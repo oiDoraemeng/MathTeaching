@@ -125,6 +125,7 @@ class LightingDialog(QDialog):
         selected = QColorDialog.getColor(QColor(getattr(self.settings, name)), self, "选择曲面颜色")
         if selected.isValid():
             setattr(self.settings, name, selected.name())
+            self.settings.use_preset_colors = False
             self._set_color_button(name)
             self._emit_change_now()
 

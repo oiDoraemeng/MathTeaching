@@ -4,24 +4,19 @@
 光泽效果。线条和辅助几何使用不受光照影响的颜色样式。
 """
 
-# 主双曲面：半透明紫色。较低环境光加强阴影层次，较高镜面反射及其指数形成光泽高光。
-SURFACE_MATERIAL = dict(
-    color="#8d70d6",      # 紫色
-    opacity=0.66,           # 透明度
-    smooth_shading=True,    # 平滑着色
-    ambient=0.20,           # 环境光
-    diffuse=0.65,           # 漫反射
-    specular=0.85,          # 镜面反射
-    specular_power=45,      # 高光范围
-)
-
-
 # 材质预设不仅改变颜色，也改变表面对光的反应，从而呈现不同物质感。
 MATERIAL_PRESETS = {
     "光泽塑料": {
-        **SURFACE_MATERIAL,
         "outer_color": "#8d70d6",
         "inner_color": "#eee6d9",
+        "color": "#8d70d6",
+        "opacity": 0.66,
+        "smooth_shading": True,
+        "ambient": 0.20,
+        "diffuse": 0.65,
+        "specular": 0.85,
+        "specular_power": 45,
+       
     },
     "透明玻璃": {
         "outer_color": "#78c9f5",
@@ -44,13 +39,14 @@ MATERIAL_PRESETS = {
         "specular_power": 10,
     },
     "抛光金属": {
-        "outer_color": "#b9873f",
-        "inner_color": "#e5c47e",
+        "outer_color": "#c89b49",
+        "inner_color": "#f1ce89",
         "opacity": 1.0,
         "smooth_shading": True,
-        "pbr": True,
-        "metallic": 0.92,
-        "roughness": 0.16,
+        "ambient": 0.30,
+        "diffuse": 0.62,
+        "specular": 1.0,
+        "specular_power": 110,
     },
     "半透明玉石": {
         "outer_color": "#57a88e",

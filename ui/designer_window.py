@@ -131,6 +131,7 @@ class MainWindow:
         preset = material_preset(name)
         self.lighting.outer_color = preset["outer_color"]
         self.lighting.inner_color = preset["inner_color"]
+        self.lighting.use_preset_colors = True
         self._update_material_summary(preset)
         self._render_scene()
 
@@ -141,7 +142,7 @@ class MainWindow:
             "光泽塑料": "高光强、半透明的聚合物表面",
             "透明玻璃": "低漫反射、高透光的玻璃质感",
             "磨砂陶瓷": "柔和反光、不透明的细腻表面",
-            "抛光金属": "PBR 金属反射，低粗糙度高光",
+            "抛光金属": "高镜面反射，明亮的抛光金属高光",
             "半透明玉石": "柔和透光、温润的矿物质感",
         }
         self.material_detail.setText(descriptions.get(self.material_name, "自定义表面材质"))

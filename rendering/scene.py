@@ -12,7 +12,7 @@ from models.parameters import HyperboloidParameters
 from rendering.axis import add_cartesian_axes
 from rendering.helper import add_teaching_helpers
 from rendering.lighting import LightSettings, setup_three_point_lighting
-from rendering.materials import SURFACE_MATERIAL, material_preset
+from rendering.materials import material_preset
 
 _CAMERA_POSITION = [(6.4, -7.2, 5.7), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
 
@@ -46,9 +46,9 @@ def build_scene(
     lighting = lighting or LightSettings()
     preset = material_preset(material_name)
     # 凸面始终使用外部颜色，凹面始终使用内部颜色。
-    # 材质下拉框只负责设置初始颜色，之后由高级光照面板统一管理。
-    outer = lighting.outer_color
-    inner = lighting.inner_color
+    # 若用户尚未手动配色，则采用当前材质预设的默认颜色。
+    outer = preset["outer_color"] if lighting.use_preset_colors else lighting.outer_color
+    inner = preset["inner_color"] if lighting.use_preset_colors else lighting.inner_color
     material = {
         **preset,
         "color": outer,
@@ -65,7 +65,6 @@ def build_scene(
     }
     material.pop("outer_color", None)
     material.pop("inner_color", None)
-    # 外层和内层分开渲染，并各自剔除背面，避免半透明正反面颜色混合。
     material["culling"] = "back"
     inner_material = {**material, "color": inner}
     inner_material.pop("backface_params", None)
