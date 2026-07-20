@@ -21,9 +21,6 @@ class LightSettings:
     """视图中可编辑的光照状态。"""
 
     ambient: float = 0.20
-    outer_color: str = "#8d70d6"
-    inner_color: str = "#d0c3f0"
-    use_preset_colors: bool = True
     rotation_angle: float = 0.0
     key: dict = field(default_factory=lambda: _KEY.copy())
     fill: dict = field(default_factory=lambda: _FILL.copy())

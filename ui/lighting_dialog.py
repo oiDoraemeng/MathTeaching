@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
 )
 
 from rendering.lighting import LightSettings
+from models.surface_settings import SurfaceSettings
 from widgets.LightRotationWidget import LightRotationWidget
 
 
@@ -17,13 +18,15 @@ class LightingDialog(QDialog):
     """环境光、主光、补光和轮廓光的实时编辑器。"""
 
     settings_changed = Signal(object)
+    surface_settings_changed = Signal(object)
     rotation_changed = Signal(float)
 
-    def __init__(self, settings: LightSettings, parent: QWidget | None = None) -> None:
+    def __init__(self, settings: LightSettings, surface_settings: SurfaceSettings, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setWindowTitle("高级光照")
         self.setMinimumWidth(430)
         self.settings = deepcopy(settings)
+        self.surface_settings = deepcopy(surface_settings)
         self._color_buttons: dict[str, QPushButton] = {}
         self._update_timer = QTimer(self)
         self._update_timer.setSingleShot(True)
@@ -84,7 +87,7 @@ class LightingDialog(QDialog):
             button = QPushButton()
             button.clicked.connect(lambda _checked=False, key=name: self._choose_surface_color(key))
             self._color_buttons[name] = button
-            self._set_color_button(name)
+            self._set_color_button(name, self.surface_settings)
             form.addRow(label, button)
         return group
 
@@ -122,23 +125,25 @@ class LightingDialog(QDialog):
             self._emit_change_now()
 
     def _choose_surface_color(self, name: str) -> None:
-        selected = QColorDialog.getColor(QColor(getattr(self.settings, name)), self, "选择曲面颜色")
+        selected = QColorDialog.getColor(QColor(getattr(self.surface_settings, name)), self, "选择曲面颜色")
         if selected.isValid():
-            setattr(self.settings, name, selected.name())
-            self.settings.use_preset_colors = False
-            self._set_color_button(name)
-            self._emit_change_now()
+            setattr(self.surface_settings, name, selected.name())
+            self.surface_settings.use_preset_colors = False
+            self._set_color_button(name, self.surface_settings)
+            self.surface_settings_changed.emit(self.surface_settings)
 
-    def _set_color_button(self, name: str) -> None:
-        value = getattr(self.settings, name)
+    def _set_color_button(self, name: str, source: object | None = None) -> None:
+        value = getattr(source or self.settings, name)
         color = QColor(value) if isinstance(value, str) else QColor.fromRgbF(*value["color"])
         self._color_buttons[name].setText(color.name().upper())
         self._color_buttons[name].setStyleSheet(f"background: {color.name()}; color: {'#ffffff' if color.lightness() < 128 else '#17202a'};")
 
     def _reset_defaults(self) -> None:
         self.settings = LightSettings()
+        self.surface_settings = SurfaceSettings()
         self.close()
         self._emit_change_now()
+        self.surface_settings_changed.emit(self.surface_settings)
 
     def _emit_change(self) -> None:
         # 滑块每经过一个像素都会发出信号；合并这些事件以稳定刷新交互渲染器。

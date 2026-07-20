@@ -8,8 +8,9 @@ from PySide6.QtWidgets import QFileDialog, QComboBox, QFrame, QLabel, QSlider, Q
 from pyvistaqt import QtInteractor
 
 from models.parameters import HyperboloidParameters
+from models.surface_settings import SurfaceSettings
 from rendering.lighting import LightSettings, update_light_rotation
-from rendering.scene import build_scene, update_lighting, update_surface_geometry
+from rendering.scene import build_scene, update_lighting, update_surface_colors, update_surface_geometry
 from ui.lighting_dialog import LightingDialog
 from rendering.materials import MATERIAL_PRESETS, material_preset
 
@@ -19,6 +20,7 @@ class MainWindow:
 
     def __init__(self) -> None:
         self.lighting = LightSettings()
+        self.surface = SurfaceSettings()
         self.material_name = "光泽塑料"
         self._lighting_dialog: LightingDialog | None = None
         self._parameter_timer = QTimer()
@@ -113,6 +115,7 @@ class MainWindow:
             self.axes_button.isChecked(),
             self.helpers_button.isChecked(),
             lighting=self.lighting,
+            surface_settings=self.surface,
             material_name=self.material_name,
             camera_position=camera_position,
             interactive=interactive,
@@ -129,9 +132,9 @@ class MainWindow:
         """应用下拉框选中的材质预设及其内外表面默认颜色。"""
         self.material_name = name
         preset = material_preset(name)
-        self.lighting.outer_color = preset["outer_color"]
-        self.lighting.inner_color = preset["inner_color"]
-        self.lighting.use_preset_colors = True
+        self.surface.outer_color = preset["outer_color"]
+        self.surface.inner_color = preset["inner_color"]
+        self.surface.use_preset_colors = True
         self._update_material_summary(preset)
         self._render_scene()
 
@@ -163,6 +166,7 @@ class MainWindow:
             self.helpers_button.isChecked(),
             high_quality=True,
             lighting=self.lighting,
+            surface_settings=self.surface,
             material_name=self.material_name,
             camera_position=self._current_camera_position(),
         )
@@ -171,9 +175,10 @@ class MainWindow:
 
     def _show_lighting_dialog(self) -> None:
         if self._lighting_dialog is None:
-            self._lighting_dialog = LightingDialog(self.lighting, self.window)
+            self._lighting_dialog = LightingDialog(self.lighting, self.surface, self.window)
             self._lighting_dialog.setWindowModality(Qt.WindowModality.NonModal)
             self._lighting_dialog.settings_changed.connect(self._update_lighting)
+            self._lighting_dialog.surface_settings_changed.connect(self._update_surface_colors)
             self._lighting_dialog.rotation_changed.connect(self._update_light_rotation)
         self._lighting_dialog.show()
         self._lighting_dialog.raise_()
@@ -182,6 +187,10 @@ class MainWindow:
     def _update_lighting(self, settings: LightSettings) -> None:
         self.lighting = settings
         update_lighting(self.plotter, self.lighting)
+
+    def _update_surface_colors(self, settings: SurfaceSettings) -> None:
+        self.surface = settings
+        update_surface_colors(self.plotter, self.surface)
 
     def _update_light_rotation(self, angle: float) -> None:
         update_light_rotation(self.plotter, self.lighting, angle)

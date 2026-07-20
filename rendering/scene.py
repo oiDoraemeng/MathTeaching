@@ -9,6 +9,7 @@ from dataclasses import replace
 
 from geometry.hyperboloid import two_sheet_hyperboloid
 from models.parameters import HyperboloidParameters
+from models.surface_settings import SurfaceSettings
 from rendering.axis import add_cartesian_axes
 from rendering.helper import add_teaching_helpers
 from rendering.lighting import LightSettings, setup_three_point_lighting
@@ -25,6 +26,7 @@ def build_scene(
     *,
     high_quality: bool = False,
     lighting: LightSettings | None = None,
+    surface_settings: SurfaceSettings | None = None,
     material_name: str = "光泽塑料",
     camera_position: list | tuple | None = None,
     interactive: bool = False,
@@ -44,11 +46,12 @@ def build_scene(
     inner_surface = surface.copy(deep=True)
     inner_surface.flip_faces(inplace=True)
     lighting = lighting or LightSettings()
+    surface_settings = surface_settings or SurfaceSettings()
     preset = material_preset(material_name)
     # 凸面始终使用外部颜色，凹面始终使用内部颜色。
     # 若用户尚未手动配色，则采用当前材质预设的默认颜色。
-    outer = preset["outer_color"] if lighting.use_preset_colors else lighting.outer_color
-    inner = preset["inner_color"] if lighting.use_preset_colors else lighting.inner_color
+    outer = preset["outer_color"] if surface_settings.use_preset_colors else surface_settings.outer_color
+    inner = preset["inner_color"] if surface_settings.use_preset_colors else surface_settings.inner_color
     material = {
         **preset,
         "color": outer,
@@ -101,13 +104,22 @@ def update_lighting(plotter: pv.Plotter, settings: LightSettings) -> None:
     actor = plotter.renderer.actors.get("hyperboloid")
     if actor is None:
         return
-    actor.prop.color = settings.outer_color
     actor.prop.ambient = settings.ambient
     inner_actor = plotter.renderer.actors.get("hyperboloid_inner")
     if inner_actor is not None:
-        inner_actor.prop.color = settings.inner_color
         inner_actor.prop.ambient = settings.ambient
     setup_three_point_lighting(plotter, settings)
+    plotter.render()
+
+
+def update_surface_colors(plotter: pv.Plotter, settings: SurfaceSettings) -> None:
+    """仅更新双曲面凸面和凹面的颜色，不改变任何灯光设置。"""
+    outer_actor = plotter.renderer.actors.get("hyperboloid")
+    inner_actor = plotter.renderer.actors.get("hyperboloid_inner")
+    if outer_actor is not None:
+        outer_actor.prop.color = settings.outer_color
+    if inner_actor is not None:
+        inner_actor.prop.color = settings.inner_color
     plotter.render()
 
 
