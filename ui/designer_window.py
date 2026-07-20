@@ -163,24 +163,8 @@ class MainWindow:
         )
         if not filename:
             return
-        build_scene(
-            self.plotter,
-            self._parameters(),
-            self.axes_button.isChecked(),
-            self.helpers_button.isChecked(),
-            high_quality=True,
-            lighting=self.lighting,
-            surface_settings=self.surface,
-            material_name=self.material_name,
-            camera_position=self._current_camera_position(),
-        )
-        try:
-            # 高质量场景重建后先提交一帧 VTK 渲染，确保光源和高光进入像素缓冲区。
-            self.plotter.render()
-            self.plotter.ren_win.Render()
-            self.plotter.screenshot(filename, return_img=False)
-        finally:
-            self._render_scene()
+        # 直接保存当前窗口的像素缓冲区，保持用户正在观察的光照、视角和材质状态。
+        self.plotter.screenshot(filename, return_img=False)
 
     def _save_parameters(self) -> None:
         filename, _ = QFileDialog.getSaveFileName(
