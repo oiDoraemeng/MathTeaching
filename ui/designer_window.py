@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QFileDialog, QComboBox, QFrame, QLabel, QSlider, Q
 from pyvistaqt import QtInteractor
 
 from models.parameters import HyperboloidParameters
-from rendering.lighting import LightSettings
+from rendering.lighting import LightSettings, update_light_rotation
 from rendering.scene import build_scene, update_lighting, update_surface_geometry
 from ui.lighting_dialog import LightingDialog
 from rendering.materials import MATERIAL_PRESETS, material_preset
@@ -173,6 +173,7 @@ class MainWindow:
             self._lighting_dialog = LightingDialog(self.lighting, self.window)
             self._lighting_dialog.setWindowModality(Qt.WindowModality.NonModal)
             self._lighting_dialog.settings_changed.connect(self._update_lighting)
+            self._lighting_dialog.rotation_changed.connect(self._update_light_rotation)
         self._lighting_dialog.show()
         self._lighting_dialog.raise_()
         self._lighting_dialog.activateWindow()
@@ -180,6 +181,9 @@ class MainWindow:
     def _update_lighting(self, settings: LightSettings) -> None:
         self.lighting = settings
         update_lighting(self.plotter, self.lighting)
+
+    def _update_light_rotation(self, angle: float) -> None:
+        update_light_rotation(self.plotter, self.lighting, angle)
 
     def _apply_style(self) -> None:
         self.window.setStyleSheet("""

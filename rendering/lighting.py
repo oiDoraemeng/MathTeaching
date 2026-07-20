@@ -5,6 +5,7 @@
 """
 
 from dataclasses import dataclass, field
+from math import atan2, cos, hypot, radians, sin
 
 import pyvista as pv
 
@@ -22,6 +23,7 @@ class LightSettings:
     ambient: float = 0.20
     outer_color: str = "#8d70d6"
     inner_color: str = "#d0c3f0"
+    rotation_angle: float = 0.0
     key: dict = field(default_factory=lambda: _KEY.copy())
     fill: dict = field(default_factory=lambda: _FILL.copy())
     rim: dict = field(default_factory=lambda: _RIM.copy())
@@ -47,3 +49,21 @@ def setup_three_point_lighting(plotter: pv.Plotter, settings: LightSettings | No
     plotter.add_light(_camera_light(**settings.key))
     plotter.add_light(_camera_light(**settings.fill))
     plotter.add_light(_camera_light(**settings.rim))
+
+
+def update_light_rotation(plotter: pv.Plotter, settings: LightSettings, angle: float) -> None:
+    """按方位角旋转完整三点光源组，且不重建场景几何。"""
+    settings.rotation_angle = angle % 360.0
+    key_angle = atan2(settings.key["position"][0], settings.key["position"][1])
+    target_angle = radians(settings.rotation_angle)
+
+    for light_name in ("key", "fill", "rim"):
+        light = getattr(settings, light_name)
+        x, y, z = light["position"]
+        radius = hypot(x, y)
+        relative_angle = atan2(x, y) - key_angle
+        rotated_angle = target_angle + relative_angle
+        light["position"] = (radius * sin(rotated_angle), radius * cos(rotated_angle), z)
+
+    setup_three_point_lighting(plotter, settings)
+    plotter.render()

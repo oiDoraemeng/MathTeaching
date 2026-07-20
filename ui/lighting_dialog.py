@@ -10,12 +10,14 @@ from PySide6.QtWidgets import (
 )
 
 from rendering.lighting import LightSettings
+from widgets.LightRotationWidget import LightRotationWidget
 
 
 class LightingDialog(QDialog):
     """环境光、主光、补光和轮廓光的实时编辑器。"""
 
     settings_changed = Signal(object)
+    rotation_changed = Signal(float)
 
     def __init__(self, settings: LightSettings, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -36,6 +38,9 @@ class LightingDialog(QDialog):
         form = QFormLayout()
         form.addRow("曲面环境光", ambient)
         layout.addLayout(form)
+        self.rotation_widget = LightRotationWidget(self.settings.rotation_angle)
+        self.rotation_widget.angle_changed.connect(self._set_rotation)
+        layout.addWidget(self.rotation_widget)
         layout.addWidget(self._surface_color_group())
         layout.addWidget(self._light_group("主光", "key"))
         layout.addWidget(self._light_group("补光", "fill"))
@@ -93,6 +98,10 @@ class LightingDialog(QDialog):
     def _set_ambient(self, value: float) -> None:
         self.settings.ambient = value
         self._emit_change()
+
+    def _set_rotation(self, angle: float) -> None:
+        self.settings.rotation_angle = angle
+        self.rotation_changed.emit(angle)
 
     def _set_light(self, name: str, field: str, value: float) -> None:
         getattr(self.settings, name)[field] = value
