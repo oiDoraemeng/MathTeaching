@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry"><rect><x>0</x><y>0</y><width>1320</width><height>820</height></rect></property>
+  <property name="windowTitle"><string>Math3D Teaching | 双叶双曲面</string></property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="rootLayout">
+    <property name="spacing"><number>0</number></property>
+    <property name="leftMargin"><number>0</number></property><property name="topMargin"><number>0</number></property><property name="rightMargin"><number>0</number></property><property name="bottomMargin"><number>0</number></property>
+    <item>
+     <widget class="QFrame" name="sidebar">
+      <property name="minimumSize"><size><width>294</width><height>0</height></size></property>
+      <property name="maximumSize"><size><width>294</width><height>16777215</height></size></property>
+      <property name="frameShape"><enum>QFrame::StyledPanel</enum></property>
+      <layout class="QVBoxLayout" name="sidebarLayout">
+       <property name="leftMargin"><number>24</number></property><property name="topMargin"><number>28</number></property><property name="rightMargin"><number>24</number></property><property name="bottomMargin"><number>24</number></property>
+       <property name="spacing"><number>14</number></property>
+       <item><widget class="QLabel" name="titleLabel"><property name="text"><string>空间解析几何</string></property></widget></item>
+       <item><widget class="QLabel" name="surfaceLabel"><property name="text"><string>双叶双曲面</string></property></widget></item>
+       <item><widget class="QLabel" name="formulaLabel"><property name="text"><string>x²/a² + y²/b² − z²/c² = −1</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
+       <item><spacer name="parameterSpacer"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>6</height></size></property></spacer></item>
+       <item><widget class="QLabel" name="parameterLabel"><property name="text"><string>曲面参数</string></property></widget></item>
+       <item><layout class="QFormLayout" name="parameterForm">
+        <property name="verticalSpacing"><number>14</number></property>
+        <item row="0" column="0"><widget class="QLabel" name="aLabel"><property name="text"><string>a</string></property></widget></item>
+        <item row="0" column="1"><layout class="QHBoxLayout" name="aLayout"><item><widget class="QSlider" name="aSlider"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="minimum"><number>1</number></property><property name="maximum"><number>300</number></property><property name="value"><number>20</number></property></widget></item><item><widget class="QLabel" name="aValue"><property name="minimumSize"><size><width>42</width><height>0</height></size></property><property name="text"><string>0.20</string></property></widget></item></layout></item>
+        <item row="1" column="0"><widget class="QLabel" name="bLabel"><property name="text"><string>b</string></property></widget></item>
+        <item row="1" column="1"><layout class="QHBoxLayout" name="bLayout"><item><widget class="QSlider" name="bSlider"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="minimum"><number>1</number></property><property name="maximum"><number>300</number></property><property name="value"><number>20</number></property></widget></item><item><widget class="QLabel" name="bValue"><property name="minimumSize"><size><width>42</width><height>0</height></size></property><property name="text"><string>0.20</string></property></widget></item></layout></item>
+        <item row="2" column="0"><widget class="QLabel" name="cLabel"><property name="text"><string>c</string></property></widget></item>
+        <item row="2" column="1"><layout class="QHBoxLayout" name="cLayout"><item><widget class="QSlider" name="cSlider"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="minimum"><number>1</number></property><property name="maximum"><number>300</number></property><property name="value"><number>100</number></property></widget></item><item><widget class="QLabel" name="cValue"><property name="minimumSize"><size><width>42</width><height>0</height></size></property><property name="text"><string>1.00</string></property></widget></item></layout></item>
+       </layout></item>
+       <item><spacer name="actionsSpacer"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>6</height></size></property></spacer></item>
+    <item>
+     <layout class="QFormLayout" name="materialForm">
+      <item row="0" column="0"><widget class="QLabel" name="materialLabel"><property name="text"><string>材质</string></property></widget></item>
+      <item row="0" column="1"><widget class="QComboBox" name="materialCombo">
+       <item><property name="text"><string>光泽塑料</string></property></item>
+       <item><property name="text"><string>透明玻璃</string></property></item>
+       <item><property name="text"><string>磨砂陶瓷</string></property></item>
+       <item><property name="text"><string>抛光金属</string></property></item>
+       <item><property name="text"><string>半透明玉石</string></property></item>
+      </widget></item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QFrame" name="materialPreviewBand">
+      <property name="frameShape"><enum>QFrame::StyledPanel</enum></property>
+      <layout class="QHBoxLayout" name="materialPreviewLayout">
+       <property name="leftMargin"><number>10</number></property><property name="topMargin"><number>8</number></property><property name="rightMargin"><number>10</number></property><property name="bottomMargin"><number>8</number></property>
+       <property name="spacing"><number>9</number></property>
+       <item><widget class="QFrame" name="materialColorPreview"><property name="minimumSize"><size><width>18</width><height>18</height></size></property><property name="maximumSize"><size><width>18</width><height>18</height></size></property><property name="frameShape"><enum>QFrame::StyledPanel</enum></property></widget></item>
+       <item><widget class="QLabel" name="materialDetailLabel"><property name="text"><string>高光与半透明表面</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
+      </layout>
+     </widget>
+    </item>
+       <item><widget class="QPushButton" name="axesButton"><property name="text"><string>显示坐标轴</string></property><property name="checkable"><bool>true</bool></property><property name="checked"><bool>true</bool></property></widget></item>
+       <item><widget class="QPushButton" name="helpersButton"><property name="text"><string>显示辅助线</string></property><property name="checkable"><bool>true</bool></property><property name="checked"><bool>true</bool></property></widget></item>
+       <item><widget class="QPushButton" name="lightingButton"><property name="text"><string>高级光照</string></property></widget></item>
+       <item><widget class="QPushButton" name="regenerateButton"><property name="text"><string>重新生成曲面</string></property></widget></item>
+       <item><widget class="QPushButton" name="saveButton"><property name="text"><string>保存图片</string></property></widget></item>
+       <item><spacer name="verticalSpacer"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Expanding</enum></property></spacer></item>
+       <item><widget class="QLabel" name="hintLabel"><property name="text"><string>拖动旋转 · 滚轮缩放 · Shift+拖动平移</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
+      </layout>
+     </widget>
+    </item>
+    <item><widget class="QWidget" name="viewportHost" native="true"/></item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
