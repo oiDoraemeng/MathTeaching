@@ -43,15 +43,16 @@ def build_scene(
     surface = two_sheet_hyperboloid(parameters)
     lighting = lighting or LightSettings()
     preset = material_preset(material_name)
-    # 优先使用预设里的 outer_color/inner_color；回退到 lighting 的颜色设置
-    outer = preset.get("outer_color", lighting.outer_color)
-    inner = preset.get("inner_color", lighting.inner_color)
+    # 凸面始终使用外部颜色，凹面始终使用内部颜色。
+    # 材质下拉框只负责设置初始颜色，之后由高级光照面板统一管理。
+    outer = lighting.outer_color
+    inner = lighting.inner_color
     material = {
         **preset,
         "color": outer,
         "ambient": lighting.ambient if material_name == "光泽塑料" else preset.get("ambient", lighting.ambient),
         "backface_params": {
-            # 使用预设的 inner_color，使修改直接生效
+            # 背面对应凹面，使用内部颜色。
             "color": inner,
             "opacity": preset.get("opacity", 1.0),
             "ambient": preset.get("ambient", lighting.ambient),
