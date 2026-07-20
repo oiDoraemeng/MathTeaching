@@ -59,6 +59,8 @@
        <item><widget class="QPushButton" name="lightingButton"><property name="text"><string>高级光照</string></property></widget></item>
        <item><widget class="QPushButton" name="regenerateButton"><property name="text"><string>重新生成曲面</string></property></widget></item>
        <item><widget class="QPushButton" name="saveButton"><property name="text"><string>保存图片</string></property></widget></item>
+       <item><widget class="QPushButton" name="saveParametersButton"><property name="text"><string>保存参数</string></property></widget></item>
+       <item><widget class="QPushButton" name="loadParametersButton"><property name="text"><string>加载参数</string></property></widget></item>
        <item><spacer name="verticalSpacer"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeType"><enum>QSizePolicy::Expanding</enum></property></spacer></item>
        <item><widget class="QLabel" name="hintLabel"><property name="text"><string>拖动旋转 · 滚轮缩放 · Shift+拖动平移</string></property><property name="wordWrap"><bool>true</bool></property></widget></item>
       </layout>

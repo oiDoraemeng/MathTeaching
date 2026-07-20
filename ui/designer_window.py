@@ -1,10 +1,12 @@
 """Qt Designer 主窗口表单的行为控制器。"""
 
+import json
+from dataclasses import asdict
 from pathlib import Path
 
 from PySide6.QtCore import QFile, QIODevice, QTimer, Qt
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QFileDialog, QComboBox, QFrame, QLabel, QSlider, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QFileDialog, QComboBox, QFrame, QLabel, QMessageBox, QSlider, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
 
 from models.parameters import HyperboloidParameters
@@ -83,6 +85,8 @@ class MainWindow:
         self._widget("regenerateButton").clicked.connect(self._render_scene)
         self._widget("lightingButton").clicked.connect(self._show_lighting_dialog)
         self._widget("saveButton").clicked.connect(self._save_screenshot)
+        self._widget("saveParametersButton").clicked.connect(self._save_parameters)
+        self._widget("loadParametersButton").clicked.connect(self._load_parameters)
         if self.material_combo is not None:
             self._update_material_summary()
 
@@ -107,8 +111,8 @@ class MainWindow:
         self._parameter_timer.stop()
         self._render_scene()
 
-    def _render_scene(self, interactive: bool = False) -> None:
-        camera_position = self._current_camera_position()
+    def _render_scene(self, interactive: bool = False, camera_position: list | None = None) -> None:
+        camera_position = camera_position or self._current_camera_position()
         build_scene(
             self.plotter,
             self._parameters(),
@@ -177,6 +181,109 @@ class MainWindow:
             self.plotter.screenshot(filename, return_img=False)
         finally:
             self._render_scene()
+
+    def _save_parameters(self) -> None:
+        filename, _ = QFileDialog.getSaveFileName(
+            self.window,
+            "保存参数预设",
+            str(Path.home() / "hyperboloid-parameters.json"),
+            "JSON Files (*.json)",
+        )
+        if not filename:
+            return
+        payload = {
+            "version": 1,
+            "surface_parameters": asdict(self._parameters()),
+            "lighting": asdict(self.lighting),
+            "surface": asdict(self.surface),
+            "material_name": self.material_name,
+            "show_axes": self.axes_button.isChecked(),
+            "show_helpers": self.helpers_button.isChecked(),
+            "camera_position": self._current_camera_position(),
+        }
+        try:
+            Path(filename).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        except OSError as error:
+            QMessageBox.warning(self.window, "保存失败", f"无法保存参数预设：{error}")
+            return
+        QMessageBox.information(self.window, "保存成功", "参数预设已保存。")
+
+    def _load_parameters(self) -> None:
+        filename, _ = QFileDialog.getOpenFileName(self.window, "加载参数预设", str(Path.home()), "JSON Files (*.json)")
+        if not filename:
+            return
+        try:
+            payload = json.loads(Path(filename).read_text(encoding="utf-8"))
+            if not isinstance(payload, dict) or payload.get("version") != 1:
+                raise ValueError("不支持的参数预设格式")
+            self._restore_parameters(payload)
+        except (OSError, ValueError, TypeError, json.JSONDecodeError) as error:
+            QMessageBox.warning(self.window, "加载失败", f"无法加载参数预设：{error}")
+            return
+        QMessageBox.information(self.window, "加载成功", "参数预设已恢复。")
+
+    def _restore_parameters(self, payload: dict) -> None:
+        parameter_data = payload["surface_parameters"]
+        for name, slider in self.sliders.items():
+            slider.blockSignals(True)
+            try:
+                slider.setValue(max(slider.minimum(), min(slider.maximum(), round(float(parameter_data[name]) * 100))))
+            finally:
+                slider.blockSignals(False)
+            self.value_labels[name].setText(f"{slider.value() / 100:.2f}")
+
+        self.lighting = self._lighting_from_payload(payload.get("lighting", {}))
+        surface_data = payload.get("surface", {})
+        self.surface = SurfaceSettings(
+            outer_color=str(surface_data.get("outer_color", SurfaceSettings.outer_color)),
+            inner_color=str(surface_data.get("inner_color", SurfaceSettings.inner_color)),
+            use_preset_colors=bool(surface_data.get("use_preset_colors", True)),
+        )
+        self.material_name = str(payload.get("material_name", self.material_name))
+        if self.material_name not in MATERIAL_PRESETS:
+            self.material_name = "光泽塑料"
+        if self.material_combo is not None:
+            self.material_combo.blockSignals(True)
+            try:
+                self.material_combo.setCurrentText(self.material_name)
+            finally:
+                self.material_combo.blockSignals(False)
+        self._update_material_summary(material_preset(self.material_name))
+
+        for button, key in ((self.axes_button, "show_axes"), (self.helpers_button, "show_helpers")):
+            button.blockSignals(True)
+            try:
+                button.setChecked(bool(payload.get(key, button.isChecked())))
+            finally:
+                button.blockSignals(False)
+
+        if self._lighting_dialog is not None:
+            self._lighting_dialog.close()
+            self._lighting_dialog = None
+        camera = payload.get("camera_position")
+        if not self._is_camera_position(camera):
+            camera = None
+        self._render_scene(camera_position=camera)
+
+    @staticmethod
+    def _lighting_from_payload(data: object) -> LightSettings:
+        defaults = asdict(LightSettings())
+        if not isinstance(data, dict):
+            return LightSettings()
+        for key in ("ambient", "rotation_angle"):
+            if key in data:
+                defaults[key] = float(data[key])
+        for light_name in ("key", "fill", "rim"):
+            source = data.get(light_name)
+            if isinstance(source, dict):
+                defaults[light_name].update({key: source[key] for key in ("position", "intensity", "color") if key in source})
+            defaults[light_name]["position"] = tuple(defaults[light_name]["position"])
+            defaults[light_name]["color"] = tuple(defaults[light_name]["color"])
+        return LightSettings(**defaults)
+
+    @staticmethod
+    def _is_camera_position(value: object) -> bool:
+        return isinstance(value, list) and len(value) == 3 and all(isinstance(vector, list) and len(vector) == 3 for vector in value)
 
     def _show_lighting_dialog(self) -> None:
         if self._lighting_dialog is None:
