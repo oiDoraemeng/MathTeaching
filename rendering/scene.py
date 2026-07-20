@@ -41,6 +41,8 @@ def build_scene(
         # 拖动参数时使用较低网格密度，松开后由完整渲染恢复细节。
         parameters = replace(parameters, radial_resolution=32, angular_resolution=48)
     surface = two_sheet_hyperboloid(parameters)
+    inner_surface = surface.copy(deep=True)
+    inner_surface.flip_faces(inplace=True)
     lighting = lighting or LightSettings()
     preset = material_preset(material_name)
     # 凸面始终使用外部颜色，凹面始终使用内部颜色。
@@ -63,7 +65,12 @@ def build_scene(
     }
     material.pop("outer_color", None)
     material.pop("inner_color", None)
+    # 外层和内层分开渲染，并各自剔除背面，避免半透明正反面颜色混合。
+    material["culling"] = "back"
+    inner_material = {**material, "color": inner}
+    inner_material.pop("backface_params", None)
     plotter.add_mesh(surface, name="hyperboloid", **material)
+    plotter.add_mesh(inner_surface, name="hyperboloid_inner", **inner_material)
 
     extent = max(parameters.a, parameters.b, parameters.c * np.cosh(parameters.u_max)) * 1.45
     if show_axes:
@@ -97,8 +104,10 @@ def update_lighting(plotter: pv.Plotter, settings: LightSettings) -> None:
         return
     actor.prop.color = settings.outer_color
     actor.prop.ambient = settings.ambient
-    actor.backface_prop.color = settings.inner_color
-    actor.backface_prop.ambient = settings.ambient
+    inner_actor = plotter.renderer.actors.get("hyperboloid_inner")
+    if inner_actor is not None:
+        inner_actor.prop.color = settings.inner_color
+        inner_actor.prop.ambient = settings.ambient
     setup_three_point_lighting(plotter, settings)
     plotter.render()
 
@@ -109,11 +118,21 @@ def update_surface_geometry(plotter: pv.Plotter, parameters: HyperboloidParamete
     if actor is None:
         return
     updated_surface = two_sheet_hyperboloid(parameters)
+    updated_inner_surface = updated_surface.copy(deep=True)
+    updated_inner_surface.flip_faces(inplace=True)
     current_surface = actor.mapper.dataset
     if current_surface.n_points == updated_surface.n_points and current_surface.n_cells == updated_surface.n_cells:
         current_surface.points = updated_surface.points
         current_surface.Modified()
     else:
         actor.mapper.dataset = updated_surface
+    inner_actor = plotter.renderer.actors.get("hyperboloid_inner")
+    if inner_actor is not None:
+        current_inner_surface = inner_actor.mapper.dataset
+        if current_inner_surface.n_points == updated_inner_surface.n_points and current_inner_surface.n_cells == updated_inner_surface.n_cells:
+            current_inner_surface.points = updated_inner_surface.points
+            current_inner_surface.Modified()
+        else:
+            inner_actor.mapper.dataset = updated_inner_surface
     plotter.reset_camera_clipping_range()
     plotter.render()
