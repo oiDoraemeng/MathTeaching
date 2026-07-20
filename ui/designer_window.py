@@ -170,8 +170,13 @@ class MainWindow:
             material_name=self.material_name,
             camera_position=self._current_camera_position(),
         )
-        self.plotter.screenshot(filename)
-        self._render_scene()
+        try:
+            # 高质量场景重建后先提交一帧 VTK 渲染，确保光源和高光进入像素缓冲区。
+            self.plotter.render()
+            self.plotter.ren_win.Render()
+            self.plotter.screenshot(filename, return_img=False)
+        finally:
+            self._render_scene()
 
     def _show_lighting_dialog(self) -> None:
         if self._lighting_dialog is None:
