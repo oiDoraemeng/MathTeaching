@@ -4,4 +4,5 @@ __pycache__/
 **/__pycache__/
 *.py[cod]
 _render_check.png
+_export_check.png
 *.vtk
