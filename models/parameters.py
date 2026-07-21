@@ -10,7 +10,6 @@ class HyperboloidParameters:
     a: float = 0.2
     b: float = 0.2
     c: float = 1
-    u_max: float = 1.35
-    radial_resolution: int = 72
-    angular_resolution: int = 96
-    
+    u_max: float = 2
+    radial_resolution: int = 72    
+    angular_resolution: int = 96   

@@ -8,12 +8,14 @@ from models.parameters import HyperboloidParameters
 
 def two_sheet_hyperboloid(parameters: HyperboloidParameters) -> pv.PolyData:
     """生成双叶双曲面的两个互不相连曲面。
-
+    x = a * sinh(u) * cos(v)
+    y = b * sinh(u) * sin(v)
+    z = c * cosh(u)
     参数范围为 u in [0, u_max]、v in [0, 2*pi]。
     """
-    u = np.linspace(0.0, parameters.u_max, parameters.radial_resolution)
+    u = np.linspace(0.0, parameters.u_max, parameters.radial_resolution) 
     v = np.linspace(0.0, 2.0 * np.pi, parameters.angular_resolution)
-    uu, vv = np.meshgrid(u, v, indexing="ij")
+    uu, vv = np.meshgrid(u, v, indexing="ij")  # 网格化参数空间
 
     x = parameters.a * np.sinh(uu) * np.cos(vv)
     y = parameters.b * np.sinh(uu) * np.sin(vv)

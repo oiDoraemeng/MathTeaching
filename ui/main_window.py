@@ -104,15 +104,20 @@ class MainWindow(QMainWindow):
         column.addWidget(heading)
         form = QFormLayout()
         form.setSpacing(14)
+
         # 默认参数（与 models/parameters.py 中默认值一致），通过滑块可交互修改
-        self.controls = {
-            "a": ParameterControl("a", 0.2),
-            "b": ParameterControl("b", 0.2),
-            "c": ParameterControl("c", 1),
-        }
-        for name, control in self.controls.items():
-            form.addRow(QLabel(name), control)
-            control.slider.valueChanged.connect(self._render_scene)
+        self.control_a = ParameterControl("a", 0.2)
+        self.control_b = ParameterControl("b", 0.2)
+        self.control_c = ParameterControl("c", 1)
+        # 逐个添加到表单
+        form.addRow(QLabel("a"), self.control_a)
+        form.addRow(QLabel("b"), self.control_b)
+        form.addRow(QLabel("c"), self.control_c)
+        # 逐个绑定信号
+        self.control_a.slider.valueChanged.connect(self._render_scene)
+        self.control_b.slider.valueChanged.connect(self._render_scene)
+        self.control_c.slider.valueChanged.connect(self._render_scene)
+
         column.addLayout(form)
         column.addSpacing(8)
         self.axes_button = self._toggle_button("显示坐标轴", True)
@@ -143,7 +148,7 @@ class MainWindow(QMainWindow):
 
     def _parameters(self) -> HyperboloidParameters:
         """从当前 UI 控件读取并返回 `HyperboloidParameters` 实例。"""
-        return HyperboloidParameters(**{name: control.value for name, control in self.controls.items()})
+        return HyperboloidParameters(self.control_a.value, self.control_b.value, self.control_c.value)
 
     def _render_scene(self) -> None:
         if not hasattr(self, "plotter"):

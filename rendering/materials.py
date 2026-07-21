@@ -10,12 +10,12 @@ MATERIAL_PRESETS = {
         "outer_color": "#8d70d6",
         "inner_color": "#eee6d9",
         "color": "#8d70d6",
-        "opacity": 0.66,
-        "smooth_shading": True,
-        "ambient": 0.20,
-        "diffuse": 0.65,
-        "specular": 0.85,
-        "specular_power": 45,
+        "opacity": 0.66,         # 透明度
+        "smooth_shading": True,  # 平滑度
+        "ambient": 0.20,         # 环境光系数
+        "diffuse": 0.65,         # 漫反射光系数
+        "specular": 0.85,        # 镜面高光系数
+        "specular_power": 45,    # 镜面高光强度
        
     },
     "透明玻璃": {
