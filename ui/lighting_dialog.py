@@ -5,12 +5,12 @@ from copy import deepcopy
 from PySide6.QtCore import QTimer, Qt, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
-    QColorDialog, QDialog, QDialogButtonBox, QFormLayout, QGroupBox,
+    QColorDialog, QComboBox, QDialog, QDialogButtonBox, QFormLayout, QGroupBox,
     QHBoxLayout, QLabel, QPushButton, QSlider, QSpinBox, QVBoxLayout, QWidget,
 )
 
-from rendering.lighting import LightSettings
-from models.surface_settings import SurfaceSettings
+from rendering.lighting import LightSettings, rotate_light_positions
+from rendering.materials import MATERIAL_PRESETS
 from widgets.LightRotationWidget import LightRotationWidget
 
 
@@ -18,15 +18,19 @@ class LightingDialog(QDialog):
     """环境光、主光、补光和轮廓光的实时编辑器。"""
 
     settings_changed = Signal(object)
-    surface_settings_changed = Signal(object)
-    rotation_changed = Signal(float)
+    material_changed = Signal(str)
 
-    def __init__(self, settings: LightSettings, surface_settings: SurfaceSettings, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        settings: LightSettings,
+        material_name: str = "光泽塑料",
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
         self.setWindowTitle("高级光照")
         self.setMinimumWidth(430)
         self.settings = deepcopy(settings)
-        self.surface_settings = deepcopy(surface_settings)
+        self.material_name = material_name if material_name in MATERIAL_PRESETS else "光泽塑料"
         self._color_buttons: dict[str, QPushButton] = {}
         self._update_timer = QTimer(self)
         self._update_timer.setSingleShot(True)
@@ -36,15 +40,19 @@ class LightingDialog(QDialog):
     def _build_ui(self) -> None:
         layout = QVBoxLayout(self)
         layout.setSpacing(12)
+        self.material_combo = QComboBox()
+        self.material_combo.addItems(MATERIAL_PRESETS)
+        self.material_combo.setCurrentText(self.material_name)
+        self.material_combo.currentTextChanged.connect(self._set_material)
         ambient = self._slider(0, 100, round(self.settings.ambient * 100))
         ambient.valueChanged.connect(lambda value: self._set_ambient(value / 100))
         form = QFormLayout()
+        form.addRow("曲面材质", self.material_combo)
         form.addRow("曲面环境光", ambient)
         layout.addLayout(form)
         self.rotation_widget = LightRotationWidget(self.settings.rotation_angle)
         self.rotation_widget.angle_changed.connect(self._set_rotation)
         layout.addWidget(self.rotation_widget)
-        layout.addWidget(self._surface_color_group())
         layout.addWidget(self._light_group("主光", "key"))
         layout.addWidget(self._light_group("补光", "fill"))
         layout.addWidget(self._light_group("轮廓光", "rim"))
@@ -80,17 +88,6 @@ class LightingDialog(QDialog):
         form.addRow("颜色", color)
         return group
 
-    def _surface_color_group(self) -> QGroupBox:
-        group = QGroupBox("曲面双面颜色")
-        form = QFormLayout(group)
-        for label, name in (("凸面（外部）", "outer_color"), ("凹面（内部）", "inner_color")):
-            button = QPushButton()
-            button.clicked.connect(lambda _checked=False, key=name: self._choose_surface_color(key))
-            self._color_buttons[name] = button
-            self._set_color_button(name, self.surface_settings)
-            form.addRow(label, button)
-        return group
-
     @staticmethod
     def _slider(minimum: int, maximum: int, value: int) -> QSlider:
         slider = QSlider(Qt.Orientation.Horizontal)
@@ -102,9 +99,13 @@ class LightingDialog(QDialog):
         self.settings.ambient = value
         self._emit_change()
 
+    def _set_material(self, material_name: str) -> None:
+        self.material_name = material_name
+        self.material_changed.emit(material_name)
+
     def _set_rotation(self, angle: float) -> None:
-        self.settings.rotation_angle = angle
-        self.rotation_changed.emit(angle)
+        rotate_light_positions(self.settings, angle)
+        self._emit_change_now()
 
     def _set_light(self, name: str, field: str, value: float) -> None:
         getattr(self.settings, name)[field] = value
@@ -124,14 +125,6 @@ class LightingDialog(QDialog):
             self._set_color_button(name)
             self._emit_change_now()
 
-    def _choose_surface_color(self, name: str) -> None:
-        selected = QColorDialog.getColor(QColor(getattr(self.surface_settings, name)), self, "选择曲面颜色")
-        if selected.isValid():
-            setattr(self.surface_settings, name, selected.name())
-            self.surface_settings.use_preset_colors = False
-            self._set_color_button(name, self.surface_settings)
-            self.surface_settings_changed.emit(self.surface_settings)
-
     def _set_color_button(self, name: str, source: object | None = None) -> None:
         value = getattr(source or self.settings, name)
         color = QColor(value) if isinstance(value, str) else QColor.fromRgbF(*value["color"])
@@ -140,10 +133,15 @@ class LightingDialog(QDialog):
 
     def _reset_defaults(self) -> None:
         self.settings = LightSettings()
-        self.surface_settings = SurfaceSettings()
+        self.material_name = "光泽塑料"
+        self.material_combo.blockSignals(True)
+        try:
+            self.material_combo.setCurrentText(self.material_name)
+        finally:
+            self.material_combo.blockSignals(False)
+        self.material_changed.emit(self.material_name)
         self.close()
         self._emit_change_now()
-        self.surface_settings_changed.emit(self.surface_settings)
 
     def _emit_change(self) -> None:
         # 滑块每经过一个像素都会发出信号；合并这些事件以稳定刷新交互渲染器。

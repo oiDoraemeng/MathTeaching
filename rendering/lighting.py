@@ -49,8 +49,8 @@ def setup_three_point_lighting(plotter: pv.Plotter, settings: LightSettings | No
     plotter.add_light(_camera_light(**settings.rim))
 
 
-def update_light_rotation(plotter: pv.Plotter, settings: LightSettings, angle: float) -> None:
-    """按方位角旋转完整三点光源组，且不重建场景几何。"""
+def rotate_light_positions(settings: LightSettings, angle: float) -> None:
+    """Rotate the complete light rig while preserving its internal offsets."""
     settings.rotation_angle = angle % 360.0
     key_angle = atan2(settings.key["position"][0], settings.key["position"][1])
     target_angle = radians(settings.rotation_angle)
@@ -63,5 +63,9 @@ def update_light_rotation(plotter: pv.Plotter, settings: LightSettings, angle: f
         rotated_angle = target_angle + relative_angle
         light["position"] = (radius * sin(rotated_angle), radius * cos(rotated_angle), z)
 
+
+def update_light_rotation(plotter: pv.Plotter, settings: LightSettings, angle: float) -> None:
+    """按方位角旋转完整三点光源组，且不重建场景几何。"""
+    rotate_light_positions(settings, angle)
     setup_three_point_lighting(plotter, settings)
     plotter.render()
