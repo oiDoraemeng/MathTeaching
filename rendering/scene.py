@@ -20,9 +20,9 @@ _CAMERA_POSITION = [(6.4, -7.2, 5.7), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
 
 def build_scene(
     plotter: pv.Plotter,
-    parameters: HyperboloidParameters,
-    show_axes: bool,
-    show_helpers: bool,
+    parameters: HyperboloidParameters | None = None,
+    show_axes: bool = True,
+    show_helpers: bool = True,
     *,
     high_quality: bool = False,
     lighting: LightSettings | None = None,
@@ -30,6 +30,7 @@ def build_scene(
     material_name: str = "光泽塑料",
     camera_position: list | tuple | None = None,
     interactive: bool = False,
+    base_surface: bool = True,
 ) -> None:
     """清空并重建完整场景。
 
@@ -38,6 +39,26 @@ def build_scene(
     """
     plotter.clear()
     plotter.set_background("#f7f8fb")
+    lighting = lighting or LightSettings()
+
+    if not base_surface:
+        if show_axes:
+            add_cartesian_axes(plotter, 4.5)
+        if interactive:
+            plotter.disable_depth_peeling()
+        else:
+            plotter.enable_depth_peeling(number_of_peels=8, occlusion_ratio=0.0)
+        setup_three_point_lighting(plotter, lighting)
+        plotter.enable_anti_aliasing("ssaa" if high_quality else "msaa")
+        if camera_position is None:
+            plotter.camera_position = _CAMERA_POSITION
+            plotter.reset_camera()
+        else:
+            plotter.camera_position = camera_position
+            plotter.reset_camera_clipping_range()
+        return
+
+    parameters = parameters or HyperboloidParameters()
 
     if interactive:
         # 拖动参数时使用较低网格密度，松开后由完整渲染恢复细节。
@@ -101,13 +122,10 @@ def build_scene(
 
 def update_lighting(plotter: pv.Plotter, settings: LightSettings) -> None:
     """不重建几何体，仅更新光照和双面材质。"""
-    actor = plotter.renderer.actors.get("hyperboloid")
-    if actor is None:
-        return
-    actor.prop.ambient = settings.ambient
-    inner_actor = plotter.renderer.actors.get("hyperboloid_inner")
-    if inner_actor is not None:
-        inner_actor.prop.ambient = settings.ambient
+    actors = plotter.renderer.actors
+    for name, actor in actors.items():
+        if name in {"hyperboloid", "hyperboloid_inner"} or name.startswith("layer:"):
+            actor.prop.ambient = settings.ambient
     setup_three_point_lighting(plotter, settings)
     plotter.render()
 
