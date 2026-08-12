@@ -13,7 +13,6 @@ from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
-    QLineEdit,
     QMenu,
     QPushButton,
     QScrollArea,
@@ -25,6 +24,7 @@ from PySide6.QtWidgets import (
 )
 
 from models.surface_layer import SurfaceLayer
+from MathInputWidget import MathInputWidget
 
 
 _SURFACE_KINDS = (
@@ -40,9 +40,17 @@ _PLACEHOLDERS = {
 
 
 class LayerRow(QFrame):
-    """One editable algebra layer with independent visibility controls."""
+    """可编辑的代数曲面图层行。
 
-    update_requested = Signal(str, str, str)
+    每个图层行包含：
+    - 曲面显隐切换
+    - 是否显示交线
+    - 曲面表达式类型选择（显式 / 隐式 / 参数）
+    - 颜色、透明度、采样范围设置
+    - 更新、删除等按钮
+    """
+
+    edit_requested = Signal(str, str, str)
     delete_requested = Signal(str)
     visibility_changed = Signal(str, bool)
     intersections_visibility_changed = Signal(str, bool)
@@ -55,7 +63,7 @@ class LayerRow(QFrame):
         self.layer_id = layer.id
         self.setObjectName("algebraLayerRow")
         self.setFrameShape(QFrame.Shape.StyledPanel)
-        self.setMinimumHeight(123)
+        self.setMinimumHeight(119)
         self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(8, 7, 8, 7)
@@ -91,13 +99,14 @@ class LayerRow(QFrame):
 
         editor = QHBoxLayout()
         editor.setSpacing(5)
-        self.expression_edit = QLineEdit(layer.expression)
-        self.expression_edit.setPlaceholderText(_PLACEHOLDERS.get(layer.kind, "输入曲面方程"))
-        self.expression_edit.setClearButtonEnabled(True)
-        self.update_button = QPushButton("更新")
-        self.update_button.setMinimumWidth(52)
-        editor.addWidget(self.expression_edit, 1)
-        editor.addWidget(self.update_button)
+        self.expression_summary = QLabel(layer.latex or layer.expression)
+        self.expression_summary.setObjectName("layerExpressionSummary")
+        self.expression_summary.setWordWrap(True)
+        self.expression_summary.setToolTip(layer.latex or layer.expression)
+        self.edit_button = QPushButton("编辑")
+        self.edit_button.setMinimumWidth(52)
+        editor.addWidget(self.expression_summary, 1)
+        editor.addWidget(self.edit_button)
         layout.addLayout(editor)
 
         opacity = QHBoxLayout()
@@ -130,18 +139,14 @@ class LayerRow(QFrame):
         self.intersections_check.toggled.connect(
             lambda visible: self.intersections_visibility_changed.emit(self.layer_id, visible)
         )
-        self.expression_edit.returnPressed.connect(self._emit_update)
-        self.update_button.clicked.connect(self._emit_update)
+        self.edit_button.clicked.connect(
+            lambda: self.edit_requested.emit(self.layer_id, str(self.kind_combo.currentData()), layer.latex or layer.expression)
+        )
         self.delete_button.clicked.connect(lambda: self.delete_requested.emit(self.layer_id))
         self.color_button.clicked.connect(self._choose_color)
         self.opacity_slider.valueChanged.connect(self._emit_opacity)
         self.range_slider.valueChanged.connect(self._update_range_label)
         self.range_slider.sliderReleased.connect(self._emit_range)
-
-    def _emit_update(self) -> None:
-        expression = self.expression_edit.text().strip()
-        if expression:
-            self.update_requested.emit(self.layer_id, str(self.kind_combo.currentData()), expression)
 
     def _choose_color(self) -> None:
         color = QColorDialog.getColor(QColor(self.color_button.property("layerColor")), self, "选择曲面颜色")
@@ -167,7 +172,7 @@ class LayerRow(QFrame):
 
 
 class AlgebraPanel(QFrame):
-    """A stable, scan-friendly control surface inspired by an algebra view."""
+    """代数面板：用于输入 CAS 曲面表达式并管理多个曲面图层。"""
 
     add_requested = Signal(str, str)
     update_requested = Signal(str, str, str)
@@ -186,6 +191,7 @@ class AlgebraPanel(QFrame):
         super().__init__(parent)
         self.rows: dict[str, LayerRow] = {}
         self._layers: list[SurfaceLayer] = []
+        self._active_layer_id: str | None = None
         self.setObjectName("algebraPanel")
         self.setMinimumWidth(350)
         self.setMaximumWidth(420)
@@ -207,17 +213,24 @@ class AlgebraPanel(QFrame):
         for label, value in _SURFACE_KINDS:
             self.kind_combo.addItem(label, value)
         self.kind_combo.currentIndexChanged.connect(self._update_placeholder)
-        self.expression_edit = QLineEdit()
-        self.expression_edit.setClearButtonEnabled(True)
-        self._update_placeholder()
-        self.add_button = QPushButton("添加")
-        self.add_button.setToolTip("添加新的代数曲面")
+        self.add_button = QPushButton("添加或更新")
+        self.add_button.setToolTip("按 Enter 或点击后才重新计算曲面")
+        self.cancel_edit_button = QToolButton()
+        self.cancel_edit_button.setText("新建")
+        self.cancel_edit_button.setToolTip("退出当前编辑并新建曲面")
+        self.cancel_edit_button.setVisible(False)
         add_line.addWidget(self.kind_combo)
-        add_line.addWidget(self.expression_edit, 1)
         add_line.addWidget(self.add_button)
+        add_line.addWidget(self.cancel_edit_button)
         layout.addLayout(add_line)
-        self.expression_edit.returnPressed.connect(self._request_add)
+
+        self.formula_editor = MathInputWidget(self)
+        self.formula_editor.setToolTip("输入数学公式，按 Enter 添加或更新曲面")
+        self._update_placeholder()
+        layout.addWidget(self.formula_editor)
+        self.formula_editor.submitted.connect(self._request_add)
         self.add_button.clicked.connect(self._request_add)
+        self.cancel_edit_button.clicked.connect(self.cancel_edit)
 
         tools_line = QHBoxLayout()
         tools_line.setSpacing(6)
@@ -271,13 +284,17 @@ class AlgebraPanel(QFrame):
         layout.addWidget(self.status_label)
 
     def set_builtin_surfaces(self, surfaces: Iterable[tuple[str, str]]) -> None:
+        """加载内置曲面菜单项。"""
         self.builtin_menu.clear()
         for surface_id, name in surfaces:
             action = self.builtin_menu.addAction(name)
             action.triggered.connect(lambda _checked=False, identifier=surface_id: self.builtin_requested.emit(identifier))
 
     def set_layers(self, layers: Iterable[SurfaceLayer]) -> None:
+        """根据当前曲面图层列表刷新侧边栏显示。"""
         self._layers = list(layers)
+        if self._active_layer_id is not None and not any(layer.id == self._active_layer_id for layer in self._layers):
+            self.finish_edit()
         while self.rows_layout.count() > 1:
             item = self.rows_layout.takeAt(0)
             if item.widget() is not None:
@@ -285,7 +302,7 @@ class AlgebraPanel(QFrame):
         self.rows.clear()
         for layer in self._layers:
             row = LayerRow(layer, self.rows_container)
-            row.update_requested.connect(self.update_requested)
+            row.edit_requested.connect(self._begin_edit)
             row.delete_requested.connect(self.delete_requested)
             row.visibility_changed.connect(self.visibility_changed)
             row.intersections_visibility_changed.connect(self.intersections_visibility_changed)
@@ -297,23 +314,53 @@ class AlgebraPanel(QFrame):
         self._refresh_manual_pair_choices()
 
     def set_status(self, message: str, is_error: bool = False) -> None:
+        """在状态区域显示提示或错误消息。"""
         self.status_label.setText(message)
         self.status_label.setProperty("isError", is_error)
         self.status_label.style().unpolish(self.status_label)
         self.status_label.style().polish(self.status_label)
 
-    def _request_add(self) -> None:
-        expression = self.expression_edit.text().strip()
+    def _request_add(self, latex: str | None = None) -> None:
+        """请求添加一个新曲面并发出事件。"""
+        expression = (latex or self.formula_editor.get_latex()).strip()
         if expression:
-            self.add_requested.emit(str(self.kind_combo.currentData()), expression)
+            if self._active_layer_id is None:
+                self.add_requested.emit(str(self.kind_combo.currentData()), expression)
+            else:
+                self.update_requested.emit(self._active_layer_id, str(self.kind_combo.currentData()), expression)
+
+    def _begin_edit(self, layer_id: str, kind: str, formula: str) -> None:
+        """Load one layer into the shared MathLive editor for direct editing."""
+        self._active_layer_id = layer_id
+        index = self.kind_combo.findData(kind)
+        if index >= 0:
+            self.kind_combo.setCurrentIndex(index)
+        self.formula_editor.set_latex(formula)
+        self.formula_editor.focus_editor()
+        self.add_button.setText("更新当前曲面")
+        self.cancel_edit_button.setVisible(True)
+
+    def finish_edit(self) -> None:
+        """Return the shared editor to new-surface mode after a successful update."""
+        self._active_layer_id = None
+        self.add_button.setText("添加或更新")
+        self.cancel_edit_button.setVisible(False)
+
+    def cancel_edit(self) -> None:
+        """Exit edit mode so the next Enter or click creates a separate layer."""
+        self.finish_edit()
+        self.formula_editor.set_latex("")
+        self.formula_editor.focus_editor()
 
     def _request_manual_intersection(self) -> None:
+        """手动请求交线计算，要求选择两个不同曲面。"""
         first_id = str(self.first_layer_combo.currentData() or "")
         second_id = str(self.second_layer_combo.currentData() or "")
         if first_id and second_id and first_id != second_id:
             self.manual_intersection_requested.emit(first_id, second_id)
 
     def _refresh_manual_pair_choices(self) -> None:
+        """刷新手动交线选择下拉框的曲面列表。"""
         current_first = self.first_layer_combo.currentData()
         current_second = self.second_layer_combo.currentData()
         for combo, current in ((self.first_layer_combo, current_first), (self.second_layer_combo, current_second)):
@@ -328,10 +375,13 @@ class AlgebraPanel(QFrame):
             self.second_layer_combo.setCurrentIndex(1)
 
     def _set_manual_controls_enabled(self, automatic: bool) -> None:
+        """启用或禁用手动交线控件。"""
         enabled = not automatic
         self.first_layer_combo.setEnabled(enabled)
         self.second_layer_combo.setEnabled(enabled)
         self.manual_intersection_button.setEnabled(enabled)
 
     def _update_placeholder(self) -> None:
-        self.expression_edit.setPlaceholderText(_PLACEHOLDERS[str(self.kind_combo.currentData())])
+        placeholder = _PLACEHOLDERS[str(self.kind_combo.currentData())]
+        self.formula_editor.setToolTip(placeholder)
+        self.formula_editor.set_placeholder(placeholder)

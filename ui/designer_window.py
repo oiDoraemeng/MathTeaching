@@ -10,6 +10,7 @@ from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
 
+from MathInputWidget import LatexParseError, LatexParser
 from geometry.cas_surface import ExpressionError, parse_surface_expression
 from geometry.standard_surfaces import BUILTIN_SURFACES, DEFAULT_BUILTIN_ID, create_builtin_layer
 from models.surface_layer import PlotDomain, SurfaceLayer
@@ -28,6 +29,7 @@ class MainWindow:
         self.material_name = "光泽塑料"
         self._lighting_dialog: LightingDialog | None = None
         self.plot_domain = PlotDomain()
+        self.latex_parser = LatexParser()
         self.layers: list[SurfaceLayer] = [create_builtin_layer(DEFAULT_BUILTIN_ID)]
         self.layer_controller: LayerSceneController | None = None
 
@@ -117,17 +119,18 @@ class MainWindow:
         self.algebra_panel.set_status("已准备好")
         self.plotter.render()
 
-    def _add_cas_surface(self, kind: str, expression: str) -> None:
+    def _add_cas_surface(self, kind: str, latex: str) -> None:
         try:
-            parsed = parse_surface_expression(expression, kind)
-        except ExpressionError as error:
+            formula, parsed = self._parse_mathlive_surface(latex, kind)
+        except (ExpressionError, LatexParseError) as error:
             self.algebra_panel.set_status(str(error), is_error=True)
             return
 
         layer = SurfaceLayer(
             name=f"曲面 {len(self.layers) + 1}",
             kind=parsed.kind,
-            expression=expression,
+            expression=parsed.source,
+            latex=formula.latex,
             parameters={name: 1.0 for name in parsed.parameter_names},
         )
         self._add_layer(layer)
@@ -148,20 +151,21 @@ class MainWindow:
         self.algebra_panel.set_status(f"已添加 {layer.name}")
         self.plotter.render()
 
-    def _update_surface_expression(self, layer_id: str, kind: str, expression: str) -> None:
+    def _update_surface_expression(self, layer_id: str, kind: str, latex: str) -> None:
         current = self._layer(layer_id)
         if current is None or self.layer_controller is None:
             return
         try:
-            parsed = parse_surface_expression(expression, kind)
-        except ExpressionError as error:
+            formula, parsed = self._parse_mathlive_surface(latex, kind)
+        except (ExpressionError, LatexParseError) as error:
             self.algebra_panel.set_status(str(error), is_error=True)
             return
 
         updated = replace(
             current,
             kind=parsed.kind,
-            expression=expression,
+            expression=parsed.source,
+            latex=formula.latex,
             parameters={name: current.parameters.get(name, 1.0) for name in parsed.parameter_names},
             builtin_id=None,
         )
@@ -172,8 +176,14 @@ class MainWindow:
             return
         self.layers = [updated if layer.id == layer_id else layer for layer in self.layers]
         self.algebra_panel.set_layers(self.layers)
+        self.algebra_panel.finish_edit()
         self.algebra_panel.set_status(f"已更新 {updated.name}")
         self.plotter.render()
+
+    def _parse_mathlive_surface(self, latex: str, kind: str):
+        """Normalize MathLive LaTeX before passing its safe text form to CAS."""
+        formula = self.latex_parser.parse(latex, kind)
+        return formula, parse_surface_expression(formula.canonical_source, formula.kind)
 
     def _remove_surface(self, layer_id: str) -> None:
         if self.layer_controller is None:

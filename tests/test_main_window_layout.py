@@ -10,6 +10,7 @@ from PySide6.QtCore import QFile, QIODevice
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QHBoxLayout
 
+from MathInputWidget import LatexParser
 from ui.algebra_panel import AlgebraPanel
 from ui.designer_window import MainWindow
 from geometry.standard_surfaces import BUILTIN_SURFACES
@@ -40,10 +41,20 @@ class MainWindowLayoutTests(unittest.TestCase):
     def test_binding_populates_the_builtin_surface_menu(self) -> None:
         window = object.__new__(MainWindow)
         window.algebra_panel = AlgebraPanel()
+        window.latex_parser = LatexParser()
 
         MainWindow._bind_algebra_panel(window)
 
         self.assertEqual(len(window.algebra_panel.builtin_menu.actions()), len(BUILTIN_SURFACES))
+
+    def test_mathlive_formula_is_normalized_before_the_existing_cas_parser(self) -> None:
+        window = object.__new__(MainWindow)
+        window.latex_parser = LatexParser()
+
+        formula, parsed = MainWindow._parse_mathlive_surface(window, r"z=x+y", "explicit")
+
+        self.assertEqual(formula.canonical_source, "z = x + y")
+        self.assertEqual(parsed.dependent_axis, "z")
 
 
 if __name__ == "__main__":

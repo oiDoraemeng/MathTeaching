@@ -16,29 +16,46 @@ class AlgebraPanelTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.application = QApplication.instance() or QApplication([])
 
-    def test_enter_in_new_expression_field_requests_an_addition(self) -> None:
+    def test_formula_editor_submission_requests_an_addition(self) -> None:
         panel = AlgebraPanel()
         events: list[tuple[str, str]] = []
         panel.add_requested.connect(lambda kind, expression: events.append((kind, expression)))
         panel.kind_combo.setCurrentIndex(1)
-        panel.expression_edit.setText("x^2 + y^2 + z^2 = 1")
+        panel.formula_editor.set_latex(r"x^2+y^2+z^2=1")
 
-        panel.expression_edit.returnPressed.emit()
+        panel.formula_editor.submitted.emit(r"x^2+y^2+z^2=1")
 
-        self.assertEqual(events, [("implicit", "x^2 + y^2 + z^2 = 1")])
+        self.assertEqual(events, [("implicit", r"x^2+y^2+z^2=1")])
 
-    def test_row_editor_submits_a_direct_formula_update_when_enter_is_pressed(self) -> None:
-        layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1")
+    def test_row_edit_action_loads_the_formula_into_the_shared_math_editor(self) -> None:
+        layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
         panel = AlgebraPanel()
         updates: list[tuple[str, str, str]] = []
         panel.update_requested.connect(lambda layer_id, kind, expression: updates.append((layer_id, kind, expression)))
         panel.set_layers([layer])
         row = panel.rows[layer.id]
-        row.expression_edit.setText("x^2 + y^2 + z^2 = r^2")
 
-        row.expression_edit.returnPressed.emit()
+        row.edit_button.click()
+        self.assertEqual(panel.formula_editor.get_latex(), r"x^2+y^2+z^2=1")
 
-        self.assertEqual(updates, [(layer.id, "implicit", "x^2 + y^2 + z^2 = r^2")])
+        panel.formula_editor.set_latex(r"x^2+y^2+z^2=r^2")
+        panel.formula_editor.submitted.emit(r"x^2+y^2+z^2=r^2")
+
+        self.assertEqual(updates, [(layer.id, "implicit", r"x^2+y^2+z^2=r^2")])
+
+    def test_cancel_edit_returns_the_shared_math_editor_to_new_surface_mode(self) -> None:
+        layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
+        panel = AlgebraPanel()
+        additions: list[tuple[str, str]] = []
+        panel.add_requested.connect(lambda kind, formula: additions.append((kind, formula)))
+        panel.set_layers([layer])
+
+        panel.rows[layer.id].edit_button.click()
+        panel.cancel_edit_button.click()
+        panel.formula_editor.set_latex(r"z=x+y")
+        panel.formula_editor.submitted.emit(r"z=x+y")
+
+        self.assertEqual(additions, [("implicit", r"z=x+y")])
 
     def test_each_row_exposes_independent_surface_and_intersection_toggles(self) -> None:
         layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1")

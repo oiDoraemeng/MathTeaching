@@ -49,6 +49,7 @@ class SurfaceLayer:
     kind: str
     expression: str
     parameters: dict[str, float] = field(default_factory=dict)
+    latex: str | None = None
     builtin_id: str | None = None
     visible: bool = True
     intersections_visible: bool = True
@@ -67,6 +68,7 @@ class SurfaceLayer:
             "name": self.name,
             "kind": self.kind,
             "expression": self.expression,
+            "latex": self.latex,
             "parameters": self.parameters,
             "builtin_id": self.builtin_id,
             "visible": self.visible,
@@ -84,6 +86,7 @@ class SurfaceLayer:
             kind=str(data["kind"]),
             expression=str(data["expression"]),
             parameters={name: float(value) for name, value in dict(data.get("parameters", {})).items()},
+            latex=str(data["latex"]) if data.get("latex") is not None else None,
             builtin_id=str(data["builtin_id"]) if data.get("builtin_id") is not None else None,
             visible=bool(data.get("visible", True)),
             intersections_visible=bool(data.get("intersections_visible", True)),

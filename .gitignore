@@ -8,3 +8,4 @@ __pycache__/
 _render_check.png
 _export_check.png
 *.vtk
+.tmp/

@@ -54,8 +54,24 @@ class CasExpressionTests(unittest.TestCase):
 
         mesh = build_surface_mesh(expression, {}, self.domain)
 
+        self.assertEqual(mesh.n_points, self.domain.explicit_resolution**2)
         self.assertEqual(mesh.n_cells, (self.domain.explicit_resolution - 1) ** 2)
         self.assertTrue(((mesh.points[:, 2] - mesh.points[:, 0] - mesh.points[:, 1]) ** 2 < 1e-10).all())
+
+    def test_oblique_plane_keeps_four_straight_parameter_boundaries(self) -> None:
+        expression = parse_surface_expression("0 = x + y + z", "implicit")
+
+        mesh = build_surface_mesh(expression, {}, self.domain)
+        boundary = mesh.extract_feature_edges(
+            boundary_edges=True,
+            feature_edges=False,
+            manifold_edges=False,
+            non_manifold_edges=False,
+        )
+
+        # A sampled rectangular patch has four chains, each with resolution - 1 edges.
+        self.assertEqual(boundary.n_cells, 4 * (self.domain.explicit_resolution - 1))
+        self.assertEqual(boundary.n_points, 4 * (self.domain.explicit_resolution - 1))
 
 
 if __name__ == "__main__":

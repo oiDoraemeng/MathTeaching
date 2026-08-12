@@ -348,10 +348,14 @@ def _build_linear_plane_mesh(
     first_axis /= np.linalg.norm(first_axis)
     second_axis = np.cross(normal_unit, first_axis)
 
+    # This is intentionally a rectangular parametric patch.  Sampling the
+    # plane through a volume contour clips it to the domain cube, producing
+    # the hexagonal outline and stair-stepped border that are wrong for a
+    # teaching plane such as z = x + y.
     half_size = max(
-        domain.x_range[1] - domain.x_range[0],
-        domain.y_range[1] - domain.y_range[0],
-        domain.z_range[1] - domain.z_range[0],
+        np.ptp(domain.x_range),
+        np.ptp(domain.y_range),
+        np.ptp(domain.z_range),
     ) / 2
     first_values = np.linspace(-half_size, half_size, domain.explicit_resolution)
     second_values = np.linspace(-half_size, half_size, domain.explicit_resolution)
