@@ -25,6 +25,18 @@ class MathInputWidgetTests(unittest.TestCase):
         self.assertIsNone(widget.web_view)
         widget.close()
 
+    def test_explicit_keyboard_hiding_restores_the_compact_editor_height(self) -> None:
+        widget = MathInputWidget()
+        visibility: list[bool] = []
+        widget.keyboardVisibilityChanged.connect(visibility.append)
+
+        widget._bridge.virtualKeyboardHeightChanged(218)
+        self.assertGreaterEqual(widget.height(), 286)
+        widget.hide_virtual_keyboard()
+
+        self.assertEqual(widget.height(), 56)
+        self.assertEqual(visibility, [True, False])
+
 
 if __name__ == "__main__":
     unittest.main()

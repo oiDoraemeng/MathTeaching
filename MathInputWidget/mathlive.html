@@ -55,7 +55,8 @@
         getLatex: () => field.getValue('latex'),
         setLatex: (latex) => field.setValue(latex || '', { silenceNotifications: true }),
         setPlaceholder: (placeholder) => { field.placeholder = placeholder || ''; },
-        focus: () => field.focus(),
+        focus: () => { field.focus(); window.mathVirtualKeyboard.show(); requestAnimationFrame(reportKeyboardHeight); },
+        hideKeyboard: () => { window.mathVirtualKeyboard.hide(); requestAnimationFrame(reportKeyboardHeight); },
         };
         window.mathInputReady = true;
         window.mathInput.setLatex(window.pendingMathLatex || '');

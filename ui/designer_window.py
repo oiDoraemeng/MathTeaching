@@ -133,23 +133,25 @@ class MainWindow:
             latex=formula.latex,
             parameters={name: 1.0 for name in parsed.parameter_names},
         )
-        self._add_layer(layer)
+        if self._add_layer(layer):
+            self.algebra_panel.confirm_formula_saved()
 
     def _add_builtin_surface(self, builtin_id: str) -> None:
         self._add_layer(create_builtin_layer(builtin_id))
 
-    def _add_layer(self, layer: SurfaceLayer) -> None:
+    def _add_layer(self, layer: SurfaceLayer) -> bool:
         if self.layer_controller is None:
-            return
+            return False
         try:
             self.layer_controller.add_layer(layer)
         except (ExpressionError, LayerRenderError) as error:
             self.algebra_panel.set_status(f"无法绘制曲面: {error}", is_error=True)
-            return
+            return False
         self.layers.append(layer)
         self.algebra_panel.set_layers(self.layers)
         self.algebra_panel.set_status(f"已添加 {layer.name}")
         self.plotter.render()
+        return True
 
     def _update_surface_expression(self, layer_id: str, kind: str, latex: str) -> None:
         current = self._layer(layer_id)

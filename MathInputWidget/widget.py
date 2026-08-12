@@ -5,10 +5,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from PySide6.QtCore import QObject, Qt, QUrl, Signal, Slot
+from PySide6.QtCore import QEvent, QObject, QTimer, Qt, QUrl, Signal, Slot
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineWidgets import QWebEngineView
-from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
 
 
 class _FormulaBridge(QObject):
@@ -35,6 +35,8 @@ class MathInputWidget(QWidget):
     latexChanged = Signal(str)
     submitted = Signal(str)
     loadFailed = Signal()
+    keyboardHeightChanged = Signal(int)
+    keyboardVisibilityChanged = Signal(bool)
 
     _EDITOR_HEIGHT = 56
     _KEYBOARD_MIN_HEIGHT = 286
@@ -44,6 +46,8 @@ class MathInputWidget(QWidget):
         self._latex = ""
         self._placeholder = ""
         self._page_ready = False
+        self._focus_requested = False
+        self._keyboard_height = 0
         self.web_view: QWebEngineView | None = None
         self._bridge = _FormulaBridge(self)
         self._bridge.latex_changed.connect(self._on_latex_changed)
@@ -57,6 +61,9 @@ class MathInputWidget(QWidget):
         self._failure_label.setVisible(False)
         self._layout.addWidget(self._failure_label)
         self.setFixedHeight(self._EDITOR_HEIGHT)
+        application = QApplication.instance()
+        if application is not None:
+            application.installEventFilter(self)
 
     def get_latex(self) -> str:
         """Return the latest browser-originated or programmatically set LaTeX."""
@@ -78,14 +85,33 @@ class MathInputWidget(QWidget):
         """Focus the MathLive field once its page is ready."""
         if not self.isVisible():
             return
+        self._focus_requested = True
         self._ensure_web_view()
         if self._page_ready:
-            self._run_javascript("window.mathInput.focus();")
+            self._focus_math_field()
+
+    def show_virtual_keyboard(self) -> None:
+        """Focus the field and show MathLive's floating virtual keyboard."""
+        self.focus_editor()
+
+    def hide_virtual_keyboard(self) -> None:
+        """Hide the keyboard and return this widget to its compact height."""
+        self._run_javascript(
+            "if (window.mathInputReady) window.mathInput.hideKeyboard();"
+        )
+        self._set_keyboard_height(0)
 
     def showEvent(self, event) -> None:
         """Create the Chromium view only when the reusable editor becomes visible."""
         super().showEvent(event)
         self._ensure_web_view()
+        if self._focus_requested and self._page_ready:
+            QTimer.singleShot(0, self._focus_math_field)
+
+    def hideEvent(self, event) -> None:
+        """Do not leave an orphaned MathLive keyboard after its host closes."""
+        self.hide_virtual_keyboard()
+        super().hideEvent(event)
 
     def _on_load_finished(self, success: bool) -> None:
         self._page_ready = success
@@ -96,6 +122,8 @@ class MathInputWidget(QWidget):
         self._failure_label.setVisible(False)
         self._set_browser_latex(self._latex)
         self.set_placeholder(self._placeholder)
+        if self._focus_requested:
+            QTimer.singleShot(0, self._focus_math_field)
 
     def _on_latex_changed(self, latex: str) -> None:
         self._latex = latex
@@ -107,10 +135,33 @@ class MathInputWidget(QWidget):
 
     def _set_keyboard_height(self, keyboard_height: int) -> None:
         """Resize the native host so MathLive's keyboard is never clipped."""
+        keyboard_height = max(0, keyboard_height)
+        was_visible = self._keyboard_height > 0
+        self._keyboard_height = keyboard_height
         height = self._EDITOR_HEIGHT
         if keyboard_height:
             height = max(self._KEYBOARD_MIN_HEIGHT, self._EDITOR_HEIGHT + keyboard_height)
         self.setFixedHeight(height)
+        self.keyboardHeightChanged.emit(keyboard_height)
+        if was_visible != (keyboard_height > 0):
+            self.keyboardVisibilityChanged.emit(keyboard_height > 0)
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        """Dismiss the keyboard when a click lands outside this input widget."""
+        if (
+            self._keyboard_height
+            and event.type() == QEvent.Type.MouseButtonPress
+            and isinstance(watched, QWidget)
+            and watched is not self
+            and not self.isAncestorOf(watched)
+        ):
+            QTimer.singleShot(0, self.hide_virtual_keyboard)
+        return super().eventFilter(watched, event)
+
+    def _focus_math_field(self) -> None:
+        if not self._page_ready or not self.isVisible():
+            return
+        self._run_javascript("window.mathInput.focus();")
 
     def _run_javascript(self, source: str) -> None:
         if self.web_view is not None:
