@@ -69,6 +69,14 @@ class LatexParserTests(unittest.TestCase):
         self.assertEqual(parsed.kind, "parametric")
         self.assertEqual(parsed.canonical_source, "(u*cos(v), u*sin(v), v); u=[0,1], v=[-1,1]")
 
+    def test_parametric_syntax_is_detected_without_a_surface_type_selector(self) -> None:
+        parsed = self.parser.parse(
+            r"\left(u\cos\left(v\right),u\sin\left(v\right),v\right);u=\left[0,1\right],v=\left[-1,1\right]",
+            "explicit",
+        )
+
+        self.assertEqual(parsed.kind, "parametric")
+
     def test_parametric_mathlive_formula_converts_fractional_components(self) -> None:
         parsed = self.parser.parse(
             r"\left(\frac{u}{2}\cos\left(v\right),\frac{u}{2}\sin\left(v\right),v\right);u=\left[0,2\right],v=\left[-1,1\right]",
@@ -76,6 +84,36 @@ class LatexParserTests(unittest.TestCase):
         )
 
         self.assertEqual(parsed.canonical_source, "(u*cos(v)/2, u*sin(v)/2, v); u=[0,2], v=[-1,1]")
+
+    def test_2d_parametric_syntax_is_detected_without_a_type_selector(self) -> None:
+        parsed = self.parser.parse_2d(
+            r"\left(\cos(t),\sin(t)\right);t=\left[0,2\pi\right]",
+            "explicit",
+        )
+
+        self.assertEqual(parsed.kind, "parametric")
+        self.assertEqual(parsed.canonical_source, "(cos(t), sin(t)); t=[0,2*pi]")
+
+    def test_empty_input_raises_a_domain_specific_error(self) -> None:
+        with self.assertRaises(LatexParseError):
+            self.parser.parse("", "implicit")
+        with self.assertRaises(LatexParseError):
+            self.parser.parse("   ", "implicit")
+
+    def test_unsupported_function_raises_a_domain_specific_error(self) -> None:
+        with self.assertRaises(LatexParseError):
+            self.parser.parse(r"\operatorname{arctan}(x)=z", "implicit")
+
+    def test_parametric_missing_ranges_raises_a_domain_specific_error(self) -> None:
+        with self.assertRaises(LatexParseError):
+            self.parser.parse(r"\left(u,v,0\right);u=\left[0,1\right]", "parametric")
+
+    def test_parametric_wrong_component_count_raises_a_domain_specific_error(self) -> None:
+        with self.assertRaises(LatexParseError):
+            self.parser.parse(
+                r"\left(u,v\right);u=\left[0,1\right],v=\left[0,1\right]",
+                "parametric",
+            )
 
 
 if __name__ == "__main__":

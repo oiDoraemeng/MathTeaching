@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import re
 
 import sympy as sp
+from sympy.core.sympify import SympifyError
 from sympy.parsing.latex import parse_latex
 
 
@@ -31,11 +32,20 @@ class ParsedFormula:
 class LatexParser:
     """Parse MathLive output without coupling callers to a browser widget."""
 
+    def parse_2d(self, latex: str, requested_kind: str = "implicit") -> ParsedFormula:
+        """Parse a 2D formula, including the compact t-range parametric form."""
+        latex = latex.strip()
+        if not latex:
+            raise LatexParseError("璇疯緭鍏ユ暟瀛﹀叕寮忋€?")
+        if requested_kind == "parametric" or self._looks_like_2d_parametric(latex):
+            return self._parse_parametric_2d(latex)
+        return self.parse(latex, requested_kind)
+
     def parse(self, latex: str, requested_kind: str = "implicit") -> ParsedFormula:
         latex = latex.strip()
         if not latex:
             raise LatexParseError("请输入数学公式。")
-        if requested_kind == "parametric":
+        if requested_kind == "parametric" or self._looks_like_parametric(latex):
             return self._parse_parametric(latex)
         if any(command in latex for command in _UNSUPPORTED_COMMANDS):
             raise LatexParseError("积分、求和、极限和无穷符号不能直接绘制为三维曲面。")
@@ -45,7 +55,7 @@ class LatexParser:
             parsed = parse_latex(latex, backend="antlr")
         except (ImportError, SyntaxError, ValueError) as error:
             raise LatexParseError("无法解析该 LaTeX 公式。") from error
-        except Exception as error:
+        except (SympifyError, TypeError, AttributeError) as error:
             raise LatexParseError("LaTeX 公式格式不完整或包含不支持的符号。") from error
 
         if isinstance(parsed, sp.Equality):
@@ -115,10 +125,74 @@ class LatexParser:
             parameter_names=parameter_names,
         )
 
+    def _parse_parametric_2d(self, latex: str) -> ParsedFormula:
+        source = self._normalize_parametric_source(latex)
+        if source.count(";") != 1:
+            raise LatexParseError("浜岀淮鍙傛暟鏇茬嚎搴斾负 (x(t), y(t)); t=[a,b]")
+        coordinate_source, range_source = (part.strip() for part in source.split(";", 1))
+        if not (coordinate_source.startswith("(") and coordinate_source.endswith(")")):
+            raise LatexParseError("浜岀淮鍙傛暟鏇茬嚎鐨勫潗鏍囧繀椤讳娇鐢ㄥ渾鎷彿")
+        components_source = self._split_top_level(coordinate_source[1:-1])
+        if len(components_source) != 2:
+            raise LatexParseError("浜岀淮鍙傛暟鏇茬嚎蹇呴』鍖呭惈涓や釜鍧愭爣琛ㄨ揪寮忋€?")
+        match = re.fullmatch(r"t\s*=\s*\[([^\]]+)\]", range_source)
+        if match is None:
+            raise LatexParseError("浜岀淮鍙傛暟鑼冨洿蹇呴』浣跨敤 t=[a,b]")
+        bounds = self._split_top_level(match.group(1))
+        if len(bounds) != 2:
+            raise LatexParseError("鍙傛暟鑼冨洿闇€瑕佷笅闄愬拰涓婇檺")
+        components = tuple(self._parse_fragment(component) for component in components_source)
+        lower, upper = (self._parse_fragment(value) for value in bounds)
+        if lower.free_symbols or upper.free_symbols or float(lower) >= float(upper):
+            raise LatexParseError("t 鐨勮寖鍥撮渶瑕佹槸閫掑鐨勬暟鍊艰寖鍥?")
+        parameter_names = tuple(
+            sorted(
+                {
+                    str(symbol)
+                    for expression in (*components, lower, upper)
+                    for symbol in expression.free_symbols
+                    if str(symbol) not in {"x", "y", "t"}
+                }
+            )
+        )
+        canonical_source = (
+            f"({sp.sstr(components[0])}, {sp.sstr(components[1])}); "
+            f"t=[{sp.sstr(lower)},{sp.sstr(upper)}]"
+        )
+        return ParsedFormula(
+            latex=latex,
+            kind="parametric",
+            expression=sp.Tuple(*components),
+            canonical_source=canonical_source,
+            parameter_names=parameter_names,
+        )
+
+    @staticmethod
+    def _normalize_parametric_source(latex: str) -> str:
+        return (
+            latex.replace(r"\left(", "(")
+            .replace(r"\right)", ")")
+            .replace(r"\left[", "[")
+            .replace(r"\right]", "]")
+            .replace(r"\,", "")
+        )
+
+    @staticmethod
+    def _looks_like_parametric(latex: str) -> bool:
+        """Recognize a coordinate triple with both u and v ranges."""
+        return ";" in latex and bool(
+            re.search(r"\bu\s*=\s*(?:\\left\s*)?\[", latex)
+            and re.search(r"\bv\s*=\s*(?:\\left\s*)?\[", latex)
+        )
+
+    @staticmethod
+    def _looks_like_2d_parametric(latex: str) -> bool:
+        return ";" in latex and bool(re.search(r"t\s*=\s*(?:\\left\s*)?\[", latex))
+
     def _parse_fragment(self, source: str) -> sp.Expr:
         try:
             return self._real_symbols(sp.simplify(parse_latex(source.strip(), backend="antlr")))
-        except Exception as error:
+        except (SyntaxError, ValueError, SympifyError, TypeError, AttributeError) as error:
             raise LatexParseError("参数曲面的坐标或范围无法解析。") from error
 
     @staticmethod

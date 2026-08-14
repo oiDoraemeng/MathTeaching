@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="mathlive-fonts.css">
+  <style>
+    html, body {
+      width: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+    #formula-container {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 38px;
+      padding: 0 4px;
+      overflow: visible;
+      cursor: pointer;
+    }
+    math-field {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      min-height: 38px;
+      padding: 1px 4px;
+      height: auto;
+      overflow: visible;
+      color: #1f2937;
+      font-size: 18px;
+      white-space: nowrap;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+  </style>
+  <script src="mathlive-bridge.js"></script>
+  <script defer src="mathlive.js"></script>
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+</head>
+<body>
+  <div id="formula-container">
+    <math-field id="formula" aria-label="Formula preview" read-only></math-field>
+  </div>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const formula = document.getElementById('formula');
+      new QWebChannel(qt.webChannelTransport, async (channel) => {
+        await customElements.whenDefined('math-field');
+        const bridge = channel.objects.bridge;
+
+        const height = MathLiveBridge.createHeightReporter(formula, bridge, 38);
+        const setLatex = (latex) => {
+          formula.setValue(latex || '', { silenceNotifications: true });
+          height.schedule();
+        };
+
+        formula.mathVirtualKeyboardPolicy = 'manual';
+        formula.addEventListener('input', height.schedule);
+        height.observeContent();
+        // Qt captures preview clicks natively so the response is immediate even
+        // when WebEngine's web-channel callback timing differs by platform.
+        window.formulaPreview = { setLatex };
+        window.formulaPreviewReady = true;
+        setLatex(window.pendingFormulaLatex || '');
+      });
+    });
+  </script>
+</body>
+</html>

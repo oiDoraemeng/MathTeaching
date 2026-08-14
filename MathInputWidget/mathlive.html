@@ -12,6 +12,8 @@
       width: 100%;
       min-height: 42px;
       padding: 8px 10px;
+      height: auto;
+      overflow: visible;
       color: #17212e;
       background: #ffffff;
       border: 1px solid #cbd3dd;
@@ -22,7 +24,37 @@
       --contains-highlight-background-color: #eaf5fd;
     }
     math-field:focus-within { border: 2px solid #2f7ebd; padding: 7px 9px; }
+    math-field::part(virtual-keyboard-toggle),
+    math-field::part(menu-toggle) {
+      display: none;
+    }
+    .mathlive-native-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 4px;
+    }
+    .mathlive-native-action {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 28px;
+      color: var(--_toolbar-text, #2c2e2f);
+      background: var(--_toolbar-background, transparent);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .mathlive-native-action:hover {
+      color: var(--_toolbar-text-active, #2f7ebd);
+      background: var(--_toolbar-background-hover, #eeeeee);
+    }
+    .mathlive-native-actions svg {
+      width: 18px;
+      height: 18px;
+    }
   </style>
+  <script src="mathlive-bridge.js"></script>
   <script defer src="mathlive.js"></script>
   <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 </head>
@@ -35,8 +67,23 @@
       await customElements.whenDefined('math-field');
       const bridge = channel.objects.bridge;
       field.mathVirtualKeyboardPolicy = 'manual';
-      field.virtualKeyboardToolbar = 'none';
-      field.addEventListener('input', () => bridge.latexChanged(field.getValue('latex')));
+
+      const height = MathLiveBridge.createHeightReporter(field, bridge, 42);
+      const installToolbar = MathLiveBridge.installKeyboardToolbarActions(field, {
+        toggleKeyboard: () => {
+          if (window.mathVirtualKeyboard.visible) {
+            window.mathVirtualKeyboard.hide();
+          } else {
+            field.focus();
+            window.mathVirtualKeyboard.show();
+          }
+        },
+      });
+
+      field.addEventListener('input', () => {
+        bridge.latexChanged(field.getValue('latex'));
+        height.schedule();
+      });
       field.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();
@@ -49,15 +96,26 @@
       window.mathVirtualKeyboard.addEventListener('geometrychange', reportKeyboardHeight);
       field.addEventListener('focusin', () => {
         window.mathVirtualKeyboard.show();
+        requestAnimationFrame(installToolbar);
         requestAnimationFrame(reportKeyboardHeight);
       });
         window.mathInput = {
         getLatex: () => field.getValue('latex'),
-        setLatex: (latex) => field.setValue(latex || '', { silenceNotifications: true }),
+        setLatex: (latex) => {
+          field.setValue(latex || '', { silenceNotifications: true });
+          height.schedule();
+        },
         setPlaceholder: (placeholder) => { field.placeholder = placeholder || ''; },
-        focus: () => { field.focus(); window.mathVirtualKeyboard.show(); requestAnimationFrame(reportKeyboardHeight); },
+        focus: () => {
+          field.focus();
+          window.mathVirtualKeyboard.show();
+          requestAnimationFrame(installToolbar);
+          requestAnimationFrame(reportKeyboardHeight);
+        },
         hideKeyboard: () => { window.mathVirtualKeyboard.hide(); requestAnimationFrame(reportKeyboardHeight); },
         };
+        height.observeContent();
+        installToolbar();
         window.mathInputReady = true;
         window.mathInput.setLatex(window.pendingMathLatex || '');
       });

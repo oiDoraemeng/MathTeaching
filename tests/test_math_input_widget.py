@@ -2,13 +2,14 @@
 
 import os
 import unittest
+from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.setdefault("QTWEBENGINE_DISABLE_SANDBOX", "1")
 
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QComboBox
 
-from MathInputWidget import MathInputWidget
+from MathInputWidget import FormulaEditorPopup, MathInputWidget
 
 
 class MathInputWidgetTests(unittest.TestCase):
@@ -36,6 +37,27 @@ class MathInputWidgetTests(unittest.TestCase):
 
         self.assertEqual(widget.height(), 56)
         self.assertEqual(visibility, [True, False])
+
+    def test_formula_content_height_is_preserved_when_keyboard_hides(self) -> None:
+        widget = MathInputWidget()
+
+        widget._bridge.contentHeightChanged(112)
+        widget._bridge.virtualKeyboardHeightChanged(218)
+        self.assertGreaterEqual(widget.height(), 330)
+        widget.hide_virtual_keyboard()
+
+        self.assertEqual(widget.height(), 112)
+
+    def test_new_formula_popup_is_larger_without_a_surface_type_selector(self) -> None:
+        popup = FormulaEditorPopup()
+
+        self.assertGreaterEqual(popup.minimumWidth(), 560)
+        self.assertGreaterEqual(popup.minimumHeight(), 420)
+        self.assertIsNone(popup.findChild(QComboBox))
+        popup.close()
+
+        popup_source = Path(__file__).parents[1] / "MathInputWidget" / "formula_popup.py"
+        self.assertNotIn("QComboBox", popup_source.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

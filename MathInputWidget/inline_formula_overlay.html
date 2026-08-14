@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="mathlive-fonts.css">
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+    math-field {
+      box-sizing: border-box;
+      position: absolute;
+      margin: 0;
+      min-height: 38px;
+      padding: 1px 4px;
+      overflow: visible;
+      color: #1f2937;
+      background: #f9fafb;
+      border: 1px solid #2f7ebd;
+      border-radius: 4px;
+      font-size: 18px;
+      cursor: text;
+    }
+    math-field::part(virtual-keyboard-toggle),
+    math-field::part(menu-toggle) {
+      display: none;
+    }
+    .mathlive-native-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 4px;
+    }
+    .mathlive-native-action {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 28px;
+      padding: 0;
+      color: var(--_toolbar-text, #2c2e2f);
+      background: var(--_toolbar-background, transparent);
+      border: 0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .mathlive-native-action:hover {
+      color: var(--_toolbar-text-active, #2f7ebd);
+      background: var(--_toolbar-background-hover, #eeeeee);
+    }
+    .mathlive-native-actions svg {
+      width: 18px;
+      height: 18px;
+    }
+  </style>
+  <script src="mathlive-bridge.js"></script>
+  <script defer src="mathlive.js"></script>
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+</head>
+<body>
+  <math-field id="formula" aria-label="Edit formula"></math-field>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const formula = document.getElementById('formula');
+      new QWebChannel(qt.webChannelTransport, async (channel) => {
+        await customElements.whenDefined('math-field');
+        const bridge = channel.objects.bridge;
+        let savedLatex = '';
+        let submissionPending = false;
+
+        const setRect = (rect) => {
+          formula.style.left = `${rect.left}px`;
+          formula.style.top = `${rect.top}px`;
+          formula.style.width = `${rect.width}px`;
+          formula.style.height = `${rect.height}px`;
+        };
+        const height = MathLiveBridge.createHeightReporter(formula, bridge, 38);
+        const hideKeyboard = () => {
+          if (window.mathVirtualKeyboard) {
+            window.mathVirtualKeyboard.hide();
+          }
+        };
+        const showKeyboard = () => {
+          if (window.mathVirtualKeyboard) {
+            window.mathVirtualKeyboard.show();
+            requestAnimationFrame(installToolbar);
+          }
+        };
+        const installToolbar = MathLiveBridge.installKeyboardToolbarActions(formula, {
+          toggleKeyboard: () => {
+            if (window.mathVirtualKeyboard.visible) {
+              hideKeyboard();
+            } else {
+              formula.focus();
+              showKeyboard();
+            }
+          },
+        });
+        const commit = () => {
+          const latex = formula.getValue('latex');
+          if (!latex || latex === savedLatex || submissionPending) {
+            return;
+          }
+          submissionPending = true;
+          bridge.formulaSubmitted(latex);
+        };
+        const open = (config) => {
+          savedLatex = config.latex || '';
+          submissionPending = false;
+          setRect(config);
+          formula.setValue(savedLatex, { silenceNotifications: true });
+          height.schedule();
+          formula.focus();
+          showKeyboard();
+        };
+
+        formula.mathVirtualKeyboardPolicy = 'manual';
+        installToolbar();
+        formula.addEventListener('input', () => {
+          submissionPending = false;
+          height.schedule();
+        });
+        height.observeContent();
+        formula.addEventListener('pointerdown', () => {
+          formula.focus();
+          if (window.mathVirtualKeyboard) {
+            window.mathVirtualKeyboard.show();
+          }
+        });
+        formula.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            commit();
+          } else if (event.key === 'Escape') {
+            event.preventDefault();
+            hideKeyboard();
+            bridge.dismissed();
+          }
+        });
+        document.addEventListener('pointerdown', (event) => {
+          if (event.target.closest('math-field, .MLK__plate, .MLK__backdrop')) {
+            return;
+          }
+          if (formula.getValue('latex') !== savedLatex) {
+            commit();
+            return;
+          }
+          bridge.dismissed();
+        });
+
+        window.inlineFormulaEditor = { open, setRect, hideKeyboard };
+        window.inlineFormulaEditorReady = true;
+        if (window.pendingInlineFormula) {
+          open(window.pendingInlineFormula);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

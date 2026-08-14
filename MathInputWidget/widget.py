@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from PySide6.QtCore import QEvent, QObject, QTimer, Qt, QUrl, Signal, Slot
+from PySide6.QtGui import QHideEvent, QShowEvent
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
@@ -15,6 +16,7 @@ class _FormulaBridge(QObject):
     latex_changed = Signal(str)
     submission_received = Signal(str)
     keyboard_height_changed = Signal(int)
+    content_height_changed = Signal(int)
 
     @Slot(str)
     def latexChanged(self, latex: str) -> None:
@@ -28,6 +30,10 @@ class _FormulaBridge(QObject):
     def virtualKeyboardHeightChanged(self, height: int) -> None:
         self.keyboard_height_changed.emit(max(0, height))
 
+    @Slot(int)
+    def contentHeightChanged(self, height: int) -> None:
+        self.content_height_changed.emit(max(0, height))
+
 
 class MathInputWidget(QWidget):
     """A reusable MathLive editor with synchronous cached LaTeX access."""
@@ -37,6 +43,7 @@ class MathInputWidget(QWidget):
     loadFailed = Signal()
     keyboardHeightChanged = Signal(int)
     keyboardVisibilityChanged = Signal(bool)
+    contentHeightChanged = Signal(int)
 
     _EDITOR_HEIGHT = 56
     _KEYBOARD_MIN_HEIGHT = 286
@@ -48,11 +55,13 @@ class MathInputWidget(QWidget):
         self._page_ready = False
         self._focus_requested = False
         self._keyboard_height = 0
+        self._formula_height = self._EDITOR_HEIGHT
         self.web_view: QWebEngineView | None = None
         self._bridge = _FormulaBridge(self)
         self._bridge.latex_changed.connect(self._on_latex_changed)
         self._bridge.submission_received.connect(self._on_submitted)
         self._bridge.keyboard_height_changed.connect(self._set_keyboard_height)
+        self._bridge.content_height_changed.connect(self._set_formula_height)
         self._channel: QWebChannel | None = None
         self._layout = QVBoxLayout(self)
         self._layout.setContentsMargins(0, 0, 0, 0)
@@ -101,14 +110,14 @@ class MathInputWidget(QWidget):
         )
         self._set_keyboard_height(0)
 
-    def showEvent(self, event) -> None:
+    def showEvent(self, event: QShowEvent) -> None:
         """Create the Chromium view only when the reusable editor becomes visible."""
         super().showEvent(event)
         self._ensure_web_view()
         if self._focus_requested and self._page_ready:
             QTimer.singleShot(0, self._focus_math_field)
 
-    def hideEvent(self, event) -> None:
+    def hideEvent(self, event: QHideEvent) -> None:
         """Do not leave an orphaned MathLive keyboard after its host closes."""
         self.hide_virtual_keyboard()
         super().hideEvent(event)
@@ -138,18 +147,33 @@ class MathInputWidget(QWidget):
         keyboard_height = max(0, keyboard_height)
         was_visible = self._keyboard_height > 0
         self._keyboard_height = keyboard_height
-        height = self._EDITOR_HEIGHT
-        if keyboard_height:
-            height = max(self._KEYBOARD_MIN_HEIGHT, self._EDITOR_HEIGHT + keyboard_height)
-        self.setFixedHeight(height)
+        self._update_widget_height()
         self.keyboardHeightChanged.emit(keyboard_height)
         if was_visible != (keyboard_height > 0):
             self.keyboardVisibilityChanged.emit(keyboard_height > 0)
 
+    def _set_formula_height(self, formula_height: int) -> None:
+        """Use the rendered MathLive field height instead of a fixed editor size."""
+        formula_height = max(self._EDITOR_HEIGHT, int(formula_height))
+        if formula_height == self._formula_height:
+            return
+        self._formula_height = formula_height
+        self._update_widget_height()
+        self.contentHeightChanged.emit(formula_height)
+
+    def _update_widget_height(self) -> None:
+        height = self._formula_height
+        if self._keyboard_height:
+            height = max(
+                self._KEYBOARD_MIN_HEIGHT,
+                self._formula_height + self._keyboard_height,
+            )
+        self.setFixedHeight(height)
+
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         """Dismiss the keyboard when a click lands outside this input widget."""
         if (
-            self._keyboard_height
+            getattr(self, "_keyboard_height", 0)
             and event.type() == QEvent.Type.MouseButtonPress
             and isinstance(watched, QWidget)
             and watched is not self
