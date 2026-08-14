@@ -56,6 +56,25 @@ class MainWindowLayoutTests(unittest.TestCase):
         self.assertEqual(formula.canonical_source, "z = x + y")
         self.assertEqual(parsed.dependent_axis, "z")
 
+    def test_scene_mode_switch_keeps_independent_layer_lists(self) -> None:
+        window = object.__new__(MainWindow)
+        window.scene_mode = __import__("models.scene_mode", fromlist=["SceneMode"]).SceneMode.THREE_D
+        window.layers = [object()]
+        window.curve_layers = []
+        window._save_current_view_state = lambda: None
+        window._close_scene_settings = lambda **_kwargs: None
+        rendered: list[object] = []
+        window._render_scene = lambda: rendered.append(window.scene_mode)
+
+        MainWindow._set_scene_mode(
+            window,
+            __import__("models.scene_mode", fromlist=["SceneMode"]).SceneMode.TWO_D,
+        )
+
+        self.assertEqual(len(window.layers), 1)
+        self.assertEqual(window.curve_layers, [])
+        self.assertEqual(len(rendered), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
