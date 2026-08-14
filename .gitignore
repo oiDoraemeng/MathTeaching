@@ -1,11 +1,79 @@
+# Python virtual environments
 .venv/
-.claude/
-.agents/
-.codex/
+venv/
+env/
+ENV/
+*.venv
+.agents
+.claude
+.codex
+
+# Python bytecode and caches
 __pycache__/
 **/__pycache__/
 *.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.coverage
+.coverage.*
+htmlcov/
+
+# Build and packaging artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+site/
+pip-wheel-metadata/
+*.spec
+
+# Local logs and temp files
+*.log
+*.tmp
+*.temp
+.tmp/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Qt / PySide / PyVista generated files
+*.ui.autosave
+*.bak
+*.orig
+*.vtk
+*.vtp
+*.vtu
+*.obj
+*.stl
+
+# Local project output
 _render_check.png
 _export_check.png
-*.vtk
-.tmp/
+screenshot_*.png
+capture_*.png
+
+# uv / package manager cache
+.uv-cache/
+
+# Local environment config
+.env
+.env.*
+
+# Optional: common generated notebooks and data artifacts
+.ipynb_checkpoints/
+*.ipynb
+
+# Jupyter / test data
+.notebook_checkpoints/
