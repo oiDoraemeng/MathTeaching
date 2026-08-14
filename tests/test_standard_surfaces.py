@@ -24,6 +24,10 @@ class BuiltinSurfaceTests(unittest.TestCase):
         layer = create_builtin_layer(DEFAULT_BUILTIN_ID)
 
         self.assertEqual(layer.builtin_id, DEFAULT_BUILTIN_ID)
+        self.assertEqual(
+            layer.latex,
+            r"\frac{x^{2}}{a^{2}} + \frac{y^{2}}{b^{2}} - \frac{z^{2}}{c^{2}} = -1",
+        )
         self.assertTrue(layer.visible)
         self.assertTrue(layer.intersections_visible)
 
