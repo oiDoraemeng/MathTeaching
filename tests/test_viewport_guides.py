@@ -1,0 +1,108 @@
+"""Regression tests for replacing viewport guides without replacing formula actors."""
+
+import unittest
+
+from models.scene_mode import SceneAppearance
+from rendering.axis import ThreeDAxes, add_cartesian_axes
+from rendering.ticks import ViewportBounds, tick_values
+from rendering.two_d_scene import TwoDGuides
+
+
+class FakeActor:
+    def __init__(self) -> None:
+        self.visibility = True
+
+    @property
+    def prop(self):
+        return None
+
+
+class FakePlotter:
+    def __init__(self) -> None:
+        self.actors: dict[str, FakeActor] = {}
+
+    def add_mesh(self, mesh, *, name: str, **_kwargs) -> FakeActor:
+        actor = FakeActor()
+        self.actors[name] = actor
+        return actor
+
+    def add_point_labels(self, _points, _labels, *, name: str, **_kwargs) -> FakeActor:
+        actor = FakeActor()
+        self.actors[name] = actor
+        return actor
+
+    def remove_actor(self, name: str, **_kwargs) -> None:
+        self.actors.pop(name, None)
+
+
+class ViewportGuideTests(unittest.TestCase):
+    def test_2d_guide_refresh_leaves_curve_actors_alone(self) -> None:
+        plotter = FakePlotter()
+        plotter.actors["curve:one"] = FakeActor()
+        appearance = SceneAppearance()
+        guides = TwoDGuides(plotter)
+
+        guides.render(ViewportBounds((-10, 10), (-10, 10)), appearance)
+        self.assertIn("grid_lines", plotter.actors)
+
+        guides.render(ViewportBounds((-100, 100), (-100, 100)), appearance)
+        self.assertIn("curve:one", plotter.actors)
+        self.assertIn("grid_lines", plotter.actors)
+
+    def test_2d_ticks_can_be_hidden_while_axes_and_grid_remain(self) -> None:
+        plotter = FakePlotter()
+        appearance = SceneAppearance(show_ticks=False)
+        guides = TwoDGuides(plotter)
+
+        guides.render(ViewportBounds((-5, 5), (-5, 5)), appearance)
+
+        self.assertIn("grid_lines", plotter.actors)
+        self.assertIn("axis_X", plotter.actors)
+        # Tick marks actor exists but should have no visible geometry.
+        tick_actor = plotter.actors.get("tick_marks")
+        self.assertIsNotNone(tick_actor)
+        self.assertNotIn("tick_labels", plotter.actors)
+
+    def test_3d_ticks_can_be_hidden_while_axes_remain(self) -> None:
+        plotter = FakePlotter()
+
+        add_cartesian_axes(plotter, 5.0, show_ticks=False)
+
+        self.assertIn("axis_X", plotter.actors)
+        self.assertFalse(any(name.startswith("tick3d_") for name in plotter.actors))
+
+    def test_2d_tick_marks_extend_only_away_from_their_number_labels(self) -> None:
+        bounds = ViewportBounds((-5, 5), (-5, 5))
+        spacing = 1.0
+        x_ticks = tick_values(bounds.x_range, spacing)
+        y_ticks = tick_values(bounds.y_range, spacing)
+
+        segments, _points, _labels = TwoDGuides._tick_geometry(
+            bounds, spacing, x_ticks, y_ticks
+        )
+
+        x_segments = segments[:len(x_ticks)]
+        y_segments = segments[len(x_ticks):]
+        self.assertTrue(all(start[1] == 0 and end[1] > 0 for start, end in x_segments))
+        self.assertTrue(all(start[0] == 0 and end[0] < 0 for start, end in y_segments))
+
+    def test_3d_tick_marks_extend_only_away_from_their_number_labels(self) -> None:
+        plotter = FakePlotter()
+        axes = ThreeDAxes(plotter)
+
+        axes._set_ticks(5.0, 1.0, "#252a33")
+
+        points = axes._tick_mesh.points
+        values_per_axis = len(
+            [value for value in tick_values((-5.0, 5.0), 1.0) if value != 0]
+        )
+        x_segments = points[:2 * values_per_axis].reshape((-1, 2, 3))
+        y_segments = points[2 * values_per_axis:4 * values_per_axis].reshape((-1, 2, 3))
+        z_segments = points[4 * values_per_axis:].reshape((-1, 2, 3))
+        self.assertTrue(all(start[1] == 0 and end[1] > 0 for start, end in x_segments))
+        self.assertTrue(all(start[0] == 0 and end[0] < 0 for start, end in y_segments))
+        self.assertTrue(all(start[0] == 0 and end[0] < 0 for start, end in z_segments))
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -18,6 +18,38 @@ from rendering.materials import material_preset
 _CAMERA_POSITION = [(6.4, -7.2, 5.7), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
 
 
+def configure_3d_camera_interaction(plotter: pv.Plotter) -> None:
+    """Use origin-centered orbiting with middle-button panning in 3D."""
+    iren = getattr(plotter, "iren", None)
+    if iren is None:
+        return
+    plotter.enable_custom_trackball_style(
+        left="rotate",
+        shift_left="pan",
+        control_left="spin",
+        middle="pan",
+        shift_middle="pan",
+        control_middle="pan",
+        right="dolly",
+        shift_right="environment_rotate",
+        control_right="dolly",
+    )
+    style = getattr(iren, "style", None)
+    if style is None:
+        return
+
+    def focus_origin_before_rotation(_caller: object, _event: object) -> None:
+        interactor = getattr(iren, "interactor", None)
+        if interactor is not None and (
+            interactor.GetShiftKey() or interactor.GetControlKey()
+        ):
+            return
+        plotter.camera.focal_point = (0.0, 0.0, 0.0)
+
+    # Run before PyVista's left-button handler starts the trackball rotation.
+    style.AddObserver("LeftButtonPressEvent", focus_origin_before_rotation, 1.0)
+
+
 def build_scene(
     plotter: pv.Plotter,
     parameters: HyperboloidParameters | None = None,
@@ -29,6 +61,12 @@ def build_scene(
     surface_settings: SurfaceSettings | None = None,
     material_name: str = "光泽塑料",
     camera_position: list | tuple | None = None,
+    background_color: str = "#f7f8fb",
+    axis_color_mode: str = "contrast",
+    contrast_axis_color: str | None = None,
+    show_ticks: bool = True,
+    tick_spacing_mode: str = "auto",
+    custom_tick_spacing: float = 1.0,
     interactive: bool = False,
     base_surface: bool = True,
 ) -> None:
@@ -38,12 +76,23 @@ def build_scene(
     MSAA 以保证响应速度。
     """
     plotter.clear()
-    plotter.set_background("#f7f8fb")
+    plotter.set_background(background_color)
+    # 2D mode enables parallel projection on the shared plotter. Restore the
+    # perspective camera mode before rebuilding any 3D scene.
+    plotter.disable_parallel_projection()
     lighting = lighting or LightSettings()
 
     if not base_surface:
         if show_axes:
-            add_cartesian_axes(plotter, 4.5)
+            add_cartesian_axes(
+                plotter,
+                4.5,
+                axis_color_mode=axis_color_mode,
+                contrast_color=contrast_axis_color,
+                show_ticks=show_ticks,
+                tick_spacing_mode=tick_spacing_mode,
+                custom_tick_spacing=custom_tick_spacing,
+            )
         if interactive:
             plotter.disable_depth_peeling()
         else:
@@ -97,7 +146,15 @@ def build_scene(
 
     extent = max(parameters.a, parameters.b, parameters.c * np.cosh(parameters.u_max)) * 1.45
     if show_axes:
-        add_cartesian_axes(plotter, extent)
+        add_cartesian_axes(
+            plotter,
+            extent,
+            axis_color_mode=axis_color_mode,
+            contrast_color=contrast_axis_color,
+            show_ticks=show_ticks,
+            tick_spacing_mode=tick_spacing_mode,
+            custom_tick_spacing=custom_tick_spacing,
+        )
     if show_helpers:
         add_teaching_helpers(plotter, parameters)
 
