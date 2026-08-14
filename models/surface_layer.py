@@ -53,14 +53,16 @@ class SurfaceLayer:
     builtin_id: str | None = None
     visible: bool = True
     intersections_visible: bool = True
+    intersection_color: str = "#111111"
+    intersection_color_revision: int = 0
     color: str = "#4f7cac"
     opacity: float = 0.62
-    range_scale: float = 1.0
+    range_scale: float = 0.618
     id: str = field(default_factory=lambda: uuid4().hex)
 
     def __post_init__(self) -> None:
         self.opacity = max(0.05, min(1.0, float(self.opacity)))
-        self.range_scale = max(1.0, min(5.0, float(self.range_scale)))
+        self.range_scale = max(0.1, min(1.0, float(self.range_scale)))
 
     def to_dict(self) -> dict:
         return {
@@ -73,6 +75,8 @@ class SurfaceLayer:
             "builtin_id": self.builtin_id,
             "visible": self.visible,
             "intersections_visible": self.intersections_visible,
+            "intersection_color": self.intersection_color,
+            "intersection_color_revision": self.intersection_color_revision,
             "color": self.color,
             "opacity": self.opacity,
             "range_scale": self.range_scale,
@@ -90,7 +94,9 @@ class SurfaceLayer:
             builtin_id=str(data["builtin_id"]) if data.get("builtin_id") is not None else None,
             visible=bool(data.get("visible", True)),
             intersections_visible=bool(data.get("intersections_visible", True)),
+            intersection_color=str(data.get("intersection_color", "#111111")),
+            intersection_color_revision=int(data.get("intersection_color_revision", 0)),
             color=str(data.get("color", "#4f7cac")),
             opacity=float(data.get("opacity", 0.62)),
-            range_scale=float(data.get("range_scale", 1.0)),
+            range_scale=float(data.get("range_scale", 0.618)),
         )

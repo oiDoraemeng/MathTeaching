@@ -75,6 +75,20 @@ class LayerSceneController:
         self._layer(layer_id).intersections_visible = visible
         self._refresh_intersection_visibility()
 
+    def set_intersection_color(self, layer_id: str, color: str, revision: int | None = None) -> None:
+        """Update all related actors; the newest function-level choice wins."""
+        layer = self._layer(layer_id)
+        layer.intersection_color = color
+        layer.intersection_color_revision = (
+            int(revision)
+            if revision is not None
+            else layer.intersection_color_revision + 1
+        )
+        for pair in self._existing_intersection_pairs():
+            if layer_id in pair:
+                self.plotter.remove_actor(self.intersection_actor_name(*pair), render=False)
+        self._refresh_intersections()
+
     def set_color(self, layer_id: str, color: str) -> None:
         layer = self._layer(layer_id)
         layer.color = color
@@ -120,10 +134,16 @@ class LayerSceneController:
         previous_domain = self.domain
         self.domain = domain
         try:
-            rebuilt = {layer_id: self._mesh_for(layer) for layer_id, layer in self.layers.items()}
+            rebuilt = {
+                layer_id: self._mesh_for(layer)
+                for layer_id, layer in self.layers.items()
+            }
         except Exception:
             self.domain = previous_domain
             raise
+        for pair in self._existing_intersection_pairs():
+            self.plotter.remove_actor(self.intersection_actor_name(*pair), render=False)
+        self.domain = domain
         self.meshes = rebuilt
         for layer_id, layer in self.layers.items():
             self._replace_surface_actor(layer, self.meshes[layer_id])
@@ -186,7 +206,7 @@ class LayerSceneController:
             actor = self.plotter.add_mesh(
                 curve,
                 name=name,
-                color="#111111",
+                color=self._intersection_color(pair),
                 line_width=1.5,
                 render_lines_as_tubes=False,
             )
@@ -224,6 +244,14 @@ class LayerSceneController:
     def _intersection_is_visible(self, pair: tuple[str, str]) -> bool:
         first, second = (self.layers[layer_id] for layer_id in pair)
         return self.intersections_visible and first.visible and second.visible and first.intersections_visible and second.intersections_visible
+
+    def _intersection_color(self, pair: tuple[str, str]) -> str:
+        first, second = (self.layers[layer_id] for layer_id in pair)
+        latest = max(
+            (first, second),
+            key=lambda layer: (layer.intersection_color_revision, layer.id),
+        )
+        return latest.intersection_color
 
     def _actors(self) -> dict:
         renderer = getattr(self.plotter, "renderer", None)

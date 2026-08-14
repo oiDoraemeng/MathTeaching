@@ -116,14 +116,33 @@ class LayerSceneControllerTests(unittest.TestCase):
         self.assertEqual(mesh_kwargs["line_width"], 1.5)
         self.assertFalse(mesh_kwargs["render_lines_as_tubes"])
 
+    def test_latest_function_level_intersection_color_wins_for_the_shared_curve(self) -> None:
+        self.controller.add_layer(self.sphere)
+        self.controller.add_layer(self.plane)
+        intersection_name = self.controller.intersection_actor_name(self.sphere.id, self.plane.id)
+
+        self.controller.set_intersection_color(self.sphere.id, "#d64545", revision=1)
+        self.controller.set_intersection_color(self.plane.id, "#3478c7", revision=2)
+
+        self.assertEqual(self.plotter.mesh_kwargs[intersection_name]["color"], "#3478c7")
+
     def test_layer_range_scale_resamples_only_that_layer_beyond_the_default_domain(self) -> None:
         self.controller.add_layer(self.plane)
 
-        self.controller.update_layer(replace(self.plane, range_scale=2.0))
+        self.controller.update_layer(replace(self.plane, range_scale=1.0))
 
         mesh = self.controller.meshes[self.plane.id]
-        self.assertEqual(mesh.bounds.x_min, -6.0)
-        self.assertEqual(mesh.bounds.x_max, 6.0)
+        self.assertEqual(mesh.bounds.x_min, -3.0)
+        self.assertEqual(mesh.bounds.x_max, 3.0)
+
+    def test_surface_range_scale_can_narrow_below_the_default_domain(self) -> None:
+        self.controller.add_layer(self.plane)
+
+        self.controller.update_layer(replace(self.plane, range_scale=0.5))
+
+        mesh = self.controller.meshes[self.plane.id]
+        self.assertEqual(mesh.bounds.x_min, -1.5)
+        self.assertEqual(mesh.bounds.x_max, 1.5)
 
 
 if __name__ == "__main__":

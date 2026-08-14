@@ -23,7 +23,7 @@ class SurfaceLayerTests(unittest.TestCase):
             intersections_visible=False,
             color="#d1664a",
             opacity=0.42,
-            range_scale=2.5,
+            range_scale=0.8,
         )
 
         restored = SurfaceLayer.from_dict(layer.to_dict())
@@ -31,8 +31,13 @@ class SurfaceLayerTests(unittest.TestCase):
         self.assertEqual(restored.to_dict(), layer.to_dict())
         self.assertEqual(restored.color, "#d1664a")
         self.assertEqual(restored.opacity, 0.42)
-        self.assertEqual(restored.range_scale, 2.5)
+        self.assertEqual(restored.range_scale, 0.8)
         self.assertEqual(restored.latex, r"x^2+y^2+z^2=r^2")
+
+    def test_surface_range_scale_has_a_real_narrowing_minimum(self) -> None:
+        layer = SurfaceLayer("plane", "explicit", "z = x + y", range_scale=0.05)
+
+        self.assertEqual(layer.range_scale, 0.1)
 
 
 if __name__ == "__main__":
