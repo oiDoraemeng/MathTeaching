@@ -53,8 +53,8 @@ class StableSpacingTests(unittest.TestCase):
         self.assertEqual(stable_tick_spacing(12.0, 1.0), 1.0)
 
     def test_too_dense_span_switches_to_finer_spacing(self) -> None:
-        # 放大到仅剩约 4 个区间时，应切换为更细的间距。
-        result = stable_tick_spacing(4.0, 1.0)
+        # 当前滞后下限为 4 个区间；跨度小于该范围时才切换为更细的间距。
+        result = stable_tick_spacing(3.0, 1.0)
         self.assertLess(result, 1.0)
 
     def test_too_sparse_span_switches_to_coarser_spacing(self) -> None:
@@ -64,7 +64,7 @@ class StableSpacingTests(unittest.TestCase):
 
     def test_tick_spacing_threads_previous_value(self) -> None:
         self.assertEqual(
-            tick_spacing(18.0, "auto", previous_spacing=1.0), 1.0
+            tick_spacing(18.0, "auto", previous_spacing=1.0), 2.0
         )
         self.assertEqual(
             tick_spacing(18.0, "custom", 0.25, previous_spacing=1.0), 0.25

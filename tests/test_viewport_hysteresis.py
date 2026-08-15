@@ -46,14 +46,15 @@ def _make_window(visible: ViewportBounds) -> MainWindow:
 
 class ViewportHysteresisTests(unittest.TestCase):
     def test_small_zoom_skips_guide_rebuild(self) -> None:
-        visible = ViewportBounds((-10.0, 10.0), (-10.0, 10.0))
+        # 跨度为 12 时自动间距为 2，轻微缩放后仍处于 4~8 个区间的滞后范围内。
+        visible = ViewportBounds((-6.0, 6.0), (-6.0, 6.0))
         window = _make_window(visible)
         window._refresh_2d_viewport()
         self.assertEqual(window._two_d_guides.render_count, 1)
 
         # 轻微放大时保留原间距，且仍处于已绘制网格范围内。
         window._current_2d_bounds = lambda: ViewportBounds(  # type: ignore[method-assign]
-            (-9.0, 9.0), (-9.0, 9.0)
+            (-5.5, 5.5), (-5.5, 5.5)
         )
         window._refresh_2d_viewport()
         self.assertEqual(window._two_d_guides.render_count, 1)  # no rebuild
