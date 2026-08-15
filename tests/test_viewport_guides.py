@@ -77,14 +77,17 @@ class ViewportGuideTests(unittest.TestCase):
         x_ticks = tick_values(bounds.x_range, spacing)
         y_ticks = tick_values(bounds.y_range, spacing)
 
-        segments, _points, _labels = TwoDGuides._tick_geometry(
+        segments, points, _labels = TwoDGuides._tick_geometry(
             bounds, spacing, x_ticks, y_ticks
         )
 
         x_segments = segments[:len(x_ticks)]
         y_segments = segments[len(x_ticks):]
         self.assertTrue(all(start[1] == 0 and end[1] > 0 for start, end in x_segments))
-        self.assertTrue(all(start[0] == 0 and end[0] < 0 for start, end in y_segments))
+        self.assertTrue(all(start[0] == 0 and end[0] > 0 for start, end in y_segments))
+        nonzero_x_count = sum(abs(value) > spacing * 1e-9 for value in x_ticks)
+        y_label_points = points[nonzero_x_count:]
+        self.assertTrue(all(point[0] < 0 for point in y_label_points))
 
     def test_3d_tick_marks_extend_only_away_from_their_number_labels(self) -> None:
         plotter = FakePlotter()

@@ -200,9 +200,9 @@ class TwoDGuides:
                 points.append((x, x_label_y - label_offset, 0))
                 labels.append(format_tick(x, spacing))
         for y in y_ticks:
-            segments.append(((y_label_x, y, 0), (y_label_x - tick_length, y, 0)))
+            segments.append(((y_label_x, y, 0), (y_label_x + tick_length, y, 0)))
             if abs(y) > spacing * 1e-9:
-                points.append((y_label_x + label_offset, y, 0))
+                points.append((y_label_x - label_offset, y, 0))
                 labels.append(format_tick(y, spacing))
         return segments, points, labels
 
