@@ -1,4 +1,4 @@
-"""Tests for the coalesced viewport refresh trigger."""
+"""合并视口刷新触发事件的测试。"""
 
 import unittest
 

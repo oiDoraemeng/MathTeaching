@@ -1,4 +1,4 @@
-"""Unit tests for independent scene state, settings, and function catalog data."""
+"""独立场景状态、设置与函数目录数据的单元测试。"""
 
 import unittest
 from dataclasses import replace

@@ -1,4 +1,4 @@
-"""Integration tests for the GeoGebra-style algebra/viewport split."""
+"""类 GeoGebra 代数区与视口分栏的集成测试。"""
 
 import os
 from pathlib import Path

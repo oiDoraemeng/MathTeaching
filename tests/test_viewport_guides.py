@@ -1,4 +1,4 @@
-"""Regression tests for replacing viewport guides without replacing formula actors."""
+"""替换视口辅助线时不替换公式 actor 的回归测试。"""
 
 import unittest
 
@@ -58,7 +58,7 @@ class ViewportGuideTests(unittest.TestCase):
 
         self.assertIn("grid_lines", plotter.actors)
         self.assertIn("axis_X", plotter.actors)
-        # Tick marks actor exists but should have no visible geometry.
+        # 刻度线 actor 应存在，但当前设置下不应包含可见几何。
         tick_actor = plotter.actors.get("tick_marks")
         self.assertIsNotNone(tick_actor)
         self.assertNotIn("tick_labels", plotter.actors)

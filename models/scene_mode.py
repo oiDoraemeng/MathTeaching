@@ -1,4 +1,4 @@
-"""Scene-mode and viewport appearance state shared by the UI and renderer."""
+"""界面与渲染器共用的场景模式和视口外观状态。"""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from math import isfinite
 
 
 class SceneMode(StrEnum):
-    """The two independent teaching workspaces."""
+    """两个相互独立的教学工作区。"""
 
     THREE_D = "3d"
     TWO_D = "2d"
@@ -16,7 +16,7 @@ class SceneMode(StrEnum):
 
 @dataclass
 class SceneAppearance:
-    """Runtime-only visual preferences for one workspace."""
+    """单个工作区的运行时外观偏好。"""
 
     background: str = "light"
     axis_color_mode: str = "contrast"

@@ -1,11 +1,8 @@
-"""Persistent orthographic Cartesian guides that follow the visible 2D view.
+"""跟随二维可见区域的持久化正交笛卡尔辅助线。
 
-Instead of deleting and rebuilding dozens of line actors on every camera
-change (which forces VTK to rebuild its render pipeline and produces the
-visible flicker), all grid lines share a single persistent mesh, all tick
-marks share another, and the axes are one mesh each. Camera changes update
-the geometry in place via ``copy_from`` so the actors and their mappers are
-never torn down.
+相机变化时不删除并重建大量线条演员，而是让网格线、刻度和坐标轴分别共享
+一个持久化网格，并用 ``copy_from`` 就地更新几何数据。这样可以保留演员和
+映射器，避免缩放、平移时出现明显闪烁。
 """
 
 from __future__ import annotations
@@ -24,9 +21,10 @@ _LABEL_KEY = "tick_labels"
 
 
 def configure_2d_camera(plotter: pv.Plotter) -> None:
-    """Apply the 2D pan/zoom interaction style without resetting the camera."""
+    """配置二维平移/缩放交互，不重置当前相机位置。"""
     plotter.enable_parallel_projection()
     if getattr(plotter, "iren", None) is not None:
+        # 2D 视图中左右中键都不应产生三维轨迹球旋转；中键与左键统一用于平移。
         plotter.enable_custom_trackball_style(
             left="pan",
             shift_left="dolly",
@@ -44,7 +42,7 @@ def configure_2d_camera(plotter: pv.Plotter) -> None:
 def _segments_to_polydata(
     segments: list[tuple[tuple[float, float, float], tuple[float, float, float]]],
 ) -> pv.PolyData:
-    """Pack independent line segments into one poly-line mesh."""
+    """将独立线段打包为一个折线网格。"""
     if not segments:
         return pv.PolyData()
     points = np.asarray([point for segment in segments for point in segment], dtype=float)
@@ -60,7 +58,7 @@ def _segments_to_polydata(
 
 
 class TwoDGuides:
-    """Own the grid, axes, ticks, and labels as a small pool of reused actors."""
+    """以可复用的少量演员管理网格、坐标轴、刻度和标签。"""
 
     def __init__(self, plotter: pv.Plotter) -> None:
         self.plotter = plotter
@@ -76,7 +74,7 @@ class TwoDGuides:
         previous_spacing: float | None = None,
         spacing: float | None = None,
     ) -> float:
-        """Update every guide in place for the supplied visible bounds."""
+        """按给定可见范围就地更新所有二维辅助线。"""
         if spacing is None:
             spacing = tick_spacing(
                 bounds.y_span,
@@ -119,7 +117,7 @@ class TwoDGuides:
         return spacing
 
     def clear(self) -> None:
-        """Forget cached actors after the plotter itself has been cleared."""
+        """在绘图器清空后丢弃已缓存的演员引用。"""
         self._meshes.clear()
         self._actors.clear()
         self._has_labels = False
@@ -134,6 +132,7 @@ class TwoDGuides:
             self._meshes[key] = stored
             self._actors[key] = actor
         else:
+            # 网格、坐标轴和刻度的拓扑固定，只复制几何数据以避免演员闪烁。
             self._meshes[key].copy_from(mesh)
             self._style(actor, color, line_width)
         actor.visibility = mesh.n_points > 0
@@ -148,9 +147,8 @@ class TwoDGuides:
     def _set_labels(
         self, points: list[tuple[float, float, float]], labels: list[str], color: str
     ) -> None:
-        # Point-label actors cannot be resized in place, so they are the one
-        # guide we rebuild — but only when the visible region actually changed,
-        # which the caller already gates on.
+        # 点标签演员无法像网格一样就地调整，只能重建；调用方已在可见范围不变时
+        # 跳过刷新，因此不会在每一帧都重复创建标签。
         if self._has_labels:
             self.plotter.remove_actor(_LABEL_KEY, render=False)
             self._has_labels = False
@@ -195,11 +193,13 @@ class TwoDGuides:
         points: list[tuple[float, float, float]] = []
         labels: list[str] = []
         for x in x_ticks:
+            # X 轴数字位于轴下方，刻度短线位于对侧上方。
             segments.append(((x, x_label_y, 0), (x, x_label_y + tick_length, 0)))
             if abs(x) > spacing * 1e-9:
                 points.append((x, x_label_y - label_offset, 0))
                 labels.append(format_tick(x, spacing))
         for y in y_ticks:
+            # Y 轴数字位于轴左侧，刻度短线位于对侧右方。
             segments.append(((y_label_x, y, 0), (y_label_x + tick_length, y, 0)))
             if abs(y) > spacing * 1e-9:
                 points.append((y_label_x - label_offset, y, 0))

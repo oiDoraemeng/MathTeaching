@@ -1,4 +1,4 @@
-"""Regression tests for keeping 2D and 3D camera modes independent."""
+"""保持二维和三维相机模式独立的回归测试。"""
 
 import unittest
 from unittest.mock import patch

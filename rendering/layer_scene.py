@@ -1,4 +1,4 @@
-"""Incremental actor management for independently editable surface layers."""
+"""可独立编辑曲面图层的增量演员管理。"""
 
 from __future__ import annotations
 
@@ -13,11 +13,11 @@ from rendering.materials import MATERIAL_PRESETS, material_preset
 
 
 class LayerRenderError(RuntimeError):
-    """Raised when a layer has no usable surface mesh in the current domain."""
+    """当图层在当前定义域内没有可用曲面网格时抛出。"""
 
 
 class LayerSceneController:
-    """Own surface and intersection actors while leaving axes and lights untouched."""
+    """管理曲面和交线演员，同时保持坐标轴与光源不受影响。"""
 
     def __init__(
         self,
@@ -76,7 +76,7 @@ class LayerSceneController:
         self._refresh_intersection_visibility()
 
     def set_intersection_color(self, layer_id: str, color: str, revision: int | None = None) -> None:
-        """Update all related actors; the newest function-level choice wins."""
+        """更新相关交线演员；共享交线使用最近一次设置的函数颜色。"""
         layer = self._layer(layer_id)
         layer.intersection_color = color
         layer.intersection_color_revision = (
@@ -86,6 +86,7 @@ class LayerSceneController:
         )
         for pair in self._existing_intersection_pairs():
             if layer_id in pair:
+                # 先移除旧交线，后续刷新会按新的颜色优先级重建。
                 self.plotter.remove_actor(self.intersection_actor_name(*pair), render=False)
         self._refresh_intersections()
 
@@ -139,9 +140,11 @@ class LayerSceneController:
                 for layer_id, layer in self.layers.items()
             }
         except Exception:
+            # 所有曲面必须成功重采样后才切换定义域，防止部分演员与数据模型不一致。
             self.domain = previous_domain
             raise
         for pair in self._existing_intersection_pairs():
+            # 曲面网格变化后，原交线不再有效，必须在新网格上重新计算。
             self.plotter.remove_actor(self.intersection_actor_name(*pair), render=False)
         self.domain = domain
         self.meshes = rebuilt
@@ -200,6 +203,7 @@ class LayerSceneController:
             name = self.intersection_actor_name(*pair)
             if name in self._actors():
                 continue
+            # 只有缺失的交线才计算，避免纯显示状态变化触发昂贵的网格求交。
             curve = intersect_surface_meshes(self.meshes[pair[0]], self.meshes[pair[1]])
             if curve.n_points == 0 or curve.n_cells == 0:
                 continue
@@ -251,6 +255,7 @@ class LayerSceneController:
             (first, second),
             key=lambda layer: (layer.intersection_color_revision, layer.id),
         )
+        # revision 相同则按图层 ID 稳定排序，避免同一交线在刷新时颜色跳变。
         return latest.intersection_color
 
     def _actors(self) -> dict:

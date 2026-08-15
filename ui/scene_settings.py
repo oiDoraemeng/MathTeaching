@@ -1,4 +1,4 @@
-"""Floating scene appearance controls for the viewport."""
+"""用于调整视口场景外观的浮动控制面板。"""
 
 from __future__ import annotations
 

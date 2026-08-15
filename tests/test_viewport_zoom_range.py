@@ -1,4 +1,4 @@
-"""Test that zoom updates domain proportionally and slider stays independent."""
+"""测试缩放按比例更新定义域，且滑块状态保持独立。"""
 from models.surface_layer import PlotDomain
 
 
@@ -10,7 +10,7 @@ def test_default_range_scale_is_golden_ratio():
 
 
 def test_domain_scaled_by_range_scale():
-    """domain.scaled(0.618) should shrink each axis to 61.8% of the domain."""
+    """domain.scaled(0.618) 应将每根轴缩小到原定义域的 61.8%。"""
     domain = PlotDomain(
         x_range=(-10.0, 10.0),
         y_range=(-10.0, 10.0),
@@ -22,7 +22,7 @@ def test_domain_scaled_by_range_scale():
 
 
 def test_domain_tracks_viewport_extent():
-    """When viewport extent changes, domain should match."""
+    """视口范围变化时，定义域应同步匹配。"""
     extent_before = 10.0
     extent_after = 5.0  # zoomed in 2x
 
@@ -39,22 +39,22 @@ def test_domain_tracks_viewport_extent():
 
     range_scale = 0.618
 
-    # Surface range before zoom
+    # 缩放前的曲面范围
     surface_before = domain_before.scaled(range_scale)
     assert abs(surface_before.x_range[1] - 6.18) < 1e-9
 
-    # Surface range after zoom
+    # 缩放后的曲面范围
     surface_after = domain_after.scaled(range_scale)
     assert abs(surface_after.x_range[1] - 3.09) < 1e-9
 
-    # Both fill exactly 61.8% of their respective viewports
+    # 两者均恰好填满各自视口范围的 61.8%
     ratio_before = surface_before.x_range[1] / extent_before
     ratio_after = surface_after.x_range[1] / extent_after
     assert abs(ratio_before - ratio_after) < 1e-9
 
 
 def test_range_scale_one_fills_viewport():
-    """range_scale=1.0 means surface fills the entire viewport."""
+    """range_scale=1.0 表示曲面填满整个视口。"""
     extent = 10.0
     domain = PlotDomain(
         x_range=(-extent, extent),

@@ -19,7 +19,7 @@ _CAMERA_POSITION = [(6.4, -7.2, 5.7), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
 
 
 def configure_3d_camera_interaction(plotter: pv.Plotter) -> None:
-    """Use origin-centered orbiting with middle-button panning in 3D."""
+    """配置三维原点旋转与中键平移交互。"""
     iren = getattr(plotter, "iren", None)
     if iren is None:
         return
@@ -46,7 +46,7 @@ def configure_3d_camera_interaction(plotter: pv.Plotter) -> None:
             return
         plotter.camera.focal_point = (0.0, 0.0, 0.0)
 
-    # Run before PyVista's left-button handler starts the trackball rotation.
+    # 先于 PyVista 左键处理器执行，确保轨迹球开始旋转时焦点就是坐标原点。
     style.AddObserver("LeftButtonPressEvent", focus_origin_before_rotation, 1.0)
 
 
@@ -77,8 +77,7 @@ def build_scene(
     """
     plotter.clear()
     plotter.set_background(background_color)
-    # 2D mode enables parallel projection on the shared plotter. Restore the
-    # perspective camera mode before rebuilding any 3D scene.
+    # 二维场景会在共享绘图器上开启平行投影，重建三维场景前必须恢复透视投影。
     plotter.disable_parallel_projection()
     lighting = lighting or LightSettings()
 
@@ -167,8 +166,7 @@ def build_scene(
     setup_three_point_lighting(plotter, lighting)
     plotter.enable_anti_aliasing("ssaa" if high_quality else "msaa")
 
-    # 设置观察方向，再由自动相机适配场景边界。
-    # direction but reframes the distance to fit the bounds — robust to any u_max.
+    # 先设置观察方向，再由自动相机根据场景边界调整距离，适配任意 u_max。
     if camera_position is None:
         plotter.camera_position = _CAMERA_POSITION
         plotter.reset_camera()

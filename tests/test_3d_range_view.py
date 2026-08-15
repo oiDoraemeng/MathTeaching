@@ -1,4 +1,4 @@
-"""Regression tests for 3D surface range behaviour."""
+"""三维曲面显示范围行为的回归测试。"""
 
 import unittest
 

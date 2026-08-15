@@ -1,9 +1,8 @@
-"""Persistent Cartesian axes for the 3D workspace.
+"""三维工作区的持久化笛卡尔坐标轴。
 
-Like the 2D guide pool, the axes and ticks are created once, and subsequent
-camera-driven updates replace *geometry data only* via ``copy_from`` /
-``mapper.dataset`` swap.  The actors and their VTK mappers survive across
-frames so the render pipeline is never rebuilt for a simple zoom or rotate.
+坐标轴和刻度只创建一次。相机缩放或旋转后，仅通过 ``copy_from`` 或
+``mapper.dataset`` 替换几何数据，保留演员及 VTK 映射器，从而避免每帧
+重建渲染管线造成闪烁。
 """
 
 from __future__ import annotations
@@ -21,7 +20,7 @@ _DIRECTIONS = np.eye(3)
 
 
 class ThreeDAxes:
-    """Own the axis arrow / tick / label actors and update them in-place."""
+    """管理坐标轴箭头、刻度和标签演员，并就地更新它们。"""
 
     def __init__(self, plotter: pv.Plotter) -> None:
         self.plotter = plotter
@@ -42,7 +41,7 @@ class ThreeDAxes:
         custom_tick_spacing: float = 1.0,
         previous_spacing: float | None = None,
     ) -> float:
-        """Update the axes geometry for *extent*.  Returns resolved spacing."""
+        """按给定范围更新坐标轴几何，并返回最终采用的刻度间距。"""
         extent = max(0.5, float(extent))
         default_color = contrast_color or AXIS_COLOR
         label_color = contrast_color or AXIS_LABEL_COLOR
@@ -88,7 +87,7 @@ class ThreeDAxes:
         return spacing
 
     def clear(self) -> None:
-        """Forget cached actors after the plotter itself has been cleared."""
+        """在绘图器被清空后丢弃已缓存的演员引用。"""
         self._arrow_meshes.clear()
         self._arrow_actors.clear()
         self._tick_mesh = None
@@ -96,7 +95,7 @@ class ThreeDAxes:
         self._has_labels.clear()
 
     # ------------------------------------------------------------------ #
-    #  Internals                                                          #
+    # 内部更新逻辑
     # ------------------------------------------------------------------ #
 
     def _set_arrow(self, key: str, mesh: pv.PolyData, color: str) -> None:
@@ -109,8 +108,10 @@ class ThreeDAxes:
         else:
             stored = self._arrow_meshes[key]
             if stored.n_points == mesh.n_points and stored.n_cells == mesh.n_cells:
+                # 拓扑未变化时只复制顶点数据，避免 VTK 重新创建映射器。
                 stored.copy_from(mesh)
             else:
+                # 箭头范围变化可能改变拓扑，此时才替换映射器的数据集。
                 mapper = getattr(actor, "mapper", None)
                 if mapper is not None:
                     mapper.dataset = mesh
@@ -154,6 +155,7 @@ class ThreeDAxes:
         labels: list[str] = []
         for axis_index in range(3):
             for value in values:
+                # 刻度短线与数字分别位于轴的两侧，防止数字遮挡轴线和刻度。
                 if axis_index == 0:
                     s, e, lp = (
                         (value, 0, 0),
@@ -184,6 +186,7 @@ class ThreeDAxes:
             )
             self._tick_mesh = stored
         else:
+            # 刻度网格的拓扑固定，只更新点坐标即可响应缩放。
             self._tick_mesh.copy_from(mesh)
             prop = getattr(self._tick_actor, "prop", None)
             if prop is not None:
@@ -226,7 +229,7 @@ def _segments_to_polydata(
 
 
 # ---------------------------------------------------------------------- #
-#  Legacy API kept for scene.py initial build (plotter.clear path)        #
+# 兼容 build_scene 在清空绘图器后的单次创建入口
 # ---------------------------------------------------------------------- #
 
 def add_cartesian_axes(
@@ -239,7 +242,7 @@ def add_cartesian_axes(
     tick_spacing_mode: str = "auto",
     custom_tick_spacing: float = 1.0,
 ) -> float:
-    """One-shot build used right after plotter.clear() in scene.py."""
+    """供 scene.py 在 ``plotter.clear()`` 后一次性创建坐标轴。"""
     axes = ThreeDAxes(plotter)
     return axes.render(
         extent,
@@ -252,7 +255,7 @@ def add_cartesian_axes(
 
 
 def remove_cartesian_axes(plotter: pv.Plotter) -> None:
-    """Remove only named axis/tick actors without disturbing geometry layers."""
+    """只删除命名的坐标轴和刻度演员，不影响函数几何图层。"""
     actors = getattr(getattr(plotter, "renderer", None), "actors", None) or plotter.actors
     for name in tuple(actors):
         if name.startswith(("axis_", "tick3d_")):

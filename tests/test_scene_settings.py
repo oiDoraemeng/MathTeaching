@@ -1,4 +1,4 @@
-"""Qt tests for mode-aware scene setting controls."""
+"""按场景模式适配的场景设置控件 Qt 测试。"""
 
 import os
 import unittest

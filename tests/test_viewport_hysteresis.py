@@ -1,4 +1,4 @@
-"""Tests for GeoGebra-style skip/hysteresis in the 2D viewport refresh."""
+"""二维视口刷新中类 GeoGebra 跳过与滞后策略的测试。"""
 
 import unittest
 
@@ -16,7 +16,7 @@ class FakePlotter:
 
 
 class SpyGuides:
-    """Tracks how many times render() is called without needing pyvista."""
+    """无需 PyVista 即可记录 render() 调用次数的测试替身。"""
 
     def __init__(self) -> None:
         self.render_count = 0
@@ -51,7 +51,7 @@ class ViewportHysteresisTests(unittest.TestCase):
         window._refresh_2d_viewport()
         self.assertEqual(window._two_d_guides.render_count, 1)
 
-        # A tiny zoom-in keeps the spacing and stays inside the drawn grid.
+        # 轻微放大时保留原间距，且仍处于已绘制网格范围内。
         window._current_2d_bounds = lambda: ViewportBounds(  # type: ignore[method-assign]
             (-9.0, 9.0), (-9.0, 9.0)
         )
@@ -63,7 +63,7 @@ class ViewportHysteresisTests(unittest.TestCase):
         window = _make_window(visible)
         window._refresh_2d_viewport()
 
-        # Pan far enough that the viewport leaves the padded grid region.
+        # 平移到足够远，使视口离开带额外边距的网格区域。
         window._current_2d_bounds = lambda: ViewportBounds(  # type: ignore[method-assign]
             (40.0, 60.0), (-10.0, 10.0)
         )
@@ -76,7 +76,7 @@ class ViewportHysteresisTests(unittest.TestCase):
         window._refresh_2d_viewport()
         first_spacing = window._two_d_guide_spacing
 
-        # Zoom out hard: span 200 -> ticks become far too sparse at 1.0.
+        # 大幅缩小：跨度为 200 时，1.0 的刻度会变得过于稀疏。
         window._current_2d_bounds = lambda: ViewportBounds(  # type: ignore[method-assign]
             (-100.0, 100.0), (-100.0, 100.0)
         )
@@ -89,7 +89,7 @@ class ViewportHysteresisTests(unittest.TestCase):
         window = _make_window(visible)
         window._refresh_2d_viewport()
 
-        # Identical viewport, but a settings change forces the rebuild.
+        # 即使视口相同，设置发生变化也必须强制重建。
         window._refresh_2d_viewport(resample=False, force=True)
         self.assertEqual(window._two_d_guides.render_count, 2)
 

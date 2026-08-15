@@ -1,4 +1,4 @@
-"""Main window composition for independent 2D and 3D formula scenes."""
+"""用于组合相互独立二维/三维公式场景的主窗口。"""
 
 from __future__ import annotations
 
@@ -32,13 +32,13 @@ from ui.lighting_dialog import LightingDialog
 from ui.scene_settings import SceneSettingsPanel
 
 
-# Guides are drawn this far beyond the viewport on each side so small pans and
-# zooms stay inside the already-drawn region and skip a rebuild.
+# 辅助线在视口四周额外绘制此比例；小幅平移和缩放仍落在既有区域内，
+# 因而无需立刻重建辅助线和曲线采样。
 _GUIDE_MARGIN = 0.6
 
 
 class _ViewportResizeFilter(QObject):
-    """Keep Qt overlay controls above the native VTK viewport while it resizes."""
+    """在原生 VTK 视口调整尺寸时，让 Qt 覆盖控件保持位于上层。"""
 
     def __init__(self, callback: Callable[[], None], parent: QObject) -> None:
         super().__init__(parent)
@@ -51,7 +51,7 @@ class _ViewportResizeFilter(QObject):
 
 
 class MainWindow:
-    """Load the Designer shell and coordinate two independent plotting workspaces."""
+    """加载 Designer 窗口骨架，并协调两个相互独立的绘图工作区。"""
 
     def __init__(self) -> None:
         self.lighting = LightSettings()
@@ -235,7 +235,7 @@ class MainWindow:
         panel.opacity_changed.connect(self._set_surface_opacity)
         panel.line_width_changed.connect(self._set_curve_line_width)
         panel.range_changed.connect(self._set_layer_range)
-        # Old signals may still be used by an extension. They have no visible toolbar affordance.
+        # 扩展程序仍可能连接旧信号；界面中已不再提供对应的工具栏操作。
         panel.auto_intersections_changed.connect(self._set_auto_intersections)
         panel.manual_intersection_requested.connect(self._add_manual_intersection)
 
@@ -262,7 +262,7 @@ class MainWindow:
             base_surface=False,
         )
         configure_3d_camera_interaction(self.plotter)
-        # plotter.clear() inside build_scene dropped every actor, start fresh.
+        # build_scene 内部会调用 plotter.clear() 清除全部 actor，因此坐标轴需要重新创建。
         self._three_d_axes = ThreeDAxes(self.plotter)
         extent = self._current_3d_axis_extent()
         spacing = self._three_d_axes.render(
@@ -321,7 +321,7 @@ class MainWindow:
             appearance.tick_spacing_mode,
             appearance.tick_spacing,
         )
-        # plotter.clear() dropped every actor, so the guide pool starts fresh.
+        # plotter.clear() 会清除全部 actor，因此二维辅助线池也必须重新建立。
         self._two_d_guides = TwoDGuides(self.plotter)
         self._two_d_guides.render(sampling_bounds, appearance, spacing=spacing)
         self._two_d_guide_spacing = spacing
@@ -343,18 +343,26 @@ class MainWindow:
         self.plotter.render()
 
     def _restore_2d_camera(self) -> None:
+        # 2D 场景使用并行投影（parallel projection），这里的 parallel_scale 相当于
+        # "视口的世界单位 zoom"：数值越大，视口显示的世界范围越大，图像越小；
+        # 数值越小，视口显示的范围越小，图像越放大。
+        #
+        # 这个值会直接影响 _current_2d_bounds() 中的 visible_2d_bounds() 计算：
+        #   half_height = parallel_scale / 2
+        #   half_width = half_height * aspect_ratio
+        # 因此它决定了当前可见窗口的 x/y 范围，进而影响网格、刻度和采样区域。
         if self._two_d_camera_position is not None:
             self.plotter.camera_position = self._two_d_camera_position
         else:
             self.plotter.camera_position = [
-                (0.0, 0.0, 20.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 1.0, 0.0),
+                (0.0, 0.0, 20.0),    # 相机位置
+                (0.0, 0.0, 0.0),     # 相机焦点
+                (0.0, 1.0, 0.0),     # 相机“向上”的方向
             ]
         if self._two_d_parallel_scale is not None:
             self.plotter.camera.parallel_scale = max(1e-6, self._two_d_parallel_scale)
         else:
-            self.plotter.camera.parallel_scale = 20.0
+            self.plotter.camera.parallel_scale = 6.0
         self.plotter.camera.clipping_range = (0.01, 1000.0)
 
     def _current_2d_bounds(self) -> ViewportBounds:
@@ -466,28 +474,8 @@ class MainWindow:
             self._three_d_spacing = spacing
             self._three_d_extent = extent
 
-        if resample and self.layer_controller is not None:
-            focal = tuple(self.plotter.camera.focal_point)
-            domain_ratio = (
-                extent / self._last_domain_extent
-                if self._last_domain_extent and self._last_domain_extent > 0
-                else 0.0
-            )
-            if force or not (0.9 <= domain_ratio <= 1.1):
-                target_domain = PlotDomain(
-                    x_range=(focal[0] - extent, focal[0] + extent),
-                    y_range=(focal[1] - extent, focal[1] + extent),
-                    z_range=(focal[2] - extent, focal[2] + extent),
-                    explicit_resolution=self.plot_domain.explicit_resolution,
-                    implicit_resolution=self.plot_domain.implicit_resolution,
-                )
-                try:
-                    self.layer_controller.set_domain(target_domain)
-                except (ExpressionError, LayerRenderError) as error:
-                    self.algebra_panel.set_status(f"无法重新绘制曲面: {error}", is_error=True)
-                else:
-                    self.plot_domain = target_domain
-                    self._last_domain_extent = extent
+        # 曲面在初始定义域上只采样一次，缩放纯粹是相机操作，不重建几何，
+        # 以获得类似 GeoGebra 的流畅缩放（不再随视口跳档重采样）。
         if render:
             self.plotter.render()
 
@@ -629,7 +617,7 @@ class MainWindow:
             self.algebra_panel.set_status(f"无法更新曲面: {error}", is_error=True)
             return
         self.layers = [updated if layer.id == layer_id else layer for layer in self.layers]
-        self.algebra_panel.set_layers(self.layers)
+        self.algebra_panel.sync_layer(layer_id, updated)
         self.algebra_panel.finish_edit()
         self.algebra_panel.set_status(f"已更新 {updated.name}")
         self.plotter.render()
@@ -657,7 +645,7 @@ class MainWindow:
             self.algebra_panel.set_status(f"无法更新曲线: {error}", is_error=True)
             return
         self.curve_layers = [updated if layer.id == layer_id else layer for layer in self.curve_layers]
-        self.algebra_panel.set_layers(self.curve_layers)
+        self.algebra_panel.sync_layer(layer_id, updated)
         self.algebra_panel.finish_edit()
         self.algebra_panel.set_status(f"已更新 {updated.name}")
         self.plotter.render()

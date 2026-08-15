@@ -1,4 +1,4 @@
-"""Tests for camera-aware tick spacing and visible ranges."""
+"""感知相机视图的刻度间距与可见范围测试。"""
 
 import unittest
 
@@ -49,16 +49,16 @@ class StableSpacingTests(unittest.TestCase):
     def test_small_zoom_keeps_previous_spacing(self) -> None:
         # 20 -> 18 keeps ~18 intervals at spacing 1.0, still inside the band.
         self.assertEqual(stable_tick_spacing(18.0, 1.0), 1.0)
-        # A modest zoom-in to 12 stays at 12 intervals, so no relabel.
+        # 适度放大到 12 个区间仍沿用当前间距，因此不需要重标刻度。
         self.assertEqual(stable_tick_spacing(12.0, 1.0), 1.0)
 
     def test_too_dense_span_switches_to_finer_spacing(self) -> None:
-        # Zooming in until only ~4 intervals remain forces a finer step.
+        # 放大到仅剩约 4 个区间时，应切换为更细的间距。
         result = stable_tick_spacing(4.0, 1.0)
         self.assertLess(result, 1.0)
 
     def test_too_sparse_span_switches_to_coarser_spacing(self) -> None:
-        # Zooming out until ~40 intervals appear forces a coarser step.
+        # 缩小到出现约 40 个区间时，应切换为更粗的间距。
         result = stable_tick_spacing(40.0, 1.0)
         self.assertGreater(result, 1.0)
 

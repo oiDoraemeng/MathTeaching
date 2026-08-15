@@ -1,4 +1,4 @@
-"""Camera-aware tick spacing and viewport range helpers."""
+"""感知相机状态的刻度间距和视口范围辅助函数。"""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from math import ceil, floor, isfinite, log10, tan
 
 @dataclass(frozen=True)
 class ViewportBounds:
-    """Axis-aligned visible bounds used for 2D guides and sampling."""
+    """供二维辅助线与采样使用的轴对齐可见范围。"""
 
     x_range: tuple[float, float]
     y_range: tuple[float, float]
@@ -34,7 +34,7 @@ class ViewportBounds:
         )
 
     def contains(self, other: "ViewportBounds") -> bool:
-        """Report whether this region fully encloses another visible region."""
+        """判断当前范围是否完整包含另一可见范围。"""
         return (
             self.x_range[0] <= other.x_range[0]
             and other.x_range[1] <= self.x_range[1]
@@ -48,7 +48,7 @@ def visible_2d_bounds(
     parallel_scale: float,
     aspect_ratio: float,
 ) -> ViewportBounds:
-    """Convert a VTK parallel camera state into visible XY bounds."""
+    """将 VTK 平行相机状态换算为可见的 XY 范围。"""
     if not isfinite(parallel_scale) or parallel_scale <= 0:
         raise ValueError("Parallel scale must be a finite positive value.")
     if not isfinite(aspect_ratio) or aspect_ratio <= 0:
@@ -62,13 +62,14 @@ def visible_2d_bounds(
 
 
 def automatic_tick_spacing(span: float, *, target_intervals: int = 16) -> float:
-    """Return the closest 1-2-5 spacing for the supplied visible span."""
+    """按给定可见跨度返回最接近的 1-2-5 刻度间距。"""
     if not isfinite(span) or span <= 0:
         raise ValueError("Tick span must be a finite positive value.")
     if target_intervals < 1:
         raise ValueError("Target interval count must be positive.")
     ideal = span / target_intervals
     exponent = floor(log10(ideal))
+    # 同时比较相邻数量级，避免理想值处于数量级边界时跳过更合适的候选间距。
     candidates = tuple(
         multiplier * (10.0 ** power)
         for power in (exponent - 1, exponent, exponent + 1)
@@ -82,15 +83,14 @@ def stable_tick_spacing(
     previous_spacing: float | None,
     *,
     target_intervals: int = 16,
-    min_intervals: int = 8,
-    max_intervals: int = 24,
+    min_intervals: int = 4,
+    max_intervals: int = 8,
 ) -> float:
-    """Keep the previous spacing until tick density leaves the healthy band.
+    """在刻度密度离开合理区间前保持上一刻度间距。
 
-    GeoGebra-style behaviour: a zoom only re-labels the axes when gridlines
-    would become too dense or too sparse. While the visible interval count
-    stays within ``[min_intervals, max_intervals]`` the previous spacing is
-    reused verbatim, so small zooms never rebuild the guides.
+    采用类似 GeoGebra 的滞后策略：只有网格将变得过密或过疏时才重标坐标轴。
+    可见区间数仍位于 ``[min_intervals, max_intervals]`` 时复用旧间距，避免
+    轻微缩放导致辅助线反复重建。
     """
     if not isfinite(span) or span <= 0:
         raise ValueError("Tick span must be a finite positive value.")
@@ -107,10 +107,10 @@ def tick_spacing(
     mode: str = "auto",
     custom_spacing: float = 1.0,
     *,
-    target_intervals: int = 16,
+    target_intervals: int = 6,
     previous_spacing: float | None = None,
 ) -> float:
-    """Resolve a scene's automatic or fixed tick spacing."""
+    """解析场景应使用的自动或固定刻度间距。"""
     if mode == "custom":
         if not isfinite(custom_spacing) or custom_spacing <= 0:
             raise ValueError("Custom tick spacing must be a finite positive value.")
@@ -121,17 +121,18 @@ def tick_spacing(
 
 
 def tick_values(axis_range: tuple[float, float], spacing: float) -> tuple[float, ...]:
-    """Return stable inclusive tick positions without cumulative float drift."""
+    """返回包含边界且不会累积浮点误差的稳定刻度位置。"""
     if not isfinite(spacing) or spacing <= 0:
         raise ValueError("Tick spacing must be a finite positive value.")
     lower, upper = axis_range
+    # 给边界留出极小容差，避免 0.3 / 0.1 等浮点表示误差漏掉端点刻度。
     start = ceil(lower / spacing - 1e-10)
     end = floor(upper / spacing + 1e-10)
     return tuple(index * spacing for index in range(start, end + 1))
 
 
 def format_tick(value: float, spacing: float) -> str:
-    """Format numeric labels without visual floating-point noise."""
+    """格式化数值标签，避免显示浮点误差噪声。"""
     tolerance = max(abs(spacing) * 1e-8, 1e-10)
     if abs(value) <= tolerance:
         return "0"
@@ -148,7 +149,7 @@ def visible_3d_axis_extent(
     view_angle_degrees: float,
     aspect_ratio: float,
 ) -> float:
-    """Estimate a symmetric world-space axis extent from a perspective camera."""
+    """根据透视相机估算对称的世界坐标轴范围。"""
     if not isfinite(camera_distance) or camera_distance <= 0:
         raise ValueError("Camera distance must be a finite positive value.")
     if not isfinite(view_angle_degrees) or view_angle_degrees <= 0:
