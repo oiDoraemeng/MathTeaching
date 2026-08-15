@@ -1,4 +1,4 @@
-"""Safe algebra parsing and numerical sampling for 2D Cartesian curves."""
+"""二维笛卡尔曲线的安全代数解析与数值采样。"""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from models.curve_layer import CurveLayer, Plot2DDomain
 
 
 class CurveExpressionError(ValueError):
-    """Raised when a formula cannot describe a safe two-dimensional curve."""
+    """当公式无法安全地表示二维曲线时抛出。"""
 
 
 _COORDINATES = ("x", "y")
@@ -38,7 +38,7 @@ _TRANSFORMATIONS = standard_transformations + (convert_xor,)
 
 @dataclass(frozen=True)
 class CurveExpression:
-    """A parsed 2D curve ready for vectorized evaluation."""
+    """已解析完成、可进行向量化计算的二维曲线。"""
 
     kind: str
     source: str
@@ -49,7 +49,7 @@ class CurveExpression:
 
 
 def parse_curve_expression(source: str, kind: str) -> CurveExpression:
-    """Parse explicit, implicit, and parametric curves without executable input."""
+    """解析显式、隐式和参数曲线，不执行用户输入的代码。"""
     source = _normalize_source(source.strip())
     if not source:
         raise CurveExpressionError("请输入二维函数表达式。")
@@ -87,7 +87,7 @@ def build_curve_mesh(
     parameters: dict[str, float],
     domain: Plot2DDomain,
 ) -> pv.PolyData:
-    """Build a polyline mesh in the XY plane for one sampled curve."""
+    """在 XY 平面为一条已采样曲线生成折线网格。"""
     if expression.kind == "explicit":
         return _build_explicit_curve(expression, parameters, domain)
     if expression.kind == "implicit":
@@ -96,7 +96,7 @@ def build_curve_mesh(
 
 
 def create_curve_layer(name: str, kind: str, source: str, *, latex: str | None = None) -> CurveLayer:
-    """Create a curve layer and expose symbolic constants as editable parameters."""
+    """创建曲线图层，并将表达式中的符号常量暴露为可编辑参数。"""
     expression = parse_curve_expression(source, kind)
     return CurveLayer(
         name=name.strip() or "函数",
@@ -154,6 +154,7 @@ def _parse_parametric(source: str) -> tuple[tuple[sp.Expr, sp.Expr], tuple[sp.Ex
 def _parse_algebra(text: str) -> sp.Expr:
     if not text or "__" in text or not _ALGEBRA_CHARACTERS.fullmatch(text):
         raise CurveExpressionError("表达式包含不支持的字符。")
+    # 在调用 sympify 前限制字符集和函数白名单，避免把用户输入当作任意 Python 表达式。
     for function_name in _FUNCTION_CALL.findall(text):
         if function_name not in _ALLOWED_FUNCTIONS:
             raise CurveExpressionError(f"不支持的函数: {function_name}")
@@ -172,7 +173,7 @@ def _parse_algebra(text: str) -> sp.Expr:
 
 
 def _normalize_source(source: str) -> str:
-    """Normalize MathLive delimiters that may remain in parametric input."""
+    """规整参数式中 MathLive 可能保留的分隔符。"""
     return (
         source.replace(r"\left(", "(")
         .replace(r"\right)", ")")
@@ -275,6 +276,7 @@ def _build_implicit_curve(expression: CurveExpression, parameters: dict[str, flo
         parameters,
     )[0]
     field[~np.isfinite(field)] = np.nan
+    # 将标量场写入规则网格后提取零等值线，可统一处理圆锥曲线等隐式方程。
     grid = pv.ImageData(
         dimensions=(domain.implicit_resolution, domain.implicit_resolution, 1),
         spacing=(
@@ -315,6 +317,7 @@ def _split_valid_segments(x_values: np.ndarray, y_values: np.ndarray, valid: np.
         elif not is_valid and start is not None:
             if index - start > 1:
                 segments.append(np.column_stack((x_values[start:index], y_values[start:index], np.zeros(index - start))))
+            # 在无定义点处分段，避免把渐近线两侧错误地连接起来。
             start = None
     if start is not None and len(valid) - start > 1:
         segments.append(np.column_stack((x_values[start:], y_values[start:], np.zeros(len(valid) - start))))
@@ -330,6 +333,9 @@ def _segments_to_mesh(segments: list[np.ndarray]) -> pv.PolyData:
     for segment in segments:
         cells.extend((len(segment), *range(offset, offset + len(segment))))
         offset += len(segment)
-    mesh = pv.PolyData(points)
+    # 直接用 points 初始化会自动创建 vertex cell，导致采样点以圆点形式显示；
+    # 先创建空网格，再只写入 lines，保留采样数据但不生成独立顶点单元。
+    mesh = pv.PolyData()
+    mesh.points = points
     mesh.lines = np.asarray(cells, dtype=np.int64)
     return mesh

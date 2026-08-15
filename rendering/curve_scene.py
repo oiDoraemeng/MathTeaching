@@ -1,4 +1,4 @@
-"""Incremental actor management for editable two-dimensional curve layers."""
+"""可编辑二维曲线图层的增量演员管理。"""
 
 from __future__ import annotations
 
@@ -9,11 +9,11 @@ from models.curve_layer import CurveLayer, Plot2DDomain
 
 
 class CurveRenderError(RuntimeError):
-    """Raised when a curve has no usable geometry in the current domain."""
+    """当曲线在当前定义域内没有可用几何时抛出。"""
 
 
 class CurveSceneController:
-    """Own curve actors while leaving the Cartesian grid untouched."""
+    """管理曲线演员，同时保持笛卡尔网格不受影响。"""
 
     def __init__(self, plotter: pv.Plotter, domain: Plot2DDomain | None = None) -> None:
         self.plotter = plotter
@@ -52,7 +52,7 @@ class CurveSceneController:
         try:
             self._actor(layer_id).visibility = visible
         except KeyError:
-            # Curves outside the current viewport have no actor until they re-enter it.
+            # 完全在当前视口外的曲线没有演员；重新进入视口后会在重采样时创建。
             pass
 
     def set_color(self, layer_id: str, color: str) -> None:
@@ -66,7 +66,7 @@ class CurveSceneController:
         self._replace_actor_if_present(layer)
 
     def set_domain(self, domain: Plot2DDomain) -> None:
-        """Resample every curve for a new visible viewport without losing layers."""
+        """为新的可见视口重采样全部曲线，同时保留图层数据。"""
         previous_domain = self.domain
         self.domain = domain
         rebuilt: dict[str, pv.PolyData] = {}
@@ -75,9 +75,10 @@ class CurveSceneController:
                 try:
                     rebuilt[layer_id] = self._mesh_for(layer)
                 except CurveRenderError:
-                    # A layer can simply be outside the current viewport; keep its data model.
+                    # 曲线可能只是离开当前视口，保留图层数据，待重新进入后再绘制。
                     rebuilt[layer_id] = pv.PolyData()
         except Exception:
+            # 任一图层重建异常时恢复旧定义域，避免控制器处于半更新状态。
             self.domain = previous_domain
             raise
         self.meshes = rebuilt
@@ -108,6 +109,8 @@ class CurveSceneController:
             color=layer.color,
             line_width=layer.line_width,
             render_lines_as_tubes=False,
+            # 保留采样点用于组成折线，但不把每个顶点单独绘制成突出的圆点。
+            show_vertices=False,
             lighting=False,
         )
         actor.visibility = layer.visible

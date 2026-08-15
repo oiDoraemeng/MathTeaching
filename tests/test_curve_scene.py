@@ -1,4 +1,4 @@
-"""Regression tests for incremental 2D curve actor updates."""
+"""二维曲线 actor 增量更新的回归测试。"""
 
 import unittest
 

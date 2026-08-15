@@ -1,4 +1,4 @@
-"""Regression tests for 2D MathLive parsing and numerical curve sampling."""
+"""二维 MathLive 解析与数值曲线采样的回归测试。"""
 
 import unittest
 
