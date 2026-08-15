@@ -1,4 +1,4 @@
-"""Tests for independent layer display state."""
+"""独立图层显示状态的测试。"""
 
 import unittest
 

@@ -70,7 +70,7 @@ AXIS_MATERIAL = dict(smooth_shading=True, ambient=0.40, diffuse=0.60)
 AXIS_COLOR = "#39404b"
 AXIS_LABEL_COLOR = "#252a33"
 
-# Teaching helpers (lines) — unlit color styling.
+# 教学辅助线使用不受光照影响的纯色样式，保证在深浅背景下均清晰可见。
 SECTION_MATERIAL = dict(color="#d9bd79", line_width=2.6)
 GENERATOR_MATERIAL = dict(color="#785cb8", opacity=0.55, line_width=1.0)
 CONSTRUCTION_MATERIAL = dict(color="#4b5563", line_width=1.5)

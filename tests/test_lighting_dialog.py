@@ -1,4 +1,4 @@
-"""Qt tests for material selection in the advanced lighting editor."""
+"""高级光照编辑器中材质选择的 Qt 测试。"""
 
 import os
 import unittest

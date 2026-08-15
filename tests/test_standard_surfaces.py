@@ -1,4 +1,4 @@
-"""Tests for the built-in quadric surface catalog."""
+"""内置二次曲面目录的测试。"""
 
 import unittest
 

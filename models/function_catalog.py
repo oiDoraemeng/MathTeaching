@@ -1,4 +1,4 @@
-"""Runtime function catalog shared by the 2D and 3D workspaces."""
+"""二维与三维工作区共用的运行时函数目录。"""
 
 from __future__ import annotations
 
@@ -42,10 +42,11 @@ TWO_D_CATALOG = (
 
 
 def catalog_entries(mode: SceneMode) -> tuple[CatalogEntry, ...]:
-    """Return entries for the requested scene without exposing mutable state."""
+    """返回指定场景的目录项，不向调用方暴露可变的内部状态。"""
     if mode is SceneMode.TWO_D:
         return TWO_D_CATALOG
 
+    # 延迟导入可避免模型目录与几何目录在模块初始化时形成循环依赖。
     from geometry.standard_surfaces import BUILTIN_SURFACES
 
     return tuple(

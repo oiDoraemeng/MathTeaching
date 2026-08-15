@@ -1,4 +1,4 @@
-"""Application data models."""
+"""应用程序的数据模型导出入口。"""
 
 from .curve_layer import CurveLayer, Plot2DDomain
 from .function_catalog import CatalogEntry, catalog_entries, catalog_entry

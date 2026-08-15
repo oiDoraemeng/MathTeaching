@@ -37,10 +37,9 @@ def _camera_light(position, intensity, color) -> pv.Light:
 
 
 def setup_three_point_lighting(plotter: pv.Plotter, settings: LightSettings | None = None) -> None:
-    """Clear existing lights and install a key/fill/rim camera-light rig.
+    """清除现有灯光，并安装由主光、补光和轮廓光组成的相机光源组。
 
-    Idempotent: safe to call on every scene rebuild — always leaves exactly
-    three lights on the renderer.
+    此函数可重复调用：每次重建场景后调用，都能确保渲染器中恰好保留三盏灯。
     """
     settings = settings or LightSettings()
     plotter.remove_all_lights()
@@ -50,7 +49,7 @@ def setup_three_point_lighting(plotter: pv.Plotter, settings: LightSettings | No
 
 
 def rotate_light_positions(settings: LightSettings, angle: float) -> None:
-    """Rotate the complete light rig while preserving its internal offsets."""
+    """旋转完整光源组，同时保持三盏灯之间的相对方位不变。"""
     settings.rotation_angle = angle % 360.0
     key_angle = atan2(settings.key["position"][0], settings.key["position"][1])
     target_angle = radians(settings.rotation_angle)

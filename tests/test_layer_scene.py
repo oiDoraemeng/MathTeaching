@@ -1,4 +1,4 @@
-"""Tests for automatic and manually selected intersection actors."""
+"""自动与手动选择交线 actor 的测试。"""
 
 from dataclasses import replace
 import unittest

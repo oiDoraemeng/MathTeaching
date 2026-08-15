@@ -1,4 +1,4 @@
-"""Data models for independently rendered two-dimensional curve layers."""
+"""独立渲染二维曲线图层所使用的数据模型。"""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from uuid import uuid4
 
 @dataclass(frozen=True)
 class Plot2DDomain:
-    """Sampling bounds for the Cartesian 2D workspace."""
+    """二维笛卡尔工作区的采样范围。"""
 
     x_range: tuple[float, float] = (-10.0, 10.0)
     y_range: tuple[float, float] = (-10.0, 10.0)
@@ -27,6 +27,7 @@ class Plot2DDomain:
             raise ValueError("Domain scale must be positive.")
 
         def scale_axis(axis_range: tuple[float, float]) -> tuple[float, float]:
+            # 始终以原范围中心缩放，避免调节单个图层范围时整体坐标系发生平移。
             center = (axis_range[0] + axis_range[1]) / 2
             half_width = (axis_range[1] - axis_range[0]) * factor / 2
             return center - half_width, center + half_width
@@ -41,7 +42,7 @@ class Plot2DDomain:
 
 @dataclass
 class CurveLayer:
-    """One user-editable two-dimensional curve and its display state."""
+    """一个可编辑二维曲线及其独立显示状态。"""
 
     name: str
     kind: str

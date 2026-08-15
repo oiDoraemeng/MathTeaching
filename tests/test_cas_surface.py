@@ -1,4 +1,4 @@
-"""Behavioral tests for local algebraic surface parsing and sampling."""
+"""本地代数曲面解析与采样行为测试。"""
 
 import unittest
 
@@ -69,7 +69,7 @@ class CasExpressionTests(unittest.TestCase):
             non_manifold_edges=False,
         )
 
-        # A sampled rectangular patch has four chains, each with resolution - 1 edges.
+        # 采样得到的矩形平面片有四条边，每条边包含 resolution - 1 条线段。
         self.assertEqual(boundary.n_cells, 4 * (self.domain.explicit_resolution - 1))
         self.assertEqual(boundary.n_points, 4 * (self.domain.explicit_resolution - 1))
 

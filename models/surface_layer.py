@@ -1,4 +1,4 @@
-"""Data models for independently rendered algebraic surface layers."""
+"""独立渲染代数曲面图层所使用的数据模型。"""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from uuid import uuid4
 
 @dataclass(frozen=True)
 class PlotDomain:
-    """Shared sampling bounds used for all surface and intersection meshes."""
+    """所有曲面及交线网格共用的采样范围。"""
 
     x_range: tuple[float, float] = (-3.0, 3.0)
     y_range: tuple[float, float] = (-3.0, 3.0)
@@ -28,6 +28,7 @@ class PlotDomain:
             raise ValueError("Domain scale must be positive.")
 
         def scale_axis(axis_range: tuple[float, float]) -> tuple[float, float]:
+            # 用中心缩放保证不同图层的范围变化不会改变公共坐标原点。
             center = (axis_range[0] + axis_range[1]) / 2
             half_width = (axis_range[1] - axis_range[0]) * factor / 2
             return (center - half_width, center + half_width)
@@ -43,7 +44,7 @@ class PlotDomain:
 
 @dataclass
 class SurfaceLayer:
-    """One user-editable surface and its independent display controls."""
+    """一个可编辑曲面及其独立显示控制状态。"""
 
     name: str
     kind: str

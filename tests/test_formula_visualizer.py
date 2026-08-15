@@ -1,4 +1,4 @@
-"""Tests for the independent SymPy-to-PyVista FormulaVisualizer bridge."""
+"""独立 SymPy 到 PyVista 的 FormulaVisualizer 桥接测试。"""
 
 import unittest
 

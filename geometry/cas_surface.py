@@ -1,4 +1,4 @@
-"""Safe local algebra parsing and numerical surface mesh generation."""
+"""曲面的安全本地代数解析与数值网格生成。"""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from models.surface_layer import PlotDomain, SurfaceLayer
 
 
 class ExpressionError(ValueError):
-    """Raised when user algebra cannot be safely parsed or sampled."""
+    """当用户代数式无法安全解析或采样时抛出。"""
 
 
 _COORDINATES = ("x", "y", "z")
@@ -37,7 +37,7 @@ _TRANSFORMATIONS = standard_transformations + (convert_xor,)
 
 @dataclass(frozen=True)
 class SurfaceExpression:
-    """A parsed surface formula ready for vectorized numerical evaluation."""
+    """已解析完成、可进行向量化数值计算的曲面公式。"""
 
     kind: str
     source: str
@@ -49,7 +49,7 @@ class SurfaceExpression:
 
 
 def parse_surface_expression(source: str, kind: str) -> SurfaceExpression:
-    """Parse an explicit, implicit, or parametric surface without executable input."""
+    """解析显式、隐式或参数曲面，不执行用户输入的代码。"""
     source = source.strip()
     if not source:
         raise ExpressionError("请输入曲面表达式。")
@@ -76,7 +76,7 @@ def parse_surface_expression(source: str, kind: str) -> SurfaceExpression:
 
 
 def build_surface_mesh(expression: SurfaceExpression, parameters: dict[str, float], domain: PlotDomain) -> pv.PolyData:
-    """Build a PyVista mesh for the parsed surface inside ``domain``."""
+    """在指定定义域内为已解析曲面生成 PyVista 网格。"""
     if expression.kind == "implicit":
         return _build_implicit_mesh(expression, parameters, domain)
     if expression.kind == "explicit":
@@ -85,7 +85,7 @@ def build_surface_mesh(expression: SurfaceExpression, parameters: dict[str, floa
 
 
 def create_cas_layer(name: str, kind: str, source: str) -> SurfaceLayer:
-    """Create a layer with detected symbolic constants exposed as controls."""
+    """创建曲面图层，并将检测到的符号常量暴露为控制参数。"""
     expression = parse_surface_expression(source, kind)
     return SurfaceLayer(
         name=name.strip() or "CAS surface",
@@ -167,6 +167,7 @@ def _split_top_level(text: str) -> list[str]:
 def _parse_algebra(text: str) -> sp.Expr:
     if not text or "__" in text or not _ALGEBRA_CHARACTERS.fullmatch(text):
         raise ExpressionError("表达式包含不支持的字符。")
+    # 先校验字符与函数白名单，再交给 SymPy 解析，防止用户输入越过可用语法范围。
     for function_name in _FUNCTION_CALL.findall(text):
         if function_name not in _ALLOWED_FUNCTIONS:
             raise ExpressionError(f"不支持的函数: {function_name}")
@@ -278,6 +279,7 @@ def _build_implicit_mesh(expression: SurfaceExpression, parameters: dict[str, fl
         parameters,
     )[0]
     field[~np.isfinite(field)] = np.nan
+    # 隐式曲面通过三维标量场的零等值面提取，网格间距须与采样点数量严格对应。
     grid = pv.ImageData(
         dimensions=(domain.implicit_resolution,) * 3,
         spacing=(
@@ -297,7 +299,7 @@ def _build_linear_plane_mesh(
     domain: PlotDomain,
     equation: sp.Expr,
 ) -> pv.PolyData | None:
-    """Build a fixed rectangular patch when an equation is linear in x, y, and z."""
+    """当方程关于 x、y、z 均为线性时生成固定的矩形平面片。"""
     coordinates = tuple(sp.Symbol(axis, real=True) for axis in _COORDINATES)
     try:
         polynomial = sp.Poly(equation, *coordinates)
@@ -348,10 +350,8 @@ def _build_linear_plane_mesh(
     first_axis /= np.linalg.norm(first_axis)
     second_axis = np.cross(normal_unit, first_axis)
 
-    # This is intentionally a rectangular parametric patch.  Sampling the
-    # plane through a volume contour clips it to the domain cube, producing
-    # the hexagonal outline and stair-stepped border that are wrong for a
-    # teaching plane such as z = x + y.
+    # 这里有意使用矩形参数片。若用体等值面采样平面，会被定义域立方体裁剪成
+    # 六边形并产生阶梯边缘，不适合展示 z = x + y 这类教学平面。
     half_size = max(
         np.ptp(domain.x_range),
         np.ptp(domain.y_range),
@@ -398,7 +398,7 @@ def _build_parametric_mesh(expression: SurfaceExpression, parameters: dict[str, 
 
 
 def _remove_invalid_points(mesh: pv.PolyData) -> pv.PolyData:
-    """Discard cells touching samples outside the selected plotting bounds."""
+    """移除接触到绘图范围外采样点的单元。"""
     valid_points = np.isfinite(mesh.points).all(axis=1)
     if not np.all(valid_points):
         mesh = mesh.extract_points(valid_points, adjacent_cells=False).extract_surface(algorithm="dataset_surface")

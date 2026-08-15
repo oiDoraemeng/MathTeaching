@@ -1,4 +1,4 @@
-"""A compact catalog of built-in axis-aligned teaching surfaces."""
+"""内置教学曲面的紧凑目录。"""
 
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ _SURFACES_BY_ID = {surface.id: surface for surface in BUILTIN_SURFACES}
 
 
 def create_builtin_layer(surface_id: str) -> SurfaceLayer:
-    """Return an independently editable layer initialized from the catalog."""
+    """从目录创建一个可独立编辑的曲面图层。"""
     try:
         surface = _SURFACES_BY_ID[surface_id]
     except KeyError as error:

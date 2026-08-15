@@ -1,4 +1,4 @@
-"""Regression tests for surface-pair intersection curves."""
+"""曲面对交线计算的回归测试。"""
 
 import unittest
 

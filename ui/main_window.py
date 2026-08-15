@@ -1,4 +1,4 @@
-"""Main PySide6 window for the analytic geometry lesson."""
+"""解析几何课程的 PySide6 主窗口。"""
 
 from pathlib import Path
 
@@ -14,7 +14,7 @@ from rendering.scene import build_scene
 
 
 class ParameterControl(QWidget):
-    """Slider row with a precise readout.
+    """带精确读数的滑块行。
 
     UI 控件说明：
     - 滑块内部范围：1 ~ 300（对应 0.01 ~ 3.0），拖动步长 0.01
@@ -164,7 +164,7 @@ class MainWindow(QMainWindow):
         params = self._parameters()
         show_axes = self.axes_button.isChecked()
         show_helpers = self.helpers_button.isChecked()
-        # Render once at SSAA for a crisp export, then restore the fast MSAA path.
+        # 导出时临时采用 SSAA 获得清晰图像，完成后恢复速度更快的 MSAA 渲染路径。
         build_scene(self.plotter, params, show_axes, show_helpers, high_quality=True)
         self.plotter.screenshot(filename)
         build_scene(self.plotter, params, show_axes, show_helpers, high_quality=False)

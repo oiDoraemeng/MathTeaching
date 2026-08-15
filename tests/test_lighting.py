@@ -1,4 +1,4 @@
-"""Tests for reusable three-point-light setting updates."""
+"""可复用三点光源设置更新的测试。"""
 
 import unittest
 
