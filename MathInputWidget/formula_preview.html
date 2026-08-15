@@ -60,8 +60,8 @@
         formula.mathVirtualKeyboardPolicy = 'manual';
         formula.addEventListener('input', height.schedule);
         height.observeContent();
-        // Qt captures preview clicks natively so the response is immediate even
-        // when WebEngine's web-channel callback timing differs by platform.
+        // 点击由 Qt 原生层捕获；即使不同平台的 WebEngine WebChannel 回调时序不同，
+        // 预览区也能立即响应。
         window.formulaPreview = { setLatex };
         window.formulaPreviewReady = true;
         setLatex(window.pendingFormulaLatex || '');

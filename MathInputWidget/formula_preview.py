@@ -1,4 +1,4 @@
-"""Read-only MathLive formula preview for compact Qt layouts."""
+"""用于紧凑 Qt 布局的只读 MathLive 公式预览。"""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QLabel, QStackedLayout, QWidget
 
 
 class _FormulaPreviewBridge(QObject):
-    """Receive edit requests from the static formula preview."""
+    """接收静态公式预览页发出的编辑请求。"""
 
     edit_requested = Signal()
     content_height_changed = Signal(int)
@@ -28,7 +28,7 @@ class _FormulaPreviewBridge(QObject):
 
 
 class _FormulaPreviewClickTarget(QWidget):
-    """Transparent Qt click layer kept above the native web preview."""
+    """覆盖在原生网页预览上方的透明 Qt 点击层。"""
 
     clicked = Signal()
 
@@ -46,7 +46,7 @@ class _FormulaPreviewClickTarget(QWidget):
 
 
 class FormulaPreviewWidget(QWidget):
-    """Render a static formula and request direct editing on click."""
+    """渲染静态公式，并在点击时请求直接编辑。"""
 
     edit_requested = Signal()
     content_height_changed = Signal(int)
@@ -57,6 +57,7 @@ class FormulaPreviewWidget(QWidget):
         super().__init__(parent)
         self._latex = latex
         self._page_ready = False
+        self._editing_mode = False  # 其他公式处于编辑状态时暂时隐藏当前网页预览。
         self.web_view: QWebEngineView | None = None
         self._bridge = _FormulaPreviewBridge(self)
         self._bridge.edit_requested.connect(self.edit_requested)
@@ -78,25 +79,32 @@ class FormulaPreviewWidget(QWidget):
         self.setToolTip(latex)
 
     def get_latex(self) -> str:
-        """Return the formula currently represented by the preview."""
+        """返回当前预览所表示的公式。"""
         return self._latex
 
     def set_latex(self, latex: str) -> None:
-        """Update the cached value and its browser representation when ready."""
+        """更新缓存值；网页就绪后同步更新其展示内容。"""
         self._latex = latex
         self.setToolTip(latex)
         self._fallback_label.setText(latex)
         if self._page_ready:
             self._set_browser_latex(latex)
 
+    def set_editing_mode(self, enabled: bool) -> None:
+        """其他公式进行行内编辑时临时隐藏网页预览。"""
+        self._editing_mode = enabled
+        if self.web_view is not None:
+            # 隐藏网页视图但不销毁，结束编辑后无需重新加载和排版公式。
+            self.web_view.setVisible(not enabled)
+
     def showEvent(self, event: QShowEvent) -> None:
-        """Load the browser only for formulas that are actually shown."""
+        """仅在公式实际显示时加载浏览器视图。"""
         super().showEvent(event)
         self._ensure_web_view()
         self._click_target.raise_()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        """Request editing when the rendered formula is clicked."""
+        """点击已渲染公式时请求进入编辑状态。"""
         if event.button() == Qt.MouseButton.LeftButton:
             self._request_edit()
             event.accept()
@@ -108,8 +116,8 @@ class FormulaPreviewWidget(QWidget):
             return self.web_view
         self.web_view = QWebEngineView(self)
         self.web_view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-        # The preview is display-only. Let its parent receive every click so
-        # native WebEngine hit testing cannot block immediate in-place editing.
+        # 预览仅负责显示，所有点击交给父控件处理，避免原生 WebEngine 命中测试
+        # 阻塞即时行内编辑。
         self.web_view.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         self.web_view.setVisible(False)
         self.web_view.page().setBackgroundColor(QColor(0, 0, 0, 0))
@@ -125,11 +133,11 @@ class FormulaPreviewWidget(QWidget):
         return self.web_view
 
     def _request_edit(self) -> None:
-        """Emit one Qt-side edit request for either preview implementation."""
+        """为任意预览实现发出统一的 Qt 编辑请求。"""
         self.edit_requested.emit()
 
     def _set_content_height(self, height: int) -> None:
-        """Match the native preview host to MathLive's rendered formula."""
+        """让原生预览宿主高度匹配 MathLive 的实际公式高度。"""
         height = max(self._MINIMUM_FORMULA_HEIGHT, int(height))
         if height == self.height():
             return

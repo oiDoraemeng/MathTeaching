@@ -1,15 +1,15 @@
-"""Qt regression tests for the compact algebra-layer workflow."""
+"""单 WebEngine 代数图层工作流的 Qt 回归测试。"""
 
 import os
 import unittest
-from unittest.mock import patch
+from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
+from PySide6.QtWebEngineWidgets import QWebEngineView
 
-from MathInputWidget import FormulaPreviewWidget
+from MathInputWidget import FormulaListWidget
 from models.surface_layer import SurfaceLayer
 from ui.algebra_panel import AlgebraPanel
 
@@ -28,125 +28,103 @@ class AlgebraPanelTests(unittest.TestCase):
 
         self.assertEqual(events, [("implicit", r"x^2+y^2+z^2=1")])
 
-    def test_compact_row_has_only_visibility_formula_and_settings_actions(self) -> None:
-        layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
+    def test_function_list_uses_one_webengine_for_all_layers(self) -> None:
+        first = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
+        second = SurfaceLayer("plane", "explicit", "z=x+y", latex=r"z=x+y")
         panel = AlgebraPanel()
-        panel.set_layers([layer])
-        row = panel.rows[layer.id]
 
-        self.assertEqual(row.minimumHeight(), 48)
-        self.assertTrue(hasattr(row, "visible_button"))
-        self.assertTrue(hasattr(row, "expression_button"))
-        self.assertIsInstance(row.expression_button, FormulaPreviewWidget)
-        self.assertEqual(row.expression_button.get_latex(), r"x^2+y^2+z^2=1")
-        self.assertTrue(hasattr(row, "settings_button"))
-        self.assertEqual(row.settings_button.text(), "⋮")
-        self.assertFalse(hasattr(row, "opacity_slider"))
-        self.assertFalse(hasattr(row, "range_slider"))
+        panel.set_layers([first, second])
+
+        self.assertIsInstance(panel.formula_list, FormulaListWidget)
+        self.assertEqual(len(panel.formula_list.findChildren(QWebEngineView)), 1)
+        self.assertEqual(list(panel.formula_list._layers), [first.id, second.id])
+
+    def test_formula_list_bridge_starts_editing_only_for_the_selected_layer(self) -> None:
+        first = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
+        second = SurfaceLayer("plane", "explicit", "z=x+y", latex=r"z=x+y")
+        panel = AlgebraPanel()
+        panel.set_layers([first, second])
+
+        panel.formula_list._bridge.edit_requested.emit(second.id)
+
+        self.assertEqual(panel._inline_active_layer_id, second.id)
+        self.assertEqual(set(panel.formula_list._layers), {first.id, second.id})
 
     def test_formula_submission_updates_only_the_selected_layer(self) -> None:
         layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
         panel = AlgebraPanel()
         updates: list[tuple[str, str, str]] = []
-        panel.update_requested.connect(lambda layer_id, kind, formula: updates.append((layer_id, kind, formula)))
-        panel.set_layers([layer])
-
-        panel._active_layer_id = layer.id
-        panel._submit_formula("implicit", r"x^2+y^2+z^2=r^2")
-
-        self.assertEqual(updates, [(layer.id, "implicit", r"x^2+y^2+z^2=r^2")])
-
-    def test_submitting_an_inline_formula_updates_that_layer(self) -> None:
-        layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
-        panel = AlgebraPanel()
-        updates: list[tuple[str, str, str]] = []
-        panel.set_layers([layer])
         panel.update_requested.connect(
-            lambda layer_id, kind, latex: updates.append((layer_id, kind, latex))
+            lambda layer_id, kind, formula: updates.append((layer_id, kind, formula))
         )
+        panel.set_layers([layer])
 
         panel._inline_active_layer_id = layer.id
-        panel._submit_inline_formula(r"x^2+y^2+z^2=r^2")
+        panel._submit_inline_formula(layer.id, r"x^2+y^2+z^2=r^2")
 
         self.assertEqual(updates, [(layer.id, "implicit", r"x^2+y^2+z^2=r^2")])
 
-    def test_formula_preview_click_opens_the_main_window_inline_editor(self) -> None:
-        layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
+    def test_formula_list_bridge_submits_the_selected_layer(self) -> None:
+        first = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
+        second = SurfaceLayer("plane", "explicit", "z=x+y", latex=r"z=x+y")
         panel = AlgebraPanel()
-        panel.set_layers([layer])
-        preview = panel.rows[layer.id].expression_button
+        updates: list[tuple[str, str, str]] = []
+        panel.update_requested.connect(
+            lambda layer_id, kind, formula: updates.append((layer_id, kind, formula))
+        )
+        panel.set_layers([first, second])
 
-        with patch("ui.algebra_panel.InlineFormulaEditorOverlay") as overlay_class:
-            preview._bridge.edit_requested.emit()
+        panel.formula_list._bridge.formula_submitted.emit(second.id, r"z=2*x+y")
 
-            self.assertEqual(panel._inline_active_layer_id, layer.id)
-            self.assertIs(panel.inline_editor, overlay_class.return_value)
-            overlay_class.return_value.open_formula.assert_called_once()
+        self.assertEqual(updates, [(second.id, "explicit", r"z=2*x+y")])
+        self.assertEqual(panel._inline_active_layer_id, second.id)
 
-    def test_rendered_preview_passes_clicks_to_the_formula_row(self) -> None:
-        layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
+    def test_formula_list_visibility_is_scoped_to_the_selected_layer(self) -> None:
+        first = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1")
+        second = SurfaceLayer("plane", "explicit", "z=x+y")
         panel = AlgebraPanel()
-        panel.set_layers([layer])
-        preview = panel.rows[layer.id].expression_button
-        web_view = preview._ensure_web_view()
+        events: list[tuple[str, bool]] = []
+        panel.visibility_changed.connect(lambda layer_id, visible: events.append((layer_id, visible)))
+        panel.set_layers([first, second])
 
-        self.assertTrue(
-            web_view.testAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        )
-        self.assertEqual(preview._click_target.cursor().shape(), Qt.CursorShape.IBeamCursor)
+        panel.formula_list._bridge.visibility_changed.emit(second.id, False)
 
-    def test_formula_row_expands_for_tall_typeset_content(self) -> None:
-        layer = SurfaceLayer(
-            "matrix",
-            "implicit",
-            "determinant",
-            latex=r"\begin{vmatrix}a&b\\c&d\end{vmatrix}=1",
-        )
+        self.assertEqual(events, [(second.id, False)])
+
+    def test_formula_list_html_contains_inline_editor_and_bridge_contract(self) -> None:
+        html_path = Path(__file__).parents[1] / "MathInputWidget" / "formula_list.html"
+        html = html_path.read_text(encoding="utf-8")
+
+        self.assertIn("qrc:///qtwebchannel/qwebchannel.js", html)
+        self.assertIn("window.formulaList", html)
+        self.assertIn("bridge.formulaSubmitted", html)
+        self.assertIn("bridge.editCancelled", html)
+        self.assertIn("setLayers,", html)
+        self.assertIn("setReadOnly(field, false)", html)
+
+    def test_advanced_lighting_button_requests_the_existing_lighting_editor(self) -> None:
         panel = AlgebraPanel()
-        panel.set_layers([layer])
-        row = panel.rows[layer.id]
+        events: list[bool] = []
+        panel.lighting_requested.connect(lambda: events.append(True))
 
-        row.set_formula_height(104)
+        panel.lighting_button.click()
 
-        self.assertEqual(row.expression_button.height(), 104)
-        self.assertEqual(row.height(), 112)
+        self.assertEqual(events, [True])
 
-    def test_inline_formula_editor_moves_native_actions_to_keyboard_toolbar(self) -> None:
-        widget_dir = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
-            "MathInputWidget",
-        )
-        editor_path = os.path.join(widget_dir, "inline_formula_overlay.html")
-        bridge_path = os.path.join(widget_dir, "mathlive-bridge.js")
-
-        with open(editor_path, encoding="utf-8") as f:
-            editor_html = f.read()
-        with open(bridge_path, encoding="utf-8") as f:
-            bridge_js = f.read()
-
-        self.assertIn("math-field::part(virtual-keyboard-toggle)", editor_html)
-        self.assertIn("math-field::part(menu-toggle)", editor_html)
-        self.assertIn("MathLiveBridge.installKeyboardToolbarActions", editor_html)
-        self.assertIn("installKeyboardToolbarActions", bridge_js)
-        self.assertIn("createNativeToolbarAction", bridge_js)
-        self.assertIn("data-action=mathlive-menu", bridge_js)
-        self.assertIn("_mathfield.showMenu", bridge_js)
-        self.assertNotIn("formula.menuItems = []", editor_html)
-        self.assertIn("contentHeightChanged", bridge_js)
-
-    def test_each_row_exposes_independent_surface_and_intersection_toggles(self) -> None:
+    def test_each_layer_keeps_independent_surface_and_intersection_events(self) -> None:
         layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1")
         panel = AlgebraPanel()
         visibility_events: list[tuple[str, bool]] = []
         intersection_events: list[tuple[str, bool]] = []
-        panel.visibility_changed.connect(lambda layer_id, visible: visibility_events.append((layer_id, visible)))
+        panel.visibility_changed.connect(
+            lambda layer_id, visible: visibility_events.append((layer_id, visible))
+        )
         panel.intersections_visibility_changed.connect(
             lambda layer_id, visible: intersection_events.append((layer_id, visible))
         )
         panel.set_layers([layer])
-        row = panel.rows[layer.id]
 
-        row.visible_button.click()
+        panel.formula_list._bridge.visibility_changed.emit(layer.id, False)
         panel.settings_popup.open_layer(layer, None)
         panel.settings_popup.intersections_check.setChecked(False)
 
@@ -157,15 +135,6 @@ class AlgebraPanelTests(unittest.TestCase):
         panel = AlgebraPanel()
 
         self.assertFalse(hasattr(panel.settings_popup, "kind_combo"))
-
-    def test_advanced_lighting_button_requests_the_existing_lighting_editor(self) -> None:
-        panel = AlgebraPanel()
-        events: list[bool] = []
-        panel.lighting_requested.connect(lambda: events.append(True))
-
-        panel.lighting_button.click()
-
-        self.assertEqual(events, [True])
 
     def test_layer_settings_popup_emits_range_only_when_slider_is_released(self) -> None:
         layer = SurfaceLayer("plane", "explicit", "z = x + y")
@@ -203,13 +172,13 @@ class AlgebraPanelTests(unittest.TestCase):
         layer = SurfaceLayer("plane", "explicit", "z=x+y", latex=r"z=x+y")
         panel = AlgebraPanel()
         panel.set_layers([layer])
+        panel._inline_active_layer_id = layer.id
+        panel.formula_list._active_layer_id = layer.id
 
-        panel._open_formula_for_layer(layer.id, layer.kind, layer.latex or layer.expression, None)
         panel._open_settings(layer.id, None)
 
-        self.assertFalse(panel.formula_popup.isVisible())
         self.assertTrue(panel.settings_popup.isVisible())
-        self.assertIsNone(panel._active_layer_id)
+        self.assertIsNone(panel._inline_active_layer_id)
 
 
 if __name__ == "__main__":

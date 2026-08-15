@@ -1,4 +1,4 @@
-"""PySide6 widget that hosts one MathLive formula field."""
+"""承载单个 MathLive 公式输入框的 PySide6 控件。"""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ class _FormulaBridge(QObject):
 
 
 class MathInputWidget(QWidget):
-    """A reusable MathLive editor with synchronous cached LaTeX access."""
+    """可复用的 MathLive 编辑器，提供同步的 LaTeX 缓存访问。"""
 
     latexChanged = Signal(str)
     submitted = Signal(str)
@@ -75,23 +75,23 @@ class MathInputWidget(QWidget):
             application.installEventFilter(self)
 
     def get_latex(self) -> str:
-        """Return the latest browser-originated or programmatically set LaTeX."""
+        """返回最新的浏览器输入值或程序设置的 LaTeX。"""
         return self._latex
 
     def set_latex(self, latex: str) -> None:
-        """Set MathLive contents and make the value available immediately."""
+        """设置 MathLive 内容，并立即更新可读取的缓存值。"""
         self._latex = latex
         if self._page_ready:
             self._set_browser_latex(latex)
 
     def set_placeholder(self, placeholder: str) -> None:
-        """Set a MathLive placeholder appropriate for the selected surface kind."""
+        """按选定的曲面类型设置合适的 MathLive 占位提示。"""
         self._placeholder = placeholder
         if self._page_ready:
             self._run_javascript(f"window.mathInput.setPlaceholder({json.dumps(placeholder)});")
 
     def focus_editor(self) -> None:
-        """Focus the MathLive field once its page is ready."""
+        """在页面准备完成后聚焦 MathLive 输入框。"""
         if not self.isVisible():
             return
         self._focus_requested = True
@@ -100,25 +100,25 @@ class MathInputWidget(QWidget):
             self._focus_math_field()
 
     def show_virtual_keyboard(self) -> None:
-        """Focus the field and show MathLive's floating virtual keyboard."""
+        """聚焦输入框并显示 MathLive 悬浮虚拟键盘。"""
         self.focus_editor()
 
     def hide_virtual_keyboard(self) -> None:
-        """Hide the keyboard and return this widget to its compact height."""
+        """隐藏虚拟键盘，并将控件恢复为紧凑高度。"""
         self._run_javascript(
             "if (window.mathInputReady) window.mathInput.hideKeyboard();"
         )
         self._set_keyboard_height(0)
 
     def showEvent(self, event: QShowEvent) -> None:
-        """Create the Chromium view only when the reusable editor becomes visible."""
+        """仅在复用编辑器实际可见时创建 Chromium 视图。"""
         super().showEvent(event)
         self._ensure_web_view()
         if self._focus_requested and self._page_ready:
             QTimer.singleShot(0, self._focus_math_field)
 
     def hideEvent(self, event: QHideEvent) -> None:
-        """Do not leave an orphaned MathLive keyboard after its host closes."""
+        """宿主关闭后不保留游离的 MathLive 虚拟键盘。"""
         self.hide_virtual_keyboard()
         super().hideEvent(event)
 
@@ -143,7 +143,7 @@ class MathInputWidget(QWidget):
         self.submitted.emit(latex)
 
     def _set_keyboard_height(self, keyboard_height: int) -> None:
-        """Resize the native host so MathLive's keyboard is never clipped."""
+        """调整原生宿主高度，避免 MathLive 键盘被裁剪。"""
         keyboard_height = max(0, keyboard_height)
         was_visible = self._keyboard_height > 0
         self._keyboard_height = keyboard_height
@@ -153,7 +153,7 @@ class MathInputWidget(QWidget):
             self.keyboardVisibilityChanged.emit(keyboard_height > 0)
 
     def _set_formula_height(self, formula_height: int) -> None:
-        """Use the rendered MathLive field height instead of a fixed editor size."""
+        """使用 MathLive 实际渲染高度，而不是固定编辑器高度。"""
         formula_height = max(self._EDITOR_HEIGHT, int(formula_height))
         if formula_height == self._formula_height:
             return
@@ -171,7 +171,7 @@ class MathInputWidget(QWidget):
         self.setFixedHeight(height)
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
-        """Dismiss the keyboard when a click lands outside this input widget."""
+        """当点击落在输入控件外时收起虚拟键盘。"""
         if (
             getattr(self, "_keyboard_height", 0)
             and event.type() == QEvent.Type.MouseButtonPress

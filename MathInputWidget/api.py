@@ -1,4 +1,4 @@
-"""Standalone SymPy-to-PyVista bridge for MathInputWidget consumers."""
+"""供 MathInputWidget 调用的独立 SymPy 到 PyVista 转换桥接层。"""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import sympy as sp
 
 
 class FormulaVisualizer:
-    """Create a PyVista mesh from a SymPy expression while reusing CAS sampling."""
+    """复用 CAS 采样逻辑，将 SymPy 表达式转换为 PyVista 网格。"""
 
     def build_mesh(
         self,
@@ -56,7 +56,7 @@ class FormulaVisualizer:
 
     @staticmethod
     def _real_coordinates(formula: sp.Expr | sp.Equality) -> sp.Expr | sp.Equality:
-        """Unify ordinary SymPy x/y/z symbols with the renderer's real symbols."""
+        """将普通 SymPy 的 x/y/z 符号统一为渲染器使用的实数符号。"""
         replacements = {
             symbol: sp.Symbol(symbol.name, real=True)
             for symbol in formula.free_symbols

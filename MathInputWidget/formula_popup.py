@@ -1,4 +1,4 @@
-"""Reusable non-modal MathLive editor window."""
+"""可复用的非模态 MathLive 公式编辑弹窗。"""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from .widget import MathInputWidget
 
 
 class FormulaEditorPopup(QDialog):
-    """A floating editor that dismisses unsubmitted changes when focus moves away."""
+    """焦点离开时丢弃未提交内容的悬浮公式编辑器。"""
 
     submitted = Signal(str, str)
     dismissed = Signal()
@@ -48,7 +48,7 @@ class FormulaEditorPopup(QDialog):
         placeholder: str,
         anchor: QPoint | None = None,
     ) -> None:
-        """Open the editor with a cached formula, without submitting it yet."""
+        """使用缓存公式打开编辑器，此时不提交修改。"""
         self._anchor = anchor
         self._kind = kind
         self.editor.set_placeholder(placeholder)
@@ -58,15 +58,15 @@ class FormulaEditorPopup(QDialog):
         QTimer.singleShot(0, self.editor.show_virtual_keyboard)
 
     def current_kind(self) -> str:
-        """Return the existing layer kind while syntax determines new layers."""
+        """编辑现有图层时保持原类型；新增图层仍由公式语法决定类型。"""
         return self._kind
 
     def accept_submission(self) -> None:
-        """Close only after the host confirms parsing and rendering succeeded."""
+        """仅在宿主确认解析和渲染成功后关闭弹窗。"""
         self.dismiss()
 
     def dismiss(self) -> None:
-        """Close the floating editor and discard the draft held only by this popup."""
+        """关闭悬浮编辑器，并丢弃仅由该弹窗保存的草稿。"""
         if not self.isVisible():
             return
         self.editor.hide_virtual_keyboard()

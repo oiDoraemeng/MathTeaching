@@ -1,8 +1,8 @@
 /**
- * Shared utilities for MathLive / Qt WebChannel bridge widgets.
+ * MathLive / Qt WebChannel 桥接控件共用的工具函数。
  *
- * Loaded by mathlive.html, inline_formula_overlay.html and
- * formula_preview.html before their own initialisation scripts.
+ * mathlive.html、inline_formula_overlay.html 与 formula_preview.html
+ * 会在各自初始化脚本之前加载本文件。
  */
 'use strict';
 
@@ -27,6 +27,7 @@ window.MathLiveBridge = (() => {
     const schedule = () => {
       if (scheduled) return;
       scheduled = true;
+      // 字体和 Shadow DOM 的重排时机不同，帧回调与短定时器共同保证高度最终会同步。
       requestAnimationFrame(report);
       setTimeout(report, 30);
     };
@@ -87,6 +88,7 @@ window.MathLiveBridge = (() => {
         toolbarActions.append(actions);
       }
       if (!actions.querySelector('[data-action=toggle-keyboard]')) {
+        // 复用 MathLive 原生按钮图标，同时把行为交给 Qt 侧提供的回调。
         const keyboardAction = createNativeToolbarAction(
           field, 'virtual-keyboard-toggle', 'toggle-keyboard',
           'Show or hide virtual keyboard',

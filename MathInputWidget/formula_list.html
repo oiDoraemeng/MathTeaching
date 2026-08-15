@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="mathlive-fonts.css">
+  <style>
+    :root { color-scheme: light; }
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      overflow-x: hidden;
+      background: #ffffff;
+      color: #1f2937;
+    }
+    #formula-list {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 100%;
+      padding: 0;
+    }
+    .layer-row {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      min-height: 48px;
+      padding: 4px 6px;
+      background: #f9fafb;
+      border: 1px solid #dfe3e8;
+      border-radius: 6px;
+    }
+    .layer-row button {
+      flex: 0 0 auto;
+      box-sizing: border-box;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      background: transparent;
+      color: #334155;
+      cursor: pointer;
+    }
+    .visibility-button {
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+    }
+    .settings-button {
+      width: 40px;
+      height: 40px;
+      font-size: 22px;
+      line-height: 1;
+    }
+    .layer-row button:hover {
+      background: #eef2f5;
+      border-color: #cfd8e1;
+    }
+    .formula-cell {
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 38px;
+      overflow: visible;
+      cursor: text;
+    }
+    math-field {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      min-height: 38px;
+      padding: 1px 4px;
+      overflow: visible;
+      color: #1f2937;
+      background: transparent;
+      border: 0;
+      font-size: 18px;
+      white-space: nowrap;
+      cursor: text;
+    }
+    math-field.editing {
+      padding: 1px 4px;
+      background: #fffdf4;
+      border: 2px solid #e59b00;
+      border-radius: 5px;
+    }
+    math-field::part(virtual-keyboard-toggle),
+    math-field::part(menu-toggle) {
+      display: none;
+    }
+    .mathlive-native-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 4px;
+    }
+    .mathlive-native-action {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 28px;
+      padding: 0;
+      color: var(--_toolbar-text, #2c2e2f);
+      background: var(--_toolbar-background, transparent);
+      border: 0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .mathlive-native-action:hover {
+      color: var(--_toolbar-text-active, #2f7ebd);
+      background: var(--_toolbar-background-hover, #eeeeee);
+    }
+    .mathlive-native-actions svg {
+      width: 18px;
+      height: 18px;
+    }
+  </style>
+  <script src="mathlive-bridge.js"></script>
+  <script defer src="mathlive.js"></script>
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+</head>
+<body>
+  <div id="formula-list"></div>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const list = document.getElementById('formula-list');
+      new QWebChannel(qt.webChannelTransport, async (channel) => {
+        await customElements.whenDefined('math-field');
+        const bridge = channel.objects.bridge;
+        let layers = new Map();
+        let active = null;
+
+        const rowFor = (layerId) => list.querySelector(`[data-layer-id="${CSS.escape(layerId)}"]`);
+        const fieldFor = (layerId) => rowFor(layerId)?.querySelector('math-field');
+        const hideKeyboard = () => {
+          if (window.mathVirtualKeyboard) {
+            window.mathVirtualKeyboard.hide();
+          }
+        };
+        const showKeyboard = (field, installToolbar) => {
+          if (!window.mathVirtualKeyboard) return;
+          field.focus();
+          window.mathVirtualKeyboard.show();
+          requestAnimationFrame(installToolbar);
+        };
+        const installFieldToolbar = (field) => MathLiveBridge.installKeyboardToolbarActions(
+          field,
+          {
+            toggleKeyboard: () => {
+              if (window.mathVirtualKeyboard.visible) {
+                hideKeyboard();
+              } else {
+                showKeyboard(field, installToolbar);
+              }
+            },
+          },
+        );
+        const syncRowHeight = (row, field) => {
+          const height = MathLiveBridge.formulaHeight(field, 38);
+          row.style.minHeight = `${Math.max(48, height + 8)}px`;
+        };
+        const watchField = (row, field) => {
+          const content = field.shadowRoot?.querySelector('[part=content]');
+          if (content) {
+            new ResizeObserver(() => syncRowHeight(row, field)).observe(content);
+          }
+          syncRowHeight(row, field);
+        };
+        const setReadOnly = (field, readOnly) => {
+          if (readOnly) {
+            field.setAttribute('read-only', '');
+            field.readOnly = true;
+          } else {
+            field.removeAttribute('read-only');
+            field.readOnly = false;
+          }
+        };
+        const finishEdit = (restore) => {
+          if (!active) return;
+          const field = active.field;
+          if (restore) {
+            field.setValue(active.savedLatex, { silenceNotifications: true });
+          }
+          setReadOnly(field, true);
+          field.classList.remove('editing');
+          hideKeyboard();
+          active = null;
+        };
+        const commit = () => {
+          if (!active || active.submissionPending) return;
+          const latex = active.field.getValue('latex');
+          if (!latex || latex === active.savedLatex) return;
+          active.submissionPending = true;
+          bridge.formulaSubmitted(active.layerId, latex);
+        };
+        const cancel = () => {
+          if (!active) return;
+          const layerId = active.layerId;
+          finishEdit(true);
+          bridge.editCancelled(layerId);
+        };
+        const startEdit = (layerId) => {
+          const field = fieldFor(layerId);
+          const row = rowFor(layerId);
+          if (!field || !row) return;
+          if (active && active.layerId !== layerId) {
+            cancel();
+          }
+          active = {
+            layerId,
+            field,
+            savedLatex: field.getValue('latex'),
+            submissionPending: false,
+          };
+          setReadOnly(field, false);
+          field.classList.add('editing');
+          field.scrollIntoView({ block: 'nearest' });
+          const installToolbar = installFieldToolbar(field);
+          installToolbar();
+          showKeyboard(field, installToolbar);
+          bridge.editRequested(layerId);
+        };
+        const bindRow = (layer, row, field) => {
+          field.setValue(layer.latex || '', { silenceNotifications: true });
+          setReadOnly(field, true);
+          watchField(row, field);
+          field.addEventListener('pointerdown', (event) => {
+            event.stopPropagation();
+            startEdit(layer.id);
+          });
+          field.addEventListener('input', () => {
+            if (active?.layerId === layer.id) {
+              active.submissionPending = false;
+            }
+            syncRowHeight(row, field);
+          });
+          field.addEventListener('keydown', (event) => {
+            if (active?.layerId !== layer.id) return;
+            if (event.key === 'Enter' && !event.shiftKey) {
+              event.preventDefault();
+              commit();
+            } else if (event.key === 'Escape') {
+              event.preventDefault();
+              cancel();
+            }
+          });
+          row.querySelector('.visibility-button').addEventListener('click', (event) => {
+            event.stopPropagation();
+            const visible = !Boolean(layers.get(layer.id).visible);
+            layers.get(layer.id).visible = visible;
+            event.currentTarget.textContent = visible ? 'o' : '-';
+            event.currentTarget.title = visible ? 'Hide function' : 'Show function';
+            bridge.visibilityChanged(layer.id, visible);
+          });
+          row.querySelector('.settings-button').addEventListener('click', (event) => {
+            event.stopPropagation();
+            const rect = row.getBoundingClientRect();
+            bridge.settingsRequested(layer.id, Math.round(rect.top), Math.round(rect.height));
+          });
+        };
+        const setLayers = (nextLayers) => {
+          if (active) {
+            finishEdit(true);
+          }
+          layers = new Map(nextLayers.map((layer) => [layer.id, {...layer}]));
+          list.replaceChildren();
+          for (const layer of layers.values()) {
+            const row = document.createElement('div');
+            row.className = 'layer-row';
+            row.dataset.layerId = layer.id;
+            const visibility = document.createElement('button');
+            visibility.className = 'visibility-button';
+            visibility.type = 'button';
+            visibility.textContent = layer.visible ? 'o' : '-';
+            visibility.title = layer.visible ? 'Hide function' : 'Show function';
+            const cell = document.createElement('div');
+            cell.className = 'formula-cell';
+            const field = document.createElement('math-field');
+            field.setAttribute('aria-label', 'Formula');
+            const settings = document.createElement('button');
+            settings.className = 'settings-button';
+            settings.type = 'button';
+            settings.textContent = '\u22ee';
+            settings.title = 'Function display and sampling settings';
+            cell.append(field);
+            row.append(visibility, cell, settings);
+            list.append(row);
+            bindRow(layer, row, field);
+          }
+        };
+        const updateLayer = (layer) => {
+          layers.set(layer.id, {...layer});
+          const field = fieldFor(layer.id);
+          const row = rowFor(layer.id);
+          if (!field || !row) return;
+          if (!active || active.layerId !== layer.id) {
+            field.setValue(layer.latex || '', { silenceNotifications: true });
+            setReadOnly(field, true);
+          }
+          row.querySelector('.visibility-button').textContent = layer.visible ? 'o' : '-';
+          row.querySelector('.visibility-button').title = layer.visible ? 'Hide function' : 'Show function';
+          syncRowHeight(row, field);
+        };
+        document.addEventListener('pointerdown', (event) => {
+          if (!active) return;
+          if (event.target.closest('math-field, .MLK__plate, .MLK__backdrop')) return;
+          if (active.field.getValue('latex') !== active.savedLatex) {
+            commit();
+          } else {
+            cancel();
+          }
+        });
+
+        window.formulaList = {
+          setLayers,
+          updateLayer,
+          acceptEdit: () => finishEdit(false),
+          cancelEdit: () => finishEdit(true),
+        };
+        window.formulaListReady = true;
+        if (window.pendingFormulaLayers) {
+          setLayers(window.pendingFormulaLayers);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

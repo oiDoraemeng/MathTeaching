@@ -1,4 +1,4 @@
-"""Convert MathLive LaTeX into safe, canonical CAS surface expressions."""
+"""将 MathLive LaTeX 转换为安全、规范的 CAS 曲面表达式。"""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from sympy.parsing.latex import parse_latex
 
 
 class LatexParseError(ValueError):
-    """Raised when a MathLive formula cannot describe a renderable surface."""
+    """当 MathLive 公式无法表示可渲染曲面时抛出。"""
 
 
 _COORDINATES = {"x", "y", "z"}
@@ -19,7 +19,7 @@ _UNSUPPORTED_COMMANDS = (r"\int", r"\sum", r"\prod", r"\infty", r"\lim", r"\begi
 _OPERATOR_FUNCTIONS = ("abs", "cos", "exp", "log", "sin", "sqrt", "tan")
 @dataclass(frozen=True)
 class ParsedFormula:
-    """A MathLive formula normalized for the existing CAS rendering pipeline."""
+    """已规范化、可接入现有 CAS 渲染流程的 MathLive 公式。"""
 
     latex: str
     kind: str
@@ -30,10 +30,10 @@ class ParsedFormula:
 
 
 class LatexParser:
-    """Parse MathLive output without coupling callers to a browser widget."""
+    """解析 MathLive 输出，不让调用方依赖浏览器控件。"""
 
     def parse_2d(self, latex: str, requested_kind: str = "implicit") -> ParsedFormula:
-        """Parse a 2D formula, including the compact t-range parametric form."""
+        """解析二维公式，包括紧凑的带 t 范围参数式。"""
         latex = latex.strip()
         if not latex:
             raise LatexParseError("璇疯緭鍏ユ暟瀛﹀叕寮忋€?")
@@ -73,7 +73,7 @@ class LatexParser:
         return self._build_implicit(latex, left - right)
 
     def _parse_parametric(self, latex: str) -> ParsedFormula:
-        """Parse MathLive coordinate and range fragments independently with SymPy."""
+        """使用 SymPy 分别解析 MathLive 坐标片段与参数范围片段。"""
         source = (
             latex.replace(r"\left(", "(")
             .replace(r"\right)", ")")
@@ -179,7 +179,7 @@ class LatexParser:
 
     @staticmethod
     def _looks_like_parametric(latex: str) -> bool:
-        """Recognize a coordinate triple with both u and v ranges."""
+        """识别同时包含 u、v 范围的三元坐标参数式。"""
         return ";" in latex and bool(
             re.search(r"\bu\s*=\s*(?:\\left\s*)?\[", latex)
             and re.search(r"\bv\s*=\s*(?:\\left\s*)?\[", latex)

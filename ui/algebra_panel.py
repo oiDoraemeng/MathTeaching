@@ -1,4 +1,4 @@
-"""Algebra list, function catalog, and mode-aware layer controls."""
+"""代数列表、函数目录与按场景模式适配的图层控制。"""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from MathInputWidget import FormulaEditorPopup, FormulaPreviewWidget, InlineFormulaEditorOverlay
+from MathInputWidget import FormulaEditorPopup, FormulaListWidget, FormulaPreviewWidget
 from models.curve_layer import CurveLayer
 from models.function_catalog import CatalogEntry
 from models.scene_mode import SceneMode
@@ -48,7 +48,7 @@ _PLACEHOLDERS = {
 
 
 class LayerSettingsPopup(QDialog):
-    """Per-layer display controls that adapt to curves and surfaces."""
+    """随曲线或曲面类型切换的单图层显示控制面板。"""
 
     intersections_changed = Signal(str, bool)
     intersection_color_changed = Signal(str, str)
@@ -151,7 +151,7 @@ class LayerSettingsPopup(QDialog):
         for control in controls:
             control.blockSignals(True)
         try:
-            # Surfaces use 0.1–1.0 (viewport fraction), curves use 1.0–5.0 (absolute).
+            # 曲面范围使用视口的 10% 至 100%；曲线范围使用 1.0 至 5.0 倍的绝对缩放。
             if self._is_curve:
                 self.line_width_slider.setValue(round(layer.line_width * 10))
                 self.range_slider.setMinimum(10)
@@ -252,7 +252,7 @@ class LayerSettingsPopup(QDialog):
 
 
 class IntersectionPopup(QDialog):
-    """Legacy manual pair selector retained only for API compatibility."""
+    """仅为 API 兼容而保留的旧版手动交线选择器。"""
 
     requested = Signal(str, str)
 
@@ -286,7 +286,7 @@ class IntersectionPopup(QDialog):
 
 
 class CatalogEntryRow(QFrame):
-    """Clickable catalog row whose preview always uses MathLive typesetting."""
+    """可点击的函数目录行，预览统一由 MathLive 排版。"""
 
     selected = Signal(str)
 
@@ -314,7 +314,7 @@ class CatalogEntryRow(QFrame):
 
 
 class FunctionCatalogPopup(QDialog):
-    """Scrollable scene-filtered catalog shown under the left functions button."""
+    """显示在左侧函数按钮下方、并按场景筛选的可滚动目录。"""
 
     requested = Signal(str)
 
@@ -380,7 +380,7 @@ class FunctionCatalogPopup(QDialog):
 
 
 class LayerRow(QFrame):
-    """One compact row: visibility, direct MathLive editing, and settings."""
+    """包含可见性、MathLive 直接编辑和设置入口的紧凑图层行。"""
 
     edit_requested = Signal(str, str, str, object)
     settings_requested = Signal(str, object)
@@ -464,7 +464,7 @@ class LayerRow(QFrame):
 
 
 class AlgebraPanel(QFrame):
-    """Compact algebra panel shared by independent 2D and 3D scenes."""
+    """由相互独立的二维和三维场景共用的紧凑代数面板。"""
 
     add_requested = Signal(str, str)
     update_requested = Signal(str, str, str)
@@ -477,7 +477,7 @@ class AlgebraPanel(QFrame):
     line_width_changed = Signal(str, float)
     range_changed = Signal(str, float)
     catalog_requested = Signal(str)
-    # Kept for plug-in and older test compatibility; no corresponding toolbar actions remain.
+        # 为插件和旧测试保留该信号；工具栏中已没有对应的可见操作入口。
     builtin_requested = Signal(str)
     lighting_requested = Signal()
     auto_intersections_changed = Signal(bool)
@@ -490,7 +490,7 @@ class AlgebraPanel(QFrame):
         self._scene_mode = SceneMode.THREE_D
         self._active_layer_id: str | None = None
         self._inline_active_layer_id: str | None = None
-        self.inline_editor: InlineFormulaEditorOverlay | None = None
+        self.inline_editor = None
         self.setObjectName("algebraPanel")
         self.setMinimumWidth(300)
         self.setMaximumWidth(360)
@@ -509,7 +509,7 @@ class AlgebraPanel(QFrame):
         toolbar.addWidget(self.function_catalog_button)
         layout.addLayout(toolbar)
 
-        # These objects preserve the old public API without reintroducing hidden toolbar controls.
+        # 这些对象维持旧版公开 API，同时不重新引入隐藏的工具栏控件。
         self.builtin_button = self.function_catalog_button
         self.builtin_menu = QMenu(self)
         self.lighting_button = QToolButton(self)
@@ -523,18 +523,10 @@ class AlgebraPanel(QFrame):
         self.intersection_menu.addAction(self.auto_intersections_action)
         self.intersection_menu.addAction(self.manual_intersection_action)
 
-        self.rows_container = QWidget(self)
-        self.rows_container.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.MinimumExpanding)
-        self.rows_layout = QVBoxLayout(self.rows_container)
-        self.rows_layout.setContentsMargins(0, 0, 0, 0)
-        self.rows_layout.setSpacing(4)
-        self.rows_layout.addStretch()
-        self.rows_scroll = QScrollArea(self)
-        self.rows_scroll.setWidgetResizable(True)
-        self.rows_scroll.setFrameShape(QFrame.Shape.NoFrame)
-        self.rows_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.rows_scroll.setWidget(self.rows_container)
-        layout.addWidget(self.rows_scroll, 1)
+        self.formula_list = FormulaListWidget(self)
+        self.rows_container = self.formula_list
+        self.rows_scroll = self.formula_list
+        layout.addWidget(self.formula_list, 1)
         self.status_label = QLabel("", self)
         self.status_label.setObjectName("algebraStatus")
         self.status_label.setWordWrap(True)
@@ -561,10 +553,14 @@ class AlgebraPanel(QFrame):
         self.settings_popup.delete_requested.connect(self.delete_requested)
         self.intersection_popup.requested.connect(self.manual_intersection_requested)
         self.catalog_popup.requested.connect(self.catalog_requested)
+        self.formula_list.edit_requested.connect(self._open_inline_formula_for_layer)
+        self.formula_list.formula_submitted.connect(self._submit_inline_formula)
+        self.formula_list.edit_cancelled.connect(self._cancel_inline_formula_edit)
+        self.formula_list.visibility_changed.connect(self.visibility_changed)
+        self.formula_list.settings_requested.connect(self._open_settings)
 
     def showEvent(self, event: QShowEvent) -> None:
         super().showEvent(event)
-        QTimer.singleShot(0, self._ensure_inline_editor)
 
     @staticmethod
     def _tool_button(text: str, tooltip: str) -> QToolButton:
@@ -576,6 +572,7 @@ class AlgebraPanel(QFrame):
 
     def set_scene_mode(self, mode: SceneMode) -> None:
         self._scene_mode = mode
+        self.formula_list.cancel_edit()
         self.settings_popup.hide()
         self.catalog_popup.hide()
 
@@ -592,18 +589,8 @@ class AlgebraPanel(QFrame):
 
     def set_layers(self, layers: Iterable[Layer]) -> None:
         self._layers = list(layers)
-        while self.rows_layout.count() > 1:
-            item = self.rows_layout.takeAt(0)
-            if item.widget() is not None:
-                item.widget().deleteLater()
         self.rows.clear()
-        for layer in self._layers:
-            row = LayerRow(layer, self.rows_container)
-            row.edit_requested.connect(self._open_inline_formula_for_layer)
-            row.settings_requested.connect(self._open_settings)
-            row.visibility_changed.connect(self.visibility_changed)
-            self.rows[layer.id] = row
-            self.rows_layout.insertWidget(self.rows_layout.count() - 1, row)
+        self.formula_list.set_layers(self._layers)
         self.intersection_popup.set_layers(
             layer for layer in self._layers if isinstance(layer, SurfaceLayer)
         )
@@ -618,9 +605,9 @@ class AlgebraPanel(QFrame):
     def confirm_formula_saved(self) -> None:
         self._active_layer_id = None
         self.formula_popup.accept_submission()
-        if self._inline_active_layer_id is not None and self.inline_editor is not None:
+        if self._inline_active_layer_id is not None:
             self._inline_active_layer_id = None
-            self.inline_editor.accept_submission()
+            self.formula_list.accept_edit()
 
     def finish_edit(self) -> None:
         self.confirm_formula_saved()
@@ -628,19 +615,19 @@ class AlgebraPanel(QFrame):
     def _open_new_formula(self) -> None:
         self.settings_popup.hide()
         self.catalog_popup.hide()
-        self._dismiss_inline_editor()
+        self.formula_list.cancel_edit()
         self._active_layer_id = None
         placeholder = _PLACEHOLDERS[self._scene_mode]["explicit"]
         self.formula_popup.open_formula("", "explicit", placeholder, self._popup_anchor(self.new_formula_button))
 
     def _open_catalog(self) -> None:
         self.settings_popup.hide()
-        self._dismiss_inline_editor()
+        self.formula_list.cancel_edit()
         self.catalog_popup.open_at(self._popup_anchor(self.function_catalog_button))
 
     def _open_formula_for_layer(self, layer_id: str, kind: str, latex: str, anchor: QPoint | None) -> None:
         self.settings_popup.hide()
-        self._dismiss_inline_editor()
+        self.formula_list.cancel_edit()
         self._active_layer_id = layer_id
         placeholder = _PLACEHOLDERS[self._scene_mode].get(kind, _PLACEHOLDERS[self._scene_mode]["explicit"])
         self.formula_popup.open_formula(latex, kind, placeholder, anchor)
@@ -651,7 +638,7 @@ class AlgebraPanel(QFrame):
             return
         self.formula_popup.dismiss()
         self.catalog_popup.hide()
-        self._dismiss_inline_editor()
+        self.formula_list.cancel_edit()
         self.settings_popup.open_layer(layer, anchor)
 
     def _open_manual_intersection_popup(self) -> None:
@@ -665,55 +652,27 @@ class AlgebraPanel(QFrame):
             return
         self.update_requested.emit(self._active_layer_id, kind, latex)
 
-    def _open_inline_formula_for_layer(
-        self, layer_id: str, _kind: str, latex: str, global_position: QPoint
-    ) -> None:
-        row = self.rows.get(layer_id)
-        if row is None:
+    def _open_inline_formula_for_layer(self, layer_id: str, *_args: object) -> None:
+        if self._layer(layer_id) is None:
             return
         self.settings_popup.hide()
         self.catalog_popup.hide()
         self.formula_popup.dismiss()
         self._active_layer_id = None
         self._inline_active_layer_id = layer_id
-        host = self.window()
-        position = host.mapFromGlobal(global_position)
-        self._ensure_inline_editor().open_formula(latex, QRect(position, row.expression_button.size()))
 
-    def _submit_inline_formula(self, latex: str) -> None:
-        layer_id = self._inline_active_layer_id
-        layer = self._layer(layer_id) if layer_id is not None else None
+    def _submit_inline_formula(self, layer_id: str, latex: str) -> None:
+        layer = self._layer(layer_id)
         if layer is not None and latex.strip():
+            self._inline_active_layer_id = layer_id
             self.update_requested.emit(layer_id, layer.kind, latex)
 
     def _cancel_formula_edit(self) -> None:
         self._active_layer_id = None
 
-    def _cancel_inline_formula_edit(self) -> None:
-        self._inline_active_layer_id = None
-
-    def _ensure_inline_editor(self) -> InlineFormulaEditorOverlay:
-        if self.inline_editor is None:
-            self.inline_editor = InlineFormulaEditorOverlay(self.window())
-            self.inline_editor.submitted.connect(self._submit_inline_formula)
-            self.inline_editor.dismissed.connect(self._cancel_inline_formula_edit)
-            self.inline_editor.content_height_changed.connect(self._resize_inline_formula_row)
-        return self.inline_editor
-
-    def _resize_inline_formula_row(self, formula_height: int) -> None:
-        layer_id = self._inline_active_layer_id
-        row = self.rows.get(layer_id) if layer_id is not None else None
-        if row is None or self.inline_editor is None:
-            return
-        row.set_formula_height(formula_height)
-        self.rows_layout.activate()
-        host = self.window()
-        position = host.mapFromGlobal(row.expression_button.mapToGlobal(QPoint(0, 0)))
-        self.inline_editor.set_formula_rect(QRect(position, row.expression_button.size()))
-
-    def _dismiss_inline_editor(self) -> None:
-        if self.inline_editor is not None:
-            self.inline_editor.dismiss()
+    def _cancel_inline_formula_edit(self, layer_id: str | None = None) -> None:
+        if layer_id is None or layer_id == self._inline_active_layer_id:
+            self._inline_active_layer_id = None
 
     def _popup_anchor(self, widget: QWidget) -> QPoint:
         return widget.mapToGlobal(QPoint(0, widget.height() + 4))
@@ -722,9 +681,7 @@ class AlgebraPanel(QFrame):
         if layer is None:
             return
         self._layers = [layer if current.id == layer_id else current for current in self._layers]
-        row = self.rows.get(layer_id)
-        if row is not None:
-            row.sync(layer)
+        self.formula_list.sync_layer(layer_id, layer)
         if self.settings_popup.isVisible() and self.settings_popup._layer_id == layer_id:
             self.settings_popup.open_layer(layer, None)
 

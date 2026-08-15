@@ -1,4 +1,4 @@
-"""Tests for MathLive LaTeX conversion into existing CAS surface formulas."""
+"""MathLive LaTeX 转换为现有 CAS 曲面公式的测试。"""
 
 import unittest
 

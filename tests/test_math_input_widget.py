@@ -1,4 +1,4 @@
-"""Public API tests for the reusable MathLive Qt widget."""
+"""可复用 MathLive Qt 控件公开 API 的测试。"""
 
 import os
 import unittest
