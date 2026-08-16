@@ -32,6 +32,11 @@
       border: 1px solid #dfe3e8;
       border-radius: 6px;
     }
+    .layer-row.selected {
+      background: #eaf2fd;
+      border-color: #8ab4f8;
+      box-shadow: 0 0 0 1px #8ab4f8 inset;
+    }
     .layer-row button {
       flex: 0 0 auto;
       box-sizing: border-box;
@@ -229,6 +234,7 @@
           watchField(row, field);
           field.addEventListener('pointerdown', (event) => {
             event.stopPropagation();
+            if (!layer.editable) return;
             startEdit(layer.id);
           });
           field.addEventListener('input', () => {
@@ -279,7 +285,7 @@
             const cell = document.createElement('div');
             cell.className = 'formula-cell';
             const field = document.createElement('math-field');
-            field.setAttribute('aria-label', 'Formula');
+            field.setAttribute('aria-label', layer.editable ? 'Formula' : 'Geometry object');
             const settings = document.createElement('button');
             settings.className = 'settings-button';
             settings.type = 'button';
@@ -314,9 +320,25 @@
           }
         });
 
+        const setSelected = (layerId) => {
+          for (const row of list.querySelectorAll('.layer-row')) {
+            row.classList.toggle('selected', row.dataset.layerId === layerId);
+          }
+          const row = layerId != null ? rowFor(layerId) : null;
+          if (row) row.scrollIntoView({ block: 'nearest' });
+        };
+        const beginEdit = (layerId) => {
+          const layer = layers.get(layerId);
+          if (!layer || !layer.editable) return;
+          setSelected(layerId);
+          startEdit(layerId);
+        };
+
         window.formulaList = {
           setLayers,
           updateLayer,
+          setSelected,
+          beginEdit,
           acceptEdit: () => finishEdit(false),
           cancelEdit: () => finishEdit(true),
         };

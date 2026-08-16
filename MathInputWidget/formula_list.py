@@ -13,10 +13,11 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QVBoxLayout, QWidget
 
 from models.curve_layer import CurveLayer
+from models.geometry_2d import GeometryObject, Linear2D, Point2D, geometry_latex
 from models.surface_layer import SurfaceLayer
 
 
-Layer = SurfaceLayer | CurveLayer
+Layer = SurfaceLayer | CurveLayer | GeometryObject
 
 
 class _FormulaListBridge(QObject):
@@ -109,6 +110,24 @@ class FormulaListWidget(QWidget):
             f"window.formulaList.updateLayer({json.dumps(self._serialize_layer(layer))});"
         )
 
+    def set_selected(self, layer_id: str | None) -> None:
+        """在网页列表中高亮当前选中的行。"""
+        if not self._page_ready:
+            return
+        payload = json.dumps(layer_id) if layer_id is not None else "null"
+        self._run_javascript(
+            f"if (window.formulaListReady) window.formulaList.setSelected({payload});"
+        )
+
+    def begin_edit(self, layer_id: str) -> None:
+        """请求网页对指定行进入编辑状态（用于画布双击点后编辑坐标）。"""
+        if layer_id not in self._layers or not self._page_ready:
+            return
+        self._run_javascript(
+            f"if (window.formulaListReady) "
+            f"window.formulaList.beginEdit({json.dumps(layer_id)});"
+        )
+
     def accept_edit(self) -> None:
         if self._active_layer_id is None:
             return
@@ -137,14 +156,29 @@ class FormulaListWidget(QWidget):
             f"window.formulaList.setLayers({json.dumps(payload)});"
         )
 
-    @staticmethod
-    def _serialize_layer(layer: Layer) -> dict[str, Any]:
+    def _serialize_layer(self, layer: Layer) -> dict[str, Any]:
+        if isinstance(layer, (Point2D, Linear2D)):
+            points = {
+                candidate.id: candidate
+                for candidate in self._layers.values()
+                if isinstance(candidate, Point2D)
+            }
+            return {
+                "id": layer.id,
+                "name": layer.name,
+                "kind": layer.kind,
+                "latex": geometry_latex(layer, points),
+                "visible": layer.visible,
+                # 点可通过编辑坐标修改；线类对象由端点决定，保持只读。
+                "editable": isinstance(layer, Point2D),
+            }
         return {
             "id": layer.id,
             "name": layer.name,
             "kind": layer.kind,
             "latex": layer.latex or layer.expression,
             "visible": layer.visible,
+            "editable": True,
         }
 
     def _run_javascript(self, source: str) -> None:

@@ -28,11 +28,12 @@ from PySide6.QtWidgets import (
 from MathInputWidget import FormulaEditorPopup, FormulaListWidget, FormulaPreviewWidget
 from models.curve_layer import CurveLayer
 from models.function_catalog import CatalogEntry
+from models.geometry_2d import GeometryObject, Linear2D, Point2D
 from models.scene_mode import SceneMode
 from models.surface_layer import SurfaceLayer
 
 
-Layer = SurfaceLayer | CurveLayer
+Layer = SurfaceLayer | CurveLayer | GeometryObject
 _PLACEHOLDERS = {
     SceneMode.THREE_D: {
         "explicit": "z = x^2 - y^2",
@@ -249,6 +250,48 @@ class LayerSettingsPopup(QDialog):
         ):
             QTimer.singleShot(0, self.hide)
         return super().eventFilter(watched, event)
+
+
+class GeometrySettingsPopup(QDialog):
+    """为不可编辑的二维几何对象提供最小化的删除操作。"""
+
+    delete_requested = Signal(str)
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self._object_id: str | None = None
+        self.setObjectName("geometrySettingsPopup")
+        self.setWindowTitle("几何对象")
+        self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
+        self.setWindowModality(Qt.WindowModality.NonModal)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(12, 10, 12, 12)
+        layout.setSpacing(10)
+        self.title = QLabel("几何对象", self)
+        self.title.setObjectName("settingsPopupTitle")
+        layout.addWidget(self.title)
+        self.delete_button = QPushButton("删除对象", self)
+        self.delete_button.clicked.connect(self._request_delete)
+        layout.addWidget(self.delete_button)
+
+    def open_geometry(self, geometry: GeometryObject, anchor: QPoint | None) -> None:
+        self._object_id = geometry.id
+        if isinstance(geometry, Point2D):
+            self.title.setText("点设置")
+        else:
+            names = {"line": "直线", "segment": "线段", "ray": "射线", "vector": "向量"}
+            self.title.setText(f"{names[geometry.kind]}设置")
+        self.show()
+        if anchor is not None:
+            self.move(anchor)
+        self.raise_()
+
+    def _request_delete(self) -> None:
+        if self._object_id is None:
+            return
+        object_id = self._object_id
+        self.hide()
+        self.delete_requested.emit(object_id)
 
 
 class IntersectionPopup(QDialog):
@@ -535,6 +578,7 @@ class AlgebraPanel(QFrame):
 
         self.formula_popup = FormulaEditorPopup(self)
         self.settings_popup = LayerSettingsPopup(self)
+        self.geometry_settings_popup = GeometrySettingsPopup(self)
         self.intersection_popup = IntersectionPopup(self)
         self.catalog_popup = FunctionCatalogPopup(self)
         self.new_formula_button.clicked.connect(self._open_new_formula)
@@ -551,6 +595,7 @@ class AlgebraPanel(QFrame):
         self.settings_popup.line_width_changed.connect(self.line_width_changed)
         self.settings_popup.range_changed.connect(self.range_changed)
         self.settings_popup.delete_requested.connect(self.delete_requested)
+        self.geometry_settings_popup.delete_requested.connect(self.delete_requested)
         self.intersection_popup.requested.connect(self.manual_intersection_requested)
         self.catalog_popup.requested.connect(self.catalog_requested)
         self.formula_list.edit_requested.connect(self._open_inline_formula_for_layer)
@@ -574,6 +619,7 @@ class AlgebraPanel(QFrame):
         self._scene_mode = mode
         self.formula_list.cancel_edit()
         self.settings_popup.hide()
+        self.geometry_settings_popup.hide()
         self.catalog_popup.hide()
 
     def set_catalog_entries(self, entries: Iterable[CatalogEntry]) -> None:
@@ -594,6 +640,23 @@ class AlgebraPanel(QFrame):
         self.intersection_popup.set_layers(
             layer for layer in self._layers if isinstance(layer, SurfaceLayer)
         )
+
+    def set_selected_layer(self, layer_id: str | None) -> None:
+        """同步画布选中状态到列表高亮。"""
+        self.formula_list.set_selected(layer_id)
+
+    def begin_geometry_edit(self, layer_id: str) -> None:
+        """从画布双击进入点坐标行内编辑。"""
+        layer = self._layer(layer_id)
+        if not isinstance(layer, Point2D):
+            return
+        self.settings_popup.hide()
+        self.geometry_settings_popup.hide()
+        self.catalog_popup.hide()
+        self.formula_popup.dismiss()
+        self._active_layer_id = None
+        self._inline_active_layer_id = layer_id
+        self.formula_list.begin_edit(layer_id)
 
     def set_status(self, message: str, is_error: bool = False) -> None:
         self.status_label.setText(message)
@@ -639,6 +702,11 @@ class AlgebraPanel(QFrame):
         self.formula_popup.dismiss()
         self.catalog_popup.hide()
         self.formula_list.cancel_edit()
+        if isinstance(layer, (Point2D, Linear2D)):
+            self.settings_popup.hide()
+            self.geometry_settings_popup.open_geometry(layer, anchor)
+            return
+        self.geometry_settings_popup.hide()
         self.settings_popup.open_layer(layer, anchor)
 
     def _open_manual_intersection_popup(self) -> None:
@@ -653,7 +721,9 @@ class AlgebraPanel(QFrame):
         self.update_requested.emit(self._active_layer_id, kind, latex)
 
     def _open_inline_formula_for_layer(self, layer_id: str, *_args: object) -> None:
-        if self._layer(layer_id) is None:
+        layer = self._layer(layer_id)
+        # 线类几何对象由端点决定，不可行内编辑；点和函数曲线可以。
+        if layer is None or isinstance(layer, Linear2D):
             return
         self.settings_popup.hide()
         self.catalog_popup.hide()
@@ -663,7 +733,7 @@ class AlgebraPanel(QFrame):
 
     def _submit_inline_formula(self, layer_id: str, latex: str) -> None:
         layer = self._layer(layer_id)
-        if layer is not None and latex.strip():
+        if layer is not None and not isinstance(layer, Linear2D) and latex.strip():
             self._inline_active_layer_id = layer_id
             self.update_requested.emit(layer_id, layer.kind, latex)
 
@@ -684,6 +754,8 @@ class AlgebraPanel(QFrame):
         self.formula_list.sync_layer(layer_id, layer)
         if self.settings_popup.isVisible() and self.settings_popup._layer_id == layer_id:
             self.settings_popup.open_layer(layer, None)
+        if self.geometry_settings_popup.isVisible() and self.geometry_settings_popup._object_id == layer_id:
+            self.geometry_settings_popup.open_geometry(layer, None)
 
     def _layer(self, layer_id: str | None) -> Layer | None:
         if layer_id is None:

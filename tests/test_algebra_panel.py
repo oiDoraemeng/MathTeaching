@@ -10,6 +10,7 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from MathInputWidget import FormulaListWidget
+from models.geometry_2d import Linear2D, Point2D
 from models.surface_layer import SurfaceLayer
 from ui.algebra_panel import AlgebraPanel
 
@@ -179,6 +180,33 @@ class AlgebraPanelTests(unittest.TestCase):
 
         self.assertTrue(panel.settings_popup.isVisible())
         self.assertIsNone(panel._inline_active_layer_id)
+
+    def test_point_rows_are_editable_but_linear_rows_are_read_only(self) -> None:
+        first = Point2D("A", 1.0, 2.0)
+        segment = Linear2D("s_1", "segment", first.id, "other_id")
+        panel = AlgebraPanel()
+        panel.set_layers([first, segment])
+
+        point_payload = panel.formula_list._serialize_layer(first)
+        segment_payload = panel.formula_list._serialize_layer(segment)
+
+        self.assertTrue(point_payload["editable"])
+        self.assertEqual(point_payload["latex"], "A=(1, 2)")
+        self.assertFalse(segment_payload["editable"])
+        self.assertIn(r"\overline{", segment_payload["latex"])
+
+    def test_geometry_objects_use_the_geometry_delete_menu(self) -> None:
+        first = Point2D("A", 1.0, 2.0)
+        segment = Linear2D("s_1", "segment", first.id, "other_id")
+        panel = AlgebraPanel()
+        removed: list[str] = []
+        panel.delete_requested.connect(removed.append)
+        panel.set_layers([first, segment])
+
+        panel._open_settings(first.id, None)
+        panel.geometry_settings_popup.delete_button.click()
+
+        self.assertEqual(removed, [first.id])
 
 
 if __name__ == "__main__":
