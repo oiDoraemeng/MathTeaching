@@ -8,6 +8,7 @@ from pathlib import Path
 from collections.abc import Callable
 
 from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QTimer
+from PySide6.QtGui import QKeyEvent, QMouseEvent
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QToolButton, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
@@ -17,11 +18,19 @@ from geometry.cas_curve import CurveExpressionError, parse_curve_expression
 from geometry.cas_surface import ExpressionError, parse_surface_expression
 from geometry.standard_surfaces import BUILTIN_SURFACES, DEFAULT_BUILTIN_ID, create_builtin_layer
 from models.curve_layer import CurveLayer, Plot2DDomain
+from models.geometry_2d import (
+    GeometryObject,
+    Linear2D,
+    LinearKind,
+    Point2D,
+    parse_point_coordinates,
+)
 from models.function_catalog import catalog_entries, catalog_entry
 from models.scene_mode import SceneAppearance, SceneMode
 from models.surface_layer import PlotDomain, SurfaceLayer
 from rendering.axis import ThreeDAxes, add_cartesian_axes
 from rendering.curve_scene import CurveRenderError, CurveSceneController
+from rendering.geometry_scene import GeometrySceneController
 from rendering.layer_scene import LayerRenderError, LayerSceneController
 from rendering.lighting import LightSettings
 from rendering.scene import build_scene, configure_3d_camera_interaction, update_lighting
@@ -30,6 +39,7 @@ from rendering.two_d_scene import TwoDGuides, configure_2d_camera
 from ui.algebra_panel import AlgebraPanel
 from ui.lighting_dialog import LightingDialog
 from ui.scene_settings import SceneSettingsPanel
+from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 
 
 # 辅助线在视口四周额外绘制此比例；小幅平移和缩放仍落在既有区域内，
@@ -50,6 +60,27 @@ class _ViewportResizeFilter(QObject):
         return False
 
 
+class _GeometryInputFilter(QObject):
+    """只在二维几何工具激活时拦截视口鼠标和键盘事件。"""
+
+    def __init__(self, owner: "MainWindow", parent: QObject) -> None:
+        super().__init__(parent)
+        self.owner = owner
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if event.type() == QEvent.Type.MouseButtonPress and isinstance(event, QMouseEvent):
+            return self.owner._handle_geometry_mouse_press(event)
+        if event.type() == QEvent.Type.MouseButtonDblClick and isinstance(event, QMouseEvent):
+            return self.owner._handle_geometry_double_click(event)
+        if event.type() == QEvent.Type.MouseMove and isinstance(event, QMouseEvent):
+            return self.owner._handle_geometry_mouse_move(event)
+        if event.type() == QEvent.Type.MouseButtonRelease and isinstance(event, QMouseEvent):
+            return self.owner._handle_geometry_mouse_release(event)
+        if event.type() == QEvent.Type.KeyPress and isinstance(event, QKeyEvent):
+            return self.owner._handle_geometry_key_press(event)
+        return False
+
+
 class MainWindow:
     """加载 Designer 窗口骨架，并协调两个相互独立的绘图工作区。"""
 
@@ -63,8 +94,12 @@ class MainWindow:
         self.latex_parser = LatexParser()
         self.layers: list[SurfaceLayer] = [create_builtin_layer(DEFAULT_BUILTIN_ID)]
         self.curve_layers: list[CurveLayer] = []
+        self.geometry_points: list[Point2D] = []
+        self.linear_objects: list[Linear2D] = []
+        self._two_d_object_order: list[str] = []
         self.layer_controller: LayerSceneController | None = None
         self.curve_controller: CurveSceneController | None = None
+        self.geometry_controller: GeometrySceneController | None = None
         self.scene_appearances = {
             SceneMode.THREE_D: SceneAppearance(show_grid=False, show_intersections=False),
             SceneMode.TWO_D: SceneAppearance(show_grid=True, show_intersections=False),
@@ -86,6 +121,12 @@ class MainWindow:
         self._viewport_interaction_observer: int | None = None
         self._intersection_color_revision = 0
         self._scene_settings_closing = False
+        self._active_2d_tool: ToolKind | None = None
+        self._pending_geometry_point_id: str | None = None
+        # Preserve the exact cursor coordinate unless grid snapping is enabled.
+        self._snap_to_grid = False
+        self._dragging_point_id: str | None = None
+        self._drag_moved = False
 
         self.window = self._load_designer_form()
         self._install_algebra_panel()
@@ -124,6 +165,7 @@ class MainWindow:
         layout.setContentsMargins(0, 0, 0, 0)
         self.plotter = QtInteractor(self.viewport_host)
         self.plotter.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.plotter.interactor.setMouseTracking(True)
         layout.addWidget(self.plotter.interactor)
 
         self.viewport_toolbar = QFrame(self.viewport_host)
@@ -142,6 +184,8 @@ class MainWindow:
         toolbar_layout.addWidget(self.scene_mode_button)
         self.viewport_toolbar.adjustSize()
 
+        self.two_d_geometry_toolbar = TwoDGeometryToolbar(self.viewport_host)
+
         self.scene_settings_panel = SceneSettingsPanel(self.viewport_host)
         self.scene_settings_panel.hide()
         self._scene_settings_animation = QPropertyAnimation(self.scene_settings_panel, b"geometry", self.window)
@@ -153,6 +197,8 @@ class MainWindow:
         self._position_viewport_overlays()
         self.scene_settings_button.clicked.connect(self._toggle_scene_settings)
         self.scene_mode_button.clicked.connect(self._toggle_scene_mode)
+        self.two_d_geometry_toolbar.tool_selected.connect(self._set_2d_geometry_tool)
+        self.two_d_geometry_toolbar.snap_toggled.connect(self._set_snap_to_grid)
         self.scene_settings_panel.background_changed.connect(self._set_scene_background)
         self.scene_settings_panel.axis_color_mode_changed.connect(self._set_axis_color_mode)
         self.scene_settings_panel.grid_changed.connect(self._set_grid_visible)
@@ -173,6 +219,8 @@ class MainWindow:
                 )
             except (AttributeError, RuntimeError, TypeError):
                 self._viewport_interaction_observer = None
+        self._geometry_input_filter = _GeometryInputFilter(self, self.plotter.interactor)
+        self.plotter.interactor.installEventFilter(self._geometry_input_filter)
         self._sync_scene_controls()
 
     def _on_viewport_host_changed(self) -> None:
@@ -199,6 +247,9 @@ class MainWindow:
         toolbar_width = self.viewport_toolbar.width()
         self.viewport_toolbar.move(max(8, host.width() - toolbar_width - 12), 12)
         self.viewport_toolbar.raise_()
+        if hasattr(self, "two_d_geometry_toolbar"):
+            self.two_d_geometry_toolbar.position_in_host()
+            self.two_d_geometry_toolbar.raise_()
         if (
             self.scene_settings_panel.isVisible()
             and self._scene_settings_animation.state() != QPropertyAnimation.State.Running
@@ -292,6 +343,7 @@ class MainWindow:
         )
         self.layer_controller.set_global_intersections_visible(appearance.show_intersections)
         self.curve_controller = None
+        self.geometry_controller = None
         available_layers: list[SurfaceLayer] = []
         for layer in self.layers:
             try:
@@ -328,6 +380,7 @@ class MainWindow:
         self._two_d_guide_bounds = sampling_bounds
         self._two_d_sample_bounds = sampling_bounds
         self.curve_controller = CurveSceneController(self.plotter, sampling_domain)
+        self.geometry_controller = GeometrySceneController(self.plotter, visible)
         self.layer_controller = None
         available_layers: list[CurveLayer] = []
         for layer in self.curve_layers:
@@ -338,7 +391,11 @@ class MainWindow:
             else:
                 available_layers.append(layer)
         self.curve_layers = available_layers
-        self._sync_panel_layers(self.curve_layers)
+        for point in self.geometry_points:
+            self.geometry_controller.add_point(point)
+        for linear in self.linear_objects:
+            self.geometry_controller.add_linear(linear)
+        self._sync_panel_layers(self._two_d_panel_layers())
         self.algebra_panel.set_status("二维场景已准备好")
         self.plotter.render()
 
@@ -348,7 +405,7 @@ class MainWindow:
         # 数值越小，视口显示的范围越小，图像越放大。
         #
         # 这个值会直接影响 _current_2d_bounds() 中的 visible_2d_bounds() 计算：
-        #   half_height = parallel_scale / 2
+        #   half_height = parallel_scale
         #   half_width = half_height * aspect_ratio
         # 因此它决定了当前可见窗口的 x/y 范围，进而影响网格、刻度和采样区域。
         if self._two_d_camera_position is not None:
@@ -384,6 +441,11 @@ class MainWindow:
         self, *, resample: bool = True, render: bool = True, force: bool = False
     ) -> None:
         visible = self._current_2d_bounds()
+        # Guide and curve sampling use hysteresis; geometry must follow the
+        # actual visible viewport on every camera interaction.
+        geometry_controller = getattr(self, "geometry_controller", None)
+        if geometry_controller is not None:
+            geometry_controller.set_bounds(visible)
         appearance = self.scene_appearances[SceneMode.TWO_D]
         spacing = tick_spacing(
             visible.y_span,
@@ -493,7 +555,10 @@ class MainWindow:
         finally:
             self._viewport_refreshing = False
 
-    def _sync_panel_layers(self, layers: list[SurfaceLayer] | list[CurveLayer]) -> None:
+    def _sync_panel_layers(
+        self,
+        layers: list[SurfaceLayer] | list[CurveLayer] | list[CurveLayer | GeometryObject],
+    ) -> None:
         self.algebra_panel.set_scene_mode(self.scene_mode)
         self.algebra_panel.set_catalog_entries(catalog_entries(self.scene_mode))
         self.algebra_panel.set_layers(layers)
@@ -507,9 +572,28 @@ class MainWindow:
 
     def _update_formula_for_scene(self, layer_id: str, kind: str, latex: str) -> None:
         if self.scene_mode is SceneMode.TWO_D:
-            self._update_curve_expression(layer_id, kind, latex)
+            if self._point_2d(layer_id) is not None:
+                self._update_point_coordinates(layer_id, latex)
+            else:
+                self._update_curve_expression(layer_id, kind, latex)
         else:
             self._update_surface_expression(layer_id, kind, latex)
+
+    def _update_point_coordinates(self, point_id: str, latex: str) -> None:
+        point = self._point_2d(point_id)
+        if point is None:
+            return
+        coordinates = parse_point_coordinates(latex)
+        if coordinates is None:
+            self.algebra_panel.set_status("坐标格式无效，请输入形如 (x, y)", is_error=True)
+            return
+        point.x, point.y = coordinates
+        if self.geometry_controller is not None:
+            self.geometry_controller.move_point(point_id, *coordinates)
+        self.algebra_panel.sync_layer(point_id, point)
+        self.algebra_panel.finish_edit()
+        self.algebra_panel.set_status(f"已更新点 {point.name}")
+        self.plotter.render()
 
     def _add_catalog_entry(self, entry_id: str) -> None:
         entry = catalog_entry(entry_id, self.scene_mode)
@@ -589,7 +673,8 @@ class MainWindow:
             self.algebra_panel.set_status(f"无法绘制曲线: {error}", is_error=True)
             return False
         self.curve_layers.append(layer)
-        self.algebra_panel.set_layers(self.curve_layers)
+        self._two_d_object_order.append(layer.id)
+        self.algebra_panel.set_layers(self._two_d_panel_layers())
         self.algebra_panel.set_status(f"已添加 {layer.name}")
         self.plotter.render()
         return True
@@ -660,7 +745,10 @@ class MainWindow:
 
     def _remove_layer_for_scene(self, layer_id: str) -> None:
         if self.scene_mode is SceneMode.TWO_D:
-            self._remove_curve(layer_id)
+            if self._geometry_object(layer_id) is not None:
+                self._remove_geometry_object(layer_id)
+            else:
+                self._remove_curve(layer_id)
         else:
             self._remove_surface(layer_id)
 
@@ -678,13 +766,48 @@ class MainWindow:
             return
         self.curve_controller.remove_layer(layer_id)
         self.curve_layers = [layer for layer in self.curve_layers if layer.id != layer_id]
-        self.algebra_panel.set_layers(self.curve_layers)
+        self._two_d_object_order = [item_id for item_id in self._two_d_object_order if item_id != layer_id]
+        self.algebra_panel.set_layers(self._two_d_panel_layers())
         self.algebra_panel.set_status("已删除曲线")
+        self.plotter.render()
+
+    def _remove_geometry_object(self, object_id: str) -> None:
+        geometry = self._geometry_object(object_id)
+        if geometry is None:
+            return
+        removed_ids = {object_id}
+        if isinstance(geometry, Point2D):
+            removed_ids.update(
+                linear.id
+                for linear in self.linear_objects
+                if object_id in {linear.start_point_id, linear.end_point_id}
+            )
+            self.geometry_points = [point for point in self.geometry_points if point.id != object_id]
+            self.linear_objects = [
+                linear for linear in self.linear_objects if linear.id not in removed_ids
+            ]
+        else:
+            self.linear_objects = [
+                linear for linear in self.linear_objects if linear.id != object_id
+            ]
+        self._two_d_object_order = [
+            item_id for item_id in self._two_d_object_order if item_id not in removed_ids
+        ]
+        if self._pending_geometry_point_id in removed_ids:
+            self._set_2d_geometry_tool(self._active_2d_tool)
+        if self.geometry_controller is not None:
+            for removed_id in removed_ids:
+                self.geometry_controller.remove_object(removed_id)
+        self.algebra_panel.set_layers(self._two_d_panel_layers())
+        self.algebra_panel.set_status("已删除几何对象")
         self.plotter.render()
 
     def _set_layer_visibility(self, layer_id: str, visible: bool) -> None:
         if self.scene_mode is SceneMode.TWO_D:
-            self._set_curve_visibility(layer_id, visible)
+            if self._geometry_object(layer_id) is not None:
+                self._set_geometry_visibility(layer_id, visible)
+            else:
+                self._set_curve_visibility(layer_id, visible)
         else:
             self._set_surface_visibility(layer_id, visible)
 
@@ -698,6 +821,16 @@ class MainWindow:
         if self.curve_controller is not None:
             self.curve_controller.set_visible(layer_id, visible)
         self._replace_curve_layer(layer_id, visible=visible)
+        self.plotter.render()
+
+    def _set_geometry_visibility(self, layer_id: str, visible: bool) -> None:
+        geometry = self._geometry_object(layer_id)
+        if geometry is None:
+            return
+        geometry.visible = visible
+        if self.geometry_controller is not None:
+            self.geometry_controller.set_visible(layer_id, visible)
+        self.algebra_panel.sync_layer(layer_id, geometry)
         self.plotter.render()
 
     def _set_surface_intersections_visibility(self, layer_id: str, visible: bool) -> None:
@@ -732,6 +865,8 @@ class MainWindow:
 
     def _set_layer_color(self, layer_id: str, color: str) -> None:
         if self.scene_mode is SceneMode.TWO_D:
+            if self._geometry_object(layer_id) is not None:
+                return
             if self.curve_controller is not None:
                 self.curve_controller.set_color(layer_id, color)
             self._replace_curve_layer(layer_id, color=color)
@@ -810,10 +945,305 @@ class MainWindow:
     def _set_scene_mode(self, mode: SceneMode) -> None:
         if mode is self.scene_mode:
             return
+        if self.scene_mode is SceneMode.TWO_D:
+            self._set_2d_geometry_tool(None)
         self._save_current_view_state()
         self.scene_mode = mode
         self._close_scene_settings(immediate=True)
         self._render_scene()
+
+    _TOOL_LABELS = {"line": "直线", "segment": "线段", "ray": "射线", "vector": "向量"}
+
+    def _set_2d_geometry_tool(self, tool: ToolKind | None) -> None:
+        """切换当前二维几何创建工具，并清理未完成的两点操作。"""
+        if self.scene_mode is not SceneMode.TWO_D:
+            tool = None
+        self._pending_geometry_point_id = None
+        self._dragging_point_id = None
+        if self.geometry_controller is not None:
+            self.geometry_controller.clear_draft()
+            # 离开选择工具时清除高亮，避免遗留悬浮/选中效果。
+            if tool != "select":
+                self.geometry_controller.set_hover(None)
+                self.geometry_controller.set_selected(None)
+        self._active_2d_tool = tool
+        if hasattr(self, "two_d_geometry_toolbar"):
+            self.two_d_geometry_toolbar.set_active_tool(tool)
+        if hasattr(self, "plotter"):
+            cursor = {
+                None: Qt.CursorShape.ArrowCursor,
+                "select": Qt.CursorShape.ArrowCursor,
+            }.get(tool, Qt.CursorShape.CrossCursor)
+            self.plotter.interactor.setCursor(cursor)
+            if tool is not None:
+                self.plotter.interactor.setFocus()
+        if tool == "select":
+            self.algebra_panel.set_status("选择工具：单击选中，拖动点可移动，双击点可编辑坐标")
+        elif tool == "point":
+            self.algebra_panel.set_status("点工具：单击画布创建点")
+        elif tool is not None:
+            self.algebra_panel.set_status(f"{self._TOOL_LABELS[tool]}工具：单击第一个点")
+
+    def _set_snap_to_grid(self, enabled: bool) -> None:
+        self._snap_to_grid = bool(enabled)
+        self.algebra_panel.set_status("已开启网格吸附" if enabled else "已关闭网格吸附")
+
+    def _handle_geometry_mouse_press(self, event: QMouseEvent) -> bool:
+        """处理被激活工具的左键单击；其他输入仍交给 PyVista。"""
+        tool = self._active_2d_tool
+        if (
+            self.scene_mode is not SceneMode.TWO_D
+            or tool is None
+            or event.button() != Qt.MouseButton.LeftButton
+        ):
+            return False
+        coordinates = self._viewport_to_world(event.position().x(), event.position().y())
+        if coordinates is None:
+            return False
+        if tool == "select":
+            return self._begin_select_or_drag(*coordinates)
+        coordinates = self._maybe_snap(*coordinates)
+        point, created = self._get_or_create_geometry_point(*coordinates)
+        if tool == "point":
+            self.algebra_panel.set_status(
+                f"{'已创建' if created else '已复用'}点 {point.name}"
+            )
+            self.plotter.render()
+            event.accept()
+            return True
+        if self._pending_geometry_point_id is None:
+            self._pending_geometry_point_id = point.id
+            self.algebra_panel.set_status(
+                f"已选择点 {point.name}，单击第二点创建{self._TOOL_LABELS[tool]}"
+            )
+            self.plotter.render()
+            event.accept()
+            return True
+
+        first = self._point_2d(self._pending_geometry_point_id)
+        if first is None:
+            self._pending_geometry_point_id = None
+            return False
+        if first.id == point.id:
+            self.algebra_panel.set_status("请单击与第一个点不同的位置", is_error=True)
+            event.accept()
+            return True
+        linear = self._create_linear_geometry(tool, first, point)
+        self._pending_geometry_point_id = None
+        if self.geometry_controller is not None:
+            self.geometry_controller.clear_draft()
+        self.algebra_panel.set_status(f"已创建{self._TOOL_LABELS[tool]} {linear.name}")
+        self.plotter.render()
+        event.accept()
+        return True
+
+    def _begin_select_or_drag(self, x: float, y: float) -> bool:
+        """选择工具左键按下：命中对象则选中，命中点则准备拖动。"""
+        if self.geometry_controller is None:
+            return False
+        hit_id = self.geometry_controller.hit_test(x, y, self._hit_tolerance())
+        self._select_geometry_object(hit_id)
+        self._dragging_point_id = hit_id if hit_id in self.geometry_controller.points else None
+        self._drag_moved = False
+        self.plotter.render()
+        # 命中对象时拦截事件，避免触发相机平移；未命中则放行以便平移画布。
+        return hit_id is not None
+
+    def _handle_geometry_mouse_move(self, event: QMouseEvent) -> bool:
+        if self.scene_mode is not SceneMode.TWO_D or self.geometry_controller is None:
+            return False
+        tool = self._active_2d_tool
+        coordinates = self._viewport_to_world(event.position().x(), event.position().y())
+        if coordinates is None:
+            return False
+        if tool == "select":
+            if self._dragging_point_id is not None:
+                snapped = self._maybe_snap(*coordinates)
+                self.geometry_controller.move_point(self._dragging_point_id, *snapped)
+                point = self._point_2d(self._dragging_point_id)
+                if point is not None:
+                    point.x, point.y = snapped
+                    self.algebra_panel.sync_layer(point.id, point)
+                self._drag_moved = True
+                self.plotter.render()
+                return True
+            # 悬浮高亮：命中变化时才重绘。
+            hit_id = self.geometry_controller.hit_test(*coordinates, self._hit_tolerance())
+            if self.geometry_controller.set_hover(hit_id):
+                cursor = (
+                    Qt.CursorShape.OpenHandCursor
+                    if hit_id in self.geometry_controller.points
+                    else Qt.CursorShape.PointingHandCursor
+                    if hit_id is not None
+                    else Qt.CursorShape.ArrowCursor
+                )
+                self.plotter.interactor.setCursor(cursor)
+                self.plotter.render()
+            return False
+        if (
+            tool in {"line", "segment", "ray", "vector"}
+            and self._pending_geometry_point_id is not None
+        ):
+            first = self._point_2d(self._pending_geometry_point_id)
+            if first is not None:
+                self.geometry_controller.set_draft(tool, first, self._maybe_snap(*coordinates))
+                self.plotter.render()
+        return False
+
+    def _handle_geometry_mouse_release(self, event: QMouseEvent) -> bool:
+        if self._dragging_point_id is None:
+            return False
+        point = self._point_2d(self._dragging_point_id)
+        if point is not None and self._drag_moved:
+            self.algebra_panel.set_status(f"已移动点 {point.name}")
+        self._dragging_point_id = None
+        self._drag_moved = False
+        return False
+
+    def _handle_geometry_double_click(self, event: QMouseEvent) -> bool:
+        if (
+            self.scene_mode is not SceneMode.TWO_D
+            or self._active_2d_tool != "select"
+            or self.geometry_controller is None
+            or event.button() != Qt.MouseButton.LeftButton
+        ):
+            return False
+        coordinates = self._viewport_to_world(event.position().x(), event.position().y())
+        if coordinates is None:
+            return False
+        hit_id = self.geometry_controller.hit_test(*coordinates, self._hit_tolerance())
+        if hit_id is not None and hit_id in self.geometry_controller.points:
+            self._select_geometry_object(hit_id)
+            self.plotter.render()
+            self.algebra_panel.begin_geometry_edit(hit_id)
+            event.accept()
+            return True
+        return False
+
+    def _select_geometry_object(self, object_id: str | None) -> None:
+        if self.geometry_controller is not None:
+            self.geometry_controller.set_selected(object_id)
+        self.algebra_panel.set_selected_layer(object_id)
+
+    def _handle_geometry_key_press(self, event: QKeyEvent) -> bool:
+        key = event.key()
+        if key in (Qt.Key.Key_Delete, Qt.Key.Key_Backspace):
+            selected = self.geometry_controller.selected_id if self.geometry_controller else None
+            if selected is not None and self._geometry_object(selected) is not None:
+                self._remove_geometry_object(selected)
+                event.accept()
+                return True
+            return False
+        if key != Qt.Key.Key_Escape:
+            return False
+        if self._active_2d_tool == "select" and self.geometry_controller is not None:
+            self._select_geometry_object(None)
+            self.plotter.render()
+            event.accept()
+            return True
+        if self._active_2d_tool is None:
+            return False
+        self._set_2d_geometry_tool(None)
+        self.algebra_panel.set_status("已返回平移模式")
+        event.accept()
+        return True
+
+    def _maybe_snap(self, x: float, y: float) -> tuple[float, float]:
+        if not self._snap_to_grid:
+            return x, y
+        spacing = self._two_d_guide_spacing
+        if spacing is None or spacing <= 0:
+            return x, y
+        # 吸附强度：仅当落点距最近网格线小于步长的 25% 时才对齐，避免"抢"走自由位置。
+        threshold = spacing * 0.25
+        snapped_x = round(x / spacing) * spacing
+        snapped_y = round(y / spacing) * spacing
+        result_x = snapped_x if abs(snapped_x - x) <= threshold else x
+        result_y = snapped_y if abs(snapped_y - y) <= threshold else y
+        return result_x, result_y
+
+    def _hit_tolerance(self) -> float:
+        return self._point_snap_tolerance()
+
+    def _viewport_to_world(self, screen_x: float, screen_y: float) -> tuple[float, float] | None:
+        interactor = getattr(self.plotter, "interactor", None)
+        if interactor is None:
+            return None
+        width = max(1, int(interactor.width()))
+        height = max(1, int(interactor.height()))
+        if not 0 <= screen_x <= width or not 0 <= screen_y <= height:
+            return None
+        bounds = self._current_2d_bounds()
+        x = bounds.x_range[0] + float(screen_x) / width * bounds.x_span
+        y = bounds.y_range[1] - float(screen_y) / height * bounds.y_span
+        return x, y
+
+    def _get_or_create_geometry_point(self, x: float, y: float) -> tuple[Point2D, bool]:
+        tolerance = self._point_snap_tolerance()
+        for point in self.geometry_points:
+            if (point.x - x) ** 2 + (point.y - y) ** 2 <= tolerance**2:
+                return point, False
+        point = Point2D(self._next_point_name(), x, y)
+        self.geometry_points.append(point)
+        self._two_d_object_order.append(point.id)
+        if self.geometry_controller is not None:
+            self.geometry_controller.add_point(point)
+        self.algebra_panel.set_layers(self._two_d_panel_layers())
+        return point, True
+
+    def _create_linear_geometry(
+        self,
+        kind: LinearKind,
+        start: Point2D,
+        end: Point2D,
+    ) -> Linear2D:
+        linear = Linear2D(
+            name=self._next_linear_name(kind),
+            kind=kind,
+            start_point_id=start.id,
+            end_point_id=end.id,
+        )
+        self.linear_objects.append(linear)
+        self._two_d_object_order.append(linear.id)
+        if self.geometry_controller is not None:
+            self.geometry_controller.add_linear(linear)
+        self.algebra_panel.set_layers(self._two_d_panel_layers())
+        return linear
+
+    def _point_snap_tolerance(self) -> float:
+        interactor = getattr(self.plotter, "interactor", None)
+        width = max(1, int(interactor.width())) if interactor is not None else 1
+        height = max(1, int(interactor.height())) if interactor is not None else 1
+        bounds = self._current_2d_bounds()
+        return 12.0 * max(bounds.x_span / width, bounds.y_span / height)
+
+    def _next_point_name(self) -> str:
+        existing = {point.name for point in self.geometry_points}
+        alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        for index in range(10_000):
+            name = alphabet[index % len(alphabet)]
+            if index >= len(alphabet):
+                name += str(index // len(alphabet))
+            if name not in existing:
+                return name
+        raise RuntimeError("无法再创建更多二维点。")
+
+    def _next_linear_name(self, kind: LinearKind) -> str:
+        existing = {linear.name for linear in self.linear_objects}
+        if kind == "line":
+            alphabet = "abcdefghijklmnopqrstuvwxyz"
+            for index in range(10_000):
+                name = alphabet[index % len(alphabet)]
+                if index >= len(alphabet):
+                    name += str(index // len(alphabet))
+                if name not in existing:
+                    return name
+        prefix = {"segment": "s", "ray": "r", "vector": "v"}[kind]
+        for index in range(1, 10_000):
+            name = f"{prefix}_{index}"
+            if name not in existing:
+                return name
+        raise RuntimeError("无法再创建更多二维线对象。")
 
     def _save_current_view_state(self) -> None:
         if not hasattr(self, "plotter"):
@@ -913,6 +1343,11 @@ class MainWindow:
             return
         appearance = self.scene_appearances[self.scene_mode]
         self.scene_mode_button.setText("2D" if self.scene_mode is SceneMode.TWO_D else "3D")
+        if hasattr(self, "two_d_geometry_toolbar"):
+            is_2d = self.scene_mode is SceneMode.TWO_D
+            self.two_d_geometry_toolbar.setVisible(is_2d)
+            if not is_2d:
+                self.two_d_geometry_toolbar.line_flyout.hide()
         self.scene_settings_panel.set_mode(self.scene_mode)
         self.scene_settings_panel.set_values(
             background=appearance.background,
@@ -963,11 +1398,37 @@ class MainWindow:
         ]
         self.algebra_panel.sync_layer(layer_id, self._curve_layer(layer_id))
 
+    def _two_d_panel_layers(self) -> list[CurveLayer | GeometryObject]:
+        objects: dict[str, CurveLayer | GeometryObject] = {
+            layer.id: layer for layer in self.curve_layers
+        }
+        objects.update({point.id: point for point in self.geometry_points})
+        objects.update({linear.id: linear for linear in self.linear_objects})
+        for object_id in objects:
+            if object_id not in self._two_d_object_order:
+                self._two_d_object_order.append(object_id)
+        return [
+            objects[object_id]
+            for object_id in self._two_d_object_order
+            if object_id in objects
+        ]
+
     def _layer(self, layer_id: str) -> SurfaceLayer | None:
         return next((layer for layer in self.layers if layer.id == layer_id), None)
 
     def _curve_layer(self, layer_id: str) -> CurveLayer | None:
         return next((layer for layer in self.curve_layers if layer.id == layer_id), None)
+
+    def _point_2d(self, point_id: str | None) -> Point2D | None:
+        if point_id is None:
+            return None
+        return next((point for point in self.geometry_points if point.id == point_id), None)
+
+    def _geometry_object(self, object_id: str) -> GeometryObject | None:
+        point = self._point_2d(object_id)
+        if point is not None:
+            return point
+        return next((linear for linear in self.linear_objects if linear.id == object_id), None)
 
     def _current_camera_position(self) -> list | None:
         if not getattr(self, "plotter", None):
@@ -1008,11 +1469,12 @@ class MainWindow:
             QCheckBox::indicator:checked { background: #2777b6; border-color: #2777b6; }
             QSlider::groove:horizontal { height: 4px; background: #d7e0e7; border-radius: 2px; }
             QSlider::handle:horizontal { width: 13px; margin: -5px 0; border-radius: 6px; background: #2f7ebd; }
-            #layerSettingsPopup, #functionCatalogPopup, #sceneSettingsPanel { background: #ffffff; border: 1px solid #d0d7df; border-radius: 8px; }
+            #layerSettingsPopup, #geometrySettingsPopup, #functionCatalogPopup, #sceneSettingsPanel { background: #ffffff; border: 1px solid #d0d7df; border-radius: 8px; }
             #settingsPopupTitle { color: #17212e; font-size: 13px; font-weight: 600; }
             #formulaEditorPopup { background: #ffffff; border: 1px solid #d0d7df; border-radius: 8px; }
-            #viewportToolbar { background: #ffffff; border: 1px solid #d0d7df; border-radius: 6px; }
-            #viewportToolbar QToolButton { font-size: 15px; font-weight: 700; }
+            #viewportToolbar, #twoDGeometryToolbar, #twoDLineFlyout { background: #ffffff; border: 1px solid #d0d7df; border-radius: 6px; }
+            #viewportToolbar QToolButton, #twoDGeometryToolbar QToolButton, #twoDLineFlyout QToolButton { font-size: 18px; font-weight: 700; }
+            #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked { background: #dcecf8; border-color: #5a97c5; color: #1d5f91; }
             """
         )
 
