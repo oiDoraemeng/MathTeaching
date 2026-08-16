@@ -27,7 +27,7 @@ class TickCalculationTests(unittest.TestCase):
 
     def test_visible_bounds_and_labels_are_stable(self) -> None:
         bounds = visible_2d_bounds((2.0, -1.0, 0.0), 10.0, 2.0)
-        self.assertEqual(bounds, ViewportBounds((-8.0, 12.0), (-6.0, 4.0)))
+        self.assertEqual(bounds, ViewportBounds((-18.0, 22.0), (-11.0, 9.0)))
         self.assertEqual(format_tick(0.5, 0.5), "0.5")
         self.assertEqual(format_tick(1_000_000.0, 1.0), "1.000e+6")
 

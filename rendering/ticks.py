@@ -48,12 +48,17 @@ def visible_2d_bounds(
     parallel_scale: float,
     aspect_ratio: float,
 ) -> ViewportBounds:
-    """将 VTK 平行相机状态换算为可见的 XY 范围。"""
+    """将 VTK 平行相机状态换算为可见的 XY 范围。
+
+    注意：parallel_scale 在 VTK 中定义为视口高度的一半（半高度），
+    而非完整高度。
+    """
     if not isfinite(parallel_scale) or parallel_scale <= 0:
         raise ValueError("Parallel scale must be a finite positive value.")
     if not isfinite(aspect_ratio) or aspect_ratio <= 0:
         raise ValueError("Viewport aspect ratio must be a finite positive value.")
-    half_height = parallel_scale / 2.0
+    # parallel_scale 已经是半高度，直接使用
+    half_height = parallel_scale
     half_width = half_height * aspect_ratio
     return ViewportBounds(
         (float(focal_point[0]) - half_width, float(focal_point[0]) + half_width),
