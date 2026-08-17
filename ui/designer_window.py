@@ -473,9 +473,20 @@ class MainWindow:
         self._two_d_guide_spacing = spacing
         self._two_d_guide_bounds = sampling_bounds
         if resample and self.curve_controller is not None:
+            # contains() 只能识别平移或缩小（可见区域超出已采样范围）；放大时较小的
+            # 可见区域仍被旧的大采样范围包含，若不重采样就会沿用稀疏网格，放大后
+            # 曲线出现折线状的不连续。这里额外判断放大幅度：采样范围由可见范围
+            # expanded(_GUIDE_MARGIN) 得到，反推出采样时的可见跨度，一旦当前可见
+            # 跨度明显小于它（放大约 1.4 倍以上）便按当前视口重采样，恢复精细分辨率。
             needs_resample = force or self._two_d_sample_bounds is None or (
                 not self._two_d_sample_bounds.contains(visible)
             )
+            if not needs_resample and self._two_d_sample_bounds is not None:
+                sampled_visible_span = self._two_d_sample_bounds.x_span / (
+                    1.0 + 2.0 * _GUIDE_MARGIN
+                )
+                if visible.x_span < sampled_visible_span * 0.7:
+                    needs_resample = True
             if needs_resample:
                 sampling_domain = self._curve_sampling_domain(sampling_bounds)
                 try:
