@@ -63,18 +63,22 @@ class Geometry2DTests(unittest.TestCase):
         controller.add_point(self.second)
         controller.add_linear(linear)
         actor_name = controller.linear_actor_name(linear.id)
-        first_mesh = plotter.meshes[actor_name]
+        # 演员为持久化对象，全程复用同一个实例以避免闪烁。
+        persistent_actor = plotter.actors[actor_name]
+        persistent_mesh = plotter.meshes[actor_name]
 
         controller.set_visible(linear.id, False)
         controller.set_bounds(ViewportBounds((-10.0, 10.0), (-10.0, 10.0)))
 
-        # 不可见时演员已移除，但内部对象仍标记为不可见。
-        self.assertNotIn(actor_name, plotter.actors)
-        self.assertFalse(linear.visible)
-        # 恢复可见后应按新视口范围重建网格。
-        controller.set_visible(linear.id, True)
+        # 不可见时演员保留但被隐藏，且内部对象标记为不可见。
         self.assertIn(actor_name, plotter.actors)
-        self.assertIsNot(plotter.meshes[actor_name], first_mesh)
+        self.assertFalse(plotter.actors[actor_name].visibility)
+        self.assertFalse(linear.visible)
+        # 恢复可见后应就地更新几何为新视口范围，而不重建演员。
+        controller.set_visible(linear.id, True)
+        self.assertIs(plotter.actors[actor_name], persistent_actor)
+        self.assertIs(plotter.meshes[actor_name], persistent_mesh)
+        self.assertTrue(plotter.actors[actor_name].visibility)
         self.assertEqual(
             {tuple(point[:2]) for point in plotter.meshes[actor_name].points},
             {(-10.0, -10.0), (10.0, 10.0)},

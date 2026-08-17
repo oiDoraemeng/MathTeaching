@@ -46,7 +46,13 @@ def linear_mesh(
 
 
 class GeometrySceneController:
-    """管理二维交互对象，同时避免影响函数曲线和坐标辅助线。"""
+    """管理二维交互对象，同时避免影响函数曲线和坐标辅助线。
+
+    与 :class:`~rendering.two_d_scene.TwoDGuides` 一样，本控制器为每个点、线及其
+    高亮光晕保留持久化演员，并用 ``copy_from`` 就地更新几何数据、用属性更新样式，
+    而不是每帧删除并重建演员。所有内部绘制均以 ``render=False`` 调用，仅由调用方在
+    操作结束后统一 ``plotter.render()``，从而消除拖动点、悬浮或选中时的闪烁。
+    """
 
     def __init__(self, plotter: pv.Plotter, bounds: ViewportBounds) -> None:
         self.plotter = plotter
@@ -60,6 +66,9 @@ class GeometrySceneController:
         self._draft_kind: LinearKind | None = None
         self._draft_start: tuple[float, float] | None = None
         self._draft_end: tuple[float, float] | None = None
+        # 持久化演员与其就地更新的网格，键为演员名。
+        self._meshes: dict[str, pv.PolyData] = {}
+        self._actors: dict[str, object] = {}
 
     @staticmethod
     def point_actor_name(point_id: str) -> str:
@@ -81,14 +90,14 @@ class GeometrySceneController:
         self.points[point.id] = point
         if point.id not in self.order:
             self.order.append(point.id)
-        self._replace_point_actor(point)
+        self._sync_point(point)
         self._refresh_labels()
 
     def add_linear(self, linear: Linear2D) -> None:
         self.linears[linear.id] = linear
         if linear.id not in self.order:
             self.order.append(linear.id)
-        self._replace_linear_actor(linear)
+        self._sync_linear(linear)
 
     def move_point(self, point_id: str, x: float, y: float) -> None:
         """更新点坐标，并联动刷新依赖它的线类对象和标签。"""
@@ -97,10 +106,10 @@ class GeometrySceneController:
             return
         point.x = float(x)
         point.y = float(y)
-        self._replace_point_actor(point)
+        self._sync_point(point)
         for linear in self.linears.values():
             if point_id in {linear.start_point_id, linear.end_point_id}:
-                self._replace_linear_actor(linear)
+                self._sync_linear(linear)
         self._refresh_labels()
 
     def remove_object(self, object_id: str) -> None:
@@ -110,7 +119,7 @@ class GeometrySceneController:
             self.linear_actor_name(object_id),
             self.linear_halo_name(object_id),
         ):
-            self.plotter.remove_actor(name, render=False)
+            self._drop_actor(name)
         self.points.pop(object_id, None)
         self.linears.pop(object_id, None)
         self.order = [item for item in self.order if item != object_id]
@@ -123,11 +132,11 @@ class GeometrySceneController:
     def set_visible(self, object_id: str, visible: bool) -> None:
         if object_id in self.points:
             self.points[object_id].visible = visible
-            self._replace_point_actor(self.points[object_id])
+            self._sync_point(self.points[object_id])
             self._refresh_labels()
         if object_id in self.linears:
             self.linears[object_id].visible = visible
-            self._replace_linear_actor(self.linears[object_id])
+            self._sync_linear(self.linears[object_id])
 
     def set_hover(self, object_id: str | None) -> bool:
         """设置悬浮对象，返回悬浮目标是否发生变化。"""
@@ -184,7 +193,7 @@ class GeometrySceneController:
         """更新依赖视口范围的直线、射线、向量箭头、标签和临时预览。"""
         self.bounds = bounds
         for linear in self.linears.values():
-            self._replace_linear_actor(linear)
+            self._sync_linear(linear)
         self._refresh_labels()
         if (
             self._draft_kind is not None
@@ -205,95 +214,172 @@ class GeometrySceneController:
         self._replace_draft(kind, self._draft_start, end)
 
     def clear_draft(self) -> None:
-        self.plotter.remove_actor(_DRAFT_ACTOR, render=False)
+        self._drop_actor(_DRAFT_ACTOR)
         self._draft_kind = None
         self._draft_start = None
         self._draft_end = None
+
+    def _drop_actor(self, name: str) -> None:
+        """移除演员并清理持久化缓存。"""
+        self.plotter.remove_actor(name, render=False)
+        self._meshes.pop(name, None)
+        self._actors.pop(name, None)
 
     def _restyle(self, object_id: str | None) -> None:
         if object_id is None:
             return
         if object_id in self.points:
-            self._replace_point_actor(self.points[object_id])
+            self._sync_point(self.points[object_id])
         elif object_id in self.linears:
-            self._replace_linear_actor(self.linears[object_id])
+            self._sync_linear(self.linears[object_id])
 
-    def _replace_point_actor(self, point: Point2D) -> None:
+    # ------------------------------------------------------------------
+    # 持久化演员辅助方法
+    # ------------------------------------------------------------------
+
+    def _get_or_create_point_actor(
+        self,
+        name: str,
+        mesh: pv.PolyData,
+        *,
+        color: str,
+        point_size: float,
+        opacity: float = 1.0,
+    ) -> object:
+        """取出已有点演员，或首次创建并缓存；几何始终通过 copy_from 就地更新。"""
+        actor = self._actors.get(name)
+        if actor is None:
+            stored = mesh.copy()
+            actor = self.plotter.add_mesh(
+                stored,
+                name=name,
+                color=color,
+                opacity=opacity,
+                lighting=False,
+                point_size=point_size,
+                render_points_as_spheres=True,
+                render=False,
+            )
+            self._meshes[name] = stored
+            self._actors[name] = actor
+        else:
+            self._meshes[name].copy_from(mesh)
+            _set_prop(actor, color=color, point_size=point_size, opacity=opacity)
+        return actor
+
+    def _get_or_create_linear_actor(
+        self,
+        name: str,
+        mesh: pv.PolyData,
+        *,
+        color: str,
+        line_width: float,
+        opacity: float = 1.0,
+    ) -> object:
+        """取出已有线演员，或首次创建并缓存；几何通过 copy_from 就地更新。"""
+        actor = self._actors.get(name)
+        if actor is None:
+            stored = mesh.copy()
+            actor = self.plotter.add_mesh(
+                stored,
+                name=name,
+                color=color,
+                opacity=opacity,
+                line_width=line_width,
+                render_lines_as_tubes=False,
+                show_vertices=False,
+                lighting=False,
+                render=False,
+            )
+            self._meshes[name] = stored
+            self._actors[name] = actor
+        else:
+            self._meshes[name].copy_from(mesh)
+            _set_prop(actor, color=color, line_width=line_width, opacity=opacity)
+        return actor
+
+    def _sync_point(self, point: Point2D) -> None:
+        """就地更新点和光晕演员的几何与样式，不销毁演员。"""
         halo_name = self.point_halo_name(point.id)
         actor_name = self.point_actor_name(point.id)
-        self.plotter.remove_actor(halo_name, render=False)
-        self.plotter.remove_actor(actor_name, render=False)
+
         if not point.visible:
+            # 隐藏而非删除，保留演员以便下次快速恢复。
+            for name in (halo_name, actor_name):
+                actor = self._actors.get(name)
+                if actor is not None:
+                    actor.visibility = False
             return
-        # Point sprites keep a stable screen-space size while preserving the
-        # exact world coordinate of the point.
-        point_mesh = _point_mesh(point.x, point.y)
-        halo = self._point_halo_style(point.id)
-        if halo is not None:
-            halo_color, halo_multiplier = halo
+
+        mesh = _point_mesh(point.x, point.y)
+        halo_style = self._point_halo_style(point.id)
+
+        # 主演员
+        main_actor = self._get_or_create_point_actor(
+            actor_name, mesh, color=point.color, point_size=_POINT_SIZE
+        )
+        main_actor.visibility = True
+
+        # 光晕演员：有高亮时显示，否则隐藏（不删除）
+        if halo_style is not None:
+            halo_color, halo_multiplier = halo_style
             halo_size = _POINT_HALO_SIZE if halo_multiplier >= 2.0 else 18.0
-            halo_actor = self.plotter.add_mesh(
-                point_mesh.copy(),
-                name=halo_name,
-                color=halo_color,
-                opacity=0.35,
-                lighting=False,
-                point_size=halo_size,
-                render_points_as_spheres=True,
+            halo_actor = self._get_or_create_point_actor(
+                halo_name, mesh, color=halo_color, point_size=halo_size, opacity=0.35
             )
             halo_actor.visibility = True
-        actor = self.plotter.add_mesh(
-            point_mesh,
-            name=actor_name,
-            color=point.color,
-            lighting=False,
-            point_size=_POINT_SIZE,
-            render_points_as_spheres=True,
-        )
-        actor.visibility = True
+        else:
+            actor = self._actors.get(halo_name)
+            if actor is not None:
+                actor.visibility = False
 
     def _point_halo_style(self, point_id: str) -> tuple[str, float] | None:
         if point_id == self._selected_id:
-            return _SELECTED_HALO_COLOR, 2.2  # 光晕倍数
+            return _SELECTED_HALO_COLOR, 2.2
         if point_id == self._hover_id:
             return _HOVER_HALO_COLOR, 1.8
         return None
 
-    def _replace_linear_actor(self, linear: Linear2D) -> None:
+    def _sync_linear(self, linear: Linear2D) -> None:
+        """就地更新线和光晕演员的几何与样式，不销毁演员。"""
         halo_name = self.linear_halo_name(linear.id)
         actor_name = self.linear_actor_name(linear.id)
-        self.plotter.remove_actor(halo_name, render=False)
-        self.plotter.remove_actor(actor_name, render=False)
+
         start = self.points.get(linear.start_point_id)
         end = self.points.get(linear.end_point_id)
-        if start is None or end is None or not linear.visible:
+        visible = linear.visible and start is not None and end is not None
+
+        if not visible:
+            for name in (halo_name, actor_name):
+                actor = self._actors.get(name)
+                if actor is not None:
+                    actor.visibility = False
             return
+
         mesh = linear_mesh(linear.kind, start, end, self.bounds)
-        if mesh.n_points == 0 or mesh.n_cells == 0:
-            return
+        has_geometry = mesh.n_points > 0 and mesh.n_cells > 0
+
+        # 主演员
+        main_actor = self._get_or_create_linear_actor(
+            actor_name, mesh if has_geometry else pv.PolyData(),
+            color=linear.color, line_width=linear.line_width,
+        )
+        main_actor.visibility = has_geometry
+
+        # 光晕演员
         highlight = self._linear_highlight_color(linear.id)
-        if highlight is not None:
-            halo_actor = self.plotter.add_mesh(
-                mesh.copy(),
-                name=halo_name,
+        if highlight is not None and has_geometry:
+            halo_actor = self._get_or_create_linear_actor(
+                halo_name, mesh,
                 color=highlight,
                 line_width=linear.line_width + _LINE_HALO_WIDTH,
                 opacity=0.4,
-                render_lines_as_tubes=False,
-                show_vertices=False,
-                lighting=False,
             )
             halo_actor.visibility = True
-        actor = self.plotter.add_mesh(
-            mesh,
-            name=actor_name,
-            color=linear.color,
-            line_width=linear.line_width,
-            render_lines_as_tubes=False,
-            show_vertices=False,
-            lighting=False,
-        )
-        actor.visibility = True
+        else:
+            actor = self._actors.get(halo_name)
+            if actor is not None:
+                actor.visibility = False
 
     def _linear_highlight_color(self, linear_id: str) -> str | None:
         if linear_id == self._selected_id:
@@ -328,6 +414,7 @@ class GeometrySceneController:
             show_points=False,
             always_visible=True,
             name=_LABEL_ACTOR,
+            render=False,
             render_points_as_spheres=False,
         )
         self._has_labels = True
@@ -346,21 +433,26 @@ class GeometrySceneController:
         start: tuple[float, float],
         end: tuple[float, float],
     ) -> None:
-        self.plotter.remove_actor(_DRAFT_ACTOR, render=False)
         mesh = linear_mesh(kind, start, end, self.bounds)
-        if mesh.n_points == 0 or mesh.n_cells == 0:
-            return
-        actor = self.plotter.add_mesh(
-            mesh,
-            name=_DRAFT_ACTOR,
+        has_geometry = mesh.n_points > 0 and mesh.n_cells > 0
+        draft_actor = self._get_or_create_linear_actor(
+            _DRAFT_ACTOR,
+            mesh if has_geometry else pv.PolyData(),
             color="#6c7b8d",
-            opacity=0.72,
             line_width=1.5,
-            render_lines_as_tubes=False,
-            show_vertices=False,
-            lighting=False,
+            opacity=0.72,
         )
-        actor.visibility = True
+        draft_actor.visibility = has_geometry
+
+
+def _set_prop(actor: object, **kwargs: object) -> None:
+    """安全更新 VTK 演员属性；FakeActor 无 prop 属性时静默跳过。"""
+    prop = getattr(actor, "prop", None)
+    if prop is None:
+        return
+    for key, value in kwargs.items():
+        if hasattr(prop, key):
+            setattr(prop, key, value)
 
 
 def _coordinates(point: Point2D | tuple[float, float]) -> tuple[float, float]:
@@ -429,19 +521,19 @@ def _parameter_limits(
 def _vector_mesh(
     start: tuple[float, float],
     end: tuple[float, float],
-    bounds: ViewportBounds,
+    bounds: ViewportBounds, # 视口边界对象
 ) -> pv.PolyData:
     """向量网格：一条线段作为杆，加一个填充三角形作为箭头。"""
-    direction = (end[0] - start[0], end[1] - start[1])
-    length = hypot(*direction)
+    direction = (end[0] - start[0], end[1] - start[1]) 
+    length = hypot(*direction) # 向量模长  
     if length <= 1e-12:
         return pv.PolyData()
-    unit = (direction[0] / length, direction[1] / length)
-    normal = (-unit[1], unit[0])
-    size = min(length * 0.34, min(bounds.x_span, bounds.y_span) * 0.035)
-    size = max(size, min(bounds.x_span, bounds.y_span) * 0.014)
+    unit = (direction[0] / length, direction[1] / length) # 单位方向向量
+    normal = (-unit[1], unit[0]) # 法向量，用于计算箭头底边的两个顶点
+    size = min(length * 0.34, min(bounds.x_span, bounds.y_span) * 0.03)
+    size = max(size, min(bounds.x_span, bounds.y_span) * 0.02)
     base = (end[0] - unit[0] * size, end[1] - unit[1] * size)
-    half = size * 0.5
+    half = size * 0.2
     left = (base[0] + normal[0] * half, base[1] + normal[1] * half)
     right = (base[0] - normal[0] * half, base[1] - normal[1] * half)
     # 杆延伸到箭头根部，避免线宽在尖端外露。
