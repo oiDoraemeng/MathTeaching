@@ -259,7 +259,8 @@ def _build_explicit_mesh(expression: SurfaceExpression, parameters: dict[str, fl
     mesh = pv.StructuredGrid(coordinate_grids["x"], coordinate_grids["y"], coordinate_grids["z"]).extract_surface(
         algorithm="dataset_surface"
     )
-    return _remove_invalid_points(mesh)
+    mesh = _remove_invalid_points(mesh)
+    return _attach_gradient_normals(mesh, expression, parameters)
 
 
 def _build_implicit_mesh(expression: SurfaceExpression, parameters: dict[str, float], domain: PlotDomain) -> pv.PolyData:
@@ -290,7 +291,8 @@ def _build_implicit_mesh(expression: SurfaceExpression, parameters: dict[str, fl
         origin=(domain.x_range[0], domain.y_range[0], domain.z_range[0]),
     )
     grid.point_data["surface_field"] = field.ravel(order="F")
-    return grid.contour([0.0], scalars="surface_field").clean()
+    mesh = grid.contour([0.0], scalars="surface_field").clean()
+    return _attach_gradient_normals(mesh, expression, parameters)
 
 
 def _build_linear_plane_mesh(
@@ -395,6 +397,60 @@ def _build_parametric_mesh(expression: SurfaceExpression, parameters: dict[str, 
     coordinates = tuple(np.where(valid, component, np.nan) for component in components)
     mesh = pv.StructuredGrid(*coordinates).extract_surface(algorithm="dataset_surface")
     return _remove_invalid_points(mesh)
+
+
+def _attach_gradient_normals(
+    mesh: pv.PolyData,
+    expression: SurfaceExpression,
+    parameters: dict[str, float],
+) -> pv.PolyData:
+    """用解析梯度替换面法线，实现平滑着色。
+
+    对隐式曲面 f(x,y,z)=0：法线方向 = ∇f，在等值面上与几何法线精确一致。
+    对显式曲面 dep=f(...)：法线方向由参数化面的切向量叉积导出。
+    计算失败时回退到 VTK 的几何法线（compute_normals），不抛出异常。
+    """
+    if mesh.n_points == 0:
+        return mesh
+    x_s, y_s, z_s = (sp.Symbol(c, real=True) for c in ("x", "y", "z"))
+    expr = expression.simplified
+    try:
+        if expression.kind == "implicit":
+            gx = sp.diff(expr, x_s)
+            gy = sp.diff(expr, y_s)
+            gz = sp.diff(expr, z_s)
+        elif expression.kind == "explicit":
+            dep = expression.dependent_axis
+            if dep == "z":
+                gx, gy, gz = -sp.diff(expr, x_s), -sp.diff(expr, y_s), sp.Integer(1)
+            elif dep == "y":
+                gx, gy, gz = -sp.diff(expr, x_s), sp.Integer(1), -sp.diff(expr, z_s)
+            else:
+                gx, gy, gz = sp.Integer(1), -sp.diff(expr, y_s), -sp.diff(expr, z_s)
+        else:
+            return mesh.compute_normals(cell_normals=False, point_normals=True, consistent_normals=True)
+    except Exception:
+        return mesh
+    param_syms = [sp.Symbol(p, real=True) for p in expression.parameter_names]
+    try:
+        fn = sp.lambdify([x_s, y_s, z_s, *param_syms], [gx, gy, gz], modules="numpy")
+        pts = mesh.points
+        param_vals = [parameters[p] for p in expression.parameter_names]
+        with np.errstate(all="ignore"):
+            raw = fn(pts[:, 0], pts[:, 1], pts[:, 2], *param_vals)
+        nx = np.broadcast_to(np.asarray(raw[0], dtype=float), pts[:, 0].shape).copy()
+        ny = np.broadcast_to(np.asarray(raw[1], dtype=float), pts[:, 0].shape).copy()
+        nz = np.broadcast_to(np.asarray(raw[2], dtype=float), pts[:, 0].shape).copy()
+        normals = np.stack([nx, ny, nz], axis=1).astype(np.float32)
+        lengths = np.linalg.norm(normals, axis=1, keepdims=True)
+        valid = lengths[:, 0] > 1e-12
+        normals[valid] /= lengths[valid]
+        normals[~valid] = [0.0, 0.0, 1.0]
+        mesh = mesh.copy(deep=False)
+        mesh.point_data["Normals"] = normals
+    except Exception:
+        return mesh.compute_normals(cell_normals=False, point_normals=True, consistent_normals=True)
+    return mesh
 
 
 def _remove_invalid_points(mesh: pv.PolyData) -> pv.PolyData:

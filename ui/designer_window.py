@@ -114,6 +114,7 @@ class MainWindow:
         self._three_d_axes: ThreeDAxes | None = None
         self._three_d_spacing: float | None = None
         self._three_d_extent: float | None = None
+        self._last_domain_extent: float | None = None
         self._viewport_refreshing = False
         self._viewport_refresh_pending = False
         self._viewport_refresh_timer: QTimer | None = None
@@ -208,7 +209,7 @@ class MainWindow:
         self.scene_settings_panel.lighting_requested.connect(self._show_lighting_dialog)
         self._viewport_refresh_timer = QTimer(self.window)
         self._viewport_refresh_timer.setSingleShot(True)
-        self._viewport_refresh_timer.setInterval(90)
+        self._viewport_refresh_timer.setInterval(130)
         self._viewport_refresh_timer.timeout.connect(self._refresh_visible_viewport)
         interactor = getattr(self.plotter, "iren", None)
         if interactor is not None:
@@ -230,11 +231,10 @@ class MainWindow:
         self._queue_viewport_refresh()
 
     def _queue_viewport_refresh(self) -> None:
-        if (
-            self._viewport_refreshing
-            or self._viewport_refresh_pending
-            or self._viewport_refresh_timer is None
-        ):
+        # 采用去抖（debounce）而非节流：每次交互事件都重启定时器，
+        # 只有用户停止缩放/旋转后才触发一次重采样。这样缩放过程中曲面
+        # 不会中途重建，避免卡顿与网格密度突变导致的视觉跳跃。
+        if self._viewport_refreshing or self._viewport_refresh_timer is None:
             return
         self._viewport_refresh_pending = True
         self._viewport_refresh_timer.start()
@@ -336,6 +336,7 @@ class MainWindow:
             explicit_resolution=self.plot_domain.explicit_resolution,
             implicit_resolution=self.plot_domain.implicit_resolution,
         )
+        self._last_domain_extent = extent
         self.layer_controller = LayerSceneController(
             self.plotter,
             self.plot_domain,
@@ -548,8 +549,7 @@ class MainWindow:
             self._three_d_spacing = spacing
             self._three_d_extent = extent
 
-        # 曲面在初始定义域上只采样一次，缩放纯粹是相机操作，不重建几何，
-        # 以获得类似 GeoGebra 的流畅缩放（不再随视口跳档重采样）。
+        # 缩放纯粹是相机操作，不重建几何；定义域只由范围滑块控制。
         if render:
             self.plotter.render()
 
