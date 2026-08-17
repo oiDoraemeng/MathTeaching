@@ -114,7 +114,6 @@ class MainWindow:
         self._three_d_axes: ThreeDAxes | None = None
         self._three_d_spacing: float | None = None
         self._three_d_extent: float | None = None
-        self._last_domain_extent: float | None = None
         self._viewport_refreshing = False
         self._viewport_refresh_pending = False
         self._viewport_refresh_timer: QTimer | None = None
@@ -316,6 +315,8 @@ class MainWindow:
         # build_scene 内部会调用 plotter.clear() 清除全部 actor，因此坐标轴需要重新创建。
         self._three_d_axes = ThreeDAxes(self.plotter)
         extent = self._current_3d_axis_extent()
+        # 切换场景会重新创建坐标轴；沿用上次三维间距，避免同一视角重建后跳到另一档刻度。
+        previous_spacing = self._three_d_spacing
         spacing = self._three_d_axes.render(
             extent,
             axis_color_mode=appearance.axis_color_mode,
@@ -323,6 +324,7 @@ class MainWindow:
             show_ticks=appearance.show_ticks,
             tick_spacing_mode=appearance.tick_spacing_mode,
             custom_tick_spacing=appearance.tick_spacing,
+            previous_spacing=previous_spacing,
         )
         self._three_d_spacing = spacing
         self._three_d_extent = extent
@@ -334,7 +336,6 @@ class MainWindow:
             explicit_resolution=self.plot_domain.explicit_resolution,
             implicit_resolution=self.plot_domain.implicit_resolution,
         )
-        self._last_domain_extent = extent
         self.layer_controller = LayerSceneController(
             self.plotter,
             self.plot_domain,
@@ -506,7 +507,7 @@ class MainWindow:
             span,
             appearance.tick_spacing_mode,
             appearance.tick_spacing,
-            target_intervals=10,
+            target_intervals=16,
             previous_spacing=None if force else self._three_d_spacing,
         )
         spacing_unchanged = (
