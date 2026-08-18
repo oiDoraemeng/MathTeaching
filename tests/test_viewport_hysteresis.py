@@ -1,6 +1,7 @@
 """二维视口刷新中类 GeoGebra 跳过与滞后策略的测试。"""
 
 import unittest
+from unittest.mock import MagicMock
 
 from models.scene_mode import SceneAppearance, SceneMode
 from rendering.ticks import ViewportBounds, tick_spacing
@@ -45,6 +46,22 @@ def _make_window(visible: ViewportBounds) -> MainWindow:
 
 
 class ViewportHysteresisTests(unittest.TestCase):
+    def test_interaction_prefetches_only_near_the_cached_outer_edge(self) -> None:
+        window = object.__new__(MainWindow)
+        window.scene_mode = SceneMode.TWO_D
+        window._viewport_refreshing = False
+        window._last_interaction_refresh_time = 0.0
+        window._two_d_sample_bounds = ViewportBounds((-22.0, 22.0), (-22.0, 22.0))
+        window._refresh_2d_viewport = MagicMock()
+
+        window._current_2d_bounds = lambda: ViewportBounds((-10.0, 10.0), (-10.0, 10.0))
+        MainWindow._on_viewport_interacting(window)
+        window._refresh_2d_viewport.assert_not_called()
+
+        window._current_2d_bounds = lambda: ViewportBounds((-2.0, 18.0), (-10.0, 10.0))
+        MainWindow._on_viewport_interacting(window)
+        window._refresh_2d_viewport.assert_called_once_with(resample=True, render=True)
+
     def test_small_zoom_skips_guide_rebuild(self) -> None:
         # 跨度为 12 时自动间距为 2，轻微缩放后仍处于 4~8 个区间的滞后范围内。
         visible = ViewportBounds((-6.0, 6.0), (-6.0, 6.0))

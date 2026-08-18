@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import time
 from pathlib import Path
 
 from collections.abc import Callable
@@ -119,6 +120,8 @@ class MainWindow:
         self._viewport_refresh_pending = False
         self._viewport_refresh_timer: QTimer | None = None
         self._viewport_interaction_observer: int | None = None
+        self._viewport_motion_observer: int | None = None
+        self._last_interaction_refresh_time = 0.0
         self._intersection_color_revision = 0
         self._scene_settings_closing = False
         self._active_2d_tool: ToolKind | None = None
@@ -217,8 +220,12 @@ class MainWindow:
                 self._viewport_interaction_observer = interactor.add_observer(
                     "EndInteractionEvent", self._on_viewport_interaction_finished
                 )
+                self._viewport_motion_observer = interactor.add_observer(
+                    "InteractionEvent", self._on_viewport_interacting
+                )
             except (AttributeError, RuntimeError, TypeError):
                 self._viewport_interaction_observer = None
+                self._viewport_motion_observer = None
         self._geometry_input_filter = _GeometryInputFilter(self, self.plotter.interactor)
         self.plotter.interactor.installEventFilter(self._geometry_input_filter)
         self._sync_scene_controls()
@@ -229,6 +236,41 @@ class MainWindow:
 
     def _on_viewport_interaction_finished(self, *_args: object) -> None:
         self._queue_viewport_refresh()
+
+    @staticmethod
+    def _needs_2d_prefetch(visible: ViewportBounds, cached: ViewportBounds) -> bool:
+        """判断视口是否接近缓存边缘，提前在可视区域外补绘。"""
+        if not cached.contains(visible):
+            return True
+        visible_center_x = (visible.x_range[0] + visible.x_range[1]) / 2
+        visible_center_y = (visible.y_range[0] + visible.y_range[1]) / 2
+        cached_center_x = (cached.x_range[0] + cached.x_range[1]) / 2
+        cached_center_y = (cached.y_range[0] + cached.y_range[1]) / 2
+        prefetch_distance = 0.35
+        return (
+            abs(visible_center_x - cached_center_x) >= visible.x_span * prefetch_distance
+            or abs(visible_center_y - cached_center_y) >= visible.y_span * prefetch_distance
+        )
+
+    def _on_viewport_interacting(self, *_args: object) -> None:
+        # 平移过程中采用节流策略，只在二维视口接近缓存边缘时补绘，避免当前视口内反复重建。
+        if self.scene_mode is not SceneMode.TWO_D or self._viewport_refreshing:
+            return
+        current = time.monotonic()
+        if current - self._last_interaction_refresh_time < 0.05:
+            return
+        cached_bounds = getattr(self, "_two_d_sample_bounds", None)
+        if cached_bounds is None:
+            return
+        try:
+            visible = self._current_2d_bounds()
+        except Exception:
+            return
+
+        # 在视口进入外围缓存区时重采样，确保用户看不到空白边缘。
+        if self._needs_2d_prefetch(visible, cached_bounds):
+            self._last_interaction_refresh_time = current
+            self._refresh_2d_viewport(resample=True, render=True)
 
     def _queue_viewport_refresh(self) -> None:
         # 采用去抖（debounce）而非节流：每次交互事件都重启定时器，
@@ -463,7 +505,14 @@ class MainWindow:
             self._two_d_guide_bounds is not None
             and self._two_d_guide_bounds.contains(visible)
         )
-        if not force and spacing_unchanged and still_covered:
+
+        # 视口接近缓存边缘时提前补绘，补绘范围始终位于当前视口外围。
+        needs_prefetch = (
+            self._two_d_guide_bounds is not None
+            and self._needs_2d_prefetch(visible, self._two_d_guide_bounds)
+        )
+
+        if not force and spacing_unchanged and still_covered and not needs_prefetch:
             if render:
                 self.plotter.render()
             return
@@ -479,7 +528,7 @@ class MainWindow:
             # 曲线出现折线状的不连续。这里额外判断放大幅度：采样范围由可见范围
             # expanded(_GUIDE_MARGIN) 得到，反推出采样时的可见跨度，一旦当前可见
             # 跨度明显小于它（放大约 1.4 倍以上）便按当前视口重采样，恢复精细分辨率。
-            needs_resample = force or self._two_d_sample_bounds is None or (
+            needs_resample = force or needs_prefetch or self._two_d_sample_bounds is None or (
                 not self._two_d_sample_bounds.contains(visible)
             )
             if not needs_resample and self._two_d_sample_bounds is not None:
