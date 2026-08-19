@@ -1,6 +1,7 @@
 """二维画布点线工具的坐标和对象生命周期测试。"""
 
 import unittest
+from unittest.mock import MagicMock
 
 from models.geometry_2d import Point2D
 from models.scene_mode import SceneMode
@@ -36,6 +37,7 @@ class FakeCamera:
     def __init__(self) -> None:
         self.parallel_scale = 10.0
         self.focal_point = (0.0, 0.0, 0.0)
+        self.position = (0.0, 0.0, 20.0)
 
 
 class FakePlotter:
@@ -153,6 +155,26 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         self.assertEqual(window._viewport_to_world(0, 0), (-10.0, 10.0))
         self.assertEqual(window._viewport_to_world(100, 100), (10.0, -10.0))
         self.assertEqual(window._viewport_to_world(50, 50), (0.0, 0.0))
+
+    def test_zoom_keeps_cursor_world_coordinate_fixed(self) -> None:
+        window = _make_window()
+        window._refresh_2d_viewport = MagicMock()
+        window._queue_viewport_refresh = MagicMock()
+        anchor_before = window._viewport_to_world(25, 30)
+
+        self.assertTrue(window._zoom_2d_at_viewport(25, 30, 0.5))
+
+        anchor_after = window._viewport_to_world(25, 30)
+        self.assertIsNotNone(anchor_before)
+        self.assertIsNotNone(anchor_after)
+        self.assertAlmostEqual(anchor_after[0], anchor_before[0])
+        self.assertAlmostEqual(anchor_after[1], anchor_before[1])
+        self.assertAlmostEqual(window.plotter.camera.focal_point[0], -2.5)
+        self.assertAlmostEqual(window.plotter.camera.focal_point[1], 2.0)
+        self.assertAlmostEqual(window.plotter.camera.position[0], -2.5)
+        self.assertAlmostEqual(window.plotter.camera.position[1], 2.0)
+        window._refresh_2d_viewport.assert_called_once_with(resample=True, render=True)
+        window._queue_viewport_refresh.assert_called_once_with()
 
     def test_point_tool_reuses_nearby_points(self) -> None:
         window = _make_window()

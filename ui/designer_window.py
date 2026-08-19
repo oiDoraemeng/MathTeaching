@@ -9,7 +9,7 @@ from pathlib import Path
 from collections.abc import Callable
 
 from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QTimer
-from PySide6.QtGui import QKeyEvent, QMouseEvent
+from PySide6.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QToolButton, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
@@ -62,13 +62,15 @@ class _ViewportResizeFilter(QObject):
 
 
 class _GeometryInputFilter(QObject):
-    """只在二维几何工具激活时拦截视口鼠标和键盘事件。"""
+    """拦截二维定点缩放和激活工具的视口鼠标、键盘事件。"""
 
     def __init__(self, owner: "MainWindow", parent: QObject) -> None:
         super().__init__(parent)
         self.owner = owner
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if event.type() == QEvent.Type.Wheel and isinstance(event, QWheelEvent):
+            return self.owner._handle_viewport_wheel(event)
         if event.type() == QEvent.Type.MouseButtonPress and isinstance(event, QMouseEvent):
             return self.owner._handle_geometry_mouse_press(event)
         if event.type() == QEvent.Type.MouseButtonDblClick and isinstance(event, QMouseEvent):
@@ -233,6 +235,59 @@ class MainWindow:
     def _on_viewport_host_changed(self) -> None:
         self._position_viewport_overlays()
         self._queue_viewport_refresh()
+
+    def _handle_viewport_wheel(self, event: QWheelEvent) -> bool:
+        """二维场景按鼠标位置缩放，保持光标下的世界坐标不变。"""
+        if self.scene_mode is not SceneMode.TWO_D:
+            return False
+        delta = event.angleDelta().y()
+        if delta == 0:
+            return False
+        self._zoom_2d_at_viewport(
+            event.position().x(),
+            event.position().y(),
+            0.9 ** (float(delta) / 120.0),
+        )
+        event.accept()
+        return True
+
+    def _zoom_2d_at_viewport(self, screen_x: float, screen_y: float, factor: float) -> bool:
+        """缩放并移动相机，使缩放前光标下的世界点保持在原屏幕位置。"""
+        if self.scene_mode is not SceneMode.TWO_D or factor <= 0:
+            return False
+        interactor = getattr(self.plotter, "interactor", None)
+        camera = getattr(self.plotter, "camera", None)
+        if interactor is None or camera is None:
+            return False
+        width = max(1, int(interactor.width()))
+        height = max(1, int(interactor.height()))
+        if not 0 <= screen_x <= width or not 0 <= screen_y <= height:
+            return False
+
+        old_scale = max(1e-6, float(camera.parallel_scale))
+        new_scale = max(1e-6, min(1e9, old_scale * factor))
+        focal = tuple(float(value) for value in camera.focal_point)
+        aspect = width / height
+        normalized_x = 2.0 * float(screen_x) / width - 1.0
+        normalized_y = 1.0 - 2.0 * float(screen_y) / height
+        anchor_x = focal[0] + normalized_x * old_scale * aspect
+        anchor_y = focal[1] + normalized_y * old_scale
+        new_focal_x = anchor_x - normalized_x * new_scale * aspect
+        new_focal_y = anchor_y - normalized_y * new_scale
+        shift_x = new_focal_x - focal[0]
+        shift_y = new_focal_y - focal[1]
+
+        camera.parallel_scale = new_scale
+        camera.focal_point = (new_focal_x, new_focal_y, focal[2])
+        try:
+            position = tuple(float(value) for value in camera.position)
+        except (AttributeError, TypeError):
+            position = None
+        if position is not None:
+            camera.position = (position[0] + shift_x, position[1] + shift_y, position[2])
+        self._refresh_2d_viewport(resample=True, render=True)
+        self._queue_viewport_refresh()
+        return True
 
     def _on_viewport_interaction_finished(self, *_args: object) -> None:
         self._queue_viewport_refresh()
