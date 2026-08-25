@@ -6,7 +6,7 @@
 
 **Architecture:** 保留 PySide6、PyVista、SymPy、`CommandPlan` 和 `SceneCommandService`。新增 SQLite 会话存储、JSON 场景快照、事件驱动的 Agent Runtime 和受控数学工具；聊天时间线使用本地 `QWebEngineView` 渲染，WebView 只能通过消息桥发送 UI 意图。
 
-**Tech Stack:** Python 3.11、PySide6/QWebEngineView、SQLite WAL、OpenAI Python SDK 的 OpenAI-compatible Chat Completions/SSE、Pydantic JSON Schema、现有 SymPy/PyVista 场景宿主、KaTeX、Markdown-it。
+**Tech Stack:** Python 3.11、PySide6/QWebEngineView、SQLite WAL、OpenAI Python SDK 的 OpenAI-compatible Chat Completions/SSE、Pydantic JSON Schema、pypdf、现有 SymPy/PyVista 场景宿主、KaTeX、Markdown-it。
 
 ---
 
@@ -14,9 +14,9 @@
 
 本计划拆成三个可独立验证的子系统，按顺序实施：
 
-1. **数据基础**：会话、逐轮记录、场景快照、恢复/撤销/分支。
-2. **Agent Runtime**：DeepSeek 流式响应、工具调用、Agent/Ask/Plan、确认/连续执行。
-3. **右侧工作区**：隐藏/打开、标题栏、会话标签、空状态、WebView 时间线、输入区和悬浮操作。
+1. **数据基础**：会话、逐轮记录、场景快照、恢复/撤销/分支、启动恢复。
+2. **上下文与 Agent Runtime**：Context Broker、附件、DeepSeek 流式响应、工具调用、Agent/Ask/Plan、确认/连续执行。
+3. **右侧工作区**：隐藏/打开、标题栏、会话标签、空状态、历史视图、WebView 时间线、输入区和悬浮操作。
 
 每个子系统完成后都要有单元测试或协议测试，再连接到下一个子系统。
 
@@ -28,6 +28,7 @@
 - `agent/session_store.py`：`.math/mathagent.db` 的 SQLite schema、迁移、会话/轮次/事件/附件 CRUD。
 - `agent/conversation.py`：会话、轮次、分支和当前指针的领域模型。
 - `agent/events.py`：Runtime/UI 之间的可序列化事件类型。
+- `agent/context_broker.py`：场景摘要、历史压缩、附件上下文和 token 用量估算。
 - `agent/tool_registry.py`：数学工具定义、JSON Schema 和调用分派。
 - `ui/agent_history.py`：历史记录窗口和恢复入口。
 - `ui/agent_web/index.html`：聊天时间线和输入区 HTML。
@@ -37,21 +38,22 @@
 - `tests/test_session_store.py`：SQLite 存储测试。
 - `tests/test_conversation.py`：分支与当前轮测试。
 - `tests/test_agent_events.py`：事件 schema 测试。
+- `tests/test_context_broker.py`：上下文包、附件限制和用量指示器测试。
 - `tests/test_agent_tools.py`：工具参数和 CommandPlan 测试。
 - `tests/test_agent_runtime_loop.py`：双模式 Runtime 测试。
 - `tests/test_agent_web_protocol.py`：WebView 消息协议测试。
 
 ### Modify files
 
-- `pyproject.toml`、`requirements.txt`：加入 OpenAI SDK、Pydantic；确认 PySide6 包含 `QtWebEngineWidgets`。
+- `pyproject.toml`、`requirements.txt`：加入 OpenAI SDK、Pydantic、pypdf；确认 PySide6 包含 `QtWebEngineWidgets`。
 - `services/agent_provider.py`：从一次性读取响应扩展为流式响应和 tool call 结果协议；保留旧 `create_plan()` 兼容入口。
 - `agent/providers/deepseek_provider.py`：DeepSeek base URL、model、thinking/tool-call 参数适配。
-- `agent/runtime.py`：改为可取消的事件驱动状态机，保留 `validate()`/`execute()` 兼容方法。
+- `agent/runtime.py`：改为可取消的事件驱动状态机，保留 `validate()`/`execute()` 兼容方法；接入 Context Broker 和每会话模式/模型。
 - `services/agent_worker.py`：改为转发 Runtime 事件，支持停止和排队消息。
 - `services/scene_commands.py`：补充快照恢复所需的宿主协议或保持命令服务作为唯一执行入口，不允许新增绕过入口。
 - `ui/designer_window.py`：提供纯数据场景捕获/恢复适配器，接入 SessionStore、Runtime 和面板打开/关闭。
 - `ui/agent_sidebar.py`：移除 40px 折叠态，改成默认隐藏、打开后固定右侧宽度的容器。
-- `ui/agent_panel.py`：改为 QWebEngineView 宿主和 Qt 消息桥，不再把 JSON 文本作为主计划视图。
+- `ui/agent_panel.py`：改为 QWebEngineView 宿主和 Qt 消息桥，不再把 JSON 文本作为主计划视图；加入上下文环形用量指示器。
 - `ui/main_window.ui`：保留主视口右上角 Agent 图标按钮的挂载位置。
 - `tests/test_agent_panel.py`、`tests/test_sidebar.py`、`tests/test_main_window_layout.py`：更新面板可见性、标签和按钮行为测试。
 
@@ -108,7 +110,7 @@ git add agent/scene_snapshot.py ui/designer_window.py tests/test_scene_snapshot.
 git commit -m "feat: add versioned math scene snapshots"
 ```
 
-## Task 2: Implement `.math` SQLite Session Storage
+## Task 2: Implement `.math` SQLite Session Storage and Startup Recovery
 
 **Files:**
 - Create: `agent/session_store.py`
@@ -135,6 +137,8 @@ def test_store_creates_math_database_and_round_trips_turn(tmp_path):
     assert store.get_turn(turn_id).scene_after == curve_snapshot
 ```
 
+Also test that `SessionStore` resolves the OS application-data root when no root is injected, persists `active_mode`, `execution_mode`, `model`, `current_turn_id`, `last_opened_at`, `closed_at`, and `parent_session_id`, and that closing a tab only marks the session closed without deleting turns. Test `app_state` round-trips the last open session IDs, active session ID, and a final scene snapshot.
+
 - [ ] **Step 2: Run the focused test and verify it fails**
 
 Run: `uv run pytest tests/test_session_store.py -q`
@@ -143,11 +147,11 @@ Expected: FAIL because `SessionStore` is not defined.
 
 - [ ] **Step 3: Implement schema and migrations**
 
-Create `.math/mathagent.db`, `.math/attachments`, `.math/previews`, and `.math/exports` below an injected `app_root`. Configure `PRAGMA journal_mode=WAL` and `PRAGMA foreign_keys=ON`. Create `sessions`, `turns`, `events`, and `attachments` tables matching the design document. Store snapshots and plans as UTF-8 JSON text.
+Create `.math/mathagent.db`, `.math/attachments`, `.math/previews`, and `.math/exports` below an injected `app_root`. When no root is injected, resolve `%APPDATA%/Math3DTeaching` on Windows, `~/Library/Application Support/Math3DTeaching` on macOS, and `~/.local/share/Math3DTeaching` on Linux. Configure `PRAGMA journal_mode=WAL` and `PRAGMA foreign_keys=ON`. Create `sessions`, `turns`, `events`, `attachments`, and `app_state` tables matching the design document, including per-session mode/model, branch parent, current pointer, open-session state, and final scene snapshot. Store snapshots and plans as UTF-8 JSON text.
 
 - [ ] **Step 4: Implement CRUD with transactions**
 
-Provide `create_session`, `list_sessions`, `rename_session`, `close_session`, `append_turn`, `append_event`, `add_attachment`, `get_turn`, `list_turns`, and `set_current_turn`. Every write uses a short transaction and returns domain dataclasses; UI code must not receive raw sqlite rows.
+Provide `create_session`, `list_sessions`, `rename_session`, `close_session`, `reopen_session`, `append_turn`, `append_event`, `add_attachment`, `get_turn`, `list_turns`, `set_current_turn`, `save_app_state`, `load_app_state`, and `restore_last_open_sessions`. Every write uses a short transaction and returns domain dataclasses; UI code must not receive raw sqlite rows. `close_session` must never delete history.
 
 - [ ] **Step 5: Run storage and runtime regression tests**
 
@@ -199,6 +203,51 @@ Expected: PASS.
 ```bash
 git add agent/conversation.py agent/events.py tests/test_conversation.py tests/test_agent_events.py
 git commit -m "feat: add MathAgent conversation events and branches"
+```
+
+## Task 3A: Add Context Broker and Attachment Pipeline
+
+**Files:**
+- Create: `agent/context_broker.py`
+- Modify: `agent/runtime.py`
+- Modify: `agent/session_store.py`
+- Modify: `pyproject.toml`
+- Modify: `requirements.txt`
+- Create: `tests/test_context_broker.py`
+
+- [ ] **Step 1: Write failing Context Broker tests**
+
+Test that a context package contains a compact scene summary, selected-object summary, recent full messages, compressed older messages, attachment metadata/text, and `used_tokens`/`max_tokens`. Test the limits: six attachments are rejected, a 10 MB + 1 byte image is rejected, and a 20 MB + 1 byte document is rejected.
+
+- [ ] **Step 2: Run focused tests and verify failure**
+
+Run: `uv run pytest tests/test_context_broker.py -q`
+
+Expected: FAIL because `ContextBroker` is not defined.
+
+- [ ] **Step 3: Implement deterministic context packing**
+
+Create `ContextPackage` and `ContextBroker.build(...)`. Include current scene and selected object as structured JSON, keep the newest messages verbatim, summarize older messages with a bounded deterministic summary, and include PDF/text extraction results. Do not add a vector database. Use provider token usage when available and a documented local estimate otherwise.
+
+- [ ] **Step 4: Implement attachment validation and storage**
+
+Accept images, PDFs, and plain text. Enforce five attachments per turn, 10 MB per image, and 20 MB per PDF/text file. Copy accepted files into `.math/attachments/`, compute SHA-256, and store only relative paths and metadata in SQLite. Use `pypdf` for PDF text extraction. If the selected provider advertises no image input support, return a user-facing capability error while allowing text/document attachments.
+
+- [ ] **Step 5: Connect per-session mode/model and usage events**
+
+Pass the session's `active_mode`, `execution_mode`, and `model` into the Runtime request. Emit a context usage event containing only `used_tokens`, `max_tokens`, and `percentage`; never emit hidden reasoning content.
+
+- [ ] **Step 6: Run focused tests**
+
+Run: `uv run pytest tests/test_context_broker.py tests/test_session_store.py tests/test_agent_runtime.py -q`
+
+Expected: PASS.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add agent/context_broker.py agent/runtime.py agent/session_store.py pyproject.toml requirements.txt tests/test_context_broker.py
+git commit -m "feat: add context broker and attachment handling"
 ```
 
 ## Task 4: Add Structured Mathematical Tool Registry
@@ -360,7 +409,7 @@ Expected: FAIL because the existing sidebar exposes a permanent 40px collapsed b
 
 - [ ] **Step 3: Implement panel visibility**
 
-Remove the collapsed bar from the normal layout. Keep an `AgentSidebar` instance but insert it into the root layout only while open, with a fixed width of 440px. On close, remove/hide it and restore the viewport. The existing viewport toolbar Agent icon becomes the only open affordance.
+Remove the collapsed bar from the normal layout. Keep an `AgentSidebar` instance but insert it into the root layout only while open, with a fixed width of 440px. On close, remove/hide it and restore the viewport. The existing viewport toolbar Agent icon becomes the only open affordance. At startup restore sessions and the last scene in the background while leaving this panel hidden.
 
 - [ ] **Step 4: Implement header and tab model**
 
@@ -368,15 +417,19 @@ Add `MathAgent`, icon-only new/history/settings buttons with tooltips, and a `QT
 
 - [ ] **Step 5: Implement empty state and mode controls**
 
-Add the title/subtitle/feature cards, the `Agent`/`Ask`/`Plan` selector, confirmation-vs-continuous execution selector for Agent mode, and the exact composer placeholder `提问或输入 "/"快捷命令`.
+Add the title/subtitle/feature cards, the `Agent`/`Ask`/`Plan` selector, confirmation-vs-continuous execution selector for Agent mode, and the exact composer placeholder `提问或输入 "/"快捷命令`. Persist mode, execution strategy, and model per session; new sessions default to `Agent + 确认执行`.
 
-- [ ] **Step 6: Run UI tests**
+- [ ] **Step 6: Add the read-only context usage ring**
+
+Render a ring in the lower-right composer toolbar. It is not clickable; on hover it displays the percentage from the latest `context_usage` event. Do not expose a context configuration button in this position.
+
+- [ ] **Step 7: Run UI tests**
 
 Run: `uv run pytest tests/test_agent_panel.py tests/test_sidebar.py tests/test_main_window_layout.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add ui/agent_sidebar.py ui/agent_panel.py ui/designer_window.py tests/test_agent_panel.py tests/test_sidebar.py tests/test_main_window_layout.py
@@ -408,7 +461,7 @@ Render event cards for user/assistant text, context, calculation, plan, preview,
 
 - [ ] **Step 4: Implement hover actions and composer**
 
-Action buttons are hidden until a successful turn card is hovered. The composer renders left tools, attachment button, mode selector, model/context controls, send/stop button, and queued-message state.
+Action buttons are hidden until a successful turn card is hovered. The composer renders left tools, attachment button, mode selector, per-session model selector, read-only context usage ring, send/stop button, and queued-message state. The context ring is not clickable.
 
 - [ ] **Step 5: Implement the Python bridge**
 
@@ -427,7 +480,7 @@ git add ui/agent_web ui/agent_panel.py tests/test_agent_web_protocol.py
 git commit -m "feat: render MathAgent timeline in local webview"
 ```
 
-## Task 9: Add History, Restore, Undo, and Branch Actions
+## Task 9: Add In-Panel History, Restore, Undo, and Branch Actions
 
 **Files:**
 - Create: `ui/agent_history.py`
@@ -449,7 +502,7 @@ Expected: FAIL because history UI and snapshot actions are not connected.
 
 - [ ] **Step 3: Implement history view**
 
-The clock button opens a local history view grouped by session and turn. Each turn shows prompt, short result, timestamp, thumbnail and hover actions. Do not expose raw database rows.
+The clock button replaces the current timeline inside the same right panel with a history view. Show a back button, sessions grouped by title, and each turn's prompt, short result, timestamp, thumbnail and hover actions. Do not open a separate dialog or expose raw database rows. Closing a session tab must preserve the session and turns so the history view can reopen it.
 
 - [ ] **Step 4: Implement restore and undo commands**
 
@@ -457,7 +510,7 @@ The clock button opens a local history view grouped by session and turn. Each tu
 
 - [ ] **Step 5: Implement new-session branching**
 
-`branch_from_turn(turn_id)` creates a new session tab with copied snapshot/context and necessary prior messages. Set its `parent_session_id` metadata if needed; leave the original session and turns untouched.
+`branch_from_turn(turn_id)` creates a new session tab with copied snapshot/context and necessary prior messages, sets `parent_session_id` to the source session ID, and leaves the original session and turns untouched.
 
 - [ ] **Step 6: Run history and scene regression tests**
 
@@ -484,17 +537,18 @@ git commit -m "feat: restore undo and branch MathAgent turns"
 
 - [ ] **Step 1: Extend settings tests**
 
-Test model switching, Agent/Ask/Plan persistence per session, attachment copying into `.math/attachments`, and that API keys are never written to `mathagent.db`.
+Test model switching, Agent/Ask/Plan and execution-strategy persistence per session, attachment copying into `.math/attachments`, five-file/size limits, unsupported-image-model messaging, and that API keys are never written to `mathagent.db`.
 
 - [ ] **Step 2: Implement settings integration**
 
-Keep provider credentials in QSettings. Store only provider name/model in session rows. Connect existing Instructions and Memory editors to the Runtime when a new turn starts.
+Keep provider credentials in QSettings. Store provider name/model and per-session mode/execution strategy in session rows. Connect existing Instructions and Memory editors to the Runtime when a new turn starts. Keep the history button in-panel and make tab close a non-destructive close rather than deletion.
 
 - [ ] **Step 3: Implement end-to-end acceptance tests**
 
 Use a fake provider and fake scene host to verify:
 
 ```text
+start app -> restore sessions and app_state last scene while panel stays hidden
 open panel -> create tab -> send prompt -> event cards
 confirm mode -> plan waits -> apply -> scene changes
 continuous mode -> plan auto-applies -> undo works
@@ -502,6 +556,8 @@ Ask mode -> mutation asks first
 Plan mode -> no scene mutation
 restore old turn -> continue -> branch record appears
 branch button -> new tab, original unchanged
+clock -> in-panel history -> back -> timeline
+close tab -> history remains -> reopen tab
 ```
 
 - [ ] **Step 4: Run the complete suite**
@@ -534,6 +590,9 @@ git commit -m "test: verify MathAgent sidebar end to end"
 - **Scene snapshot drift:** include a snapshot version and reject unsupported versions instead of partially restoring.
 - **Restore corrupts the active scene:** capture an in-memory pre-restore snapshot and restore through the existing transaction/render path.
 - **SQLite blocks the UI:** keep all storage calls short and off the UI thread for event-heavy writes; enable WAL and batch event inserts per turn.
+- **Attachment/context growth:** enforce the five-file and per-file size limits before the provider call; cap old-message summaries and expose only the usage percentage in the ring.
+- **Unsupported vision model:** inspect provider capabilities before sending image parts and show a clear capability error instead of silently changing models.
+- **Startup restore surprises the user:** restore the last scene in the background while keeping the Agent panel hidden; provide history recovery if the snapshot is invalid.
 - **WebView bypasses safety:** expose only JSON message signals; never expose a Python object, Qt pointer, PyVista object, or command-service callable to JavaScript.
 - **Scope creep toward a code IDE:** keep the tool registry math-only and reject file/terminal tools in this product.
 
@@ -542,6 +601,7 @@ git commit -m "test: verify MathAgent sidebar end to end"
 - Panel visibility, title icons, tabs, empty state, composer, Agent/Ask/Plan, confirmation/continuous modes, hover actions, history, restore, undo, and branch behavior each have explicit tasks.
 - Every scene mutation path still ends in `SceneCommandService.execute()`.
 - Every persistence requirement has a schema or test task.
+- Startup restore, per-session mode/model, Context Broker, attachment limits, in-panel history, and non-destructive tab close each have explicit implementation and acceptance coverage.
 - No task depends on an unspecified project-root workflow; `.math` is application-managed.
 - No raw API key is persisted in SQLite.
 - 计划没有使用未定义的占位步骤。

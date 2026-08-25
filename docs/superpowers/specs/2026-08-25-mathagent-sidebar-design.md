@@ -24,6 +24,13 @@ Agent 不直接操作 Qt 控件、PyVista 或任意 Python。所有场景修改�
 - 关闭后整个面板隐藏，主视口恢复原宽度，不保留折叠工具条或空白槽位。
 - 打开/关闭可以使用短水平动画，但不能重建 PyVista 场景或丢失会话。
 
+### 2.1.1 Startup recovery
+
+- 应用启动时后台加载上次打开的会话标签、每个会话的当前轮次、模式、执行策略和模型。
+- 启动时恢复上次关闭前的最后场景快照。
+- 右侧面板仍保持隐藏；恢复数据不能自动打开面板。
+- 如果历史数据库损坏或快照版本不支持，保留当前空场景，显示可理解的错误，并允许用户从历史视图继续使用。
+
 ### 2.2 Header
 
 标题栏左侧显示 `MathAgent`。
@@ -111,10 +118,24 @@ New Chat x | New Chat x | ...
 输入框右下角：
 
 - 模型切换
-- 当前上下文/会话信息
+- 上下文用量环形指示器
 - 发送按钮
 
 请求运行时发送按钮变为停止按钮。连续模式允许用户继续输入，后续消息按会话顺序排队。
+
+### 2.8 Context usage indicator
+
+- 输入区右下角显示只读的环形上下文用量指示器，不是按钮，也不打开上下文设置。
+- 平时只显示环形占用状态；鼠标悬浮时显示当前百分比。
+- 指示器不显示模型内部推理内容，只反映本轮实际发送的上下文占用量。
+
+### 2.9 Attachments
+
+- 首期支持图片、PDF 和纯文本文档。
+- 每轮最多 5 个附件；图片单个不超过 10 MB；PDF/文本单个不超过 20 MB。
+- 超过限制时在输入区显示错误，不发送模型请求。
+- 原文件保存到 `.math/attachments/`，数据库只保存 MIME 类型、大小、哈希和相对路径。
+- 如果当前模型不支持图片，明确提示“当前模型不支持图片”，不自动切换模型，也不伪装成已处理；文字和文档附件仍可继续使用。
 
 ## 3. Agent modes
 
@@ -140,6 +161,14 @@ Agent 模式内部提供两种执行策略：
 ### 配置自定义智能体
 
 打开设置页，为未来的高中数学、大学数学等角色配置 Instructions、可用 Skills 和工具权限。本阶段不实现多 Agent 协同。
+
+### 3.1 Per-session settings
+
+- `Agent/Ask/Plan` 按会话保存。
+- Agent 模式下的“确认执行/连续自动执行”按会话保存。
+- 当前模型按会话保存。
+- 切换标签时恢复该标签自己的模式、执行策略和模型，不跨会话全局覆盖。
+- 新建会话默认使用 `Agent + 确认执行`，并以当前设置中的模型作为初始模型；创建后模型切换只影响该会话。
 
 ## 4. Runtime architecture
 
@@ -170,6 +199,7 @@ IDLE
 - `PlanExecutor`：确认模式等待审批，连续模式自动提交。
 - `EventBus`：只传输可序列化事件，不把 Qt 控件传给 Agent。
 - `CancellationToken`：停止请求、阻止后续工具调用和回滚未提交事务。
+- `ContextBroker`：生成当前场景摘要、选中对象摘要、最近消息窗口、历史压缩摘要和附件上下文，并计算本轮 token 用量。
 
 ### 4.3 Event protocol
 
@@ -234,13 +264,16 @@ undo_last_plan()
    └─ exports/
 ```
 
+应用数据目录按操作系统解析：Windows 使用 `%APPDATA%/Math3DTeaching/.math/`，macOS 使用 `~/Library/Application Support/Math3DTeaching/.math/`，Linux 使用 `~/.local/share/Math3DTeaching/.math/`。用户不需要选择或创建项目目录。
+
 推荐使用 SQLite，启用 WAL；UI 不直接访问数据库，由 `SessionStore` 统一读写。API Key 不进入数据库，继续使用 QSettings 或系统凭据存储。
 
 ### 6.1 Database records
 
 ```text
 sessions
-  id, title, created_at, updated_at, active_mode, model
+  id, title, created_at, updated_at, active_mode, execution_mode, model,
+  current_turn_id, last_opened_at, closed_at, parent_session_id
 
 turns
   id, session_id, turn_index, parent_turn_id, branch_id
@@ -252,10 +285,15 @@ events
   id, session_id, turn_id, type, payload_json, created_at
 
 attachments
-  id, session_id, turn_id, path, mime_type, created_at
+  id, session_id, turn_id, path, mime_type, byte_size, sha256, created_at
+
+app_state
+  key, value_json, updated_at
 ```
 
 每一轮 Agent 执行单独保存，因此同一会话可以恢复任意轮次。
+
+`app_state` 保存应用级恢复信息：上次打开的会话标签 ID、活动会话 ID 和应用退出时的最后场景快照。这样用户手动绘制但没有产生 Agent 轮次时，启动恢复仍然可以还原最后场景。
 
 ### 6.2 Scene snapshots
 
@@ -291,6 +329,13 @@ attachments
 
 点击“分支到新聊天记录”：新建会话标签，复制该轮场景、上下文和必要消息，原会话不变。
 
+### 7.1 History view
+
+- 标题栏时钟按钮在同一个右侧面板内切换到历史视图。
+- 历史视图顶部提供返回按钮，返回当前会话时间线；不打开独立窗口。
+- 历史视图按会话分组，展开后显示每一轮执行记录、摘要、时间和预览缩略图。
+- 会话标签的 `x` 只关闭当前标签，不删除数据库历史；关闭的会话可以从历史视图重新打开。
+
 ## 8. Rendering technology
 
 保留 PySide6 作为应用外壳，右侧聊天时间线使用本地 `QWebEngineView`：
@@ -304,6 +349,8 @@ ui/agent_web/
 ```
 
 WebView 负责 Markdown、KaTeX/MathJax、消息卡片、悬浮按钮和事件动画；Python 负责 Agent Runtime、数据库、场景和权限。两者通过受控消息桥通信，WebView 不直接访问 Qt 或 PyVista。
+
+`ContextBroker` 负责在发送请求前生成上下文包：当前场景和选中对象使用结构化摘要，最近对话保留完整文本，更早消息压缩为摘要；不引入向量数据库作为首期依赖。上下文环形指示器使用 provider 返回的 token usage 或本地估算值，显示实际发送量占模型上下文上限的百分比。
 
 ## 9. Non-goals
 
@@ -327,4 +374,10 @@ WebView 负责 Markdown、KaTeX/MathJax、消息卡片、悬浮按钮和事件�
 - 历史轮次可恢复任意场景。
 - 恢复后继续输入会产生当前会话分支。
 - “分支到新聊天记录”不修改原会话。
+- 启动后自动恢复上次会话标签、会话模式、会话模型和最后场景，但面板保持隐藏。
+- 新建会话默认为 `Agent + 确认执行`。
+- 模型切换只影响当前会话后续请求。
+- 上下文环形指示器悬浮时显示百分比。
+- 附件限制和不支持图片模型的提示行为符合本 Spec。
+- 历史按钮在同一面板内切换历史视图，标签关闭不删除历史。
 - 所有场景修改仍经过 `SceneCommandService`。
