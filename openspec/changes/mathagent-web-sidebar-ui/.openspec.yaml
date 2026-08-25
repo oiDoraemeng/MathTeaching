@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-08-26
+goal: Deliver a VS Code-style MathAgent sidebar UI with streaming timeline
+  cards, modern composer controls, and a strict JSON bridge.
