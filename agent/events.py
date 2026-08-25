@@ -25,6 +25,7 @@ EVENT_TYPES = frozenset(
         "stopped",
         "error",
         "context_usage",
+        "turn_finished",
     }
 )
 

@@ -1,0 +1,16 @@
+name: linear_algebra
+description: 向量运算、矩阵变换和行列式面积演示
+version: 1.0
+triggers:
+- 线性代数
+- 向量
+- 矩阵
+- 行列式
+- 面积
+- linear
+- matrix
+- determinant
+capabilities:
+- vector_operations
+- matrix_transform
+- determinant_area

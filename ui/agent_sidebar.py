@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from enum import Enum
 
 from PySide6.QtCore import Qt, Signal
@@ -21,6 +22,7 @@ from agent.instruction import InstructionStore
 from agent.memory import MemoryStore
 from agent.skill_manager import SkillManager
 from agent.session_store import SessionStore
+from ui.agent_sidebar_web import AgentSidebarWeb
 
 
 class AgentSidebarState(Enum):
@@ -87,15 +89,12 @@ class AgentSidebar(QWidget):
 
     state_changed = Signal(AgentSidebarState)
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(self, parent: QWidget | None = None, dispatcher: Callable[[object], object] | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("agentSidebar")
         self._state = AgentSidebarState.COLLAPSED
         self._model_name = ""
         self._model_enabled = False
-
-        # 导入这里而不是顶部，避免循环依赖
-        from ui.agent_panel import AgentPanel
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -122,8 +121,8 @@ class AgentSidebar(QWidget):
         self.navigation_bar.hide()
         layout.addWidget(self.navigation_bar)
 
-        # 展开态完整面板
-        self.expanded_panel = AgentPanel(self)
+        # 展开态完整面板由本地 React/WebEngine 文档渲染。
+        self.expanded_panel = AgentSidebarWeb(dispatcher or (lambda _message: None), parent=self)
         self.expanded_panel.hide()
         layout.addWidget(self.expanded_panel)
 
@@ -145,9 +144,13 @@ class AgentSidebar(QWidget):
 
         # 连接信号
         self.collapsed_bar.expand_requested.connect(self.expand)
-        self.expanded_panel.close_requested.connect(self.collapse)
-        self.expanded_panel.history_requested.connect(self.show_history)
+        self.expanded_panel.bridge.event_json.connect(self._handle_web_event)
         self.select_tab("agent")
+
+    def _handle_web_event(self, raw: str) -> None:
+        # UI intents are dispatched by the host owner; this hook is reserved for
+        # sidebar-level navigation events emitted by the local document.
+        return None
 
     def _build_history_page(self) -> QWidget:
         page = QWidget(self)
@@ -257,6 +260,7 @@ class AgentSidebar(QWidget):
             button.setChecked(key == name)
         if name == "agent":
             self.expanded_panel.show()
+            self.navigation_bar.hide()
             self.tool_pages.hide()
         else:
             self.expanded_panel.hide()
@@ -282,7 +286,7 @@ class AgentSidebar(QWidget):
             return
         self.show()
         self.collapsed_bar.hide()
-        self.navigation_bar.show()
+        self.navigation_bar.hide()
         self.expanded_panel.show()
         self.tool_pages.hide()
         self.setFixedWidth(440)

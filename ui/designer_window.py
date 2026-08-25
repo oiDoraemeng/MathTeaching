@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 import time
 from pathlib import Path
 
@@ -39,23 +39,23 @@ from rendering.scene import build_scene, configure_3d_camera_interaction, update
 from rendering.ticks import ViewportBounds, tick_spacing, visible_2d_bounds, visible_3d_axis_extent
 from rendering.two_d_scene import TwoDGuides, configure_2d_camera
 from ui.algebra_panel import AlgebraPanel
-from ui.agent_panel import AgentPanel
 from ui.agent_sidebar import AgentSidebar
 from ui.agent_settings import AgentSettingsDialog
 from ui.lighting_dialog import LightingDialog
 from ui.scene_settings import SceneSettingsPanel
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
-from services.agent_worker import AgentWorker
+from services.agent_worker import RuntimeTurnWorker
 from services.agent_provider import (
-    AgentMessage,
-    AgentResponse,
     AgentSettings,
     OpenAICompatibleProvider,
     SceneContext,
 )
 from services.scene_commands import CommandError, CommandPlan, RuleBasedAgentProvider, SceneCommandService
 from agent.runtime import AgentRuntime
+from agent.scene_snapshot import SceneSnapshot
 from agent.session_store import SessionStore
+from agent.conversation import ConversationService
+from agent.context_broker import AttachmentInput, ContextBroker
 from agent.providers import ModelProvider
 
 
@@ -183,14 +183,15 @@ class MainWindow:
         self._scene_command_snapshot: _SceneCommandState | None = None
         self._scene_command_active = False
         self._agent_thread: QThread | None = None
-        self._agent_worker: AgentWorker | None = None
-        self._agent_messages: list[AgentMessage] = []
+        self._agent_worker: RuntimeTurnWorker | None = None
         self._agent_settings_dialog: AgentSettingsDialog | None = None
         self._last_agent_plan_summary = ""
         self._agent_settings = AgentSettingsDialog.load_settings()
         self._agent_provider = self._create_agent_provider()
         self.scene_command_service = SceneCommandService(self)
         self._agent_session_store = SessionStore()
+        self._agent_context_broker = ContextBroker(attachments_root=self._agent_session_store.math_root)
+        self._agent_conversations = ConversationService(self._agent_session_store)
         self._agent_runtime = AgentRuntime(
             provider=self._agent_provider,
             command_service=self.scene_command_service,
@@ -236,21 +237,146 @@ class MainWindow:
         if root_layout is None:
             raise RuntimeError("Designer form must use a horizontal root layout")
         self._root_layout = root_layout
-        self.agent_sidebar = AgentSidebar(self.window)
+        self.agent_sidebar = AgentSidebar(self.window, dispatcher=self._dispatch_agent_web_intent)
         self.agent_sidebar.setFixedWidth(440)
         self.agent_panel = self.agent_sidebar.expanded_panel
         root_layout.addWidget(self.agent_sidebar)
         # Sidebar 默认隐藏，关闭时不占用主视口布局空间。
         self.agent_sidebar.hide()
-        self.agent_panel.message_requested.connect(self._request_agent_plan)
-        self.agent_panel.settings_requested.connect(self._show_agent_settings)
-        self.agent_panel.close_requested.connect(self._close_agent_panel)
-        self.agent_panel.execute_requested.connect(self._execute_agent_plan)
         self.agent_sidebar.set_model_status(
             self._agent_settings.model,
             enabled=self._using_remote_agent(),
         )
         self.agent_panel.set_scene_mode(self.scene_mode is SceneMode.TWO_D)
+
+    def _dispatch_agent_web_intent(self, envelope) -> None:
+        """Handle validated Web UI intents without exposing scene services."""
+        message_type = getattr(envelope, "type", "")
+        payload = getattr(envelope, "payload", {}) or {}
+        session_id = str(getattr(envelope, "session_id", "") or "")
+        if message_type == "create_session":
+            try:
+                self._agent_session_store.get_session(session_id)
+            except KeyError:
+                self._agent_session_store.create_session(
+                    str(payload.get("title", "New Chat")),
+                    session_id=session_id,
+                    model=str(payload.get("model", self._agent_settings.model)),
+                    active_mode=str(payload.get("mode", "Agent")),
+                    execution_mode=str(payload.get("execution_mode", "confirm")),
+                )
+        elif session_id in {"boot", ""}:
+            sessions = self._agent_session_store.list_sessions(include_closed=False)
+            if sessions:
+                session_id = sessions[0].id
+            else:
+                session_id = self._agent_session_store.create_session(model=self._agent_settings.model).id
+        else:
+            try:
+                self._agent_session_store.get_session(session_id)
+            except KeyError:
+                self._agent_session_store.create_session(session_id=session_id, model=self._agent_settings.model)
+        self.agent_panel.set_active_session(session_id)
+        if message_type == "create_session":
+            return
+        if message_type == "close_session":
+            self._agent_session_store.close_session(session_id)
+        elif message_type == "send_message":
+            text = str(payload.get("text", "")).strip()
+            if text:
+                self._request_agent_plan(text, session_id=session_id)
+        elif message_type in {"stop_turn", "stop_session"}:
+            self._agent_runtime.stop(session_id)
+            self.agent_sidebar.set_busy(False)
+        elif message_type in {"set_mode", "change_mode"}:
+            self._agent_session_store.set_session_preferences(session_id, active_mode=str(payload.get("mode", "Agent")))
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", "mode"))
+        elif message_type in {"set_execution_mode", "change_execution_mode"}:
+            self._agent_session_store.set_session_preferences(session_id, execution_mode=str(payload.get("execution_mode", "confirm")))
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", "execution-mode"))
+        elif message_type in {"set_model", "change_model"}:
+            self._agent_session_store.set_session_preferences(session_id, model=str(payload.get("model", "")))
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", "model"))
+        elif message_type == "attach_files":
+            raw_paths = payload.get("paths", [])
+            if not isinstance(raw_paths, list):
+                raise ValueError("附件路径必须是数组")
+            inputs = [
+                AttachmentInput(Path(str(item.get("path", ""))), str(item.get("mime_type", "application/octet-stream")))
+                for item in raw_paths
+                if isinstance(item, dict)
+            ]
+            stored = self._agent_context_broker.store_attachments(inputs)
+            for item in stored:
+                self._agent_session_store.add_attachment(
+                    session_id,
+                    turn_id=None,
+                    relative_path=item.relative_path,
+                    mime_type=item.mime_type,
+                    byte_size=item.byte_size,
+                    sha256=item.sha256,
+                )
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", "attachments"))
+        elif message_type == "approve_plan":
+            turn = self._agent_session_store.get_turn(str(getattr(envelope, "turn_id", "")))
+            if turn.command_plan is None:
+                raise ValueError("该回合没有可执行的命令计划")
+            self.agent_panel.bridge.emit_event({
+                "protocol_version": 1,
+                "type": "execution",
+                "request_id": getattr(envelope, "request_id", "approve"),
+                "session_id": session_id,
+                "turn_id": turn.id,
+                "payload": {"status": "started", "summary": turn.command_plan.get("summary", "")},
+            })
+            self._agent_runtime.execute(CommandPlan.from_dict(turn.command_plan))
+            after = self._scene_snapshot_from_current_state()
+            self._agent_session_store.update_turn_scene_snapshots(turn.id, scene_after=after, status="completed")
+            self._agent_session_store.append_event(session_id, "execution_finished", {"status": "completed"}, turn_id=turn.id)
+            self._agent_session_store.append_event(session_id, "turn_finished", {"status": "completed"}, turn_id=turn.id)
+            self.agent_panel.bridge.emit_event({
+                "protocol_version": 1,
+                "type": "turn_finished",
+                "request_id": getattr(envelope, "request_id", "approve"),
+                "session_id": session_id,
+                "turn_id": turn.id,
+                "payload": {"status": "completed"},
+            })
+        elif message_type == "branch_turn":
+            branch = self._agent_conversations.branch_from_turn(str(getattr(envelope, "turn_id", "")))
+            self.agent_panel.set_active_session(branch.id)
+        elif message_type in {"restore_turn", "undo_turn"}:
+            turn = self._agent_session_store.get_turn(str(getattr(envelope, "turn_id", "")))
+            snapshot = turn.scene_after if message_type == "restore_turn" else turn.scene_before
+            if snapshot is None:
+                raise ValueError("该回合没有可恢复的场景快照")
+            self._restore_agent_scene_snapshot(snapshot)
+            self._agent_session_store.set_current_turn(turn.session_id, turn.id)
+            self.agent_panel.bridge.emit_event({
+                "protocol_version": 1,
+                "type": "execution",
+                "request_id": getattr(envelope, "request_id", message_type),
+                "session_id": session_id,
+                "turn_id": turn.id,
+                "payload": {"status": "restored" if message_type == "restore_turn" else "undone"},
+            })
+        elif message_type == "request_snapshot":
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", "snapshot"))
+
+    def _emit_agent_snapshot(self, session_id: str, request_id: str) -> None:
+        from agent.ui_projection import build_session_snapshot
+        snapshot = build_session_snapshot(
+            self._agent_session_store,
+            active_session_id=session_id or None,
+            model_status={"model": self._agent_settings.model, "connected": self._using_remote_agent()},
+        )
+        self.agent_panel.bridge.emit_event({
+            "protocol_version": 1,
+            "type": "session_snapshot",
+            "request_id": request_id,
+            "session_id": session_id,
+            "payload": snapshot,
+        })
 
     def _create_agent_provider(self):
         if AgentSettingsDialog.is_enabled() and (self._agent_settings.provider == "local" or self._agent_settings.is_complete):
@@ -535,23 +661,35 @@ class MainWindow:
     # AI 场景命令适配层
     # ------------------------------------------------------------------
 
-    def _request_agent_plan(self, prompt: str) -> None:
+    def _request_agent_plan(self, prompt: str, *, session_id: str | None = None) -> None:
         if self._agent_thread is not None and self._agent_thread.isRunning():
             return
-        self.agent_panel.add_user_message(prompt)
-        self._agent_messages.append(AgentMessage("user", prompt))
+        active_session_id = session_id or self.agent_panel.active_session_id
+        self.agent_panel.set_active_session(active_session_id)
+        self.agent_panel.bridge.emit_event({
+            "protocol_version": 1,
+            "type": "user_message",
+            "request_id": "user-message",
+            "session_id": active_session_id,
+            "payload": {"text": prompt},
+        })
         self.agent_sidebar.set_busy(True)
         thread = QThread(self.window)
-        worker = AgentWorker(
-            provider=self._agent_provider,
-            agent=self._math_teacher_agent,
-            messages=tuple(self._agent_messages),
+        session = self._agent_session_store.get_session(active_session_id)
+        worker = RuntimeTurnWorker(
+            self._agent_runtime,
+            active_session_id,
+            prompt,
+            mode=session.active_mode,
+            execution_mode=session.execution_mode,
             scene_context=self._build_scene_context(),
+            scene_before=self._scene_snapshot_from_current_state(),
         )
         worker.moveToThread(thread)
         thread.started.connect(worker.run)
-        worker.response_ready.connect(self._receive_agent_response, Qt.ConnectionType.QueuedConnection)
-        worker.error.connect(self._receive_agent_error, Qt.ConnectionType.QueuedConnection)
+        worker.event_ready.connect(self._receive_runtime_event, Qt.ConnectionType.QueuedConnection)
+        worker.turn_finished.connect(self._receive_runtime_result, Qt.ConnectionType.QueuedConnection)
+        worker.error.connect(self._receive_runtime_error, Qt.ConnectionType.QueuedConnection)
         worker.finished.connect(thread.quit)
         worker.finished.connect(worker.deleteLater)
         thread.finished.connect(thread.deleteLater)
@@ -560,47 +698,31 @@ class MainWindow:
         self._agent_worker = worker
         thread.start()
 
-    def _receive_agent_response(self, response: AgentResponse) -> None:
-        if response.text:
-            self._agent_messages.append(AgentMessage("assistant", response.text))
-            self.agent_panel.add_assistant_message(response.text)
-        if response.plan is None:
-            if not response.text:
-                self.agent_panel.add_assistant_message("模型未生成命令计划。")
-            self.agent_sidebar.set_busy(False)
-            return
-        plan = response.plan
-        validation = self.scene_command_service.preview(plan)
-        self.agent_sidebar.set_busy(False)
-        self.agent_panel.show_plan(plan, () if validation.valid else validation.messages)
+    def _receive_runtime_event(self, event) -> None:
+        from agent.ui_projection import project_runtime_event
+        key = str(event.session_id or "")
+        sequence = getattr(self, "_agent_event_sequences", {}).get(key, 0) + 1
+        if not hasattr(self, "_agent_event_sequences"):
+            self._agent_event_sequences = {}
+        self._agent_event_sequences[key] = sequence
+        self.agent_panel.bridge.emit_event(project_runtime_event(event, sequence=sequence))
 
-    def _receive_agent_error(self, message: str) -> None:
-        # 失败的这一轮不留在历史里，否则重试会把同一条请求重复发给模型。
-        if self._agent_messages and self._agent_messages[-1].role == "user":
-            self._agent_messages.pop()
+    def _receive_runtime_result(self, result) -> None:
+        self.agent_sidebar.set_busy(False)
+        if result.turn_id and result.status == "completed":
+            self._agent_session_store.update_turn_scene_snapshots(
+                result.turn_id,
+                scene_after=self._scene_snapshot_from_current_state(),
+                status=result.status,
+            )
+
+    def _receive_runtime_error(self, message: str) -> None:
         self.agent_sidebar.set_busy(False)
         self.agent_panel.show_error(message)
 
     def _agent_finished(self) -> None:
         self._agent_thread = None
         self._agent_worker = None
-
-    def _execute_agent_plan(self) -> None:
-        plan = self.agent_panel.plan
-        if plan is None:
-            return
-        try:
-            self._agent_runtime.execute(plan)
-        except (CommandError, ValueError, RuntimeError) as error:
-            self.agent_panel.show_error(f"执行失败，场景未改变：{error}", keep_plan=True)
-            return
-        self._last_agent_plan_summary = plan.summary
-        self.agent_panel.clear_plan()
-        self.agent_panel.add_assistant_message("计划已执行，可用撤销回退。")
-        self.agent_sidebar.set_model_status(
-            self._agent_settings.model,
-            enabled=self._using_remote_agent(),
-        )
 
     def begin_scene_command_transaction(self) -> None:
         self._scene_command_snapshot = self._capture_scene_command_state()
@@ -639,6 +761,85 @@ class MainWindow:
             points3d=tuple((alias, tuple(coordinates)) for alias, coordinates in getattr(self, "_agent_points3d", {}).items()),
             areas=tuple((alias, dict(operation)) for alias, operation in getattr(self, "_agent_areas", {}).items()),
         )
+
+    @staticmethod
+    def _snapshot_record(value: object, *, object_type: str | None = None) -> dict[str, object]:
+        record = asdict(value)
+        # Point2D exposes an init=False ``kind`` marker; constructors restore
+        # that marker themselves, while Linear2D uses its kind as data.
+        if isinstance(value, Point2D):
+            record.pop("kind", None)
+        if object_type:
+            record["object_type"] = object_type
+        return record
+
+    def _scene_snapshot_from_current_state(self) -> SceneSnapshot:
+        return self._scene_snapshot_from_state(self._capture_scene_command_state())
+
+    @classmethod
+    def _scene_snapshot_from_state(cls, state: _SceneCommandState) -> SceneSnapshot:
+        geometry: list[dict[str, object]] = []
+        geometry.extend(cls._snapshot_record(point, object_type="point") for point in state.points)
+        geometry.extend(cls._snapshot_record(linear, object_type="linear") for linear in state.linears)
+        geometry.extend(cls._snapshot_record(annotation, object_type="annotation") for annotation in state.annotations)
+        metadata = {
+            "object_order": list(state.object_order),
+            "points3d": [[alias, list(coordinates)] for alias, coordinates in state.points3d],
+            "areas": [[alias, dict(operation)] for alias, operation in state.areas],
+        }
+        return SceneSnapshot(
+            scene_mode=state.scene_mode.value,
+            curves=tuple(cls._snapshot_record(layer) for layer in state.curves),
+            geometry=tuple(geometry),
+            layers=tuple(cls._snapshot_record(layer) for layer in state.surfaces),
+            metadata=metadata,
+        )
+
+    @staticmethod
+    def _without_snapshot_marker(record: dict[str, object]) -> dict[str, object]:
+        value = dict(record)
+        value.pop("object_type", None)
+        return value
+
+    @classmethod
+    def _state_from_scene_snapshot(cls, snapshot: SceneSnapshot) -> _SceneCommandState:
+        points: list[Point2D] = []
+        linears: list[Linear2D] = []
+        annotations: list[Annotation2D] = []
+        for raw in snapshot.geometry:
+            record = cls._without_snapshot_marker(raw)
+            object_type = str(raw.get("object_type", ""))
+            if object_type == "point":
+                points.append(Point2D(**record))
+            elif object_type == "linear":
+                linears.append(Linear2D(**record))
+            elif object_type == "annotation":
+                annotations.append(Annotation2D(**record))
+        metadata = dict(snapshot.metadata)
+        points3d = tuple(
+            (str(item[0]), tuple(float(value) for value in item[1]))
+            for item in metadata.get("points3d", [])
+            if isinstance(item, (list, tuple)) and len(item) == 2
+        )
+        areas = tuple(
+            (str(item[0]), dict(item[1]))
+            for item in metadata.get("areas", [])
+            if isinstance(item, (list, tuple)) and len(item) == 2 and isinstance(item[1], dict)
+        )
+        return _SceneCommandState(
+            points=tuple(points),
+            linears=tuple(linears),
+            annotations=tuple(annotations),
+            curves=tuple(CurveLayer(**dict(item)) for item in snapshot.curves),
+            object_order=tuple(str(value) for value in metadata.get("object_order", [])),
+            surfaces=tuple(SurfaceLayer(**dict(item)) for item in snapshot.layers),
+            scene_mode=SceneMode(snapshot.scene_mode),
+            points3d=points3d,
+            areas=areas,
+        )
+
+    def _restore_agent_scene_snapshot(self, snapshot: SceneSnapshot) -> None:
+        self._restore_scene_command_state(self._state_from_scene_snapshot(snapshot))
 
     def _restore_scene_command_state(self, state: _SceneCommandState) -> None:
         self.geometry_points = [replace(point) for point in state.points]
@@ -2254,14 +2455,11 @@ class MainWindow:
         self.agent_sidebar.expand()
         self.agent_sidebar.select_tab("agent")
         self._root_layout.activate()
-        self.agent_panel.prompt_edit.setFocus()
+        self.agent_panel.view.setFocus()
 
     def _close_agent_panel(self, immediate: bool = False) -> None:
         self.agent_button.setChecked(False)
-        if hasattr(self, "agent_sidebar"):
-            self.agent_sidebar.collapse()
-        else:
-            self.agent_panel.hide()
+        self.agent_sidebar.collapse()
         self._root_layout.activate()
 
     def _show_agent_settings(self) -> None:
@@ -2297,9 +2495,7 @@ class MainWindow:
         remote = self._using_remote_agent()
         self.agent_sidebar.set_model_status(settings.model, enabled=remote)
         if settings.provider != "local" and settings.is_complete and not remote:
-            self.agent_panel.add_assistant_message(
-                "连接信息不可用，已回退到本地演示模式。"
-            )
+            self.agent_panel.show_error("连接信息不可用，已回退到本地演示模式。")
 
     def _restore_demo_agent(self) -> None:
         # 只切换 provider；保留已填写的连接信息，方便随时切回远程模型。

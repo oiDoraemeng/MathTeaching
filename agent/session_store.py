@@ -201,12 +201,13 @@ class SessionStore:
         self,
         title: str = "New Chat",
         *,
+        session_id: str | None = None,
         model: str = "",
         active_mode: str = "Agent",
         execution_mode: str = "confirm",
         parent_session_id: str | None = None,
     ) -> SessionRecord:
-        session_id = _new_id()
+        session_id = session_id or _new_id()
         timestamp = _now()
         with self._connect() as connection:
             connection.execute(
@@ -342,6 +343,26 @@ class SessionStore:
         with self._connect() as connection:
             connection.execute("UPDATE sessions SET current_turn_id = ?, updated_at = ? WHERE id = ?", (turn_id, _now(), session_id))
         return self.get_session(session_id)
+
+    def update_turn_scene_snapshots(
+        self,
+        turn_id: str,
+        *,
+        scene_before: SceneSnapshot | Mapping[str, Any] | None = None,
+        scene_after: SceneSnapshot | Mapping[str, Any] | None = None,
+        status: str | None = None,
+    ) -> TurnRecord:
+        """Fill snapshots after a host-side execution or confirmation."""
+        turn = self.get_turn(turn_id)
+        before = turn.scene_before if scene_before is None else scene_before
+        after = turn.scene_after if scene_after is None else scene_after
+        next_status = status if status is not None else turn.execution_status
+        with self._connect() as connection:
+            connection.execute(
+                "UPDATE turns SET scene_before_json = ?, scene_after_json = ?, execution_status = ? WHERE id = ?",
+                (_snapshot_json(before), _snapshot_json(after), next_status, turn_id),
+            )
+        return self.get_turn(turn_id)
 
     def append_event(self, session_id: str, event_type: str, payload: Mapping[str, Any], *, turn_id: str | None = None) -> int:
         with self._connect() as connection:

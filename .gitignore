@@ -24,6 +24,9 @@ htmlcov/
 # Build and packaging artifacts
 build/
 dist/
+ui/agent_web/node_modules/
+!ui/agent_web/dist/
+!ui/agent_web/dist/**
 *.egg-info/
 .eggs/
 site/

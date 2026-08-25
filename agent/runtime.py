@@ -85,11 +85,32 @@ class AgentRuntime:
         scene_after: SceneSnapshot | None = None,
     ) -> RuntimeTurnResult:
         events: list[AgentEvent] = [AgentEvent("session_started", {"mode": mode, "execution_mode": execution_mode}, session_id=session_id)]
+
+        def finish(status: str, response: AgentResponse, validation: CommandValidation | None, scene_after_value: SceneSnapshot | None) -> str | None:
+            """Persist one complete turn and its serializable event timeline."""
+            events.append(AgentEvent("turn_finished", {"status": status}, session_id=session_id))
+            turn_id = self._persist_turn(
+                session_id,
+                prompt,
+                response,
+                validation,
+                status,
+                scene_before,
+                scene_after_value,
+                mode,
+                execution_mode,
+            )
+            if self.session_store is not None and turn_id is not None:
+                for event in events:
+                    self.session_store.append_event(session_id, event.type, event.payload, turn_id=turn_id)
+            return turn_id
+
         if session_id in self._stopped_sessions:
             self._stopped_sessions.discard(session_id)
             response = AgentResponse("已停止本轮请求。", None)
             events.append(AgentEvent("stopped", {}, session_id=session_id))
-            return RuntimeTurnResult("stopped", response, None, tuple(events))
+            turn_id = finish("stopped", response, None, None)
+            return RuntimeTurnResult("stopped", response, None, tuple(events), turn_id)
         try:
             events.append(AgentEvent("message_delta", {"text": "正在分析数学问题…"}, session_id=session_id))
             runtime_response = self.respond(prompt, scene_context)
@@ -98,41 +119,41 @@ class AgentRuntime:
             if response.plan is None:
                 events.append(AgentEvent("execution_finished", {"status": "answered"}, session_id=session_id))
                 status = "answered"
-                turn_id = self._persist_turn(session_id, prompt, response, validation, status, scene_before, scene_after, mode, execution_mode)
+                turn_id = finish(status, response, validation, scene_after)
                 return RuntimeTurnResult(status, response, validation, tuple(events), turn_id)
             events.append(AgentEvent("plan_ready", {"plan": response.plan.to_dict()}, session_id=session_id))
             if validation is None or not validation.valid:
                 events.append(AgentEvent("validation_result", {"valid": False, "messages": list(validation.messages if validation else ("缺少验证结果",))}, session_id=session_id))
                 status = "rejected"
-                turn_id = self._persist_turn(session_id, prompt, response, validation, status, scene_before, None, mode, execution_mode)
+                turn_id = finish(status, response, validation, None)
                 return RuntimeTurnResult(status, response, validation, tuple(events), turn_id)
             events.append(AgentEvent("validation_result", {"valid": True}, session_id=session_id))
             if mode == "Plan":
                 events.append(AgentEvent("preview_ready", {"summary": response.plan.summary}, session_id=session_id))
                 status = "planned"
-                turn_id = self._persist_turn(session_id, prompt, response, validation, status, scene_before, None, mode, execution_mode)
+                turn_id = finish(status, response, validation, None)
                 return RuntimeTurnResult(status, response, validation, tuple(events), turn_id)
             if mode == "Ask" or execution_mode != "continuous":
                 events.append(AgentEvent("approval_required", {"summary": response.plan.summary}, session_id=session_id))
                 status = "approval_required"
-                turn_id = self._persist_turn(session_id, prompt, response, validation, status, scene_before, None, mode, execution_mode)
+                turn_id = finish(status, response, validation, None)
                 return RuntimeTurnResult(status, response, validation, tuple(events), turn_id)
             if session_id in self._stopped_sessions:
                 self._stopped_sessions.discard(session_id)
                 events.append(AgentEvent("stopped", {}, session_id=session_id))
                 status = "stopped"
-                turn_id = self._persist_turn(session_id, prompt, response, validation, status, scene_before, None, mode, execution_mode)
+                turn_id = finish(status, response, validation, None)
                 return RuntimeTurnResult(status, response, validation, tuple(events), turn_id)
             events.append(AgentEvent("execution_started", {"summary": response.plan.summary}, session_id=session_id))
             self.command_service.execute(response.plan)
             events.append(AgentEvent("execution_finished", {"status": "completed"}, session_id=session_id))
             status = "completed"
-            turn_id = self._persist_turn(session_id, prompt, response, validation, status, scene_before, scene_after, mode, execution_mode)
+            turn_id = finish(status, response, validation, scene_after)
             return RuntimeTurnResult(status, response, validation, tuple(events), turn_id)
         except Exception as error:
             events.append(AgentEvent("error", {"message": str(error)}, session_id=session_id))
             response = AgentResponse("本轮执行失败。", None)
-            turn_id = self._persist_turn(session_id, prompt, response, None, "failed", scene_before, None, mode, execution_mode)
+            turn_id = finish("failed", response, None, None)
             return RuntimeTurnResult("failed", response, None, tuple(events), turn_id)
 
     def _persist_turn(

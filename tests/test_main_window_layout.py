@@ -8,10 +8,11 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QFile, QIODevice
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QWidget
 
 from MathInputWidget import LatexParser
 from ui.algebra_panel import AlgebraPanel
+from ui.agent_sidebar_web import AgentSidebarWeb
 from ui.designer_window import MainWindow
 from geometry.standard_surfaces import BUILTIN_SURFACES
 
@@ -74,6 +75,35 @@ class MainWindowLayoutTests(unittest.TestCase):
         self.assertEqual(len(window.layers), 1)
         self.assertEqual(window.curve_layers, [])
         self.assertEqual(len(rendered), 1)
+
+    def test_agent_web_panel_is_fixed_on_the_right_and_hidden_without_a_slot(self) -> None:
+        host = QWidget()
+        host.resize(900, 600)
+        layout = QHBoxLayout(host)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        viewport = QWidget(host)
+        panel = AgentSidebarWeb(lambda _message: None, parent=host)
+        panel.setFixedWidth(420)
+        layout.addWidget(viewport)
+        layout.addWidget(panel)
+
+        panel.hide()
+        layout.activate()
+        self.assertFalse(panel.isVisible())
+        self.assertEqual(viewport.width(), 900)
+
+        panel.show()
+        layout.activate()
+        self.assertEqual(panel.width(), 420)
+        self.assertEqual(panel.x(), 480)
+        self.assertEqual(viewport.width(), 480)
+
+        panel.hide()
+        layout.activate()
+        self.assertFalse(panel.isVisible())
+        self.assertEqual(viewport.width(), 900)
+        host.deleteLater()
 
 
 if __name__ == "__main__":

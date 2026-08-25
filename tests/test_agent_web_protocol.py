@@ -3,7 +3,13 @@ from __future__ import annotations
 import pytest
 
 from agent.events import AgentEvent
-from agent.web_protocol import parse_client_message, serialize_event
+from agent.web_protocol import (
+    MAX_PAYLOAD_BYTES,
+    BridgeEnvelope,
+    parse_client_message,
+    parse_envelope,
+    serialize_event,
+)
 
 
 def test_protocol_accepts_json_ui_intents() -> None:
@@ -28,3 +34,60 @@ def test_protocol_serializes_runtime_event() -> None:
 
     assert payload["type"] == "plan_ready"
     assert payload["payload"]["summary"] == "curve"
+
+
+def test_envelope_requires_version_request_and_sequence() -> None:
+    envelope = parse_envelope(
+        {
+            "protocol_version": 1,
+            "type": "message_delta",
+            "request_id": "req-1",
+            "session_id": "s1",
+            "turn_id": "t1",
+            "sequence": 3,
+            "payload": {"text": "hello"},
+        }
+    )
+
+    assert isinstance(envelope, BridgeEnvelope)
+    assert envelope.sequence == 3
+    assert envelope.payload == {"text": "hello"}
+
+
+def test_envelope_rejects_bad_version_unknown_type_and_large_payload() -> None:
+    base = {
+        "protocol_version": 1,
+        "type": "send_message",
+        "request_id": "req-1",
+        "session_id": "s1",
+        "payload": {"text": "hello"},
+    }
+    with pytest.raises(ValueError, match="protocol_version"):
+        parse_envelope({**base, "protocol_version": 2})
+    with pytest.raises(ValueError, match="unknown message"):
+        parse_envelope({**base, "type": "run_python"})
+    with pytest.raises(ValueError, match="payload"):
+        parse_envelope({**base, "payload": {"text": "x" * MAX_PAYLOAD_BYTES}})
+
+
+def test_snapshot_and_stop_intents_keep_id_rules() -> None:
+    snapshot = parse_envelope(
+        {
+            "protocol_version": 1,
+            "type": "request_snapshot",
+            "request_id": "req-1",
+            "session_id": "s1",
+            "payload": {},
+        }
+    )
+    assert snapshot.type == "request_snapshot"
+    with pytest.raises(ValueError, match="turn_id"):
+        parse_envelope(
+            {
+                "protocol_version": 1,
+                "type": "approve_plan",
+                "request_id": "req-2",
+                "session_id": "s1",
+                "payload": {},
+            }
+        )
