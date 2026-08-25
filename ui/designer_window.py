@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from dataclasses import replace
+from dataclasses import dataclass, replace
 import time
 from pathlib import Path
 
 from collections.abc import Callable
 
-from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QTimer
-from PySide6.QtGui import QKeyEvent, QMouseEvent, QWheelEvent
+from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QThread, QTimer
+from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent, QShortcut, QWheelEvent
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QToolButton, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
@@ -20,6 +20,7 @@ from geometry.cas_surface import ExpressionError, parse_surface_expression
 from geometry.standard_surfaces import BUILTIN_SURFACES, DEFAULT_BUILTIN_ID, create_builtin_layer
 from models.curve_layer import CurveLayer, Plot2DDomain
 from models.geometry_2d import (
+    Annotation2D,
     GeometryObject,
     Linear2D,
     LinearKind,
@@ -38,14 +39,28 @@ from rendering.scene import build_scene, configure_3d_camera_interaction, update
 from rendering.ticks import ViewportBounds, tick_spacing, visible_2d_bounds, visible_3d_axis_extent
 from rendering.two_d_scene import TwoDGuides, configure_2d_camera
 from ui.algebra_panel import AlgebraPanel
+from ui.agent_panel import AgentPanel
+from ui.agent_sidebar import AgentSidebar
+from ui.agent_settings import AgentSettingsDialog
 from ui.lighting_dialog import LightingDialog
 from ui.scene_settings import SceneSettingsPanel
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
+from services.agent_worker import AgentWorker
+from services.agent_provider import (
+    AgentMessage,
+    AgentResponse,
+    AgentSettings,
+    OpenAICompatibleProvider,
+    SceneContext,
+)
+from services.scene_commands import CommandError, CommandPlan, RuleBasedAgentProvider, SceneCommandService
+from agent.runtime import AgentRuntime
+from agent.providers import ModelProvider
 
 
 # 辅助线在视口四周额外绘制此比例；小幅平移和缩放仍落在既有区域内，
 # 因而无需立刻重建辅助线和曲线采样。
-_GUIDE_MARGIN = 0.6
+_GUIDE_MARGIN = 2.5
 
 
 class _ViewportResizeFilter(QObject):
@@ -84,6 +99,30 @@ class _GeometryInputFilter(QObject):
         return False
 
 
+@dataclass(frozen=True)
+class _GeometryHistoryState:
+    """可恢复的二维几何状态，不包含函数曲线和相机状态。"""
+
+    points: tuple[Point2D, ...]
+    linears: tuple[Linear2D, ...]
+    object_order: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class _SceneCommandState:
+    """Agent 事务快照，覆盖二维曲线、几何对象、标注和顺序。"""
+
+    points: tuple[Point2D, ...]
+    linears: tuple[Linear2D, ...]
+    annotations: tuple[Annotation2D, ...]
+    curves: tuple[CurveLayer, ...]
+    object_order: tuple[str, ...]
+    surfaces: tuple[SurfaceLayer, ...] = ()
+    scene_mode: SceneMode = SceneMode.TWO_D
+    points3d: tuple[tuple[str, tuple[float, float, float]], ...] = ()
+    areas: tuple[tuple[str, dict[str, object]], ...] = ()
+
+
 class MainWindow:
     """加载 Designer 窗口骨架，并协调两个相互独立的绘图工作区。"""
 
@@ -99,6 +138,9 @@ class MainWindow:
         self.curve_layers: list[CurveLayer] = []
         self.geometry_points: list[Point2D] = []
         self.linear_objects: list[Linear2D] = []
+        self.annotations: list[Annotation2D] = []
+        self._agent_areas: dict[str, dict[str, object]] = {}
+        self._agent_points3d: dict[str, tuple[float, float, float]] = {}
         self._two_d_object_order: list[str] = []
         self.layer_controller: LayerSceneController | None = None
         self.curve_controller: CurveSceneController | None = None
@@ -132,10 +174,28 @@ class MainWindow:
         self._snap_to_grid = False
         self._dragging_point_id: str | None = None
         self._drag_moved = False
+        self._drag_start_geometry_state: _GeometryHistoryState | None = None
+        self._geometry_undo_stack: list[_GeometryHistoryState] = []
+        self._geometry_redo_stack: list[_GeometryHistoryState] = []
+        self._scene_command_undo_stack: list[_SceneCommandState] = []
+        self._scene_command_redo_stack: list[_SceneCommandState] = []
+        self._scene_command_snapshot: _SceneCommandState | None = None
+        self._scene_command_active = False
+        self._agent_thread: QThread | None = None
+        self._agent_worker: AgentWorker | None = None
+        self._agent_messages: list[AgentMessage] = []
+        self._agent_settings_dialog: AgentSettingsDialog | None = None
+        self._last_agent_plan_summary = ""
+        self._agent_settings = AgentSettingsDialog.load_settings()
+        self._agent_provider = self._create_agent_provider()
+        self.scene_command_service = SceneCommandService(self)
+        self._agent_runtime = AgentRuntime(provider=self._agent_provider, command_service=self.scene_command_service)
+        self._math_teacher_agent = self._agent_runtime.agent
 
         self.window = self._load_designer_form()
         self._install_algebra_panel()
         self._configure_viewport()
+        self._install_agent_panel()
         self._bind_algebra_panel()
         self._apply_style()
         self._render_scene()
@@ -164,6 +224,39 @@ class MainWindow:
         self.algebra_panel = AlgebraPanel(self.window)
         root_layout.insertWidget(0, self.algebra_panel)
 
+    def _install_agent_panel(self) -> None:
+        """将 AI 助手作为主窗口最右侧的固定布局面板安装。"""
+        root_layout = self.window.findChild(QHBoxLayout, "rootLayout")
+        if root_layout is None:
+            raise RuntimeError("Designer form must use a horizontal root layout")
+        self._root_layout = root_layout
+        self.agent_sidebar = AgentSidebar(self.window)
+        self.agent_sidebar.setFixedWidth(440)
+        self.agent_panel = self.agent_sidebar.expanded_panel
+        root_layout.addWidget(self.agent_sidebar)
+        # Sidebar 默认隐藏，关闭时不占用主视口布局空间。
+        self.agent_sidebar.hide()
+        self.agent_panel.message_requested.connect(self._request_agent_plan)
+        self.agent_panel.settings_requested.connect(self._show_agent_settings)
+        self.agent_panel.close_requested.connect(self._close_agent_panel)
+        self.agent_panel.execute_requested.connect(self._execute_agent_plan)
+        self.agent_sidebar.set_model_status(
+            self._agent_settings.model,
+            enabled=self._using_remote_agent(),
+        )
+        self.agent_panel.set_scene_mode(self.scene_mode is SceneMode.TWO_D)
+
+    def _create_agent_provider(self):
+        if AgentSettingsDialog.is_enabled() and (self._agent_settings.provider == "local" or self._agent_settings.is_complete):
+            try:
+                return ModelProvider.create(self._agent_settings.provider, self._agent_settings)
+            except ValueError:
+                pass
+        return RuleBasedAgentProvider()
+
+    def _using_remote_agent(self) -> bool:
+        return isinstance(self._agent_provider, OpenAICompatibleProvider)
+
     def _configure_viewport(self) -> None:
         self.viewport_host = self._widget("viewportHost", QWidget)
         layout = QVBoxLayout(self.viewport_host)
@@ -185,8 +278,15 @@ class MainWindow:
         self.scene_mode_button = QToolButton(self.viewport_toolbar)
         self.scene_mode_button.setToolTip("切换二维和三维场景")
         self.scene_mode_button.setFixedSize(38, 38)
+        self.agent_button = QToolButton(self.viewport_toolbar)
+        self.agent_button.setObjectName("agentButton")
+        self.agent_button.setText("✦")
+        self.agent_button.setToolTip("AI 教学助手")
+        self.agent_button.setCheckable(True)
+        self.agent_button.setFixedSize(38, 38)
         toolbar_layout.addWidget(self.scene_settings_button)
         toolbar_layout.addWidget(self.scene_mode_button)
+        toolbar_layout.addWidget(self.agent_button)
         self.viewport_toolbar.adjustSize()
 
         self.two_d_geometry_toolbar = TwoDGeometryToolbar(self.viewport_host)
@@ -202,8 +302,12 @@ class MainWindow:
         self._position_viewport_overlays()
         self.scene_settings_button.clicked.connect(self._toggle_scene_settings)
         self.scene_mode_button.clicked.connect(self._toggle_scene_mode)
+        self.agent_button.clicked.connect(self._toggle_agent_panel)
         self.two_d_geometry_toolbar.tool_selected.connect(self._set_2d_geometry_tool)
         self.two_d_geometry_toolbar.snap_toggled.connect(self._set_snap_to_grid)
+        self.two_d_geometry_toolbar.undo_requested.connect(self._undo_2d_geometry)
+        self.two_d_geometry_toolbar.redo_requested.connect(self._redo_2d_geometry)
+        self._configure_2d_history_shortcuts()
         self.scene_settings_panel.background_changed.connect(self._set_scene_background)
         self.scene_settings_panel.axis_color_mode_changed.connect(self._set_axis_color_mode)
         self.scene_settings_panel.grid_changed.connect(self._set_grid_visible)
@@ -230,7 +334,17 @@ class MainWindow:
                 self._viewport_motion_observer = None
         self._geometry_input_filter = _GeometryInputFilter(self, self.plotter.interactor)
         self.plotter.interactor.installEventFilter(self._geometry_input_filter)
+        self._update_geometry_history_controls()
         self._sync_scene_controls()
+
+    def _configure_2d_history_shortcuts(self) -> None:
+        """注册主窗口级二维几何撤回快捷键，避免依赖当前控件焦点。"""
+        self._undo_2d_shortcut = QShortcut(QKeySequence("Ctrl+Z"), self.window)
+        self._redo_2d_shortcut = QShortcut(QKeySequence("Ctrl+Shift+Z"), self.window)
+        for shortcut in (self._undo_2d_shortcut, self._redo_2d_shortcut):
+            shortcut.setContext(Qt.ShortcutContext.WindowShortcut)
+        self._undo_2d_shortcut.activated.connect(self._undo_2d_geometry)
+        self._redo_2d_shortcut.activated.connect(self._redo_2d_geometry)
 
     def _on_viewport_host_changed(self) -> None:
         self._position_viewport_overlays()
@@ -308,21 +422,46 @@ class MainWindow:
         )
 
     def _on_viewport_interacting(self, *_args: object) -> None:
-        # 平移过程中采用节流策略，只在二维视口接近缓存边缘时补绘，避免当前视口内反复重建。
+        # 缩放立即响应（spacing 必变），平移采用节流策略（只补绘网格）。
         if self.scene_mode is not SceneMode.TWO_D or self._viewport_refreshing:
             return
+        try:
+            visible = self._current_2d_bounds()
+        except Exception:
+            return
+        # 允许只构造了视口字段的测试替身继续使用平移预取逻辑。
+        if not hasattr(self, "scene_appearances"):
+            current = time.monotonic()
+            if current - getattr(self, "_last_interaction_refresh_time", 0.0) < 0.05:
+                return
+            cached_bounds = getattr(self, "_two_d_sample_bounds", None)
+            if cached_bounds is not None and self._needs_2d_prefetch(visible, cached_bounds):
+                self._last_interaction_refresh_time = current
+                self._refresh_2d_viewport(resample=True, render=True)
+            return
+        appearance = self.scene_appearances[SceneMode.TWO_D]
+        spacing = tick_spacing(
+            visible.y_span,
+            appearance.tick_spacing_mode,
+            appearance.tick_spacing,
+            previous_spacing=self._two_d_guide_spacing,
+        )
+        spacing_changed = (
+            self._two_d_guide_spacing is None
+            or abs(spacing - self._two_d_guide_spacing) > self._two_d_guide_spacing * 1e-9
+        )
+        # 缩放时 spacing 必定改变，立即重建网格和重采样曲线，无节流。
+        if spacing_changed:
+            self._last_interaction_refresh_time = time.monotonic()
+            self._refresh_2d_viewport(resample=True, render=True)
+            return
+        # 平移时 spacing 不变，采用节流策略，只在接近边缘时补绘网格。
         current = time.monotonic()
         if current - self._last_interaction_refresh_time < 0.05:
             return
         cached_bounds = getattr(self, "_two_d_sample_bounds", None)
         if cached_bounds is None:
             return
-        try:
-            visible = self._current_2d_bounds()
-        except Exception:
-            return
-
-        # 在视口进入外围缓存区时重采样，确保用户看不到空白边缘。
         if self._needs_2d_prefetch(visible, cached_bounds):
             self._last_interaction_refresh_time = current
             self._refresh_2d_viewport(resample=True, render=True)
@@ -385,6 +524,536 @@ class MainWindow:
         # 扩展程序仍可能连接旧信号；界面中已不再提供对应的工具栏操作。
         panel.auto_intersections_changed.connect(self._set_auto_intersections)
         panel.manual_intersection_requested.connect(self._add_manual_intersection)
+
+    # ------------------------------------------------------------------
+    # AI 场景命令适配层
+    # ------------------------------------------------------------------
+
+    def _request_agent_plan(self, prompt: str) -> None:
+        if self._agent_thread is not None and self._agent_thread.isRunning():
+            return
+        self.agent_panel.add_user_message(prompt)
+        self._agent_messages.append(AgentMessage("user", prompt))
+        self.agent_sidebar.set_busy(True)
+        thread = QThread(self.window)
+        worker = AgentWorker(
+            provider=self._agent_provider,
+            agent=self._math_teacher_agent,
+            messages=tuple(self._agent_messages),
+            scene_context=self._build_scene_context(),
+        )
+        worker.moveToThread(thread)
+        thread.started.connect(worker.run)
+        worker.response_ready.connect(self._receive_agent_response, Qt.ConnectionType.QueuedConnection)
+        worker.error.connect(self._receive_agent_error, Qt.ConnectionType.QueuedConnection)
+        worker.finished.connect(thread.quit)
+        worker.finished.connect(worker.deleteLater)
+        thread.finished.connect(thread.deleteLater)
+        thread.finished.connect(self._agent_finished)
+        self._agent_thread = thread
+        self._agent_worker = worker
+        thread.start()
+
+    def _receive_agent_response(self, response: AgentResponse) -> None:
+        if response.text:
+            self._agent_messages.append(AgentMessage("assistant", response.text))
+            self.agent_panel.add_assistant_message(response.text)
+        if response.plan is None:
+            if not response.text:
+                self.agent_panel.add_assistant_message("模型未生成命令计划。")
+            self.agent_sidebar.set_busy(False)
+            return
+        plan = response.plan
+        validation = self.scene_command_service.preview(plan)
+        self.agent_sidebar.set_busy(False)
+        self.agent_panel.show_plan(plan, () if validation.valid else validation.messages)
+
+    def _receive_agent_error(self, message: str) -> None:
+        # 失败的这一轮不留在历史里，否则重试会把同一条请求重复发给模型。
+        if self._agent_messages and self._agent_messages[-1].role == "user":
+            self._agent_messages.pop()
+        self.agent_sidebar.set_busy(False)
+        self.agent_panel.show_error(message)
+
+    def _agent_finished(self) -> None:
+        self._agent_thread = None
+        self._agent_worker = None
+
+    def _execute_agent_plan(self) -> None:
+        plan = self.agent_panel.plan
+        if plan is None:
+            return
+        try:
+            self._agent_runtime.execute(plan)
+        except (CommandError, ValueError, RuntimeError) as error:
+            self.agent_panel.show_error(f"执行失败，场景未改变：{error}", keep_plan=True)
+            return
+        self._last_agent_plan_summary = plan.summary
+        self.agent_panel.clear_plan()
+        self.agent_panel.add_assistant_message("计划已执行，可用撤销回退。")
+        self.agent_sidebar.set_model_status(
+            self._agent_settings.model,
+            enabled=self._using_remote_agent(),
+        )
+
+    def begin_scene_command_transaction(self) -> None:
+        self._scene_command_snapshot = self._capture_scene_command_state()
+        self._scene_command_active = True
+
+    def commit_scene_command_transaction(self) -> None:
+        if not self._scene_command_active or self._scene_command_snapshot is None:
+            return
+        after = self._capture_scene_command_state()
+        if after != self._scene_command_snapshot:
+            self._scene_command_undo_stack.append(self._scene_command_snapshot)
+            self._scene_command_redo_stack.clear()
+        self._scene_command_snapshot = None
+        self._scene_command_active = False
+        self._sync_panel_layers(self.layers if self.scene_mode is SceneMode.THREE_D else self._two_d_panel_layers())
+        self._update_geometry_history_controls()
+        self.plotter.render()
+
+    def rollback_scene_command_transaction(self) -> None:
+        snapshot = self._scene_command_snapshot
+        self._scene_command_snapshot = None
+        self._scene_command_active = False
+        if snapshot is not None:
+            self._restore_scene_command_state(snapshot)
+        self._update_geometry_history_controls()
+
+    def _capture_scene_command_state(self) -> _SceneCommandState:
+        return _SceneCommandState(
+            points=tuple(replace(point) for point in self.geometry_points),
+            linears=tuple(replace(linear) for linear in self.linear_objects),
+            annotations=tuple(replace(annotation) for annotation in self.annotations),
+            curves=tuple(replace(layer, parameters=dict(layer.parameters)) for layer in self.curve_layers),
+            object_order=tuple(self._two_d_object_order),
+            surfaces=tuple(replace(layer, parameters=dict(layer.parameters)) for layer in self.layers),
+            scene_mode=self.scene_mode,
+            points3d=tuple((alias, tuple(coordinates)) for alias, coordinates in getattr(self, "_agent_points3d", {}).items()),
+            areas=tuple((alias, dict(operation)) for alias, operation in getattr(self, "_agent_areas", {}).items()),
+        )
+
+    def _restore_scene_command_state(self, state: _SceneCommandState) -> None:
+        self.geometry_points = [replace(point) for point in state.points]
+        self.linear_objects = [replace(linear) for linear in state.linears]
+        self.annotations = [replace(annotation) for annotation in state.annotations]
+        self.curve_layers = [replace(layer, parameters=dict(layer.parameters)) for layer in state.curves]
+        self.layers = [replace(layer, parameters=dict(layer.parameters)) for layer in state.surfaces]
+        self._two_d_object_order = list(state.object_order)
+        self._agent_points3d = {alias: tuple(coordinates) for alias, coordinates in state.points3d}
+        self._agent_areas = {alias: dict(operation) for alias, operation in state.areas}
+        if self.scene_mode is not state.scene_mode:
+            self._set_scene_mode(state.scene_mode)
+        else:
+            self._render_scene()
+
+    def _rebuild_2d_controllers(self) -> None:
+        if self.scene_mode is not SceneMode.TWO_D:
+            return
+        old_curve_controller = getattr(self, "curve_controller", None)
+        if old_curve_controller is not None:
+            for layer_id in list(old_curve_controller.layers):
+                old_curve_controller.remove_layer(layer_id)
+        old_geometry_controller = getattr(self, "geometry_controller", None)
+        if old_geometry_controller is not None:
+            for object_id in [*old_geometry_controller.points, *old_geometry_controller.linears, *old_geometry_controller.annotations]:
+                old_geometry_controller.remove_object(object_id)
+        visible = self._current_2d_bounds()
+        sampling_bounds = visible.expanded(_GUIDE_MARGIN)
+        self.curve_domain = self._curve_sampling_domain(sampling_bounds)
+        self.curve_controller = CurveSceneController(self.plotter, self.curve_domain)
+        self.geometry_controller = GeometrySceneController(self.plotter, visible)
+        for layer in self.curve_layers:
+            self.curve_controller.add_layer(layer)
+        for point in self.geometry_points:
+            self.geometry_controller.add_point(point)
+        for linear in self.linear_objects:
+            self.geometry_controller.add_linear(linear)
+        for annotation in getattr(self, "annotations", []):
+            self.geometry_controller.add_annotation(annotation)
+        self.algebra_panel.set_layers(self._two_d_panel_layers())
+
+    def apply_scene_command(self, operation: dict[str, object]) -> None:
+        name = operation["op"]
+        if name == "scene.set_mode":
+            mode_value = str(operation.get("mode", "2d"))
+            try:
+                mode = SceneMode(mode_value)
+            except ValueError as error:
+                raise CommandError(f"未知场景模式: {mode_value}") from error
+            self._set_scene_mode(mode)
+            return
+        if name == "scene.clear":
+            if self.scene_mode is SceneMode.THREE_D:
+                self.layers.clear()
+                self._agent_points3d = {}
+                self._render_scene()
+            else:
+                self.geometry_points.clear()
+                self.linear_objects.clear()
+                self.annotations.clear()
+                self.curve_layers.clear()
+                self._two_d_object_order.clear()
+                self._agent_areas = {}
+                self._rebuild_2d_controllers()
+            return
+        if name == "point3d.upsert":
+            self._command_upsert_point3d(operation)
+            return
+        if name == "point.upsert":
+            self._command_upsert_point(operation)
+            return
+        if name == "linear.upsert":
+            self._command_upsert_linear(operation)
+            return
+        if name == "annotation.upsert":
+            self._command_upsert_annotation(operation)
+            return
+        if name.endswith(".delete"):
+            self._command_delete_alias(str(operation["alias"]))
+            return
+        if name == "curve.create":
+            self._command_create_curve(operation)
+            return
+        if name == "curve.update":
+            self._command_update_curve(operation)
+            return
+        if name == "surface.create":
+            self._command_create_surface(operation)
+            return
+        if name == "surface.update":
+            self._command_update_surface(operation)
+            return
+        if name == "area.fill":
+            self._command_fill_area(operation)
+            return
+        if name == "view.fit":
+            self._fit_2d_to_command_objects(float(operation.get("padding", 1.15)))
+            return
+        if name == "scene.export_png":
+            filename = str(operation.get("filename", ""))
+            if not filename:
+                raise CommandError("scene.export_png 需要 filename。")
+            self.plotter.screenshot(filename)
+            return
+        if name == "geometry.intersection":
+            self._command_intersection(operation)
+            return
+        if name.startswith("linear_algebra.") or name.startswith("calculus."):
+            raise CommandError(f"宿主收到未展开的教学命令: {name}")
+        raise CommandError(f"宿主不支持操作: {name}")
+
+    def _command_upsert_point(self, operation: dict[str, object]) -> None:
+        alias = str(operation["alias"])
+        coordinates = tuple(float(value) for value in operation["coordinates"])  # type: ignore[index]
+        point = next((item for item in self.geometry_points if item.agent_alias == alias), None)
+        if point is None:
+            point = Point2D(str(operation.get("name", alias)), *coordinates, agent_alias=alias)
+            self.geometry_points.append(point)
+            self._two_d_object_order.append(point.id)
+            if self.geometry_controller is not None:
+                self.geometry_controller.add_point(point)
+        else:
+            point.x, point.y = coordinates
+            if self.geometry_controller is not None:
+                self.geometry_controller.move_point(point.id, *coordinates)
+
+    def _command_upsert_linear(self, operation: dict[str, object]) -> None:
+        alias = str(operation["alias"])
+        start = self._command_point_alias(str(operation["start"]))
+        end = self._command_point_alias(str(operation["end"]))
+        linear = next((item for item in self.linear_objects if item.agent_alias == alias), None)
+        kwargs = {
+            "color": str(operation.get("color", "#2777b6")),
+            "style": str(operation.get("style", "solid")),
+            "role": str(operation.get("role", "primary")),
+            "label": operation.get("label"),
+        }
+        if linear is None:
+            linear = Linear2D(
+                str(operation.get("name", alias)),
+                str(operation["kind"]),
+                start.id,
+                end.id,
+                agent_alias=alias,
+                **kwargs,
+            )
+            self.linear_objects.append(linear)
+            self._two_d_object_order.append(linear.id)
+        else:
+            linear.start_point_id = start.id
+            linear.end_point_id = end.id
+            linear.kind = str(operation["kind"])  # type: ignore[assignment]
+            linear.color = kwargs["color"]
+            linear.style = kwargs["style"]  # type: ignore[assignment]
+            linear.role = kwargs["role"]  # type: ignore[assignment]
+            linear.label = kwargs["label"]
+        if self.geometry_controller is not None:
+            self.geometry_controller.linears.pop(linear.id, None)
+            self.geometry_controller.add_linear(linear)
+
+    def _command_upsert_annotation(self, operation: dict[str, object]) -> None:
+        alias = str(operation["alias"])
+        x, y = (float(value) for value in operation["position"])  # type: ignore[index]
+        annotation = next((item for item in self.annotations if item.agent_alias == alias), None)
+        if annotation is None:
+            annotation = Annotation2D(
+                str(operation.get("name", alias)), str(operation["text"]), x, y,
+                latex=operation.get("latex"), color=str(operation.get("color", "#263241")), agent_alias=alias,
+            )
+            self.annotations.append(annotation)
+            self._two_d_object_order.append(annotation.id)
+        else:
+            annotation.text = str(operation["text"])
+            annotation.x, annotation.y = x, y
+        if self.geometry_controller is not None:
+            self.geometry_controller.annotations.pop(annotation.id, None)
+            self.geometry_controller.add_annotation(annotation)
+
+    def _command_create_curve(self, operation: dict[str, object]) -> None:
+        if self.curve_controller is None:
+            raise CommandError("二维曲线控制器尚未初始化。")
+        kind = str(operation["kind"])
+        expression = str(operation["expression"])
+        formula, parsed = self._parse_mathlive_curve(expression, kind)
+        layer = CurveLayer(
+            str(operation.get("name", operation["alias"])), parsed.kind, parsed.source,
+            latex=formula.latex, parameters={name: 1.0 for name in parsed.parameter_names},
+            color=str(operation.get("color", "#2777b6")), agent_alias=str(operation["alias"]),
+        )
+        self.curve_controller.add_layer(layer)
+        self.curve_layers.append(layer)
+        self._two_d_object_order.append(layer.id)
+
+    def _command_create_surface(self, operation: dict[str, object]) -> None:
+        """把 3D Skill 的曲面命令交给现有 CAS + LayerSceneController。"""
+        if self.scene_mode is not SceneMode.THREE_D or self.layer_controller is None:
+            raise CommandError("创建曲面需要处于三维场景。")
+        kind = str(operation["kind"])
+        expression = str(operation["expression"])
+        try:
+            formula, parsed = self._parse_mathlive_surface(expression, kind)
+            layer = SurfaceLayer(
+                str(operation.get("name", operation["alias"])),
+                parsed.kind,
+                parsed.source,
+                latex=formula.latex,
+                parameters={name: 1.0 for name in parsed.parameter_names},
+                color=str(operation.get("color", "#4f7cac")),
+                opacity=float(operation.get("opacity", 0.62)),
+                agent_alias=str(operation["alias"]),
+            )
+            self.layer_controller.add_layer(layer)
+        except (ExpressionError, LayerRenderError, LatexParseError, ValueError) as error:
+            raise CommandError(f"无法创建曲面: {error}") from error
+        self.layers.append(layer)
+        self._sync_panel_layers(self.layers)
+        self.plotter.render()
+
+    def _command_update_surface(self, operation: dict[str, object]) -> None:
+        if self.scene_mode is not SceneMode.THREE_D or self.layer_controller is None:
+            raise CommandError("更新曲面需要处于三维场景。")
+        alias = str(operation["alias"])
+        current = next((item for item in self.layers if item.agent_alias == alias), None)
+        if current is None:
+            raise CommandError(f"未知曲面别名: {alias}")
+        try:
+            formula, parsed = self._parse_mathlive_surface(str(operation["expression"]), str(operation["kind"]))
+            updated = replace(
+                current,
+                kind=parsed.kind,
+                expression=parsed.source,
+                latex=formula.latex,
+                parameters={name: current.parameters.get(name, 1.0) for name in parsed.parameter_names},
+            )
+            self.layer_controller.update_layer(updated)
+        except (ExpressionError, LayerRenderError, LatexParseError, ValueError) as error:
+            raise CommandError(f"无法更新曲面: {error}") from error
+        self.layers = [updated if item.id == current.id else item for item in self.layers]
+        self._sync_panel_layers(self.layers)
+        self.plotter.render()
+
+    def _command_fill_area(self, operation: dict[str, object]) -> None:
+        if self.scene_mode is not SceneMode.TWO_D:
+            raise CommandError("积分面积演示需要处于二维场景。")
+        expression = dict(operation)
+        alias = str(operation["alias"])
+        areas = getattr(self, "_agent_areas", {})
+        areas[alias] = expression
+        self._agent_areas = areas
+        self._render_agent_areas()
+
+    def _render_agent_areas(self) -> None:
+        if self.scene_mode is not SceneMode.TWO_D:
+            return
+        import numpy as np
+        import pyvista as pv
+        import sympy as sp
+        from geometry.cas_curve import parse_curve_expression
+
+        areas = getattr(self, "_agent_areas", {})
+        for alias in areas:
+            self.plotter.remove_actor(f"agent-area:{alias}", render=False)
+        for alias, operation in areas.items():
+            try:
+                interval = operation.get("interval", (-1.0, 1.0))
+                start, end = float(interval[0]), float(interval[1])  # type: ignore[index]
+                parsed = parse_curve_expression(str(operation["expression"]), "explicit")
+                if parsed.dependent_axis != "y":
+                    continue
+                x = sp.Symbol("x", real=True)
+                function = sp.lambdify(x, parsed.simplified, modules="numpy")
+                values = np.linspace(start, end, 220)
+                y_values = np.asarray(function(values), dtype=float)
+                if y_values.ndim == 0:
+                    y_values = np.full(values.shape, float(y_values))
+                if not np.all(np.isfinite(y_values)):
+                    continue
+                points = np.column_stack(
+                    [
+                        np.concatenate([values, values[::-1]]),
+                        np.concatenate([y_values, np.zeros_like(y_values)[::-1]]),
+                        np.zeros(values.size * 2),
+                    ]
+                )
+                faces = np.concatenate([[len(points)], np.arange(len(points))])
+                mesh = pv.PolyData(points, faces)
+                self.plotter.add_mesh(
+                    mesh,
+                    name=f"agent-area:{alias}",
+                    color=str(operation.get("color", "#7c5ce3")),
+                    opacity=float(operation.get("opacity", 0.24)),
+                    show_edges=False,
+                )
+            except Exception:
+                # 曲线本身仍由 CurveSceneController 渲染；面积失败不会破坏事务。
+                continue
+        self.plotter.render()
+
+    def _command_upsert_point3d(self, operation: dict[str, object]) -> None:
+        """在 3D 视口中用一个受控球体表示点。
+
+        点的坐标数据放在宿主的 ``_agent_points3d`` 中，渲染仍由宿主统一
+        通过 PyVista 执行，Agent/Skill 本身不会接触绘图器。
+        """
+        if self.scene_mode is not SceneMode.THREE_D:
+            raise CommandError("三维点需要处于三维场景。")
+        try:
+            coordinates = tuple(float(value) for value in operation["coordinates"])  # type: ignore[index]
+            if len(coordinates) != 3:
+                raise ValueError("三维点需要三个坐标")
+        except (TypeError, ValueError) as error:
+            raise CommandError("三维点坐标无效。") from error
+        points = getattr(self, "_agent_points3d", {})
+        alias = str(operation["alias"])
+        points[alias] = coordinates
+        self._agent_points3d = points
+        self._render_agent_points3d()
+
+    def _render_agent_points3d(self) -> None:
+        if self.scene_mode is not SceneMode.THREE_D:
+            return
+        import pyvista as pv
+
+        for alias in getattr(self, "_agent_points3d", {}):
+            self.plotter.remove_actor(f"agent-point:{alias}", render=False)
+        for alias, coordinates in getattr(self, "_agent_points3d", {}).items():
+            mesh = pv.Sphere(radius=0.08, center=coordinates, theta_resolution=16, phi_resolution=8)
+            self.plotter.add_mesh(mesh, name=f"agent-point:{alias}", color="#d64545")
+        self.plotter.render()
+
+    def _command_intersection(self, operation: dict[str, object]) -> None:
+        first = str(operation["first"])
+        second = str(operation["second"])
+        if self.scene_mode is SceneMode.THREE_D and self.layer_controller is not None:
+            first_layer = next((item for item in self.layers if item.agent_alias == first or item.id == first), None)
+            second_layer = next((item for item in self.layers if item.agent_alias == second or item.id == second), None)
+            if first_layer is None or second_layer is None:
+                raise CommandError("交集计算需要两个已存在的曲面别名。")
+            self.layer_controller.set_manual_intersection_pair(first_layer.id, second_layer.id, True)
+            self.plotter.render()
+            return
+        raise CommandError("当前交集工具只支持三维曲面。")
+
+    def _command_update_curve(self, operation: dict[str, object]) -> None:
+        alias = str(operation["alias"])
+        layer = next((item for item in self.curve_layers if item.agent_alias == alias), None)
+        if layer is None:
+            raise CommandError(f"未知曲线别名: {alias}")
+        updated = replace(layer, kind=str(operation["kind"]), expression=str(operation["expression"]))
+        if self.curve_controller is not None:
+            self.curve_controller.update_layer(updated)
+        self.curve_layers = [updated if item.id == layer.id else item for item in self.curve_layers]
+        self.algebra_panel.sync_layer(layer.id, updated)
+
+    def _command_point_alias(self, alias: str) -> Point2D:
+        point = next((item for item in self.geometry_points if item.agent_alias == alias or item.name == alias), None)
+        if point is None:
+            raise CommandError(f"未知点别名: {alias}")
+        return point
+
+    def _command_delete_alias(self, alias: str) -> None:
+        areas = getattr(self, "_agent_areas", {})
+        if alias in areas or f"{alias}_fill" in areas:
+            target = alias if alias in areas else f"{alias}_fill"
+            areas.pop(target, None)
+            self.plotter.remove_actor(f"agent-area:{target}", render=False)
+            self.plotter.render()
+            return
+        points3d = getattr(self, "_agent_points3d", {})
+        if alias in points3d:
+            points3d.pop(alias, None)
+            self._render_agent_points3d()
+            return
+        point = next((item for item in self.geometry_points if item.agent_alias == alias), None)
+        if point is not None:
+            self._remove_geometry_object(point.id)
+            return
+        linear = next((item for item in self.linear_objects if item.agent_alias == alias), None)
+        if linear is not None:
+            self._remove_geometry_object(linear.id)
+            return
+        annotation = next((item for item in self.annotations if item.agent_alias == alias), None)
+        if annotation is not None:
+            self.annotations = [item for item in self.annotations if item.id != annotation.id]
+            self._two_d_object_order = [item for item in self._two_d_object_order if item != annotation.id]
+            if self.geometry_controller is not None:
+                self.geometry_controller.remove_object(annotation.id)
+            return
+        layer = next((item for item in self.curve_layers if item.agent_alias == alias), None)
+        if layer is not None:
+            self.curve_controller.remove_layer(layer.id) if self.curve_controller else None
+            self.curve_layers = [item for item in self.curve_layers if item.id != layer.id]
+            self._two_d_object_order = [item for item in self._two_d_object_order if item != layer.id]
+            return
+        surface = next((item for item in self.layers if item.agent_alias == alias), None)
+        if surface is not None:
+            if self.layer_controller is not None:
+                self.layer_controller.remove_layer(surface.id)
+            self.layers = [item for item in self.layers if item.id != surface.id]
+            self._sync_panel_layers(self.layers)
+            self.plotter.render()
+            return
+        raise CommandError(f"未知对象别名: {alias}")
+
+    def _fit_2d_to_command_objects(self, padding: float) -> None:
+        if self.scene_mode is SceneMode.THREE_D:
+            self.plotter.reset_camera()
+            self.plotter.render()
+            return
+        points = [(point.x, point.y) for point in self.geometry_points]
+        if not points:
+            return
+        min_x = min(point[0] for point in points)
+        max_x = max(point[0] for point in points)
+        min_y = min(point[1] for point in points)
+        max_y = max(point[1] for point in points)
+        span = max(max_x - min_x, max_y - min_y, 1.0) * max(1.0, padding)
+        self.plotter.camera.focal_point = ((min_x + max_x) / 2, (min_y + max_y) / 2, 0.0)
+        self.plotter.camera.position = (self.plotter.camera.focal_point[0], self.plotter.camera.focal_point[1], 20.0)
+        self.plotter.camera.parallel_scale = span / 2
+        self._refresh_2d_viewport(resample=True, render=False)
 
     def _render_scene(self) -> None:
         if self.scene_mode is SceneMode.TWO_D:
@@ -454,6 +1123,7 @@ class MainWindow:
         self.layers = available_layers
         self._sync_panel_layers(self.layers)
         self.algebra_panel.set_status("三维场景已准备好")
+        self._render_agent_points3d()
         self._refresh_3d_viewport(resample=True, render=False)
         self.plotter.render()
 
@@ -494,6 +1164,9 @@ class MainWindow:
             self.geometry_controller.add_point(point)
         for linear in self.linear_objects:
             self.geometry_controller.add_linear(linear)
+        for annotation in getattr(self, "annotations", []):
+            self.geometry_controller.add_annotation(annotation)
+        self._render_agent_areas()
         self._sync_panel_layers(self._two_d_panel_layers())
         self.algebra_panel.set_status("二维场景已准备好")
         self.plotter.render()
@@ -529,11 +1202,22 @@ class MainWindow:
         return visible_2d_bounds(focal, float(self.plotter.camera.parallel_scale), width / height)
 
     def _curve_sampling_domain(self, bounds: ViewportBounds) -> Plot2DDomain:
+        # 采样域为可视区域外扩 _GUIDE_MARGIN 得到（约 6 倍视口跨度）。若固定分辨率，
+        # 采样点会被稀释到整个外扩域，可视区域内密度不足而出现锯齿。这里按外扩比例
+        # 放大分辨率，保证可视区域内采样密度恒定，同时设上限避免性能问题。
+        span_ratio = 1.0 + 2.0 * _GUIDE_MARGIN
+        curve_resolution = min(
+            8000, max(self.curve_domain.curve_resolution, int(self.curve_domain.curve_resolution * span_ratio))
+        )
+        # 隐式曲线为二维网格（成本 O(n²)），放大比例受限以兼顾性能。
+        implicit_resolution = min(
+            480, max(self.curve_domain.implicit_resolution, int(self.curve_domain.implicit_resolution * span_ratio ** 0.5))
+        )
         return Plot2DDomain(
             x_range=bounds.x_range,
             y_range=bounds.y_range,
-            curve_resolution=self.curve_domain.curve_resolution,
-            implicit_resolution=self.curve_domain.implicit_resolution,
+            curve_resolution=curve_resolution,
+            implicit_resolution=implicit_resolution,
         )
 
     def _refresh_2d_viewport(
@@ -590,7 +1274,8 @@ class MainWindow:
                 sampled_visible_span = self._two_d_sample_bounds.x_span / (
                     1.0 + 2.0 * _GUIDE_MARGIN
                 )
-                if visible.x_span < sampled_visible_span * 0.7:
+                # 放大约 1.05 倍即重采样（阈值 0.95），及时恢复精细分辨率消除锯齿。
+                if visible.x_span < sampled_visible_span * 0.95:
                     needs_resample = True
             if needs_resample:
                 sampling_domain = self._curve_sampling_domain(sampling_bounds)
@@ -616,47 +1301,28 @@ class MainWindow:
     def _refresh_3d_viewport(
         self, *, resample: bool = True, render: bool = True, force: bool = False
     ) -> None:
-        appearance = self.scene_appearances[SceneMode.THREE_D]
-        extent = self._current_3d_axis_extent()
-        span = 2.0 * extent
-        spacing = tick_spacing(
-            span,
-            appearance.tick_spacing_mode,
-            appearance.tick_spacing,
-            target_intervals=16,
-            previous_spacing=None if force else self._three_d_spacing,
-        )
-        spacing_unchanged = (
-            self._three_d_spacing is not None
-            and abs(spacing - self._three_d_spacing) <= self._three_d_spacing * 1e-9
-        )
-        extent_ratio = (
-            extent / self._three_d_extent
-            if self._three_d_extent is not None and self._three_d_extent > 0
-            else 0.0
-        )
-        still_covered = 0.7 <= extent_ratio <= 1.3
-        need_axes_update = force or not spacing_unchanged or not still_covered
+        """刷新三维视口。
 
-        if need_axes_update:
-            padded_extent = extent * 1.3
-            if self._three_d_axes is not None:
-                spacing = self._three_d_axes.render(
-                    padded_extent,
-                    axis_color_mode=appearance.axis_color_mode,
-                    contrast_color=appearance.contrast_axis_color,
-                    show_ticks=appearance.show_ticks,
-                    tick_spacing_mode=appearance.tick_spacing_mode,
-                    custom_tick_spacing=appearance.tick_spacing,
-                    previous_spacing=None if force else self._three_d_spacing,
-                )
-            self._three_d_spacing = spacing
+        坐标轴范围由定义域决定，与相机无关：缩放是纯相机操作，坐标轴会随
+        投影自然变大变小，无需重建几何。只有外观设置变化（force=True）才
+        重新生成坐标轴。
+        """
+        if force and self._three_d_axes is not None:
+            appearance = self.scene_appearances[SceneMode.THREE_D]
+            extent = self._three_d_extent or self._current_3d_axis_extent()
+            self._three_d_spacing = self._three_d_axes.render(
+                extent,
+                axis_color_mode=appearance.axis_color_mode,
+                contrast_color=appearance.contrast_axis_color,
+                show_ticks=appearance.show_ticks,
+                tick_spacing_mode=appearance.tick_spacing_mode,
+                custom_tick_spacing=appearance.tick_spacing,
+                previous_spacing=None,
+            )
             self._three_d_extent = extent
 
-        # 缩放纯粹是相机操作，不重建几何；定义域只由范围滑块控制。
         if render:
             self.plotter.render()
-
 
     def _refresh_visible_viewport(self) -> None:
         self._viewport_refresh_pending = False
@@ -703,11 +1369,13 @@ class MainWindow:
         if coordinates is None:
             self.algebra_panel.set_status("坐标格式无效，请输入形如 (x, y)", is_error=True)
             return
+        before = self._capture_geometry_state()
         point.x, point.y = coordinates
         if self.geometry_controller is not None:
             self.geometry_controller.move_point(point_id, *coordinates)
         self.algebra_panel.sync_layer(point_id, point)
         self.algebra_panel.finish_edit()
+        self._record_geometry_change(before)
         self.algebra_panel.set_status(f"已更新点 {point.name}")
         self.plotter.render()
 
@@ -891,6 +1559,7 @@ class MainWindow:
         geometry = self._geometry_object(object_id)
         if geometry is None:
             return
+        before = self._capture_geometry_state()
         removed_ids = {object_id}
         if isinstance(geometry, Point2D):
             removed_ids.update(
@@ -915,6 +1584,7 @@ class MainWindow:
             for removed_id in removed_ids:
                 self.geometry_controller.remove_object(removed_id)
         self.algebra_panel.set_layers(self._two_d_panel_layers())
+        self._record_geometry_change(before)
         self.algebra_panel.set_status("已删除几何对象")
         self.plotter.render()
 
@@ -943,10 +1613,14 @@ class MainWindow:
         geometry = self._geometry_object(layer_id)
         if geometry is None:
             return
+        if geometry.visible == visible:
+            return
+        before = self._capture_geometry_state()
         geometry.visible = visible
         if self.geometry_controller is not None:
             self.geometry_controller.set_visible(layer_id, visible)
         self.algebra_panel.sync_layer(layer_id, geometry)
+        self._record_geometry_change(before)
         self.plotter.render()
 
     def _set_surface_intersections_visibility(self, layer_id: str, visible: bool) -> None:
@@ -1076,6 +1750,7 @@ class MainWindow:
             tool = None
         self._pending_geometry_point_id = None
         self._dragging_point_id = None
+        self._drag_start_geometry_state = None
         if self.geometry_controller is not None:
             self.geometry_controller.clear_draft()
             # 离开选择工具时清除高亮，避免遗留悬浮/选中效果。
@@ -1104,6 +1779,112 @@ class MainWindow:
         self._snap_to_grid = bool(enabled)
         self.algebra_panel.set_status("已开启网格吸附" if enabled else "已关闭网格吸附")
 
+    def _capture_geometry_state(self) -> _GeometryHistoryState:
+        """复制当前几何状态，避免后续点移动修改历史快照。"""
+        return _GeometryHistoryState(
+            points=tuple(replace(point) for point in self.geometry_points),
+            linears=tuple(replace(linear) for linear in self.linear_objects),
+            object_order=tuple(self._two_d_object_order),
+        )
+
+    def _ensure_geometry_history(self) -> None:
+        if not hasattr(self, "_geometry_undo_stack"):
+            self._geometry_undo_stack = []
+        if not hasattr(self, "_geometry_redo_stack"):
+            self._geometry_redo_stack = []
+
+    def _record_geometry_change(self, before: _GeometryHistoryState) -> None:
+        if getattr(self, "_scene_command_active", False):
+            return
+        # 手动操作发生在 AI 事务之后时，撤销应优先回退最新的手动操作。
+        if getattr(self, "_scene_command_undo_stack", []):
+            self._scene_command_undo_stack.clear()
+            self._scene_command_redo_stack.clear()
+        self._ensure_geometry_history()
+        after = self._capture_geometry_state()
+        if before == after:
+            return
+        self._geometry_undo_stack.append(before)
+        self._geometry_redo_stack.clear()
+        self._update_geometry_history_controls()
+
+    def _update_geometry_history_controls(self) -> None:
+        toolbar = getattr(self, "two_d_geometry_toolbar", None)
+        if toolbar is not None and hasattr(toolbar, "set_history_state"):
+            toolbar.set_history_state(
+                can_undo=bool(getattr(self, "_geometry_undo_stack", []))
+                or bool(getattr(self, "_scene_command_undo_stack", [])),
+                can_redo=bool(getattr(self, "_geometry_redo_stack", []))
+                or bool(getattr(self, "_scene_command_redo_stack", [])),
+            )
+
+    def _undo_2d_geometry(self) -> None:
+        if getattr(self, "_scene_command_undo_stack", []):
+            current = self._capture_scene_command_state()
+            target = self._scene_command_undo_stack.pop()
+            self._scene_command_redo_stack.append(current)
+            self._restore_scene_command_state(target)
+            self.algebra_panel.set_status("已撤回 AI 场景命令")
+            self._update_geometry_history_controls()
+            return
+        self._ensure_geometry_history()
+        if self.scene_mode is not SceneMode.TWO_D or not self._geometry_undo_stack:
+            return
+        current = self._capture_geometry_state()
+        target = self._geometry_undo_stack.pop()
+        self._geometry_redo_stack.append(current)
+        self._restore_geometry_state(target)
+        self._update_geometry_history_controls()
+        self.algebra_panel.set_status("已撤回二维几何操作")
+
+    _undo_scene_command = _undo_2d_geometry
+
+    def _redo_2d_geometry(self) -> None:
+        if getattr(self, "_scene_command_redo_stack", []):
+            current = self._capture_scene_command_state()
+            target = self._scene_command_redo_stack.pop()
+            self._scene_command_undo_stack.append(current)
+            self._restore_scene_command_state(target)
+            self.algebra_panel.set_status("已反撤回 AI 场景命令")
+            self._update_geometry_history_controls()
+            return
+        self._ensure_geometry_history()
+        if self.scene_mode is not SceneMode.TWO_D or not self._geometry_redo_stack:
+            return
+        current = self._capture_geometry_state()
+        target = self._geometry_redo_stack.pop()
+        self._geometry_undo_stack.append(current)
+        self._restore_geometry_state(target)
+        self._update_geometry_history_controls()
+        self.algebra_panel.set_status("已反撤回二维几何操作")
+
+    def _restore_geometry_state(self, state: _GeometryHistoryState) -> None:
+        """恢复几何对象并重建几何控制器，保持函数曲线和当前工具不变。"""
+        self.geometry_points = [replace(point) for point in state.points]
+        self.linear_objects = [replace(linear) for linear in state.linears]
+        self._two_d_object_order = list(state.object_order)
+        self._pending_geometry_point_id = None
+        self._dragging_point_id = None
+        self._drag_moved = False
+        self._drag_start_geometry_state = None
+
+        controller = getattr(self, "geometry_controller", None)
+        if controller is not None:
+            controller.clear_draft()
+            controller.set_hover(None)
+            controller.set_selected(None)
+            for object_id in [*controller.points, *controller.linears]:
+                controller.remove_object(object_id)
+            for point in self.geometry_points:
+                controller.add_point(point)
+            for linear in self.linear_objects:
+                controller.add_linear(linear)
+            for annotation in getattr(self, "annotations", []):
+                controller.add_annotation(annotation)
+        self.algebra_panel.set_layers(self._two_d_panel_layers())
+        self.algebra_panel.set_selected_layer(None)
+        self.plotter.render()
+
     def _handle_geometry_mouse_press(self, event: QMouseEvent) -> bool:
         """处理被激活工具的左键单击；其他输入仍交给 PyVista。"""
         tool = self._active_2d_tool
@@ -1119,8 +1900,10 @@ class MainWindow:
         if tool == "select":
             return self._begin_select_or_drag(*coordinates)
         coordinates = self._maybe_snap(*coordinates)
-        point, created = self._get_or_create_geometry_point(*coordinates)
+        before = self._capture_geometry_state()
+        point, created = self._get_or_create_geometry_point(*coordinates, record_history=False)
         if tool == "point":
+            self._record_geometry_change(before)
             self.algebra_panel.set_status(
                 f"{'已创建' if created else '已复用'}点 {point.name}"
             )
@@ -1129,6 +1912,7 @@ class MainWindow:
             return True
         if self._pending_geometry_point_id is None:
             self._pending_geometry_point_id = point.id
+            self._record_geometry_change(before)
             self.algebra_panel.set_status(
                 f"已选择点 {point.name}，单击第二点创建{self._TOOL_LABELS[tool]}"
             )
@@ -1144,10 +1928,12 @@ class MainWindow:
             self.algebra_panel.set_status("请单击与第一个点不同的位置", is_error=True)
             event.accept()
             return True
-        linear = self._create_linear_geometry(tool, first, point)
+        linear = self._create_linear_geometry(tool, first, point, record_history=False)
         self._pending_geometry_point_id = None
         if self.geometry_controller is not None:
             self.geometry_controller.clear_draft()
+        if not getattr(self, "_scene_command_active", False):
+            self._record_geometry_change(before)
         self.algebra_panel.set_status(f"已创建{self._TOOL_LABELS[tool]} {linear.name}")
         self.plotter.render()
         event.accept()
@@ -1160,6 +1946,9 @@ class MainWindow:
         hit_id = self.geometry_controller.hit_test(x, y, self._hit_tolerance())
         self._select_geometry_object(hit_id)
         self._dragging_point_id = hit_id if hit_id in self.geometry_controller.points else None
+        self._drag_start_geometry_state = (
+            self._capture_geometry_state() if self._dragging_point_id is not None else None
+        )
         self._drag_moved = False
         self.plotter.render()
         # 命中对象时拦截事件，避免触发相机平移；未命中则放行以便平移画布。
@@ -1211,9 +2000,12 @@ class MainWindow:
             return False
         point = self._point_2d(self._dragging_point_id)
         if point is not None and self._drag_moved:
+            if self._drag_start_geometry_state is not None:
+                self._record_geometry_change(self._drag_start_geometry_state)
             self.algebra_panel.set_status(f"已移动点 {point.name}")
         self._dragging_point_id = None
         self._drag_moved = False
+        self._drag_start_geometry_state = None
         return False
 
     def _handle_geometry_double_click(self, event: QMouseEvent) -> bool:
@@ -1243,6 +2035,16 @@ class MainWindow:
 
     def _handle_geometry_key_press(self, event: QKeyEvent) -> bool:
         key = event.key()
+        modifiers = event.modifiers()
+        if key == Qt.Key.Key_Z:
+            if modifiers == Qt.KeyboardModifier.ControlModifier:
+                self._undo_2d_geometry()
+                event.accept()
+                return True
+            if modifiers == Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier:
+                self._redo_2d_geometry()
+                event.accept()
+                return True
         if key in (Qt.Key.Key_Delete, Qt.Key.Key_Backspace):
             selected = self.geometry_controller.selected_id if self.geometry_controller else None
             if selected is not None and self._geometry_object(selected) is not None:
@@ -1294,17 +2096,26 @@ class MainWindow:
         y = bounds.y_range[1] - float(screen_y) / height * bounds.y_span
         return x, y
 
-    def _get_or_create_geometry_point(self, x: float, y: float) -> tuple[Point2D, bool]:
+    def _get_or_create_geometry_point(
+        self,
+        x: float,
+        y: float,
+        *,
+        record_history: bool = True,
+    ) -> tuple[Point2D, bool]:
         tolerance = self._point_snap_tolerance()
         for point in self.geometry_points:
             if (point.x - x) ** 2 + (point.y - y) ** 2 <= tolerance**2:
                 return point, False
+        before = self._capture_geometry_state()
         point = Point2D(self._next_point_name(), x, y)
         self.geometry_points.append(point)
         self._two_d_object_order.append(point.id)
         if self.geometry_controller is not None:
             self.geometry_controller.add_point(point)
         self.algebra_panel.set_layers(self._two_d_panel_layers())
+        if record_history:
+            self._record_geometry_change(before)
         return point, True
 
     def _create_linear_geometry(
@@ -1312,7 +2123,10 @@ class MainWindow:
         kind: LinearKind,
         start: Point2D,
         end: Point2D,
+        *,
+        record_history: bool = True,
     ) -> Linear2D:
+        before = self._capture_geometry_state()
         linear = Linear2D(
             name=self._next_linear_name(kind),
             kind=kind,
@@ -1324,6 +2138,8 @@ class MainWindow:
         if self.geometry_controller is not None:
             self.geometry_controller.add_linear(linear)
         self.algebra_panel.set_layers(self._two_d_panel_layers())
+        if record_history:
+            self._record_geometry_change(before)
         return linear
 
     def _point_snap_tolerance(self) -> float:
@@ -1418,7 +2234,133 @@ class MainWindow:
             self.layer_controller.set_global_intersections_visible(visible)
             self.plotter.render()
 
+    def _toggle_agent_panel(self) -> None:
+        if hasattr(self, "agent_sidebar") and self.agent_sidebar.state.value == "expanded":
+            self._close_agent_panel()
+        else:
+            self._open_agent_panel()
+
+    def _open_agent_panel(self) -> None:
+        if self.scene_settings_panel.isVisible():
+            self._close_scene_settings(immediate=True)
+        self.agent_button.setChecked(True)
+        self.agent_sidebar.show()
+        self.agent_sidebar.expand()
+        self.agent_sidebar.select_tab("agent")
+        self._root_layout.activate()
+        self.agent_panel.prompt_edit.setFocus()
+
+    def _close_agent_panel(self, immediate: bool = False) -> None:
+        self.agent_button.setChecked(False)
+        if hasattr(self, "agent_sidebar"):
+            self.agent_sidebar.collapse()
+        else:
+            self.agent_panel.hide()
+        self._root_layout.activate()
+
+    def _show_agent_settings(self) -> None:
+        dialog = getattr(self, "_agent_settings_dialog", None)
+        if dialog is not None:
+            # 重复点击设置按钮时只把已有对话框带到前面，避免多个窗口写同一份 QSettings。
+            dialog.show()
+            dialog.raise_()
+            dialog.activateWindow()
+            return
+        dialog = AgentSettingsDialog(self.window)
+        dialog.settings_saved.connect(self._apply_agent_settings)
+        dialog.demo_requested.connect(self._restore_demo_agent)
+        dialog.finished.connect(self._forget_agent_settings_dialog)
+        self._agent_settings_dialog = dialog
+        dialog.open()
+
+    def _forget_agent_settings_dialog(self) -> None:
+        dialog = getattr(self, "_agent_settings_dialog", None)
+        self._agent_settings_dialog = None
+        if dialog is not None:
+            dialog.deleteLater()
+
+    def _apply_agent_settings(self, settings: AgentSettings) -> None:
+        self._agent_settings = settings
+        self._agent_provider = self._create_agent_provider()
+        self._agent_runtime = AgentRuntime(provider=self._agent_provider, command_service=self.scene_command_service)
+        self._math_teacher_agent = self._agent_runtime.agent
+        remote = self._using_remote_agent()
+        self.agent_sidebar.set_model_status(settings.model, enabled=remote)
+        if settings.provider != "local" and settings.is_complete and not remote:
+            self.agent_panel.add_assistant_message(
+                "连接信息不可用，已回退到本地演示模式。"
+            )
+
+    def _restore_demo_agent(self) -> None:
+        # 只切换 provider；保留已填写的连接信息，方便随时切回远程模型。
+        self._agent_provider = RuleBasedAgentProvider()
+        self._agent_runtime = AgentRuntime(provider=self._agent_provider, command_service=self.scene_command_service)
+        self._math_teacher_agent = self._agent_runtime.agent
+        self.agent_sidebar.set_model_status("", enabled=False)
+
+    def _build_scene_context(self) -> SceneContext:
+        curves = tuple(
+            {
+                "alias": layer.agent_alias or layer.name,
+                "kind": layer.kind,
+                "expression": layer.expression,
+            }
+            for layer in self.curve_layers
+        )
+        point_aliases = {
+            point.id: point.agent_alias or point.name
+            for point in self.geometry_points
+        }
+        points = tuple(
+            {
+                "alias": point.agent_alias or point.name,
+                "kind": "point",
+                "coordinates": [point.x, point.y],
+            }
+            for point in self.geometry_points
+        )
+        linears = tuple(
+            {
+                "alias": linear.agent_alias or linear.name,
+                "kind": linear.kind,
+                "start": point_aliases.get(linear.start_point_id, linear.start_point_id),
+                "end": point_aliases.get(linear.end_point_id, linear.end_point_id),
+                "style": linear.style,
+                "role": linear.role,
+            }
+            for linear in self.linear_objects
+        )
+        annotations = tuple(
+            {
+                "alias": annotation.agent_alias or annotation.name,
+                "kind": "annotation",
+                "text": annotation.text,
+                "position": [annotation.x, annotation.y],
+            }
+            for annotation in self.annotations
+        )
+        surfaces = tuple(
+            {
+                "alias": layer.agent_alias or layer.name,
+                "kind": layer.kind,
+                "expression": layer.expression,
+            }
+            for layer in self.layers
+        )
+        points3d = tuple(
+            {"alias": alias, "kind": "point3d", "coordinates": list(coordinates)}
+            for alias, coordinates in getattr(self, "_agent_points3d", {}).items()
+        )
+        return SceneContext(
+            scene_mode="2d" if self.scene_mode is SceneMode.TWO_D else "3d",
+            curves=curves + surfaces,
+            geometry=points + linears + annotations + points3d,
+            last_plan_summary=self._last_agent_plan_summary,
+        )
+
     def _toggle_scene_settings(self) -> None:
+        if self.agent_panel.isVisible():
+            self._close_agent_panel(immediate=True)
         if self.scene_settings_panel.isVisible():
             self._close_scene_settings()
             return
@@ -1440,6 +2382,7 @@ class MainWindow:
         if immediate:
             self._scene_settings_animation.stop()
             self.scene_settings_panel.hide()
+            self._scene_settings_closing = False
             return
         current = self.scene_settings_panel.geometry()
         end = QRect(self.viewport_host.width() + 4, current.y(), current.width(), current.height())
@@ -1465,6 +2408,8 @@ class MainWindow:
             if not is_2d:
                 self.two_d_geometry_toolbar.line_flyout.hide()
         self.scene_settings_panel.set_mode(self.scene_mode)
+        if hasattr(self, "agent_panel"):
+            self.agent_panel.set_scene_mode(self.scene_mode is SceneMode.TWO_D)
         self.scene_settings_panel.set_values(
             background=appearance.background,
             axis_color_mode=appearance.axis_color_mode,
@@ -1590,6 +2535,25 @@ class MainWindow:
             #formulaEditorPopup { background: #ffffff; border: 1px solid #d0d7df; border-radius: 8px; }
             #viewportToolbar, #twoDGeometryToolbar, #twoDLineFlyout { background: #ffffff; border: 1px solid #d0d7df; border-radius: 6px; }
             #viewportToolbar QToolButton, #twoDGeometryToolbar QToolButton, #twoDLineFlyout QToolButton { font-size: 18px; font-weight: 700; }
+            #agentButton:checked { background: #dcecf8; border-color: #5a97c5; color: #1d5f91; }
+
+            #agentPanel { background: #ffffff; border-left: 1px solid #c8d2dc; border-radius: 0; }
+            #agentSidebar { background: #ffffff; border-left: 1px solid #c8d2dc; }
+            #agentCollapsedBar { background: #f7f9fb; border-left: 0; }
+            #agentCollapsedLabel { color: #637184; font-size: 11px; font-weight: 600; }
+            #agentNavAgent, #agentNavSkills, #agentNavMemory, #agentNavRules { min-height: 28px; text-align: left; }
+            #agentNavAgent:checked, #agentNavSkills:checked, #agentNavMemory:checked, #agentNavRules:checked { background: #dcecf8; border-color: #5a97c5; color: #1d5f91; }
+            #agentTitle { color: #17212e; font-size: 15px; font-weight: 700; }
+            #agentStatus { color: #637184; font-size: 11px; }
+            #agentModeHint { color: #8a5a00; background: #fff8e5; border: 1px solid #efd79a; border-radius: 4px; padding: 5px; }
+            #agentMessageScroll { background: #f7f9fb; border: 1px solid #e0e5ea; border-radius: 5px; }
+            #agentUserBubble { background: #dcecf8; border: 1px solid #b8d6eb; border-radius: 7px; }
+            #agentAssistantBubble { background: #ffffff; border: 1px solid #dce2e8; border-radius: 7px; }
+            #agentPlanCard { background: #f4f8fb; border: 1px solid #b9d0e1; border-radius: 6px; }
+            #agentPlanProblems { color: #a12d2d; font-size: 11px; }
+            #agentPromptEdit { background: #ffffff; border: 1px solid #cbd3dd; border-radius: 5px; padding: 5px; }
+            #agentSendButton { min-height: 34px; }
+
             #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked { background: #dcecf8; border-color: #5a97c5; color: #1d5f91; }
             """
         )
