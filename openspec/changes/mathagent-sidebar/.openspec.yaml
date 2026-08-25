@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-08-25
+goal: Provide a safe, usable math teaching agent while preserving CommandPlan
+  validation and SceneCommandService as the only scene mutation path.
