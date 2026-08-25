@@ -14,4 +14,5 @@ def test_webview_uses_packaged_local_document_and_restrictive_csp() -> None:
     assert host.view.url().scheme() == "mathagent"
     assert host.view.url().path().endswith("/index.html")
     assert "connect-src 'none'" in index
+    assert "qrc:///qtwebchannel/qwebchannel.js" in index
     assert "http" not in index.split("Content-Security-Policy", 1)[-1]
