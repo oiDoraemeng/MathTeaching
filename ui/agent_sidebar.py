@@ -20,6 +20,7 @@ from PySide6.QtWidgets import (
 from agent.instruction import InstructionStore
 from agent.memory import MemoryStore
 from agent.skill_manager import SkillManager
+from agent.session_store import SessionStore
 
 
 class AgentSidebarState(Enum):
@@ -130,9 +131,11 @@ class AgentSidebar(QWidget):
         self.skills_page = self._build_skills_page()
         self.memory_page = self._build_memory_page()
         self.rules_page = self._build_rules_page()
+        self.history_page = self._build_history_page()
         self.tool_pages.addWidget(self.skills_page)
         self.tool_pages.addWidget(self.memory_page)
         self.tool_pages.addWidget(self.rules_page)
+        self.tool_pages.addWidget(self.history_page)
         self.tool_pages.hide()
         layout.addWidget(self.tool_pages, 1)
 
@@ -143,7 +146,41 @@ class AgentSidebar(QWidget):
         # 连接信号
         self.collapsed_bar.expand_requested.connect(self.expand)
         self.expanded_panel.close_requested.connect(self.collapse)
+        self.expanded_panel.history_requested.connect(self.show_history)
         self.select_tab("agent")
+
+    def _build_history_page(self) -> QWidget:
+        page = QWidget(self)
+        column = QVBoxLayout(page)
+        self.history_back_button = QPushButton("返回当前对话", page)
+        self.history_back_button.clicked.connect(lambda: self.select_tab("agent"))
+        column.addWidget(self.history_back_button)
+        title = QLabel("历史记录", page)
+        title.setStyleSheet("font-weight: 700; font-size: 14px;")
+        column.addWidget(title)
+        self.history_list = QListWidget(page)
+        column.addWidget(self.history_list, 1)
+        self._refresh_history()
+        return page
+
+    def _refresh_history(self) -> None:
+        if not hasattr(self, "history_list"):
+            return
+        self.history_list.clear()
+        try:
+            sessions = SessionStore().list_sessions(include_closed=True)
+        except Exception:
+            sessions = []
+        for session in sessions:
+            state = "已关闭" if session.closed_at else "进行中"
+            self.history_list.addItem(f"{session.title} · {state}")
+
+    def show_history(self) -> None:
+        self._refresh_history()
+        self.navigation_bar.show()
+        self.expanded_panel.hide()
+        self.tool_pages.setCurrentWidget(self.history_page)
+        self.tool_pages.show()
 
     def _build_skills_page(self) -> QWidget:
         page = QWidget(self)

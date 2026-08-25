@@ -55,6 +55,7 @@ from services.agent_provider import (
 )
 from services.scene_commands import CommandError, CommandPlan, RuleBasedAgentProvider, SceneCommandService
 from agent.runtime import AgentRuntime
+from agent.session_store import SessionStore
 from agent.providers import ModelProvider
 
 
@@ -189,7 +190,12 @@ class MainWindow:
         self._agent_settings = AgentSettingsDialog.load_settings()
         self._agent_provider = self._create_agent_provider()
         self.scene_command_service = SceneCommandService(self)
-        self._agent_runtime = AgentRuntime(provider=self._agent_provider, command_service=self.scene_command_service)
+        self._agent_session_store = SessionStore()
+        self._agent_runtime = AgentRuntime(
+            provider=self._agent_provider,
+            command_service=self.scene_command_service,
+            session_store=self._agent_session_store,
+        )
         self._math_teacher_agent = self._agent_runtime.agent
 
         self.window = self._load_designer_form()
@@ -2282,7 +2288,11 @@ class MainWindow:
     def _apply_agent_settings(self, settings: AgentSettings) -> None:
         self._agent_settings = settings
         self._agent_provider = self._create_agent_provider()
-        self._agent_runtime = AgentRuntime(provider=self._agent_provider, command_service=self.scene_command_service)
+        self._agent_runtime = AgentRuntime(
+            provider=self._agent_provider,
+            command_service=self.scene_command_service,
+            session_store=self._agent_session_store,
+        )
         self._math_teacher_agent = self._agent_runtime.agent
         remote = self._using_remote_agent()
         self.agent_sidebar.set_model_status(settings.model, enabled=remote)
@@ -2294,7 +2304,11 @@ class MainWindow:
     def _restore_demo_agent(self) -> None:
         # 只切换 provider；保留已填写的连接信息，方便随时切回远程模型。
         self._agent_provider = RuleBasedAgentProvider()
-        self._agent_runtime = AgentRuntime(provider=self._agent_provider, command_service=self.scene_command_service)
+        self._agent_runtime = AgentRuntime(
+            provider=self._agent_provider,
+            command_service=self.scene_command_service,
+            session_store=self._agent_session_store,
+        )
         self._math_teacher_agent = self._agent_runtime.agent
         self.agent_sidebar.set_model_status("", enabled=False)
 

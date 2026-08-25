@@ -124,6 +124,7 @@ class AgentPanel(QWidget):
     history_requested = Signal()
     new_chat_requested = Signal(str)
     session_changed = Signal(str)
+    stop_requested = Signal()
     close_requested = Signal()
 
     _DEMO_STATUS = "本地演示模式"
@@ -377,6 +378,8 @@ class AgentPanel(QWidget):
         self._busy = busy
         self.prompt_edit.setReadOnly(busy)
         self.settings_button.setEnabled(not busy)
+        self.send_button.setText("停止" if busy else "发送")
+        self.send_button.setToolTip("停止当前请求" if busy else "发送消息")
         self._update_send_enabled()
         self._refresh_execute_enabled()
         if busy:
@@ -545,9 +548,12 @@ class AgentPanel(QWidget):
         scrollbar.setValue(scrollbar.maximum())
 
     def _update_send_enabled(self) -> None:
-        self.send_button.setEnabled(not self._busy and bool(self.prompt_edit.toPlainText().strip()))
+        self.send_button.setEnabled(self._busy or bool(self.prompt_edit.toPlainText().strip()))
 
     def _submit_from_button(self) -> None:
+        if self._busy:
+            self.stop_requested.emit()
+            return
         self._submit_message(self.prompt_edit.toPlainText())
 
     def _submit_message(self, text: str) -> None:
