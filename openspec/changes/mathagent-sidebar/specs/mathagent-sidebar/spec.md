@@ -90,7 +90,7 @@ The sidebar SHALL support creating a new session from a historical turn. The new
 
 ### Requirement: Composer controls and attachments
 
-The composer SHALL provide attachment, image, document, menu, and tool actions; a model selector; a send action that becomes stop while a request is running; and a read-only circular context-usage indicator whose percentage is shown on hover. The first release SHALL accept images, PDFs, and plain text with at most five attachments per turn.
+The composer SHALL provide attachment, image, document, menu, and tool actions; a model selector; a send action that becomes stop while a request is running; and a read-only circular context-usage indicator whose percentage is shown on hover. The first release SHALL accept images, PDFs, and plain text with at most five attachments per turn. A single image SHALL be limited to 10 MB and a single PDF or text document SHALL be limited to 20 MB.
 
 #### Scenario: Attachment limit
 - **WHEN** a user adds a sixth attachment or an attachment over its allowed size
@@ -99,3 +99,11 @@ The composer SHALL provide attachment, image, document, menu, and tool actions; 
 #### Scenario: Unsupported image input
 - **WHEN** the selected model does not support image input
 - **THEN** the composer reports that capability clearly and does not silently switch models
+
+### Requirement: MathAgent settings surface
+
+The settings action SHALL open an in-panel settings view with sections for Agent, Skills, Memory, and Rules. Rules SHALL expose the editable math-teacher Instructions document; Memory SHALL expose the lightweight learning preferences and recent topics; changes SHALL be saved locally and applied to subsequent turns without altering historical turn records.
+
+#### Scenario: Edit instructions and memory
+- **WHEN** the user edits a rule or learning preference and saves it
+- **THEN** the value is persisted locally, visible after restarting the application, and included in the next runtime context

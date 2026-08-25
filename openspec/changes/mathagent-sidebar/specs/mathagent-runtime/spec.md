@@ -42,11 +42,31 @@ The runtime SHALL expose observable states for analyzing context, planning, vali
 
 ### Requirement: Mathematical tools and skills
 
-The runtime SHALL expose parameter-validated math tools for scene inspection, expression calculation, geometry, calculus, and linear algebra. Mutating tools SHALL produce CommandPlans; skills SHALL not render directly.
+The runtime SHALL expose parameter-validated math tools for scene inspection, expression calculation, geometry, calculus, and linear algebra. Skills SHALL be discoverable from the local math skill registry and SHALL produce CommandPlans only; skills SHALL not render directly.
 
 #### Scenario: Create a curve
 - **WHEN** the Agent calls the curve tool with a valid expression and range
 - **THEN** the tool returns a validated CommandPlan suitable for preview and later approval
+
+### Requirement: Local MCP tool boundary
+
+The local Math3D MCP layer SHALL expose math-only tools for creating points, vectors, curves, surfaces, annotations, image exports, and intersections. Each mutating MCP tool SHALL delegate to the same validated CommandPlan and SceneCommandService pipeline; it SHALL not call PyVista or Qt directly and SHALL not connect to an external MCP server.
+
+#### Scenario: MCP tool invocation
+- **WHEN** the Agent invokes a local `create_curve` or `create_surface` tool
+- **THEN** the tool returns a validated plan or a structured validation error and no renderer is called before approval
+
+### Requirement: Prompt and instruction composition
+
+The runtime SHALL support local `teach`, `visualize`, and `prove` prompt templates and SHALL select or combine them according to the user's intent. It SHALL load the editable math-teacher Instructions and lightweight Memory preferences for each request, while keeping the Math Teacher Agent as the only active agent role in this release.
+
+#### Scenario: Explain and visualize a concept
+- **WHEN** a user asks why a determinant represents area and requests a drawing
+- **THEN** the runtime composes teaching and visualization guidance, explains the concept first, and then produces a validated visualization plan
+
+#### Scenario: No arbitrary agent role
+- **WHEN** the user requests a code-editing or terminal-style agent
+- **THEN** the runtime refuses that capability and keeps the Math Teacher Agent role and math-only tools active
 
 ### Requirement: Execution modes
 

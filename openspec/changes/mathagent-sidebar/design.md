@@ -60,6 +60,16 @@ Store Agent/Ask/Plan mode, confirmation/continuous strategy, and model on each s
 
 This matches tab behavior users expect and prevents changing one conversation from unexpectedly changing another.
 
+### 8. Local Skills and MCP adapters share one command boundary
+
+Load `geometry`, `calculus`, and `linear_algebra` Skills from the local registry. Expose the same renderer-agnostic operations through a local Math3D MCP adapter for model tool calls. Both adapters return typed results or CommandPlans; neither receives a Qt/PyVista handle. The runtime owns approval and is the only component allowed to reach `SceneCommandService.execute()`.
+
+This avoids maintaining separate safety rules for skill calls and MCP calls while keeping the tool vocabulary specific to mathematical teaching.
+
+### 9. Instructions, Memory, and prompt templates are request inputs
+
+Keep the editable math-teacher Instructions and lightweight learning Memory in QSettings-backed local storage. A Prompt Manager composes `teach`, `visualize`, and `prove` templates with those settings and the Context Broker output for each new turn. Historical messages retain the prompt metadata that was used at execution time so later settings edits do not rewrite history.
+
 ## Risks / Trade-offs
 
 - [QWebEngine is unavailable in a minimal PySide6 install] -> Detect the import during startup and report an actionable dependency error; do not silently revert to the old low-fidelity panel.
@@ -69,6 +79,8 @@ This matches tab behavior users expect and prevents changing one conversation fr
 - [Large attachments or conversations exhaust context] -> Enforce file/turn limits, summarize older messages, and expose usage percentage before submission.
 - [Restore creates an unexpected visual change] -> Capture an in-memory pre-restore guard and provide the existing undo path.
 - [WebView bridge becomes a safety bypass] -> Expose only JSON intent signals; never expose Python objects or direct renderer calls.
+- [Settings changes unexpectedly rewrite old conversations] -> Snapshot the effective instruction/memory/template identifiers in each turn and apply edits only to subsequent requests.
+- [MCP and Skills diverge in behavior] -> Route both through one typed tool registry and the same preview/validation path.
 
 ## Migration Plan
 
