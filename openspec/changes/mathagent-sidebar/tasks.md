@@ -34,7 +34,7 @@
 - [x] 5.1 Replace the permanent collapsed assistant strip with a hidden-by-default fixed-width sidebar opened by the viewport Agent icon; verify open/close layout tests pass.
 - [ ] 5.2 Add the MathAgent header icons, multi-session tab strip, new/close behavior, and per-session model/mode restoration; verify tabs never change the scene implicitly and at least one input session remains.
 - [ ] 5.3 Add the empty state, timeline event-card model, exact composer placeholder, tool buttons, Agent/Ask/Plan selector, and confirmation/continuous control; verify UI behavior tests pass.
-- [ ] 5.4 Add the read-only circular context indicator with hover percentage plus send/stop state; verify it is not clickable and reflects the latest usage event.
+- [x] 5.4 Add the read-only circular context indicator with hover percentage plus send/stop state; verify it is not clickable and reflects the latest usage event.
 
 ## 6. Rich local timeline and history
 
@@ -45,13 +45,13 @@
 
 ## 7. Settings and integration
 
-- [ ] 7.1 Connect existing Instructions, Memory, Skills, and model settings to new runtime requests while retaining QSettings credential storage; verify edits affect subsequent turns and are not written to the database.
-- [ ] 7.2 Add the in-panel Agent/Skills/Memory/Rules settings view and QSettings persistence; verify saved rules and preferences survive restart and are applied only to new turns.
-- [ ] 7.3 Connect the sidebar to the existing designer window, scene command service, layer management, 2D/3D rendering, and PyVista refresh path; verify existing scene regression tests pass.
+- [x] 7.1 Connect existing Instructions, Memory, Skills, and model settings to new runtime requests while retaining QSettings credential storage; verify edits affect subsequent turns and are not written to the database.
+- [x] 7.2 Add the in-panel Agent/Skills/Memory/Rules settings view and QSettings persistence; verify saved rules and preferences survive restart and are applied only to new turns.
+- [x] 7.3 Connect the sidebar to the existing designer window, scene command service, layer management, 2D/3D rendering, and PyVista refresh path; verify existing scene regression tests pass.
 - [ ] 7.4 Update user documentation for hidden-panel toggle, session modes, `.math` storage, history restore, undo, branch behavior, Skills, and settings; verify documented commands and paths match the implementation.
 
 ## 8. Verification and rollout
 
 - [ ] 8.1 Add focused tests for snapshots, storage, context, providers, tools, runtime, WebView protocol, sidebar, history, and settings; verify each focused test group passes.
-- [ ] 8.2 Run the complete suite with `pytest -q`, `python -m compileall agent services ui tests`, and `git diff --check`; verify no existing 2D/3D, SymPy, PyVista, or layer tests regress.
-- [ ] 8.3 Run `openspec validate mathagent-sidebar --type change --strict` and verify all proposal, specs, design, and task artifacts are recognized as complete before implementation begins.
+- [x] 8.2 Run the complete suite with `pytest -q`, `python -m compileall agent services ui tests`, and `git diff --check`; verify no existing 2D/3D, SymPy, PyVista, or layer tests regress.
+- [x] 8.3 Run `openspec validate mathagent-sidebar --type change --strict` and verify all proposal, specs, design, and task artifacts are recognized as complete before implementation begins.
