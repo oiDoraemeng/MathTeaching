@@ -1,37 +1,37 @@
 ## 1. Scene and persistence foundation
 
-- [ ] 1.1 Add a versioned, Qt/PyVista-free scene snapshot type and round-trip tests; verify unknown versions are rejected and `pytest tests/test_scene_snapshot.py -q` passes.
-- [ ] 1.2 Add the application-data resolver and SQLite WAL session store with sessions, turns, events, attachments, and app state; verify temporary-root creation, WAL mode, CRUD, and reopen tests pass.
+- [x] 1.1 Add a versioned, Qt/PyVista-free scene snapshot type and round-trip tests; verify unknown versions are rejected and `pytest tests/test_scene_snapshot.py -q` passes.
+- [x] 1.2 Add the application-data resolver and SQLite WAL session store with sessions, turns, events, attachments, and app state; verify temporary-root creation, WAL mode, CRUD, and reopen tests pass.
 - [ ] 1.3 Add snapshot capture/restore adapters to the existing scene host; verify 2D, 3D, layers, annotations, and camera state survive a snapshot restore without serializing PyVista objects.
-- [ ] 1.4 Implement immutable turn pointers, restore, undo, and explicit branch persistence; verify restoring a turn makes no provider call and branching leaves the source session unchanged.
+- [x] 1.4 Implement immutable turn pointers, restore, undo, and explicit branch persistence; verify restoring a turn makes no provider call and branching leaves the source session unchanged.
 - [ ] 1.5 Implement startup recovery of tabs, active session, and final scene while keeping the sidebar hidden; verify an end-to-end restart test passes.
 
 ## 2. Context and attachments
 
-- [ ] 2.1 Implement the Context Broker with structured scene context, selected-object context, recent verbatim messages, bounded older summaries, and token usage; verify deterministic packing and usage percentage tests pass.
+- [x] 2.1 Implement the Context Broker with structured scene context, selected-object context, recent verbatim messages, bounded older summaries, and token usage; verify deterministic packing and usage percentage tests pass.
 - [ ] 2.2 Add image/PDF/plain-text attachment validation, SHA-256 metadata, and `.math/attachments/` copying; verify five-file, 10 MB image, 20 MB document, and unsupported-image-model cases.
 - [ ] 2.3 Keep credentials out of SQLite and expose only context usage numbers to the UI; verify database inspection and protocol tests contain no API key or hidden reasoning content.
 
 ## 3. Provider and mathematical tools
 
-- [ ] 3.1 Extend the OpenAI-compatible provider contract for streaming text and structured tool-call deltas while preserving the existing plan-generation entry point; verify fake-stream compatibility tests pass.
+- [x] 3.1 Extend the OpenAI-compatible provider contract for streaming text and structured tool-call deltas while preserving the existing plan-generation entry point; verify fake-stream compatibility tests pass.
 - [ ] 3.2 Add DeepSeek, OpenAI-compatible, and local provider adapters with capability metadata and masked errors; verify provider regression tests pass with mocked responses.
-- [ ] 3.3 Add typed geometry, calculus, linear-algebra, scene-inspection, and expression tools; verify mutating tools return CommandPlans, reject invalid arguments, and import no Qt/PyVista modules.
-- [ ] 3.4 Ensure preview revalidates plans and only an approved runtime action can call `SceneCommandService.execute()`; verify direct tool execution cannot mutate a scene.
-- [ ] 3.5 Add the local Skill Manager and renderer-agnostic geometry, calculus, and linear-algebra handlers; verify skills are discoverable and return plans only.
-- [ ] 3.6 Add the local Math3D MCP boundary for point/vector/curve/surface/annotation/export/intersection tools; verify every mutating tool routes through validation and `SceneCommandService`.
-- [ ] 3.7 Add `teach`, `visualize`, and `prove` prompt templates plus Math Teacher Instructions/Memory composition; verify a combined teaching-and-visualization request selects both templates and no code-agent role is exposed.
+- [x] 3.3 Add typed geometry, calculus, linear-algebra, scene-inspection, and expression tools; verify mutating tools return CommandPlans, reject invalid arguments, and import no Qt/PyVista modules.
+- [x] 3.4 Ensure preview revalidates plans and only an approved runtime action can call `SceneCommandService.execute()`; verify direct tool execution cannot mutate a scene.
+- [x] 3.5 Add the local Skill Manager and renderer-agnostic geometry, calculus, and linear-algebra handlers; verify skills are discoverable and return plans only.
+- [x] 3.6 Add the local Math3D MCP boundary for point/vector/curve/surface/annotation/export/intersection tools; verify every mutating tool routes through validation and `SceneCommandService`.
+- [x] 3.7 Add `teach`, `visualize`, and `prove` prompt templates plus Math Teacher Instructions/Memory composition; verify a combined teaching-and-visualization request selects both templates and no code-agent role is exposed.
 
 ## 4. Runtime and execution modes
 
 - [ ] 4.1 Implement the event-driven runtime state machine and JSON event protocol; verify state transition and event serialization tests cover planning, validation, preview, apply, stop, and error.
-- [ ] 4.2 Add per-session Agent/Ask/Plan behavior and confirmation/continuous execution strategies; verify confirmation waits, continuous applies after validation, Ask requests permission, and Plan never applies.
+- [x] 4.2 Add per-session Agent/Ask/Plan behavior and confirmation/continuous execution strategies; verify confirmation waits, continuous applies after validation, Ask requests permission, and Plan never applies.
 - [ ] 4.3 Add cancellation tokens, bounded repair/tool-call loops, and worker signals for event, finish, error, and stop; verify stop prevents later tool calls and scene mutation.
-- [ ] 4.4 Persist completed, rejected, stopped, and failed turns with before/after snapshots and event timelines; verify runtime persistence tests pass.
+- [x] 4.4 Persist completed, rejected, stopped, and failed turns with before/after snapshots and event timelines; verify runtime persistence tests pass.
 
 ## 5. Sidebar shell and session tabs
 
-- [ ] 5.1 Replace the permanent collapsed assistant strip with a hidden-by-default fixed-width sidebar opened by the viewport Agent icon; verify open/close layout tests pass.
+- [x] 5.1 Replace the permanent collapsed assistant strip with a hidden-by-default fixed-width sidebar opened by the viewport Agent icon; verify open/close layout tests pass.
 - [ ] 5.2 Add the MathAgent header icons, multi-session tab strip, new/close behavior, and per-session model/mode restoration; verify tabs never change the scene implicitly and at least one input session remains.
 - [ ] 5.3 Add the empty state, timeline event-card model, exact composer placeholder, tool buttons, Agent/Ask/Plan selector, and confirmation/continuous control; verify UI behavior tests pass.
 - [ ] 5.4 Add the read-only circular context indicator with hover percentage plus send/stop state; verify it is not clickable and reflects the latest usage event.
