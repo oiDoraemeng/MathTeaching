@@ -81,7 +81,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     }
     case "event_received": {
       const { event } = action;
-      const key = `${event.session_id}:${event.turn_id ?? "session"}`;
+      const key = event.session_id;
       const sequence = event.sequence;
       const previous = state.lastSequence[key] ?? 0;
       if (sequence !== undefined && sequence <= previous) return state;

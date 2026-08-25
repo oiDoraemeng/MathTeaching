@@ -35,7 +35,7 @@ export function createQtBridge(): QtBridgeClient {
       else {
         dispatch({ type: "event_received", event });
         if (event.sequence !== undefined) {
-          const key = `${event.session_id}:${event.turn_id ?? "session"}`;
+          const key = event.session_id;
           const previous = lastSequences[key] ?? 0;
           if (event.sequence > previous + 1) requestSnapshot(event.session_id);
           lastSequences[key] = Math.max(previous, event.sequence);
