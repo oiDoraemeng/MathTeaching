@@ -24,6 +24,18 @@ from .agent_bridge import AgentBridge
 class _LocalAssetHandler(QWebEngineUrlSchemeHandler):
     _ALLOWED_NAMES = {"index.html", "manifest.json"}
     _ALLOWED_SUFFIXES = {".js", ".css", ".map", ".svg", ".png", ".woff", ".woff2", ".ttf", ".html", ".json"}
+    _MIME_TYPES = {
+        ".css": "text/css",
+        ".html": "text/html",
+        ".js": "text/javascript",
+        ".json": "application/json",
+        ".map": "application/json",
+        ".png": "image/png",
+        ".svg": "image/svg+xml",
+        ".ttf": "font/ttf",
+        ".woff": "font/woff",
+        ".woff2": "font/woff2",
+    }
 
     def __init__(self, root: Path, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -55,7 +67,7 @@ class _LocalAssetHandler(QWebEngineUrlSchemeHandler):
         buffer = QBuffer(job)
         buffer.setData(data)
         buffer.open(QIODevice.OpenModeFlag.ReadOnly)
-        mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+        mime = self._MIME_TYPES.get(path.suffix.lower()) or mimetypes.guess_type(path.name)[0] or "application/octet-stream"
         job.reply(mime.encode("ascii"), buffer)
 
 
