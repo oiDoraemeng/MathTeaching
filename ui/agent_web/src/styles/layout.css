@@ -1,4 +1,5 @@
 .agent-app { display: grid; grid-template-rows: 36px 30px minmax(0, 1fr) auto; width: 100%; height: 100vh; overflow: hidden; background: var(--agent-bg); }
+.agent-app > * { min-width: 0; }
 .agent-header, .session-tabs, .composer { background: var(--agent-surface); border-bottom: 1px solid var(--agent-border); }
 .agent-header { display: flex; align-items: center; gap: 4px; padding: 0 10px; }
 .agent-header strong { font-size: 13px; font-weight: 600; letter-spacing: .1px; }
@@ -49,11 +50,16 @@
 .composer { min-height: 125px; padding: 10px; border-top: 1px solid var(--agent-border); border-bottom: 0; }
 .composer textarea { display: block; width: 100%; min-height: 64px; max-height: 140px; resize: vertical; padding: 9px; color: var(--agent-text); background: var(--agent-elevated); border: 1px solid var(--agent-border); border-radius: 5px; outline: none; }
 .composer textarea:focus { border-color: var(--agent-accent); }
-.composer-toolbar { display: flex; align-items: center; gap: 4px; margin-top: 7px; }
-.composer-toolbar select { height: 28px; max-width: 115px; padding: 0 4px; color: var(--agent-text); background: var(--agent-elevated); border: 1px solid var(--agent-border); border-radius: 4px; font-size: 11px; }
-.execution-selector select { max-width: 92px; }
-.attachment-actions { display: flex; gap: 1px; }
-.attachment-actions button { width: 25px; height: 25px; }
+.composer-toolbar { display: flex; min-width: 0; align-items: center; gap: 2px; margin-top: 7px; }
+.composer-toolbar select { width: 100%; min-width: 0; height: 28px; padding: 0 3px; color: var(--agent-text); background: var(--agent-elevated); border: 1px solid var(--agent-border); border-radius: 4px; font-size: 11px; text-overflow: ellipsis; }
+.mode-selector, .execution-selector, .model-selector { flex: 0 1 auto; min-width: 0; }
+.mode-selector { width: 68px; }
+.execution-selector { width: 74px; }
+.model-selector { width: 62px; }
+.attachment-actions { display: flex; flex: 0 0 auto; gap: 1px; }
+.attachment-actions button { width: 22px; height: 25px; }
+.composer-icon { flex: 0 0 24px; width: 24px !important; }
+.toolbar-spacer { flex: 1 1 4px; min-width: 0; }
 .context-ring { position: relative; display: inline-grid; width: 25px; height: 25px; place-items: center; margin: 0 3px; border-radius: 50%; background: conic-gradient(var(--agent-accent) var(--context-progress, 0%), var(--agent-border) 0); font-size: 8px; cursor: help; }
 .context-ring::after { position: absolute; inset: 3px; content: ""; background: var(--agent-surface); border-radius: 50%; }
 .context-ring span { position: relative; z-index: 1; }

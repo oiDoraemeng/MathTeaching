@@ -23,3 +23,9 @@ def test_local_assets_use_browser_mime_types_for_module_loading() -> None:
     assert _LocalAssetHandler._MIME_TYPES[".js"] == "text/javascript"
     assert _LocalAssetHandler._MIME_TYPES[".css"] == "text/css"
     assert _LocalAssetHandler._MIME_TYPES[".woff2"] == "font/woff2"
+
+
+def test_web_layout_allows_sidebar_children_to_shrink_to_webview_width() -> None:
+    styles = (Path(__file__).parents[1] / "ui" / "agent_web" / "src" / "styles" / "layout.css").read_text(encoding="utf-8")
+    assert ".agent-app > * { min-width: 0; }" in styles
+    assert ".model-selector { width: 62px; }" in styles
