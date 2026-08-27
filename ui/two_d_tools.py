@@ -15,6 +15,8 @@ class TwoDGeometryToolbar(QFrame):
 
     tool_selected = Signal(object)
     snap_toggled = Signal(bool)
+    undo_requested = Signal()
+    redo_requested = Signal()
 
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent)
@@ -25,7 +27,7 @@ class TwoDGeometryToolbar(QFrame):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
 
-        self.select_button = self._button("⭅", "选择/移动", "selectToolButton")
+        self.select_button = self._button("➤", "选择/移动", "selectToolButton")
         self.point_button = self._button("●", "点", "pointToolButton")
         self.line_button = self._button("╱", "线工具", "lineToolButton")
         layout.addWidget(self.select_button)
@@ -36,16 +38,21 @@ class TwoDGeometryToolbar(QFrame):
         self.snap_button.setChecked(False)
         layout.addWidget(self.snap_button)
 
+        self.undo_button = self._action_button("↶", "撤回", "undoToolButton")
+        self.redo_button = self._action_button("↷", "反撤回", "redoToolButton")
+        layout.addWidget(self.undo_button)
+        layout.addWidget(self.redo_button)
+
         self.line_flyout = QFrame(parent)
         self.line_flyout.setObjectName("twoDLineFlyout")
         flyout_layout = QVBoxLayout(self.line_flyout)
         flyout_layout.setContentsMargins(4, 4, 4, 4)
         flyout_layout.setSpacing(4)
         self.line_buttons: dict[LinearKind, QToolButton] = {
-            "line": self._button("↔", "直线", "lineGeometryButton"),
+            "line": self._button("∕", "直线", "lineGeometryButton"),
             "segment": self._button("━", "线段", "segmentToolButton"),
             "ray": self._button("→", "射线", "rayToolButton"),
-            "vector": self._button("⇀", "向量", "vectorToolButton"),
+            "vector": self._button("↗", "向量", "vectorToolButton"),
         }
         for button in self.line_buttons.values():
             flyout_layout.addWidget(button)
@@ -58,10 +65,13 @@ class TwoDGeometryToolbar(QFrame):
         for kind, button in self.line_buttons.items():
             button.clicked.connect(lambda _checked=False, value=kind: self._select_tool(value))
         self.snap_button.toggled.connect(self.snap_toggled)
+        self.undo_button.clicked.connect(self.undo_requested)
+        self.redo_button.clicked.connect(self.redo_requested)
         self.line_button.installEventFilter(self)
         self.line_flyout.installEventFilter(self)
         self.adjustSize()
         self.line_flyout.adjustSize()
+        self.set_history_state(can_undo=False, can_redo=False)
 
     def set_active_tool(self, tool: ToolKind | None) -> None:
         self._active_tool = tool
@@ -73,6 +83,10 @@ class TwoDGeometryToolbar(QFrame):
 
     def is_snap_enabled(self) -> bool:
         return self.snap_button.isChecked()
+
+    def set_history_state(self, *, can_undo: bool, can_redo: bool) -> None:
+        self.undo_button.setEnabled(can_undo)
+        self.redo_button.setEnabled(can_redo)
 
     def position_in_host(self) -> None:
         parent = self.parentWidget()
@@ -132,5 +146,14 @@ class TwoDGeometryToolbar(QFrame):
         button.setText(text)
         button.setToolTip(tooltip)
         button.setCheckable(True)
+        button.setFixedSize(38, 38)
+        return button
+
+    @staticmethod
+    def _action_button(text: str, tooltip: str, object_name: str) -> QToolButton:
+        button = QToolButton()
+        button.setObjectName(object_name)
+        button.setText(text)
+        button.setToolTip(tooltip)
         button.setFixedSize(38, 38)
         return button

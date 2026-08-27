@@ -3,6 +3,7 @@
 from .curve_layer import CurveLayer, Plot2DDomain
 from .function_catalog import CatalogEntry, catalog_entries, catalog_entry
 from .geometry_2d import (
+    Annotation2D,
     GeometryObject,
     Linear2D,
     Point2D,
@@ -15,6 +16,7 @@ from .surface_layer import PlotDomain, SurfaceLayer
 
 __all__ = (
     "CurveLayer",
+    "Annotation2D",
     "CatalogEntry",
     "GeometryObject",
     "Linear2D",

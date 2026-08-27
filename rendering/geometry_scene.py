@@ -8,11 +8,12 @@ from math import hypot
 import numpy as np
 import pyvista as pv
 
-from models.geometry_2d import Linear2D, LinearKind, Point2D, format_number
+from models.geometry_2d import Annotation2D, Linear2D, LinearKind, Point2D, format_number
 from rendering.ticks import ViewportBounds
 
 _DRAFT_ACTOR = "geometry:draft"
 _LABEL_ACTOR = "geometry:labels"
+_ANNOTATION_ACTOR = "geometry:annotations"
 
 _HOVER_HALO_COLOR = "#f0c674"
 _SELECTED_HALO_COLOR = "#8ab4f8"
@@ -27,6 +28,8 @@ def linear_mesh(
     start: Point2D | tuple[float, float],
     end: Point2D | tuple[float, float],
     bounds: ViewportBounds,
+    *,
+    style: str = "solid",
 ) -> pv.PolyData:
     """生成适合当前视口的直线、线段、射线或向量网格。
 
@@ -36,13 +39,13 @@ def linear_mesh(
     end_xy = _coordinates(end)
     if kind == "line":
         segment = _line_extent(start_xy, end_xy, bounds)
-        return _segments_mesh([segment] if segment is not None else [])
+        return _styled_segment_mesh(segment, style)
     if kind == "ray":
         segment = _ray_extent(start_xy, end_xy, bounds)
-        return _segments_mesh([segment] if segment is not None else [])
+        return _styled_segment_mesh(segment, style)
     if kind == "vector":
         return _vector_mesh(start_xy, end_xy, bounds)
-    return _segments_mesh([(start_xy, end_xy)])
+    return _styled_segment_mesh((start_xy, end_xy), style)
 
 
 class GeometrySceneController:
@@ -59,6 +62,7 @@ class GeometrySceneController:
         self.bounds = bounds
         self.points: dict[str, Point2D] = {}
         self.linears: dict[str, Linear2D] = {}
+        self.annotations: dict[str, Annotation2D] = {}
         self.order: list[str] = []
         self._hover_id: str | None = None
         self._selected_id: str | None = None
@@ -86,6 +90,10 @@ class GeometrySceneController:
     def linear_halo_name(linear_id: str) -> str:
         return f"geometry:linear:{linear_id}:halo"
 
+    @staticmethod
+    def annotation_actor_name(annotation_id: str) -> str:
+        return f"geometry:annotation:{annotation_id}"
+
     def add_point(self, point: Point2D) -> None:
         self.points[point.id] = point
         if point.id not in self.order:
@@ -98,6 +106,13 @@ class GeometrySceneController:
         if linear.id not in self.order:
             self.order.append(linear.id)
         self._sync_linear(linear)
+        self._refresh_annotations()
+
+    def add_annotation(self, annotation: Annotation2D) -> None:
+        self.annotations[annotation.id] = annotation
+        if annotation.id not in self.order:
+            self.order.append(annotation.id)
+        self._refresh_annotations()
 
     def move_point(self, point_id: str, x: float, y: float) -> None:
         """更新点坐标，并联动刷新依赖它的线类对象和标签。"""
@@ -111,6 +126,7 @@ class GeometrySceneController:
             if point_id in {linear.start_point_id, linear.end_point_id}:
                 self._sync_linear(linear)
         self._refresh_labels()
+        self._refresh_annotations()
 
     def remove_object(self, object_id: str) -> None:
         for name in (
@@ -118,16 +134,19 @@ class GeometrySceneController:
             self.point_halo_name(object_id),
             self.linear_actor_name(object_id),
             self.linear_halo_name(object_id),
+            self.annotation_actor_name(object_id),
         ):
             self._drop_actor(name)
         self.points.pop(object_id, None)
         self.linears.pop(object_id, None)
+        self.annotations.pop(object_id, None)
         self.order = [item for item in self.order if item != object_id]
         if self._hover_id == object_id:
             self._hover_id = None
         if self._selected_id == object_id:
             self._selected_id = None
         self._refresh_labels()
+        self._refresh_annotations()
 
     def set_visible(self, object_id: str, visible: bool) -> None:
         if object_id in self.points:
@@ -137,6 +156,9 @@ class GeometrySceneController:
         if object_id in self.linears:
             self.linears[object_id].visible = visible
             self._sync_linear(self.linears[object_id])
+        if object_id in self.annotations:
+            self.annotations[object_id].visible = visible
+            self._refresh_annotations()
 
     def set_hover(self, object_id: str | None) -> bool:
         """设置悬浮对象，返回悬浮目标是否发生变化。"""
@@ -195,6 +217,7 @@ class GeometrySceneController:
         for linear in self.linears.values():
             self._sync_linear(linear)
         self._refresh_labels()
+        self._refresh_annotations()
         if (
             self._draft_kind is not None
             and self._draft_start is not None
@@ -356,7 +379,7 @@ class GeometrySceneController:
                     actor.visibility = False
             return
 
-        mesh = linear_mesh(linear.kind, start, end, self.bounds)
+        mesh = linear_mesh(linear.kind, start, end, self.bounds, style=linear.style)
         has_geometry = mesh.n_points > 0 and mesh.n_cells > 0
 
         # 主演员
@@ -418,6 +441,48 @@ class GeometrySceneController:
             render_points_as_spheres=False,
         )
         self._has_labels = True
+
+    def _refresh_annotations(self) -> None:
+        """刷新独立教学标注，不将其混入点名标签。"""
+        add_labels = getattr(self.plotter, "add_point_labels", None)
+        if add_labels is None:
+            return
+        self.plotter.remove_actor(_ANNOTATION_ACTOR, render=False)
+        positions: list[tuple[float, float, float]] = []
+        texts: list[str] = []
+        colors: list[str] = []
+        for annotation in self.annotations.values():
+            if not annotation.visible:
+                continue
+            positions.append((annotation.x + annotation.offset_x, annotation.y + annotation.offset_y, 0.0))
+            texts.append(annotation.text)
+            colors.append(annotation.color)
+        for linear in self.linears.values():
+            if not linear.visible or not linear.label:
+                continue
+            start = self.points.get(linear.start_point_id)
+            end = self.points.get(linear.end_point_id)
+            if start is None or end is None:
+                continue
+            positions.append(((start.x + end.x) / 2.0, (start.y + end.y) / 2.0, 0.0))
+            texts.append(linear.label)
+            colors.append(linear.color)
+        if not positions:
+            return
+        # PyVista 点标签演员只支持一个颜色；使用首个标注颜色保持轻量，
+        # 后续可在需要时按颜色拆分演员。
+        add_labels(
+            positions,
+            texts,
+            font_size=14,
+            text_color=colors[0],
+            shape=None,
+            show_points=False,
+            always_visible=True,
+            name=_ANNOTATION_ACTOR,
+            render=False,
+            render_points_as_spheres=False,
+        )
 
     def _point_label_text(self, point: Point2D) -> str:
         if point.id in {self._selected_id, self._hover_id}:
@@ -601,3 +666,34 @@ def _segments_mesh(
     mesh.points = points
     mesh.lines = lines
     return mesh
+
+
+def _styled_segment_mesh(
+    segment: tuple[tuple[float, float], tuple[float, float]] | None,
+    style: str,
+) -> pv.PolyData:
+    if segment is None:
+        return pv.PolyData()
+    if style != "dashed":
+        return _segments_mesh([segment])
+    start, end = segment
+    dx = end[0] - start[0]
+    dy = end[1] - start[1]
+    length = hypot(dx, dy)
+    if length <= 1e-12:
+        return pv.PolyData()
+    # 固定数量的短划线不依赖 VTK line stipple，跨平台输出一致。
+    dash_count = 16
+    pieces: list[tuple[tuple[float, float], tuple[float, float]]] = []
+    for index in range(dash_count):
+        if index % 2:
+            continue
+        t0 = index / dash_count
+        t1 = min(1.0, (index + 0.62) / dash_count)
+        pieces.append(
+            (
+                (start[0] + dx * t0, start[1] + dy * t0),
+                (start[0] + dx * t1, start[1] + dy * t1),
+            )
+        )
+    return _segments_mesh(pieces)

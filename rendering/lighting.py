@@ -32,7 +32,12 @@ def _camera_light(position, intensity, color) -> pv.Light:
     light.position = position
     light.focal_point = (0.0, 0.0, 0.0)
     light.intensity = intensity
-    light.color = color
+    # PyVista 0.48 renamed the light color property; retain the old
+    # assignment for older releases used by existing installations.
+    if hasattr(light, "diffuse_color"):
+        light.diffuse_color = color
+    else:  # pragma: no cover - exercised only with legacy PyVista
+        light.color = color
     return light
 
 

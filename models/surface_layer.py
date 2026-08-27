@@ -60,6 +60,7 @@ class SurfaceLayer:
     opacity: float = 0.62
     range_scale: float = 0.618
     id: str = field(default_factory=lambda: uuid4().hex)
+    agent_alias: str | None = None
 
     def __post_init__(self) -> None:
         self.opacity = max(0.05, min(1.0, float(self.opacity)))
@@ -81,6 +82,7 @@ class SurfaceLayer:
             "color": self.color,
             "opacity": self.opacity,
             "range_scale": self.range_scale,
+            "agent_alias": self.agent_alias,
         }
 
     @classmethod
@@ -100,4 +102,5 @@ class SurfaceLayer:
             color=str(data.get("color", "#4f7cac")),
             opacity=float(data.get("opacity", 0.62)),
             range_scale=float(data.get("range_scale", 0.618)),
+            agent_alias=str(data["agent_alias"]) if data.get("agent_alias") is not None else None,
         )

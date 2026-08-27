@@ -55,6 +55,7 @@ class CurveLayer:
     line_width: float = 2.4
     range_scale: float = 1.0
     id: str = field(default_factory=lambda: uuid4().hex)
+    agent_alias: str | None = None
 
     def __post_init__(self) -> None:
         self.line_width = max(1.0, min(8.0, float(self.line_width)))

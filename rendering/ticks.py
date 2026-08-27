@@ -83,19 +83,30 @@ def automatic_tick_spacing(span: float, *, target_intervals: int = 16) -> float:
     return min(candidates, key=lambda candidate: abs(log10(candidate / ideal)))
 
 
+# 目标区间数与滞后区间必须相互兼容：把理想间距取整到 1-2-5 阶梯，最多会让
+# 区间数偏移 10**0.199 ≈ 1.58 倍，因此按 TARGET 重算得到的区间数必然落在
+# [TARGET / 1.58, TARGET * 1.58] = [6.3, 15.8] 内，也就是完全位于滞后区间
+# [MIN, MAX] 之中。若二者不兼容，新算出的间距会立刻越界，导致每帧重算并且
+# 放大与缩小走不同的阶梯（例如放大时从 1 直接跳到 0.2）。
+_TARGET_INTERVALS = 10
+_MIN_INTERVALS = 5
+_MAX_INTERVALS = 16
+
+
 def stable_tick_spacing(
     span: float,
     previous_spacing: float | None,
     *,
-    target_intervals: int = 16,
-    min_intervals: int = 4,
-    max_intervals: int = 8,
+    target_intervals: int = _TARGET_INTERVALS,
+    min_intervals: int = _MIN_INTERVALS,
+    max_intervals: int = _MAX_INTERVALS,
 ) -> float:
     """在刻度密度离开合理区间前保持上一刻度间距。
 
     采用类似 GeoGebra 的滞后策略：只有网格将变得过密或过疏时才重标坐标轴。
     可见区间数仍位于 ``[min_intervals, max_intervals]`` 时复用旧间距，避免
-    轻微缩放导致辅助线反复重建。
+    轻微缩放导致辅助线反复重建。越界后按 ``target_intervals`` 重算，新间距
+    保证重新落回该区间，因此放大与缩小沿同一条 1-2-5 阶梯逐级变化。
     """
     if not isfinite(span) or span <= 0:
         raise ValueError("Tick span must be a finite positive value.")
@@ -112,7 +123,7 @@ def tick_spacing(
     mode: str = "auto",
     custom_spacing: float = 1.0,
     *,
-    target_intervals: int = 6,
+    target_intervals: int = _TARGET_INTERVALS,
     previous_spacing: float | None = None,
 ) -> float:
     """解析场景应使用的自动或固定刻度间距。"""

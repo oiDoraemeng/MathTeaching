@@ -258,10 +258,17 @@ def _build_explicit_curve(expression: CurveExpression, parameters: dict[str, flo
         x_values, y_values = independent_values, dependent_values
     else:
         x_values, y_values = dependent_values, independent_values
+    # 仅以 NaN/inf 判定“未定义”；不因超出 y 范围而截断，否则像 ln(x) 这类
+    # 趋于 ±∞ 的曲线会在到达视口边缘前提前断开，留下可见空隙。超出视口的点
+    # 保留用于把曲线连到边缘，真正的渐近线由跳变检测（split）单独分段。
+    dependent_range = domain.y_range if dependent_axis == "y" else domain.x_range
+    view_span = abs(dependent_range[1] - dependent_range[0])
+    y_values = _clamp_offscreen(y_values, dependent_range, view_span) if dependent_axis == "y" else y_values
+    x_values = _clamp_offscreen(x_values, dependent_range, view_span) if dependent_axis == "x" else x_values
     valid = np.isfinite(x_values) & np.isfinite(y_values)
-    valid &= (x_values >= domain.x_range[0]) & (x_values <= domain.x_range[1])
-    valid &= (y_values >= domain.y_range[0]) & (y_values <= domain.y_range[1])
-    return _segments_to_mesh(_split_valid_segments(x_values, y_values, valid))
+    return _segments_to_mesh(
+        _split_valid_segments(x_values, y_values, valid, jump_threshold=view_span)
+    )
 
 
 def _build_implicit_curve(expression: CurveExpression, parameters: dict[str, float], domain: Plot2DDomain) -> pv.PolyData:
@@ -302,25 +309,70 @@ def _build_parametric_curve(expression: CurveExpression, parameters: dict[str, f
         expression.parameter_names,
         parameters,
     )
+    # 参数曲线的 x/y 均可越界；裁剪前先夹到视口外缓冲带，避免超范围坐标。
+    x_span = abs(domain.x_range[1] - domain.x_range[0])
+    y_span = abs(domain.y_range[1] - domain.y_range[0])
+    view_span = max(x_span, y_span)
+    x_values = _clamp_offscreen(x_values, domain.x_range, x_span)
+    y_values = _clamp_offscreen(y_values, domain.y_range, y_span)
     valid = np.isfinite(x_values) & np.isfinite(y_values)
-    valid &= (x_values >= domain.x_range[0]) & (x_values <= domain.x_range[1])
-    valid &= (y_values >= domain.y_range[0]) & (y_values <= domain.y_range[1])
-    return _segments_to_mesh(_split_valid_segments(x_values, y_values, valid))
+    return _segments_to_mesh(
+        _split_valid_segments(x_values, y_values, valid, jump_threshold=view_span)
+    )
 
 
-def _split_valid_segments(x_values: np.ndarray, y_values: np.ndarray, valid: np.ndarray) -> list[np.ndarray]:
+def _clamp_offscreen(values: np.ndarray, view_range: tuple[float, float], view_span: float) -> np.ndarray:
+    """将远超视口的因变量值夹到视口外一个缓冲带内。
+
+    ln(x)、1/x 等曲线趋于 ±∞ 时，采样值可达上万，直接绘制会拉出无意义的长线段。
+    这里保留正负号并夹到视口外约一个视口高度处，既让曲线延伸到边缘外（消除断点），
+    又不产生极端坐标；跳变检测据此仍能在真正的渐近线两侧正确分段。
+    """
+    if view_span <= 0 or not np.any(np.isfinite(values)):
+        return values
+    lower = view_range[0] - view_span
+    upper = view_range[1] + view_span
+    clamped = np.clip(values, lower, upper)
+    # 保留 NaN/inf（未定义点），只夹住有限的超范围值。
+    return np.where(np.isfinite(values), clamped, values)
+
+
+def _split_valid_segments(
+    x_values: np.ndarray,
+    y_values: np.ndarray,
+    valid: np.ndarray,
+    *,
+    jump_threshold: float | None = None,
+) -> list[np.ndarray]:
     segments: list[np.ndarray] = []
     start: int | None = None
+
+    def flush(stop: int) -> None:
+        nonlocal start
+        if start is not None and stop - start > 1:
+            length = stop - start
+            segments.append(
+                np.column_stack((x_values[start:stop], y_values[start:stop], np.zeros(length)))
+            )
+        start = None
+
     for index, is_valid in enumerate(valid):
         if is_valid and start is None:
             start = index
         elif not is_valid and start is not None:
-            if index - start > 1:
-                segments.append(np.column_stack((x_values[start:index], y_values[start:index], np.zeros(index - start))))
             # 在无定义点处分段，避免把渐近线两侧错误地连接起来。
-            start = None
+            flush(index)
+        elif is_valid and start is not None and jump_threshold is not None and index > 0:
+            # 相邻采样点因变量跳变超过阈值，判定为渐近线间断，就地分段，
+            # 避免竖直长线把 +∞ 一侧与 -∞ 一侧错误连接（如 tan(x)、1/x）。
+            dy = abs(float(y_values[index]) - float(y_values[index - 1]))
+            dx = abs(float(x_values[index]) - float(x_values[index - 1]))
+            if max(dy, dx) > jump_threshold:
+                flush(index)
+                start = index
     if start is not None and len(valid) - start > 1:
-        segments.append(np.column_stack((x_values[start:], y_values[start:], np.zeros(len(valid) - start))))
+        length = len(valid) - start
+        segments.append(np.column_stack((x_values[start:], y_values[start:], np.zeros(length))))
     return segments
 
 

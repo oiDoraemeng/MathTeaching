@@ -2,10 +2,15 @@
 
 import unittest
 
-from rendering.lighting import LightSettings, rotate_light_positions
+from rendering.lighting import LightSettings, _camera_light, rotate_light_positions
 
 
 class LightingTests(unittest.TestCase):
+    def test_camera_light_uses_supported_color_properties(self) -> None:
+        light = _camera_light((0.0, 0.0, 1.0), 1.0, (0.2, 0.4, 0.6))
+
+        self.assertEqual(tuple(light.diffuse_color[:3]), (0.2, 0.4, 0.6))
+
     def test_rotating_the_rig_updates_all_lights_relative_to_the_key_light(self) -> None:
         settings = LightSettings()
         original_height = settings.key["position"][2]

@@ -113,14 +113,18 @@ class FakeMouseEvent:
 
 
 class FakeKeyEvent:
-    def __init__(self) -> None:
-        self.accepted = False
-
-    @staticmethod
-    def key():
+    def __init__(self, key=None, modifiers=None) -> None:
         from PySide6.QtCore import Qt
 
-        return Qt.Key.Key_Escape
+        self.accepted = False
+        self._key = Qt.Key.Key_Escape if key is None else key
+        self._modifiers = Qt.KeyboardModifier.NoModifier if modifiers is None else modifiers
+
+    def key(self):
+        return self._key
+
+    def modifiers(self):
+        return self._modifiers
 
     def accept(self) -> None:
         self.accepted = True
@@ -198,6 +202,80 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         self.assertAlmostEqual(window.geometry_points[0].x, -2.6)
         self.assertAlmostEqual(window.geometry_points[0].y, 1.4)
 
+    def test_geometry_creation_supports_undo_and_redo(self) -> None:
+        window = _make_window()
+        point, created = window._get_or_create_geometry_point(-2.0, 1.0)
+
+        self.assertTrue(created)
+        self.assertEqual([point.name], [item.name for item in window.geometry_points])
+
+        window._undo_2d_geometry()
+        self.assertEqual(window.geometry_points, [])
+        self.assertEqual(window.linear_objects, [])
+
+        window._redo_2d_geometry()
+        self.assertEqual(len(window.geometry_points), 1)
+        self.assertEqual(window.geometry_points[0].id, point.id)
+        self.assertEqual(window.geometry_points[0].x, -2.0)
+
+    def test_keyboard_shortcuts_route_to_undo_and_redo(self) -> None:
+        window = _make_window()
+        point, _created = window._get_or_create_geometry_point(-2.0, 1.0)
+
+        from PySide6.QtCore import Qt
+
+        self.assertTrue(
+            window._handle_geometry_key_press(
+                FakeKeyEvent(Qt.Key.Key_Z, Qt.KeyboardModifier.ControlModifier)
+            )
+        )
+        self.assertEqual(window.geometry_points, [])
+
+        self.assertTrue(
+            window._handle_geometry_key_press(
+                FakeKeyEvent(
+                    Qt.Key.Key_Z,
+                    Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier,
+                )
+            )
+        )
+        self.assertEqual(window.geometry_points[0].id, point.id)
+
+    def test_deleting_point_can_be_undone_with_its_dependent_line(self) -> None:
+        window = _make_window()
+        first = Point2D("A", -1, 0)
+        second = Point2D("B", 1, 0)
+        window.geometry_points = [first, second]
+        window.geometry_controller.add_point(first)
+        window.geometry_controller.add_point(second)
+        linear = window._create_linear_geometry("segment", first, second)
+
+        window._remove_geometry_object(first.id)
+        self.assertEqual(window.linear_objects, [])
+
+        window._undo_2d_geometry()
+        self.assertEqual({point.id for point in window.geometry_points}, {first.id, second.id})
+        self.assertEqual(len(window.linear_objects), 1)
+        self.assertEqual(window.linear_objects[0].id, linear.id)
+        self.assertEqual(window.linear_objects[0].start_point_id, first.id)
+
+    def test_dragging_point_records_one_undoable_change(self) -> None:
+        window = _make_window()
+        point = Point2D("A", 0, 0)
+        window.geometry_points = [point]
+        window.geometry_controller.add_point(point)
+        window._active_2d_tool = "select"
+
+        self.assertTrue(window._begin_select_or_drag(0, 0))
+        window.geometry_controller.move_point(point.id, 1, 0)
+        point.x, point.y = 1, 0
+        window._drag_moved = True
+        window._handle_geometry_mouse_release(FakeMouseEvent(60, 50))
+
+        self.assertEqual(len(window._geometry_undo_stack), 1)
+        window._undo_2d_geometry()
+        self.assertEqual((window.geometry_points[0].x, window.geometry_points[0].y), (0, 0))
+
     def test_line_tool_creates_two_points_and_a_line_then_escape_cancels_it(self) -> None:
         window = _make_window()
         window._active_2d_tool = "line"
@@ -219,6 +297,18 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
 
         window._handle_geometry_key_press(FakeKeyEvent())
         self.assertIsNone(window._active_2d_tool)
+
+    def test_complete_line_click_is_one_undoable_geometry_action(self) -> None:
+        window = _make_window()
+        window._active_2d_tool = "line"
+
+        window._handle_geometry_mouse_press(FakeMouseEvent(20, 50))
+        window._handle_geometry_mouse_press(FakeMouseEvent(80, 50))
+
+        self.assertEqual(len(window._geometry_undo_stack), 2)
+        window._undo_2d_geometry()
+        self.assertEqual(len(window.geometry_points), 1)
+        self.assertEqual(window.linear_objects, [])
 
     def test_deleting_a_point_cascades_to_its_dependent_linear_objects(self) -> None:
         window = _make_window()

@@ -2,10 +2,12 @@
 
 import os
 import unittest
+from unittest.mock import MagicMock
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QEvent
+from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import QApplication, QWidget
 
 from models.scene_mode import SceneAppearance, SceneMode
@@ -50,6 +52,43 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         toolbar = TwoDGeometryToolbar(host)
 
         self.assertFalse(toolbar.snap_button.isChecked())
+
+    def test_undo_and_redo_buttons_emit_actions_and_follow_history_state(self) -> None:
+        host = QWidget()
+        toolbar = TwoDGeometryToolbar(host)
+        undo_events: list[bool] = []
+        redo_events: list[bool] = []
+        toolbar.undo_requested.connect(lambda: undo_events.append(True))
+        toolbar.redo_requested.connect(lambda: redo_events.append(True))
+
+        self.assertFalse(toolbar.undo_button.isEnabled())
+        self.assertFalse(toolbar.redo_button.isEnabled())
+
+        toolbar.set_history_state(can_undo=True, can_redo=False)
+        self.assertTrue(toolbar.undo_button.isEnabled())
+        self.assertFalse(toolbar.redo_button.isEnabled())
+        toolbar.undo_button.click()
+
+        toolbar.set_history_state(can_undo=False, can_redo=True)
+        toolbar.redo_button.click()
+
+        self.assertEqual(undo_events, [True])
+        self.assertEqual(redo_events, [True])
+
+    def test_main_window_registers_undo_and_redo_shortcuts(self) -> None:
+        window = object.__new__(MainWindow)
+        window.window = QWidget()
+        window._undo_2d_geometry = MagicMock()
+        window._redo_2d_geometry = MagicMock()
+
+        MainWindow._configure_2d_history_shortcuts(window)
+
+        self.assertEqual(window._undo_2d_shortcut.key(), QKeySequence("Ctrl+Z"))
+        self.assertEqual(window._redo_2d_shortcut.key(), QKeySequence("Ctrl+Shift+Z"))
+        window._undo_2d_shortcut.activated.emit()
+        window._redo_2d_shortcut.activated.emit()
+        window._undo_2d_geometry.assert_called_once_with()
+        window._redo_2d_geometry.assert_called_once_with()
 
     def test_main_window_only_shows_the_geometry_toolbar_in_two_d_mode(self) -> None:
         class FakeButton:

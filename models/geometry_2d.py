@@ -10,6 +10,8 @@ from uuid import uuid4
 
 LinearKind: TypeAlias = Literal["line", "segment", "ray", "vector"]
 GeometryKind: TypeAlias = Literal["point", "line", "segment", "ray", "vector"]
+LinearStyle: TypeAlias = Literal["solid", "dashed"]
+LinearRole: TypeAlias = Literal["primary", "construction", "result"]
 LINEAR_KINDS = frozenset(("line", "segment", "ray", "vector"))
 
 
@@ -23,6 +25,7 @@ class Point2D:
     visible: bool = True
     color: str = "#d64545"
     id: str = field(default_factory=lambda: uuid4().hex)
+    agent_alias: str | None = None
     kind: Literal["point"] = field(default="point", init=False)
 
 
@@ -38,11 +41,36 @@ class Linear2D:
     color: str = "#2777b6"
     line_width: float = 2.4
     id: str = field(default_factory=lambda: uuid4().hex)
+    style: LinearStyle = "solid"
+    role: LinearRole = "primary"
+    label: str | None = None
+    agent_alias: str | None = None
 
     def __post_init__(self) -> None:
         if self.kind not in LINEAR_KINDS:
             raise ValueError(f"Unsupported linear geometry kind: {self.kind}")
         self.line_width = max(1.0, min(8.0, float(self.line_width)))
+        if self.style not in {"solid", "dashed"}:
+            raise ValueError(f"Unsupported linear style: {self.style}")
+        if self.role not in {"primary", "construction", "result"}:
+            raise ValueError(f"Unsupported linear role: {self.role}")
+
+
+@dataclass
+class Annotation2D:
+    """二维教学标注，位置使用世界坐标。"""
+
+    name: str
+    text: str
+    x: float
+    y: float
+    latex: str | None = None
+    visible: bool = True
+    color: str = "#263241"
+    offset_x: float = 0.0
+    offset_y: float = 0.0
+    id: str = field(default_factory=lambda: uuid4().hex)
+    agent_alias: str | None = None
 
 
 GeometryObject: TypeAlias = Point2D | Linear2D

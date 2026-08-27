@@ -3,7 +3,7 @@
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry"><rect><x>0</x><y>0</y><width>1320</width><height>820</height></rect></property>
-  <property name="windowTitle"><string>Math3D 教学 | CAS 曲面浏览器</string></property>
+  <property name="windowTitle"><string>Math 教学 </string></property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="rootLayout">
     <property name="spacing"><number>0</number></property>

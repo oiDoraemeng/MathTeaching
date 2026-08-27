@@ -61,10 +61,10 @@ class TwoDGuides:
     """以可复用的少量演员管理网格、坐标轴、刻度和标签。"""
 
     def __init__(self, plotter: pv.Plotter) -> None:
-        self.plotter = plotter
-        self._meshes: dict[str, pv.PolyData] = {}
-        self._actors: dict[str, object] = {}
-        self._has_labels = False
+        self.plotter = plotter # 保存绘图器实例
+        self._meshes: dict[str, pv.PolyData] = {} # 保存网格、坐标轴和刻度的网格数据
+        self._actors: dict[str, object] = {}  # 保存网格、坐标轴和刻度的演员引用
+        self._has_labels = False   # 用于判断是否需要重建点标签演员
 
     def render(
         self,
@@ -185,7 +185,7 @@ class TwoDGuides:
         x_ticks: tuple[float, ...],
         y_ticks: tuple[float, ...],
     ) -> tuple[list, list[tuple[float, float, float]], list[str]]:
-        tick_length = min(bounds.x_span, bounds.y_span) * 0.012
+        tick_length = min(bounds.x_span, bounds.y_span) * 0.003
         label_offset = tick_length * 1.4
         x_label_y = _label_axis_position(0.0, bounds.y_range, spacing)
         y_label_x = _label_axis_position(0.0, bounds.x_range, spacing)
