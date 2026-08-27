@@ -86,6 +86,23 @@ export interface SnapshotProjection {
   history?: { visible?: HistoryItem[]; hidden?: HistoryItem[] };
   model_catalog?: ModelCatalog;
   modelCatalog?: ModelCatalog;
+  capability_catalog?: CapabilityCatalog;
+  capabilityCatalog?: CapabilityCatalog;
+}
+
+export interface CapabilityDescriptor {
+  name: string;
+  category: "scene_read" | "scene_edit" | "math" | "view" | "result" | "teaching";
+  description: string;
+  input_schema: Record<string, unknown>;
+  result_kind: string;
+  scene_scope: "2d" | "3d" | "both";
+  mutating: boolean;
+}
+
+export interface CapabilityCatalog {
+  catalog_version: number;
+  capabilities: CapabilityDescriptor[];
 }
 
 export interface ModelDescriptor {
@@ -176,6 +193,7 @@ export interface AppState {
   view: ViewName;
   history: { visible: HistoryItem[]; hidden: HistoryItem[] };
   modelCatalog: ModelCatalog;
+  capabilityCatalog: CapabilityCatalog;
   pendingMutations: Record<string, { requestId: string; sessionId: string; previous: string }>;
 }
 

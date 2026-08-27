@@ -4,7 +4,7 @@ import { AttachmentActions } from "./AttachmentActions";
 import { ContextRing } from "./ContextRing";
 import { ModeSelector, modeIntent } from "./ModeSelector";
 import { ModelSelector } from "./ModelSelector";
-import type { AgentMode, ContextUsage, IntentSender, ModelCatalog } from "../types";
+import type { AgentMode, CapabilityCatalog, ContextUsage, IntentSender, ModelCatalog } from "../types";
 
 interface ComposerProps {
   sessionId: string;
@@ -12,12 +12,13 @@ interface ComposerProps {
   model: string;
   contextUsage: ContextUsage;
   catalog?: ModelCatalog;
+  capabilityCatalog?: CapabilityCatalog;
   busy?: boolean;
   onIntent: IntentSender;
   onModeChange?: (mode: AgentMode) => void;
 }
 
-export function Composer({ sessionId, mode, model, contextUsage, catalog, busy = false, onIntent, onModeChange }: ComposerProps) {
+export function Composer({ sessionId, mode, model, contextUsage, catalog, capabilityCatalog, busy = false, onIntent, onModeChange }: ComposerProps) {
   const [prompt, setPrompt] = useState("");
   const submit = () => {
     const text = prompt.trim();
@@ -29,7 +30,7 @@ export function Composer({ sessionId, mode, model, contextUsage, catalog, busy =
   return <section className="composer" aria-label="消息输入">
     <textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); submit(); } }} placeholder={'提问或输入 "/"快捷命令'} aria-label="提问或输入" />
     <div className="composer-toolbar">
-      <AttachmentActions sessionId={sessionId} onIntent={onIntent} />
+      <AttachmentActions sessionId={sessionId} capabilityCatalog={capabilityCatalog} onIntent={onIntent} onInsertPrompt={setPrompt} />
       <ModeSelector mode={mode} onChange={(value) => { onModeChange?.(value); onIntent(modeIntent(value, sessionId)); }} />
       <span className="toolbar-spacer" />
       <ModelSelector model={model} sessionId={sessionId} catalog={catalog} onIntent={onIntent} />

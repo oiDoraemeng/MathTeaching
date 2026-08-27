@@ -14,4 +14,13 @@ describe("EventCard", () => {
 
     expect(container.querySelector(".reasoning-block")?.hasAttribute("open")).toBe(false);
   });
+
+  it("renders capability lifecycle and conflict cards", () => {
+    const { getByLabelText, getByText } = render(
+      <EventCard event={{ type: "scene_conflict", session_id: "s1", payload: { message: "2D 与 3D 不能混用" } }} sessionId="s1" onIntent={vi.fn()} />,
+    );
+
+    expect(getByLabelText("场景冲突")).toBeInTheDocument();
+    expect(getByText("2D 与 3D 不能混用")).toBeInTheDocument();
+  });
 });

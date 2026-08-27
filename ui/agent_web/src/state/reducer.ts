@@ -40,6 +40,7 @@ export const initialState = (): AppState => ({
   view: "conversation",
   history: { visible: [], hidden: [] },
   modelCatalog: { builtin: [], custom: [] },
+  capabilityCatalog: { catalog_version: 1, capabilities: [] },
   pendingMutations: {},
 });
 
@@ -113,6 +114,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           hidden: action.snapshot.history?.hidden ?? [],
         },
         modelCatalog: action.snapshot.model_catalog ?? action.snapshot.modelCatalog ?? state.modelCatalog,
+        capabilityCatalog: action.snapshot.capability_catalog ?? action.snapshot.capabilityCatalog ?? state.capabilityCatalog,
         view: state.view,
         pendingMutations: {},
         gapDetected: false,

@@ -30,6 +30,8 @@
 .event-calculation { border-left-color: var(--agent-warning); }
 .event-execution, .event-turn_finished { border-left-color: var(--agent-success); }
 .event-error { border-left-color: var(--agent-error); }
+.event-scene_conflict, .event-capability_fallback { border-left-color: var(--agent-warning); }
+.event-tool_started, .event-tool_finished { border-left-color: var(--agent-accent); }
 .event-stopped { border-left-color: var(--agent-muted); }
 .event-card p { margin: 0; white-space: pre-wrap; }
 .markdown-content > :first-child { margin-top: 0; }
@@ -75,6 +77,11 @@
 .composer-popover { position: absolute; z-index: 10; bottom: 31px; left: 0; display: grid; min-width: 150px; gap: 4px; padding: 8px; color: var(--agent-text); background: var(--agent-elevated); border: 1px solid var(--agent-border); border-radius: 4px; box-shadow: 0 8px 24px rgb(0 0 0 / 28%); font-size: 11px; }
 .composer-popover strong { padding: 2px 4px 5px; font-size: 11px; }
 .composer-popover span { padding: 3px 4px; color: var(--agent-muted); }
+.capability-group { display: grid; gap: 2px; }
+.capability-group > span { padding: 5px 4px 1px; color: var(--agent-muted); font-size: 10px; font-weight: 600; }
+.capability-group button { display: grid; height: auto; min-height: 28px; gap: 1px; padding: 4px 5px; }
+.capability-group button b { font-size: 11px; font-weight: 600; }
+.capability-group button small { overflow-wrap: anywhere; color: var(--agent-muted); font-size: 10px; line-height: 1.25; }
 .composer-popover button { display: flex; align-items: center; gap: 6px; width: 100%; height: 26px; padding: 0 5px; text-align: left; }
 .composer-icon { flex: 0 0 24px; width: 24px !important; }
 .toolbar-spacer { flex: 1 1 4px; min-width: 0; }
