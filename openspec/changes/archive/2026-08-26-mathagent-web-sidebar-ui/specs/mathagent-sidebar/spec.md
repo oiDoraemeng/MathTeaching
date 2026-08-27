@@ -33,6 +33,8 @@ Each turn SHALL render readable, role-specific cards in the local Web UI for use
 - **WHEN** an Agent turn completes successfully
 - **THEN** the timeline contains the user request, explanation, plan, preview, and execution result as readable cards
 
+## ADDED Requirements
+
 ### Requirement: JSON-only UI bridge
 
 The Web UI SHALL communicate with Python through a versioned JSON message bridge. The bridge SHALL validate message type, protocol version, session ID, turn ID when required, and payload size before forwarding an intent. The bridge SHALL never expose Qt objects, PyVista objects, Python callables, credentials, or direct `SceneCommandService` access to JavaScript.
