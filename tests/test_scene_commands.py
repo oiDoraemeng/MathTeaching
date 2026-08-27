@@ -119,6 +119,28 @@ class SceneCommandTests(unittest.TestCase):
         with self.assertRaises(CommandError):
             CommandPlan.from_dict({"operations": ["scene.clear"]})
 
+    def test_validation_injects_one_leading_target_mode_and_supports_scoped_operations(self) -> None:
+        validation = SceneCommandService().preview(
+            CommandPlan(
+                scene="2d",
+                operations=(
+                    {"op": "scene.set_mode", "mode": "2d"},
+                    {"op": "scene.clear", "scope": "curves"},
+                    {"op": "point.upsert", "alias": "P", "coordinates": [1, 2]},
+                ),
+            )
+        )
+        point3d_delete = SceneCommandService().preview(
+            CommandPlan(scene="3d", operations=({"op": "point3d.delete", "alias": "A"},))
+        )
+
+        self.assertTrue(validation.valid, validation.messages)
+        self.assertEqual(
+            [item for item in validation.expanded_operations if item.get("op") == "scene.set_mode"],
+            [{"op": "scene.set_mode", "mode": "2d"}],
+        )
+        self.assertTrue(point3d_delete.valid, point3d_delete.messages)
+
 
 if __name__ == "__main__":
     unittest.main()

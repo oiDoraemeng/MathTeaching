@@ -29,7 +29,12 @@ def _specifications() -> tuple[CapabilitySpec, ...]:
     closed = {"type": "object", "additionalProperties": False}
     return (
         CapabilitySpec(
-            "scene.inspect", "scene_read", "Summarize the staged mathematical scene.", {**closed}, "data", aliases=("inspect_scene",)
+            "scene.inspect",
+            "scene_read",
+            "Summarize the staged mathematical scene.",
+            {**closed, "properties": {"limit": {"type": "integer", "minimum": 1, "maximum": 50}}},
+            "data",
+            aliases=("inspect_scene",),
         ),
         CapabilitySpec(
             "scene.find",
@@ -215,12 +220,12 @@ class CapabilityRegistry:
         return result
 
 
-def _unavailable_handler(call: ToolCall, _context: Any) -> CapabilityResult:
-    return CapabilityResult.error(call.call_id, call.name, CapabilityError("capability_unavailable", "capability handler is not available"))
-
-
 def build_default_registry() -> CapabilityRegistry:
+    from .math_tools import handlers as math_handlers
+    from .scene_tools import handlers as scene_handlers
+
     registry = CapabilityRegistry()
+    handlers = {**scene_handlers(), **math_handlers()}
     for spec in _specifications():
-        registry.register(spec, _unavailable_handler)
+        registry.register(spec, handlers[spec.name])
     return registry

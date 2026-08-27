@@ -95,6 +95,7 @@ _ALLOWED_OPERATIONS = frozenset(
         "curve.delete",
         "point.upsert",
         "point3d.upsert",
+        "point3d.delete",
         "point.delete",
         "linear.upsert",
         "linear.delete",
@@ -120,7 +121,7 @@ _KIND_VALUES = frozenset({"line", "segment", "ray", "vector"})
 _CURVE_KINDS = frozenset({"explicit", "implicit", "parametric"})
 _STYLE_VALUES = frozenset({"solid", "dashed"})
 _ROLE_VALUES = frozenset({"primary", "construction", "result"})
-_THREE_D_OPERATIONS = frozenset({"point3d.upsert", "surface.create", "surface.update", "surface.delete", "geometry.intersection"})
+_THREE_D_OPERATIONS = frozenset({"point3d.upsert", "point3d.delete", "surface.create", "surface.update", "surface.delete", "geometry.intersection"})
 _TWO_D_OPERATIONS = frozenset(
     {
         "point.upsert",
@@ -173,10 +174,6 @@ class SceneCommandService:
             messages.append("scene 必须是 2d 或 3d。")
         if not plan.operations:
             messages.append("命令计划至少需要一个操作。")
-        # 场景是计划级别的执行上下文；3D 计划自动显式切换到 3D，避免
-        # 宿主在错误的渲染工作区中解释 surface/point3d 命令。
-        if plan.scene == "3d":
-            expanded.append({"op": "scene.set_mode", "mode": "3d"})
         for index, operation in enumerate(plan.operations):
             try:
                 _validate_scene_scope(plan.scene, operation)
@@ -188,6 +185,11 @@ class SceneCommandService:
                     expanded.extend(self._validate_operation(generated))
             except CommandError as error:
                 messages.append(f"操作 {index + 1}: {error}")
+        if not messages and plan.scene in _SCENE_VALUES:
+            # The command host must never infer a target workspace. Normalize
+            # all redundant macro/user mode operations to one leading action.
+            expanded = [operation for operation in expanded if operation.get("op") != "scene.set_mode"]
+            expanded.insert(0, {"op": "scene.set_mode", "mode": plan.scene})
         return CommandValidation(not messages, tuple(messages), tuple(expanded))
 
     def preview(self, plan: CommandPlan) -> CommandValidation:
@@ -257,6 +259,8 @@ class SceneCommandService:
         elif name == "point3d.upsert":
             _require_text(operation, "alias")
             _require_coordinates(operation.get("coordinates"), dimensions=3)
+        elif name == "point3d.delete":
+            _require_text(operation, "alias")
         elif name == "point.upsert":
             _require_text(operation, "alias")
             _require_point(operation.get("coordinates"))
@@ -306,6 +310,8 @@ class SceneCommandService:
             _require_text(operation, "second")
         elif name in {"curve.delete", "point.delete", "linear.delete", "annotation.delete", "surface.delete"}:
             _require_text(operation, "alias")
+        elif name == "scene.clear":
+            _require_choice(operation, "scope", frozenset({"all", "curves", "surfaces", "geometry", "annotations"}))
         elif name == "view.fit":
             try:
                 padding = float(operation.get("padding", 1.15))

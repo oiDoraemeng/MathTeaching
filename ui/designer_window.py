@@ -1128,18 +1128,7 @@ class MainWindow:
             self._set_scene_mode(mode)
             return
         if name == "scene.clear":
-            if self.scene_mode is SceneMode.THREE_D:
-                self.layers.clear()
-                self._agent_points3d = {}
-                self._render_scene()
-            else:
-                self.geometry_points.clear()
-                self.linear_objects.clear()
-                self.annotations.clear()
-                self.curve_layers.clear()
-                self._two_d_object_order.clear()
-                self._agent_areas = {}
-                self._rebuild_2d_controllers()
+            self._command_clear_scope(str(operation.get("scope", "all")))
             return
         if name == "point3d.upsert":
             self._command_upsert_point3d(operation)
@@ -1176,9 +1165,7 @@ class MainWindow:
             return
         if name == "scene.export_png":
             filename = str(operation.get("filename", ""))
-            if not filename:
-                raise CommandError("scene.export_png 需要 filename。")
-            self.plotter.screenshot(filename)
+            self.plotter.screenshot(str(self._managed_export_path(filename)))
             return
         if name == "geometry.intersection":
             self._command_intersection(operation)
@@ -1186,6 +1173,43 @@ class MainWindow:
         if name.startswith("linear_algebra.") or name.startswith("calculus."):
             raise CommandError(f"宿主收到未展开的教学命令: {name}")
         raise CommandError(f"宿主不支持操作: {name}")
+
+    def _command_clear_scope(self, scope: str) -> None:
+        if scope not in {"all", "curves", "surfaces", "geometry", "annotations"}:
+            raise CommandError("scene.clear.scope 不受支持。")
+        if self.scene_mode is SceneMode.THREE_D:
+            if scope in {"all", "surfaces"}:
+                self.layers.clear()
+            if scope in {"all", "geometry", "surfaces"}:
+                self._agent_points3d = {}
+            self._render_scene()
+            return
+        if scope in {"all", "geometry"}:
+            self.geometry_points.clear()
+            self.linear_objects.clear()
+            self._agent_areas = {}
+        if scope in {"all", "annotations"}:
+            self.annotations.clear()
+        if scope in {"all", "curves"}:
+            self.curve_layers.clear()
+        remaining_ids = {
+            *(point.id for point in self.geometry_points),
+            *(linear.id for linear in self.linear_objects),
+            *(annotation.id for annotation in self.annotations),
+            *(layer.id for layer in self.curve_layers),
+        }
+        self._two_d_object_order = [item_id for item_id in self._two_d_object_order if item_id in remaining_ids]
+        self._rebuild_2d_controllers()
+
+    def _managed_export_path(self, filename: str) -> Path:
+        name = Path(filename).name
+        if name != filename or not name.lower().endswith(".png"):
+            raise CommandError("scene.export_png 需要安全的 PNG 文件名。")
+        exports_root = self._agent_session_store.exports_root.resolve()
+        target = (exports_root / name).resolve()
+        if target.parent != exports_root:
+            raise CommandError("scene.export_png 不能写入导出目录之外。")
+        return target
 
     def _command_upsert_point(self, operation: dict[str, object]) -> None:
         alias = str(operation["alias"])

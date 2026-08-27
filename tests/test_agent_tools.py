@@ -33,6 +33,14 @@ def test_invalid_tool_arguments_are_rejected() -> None:
         ToolRegistry().call("create_curve", expression="__import__('os')", alias="f")
 
 
+def test_legacy_tool_name_routes_to_canonical_capability() -> None:
+    result = ToolRegistry().call("create_curve", expression="x^2", alias="f")
+
+    assert result.canonical_name == "scene.edit"
+    assert result.plan is not None
+    assert result.plan.operations[0]["expression"] == "y=x^2"
+
+
 def test_tool_registry_does_not_import_renderers() -> None:
     module = importlib.import_module("agent.tool_registry")
     assert "PySide6" not in module.__dict__

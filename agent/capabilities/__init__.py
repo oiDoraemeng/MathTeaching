@@ -8,12 +8,15 @@ from .contracts import (
     SceneScope,
     ToolCall,
 )
+from .registry import CapabilityRegistry, build_default_registry
 
 __all__ = [
     "CAPABILITY_CATALOG_VERSION",
     "CapabilityError",
     "CapabilityResult",
     "CapabilitySpec",
+    "CapabilityRegistry",
     "SceneScope",
     "ToolCall",
+    "build_default_registry",
 ]
