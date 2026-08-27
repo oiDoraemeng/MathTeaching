@@ -50,6 +50,8 @@ CLIENT_MESSAGE_TYPES = frozenset(
 EVENT_MESSAGE_TYPES = frozenset(
     {
         "session_snapshot",
+        "user_message",
+        "session_started",
         "message_delta",
         "explanation",
         "scene_context",

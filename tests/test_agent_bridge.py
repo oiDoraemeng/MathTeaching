@@ -73,6 +73,30 @@ def test_bridge_rejects_malformed_capability_event_payload() -> None:
     assert emitted[-1]["payload"]["code"] == "invalid_event"
 
 
+def test_bridge_forwards_turn_lifecycle_events() -> None:
+    app = QApplication.instance() or QApplication([])
+    emitted: list[dict[str, object]] = []
+    bridge = AgentBridge(lambda _message: None)
+    bridge.event_json.connect(lambda raw: emitted.append(json.loads(raw)))
+
+    for event_type, payload in (
+        ("user_message", {"text": "生成向量加法的几何教学图"}),
+        ("session_started", {"mode": "Agent", "execution_mode": "continuous"}),
+    ):
+        bridge.emit_event(
+            {
+                "protocol_version": 1,
+                "type": event_type,
+                "request_id": "turn-1",
+                "session_id": "s1",
+                "turn_id": "t1",
+                "payload": payload,
+            }
+        )
+
+    assert [item["type"] for item in emitted] == ["user_message", "session_started"]
+
+
 def test_web_host_owns_one_web_view() -> None:
     app = QApplication.instance() or QApplication([])
     host = AgentSidebarWeb(lambda _message: None)

@@ -597,8 +597,17 @@ class RuleBasedAgentProvider:
         from .agent_provider import AgentResponse
 
         match = self._VECTOR_PATTERN.search(prompt)
+        is_vector_addition = "向量加法" in prompt or "vector addition" in prompt.lower()
         if match is not None and ("向量" in prompt or "vector" in prompt.lower()):
             values = tuple(float(value) for value in match.groups())
+        elif is_vector_addition:
+            # Keep the no-parameter teaching request useful and deterministic.
+            # These are the documented classroom defaults; explicit coordinates
+            # still take precedence above.
+            values = (2.0, 1.0, 1.0, 3.0)
+        else:
+            values = None
+        if values is not None:
             plan = CommandPlan(
                 summary="生成向量加法的平行四边形法与三角形法教学图",
                 operations=(

@@ -11,7 +11,9 @@ from PySide6.QtCore import QSettings
 from PySide6.QtWidgets import QApplication
 
 from services.agent_provider import AgentSettings
+from services.scene_commands import RuleBasedAgentProvider
 from ui.agent_settings import AgentSettingsDialog
+from ui.designer_window import MainWindow
 
 
 class AgentSettingsTests(unittest.TestCase):
@@ -109,6 +111,14 @@ class AgentSettingsTests(unittest.TestCase):
             AgentSettings("https://example.test/v1", "secret", "model-x", 15.0),
         )
         dialog.deleteLater()
+
+    def test_disabled_remote_configuration_uses_local_demo_provider(self) -> None:
+        window = MainWindow.__new__(MainWindow)
+        window._agent_settings = AgentSettings(provider="openai")
+
+        provider = window._create_agent_provider()
+
+        self.assertIsInstance(provider, RuleBasedAgentProvider)
 
 
 if __name__ == "__main__":

@@ -102,6 +102,40 @@ def test_continuous_mode_executes_after_validation(tmp_path) -> None:
     assert any(event.type == "execution_finished" for event in result.events)
 
 
+def test_non_streaming_turn_emits_the_assistant_response(tmp_path) -> None:
+    runtime, _, session, _ = _runtime(tmp_path)
+    streamed: list[AgentEvent] = []
+
+    result = runtime.run_turn(
+        session.id,
+        "创建点 P(1,2)",
+        mode="Agent",
+        execution_mode="continuous",
+        on_event=streamed.append,
+    )
+
+    visible_answers = [
+        event.payload.get("text")
+        for event in streamed
+        if event.type == "message_delta" and event.payload.get("kind") != "reasoning"
+    ]
+    assert visible_answers == [result.response.text]
+
+
+def test_generic_vector_addition_request_uses_default_teaching_vectors(tmp_path) -> None:
+    runtime, _, session, host = _runtime(tmp_path)
+
+    result = runtime.run_turn(session.id, "生成向量加法的几何教学图", mode="Agent")
+
+    assert result.status == "completed"
+    assert result.response.plan is not None
+    operation = result.response.plan.operations[0]
+    assert operation["op"] == "teach.vector_addition"
+    assert operation["a"] == [2, 1]
+    assert operation["b"] == [1, 3]
+    assert any(item.get("op") == "linear.upsert" for item in host.operations)
+
+
 def test_native_tool_loop_injects_canonical_catalog_and_composes_once(tmp_path) -> None:
     provider = _NativeToolProvider()
     host = _Host()

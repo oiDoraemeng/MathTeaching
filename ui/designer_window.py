@@ -621,9 +621,11 @@ class MainWindow:
         })
 
     def _create_agent_provider(self):
-        if self._agent_settings.provider == "local" and AgentSettingsDialog.is_enabled():
+        if not AgentSettingsDialog.is_enabled():
+            return RuleBasedAgentProvider()
+        if self._agent_settings.provider == "local":
             return ModelProvider.create("local", self._agent_settings)
-        if AgentSettingsDialog.is_enabled() and self._agent_settings.is_complete:
+        if self._agent_settings.is_complete:
             try:
                 return ModelProvider.create(self._agent_settings.provider, self._agent_settings)
             except ValueError:

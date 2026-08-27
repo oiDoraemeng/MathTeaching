@@ -241,6 +241,7 @@ class AgentRuntime:
             events.append(AgentEvent("stopped", {}, session_id=session_id))
             turn_id = finish("stopped", response, None, None)
             return RuntimeTurnResult("stopped", response, None, tuple(events), turn_id)
+        answer_streamed = False
         try:
             if self._uses_native_tools():
                 emit(AgentEvent("message_delta", {"text": "正在分析数学问题…", "kind": "reasoning"}, session_id=session_id))
@@ -281,9 +282,12 @@ class AgentRuntime:
                 raise AssertionError("unreachable")
             if not self._uses_native_tools():
                 def on_stream_delta(delta_text: str, kind: str | None) -> None:
+                    nonlocal answer_streamed
                     payload = {"text": delta_text}
                     if kind:
                         payload["kind"] = kind
+                    if kind != "reasoning" and delta_text:
+                        answer_streamed = True
                     emit(AgentEvent("message_delta", payload, session_id=session_id))
 
                 stream_response = getattr(self.agent, "respond_stream", None)
@@ -305,10 +309,12 @@ class AgentRuntime:
                     )
                     validation = self.command_service.preview(response.plan) if response.plan is not None else None
                 else:
-                    emit(AgentEvent("message_delta", {"text": "正在分析数学问题…"}, session_id=session_id))
+                    emit(AgentEvent("message_delta", {"text": "正在分析数学问题…", "kind": "reasoning"}, session_id=session_id))
                     runtime_response = self.respond(prompt, scene_context)
                     response = runtime_response.response
                     validation = runtime_response.validation
+            if response.text.strip() and not answer_streamed:
+                emit(AgentEvent("message_delta", {"text": response.text}, session_id=session_id))
             if response.plan is None:
                 events.append(AgentEvent("execution_finished", {"status": "answered"}, session_id=session_id))
                 status = "answered"
