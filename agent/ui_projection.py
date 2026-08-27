@@ -11,6 +11,7 @@ from typing import Any
 
 from .events import AgentEvent
 from .session_store import SessionStore, SessionRecord, TurnRecord
+from .model_catalog import CustomModelStore, default_model_id, model_catalog
 
 
 def _json_value(value: Any) -> Any:
@@ -63,9 +64,12 @@ def _session_projection(store: SessionStore, session: SessionRecord) -> dict[str
         "mode": session.active_mode,
         "execution_mode": session.execution_mode,
         "executionMode": session.execution_mode,
-        "model": session.model,
+        "model": default_model_id(session.model, tuple(CustomModelStore.load().keys())),
+        "thinking_enabled": session.thinking_enabled,
+        "thinking_level": session.thinking_level,
         "current_turn_id": session.current_turn_id,
         "closed": session.closed_at is not None,
+        "hidden": session.hidden_at is not None,
         "parent_session_id": session.parent_session_id,
         "turns": [_turn_projection(store, turn) for turn in store.list_turns(session.id)],
         "attachments": [
@@ -93,6 +97,18 @@ def _session_projection(store: SessionStore, session: SessionRecord) -> dict[str
     }
 
 
+def _history_item(store: SessionStore, session: SessionRecord) -> dict[str, Any]:
+    return {
+        "id": session.id,
+        "title": session.title,
+        "updated_at": session.updated_at,
+        "last_opened_at": session.last_opened_at,
+        "turn_count": len(store.list_turns(session.id)),
+        "hidden": session.hidden_at is not None,
+        "closed": session.closed_at is not None,
+    }
+
+
 def build_session_snapshot(
     store: SessionStore,
     *,
@@ -100,13 +116,22 @@ def build_session_snapshot(
     model_status: Mapping[str, Any] | None = None,
     settings_state: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
+    # Keep closed session metadata in the snapshot for persistence/history.
+    # The Web UI filters closed records from the live tab strip.
     sessions = store.list_sessions(include_closed=True)
+    history_sessions = store.list_sessions(include_closed=True)
+    hidden_sessions = store.list_hidden_sessions(include_closed=True)
+    visible_history = [_history_item(store, session) for session in history_sessions]
+    visible_history = [item for item in visible_history if not item["hidden"]]
+    hidden_history = [_history_item(store, session) for session in hidden_sessions]
     return {
         "type": "session_snapshot",
         "active_session_id": active_session_id,
         "sessions": [_session_projection(store, session) for session in sessions],
         "model_status": _json_value(dict(model_status or {})),
         "settings_state": _json_value(dict(settings_state or {})),
+        "history": {"visible": visible_history, "hidden": hidden_history},
+        "model_catalog": model_catalog(CustomModelStore.load()),
     }
 
 

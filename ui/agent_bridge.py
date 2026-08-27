@@ -8,7 +8,7 @@ from typing import Any
 
 from PySide6.QtCore import QObject, Signal, Slot
 
-from agent.web_protocol import BridgeEnvelope, parse_envelope
+from agent.web_protocol import BridgeEnvelope, ProtocolError, parse_envelope
 
 
 class AgentBridge(QObject):
@@ -23,10 +23,13 @@ class AgentBridge(QObject):
     @Slot(str)
     def send_json(self, raw: str) -> None:
         request_id = ""
+        session_id = ""
         try:
             try:
                 decoded = json.loads(raw)
-                request_id = str(decoded.get("request_id", "")) if isinstance(decoded, dict) else ""
+                if isinstance(decoded, dict):
+                    request_id = str(decoded.get("request_id", ""))
+                    session_id = str(decoded.get("session_id", ""))
             except (TypeError, json.JSONDecodeError):
                 pass
             envelope = parse_envelope(raw)
@@ -35,13 +38,17 @@ class AgentBridge(QObject):
             if result is not None:
                 self.emit_event(result)
         except Exception as error:
+            payload: dict[str, Any] = {"code": getattr(error, "code", "bridge_error"), "message": str(error)}
+            field = getattr(error, "field", None)
+            if field:
+                payload["field"] = field
             self.emit_event(
                 {
                     "protocol_version": 1,
                     "type": "error",
                     "request_id": request_id,
-                    "session_id": "",
-                    "payload": {"message": str(error)},
+                    "session_id": session_id,
+                    "payload": payload,
                 }
             )
 

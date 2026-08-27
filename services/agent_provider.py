@@ -33,6 +33,9 @@ class AgentSettings:
     model: str = ""
     timeout_seconds: float = 60.0
     provider: str = "openai"
+    # Keep direct programmatic construction backward-compatible; the settings
+    # dialog explicitly defaults persisted UI configuration to Responses.
+    protocol: str = "chat_completions"
 
     @property
     def is_complete(self) -> bool:
@@ -42,6 +45,10 @@ class AgentSettings:
         if provider == "deepseek":
             return bool(self.api_key.strip() and self.model.strip())
         return bool(self.base_url.strip() and self.api_key.strip() and self.model.strip())
+
+    @property
+    def normalized_protocol(self) -> str:
+        return "chat_completions" if self.protocol == "chat_completions" else "responses"
 
 
 @dataclass(frozen=True)
@@ -164,16 +171,17 @@ class OpenAICompatibleProvider:
         return message
 
     def _request(self, messages: tuple[AgentMessage, ...], *, timeout: float | None = None) -> str:
-        url = f"{self.settings.base_url.rstrip('/')}/chat/completions"
+        protocol = self.settings.normalized_protocol
+        url = f"{self.settings.base_url.rstrip('/')}/{ 'responses' if protocol == 'responses' else 'chat/completions' }"
         request_messages = [
             {"role": "system", "content": SYSTEM_PROMPT},
             *({"role": message.role, "content": message.content} for message in messages),
         ]
-        payload = {
-            "model": self.settings.model,
-            "messages": request_messages,
-            "temperature": 0,
-        }
+        payload = {"model": self.settings.model, "temperature": 0}
+        if protocol == "responses":
+            payload["input"] = request_messages
+        else:
+            payload["messages"] = request_messages
         request = Request(
             url,
             data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
@@ -195,7 +203,12 @@ class OpenAICompatibleProvider:
             raise RuntimeError(f"模型服务返回 HTTP {status}。")
         try:
             response_payload = json.loads(body)
-            content = response_payload["choices"][0]["message"]["content"]
+            if protocol == "responses":
+                content = response_payload.get("output_text")
+                if not content:
+                    content = response_payload["output"][0]["content"][0]["text"]
+            else:
+                content = response_payload["choices"][0]["message"]["content"]
         except (json.JSONDecodeError, KeyError, IndexError, TypeError) as error:
             raise RuntimeError("模型服务返回了无法识别的 JSON。") from error
         if not isinstance(content, str) or not content.strip():
@@ -271,6 +284,11 @@ class OpenAICompatibleProvider:
                 continue
             choice = choices[0] if isinstance(choices[0], dict) else {}
             delta = choice.get("delta") if isinstance(choice.get("delta"), dict) else {}
+            # DeepSeek 等模型把思考过程放在 reasoning_content 字段，正式
+            # 回答放在 content 字段；两者都作为流式增量转发，前端用 kind 区分。
+            reasoning = delta.get("reasoning_content")
+            if isinstance(reasoning, str) and reasoning:
+                yield ProviderEvent("message_delta", {"text": reasoning, "kind": "reasoning"})
             content = delta.get("content")
             if isinstance(content, str) and content:
                 text_parts.append(content)

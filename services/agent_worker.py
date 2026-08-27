@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from time import monotonic
 
 from PySide6.QtCore import QObject, Signal, Slot
 
 from .agent_provider import AgentMessage, AgentResponse, AgentProvider, SceneContext
 from .scene_commands import CommandError, CommandPlan, RuleBasedAgentProvider
+
+
+_STREAM_FLUSH_INTERVAL_SECONDS = 0.04
+_STREAM_MAX_CHARS = 48
 
 
 class RuntimeTurnWorker(QObject):
@@ -29,6 +34,7 @@ class RuntimeTurnWorker(QObject):
         scene_context=None,
         scene_before=None,
         scene_after=None,
+        turn_id: str | None = None,
     ) -> None:
         super().__init__()
         self.runtime = runtime
@@ -39,10 +45,54 @@ class RuntimeTurnWorker(QObject):
         self.scene_context = scene_context
         self.scene_before = scene_before
         self.scene_after = scene_after
+        self.turn_id = turn_id
 
     @Slot()
     def run(self) -> None:
         try:
+            streamed_ids: set[int] = set()
+            pending_event = None
+            pending_text: list[str] = []
+            pending_kind: str | None = None
+            pending_size = 0
+            last_flush = monotonic()
+
+            def flush_stream() -> None:
+                nonlocal pending_event, pending_text, pending_kind, pending_size, last_flush
+                if pending_event is None:
+                    return
+                payload = dict(pending_event.payload)
+                payload["text"] = "".join(pending_text)
+                self.event_ready.emit(replace(pending_event, payload=payload))
+                pending_event = None
+                pending_text = []
+                pending_kind = None
+                pending_size = 0
+                last_flush = monotonic()
+
+            def on_event(event) -> None:
+                nonlocal pending_event, pending_kind, pending_size
+                streamed_ids.add(id(event))
+                if event.type != "message_delta":
+                    flush_stream()
+                    self.event_ready.emit(event)
+                    return
+                text = event.payload.get("text")
+                kind = event.payload.get("kind")
+                if not isinstance(text, str) or not text:
+                    flush_stream()
+                    self.event_ready.emit(event)
+                    return
+                if pending_event is not None and kind != pending_kind:
+                    flush_stream()
+                if pending_event is None:
+                    pending_event = event
+                    pending_kind = kind if isinstance(kind, str) else None
+                pending_text.append(text)
+                pending_size += len(text)
+                if pending_size >= _STREAM_MAX_CHARS or monotonic() - last_flush >= _STREAM_FLUSH_INTERVAL_SECONDS:
+                    flush_stream()
+
             result = self.runtime.run_turn(
                 self.session_id,
                 self.prompt,
@@ -51,11 +101,17 @@ class RuntimeTurnWorker(QObject):
                 scene_context=self.scene_context,
                 scene_before=self.scene_before,
                 scene_after=self.scene_after,
+                turn_id=self.turn_id,
+                on_event=on_event,
             )
+            flush_stream()
             # Runtime persistence allocates the durable turn id after provider
             # work completes. Attach it to every streamed event before the
             # browser projection sees the batch so one prompt stays one card.
             for event in result.events:
+                if id(event) in streamed_ids:
+                    # 已实时转发过的事件不再重复发出。
+                    continue
                 if result.turn_id and getattr(event, "turn_id", None) != result.turn_id:
                     event = replace(event, turn_id=result.turn_id)
                 self.event_ready.emit(event)

@@ -1,0 +1,20 @@
+name: calculus
+description: 函数、导数、积分面积和切线的可视化
+version: 1.0
+triggers:
+- 微积分
+- 函数
+- 导数
+- 积分
+- 切线
+- 曲线
+- calculus
+- derivative
+- integral
+- curve
+- function
+capabilities:
+- plot_function
+- derivative
+- integral_area
+- tangent

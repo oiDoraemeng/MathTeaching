@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
+from typing import Callable, Iterable
 
-from services.agent_provider import AgentMessage, AgentProvider, AgentResponse, SceneContext
+from services.agent_provider import AgentMessage, AgentProvider, AgentResponse, ProviderEvent, SceneContext
 from services.scene_commands import CommandPlan, RuleBasedAgentProvider
 
 from .instruction import InstructionStore
@@ -69,8 +69,9 @@ class MathTeacherAgent:
         request = next((item.content for item in reversed(message_list) if item.role == "user"), "")
         selected_prompts = self.prompts.select(request)
         local_result = self.skill_manager.create_plan_for_request(request, scene_context)
-        # 已注册 Skill 优先提供确定性计划；远程模型只处理需要开放式解释或
-        # 未被本地 Skill 识别的请求。这样即使切换到本地模型适配器，安全边界也一致。
+        # Local skills are used by the explicit local/demo provider only. A
+        # selected remote model must be configured before any request is sent,
+        # including requests that happen to match a deterministic skill.
         if local_result is not None and isinstance(self.provider, (RuleBasedAgentProvider, LocalModelProvider)):
             manifest, plan = local_result
             self.memory.remember_topic(manifest.name)
@@ -86,10 +87,86 @@ class MathTeacherAgent:
             *message_list,
         ]
         response = self.provider.create_plan(tuple(enriched), scene_context or SceneContext())
+        # A remote model may provide a useful explanation without following
+        # the JSON-plan protocol. For a recognized deterministic skill, keep
+        # that explanation and attach the locally validated drawing plan.
+        if response.plan is None and local_result is not None:
+            manifest, plan = local_result
+            self.memory.remember_topic(manifest.name)
+            return AgentTurn(
+                AgentResponse(response.text, plan, response.raw_content),
+                (manifest.name,),
+                selected_prompts,
+            )
         if response.plan is not None:
             for manifest in self.skill_manager.match(request):
                 self.memory.remember_topic(manifest.name)
         return AgentTurn(response, tuple(item.name for item in self.skill_manager.match(request)), selected_prompts)
+
+    def _enriched_messages(self, message_list: list[AgentMessage], request: str, selected_prompts: tuple[str, ...]) -> tuple[AgentMessage, ...]:
+        return (
+            AgentMessage("system", self.instructions.load()),
+            AgentMessage("system", self.prompts.compose(selected_prompts, memory=self.memory.load().to_dict())),
+            AgentMessage("system", "可用数学 Skill：" + ", ".join(item.name for item in self.skill_manager.list_skills())),
+            *message_list,
+        )
+
+    def respond_stream(
+        self,
+        messages: Iterable[AgentMessage] | str,
+        scene_context: SceneContext | None = None,
+        *,
+        on_delta: Callable[[str, str | None], None] | None = None,
+    ) -> AgentResponse:
+        """流式调用 provider（若支持），把增量文本实时回调给上层。
+
+        本地规则/离线 provider 没有真正的流式能力，此时回退到非流式
+        create_plan，行为与 respond 一致。
+        """
+        if isinstance(messages, str):
+            message_list = [AgentMessage("user", messages)]
+        else:
+            message_list = list(messages)
+        request = next((item.content for item in reversed(message_list) if item.role == "user"), "")
+        selected_prompts = self.prompts.select(request)
+        local_result = self.skill_manager.create_plan_for_request(request, scene_context)
+        stream = getattr(self.provider, "stream", None)
+        if not callable(stream):
+            return self.respond(message_list, scene_context)
+        enriched = self._enriched_messages(message_list, request, selected_prompts)
+        text_parts: list[str] = []
+        try:
+            for event in stream(tuple(enriched)):
+                if event.type == "message_delta":
+                    delta_text = str(event.data.get("text", ""))
+                    if delta_text:
+                        text_parts.append(delta_text)
+                        if on_delta is not None:
+                            on_delta(delta_text, event.data.get("kind"))
+                # tool_call / completed 事件在无工具协议的 Chat Completions
+                # 流程中暂不消费；plan 仍从最终文本解析，与 create_plan 一致。
+        except Exception:
+            # 流式失败时回退到非流式请求，保证功能可用。
+            return self.respond(message_list, scene_context)
+        content = "".join(text_parts)
+        if not content.strip():
+            return self.respond(message_list, scene_context)
+        from services.agent_provider import parse_plan_response
+
+        try:
+            plan = parse_plan_response(content)
+        except ValueError:
+            # Remote models often stream a natural-language explanation instead
+            # of the JSON plan. Keep that explanation, but attach the matching
+            # deterministic Skill plan so a recognized visualization still
+            # reaches validation and SceneCommandService.
+            if local_result is not None:
+                manifest, plan = local_result
+                self.memory.remember_topic(manifest.name)
+                return AgentResponse(text=content.strip(), plan=plan, raw_content=content)
+            # 纯文本讲解或澄清问题；与 create_plan 的容错路径保持一致。
+            return AgentResponse(text=content.strip(), plan=None, raw_content=content)
+        return AgentResponse(text=plan.summary or "已生成可验证的命令计划，请确认后执行。", plan=plan, raw_content=content)
 
 
 Agent = MathTeacherAgent

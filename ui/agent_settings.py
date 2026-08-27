@@ -68,9 +68,12 @@ class AgentSettingsDialog(QDialog):
         layout = QVBoxLayout(self)
         form = QFormLayout()
         self.provider_combo = QComboBox(self)
-        self.provider_combo.addItem("OpenAI-compatible", "openai")
+        self.provider_combo.addItem("OpenAI - Responses", "openai")
         self.provider_combo.addItem("DeepSeek", "deepseek")
         self.provider_combo.addItem("本地演示模型", "local")
+        self.protocol_combo = QComboBox(self)
+        self.protocol_combo.addItem("Responses", "responses")
+        self.protocol_combo.addItem("Chat Completions", "chat_completions")
         self.base_url_edit = QLineEdit(self)
         self.base_url_edit.setPlaceholderText("https://example.com/v1")
         self.api_key_edit = QLineEdit(self)
@@ -91,6 +94,7 @@ class AgentSettingsDialog(QDialog):
         self.timeout_spin.setDecimals(1)
         self.timeout_spin.setSuffix(" 秒")
         form.addRow("模型 Provider", self.provider_combo)
+        form.addRow("API protocol", self.protocol_combo)
         form.addRow("Base URL", self.base_url_edit)
         form.addRow("API Key", key_row)
         form.addRow("Model name", self.model_edit)
@@ -145,6 +149,7 @@ class AgentSettingsDialog(QDialog):
             model=str(settings.value("agent/model", "") or ""),
             timeout_seconds=max(1.0, min(600.0, timeout)),
             provider=str(settings.value("agent/provider", "openai") or "openai"),
+            protocol=str(settings.value("agent/protocol", "responses") or "responses"),
         )
 
     @classmethod
@@ -159,6 +164,7 @@ class AgentSettingsDialog(QDialog):
         settings.setValue("agent/model", settings_value.model.strip())
         settings.setValue("agent/timeout_seconds", float(settings_value.timeout_seconds))
         settings.setValue("agent/provider", settings_value.provider or "openai")
+        settings.setValue("agent/protocol", settings_value.normalized_protocol)
         settings.setValue(
             "agent/enabled",
             settings_value.is_complete if enabled is None else bool(enabled),
@@ -172,6 +178,7 @@ class AgentSettingsDialog(QDialog):
             model=self.model_edit.text().strip(),
             timeout_seconds=float(self.timeout_spin.value()),
             provider=str(self.provider_combo.currentData() or "openai"),
+            protocol=str(self.protocol_combo.currentData() or "responses"),
         )
 
     def _normalized_base_url(self) -> str:
@@ -180,6 +187,8 @@ class AgentSettingsDialog(QDialog):
     def _set_form_values(self, settings: AgentSettings) -> None:
         index = self.provider_combo.findData(settings.provider)
         self.provider_combo.setCurrentIndex(index if index >= 0 else 0)
+        protocol_index = self.protocol_combo.findData(settings.normalized_protocol)
+        self.protocol_combo.setCurrentIndex(protocol_index if protocol_index >= 0 else 0)
         self.base_url_edit.setText(settings.base_url)
         self.api_key_edit.setText(settings.api_key)
         self.model_edit.setText(settings.model)

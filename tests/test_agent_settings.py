@@ -15,6 +15,12 @@ from ui.agent_settings import AgentSettingsDialog
 
 
 class AgentSettingsTests(unittest.TestCase):
+    _settings_keys = (
+        "agent/base_url", "agent/api_key", "agent/model",
+        "agent/timeout_seconds", "agent/enabled", "agent/provider",
+        "agent/protocol",
+    )
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.application = QApplication.instance() or QApplication([])
@@ -22,14 +28,16 @@ class AgentSettingsTests(unittest.TestCase):
     def setUp(self) -> None:
         self.qsettings = QSettings("Math3DTeaching", "Math3DTeaching")
         self.original = {
-            key: self.qsettings.value(key) for key in (
-                "agent/base_url", "agent/api_key", "agent/model",
-                "agent/timeout_seconds", "agent/enabled",
-            ) if self.qsettings.contains(key)
+            key: self.qsettings.value(key)
+            for key in self._settings_keys
+            if self.qsettings.contains(key)
         }
+        for key in self._settings_keys:
+            self.qsettings.remove(key)
+        self.qsettings.sync()
 
     def tearDown(self) -> None:
-        for key in ("agent/base_url", "agent/api_key", "agent/model", "agent/timeout_seconds", "agent/enabled"):
+        for key in self._settings_keys:
             self.qsettings.remove(key)
         for key, value in self.original.items():
             self.qsettings.setValue(key, value)
@@ -60,7 +68,7 @@ class AgentSettingsTests(unittest.TestCase):
 
         self.assertEqual(
             dialog.current_settings(),
-            AgentSettings("https://example.test/v1", "secret", "model-x", 20.0),
+            AgentSettings("https://example.test/v1", "secret", "model-x", 20.0, protocol="responses"),
         )
         dialog.deleteLater()
 

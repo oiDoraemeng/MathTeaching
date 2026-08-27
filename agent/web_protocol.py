@@ -13,6 +13,7 @@ CLIENT_MESSAGE_TYPES = frozenset(
     {
         "create_session",
         "close_session",
+        "reopen_session",
         "send_message",
         "approve_plan",
         "stop_turn",
@@ -29,6 +30,18 @@ CLIENT_MESSAGE_TYPES = frozenset(
         "change_model",
         "open_history",
         "open_settings",
+        "restore_session_view",
+        "rename_session",
+        "hide_session",
+        "restore_hidden_session",
+        "save_model_provider",
+        "test_model_provider",
+        "save_custom_model",
+        "update_custom_model",
+        "delete_custom_model",
+        "set_selected_model",
+        "set_thinking_preferences",
+        "open_skills",
         "attach_files",
         "request_snapshot",
     }
@@ -51,11 +64,25 @@ EVENT_MESSAGE_TYPES = frozenset(
         "stopped",
         "error",
         "turn_finished",
+        "history_snapshot",
+        "settings_snapshot",
+        "model_catalog",
+        "mutation_succeeded",
+        "mutation_failed",
+        "provider_test_result",
     }
 )
 
 PROTOCOL_VERSION = 1
 MAX_PAYLOAD_BYTES = 128 * 1024
+MAX_IDENTIFIER_LENGTH = 128
+
+
+class ProtocolError(ValueError):
+    def __init__(self, code: str, message: str, *, field: str | None = None) -> None:
+        super().__init__(message)
+        self.code = code
+        self.field = field
 
 
 @dataclass(frozen=True)
@@ -117,17 +144,23 @@ def parse_envelope(value: str | dict[str, Any]) -> BridgeEnvelope:
         raise ValueError(f"unsupported protocol_version: {decoded.get('protocol_version')!r}")
     message_type = str(decoded.get("type", ""))
     if message_type not in CLIENT_MESSAGE_TYPES and message_type not in EVENT_MESSAGE_TYPES:
-        raise ValueError(f"unknown message type: {message_type}")
+        raise ProtocolError("unknown_message_type", f"unknown message type: {message_type}", field="type")
     request_id = str(decoded.get("request_id", "")).strip()
     if not request_id:
-        raise ValueError("request_id is required")
+        raise ProtocolError("missing_request_id", "request_id is required", field="request_id")
+    if len(request_id) > MAX_IDENTIFIER_LENGTH:
+        raise ProtocolError("identifier_too_long", "request_id exceeds maximum length", field="request_id")
     session_id = str(decoded.get("session_id", "")).strip()
     if not session_id and message_type != "request_snapshot":
-        raise ValueError("session_id is required")
+        raise ProtocolError("missing_session_id", "session_id is required", field="session_id")
+    if len(session_id) > MAX_IDENTIFIER_LENGTH:
+        raise ProtocolError("identifier_too_long", "session_id exceeds maximum length", field="session_id")
     turn_id_value = decoded.get("turn_id")
     turn_id = str(turn_id_value).strip() if turn_id_value is not None else None
+    if turn_id is not None and len(turn_id) > MAX_IDENTIFIER_LENGTH:
+        raise ProtocolError("identifier_too_long", "turn_id exceeds maximum length", field="turn_id")
     if message_type in _TURN_REQUIRED_TYPES and not turn_id:
-        raise ValueError("turn_id is required")
+        raise ProtocolError("missing_turn_id", "turn_id is required", field="turn_id")
     sequence_value = decoded.get("sequence")
     if sequence_value is not None and (isinstance(sequence_value, bool) or not isinstance(sequence_value, int) or sequence_value < 0):
         raise ValueError("sequence must be a non-negative integer")

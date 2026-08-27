@@ -7,6 +7,46 @@ from agent.scene_snapshot import SceneSnapshot
 from agent.session_store import SessionStore
 
 
+def test_store_migrates_existing_sessions_table_with_hidden_at(tmp_path) -> None:
+    math_root = tmp_path / ".math"
+    math_root.mkdir()
+    database_path = math_root / "mathagent.db"
+    with sqlite3.connect(database_path) as connection:
+        connection.execute(
+            """
+            CREATE TABLE sessions (
+                id TEXT PRIMARY KEY,
+                title TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                active_mode TEXT NOT NULL DEFAULT 'Agent',
+                execution_mode TEXT NOT NULL DEFAULT 'confirm',
+                model TEXT NOT NULL DEFAULT '',
+                current_turn_id TEXT,
+                last_opened_at TEXT,
+                closed_at TEXT,
+                parent_session_id TEXT
+            )
+            """
+        )
+        connection.execute(
+            """
+            INSERT INTO sessions
+            (id, title, created_at, updated_at, active_mode, execution_mode, model,
+             last_opened_at, parent_session_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            ("legacy", "Legacy Chat", "2026-01-01T00:00:00Z", "2026-01-01T00:00:00Z", "Agent", "confirm", "", "2026-01-01T00:00:00Z", None),
+        )
+
+    store = SessionStore(app_root=tmp_path)
+
+    with sqlite3.connect(database_path) as connection:
+        columns = {row[1] for row in connection.execute("PRAGMA table_info(sessions)")}
+    assert "hidden_at" in columns
+    assert store.get_session("legacy").hidden_at is None
+
+
 def test_store_creates_math_database_and_round_trips_turn(tmp_path) -> None:
     empty = SceneSnapshot()
     curve = SceneSnapshot(curves=({"alias": "f", "expression": "y=x^2"},))
@@ -92,3 +132,21 @@ def test_store_rejects_unknown_snapshot_version(tmp_path) -> None:
         assert "snapshot" in str(error)
     else:
         raise AssertionError("invalid snapshots must be rejected")
+
+
+def test_session_thinking_preferences_round_trip_and_validate_level(tmp_path) -> None:
+    store = SessionStore(app_root=tmp_path)
+    session = store.create_session("Chat")
+    assert session.thinking_enabled is True
+    assert session.thinking_level == "High"
+
+    updated = store.set_session_preferences(session.id, thinking_enabled=False, thinking_level="Low")
+    assert updated.thinking_enabled is False
+    assert updated.thinking_level == "Low"
+
+    try:
+        store.set_session_preferences(session.id, thinking_level="Extreme")
+    except ValueError as error:
+        assert str(error) == "invalid_thinking_level"
+    else:
+        raise AssertionError("unsupported thinking levels must be rejected")

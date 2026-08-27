@@ -35,6 +35,15 @@ def _snapshot_value(value: str | None) -> SceneSnapshot | None:
     return SceneSnapshot.from_json(value) if value else None
 
 
+def _normalize_title(title: str) -> str:
+    normalized = str(title or "").strip()
+    if not normalized:
+        return "New Chat"
+    if len(normalized) > 80:
+        raise ValueError("title_too_long")
+    return normalized
+
+
 @dataclass(frozen=True)
 class SessionRecord:
     id: str
@@ -47,6 +56,9 @@ class SessionRecord:
     current_turn_id: str | None = None
     last_opened_at: str | None = None
     closed_at: str | None = None
+    hidden_at: str | None = None
+    thinking_enabled: bool = True
+    thinking_level: str = "High"
     parent_session_id: str | None = None
 
 
@@ -146,6 +158,9 @@ class SessionStore:
                 current_turn_id TEXT,
                 last_opened_at TEXT,
                 closed_at TEXT,
+                hidden_at TEXT,
+                thinking_enabled INTEGER NOT NULL DEFAULT 1,
+                thinking_level TEXT NOT NULL DEFAULT 'High',
                 parent_session_id TEXT
             );
             CREATE TABLE IF NOT EXISTS turns (
@@ -192,10 +207,20 @@ class SessionStore:
             );
             """
         )
+        columns = {str(row[1]) for row in connection.execute("PRAGMA table_info(sessions)").fetchall()}
+        if "hidden_at" not in columns:
+            connection.execute("ALTER TABLE sessions ADD COLUMN hidden_at TEXT")
+        if "thinking_enabled" not in columns:
+            connection.execute("ALTER TABLE sessions ADD COLUMN thinking_enabled INTEGER NOT NULL DEFAULT 1")
+        if "thinking_level" not in columns:
+            connection.execute("ALTER TABLE sessions ADD COLUMN thinking_level TEXT NOT NULL DEFAULT 'High'")
 
     @staticmethod
     def _session(row: sqlite3.Row) -> SessionRecord:
-        return SessionRecord(**dict(row))
+        values = dict(row)
+        values["thinking_enabled"] = bool(values.get("thinking_enabled", 1))
+        values.setdefault("thinking_level", "High")
+        return SessionRecord(**values)
 
     def create_session(
         self,
@@ -204,18 +229,19 @@ class SessionStore:
         session_id: str | None = None,
         model: str = "",
         active_mode: str = "Agent",
-        execution_mode: str = "confirm",
+        execution_mode: str = "continuous",
         parent_session_id: str | None = None,
     ) -> SessionRecord:
         session_id = session_id or _new_id()
+        title = _normalize_title(title)
         timestamp = _now()
         with self._connect() as connection:
             connection.execute(
                 """INSERT INTO sessions
                 (id, title, created_at, updated_at, active_mode, execution_mode, model,
-                 last_opened_at, parent_session_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                (session_id, title or "New Chat", timestamp, timestamp, active_mode, execution_mode, model, timestamp, parent_session_id),
+                 last_opened_at, hidden_at, thinking_enabled, thinking_level, parent_session_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (session_id, title, timestamp, timestamp, active_mode, execution_mode, model, timestamp, None, 1, "High", parent_session_id),
             )
         return self.get_session(session_id)
 
@@ -226,19 +252,63 @@ class SessionStore:
             raise KeyError(f"unknown session: {session_id}")
         return self._session(row)
 
-    def list_sessions(self, *, include_closed: bool = False) -> list[SessionRecord]:
+    def list_sessions(self, *, include_closed: bool = False, include_hidden: bool = False) -> list[SessionRecord]:
         query = "SELECT * FROM sessions"
+        filters: list[str] = []
         if not include_closed:
-            query += " WHERE closed_at IS NULL"
-        query += " ORDER BY updated_at DESC"
+            filters.append("closed_at IS NULL")
+        if not include_hidden:
+            filters.append("hidden_at IS NULL")
+        if filters:
+            query += " WHERE " + " AND ".join(filters)
+        query += " ORDER BY updated_at DESC, id ASC"
         with self._connect() as connection:
             rows = connection.execute(query).fetchall()
         return [self._session(row) for row in rows]
 
     def rename_session(self, session_id: str, title: str) -> SessionRecord:
+        title = _normalize_title(title)
         with self._connect() as connection:
-            connection.execute("UPDATE sessions SET title = ?, updated_at = ? WHERE id = ?", (title.strip() or "New Chat", _now(), session_id))
+            cursor = connection.execute("UPDATE sessions SET title = ?, updated_at = ? WHERE id = ?", (title, _now(), session_id))
+            if cursor.rowcount == 0:
+                raise KeyError(f"unknown session: {session_id}")
         return self.get_session(session_id)
+
+    def list_hidden_sessions(self, *, include_closed: bool = True) -> list[SessionRecord]:
+        query = "SELECT * FROM sessions WHERE hidden_at IS NOT NULL"
+        if not include_closed:
+            query += " AND closed_at IS NULL"
+        query += " ORDER BY updated_at DESC, id ASC"
+        with self._connect() as connection:
+            rows = connection.execute(query).fetchall()
+        return [self._session(row) for row in rows]
+
+    def hide_session(self, session_id: str) -> SessionRecord:
+        visible = self.list_sessions(include_closed=False)
+        if not any(item.id == session_id for item in visible):
+            raise KeyError(f"unknown or already hidden session: {session_id}")
+        if len(visible) <= 1:
+            raise ValueError("cannot_hide_last_visible_session")
+        timestamp = _now()
+        with self._connect() as connection:
+            connection.execute("UPDATE sessions SET hidden_at = ?, updated_at = ? WHERE id = ?", (timestamp, timestamp, session_id))
+        return self.get_session(session_id)
+
+    def restore_hidden_session(self, session_id: str) -> SessionRecord:
+        timestamp = _now()
+        with self._connect() as connection:
+            cursor = connection.execute("UPDATE sessions SET hidden_at = NULL, updated_at = ? WHERE id = ?", (timestamp, session_id))
+            if cursor.rowcount == 0:
+                raise KeyError(f"unknown session: {session_id}")
+        return self.get_session(session_id)
+
+    def select_visible_fallback(self, *, excluding: str | None = None) -> SessionRecord:
+        sessions = [item for item in self.list_sessions() if item.id != excluding]
+        if sessions:
+            latest_key = max((item.last_opened_at or "", item.updated_at) for item in sessions)
+            candidates = [item for item in sessions if (item.last_opened_at or "", item.updated_at) == latest_key]
+            return min(candidates, key=lambda item: item.id)
+        return self.create_session()
 
     def close_session(self, session_id: str) -> SessionRecord:
         timestamp = _now()
@@ -252,17 +322,30 @@ class SessionStore:
             connection.execute("UPDATE sessions SET closed_at = NULL, last_opened_at = ?, updated_at = ? WHERE id = ?", (timestamp, timestamp, session_id))
         return self.get_session(session_id)
 
-    def set_session_preferences(self, session_id: str, *, active_mode: str | None = None, execution_mode: str | None = None, model: str | None = None) -> SessionRecord:
+    def set_session_preferences(
+        self,
+        session_id: str,
+        *,
+        active_mode: str | None = None,
+        execution_mode: str | None = None,
+        model: str | None = None,
+        thinking_enabled: bool | None = None,
+        thinking_level: str | None = None,
+    ) -> SessionRecord:
         current = self.get_session(session_id)
+        if thinking_level is not None and thinking_level not in {"Low", "High", "X-High"}:
+            raise ValueError("invalid_thinking_level")
         values = (
             active_mode if active_mode is not None else current.active_mode,
             execution_mode if execution_mode is not None else current.execution_mode,
             model if model is not None else current.model,
+            int(thinking_enabled if thinking_enabled is not None else current.thinking_enabled),
+            thinking_level if thinking_level is not None else current.thinking_level,
             _now(),
             session_id,
         )
         with self._connect() as connection:
-            connection.execute("UPDATE sessions SET active_mode = ?, execution_mode = ?, model = ?, updated_at = ? WHERE id = ?", values)
+            connection.execute("UPDATE sessions SET active_mode = ?, execution_mode = ?, model = ?, thinking_enabled = ?, thinking_level = ?, updated_at = ? WHERE id = ?", values)
         return self.get_session(session_id)
 
     def append_turn(
@@ -281,11 +364,12 @@ class SessionStore:
         parent_turn_id: str | None = None,
         branch_id: str | None = None,
         preview_path: str | None = None,
+        turn_id: str | None = None,
     ) -> str:
         session = self.get_session(session_id)
         with self._connect() as connection:
             index = int(connection.execute("SELECT COALESCE(MAX(turn_index), 0) + 1 FROM turns WHERE session_id = ?", (session_id,)).fetchone()[0])
-            turn_id = _new_id()
+            turn_id = turn_id or _new_id()
             timestamp = _now()
             connection.execute(
                 """INSERT INTO turns

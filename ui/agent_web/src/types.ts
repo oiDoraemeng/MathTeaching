@@ -1,5 +1,6 @@
 export type AgentMode = "Agent" | "Ask" | "Plan";
 export type ExecutionMode = "confirm" | "continuous";
+export type ViewName = "conversation" | "history" | "settings";
 
 export type TimelineEventType =
   | "user_message"
@@ -39,6 +40,15 @@ export interface ModelStatus {
   error?: string;
 }
 
+export interface SettingsState {
+  provider?: string;
+  protocol?: string;
+  base_url?: string;
+  model?: string;
+  key_configured?: boolean;
+  key_suffix?: string;
+}
+
 export interface TurnProjection {
   id: string;
   userMessage: string;
@@ -54,6 +64,10 @@ export interface SessionProjection {
   mode: AgentMode;
   executionMode: ExecutionMode;
   model: string;
+  thinking_enabled?: boolean;
+  thinking_level?: "Low" | "High" | "X-High";
+  closed?: boolean;
+  hidden?: boolean;
   turns: TurnProjection[];
   contextUsage?: ContextUsage;
   attachments?: Array<{ id: string; turn_id?: string; path: string; mime_type: string; byte_size: number; sha256: string }>;
@@ -67,6 +81,42 @@ export interface SnapshotProjection {
   contextUsage?: ContextUsage;
   model_status?: ModelStatus;
   modelStatus?: ModelStatus;
+  settings_state?: SettingsState;
+  settingsState?: SettingsState;
+  history?: { visible?: HistoryItem[]; hidden?: HistoryItem[] };
+  model_catalog?: ModelCatalog;
+  modelCatalog?: ModelCatalog;
+}
+
+export interface ModelDescriptor {
+  id: string;
+  name: string;
+  group: string;
+  provider?: string;
+  protocol?: string;
+  capabilities?: string[];
+  context_window?: string;
+  base_url?: string;
+  model?: string;
+  input_context?: string;
+  output_context?: string;
+  thinking_enabled?: boolean;
+  thinking_levels?: Array<"Low" | "High" | "X-High">;
+}
+
+export interface ModelCatalog {
+  builtin: ModelDescriptor[];
+  custom: ModelDescriptor[];
+}
+
+export interface HistoryItem {
+  id: string;
+  title: string;
+  updated_at?: string;
+  last_opened_at?: string;
+  turn_count: number;
+  hidden: boolean;
+  closed: boolean;
 }
 
 export interface BridgeEnvelope {
@@ -82,6 +132,7 @@ export interface BridgeEnvelope {
 export type IntentType =
   | "create_session"
   | "close_session"
+  | "reopen_session"
   | "send_message"
   | "approve_plan"
   | "stop_turn"
@@ -92,7 +143,21 @@ export type IntentType =
   | "attach_files"
   | "change_mode"
   | "change_model"
-  | "change_execution_mode";
+  | "change_execution_mode"
+  | "open_history"
+  | "open_settings"
+  | "restore_session_view"
+  | "rename_session"
+  | "hide_session"
+  | "restore_hidden_session"
+  | "save_model_provider"
+  | "test_model_provider"
+  | "save_custom_model"
+  | "update_custom_model"
+  | "delete_custom_model"
+  | "set_selected_model"
+  | "set_thinking_preferences"
+  | "open_skills";
 
 export interface ClientIntent extends Omit<BridgeEnvelope, "type"> {
   type: IntentType;
@@ -105,8 +170,13 @@ export interface AppState {
   activeSessionId: string;
   contextUsage: ContextUsage;
   modelStatus: ModelStatus;
+  settingsState: SettingsState;
   gapDetected: boolean;
   lastSequence: Record<string, number>;
+  view: ViewName;
+  history: { visible: HistoryItem[]; hidden: HistoryItem[] };
+  modelCatalog: ModelCatalog;
+  pendingMutations: Record<string, { requestId: string; sessionId: string; previous: string }>;
 }
 
 export const EMPTY_CONTEXT: ContextUsage = {

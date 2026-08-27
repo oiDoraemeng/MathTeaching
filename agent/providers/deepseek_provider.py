@@ -9,7 +9,14 @@ class DeepSeekProvider(OpenAIProvider):
 
     def __init__(self, settings: AgentSettings) -> None:
         if not settings.base_url.strip():
-            settings = AgentSettings(self.DEFAULT_BASE_URL, settings.api_key, settings.model, settings.timeout_seconds)
+            settings = AgentSettings(
+                base_url=self.DEFAULT_BASE_URL,
+                api_key=settings.api_key,
+                model=settings.model,
+                timeout_seconds=settings.timeout_seconds,
+                provider=settings.provider,
+                protocol=settings.protocol,
+            )
         super().__init__(settings)
 
 

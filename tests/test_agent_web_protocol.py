@@ -6,6 +6,7 @@ from agent.events import AgentEvent
 from agent.web_protocol import (
     MAX_PAYLOAD_BYTES,
     BridgeEnvelope,
+    ProtocolError,
     parse_client_message,
     parse_envelope,
     serialize_event,
@@ -91,3 +92,9 @@ def test_snapshot_and_stop_intents_keep_id_rules() -> None:
                 "payload": {},
             }
         )
+
+
+def test_unknown_envelope_type_uses_stable_protocol_error_code() -> None:
+    with pytest.raises(ProtocolError) as raised:
+        parse_envelope({"protocol_version": 1, "type": "run_python", "request_id": "r", "session_id": "s", "payload": {}})
+    assert raised.value.code == "unknown_message_type"

@@ -1,0 +1,22 @@
+name: geometry
+description: 创建点、向量、直线、曲线和曲面
+version: 1.0
+triggers:
+- 几何
+- 点
+- 向量
+- 直线
+- 曲线
+- 曲面
+- geometry
+- point
+- vector
+- line
+- curve
+- surface
+capabilities:
+- create_point
+- create_vector
+- create_line
+- create_curve
+- create_surface

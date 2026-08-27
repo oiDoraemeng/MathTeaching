@@ -38,6 +38,16 @@ def test_bridge_forwards_valid_intent_and_emits_json_error() -> None:
     assert emitted[-1]["request_id"] == "req-2"
 
 
+def test_bridge_error_preserves_session_id_and_uses_bounded_payload() -> None:
+    app = QApplication.instance() or QApplication([])
+    emitted: list[dict[str, object]] = []
+    bridge = AgentBridge(lambda _message: (_ for _ in ()).throw(ValueError("bad request")))
+    bridge.event_json.connect(lambda raw: emitted.append(json.loads(raw)))
+    bridge.send_json(json.dumps({"protocol_version": 1, "type": "send_message", "request_id": "r", "session_id": "s", "payload": {}}))
+    assert emitted[-1]["session_id"] == "s"
+    assert set(emitted[-1]["payload"]) == {"code", "message"}
+
+
 def test_bridge_exposes_only_send_json_slot() -> None:
     app = QApplication.instance() or QApplication([])
     bridge = AgentBridge(lambda _message: None)

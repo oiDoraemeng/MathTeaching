@@ -4,11 +4,13 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, replace
 import time
+from uuid import uuid4
 from pathlib import Path
 
+from collections import deque
 from collections.abc import Callable
 
-from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QThread, QTimer
+from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QThread, QTimer, Signal, Slot
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent, QShortcut, QWheelEvent
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QToolButton, QVBoxLayout, QWidget
@@ -47,6 +49,8 @@ from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 from services.agent_worker import RuntimeTurnWorker
 from services.agent_provider import (
     AgentSettings,
+    AgentMessage,
+    AgentResponse,
     OpenAICompatibleProvider,
     SceneContext,
 )
@@ -62,6 +66,105 @@ from agent.providers import ModelProvider
 # 辅助线在视口四周额外绘制此比例；小幅平移和缩放仍落在既有区域内，
 # 因而无需立刻重建辅助线和曲线采样。
 _GUIDE_MARGIN = 2.5
+
+
+class _UnavailableAgentProvider:
+    """Provider used when the user has not configured the selected remote model."""
+
+    def __init__(self, reason: str = "provider_unconfigured") -> None:
+        self.reason = reason
+
+    def create_plan(self, messages: tuple[AgentMessage, ...], scene_context: SceneContext) -> AgentResponse:
+        raise RuntimeError(self.reason)
+
+    def stream(self, messages, *, tools=()):
+        raise RuntimeError(self.reason)
+
+
+@dataclass
+class _SceneCommandRequest:
+    """One validated scene-host call crossing the worker/GUI boundary."""
+
+    method: str
+    args: tuple[object, ...] = ()
+    error: BaseException | None = None
+
+
+class _SceneCommandBridge(QObject):
+    """Dispatch SceneCommandService host calls on the Qt GUI thread."""
+
+    request = Signal(object)
+
+    def __init__(self, host: object) -> None:
+        super().__init__()
+        self._host = host
+        self.request.connect(self._dispatch, Qt.ConnectionType.BlockingQueuedConnection)
+
+    @Slot(object)
+    def _dispatch(self, request: _SceneCommandRequest) -> None:
+        try:
+            getattr(self._host, request.method)(*request.args)
+        except Exception as error:
+            # BlockingQueuedConnection does not propagate Python exceptions from
+            # a slot, so carry it back explicitly for SceneCommandService.
+            request.error = error
+
+
+class _SceneCommandHostProxy:
+    """Minimal SceneCommandHost adapter safe to call from any thread."""
+
+    def __init__(self, bridge: _SceneCommandBridge) -> None:
+        self._bridge = bridge
+
+    def _invoke(self, method: str, *args: object) -> None:
+        request = _SceneCommandRequest(method, tuple(args))
+        if QThread.currentThread() == self._bridge.thread():
+            self._bridge._dispatch(request)
+        else:
+            self._bridge.request.emit(request)
+        if request.error is not None:
+            raise request.error
+
+    def begin_scene_command_transaction(self) -> None:
+        self._invoke("begin_scene_command_transaction")
+
+    def apply_scene_command(self, operation: dict[str, object]) -> None:
+        self._invoke("apply_scene_command", operation)
+
+    def commit_scene_command_transaction(self) -> None:
+        self._invoke("commit_scene_command_transaction")
+
+    def rollback_scene_command_transaction(self) -> None:
+        self._invoke("rollback_scene_command_transaction")
+
+    def _undo_scene_command(self) -> None:
+        self._invoke("_undo_scene_command")
+
+    def _undo_2d_geometry(self) -> None:
+        self._invoke("_undo_2d_geometry")
+
+
+class _AgentEventRelay(QObject):
+    """GUI-thread receiver for streaming events produced by a worker thread."""
+
+    def __init__(self, callback: Callable[[object], None], parent: QObject) -> None:
+        super().__init__(parent)
+        self._callback = callback
+
+    @Slot(object)
+    def deliver(self, event: object) -> None:
+        self._callback(event)
+
+
+def _provider_configuration_error(provider: str) -> str:
+    """Return a user-facing configuration error without exposing secrets."""
+    labels = {
+        "deepseek": "DeepSeek",
+        "openai": "OpenAI",
+        "local": "本地模型",
+    }
+    label = labels.get(str(provider).strip().lower(), "当前模型")
+    return f"provider_unconfigured: {label} API Key 或模型信息未配置，请打开设置完成配置后重试。"
 
 
 class _ViewportResizeFilter(QObject):
@@ -184,11 +287,14 @@ class MainWindow:
         self._scene_command_active = False
         self._agent_thread: QThread | None = None
         self._agent_worker: RuntimeTurnWorker | None = None
+        self._agent_processed_requests: dict[str, deque[tuple[str, str]]] = {}
         self._agent_settings_dialog: AgentSettingsDialog | None = None
         self._last_agent_plan_summary = ""
         self._agent_settings = AgentSettingsDialog.load_settings()
         self._agent_provider = self._create_agent_provider()
-        self.scene_command_service = SceneCommandService(self)
+        self._scene_command_bridge = _SceneCommandBridge(self)
+        self._scene_command_host_proxy = _SceneCommandHostProxy(self._scene_command_bridge)
+        self.scene_command_service = SceneCommandService(self._scene_command_host_proxy)
         self._agent_session_store = SessionStore()
         self._agent_context_broker = ContextBroker(attachments_root=self._agent_session_store.math_root)
         self._agent_conversations = ConversationService(self._agent_session_store)
@@ -200,6 +306,7 @@ class MainWindow:
         self._math_teacher_agent = self._agent_runtime.agent
 
         self.window = self._load_designer_form()
+        self._agent_event_relay = _AgentEventRelay(self._receive_runtime_event, self.window)
         self._install_algebra_panel()
         self._configure_viewport()
         self._install_agent_panel()
@@ -254,6 +361,16 @@ class MainWindow:
         message_type = getattr(envelope, "type", "")
         payload = getattr(envelope, "payload", {}) or {}
         session_id = str(getattr(envelope, "session_id", "") or "")
+        request_id = str(getattr(envelope, "request_id", "") or "")
+        previous_active_id = self.agent_panel.active_session_id
+        if message_type not in {"request_snapshot", "open_history", "open_settings", "restore_session_view", "open_skills"} and request_id:
+            ledger = self._agent_processed_requests.setdefault(session_id, deque(maxlen=128))
+            signature = (request_id, message_type)
+            if any(item[0] == request_id and item[1] != message_type for item in ledger):
+                raise ValueError("request_reuse_conflict")
+            if signature in ledger:
+                return
+            ledger.append(signature)
         if message_type == "create_session":
             try:
                 self._agent_session_store.get_session(session_id)
@@ -263,7 +380,7 @@ class MainWindow:
                     session_id=session_id,
                     model=str(payload.get("model", self._agent_settings.model)),
                     active_mode=str(payload.get("mode", "Agent")),
-                    execution_mode=str(payload.get("execution_mode", "confirm")),
+                    execution_mode=str(payload.get("execution_mode", "continuous")),
                 )
         elif session_id in {"boot", ""}:
             sessions = self._agent_session_store.list_sessions(include_closed=False)
@@ -278,9 +395,97 @@ class MainWindow:
                 self._agent_session_store.create_session(session_id=session_id, model=self._agent_settings.model)
         self.agent_panel.set_active_session(session_id)
         if message_type == "create_session":
+            self._emit_agent_snapshot(session_id, request_id or "create-session")
             return
-        if message_type == "close_session":
-            self._agent_session_store.close_session(session_id)
+        if message_type in {"open_history", "open_settings"}:
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", message_type))
+            return
+        if message_type == "open_skills":
+            from agent.skill_manager import SkillManager
+            self.agent_panel.bridge.emit_event({
+                "protocol_version": 1,
+                "type": "settings_snapshot",
+                "request_id": getattr(envelope, "request_id", message_type),
+                "session_id": session_id,
+                "payload": {"skills": [skill.name for skill in SkillManager(command_service=self._agent_runtime.command_service).list_skills()]},
+            })
+            return
+        if message_type == "save_model_provider":
+            from ui.agent_settings import AgentSettingsDialog
+            draft = AgentSettings(
+                base_url=str(payload.get("base_url", "")),
+                api_key=str(payload.get("api_key", "")),
+                model=str(payload.get("model", "")),
+                timeout_seconds=float(payload.get("timeout_seconds", 60.0)),
+                provider=str(payload.get("provider", "openai")),
+                protocol=str(payload.get("protocol", "responses")),
+            )
+            AgentSettingsDialog.save_settings(draft, enabled=bool(payload.get("enabled", draft.is_complete)))
+            self._agent_settings = draft
+            self._agent_provider = self._create_agent_provider()
+            self._agent_runtime = AgentRuntime(provider=self._agent_provider, command_service=self.scene_command_service, session_store=self._agent_session_store)
+            self._math_teacher_agent = self._agent_runtime.agent
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", "provider"))
+            return
+        if message_type == "test_model_provider":
+            from agent.providers import ModelProvider
+            draft = AgentSettings(
+                base_url=str(payload.get("base_url", "")),
+                api_key=str(payload.get("api_key", "")),
+                model=str(payload.get("model", "")),
+                timeout_seconds=min(10.0, max(1.0, float(payload.get("timeout_seconds", 10.0)))),
+                provider=str(payload.get("provider", "openai")),
+                protocol=str(payload.get("protocol", "responses")),
+            )
+            try:
+                ModelProvider.create(draft.provider, draft).test_connection()
+            except Exception as error:
+                message = str(error).replace(draft.api_key, "***") if draft.api_key else str(error)
+                result = {"ok": False, "message": message[:512]}
+            else:
+                result = {"ok": True, "message": "connection_ok"}
+            self.agent_panel.bridge.emit_event({"protocol_version": 1, "type": "provider_test_result", "request_id": getattr(envelope, "request_id", "provider-test"), "session_id": session_id, "payload": result})
+            return
+        if message_type == "restore_session_view":
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", message_type))
+        elif message_type == "rename_session":
+            title = str(payload.get("title", ""))
+            self._agent_session_store.rename_session(session_id, title)
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", message_type))
+        elif message_type == "hide_session":
+            self._agent_session_store.hide_session(session_id)
+            fallback = self._agent_session_store.select_visible_fallback(excluding=session_id)
+            self._emit_agent_snapshot(fallback.id, getattr(envelope, "request_id", message_type))
+        elif message_type == "restore_hidden_session":
+            self._agent_session_store.restore_hidden_session(session_id)
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", message_type))
+        elif message_type in {"save_custom_model", "update_custom_model"}:
+            from agent.model_catalog import CustomModelStore
+            model_id = str(payload.get("id", payload.get("model_id", "")))
+            CustomModelStore.save(model_id, payload)
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", message_type))
+        elif message_type == "delete_custom_model":
+            from agent.model_catalog import CustomModelStore
+            CustomModelStore.delete(str(payload.get("id", payload.get("model_id", ""))))
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", message_type))
+        elif message_type == "close_session":
+            visible = self._agent_session_store.list_sessions(include_closed=False)
+            if len(visible) > 1:
+                self._agent_session_store.close_session(session_id)
+                active_id = previous_active_id
+                remaining = [item for item in visible if item.id != session_id]
+                if active_id == session_id or not any(item.id == active_id for item in remaining):
+                    active = self._agent_session_store.select_visible_fallback(excluding=session_id)
+                else:
+                    active = self._agent_session_store.get_session(active_id)
+                self.agent_panel.set_active_session(active.id)
+                self._emit_agent_snapshot(active.id, request_id or "close-session")
+            else:
+                self._emit_agent_snapshot(session_id, request_id or "close-session")
+        elif message_type == "reopen_session":
+            self._agent_session_store.reopen_session(session_id)
+            self.agent_panel.set_active_session(session_id)
+            self._emit_agent_snapshot(session_id, request_id or "reopen-session")
         elif message_type == "send_message":
             text = str(payload.get("text", "")).strip()
             if text:
@@ -297,6 +502,19 @@ class MainWindow:
         elif message_type in {"set_model", "change_model"}:
             self._agent_session_store.set_session_preferences(session_id, model=str(payload.get("model", "")))
             self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", "model"))
+        elif message_type == "set_selected_model":
+            self._agent_session_store.set_session_preferences(session_id, model=str(payload.get("model", "")))
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", "model"))
+        elif message_type == "set_thinking_preferences":
+            enabled = payload.get("enabled", True)
+            if not isinstance(enabled, bool):
+                raise ValueError("thinking_enabled must be boolean")
+            self._agent_session_store.set_session_preferences(
+                session_id,
+                thinking_enabled=enabled,
+                thinking_level=str(payload.get("level", "High")),
+            )
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", "thinking"))
         elif message_type == "attach_files":
             raw_paths = payload.get("paths", [])
             if not isinstance(raw_paths, list):
@@ -318,7 +536,12 @@ class MainWindow:
                 )
             self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", "attachments"))
         elif message_type == "approve_plan":
-            turn = self._agent_session_store.get_turn(str(getattr(envelope, "turn_id", "")))
+            turn_id = str(getattr(envelope, "turn_id", ""))
+            turn = self._agent_session_store.get_turn(turn_id)
+            if turn.execution_status not in {"approval_required", "plan_pending"}:
+                raise ValueError("stale_approval")
+            if not self._agent_runtime.consume_approval(session_id, turn_id):
+                raise ValueError("stale_approval")
             if turn.command_plan is None:
                 raise ValueError("该回合没有可执行的命令计划")
             self.agent_panel.bridge.emit_event({
@@ -369,6 +592,14 @@ class MainWindow:
             self._agent_session_store,
             active_session_id=session_id or None,
             model_status={"model": self._agent_settings.model, "connected": self._using_remote_agent()},
+            settings_state={
+                "provider": self._agent_settings.provider,
+                "protocol": self._agent_settings.normalized_protocol,
+                "base_url": self._agent_settings.base_url,
+                "model": self._agent_settings.model,
+                "key_configured": bool(self._agent_settings.api_key),
+                "key_suffix": self._agent_settings.api_key[-4:] if self._agent_settings.api_key else "",
+            },
         )
         self.agent_panel.bridge.emit_event({
             "protocol_version": 1,
@@ -379,12 +610,14 @@ class MainWindow:
         })
 
     def _create_agent_provider(self):
-        if AgentSettingsDialog.is_enabled() and (self._agent_settings.provider == "local" or self._agent_settings.is_complete):
+        if self._agent_settings.provider == "local" and AgentSettingsDialog.is_enabled():
+            return ModelProvider.create("local", self._agent_settings)
+        if AgentSettingsDialog.is_enabled() and self._agent_settings.is_complete:
             try:
                 return ModelProvider.create(self._agent_settings.provider, self._agent_settings)
             except ValueError:
-                pass
-        return RuleBasedAgentProvider()
+                return _UnavailableAgentProvider(_provider_configuration_error(self._agent_settings.provider))
+        return _UnavailableAgentProvider(_provider_configuration_error(self._agent_settings.provider))
 
     def _using_remote_agent(self) -> bool:
         return isinstance(self._agent_provider, OpenAICompatibleProvider)
@@ -665,12 +898,14 @@ class MainWindow:
         if self._agent_thread is not None and self._agent_thread.isRunning():
             return
         active_session_id = session_id or self.agent_panel.active_session_id
+        turn_id = uuid4().hex
         self.agent_panel.set_active_session(active_session_id)
         self.agent_panel.bridge.emit_event({
             "protocol_version": 1,
             "type": "user_message",
             "request_id": "user-message",
             "session_id": active_session_id,
+            "turn_id": turn_id,
             "payload": {"text": prompt},
         })
         self.agent_sidebar.set_busy(True)
@@ -684,10 +919,11 @@ class MainWindow:
             execution_mode=session.execution_mode,
             scene_context=self._build_scene_context(),
             scene_before=self._scene_snapshot_from_current_state(),
+            turn_id=turn_id,
         )
         worker.moveToThread(thread)
         thread.started.connect(worker.run)
-        worker.event_ready.connect(self._receive_runtime_event, Qt.ConnectionType.QueuedConnection)
+        worker.event_ready.connect(self._agent_event_relay.deliver, Qt.ConnectionType.QueuedConnection)
         worker.turn_finished.connect(self._receive_runtime_result, Qt.ConnectionType.QueuedConnection)
         worker.error.connect(self._receive_runtime_error, Qt.ConnectionType.QueuedConnection)
         worker.finished.connect(thread.quit)
@@ -2495,7 +2731,7 @@ class MainWindow:
         remote = self._using_remote_agent()
         self.agent_sidebar.set_model_status(settings.model, enabled=remote)
         if settings.provider != "local" and settings.is_complete and not remote:
-            self.agent_panel.show_error("连接信息不可用，已回退到本地演示模式。")
+            self.agent_panel.show_error(_provider_configuration_error(settings.provider))
 
     def _restore_demo_agent(self) -> None:
         # 只切换 provider；保留已填写的连接信息，方便随时切回远程模型。

@@ -26,4 +26,13 @@ describe("MathAgent shell", () => {
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
   });
+
+  it("opens history and settings as visible secondary views", () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /\u5386\u53f2\u8bb0\u5f55/ }));
+    expect(screen.getByRole("heading", { name: "History" })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Back to conversation" }));
+    fireEvent.click(screen.getByRole("button", { name: /\u8bbe\u7f6e/ }));
+    expect(screen.getByRole("heading", { name: "Settings" })).toBeVisible();
+  });
 });
