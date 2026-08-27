@@ -41,7 +41,29 @@ def test_legacy_tool_name_routes_to_canonical_capability() -> None:
     assert result.plan.operations[0]["expression"] == "y=x^2"
 
 
+def test_every_legacy_tool_reports_a_catalog_canonical_name() -> None:
+    registry = ToolRegistry()
+    catalog_names = {item["name"] for item in registry.capabilities.catalog()["capabilities"]}
+    results = (
+        registry.call("inspect_scene"),
+        registry.call("calculate_expression", expression="2+2"),
+        registry.call("create_curve", expression="x", alias="f"),
+        registry.call("create_tangent", expression="x^2", curve_alias="f", x=1),
+        registry.call("create_integral_area", expression="x", curve_alias="f", interval=[0, 1]),
+        registry.call("create_determinant_demo", a=[1, 0], b=[0, 1]),
+    )
+
+    assert {result.canonical_name for result in results} <= catalog_names
+
+
 def test_tool_registry_does_not_import_renderers() -> None:
     module = importlib.import_module("agent.tool_registry")
     assert "PySide6" not in module.__dict__
     assert "pyvista" not in module.__dict__
+
+
+def test_skill_metadata_uses_only_canonical_capability_names() -> None:
+    canonical = set(__import__("agent.capabilities.contracts", fromlist=["CANONICAL_CAPABILITY_NAMES"]).CANONICAL_CAPABILITY_NAMES)
+    skills = __import__("agent.skill_manager", fromlist=["SkillManager"]).SkillManager().list_skills()
+
+    assert all(set(skill.capabilities) <= canonical for skill in skills)

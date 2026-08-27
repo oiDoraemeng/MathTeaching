@@ -12,6 +12,7 @@ from typing import Any
 from .events import AgentEvent
 from .session_store import SessionStore, SessionRecord, TurnRecord
 from .model_catalog import CustomModelStore, default_model_id, model_catalog
+from .capabilities import build_default_registry
 
 
 def _json_value(value: Any) -> Any:
@@ -132,6 +133,7 @@ def build_session_snapshot(
         "settings_state": _json_value(dict(settings_state or {})),
         "history": {"visible": visible_history, "hidden": hidden_history},
         "model_catalog": model_catalog(CustomModelStore.load()),
+        "capability_catalog": build_default_registry().catalog(),
     }
 
 

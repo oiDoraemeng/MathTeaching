@@ -57,4 +57,14 @@ class AgentBridge(QObject):
             payload = event.to_dict()
         else:
             payload = dict(event)
-        self.event_json.emit(json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
+        try:
+            normalized = parse_envelope(payload).to_dict()
+        except Exception as error:
+            normalized = {
+                "protocol_version": 1,
+                "type": "error",
+                "request_id": str(payload.get("request_id", "ui")),
+                "session_id": str(payload.get("session_id", "")),
+                "payload": {"code": "invalid_event", "message": str(error)[:512]},
+            }
+        self.event_json.emit(json.dumps(normalized, ensure_ascii=False, separators=(",", ":")))

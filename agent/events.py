@@ -6,6 +6,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, ClassVar
 
+from .capabilities.contracts import MAX_EVENT_STRING_LENGTH, json_safe
+
 
 EVENT_TYPES = frozenset(
     {
@@ -13,6 +15,9 @@ EVENT_TYPES = frozenset(
         "message_delta",
         "tool_started",
         "tool_finished",
+        "capability_fallback",
+        "plan_composed",
+        "scene_conflict",
         "calculation_result",
         "plan_ready",
         "validation_result",
@@ -29,6 +34,25 @@ EVENT_TYPES = frozenset(
     }
 )
 
+_SENSITIVE_KEYS = frozenset({"api_key", "authorization", "password", "secret", "token", "headers"})
+
+
+def sanitize_event_payload(value: dict[str, Any]) -> dict[str, Any]:
+    """Detach bounded JSON-safe event data before it reaches storage or the UI."""
+    def sanitize(item: Any, *, key: str = "") -> Any:
+        if key.lower() in _SENSITIVE_KEYS:
+            return "***"
+        if isinstance(item, str):
+            return item[:MAX_EVENT_STRING_LENGTH]
+        if isinstance(item, dict):
+            return {str(child_key)[:MAX_EVENT_STRING_LENGTH]: sanitize(child, key=str(child_key)) for child_key, child in item.items()}
+        if isinstance(item, (list, tuple)):
+            return [sanitize(child) for child in item[:64]]
+        return item
+
+    payload = sanitize(value)
+    return json_safe(payload)
+
 
 @dataclass(frozen=True)
 class AgentEvent:
@@ -44,6 +68,7 @@ class AgentEvent:
             raise ValueError(f"unknown event type: {self.type}")
         if not isinstance(self.payload, dict):
             raise ValueError("event payload must be an object")
+        object.__setattr__(self, "payload", sanitize_event_payload(self.payload))
 
     def to_dict(self) -> dict[str, Any]:
         return {

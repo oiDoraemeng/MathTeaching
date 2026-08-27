@@ -11,6 +11,6 @@ triggers:
 - matrix
 - determinant
 capabilities:
-- vector_operations
-- matrix_transform
-- determinant_area
+- math.calculate
+- teaching.explain
+- scene.edit

@@ -14,8 +14,18 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class AgentMessage:
-    role: Literal["system", "user", "assistant"]
-    content: str
+    role: Literal["system", "user", "assistant", "tool"]
+    content: str = ""
+    tool_calls: tuple["ProviderToolCall", ...] = ()
+    tool_result: "ToolResultMessage | None" = None
+
+    @classmethod
+    def assistant_tool_calls(cls, calls: Iterable["ProviderToolCall"], content: str = "") -> "AgentMessage":
+        return cls("assistant", content, tuple(calls))
+
+    @classmethod
+    def tool_result(cls, result: "ToolResultMessage") -> "AgentMessage":
+        return cls("tool", result.content, tool_result=result)
 
 
 @dataclass(frozen=True)
@@ -73,6 +83,23 @@ class ToolResultMessage:
     content: str
 
 
+@dataclass(frozen=True)
+class ProviderToolCall:
+    """Provider-neutral native function call with a stable correlation ID."""
+
+    call_id: str
+    name: str
+    arguments: dict[str, Any] | None
+    argument_error: str | None = None
+
+
+@dataclass(frozen=True)
+class NativeToolResponse:
+    text: str
+    tool_calls: tuple[ProviderToolCall, ...] = ()
+    raw_content: str = ""
+
+
 class AgentProvider(Protocol):
     def create_plan(
         self,
@@ -87,6 +114,13 @@ class AgentProvider(Protocol):
         *,
         tools: Iterable[dict[str, Any]] = (),
     ) -> Iterable[ProviderEvent]:
+        ...
+
+    def request_tools(
+        self,
+        messages: tuple[AgentMessage, ...],
+        catalog: Iterable[dict[str, Any]],
+    ) -> NativeToolResponse:
         ...
 
 
@@ -169,6 +203,131 @@ class OpenAICompatibleProvider:
         if self.settings.api_key:
             message = message.replace(self.settings.api_key, "***")
         return message
+
+    @property
+    def supports_native_tools(self) -> bool:
+        return True
+
+    @staticmethod
+    def _tool_definitions(catalog: Iterable[dict[str, Any]], *, protocol: str) -> list[dict[str, Any]]:
+        definitions: list[dict[str, Any]] = []
+        for item in catalog:
+            name = item.get("name")
+            schema = item.get("input_schema")
+            if not isinstance(name, str) or not isinstance(schema, dict):
+                continue
+            description = str(item.get("description", ""))[:512]
+            if protocol == "responses":
+                definitions.append({"type": "function", "name": name, "description": description, "parameters": schema, "strict": True})
+            else:
+                definitions.append({"type": "function", "function": {"name": name, "description": description, "parameters": schema, "strict": True}})
+        return definitions
+
+    @staticmethod
+    def _chat_messages(messages: tuple[AgentMessage, ...]) -> list[dict[str, Any]]:
+        serialized: list[dict[str, Any]] = []
+        for message in messages:
+            if message.role == "tool" and message.tool_result is not None:
+                serialized.append({"role": "tool", "tool_call_id": message.tool_result.tool_call_id, "content": message.tool_result.content})
+            elif message.tool_calls:
+                serialized.append(
+                    {
+                        "role": "assistant",
+                        "content": message.content or None,
+                        "tool_calls": [
+                            {"id": call.call_id, "type": "function", "function": {"name": call.name, "arguments": json.dumps(call.arguments or {}, ensure_ascii=False, separators=(",", ":"))}}
+                            for call in message.tool_calls
+                        ],
+                    }
+                )
+            else:
+                serialized.append({"role": message.role, "content": message.content})
+        return serialized
+
+    @staticmethod
+    def _response_items(messages: tuple[AgentMessage, ...]) -> list[dict[str, Any]]:
+        items: list[dict[str, Any]] = []
+        for message in messages:
+            if message.role == "tool" and message.tool_result is not None:
+                items.append({"type": "function_call_output", "call_id": message.tool_result.tool_call_id, "output": message.tool_result.content})
+            elif message.tool_calls:
+                for call in message.tool_calls:
+                    items.append({"type": "function_call", "call_id": call.call_id, "name": call.name, "arguments": json.dumps(call.arguments or {}, ensure_ascii=False, separators=(",", ":"))})
+            else:
+                items.append({"role": message.role, "content": message.content})
+        return items
+
+    @staticmethod
+    def _native_calls(payload: object, *, protocol: str) -> tuple[ProviderToolCall, ...]:
+        if protocol == "responses":
+            raw_calls = [item for item in (payload.get("output", []) if isinstance(payload, dict) else []) if isinstance(item, dict) and item.get("type") == "function_call"]
+            return tuple(OpenAICompatibleProvider._provider_call(item.get("call_id"), item.get("name"), item.get("arguments")) for item in raw_calls)
+        try:
+            raw_calls = payload["choices"][0]["message"].get("tool_calls", [])
+        except (KeyError, IndexError, TypeError):
+            raw_calls = []
+        return tuple(
+            OpenAICompatibleProvider._provider_call(
+                item.get("id") if isinstance(item, dict) else None,
+                item.get("function", {}).get("name") if isinstance(item, dict) and isinstance(item.get("function"), dict) else None,
+                item.get("function", {}).get("arguments") if isinstance(item, dict) and isinstance(item.get("function"), dict) else None,
+            )
+            for item in raw_calls
+            if isinstance(item, dict)
+        )
+
+    @staticmethod
+    def _provider_call(call_id: object, name: object, arguments_text: object) -> ProviderToolCall:
+        identifier = str(call_id or "")
+        capability = str(name or "")
+        if not identifier or not capability:
+            return ProviderToolCall(identifier or "missing-call-id", capability or "unknown", None, "malformed_tool_call")
+        try:
+            arguments = json.loads(arguments_text or "{}")
+        except (TypeError, json.JSONDecodeError):
+            return ProviderToolCall(identifier, capability, None, "malformed_tool_arguments")
+        if not isinstance(arguments, dict):
+            return ProviderToolCall(identifier, capability, None, "malformed_tool_arguments")
+        return ProviderToolCall(identifier, capability, arguments)
+
+    def request_tools(self, messages: tuple[AgentMessage, ...], catalog: Iterable[dict[str, Any]]) -> NativeToolResponse:
+        protocol = self.settings.normalized_protocol
+        url = f"{self.settings.base_url.rstrip('/')}/{ 'responses' if protocol == 'responses' else 'chat/completions' }"
+        system = AgentMessage("system", SYSTEM_PROMPT)
+        payload: dict[str, Any] = {"model": self.settings.model, "temperature": 0, "parallel_tool_calls": False, "tools": self._tool_definitions(catalog, protocol=protocol)}
+        if protocol == "responses":
+            payload["input"] = self._response_items((system, *messages))
+        else:
+            payload["messages"] = self._chat_messages((system, *messages))
+        request = Request(
+            url,
+            data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+            headers={"Authorization": f"Bearer {self.settings.api_key}", "Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urlopen(request, timeout=self.settings.timeout_seconds) as response:
+                status = getattr(response, "status", 200)
+                body = response.read().decode("utf-8")
+        except HTTPError as error:
+            raise RuntimeError(f"模型服务返回 HTTP {error.code}。") from None
+        except (URLError, TimeoutError, OSError) as error:
+            raise RuntimeError(f"无法连接模型服务：{self._safe_error(error)}") from None
+        if status < 200 or status >= 300:
+            raise RuntimeError(f"模型服务返回 HTTP {status}。")
+        try:
+            response_payload = json.loads(body)
+        except json.JSONDecodeError as error:
+            raise RuntimeError("模型服务返回了无法识别的 JSON。") from error
+        calls = self._native_calls(response_payload, protocol=protocol)
+        if protocol == "responses":
+            text = str(response_payload.get("output_text") or "")
+        else:
+            try:
+                text = str(response_payload["choices"][0]["message"].get("content") or "")
+            except (KeyError, IndexError, TypeError) as error:
+                raise RuntimeError("模型服务返回了无法识别的 JSON。") from error
+        return NativeToolResponse(self._safe_error(text), calls, self._safe_error(body))
 
     def _request(self, messages: tuple[AgentMessage, ...], *, timeout: float | None = None) -> str:
         protocol = self.settings.normalized_protocol

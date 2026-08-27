@@ -6,6 +6,7 @@ from agent.scene_snapshot import SceneSnapshot
 from agent.session_store import SessionStore
 from services.agent_provider import AgentResponse
 from services.agent_provider import ProviderEvent
+from services.agent_provider import NativeToolResponse, ProviderToolCall
 from services.scene_commands import SceneCommandService
 
 
@@ -47,6 +48,32 @@ class _StreamingExplanationProvider:
         yield ProviderEvent("completed", {"text": "正在解释并准备绘图。", "tool_calls": []})
 
 
+class _NativeToolProvider:
+    supports_native_tools = True
+
+    def __init__(self) -> None:
+        self.requests = []
+
+    def request_tools(self, messages, catalog):
+        self.requests.append((messages, tuple(catalog)))
+        if len(self.requests) == 1:
+            return NativeToolResponse("", (ProviderToolCall("call-1", "scene.edit", {"action": "upsert", "object_type": "point", "alias": "P", "coordinates": [1, 2]}),))
+        return NativeToolResponse("已创建点 P。")
+
+    def create_plan(self, messages, scene_context):
+        raise AssertionError("native tool path should not use one-shot plan")
+
+
+class _NativeFallbackProvider(_NativeToolProvider):
+    def request_tools(self, messages, catalog):
+        raise RuntimeError("native_transport_unsupported")
+
+    def create_plan(self, messages, scene_context):
+        from services.scene_commands import CommandPlan
+
+        return AgentResponse("fallback", CommandPlan(summary="fallback", operations=({"op": "point.upsert", "alias": "P", "coordinates": [1, 2]},)), "")
+
+
 def _runtime(tmp_path):
     host = _Host()
     store = SessionStore(app_root=tmp_path)
@@ -73,6 +100,39 @@ def test_continuous_mode_executes_after_validation(tmp_path) -> None:
     assert result.status == "completed"
     assert host.events == ["begin", "commit"]
     assert any(event.type == "execution_finished" for event in result.events)
+
+
+def test_native_tool_loop_injects_canonical_catalog_and_composes_once(tmp_path) -> None:
+    provider = _NativeToolProvider()
+    host = _Host()
+    store = SessionStore(app_root=tmp_path)
+    runtime = AgentRuntime(provider=provider, command_service=SceneCommandService(host), session_store=store)
+    session = store.create_session("Chat")
+
+    result = runtime.run_turn(session.id, "创建点 P(1,2)", mode="Agent", scene_before=SceneSnapshot())
+
+    assert result.status == "completed"
+    assert len(provider.requests) == 2
+    assert {item["name"] for item in provider.requests[0][1]} == {
+        "scene.inspect", "scene.find", "scene.edit", "scene.clear", "math.calculate", "math.derive", "view.control", "result.export", "teaching.explain",
+    }
+    assert provider.requests[1][0][-1].tool_result.tool_call_id == "call-1"
+    assert [operation["op"] for operation in host.operations] == ["scene.set_mode", "point.upsert"]
+    assert any(event.type == "tool_started" for event in result.events)
+    assert any(event.type == "plan_composed" for event in result.events)
+
+
+def test_native_tool_transport_failure_uses_same_provider_json_fallback(tmp_path) -> None:
+    host = _Host()
+    store = SessionStore(app_root=tmp_path)
+    runtime = AgentRuntime(provider=_NativeFallbackProvider(), command_service=SceneCommandService(host), session_store=store)
+    session = store.create_session("Chat")
+
+    result = runtime.run_turn(session.id, "创建点 P(1,2)", mode="Agent")
+
+    assert result.status == "completed"
+    assert result.response.text == "fallback"
+    assert any(event.type == "capability_fallback" for event in result.events)
 
 
 def test_unconfigured_remote_provider_reports_error_for_vector_request(tmp_path) -> None:

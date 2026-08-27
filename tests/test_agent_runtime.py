@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from io import StringIO
 import json
+from tempfile import TemporaryDirectory
 import unittest
 
 from PySide6.QtCore import QSettings
@@ -13,6 +14,8 @@ from agent.mcp_server import Math3DMCPServer
 from agent.memory import MemoryProfile, MemoryStore
 from agent.prompt_manager import PromptManager
 from agent.runtime import AgentRuntime
+from agent.scene_snapshot import SceneSnapshot
+from agent.events import AgentEvent
 from agent.skill_manager import SkillManager
 from services.scene_commands import CommandPlan, CommandError, SceneCommandService
 
@@ -33,6 +36,17 @@ class _Host:
 
     def rollback_scene_command_transaction(self) -> None:
         self.events.append("rollback")
+
+
+class _FingerprintHost(_Host):
+    def __init__(self, matches: bool) -> None:
+        super().__init__()
+        self.matches = matches
+        self.checked: list[str] = []
+
+    def check_scene_fingerprint(self, expected: str) -> bool:
+        self.checked.append(expected)
+        return self.matches
 
 
 class AgentRuntimeTests(unittest.TestCase):
@@ -86,6 +100,40 @@ class AgentRuntimeTests(unittest.TestCase):
     def test_scene_scope_rejects_cross_dimension_operations(self) -> None:
         with self.assertRaises(CommandError):
             SceneCommandService().execute(CommandPlan(scene="2d", operations=({"op": "surface.create", "alias": "s", "kind": "explicit", "expression": "z=x+y"},)))
+
+    def test_fingerprint_is_checked_before_transaction(self) -> None:
+        host = _FingerprintHost(matches=False)
+        snapshot = SceneSnapshot()
+        plan = CommandPlan(operations=({"op": "point.upsert", "alias": "P", "coordinates": [1, 2]},))
+
+        with self.assertRaisesRegex(CommandError, "scene_changed_since_plan"):
+            SceneCommandService(host).execute(plan, expected_scene_fingerprint=snapshot.fingerprint())
+
+        self.assertEqual(host.events, [])
+        self.assertEqual(host.operations, [])
+
+    def test_runtime_persists_the_base_scene_fingerprint(self) -> None:
+        from agent.session_store import SessionStore
+
+        with TemporaryDirectory() as root:
+            store = SessionStore(app_root=root)
+            snapshot = SceneSnapshot()
+            host = _FingerprintHost(matches=True)
+            runtime = AgentRuntime(command_service=SceneCommandService(host), session_store=store)
+            session = store.create_session("Chat")
+
+            result = runtime.run_turn(session.id, "创建点 P(1,2)", scene_before=snapshot)
+
+            self.assertEqual(result.status, "completed")
+            self.assertEqual(store.get_turn(result.turn_id).validation["base_scene_fingerprint"], snapshot.fingerprint())
+            self.assertEqual(host.checked, [snapshot.fingerprint()])
+
+    def test_runtime_events_are_json_safe_bounded_and_redacted(self) -> None:
+        event = AgentEvent("tool_finished", {"api_key": "secret", "summary": "x" * 700, "nested": {"token": "hidden"}})
+
+        self.assertEqual(event.payload["api_key"], "***")
+        self.assertEqual(event.payload["nested"]["token"], "***")
+        self.assertEqual(len(event.payload["summary"]), 512)
 
 
 if __name__ == "__main__":

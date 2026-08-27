@@ -98,3 +98,28 @@ def test_unknown_envelope_type_uses_stable_protocol_error_code() -> None:
     with pytest.raises(ProtocolError) as raised:
         parse_envelope({"protocol_version": 1, "type": "run_python", "request_id": "r", "session_id": "s", "payload": {}})
     assert raised.value.code == "unknown_message_type"
+
+
+def test_capability_events_require_their_bounded_structured_fields() -> None:
+    event = parse_envelope(
+        {
+            "protocol_version": 1,
+            "type": "tool_finished",
+            "request_id": "event-1",
+            "session_id": "s1",
+            "turn_id": "t1",
+            "sequence": 3,
+            "payload": {"call_id": "call-1", "name": "scene.inspect", "status": "ok", "result_kind": "data"},
+        }
+    )
+    assert event.payload["name"] == "scene.inspect"
+    with pytest.raises(ProtocolError, match="invalid type"):
+        parse_envelope(
+            {
+                "protocol_version": 1,
+                "type": "plan_composed",
+                "request_id": "event-2",
+                "session_id": "s1",
+                "payload": {"summary": "plan", "operation_count": "two"},
+            }
+        )

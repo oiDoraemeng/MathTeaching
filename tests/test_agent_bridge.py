@@ -61,6 +61,18 @@ def test_bridge_exposes_only_send_json_slot() -> None:
     assert not {"execute_plan", "restore_scene", "run_python"} & methods
 
 
+def test_bridge_rejects_malformed_capability_event_payload() -> None:
+    app = QApplication.instance() or QApplication([])
+    emitted: list[dict[str, object]] = []
+    bridge = AgentBridge(lambda _message: None)
+    bridge.event_json.connect(lambda raw: emitted.append(json.loads(raw)))
+
+    bridge.emit_event({"protocol_version": 1, "type": "tool_started", "request_id": "r", "session_id": "s", "payload": {"name": "scene.inspect"}})
+
+    assert emitted[-1]["type"] == "error"
+    assert emitted[-1]["payload"]["code"] == "invalid_event"
+
+
 def test_web_host_owns_one_web_view() -> None:
     app = QApplication.instance() or QApplication([])
     host = AgentSidebarWeb(lambda _message: None)

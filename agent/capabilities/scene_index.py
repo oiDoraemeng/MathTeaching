@@ -55,8 +55,13 @@ class SceneIndex:
         for record in snapshot.annotations:
             add(record, "annotation")
         for item in snapshot.metadata.get("points3d", []):
-            if isinstance(item, (tuple, list)) and len(item) == 2:
+            if isinstance(item, dict):
+                add(item, "point3d")
+            elif isinstance(item, (tuple, list)) and len(item) == 2:
                 add({"alias": str(item[0]), "coordinates": list(item[1])}, "point3d")
+        for item in snapshot.metadata.get("areas", []):
+            if isinstance(item, (tuple, list)) and len(item) == 2 and isinstance(item[1], dict):
+                add({"alias": str(item[0]), **item[1]}, "area")
         return cls(snapshot.scene_mode, objects)
 
     def clone(self) -> "SceneIndex":
@@ -98,6 +103,10 @@ class SceneIndex:
     def get(self, alias: str) -> dict[str, Any] | None:
         value = self._objects.get(alias)
         return deepcopy(value) if value is not None else None
+
+    def has_object_type(self, object_types: set[str] | None = None) -> bool:
+        """Check staged membership without exposing an unbounded collection."""
+        return any(object_types is None or value.get("object_type") in object_types for value in self._objects.values())
 
     def apply_operations(self, operations: Iterable[dict[str, Any]]) -> None:
         for operation in operations:

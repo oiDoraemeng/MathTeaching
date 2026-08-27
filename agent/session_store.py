@@ -449,10 +449,13 @@ class SessionStore:
         return self.get_turn(turn_id)
 
     def append_event(self, session_id: str, event_type: str, payload: Mapping[str, Any], *, turn_id: str | None = None) -> int:
+        from .events import sanitize_event_payload
+
+        safe_payload = sanitize_event_payload(dict(payload))
         with self._connect() as connection:
             cursor = connection.execute(
                 "INSERT INTO events (session_id, turn_id, type, payload_json, created_at) VALUES (?, ?, ?, ?, ?)",
-                (session_id, turn_id, event_type, json.dumps(dict(payload), ensure_ascii=False), _now()),
+                (session_id, turn_id, event_type, json.dumps(safe_payload, ensure_ascii=False), _now()),
             )
             return int(cursor.lastrowid)
 

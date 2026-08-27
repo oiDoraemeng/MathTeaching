@@ -41,6 +41,21 @@ def test_scene_clear_empty_scope_is_no_op_and_unsafe_export_is_rejected() -> Non
     assert exported.errors[0].code == "unsafe_export_filename"
 
 
+def test_scene_clear_checks_the_full_staged_index_not_only_inspection_page() -> None:
+    index = SceneIndex.from_snapshot(
+        SceneSnapshot(
+            scene_mode="3d",
+            geometry=tuple({"object_type": "point", "agent_alias": f"P{number}", "x": number, "y": 0} for number in range(51)),
+            layers=({"agent_alias": "Zsurface", "kind": "explicit", "expression": "z=x+y"},),
+        )
+    )
+
+    cleared = _call("scene.clear", {"scope": "surfaces"}, index)
+
+    assert cleared.status == "ok"
+    assert cleared.plan["operations"] == [{"op": "scene.clear", "scope": "surfaces"}]
+
+
 def test_scene_edit_rejects_alias_conflict_and_scope_mismatch() -> None:
     index = _index()
 

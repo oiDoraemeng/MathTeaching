@@ -70,6 +70,11 @@ EVENT_MESSAGE_TYPES = frozenset(
         "mutation_succeeded",
         "mutation_failed",
         "provider_test_result",
+        "tool_started",
+        "tool_finished",
+        "capability_fallback",
+        "plan_composed",
+        "scene_conflict",
     }
 )
 
@@ -167,6 +172,7 @@ def parse_envelope(value: str | dict[str, Any]) -> BridgeEnvelope:
     payload = decoded.get("payload", {})
     if not isinstance(payload, dict):
         raise ValueError("payload must be an object")
+    _validate_event_payload(message_type, payload)
     try:
         encoded = json.dumps(decoded, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     except (TypeError, ValueError) as error:
@@ -182,6 +188,23 @@ def parse_envelope(value: str | dict[str, Any]) -> BridgeEnvelope:
         sequence=sequence_value,
         payload=dict(payload),
     )
+
+
+def _validate_event_payload(message_type: str, payload: dict[str, Any]) -> None:
+    """Reject malformed capability events before they reach the Web reducer."""
+    required: dict[str, tuple[tuple[str, type | tuple[type, ...]], ...]] = {
+        "tool_started": (("call_id", str), ("name", str), ("category", str), ("mutating", bool)),
+        "tool_finished": (("call_id", str), ("name", str), ("status", str), ("result_kind", str)),
+        "capability_fallback": (("reason", str),),
+        "plan_composed": (("summary", str), ("operation_count", int)),
+        "scene_conflict": (("code", str), ("message", str)),
+    }
+    for field, expected_type in required.get(message_type, ()):
+        value = payload.get(field)
+        if isinstance(value, bool) and expected_type is int:
+            raise ProtocolError("invalid_event_payload", f"{field} has an invalid type", field=field)
+        if not isinstance(value, expected_type):
+            raise ProtocolError("invalid_event_payload", f"{field} has an invalid type", field=field)
 
 
 def parse_client_message(value: str | dict[str, Any]) -> ClientMessage:

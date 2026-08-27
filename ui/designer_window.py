@@ -88,6 +88,7 @@ class _SceneCommandRequest:
     method: str
     args: tuple[object, ...] = ()
     error: BaseException | None = None
+    result: object | None = None
 
 
 class _SceneCommandBridge(QObject):
@@ -103,7 +104,7 @@ class _SceneCommandBridge(QObject):
     @Slot(object)
     def _dispatch(self, request: _SceneCommandRequest) -> None:
         try:
-            getattr(self._host, request.method)(*request.args)
+            request.result = getattr(self._host, request.method)(*request.args)
         except Exception as error:
             # BlockingQueuedConnection does not propagate Python exceptions from
             # a slot, so carry it back explicitly for SceneCommandService.
@@ -136,6 +137,16 @@ class _SceneCommandHostProxy:
 
     def rollback_scene_command_transaction(self) -> None:
         self._invoke("rollback_scene_command_transaction")
+
+    def check_scene_fingerprint(self, expected: str) -> bool:
+        request = _SceneCommandRequest("check_scene_fingerprint", (expected,))
+        if QThread.currentThread() == self._bridge.thread():
+            self._bridge._dispatch(request)
+        else:
+            self._bridge.request.emit(request)
+        if request.error is not None:
+            raise request.error
+        return bool(request.result)
 
     def _undo_scene_command(self) -> None:
         self._invoke("_undo_scene_command")
@@ -401,14 +412,7 @@ class MainWindow:
             self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", message_type))
             return
         if message_type == "open_skills":
-            from agent.skill_manager import SkillManager
-            self.agent_panel.bridge.emit_event({
-                "protocol_version": 1,
-                "type": "settings_snapshot",
-                "request_id": getattr(envelope, "request_id", message_type),
-                "session_id": session_id,
-                "payload": {"skills": [skill.name for skill in SkillManager(command_service=self._agent_runtime.command_service).list_skills()]},
-            })
+            self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", message_type))
             return
         if message_type == "save_model_provider":
             from ui.agent_settings import AgentSettingsDialog
@@ -552,7 +556,14 @@ class MainWindow:
                 "turn_id": turn.id,
                 "payload": {"status": "started", "summary": turn.command_plan.get("summary", "")},
             })
-            self._agent_runtime.execute(CommandPlan.from_dict(turn.command_plan))
+            fingerprint = turn.validation.get("base_scene_fingerprint") if turn.validation else None
+            try:
+                self._agent_runtime.execute(CommandPlan.from_dict(turn.command_plan), expected_scene_fingerprint=fingerprint)
+            except CommandError as error:
+                if str(error) == "scene_changed_since_plan":
+                    self._agent_session_store.update_turn_scene_snapshots(turn.id, status="scene_changed_since_plan")
+                    self._agent_session_store.append_event(session_id, "scene_conflict", {"code": "scene_changed_since_plan", "message": "场景已在计划生成后发生变化"}, turn_id=turn.id)
+                raise
             after = self._scene_snapshot_from_current_state()
             self._agent_session_store.update_turn_scene_snapshots(turn.id, scene_after=after, status="completed")
             self._agent_session_store.append_event(session_id, "execution_finished", {"status": "completed"}, turn_id=turn.id)
@@ -963,6 +974,9 @@ class MainWindow:
     def begin_scene_command_transaction(self) -> None:
         self._scene_command_snapshot = self._capture_scene_command_state()
         self._scene_command_active = True
+
+    def check_scene_fingerprint(self, expected: str) -> bool:
+        return self._scene_snapshot_from_current_state().fingerprint() == expected
 
     def commit_scene_command_transaction(self) -> None:
         if not self._scene_command_active or self._scene_command_snapshot is None:

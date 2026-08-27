@@ -125,8 +125,7 @@ def scene_clear(call: ToolCall, context: Any) -> CapabilityResult:
     scope = str(call.arguments["scope"])
     index = _index(context)
     types = _SCOPES[scope]
-    objects = index.inspect(limit=50)["objects"]
-    if not any(types is None or item["object_type"] in types for item in objects):
+    if not index.has_object_type(types):
         return CapabilityResult.no_op(call, explanation=f"{scope} is already empty")
     return _plan(call, index.scene_mode, f"清除 {scope}", [{"op": "scene.clear", "scope": scope}])
 

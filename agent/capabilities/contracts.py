@@ -11,8 +11,25 @@ from typing import Any, Mapping
 
 
 CAPABILITY_CATALOG_VERSION = 1
+CANONICAL_CAPABILITY_NAMES = (
+    "scene.inspect",
+    "scene.find",
+    "scene.edit",
+    "scene.clear",
+    "math.calculate",
+    "math.derive",
+    "view.control",
+    "result.export",
+    "teaching.explain",
+)
+CAPABILITY_CATEGORIES = ("scene_read", "scene_edit", "math", "view", "result", "teaching")
 MAX_TOOL_ARGUMENT_BYTES = 16 * 1024
 MAX_TOOL_RESULT_BYTES = 32 * 1024
+MAX_TOOL_CALLS = 8
+MAX_MUTATING_CALLS = 4
+MAX_RAW_PLAN_OPERATIONS = 32
+MAX_EXPANDED_PLAN_OPERATIONS = 128
+MAX_IDENTICAL_TOOL_CALLS = 2
 MAX_EVENT_STRING_LENGTH = 512
 _ALIAS_PATTERN = re.compile(r"^[A-Za-z][A-Za-z0-9_-]{0,63}$")
 

@@ -27,6 +27,11 @@ def test_session_projection_contains_tabs_turns_and_preferences(tmp_path) -> Non
     assert snapshot["sessions"][0]["model"] == "deepseek-chat"
     assert snapshot["sessions"][0]["turns"][0]["user_message"] == "画曲线"
     assert snapshot["sessions"][0]["events"][0]["type"] == "plan_ready"
+    assert snapshot["capability_catalog"]["catalog_version"] == 1
+    assert {item["name"] for item in snapshot["capability_catalog"]["capabilities"]} == {
+        "scene.inspect", "scene.find", "scene.edit", "scene.clear", "math.calculate", "math.derive", "view.control", "result.export", "teaching.explain",
+    }
+    assert all("aliases" not in item for item in snapshot["capability_catalog"]["capabilities"])
     assert "api_key" not in str(snapshot)
 
 

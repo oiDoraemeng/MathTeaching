@@ -11,6 +11,8 @@ from services.agent_provider import (
     AgentSettings,
     OpenAICompatibleProvider,
     ProviderEvent,
+    ProviderToolCall,
+    ToolResultMessage,
     SceneContext,
 )
 
@@ -123,6 +125,50 @@ class AgentProviderTests(unittest.TestCase):
         self.assertEqual(events[1].data["name"], "create_curve")
         self.assertEqual(events[1].data["arguments"]["range"], [-1, 1])
         self.assertIsInstance(events[2], ProviderEvent)
+
+    def test_chat_tool_protocol_serializes_calls_results_and_catalog(self) -> None:
+        provider = OpenAICompatibleProvider(self.settings)
+        messages = (
+            AgentMessage("user", "画曲线"),
+            AgentMessage.assistant_tool_calls((ProviderToolCall("call-1", "scene.inspect", {}),)),
+            AgentMessage.tool_result(ToolResultMessage("call-1", "scene.inspect", '{"scene_mode":"2d"}')),
+        )
+        catalog = [{"name": "scene.inspect", "description": "inspect", "input_schema": {"type": "object", "additionalProperties": False}}]
+        with patch("services.agent_provider.urlopen", return_value=_Response({
+            "choices": [{"message": {"content": "", "tool_calls": [{"id": "call-2", "function": {"name": "scene.find", "arguments": '{"alias":"f"}'}}]}}],
+        })) as opened:
+            response = provider.request_tools(messages, catalog)
+
+        payload = json.loads(opened.call_args.args[0].data.decode("utf-8"))
+        self.assertFalse(payload["parallel_tool_calls"])
+        self.assertEqual(payload["tools"][0]["function"]["name"], "scene.inspect")
+        self.assertEqual(payload["messages"][-2]["tool_calls"][0]["id"], "call-1")
+        self.assertEqual(payload["messages"][-1]["tool_call_id"], "call-1")
+        self.assertEqual(response.tool_calls[0].call_id, "call-2")
+        self.assertEqual(response.tool_calls[0].arguments, {"alias": "f"})
+
+    def test_responses_tool_protocol_uses_function_call_output_items(self) -> None:
+        settings = AgentSettings(base_url="https://model.example/v1", api_key="secret-token", model="teaching-model", protocol="responses")
+        provider = OpenAICompatibleProvider(settings)
+        messages = (
+            AgentMessage("user", "检查场景"),
+            AgentMessage.assistant_tool_calls((ProviderToolCall("call-1", "scene.inspect", {}),)),
+            AgentMessage.tool_result(ToolResultMessage("call-1", "scene.inspect", "{}")),
+        )
+        catalog = [{"name": "scene.inspect", "description": "inspect", "input_schema": {"type": "object", "additionalProperties": False}}]
+        with patch("services.agent_provider.urlopen", return_value=_Response({
+            "output_text": "场景为空",
+            "output": [],
+        })) as opened:
+            response = provider.request_tools(messages, catalog)
+
+        payload = json.loads(opened.call_args.args[0].data.decode("utf-8"))
+        self.assertFalse(payload["parallel_tool_calls"])
+        self.assertEqual(payload["tools"][0]["name"], "scene.inspect")
+        self.assertEqual(payload["input"][-2]["type"], "function_call")
+        self.assertEqual(payload["input"][-1]["type"], "function_call_output")
+        self.assertEqual(payload["input"][-1]["call_id"], "call-1")
+        self.assertEqual(response.text, "场景为空")
 
 
 if __name__ == "__main__":

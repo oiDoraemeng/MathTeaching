@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import copy
+import hashlib
 import json
 from typing import Any
 
@@ -79,6 +80,10 @@ class SceneSnapshot:
 
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), ensure_ascii=False, sort_keys=True)
+
+    def fingerprint(self) -> str:
+        """Stable SHA-256 identity used to guard delayed scene execution."""
+        return hashlib.sha256(self.to_json().encode("utf-8")).hexdigest()
 
     @classmethod
     def from_dict(cls, payload: dict[str, Any]) -> "SceneSnapshot":

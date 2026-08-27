@@ -15,7 +15,5 @@ triggers:
 - curve
 - function
 capabilities:
-- plot_function
-- derivative
-- integral_area
-- tangent
+- scene.edit
+- math.derive

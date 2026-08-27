@@ -46,6 +46,18 @@ def test_scene_index_reads_staged_operations_without_mutating_source_snapshot() 
     assert snapshot.geometry[0]["agent_alias"] == "P"
 
 
+def test_scene_index_recognizes_main_window_points3d_snapshot_records() -> None:
+    index = SceneIndex.from_snapshot(SceneSnapshot(scene_mode="3d", metadata={"points3d": [{"alias": "A", "kind": "point3d", "coordinates": [1, 2, 3]}]}))
+
+    assert index.find(alias="A")["objects"] == [{"alias": "A", "object_type": "point3d", "coordinates": [1, 2, 3], "kind": "point3d"}]
+
+
+def test_scene_index_recognizes_main_window_area_metadata() -> None:
+    index = SceneIndex.from_snapshot(SceneSnapshot(metadata={"areas": [["area", {"op": "area.fill", "expression": "y=x", "interval": [0, 1]}]]}))
+
+    assert index.find(alias="area")["objects"][0]["object_type"] == "area"
+
+
 def test_scene_index_uses_bounded_results_without_selection_fallback() -> None:
     index = SceneIndex.from_snapshot(
         SceneSnapshot(geometry=tuple({"object_type": "point", "agent_alias": f"P{number}", "x": number, "y": 0} for number in range(60)))

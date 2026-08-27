@@ -103,6 +103,24 @@ class MathTeacherAgent:
                 self.memory.remember_topic(manifest.name)
         return AgentTurn(response, tuple(item.name for item in self.skill_manager.match(request)), selected_prompts)
 
+    def native_tool_messages(self, messages: Iterable[AgentMessage] | str) -> tuple[AgentMessage, ...]:
+        """Build the same bounded instructional transcript for native tools."""
+        if isinstance(messages, str):
+            message_list = [AgentMessage("user", messages)]
+        else:
+            message_list = list(messages)
+        request = next((item.content for item in reversed(message_list) if item.role == "user"), "")
+        selected_prompts = self.prompts.select(request)
+        from .capabilities.contracts import CANONICAL_CAPABILITY_NAMES
+
+        return (
+            *self._enriched_messages(message_list, request, selected_prompts),
+            AgentMessage(
+                "system",
+                "原生能力名称：" + ", ".join(CANONICAL_CAPABILITY_NAMES) + "。工具调用必须顺序执行，结果有界；不支持的请求应直接解释限制。",
+            ),
+        )
+
     def _enriched_messages(self, message_list: list[AgentMessage], request: str, selected_prompts: tuple[str, ...]) -> tuple[AgentMessage, ...]:
         return (
             AgentMessage("system", self.instructions.load()),

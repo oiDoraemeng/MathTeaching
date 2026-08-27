@@ -85,6 +85,8 @@ class SceneCommandHost(Protocol):
 
     def rollback_scene_command_transaction(self) -> None: ...
 
+    def check_scene_fingerprint(self, expected: str) -> bool: ...
+
 
 _ALLOWED_OPERATIONS = frozenset(
     {
@@ -195,12 +197,15 @@ class SceneCommandService:
     def preview(self, plan: CommandPlan) -> CommandValidation:
         return self.validate(plan)
 
-    def execute(self, plan: CommandPlan) -> CommandValidation:
+    def execute(self, plan: CommandPlan, *, expected_scene_fingerprint: str | None = None) -> CommandValidation:
         validation = self.validate(plan)
         if not validation.valid:
             raise CommandError("；".join(validation.messages))
         if self.host is None:
             raise CommandError("命令服务尚未绑定场景宿主。")
+        check_fingerprint = getattr(self.host, "check_scene_fingerprint", None)
+        if expected_scene_fingerprint is not None and callable(check_fingerprint) and not check_fingerprint(expected_scene_fingerprint):
+            raise CommandError("scene_changed_since_plan")
         self.host.begin_scene_command_transaction()
         try:
             for operation in validation.expanded_operations:

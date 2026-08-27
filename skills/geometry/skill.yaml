@@ -15,8 +15,6 @@ triggers:
 - curve
 - surface
 capabilities:
-- create_point
-- create_vector
-- create_line
-- create_curve
-- create_surface
+- scene.edit
+- scene.find
+- scene.clear
