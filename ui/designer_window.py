@@ -9,6 +9,7 @@ from pathlib import Path
 
 from collections import deque
 from collections.abc import Callable
+from typing import Literal
 
 from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QThread, QTimer, Signal, Slot
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent, QShortcut, QWheelEvent
@@ -67,6 +68,9 @@ from agent.providers import ModelProvider
 # 辅助线在视口四周额外绘制此比例；小幅平移和缩放仍落在既有区域内，
 # 因而无需立刻重建辅助线和曲线采样。
 _GUIDE_MARGIN = 2.5
+
+ThemeMode = Literal["light", "dark", "system"]
+EffectiveTheme = Literal["light", "dark"]
 
 
 class _UnavailableAgentProvider:
@@ -242,7 +246,13 @@ class _SceneCommandState:
 class MainWindow:
     """加载 Designer 窗口骨架，并协调两个相互独立的绘图工作区。"""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        theme_mode: ThemeMode = "system",
+        effective_theme: EffectiveTheme = "light",
+    ) -> None:
+        self.theme_mode = theme_mode
+        self.effective_theme = effective_theme
         self.lighting = LightSettings()
         self.material_name = "光泽塑料"
         self._lighting_dialog: LightingDialog | None = None
@@ -3036,6 +3046,32 @@ class MainWindow:
     def _apply_style(self) -> None:
         from ui.tokens import build_qss
         self.window.setStyleSheet(build_qss(getattr(self, "effective_theme", "light")))
+
+    def set_theme(self, mode: ThemeMode, effective: EffectiveTheme) -> None:
+        """Apply and propagate the resolved application theme."""
+        self.theme_mode = mode
+        self.effective_theme = effective
+        if hasattr(self, "window"):
+            self._apply_style()
+        # Theme-aware surfaces are optional so this remains compatible with
+        # lightweight test doubles and older embedded hosts.
+        for surface in (
+            getattr(self, "agent_panel", None),
+            getattr(self, "agent_sidebar", None),
+            getattr(self, "plotter", None),
+        ):
+            callback = getattr(surface, "set_theme", None)
+            if callable(callback):
+                try:
+                    callback(effective)
+                except TypeError:
+                    callback(theme=effective)
+        rerender = getattr(self, "_render_scene", None)
+        if callable(rerender) and getattr(self, "_viewport_refreshing", False) is False:
+            # Scene background handling may be added by later tasks; rerender
+            # only when a scene is already initialized.
+            if hasattr(self, "plotter"):
+                rerender()
 
     def show(self) -> None:
         self.window.show()
