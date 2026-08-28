@@ -3068,13 +3068,20 @@ class MainWindow:
         ):
             callback = getattr(surface, "set_theme", None)
             if callable(callback):
-                parameters = inspect.signature(callback).parameters
-                if "effective" in parameters:
+                try:
+                    parameters = inspect.signature(callback).parameters
+                except (TypeError, ValueError):
+                    parameters = None
+                if parameters is None:
+                    callback(effective)
+                elif "effective" in parameters:
                     callback(effective=effective)
                 elif "theme" in parameters:
                     callback(theme=effective)
-                else:
+                elif parameters:
                     callback(effective)
+                else:
+                    callback()
 
     def show(self) -> None:
         self.window.show()
