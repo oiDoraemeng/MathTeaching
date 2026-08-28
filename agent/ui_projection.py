@@ -7,12 +7,24 @@ credentials, or provider response objects. Python remains the source of truth.
 from __future__ import annotations
 
 from collections.abc import Mapping
+import json
 from typing import Any
 
 from .events import AgentEvent
+from .events import sanitize_event_payload
 from .session_store import SessionStore, SessionRecord, TurnRecord
 from .model_catalog import CustomModelStore, default_model_id, model_catalog
 from .capabilities import build_default_registry
+
+
+_HIDDEN_TIMELINE_EVENTS = frozenset({"session_started", "capability_fallback", "execution_started", "execution_finished", "turn_finished", "approval_required"})
+_EVENT_NAME_MAP = {
+    "validation_result": "validation",
+    "preview_ready": "preview",
+    "execution_started": "execution",
+    "execution_finished": "execution",
+    "calculation_result": "calculation",
+}
 
 
 def _json_value(value: Any) -> Any:
@@ -27,8 +39,41 @@ def _json_value(value: Any) -> Any:
     return str(value)
 
 
+def _safe_command_plan(plan: Mapping[str, Any] | None, *, execution_status: str | None = None, validation: Mapping[str, Any] | None = None) -> dict[str, Any] | None:
+    if not isinstance(plan, Mapping):
+        return None
+    try:
+        safe_plan = sanitize_event_payload(dict(plan))
+    except (TypeError, ValueError):
+        return {"summary": "绘图指令", "operations": []}
+    status = "已执行" if execution_status in {"completed", "success"} else "已撤销" if execution_status == "undone" else "待执行"
+    validation_status = "已通过" if validation and validation.get("valid") is True else "未通过" if validation and validation.get("valid") is False else "待校验"
+    operations: list[dict[str, str]] = []
+    for index, operation in enumerate(safe_plan.get("operations", []) if isinstance(safe_plan.get("operations"), list) else []):
+        if not isinstance(operation, Mapping):
+            continue
+        name = str(operation.get("op") or operation.get("name") or operation.get("type") or f"操作 {index + 1}")[:128]
+        params = []
+        for key, value in operation.items():
+            if key in {"op", "name", "type"}:
+                continue
+            rendered = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+            params.append(f"{key}={str(rendered)[:96]}")
+        operations.append({"name": name, "summary": ", ".join(params)[:512] or name, "status": status, "validation": validation_status})
+    return {"summary": str(safe_plan.get("summary") or "已生成绘图指令")[:512], "operations": operations[:128]}
+
+
+def _project_event_payload(event_type: str, payload: Mapping[str, Any]) -> dict[str, Any]:
+    safe_payload = sanitize_event_payload(dict(payload))
+    if event_type == "plan_ready":
+        raw_plan = safe_payload.get("plan") if isinstance(safe_payload.get("plan"), Mapping) else safe_payload
+        return {"plan": _safe_command_plan(raw_plan) or {"summary": "已生成绘图指令", "operations": []}}
+    return safe_payload
+
+
 def _turn_projection(store: SessionStore, turn: TurnRecord) -> dict[str, Any]:
     events = store.list_events(turn.session_id, turn_id=turn.id)
+    safe_plan = _safe_command_plan(turn.command_plan, execution_status=turn.execution_status, validation=turn.validation)
     return {
         "id": turn.id,
         "user_message": turn.user_message,
@@ -40,17 +85,18 @@ def _turn_projection(store: SessionStore, turn: TurnRecord) -> dict[str, Any]:
         "mode": turn.agent_mode,
         "execution_mode": turn.execution_mode,
         "executionMode": turn.execution_mode,
-        "command_plan": _json_value(turn.command_plan),
+        "command_plan": safe_plan,
+        "commandPlan": safe_plan,
         "validation": _json_value(turn.validation),
         "scene_before": _json_value(turn.scene_before),
         "scene_after": _json_value(turn.scene_after),
         "created_at": turn.created_at,
         "events": [
             {
-                "type": event.type,
+                "type": _EVENT_NAME_MAP.get(event.type, event.type),
                 "session_id": event.session_id,
                 "turn_id": event.turn_id,
-                "payload": _json_value(event.payload),
+                "payload": _json_value(_project_event_payload(event.type, event.payload)),
                 "created_at": event.created_at,
             }
             for event in events
@@ -138,13 +184,7 @@ def build_session_snapshot(
 
 
 def project_runtime_event(event: AgentEvent, *, sequence: int, request_id: str = "runtime") -> dict[str, Any]:
-    event_name = {
-        "validation_result": "validation",
-        "preview_ready": "preview",
-        "execution_started": "execution",
-        "execution_finished": "execution",
-        "calculation_result": "calculation",
-    }.get(event.type, event.type)
+    event_name = _EVENT_NAME_MAP.get(event.type, event.type)
     return {
         "protocol_version": 1,
         "type": event_name,
@@ -152,6 +192,6 @@ def project_runtime_event(event: AgentEvent, *, sequence: int, request_id: str =
         "session_id": event.session_id or "",
         "turn_id": event.turn_id,
         "sequence": sequence,
-        "payload": _json_value(event.payload),
+        "payload": _json_value({**_project_event_payload(event.type, event.payload), **({"ui_hidden": True} if event.type in _HIDDEN_TIMELINE_EVENTS else {})}),
         "created_at": event.created_at,
     }

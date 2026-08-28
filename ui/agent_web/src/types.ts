@@ -26,6 +26,21 @@ export interface TimelineEvent {
   payload: Record<string, unknown>;
 }
 
+export interface ProgressLog {
+  id: string;
+  kind: "tool" | "validation" | "status" | "error";
+  label: string;
+  detail?: string;
+  status?: string;
+}
+
+export interface CommandOperation {
+  name: string;
+  summary: string;
+  status?: string;
+  validation?: string;
+}
+
 export interface ContextUsage {
   usedTokens: number;
   maxTokens: number;
@@ -56,6 +71,13 @@ export interface TurnProjection {
   status: string;
   hovered?: boolean;
   technicalDetails?: boolean;
+  reasoningText?: string;
+  assistantText?: string;
+  progressLogs?: ProgressLog[];
+  commandPlan?: { summary: string; operations: CommandOperation[] };
+  thinkingExpanded?: boolean;
+  planExpanded?: boolean;
+  drawState?: "available" | "pending" | "drawn" | "undone" | "unavailable";
 }
 
 export interface SessionProjection {

@@ -64,6 +64,14 @@ class _NativeToolProvider:
         raise AssertionError("native tool path should not use one-shot plan")
 
 
+class _StreamingNativeToolProvider(_NativeToolProvider):
+    def stream_tools(self, messages, catalog, *, on_event):
+        self.requests.append((messages, tuple(catalog)))
+        on_event(ProviderEvent("message_delta", {"text": "正在分析", "kind": "reasoning"}))
+        on_event(ProviderEvent("message_delta", {"text": "已创建点 P。", "kind": "content"}))
+        return NativeToolResponse("已创建点 P。")
+
+
 class _NativeFallbackProvider(_NativeToolProvider):
     def request_tools(self, messages, catalog):
         raise RuntimeError("native_transport_unsupported")
@@ -154,6 +162,21 @@ def test_native_tool_loop_injects_canonical_catalog_and_composes_once(tmp_path) 
     assert [operation["op"] for operation in host.operations] == ["scene.set_mode", "point.upsert"]
     assert any(event.type == "tool_started" for event in result.events)
     assert any(event.type == "plan_composed" for event in result.events)
+
+
+def test_native_tool_stream_forwards_reasoning_and_does_not_repeat_content(tmp_path) -> None:
+    provider = _StreamingNativeToolProvider()
+    host = _Host()
+    store = SessionStore(app_root=tmp_path)
+    runtime = AgentRuntime(provider=provider, command_service=SceneCommandService(host), session_store=store)
+    session = store.create_session("Chat")
+    streamed: list[AgentEvent] = []
+
+    result = runtime.run_turn(session.id, "创建点 P(1,2)", mode="Agent", scene_before=SceneSnapshot(), on_event=streamed.append)
+
+    content = [event.payload["text"] for event in streamed if event.type == "message_delta" and event.payload.get("kind") != "reasoning"]
+    assert result.status == "answered"
+    assert content == ["已创建点 P。"]
 
 
 def test_native_tool_transport_failure_uses_same_provider_json_fallback(tmp_path) -> None:
@@ -285,6 +308,27 @@ def test_completed_turn_persists_before_and_after_snapshots(tmp_path) -> None:
     assert turns[-1].scene_after == after
 
 
+def test_undo_can_clear_persisted_after_snapshot(tmp_path) -> None:
+    _, store, session, _ = _runtime(tmp_path)
+    turn_id = store.append_turn(
+        session.id,
+        user_message="draw",
+        assistant_message="plan",
+        scene_before=SceneSnapshot(),
+        scene_after=SceneSnapshot(geometry=({"alias": "P"},)),
+        command_plan={"scene": "2d", "operations": []},
+        status="completed",
+        agent_mode="Agent",
+        execution_mode="continuous",
+    )
+
+    updated = store.update_turn_scene_snapshots(turn_id, scene_after=None, status="undone")
+
+    assert updated.execution_status == "undone"
+    assert updated.scene_before == SceneSnapshot()
+    assert updated.scene_after is None
+
+
 def test_approval_ticket_is_single_use_and_stop_invalidates_it(tmp_path) -> None:
     runtime, store, session, _ = _runtime(tmp_path)
     turn_id = store.append_turn(
@@ -306,3 +350,12 @@ def test_approval_ticket_is_single_use_and_stop_invalidates_it(tmp_path) -> None
     runtime.register_approval(session.id, turn_id)
     runtime.stop(session.id)
     assert runtime.consume_approval(session.id, turn_id) is False
+
+
+def test_tool_argument_summary_redacts_sensitive_and_bounds_nested_values() -> None:
+    summary = AgentRuntime._argument_summary({"api_key": "secret-token", "nested": {"authorization": "bearer secret", "value": "x" * 500}})
+
+    assert "secret-token" not in summary
+    assert "bearer secret" not in summary
+    assert "***" in summary
+    assert len(summary) <= 512

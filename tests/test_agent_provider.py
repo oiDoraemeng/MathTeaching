@@ -33,12 +33,43 @@ class _Response:
         return json.dumps(self.payload).encode("utf-8")
 
 
+class _StreamingResponse:
+    status = 200
+
+    def __iter__(self):
+        return iter((b"data: [DONE]\\n",))
+
+    def close(self) -> None:
+        return None
+
+
+class _StreamingLinesResponse:
+    status = 200
+
+    def __init__(self, *lines: bytes) -> None:
+        self.lines = lines
+
+    def __iter__(self):
+        return iter(self.lines)
+
+    def close(self) -> None:
+        return None
+
+
 class _StreamingProvider(OpenAICompatibleProvider):
     def _stream_request(self, messages, tools=None):
         yield {"choices": [{"delta": {"content": "解释"}}]}
         yield {"choices": [{"delta": {"tool_calls": [{"index": 0, "id": "call-1", "function": {"name": "create_curve", "arguments": '{"expression":"x^2"'}}]}}]}
         yield {"choices": [{"delta": {"tool_calls": [{"index": 0, "function": {"arguments": ',"range":[-1,1]}'}}]}}]}
         yield {"choices": [{"delta": {}, "finish_reason": "tool_calls"}]}
+
+
+class _ResponsesStreamingProvider(OpenAICompatibleProvider):
+    def _stream_responses_request(self, messages, catalog):
+        yield {"type": "response.reasoning_summary_text.delta", "delta": "分析中"}
+        yield {"type": "response.output_text.delta", "delta": "已完成"}
+        yield {"type": "response.output_item.added", "item": {"id": "item-1", "type": "function_call", "call_id": "call-1", "name": "scene.inspect", "arguments": ""}}
+        yield {"type": "response.function_call_arguments.done", "item_id": "item-1", "name": "scene.inspect", "arguments": "{}"}
 
 
 class AgentProviderTests(unittest.TestCase):
@@ -126,6 +157,42 @@ class AgentProviderTests(unittest.TestCase):
         self.assertEqual(events[1].data["arguments"]["range"], [-1, 1])
         self.assertIsInstance(events[2], ProviderEvent)
 
+    def test_stream_request_disables_parallel_tool_calls(self) -> None:
+        provider = OpenAICompatibleProvider(self.settings)
+        tools = [{"type": "function", "function": {"name": "scene.inspect", "parameters": {"type": "object"}}}]
+
+        with patch("services.agent_provider.urlopen", return_value=_StreamingResponse()) as opened:
+            list(provider.stream((AgentMessage("user", "检查场景"),), tools=tools))
+
+        payload = json.loads(opened.call_args.args[0].data.decode("utf-8"))
+        self.assertTrue(payload["stream"])
+        self.assertFalse(payload["parallel_tool_calls"])
+        self.assertEqual(payload["tools"], tools)
+
+    def test_stream_tools_preserves_tool_transcript_on_continuation(self) -> None:
+        provider = OpenAICompatibleProvider(self.settings)
+        catalog = [{"name": "scene.inspect", "description": "inspect", "input_schema": {"type": "object", "additionalProperties": False}}]
+        first = _StreamingLinesResponse(
+            b'data: {"choices":[{"delta":{"tool_calls":[{"index":0,"id":"call-1","function":{"name":"scene.inspect","arguments":"{}"}}]}}]}\n',
+            b"data: [DONE]\n",
+        )
+        second = _StreamingLinesResponse(
+            b'data: {"choices":[{"delta":{"content":"\\u573a\\u666f\\u4e3a\\u7a7a"}}]}\n',
+            b"data: [DONE]\n",
+        )
+        with patch("services.agent_provider.urlopen", side_effect=[first, second]) as opened:
+            response = provider.stream_tools((AgentMessage("user", "检查场景"),), catalog)
+            continuation = provider.stream_tools((
+                AgentMessage("user", "检查场景"),
+                AgentMessage.assistant_tool_calls((response.tool_calls[0],)),
+                AgentMessage.tool_result(ToolResultMessage("call-1", "scene.inspect", "{}")),
+            ), catalog)
+
+        payload = json.loads(opened.call_args_list[1].args[0].data.decode("utf-8"))
+        self.assertEqual(payload["messages"][-2]["tool_calls"][0]["id"], "call-1")
+        self.assertEqual(payload["messages"][-1]["tool_call_id"], "call-1")
+        self.assertEqual(continuation.text, "场景为空")
+
     def test_chat_tool_protocol_serializes_calls_results_and_catalog(self) -> None:
         provider = OpenAICompatibleProvider(self.settings)
         messages = (
@@ -169,6 +236,18 @@ class AgentProviderTests(unittest.TestCase):
         self.assertEqual(payload["input"][-1]["type"], "function_call_output")
         self.assertEqual(payload["input"][-1]["call_id"], "call-1")
         self.assertEqual(response.text, "场景为空")
+
+    def test_responses_stream_tools_forwards_reasoning_text_and_function_call(self) -> None:
+        settings = AgentSettings(base_url="https://model.example/v1", api_key="secret-token", model="teaching-model", protocol="responses")
+        provider = _ResponsesStreamingProvider(settings)
+        events: list[ProviderEvent] = []
+
+        response = provider.stream_tools((AgentMessage("user", "检查场景"),), [], on_event=events.append)
+
+        self.assertEqual([(event.data["text"], event.data["kind"]) for event in events], [("分析中", "reasoning"), ("已完成", "content")])
+        self.assertEqual(response.text, "已完成")
+        self.assertEqual(response.tool_calls[0].call_id, "call-1")
+        self.assertEqual(response.tool_calls[0].name, "scene.inspect")
 
 
 if __name__ == "__main__":

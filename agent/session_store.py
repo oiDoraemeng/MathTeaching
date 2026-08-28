@@ -16,6 +16,9 @@ from uuid import uuid4
 from .scene_snapshot import SceneSnapshot
 
 
+_UNSET = object()
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -432,14 +435,14 @@ class SessionStore:
         self,
         turn_id: str,
         *,
-        scene_before: SceneSnapshot | Mapping[str, Any] | None = None,
-        scene_after: SceneSnapshot | Mapping[str, Any] | None = None,
+        scene_before: SceneSnapshot | Mapping[str, Any] | None | object = _UNSET,
+        scene_after: SceneSnapshot | Mapping[str, Any] | None | object = _UNSET,
         status: str | None = None,
     ) -> TurnRecord:
         """Fill snapshots after a host-side execution or confirmation."""
         turn = self.get_turn(turn_id)
-        before = turn.scene_before if scene_before is None else scene_before
-        after = turn.scene_after if scene_after is None else scene_after
+        before = turn.scene_before if scene_before is _UNSET else scene_before
+        after = turn.scene_after if scene_after is _UNSET else scene_after
         next_status = status if status is not None else turn.execution_status
         with self._connect() as connection:
             connection.execute(

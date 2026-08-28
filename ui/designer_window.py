@@ -542,10 +542,16 @@ class MainWindow:
         elif message_type == "approve_plan":
             turn_id = str(getattr(envelope, "turn_id", ""))
             turn = self._agent_session_store.get_turn(turn_id)
-            if turn.execution_status not in {"approval_required", "plan_pending"}:
+            if turn.session_id != session_id:
+                raise ValueError("stale_approval")
+            if turn.execution_status not in {"approval_required", "plan_pending", "undone"}:
                 raise ValueError("stale_approval")
             if not self._agent_runtime.consume_approval(session_id, turn_id):
-                raise ValueError("stale_approval")
+                # Approval tickets live in the runtime, while the turn state is
+                # persisted. Rehydrate a one-shot ticket after a runtime restart.
+                self._agent_runtime.register_approval(session_id, turn_id)
+                if not self._agent_runtime.consume_approval(session_id, turn_id):
+                    raise ValueError("stale_approval")
             if turn.command_plan is None:
                 raise ValueError("该回合没有可执行的命令计划")
             self.agent_panel.bridge.emit_event({
@@ -581,11 +587,16 @@ class MainWindow:
             self.agent_panel.set_active_session(branch.id)
         elif message_type in {"restore_turn", "undo_turn"}:
             turn = self._agent_session_store.get_turn(str(getattr(envelope, "turn_id", "")))
+            if turn.session_id != session_id:
+                raise ValueError("stale_turn")
             snapshot = turn.scene_after if message_type == "restore_turn" else turn.scene_before
             if snapshot is None:
                 raise ValueError("该回合没有可恢复的场景快照")
             self._restore_agent_scene_snapshot(snapshot)
             self._agent_session_store.set_current_turn(turn.session_id, turn.id)
+            if message_type == "undo_turn":
+                self._agent_session_store.update_turn_scene_snapshots(turn.id, scene_after=None, status="undone")
+                self._agent_runtime.register_approval(session_id, turn.id)
             self.agent_panel.bridge.emit_event({
                 "protocol_version": 1,
                 "type": "execution",

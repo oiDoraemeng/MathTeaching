@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
-from typing import Any, Iterable, Literal, Protocol, TYPE_CHECKING
+from typing import Any, Callable, Iterable, Literal, Protocol, TYPE_CHECKING
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -329,6 +329,99 @@ class OpenAICompatibleProvider:
                 raise RuntimeError("模型服务返回了无法识别的 JSON。") from error
         return NativeToolResponse(self._safe_error(text), calls, self._safe_error(body))
 
+    def _stream_responses_request(self, messages: tuple[AgentMessage, ...], catalog: Iterable[dict[str, Any]]) -> Iterable[dict[str, Any]]:
+        url = f"{self.settings.base_url.rstrip('/')}/responses"
+        payload = {
+            "model": self.settings.model,
+            "temperature": 0,
+            "stream": True,
+            "parallel_tool_calls": False,
+            "tools": self._tool_definitions(catalog, protocol="responses"),
+            "input": self._response_items((AgentMessage("system", SYSTEM_PROMPT), *messages)),
+        }
+        request = Request(
+            url,
+            data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+            headers={"Authorization": f"Bearer {self.settings.api_key}", "Content-Type": "application/json", "Accept": "text/event-stream"},
+            method="POST",
+        )
+        try:
+            response = urlopen(request, timeout=self.settings.timeout_seconds)
+            for raw_line in response:
+                line = raw_line.decode("utf-8", errors="replace").strip()
+                if not line.startswith("data:"):
+                    continue
+                try:
+                    decoded = json.loads(line[5:].strip())
+                except json.JSONDecodeError:
+                    continue
+                if isinstance(decoded, dict):
+                    yield decoded
+        except HTTPError as error:
+            raise RuntimeError(f"模型服务返回 HTTP {error.code}。") from None
+        except (URLError, TimeoutError, OSError) as error:
+            raise RuntimeError(f"无法连接模型服务：{self._safe_error(error)}") from None
+        finally:
+            close = getattr(locals().get("response"), "close", None)
+            if close is not None:
+                close()
+
+    def _stream_responses_tools(
+        self,
+        messages: tuple[AgentMessage, ...],
+        catalog: Iterable[dict[str, Any]],
+        on_event: Callable[[ProviderEvent], None] | None,
+    ) -> NativeToolResponse:
+        text_parts: list[str] = []
+        calls_by_item: dict[str, dict[str, str]] = {}
+        for event in self._stream_responses_request(messages, catalog):
+            event_type = event.get("type")
+            delta = event.get("delta")
+            if event_type in {"response.reasoning_summary_text.delta", "response.reasoning_text.delta"} and isinstance(delta, str) and delta:
+                if on_event is not None:
+                    on_event(ProviderEvent("message_delta", {"text": delta, "kind": "reasoning"}))
+            elif event_type == "response.output_text.delta" and isinstance(delta, str) and delta:
+                text_parts.append(delta)
+                if on_event is not None:
+                    on_event(ProviderEvent("message_delta", {"text": delta, "kind": "content"}))
+            elif event_type == "response.output_item.added":
+                item = event.get("item") if isinstance(event.get("item"), dict) else {}
+                if item.get("type") == "function_call":
+                    item_id = str(item.get("id") or event.get("item_id") or "")
+                    if item_id:
+                        calls_by_item[item_id] = {"call_id": str(item.get("call_id") or item_id), "name": str(item.get("name") or ""), "arguments": str(item.get("arguments") or "")}
+            elif event_type == "response.function_call_arguments.done":
+                item_id = str(event.get("item_id") or "")
+                record = calls_by_item.setdefault(item_id, {"call_id": item_id, "name": "", "arguments": ""})
+                record["name"] = str(event.get("name") or record["name"])
+                record["arguments"] = str(event.get("arguments") or record["arguments"])
+        calls = tuple(self._provider_call(record["call_id"], record["name"], record["arguments"]) for record in calls_by_item.values())
+        return NativeToolResponse("".join(text_parts), calls, "")
+
+    def stream_tools(
+        self,
+        messages: tuple[AgentMessage, ...],
+        catalog: Iterable[dict[str, Any]],
+        *,
+        on_event: Callable[[ProviderEvent], None] | None = None,
+    ) -> NativeToolResponse:
+        """Stream native tool responses for both supported OpenAI protocols."""
+        if self.settings.normalized_protocol == "responses":
+            return self._stream_responses_tools(messages, catalog, on_event)
+        text_parts: list[str] = []
+        calls: list[ProviderToolCall] = []
+        tools = self._tool_definitions(catalog, protocol="chat_completions")
+        for event in self.stream(messages, tools=tools):
+            if on_event is not None and event.type == "message_delta":
+                on_event(event)
+            if event.type == "message_delta":
+                value = event.data.get("text")
+                if isinstance(value, str):
+                    text_parts.append(value)
+            elif event.type == "tool_call":
+                calls.append(self._provider_call(event.data.get("tool_call_id"), event.data.get("name"), json.dumps(event.data.get("arguments", {}), ensure_ascii=False)))
+        return NativeToolResponse("".join(text_parts), tuple(calls), "")
+
     def _request(self, messages: tuple[AgentMessage, ...], *, timeout: float | None = None) -> str:
         protocol = self.settings.normalized_protocol
         url = f"{self.settings.base_url.rstrip('/')}/{ 'responses' if protocol == 'responses' else 'chat/completions' }"
@@ -381,15 +474,13 @@ class OpenAICompatibleProvider:
     ) -> Iterable[dict[str, Any]]:
         """Yield decoded SSE data objects from an OpenAI-compatible endpoint."""
         url = f"{self.settings.base_url.rstrip('/')}/chat/completions"
-        request_messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            *({"role": message.role, "content": message.content} for message in messages),
-        ]
+        request_messages = self._chat_messages((AgentMessage("system", SYSTEM_PROMPT), *messages))
         payload: dict[str, Any] = {
             "model": self.settings.model,
             "messages": request_messages,
             "temperature": 0,
             "stream": True,
+            "parallel_tool_calls": False,
         }
         tool_list = list(tools)
         if tool_list:

@@ -98,7 +98,21 @@ class AgentRuntime:
                 return AgentResponse("已停止本轮请求。", None), CapabilityTurn(
                     tuple(staged.results), staged.index, error=CapabilityResult.error("cancelled", "capability.loop", CapabilityError("cancelled", "用户已停止本轮请求"))
                 )
-            native_response = provider.request_tools(tuple(transcript), catalog)
+            stream_tools = getattr(provider, "stream_tools", None)
+
+            def forward_provider_event(provider_event) -> None:
+                if provider_event.type != "message_delta":
+                    return
+                text = provider_event.data.get("text")
+                if not isinstance(text, str) or not text:
+                    return
+                payload: dict[str, Any] = {"text": text}
+                kind = provider_event.data.get("kind")
+                if isinstance(kind, str):
+                    payload["kind"] = kind
+                emit(AgentEvent("message_delta", payload, session_id=session_id))
+
+            native_response = stream_tools(tuple(transcript), catalog, on_event=forward_provider_event) if callable(stream_tools) else provider.request_tools(tuple(transcript), catalog)
             calls = tuple(native_response.tool_calls)
             if not calls:
                 turn = staged.finish()
@@ -113,7 +127,7 @@ class AgentRuntime:
                 emit(
                     AgentEvent(
                         "tool_started",
-                        {"call_id": provider_call.call_id, "name": canonical, "category": category, "mutating": mutating},
+                        {"call_id": provider_call.call_id, "name": canonical, "category": category, "mutating": mutating, "arguments_summary": self._argument_summary(provider_call.arguments)},
                         session_id=session_id,
                     )
                 )
@@ -158,6 +172,33 @@ class AgentRuntime:
             return canonical, spec.category, spec.mutating
         except ValueError:
             return name, "unknown", False
+
+    @staticmethod
+    def _argument_summary(arguments: dict[str, Any] | None) -> str:
+        if not arguments:
+            return "无参数"
+
+        def safe_value(value: Any, key: str = "") -> Any:
+            normalized_key = key.lower().replace("-", "_")
+            if any(marker in normalized_key for marker in ("api_key", "authorization", "password", "secret", "token", "credential")):
+                return "***"
+            if isinstance(value, dict):
+                return {str(child_key): safe_value(child, str(child_key)) for child_key, child in value.items()}
+            if isinstance(value, (list, tuple)):
+                return [safe_value(child) for child in value[:16]]
+            if isinstance(value, str):
+                return value[:96]
+            if isinstance(value, (int, float, bool)) or value is None:
+                return value
+            return str(value)[:96]
+
+        pairs: list[str] = []
+        for key in sorted(arguments):
+            rendered = safe_value(arguments[key], str(key))
+            if not isinstance(rendered, str):
+                rendered = json.dumps(rendered, ensure_ascii=False, separators=(",", ":"))
+            pairs.append(f"{key}={str(rendered)[:96]}")
+        return ", ".join(pairs)[:512]
 
     def stop(self, session_id: str) -> None:
         """Mark a session stopped; the running turn checks this before mutation."""
@@ -246,11 +287,17 @@ class AgentRuntime:
             if self._uses_native_tools():
                 emit(AgentEvent("message_delta", {"text": "正在分析数学问题…", "kind": "reasoning"}, session_id=session_id))
                 try:
+                    def emit_native(event: AgentEvent) -> None:
+                        nonlocal answer_streamed
+                        if event.type == "message_delta" and event.payload.get("kind") != "reasoning" and event.payload.get("text"):
+                            answer_streamed = True
+                        emit(event)
+
                     response, native_turn = self._native_turn(
                         prompt,
                         scene_before or SceneSnapshot(scene_mode=(scene_context.scene_mode if scene_context else "2d")),
                         session_id=session_id,
-                        emit=emit,
+                        emit=emit_native,
                     )
                 except Exception:
                     # Native tool calling is an optional transport feature. The

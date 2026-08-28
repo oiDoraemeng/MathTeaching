@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from agent.events import AgentEvent
 from agent.session_store import SessionStore
 from agent.web_protocol import parse_envelope
@@ -36,6 +38,47 @@ def test_snapshot_intent_can_be_handled_with_session_store(tmp_path) -> None:
     received.append(message)
     assert received[0].type == "request_snapshot"
     assert store.get_session(session.id).id == session.id
+
+
+def test_plan_approval_rejects_a_turn_from_another_session(tmp_path) -> None:
+    from types import SimpleNamespace
+
+    from agent.runtime import AgentRuntime
+    from ui.designer_window import MainWindow
+
+    store = SessionStore(app_root=tmp_path)
+    owner = store.create_session("Owner")
+    attacker = store.create_session("Attacker")
+    turn_id = store.append_turn(
+        owner.id,
+        user_message="画点",
+        assistant_message="计划",
+        scene_before=None,
+        scene_after=None,
+        command_plan={"scene": "2d", "operations": []},
+        status="approval_required",
+    )
+
+    class Bridge:
+        def emit_event(self, _event):
+            pass
+
+    class Panel:
+        active_session_id = attacker.id
+        bridge = Bridge()
+
+        def set_active_session(self, _session_id):
+            pass
+
+    window = MainWindow.__new__(MainWindow)
+    window._agent_processed_requests = {}
+    window.agent_panel = Panel()
+    window._agent_session_store = store
+    window._agent_runtime = AgentRuntime(session_store=store)
+    envelope = SimpleNamespace(type="approve_plan", session_id=attacker.id, request_id="approve-1", turn_id=turn_id, payload={})
+
+    with pytest.raises(ValueError, match="stale_approval"):
+        MainWindow._dispatch_agent_web_intent(window, envelope)
 
 
 def test_runtime_turn_worker_forwards_runtime_events() -> None:
