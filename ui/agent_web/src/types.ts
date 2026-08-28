@@ -95,6 +95,17 @@ export interface SessionProjection {
   attachments?: Array<{ id: string; turn_id?: string; path: string; mime_type: string; byte_size: number; sha256: string }>;
 }
 
+export interface CaseProjection {
+  id: string;
+  category: string;
+  name: string;
+  formula: string;
+  steps: string[];
+  conclusion: string;
+  summary?: string;
+  sceneMode?: "2d" | "3d";
+}
+
 export interface SnapshotProjection {
   sessions: SessionProjection[];
   active_session_id?: string;
@@ -207,6 +218,8 @@ export type IntentSender = (intent: ClientIntent) => void;
 export interface AppState {
   sessions: SessionProjection[];
   activeSessionId: string;
+  activeTab: string;
+  cases: CaseProjection[];
   contextUsage: ContextUsage;
   modelStatus: ModelStatus;
   settingsState: SettingsState;

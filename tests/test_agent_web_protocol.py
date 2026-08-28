@@ -123,3 +123,24 @@ def test_capability_events_require_their_bounded_structured_fields() -> None:
                 "payload": {"summary": "plan", "operation_count": "two"},
             }
         )
+
+
+def test_math_case_event_is_valid_without_a_session() -> None:
+    envelope = parse_envelope(
+        {
+            "protocol_version": 1,
+            "type": "math_case",
+            "request_id": "case-1",
+            "session_id": "",
+            "payload": {
+                "case_id": "vector-subtraction",
+                "name": "向量减法",
+                "formula": "a-b=(1,-1)",
+                "steps": ["将减法转为加上相反向量"],
+                "conclusion": "向量减法等价于加上相反向量。",
+            },
+        }
+    )
+
+    assert envelope.type == "math_case"
+    assert envelope.payload["case_id"] == "vector-subtraction"

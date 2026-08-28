@@ -28,6 +28,7 @@ from PySide6.QtWidgets import (
 from MathInputWidget import FormulaEditorPopup, FormulaListWidget, FormulaPreviewWidget
 from models.curve_layer import CurveLayer
 from models.function_catalog import CatalogEntry
+from models.linear_algebra_cases import LinearAlgebraCase, linear_algebra_cases
 from models.geometry_2d import GeometryObject, Linear2D, Point2D
 from models.scene_mode import SceneMode
 from models.surface_layer import SurfaceLayer
@@ -422,6 +423,101 @@ class FunctionCatalogPopup(QDialog):
         return super().eventFilter(watched, event)
 
 
+class LinearAlgebraCaseRow(QFrame):
+    """可点击的线性代数教学案例行。"""
+
+    selected = Signal(str)
+
+    def __init__(self, case: LinearAlgebraCase, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.case_id = case.id
+        self.setObjectName("linearAlgebraCaseRow")
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(9, 7, 9, 7)
+        layout.setSpacing(2)
+        title = QLabel(case.name, self)
+        title.setObjectName("linearAlgebraCaseTitle")
+        summary = QLabel(case.summary, self)
+        summary.setObjectName("linearAlgebraCaseSummary")
+        summary.setWordWrap(True)
+        layout.addWidget(title)
+        layout.addWidget(summary)
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.selected.emit(self.case_id)
+            event.accept()
+            return
+        super().mousePressEvent(event)
+
+
+class LinearAlgebraCasePopup(QDialog):
+    """显示内置线性代数案例的分组弹窗。"""
+
+    requested = Signal(str)
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setObjectName("linearAlgebraCasePopup")
+        self.setWindowTitle("线性代数")
+        self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
+        self.setWindowModality(Qt.WindowModality.NonModal)
+        self.setMinimumSize(260, 260)
+        self.resize(300, 330)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(10, 10, 10, 10)
+        self.scroll = QScrollArea(self)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.content = QWidget(self.scroll)
+        self.content_layout = QVBoxLayout(self.content)
+        self.content_layout.setContentsMargins(0, 0, 0, 0)
+        self.content_layout.setSpacing(5)
+        self.content_layout.addStretch()
+        self.scroll.setWidget(self.content)
+        layout.addWidget(self.scroll)
+        self.set_cases(linear_algebra_cases())
+        application = QApplication.instance()
+        if application is not None:
+            application.installEventFilter(self)
+
+    def set_cases(self, cases: Iterable[LinearAlgebraCase]) -> None:
+        while self.content_layout.count() > 1:
+            item = self.content_layout.takeAt(0)
+            if item.widget() is not None:
+                item.widget().deleteLater()
+        last_category: str | None = None
+        for case in cases:
+            if case.category != last_category:
+                category = QLabel(case.category, self.content)
+                category.setObjectName("catalogCategory")
+                self.content_layout.insertWidget(self.content_layout.count() - 1, category)
+                last_category = case.category
+            row = LinearAlgebraCaseRow(case, self.content)
+            row.selected.connect(self._request)
+            self.content_layout.insertWidget(self.content_layout.count() - 1, row)
+
+    def open_at(self, anchor: QPoint) -> None:
+        self.show()
+        self.move(anchor)
+        self.raise_()
+
+    def _request(self, case_id: str) -> None:
+        self.hide()
+        self.requested.emit(case_id)
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if (
+            self.isVisible()
+            and event.type() == QEvent.Type.MouseButtonPress
+            and isinstance(watched, QWidget)
+            and watched is not self
+            and not self.isAncestorOf(watched)
+        ):
+            QTimer.singleShot(0, self.hide)
+        return super().eventFilter(watched, event)
+
+
 class LayerRow(QFrame):
     """包含可见性、MathLive 直接编辑和设置入口的紧凑图层行。"""
 
@@ -525,6 +621,7 @@ class AlgebraPanel(QFrame):
     lighting_requested = Signal()
     auto_intersections_changed = Signal(bool)
     manual_intersection_requested = Signal(str, str)
+    linear_algebra_requested = Signal(str)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -548,8 +645,11 @@ class AlgebraPanel(QFrame):
         self.new_formula_button = self._tool_button("+", "新增公式")
         self.function_catalog_button = self._tool_button("函数", "函数目录")
         self.function_catalog_button.setFixedWidth(44)
+        self.linear_algebra_button = self._tool_button("线性代数", "线性代数案例")
+        self.linear_algebra_button.setFixedWidth(72)
         toolbar.addWidget(self.new_formula_button)
         toolbar.addWidget(self.function_catalog_button)
+        toolbar.addWidget(self.linear_algebra_button)
         layout.addLayout(toolbar)
 
         # 这些对象维持旧版公开 API，同时不重新引入隐藏的工具栏控件。
@@ -581,8 +681,10 @@ class AlgebraPanel(QFrame):
         self.geometry_settings_popup = GeometrySettingsPopup(self)
         self.intersection_popup = IntersectionPopup(self)
         self.catalog_popup = FunctionCatalogPopup(self)
+        self.linear_algebra_popup = LinearAlgebraCasePopup(self)
         self.new_formula_button.clicked.connect(self._open_new_formula)
         self.function_catalog_button.clicked.connect(self._open_catalog)
+        self.linear_algebra_button.clicked.connect(self._open_linear_algebra)
         self.lighting_button.clicked.connect(self.lighting_requested)
         self.auto_intersections_action.toggled.connect(self.auto_intersections_changed)
         self.manual_intersection_action.triggered.connect(self._open_manual_intersection_popup)
@@ -598,6 +700,7 @@ class AlgebraPanel(QFrame):
         self.geometry_settings_popup.delete_requested.connect(self.delete_requested)
         self.intersection_popup.requested.connect(self.manual_intersection_requested)
         self.catalog_popup.requested.connect(self.catalog_requested)
+        self.linear_algebra_popup.requested.connect(self.linear_algebra_requested)
         self.formula_list.edit_requested.connect(self._open_inline_formula_for_layer)
         self.formula_list.formula_submitted.connect(self._submit_inline_formula)
         self.formula_list.edit_cancelled.connect(self._cancel_inline_formula_edit)
@@ -621,6 +724,7 @@ class AlgebraPanel(QFrame):
         self.settings_popup.hide()
         self.geometry_settings_popup.hide()
         self.catalog_popup.hide()
+        self.linear_algebra_popup.hide()
 
     def set_catalog_entries(self, entries: Iterable[CatalogEntry]) -> None:
         self.catalog_popup.set_entries(entries)
@@ -685,8 +789,15 @@ class AlgebraPanel(QFrame):
 
     def _open_catalog(self) -> None:
         self.settings_popup.hide()
+        self.linear_algebra_popup.hide()
         self.formula_list.cancel_edit()
         self.catalog_popup.open_at(self._popup_anchor(self.function_catalog_button))
+
+    def _open_linear_algebra(self) -> None:
+        self.settings_popup.hide()
+        self.catalog_popup.hide()
+        self.formula_list.cancel_edit()
+        self.linear_algebra_popup.open_at(self._popup_anchor(self.linear_algebra_button))
 
     def _open_formula_for_layer(self, layer_id: str, kind: str, latex: str, anchor: QPoint | None) -> None:
         self.settings_popup.hide()

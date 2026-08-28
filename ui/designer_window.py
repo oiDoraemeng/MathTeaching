@@ -30,6 +30,7 @@ from models.geometry_2d import (
     parse_point_coordinates,
 )
 from models.function_catalog import catalog_entries, catalog_entry
+from models.linear_algebra_cases import LinearAlgebraCase, linear_algebra_case
 from models.scene_mode import SceneAppearance, SceneMode
 from models.surface_layer import PlotDomain, SurfaceLayer
 from rendering.axis import ThreeDAxes, add_cartesian_axes
@@ -899,6 +900,7 @@ class MainWindow:
         panel.set_builtin_surfaces((surface.id, surface.name) for surface in BUILTIN_SURFACES)
         panel.add_requested.connect(self._add_formula_for_scene)
         panel.catalog_requested.connect(self._add_catalog_entry)
+        panel.linear_algebra_requested.connect(self._load_linear_algebra_case)
         panel.builtin_requested.connect(self._add_builtin_surface)
         panel.lighting_requested.connect(self._show_lighting_dialog)
         panel.update_requested.connect(self._update_formula_for_scene)
@@ -1204,6 +1206,9 @@ class MainWindow:
     def _command_clear_scope(self, scope: str) -> None:
         if scope not in {"all", "curves", "surfaces", "geometry", "annotations"}:
             raise CommandError("scene.clear.scope 不受支持。")
+        if scope == "all":
+            self.layers.clear()
+            self._agent_points3d = {}
         if self.scene_mode is SceneMode.THREE_D:
             if scope in {"all", "surfaces"}:
                 self.layers.clear()
@@ -1890,6 +1895,32 @@ class MainWindow:
             color=entry.color,
         )
         self._add_curve_layer(layer)
+
+    @staticmethod
+    def _linear_algebra_case_plan(case: LinearAlgebraCase) -> CommandPlan:
+        """Wrap a built-in case in one clear-and-load 2D command plan."""
+        return CommandPlan(
+            scene="2d",
+            summary=case.summary,
+            operations=({"op": "scene.clear", "scope": "all"}, *case.plan.operations),
+        )
+
+    def _load_linear_algebra_case(self, case_id: str) -> None:
+        case = linear_algebra_case(case_id)
+        if case is None:
+            self.algebra_panel.set_status(f"未知线性代数案例: {case_id}", is_error=True)
+            return
+        plan = self._linear_algebra_case_plan(case)
+        try:
+            self.scene_command_service.execute(plan)
+        except CommandError as error:
+            self.algebra_panel.set_status(f"无法加载案例 {case.name}: {error}", is_error=True)
+            return
+        self.algebra_panel.set_status(f"已加载案例: {case.name}")
+        if hasattr(self, "agent_panel"):
+            if hasattr(self, "agent_sidebar"):
+                self._open_agent_panel()
+            self.agent_panel.show_math_case(case)
 
     def _add_cas_surface(self, kind: str, latex: str) -> None:
         try:

@@ -5,6 +5,8 @@ import {
   type SessionProjection,
   type SnapshotProjection,
   type TimelineEvent,
+  type CaseProjection,
+  type TurnProjection,
 } from "../types";
 
 const HIDDEN_TIMELINE_EVENTS = new Set(["session_started", "capability_fallback", "execution_started", "execution_finished", "execution", "turn_finished", "approval_required"]);
@@ -22,7 +24,9 @@ export type AppAction =
   | { type: "set_view"; view: AppState["view"] }
   | { type: "history_loaded"; visible: AppState["history"]["visible"]; hidden: AppState["history"]["hidden"] }
   | { type: "register_mutation"; key: string; requestId: string; sessionId: string; previous: string }
-  | { type: "clear_session"; sessionId: string };
+  | { type: "clear_session"; sessionId: string }
+  | { type: "select_case"; caseId: string }
+  | { type: "close_case"; caseId: string };
 
 export const initialSession = (): SessionProjection => ({
   id: "local-session",
@@ -36,6 +40,8 @@ export const initialSession = (): SessionProjection => ({
 export const initialState = (): AppState => ({
   sessions: [initialSession()],
   activeSessionId: "local-session",
+  activeTab: "session:local-session",
+  cases: [],
   contextUsage: EMPTY_CONTEXT,
   modelStatus: { connected: false },
   settingsState: {},
@@ -50,7 +56,7 @@ export const initialState = (): AppState => ({
 
 function hydrateTurn(turn: SessionProjection["turns"][number]): SessionProjection["turns"][number] {
   const persistedStatus = turn.status;
-  let next = { ...turn, events: [], reasoningText: turn.reasoningText ?? "", assistantText: turn.assistantText ?? "", progressLogs: [], thinkingExpanded: turn.thinkingExpanded ?? (turn.status === "running"), planExpanded: turn.planExpanded ?? false, drawState: turn.drawState ?? "unavailable" };
+  let next: TurnProjection = { ...turn, events: [], reasoningText: turn.reasoningText ?? "", assistantText: turn.assistantText ?? "", progressLogs: [], thinkingExpanded: turn.thinkingExpanded ?? (turn.status === "running"), planExpanded: turn.planExpanded ?? false, drawState: turn.drawState ?? "unavailable" };
   for (const event of turn.events ?? []) next = sessionWithEvent({ id: "hydrate", title: "", mode: "Agent", executionMode: "continuous", model: "", turns: [next] }, event).turns[0];
   next.events = (turn.events ?? []).filter((event) => event.type === "explanation");
   next.status = persistedStatus;
@@ -171,6 +177,17 @@ function sessionWithEvent(session: SessionProjection, event: TimelineEvent): Ses
   return { ...session, turns };
 }
 
+function caseFromEvent(event: TimelineEvent): CaseProjection | null {
+  const payload = event.payload ?? {};
+  const id = typeof payload.case_id === "string" ? payload.case_id.trim() : "";
+  const name = typeof payload.name === "string" ? payload.name.trim() : "";
+  const formula = typeof payload.formula === "string" ? payload.formula : "";
+  const conclusion = typeof payload.conclusion === "string" ? payload.conclusion : "";
+  const steps = Array.isArray(payload.steps) ? payload.steps.filter((value): value is string => typeof value === "string").slice(0, 12) : [];
+  if (!id || !name || !formula || !conclusion || !steps.length) return null;
+  return { id, category: typeof payload.category === "string" ? payload.category : "向量", name, formula, steps, conclusion, summary: typeof payload.summary === "string" ? payload.summary : "", sceneMode: payload.scene_mode === "3d" ? "3d" : "2d" };
+}
+
 export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case "snapshot_loaded": {
@@ -198,6 +215,14 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     }
     case "event_received": {
       const { event } = action;
+      if (event.type === "math_case") {
+        const nextCase = caseFromEvent(event);
+        if (!nextCase) return state;
+        const cases = state.cases.some((item) => item.id === nextCase.id)
+          ? state.cases.map((item) => item.id === nextCase.id ? nextCase : item)
+          : [...state.cases, nextCase];
+        return { ...state, cases, activeTab: `case:${nextCase.id}` };
+      }
       if ((event.type === "mutation_succeeded" || event.type === "provider_test_result") && event.request_id) {
         const pendingMutations = { ...state.pendingMutations };
         for (const [key, value] of Object.entries(pendingMutations)) if (value.requestId === event.request_id && value.sessionId === event.session_id) delete pendingMutations[key];
@@ -230,7 +255,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case "toggle_plan":
       return { ...state, sessions: state.sessions.map((session) => session.id !== action.sessionId ? session : { ...session, turns: session.turns.map((turn) => turn.id === action.turnId ? { ...turn, planExpanded: !turn.planExpanded } : turn) }) };
     case "switch_session":
-      return state.sessions.some((session) => session.id === action.sessionId) ? { ...state, activeSessionId: action.sessionId } : state;
+      return state.sessions.some((session) => session.id === action.sessionId) ? { ...state, activeSessionId: action.sessionId, activeTab: `session:${action.sessionId}` } : state;
     case "set_view":
       return { ...state, view: action.view };
     case "history_loaded":
@@ -254,6 +279,12 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, pendingMutations: { ...state.pendingMutations, [action.key]: { requestId: action.requestId, sessionId: action.sessionId, previous: action.previous } } };
     case "clear_session":
       return { ...state, sessions: state.sessions.map((session) => session.id === action.sessionId ? { ...session, turns: [] } : session) };
+    case "select_case":
+      return state.cases.some((item) => item.id === action.caseId) ? { ...state, activeTab: `case:${action.caseId}` } : state;
+    case "close_case": {
+      const cases = state.cases.filter((item) => item.id !== action.caseId);
+      return { ...state, cases, activeTab: state.activeTab === `case:${action.caseId}` ? `session:${state.activeSessionId}` : state.activeTab };
+    }
     default:
       return state;
   }

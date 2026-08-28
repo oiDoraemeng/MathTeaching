@@ -91,6 +91,8 @@ class AgentSidebarWeb(QWidget):
         self.asset_root = Path(asset_root) if asset_root is not None else Path(__file__).with_name("agent_web") / "dist"
         self.asset_root = self.asset_root.resolve()
         self._active_session_id = ""
+        self._document_loaded = False
+        self._pending_math_case: dict[str, object] | None = None
         self.bridge = AgentBridge(dispatcher, self)
         self.view = QWebEngineView(self)
         self.page = _LocalPage(self.view)
@@ -148,6 +150,41 @@ class AgentSidebarWeb(QWidget):
             }
         )
 
+    def show_math_case(self, case: Any) -> None:
+        """Publish one bounded, JSON-only teaching case to the Web UI."""
+        payload = {
+            "case_id": str(getattr(case, "id", ""))[:128],
+            "category": str(getattr(case, "category", ""))[:64],
+            "name": str(getattr(case, "name", ""))[:128],
+            "formula": str(getattr(case, "formula", ""))[:512],
+            "steps": [str(step)[:512] for step in tuple(getattr(case, "steps", ()))[:12]],
+            "conclusion": str(getattr(case, "conclusion", ""))[:1024],
+            "summary": str(getattr(case, "summary", ""))[:512],
+            "scene_mode": "2d",
+        }
+        if not self._document_loaded:
+            self._pending_math_case = payload
+            return
+        self._emit_math_case_payload(payload)
+
+    def _emit_math_case_payload(self, payload: dict[str, object]) -> None:
+        self.bridge.emit_event(
+            {
+                "protocol_version": 1,
+                "type": "math_case",
+                "request_id": f"math-case-{payload['case_id']}",
+                "session_id": "",
+                "payload": payload,
+            }
+        )
+
+    def _replay_pending_case(self) -> None:
+        if self._pending_math_case is None or not self._document_loaded:
+            return
+        payload = self._pending_math_case
+        self._pending_math_case = None
+        self._emit_math_case_payload(payload)
+
     def _install_scheme_handler(self) -> None:
         scheme = QWebEngineUrlScheme(b"mathagent")
         scheme.setSyntax(QWebEngineUrlScheme.Syntax.HostAndPort)
@@ -164,6 +201,8 @@ class AgentSidebarWeb(QWidget):
     def _request_initial_snapshot(self, ok: bool) -> None:
         if not ok:
             return
+        self._document_loaded = True
         self.bridge.send_json(
             '{"protocol_version":1,"type":"request_snapshot","request_id":"webview-boot","session_id":"","payload":{}}'
         )
+        self._replay_pending_case()

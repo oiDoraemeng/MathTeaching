@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from types import SimpleNamespace
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
@@ -103,3 +104,47 @@ def test_web_host_owns_one_web_view() -> None:
 
     assert len(host.findChildren(QWebEngineView)) == 1
     assert host.view.url().scheme() == "mathagent"
+
+
+def test_web_host_emits_a_json_safe_math_case_event() -> None:
+    app = QApplication.instance() or QApplication([])
+    host = AgentSidebarWeb(lambda _message: None)
+    emitted: list[dict[str, object]] = []
+    host.bridge.event_json.connect(lambda raw: emitted.append(json.loads(raw)))
+    host._document_loaded = True
+
+    host.show_math_case(
+        SimpleNamespace(
+            id="vector-subtraction",
+            category="向量",
+            name="向量减法",
+            formula="a-b=(1,-1)",
+            steps=("将减法改写成加上相反向量",),
+            conclusion="减法等价于加上相反向量。",
+            summary="用相反向量演示向量减法",
+        )
+    )
+
+    assert emitted[-1]["type"] == "math_case"
+    assert emitted[-1]["payload"]["case_id"] == "vector-subtraction"
+
+
+def test_web_host_replays_latest_case_after_document_load() -> None:
+    app = QApplication.instance() or QApplication([])
+    host = AgentSidebarWeb(lambda _message: None)
+    emitted: list[dict[str, object]] = []
+    host.bridge.event_json.connect(lambda raw: emitted.append(json.loads(raw)))
+    host._document_loaded = False
+
+    from models.linear_algebra_cases import linear_algebra_case
+
+    case = linear_algebra_case("vector-addition")
+    assert case is not None
+    host.show_math_case(case)
+    assert not emitted
+
+    host._document_loaded = True
+    host._replay_pending_case()
+
+    assert emitted[-1]["type"] == "math_case"
+    assert emitted[-1]["payload"]["case_id"] == "vector-addition"

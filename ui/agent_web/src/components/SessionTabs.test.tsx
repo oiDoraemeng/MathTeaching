@@ -32,4 +32,22 @@ describe("SessionTabs", () => {
     expect(screen.queryByText("Closed")).not.toBeInTheDocument();
     expect(screen.queryByText("Hidden")).not.toBeInTheDocument();
   });
+
+  it("renders case tabs alongside sessions and closes a case tab", () => {
+    const onSelectCase = vi.fn();
+    const onClose = vi.fn();
+    render(<SessionTabs
+      sessions={[{ id: "open", title: "Open", mode: "Agent", executionMode: "continuous", model: "DeepSeek", turns: [] }]}
+      cases={[{ id: "vector-addition", category: "向量", name: "向量加法", formula: "a+b", steps: ["step"], conclusion: "sum" }]}
+      activeSessionId="open"
+      activeTab="case:vector-addition"
+      onSelect={vi.fn()}
+      onSelectCase={onSelectCase}
+      onClose={onClose}
+    />);
+    fireEvent.click(screen.getByRole("button", { name: "向量加法" }));
+    fireEvent.click(screen.getByRole("button", { name: /关闭 向量加法/ }));
+    expect(onSelectCase).toHaveBeenCalledWith("vector-addition");
+    expect(onClose).toHaveBeenCalledWith("case:vector-addition");
+  });
 });

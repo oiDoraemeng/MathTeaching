@@ -111,6 +111,26 @@ describe("MathAgent reducer", () => {
     const gap = appReducer(state, { type: "event_received", event: event("execution", 3, { text: "done" }) });
     expect(gap.gapDetected).toBe(true);
   });
+  it("creates one reusable case tab and activates it", () => {
+    const caseEvent: TimelineEvent = { type: "math_case", session_id: "", payload: {
+      case_id: "vector-subtraction", category: "向量", name: "向量减法", formula: "a-b=(1,-1)",
+      steps: ["加上相反向量"], conclusion: "减法等价于加法。", summary: "向量减法",
+    } };
+    let state = appReducer(initialState(), { type: "event_received", event: caseEvent });
+    state = appReducer(state, { type: "event_received", event: { ...caseEvent, payload: { ...caseEvent.payload, summary: "更新后的解释" } } });
+    expect(state.cases).toHaveLength(1);
+    expect(state.cases[0].summary).toBe("更新后的解释");
+    expect(state.activeTab).toBe("case:vector-subtraction");
+  });
+  it("closes a case tab and returns to the active session", () => {
+    const caseEvent: TimelineEvent = { type: "math_case", session_id: "", payload: {
+      case_id: "vector-addition", category: "向量", name: "向量加法", formula: "a+b", steps: ["step"], conclusion: "sum",
+    } };
+    const withCase = appReducer(initialState(), { type: "event_received", event: caseEvent });
+    const closed = appReducer(withCase, { type: "close_case", caseId: "vector-addition" });
+    expect(closed.cases).toHaveLength(0);
+    expect(closed.activeTab).toBe("session:local-session");
+  });
   it("rolls back only the matching optimistic mutation", () => {
     let state = initialState();
     state = appReducer(state, { type: "register_mutation", key: "model:local-session", requestId: "r1", sessionId: "local-session", previous: "old" });

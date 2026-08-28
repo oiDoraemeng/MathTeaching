@@ -112,6 +112,16 @@ class AlgebraPanelTests(unittest.TestCase):
 
         self.assertEqual(events, [True])
 
+    def test_linear_algebra_button_emits_selected_case_id(self) -> None:
+        panel = AlgebraPanel()
+        events: list[str] = []
+        panel.linear_algebra_requested.connect(events.append)
+
+        panel.linear_algebra_popup._request("vector-subtraction")
+
+        self.assertEqual(events, ["vector-subtraction"])
+        self.assertEqual(panel.linear_algebra_button.text(), "线性代数")
+
     def test_each_layer_keeps_independent_surface_and_intersection_events(self) -> None:
         layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1")
         panel = AlgebraPanel()

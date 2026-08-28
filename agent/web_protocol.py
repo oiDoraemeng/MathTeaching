@@ -77,6 +77,7 @@ EVENT_MESSAGE_TYPES = frozenset(
         "capability_fallback",
         "plan_composed",
         "scene_conflict",
+        "math_case",
     }
 )
 
@@ -158,7 +159,7 @@ def parse_envelope(value: str | dict[str, Any]) -> BridgeEnvelope:
     if len(request_id) > MAX_IDENTIFIER_LENGTH:
         raise ProtocolError("identifier_too_long", "request_id exceeds maximum length", field="request_id")
     session_id = str(decoded.get("session_id", "")).strip()
-    if not session_id and message_type != "request_snapshot":
+    if not session_id and message_type not in {"request_snapshot", "math_case"}:
         raise ProtocolError("missing_session_id", "session_id is required", field="session_id")
     if len(session_id) > MAX_IDENTIFIER_LENGTH:
         raise ProtocolError("identifier_too_long", "session_id exceeds maximum length", field="session_id")
@@ -200,6 +201,7 @@ def _validate_event_payload(message_type: str, payload: dict[str, Any]) -> None:
         "capability_fallback": (("reason", str),),
         "plan_composed": (("summary", str), ("operation_count", int)),
         "scene_conflict": (("code", str), ("message", str)),
+        "math_case": (("case_id", str), ("name", str), ("formula", str), ("steps", list), ("conclusion", str)),
     }
     for field, expected_type in required.get(message_type, ()):
         value = payload.get(field)
