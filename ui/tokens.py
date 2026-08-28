@@ -83,3 +83,9 @@ def flatten_theme(theme: ThemeName, tokens: Mapping[str, object] | None = None) 
     common = _flatten({key: value for key, value in source.items() if key not in {"$schema", "$comment", "themes"}})
     themed = _flatten(source["themes"][theme])
     return {_flat_name(key): value for key, value in {**common, **themed}.items()}
+
+def build_qss(theme: ThemeName) -> str:
+    """Render the global Qt stylesheet from the validated design tokens."""
+    template_path = Path(__file__).with_name("styles") / "base.qss.in"
+    from string import Template
+    return Template(template_path.read_text(encoding="utf-8")).substitute(flatten_theme(theme))

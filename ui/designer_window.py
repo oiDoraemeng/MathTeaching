@@ -3034,57 +3034,8 @@ class MainWindow:
         return widget
 
     def _apply_style(self) -> None:
-        self.window.setStyleSheet(
-            """
-            QMainWindow { background: #f7f8fa; }
-            #viewportHost { background: #f7f8fa; }
-            #algebraPanel { background: #ffffff; border-right: 1px solid #d9dde3; }
-            #algebraTitle { color: #17212e; font-size: 20px; font-weight: 700; }
-            #algebraLayerRow, #catalogEntryRow { background: #f9fafb; border: 1px solid #dfe3e8; border-radius: 6px; }
-            #catalogEntryRow:hover { background: #eaf2f7; border-color: #b7ccdc; }
-            #catalogCategory { color: #536273; font-size: 12px; font-weight: 700; padding: 8px 2px 2px 2px; }
-            #algebraStatus { color: #536273; font-size: 12px; padding-top: 2px; }
-            #algebraStatus[isError="true"] { color: #b42318; }
-            QScrollArea { border: 0; background: #ffffff; }
-            QLabel { color: #263241; font-size: 12px; }
-            QLineEdit, QComboBox { min-height: 30px; background: #ffffff; color: #1f2937; border: 1px solid #cbd3dd; border-radius: 4px; padding: 2px 7px; }
-            QLineEdit:focus, QComboBox:focus { border: 2px solid #2f7ebd; }
-            QPushButton { min-height: 30px; background: #edf3f7; color: #1f547d; border: 1px solid #b9d0e1; border-radius: 4px; padding: 3px 8px; font-weight: 600; }
-            QPushButton:hover { background: #dfeef7; }
-            QToolButton { min-width: 24px; min-height: 24px; color: #4a5563; border: 1px solid transparent; border-radius: 4px; }
-            QToolButton:hover { background: #eef2f5; border-color: #cfd8e1; }
-            QCheckBox { color: #405064; spacing: 4px; }
-            QCheckBox::indicator { width: 14px; height: 14px; border: 1px solid #aab5c1; border-radius: 3px; background: #ffffff; }
-            QCheckBox::indicator:checked { background: #2777b6; border-color: #2777b6; }
-            QSlider::groove:horizontal { height: 4px; background: #d7e0e7; border-radius: 2px; }
-            QSlider::handle:horizontal { width: 13px; margin: -5px 0; border-radius: 6px; background: #2f7ebd; }
-            #layerSettingsPopup, #geometrySettingsPopup, #functionCatalogPopup, #sceneSettingsPanel { background: #ffffff; border: 1px solid #d0d7df; border-radius: 8px; }
-            #settingsPopupTitle { color: #17212e; font-size: 13px; font-weight: 600; }
-            #formulaEditorPopup { background: #ffffff; border: 1px solid #d0d7df; border-radius: 8px; }
-            #viewportToolbar, #twoDGeometryToolbar, #twoDLineFlyout { background: #ffffff; border: 1px solid #d0d7df; border-radius: 6px; }
-            #viewportToolbar QToolButton, #twoDGeometryToolbar QToolButton, #twoDLineFlyout QToolButton { font-size: 18px; font-weight: 700; }
-            #agentButton:checked { background: #dcecf8; border-color: #5a97c5; color: #1d5f91; }
-
-            #agentPanel { background: #ffffff; border-left: 1px solid #c8d2dc; border-radius: 0; }
-            #agentSidebar { background: #ffffff; border-left: 1px solid #c8d2dc; }
-            #agentCollapsedBar { background: #f7f9fb; border-left: 0; }
-            #agentCollapsedLabel { color: #637184; font-size: 11px; font-weight: 600; }
-            #agentNavAgent, #agentNavSkills, #agentNavMemory, #agentNavRules { min-height: 28px; text-align: left; }
-            #agentNavAgent:checked, #agentNavSkills:checked, #agentNavMemory:checked, #agentNavRules:checked { background: #dcecf8; border-color: #5a97c5; color: #1d5f91; }
-            #agentTitle { color: #17212e; font-size: 15px; font-weight: 700; }
-            #agentStatus { color: #637184; font-size: 11px; }
-            #agentModeHint { color: #8a5a00; background: #fff8e5; border: 1px solid #efd79a; border-radius: 4px; padding: 5px; }
-            #agentMessageScroll { background: #f7f9fb; border: 1px solid #e0e5ea; border-radius: 5px; }
-            #agentUserBubble { background: #dcecf8; border: 1px solid #b8d6eb; border-radius: 7px; }
-            #agentAssistantBubble { background: #ffffff; border: 1px solid #dce2e8; border-radius: 7px; }
-            #agentPlanCard { background: #f4f8fb; border: 1px solid #b9d0e1; border-radius: 6px; }
-            #agentPlanProblems { color: #a12d2d; font-size: 11px; }
-            #agentPromptEdit { background: #ffffff; border: 1px solid #cbd3dd; border-radius: 5px; padding: 5px; }
-            #agentSendButton { min-height: 34px; }
-
-            #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked { background: #dcecf8; border-color: #5a97c5; color: #1d5f91; }
-            """
-        )
+        from ui.tokens import build_qss
+        self.window.setStyleSheet(build_qss(getattr(self, "effective_theme", "light")))
 
     def show(self) -> None:
         self.window.show()

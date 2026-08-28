@@ -1,7 +1,15 @@
 from copy import deepcopy
 import json
 import pytest
-from ui.tokens import TokenError, flatten_theme, load_tokens
+from ui.tokens import TokenError, build_qss, flatten_theme, load_tokens
+
+@pytest.mark.parametrize("theme", ["light", "dark"])
+def test_qss_template_is_fully_substituted(theme: str) -> None:
+    qss = build_qss(theme)
+    assert "$" not in qss
+    assert "#viewportToolbar" in qss
+    assert "QLineEdit:focus" in qss
+    assert "min-height: 32px" in qss
 
 def test_light_and_dark_themes_have_identical_leaf_keys():
     tokens = load_tokens(); light = flatten_theme("light", tokens); dark = flatten_theme("dark", tokens)
