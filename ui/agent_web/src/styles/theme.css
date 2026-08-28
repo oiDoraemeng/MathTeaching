@@ -30,6 +30,7 @@
   --agent-font-size-subtitle: 13px;
   --agent-font-size-title: 15px;
   --agent-font-family: Segoe UI;
+  --agent-surface: #ffffff;
 }
 
 [data-theme="dark"] {
@@ -64,6 +65,7 @@
   --agent-font-size-subtitle: 13px;
   --agent-font-size-title: 15px;
   --agent-font-family: Segoe UI;
+  --agent-surface: #202124;
 }
 
 * { box-sizing: border-box; }
