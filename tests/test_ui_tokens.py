@@ -30,3 +30,9 @@ def test_theme_shape_and_shadow_validation(tmp_path):
     data = deepcopy(load_tokens()); data["themes"]["dark"]["shadow"]["overlay"] = ""
     path = tmp_path / "tokens.json"; path.write_text(json.dumps(data), encoding="utf-8")
     with pytest.raises(TokenError, match="shadow.overlay"): load_tokens(path)
+
+@pytest.mark.parametrize("shadow", ["0 1px rgba(0,0,0,.4", "0 1px rgba(0,0,0,2)"])
+def test_malformed_shadow_color_fails(tmp_path, shadow):
+    data = deepcopy(load_tokens()); data["themes"]["dark"]["shadow"]["overlay"] = shadow
+    path = tmp_path / "tokens.json"; path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(TokenError, match="shadow.overlay"): load_tokens(path)

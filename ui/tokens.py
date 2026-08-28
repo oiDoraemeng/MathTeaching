@@ -63,6 +63,8 @@ def _validate(data: object) -> dict[str, object]:
         if not isinstance(shadow, Mapping): raise TokenError(f"themes.{mode}.shadow must be an object")
         for key, val in shadow.items():
             if not isinstance(val, str) or not val.strip(): raise TokenError(f"themes.{mode}.shadow.{key} must be a non-empty string")
+            if "rgba(" in val and val.count("rgba(") != len(re.findall(r"rgba\([^)]*\)", val)):
+                raise TokenError(f"themes.{mode}.shadow.{key} has malformed color")
             for rgba in re.findall(r"rgba\([^)]*\)", val):
                 if not _is_color(rgba): raise TokenError(f"themes.{mode}.shadow.{key} has invalid color")
     return data
