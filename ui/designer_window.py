@@ -9,6 +9,7 @@ from pathlib import Path
 
 from collections import deque
 from collections.abc import Callable
+import inspect
 from typing import Literal
 
 from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QThread, QTimer, Signal, Slot
@@ -3051,6 +3052,11 @@ class MainWindow:
         """Apply and propagate the resolved application theme."""
         self.theme_mode = mode
         self.effective_theme = effective
+        from PySide6.QtCore import QSettings
+
+        settings = QSettings()
+        settings.setValue("ui/theme", mode)
+        settings.sync()
         if hasattr(self, "window"):
             self._apply_style()
         # Theme-aware surfaces are optional so this remains compatible with
@@ -3062,16 +3068,13 @@ class MainWindow:
         ):
             callback = getattr(surface, "set_theme", None)
             if callable(callback):
-                try:
-                    callback(effective)
-                except TypeError:
+                parameters = inspect.signature(callback).parameters
+                if "effective" in parameters:
+                    callback(effective=effective)
+                elif "theme" in parameters:
                     callback(theme=effective)
-        rerender = getattr(self, "_render_scene", None)
-        if callable(rerender) and getattr(self, "_viewport_refreshing", False) is False:
-            # Scene background handling may be added by later tasks; rerender
-            # only when a scene is already initialized.
-            if hasattr(self, "plotter"):
-                rerender()
+                else:
+                    callback(effective)
 
     def show(self) -> None:
         self.window.show()

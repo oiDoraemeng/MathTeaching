@@ -41,3 +41,15 @@ Direct helper verification succeeded:
 ```text
 theme helpers: PASS
 ```
+
+## Follow-up fixes
+
+- `MainWindow.set_theme` now persists `ui/theme` through `QSettings` and never rerenders/rebuilds the active scene.
+- Optional surface callbacks are selected by signature (`effective`/`theme`/positional), avoiding a second invocation when callback code itself raises `TypeError`.
+- Added a regression test asserting persistence and no scene rerender.
+
+Follow-up smoke check output:
+
+```text
+'dark' \\HKEY_CURRENT_USER\Software\Math3DTeaching\Math3DTeaching
+```
