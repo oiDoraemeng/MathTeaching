@@ -23,6 +23,6 @@ test("falls back for malformed structure and import does not write", async () =>
   const tokens = await loadTokens(file);
   const css = generateThemeCss(tokens);
   assert.match(css, /--agent-accent: #2f7ebd/);
-  assert.match(css, /\[data-theme="dark"\][\s\S]*--agent-bg: #eef1f4/);
+  assert.match(css, /\[data-theme="dark"\][\s\S]*--agent-canvas: #eef1f4/);
   await stat(file);
 });
