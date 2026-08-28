@@ -53,7 +53,12 @@ def _validate(data: object) -> dict[str, object]:
         for key, val in group.items():
             if not isinstance(val, int) or isinstance(val, bool) or val <= 0: raise TokenError(f"{name}.{key} must be a positive integer")
     light, dark = _flatten(themes["light"]), _flatten(themes["dark"])
-    if set(light) != set(dark): raise TokenError("themes light and dark must have identical leaf keys")
+    if set(light) != set(dark):
+        missing_in_dark = sorted(set(light) - set(dark))
+        missing_in_light = sorted(set(dark) - set(light))
+        if missing_in_dark:
+            raise TokenError(f"themes.dark.{missing_in_dark[0]}")
+        raise TokenError(f"themes.light.{missing_in_light[0]}")
     for mode, theme in themes.items():
         for group in _COLOR_GROUPS:
             if group not in theme or not isinstance(theme[group], Mapping): raise TokenError(f"themes.{mode}.{group} must be an object")

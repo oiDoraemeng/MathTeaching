@@ -12,3 +12,11 @@
 `uv run pytest tests/test_ui_tokens.py -q` could not collect because the current environment does not expose the repository package on `PYTHONPATH` (`ModuleNotFoundError: No module named 'ui'`).
 
 The retired-selector assertions are intentionally strict; they will fail until the corresponding stylesheet cleanup from the upstream UI tasks is present.
+
+## Review follow-up
+
+- Replaced literal `\\n` sequences in both snapshots with actual line breaks matching `build_qss` output.
+- Tightened malformed-theme assertions to exact invalid JSON paths, including the specific missing or extra leaf.
+- Updated validation to report the precise counterpart path for theme leaf-set mismatches.
+
+Focused verification remains blocked by the existing `ModuleNotFoundError: No module named 'ui'` collection issue.

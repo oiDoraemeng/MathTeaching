@@ -31,8 +31,8 @@ def test_qss_has_required_and_no_retired_content(theme: str) -> None:
 @pytest.mark.parametrize(
     ("label", "mutate", "error_path"),
     [
-        ("missing theme leaf", lambda data: data["themes"]["dark"]["bg"].pop("scene"), "themes"),
-        ("mismatched theme key sets", lambda data: data["themes"]["dark"]["bg"].__setitem__("extra", "#fff"), "themes"),
+        ("missing theme leaf", lambda data: data["themes"]["dark"]["bg"].pop("scene"), r"^themes\.dark\.bg\.scene$"),
+        ("mismatched theme key sets", lambda data: data["themes"]["dark"]["bg"].__setitem__("extra", "#fff"), r"^themes\.light\.bg\.extra$"),
         ("zero font size", lambda data: data["font"]["size"].__setitem__("title", 0), "font.size.title"),
         ("negative duration", lambda data: data["motion"]["duration"].__setitem__("normal", -1), "motion.duration.normal"),
         ("invalid color", lambda data: data["themes"]["light"]["bg"].__setitem__("scene", "not-a-color"), "themes.light.bg.scene"),
