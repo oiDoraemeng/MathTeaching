@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "theme:generate": "node scripts/gen-theme.mjs",
+    "predev": "pnpm theme:generate",
+    "prebuild": "pnpm theme:generate",
     "dev": "vite",
     "build": "vite build",
     "test": "vitest run",
