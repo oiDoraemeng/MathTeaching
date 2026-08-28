@@ -283,6 +283,26 @@ class AgentRuntime:
             turn_id = finish("stopped", response, None, None)
             return RuntimeTurnResult("stopped", response, None, tuple(events), turn_id)
         answer_streamed = False
+
+        def on_stream_delta(delta_text: str, kind: str | None) -> None:
+            nonlocal answer_streamed
+            payload = {"text": delta_text}
+            if kind:
+                payload["kind"] = kind
+            if kind != "reasoning" and delta_text:
+                answer_streamed = True
+            emit(AgentEvent("message_delta", payload, session_id=session_id))
+
+        def stream_fallback(scene_context_value: SceneContext | None) -> RuntimeResponse:
+            """Retry through the provider's streaming text protocol.
+
+            respond_stream already degrades to the one-shot request when the
+            provider has no stream support, so the fallback never loses a turn.
+            """
+            response_value = self.agent.respond_stream(prompt, scene_context_value, on_delta=on_stream_delta)
+            validation_value = self.command_service.preview(response_value.plan) if response_value.plan is not None else None
+            return RuntimeResponse(response_value, validation_value)
+
         try:
             if self._uses_native_tools():
                 emit(AgentEvent("message_delta", {"text": "正在分析数学问题…", "kind": "reasoning"}, session_id=session_id))
@@ -299,12 +319,13 @@ class AgentRuntime:
                         session_id=session_id,
                         emit=emit_native,
                     )
-                except Exception:
-                    # Native tool calling is an optional transport feature. The
-                    # same configured provider is retried once via its existing
-                    # one-shot JSON plan protocol.
-                    emit(AgentEvent("capability_fallback", {"reason": "native_tool_protocol_unavailable"}, session_id=session_id))
-                    runtime_response = self.respond(prompt, scene_context)
+                except Exception as error:
+                    # Native tool calling is an optional transport feature. Carry
+                    # the real provider error into the timeline instead of a fixed
+                    # label, and keep the retry streaming so a transport failure
+                    # never silently degrades the turn to one-shot text.
+                    emit(AgentEvent("capability_fallback", {"reason": str(error)[:512]}, session_id=session_id))
+                    runtime_response = stream_fallback(scene_context)
                     response = runtime_response.response
                     validation = runtime_response.validation
                 else:
@@ -324,19 +345,7 @@ class AgentRuntime:
                     if native_turn.plan is not None:
                         emit(AgentEvent("plan_composed", {"summary": native_turn.plan.summary, "operation_count": len(native_turn.plan.operations)}, session_id=session_id))
                     validation = self.command_service.preview(response.plan) if response.plan is not None else None
-            elif False:
-                # Kept as a branch separator for the existing streaming path.
-                raise AssertionError("unreachable")
             if not self._uses_native_tools():
-                def on_stream_delta(delta_text: str, kind: str | None) -> None:
-                    nonlocal answer_streamed
-                    payload = {"text": delta_text}
-                    if kind:
-                        payload["kind"] = kind
-                    if kind != "reasoning" and delta_text:
-                        answer_streamed = True
-                    emit(AgentEvent("message_delta", payload, session_id=session_id))
-
                 stream_response = getattr(self.agent, "respond_stream", None)
                 if callable(stream_response) and getattr(self.agent.provider, "stream", None):
                     # Give the Web UI immediate feedback while the first model

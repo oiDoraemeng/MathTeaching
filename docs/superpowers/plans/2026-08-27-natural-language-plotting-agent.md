@@ -18,6 +18,48 @@
 - The natural-language agent calls the new capability registry directly. The legacy MCP adapter and `ToolRegistry` remain compatibility boundaries and must never receive `execute=True` from this flow.
 - Each logical task may be committed after its focused tests pass. Use a narrow `git add -- <listed paths>` and a descriptive commit message; do not commit unrelated files.
 
+## Post-Implementation Note (2026-08-28)
+
+This plan was written against a module layout that the repository has since
+refactored. The work is complete and verified, but **do not treat the file paths
+in the task bodies above as current** — roughly two thirds of them no longer
+exist. The table below maps each planned path to where the implementation
+actually landed.
+
+| Planned path | Actual path |
+| --- | --- |
+| `agent/provider.py`, `agent/openai_provider.py`, `agent/models.py` | `services/agent_provider.py` |
+| `agent/scene_commands.py` | `services/scene_commands.py` |
+| `agent/persistence.py` | `agent/session_store.py` |
+| `agent/agent_bridge.py` | `ui/agent_bridge.py` + `agent/web_protocol.py` |
+| `agent/agent_web_protocol.py` | `agent/web_protocol.py` |
+| `agent/prompts.py`, `agent/skills.py` | `agent/prompt_manager.py`, `agent/skill_manager.py` (+ `agent/prompts/`, `agent/instructions/` content files) |
+| `ui/agent_web/src/bridge.ts` | `ui/agent_web/src/bridge/qtBridge.ts` |
+| `ui/agent_web/src/components/Conversation.tsx` | `ui/agent_web/src/components/Timeline.tsx` |
+| `tests/test_agent_math_capabilities.py` | `tests/test_agent_capability_tools.py` |
+
+Snapshot projection lives in `agent/ui_projection.py`, which the plan never
+named. Task 5.1's prompt work split across two namespaces: canonical capability
+names go to native tool requests via `CANONICAL_CAPABILITY_NAMES`
+(`agent/agent.py`), while `SYSTEM_PROMPT` in `services/agent_provider.py`
+correctly lists `CommandPlan` **operation** names for the JSON fallback path —
+these are different identifier sets, not a missed migration.
+
+**Checkbox state:** the 117 checkboxes above were never ticked during execution.
+`openspec/changes/natural-language-plotting-agent/tasks.md` is the authoritative
+completion record; all 20 of its items are done. This file is kept as the
+historical design-time plan rather than being retro-ticked, so it should be read
+as "what we intended to do" and not as a live progress tracker.
+
+**Fallback behaviour changed after this plan was written.** Task 11 specified a
+one-shot JSON retry when a provider rejects native tools. A later fix made that
+retry stream instead, because the non-streaming retry was masking a server-side
+tool-schema rejection and silently degrading every turn to non-streaming output.
+The JSON/fenced `CommandPlan` parsing, single-retry limit, same-provider
+constraint, and fingerprint guard are all unchanged; only the streaming property
+and the fallback event's `reason` differ. See the updated
+`spec.md` / `design.md` / `tasks.md` 3.2 for the current contract.
+
 ## Task Sequence
 
 <!-- openspec-task: 1.1 -->

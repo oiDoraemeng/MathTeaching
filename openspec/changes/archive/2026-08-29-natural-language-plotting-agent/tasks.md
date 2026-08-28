@@ -16,7 +16,7 @@
 ## 3. Runtime and Provider Integration
 
 - [x] 3.1 Extend provider conversation records and OpenAI-compatible serializers for Chat Completions and Responses function calls plus matching results; verify call IDs, sequential call processing, and `parallel_tool_calls=false` payloads
-- [x] 3.2 Inject the capability catalog into native provider requests, run the bounded continuation loop, and preserve the one-shot JSON/fenced-plan fallback; verify unsupported-native-tool retry uses the same provider and emits a fallback event
+- [x] 3.2 Inject the capability catalog into native provider requests, run the bounded continuation loop, and preserve the JSON/fenced-plan parsing on a streaming retry; verify unsupported-native-tool retry uses the same provider, streams incremental deltas, and emits a fallback event carrying the sanitized provider reason
 - [x] 3.3 Carry the immutable start snapshot and SHA-256 fingerprint through workers, validation persistence, automatic execution, and approval; verify `scene_changed_since_plan` starts no transaction and invalidates the ticket
 - [x] 3.4 Preserve Agent/Ask/Plan behavior for one combined plan, including no-plan answers, duplicate approval rejection, cancellation at every loop boundary, and rollback; verify runtime integration tests pass
 - [x] 3.5 Emit and persist ordered, bounded, JSON-safe tool lifecycle and plan-composition events; verify one terminal event, credential redaction, and renderer-object rejection

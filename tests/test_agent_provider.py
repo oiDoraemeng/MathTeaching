@@ -101,6 +101,61 @@ class AgentProviderTests(unittest.TestCase):
         self.assertEqual(payload["messages"][-1]["content"], "清空场景")
         self.assertIsNotNone(response.plan)
 
+    def test_real_capability_catalog_is_sent_without_strict_in_both_protocols(self) -> None:
+        """The registry has genuinely optional parameters, so ``strict`` must stay off.
+
+        Server-side Structured Outputs requires every key in ``properties`` to
+        appear in ``required``; six of the nine capabilities do not satisfy that,
+        so sending ``strict`` gets the whole tool request rejected with HTTP 400.
+        Local ``validate_tool_arguments`` is the real boundary instead.
+        """
+        from agent.capabilities import build_default_registry
+
+        catalog = build_default_registry().catalog()["capabilities"]
+        self.assertEqual(len(catalog), 9)
+        optional_keys = {
+            item["name"]
+            for item in catalog
+            if set(item["input_schema"].get("properties", {})) - set(item["input_schema"].get("required", []))
+        }
+        self.assertTrue(optional_keys, "catalog should still exercise optional parameters")
+
+        for protocol, reply in (
+            ("chat_completions", {"choices": [{"message": {"content": "ok"}}]}),
+            ("responses", {"output_text": "ok", "output": []}),
+        ):
+            settings = AgentSettings(base_url="https://model.example/v1", api_key="secret-token", model="teaching-model", protocol=protocol)
+            with patch("services.agent_provider.urlopen", return_value=_Response(reply)) as opened:
+                OpenAICompatibleProvider(settings).request_tools((AgentMessage("user", "画图"),), catalog)
+
+            payload = json.loads(opened.call_args.args[0].data.decode("utf-8"))
+            tools = payload["tools"]
+            self.assertEqual(len(tools), 9, protocol)
+            for definition in tools:
+                self.assertNotIn("strict", definition, protocol)
+                self.assertNotIn("strict", definition.get("function", {}), protocol)
+
+    def test_system_prompt_declares_every_allowed_command_operation(self) -> None:
+        """The JSON fallback prompt and the executor must list the same operations.
+
+        The prompt is the only thing telling a model which operations exist on
+        the JSON/fenced-plan path, so an operation missing here is unreachable
+        even though ``SceneCommandService`` would accept it. Locking both
+        directions also fails loudly if an operation is retired from the
+        executor but left advertised.
+        """
+        import re
+
+        from services.agent_provider import SYSTEM_PROMPT
+        from services.scene_commands import _ALLOWED_OPERATIONS
+
+        marker = "只能使用已注册的场景操作："
+        self.assertIn(marker, SYSTEM_PROMPT)
+        block = SYSTEM_PROMPT.split(marker, 1)[1].split("。", 1)[0]
+        declared = set(re.findall(r"[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*", block))
+
+        self.assertEqual(declared, set(_ALLOWED_OPERATIONS))
+
     def test_plain_text_reply_becomes_chat_message(self) -> None:
         with patch("services.agent_provider.urlopen", return_value=_Response({
             "choices": [{"message": {"content": "请问你想画哪个区间的图像？"}}],

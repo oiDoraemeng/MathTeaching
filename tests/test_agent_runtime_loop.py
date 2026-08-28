@@ -82,6 +82,25 @@ class _NativeFallbackProvider(_NativeToolProvider):
         return AgentResponse("fallback", CommandPlan(summary="fallback", operations=({"op": "point.upsert", "alias": "P", "coordinates": [1, 2]},)), "")
 
 
+class _NativeRejectedStreamingProvider(_NativeToolProvider):
+    """Reject the native tool request the way a real 400 does, but stream text."""
+
+    def stream_tools(self, messages, catalog, *, on_event):
+        raise RuntimeError("模型服务返回 HTTP 400。")
+
+    def request_tools(self, messages, catalog):
+        raise RuntimeError("模型服务返回 HTTP 400。")
+
+    def create_plan(self, messages, scene_context):
+        raise AssertionError("streaming fallback should not use the one-shot plan request")
+
+    def stream(self, messages, *, tools=()):
+        yield ProviderEvent("message_delta", {"text": "先看导数", "kind": "reasoning"})
+        yield ProviderEvent("message_delta", {"text": "斜率"})
+        yield ProviderEvent("message_delta", {"text": "是 2x。"})
+        yield ProviderEvent("completed", {"text": "斜率是 2x。", "tool_calls": []})
+
+
 def _runtime(tmp_path):
     host = _Host()
     store = SessionStore(app_root=tmp_path)
@@ -189,7 +208,31 @@ def test_native_tool_transport_failure_uses_same_provider_json_fallback(tmp_path
 
     assert result.status == "completed"
     assert result.response.text == "fallback"
-    assert any(event.type == "capability_fallback" for event in result.events)
+    fallback = [event for event in result.events if event.type == "capability_fallback"]
+    assert fallback
+    # The real transport error reaches the timeline instead of a fixed label.
+    assert "native_transport_unsupported" in fallback[0].payload["reason"]
+
+
+def test_native_tool_rejection_falls_back_to_streaming_text(tmp_path) -> None:
+    host = _Host()
+    store = SessionStore(app_root=tmp_path)
+    runtime = AgentRuntime(provider=_NativeRejectedStreamingProvider(), command_service=SceneCommandService(host), session_store=store)
+    session = store.create_session("Chat")
+    streamed: list[AgentEvent] = []
+
+    result = runtime.run_turn(session.id, "y=x^2 的导数", mode="Agent", on_event=streamed.append)
+
+    fallback = [event for event in streamed if event.type == "capability_fallback"]
+    assert fallback
+    assert "400" in fallback[0].payload["reason"]
+    content = [event.payload["text"] for event in streamed if event.type == "message_delta" and event.payload.get("kind") != "reasoning"]
+    # Several deltas prove the retry streamed rather than emitting one whole answer.
+    assert content == ["斜率", "是 2x。"]
+    # respond_stream accumulates every delta, reasoning included, into the text it
+    # parses for a plan. That is pre-existing behaviour, asserted here so a future
+    # change to it is visible rather than silent.
+    assert result.response.text == "先看导数斜率是 2x。"
 
 
 def test_unconfigured_remote_provider_reports_error_for_vector_request(tmp_path) -> None:

@@ -127,7 +127,7 @@ class AgentProvider(Protocol):
 SYSTEM_PROMPT = """你是 Math3DTeaching 的 Math Teacher Agent。
 先解释数学概念；需要修改场景时，只能返回受限 CommandPlan JSON（或 JSON fenced block），不得输出或执行 Python。
 只能使用已注册的场景操作：scene.set_mode、scene.clear、curve.create、curve.update、curve.delete、
-point.upsert、point3d.upsert、point.delete、linear.upsert、linear.delete、teach.vector_addition、
+point.upsert、point3d.upsert、point.delete、point3d.delete、linear.upsert、linear.delete、teach.vector_addition、
 annotation.upsert、annotation.delete、view.fit、scene.export_png、surface.create、surface.update、surface.delete、
 calculus.derivative、calculus.integral_area、calculus.tangent、area.fill、linear_algebra.matrix_transform、
 linear_algebra.determinant_area、geometry.intersection。
@@ -217,10 +217,14 @@ class OpenAICompatibleProvider:
             if not isinstance(name, str) or not isinstance(schema, dict):
                 continue
             description = str(item.get("description", ""))[:512]
+            # 不发送 strict：服务端 Structured Outputs 要求 properties 的每个键
+            # 都出现在 required 中，而这里的能力 schema 有真正的可选参数。真正的
+            # 边界是本地 validate_tool_arguments（逐调用全量 Draft 2020-12 校验，
+            # 含 additionalProperties: false），它比服务端 strict 更严。
             if protocol == "responses":
-                definitions.append({"type": "function", "name": name, "description": description, "parameters": schema, "strict": True})
+                definitions.append({"type": "function", "name": name, "description": description, "parameters": schema})
             else:
-                definitions.append({"type": "function", "function": {"name": name, "description": description, "parameters": schema, "strict": True}})
+                definitions.append({"type": "function", "function": {"name": name, "description": description, "parameters": schema}})
         return definitions
 
     @staticmethod

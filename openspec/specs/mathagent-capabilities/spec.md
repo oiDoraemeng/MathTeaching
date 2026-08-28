@@ -1,8 +1,9 @@
-## Purpose
+# mathagent-capabilities Specification
 
+## Purpose
 Provide a discoverable and safe capability system through which the Math Teacher Agent can read, analyze, edit, view, export, and explain 2D or 3D mathematical scenes using natural language.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Categorized capability registry
 
@@ -178,7 +179,8 @@ Legacy helper names SHALL remain callable as aliases that normalize into the nam
 
 #### Scenario: Native tool protocol fallback
 - **WHEN** a configured provider rejects native function tools as unsupported
-- **THEN** the runtime retries once with the same provider's JSON CommandPlan path and records a visible fallback event
+- **THEN** the runtime retries once through the same provider's streaming text protocol, still parsing the reply as a JSON or fenced-JSON `CommandPlan`, and records a visible fallback event carrying the sanitized provider reason
+- **AND** the retry streams incremental deltas rather than emitting one whole answer, so a rejected native request never silently degrades the turn to non-streaming output
 - **AND** it does not switch models, connect to an external MCP server, or claim multi-tool staged behavior for that fallback turn
 
 #### Scenario: No external or direct MCP execution
