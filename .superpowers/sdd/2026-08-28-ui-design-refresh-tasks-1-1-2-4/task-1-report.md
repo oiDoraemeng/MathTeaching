@@ -25,3 +25,18 @@ The initial focused run without `PYTHONPATH` could not collect `ui` because this
 
 - CSS `rgba(...)` values are validated by a deliberately narrow parser in addition to `QColor`; other future CSS color syntaxes will need explicit support if introduced.
 - Existing unrelated OpenSpec edits and plan files were preserved.
+
+## Review fixes
+
+- Hardened all structural validation paths to normalize malformed mappings, missing nested sections, theme names, leaf parity, and integer values to TokenError.
+- Added explicit non-empty CSS shadow validation with rgba fragment checks; QColor is not used directly on full shadow strings.
+- Expanded tests to 9 cases covering malformed sections, flattened names, invalid themes, and shadows.
+
+Command/output:
+
+$env:PYTHONPATH='.'; uv run pytest tests/test_ui_tokens.py -q`n``text
+.........                                                                [100%]
+9 passed in 0.09s
+`` 
+
+PYTHONPATH remains required because uv package mode is disabled and the repository has no installed package entry point.
