@@ -40,3 +40,14 @@ $env:PYTHONPATH='.'; uv run pytest tests/test_ui_tokens.py -q`n``text
 `` 
 
 PYTHONPATH remains required because uv package mode is disabled and the repository has no installed package entry point.
+
+## Shadow validation follow-up
+
+Strictly reject malformed or invalid `rgba(...)` fragments in shadow values, including missing delimiters and invalid alpha. Added regression coverage.
+
+Command/output: `PYTHONPATH=. uv run pytest tests/test_ui_tokens.py -q`
+
+```text
+...........                                                              [100%]
+11 passed in 0.13s
+```
