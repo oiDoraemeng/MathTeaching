@@ -14,6 +14,7 @@ export type TimelineEventType =
   | "execution"
   | "stopped"
   | "error"
+  | "theme_state"
   | "turn_finished"
   | string;
 
@@ -230,6 +231,7 @@ export interface AppState {
   modelCatalog: ModelCatalog;
   capabilityCatalog: CapabilityCatalog;
   pendingMutations: Record<string, { requestId: string; sessionId: string; previous: string }>;
+  theme?: "light" | "dark";
 }
 
 export const EMPTY_CONTEXT: ContextUsage = {

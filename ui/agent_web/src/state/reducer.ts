@@ -28,6 +28,12 @@ export type AppAction =
   | { type: "select_case"; caseId: string }
   | { type: "close_case"; caseId: string };
 
+function applyTheme(mode: unknown): "light" | "dark" | null {
+  if (mode !== "light" && mode !== "dark") return null;
+  document.documentElement.dataset.theme = mode;
+  return mode;
+}
+
 export const initialSession = (): SessionProjection => ({
   id: "local-session",
   title: "New Chat",
@@ -52,6 +58,7 @@ export const initialState = (): AppState => ({
   modelCatalog: { builtin: [], custom: [] },
   capabilityCatalog: { catalog_version: 1, capabilities: [] },
   pendingMutations: {},
+  theme: undefined,
 });
 
 function hydrateTurn(turn: SessionProjection["turns"][number]): SessionProjection["turns"][number] {
@@ -215,6 +222,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     }
     case "event_received": {
       const { event } = action;
+      if (event.type === "theme_state") {
+        const theme = applyTheme(event.payload?.mode);
+        return theme ? { ...state, theme } : state;
+      }
       if (event.type === "math_case") {
         const nextCase = caseFromEvent(event);
         if (!nextCase) return state;
