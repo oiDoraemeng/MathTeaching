@@ -23,8 +23,12 @@ def test_layer_rows_are_cards_with_color_strip_and_states() -> None:
     assert "border-radius: 8px" in html
     assert ".layer-row:hover" in html
     assert ".layer-row.selected" in html
-    assert "eye-off" in html and "eye" in html
-    assert "ellipsis" in html
+    assert "const eyeIcon" in html
+    assert "const eyeOffIcon" in html
+    assert "visible ? eyeIcon() : eyeOffIcon()" in html
+    assert "const settingsIcon" in html
+    assert "settings.innerHTML = settingsIcon()" in html
+    assert "settings.textContent = '\\u22ee'" not in html
 
 
 def test_control_dimensions_use_only_three_grades() -> None:
