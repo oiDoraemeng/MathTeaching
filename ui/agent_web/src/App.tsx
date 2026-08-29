@@ -10,7 +10,6 @@ import { MathCaseView } from "./components/MathCaseView";
 import { createQtBridge } from "./bridge/qtBridge";
 import { appReducer, initialSession, initialState } from "./state/reducer";
 import type { ClientIntent } from "./types";
-import "./styles/theme.css";
 import "./styles/layout.css";
 
 export function App() {
