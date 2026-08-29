@@ -1,16 +1,13 @@
 QMainWindow, #viewportHost { background: #eef1f4; color: #17212e; }
 #algebraPanel, #agentSidebar { background: #ffffff; }
-#algebraPanel { border-right: 1px solid #d5dbe3; }
-#agentPanel { background: #ffffff; border-left: 1px solid #b8c2cd; border-radius: 0; }
-#algebraTitle, #agentTitle { color: #17212e; font-weight: 700; }
+#algebraTitle { color: #17212e; font-weight: 700; }
 #algebraTitle { font-size: 15px; }
-#agentTitle { font-size: 13px; }
 #algebraLayerRow, #catalogEntryRow { background: #f5f7f9; border: 1px solid #d5dbe3; border-radius: 4px; }
 #catalogEntryRow:hover { background: #e4f0f9; border-color: #b8c2cd; }
 #catalogCategory, #algebraStatus { color: #3f4c5c; font-size: 11px; }
 #catalogCategory { font-weight: 700; padding: 8px 2px 2px 2px; }
 #algebraStatus { padding-top: 2px; }
-#algebraStatus[isError="true"], #agentPlanProblems { color: #b42318; }
+#algebraStatus[isError="true"] { color: #b42318; }
 QScrollArea { border: 0; background: #ffffff; }
 QLabel { color: #3f4c5c; font-size: 12px; }
 QLineEdit, QComboBox, QPushButton {
@@ -34,21 +31,6 @@ QSlider::handle:horizontal { width: 13px; margin: -5px 0; border-radius: 6px; ba
 }
 #settingsPopupTitle { color: #17212e; font-size: 13px; font-weight: 600; }
 #viewportToolbar QToolButton, #twoDGeometryToolbar QToolButton, #twoDLineFlyout QToolButton { font-size: 18px; font-weight: 700; }
-#agentButton:checked, #agentNavAgent:checked, #agentNavSkills:checked, #agentNavMemory:checked, #agentNavRules:checked,
-#twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
+#agentButton:checked, #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
   background: #e4f0f9; border-color: #2f7ebd; color: #2f7ebd;
 }
-#agentCollapsedBar, #agentMessageScroll { background: #f5f7f9; }
-#agentCollapsedBar { border-left: 0; }
-#agentCollapsedLabel, #agentStatus { color: #66788c; font-size: 11px; }
-#agentCollapsedLabel { font-weight: 600; }
-#agentNavAgent, #agentNavSkills, #agentNavMemory, #agentNavRules { min-height: 28px; text-align: left; }
-#agentModeHint { color: #8a5a00; background: #e4f0f9; border: 1px solid #d5dbe3; border-radius: 4px; padding: 5px; }
-#agentMessageScroll { border: 1px solid #eceff3; border-radius: 5px; }
-#agentUserBubble { background: #e4f0f9; border: 1px solid #b8c2cd; border-radius: 7px; }
-#agentAssistantBubble { background: #ffffff; border: 1px solid #d5dbe3; border-radius: 7px; }
-#agentPlanCard { background: #f5f7f9; border: 1px solid #b8c2cd; border-radius: 4px; }
-#agentPlanProblems { font-size: 11px; }
-#agentPromptEdit { background: #ffffff; border: 1px solid #d5dbe3; border-radius: 5px; padding: 5px; }
-#agentSendButton { min-height: 34px; }
-

@@ -1,16 +1,13 @@
 QMainWindow, #viewportHost { background: $bg_canvas; color: $text_primary; }
 #algebraPanel, #agentSidebar { background: $bg_panel; }
-#algebraPanel { border-right: 1px solid $border_default; }
-#agentPanel { background: $bg_panel; border-left: 1px solid $border_strong; border-radius: 0; }
-#algebraTitle, #agentTitle { color: $text_primary; font-weight: 700; }
+#algebraTitle { color: $text_primary; font-weight: 700; }
 #algebraTitle { font-size: ${size_title}px; }
-#agentTitle { font-size: ${size_subtitle}px; }
 #algebraLayerRow, #catalogEntryRow { background: $bg_elevated; border: 1px solid $border_default; border-radius: ${radius_sm}px; }
 #catalogEntryRow:hover { background: $accent_soft_bg; border-color: $border_strong; }
 #catalogCategory, #algebraStatus { color: $text_secondary; font-size: ${size_caption}px; }
 #catalogCategory { font-weight: 700; padding: ${space_s2}px 2px 2px 2px; }
 #algebraStatus { padding-top: 2px; }
-#algebraStatus[isError="true"], #agentPlanProblems { color: $status_error; }
+#algebraStatus[isError="true"] { color: $status_error; }
 QScrollArea { border: 0; background: $bg_panel; }
 QLabel { color: $text_secondary; font-size: ${size_body}px; }
 QLineEdit, QComboBox, QPushButton {
@@ -34,20 +31,6 @@ QSlider::handle:horizontal { width: 13px; margin: -5px 0; border-radius: 6px; ba
 }
 #settingsPopupTitle { color: $text_primary; font-size: ${size_subtitle}px; font-weight: 600; }
 #viewportToolbar QToolButton, #twoDGeometryToolbar QToolButton, #twoDLineFlyout QToolButton { font-size: 18px; font-weight: 700; }
-#agentButton:checked, #agentNavAgent:checked, #agentNavSkills:checked, #agentNavMemory:checked, #agentNavRules:checked,
-#twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
+#agentButton:checked, #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
   background: $accent_soft_bg; border-color: $accent_default; color: $accent_default;
 }
-#agentCollapsedBar, #agentMessageScroll { background: $bg_elevated; }
-#agentCollapsedBar { border-left: 0; }
-#agentCollapsedLabel, #agentStatus { color: $text_muted; font-size: ${size_caption}px; }
-#agentCollapsedLabel { font-weight: 600; }
-#agentNavAgent, #agentNavSkills, #agentNavMemory, #agentNavRules { min-height: 28px; text-align: left; }
-#agentModeHint { color: $status_warning; background: $accent_soft_bg; border: 1px solid $border_default; border-radius: ${radius_sm}px; padding: 5px; }
-#agentMessageScroll { border: 1px solid $border_subtle; border-radius: 5px; }
-#agentUserBubble { background: $accent_soft_bg; border: 1px solid $border_strong; border-radius: 7px; }
-#agentAssistantBubble { background: $bg_panel; border: 1px solid $border_default; border-radius: 7px; }
-#agentPlanCard { background: $bg_elevated; border: 1px solid $border_strong; border-radius: ${radius_sm}px; }
-#agentPlanProblems { font-size: ${size_caption}px; }
-#agentPromptEdit { background: $bg_panel; border: 1px solid $border_default; border-radius: 5px; padding: 5px; }
-#agentSendButton { min-height: 34px; }
