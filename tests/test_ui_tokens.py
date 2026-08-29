@@ -14,6 +14,7 @@ from unittest.mock import MagicMock
 
 from models.scene_mode import SceneAppearance, SceneMode
 from ui.designer_window import MainWindow
+from ui.algebra_panel import AlgebraPanel
 from ui.lighting_dialog import LightingDialog
 from ui.scene_settings import SceneSettingsPanel
 from ui.tokens import TokenError, _shadow_effect_values, build_qss, flatten_theme, load_tokens
@@ -85,7 +86,17 @@ def test_qss_has_required_and_no_retired_content(theme: str) -> None:
 def test_overlay_and_dialog_chrome_use_token_metrics(theme: str) -> None:
     flat = flatten_theme(theme)
     qss = build_qss(theme)
-    for selector in ("#viewportToolbar", "#twoDGeometryToolbar", "#twoDLineFlyout", "#sceneSettingsPanel"):
+    for selector in (
+        "#layerSettingsPopup",
+        "#geometrySettingsPopup",
+        "#functionCatalogPopup",
+        "#formulaEditorPopup",
+        "#linearAlgebraCasePopup",
+        "#viewportToolbar",
+        "#twoDGeometryToolbar",
+        "#twoDLineFlyout",
+        "#sceneSettingsPanel",
+    ):
         block = _block_for_selector(qss, selector)
         assert f"background: {flat['bg_overlay']}" in block
         assert f"border: 1px solid {flat['border_subtle']}" in block
@@ -133,6 +144,23 @@ def test_floating_widget_construction_names_and_token_shadows(monkeypatch) -> No
     for widget, object_name, level in widgets:
         assert widget.objectName() == object_name
         _assert_shadow(widget, level)
+
+
+def test_algebra_panel_popups_sync_overlay_theme() -> None:
+    panel = AlgebraPanel()
+    popup_widgets = (
+        panel.settings_popup,
+        panel.geometry_settings_popup,
+        panel.catalog_popup,
+        panel.formula_popup,
+        panel.linear_algebra_popup,
+    )
+    for popup in popup_widgets:
+        _assert_shadow(popup, "overlay", "light")
+
+    panel.sync_overlay_theme("dark")
+    for popup in popup_widgets:
+        _assert_shadow(popup, "overlay", "dark")
 
 
 def test_main_window_apply_style_has_no_inline_qss() -> None:

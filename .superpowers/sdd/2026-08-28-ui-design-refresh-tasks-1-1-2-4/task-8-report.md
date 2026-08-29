@@ -13,3 +13,12 @@ Verification:
 
 Note:
 - The targeted assertions passed. `test_main_window_layout.py` still shows a QtWebEngine/GPU teardown crash in some runs after pytest exits; the test body itself passes.
+
+Review fix:
+- Applied token-backed overlay drop shadows to AlgebraPanel-owned popups: `#layerSettingsPopup`, `#geometrySettingsPopup`, `#functionCatalogPopup`, `#formulaEditorPopup`, and `#linearAlgebraCasePopup`.
+- Added `AlgebraPanel.sync_overlay_theme(theme)` and wired `MainWindow._apply_style()` to refresh those popup shadows during theme changes, so shadow colors and metrics do not go stale.
+- Expanded overlay chrome tests to include all overlay family selectors and added AlgebraPanel popup shadow synchronization coverage.
+
+Verification:
+- `PYTHONPATH=. uv run pytest tests/test_ui_tokens.py tests/test_algebra_panel.py -q` (PowerShell equivalent: `$env:PYTHONPATH='.'; uv run pytest tests/test_ui_tokens.py tests/test_algebra_panel.py -q`)
+- Result: 44 passed, 2 warnings.

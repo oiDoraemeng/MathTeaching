@@ -33,6 +33,7 @@ from models.geometry_2d import GeometryObject, Linear2D, Point2D
 from models.scene_mode import SceneMode
 from models.surface_layer import SurfaceLayer
 from ui.icons import apply_icon
+from ui.tokens import ThemeName, apply_drop_shadow
 
 
 Layer = SurfaceLayer | CurveLayer | GeometryObject
@@ -685,6 +686,7 @@ class AlgebraPanel(QFrame):
         self.intersection_popup = IntersectionPopup(self)
         self.catalog_popup = FunctionCatalogPopup(self)
         self.linear_algebra_popup = LinearAlgebraCasePopup(self)
+        self.sync_overlay_theme("light")
         self.new_formula_button.clicked.connect(self._open_new_formula)
         self.function_catalog_button.clicked.connect(self._open_catalog)
         self.linear_algebra_button.clicked.connect(self._open_linear_algebra)
@@ -712,6 +714,16 @@ class AlgebraPanel(QFrame):
 
     def showEvent(self, event: QShowEvent) -> None:
         super().showEvent(event)
+
+    def sync_overlay_theme(self, theme: ThemeName) -> None:
+        for popup in (
+            self.settings_popup,
+            self.geometry_settings_popup,
+            self.catalog_popup,
+            self.formula_popup,
+            self.linear_algebra_popup,
+        ):
+            apply_drop_shadow(popup, "overlay", theme)
 
     @staticmethod
     def _tool_button(text: str, tooltip: str) -> QToolButton:

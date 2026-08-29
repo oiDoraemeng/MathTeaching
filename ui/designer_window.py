@@ -3059,6 +3059,9 @@ class MainWindow:
                 apply_drop_shadow(widget, "overlay", effective_theme)
         if getattr(self, "_lighting_dialog", None) is not None:
             apply_drop_shadow(self._lighting_dialog, "modal", effective_theme)
+        algebra_panel = getattr(self, "algebra_panel", None)
+        if algebra_panel is not None:
+            algebra_panel.sync_overlay_theme(effective_theme)
 
     def set_theme(self, mode: ThemeMode, effective: EffectiveTheme) -> None:
         """Apply and propagate the resolved application theme."""
