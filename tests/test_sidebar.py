@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 # 测试导入
 print("Testing imports...")
 try:
-    from ui.agent_sidebar import AgentSidebar, AgentSidebarState, AgentCollapsedBar
+    from ui.agent_sidebar import AgentSidebar, AgentSidebarState
     print("✓ AgentSidebar imports successful")
 except ImportError as e:
     print(f"✗ Import failed: {e}")
@@ -20,6 +20,9 @@ print("\nTesting AgentSidebarState enum...")
 assert AgentSidebarState.COLLAPSED.value == "collapsed"
 assert AgentSidebarState.EXPANDED.value == "expanded"
 print("✓ AgentSidebarState enum works")
+assert AgentSidebar.MIN_WIDTH == 360
+assert AgentSidebar.DEFAULT_WIDTH == 440
+assert AgentSidebar.MAX_WIDTH == 560
 
 # 测试基本逻辑（不需要 Qt）
 print("\nTesting logic without Qt...")
