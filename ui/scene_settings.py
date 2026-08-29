@@ -37,6 +37,7 @@ class SceneSettingsPanel(QFrame):
         layout.setSpacing(10)
         self.form = QFormLayout()
         self.background_combo = QComboBox(self)
+        self.background_combo.addItem("跟随主题", "auto")
         self.background_combo.addItem("白色背景", "light")
         self.background_combo.addItem("黑色背景", "dark")
         self.axis_combo = QComboBox(self)

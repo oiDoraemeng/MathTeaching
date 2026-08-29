@@ -71,6 +71,7 @@ class TwoDGuides:
         bounds: ViewportBounds,
         appearance: SceneAppearance,
         *,
+        effective_theme: str = "light",
         previous_spacing: float | None = None,
         spacing: float | None = None,
     ) -> float:
@@ -85,7 +86,7 @@ class TwoDGuides:
         x_ticks = tick_values(bounds.x_range, spacing)
         y_ticks = tick_values(bounds.y_range, spacing)
 
-        grid_color = "#3d4650" if appearance.background == "dark" else "#d8e0e7"
+        grid_color = _grid_color(appearance, effective_theme)
         self._set_geometry(
             _GRID_KEY,
             self._grid_mesh(bounds, spacing, x_ticks, y_ticks) if appearance.show_grid else pv.PolyData(),
@@ -96,17 +97,17 @@ class TwoDGuides:
         self._set_geometry(
             _AXIS_X_KEY,
             _segments_to_polydata([((bounds.x_range[0], 0, 0), (bounds.x_range[1], 0, 0))]),
-            color=_axis_color(appearance, "X"),
+            color=_axis_color(appearance, "X", effective_theme),
             line_width=2.5,
         )
         self._set_geometry(
             _AXIS_Y_KEY,
             _segments_to_polydata([((0, bounds.y_range[0], 0), (0, bounds.y_range[1], 0))]),
-            color=_axis_color(appearance, "Y"),
+            color=_axis_color(appearance, "Y", effective_theme),
             line_width=2.5,
         )
 
-        label_color = appearance.contrast_axis_color
+        label_color = appearance.contrast_axis_color(effective_theme)
         if appearance.show_ticks:
             segments, points, labels = self._tick_geometry(bounds, spacing, x_ticks, y_ticks)
             self._set_geometry(_TICK_KEY, _segments_to_polydata(segments), color=label_color, line_width=1.4)
@@ -214,7 +215,15 @@ def _label_axis_position(value: float, axis_range: tuple[float, float], spacing:
     return axis_range[0] + margin if value < axis_range[0] + margin else axis_range[1] - margin
 
 
-def _axis_color(appearance: SceneAppearance, axis: str) -> str:
+def _grid_color(appearance: SceneAppearance, effective_theme: str) -> str:
+    """Use the legacy explicit grid colors and resolve auto by active theme."""
+    is_dark = appearance.background == "dark" or (
+        appearance.background == "auto" and effective_theme == "dark"
+    )
+    return "#3d4650" if is_dark else "#d8e0e7"
+
+
+def _axis_color(appearance: SceneAppearance, axis: str, effective_theme: str = "light") -> str:
     if appearance.axis_color_mode == "color":
         return {"X": "#d64545", "Y": "#2f9e5b"}[axis]
-    return appearance.contrast_axis_color
+    return appearance.contrast_axis_color(effective_theme)

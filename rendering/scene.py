@@ -9,6 +9,7 @@ from dataclasses import replace
 
 from geometry.hyperboloid import two_sheet_hyperboloid
 from models.parameters import HyperboloidParameters
+from models.scene_mode import SceneAppearance
 from models.surface_settings import SurfaceSettings
 from rendering.axis import add_cartesian_axes
 from rendering.helper import add_teaching_helpers
@@ -61,7 +62,9 @@ def build_scene(
     surface_settings: SurfaceSettings | None = None,
     material_name: str = "光泽塑料",
     camera_position: list | tuple | None = None,
-    background_color: str = "#f7f8fb",
+    background_color: str | None = None,
+    appearance: SceneAppearance | None = None,
+    effective_theme: str = "light",
     axis_color_mode: str = "contrast",
     contrast_axis_color: str | None = None,
     show_ticks: bool = True,
@@ -76,7 +79,17 @@ def build_scene(
     MSAA 以保证响应速度。
     """
     plotter.clear()
-    plotter.set_background(background_color)
+    resolved_background = (
+        appearance.background_color(effective_theme)
+        if appearance is not None
+        else background_color or "#f7f8fb"
+    )
+    resolved_contrast_color = (
+        appearance.contrast_axis_color(effective_theme)
+        if appearance is not None and contrast_axis_color is None
+        else contrast_axis_color
+    )
+    plotter.set_background(resolved_background)
     # 二维场景会在共享绘图器上开启平行投影，重建三维场景前必须恢复透视投影。
     plotter.disable_parallel_projection()
     lighting = lighting or LightSettings()
@@ -87,7 +100,7 @@ def build_scene(
                 plotter,
                 4.5,
                 axis_color_mode=axis_color_mode,
-                contrast_color=contrast_axis_color,
+                contrast_color=resolved_contrast_color,
                 show_ticks=show_ticks,
                 tick_spacing_mode=tick_spacing_mode,
                 custom_tick_spacing=custom_tick_spacing,
@@ -149,7 +162,7 @@ def build_scene(
             plotter,
             extent,
             axis_color_mode=axis_color_mode,
-            contrast_color=contrast_axis_color,
+            contrast_color=resolved_contrast_color,
             show_ticks=show_ticks,
             tick_spacing_mode=tick_spacing_mode,
             custom_tick_spacing=custom_tick_spacing,

@@ -1574,15 +1574,17 @@ class MainWindow:
 
     def _render_3d_scene(self) -> None:
         appearance = self.scene_appearances[SceneMode.THREE_D]
+        effective_theme = getattr(self, "effective_theme", "light")
         build_scene(
             self.plotter,
             show_axes=False,
             show_helpers=True,
             lighting=self.lighting,
             camera_position=self._three_d_camera_position,
-            background_color=appearance.background_color,
+            appearance=appearance,
+            effective_theme=effective_theme,
             axis_color_mode=appearance.axis_color_mode,
-            contrast_axis_color=appearance.contrast_axis_color,
+            contrast_axis_color=appearance.contrast_axis_color(effective_theme),
             show_ticks=appearance.show_ticks,
             tick_spacing_mode=appearance.tick_spacing_mode,
             custom_tick_spacing=appearance.tick_spacing,
@@ -1597,7 +1599,7 @@ class MainWindow:
         spacing = self._three_d_axes.render(
             extent,
             axis_color_mode=appearance.axis_color_mode,
-            contrast_color=appearance.contrast_axis_color,
+            contrast_color=appearance.contrast_axis_color(effective_theme),
             show_ticks=appearance.show_ticks,
             tick_spacing_mode=appearance.tick_spacing_mode,
             custom_tick_spacing=appearance.tick_spacing,
@@ -1640,8 +1642,9 @@ class MainWindow:
 
     def _render_2d_scene(self) -> None:
         appearance = self.scene_appearances[SceneMode.TWO_D]
+        effective_theme = getattr(self, "effective_theme", "light")
         self.plotter.clear()
-        self.plotter.set_background(appearance.background_color)
+        self.plotter.set_background(appearance.background_color(effective_theme))
         configure_2d_camera(self.plotter)
         self._restore_2d_camera()
         visible = self._current_2d_bounds()
@@ -1655,7 +1658,12 @@ class MainWindow:
         )
         # plotter.clear() 会清除全部 actor，因此二维辅助线池也必须重新建立。
         self._two_d_guides = TwoDGuides(self.plotter)
-        self._two_d_guides.render(sampling_bounds, appearance, spacing=spacing)
+        self._two_d_guides.render(
+            sampling_bounds,
+            appearance,
+            effective_theme=effective_theme,
+            spacing=spacing,
+        )
         self._two_d_guide_spacing = spacing
         self._two_d_guide_bounds = sampling_bounds
         self._two_d_sample_bounds = sampling_bounds
@@ -1741,6 +1749,7 @@ class MainWindow:
         if geometry_controller is not None:
             geometry_controller.set_bounds(visible)
         appearance = self.scene_appearances[SceneMode.TWO_D]
+        effective_theme = getattr(self, "effective_theme", "light")
         spacing = tick_spacing(
             visible.y_span,
             appearance.tick_spacing_mode,
@@ -1769,7 +1778,12 @@ class MainWindow:
 
         sampling_bounds = visible.expanded(_GUIDE_MARGIN)
         if self._two_d_guides is not None:
-            self._two_d_guides.render(sampling_bounds, appearance, spacing=spacing)
+            self._two_d_guides.render(
+                sampling_bounds,
+                appearance,
+                effective_theme=effective_theme,
+                spacing=spacing,
+            )
         self._two_d_guide_spacing = spacing
         self._two_d_guide_bounds = sampling_bounds
         if resample and self.curve_controller is not None:
@@ -1820,11 +1834,12 @@ class MainWindow:
         """
         if force and self._three_d_axes is not None:
             appearance = self.scene_appearances[SceneMode.THREE_D]
+            effective_theme = getattr(self, "effective_theme", "light")
             extent = self._three_d_extent or self._current_3d_axis_extent()
             self._three_d_spacing = self._three_d_axes.render(
                 extent,
                 axis_color_mode=appearance.axis_color_mode,
-                contrast_color=appearance.contrast_axis_color,
+                contrast_color=appearance.contrast_axis_color(effective_theme),
                 show_ticks=appearance.show_ticks,
                 tick_spacing_mode=appearance.tick_spacing_mode,
                 custom_tick_spacing=appearance.tick_spacing,
@@ -3097,6 +3112,15 @@ class MainWindow:
                     callback(effective)
                 else:
                     callback()
+        active_appearance = getattr(self, "scene_appearances", {}).get(
+            getattr(self, "scene_mode", SceneMode.THREE_D)
+        )
+        if (
+            active_appearance is not None
+            and active_appearance.background == "auto"
+            and getattr(self, "plotter", None) is not None
+        ):
+            self._render_scene()
 
     def show(self) -> None:
         self.window.show()

@@ -37,8 +37,11 @@ class SceneSettingsPanelTests(unittest.TestCase):
         backgrounds: list[str] = []
         panel.background_changed.connect(backgrounds.append)
 
+        self.assertEqual(panel.background_combo.itemText(0), "跟随主题")
+        self.assertEqual(panel.background_combo.itemData(0), "auto")
+
         panel.set_values(
-            background="dark",
+            background="auto",
             axis_color_mode="color",
             grid=False,
             ticks=False,
@@ -47,7 +50,7 @@ class SceneSettingsPanelTests(unittest.TestCase):
             intersections=True,
         )
 
-        self.assertEqual(panel.background_combo.currentData(), "dark")
+        self.assertEqual(panel.background_combo.currentData(), "auto")
         self.assertEqual(panel.axis_combo.currentData(), "color")
         self.assertFalse(panel.ticks_check.isChecked())
         self.assertEqual(panel.tick_spacing_combo.currentData(), "custom")

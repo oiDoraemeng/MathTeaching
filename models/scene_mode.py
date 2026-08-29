@@ -18,7 +18,7 @@ class SceneMode(StrEnum):
 class SceneAppearance:
     """单个工作区的运行时外观偏好。"""
 
-    background: str = "light"
+    background: str = "auto"
     axis_color_mode: str = "contrast"
     show_grid: bool = True
     show_ticks: bool = True
@@ -27,15 +27,33 @@ class SceneAppearance:
     show_intersections: bool = False
 
     def __post_init__(self) -> None:
+        if self.background not in {"auto", "light", "dark"}:
+            self.background = "auto"
         if self.tick_spacing_mode not in {"auto", "custom"}:
             self.tick_spacing_mode = "auto"
         if not isfinite(self.tick_spacing) or self.tick_spacing <= 0:
             self.tick_spacing = 1.0
 
-    @property
-    def background_color(self) -> str:
-        return "#101317" if self.background == "dark" else "#f7f8fb"
+    def background_color(self, effective_theme: str = "light") -> str:
+        """Return the scene surface color for the selected background mode."""
+        if self.background == "dark":
+            return "#101317"
+        if self.background == "light":
+            return "#f7f8fb"
+        return self._theme_color(effective_theme, "bg", "scene")
 
-    @property
-    def contrast_axis_color(self) -> str:
-        return "#f5f7fa" if self.background == "dark" else "#242a32"
+    def contrast_axis_color(self, effective_theme: str = "light") -> str:
+        """Return the neutral axis color with sufficient scene contrast."""
+        if self.background == "dark":
+            return "#f5f7fa"
+        if self.background == "light":
+            return "#242a32"
+        return self._theme_color(effective_theme, "text", "primary")
+
+    @staticmethod
+    def _theme_color(effective_theme: str, group: str, name: str) -> str:
+        from ui.tokens import load_tokens
+
+        theme = effective_theme if effective_theme in {"light", "dark"} else "light"
+        tokens = load_tokens()
+        return str(tokens["themes"][theme][group][name])

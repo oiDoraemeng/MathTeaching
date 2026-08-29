@@ -12,12 +12,26 @@ class SceneModeTests(unittest.TestCase):
     def test_appearance_defaults_match_the_two_viewport_requirements(self) -> None:
         appearance = SceneAppearance()
 
-        self.assertEqual(appearance.background_color, "#f7f8fb")
-        self.assertEqual(appearance.contrast_axis_color, "#242a32")
+        self.assertEqual(appearance.background, "auto")
+        self.assertEqual(appearance.background_color(), "#f4f6f9")
+        self.assertEqual(appearance.contrast_axis_color(), "#17212e")
         self.assertFalse(appearance.show_intersections)
         self.assertTrue(appearance.show_ticks)
         self.assertEqual(appearance.tick_spacing_mode, "auto")
         self.assertEqual(appearance.tick_spacing, 1.0)
+
+    def test_auto_background_uses_effective_theme(self) -> None:
+        appearance = SceneAppearance()
+
+        self.assertEqual(appearance.background_color("light"), "#f4f6f9")
+        self.assertEqual(appearance.background_color("dark"), "#1e1f23")
+
+    def test_legacy_background_values_remain_explicit(self) -> None:
+        self.assertEqual(SceneAppearance(background="light").background_color("dark"), "#f7f8fb")
+        self.assertEqual(SceneAppearance(background="dark").background_color("light"), "#101317")
+
+    def test_unknown_background_values_normalize_to_auto(self) -> None:
+        self.assertEqual(SceneAppearance(background="legacy").background, "auto")
 
     def test_catalog_is_filtered_by_scene_and_has_expected_categories(self) -> None:
         two_d = catalog_entries(SceneMode.TWO_D)
