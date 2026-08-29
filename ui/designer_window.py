@@ -50,6 +50,7 @@ from ui.lighting_dialog import LightingDialog
 from ui.icons import apply_icon
 from ui.scene_settings import SceneSettingsPanel
 from ui.status_bar import AppStatusBar
+from ui.panel_resize_handle import PanelResizeSpec, _PanelResizeHandle
 from ui.tokens import apply_drop_shadow
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 from services.agent_worker import RuntimeTurnWorker
@@ -372,9 +373,16 @@ class MainWindow:
             raise RuntimeError("Designer form must use a horizontal root layout")
         self._root_layout = root_layout
         self.agent_sidebar = AgentSidebar(self.window, dispatcher=self._dispatch_agent_web_intent)
-        self.agent_sidebar.setFixedWidth(440)
+        self.agent_sidebar.set_panel_width(self.agent_sidebar.DEFAULT_WIDTH)
+        self.agent_resize_handle = _PanelResizeHandle(
+            PanelResizeSpec(360, 560, 440, "ui/agent_panel_width", "left"),
+            parent=self.window,
+        )
+        self.agent_resize_handle.width_changed.connect(self.agent_sidebar.set_panel_width)
         self.agent_panel = self.agent_sidebar.expanded_panel
         root_layout.addWidget(self.agent_sidebar)
+        root_layout.insertWidget(root_layout.indexOf(self.agent_sidebar), self.agent_resize_handle)
+        self.agent_resize_handle.hide()
         # Sidebar 默认隐藏，关闭时不占用主视口布局空间。
         self.agent_sidebar.hide()
         self.agent_sidebar.set_model_status(

@@ -91,6 +91,9 @@ class AgentSidebar(QWidget):
     """AI 助手侧边栏容器：关闭时隐藏并释放主视口布局空间。"""
 
     state_changed = Signal(AgentSidebarState)
+    MIN_WIDTH = 360
+    DEFAULT_WIDTH = 440
+    MAX_WIDTH = 560
 
     def __init__(self, parent: QWidget | None = None, dispatcher: Callable[[object], object] | None = None) -> None:
         super().__init__(parent)
@@ -142,7 +145,7 @@ class AgentSidebar(QWidget):
         layout.addWidget(self.tool_pages, 1)
 
         # 初始状态：整个侧边栏隐藏，不留下 40px 占位。
-        self.setFixedWidth(440)
+        self.set_panel_width(self.DEFAULT_WIDTH)
         self.hide()
 
         # 连接信号
@@ -293,7 +296,7 @@ class AgentSidebar(QWidget):
         self.navigation_bar.hide()
         self.expanded_panel.show()
         self.tool_pages.hide()
-        self.setFixedWidth(440)
+        self.set_panel_width(self.width())
         self._state = AgentSidebarState.EXPANDED
         self.state_changed.emit(self._state)
 
@@ -305,7 +308,7 @@ class AgentSidebar(QWidget):
         self.navigation_bar.hide()
         self.tool_pages.hide()
         self.collapsed_bar.hide()
-        self.setFixedWidth(440)
+        self.set_panel_width(self.width())
         self.hide()
         self._state = AgentSidebarState.COLLAPSED
         self.state_changed.emit(self._state)
@@ -319,6 +322,11 @@ class AgentSidebar(QWidget):
             self.collapsed_bar.set_status("", "#4ADE80", f"{model} · 已连接")
         else:
             self.collapsed_bar.set_status("", "#6B7280", "本地演示模式")
+
+    def set_panel_width(self, width: int) -> int:
+        value = max(self.MIN_WIDTH, min(self.MAX_WIDTH, int(width)))
+        self.setFixedWidth(value)
+        return value
 
     def set_busy(self, busy: bool) -> None:
         """设置忙碌状态。"""
