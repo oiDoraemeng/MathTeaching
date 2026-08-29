@@ -12,7 +12,6 @@ from PySide6.QtWidgets import QApplication, QHBoxLayout, QWidget
 
 from MathInputWidget import LatexParser
 from ui.algebra_panel import AlgebraPanel
-from ui.agent_sidebar_web import AgentSidebarWeb
 from ui.designer_window import MainWindow
 from geometry.standard_surfaces import BUILTIN_SURFACES
 
@@ -83,7 +82,9 @@ class MainWindowLayoutTests(unittest.TestCase):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         viewport = QWidget(host)
-        panel = AgentSidebarWeb(lambda _message: None, parent=host)
+        # This test asserts layout allocation only. WebView lifecycle and
+        # bridge behavior are covered by the dedicated Agent Web tests.
+        panel = QWidget(host)
         panel.setFixedWidth(420)
         layout.addWidget(viewport)
         layout.addWidget(panel)
