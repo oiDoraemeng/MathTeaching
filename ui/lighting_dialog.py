@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
 
 from rendering.lighting import LightSettings, rotate_light_positions
 from rendering.materials import MATERIAL_PRESETS
-from ui.tokens import apply_drop_shadow, flatten_theme
+from ui.tokens import ThemeName, apply_drop_shadow, flatten_theme
 from widgets.LightRotationWidget import LightRotationWidget
 
 
@@ -26,12 +26,15 @@ class LightingDialog(QDialog):
         settings: LightSettings,
         material_name: str = "光泽塑料",
         parent: QWidget | None = None,
+        *,
+        effective_theme: ThemeName | None = None,
     ) -> None:
         super().__init__(parent)
         self.setObjectName("lightingDialog")
         self.setWindowTitle("高级光照")
         self.setMinimumWidth(430)
-        apply_drop_shadow(self, "modal")
+        self.effective_theme = effective_theme if effective_theme in ("light", "dark") else self._resolve_effective_theme(parent)
+        self.set_effective_theme(self.effective_theme)
         self.settings = deepcopy(settings)
         self.material_name = material_name if material_name in MATERIAL_PRESETS else "光泽塑料"
         self._color_buttons: dict[str, QPushButton] = {}
@@ -39,6 +42,14 @@ class LightingDialog(QDialog):
         self._update_timer.setSingleShot(True)
         self._update_timer.timeout.connect(self._emit_change_now)
         self._build_ui()
+
+    @staticmethod
+    def _resolve_effective_theme(parent: QWidget | None) -> ThemeName:
+        window = getattr(parent, "window", None)
+        if callable(window):
+            window = window()
+        resolved = getattr(window, "effective_theme", None)
+        return resolved if resolved in ("light", "dark") else "light"
 
     def _build_ui(self) -> None:
         layout = QVBoxLayout(self)
@@ -65,6 +76,10 @@ class LightingDialog(QDialog):
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
         buttons.rejected.connect(self.close)
         layout.addWidget(buttons)
+
+    def set_effective_theme(self, effective_theme: ThemeName) -> None:
+        self.effective_theme = effective_theme
+        apply_drop_shadow(self, "modal", effective_theme)
 
     def _light_group(self, label: str, key: str) -> QGroupBox:
         group = QGroupBox(label)

@@ -23,7 +23,17 @@ from agent.instruction import InstructionStore
 from agent.memory import MemoryProfile, MemoryStore
 from agent.providers import ModelProvider
 from services.agent_provider import AgentSettings
-from ui.tokens import apply_drop_shadow
+from ui.tokens import ThemeName, apply_drop_shadow
+
+
+def _resolve_effective_theme(parent, effective_theme: ThemeName | None) -> ThemeName:
+    if effective_theme in ("light", "dark"):
+        return effective_theme
+    window = getattr(parent, "window", None)
+    if callable(window):
+        window = window()
+    resolved = getattr(window, "effective_theme", None)
+    return resolved if resolved in ("light", "dark") else "light"
 
 
 class _ConnectionTestWorker(QObject):
@@ -57,12 +67,13 @@ class AgentSettingsDialog(QDialog):
     _ORGANIZATION = "Math3DTeaching"
     _APPLICATION = "Math3DTeaching"
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent=None, *, effective_theme: ThemeName | None = None) -> None:
         super().__init__(parent)
         self.setWindowTitle("AI 教学助手设置")
         self.setModal(False)
         self.setMinimumWidth(430)
-        apply_drop_shadow(self, "modal")
+        self.effective_theme = _resolve_effective_theme(parent, effective_theme)
+        self.set_effective_theme(self.effective_theme)
         self._settings = self.load_settings()
         self._test_thread: QThread | None = None
         self._test_worker: _ConnectionTestWorker | None = None
@@ -133,6 +144,10 @@ class AgentSettingsDialog(QDialog):
         self.instructions_button.clicked.connect(self._edit_instructions)
         buttons.accepted.connect(self._save)
         buttons.rejected.connect(self.reject)
+
+    def set_effective_theme(self, effective_theme: ThemeName) -> None:
+        self.effective_theme = effective_theme
+        apply_drop_shadow(self, "modal", effective_theme)
 
     @classmethod
     def _qsettings(cls) -> QSettings:
@@ -220,7 +235,7 @@ class AgentSettingsDialog(QDialog):
         self.status_label.setText("已切回本地演示模式，连接信息仍然保留。")
 
     def _edit_instructions(self) -> None:
-        dialog = InstructionsDialog(self)
+        dialog = InstructionsDialog(self, effective_theme=self.effective_theme)
         dialog.open()
         self._instructions_dialog = dialog
 
@@ -284,11 +299,18 @@ class InstructionsDialog(QDialog):
 
     saved = Signal(str)
 
-    def __init__(self, parent=None, store: InstructionStore | None = None) -> None:
+    def __init__(
+        self,
+        parent=None,
+        store: InstructionStore | None = None,
+        *,
+        effective_theme: ThemeName | None = None,
+    ) -> None:
         super().__init__(parent)
         self.setWindowTitle("编辑 Math Teacher Agent Instructions")
         self.setMinimumSize(520, 420)
-        apply_drop_shadow(self, "modal")
+        self.effective_theme = _resolve_effective_theme(parent, effective_theme)
+        self.set_effective_theme(self.effective_theme)
         self.store = store or InstructionStore()
         layout = QVBoxLayout(self)
         self.editor = QPlainTextEdit(self)
@@ -308,6 +330,10 @@ class InstructionsDialog(QDialog):
         reset.clicked.connect(lambda: self.editor.setPlainText(self.store.default_text))
         close.clicked.connect(self.close)
 
+    def set_effective_theme(self, effective_theme: ThemeName) -> None:
+        self.effective_theme = effective_theme
+        apply_drop_shadow(self, "modal", effective_theme)
+
     def _save(self) -> None:
         text = self.store.save(self.editor.toPlainText())
         self.saved.emit(text)
@@ -319,10 +345,17 @@ class MemorySettingsDialog(QDialog):
 
     saved = Signal(object)
 
-    def __init__(self, parent=None, store: MemoryStore | None = None) -> None:
+    def __init__(
+        self,
+        parent=None,
+        store: MemoryStore | None = None,
+        *,
+        effective_theme: ThemeName | None = None,
+    ) -> None:
         super().__init__(parent)
         self.setWindowTitle("AI 学习记忆")
-        apply_drop_shadow(self, "modal")
+        self.effective_theme = _resolve_effective_theme(parent, effective_theme)
+        self.set_effective_theme(self.effective_theme)
         self.store = store or MemoryStore()
         profile = self.store.load()
         layout = QVBoxLayout(self)
@@ -341,6 +374,10 @@ class MemorySettingsDialog(QDialog):
         layout.addWidget(buttons)
         buttons.accepted.connect(self._save)
         buttons.rejected.connect(self.reject)
+
+    def set_effective_theme(self, effective_theme: ThemeName) -> None:
+        self.effective_theme = effective_theme
+        apply_drop_shadow(self, "modal", effective_theme)
 
     def _save(self) -> None:
         current = self.store.load()

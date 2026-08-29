@@ -5,15 +5,17 @@ from __future__ import annotations
 import os
 from pathlib import Path
 import re
+from types import SimpleNamespace
 
 import pytest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtWidgets import QApplication, QGraphicsDropShadowEffect, QGroupBox, QPushButton
+from PySide6.QtWidgets import QApplication, QGraphicsDropShadowEffect, QGroupBox, QPushButton, QWidget
 
 from rendering.lighting import LightSettings
 from ui.agent_settings import AgentSettingsDialog, InstructionsDialog, MemorySettingsDialog
+from ui.designer_window import MainWindow
 from ui.lighting_dialog import LightingDialog
 from ui.tokens import _shadow_effect_values, build_qss, flatten_theme
 
@@ -43,10 +45,10 @@ def _style_declarations(button: QPushButton) -> dict[str, str]:
     return declarations
 
 
-def _assert_modal_shadow(dialog) -> None:
+def _assert_modal_shadow(dialog, theme: str = "light") -> None:
     effect = dialog.graphicsEffect()
     assert isinstance(effect, QGraphicsDropShadowEffect)
-    offset_x, offset_y, blur, color = _shadow_effect_values("modal", "light")
+    offset_x, offset_y, blur, color = _shadow_effect_values("modal", theme)
     assert effect.blurRadius() == blur
     assert effect.xOffset() == offset_x
     assert effect.yOffset() == offset_y
@@ -83,22 +85,61 @@ def test_dialog_qss_uses_tokenized_modal_and_groupbox_rules(theme: str) -> None:
     assert f"background: {flat['bg_overlay']}" in title_block
 
 
-def test_dialog_instances_leave_chrome_to_global_selectors() -> None:
-    lighting = LightingDialog(LightSettings(), "光泽塑料")
-    settings = AgentSettingsDialog()
-    instructions = InstructionsDialog()
-    memory = MemorySettingsDialog()
+@pytest.mark.parametrize("theme", ["light", "dark"])
+def test_dialog_instances_pick_up_effective_theme_on_creation(theme: str) -> None:
+    window = QWidget()
+    window.effective_theme = theme
+    sidebar = QWidget(window)
+
+    lighting = LightingDialog(LightSettings(), "光泽塑料", window, effective_theme=theme)
+    settings = AgentSettingsDialog(window, effective_theme=theme)
+    instructions = InstructionsDialog(settings, effective_theme=theme)
+    memory = MemorySettingsDialog(sidebar, effective_theme=theme)
 
     for dialog in (lighting, settings, instructions, memory):
         assert "border:" not in dialog.styleSheet()
         assert "font-size" not in dialog.styleSheet()
-        _assert_modal_shadow(dialog)
+        _assert_modal_shadow(dialog, theme)
+
+    settings.set_effective_theme("dark" if theme == "light" else "light")
+    instructions.set_effective_theme("dark" if theme == "light" else "light")
+    memory.set_effective_theme("dark" if theme == "light" else "light")
+    lighting.set_effective_theme("dark" if theme == "light" else "light")
+    for dialog in (lighting, settings, instructions, memory):
+        _assert_modal_shadow(dialog, "dark" if theme == "light" else "light")
 
     groups = lighting.findChildren(QGroupBox)
     assert groups
     assert all(group.styleSheet() == "" for group in groups)
     assert lighting.material_combo.styleSheet() == ""
     assert settings.provider_combo.styleSheet() == ""
+
+
+def test_main_window_apply_style_refreshes_existing_modal_dialogs() -> None:
+    window = object.__new__(MainWindow)
+    window.effective_theme = "dark"
+    window.window = QWidget()
+    window.window.effective_theme = "dark"
+    window.viewport_toolbar = None
+    window.two_d_geometry_toolbar = None
+    window.scene_settings_panel = None
+    window._lighting_dialog = LightingDialog(LightSettings(), "光泽塑料", window.window, effective_theme="light")
+    window._agent_settings_dialog = AgentSettingsDialog(window.window, effective_theme="light")
+    window._agent_settings_dialog._instructions_dialog = InstructionsDialog(window._agent_settings_dialog, effective_theme="light")
+    window.agent_sidebar = SimpleNamespace(
+        _memory_dialog=MemorySettingsDialog(QWidget(window.window), effective_theme="light")
+    )
+    window.algebra_panel = SimpleNamespace(sync_overlay_theme=lambda _theme: None)
+
+    MainWindow._apply_style(window)
+
+    for dialog in (
+        window._lighting_dialog,
+        window._agent_settings_dialog,
+        window._agent_settings_dialog._instructions_dialog,
+        window.agent_sidebar._memory_dialog,
+    ):
+        _assert_modal_shadow(dialog, "dark")
 
 
 def test_lighting_color_swatches_keep_only_fill_and_semantic_foreground() -> None:
