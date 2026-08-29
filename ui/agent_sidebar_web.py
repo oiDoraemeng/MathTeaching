@@ -6,11 +6,12 @@ import mimetypes
 from pathlib import Path
 from typing import Any
 
-from PySide6.QtCore import QByteArray, QBuffer, QIODevice, QUrl
+from PySide6.QtCore import QByteArray, QBuffer, QIODevice, QUrl, QUrlQuery
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import (
     QWebEnginePage,
     QWebEngineProfile,
+    QWebEngineScript,
     QWebEngineUrlRequestJob,
     QWebEngineUrlScheme,
     QWebEngineUrlSchemeHandler,
@@ -79,18 +80,37 @@ class _LocalPage(QWebEnginePage):
 class AgentSidebarWeb(QWidget):
     """Single WebEngine instance that renders the packaged Agent UI."""
 
+    _THEME_BOOTSTRAP_SOURCE = """(() => {
+  const mode = new URLSearchParams(location.search).get(\"theme\");
+  if (mode === \"light\" || mode === \"dark\") document.documentElement.dataset.theme = mode;
+})();"""
+
+    @staticmethod
+    def _validated_theme(theme: str | None) -> str:
+        return theme if theme in {"light", "dark"} else "light"
+
+    @classmethod
+    def _initial_url(cls, theme: str | None = None) -> QUrl:
+        url = QUrl("mathagent://app/index.html")
+        query = QUrlQuery()
+        query.addQueryItem("theme", cls._validated_theme(theme))
+        url.setQuery(query)
+        return url
+
     def __init__(
         self,
         dispatcher: Any,
         *,
         asset_root: str | Path | None = None,
         parent: QWidget | None = None,
+        effective_theme: str | None = None,
     ) -> None:
         super().__init__(parent)
         self.setObjectName("agentSidebarWeb")
         self.asset_root = Path(asset_root) if asset_root is not None else Path(__file__).with_name("agent_web") / "dist"
         self.asset_root = self.asset_root.resolve()
         self._active_session_id = ""
+        self._effective_theme = self._validated_theme(effective_theme or getattr(self.window(), "effective_theme", None))
         self._document_loaded = False
         self._pending_math_case: dict[str, object] | None = None
         self.bridge = AgentBridge(dispatcher, self)
@@ -100,12 +120,29 @@ class AgentSidebarWeb(QWidget):
         self.channel = QWebChannel(self.page)
         self.channel.registerObject("qtBridge", self.bridge)
         self.page.setWebChannel(self.channel)
+        self._install_theme_bootstrap()
         self._install_scheme_handler()
         self.view.loadFinished.connect(self._request_initial_snapshot)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.view)
-        self.view.setUrl(QUrl("mathagent://app/index.html"))
+        self.view.setUrl(self._initial_url(self._effective_theme))
+
+    def _install_theme_bootstrap(self) -> None:
+        script = QWebEngineScript()
+        script.setName("theme-bootstrap")
+        script.setInjectionPoint(QWebEngineScript.InjectionPoint.DocumentCreation)
+        script.setWorldId(QWebEngineScript.ScriptWorldId.MainWorld)
+        script.setSourceCode(self._THEME_BOOTSTRAP_SOURCE)
+        self.page.scripts().insert(script)
+
+    def set_theme(self, mode: str, *, loaded: bool | None = None) -> None:
+        theme = self._validated_theme(mode)
+        self._effective_theme = theme
+        if loaded is None:
+            loaded = self._document_loaded
+        if not loaded:
+            self.view.setUrl(self._initial_url(theme))
 
     @property
     def active_session_id(self) -> str:

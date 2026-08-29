@@ -35,7 +35,7 @@
 ## 3. Web Agent 侧栏主题同步（Batch 2）
 
 - [x] 3.1 移除 `theme.css` 的 `prefers-color-scheme` 分支与默认 `color-scheme: dark`，改用 `gen-theme.mjs` 生成的 `[data-theme]` 双分支变量。
-- [ ] 3.2 `agent_sidebar_web.py`：`_initial_url()` 拼接 `?theme=<mode>` 查询参数；注册 `QWebEngineScript`（DocumentCreation）读取参数设置 `data-theme`。
+- [x] 3.2 `agent_sidebar_web.py`：`_initial_url()` 拼接 `?theme=<mode>` 查询参数；注册 `QWebEngineScript`（DocumentCreation）读取参数设置 `data-theme`。
 - [ ] 3.3 `web_protocol.py` 的 `EVENT_MESSAGE_TYPES` 增加 `theme_state`（payload 仅 `mode`，白名单校验，与已注册的 `math_case` 并存）；`agent_sidebar_web.set_theme()` 按加载状态发射事件。
 - [ ] 3.4 React reducer 处理 `theme_state` → 切换 `documentElement` 的 `data-theme`（与 UserScript 幂等）；根容器颜色过渡 `.15s`。
 - [ ] 3.5 清理 `layout.css` 与组件中的字面量颜色（`#fff`、`rgb(0 0 0 / 30%)` 等）改语义变量；增加"无字面量颜色"lint 断言。
