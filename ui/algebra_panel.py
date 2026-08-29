@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from PySide6.QtCore import QEvent, QObject, QPoint, QRect, QTimer, Qt, Signal
-from PySide6.QtGui import QAction, QColor, QFont, QMouseEvent, QShowEvent
+from PySide6.QtGui import QAction, QColor, QMouseEvent, QShowEvent
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -32,6 +32,7 @@ from models.linear_algebra_cases import LinearAlgebraCase, linear_algebra_cases
 from models.geometry_2d import GeometryObject, Linear2D, Point2D
 from models.scene_mode import SceneMode
 from models.surface_layer import SurfaceLayer
+from ui.icons import apply_icon
 
 
 Layer = SurfaceLayer | CurveLayer | GeometryObject
@@ -548,11 +549,7 @@ class LayerRow(QFrame):
         self.expression_button.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
         self.expression_button.setToolTip(layer.latex or layer.expression)
         self.settings_button = QToolButton(self)
-        self.settings_button.setText("\N{VERTICAL ELLIPSIS}")
-        settings_font = QFont(self.settings_button.font())
-        settings_font.setPointSize(22)
-        self.settings_button.setFont(settings_font)
-        self.settings_button.setFixedSize(40, 40)
+        apply_icon(self.settings_button, "ellipsis", "#3f4c5c", icon_size=16, hit_size=28)
         self.settings_button.setToolTip("函数显示与采样设置")
         layout.addWidget(self.visible_button)
         layout.addWidget(self.expression_button, 1)
@@ -598,7 +595,13 @@ class LayerRow(QFrame):
         self.visibility_changed.emit(self.layer_id, visible)
 
     def _set_visibility_icon(self, visible: bool) -> None:
-        self.visible_button.setText("o" if visible else "-")
+        apply_icon(
+            self.visible_button,
+            "eye" if visible else "eye-off",
+            "#3f4c5c",
+            icon_size=16,
+            hit_size=28,
+        )
         self.visible_button.setToolTip("隐藏函数" if visible else "显示函数")
 
 
@@ -642,7 +645,7 @@ class AlgebraPanel(QFrame):
         title.setObjectName("algebraTitle")
         toolbar.addWidget(title)
         toolbar.addStretch()
-        self.new_formula_button = self._tool_button("+", "新增公式")
+        self.new_formula_button = self._icon_button("plus", "新增公式")
         self.function_catalog_button = self._tool_button("函数", "函数目录")
         self.function_catalog_button.setFixedWidth(44)
         self.linear_algebra_button = self._tool_button("线性代数", "线性代数案例")
@@ -716,6 +719,13 @@ class AlgebraPanel(QFrame):
         button.setText(text)
         button.setToolTip(tooltip)
         button.setFixedHeight(30)
+        return button
+
+    @staticmethod
+    def _icon_button(name: str, tooltip: str) -> QToolButton:
+        button = QToolButton()
+        button.setToolTip(tooltip)
+        apply_icon(button, name, "#3f4c5c", icon_size=16, hit_size=28)
         return button
 
     def set_scene_mode(self, mode: SceneMode) -> None:

@@ -22,6 +22,7 @@ from agent.instruction import InstructionStore
 from agent.memory import MemoryStore
 from agent.skill_manager import SkillManager
 from agent.session_store import SessionStore
+from ui.icons import apply_icon
 from ui.agent_sidebar_web import AgentSidebarWeb
 
 
@@ -48,8 +49,7 @@ class AgentCollapsedBar(QWidget):
         # AI 图标按钮
         self.icon_button = QToolButton(self)
         self.icon_button.setObjectName("agentIconButton")
-        self.icon_button.setText("🤖")
-        self.icon_button.setFixedSize(32, 32)
+        apply_icon(self.icon_button, "sparkles", "#3f4c5c", icon_size=16, hit_size=32)
         self.icon_button.setToolTip("AI 教学助手（点击展开）")
         layout.addWidget(self.icon_button, 0, Qt.AlignmentFlag.AlignHCenter)
 
@@ -61,9 +61,10 @@ class AgentCollapsedBar(QWidget):
 
         layout.addStretch(1)
 
-        # 状态指示器（小圆点）
-        self.status_indicator = QLabel("●", self)
+        # 状态指示器 uses a styled dot instead of a font glyph.
+        self.status_indicator = QLabel(self)
         self.status_indicator.setObjectName("sidebarStatusIndicator")
+        self.status_indicator.setFixedSize(8, 8)
         self.status_indicator.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.status_indicator.setToolTip("未配置")
         layout.addWidget(self.status_indicator, 0, Qt.AlignmentFlag.AlignHCenter)
@@ -75,12 +76,14 @@ class AgentCollapsedBar(QWidget):
         """设置状态指示器。
 
         Args:
-            status: 状态文本（如 "●"）
+            status: 保留给旧调用方的状态文本参数
             color: 颜色（如 "#4ADE80" 绿色、"#F59E0B" 橙色、"#6B7280" 灰色）
             tooltip: 提示文本
         """
-        self.status_indicator.setText(status)
-        self.status_indicator.setStyleSheet(f"QLabel {{ color: {color}; font-size: 16px; }}")
+        _ = status
+        self.status_indicator.setStyleSheet(
+            f"QLabel {{ background: {color}; border-radius: 4px; }}"
+        )
         self.status_indicator.setToolTip(tooltip)
 
 
@@ -312,14 +315,14 @@ class AgentSidebar(QWidget):
         self._model_enabled = enabled
         self.expanded_panel.set_model_status(model, enabled=enabled)
         if enabled and model:
-            self.collapsed_bar.set_status("●", "#4ADE80", f"{model} · 已连接")
+            self.collapsed_bar.set_status("", "#4ADE80", f"{model} · 已连接")
         else:
-            self.collapsed_bar.set_status("●", "#6B7280", "本地演示模式")
+            self.collapsed_bar.set_status("", "#6B7280", "本地演示模式")
 
     def set_busy(self, busy: bool) -> None:
         """设置忙碌状态。"""
         self.expanded_panel.set_busy(busy)
         if busy:
-            self.collapsed_bar.set_status("●", "#F59E0B", "正在请求…")
+            self.collapsed_bar.set_status("", "#F59E0B", "正在请求…")
         else:
             self.set_model_status(self._model_name, enabled=self._model_enabled)

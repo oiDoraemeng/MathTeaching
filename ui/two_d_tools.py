@@ -6,6 +6,7 @@ from PySide6.QtCore import QEvent, QObject, QPoint, QTimer, Qt, Signal
 from PySide6.QtWidgets import QFrame, QToolButton, QVBoxLayout, QWidget
 
 from models.geometry_2d import LinearKind
+from ui.icons import apply_icon
 
 ToolKind = LinearKind | str
 
@@ -27,19 +28,19 @@ class TwoDGeometryToolbar(QFrame):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
 
-        self.select_button = self._button("➤", "选择/移动", "selectToolButton")
-        self.point_button = self._button("●", "点", "pointToolButton")
-        self.line_button = self._button("╱", "线工具", "lineToolButton")
+        self.select_button = self._button("move", "选择/移动", "selectToolButton")
+        self.point_button = self._button("circle-dot", "点", "pointToolButton")
+        self.line_button = self._button("slash", "线工具", "lineToolButton")
         layout.addWidget(self.select_button)
         layout.addWidget(self.point_button)
         layout.addWidget(self.line_button)
 
-        self.snap_button = self._button("#", "吸附到网格", "snapToggleButton")
+        self.snap_button = self._button("grid-3x3", "吸附到网格", "snapToggleButton")
         self.snap_button.setChecked(False)
         layout.addWidget(self.snap_button)
 
-        self.undo_button = self._action_button("↶", "撤回", "undoToolButton")
-        self.redo_button = self._action_button("↷", "反撤回", "redoToolButton")
+        self.undo_button = self._action_button("undo-2", "撤回", "undoToolButton")
+        self.redo_button = self._action_button("redo-2", "反撤回", "redoToolButton")
         layout.addWidget(self.undo_button)
         layout.addWidget(self.redo_button)
 
@@ -49,10 +50,10 @@ class TwoDGeometryToolbar(QFrame):
         flyout_layout.setContentsMargins(4, 4, 4, 4)
         flyout_layout.setSpacing(4)
         self.line_buttons: dict[LinearKind, QToolButton] = {
-            "line": self._button("∕", "直线", "lineGeometryButton"),
-            "segment": self._button("━", "线段", "segmentToolButton"),
-            "ray": self._button("→", "射线", "rayToolButton"),
-            "vector": self._button("↗", "向量", "vectorToolButton"),
+            "line": self._button("slash", "直线", "lineGeometryButton"),
+            "segment": self._button("minus", "线段", "segmentToolButton"),
+            "ray": self._button("arrow-up-right", "射线", "rayToolButton"),
+            "vector": self._button("arrow-up-right", "向量", "vectorToolButton"),
         }
         for button in self.line_buttons.values():
             flyout_layout.addWidget(button)
@@ -140,20 +141,18 @@ class TwoDGeometryToolbar(QFrame):
             self.line_flyout.hide()
 
     @staticmethod
-    def _button(text: str, tooltip: str, object_name: str) -> QToolButton:
+    def _button(icon_name: str, tooltip: str, object_name: str) -> QToolButton:
         button = QToolButton()
         button.setObjectName(object_name)
-        button.setText(text)
         button.setToolTip(tooltip)
         button.setCheckable(True)
-        button.setFixedSize(38, 38)
+        apply_icon(button, icon_name, "#3f4c5c", icon_size=16, hit_size=36)
         return button
 
     @staticmethod
-    def _action_button(text: str, tooltip: str, object_name: str) -> QToolButton:
+    def _action_button(icon_name: str, tooltip: str, object_name: str) -> QToolButton:
         button = QToolButton()
         button.setObjectName(object_name)
-        button.setText(text)
         button.setToolTip(tooltip)
-        button.setFixedSize(38, 38)
+        apply_icon(button, icon_name, "#3f4c5c", icon_size=16, hit_size=36)
         return button

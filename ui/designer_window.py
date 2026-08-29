@@ -47,6 +47,7 @@ from ui.algebra_panel import AlgebraPanel
 from ui.agent_sidebar import AgentSidebar
 from ui.agent_settings import AgentSettingsDialog
 from ui.lighting_dialog import LightingDialog
+from ui.icons import apply_icon
 from ui.scene_settings import SceneSettingsPanel
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 from services.agent_worker import RuntimeTurnWorker
@@ -673,18 +674,16 @@ class MainWindow:
         toolbar_layout.setContentsMargins(4, 4, 4, 4)
         toolbar_layout.setSpacing(4)
         self.scene_settings_button = QToolButton(self.viewport_toolbar)
-        self.scene_settings_button.setText("⚙")
         self.scene_settings_button.setToolTip("场景设置")
-        self.scene_settings_button.setFixedSize(38, 38)
+        apply_icon(self.scene_settings_button, "settings-2", "#3f4c5c", icon_size=16, hit_size=36)
         self.scene_mode_button = QToolButton(self.viewport_toolbar)
         self.scene_mode_button.setToolTip("切换二维和三维场景")
         self.scene_mode_button.setFixedSize(38, 38)
         self.agent_button = QToolButton(self.viewport_toolbar)
         self.agent_button.setObjectName("agentButton")
-        self.agent_button.setText("✦")
         self.agent_button.setToolTip("AI 教学助手")
         self.agent_button.setCheckable(True)
-        self.agent_button.setFixedSize(38, 38)
+        apply_icon(self.agent_button, "sparkles", "#3f4c5c", icon_size=16, hit_size=36)
         toolbar_layout.addWidget(self.scene_settings_button)
         toolbar_layout.addWidget(self.scene_mode_button)
         toolbar_layout.addWidget(self.agent_button)
