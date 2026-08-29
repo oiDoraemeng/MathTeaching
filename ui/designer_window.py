@@ -49,6 +49,7 @@ from ui.agent_settings import AgentSettingsDialog
 from ui.lighting_dialog import LightingDialog
 from ui.icons import apply_icon
 from ui.scene_settings import SceneSettingsPanel
+from ui.status_bar import AppStatusBar
 from ui.tokens import apply_drop_shadow
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 from services.agent_worker import RuntimeTurnWorker
@@ -381,6 +382,14 @@ class MainWindow:
             enabled=self._using_remote_agent(),
         )
         self.agent_panel.set_scene_mode(self.scene_mode is SceneMode.TWO_D)
+        self.status_bar = AppStatusBar(self.window)
+        central = self.window.centralWidget()
+        if central is not None:
+            wrapper = QVBoxLayout()
+            wrapper.setContentsMargins(0, 0, 0, 0)
+            wrapper.addLayout(root_layout)
+            wrapper.addWidget(self.status_bar)
+            central.setLayout(wrapper)
 
     def _dispatch_agent_web_intent(self, envelope) -> None:
         """Handle validated Web UI intents without exposing scene services."""

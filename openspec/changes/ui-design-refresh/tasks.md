@@ -46,7 +46,7 @@
 
 ## 4. 布局与信息架构（Batch 4）
 
-- [ ] 4.1 新增底部状态栏（30px）：2D/3D 模式、激活工具胶囊、渲染耗时、Agent 状态段（点击开合面板）、主题切换按钮（sun/moon/monitor 循环三态）；rootLayout 包一层垂直布局容纳状态栏。
+- [x] 4.1 新增底部状态栏（30px）：2D/3D 模式、激活工具胶囊、渲染耗时、Agent 状态段（点击开合面板）、主题切换按钮（sun/moon/monitor 循环三态）；rootLayout 包一层垂直布局容纳状态栏。
 - [ ] 4.2 新增参数化 `_PanelResizeHandle`（5px 手柄，方向/范围/默认值/QSettings 键参数化）：左栏手柄 260–420（默认 320，键 `ui/algebra_panel_width`，常驻）+ 右栏手柄 360–560（默认 440，键 `ui/agent_panel_width`，随面板显隐），双击复位、钳制、持久化；`algebra_panel.py` 宽度约束改 260/420；`AgentSidebar` 三处 `setFixedWidth(440)` 统一为常量 + 存储宽度。
 - [ ] 4.3 删除 `AgentSidebarState` 死注释与已隐藏的 `AgentCollapsedBar` 死类；常量统一 MIN 360 / DEFAULT 440 / MAX 560。
 - [ ] 4.4 修正窗口标题为 `Math3D Teaching`；删除 `ui/main_window.py`；精简 `main_window.ui` 死侧栏配置并更新 `tests/test_main_window_layout.py`。
