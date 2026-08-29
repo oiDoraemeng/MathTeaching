@@ -26,6 +26,29 @@ QCheckBox::indicator { width: 14px; height: 14px; border: 1px solid #b8c2cd; bor
 QCheckBox::indicator:checked { background: #2f7ebd; border-color: #2f7ebd; }
 QSlider::groove:horizontal { height: 4px; background: #d5dbe3; border-radius: 2px; }
 QSlider::handle:horizontal { width: 13px; margin: -5px 0; border-radius: 6px; background: #2f7ebd; }
+QDialog {
+  background: #ffffff; border: 1px solid #eceff3; border-radius: 10px;
+}
+QDialogButtonBox {
+  spacing: 8px;
+}
+QDialogButtonBox QPushButton {
+  min-height: 32px;
+  padding: 3px 10px;
+}
+QGroupBox {
+  margin-top: 12px;
+  padding: 10px 10px 8px 10px;
+  color: #17212e;
+  border: 1px solid #d5dbe3;
+  border-radius: 8px;
+}
+QGroupBox::title {
+  padding: 0 4px;
+  margin-left: 6px;
+  color: #3f4c5c;
+  background: #ffffff;
+}
 #layerSettingsPopup, #geometrySettingsPopup, #intersectionPopup, #functionCatalogPopup, #sceneSettingsPanel, #formulaEditorPopup,
 #linearAlgebraCasePopup, #viewportToolbar, #twoDGeometryToolbar, #twoDLineFlyout {
   background: #ffffff; border: 1px solid #eceff3; border-radius: 8px;
@@ -37,7 +60,4 @@ QSlider::handle:horizontal { width: 13px; margin: -5px 0; border-radius: 6px; ba
 }
 #agentButton:checked, #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
   background: #e4f0f9; border-color: #2f7ebd; color: #2f7ebd;
-}
-QDialog {
-  background: #ffffff; border: 1px solid #eceff3; border-radius: 10px;
 }

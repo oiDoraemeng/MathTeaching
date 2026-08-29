@@ -23,6 +23,7 @@ from agent.instruction import InstructionStore
 from agent.memory import MemoryProfile, MemoryStore
 from agent.providers import ModelProvider
 from services.agent_provider import AgentSettings
+from ui.tokens import apply_drop_shadow
 
 
 class _ConnectionTestWorker(QObject):
@@ -61,6 +62,7 @@ class AgentSettingsDialog(QDialog):
         self.setWindowTitle("AI 教学助手设置")
         self.setModal(False)
         self.setMinimumWidth(430)
+        apply_drop_shadow(self, "modal")
         self._settings = self.load_settings()
         self._test_thread: QThread | None = None
         self._test_worker: _ConnectionTestWorker | None = None
@@ -286,6 +288,7 @@ class InstructionsDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("编辑 Math Teacher Agent Instructions")
         self.setMinimumSize(520, 420)
+        apply_drop_shadow(self, "modal")
         self.store = store or InstructionStore()
         layout = QVBoxLayout(self)
         self.editor = QPlainTextEdit(self)
@@ -319,6 +322,7 @@ class MemorySettingsDialog(QDialog):
     def __init__(self, parent=None, store: MemoryStore | None = None) -> None:
         super().__init__(parent)
         self.setWindowTitle("AI 学习记忆")
+        apply_drop_shadow(self, "modal")
         self.store = store or MemoryStore()
         profile = self.store.load()
         layout = QVBoxLayout(self)

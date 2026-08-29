@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
 
 from rendering.lighting import LightSettings, rotate_light_positions
 from rendering.materials import MATERIAL_PRESETS
-from ui.tokens import apply_drop_shadow
+from ui.tokens import apply_drop_shadow, flatten_theme
 from widgets.LightRotationWidget import LightRotationWidget
 
 
@@ -131,8 +131,11 @@ class LightingDialog(QDialog):
     def _set_color_button(self, name: str, source: object | None = None) -> None:
         value = getattr(source or self.settings, name)
         color = QColor(value) if isinstance(value, str) else QColor.fromRgbF(*value["color"])
+        light_theme = flatten_theme("light")
+        dark_theme = flatten_theme("dark")
+        foreground = light_theme["text_on_accent"] if color.lightness() < 128 else dark_theme["text_on_accent"]
         self._color_buttons[name].setText(color.name().upper())
-        self._color_buttons[name].setStyleSheet(f"background: {color.name()}; color: {'#ffffff' if color.lightness() < 128 else '#17202a'};")
+        self._color_buttons[name].setStyleSheet(f"background: {color.name()}; color: {foreground};")
 
     def _reset_defaults(self) -> None:
         self.settings = LightSettings()
