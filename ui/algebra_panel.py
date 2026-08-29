@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from PySide6.QtCore import QEvent, QObject, QPoint, QRect, QTimer, Qt, Signal
+from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QRect, QTimer, Qt, Signal
 from PySide6.QtGui import QAction, QColor, QMouseEvent, QShowEvent
 from PySide6.QtWidgets import (
     QApplication,
@@ -72,6 +72,9 @@ class LayerSettingsPopup(QDialog):
         self.setWindowTitle("函数设置")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
         self.setWindowModality(Qt.WindowModality.NonModal)
+        self._show_animation = QPropertyAnimation(self, b"windowOpacity", self)
+        self._show_animation.setDuration(150)
+        self._show_animation.setEasingCurve(QEasingCurve.Type.OutCubic)
         self.setMinimumWidth(278)
         application = QApplication.instance()
         if application is not None:
@@ -126,7 +129,7 @@ class LayerSettingsPopup(QDialog):
         text.setObjectName("sectionHeader")
         row.addWidget(text)
         button = QToolButton(host)
-        button.setFixedSize(40, 28)
+        button.setFixedSize(28, 28)
         button.setToolTip(tooltip)
         row.addWidget(button)
         row.addStretch()
@@ -180,7 +183,12 @@ class LayerSettingsPopup(QDialog):
         self._set_color_button(self.color_button, layer.color)
         if isinstance(layer, SurfaceLayer):
             self._set_color_button(self.intersection_color_button, layer.intersection_color)
+        self.setWindowOpacity(0.0)
         self.show()
+        self._show_animation.stop()
+        self._show_animation.setStartValue(0.0)
+        self._show_animation.setEndValue(1.0)
+        self._show_animation.start()
         if anchor is not None:
             self.move(anchor)
 
@@ -271,6 +279,9 @@ class GeometrySettingsPopup(QDialog):
         self.setWindowTitle("几何对象")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
         self.setWindowModality(Qt.WindowModality.NonModal)
+        self._show_animation = QPropertyAnimation(self, b"windowOpacity", self)
+        self._show_animation.setDuration(150)
+        self._show_animation.setEasingCurve(QEasingCurve.Type.OutCubic)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(12, 10, 12, 12)
         layout.setSpacing(10)
@@ -288,7 +299,12 @@ class GeometrySettingsPopup(QDialog):
         else:
             names = {"line": "直线", "segment": "线段", "ray": "射线", "vector": "向量"}
             self.title.setText(f"{names[geometry.kind]}设置")
+        self.setWindowOpacity(0.0)
         self.show()
+        self._show_animation.stop()
+        self._show_animation.setStartValue(0.0)
+        self._show_animation.setEndValue(1.0)
+        self._show_animation.start()
         if anchor is not None:
             self.move(anchor)
         self.raise_()
@@ -533,7 +549,7 @@ class LayerRow(QFrame):
     visibility_changed = Signal(str, bool)
 
     _MINIMUM_ROW_HEIGHT = 48
-    _MINIMUM_FORMULA_HEIGHT = 38
+    _MINIMUM_FORMULA_HEIGHT = 32
     _VERTICAL_MARGINS = 8
 
     def __init__(self, layer: Layer, parent: QWidget | None = None) -> None:
@@ -736,7 +752,7 @@ class AlgebraPanel(QFrame):
         button = QToolButton()
         button.setText(text)
         button.setToolTip(tooltip)
-        button.setFixedHeight(30)
+        button.setFixedHeight(32)
         return button
 
     @staticmethod

@@ -28,19 +28,19 @@ from ui.agent_sidebar_web import AgentSidebarWeb
 
 class AgentSidebarState(Enum):
     """侧边栏状态"""
-    COLLAPSED = "collapsed"  # 折叠态：40px 工具条
+    COLLAPSED = "collapsed"  # 折叠态：36px 工具条
     EXPANDED = "expanded"    # 展开态：380px 完整面板
 
 
 class AgentCollapsedBar(QWidget):
-    """折叠态：40px 垂直工具条。"""
+    """折叠态：36px 垂直工具条。"""
 
     expand_requested = Signal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("sidebarCollapsedBar")
-        self.setFixedWidth(40)
+        self.setFixedWidth(36)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 12, 4, 12)
@@ -252,7 +252,8 @@ class AgentSidebar(QWidget):
     def _edit_memory(self) -> None:
         from ui.agent_settings import MemorySettingsDialog
 
-        dialog = MemorySettingsDialog(self)
+        effective_theme = getattr(self.window(), "effective_theme", "light")
+        dialog = MemorySettingsDialog(self, effective_theme=effective_theme)
         dialog.saved.connect(lambda _profile: self._refresh_memory_label())
         dialog.open()
         self._memory_dialog = dialog

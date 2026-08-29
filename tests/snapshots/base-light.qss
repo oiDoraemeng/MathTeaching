@@ -1,9 +1,11 @@
 QMainWindow, #viewportHost { background: #eef1f4; color: #17212e; }
 #algebraPanel, #agentSidebar { background: #ffffff; }
-#algebraPanel { border-right: 1px solid #d5dbe3; }
+#algebraPanel { border: 0; }
 #algebraTitle { color: #17212e; font-size: 15px; font-weight: 600; }
 #sectionHeader { color: #3f4c5c; font-size: 11px; letter-spacing: 0.2px; }
-#algebraLayerRow, #catalogEntryRow { background: #f5f7f9; border: 1px solid #d5dbe3; border-radius: 4px; }
+#algebraLayerRow, #catalogEntryRow { background: #f5f7f9; border: 1px solid transparent; border-radius: 8px; }
+#algebraLayerRow:hover { border-color: #d5dbe3; }
+#algebraLayerRow[selected="true"] { background: #e4f0f9; border: 1px solid #2f7ebd; }
 #catalogEntryRow:hover { background: #e4f0f9; border-color: #b8c2cd; }
 #catalogCategory, #algebraStatus { color: #3f4c5c; font-size: 11px; }
 #catalogCategory { font-weight: 700; padding: 8px 2px 2px 2px; }
@@ -16,7 +18,8 @@ QLineEdit, QComboBox, QPushButton {
   border: 1px solid #d5dbe3; border-radius: 4px;
 }
 QLineEdit, QComboBox { padding: 2px 7px; }
-QLineEdit:focus, QComboBox:focus, QPushButton:focus { border: 2px solid #2f7ebd; }
+QLineEdit:focus, QComboBox:focus, QPushButton:focus { border: 1px solid #d5dbe3; }
+QLineEdit:focus-visible, QComboBox:focus-visible, QPushButton:focus-visible, QToolButton:focus-visible { border: 2px solid #2f7ebd; }
 QPushButton { background: #f5f7f9; color: #2f7ebd; padding: 3px 8px; font-weight: 600; }
 QPushButton:hover { background: #e4f0f9; }
 QToolButton { min-width: 24px; min-height: 24px; color: #3f4c5c; border: 1px solid transparent; border-radius: 4px; }

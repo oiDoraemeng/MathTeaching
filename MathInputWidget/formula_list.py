@@ -169,6 +169,7 @@ class FormulaListWidget(QWidget):
                 "kind": layer.kind,
                 "latex": geometry_latex(layer, points),
                 "visible": layer.visible,
+                "color": getattr(layer, "color", "#8ab4f8"),
                 # 点可通过编辑坐标修改；线类对象由端点决定，保持只读。
                 "editable": isinstance(layer, Point2D),
             }
@@ -178,6 +179,7 @@ class FormulaListWidget(QWidget):
             "kind": layer.kind,
             "latex": layer.latex or layer.expression,
             "visible": layer.visible,
+            "color": getattr(layer, "color", "#8ab4f8"),
             "editable": True,
         }
 

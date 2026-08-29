@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import QEvent, QObject, QPoint, QTimer, Qt, Signal
+from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QTimer, Qt, Signal
 from PySide6.QtWidgets import QFrame, QToolButton, QVBoxLayout, QWidget
 
 from models.geometry_2d import LinearKind
@@ -49,6 +49,9 @@ class TwoDGeometryToolbar(QFrame):
         self.line_flyout = QFrame(parent)
         self.line_flyout.setObjectName("twoDLineFlyout")
         apply_drop_shadow(self.line_flyout, "overlay")
+        self._flyout_animation = QPropertyAnimation(self.line_flyout, b"windowOpacity", self)
+        self._flyout_animation.setDuration(150)
+        self._flyout_animation.setEasingCurve(QEasingCurve.Type.OutCubic)
         flyout_layout = QVBoxLayout(self.line_flyout)
         flyout_layout.setContentsMargins(4, 4, 4, 4)
         flyout_layout.setSpacing(4)
@@ -126,7 +129,12 @@ class TwoDGeometryToolbar(QFrame):
         if not self.isVisible():
             return
         self._position_flyout()
+        self.line_flyout.setWindowOpacity(0.0)
         self.line_flyout.show()
+        self._flyout_animation.stop()
+        self._flyout_animation.setStartValue(0.0)
+        self._flyout_animation.setEndValue(1.0)
+        self._flyout_animation.start()
         self.line_flyout.raise_()
 
     def _position_flyout(self) -> None:

@@ -1,4 +1,4 @@
-.agent-app { display: flex; flex-direction: column; width: 100%; height: 100vh; overflow: hidden; background: var(--agent-bg); }
+.agent-app { display: flex; flex-direction: column; width: 100%; height: 100vh; overflow: hidden; background: var(--agent-bg); transition: background-color .15s ease, color .15s ease; }
 .agent-app > * { min-width: 0; }
 .agent-header, .session-tabs, .composer { background: var(--agent-surface); border-bottom: 1px solid var(--agent-border); }
 .agent-header { display: flex; align-items: center; gap: 4px; padding: 0 10px; }
@@ -170,3 +170,11 @@
 .settings-form-actions .settings-save { margin-top: 0; }
 @media (max-width: 359px) { .settings-context-grid { grid-template-columns: 1fr; } }
 @media (max-width: 359px) { .secondary-view { padding-inline: 10px; } .history-row { padding-inline: 7px; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

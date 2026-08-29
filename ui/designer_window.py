@@ -331,6 +331,7 @@ class MainWindow:
         self._math_teacher_agent = self._agent_runtime.agent
 
         self.window = self._load_designer_form()
+        self.window.effective_theme = self.effective_theme
         self._agent_event_relay = _AgentEventRelay(self._receive_runtime_event, self.window)
         self._install_algebra_panel()
         self._configure_viewport()
@@ -680,7 +681,7 @@ class MainWindow:
         apply_icon(self.scene_settings_button, "settings-2", "#3f4c5c", icon_size=16, hit_size=36)
         self.scene_mode_button = QToolButton(self.viewport_toolbar)
         self.scene_mode_button.setToolTip("切换二维和三维场景")
-        self.scene_mode_button.setFixedSize(38, 38)
+        self.scene_mode_button.setFixedSize(36, 36)
         self.agent_button = QToolButton(self.viewport_toolbar)
         self.agent_button.setObjectName("agentButton")
         self.agent_button.setToolTip("AI 教学助手")
@@ -696,7 +697,7 @@ class MainWindow:
         self.scene_settings_panel = SceneSettingsPanel(self.viewport_host)
         self.scene_settings_panel.hide()
         self._scene_settings_animation = QPropertyAnimation(self.scene_settings_panel, b"geometry", self.window)
-        self._scene_settings_animation.setDuration(180)
+        self._scene_settings_animation.setDuration(200)
         self._scene_settings_animation.setEasingCurve(QEasingCurve.Type.OutCubic)
         self._scene_settings_animation.finished.connect(self._finish_scene_settings_animation)
         self._viewport_resize_filter = _ViewportResizeFilter(self._on_viewport_host_changed, self.viewport_host)
@@ -2815,7 +2816,7 @@ class MainWindow:
             dialog.raise_()
             dialog.activateWindow()
             return
-        dialog = AgentSettingsDialog(self.window)
+        dialog = AgentSettingsDialog(self.window, effective_theme=self.effective_theme)
         dialog.settings_saved.connect(self._apply_agent_settings)
         dialog.demo_requested.connect(self._restore_demo_agent)
         dialog.finished.connect(self._forget_agent_settings_dialog)
@@ -2979,7 +2980,12 @@ class MainWindow:
         if self.scene_mode is SceneMode.TWO_D:
             return
         if self._lighting_dialog is None:
-            self._lighting_dialog = LightingDialog(self.lighting, self.material_name, self.window)
+            self._lighting_dialog = LightingDialog(
+                self.lighting,
+                self.material_name,
+                self.window,
+                effective_theme=self.effective_theme,
+            )
             self._lighting_dialog.setWindowModality(Qt.WindowModality.NonModal)
             self._lighting_dialog.settings_changed.connect(self._update_lighting)
             self._lighting_dialog.material_changed.connect(self._update_material)
@@ -3064,6 +3070,7 @@ class MainWindow:
         from ui.tokens import build_qss
         effective_theme = getattr(self, "effective_theme", "light")
         self.window.setStyleSheet(build_qss(effective_theme))
+        self.window.effective_theme = effective_theme
         for widget in (
             getattr(self, "viewport_toolbar", None),
             getattr(self, "two_d_geometry_toolbar", None),
@@ -3072,8 +3079,18 @@ class MainWindow:
         ):
             if widget is not None:
                 apply_drop_shadow(widget, "overlay", effective_theme)
-        if getattr(self, "_lighting_dialog", None) is not None:
-            apply_drop_shadow(self._lighting_dialog, "modal", effective_theme)
+        agent_settings_dialog = getattr(self, "_agent_settings_dialog", None)
+        if agent_settings_dialog is not None:
+            agent_settings_dialog.set_effective_theme(effective_theme)
+            instructions_dialog = getattr(agent_settings_dialog, "_instructions_dialog", None)
+            if instructions_dialog is not None:
+                instructions_dialog.set_effective_theme(effective_theme)
+        memory_dialog = getattr(getattr(self, "agent_sidebar", None), "_memory_dialog", None)
+        if memory_dialog is not None:
+            memory_dialog.set_effective_theme(effective_theme)
+        lighting_dialog = getattr(self, "_lighting_dialog", None)
+        if lighting_dialog is not None:
+            lighting_dialog.set_effective_theme(effective_theme)
         algebra_panel = getattr(self, "algebra_panel", None)
         if algebra_panel is not None:
             algebra_panel.sync_overlay_theme(effective_theme)
@@ -3082,6 +3099,8 @@ class MainWindow:
         """Apply and propagate the resolved application theme."""
         self.theme_mode = mode
         self.effective_theme = effective
+        if hasattr(self, "window"):
+            self.window.effective_theme = effective
         from PySide6.QtCore import QSettings
 
         settings = QSettings()
