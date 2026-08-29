@@ -8,7 +8,7 @@ from types import MappingProxyType
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QColor, QIcon, QPainter, QPixmap
 from PySide6.QtSvg import QSvgRenderer
-from PySide6.QtWidgets import QAbstractButton
+from PySide6.QtWidgets import QAbstractButton, QApplication
 
 
 _SVG_HEAD = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
@@ -52,6 +52,27 @@ def _rgba(color: QColor | str) -> str:
     return resolved.name(QColor.NameFormat.HexArgb)
 
 
+def _screen_dpr(screen) -> float | None:
+    if screen is None:
+        return None
+    dpr = getattr(screen, "devicePixelRatio", None)
+    if callable(dpr):
+        value = float(dpr())
+        return value if value > 0 else None
+    return None
+
+
+def _button_dpr(button: QAbstractButton) -> float:
+    window = button.window()
+    if window is not None:
+        window_handle = window.windowHandle()
+        if window_handle is not None:
+            window_dpr = _screen_dpr(window_handle.screen())
+            if window_dpr is not None:
+                return window_dpr
+    return _screen_dpr(QApplication.primaryScreen()) or 1.0
+
+
 def icon(name: str, color: QColor | str, size: int = 16, dpr: float = 1.0) -> QIcon:
     """Render a bundled SVG icon at the requested logical size and DPR."""
     if name not in LUCIDE_SVG:
@@ -92,6 +113,6 @@ def apply_icon(
 ) -> None:
     """Apply a bundled icon while preserving the button's existing behavior."""
     button.setText("")
-    button.setIcon(icon(name, color, icon_size, button.devicePixelRatioF()))
+    button.setIcon(icon(name, color, icon_size, _button_dpr(button)))
     button.setIconSize(QSize(icon_size, icon_size))
     button.setFixedSize(hit_size, hit_size)

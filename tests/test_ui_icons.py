@@ -6,6 +6,7 @@ import pytest
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QApplication, QToolButton
 
+import ui.icons as icons
 from ui.icons import apply_icon, icon
 
 
@@ -47,3 +48,72 @@ def test_apply_icon_clears_text_and_sets_metrics():
     assert button.text() == ""
     assert button.width() == 36 and button.height() == 36
     assert button.iconSize() == QSize(16, 16)
+
+
+def test_apply_icon_uses_window_screen_dpr(monkeypatch):
+    seen = {}
+
+    def fake_icon(name, color, size=16, dpr=1.0):
+        seen["args"] = (name, color, size, dpr)
+        return icon(name, color, size, dpr)
+
+    class _Screen:
+        def devicePixelRatio(self):
+            return 2.5
+
+    class _WindowHandle:
+        def screen(self):
+            return _Screen()
+
+    class _Window:
+        def windowHandle(self):
+            return _WindowHandle()
+
+    class _Button:
+        def setText(self, _text):
+            pass
+
+        def window(self):
+            return _Window()
+
+        def setIcon(self, _icon):
+            pass
+
+        def setIconSize(self, _size):
+            pass
+
+        def setFixedSize(self, _w, _h):
+            pass
+
+    monkeypatch.setattr(icons, "icon", fake_icon)
+    apply_icon(_Button(), "plus", "#123456")
+    assert seen["args"] == ("plus", "#123456", 16, 2.5)
+
+
+def test_apply_icon_falls_back_to_one_without_screen(monkeypatch):
+    seen = {}
+
+    def fake_icon(name, color, size=16, dpr=1.0):
+        seen["args"] = (name, color, size, dpr)
+        return icon(name, color, size, dpr)
+
+    class _Button:
+        def setText(self, _text):
+            pass
+
+        def window(self):
+            return None
+
+        def setIcon(self, _icon):
+            pass
+
+        def setIconSize(self, _size):
+            pass
+
+        def setFixedSize(self, _w, _h):
+            pass
+
+    monkeypatch.setattr(icons, "icon", fake_icon)
+    monkeypatch.setattr(icons.QApplication, "primaryScreen", staticmethod(lambda: None))
+    apply_icon(_Button(), "plus", "#123456")
+    assert seen["args"] == ("plus", "#123456", 16, 1.0)
