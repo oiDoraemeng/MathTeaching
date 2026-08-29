@@ -39,8 +39,8 @@
 - [x] 3.3 `web_protocol.py` 的 `EVENT_MESSAGE_TYPES` 增加 `theme_state`（payload 仅 `mode`，白名单校验，与已注册的 `math_case` 并存）；`agent_sidebar_web.set_theme()` 按加载状态发射事件。
 - [x] 3.4 React reducer 处理 `theme_state` → 切换 `documentElement` 的 `data-theme`（与 UserScript 幂等）；根容器颜色过渡 `.15s`。
 - [x] 3.5 清理 `layout.css` 与组件中的字面量颜色（`#fff`、`rgb(0 0 0 / 30%)` 等）改语义变量；增加"无字面量颜色"lint 断言。
-- [ ] 3.6 案例阅读页令牌化（§12.3）：`MathCaseView` 卡片 5px 圆角+1px 边框 → `radius.md` + 默认无边框；步骤 `li::marker` accent 化、间距 12px；公式/结论卡对齐版式规范（文档标题 20px 独立于 chrome 15px）。
-- [ ] 3.7 案例标签类型区分（§12.2 D9）：`.session-tab-case` 增加 12px `book-open` 前导图标（muted → 激活 accent）；验证 `close_case` 回退会话、运行中回合不受影响、同 id 重发复用标签（D10 瞬态语义）。
+- [x] 3.6 案例阅读页令牌化（§12.3）：`MathCaseView` 卡片 5px 圆角+1px 边框 → `radius.md` + 默认无边框；步骤 `li::marker` accent 化、间距 12px；公式/结论卡对齐版式规范（文档标题 20px 独立于 chrome 15px）。
+- [x] 3.7 案例标签类型区分（§12.2 D9）：`.session-tab-case` 增加 12px `book-open` 前导图标（muted → 激活 accent）；验证 `close_case` 回退会话、运行中回合不受影响、同 id 重发复用标签（D10 瞬态语义）。
 
 **Batch 2 检查点**：`pytest tests/test_agent_web_protocol.py -q` 绿；`pnpm -C ui/agent_web test`（reducer/主题/案例标签）绿；侧栏 light/dark 渲染与案例页版式走查通过。
 

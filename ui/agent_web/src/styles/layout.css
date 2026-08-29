@@ -11,7 +11,9 @@
 .session-tab { display: inline-flex; flex: 0 0 auto; align-items: center; min-width: 104px; max-width: 240px; height: 29px; color: var(--agent-muted); border-top: 2px solid transparent; }
 .session-tab-case { color: var(--agent-accent); }
 .session-tab.active { color: var(--agent-text); border-top-color: var(--agent-accent); background: var(--agent-bg); }
-.session-tab-select { flex: 1 1 auto; min-width: 0; overflow: hidden; padding: 0 4px 0 9px; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
+.session-tab-select { display: inline-flex; align-items: center; gap: 4px; flex: 1 1 auto; min-width: 0; overflow: hidden; padding: 0 4px 0 9px; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
+.session-tab-select svg { flex: 0 0 12px; color: var(--agent-muted); }
+.session-tab-case.active .session-tab-select svg { color: var(--agent-accent); }
 .session-tab-close { flex: 0 0 23px; width: 23px; height: 23px; margin-right: 3px; border-radius: 3px; }
 .session-tab-close:hover { background: color-mix(in srgb, var(--agent-text) 12%, transparent); }
 .timeline { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 22px 16px 24px; scrollbar-color: var(--agent-border) transparent; }
@@ -20,9 +22,10 @@
 .math-case-header span { color: var(--agent-accent); font-size: 11px; }
 .math-case-header h1 { margin: 4px 0; font-size: 20px; }
 .math-case-header p { margin: 0; color: var(--agent-muted); font-size: 12px; }
-.math-case-formula, .math-case-conclusion { max-width: 620px; margin: 12px auto; padding: 12px; background: var(--agent-surface); border: 1px solid var(--agent-border); border-radius: 5px; }
+.math-case-formula, .math-case-conclusion { max-width: 620px; margin: 12px auto; padding: 12px; background: var(--agent-surface); border: 0; border-radius: 8px; box-shadow: 0 0 0 1px var(--agent-border); }
 .math-case-steps { max-width: 620px; margin: 18px auto; padding-left: 25px; color: var(--agent-text); }
-.math-case-steps li { margin: 10px 0; padding-left: 5px; }
+.math-case-steps li { margin: 12px 0; padding-left: 5px; }
+.math-case-steps li::marker { color: var(--agent-accent); font-weight: 600; }
 .math-case-conclusion h2 { margin: 0 0 6px; font-size: 13px; }
 .empty-state { max-width: 360px; margin: 16vh auto 0; text-align: center; }
 .empty-state h1 { margin: 0 0 8px; font-size: 20px; font-weight: 600; }

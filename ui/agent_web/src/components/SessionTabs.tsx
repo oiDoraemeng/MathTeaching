@@ -1,5 +1,5 @@
 import { useRef, type WheelEvent } from "react";
-import { X } from "lucide-react";
+import { BookOpen, X } from "lucide-react";
 import type { CaseProjection, SessionProjection } from "../types";
 
 interface SessionTabsProps {
@@ -29,7 +29,7 @@ export function SessionTabs({ sessions, activeSessionId, onSelect, onClose, case
       {openSessions.length > 1 && <button className="session-tab-close" aria-label={`关闭 ${session.title || "New Chat"}`} title="关闭会话" onClick={() => onClose(session.id)}><X size={13} /></button>}
     </div>)}
     {cases.map((caseData) => <div key={`case-${caseData.id}`} className={`session-tab session-tab-case ${selectedTab === `case:${caseData.id}` ? "active" : ""}`}>
-      <button className="session-tab-select" onClick={() => onSelectCase?.(caseData.id)} aria-current={selectedTab === `case:${caseData.id}` ? "page" : undefined}>{caseData.name}</button>
+      <button className="session-tab-select" onClick={() => onSelectCase?.(caseData.id)} aria-current={selectedTab === `case:${caseData.id}` ? "page" : undefined}><BookOpen size={12} aria-hidden="true" />{caseData.name}</button>
       <button className="session-tab-close" aria-label={`关闭 ${caseData.name}`} title="关闭案例" onClick={() => onClose(`case:${caseData.id}`)}><X size={13} /></button>
     </div>)}
   </nav>;
