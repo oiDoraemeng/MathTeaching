@@ -112,6 +112,7 @@ class AgentSidebarWeb(QWidget):
         self._active_session_id = ""
         self._effective_theme = self._validated_theme(effective_theme or getattr(self.window(), "effective_theme", None))
         self._document_loaded = False
+        self._pending_theme: str | None = None
         self._pending_math_case: dict[str, object] | None = None
         self.bridge = AgentBridge(dispatcher, self)
         self.view = QWebEngineView(self)
@@ -142,7 +143,17 @@ class AgentSidebarWeb(QWidget):
         if loaded is None:
             loaded = self._document_loaded
         if not loaded:
+            self._pending_theme = theme
             self.view.setUrl(self._initial_url(theme))
+            return
+        self._pending_theme = None
+        self.bridge.emit_event({
+            "protocol_version": 1,
+            "type": "theme_state",
+            "request_id": "theme-state",
+            "session_id": "",
+            "payload": {"mode": theme},
+        })
 
     @property
     def active_session_id(self) -> str:
@@ -239,6 +250,16 @@ class AgentSidebarWeb(QWidget):
         if not ok:
             return
         self._document_loaded = True
+        if self._pending_theme is not None:
+            theme = self._pending_theme
+            self._pending_theme = None
+            self.bridge.emit_event({
+                "protocol_version": 1,
+                "type": "theme_state",
+                "request_id": "theme-state",
+                "session_id": "",
+                "payload": {"mode": theme},
+            })
         self.bridge.send_json(
             '{"protocol_version":1,"type":"request_snapshot","request_id":"webview-boot","session_id":"","payload":{}}'
         )

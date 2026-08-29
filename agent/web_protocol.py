@@ -78,6 +78,7 @@ EVENT_MESSAGE_TYPES = frozenset(
         "plan_composed",
         "scene_conflict",
         "math_case",
+        "theme_state",
     }
 )
 
@@ -159,7 +160,7 @@ def parse_envelope(value: str | dict[str, Any]) -> BridgeEnvelope:
     if len(request_id) > MAX_IDENTIFIER_LENGTH:
         raise ProtocolError("identifier_too_long", "request_id exceeds maximum length", field="request_id")
     session_id = str(decoded.get("session_id", "")).strip()
-    if not session_id and message_type not in {"request_snapshot", "math_case"}:
+    if not session_id and message_type not in {"request_snapshot", "math_case", "theme_state"}:
         raise ProtocolError("missing_session_id", "session_id is required", field="session_id")
     if len(session_id) > MAX_IDENTIFIER_LENGTH:
         raise ProtocolError("identifier_too_long", "session_id exceeds maximum length", field="session_id")
@@ -195,6 +196,10 @@ def parse_envelope(value: str | dict[str, Any]) -> BridgeEnvelope:
 
 def _validate_event_payload(message_type: str, payload: dict[str, Any]) -> None:
     """Reject malformed capability events before they reach the Web reducer."""
+    if message_type == "theme_state":
+        if set(payload) != {"mode"} or payload.get("mode") not in {"light", "dark"}:
+            raise ProtocolError("invalid_event_payload", "theme_state requires only mode=light|dark", field="mode")
+        return
     required: dict[str, tuple[tuple[str, type | tuple[type, ...]], ...]] = {
         "tool_started": (("call_id", str), ("name", str), ("category", str), ("mutating", bool)),
         "tool_finished": (("call_id", str), ("name", str), ("status", str), ("result_kind", str)),
