@@ -15,7 +15,7 @@ def test_sidebar_is_hidden_without_a_collapsed_layout_slot() -> None:
 
     assert sidebar.state == AgentSidebarState.COLLAPSED
     assert not sidebar.isVisible()
-    assert sidebar.layout().indexOf(sidebar.collapsed_bar) == -1
+    assert not hasattr(sidebar, "collapsed_bar")
 
 
 def test_open_sidebar_has_fixed_width_and_close_hides_it() -> None:

@@ -32,61 +32,6 @@ class AgentSidebarState(Enum):
     EXPANDED = "expanded"    # 展开态：380px 完整面板
 
 
-class AgentCollapsedBar(QWidget):
-    """折叠态：36px 垂直工具条。"""
-
-    expand_requested = Signal()
-
-    def __init__(self, parent: QWidget | None = None) -> None:
-        super().__init__(parent)
-        self.setObjectName("sidebarCollapsedBar")
-        self.setFixedWidth(36)
-
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(4, 12, 4, 12)
-        layout.setSpacing(8)
-
-        # AI 图标按钮
-        self.icon_button = QToolButton(self)
-        self.icon_button.setObjectName("agentIconButton")
-        apply_icon(self.icon_button, "sparkles", "#3f4c5c", icon_size=16, hit_size=32)
-        self.icon_button.setToolTip("AI 教学助手（点击展开）")
-        layout.addWidget(self.icon_button, 0, Qt.AlignmentFlag.AlignHCenter)
-
-        # 竖排文字
-        self.label = QLabel("A\nI\n助\n手", self)
-        self.label.setObjectName("sidebarCollapsedLabel")
-        self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        layout.addWidget(self.label, 0, Qt.AlignmentFlag.AlignHCenter)
-
-        layout.addStretch(1)
-
-        # 状态指示器 uses a styled dot instead of a font glyph.
-        self.status_indicator = QLabel(self)
-        self.status_indicator.setObjectName("sidebarStatusIndicator")
-        self.status_indicator.setFixedSize(8, 8)
-        self.status_indicator.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.status_indicator.setToolTip("未配置")
-        layout.addWidget(self.status_indicator, 0, Qt.AlignmentFlag.AlignHCenter)
-
-        self.icon_button.clicked.connect(self.expand_requested)
-        self.label.mousePressEvent = lambda _: self.expand_requested.emit()
-
-    def set_status(self, status: str, color: str, tooltip: str) -> None:
-        """设置状态指示器。
-
-        Args:
-            status: 保留给旧调用方的状态文本参数
-            color: 颜色（如 "#4ADE80" 绿色、"#F59E0B" 橙色、"#6B7280" 灰色）
-            tooltip: 提示文本
-        """
-        _ = status
-        self.status_indicator.setStyleSheet(
-            f"QLabel {{ background: {color}; border-radius: 4px; }}"
-        )
-        self.status_indicator.setToolTip(tooltip)
-
-
 class AgentSidebar(QWidget):
     """AI 助手侧边栏容器：关闭时隐藏并释放主视口布局空间。"""
 
@@ -105,10 +50,6 @@ class AgentSidebar(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
-
-        # 保留旧折叠条对象以兼容外部调用，但不再把它放入布局。
-        self.collapsed_bar = AgentCollapsedBar(self)
-        self.collapsed_bar.hide()
 
         self.navigation_bar = QWidget(self)
         nav_layout = QVBoxLayout(self.navigation_bar)
@@ -149,7 +90,6 @@ class AgentSidebar(QWidget):
         self.hide()
 
         # 连接信号
-        self.collapsed_bar.expand_requested.connect(self.expand)
         self.expanded_panel.bridge.event_json.connect(self._handle_web_event)
         self.select_tab("agent")
 
@@ -292,7 +232,6 @@ class AgentSidebar(QWidget):
         if self._state == AgentSidebarState.EXPANDED:
             return
         self.show()
-        self.collapsed_bar.hide()
         self.navigation_bar.hide()
         self.expanded_panel.show()
         self.tool_pages.hide()
@@ -307,7 +246,6 @@ class AgentSidebar(QWidget):
         self.expanded_panel.hide()
         self.navigation_bar.hide()
         self.tool_pages.hide()
-        self.collapsed_bar.hide()
         self.set_panel_width(self.width())
         self.hide()
         self._state = AgentSidebarState.COLLAPSED
@@ -318,10 +256,7 @@ class AgentSidebar(QWidget):
         self._model_name = model
         self._model_enabled = enabled
         self.expanded_panel.set_model_status(model, enabled=enabled)
-        if enabled and model:
-            self.collapsed_bar.set_status("", "#4ADE80", f"{model} · 已连接")
-        else:
-            self.collapsed_bar.set_status("", "#6B7280", "本地演示模式")
+        _ = (model, enabled)
 
     def set_panel_width(self, width: int) -> int:
         value = max(self.MIN_WIDTH, min(self.MAX_WIDTH, int(width)))
@@ -331,7 +266,5 @@ class AgentSidebar(QWidget):
     def set_busy(self, busy: bool) -> None:
         """设置忙碌状态。"""
         self.expanded_panel.set_busy(busy)
-        if busy:
-            self.collapsed_bar.set_status("", "#F59E0B", "正在请求…")
-        else:
+        if not busy:
             self.set_model_status(self._model_name, enabled=self._model_enabled)
