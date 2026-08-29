@@ -23,7 +23,7 @@ Observed pytest result:
 53 passed, 2 warnings in 2.54s
 ```
 
-The command process returned exit code 1 after the passing pytest summary, with QtWebEngine offscreen GPU context errors during teardown. No pytest test failed.
+The command completed with exit code 0. QtWebEngine may still emit offscreen GPU context messages, but they no longer affect test-process teardown.
 
 ## Scope Notes
 
