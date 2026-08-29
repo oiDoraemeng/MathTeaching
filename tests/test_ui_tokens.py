@@ -1,11 +1,24 @@
 from copy import deepcopy
+import inspect
 import json
 from pathlib import Path
+import re
 import pytest
+from ui.designer_window import MainWindow
 from ui.tokens import TokenError, build_qss, flatten_theme, load_tokens
 
-RETIRED_SELECTORS = ("#agentPanel", "#agentCollapsedBar", "#agentUserBubble", "#agentAssistantBubble", "#agentPlanCard")
+AGENT_SELECTOR_ALLOWLIST = {"#agentsidebar", "#agentsidebarweb", "#agentbutton"}
 RETIRED_COLORS = ("#d9dde3", "#d0d7df", "#cbd3dd", "#dfe3e8", "#e0e5ea", "#3794ff", "#006ab1")
+_SELECTOR_PREAMBLE = re.compile(r"(?:\A|\})\s*([^{}]+?)\s*\{", re.DOTALL)
+
+
+def _selectors(qss: str) -> list[str]:
+    return [
+        selector.strip()
+        for preamble in _SELECTOR_PREAMBLE.findall(qss)
+        for selector in preamble.split(",")
+        if selector.strip()
+    ]
 
 
 def _normalized_qss(value: str) -> str:
@@ -22,10 +35,22 @@ def test_qss_template_is_fully_substituted(theme: str) -> None:
 
 @pytest.mark.parametrize("theme", ["light", "dark"])
 def test_qss_has_required_and_no_retired_content(theme: str) -> None:
-    qss = build_qss(theme).lower()
-    assert "#scenesettingspanel" in qss
-    assert not any(selector.lower() in qss for selector in RETIRED_SELECTORS)
-    assert not any(color in qss for color in RETIRED_COLORS)
+    qss = build_qss(theme)
+    agent_selectors = {
+        agent_selector.lower()
+        for selector in _selectors(qss)
+        for agent_selector in re.findall(r"#agent[\w-]*", selector, flags=re.IGNORECASE)
+    }
+
+    assert "#scenesettingspanel" in qss.lower()
+    assert agent_selectors <= AGENT_SELECTOR_ALLOWLIST
+    assert not any(color in qss.lower() for color in RETIRED_COLORS)
+
+
+def test_main_window_apply_style_has_no_inline_qss() -> None:
+    source = inspect.getsource(MainWindow._apply_style)
+    assert "setStyleSheet(build_qss(" in source
+    assert not re.search(r"setStyleSheet\(\s*['\"]", source)
 
 
 @pytest.mark.parametrize(

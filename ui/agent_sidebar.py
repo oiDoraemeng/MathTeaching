@@ -38,7 +38,7 @@ class AgentCollapsedBar(QWidget):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setObjectName("agentCollapsedBar")
+        self.setObjectName("sidebarCollapsedBar")
         self.setFixedWidth(40)
 
         layout = QVBoxLayout(self)
@@ -55,7 +55,7 @@ class AgentCollapsedBar(QWidget):
 
         # 竖排文字
         self.label = QLabel("A\nI\n助\n手", self)
-        self.label.setObjectName("agentCollapsedLabel")
+        self.label.setObjectName("sidebarCollapsedLabel")
         self.label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         layout.addWidget(self.label, 0, Qt.AlignmentFlag.AlignHCenter)
 
@@ -63,7 +63,7 @@ class AgentCollapsedBar(QWidget):
 
         # 状态指示器（小圆点）
         self.status_indicator = QLabel("●", self)
-        self.status_indicator.setObjectName("agentStatusIndicator")
+        self.status_indicator.setObjectName("sidebarStatusIndicator")
         self.status_indicator.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.status_indicator.setToolTip("未配置")
         layout.addWidget(self.status_indicator, 0, Qt.AlignmentFlag.AlignHCenter)
@@ -112,7 +112,7 @@ class AgentSidebar(QWidget):
         for key, label in (("agent", "Agent"), ("skills", "Skills"), ("memory", "Memory"), ("rules", "Rules")):
             button = QToolButton(self.navigation_bar)
             button.setText(label)
-            button.setObjectName(f"agentNav{key.title()}")
+            button.setObjectName(f"sidebarNav{key.title()}")
             button.setCheckable(True)
             button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
             button.clicked.connect(lambda checked=False, name=key: self.select_tab(name))
