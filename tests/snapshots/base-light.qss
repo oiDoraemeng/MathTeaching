@@ -1,8 +1,8 @@
 QMainWindow, #viewportHost { background: #eef1f4; color: #17212e; }
 #algebraPanel, #agentSidebar { background: #ffffff; }
 #algebraPanel { border-right: 1px solid #d5dbe3; }
-#algebraTitle { color: #17212e; font-weight: 700; }
-#algebraTitle { font-size: 15px; }
+#algebraTitle { color: #17212e; font-size: 15px; font-weight: 600; }
+#sectionHeader { color: #3f4c5c; font-size: 11px; letter-spacing: 0.2px; }
 #algebraLayerRow, #catalogEntryRow { background: #f5f7f9; border: 1px solid #d5dbe3; border-radius: 4px; }
 #catalogEntryRow:hover { background: #e4f0f9; border-color: #b8c2cd; }
 #catalogCategory, #algebraStatus { color: #3f4c5c; font-size: 11px; }

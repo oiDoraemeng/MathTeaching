@@ -37,7 +37,6 @@ class LightRotationWidget(QWidget):
         del event
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-
         center = QPointF(self.width() / 2.0, 104.0)
         radius = min(self.width() * 0.34, 70.0)
         ring_width = 7.0
@@ -75,11 +74,17 @@ class LightRotationWidget(QWidget):
             outer = QPointF(marker.x() + 16 * sin(ray_angle), marker.y() - 16 * cos(ray_angle))
             painter.drawLine(inner, outer)
 
+        label_font = QFont(self.font())
+        label_font.setPixelSize(13)
+        label_font.setWeight(QFont.Weight.DemiBold)
         painter.setPen(QColor("#475569"))
-        painter.setFont(QFont("Segoe UI", 10, QFont.Weight.DemiBold))
+        painter.setFont(label_font)
         painter.drawText(0, 188, self.width(), 22, Qt.AlignmentFlag.AlignCenter, "灯光方位")
+        value_font = QFont(self.font())
+        value_font.setPixelSize(15)
+        value_font.setWeight(QFont.Weight.Bold)
         painter.setPen(QColor("#1d4ed8"))
-        painter.setFont(QFont("Segoe UI", 18, QFont.Weight.Bold))
+        painter.setFont(value_font)
         painter.drawText(0, 208, self.width(), 25, Qt.AlignmentFlag.AlignCenter, f"{self._angle:.0f}°")
 
     def mousePressEvent(self, event) -> None:  # noqa: N802 - Qt 事件名

@@ -122,7 +122,9 @@ class LayerSettingsPopup(QDialog):
         host = QWidget(self)
         row = QHBoxLayout(host)
         row.setContentsMargins(0, 0, 0, 0)
-        row.addWidget(QLabel(label, host))
+        text = QLabel(label, host)
+        text.setObjectName("sectionHeader")
+        row.addWidget(text)
         button = QToolButton(host)
         button.setFixedSize(40, 28)
         button.setToolTip(tooltip)
@@ -134,7 +136,9 @@ class LayerSettingsPopup(QDialog):
         host = QWidget(self)
         row = QHBoxLayout(host)
         row.setContentsMargins(0, 0, 0, 0)
-        row.addWidget(QLabel(label, host))
+        text = QLabel(label, host)
+        text.setObjectName("sectionHeader")
+        row.addWidget(text)
         slider = QSlider(Qt.Orientation.Horizontal, host)
         slider.setRange(minimum, maximum)
         value = QLabel(host)
@@ -211,7 +215,7 @@ class LayerSettingsPopup(QDialog):
     @staticmethod
     def _set_color_button(button: QToolButton, color: str) -> None:
         button.setProperty("layerColor", color)
-        button.setStyleSheet(f"background: {color}; border: 1px solid #687385; border-radius: 3px;")
+        button.setStyleSheet(f"background: {color};")
 
     def _emit_opacity(self, value: int) -> None:
         self.opacity_value.setText(f"{value}%")
