@@ -59,7 +59,7 @@
 - [x] 5.2 React 测试：`theme_state` 事件应用与非法值忽略、无 `prefers-color-scheme` 依赖断言、两主题变量完整性、360/440/560 三宽度布局；案例标签（图标区分、upsert 复用、关闭回退、回合不中断）与案例阅读页（版式结构、KaTeX 渲染、卡片规范）测试。
 - [x] 5.3 案例弹窗 Qt 测试：弹窗样式选择器存在、案例行 hover/摘要截断、未知案例 id 场景不变 + 错误状态、加载案例触发侧栏案例页。
 - [x] 5.4 集成测试：`set_theme` 后 `runJavaScript` 断言 `data-theme`；URL 参数首帧注入断言；现有 2D/3D 渲染回归与桥接协议测试全绿。
-- [ ] 5.5 运行 focused/full tests、TypeScript 检查、前端构建与 `openspec validate --strict`。
+- [x] 5.5 运行 focused/full tests、TypeScript 检查、前端构建与 `openspec validate --strict`。
 
 **Batch 5 检查点**：`pytest -q` 全绿；`pnpm -C ui/agent_web test && pnpm -C ui/agent_web build` 绿；`openspec validate ui-design-refresh --strict` 通过。
 
