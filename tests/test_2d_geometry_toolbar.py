@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtCore import QEvent
+from PySide6.QtCore import QEvent, QSize
 from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import QApplication, QWidget
 
@@ -52,6 +52,24 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         toolbar = TwoDGeometryToolbar(host)
 
         self.assertFalse(toolbar.snap_button.isChecked())
+
+    def test_toolbar_icon_controls_use_consistent_metrics(self) -> None:
+        host = QWidget()
+        toolbar = TwoDGeometryToolbar(host)
+
+        controls = (
+            toolbar.select_button,
+            toolbar.point_button,
+            toolbar.line_button,
+            toolbar.snap_button,
+            toolbar.undo_button,
+            toolbar.redo_button,
+            *toolbar.line_buttons.values(),
+        )
+        for button in controls:
+            self.assertEqual(button.text(), "")
+            self.assertEqual(button.size(), QSize(36, 36))
+            self.assertEqual(button.iconSize(), QSize(16, 16))
 
     def test_undo_and_redo_buttons_emit_actions_and_follow_history_state(self) -> None:
         host = QWidget()
