@@ -28,7 +28,7 @@
 - [x] 2.5 `SceneAppearance.background` 值域扩展 `"auto"`（默认），combo 增"跟随主题"项；`rendering/scene.py` 与 `rendering/two_d_scene.py` 在 auto 下按有效主题取背景/网格色（`bg.scene`）；主题切换时重渲 auto 外观。
 - [x] 2.6 `LightingDialog` 等 QDialog 纳入令牌模板（QGroupBox 边框/文字色）。
 - [x] 2.7 视觉质感：面板分隔去边框改色阶（light canvas 加深、QSS 去 `border-right`）；`LayerRow` 卡片化（elevated 底、8px 圆角、4px 左色条、hover 边框/选中 accent 态、可见性 eye 图标、设置钮 40×40/22pt → 28px `ellipsis`）；节标题模式（11px/muted/字距）；键盘焦点环（2px accent）；控件高度三档（36/32/28）全量替换 38/40/30 随机值；弹层 150ms 淡入位移、面板动画统一 200ms OutCubic；Web 侧 `prefers-reduced-motion` 支持。
-- [ ] 2.8 案例弹窗纳入规范（§12.4）：`#linearAlgebraCasePopup`/`linearAlgebraCaseRow`/`linearAlgebraCaseTitle`/`linearAlgebraCaseSummary` 入 QSS 模板（overlay 底、lg 圆角、overlay 阴影、150ms 出现动画）；案例行卡片化（8/12px 内距、hover soft_bg + 左 3px accent 指示条、摘要单行省略 muted）；工具栏"函数"/"线性代数"文字按钮统一 32px 高入令牌。
+- [x] 2.8 案例弹窗纳入规范（§12.4）：`#linearAlgebraCasePopup`/`linearAlgebraCaseRow`/`linearAlgebraCaseTitle`/`linearAlgebraCaseSummary` 入 QSS 模板（overlay 底、lg 圆角、overlay 阴影、150ms 出现动画）；案例行卡片化（8/12px 内距、hover soft_bg + 左 3px accent 指示条、摘要单行省略 muted）；工具栏"函数"/"线性代数"文字按钮统一 32px 高入令牌。
 
 **Batch 3 检查点**：`pytest tests/test_algebra_panel.py tests/test_main_window_layout.py -q` 绿；light/dark 两主题下主窗口、悬浮层、案例弹窗视觉走查通过。
 
@@ -55,10 +55,10 @@
 
 ## 5. 验证（Batch 5）
 
-- [ ] 5.1 Python 测试：主题三态解析与 QSettings 往返、`theme_state` 序列化（mode 白名单、无凭据）、双手柄（左栏 260–420/默认 320、右栏 360–560/默认 440）钳制/复位/持久化/拖动方向、`background=auto` 兼容旧值、令牌/QSS 快照断言。
-- [ ] 5.2 React 测试：`theme_state` 事件应用与非法值忽略、无 `prefers-color-scheme` 依赖断言、两主题变量完整性、360/440/560 三宽度布局；案例标签（图标区分、upsert 复用、关闭回退、回合不中断）与案例阅读页（版式结构、KaTeX 渲染、卡片规范）测试。
-- [ ] 5.3 案例弹窗 Qt 测试：弹窗样式选择器存在、案例行 hover/摘要截断、未知案例 id 场景不变 + 错误状态、加载案例触发侧栏案例页。
-- [ ] 5.4 集成测试：`set_theme` 后 `runJavaScript` 断言 `data-theme`；URL 参数首帧注入断言；现有 2D/3D 渲染回归与桥接协议测试全绿。
+- [x] 5.1 Python 测试：主题三态解析与 QSettings 往返、`theme_state` 序列化（mode 白名单、无凭据）、双手柄（左栏 260–420/默认 320、右栏 360–560/默认 440）钳制/复位/持久化/拖动方向、`background=auto` 兼容旧值、令牌/QSS 快照断言。
+- [x] 5.2 React 测试：`theme_state` 事件应用与非法值忽略、无 `prefers-color-scheme` 依赖断言、两主题变量完整性、360/440/560 三宽度布局；案例标签（图标区分、upsert 复用、关闭回退、回合不中断）与案例阅读页（版式结构、KaTeX 渲染、卡片规范）测试。
+- [x] 5.3 案例弹窗 Qt 测试：弹窗样式选择器存在、案例行 hover/摘要截断、未知案例 id 场景不变 + 错误状态、加载案例触发侧栏案例页。
+- [x] 5.4 集成测试：`set_theme` 后 `runJavaScript` 断言 `data-theme`；URL 参数首帧注入断言；现有 2D/3D 渲染回归与桥接协议测试全绿。
 - [ ] 5.5 运行 focused/full tests、TypeScript 检查、前端构建与 `openspec validate --strict`。
 
 **Batch 5 检查点**：`pytest -q` 全绿；`pnpm -C ui/agent_web test && pnpm -C ui/agent_web build` 绿；`openspec validate ui-design-refresh --strict` 通过。

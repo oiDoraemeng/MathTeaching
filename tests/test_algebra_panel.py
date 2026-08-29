@@ -6,13 +6,14 @@ from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QFrame, QLabel
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from MathInputWidget import FormulaListWidget
 from models.geometry_2d import Linear2D, Point2D
 from models.surface_layer import SurfaceLayer
 from ui.algebra_panel import AlgebraPanel
+from ui.tokens import build_qss
 
 
 class AlgebraPanelTests(unittest.TestCase):
@@ -121,6 +122,13 @@ class AlgebraPanelTests(unittest.TestCase):
 
         self.assertEqual(events, ["vector-subtraction"])
         self.assertEqual(panel.linear_algebra_button.text(), "线性代数")
+
+    def test_case_popup_rows_use_the_tokenized_reading_surface(self) -> None:
+        panel = AlgebraPanel()
+        row = panel.linear_algebra_popup.findChild(QFrame, "linearAlgebraCaseRow")
+        self.assertIsNotNone(row)
+        self.assertIn("#linearAlgebraCaseRow:hover", build_qss("light"))
+        self.assertEqual(row.findChild(QLabel, "linearAlgebraCaseSummary").wordWrap(), False)
 
     def test_each_layer_keeps_independent_surface_and_intersection_events(self) -> None:
         layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1")

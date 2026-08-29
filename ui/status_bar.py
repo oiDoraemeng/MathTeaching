@@ -5,6 +5,8 @@ from typing import Literal
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QFrame, QLabel, QToolButton, QHBoxLayout
 
+from ui.icons import apply_icon
+
 ThemeMode = Literal["light", "dark", "system"]
 
 
@@ -32,7 +34,8 @@ class AppStatusBar(QFrame):
             layout.addWidget(widget)
         layout.addStretch(1)
         layout.addWidget(self.theme_button)
-        self.set_theme_mode("system")
+        self._theme_mode: ThemeMode = "system"
+        self.set_theme_mode(self._theme_mode)
 
     def set_scene_mode(self, mode) -> None:
         self.scene_label.setText("2D" if getattr(mode, "value", mode) in ("2d", "2D") else "3D")
@@ -48,6 +51,16 @@ class AppStatusBar(QFrame):
         self.agent_button.setText(state or "Agent")
 
     def set_theme_mode(self, mode: ThemeMode) -> None:
+        if mode not in {"system", "light", "dark"}:
+            mode = "system"
+        self._theme_mode = mode
         labels = {"system": "系统主题", "light": "浅色主题", "dark": "深色主题"}
-        self.theme_button.setToolTip(labels.get(mode, labels["system"]))
-        self.theme_button.setAccessibleName(labels.get(mode, labels["system"]))
+        icons = {"system": "monitor", "light": "sun", "dark": "moon"}
+        label = labels[mode]
+        self.theme_button.setToolTip(f"{label}（点击切换）")
+        self.theme_button.setAccessibleName(label)
+        apply_icon(self.theme_button, icons[mode], "#687386", icon_size=16, hit_size=28)
+
+    @property
+    def theme_mode(self) -> ThemeMode:
+        return self._theme_mode

@@ -5,13 +5,24 @@
   <property name="geometry"><rect><x>0</x><y>0</y><width>1320</width><height>820</height></rect></property>
   <property name="windowTitle"><string>Math3D Teaching</string></property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="rootLayout">
+   <layout class="QVBoxLayout" name="centralLayout">
     <property name="spacing"><number>0</number></property>
     <property name="leftMargin"><number>0</number></property>
     <property name="topMargin"><number>0</number></property>
     <property name="rightMargin"><number>0</number></property>
     <property name="bottomMargin"><number>0</number></property>
-    <item><widget class="QWidget" name="viewportHost" native="true"/></item>
+    <item>
+     <widget class="QWidget" name="contentHost">
+      <layout class="QHBoxLayout" name="rootLayout">
+       <property name="spacing"><number>0</number></property>
+       <property name="leftMargin"><number>0</number></property>
+       <property name="topMargin"><number>0</number></property>
+       <property name="rightMargin"><number>0</number></property>
+       <property name="bottomMargin"><number>0</number></property>
+       <item><widget class="QWidget" name="viewportHost" native="true"/></item>
+      </layout>
+     </widget>
+    </item>
    </layout>
   </widget>
  </widget>

@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QRect, QTimer, Qt, Signal
-from PySide6.QtGui import QAction, QColor, QMouseEvent, QShowEvent
+from PySide6.QtGui import QAction, QColor, QFontMetrics, QMouseEvent, QResizeEvent, QShowEvent
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -462,9 +462,20 @@ class LinearAlgebraCaseRow(QFrame):
         title.setObjectName("linearAlgebraCaseTitle")
         summary = QLabel(case.summary, self)
         summary.setObjectName("linearAlgebraCaseSummary")
-        summary.setWordWrap(True)
+        summary.setWordWrap(False)
+        summary.setTextFormat(Qt.TextFormat.PlainText)
+        summary.setToolTip(case.summary)
+        self._summary_label = summary
+        self._summary_text = case.summary
         layout.addWidget(title)
         layout.addWidget(summary)
+
+    def resizeEvent(self, event: QResizeEvent) -> None:  # noqa: N802
+        super().resizeEvent(event)
+        available = max(0, self.width() - 24)
+        self._summary_label.setText(QFontMetrics(self._summary_label.font()).elidedText(
+            self._summary_text, Qt.TextElideMode.ElideRight, available
+        ))
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.MouseButton.LeftButton:
@@ -485,6 +496,9 @@ class LinearAlgebraCasePopup(QDialog):
         self.setWindowTitle("线性代数")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
         self.setWindowModality(Qt.WindowModality.NonModal)
+        self._show_animation = QPropertyAnimation(self, b"windowOpacity", self)
+        self._show_animation.setDuration(150)
+        self._show_animation.setEasingCurve(QEasingCurve.Type.OutCubic)
         self.setMinimumSize(260, 260)
         self.resize(300, 330)
         layout = QVBoxLayout(self)
@@ -521,9 +535,14 @@ class LinearAlgebraCasePopup(QDialog):
             self.content_layout.insertWidget(self.content_layout.count() - 1, row)
 
     def open_at(self, anchor: QPoint) -> None:
+        self.setWindowOpacity(0.0)
         self.show()
         self.move(anchor)
         self.raise_()
+        self._show_animation.stop()
+        self._show_animation.setStartValue(0.0)
+        self._show_animation.setEndValue(1.0)
+        self._show_animation.start()
 
     def _request(self, case_id: str) -> None:
         self.hide()
@@ -647,6 +666,9 @@ class AlgebraPanel(QFrame):
     auto_intersections_changed = Signal(bool)
     manual_intersection_requested = Signal(str, str)
     linear_algebra_requested = Signal(str)
+    MIN_WIDTH = 260
+    DEFAULT_WIDTH = 320
+    MAX_WIDTH = 420
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -657,8 +679,8 @@ class AlgebraPanel(QFrame):
         self._inline_active_layer_id: str | None = None
         self.inline_editor = None
         self.setObjectName("algebraPanel")
-        self.setMinimumWidth(300)
-        self.setMaximumWidth(360)
+        self.setMinimumWidth(self.MIN_WIDTH)
+        self.setMaximumWidth(self.MAX_WIDTH)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 12, 10, 10)
         layout.setSpacing(7)

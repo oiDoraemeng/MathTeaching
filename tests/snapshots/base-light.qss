@@ -11,6 +11,14 @@ QMainWindow, #viewportHost { background: #eef1f4; color: #17212e; }
 #catalogCategory { font-weight: 700; padding: 8px 2px 2px 2px; }
 #algebraStatus { padding-top: 2px; }
 #algebraStatus[isError="true"] { color: #b42318; }
+#linearAlgebraCaseRow { background: #f5f7f9; border: 1px solid transparent; border-radius: 8px; padding: 8px 12px; }
+#linearAlgebraCaseRow:hover { background: #e4f0f9; border-left: 3px solid #2f7ebd; }
+#linearAlgebraCaseTitle { color: #17212e; font-size: 12px; font-weight: 600; }
+#linearAlgebraCaseSummary { color: #3f4c5c; font-size: 11px; }
+#appStatusBar { background: #ffffff; border-top: 1px solid #d5dbe3; }
+#appStatusBar QLabel { color: #3f4c5c; font-size: 11px; }
+#appStatusBar QToolButton { min-width: 24px; min-height: 24px; border-radius: 4px; }
+#appStatusBar QToolButton:hover { background: #f5f7f9; }
 QScrollArea { border: 0; background: #ffffff; }
 QLabel { color: #3f4c5c; font-size: 12px; }
 QLineEdit, QComboBox, QPushButton {

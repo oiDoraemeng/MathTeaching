@@ -365,6 +365,19 @@ class MainWindow:
             legacy_sidebar.deleteLater()
         self.algebra_panel = AlgebraPanel(self.window)
         root_layout.insertWidget(0, self.algebra_panel)
+        self.algebra_resize_handle = _PanelResizeHandle(
+            PanelResizeSpec(
+                self.algebra_panel.MIN_WIDTH,
+                self.algebra_panel.MAX_WIDTH,
+                self.algebra_panel.DEFAULT_WIDTH,
+                "ui/algebra_panel_width",
+                "right",
+            ),
+            parent=self.window,
+        )
+        self.algebra_panel.setFixedWidth(self.algebra_resize_handle.restore_width())
+        self.algebra_resize_handle.width_changed.connect(self.algebra_panel.setFixedWidth)
+        root_layout.insertWidget(1, self.algebra_resize_handle)
 
     def _install_agent_panel(self) -> None:
         """将 AI 助手作为主窗口最右侧的固定布局面板安装。"""
@@ -391,13 +404,15 @@ class MainWindow:
         )
         self.agent_panel.set_scene_mode(self.scene_mode is SceneMode.TWO_D)
         self.status_bar = AppStatusBar(self.window)
+        self.status_bar.agent_toggle_requested.connect(self._toggle_agent_panel)
+        self.status_bar.theme_cycle_requested.connect(self.cycle_theme_mode)
+        self.status_bar.set_scene_mode(self.scene_mode)
+        self.status_bar.set_agent_status("就绪" if self._using_remote_agent() else "未配置")
         central = self.window.centralWidget()
         if central is not None:
-            wrapper = QVBoxLayout()
-            wrapper.setContentsMargins(0, 0, 0, 0)
-            wrapper.addLayout(root_layout)
-            wrapper.addWidget(self.status_bar)
-            central.setLayout(wrapper)
+            central_layout = central.layout()
+            if isinstance(central_layout, QVBoxLayout):
+                central_layout.addWidget(self.status_bar)
 
     def _dispatch_agent_web_intent(self, envelope) -> None:
         """Handle validated Web UI intents without exposing scene services."""
@@ -965,6 +980,8 @@ class MainWindow:
             "payload": {"text": prompt},
         })
         self.agent_sidebar.set_busy(True)
+        if hasattr(self, "status_bar"):
+            self.status_bar.set_agent_status("生成中")
         thread = QThread(self.window)
         session = self._agent_session_store.get_session(active_session_id)
         worker = RuntimeTurnWorker(
@@ -1001,6 +1018,8 @@ class MainWindow:
 
     def _receive_runtime_result(self, result) -> None:
         self.agent_sidebar.set_busy(False)
+        if hasattr(self, "status_bar"):
+            self.status_bar.set_agent_status("就绪")
         if result.turn_id and result.status == "completed":
             self._agent_session_store.update_turn_scene_snapshots(
                 result.turn_id,
@@ -1010,6 +1029,8 @@ class MainWindow:
 
     def _receive_runtime_error(self, message: str) -> None:
         self.agent_sidebar.set_busy(False)
+        if hasattr(self, "status_bar"):
+            self.status_bar.set_agent_status("就绪")
         self.agent_panel.show_error(message)
 
     def _agent_finished(self) -> None:
@@ -2302,6 +2323,18 @@ class MainWindow:
         next_mode = SceneMode.TWO_D if self.scene_mode is SceneMode.THREE_D else SceneMode.THREE_D
         self._set_scene_mode(next_mode)
 
+    def cycle_theme_mode(self) -> None:
+        """Cycle the persisted theme preference and apply it immediately."""
+        modes: tuple[ThemeMode, ...] = ("system", "light", "dark")
+        current = self.theme_mode if self.theme_mode in modes else "system"
+        mode = modes[(modes.index(current) + 1) % len(modes)]
+        from PySide6.QtWidgets import QApplication
+
+        app = QApplication.instance()
+        scheme = app.styleHints().colorScheme() if app is not None else Qt.ColorScheme.Light
+        effective = "dark" if mode == "dark" or (mode == "system" and scheme == Qt.ColorScheme.Dark) else "light"
+        self.set_theme(mode, effective)
+
     def _set_scene_mode(self, mode: SceneMode) -> None:
         if mode is self.scene_mode:
             return
@@ -2309,6 +2342,8 @@ class MainWindow:
             self._set_2d_geometry_tool(None)
         self._save_current_view_state()
         self.scene_mode = mode
+        if hasattr(self, "status_bar"):
+            self.status_bar.set_scene_mode(mode)
         self._close_scene_settings(immediate=True)
         self._render_scene()
 
@@ -2328,6 +2363,8 @@ class MainWindow:
                 self.geometry_controller.set_hover(None)
                 self.geometry_controller.set_selected(None)
         self._active_2d_tool = tool
+        if hasattr(self, "status_bar"):
+            self.status_bar.set_active_tool(self._TOOL_LABELS.get(tool or ""))
         if hasattr(self, "two_d_geometry_toolbar"):
             self.two_d_geometry_toolbar.set_active_tool(tool)
         if hasattr(self, "plotter"):
@@ -3125,6 +3162,8 @@ class MainWindow:
         settings.sync()
         if hasattr(self, "window"):
             self._apply_style()
+        if hasattr(self, "status_bar"):
+            self.status_bar.set_theme_mode(mode)
         # Theme-aware surfaces are optional so this remains compatible with
         # lightweight test doubles and older embedded hosts.
         for surface in (

@@ -39,6 +39,9 @@ LUCIDE_SVG: Mapping[str, str] = MappingProxyType(
         "move": _svg('<path d="m5 9-3 3 3 3"/><path d="m9 5 3-3 3 3"/><path d="m15 19-3 3-3-3"/><path d="m19 9 3 3-3 3"/><path d="M2 12h20"/><path d="M12 2v20"/>'),
         "minus": _svg('<path d="M5 12h14"/>'),
         "arrow-up-right": _svg('<path d="M7 17 17 7"/><path d="M7 7h10v10"/>'),
+        "sun": _svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>'),
+        "moon": _svg('<path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 8.5 8.5 0 1 0 20.5 14.5Z"/>'),
+        "monitor": _svg('<rect width="18" height="12" x="3" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 15v6"/>'),
     }
 )
 
