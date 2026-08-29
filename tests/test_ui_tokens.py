@@ -89,6 +89,7 @@ def test_overlay_and_dialog_chrome_use_token_metrics(theme: str) -> None:
     for selector in (
         "#layerSettingsPopup",
         "#geometrySettingsPopup",
+        "#intersectionPopup",
         "#functionCatalogPopup",
         "#formulaEditorPopup",
         "#linearAlgebraCasePopup",
@@ -149,17 +150,19 @@ def test_floating_widget_construction_names_and_token_shadows(monkeypatch) -> No
 def test_algebra_panel_popups_sync_overlay_theme() -> None:
     panel = AlgebraPanel()
     popup_widgets = (
-        panel.settings_popup,
-        panel.geometry_settings_popup,
-        panel.catalog_popup,
-        panel.formula_popup,
-        panel.linear_algebra_popup,
+        (panel.settings_popup, "layerSettingsPopup"),
+        (panel.geometry_settings_popup, "geometrySettingsPopup"),
+        (panel.intersection_popup, "intersectionPopup"),
+        (panel.catalog_popup, "functionCatalogPopup"),
+        (panel.formula_popup, "formulaEditorPopup"),
+        (panel.linear_algebra_popup, "linearAlgebraCasePopup"),
     )
-    for popup in popup_widgets:
+    for popup, object_name in popup_widgets:
+        assert popup.objectName() == object_name
         _assert_shadow(popup, "overlay", "light")
 
     panel.sync_overlay_theme("dark")
-    for popup in popup_widgets:
+    for popup, _object_name in popup_widgets:
         _assert_shadow(popup, "overlay", "dark")
 
 

@@ -304,6 +304,7 @@ class IntersectionPopup(QDialog):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self.setObjectName("intersectionPopup")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
         layout = QHBoxLayout(self)
         self.first_combo = QComboBox(self)
@@ -719,6 +720,7 @@ class AlgebraPanel(QFrame):
         for popup in (
             self.settings_popup,
             self.geometry_settings_popup,
+            self.intersection_popup,
             self.catalog_popup,
             self.formula_popup,
             self.linear_algebra_popup,

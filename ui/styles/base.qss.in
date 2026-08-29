@@ -26,7 +26,7 @@ QCheckBox::indicator { width: 14px; height: 14px; border: 1px solid $border_stro
 QCheckBox::indicator:checked { background: $accent_default; border-color: $accent_default; }
 QSlider::groove:horizontal { height: 4px; background: $border_default; border-radius: 2px; }
 QSlider::handle:horizontal { width: 13px; margin: -5px 0; border-radius: 6px; background: $accent_default; }
-#layerSettingsPopup, #geometrySettingsPopup, #functionCatalogPopup, #sceneSettingsPanel, #formulaEditorPopup,
+#layerSettingsPopup, #geometrySettingsPopup, #intersectionPopup, #functionCatalogPopup, #sceneSettingsPanel, #formulaEditorPopup,
 #linearAlgebraCasePopup, #viewportToolbar, #twoDGeometryToolbar, #twoDLineFlyout {
   background: $bg_overlay; border: 1px solid $border_subtle; border-radius: ${radius_md}px;
 }
