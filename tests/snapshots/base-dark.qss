@@ -27,11 +27,17 @@ QCheckBox::indicator:checked { background: #4c9ee8; border-color: #4c9ee8; }
 QSlider::groove:horizontal { height: 4px; background: #3c4046; border-radius: 2px; }
 QSlider::handle:horizontal { width: 13px; margin: -5px 0; border-radius: 6px; background: #4c9ee8; }
 #layerSettingsPopup, #geometrySettingsPopup, #functionCatalogPopup, #sceneSettingsPanel, #formulaEditorPopup,
-#viewportToolbar, #twoDGeometryToolbar, #twoDLineFlyout {
+#linearAlgebraCasePopup, #viewportToolbar, #twoDGeometryToolbar, #twoDLineFlyout {
   background: #24262a; border: 1px solid #33363b; border-radius: 8px;
 }
 #settingsPopupTitle { color: #e8eaed; font-size: 13px; font-weight: 600; }
 #viewportToolbar QToolButton, #twoDGeometryToolbar QToolButton, #twoDLineFlyout QToolButton { font-size: 18px; font-weight: 700; }
+#viewportToolbar QToolButton:hover, #twoDGeometryToolbar QToolButton:hover, #twoDLineFlyout QToolButton:hover {
+  background: rgba(76,158,232,.16); border-color: #33363b; color: #4c9ee8;
+}
 #agentButton:checked, #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
   background: rgba(76,158,232,.16); border-color: #4c9ee8; color: #4c9ee8;
+}
+QDialog {
+  background: #24262a; border: 1px solid #33363b; border-radius: 10px;
 }

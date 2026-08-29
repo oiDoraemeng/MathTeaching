@@ -6,11 +6,16 @@ from typing import Literal
 from collections.abc import Mapping
 
 from PySide6.QtGui import QColor
+from PySide6.QtWidgets import QGraphicsDropShadowEffect, QWidget
 
 ThemeName = Literal["light", "dark"]
+ShadowLevel = Literal["overlay", "modal"]
 _ROOT = Path(__file__).resolve().parent.parent
 _COLOR_GROUPS = {"bg", "text", "border", "accent", "status"}
 _RGBA = re.compile(r"rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(0|1|0?\.\d+)\s*\)")
+_SHADOW_LAYER = re.compile(
+    r"(-?\d+)(?:px)?\s+(-?\d+)(?:px)?\s+(\d+)(?:px)?\s+rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(0|1|0?\.\d+)\s*\)"
+)
 
 class TokenError(ValueError):
     pass
@@ -94,3 +99,23 @@ def build_qss(theme: ThemeName) -> str:
     template_path = Path(__file__).with_name("styles") / "base.qss.in"
     from string import Template
     return Template(template_path.read_text(encoding="utf-8")).substitute(flatten_theme(theme))
+
+def _shadow_effect_values(level: ShadowLevel, theme: ThemeName) -> tuple[int, int, int, QColor]:
+    """Map the strongest CSS shadow layer to Qt's single drop-shadow effect."""
+    shadow = str(flatten_theme(theme)[f"shadow_{level}"])
+    matches = _SHADOW_LAYER.findall(shadow)
+    if not matches:
+        raise TokenError(f"themes.{theme}.shadow.{level} cannot be mapped to a Qt shadow")
+    x, y, blur, red, green, blue, alpha = matches[-1]
+    color = QColor(int(red), int(green), int(blue))
+    color.setAlphaF(float(alpha))
+    return int(x), int(y), int(blur), color
+
+def apply_drop_shadow(widget: QWidget, level: ShadowLevel, theme: ThemeName = "light") -> None:
+    """Apply a token-backed drop shadow to floating Qt chrome."""
+    offset_x, offset_y, blur, color = _shadow_effect_values(level, theme)
+    effect = QGraphicsDropShadowEffect(widget)
+    effect.setBlurRadius(blur)
+    effect.setOffset(offset_x, offset_y)
+    effect.setColor(color)
+    widget.setGraphicsEffect(effect)

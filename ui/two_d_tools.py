@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QFrame, QToolButton, QVBoxLayout, QWidget
 
 from models.geometry_2d import LinearKind
 from ui.icons import apply_icon
+from ui.tokens import apply_drop_shadow
 
 ToolKind = LinearKind | str
 
@@ -24,6 +25,7 @@ class TwoDGeometryToolbar(QFrame):
         self._active_tool: ToolKind | None = None
         self.setObjectName("twoDGeometryToolbar")
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
+        apply_drop_shadow(self, "overlay")
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
@@ -46,6 +48,7 @@ class TwoDGeometryToolbar(QFrame):
 
         self.line_flyout = QFrame(parent)
         self.line_flyout.setObjectName("twoDLineFlyout")
+        apply_drop_shadow(self.line_flyout, "overlay")
         flyout_layout = QVBoxLayout(self.line_flyout)
         flyout_layout.setContentsMargins(4, 4, 4, 4)
         flyout_layout.setSpacing(4)

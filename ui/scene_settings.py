@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 )
 
 from models.scene_mode import SceneMode
+from ui.tokens import apply_drop_shadow
 
 
 class SceneSettingsPanel(QFrame):
@@ -30,6 +31,7 @@ class SceneSettingsPanel(QFrame):
         super().__init__(parent)
         self.setObjectName("sceneSettingsPanel")
         self.setFixedWidth(264)
+        apply_drop_shadow(self, "overlay")
         layout = QVBoxLayout(self)
         layout.setContentsMargins(14, 14, 14, 14)
         layout.setSpacing(10)

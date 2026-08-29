@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
 
 from rendering.lighting import LightSettings, rotate_light_positions
 from rendering.materials import MATERIAL_PRESETS
+from ui.tokens import apply_drop_shadow
 from widgets.LightRotationWidget import LightRotationWidget
 
 
@@ -27,8 +28,10 @@ class LightingDialog(QDialog):
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
+        self.setObjectName("lightingDialog")
         self.setWindowTitle("高级光照")
         self.setMinimumWidth(430)
+        apply_drop_shadow(self, "modal")
         self.settings = deepcopy(settings)
         self.material_name = material_name if material_name in MATERIAL_PRESETS else "光泽塑料"
         self._color_buttons: dict[str, QPushButton] = {}

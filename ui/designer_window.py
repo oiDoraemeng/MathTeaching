@@ -49,6 +49,7 @@ from ui.agent_settings import AgentSettingsDialog
 from ui.lighting_dialog import LightingDialog
 from ui.icons import apply_icon
 from ui.scene_settings import SceneSettingsPanel
+from ui.tokens import apply_drop_shadow
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 from services.agent_worker import RuntimeTurnWorker
 from services.agent_provider import (
@@ -670,6 +671,7 @@ class MainWindow:
 
         self.viewport_toolbar = QFrame(self.viewport_host)
         self.viewport_toolbar.setObjectName("viewportToolbar")
+        apply_drop_shadow(self.viewport_toolbar, "overlay")
         toolbar_layout = QVBoxLayout(self.viewport_toolbar)
         toolbar_layout.setContentsMargins(4, 4, 4, 4)
         toolbar_layout.setSpacing(4)
@@ -3045,7 +3047,18 @@ class MainWindow:
 
     def _apply_style(self) -> None:
         from ui.tokens import build_qss
-        self.window.setStyleSheet(build_qss(getattr(self, "effective_theme", "light")))
+        effective_theme = getattr(self, "effective_theme", "light")
+        self.window.setStyleSheet(build_qss(effective_theme))
+        for widget in (
+            getattr(self, "viewport_toolbar", None),
+            getattr(self, "two_d_geometry_toolbar", None),
+            getattr(getattr(self, "two_d_geometry_toolbar", None), "line_flyout", None),
+            getattr(self, "scene_settings_panel", None),
+        ):
+            if widget is not None:
+                apply_drop_shadow(widget, "overlay", effective_theme)
+        if getattr(self, "_lighting_dialog", None) is not None:
+            apply_drop_shadow(self._lighting_dialog, "modal", effective_theme)
 
     def set_theme(self, mode: ThemeMode, effective: EffectiveTheme) -> None:
         """Apply and propagate the resolved application theme."""

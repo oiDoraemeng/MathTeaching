@@ -1,11 +1,24 @@
 from copy import deepcopy
 import inspect
 import json
+import os
 from pathlib import Path
 import re
 import pytest
+
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+from PySide6.QtWidgets import QApplication, QGraphicsDropShadowEffect, QHBoxLayout, QWidget
+from PySide6.QtCore import Qt
+from unittest.mock import MagicMock
+
+from models.scene_mode import SceneAppearance, SceneMode
 from ui.designer_window import MainWindow
-from ui.tokens import TokenError, build_qss, flatten_theme, load_tokens
+from ui.lighting_dialog import LightingDialog
+from ui.scene_settings import SceneSettingsPanel
+from ui.tokens import TokenError, _shadow_effect_values, build_qss, flatten_theme, load_tokens
+from ui.two_d_tools import TwoDGeometryToolbar
+from rendering.lighting import LightSettings
 
 AGENT_SELECTOR_ALLOWLIST = {"#agentsidebar", "#agentsidebarweb", "#agentbutton"}
 RETIRED_COLORS = ("#d9dde3", "#d0d7df", "#cbd3dd", "#dfe3e8", "#e0e5ea", "#3794ff", "#006ab1")
@@ -23,6 +36,27 @@ def _selectors(qss: str) -> list[str]:
 
 def _normalized_qss(value: str) -> str:
     return "\n".join(line.rstrip() for line in value.splitlines()).rstrip() + "\n"
+
+
+def _block_for_selector(qss: str, selector: str) -> str:
+    match = re.search(rf"([^{{}}]*{re.escape(selector)}[^{{}}]*)\{{([^{{}}]+)\}}", qss)
+    assert match is not None
+    return match.group(2)
+
+
+def _assert_shadow(widget: QWidget, level: str, theme: str = "light") -> None:
+    effect = widget.graphicsEffect()
+    assert isinstance(effect, QGraphicsDropShadowEffect)
+    offset_x, offset_y, blur, color = _shadow_effect_values(level, theme)
+    assert effect.blurRadius() == blur
+    assert effect.xOffset() == offset_x
+    assert effect.yOffset() == offset_y
+    assert effect.color().getRgb() == color.getRgb()
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _application() -> QApplication:
+    return QApplication.instance() or QApplication([])
 
 @pytest.mark.parametrize("theme", ["light", "dark"])
 def test_qss_template_is_fully_substituted(theme: str) -> None:
@@ -45,6 +79,60 @@ def test_qss_has_required_and_no_retired_content(theme: str) -> None:
     assert "#scenesettingspanel" in qss.lower()
     assert agent_selectors <= AGENT_SELECTOR_ALLOWLIST
     assert not any(color in qss.lower() for color in RETIRED_COLORS)
+
+
+@pytest.mark.parametrize("theme", ["light", "dark"])
+def test_overlay_and_dialog_chrome_use_token_metrics(theme: str) -> None:
+    flat = flatten_theme(theme)
+    qss = build_qss(theme)
+    for selector in ("#viewportToolbar", "#twoDGeometryToolbar", "#twoDLineFlyout", "#sceneSettingsPanel"):
+        block = _block_for_selector(qss, selector)
+        assert f"background: {flat['bg_overlay']}" in block
+        assert f"border: 1px solid {flat['border_subtle']}" in block
+        assert f"border-radius: {flat['radius_md']}px" in block
+
+    dialog_block = _block_for_selector(qss, "QDialog")
+    assert f"border-radius: {flat['radius_lg']}px" in dialog_block
+
+
+def test_floating_widget_construction_names_and_token_shadows(monkeypatch) -> None:
+    class FakeInteractor:
+        def __init__(self, parent: QWidget) -> None:
+            self.interactor = QWidget(parent)
+            self.iren = None
+
+        def setFocusPolicy(self, policy: Qt.FocusPolicy) -> None:
+            self.interactor.setFocusPolicy(policy)
+
+    monkeypatch.setattr("ui.designer_window.QtInteractor", FakeInteractor)
+    shell = QWidget()
+    viewport_host = QWidget(shell)
+    viewport_host.setObjectName("viewportHost")
+    QHBoxLayout(shell).addWidget(viewport_host)
+    window = object.__new__(MainWindow)
+    window.window = shell
+    window.scene_mode = SceneMode.THREE_D
+    window.scene_appearances = {
+        SceneMode.TWO_D: SceneAppearance(),
+        SceneMode.THREE_D: SceneAppearance(),
+    }
+    window._update_geometry_history_controls = MagicMock()
+
+    MainWindow._configure_viewport(window)
+    toolbar = TwoDGeometryToolbar(viewport_host)
+    settings = SceneSettingsPanel(viewport_host)
+    dialog = LightingDialog(LightSettings(), "光泽塑料", shell)
+
+    widgets = (
+        (window.viewport_toolbar, "viewportToolbar", "overlay"),
+        (toolbar, "twoDGeometryToolbar", "overlay"),
+        (toolbar.line_flyout, "twoDLineFlyout", "overlay"),
+        (settings, "sceneSettingsPanel", "overlay"),
+        (dialog, "lightingDialog", "modal"),
+    )
+    for widget, object_name, level in widgets:
+        assert widget.objectName() == object_name
+        _assert_shadow(widget, level)
 
 
 def test_main_window_apply_style_has_no_inline_qss() -> None:
