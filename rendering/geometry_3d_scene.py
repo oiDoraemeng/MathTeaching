@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from math import sqrt
 from typing import Iterable
 
 import numpy as np
@@ -61,7 +60,11 @@ class Geometry3DSceneController:
         model = Linear3D(alias, _v3(start), _v3(end), kind=kind, color=color, line_width=line_width, role=role)  # type: ignore[arg-type]
         name = f"geometry3d:linear:{alias}"
         self._remove(name)
-        mesh = pv.Line(model.start, model.end)
+        if model.kind == "vector":
+            direction = np.subtract(model.end, model.start)
+            mesh = pv.Arrow(start=model.start, direction=direction, scale="auto")
+        else:
+            mesh = pv.Line(model.start, model.end)
         actor = self._add(mesh, name=name, color=model.color, line_width=model.line_width)
         self.linears[alias] = model
         return actor

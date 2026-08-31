@@ -166,6 +166,7 @@ _TWO_D_OPERATIONS = frozenset(
         "geometry.projection",
         "geometry.transformed_grid",
         "geometry.subspace_region",
+        "geometry.staged_transform",
         "geometry.oriented_area",
     }
 )
@@ -289,8 +290,10 @@ class SceneCommandService:
         elif name == "linear3d.upsert":
             _require_text(operation, "alias")
             _require_choice(operation, "kind", frozenset({"segment", "vector"}))
-            _require_coordinates(operation.get("start"), dimensions=3)
-            _require_coordinates(operation.get("end"), dimensions=3)
+            start = _require_coordinates(operation.get("start"), dimensions=3)
+            end = _require_coordinates(operation.get("end"), dimensions=3)
+            if math.sqrt(sum((finish - begin) ** 2 for begin, finish in zip(start, end))) <= 1e-12:
+                raise CommandError("linear3d 的起点和终点不能重合。")
             _require_choice_value(operation, "style", _STYLE_VALUES, default="solid")
             _require_choice_value(operation, "role", _ROLE_VALUES, default="primary")
         elif name == "point3d.upsert":
@@ -339,11 +342,18 @@ class SceneCommandService:
             _require_finite_number(interval[1], "interval[1]")
             _require_text(operation, "alias")
         elif name == "geometry.polygon":
+            _require_text(operation, "alias")
             vertices = operation.get("vertices")
             if not isinstance(vertices, (list, tuple)) or len(vertices) < 3:
                 raise CommandError("geometry.polygon.vertices 至少需要三个顶点。")
-            for vertex in vertices:
-                _point(vertex, "geometry.polygon.vertices")
+            points = tuple(_point(vertex, "geometry.polygon.vertices") for vertex in vertices)
+            twice_area = sum(
+                points[index][0] * points[(index + 1) % len(points)][1]
+                - points[(index + 1) % len(points)][0] * points[index][1]
+                for index in range(len(points))
+            )
+            if abs(twice_area) <= 1e-12:
+                raise CommandError("geometry.polygon.vertices 不能退化为共线点。")
             _validate_opacity(operation.get("opacity", 0.24))
         elif name in {"geometry.angle_arc", "geometry.right_angle_marker"}:
             _require_text(operation, "alias")

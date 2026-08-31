@@ -895,8 +895,11 @@ def _angle_arc_mesh(
         [(vertex[0] + radius * cos(angle), vertex[1] + radius * sin(angle), 0.0) for angle in angles],
         dtype=float,
     )
-    lines = np.asarray([2, *range(len(points))], dtype=np.int64)
-    return pv.PolyData(points, lines)
+    lines = np.asarray([len(points), *range(len(points))], dtype=np.int64)
+    mesh = pv.PolyData()
+    mesh.points = points
+    mesh.lines = lines
+    return mesh
 
 
 def _right_angle_mesh(

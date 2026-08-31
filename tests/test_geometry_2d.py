@@ -99,6 +99,18 @@ class Geometry2DTests(unittest.TestCase):
         self.assertEqual(first_kwargs["point_size"], 11.0)
         self.assertTrue(second_kwargs["render_points_as_spheres"])
 
+    def test_teaching_angle_arc_is_one_polyline_with_all_samples(self) -> None:
+        plotter = FakePlotter()
+        controller = GeometrySceneController(plotter, self.bounds)
+
+        controller.add_teaching_angle_arc(
+            "theta", (0.0, 0.0), (1.0, 0.0), (0.0, 1.0), radius=0.5
+        )
+
+        mesh = plotter.meshes["geometry:teaching:arc:theta"]
+        self.assertEqual(mesh.n_lines, 1)
+        self.assertEqual(mesh.n_points, 32)
+
     def test_geometry_latex_uses_coordinates_and_endpoint_symbols(self) -> None:
         line = Linear2D("a", "line", self.first.id, self.second.id)
         segment = Linear2D("s_1", "segment", self.first.id, self.second.id)

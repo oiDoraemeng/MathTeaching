@@ -37,8 +37,12 @@ def test_new_operations_reject_wrong_scene_scope() -> None:
     invalid_3d = validator.validate(CommandPlan(scene="3d", operations=(
         {"op": "geometry.polygon", "alias": "face", "vertices": [[0, 0], [1, 0], [0, 1]]},
     )))
+    invalid_staged_3d = validator.validate(CommandPlan(scene="3d", operations=(
+        {"op": "geometry.staged_transform", "matrices": [[[1, 0], [0, 1]]], "points": [[1, 0]], "aliases": ["p"]},
+    )))
     assert not invalid_2d.valid
     assert not invalid_3d.valid
+    assert not invalid_staged_3d.valid
 
 
 def test_new_operations_reject_degenerate_geometry() -> None:
@@ -49,6 +53,9 @@ def test_new_operations_reject_degenerate_geometry() -> None:
     volume = validator.validate(CommandPlan(scene="3d", operations=(
         {"op": "geometry.oriented_volume", "alias": "V", "origin": [0, 0, 0], "vectors": [[1, 0, 0], [0, 1, 0]]},
     )))
+    collinear_polygon = validator.validate(CommandPlan(scene="2d", operations=(
+        {"op": "geometry.polygon", "alias": "flat", "vertices": [[0, 0], [1, 0], [2, 0]]},
+    )))
     assert not polygon.valid
     assert not volume.valid
-
+    assert not collinear_polygon.valid
