@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QRect, QTimer, Qt, Signal
-from PySide6.QtGui import QAction, QColor, QFontMetrics, QMouseEvent, QResizeEvent, QShowEvent
+from PySide6.QtGui import QAction, QColor, QMouseEvent, QShowEvent
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -28,12 +28,11 @@ from PySide6.QtWidgets import (
 from MathInputWidget import FormulaEditorPopup, FormulaListWidget, FormulaPreviewWidget
 from models.curve_layer import CurveLayer
 from models.function_catalog import CatalogEntry
-from linear_algebra.catalog.model import LessonEntry
-from linear_algebra.registry import catalog_registry
 from models.geometry_2d import GeometryObject, Linear2D, Point2D
 from models.scene_mode import SceneMode
 from models.surface_layer import SurfaceLayer
 from ui.icons import apply_icon, icon_color, retint_icons
+from ui.linear_algebra_dialog import LinearAlgebraDialog
 from ui.tokens import ThemeName, apply_drop_shadow, apply_rounded_overlay
 
 
@@ -451,123 +450,6 @@ class FunctionCatalogPopup(QDialog):
         return super().eventFilter(watched, event)
 
 
-class LinearAlgebraTopicRow(QFrame):
-    """可点击的线性代数讲义主题行。"""
-
-    selected = Signal(str)
-
-    def __init__(self, topic: LessonEntry, parent: QWidget | None = None) -> None:
-        super().__init__(parent)
-        self.topic_id = topic.id
-        self.setObjectName("linearAlgebraCaseRow")
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(9, 7, 9, 7)
-        layout.setSpacing(2)
-        title = QLabel(topic.title, self)
-        title.setObjectName("linearAlgebraCaseTitle")
-        summary_text = catalog_registry().get_explanation(topic.explanation_id).summary
-        summary = QLabel(summary_text, self)
-        summary.setObjectName("linearAlgebraCaseSummary")
-        summary.setWordWrap(False)
-        summary.setTextFormat(Qt.TextFormat.PlainText)
-        summary.setToolTip(summary_text)
-        self._summary_label = summary
-        self._summary_text = summary_text
-        layout.addWidget(title)
-        layout.addWidget(summary)
-
-    def resizeEvent(self, event: QResizeEvent) -> None:  # noqa: N802
-        super().resizeEvent(event)
-        available = max(0, self.width() - 24)
-        self._summary_label.setText(QFontMetrics(self._summary_label.font()).elidedText(
-            self._summary_text, Qt.TextElideMode.ElideRight, available
-        ))
-
-    def mousePressEvent(self, event: QMouseEvent) -> None:
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.selected.emit(self.topic_id)
-            event.accept()
-            return
-        super().mousePressEvent(event)
-
-
-class LinearAlgebraTopicPopup(QDialog):
-    """显示讲义主题的临时列表；三级树由独立对话框接管。"""
-
-    requested = Signal(str)
-
-    def __init__(self, parent: QWidget | None = None) -> None:
-        super().__init__(parent)
-        self.setObjectName("linearAlgebraCasePopup")
-        self.setWindowTitle("线性代数")
-        self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
-        apply_rounded_overlay(self, "lg")
-        self.setWindowModality(Qt.WindowModality.NonModal)
-        self._show_animation = QPropertyAnimation(self, b"windowOpacity", self)
-        self._show_animation.setDuration(150)
-        self._show_animation.setEasingCurve(QEasingCurve.Type.OutCubic)
-        self.setMinimumSize(260, 260)
-        self.resize(300, 330)
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)
-        self.scroll = QScrollArea(self)
-        self.scroll.setWidgetResizable(True)
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.content = QWidget(self.scroll)
-        self.content_layout = QVBoxLayout(self.content)
-        self.content_layout.setContentsMargins(0, 0, 0, 0)
-        self.content_layout.setSpacing(5)
-        self.content_layout.addStretch()
-        self.scroll.setWidget(self.content)
-        layout.addWidget(self.scroll)
-        self.set_topics(catalog_registry().topics)
-        application = QApplication.instance()
-        if application is not None:
-            application.installEventFilter(self)
-
-    def set_topics(self, topics: Iterable[LessonEntry]) -> None:
-        while self.content_layout.count() > 1:
-            item = self.content_layout.takeAt(0)
-            if item.widget() is not None:
-                item.widget().deleteLater()
-        last_category: str | None = None
-        for topic in topics:
-            topic_category = topic.source_path[1]
-            if topic_category != last_category:
-                category = QLabel(topic_category, self.content)
-                category.setObjectName("catalogCategory")
-                self.content_layout.insertWidget(self.content_layout.count() - 1, category)
-                last_category = topic_category
-            row = LinearAlgebraTopicRow(topic, self.content)
-            row.selected.connect(self._request)
-            self.content_layout.insertWidget(self.content_layout.count() - 1, row)
-
-    def open_at(self, anchor: QPoint) -> None:
-        self.setWindowOpacity(0.0)
-        self.show()
-        self.move(anchor)
-        self.raise_()
-        self._show_animation.stop()
-        self._show_animation.setStartValue(0.0)
-        self._show_animation.setEndValue(1.0)
-        self._show_animation.start()
-
-    def _request(self, topic_id: str) -> None:
-        self.hide()
-        self.requested.emit(topic_id)
-
-    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
-        if (
-            self.isVisible()
-            and event.type() == QEvent.Type.MouseButtonPress
-            and isinstance(watched, QWidget)
-            and watched is not self
-            and not self.isAncestorOf(watched)
-        ):
-            QTimer.singleShot(0, self.hide)
-        return super().eventFilter(watched, event)
-
-
 class LayerRow(QFrame):
     """包含可见性、MathLive 直接编辑和设置入口的紧凑图层行。"""
 
@@ -736,7 +618,7 @@ class AlgebraPanel(QFrame):
         self.geometry_settings_popup = GeometrySettingsPopup(self)
         self.intersection_popup = IntersectionPopup(self)
         self.catalog_popup = FunctionCatalogPopup(self)
-        self.linear_algebra_popup = LinearAlgebraTopicPopup(self)
+        self.linear_algebra_popup = LinearAlgebraDialog(self)
         self.sync_overlay_theme("light")
         self.new_formula_button.clicked.connect(self._open_new_formula)
         self.function_catalog_button.clicked.connect(self._open_catalog)

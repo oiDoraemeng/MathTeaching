@@ -113,22 +113,21 @@ class AlgebraPanelTests(unittest.TestCase):
 
         self.assertEqual(events, [True])
 
-    def test_linear_algebra_button_emits_selected_case_id(self) -> None:
+    def test_linear_algebra_button_emits_selected_topic_id(self) -> None:
         panel = AlgebraPanel()
         events: list[str] = []
         panel.linear_algebra_requested.connect(events.append)
 
-        panel.linear_algebra_popup._request("vector-subtraction")
+        topic = panel.linear_algebra_popup.tree.topLevelItem(0).child(0).child(0)
+        panel.linear_algebra_popup.activate_item(topic)
 
-        self.assertEqual(events, ["vector-subtraction"])
+        self.assertEqual(events, ["ch01.vector.magnitude"])
         self.assertEqual(panel.linear_algebra_button.text(), "线性代数")
 
-    def test_case_popup_rows_use_the_tokenized_reading_surface(self) -> None:
+    def test_linear_algebra_popup_uses_tokenized_tree_surface(self) -> None:
         panel = AlgebraPanel()
-        row = panel.linear_algebra_popup.findChild(QFrame, "linearAlgebraCaseRow")
-        self.assertIsNotNone(row)
-        self.assertIn("#linearAlgebraCaseRow:hover", build_qss("light"))
-        self.assertEqual(row.findChild(QLabel, "linearAlgebraCaseSummary").wordWrap(), False)
+        self.assertEqual(panel.linear_algebra_popup.tree.objectName(), "linearAlgebraTree")
+        self.assertIn("#linearAlgebraTree", build_qss("light"))
 
     def test_each_layer_keeps_independent_surface_and_intersection_events(self) -> None:
         layer = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1")
