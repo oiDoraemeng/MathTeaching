@@ -32,7 +32,8 @@ from models.geometry_2d import (
     parse_point_coordinates,
 )
 from models.function_catalog import catalog_entries, catalog_entry
-from models.linear_algebra_cases import LinearAlgebraCase, linear_algebra_case
+from linear_algebra.registry import catalog_registry
+from linear_algebra.visualizations.common import RenderContext
 from models.scene_mode import SceneAppearance, SceneMode
 from models.surface_layer import PlotDomain, SurfaceLayer
 from rendering.axis import ThreeDAxes, add_cartesian_axes
@@ -952,7 +953,7 @@ class MainWindow:
         panel.set_builtin_surfaces((surface.id, surface.name) for surface in BUILTIN_SURFACES)
         panel.add_requested.connect(self._add_formula_for_scene)
         panel.catalog_requested.connect(self._add_catalog_entry)
-        panel.linear_algebra_requested.connect(self._load_linear_algebra_case)
+        panel.linear_algebra_requested.connect(self._load_linear_algebra_topic)
         panel.builtin_requested.connect(self._add_builtin_surface)
         panel.lighting_requested.connect(self._show_lighting_dialog)
         panel.update_requested.connect(self._update_formula_for_scene)
@@ -2141,30 +2142,45 @@ class MainWindow:
         self._add_curve_layer(layer)
 
     @staticmethod
-    def _linear_algebra_case_plan(case: LinearAlgebraCase) -> CommandPlan:
-        """Wrap a built-in case in one clear-and-load 2D command plan."""
+    def _linear_algebra_lesson_plan(topic_id: str) -> CommandPlan:
+        """Build and validate one atomic clear-and-load lecture plan."""
+        registry = catalog_registry()
+        topic = registry.get_topic(topic_id)
+        recipe = registry.get_recipe(topic.visualization_id)
+        lesson_plan = recipe.builder(RenderContext.default(topic.id))
+        validation = SceneCommandService().validate(lesson_plan)
+        if not validation.valid:
+            raise CommandError("；".join(validation.messages))
         return CommandPlan(
-            scene="2d",
-            summary=case.summary,
-            operations=({"op": "scene.clear", "scope": "all"}, *case.plan.operations),
+            scene=lesson_plan.scene,
+            summary=lesson_plan.summary,
+            operations=({"op": "scene.clear", "scope": "all"}, *lesson_plan.operations),
         )
 
-    def _load_linear_algebra_case(self, case_id: str) -> None:
-        case = linear_algebra_case(case_id)
-        if case is None:
-            self.algebra_panel.set_status(f"未知线性代数案例: {case_id}", is_error=True)
+    def _load_linear_algebra_topic(self, topic_id: str) -> None:
+        registry = catalog_registry()
+        try:
+            topic = registry.get_topic(topic_id)
+            explanation = registry.get_explanation(topic.explanation_id)
+            plan = self._linear_algebra_lesson_plan(topic_id)
+        except (KeyError, CommandError, ValueError) as error:
+            self.algebra_panel.set_status(f"未知或无效的线性代数主题 {topic_id}: {error}", is_error=True)
             return
-        plan = self._linear_algebra_case_plan(case)
         try:
             self.scene_command_service.execute(plan)
         except CommandError as error:
-            self.algebra_panel.set_status(f"无法加载案例 {case.name}: {error}", is_error=True)
+            self.algebra_panel.set_status(f"无法加载主题 {topic.title}: {error}", is_error=True)
             return
-        self.algebra_panel.set_status(f"已加载案例: {case.name}")
+        self.algebra_panel.set_status(f"已加载主题: {topic.title}")
         if hasattr(self, "agent_panel"):
             if hasattr(self, "agent_sidebar"):
                 self._open_agent_panel()
-            self.agent_panel.show_math_case(case)
+            self.agent_panel.show_math_case(
+                explanation,
+                case_id=topic.id,
+                category=topic.source_path[1],
+                scene_mode=plan.scene,
+            )
 
     def _add_cas_surface(self, kind: str, latex: str) -> None:
         try:

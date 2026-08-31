@@ -198,17 +198,24 @@ class AgentSidebarWeb(QWidget):
             }
         )
 
-    def show_math_case(self, case: Any) -> None:
+    def show_math_case(
+        self,
+        case: Any,
+        *,
+        case_id: str | None = None,
+        category: str | None = None,
+        scene_mode: str | None = None,
+    ) -> None:
         """Publish one bounded, JSON-only teaching case to the Web UI."""
         payload = {
-            "case_id": str(getattr(case, "id", ""))[:128],
-            "category": str(getattr(case, "category", ""))[:64],
-            "name": str(getattr(case, "name", ""))[:128],
+            "case_id": str(case_id or getattr(case, "id", ""))[:128],
+            "category": str(category or getattr(case, "category", ""))[:64],
+            "name": str(getattr(case, "name", getattr(case, "title", "")))[:128],
             "formula": str(getattr(case, "formula", ""))[:512],
             "steps": [str(step)[:512] for step in tuple(getattr(case, "steps", ()))[:12]],
             "conclusion": str(getattr(case, "conclusion", ""))[:1024],
             "summary": str(getattr(case, "summary", ""))[:512],
-            "scene_mode": "2d",
+            "scene_mode": scene_mode if scene_mode in {"2d", "3d"} else "2d",
         }
         if not self._document_loaded:
             self._pending_math_case = payload

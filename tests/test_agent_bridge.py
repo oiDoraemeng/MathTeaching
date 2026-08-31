@@ -136,15 +136,16 @@ def test_web_host_replays_latest_case_after_document_load() -> None:
     host.bridge.event_json.connect(lambda raw: emitted.append(json.loads(raw)))
     host._document_loaded = False
 
-    from models.linear_algebra_cases import linear_algebra_case
+    from linear_algebra.registry import catalog_registry
 
-    case = linear_algebra_case("vector-addition")
-    assert case is not None
-    host.show_math_case(case)
+    registry = catalog_registry()
+    topic = registry.get_topic("ch01.ops.addition")
+    explanation = registry.get_explanation(topic.explanation_id)
+    host.show_math_case(explanation, case_id=topic.id, category=topic.source_path[1])
     assert not emitted
 
     host._document_loaded = True
     host._replay_pending_case()
 
     assert emitted[-1]["type"] == "math_case"
-    assert emitted[-1]["payload"]["case_id"] == "vector-addition"
+    assert emitted[-1]["payload"]["case_id"] == "ch01.ops.addition"

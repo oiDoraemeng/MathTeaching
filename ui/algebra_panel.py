@@ -28,7 +28,8 @@ from PySide6.QtWidgets import (
 from MathInputWidget import FormulaEditorPopup, FormulaListWidget, FormulaPreviewWidget
 from models.curve_layer import CurveLayer
 from models.function_catalog import CatalogEntry
-from models.linear_algebra_cases import LinearAlgebraCase, linear_algebra_cases
+from linear_algebra.catalog.model import LessonEntry
+from linear_algebra.registry import catalog_registry
 from models.geometry_2d import GeometryObject, Linear2D, Point2D
 from models.scene_mode import SceneMode
 from models.surface_layer import SurfaceLayer
@@ -450,27 +451,28 @@ class FunctionCatalogPopup(QDialog):
         return super().eventFilter(watched, event)
 
 
-class LinearAlgebraCaseRow(QFrame):
-    """可点击的线性代数教学案例行。"""
+class LinearAlgebraTopicRow(QFrame):
+    """可点击的线性代数讲义主题行。"""
 
     selected = Signal(str)
 
-    def __init__(self, case: LinearAlgebraCase, parent: QWidget | None = None) -> None:
+    def __init__(self, topic: LessonEntry, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.case_id = case.id
+        self.topic_id = topic.id
         self.setObjectName("linearAlgebraCaseRow")
         layout = QVBoxLayout(self)
         layout.setContentsMargins(9, 7, 9, 7)
         layout.setSpacing(2)
-        title = QLabel(case.name, self)
+        title = QLabel(topic.title, self)
         title.setObjectName("linearAlgebraCaseTitle")
-        summary = QLabel(case.summary, self)
+        summary_text = catalog_registry().get_explanation(topic.explanation_id).summary
+        summary = QLabel(summary_text, self)
         summary.setObjectName("linearAlgebraCaseSummary")
         summary.setWordWrap(False)
         summary.setTextFormat(Qt.TextFormat.PlainText)
-        summary.setToolTip(case.summary)
+        summary.setToolTip(summary_text)
         self._summary_label = summary
-        self._summary_text = case.summary
+        self._summary_text = summary_text
         layout.addWidget(title)
         layout.addWidget(summary)
 
@@ -483,14 +485,14 @@ class LinearAlgebraCaseRow(QFrame):
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         if event.button() == Qt.MouseButton.LeftButton:
-            self.selected.emit(self.case_id)
+            self.selected.emit(self.topic_id)
             event.accept()
             return
         super().mousePressEvent(event)
 
 
-class LinearAlgebraCasePopup(QDialog):
-    """显示内置线性代数案例的分组弹窗。"""
+class LinearAlgebraTopicPopup(QDialog):
+    """显示讲义主题的临时列表；三级树由独立对话框接管。"""
 
     requested = Signal(str)
 
@@ -518,24 +520,25 @@ class LinearAlgebraCasePopup(QDialog):
         self.content_layout.addStretch()
         self.scroll.setWidget(self.content)
         layout.addWidget(self.scroll)
-        self.set_cases(linear_algebra_cases())
+        self.set_topics(catalog_registry().topics)
         application = QApplication.instance()
         if application is not None:
             application.installEventFilter(self)
 
-    def set_cases(self, cases: Iterable[LinearAlgebraCase]) -> None:
+    def set_topics(self, topics: Iterable[LessonEntry]) -> None:
         while self.content_layout.count() > 1:
             item = self.content_layout.takeAt(0)
             if item.widget() is not None:
                 item.widget().deleteLater()
         last_category: str | None = None
-        for case in cases:
-            if case.category != last_category:
-                category = QLabel(case.category, self.content)
+        for topic in topics:
+            topic_category = topic.source_path[1]
+            if topic_category != last_category:
+                category = QLabel(topic_category, self.content)
                 category.setObjectName("catalogCategory")
                 self.content_layout.insertWidget(self.content_layout.count() - 1, category)
-                last_category = case.category
-            row = LinearAlgebraCaseRow(case, self.content)
+                last_category = topic_category
+            row = LinearAlgebraTopicRow(topic, self.content)
             row.selected.connect(self._request)
             self.content_layout.insertWidget(self.content_layout.count() - 1, row)
 
@@ -549,9 +552,9 @@ class LinearAlgebraCasePopup(QDialog):
         self._show_animation.setEndValue(1.0)
         self._show_animation.start()
 
-    def _request(self, case_id: str) -> None:
+    def _request(self, topic_id: str) -> None:
         self.hide()
-        self.requested.emit(case_id)
+        self.requested.emit(topic_id)
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         if (
@@ -733,7 +736,7 @@ class AlgebraPanel(QFrame):
         self.geometry_settings_popup = GeometrySettingsPopup(self)
         self.intersection_popup = IntersectionPopup(self)
         self.catalog_popup = FunctionCatalogPopup(self)
-        self.linear_algebra_popup = LinearAlgebraCasePopup(self)
+        self.linear_algebra_popup = LinearAlgebraTopicPopup(self)
         self.sync_overlay_theme("light")
         self.new_formula_button.clicked.connect(self._open_new_formula)
         self.function_catalog_button.clicked.connect(self._open_catalog)
