@@ -38,6 +38,7 @@ from models.surface_layer import PlotDomain, SurfaceLayer
 from rendering.axis import ThreeDAxes, add_cartesian_axes
 from rendering.curve_scene import CurveRenderError, CurveSceneController
 from rendering.geometry_scene import GeometrySceneController
+from rendering.geometry_3d_scene import Geometry3DSceneController
 from rendering.layer_scene import LayerRenderError, LayerSceneController
 from rendering.lighting import LightSettings
 from rendering.scene import build_scene, configure_3d_camera_interaction, update_lighting
@@ -246,6 +247,8 @@ class _SceneCommandState:
     scene_mode: SceneMode = SceneMode.TWO_D
     points3d: tuple[tuple[str, tuple[float, float, float]], ...] = ()
     areas: tuple[tuple[str, dict[str, object]], ...] = ()
+    teaching_2d: tuple[tuple[str, dict[str, object]], ...] = ()
+    geometry_3d: tuple[tuple[str, dict[str, object]], ...] = ()
 
 
 class MainWindow:
@@ -272,10 +275,13 @@ class MainWindow:
         self.annotations: list[Annotation2D] = []
         self._agent_areas: dict[str, dict[str, object]] = {}
         self._agent_points3d: dict[str, tuple[float, float, float]] = {}
+        self._agent_teaching_2d: dict[str, dict[str, object]] = {}
+        self._agent_geometry3d: dict[str, dict[str, object]] = {}
         self._two_d_object_order: list[str] = []
         self.layer_controller: LayerSceneController | None = None
         self.curve_controller: CurveSceneController | None = None
         self.geometry_controller: GeometrySceneController | None = None
+        self.geometry3d_controller: Geometry3DSceneController | None = None
         self.scene_appearances = {
             SceneMode.THREE_D: SceneAppearance(show_grid=False, show_intersections=False),
             SceneMode.TWO_D: SceneAppearance(show_grid=True, show_intersections=False),
@@ -1077,6 +1083,8 @@ class MainWindow:
             scene_mode=self.scene_mode,
             points3d=tuple((alias, tuple(coordinates)) for alias, coordinates in getattr(self, "_agent_points3d", {}).items()),
             areas=tuple((alias, dict(operation)) for alias, operation in getattr(self, "_agent_areas", {}).items()),
+            teaching_2d=tuple((alias, dict(operation)) for alias, operation in getattr(self, "_agent_teaching_2d", {}).items()),
+            geometry_3d=tuple((alias, dict(operation)) for alias, operation in getattr(self, "_agent_geometry3d", {}).items()),
         )
 
     @staticmethod
@@ -1103,6 +1111,8 @@ class MainWindow:
             "object_order": list(state.object_order),
             "points3d": [[alias, list(coordinates)] for alias, coordinates in state.points3d],
             "areas": [[alias, dict(operation)] for alias, operation in state.areas],
+            "teaching_2d": [[alias, dict(operation)] for alias, operation in state.teaching_2d],
+            "geometry_3d": [[alias, dict(operation)] for alias, operation in state.geometry_3d],
         }
         return SceneSnapshot(
             scene_mode=state.scene_mode.value,
@@ -1143,6 +1153,16 @@ class MainWindow:
             for item in metadata.get("areas", [])
             if isinstance(item, (list, tuple)) and len(item) == 2 and isinstance(item[1], dict)
         )
+        teaching_2d = tuple(
+            (str(item[0]), dict(item[1]))
+            for item in metadata.get("teaching_2d", [])
+            if isinstance(item, (list, tuple)) and len(item) == 2 and isinstance(item[1], dict)
+        )
+        geometry_3d = tuple(
+            (str(item[0]), dict(item[1]))
+            for item in metadata.get("geometry_3d", [])
+            if isinstance(item, (list, tuple)) and len(item) == 2 and isinstance(item[1], dict)
+        )
         return _SceneCommandState(
             points=tuple(points),
             linears=tuple(linears),
@@ -1153,6 +1173,8 @@ class MainWindow:
             scene_mode=SceneMode(snapshot.scene_mode),
             points3d=points3d,
             areas=areas,
+            teaching_2d=teaching_2d,
+            geometry_3d=geometry_3d,
         )
 
     def _restore_agent_scene_snapshot(self, snapshot: SceneSnapshot) -> None:
@@ -1167,6 +1189,8 @@ class MainWindow:
         self._two_d_object_order = list(state.object_order)
         self._agent_points3d = {alias: tuple(coordinates) for alias, coordinates in state.points3d}
         self._agent_areas = {alias: dict(operation) for alias, operation in state.areas}
+        self._agent_teaching_2d = {alias: dict(operation) for alias, operation in state.teaching_2d}
+        self._agent_geometry3d = {alias: dict(operation) for alias, operation in state.geometry_3d}
         if self.scene_mode is not state.scene_mode:
             self._set_scene_mode(state.scene_mode)
         else:
@@ -1214,6 +1238,15 @@ class MainWindow:
         if name == "point3d.upsert":
             self._command_upsert_point3d(operation)
             return
+        if name == "linear3d.upsert":
+            self._command_upsert_linear3d(operation)
+            return
+        if name == "plane3d.upsert":
+            self._command_upsert_plane3d(operation)
+            return
+        if name in {"geometry.parallelogram3d", "geometry.parallelepiped", "geometry.oriented_volume"}:
+            self._command_upsert_solid3d(operation)
+            return
         if name == "point.upsert":
             self._command_upsert_point(operation)
             return
@@ -1222,6 +1255,12 @@ class MainWindow:
             return
         if name == "annotation.upsert":
             self._command_upsert_annotation(operation)
+            return
+        if name == "annotation.formula":
+            self._command_formula_annotation(operation)
+            return
+        if name.startswith("geometry."):
+            self._command_teaching_geometry(operation)
             return
         if name.endswith(".delete"):
             self._command_delete_alias(str(operation["alias"]))
@@ -1255,23 +1294,130 @@ class MainWindow:
             raise CommandError(f"宿主收到未展开的教学命令: {name}")
         raise CommandError(f"宿主不支持操作: {name}")
 
+    def _command_upsert_linear3d(self, operation: dict[str, object]) -> None:
+        if self.scene_mode is not SceneMode.THREE_D or self.geometry3d_controller is None:
+            raise CommandError("三维线性对象需要处于三维场景。")
+        alias = str(operation["alias"])
+        payload = dict(operation)
+        self._agent_geometry3d[alias] = payload
+        self.geometry3d_controller.add_linear(
+            alias,
+            tuple(float(value) for value in operation["start"]),  # type: ignore[arg-type]
+            tuple(float(value) for value in operation["end"]),  # type: ignore[arg-type]
+            kind=str(operation.get("kind", "vector")),
+            color=str(operation.get("color", "#2777b6")),
+            role=str(operation.get("role", "primary")),
+        )
+
+    def _command_upsert_plane3d(self, operation: dict[str, object]) -> None:
+        if self.scene_mode is not SceneMode.THREE_D or self.geometry3d_controller is None:
+            raise CommandError("三维平面需要处于三维场景。")
+        alias = str(operation["alias"])
+        self._agent_geometry3d[alias] = dict(operation)
+        self.geometry3d_controller.add_plane(
+            alias,
+            tuple(float(value) for value in operation["origin"]),  # type: ignore[arg-type]
+            tuple(float(value) for value in operation["normal"]),  # type: ignore[arg-type]
+            size=float(operation.get("size", 2.0)),
+            opacity=float(operation.get("opacity", 0.24)),
+            color=str(operation.get("color", "#5b8def")),
+        )
+
+    def _command_upsert_solid3d(self, operation: dict[str, object]) -> None:
+        if self.scene_mode is not SceneMode.THREE_D or self.geometry3d_controller is None:
+            raise CommandError("三维体几何需要处于三维场景。")
+        alias = str(operation["alias"])
+        vectors = tuple(tuple(float(value) for value in vector) for vector in operation["vectors"])  # type: ignore[index]
+        self._agent_geometry3d[alias] = dict(operation)
+        kwargs = {
+            "opacity": float(operation.get("opacity", 0.24)),
+            "color": str(operation.get("color", "#4c9f70")),
+        }
+        origin = tuple(float(value) for value in operation["origin"])  # type: ignore[arg-type]
+        if operation["op"] == "geometry.parallelogram3d":
+            self.geometry3d_controller.add_parallelogram(alias, origin, vectors, **kwargs)
+        elif operation["op"] == "geometry.oriented_volume":
+            self.geometry3d_controller.add_oriented_volume(alias, origin, vectors, **kwargs)
+        else:
+            self.geometry3d_controller.add_parallelepiped(alias, origin, vectors, **kwargs)
+
+    def _command_formula_annotation(self, operation: dict[str, object]) -> None:
+        position = tuple(float(value) for value in operation["position"])  # type: ignore[arg-type]
+        if self.scene_mode is SceneMode.TWO_D:
+            self._command_upsert_annotation({
+                "op": "annotation.upsert",
+                "alias": operation["alias"],
+                "text": operation["text"],
+                "position": position,
+            })
+            return
+        if len(position) != 3:
+            raise CommandError("三维公式标注需要三个坐标。")
+        self._agent_geometry3d[f"annotation:{operation['alias']}"] = dict(operation)
+        add_labels = getattr(self.plotter, "add_point_labels", None)
+        if callable(add_labels):
+            name = f"geometry3d:annotation:{operation['alias']}"
+            self.plotter.remove_actor(name, render=False)
+            add_labels(
+                [position], [str(operation["text"])], name=name, shape=None, show_points=False,
+                always_visible=True, render=False,
+            )
+
+    def _command_teaching_geometry(self, operation: dict[str, object]) -> None:
+        if self.scene_mode is not SceneMode.TWO_D or self.geometry_controller is None:
+            raise CommandError("该教学几何操作需要处于二维场景。")
+        name = str(operation["op"])
+        alias = str(operation.get("alias", operation.get("result_alias", "teaching")))
+        self._agent_teaching_2d[alias] = dict(operation)
+        if name == "geometry.polygon":
+            self.geometry_controller.add_teaching_polygon(alias, tuple(tuple(float(v) for v in p) for p in operation["vertices"]), color=str(operation.get("color", "#5b8def")), opacity=float(operation.get("opacity", 0.24)), outline=bool(operation.get("outline", True)))  # type: ignore[index]
+        elif name == "geometry.angle_arc":
+            self.geometry_controller.add_teaching_angle_arc(alias, tuple(float(v) for v in operation["vertex"]), tuple(float(v) for v in operation["first"]), tuple(float(v) for v in operation["second"]), radius=float(operation["radius"]), color=str(operation.get("color", "#d97845")))  # type: ignore[arg-type]
+        elif name == "geometry.right_angle_marker":
+            self.geometry_controller.add_teaching_right_angle_marker(alias, tuple(float(v) for v in operation["vertex"]), tuple(float(v) for v in operation["first"]), tuple(float(v) for v in operation["second"]), size=float(operation["size"]), color=str(operation.get("color", "#d97845")))  # type: ignore[arg-type]
+        elif name == "geometry.projection":
+            self.geometry_controller.add_teaching_projection(tuple(float(v) for v in operation["vector"]), tuple(float(v) for v in operation["direction"]), result_alias=str(operation["result_alias"]), foot_alias=str(operation["foot_alias"]), residual_alias=str(operation["residual_alias"]), color=str(operation.get("color", "#2777b6")))  # type: ignore[arg-type]
+        elif name == "geometry.transformed_grid":
+            matrix = tuple(tuple(float(v) for v in row) for row in operation["matrix"])  # type: ignore[index]
+            self.geometry_controller.add_teaching_transformed_grid(matrix, tuple(float(v) for v in operation["bounds"]), step=float(operation.get("step", 1.0)), color=str(operation.get("color", "#5b8def")))  # type: ignore[arg-type]
+        elif name == "geometry.subspace_region":
+            basis = tuple(tuple(float(v) for v in row) for row in operation["basis"])  # type: ignore[index]
+            self.geometry_controller.add_teaching_subspace_region(basis, tuple(float(v) for v in operation["bounds"]), color=str(operation.get("color", "#4c9f70")), opacity=float(operation.get("opacity", 0.2)))  # type: ignore[arg-type]
+        elif name == "geometry.staged_transform":
+            matrices = tuple(tuple(tuple(float(v) for v in row) for row in matrix) for matrix in operation["matrices"])  # type: ignore[index]
+            points = tuple(tuple(float(v) for v in point) for point in operation["points"])  # type: ignore[index]
+            self.geometry_controller.add_teaching_staged_transform(matrices, points, tuple(str(v) for v in operation["aliases"]))  # type: ignore[arg-type]
+        elif name == "geometry.oriented_area":
+            vectors = tuple(tuple(float(v) for v in vector) for vector in operation["vectors"])  # type: ignore[index]
+            self.geometry_controller.add_teaching_oriented_area(vectors, alias=str(operation.get("alias", "oriented-area")), color=str(operation.get("color", "#d97845")), opacity=float(operation.get("opacity", 0.28)))  # type: ignore[arg-type]
+        else:
+            raise CommandError(f"宿主不支持操作: {name}")
+
     def _command_clear_scope(self, scope: str) -> None:
         if scope not in {"all", "curves", "surfaces", "geometry", "annotations"}:
             raise CommandError("scene.clear.scope 不受支持。")
         if scope == "all":
             self.layers.clear()
             self._agent_points3d = {}
+            self._agent_geometry3d = {}
+            self._agent_teaching_2d = {}
         if self.scene_mode is SceneMode.THREE_D:
             if scope in {"all", "surfaces"}:
                 self.layers.clear()
             if scope in {"all", "geometry", "surfaces"}:
                 self._agent_points3d = {}
+                self._agent_geometry3d = {}
+                if self.geometry3d_controller is not None:
+                    self.geometry3d_controller.clear()
             self._render_scene()
             return
         if scope in {"all", "geometry"}:
             self.geometry_points.clear()
             self.linear_objects.clear()
             self._agent_areas = {}
+            self._agent_teaching_2d = {}
+            if self.geometry_controller is not None:
+                self.geometry_controller.clear_teaching()
         if scope in {"all", "annotations"}:
             self.annotations.clear()
         if scope in {"all", "curves"}:
@@ -1557,6 +1703,24 @@ class MainWindow:
             points3d.pop(alias, None)
             self._render_agent_points3d()
             return
+        geometry3d = getattr(self, "_agent_geometry3d", {})
+        if alias in geometry3d or f"annotation:{alias}" in geometry3d:
+            geometry3d.pop(alias, None)
+            geometry3d.pop(f"annotation:{alias}", None)
+            if self.geometry3d_controller is not None:
+                self.geometry3d_controller.remove_alias(alias)
+            self.plotter.remove_actor(f"geometry3d:annotation:{alias}", render=False)
+            self.plotter.render()
+            return
+        teaching = getattr(self, "_agent_teaching_2d", {})
+        if alias in teaching:
+            teaching.pop(alias, None)
+            if self.geometry_controller is not None:
+                # The controller uses stable prefixes for every teaching actor.
+                for prefix in ("polygon", "arc", "right-angle", "oriented-area", "projection"):
+                    self.plotter.remove_actor(f"geometry:teaching:{prefix}:{alias}", render=False)
+            self.plotter.render()
+            return
         point = next((item for item in self.geometry_points if item.agent_alias == alias), None)
         if point is not None:
             self._remove_geometry_object(point.id)
@@ -1665,6 +1829,7 @@ class MainWindow:
         self.layer_controller.set_global_intersections_visible(appearance.show_intersections)
         self.curve_controller = None
         self.geometry_controller = None
+        self.geometry3d_controller = Geometry3DSceneController(self.plotter)
         available_layers: list[SurfaceLayer] = []
         for layer in self.layers:
             try:
@@ -1676,6 +1841,15 @@ class MainWindow:
         self.layers = available_layers
         self._sync_panel_layers(self.layers)
         self.algebra_panel.set_status("三维场景已准备好")
+        for operation in tuple(self._agent_geometry3d.values()):
+            if operation.get("op") == "linear3d.upsert":
+                self._command_upsert_linear3d(operation)
+            elif operation.get("op") == "plane3d.upsert":
+                self._command_upsert_plane3d(operation)
+            elif operation.get("op") in {"geometry.parallelogram3d", "geometry.parallelepiped", "geometry.oriented_volume"}:
+                self._command_upsert_solid3d(operation)
+            elif operation.get("op") == "annotation.formula":
+                self._command_formula_annotation(operation)
         self._render_agent_points3d()
         self._refresh_3d_viewport(resample=True, render=False)
         self.plotter.render()
@@ -1709,6 +1883,7 @@ class MainWindow:
         self._two_d_sample_bounds = sampling_bounds
         self.curve_controller = CurveSceneController(self.plotter, sampling_domain)
         self.geometry_controller = GeometrySceneController(self.plotter, visible)
+        self.geometry3d_controller = None
         self.layer_controller = None
         available_layers: list[CurveLayer] = []
         for layer in self.curve_layers:
@@ -1725,6 +1900,8 @@ class MainWindow:
             self.geometry_controller.add_linear(linear)
         for annotation in getattr(self, "annotations", []):
             self.geometry_controller.add_annotation(annotation)
+        for operation in tuple(self._agent_teaching_2d.values()):
+            self._command_teaching_geometry(operation)
         self._render_agent_areas()
         self._sync_panel_layers(self._two_d_panel_layers())
         self.algebra_panel.set_status("二维场景已准备好")

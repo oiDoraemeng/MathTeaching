@@ -100,9 +100,11 @@ _ALLOWED_OPERATIONS = frozenset(
         "point3d.delete",
         "point.delete",
         "linear.upsert",
+        "linear3d.upsert",
         "linear.delete",
         "teach.vector_addition",
         "annotation.upsert",
+        "annotation.formula",
         "annotation.delete",
         "view.fit",
         "scene.export_png",
@@ -115,6 +117,18 @@ _ALLOWED_OPERATIONS = frozenset(
         "calculus.tangent",
         "linear_algebra.matrix_transform",
         "linear_algebra.determinant_area",
+        "geometry.polygon",
+        "geometry.angle_arc",
+        "geometry.right_angle_marker",
+        "geometry.projection",
+        "geometry.transformed_grid",
+        "geometry.subspace_region",
+        "geometry.staged_transform",
+        "geometry.oriented_area",
+        "geometry.parallelogram3d",
+        "geometry.parallelepiped",
+        "geometry.oriented_volume",
+        "plane3d.upsert",
         "geometry.intersection",
     }
 )
@@ -123,7 +137,11 @@ _KIND_VALUES = frozenset({"line", "segment", "ray", "vector"})
 _CURVE_KINDS = frozenset({"explicit", "implicit", "parametric"})
 _STYLE_VALUES = frozenset({"solid", "dashed"})
 _ROLE_VALUES = frozenset({"primary", "construction", "result"})
-_THREE_D_OPERATIONS = frozenset({"point3d.upsert", "point3d.delete", "surface.create", "surface.update", "surface.delete", "geometry.intersection"})
+_THREE_D_OPERATIONS = frozenset({
+    "point3d.upsert", "point3d.delete", "linear3d.upsert", "plane3d.upsert",
+    "geometry.parallelogram3d", "geometry.parallelepiped", "geometry.oriented_volume",
+    "surface.create", "surface.update", "surface.delete", "geometry.intersection",
+})
 _TWO_D_OPERATIONS = frozenset(
     {
         "point.upsert",
@@ -142,6 +160,13 @@ _TWO_D_OPERATIONS = frozenset(
         "linear_algebra.matrix_transform",
         "linear_algebra.determinant_area",
         "area.fill",
+        "geometry.polygon",
+        "geometry.angle_arc",
+        "geometry.right_angle_marker",
+        "geometry.projection",
+        "geometry.transformed_grid",
+        "geometry.subspace_region",
+        "geometry.oriented_area",
     }
 )
 
@@ -261,6 +286,13 @@ class SceneCommandService:
             _require_text(operation, "end")
             _require_choice_value(operation, "style", _STYLE_VALUES, default="solid")
             _require_choice_value(operation, "role", _ROLE_VALUES, default="primary")
+        elif name == "linear3d.upsert":
+            _require_text(operation, "alias")
+            _require_choice(operation, "kind", frozenset({"segment", "vector"}))
+            _require_coordinates(operation.get("start"), dimensions=3)
+            _require_coordinates(operation.get("end"), dimensions=3)
+            _require_choice_value(operation, "style", _STYLE_VALUES, default="solid")
+            _require_choice_value(operation, "role", _ROLE_VALUES, default="primary")
         elif name == "point3d.upsert":
             _require_text(operation, "alias")
             _require_coordinates(operation.get("coordinates"), dimensions=3)
@@ -273,6 +305,14 @@ class SceneCommandService:
             _require_text(operation, "alias")
             _require_text(operation, "text")
             _require_point(operation.get("position"), field_name="position")
+        elif name == "annotation.formula":
+            _require_text(operation, "alias")
+            _require_text(operation, "text")
+            position = operation.get("position")
+            if isinstance(position, (list, tuple)) and len(position) == 3:
+                _require_coordinates(position, dimensions=3)
+            else:
+                _require_point(position, field_name="position")
         elif name in {"surface.create", "surface.update"}:
             _require_text(operation, "alias")
             _require_choice(operation, "kind", _CURVE_KINDS)
@@ -298,6 +338,87 @@ class SceneCommandService:
             _require_finite_number(interval[0], "interval[0]")
             _require_finite_number(interval[1], "interval[1]")
             _require_text(operation, "alias")
+        elif name == "geometry.polygon":
+            vertices = operation.get("vertices")
+            if not isinstance(vertices, (list, tuple)) or len(vertices) < 3:
+                raise CommandError("geometry.polygon.vertices 至少需要三个顶点。")
+            for vertex in vertices:
+                _point(vertex, "geometry.polygon.vertices")
+            _validate_opacity(operation.get("opacity", 0.24))
+        elif name in {"geometry.angle_arc", "geometry.right_angle_marker"}:
+            _require_text(operation, "alias")
+            _point(operation.get("vertex"), "vertex")
+            _point(operation.get("first"), "first")
+            _point(operation.get("second"), "second")
+            size_key = "radius" if name == "geometry.angle_arc" else "size"
+            size = _require_finite_number(operation.get(size_key), size_key)
+            if size <= 0:
+                raise CommandError(f"{size_key} 必须为正数。")
+        elif name == "geometry.projection":
+            _require_coordinates(operation.get("vector"), dimensions=2)
+            direction = _require_coordinates(operation.get("direction"), dimensions=2)
+            if math.hypot(*direction) <= 1e-12:
+                raise CommandError("geometry.projection.direction 不能是零向量。")
+            for key in ("result_alias", "foot_alias", "residual_alias"):
+                _require_text(operation, key)
+        elif name == "geometry.transformed_grid":
+            _validate_matrix_2(operation.get("matrix"), field_name="matrix")
+            _validate_bounds(operation.get("bounds"))
+            step = _require_finite_number(operation.get("step", 1.0), "step")
+            if step <= 0:
+                raise CommandError("step 必须为正数。")
+        elif name == "geometry.subspace_region":
+            basis = operation.get("basis")
+            if not isinstance(basis, (list, tuple)) or not basis or len(basis) > 2:
+                raise CommandError("basis 必须包含 1 到 2 个二维向量。")
+            for vector in basis:
+                _require_coordinates(vector, dimensions=2)
+            _validate_bounds(operation.get("bounds"))
+            _validate_opacity(operation.get("opacity", 0.2))
+        elif name == "geometry.staged_transform":
+            matrices = operation.get("matrices")
+            points = operation.get("points")
+            aliases = operation.get("aliases")
+            if not isinstance(matrices, (list, tuple)) or not matrices:
+                raise CommandError("matrices 必须是非空矩阵序列。")
+            if not isinstance(points, (list, tuple)) or not points:
+                raise CommandError("points 必须是非空二维点序列。")
+            if not isinstance(aliases, (list, tuple)) or len(aliases) != len(points):
+                raise CommandError("aliases 必须与 points 长度一致。")
+            for matrix in matrices:
+                _validate_matrix_2(matrix, field_name="matrices")
+            for point in points:
+                _require_coordinates(point, dimensions=2)
+            for alias in aliases:
+                if not isinstance(alias, str) or not alias.strip():
+                    raise CommandError("aliases 必须包含非空字符串。")
+        elif name == "geometry.oriented_area":
+            vectors = operation.get("vectors")
+            if not isinstance(vectors, (list, tuple)) or len(vectors) != 2:
+                raise CommandError("vectors 必须包含两个二维向量。")
+            for vector in vectors:
+                _require_coordinates(vector, dimensions=2)
+        elif name == "plane3d.upsert":
+            _require_text(operation, "alias")
+            _require_coordinates(operation.get("origin"), dimensions=3)
+            normal = _require_coordinates(operation.get("normal"), dimensions=3)
+            if math.sqrt(sum(value * value for value in normal)) <= 1e-12:
+                raise CommandError("plane3d.normal 不能是零向量。")
+            size = _require_finite_number(operation.get("size", 2.0), "size")
+            if size <= 0:
+                raise CommandError("plane3d.size 必须为正数。")
+            _validate_opacity(operation.get("opacity", 0.24))
+        elif name in {"geometry.parallelogram3d", "geometry.parallelepiped", "geometry.oriented_volume"}:
+            _require_text(operation, "alias")
+            _require_coordinates(operation.get("origin"), dimensions=3)
+            vectors = operation.get("vectors")
+            required = 2 if name == "geometry.parallelogram3d" else 3
+            if not isinstance(vectors, (list, tuple)) or len(vectors) != required:
+                raise CommandError(f"{name}.vectors 必须包含 {required} 个三维向量。")
+            for vector in vectors:
+                _require_coordinates(vector, dimensions=3)
+            if name != "geometry.oriented_volume":
+                _validate_opacity(operation.get("opacity", 0.24))
         elif name == "linear_algebra.matrix_transform":
             matrix = operation.get("matrix")
             if not isinstance(matrix, (list, tuple)) or len(matrix) != 2 or any(
@@ -560,6 +681,33 @@ def _point(value: Any, field_name: str) -> tuple[float, float]:
     if not all(math.isfinite(item) for item in point):
         raise CommandError(f"{field_name} 必须包含有限数。")
     return point
+
+
+def _validate_matrix_2(value: Any, *, field_name: str) -> tuple[tuple[float, float], tuple[float, float]]:
+    if not isinstance(value, (list, tuple)) or len(value) != 2 or any(
+        not isinstance(row, (list, tuple)) or len(row) != 2 for row in value
+    ):
+        raise CommandError(f"{field_name} 必须是 2x2 矩阵。")
+    rows = []
+    for row in value:
+        rows.append(tuple(_require_finite_number(item, field_name) for item in row))
+    return rows[0], rows[1]  # type: ignore[return-value]
+
+
+def _validate_bounds(value: Any) -> tuple[float, float, float, float]:
+    if not isinstance(value, (list, tuple)) or len(value) != 4:
+        raise CommandError("bounds 必须是 [xmin, xmax, ymin, ymax]。")
+    bounds = tuple(_require_finite_number(item, "bounds") for item in value)
+    if bounds[0] >= bounds[1] or bounds[2] >= bounds[3]:
+        raise CommandError("bounds 的最小值必须小于最大值。")
+    return bounds  # type: ignore[return-value]
+
+
+def _validate_opacity(value: Any) -> float:
+    opacity = _require_finite_number(value, "opacity")
+    if not 0 < opacity <= 1:
+        raise CommandError("opacity 必须在 (0, 1] 范围内。")
+    return opacity
 
 
 def _require_finite_number(value: Any, field_name: str) -> float:

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from math import hypot
+from math import acos, atan2, cos, hypot, pi, sin
 
 import numpy as np
 import pyvista as pv
@@ -73,6 +73,7 @@ class GeometrySceneController:
         # 持久化演员与其就地更新的网格，键为演员名。
         self._meshes: dict[str, pv.PolyData] = {}
         self._actors: dict[str, object] = {}
+        self._teaching_actors: dict[str, object] = {}
 
     @staticmethod
     def point_actor_name(point_id: str) -> str:
@@ -241,6 +242,173 @@ class GeometrySceneController:
         self._draft_kind = None
         self._draft_start = None
         self._draft_end = None
+
+    def clear_teaching(self) -> None:
+        """Remove actors created by linear-algebra teaching primitives."""
+        for name in tuple(self._teaching_actors):
+            self.plotter.remove_actor(name, render=False)
+        self._teaching_actors.clear()
+
+    def add_teaching_polygon(
+        self,
+        alias: str,
+        vertices: Iterable[tuple[float, float]],
+        *,
+        color: str = "#5b8def",
+        opacity: float = 0.24,
+        outline: bool = True,
+    ) -> None:
+        points = tuple((float(x), float(y)) for x, y in vertices)
+        if len(points) < 3:
+            raise ValueError("A teaching polygon requires at least three vertices")
+        mesh = _polygon_mesh(points)
+        name = f"geometry:teaching:polygon:{alias}"
+        self._replace_teaching_actor(name, mesh, color=color, opacity=opacity, show_edges=outline)
+
+    def add_teaching_angle_arc(
+        self,
+        alias: str,
+        vertex: tuple[float, float],
+        first: tuple[float, float],
+        second: tuple[float, float],
+        *,
+        radius: float,
+        color: str = "#d97845",
+    ) -> None:
+        mesh = _angle_arc_mesh(vertex, first, second, radius)
+        name = f"geometry:teaching:arc:{alias}"
+        self._replace_teaching_actor(name, mesh, color=color, line_width=3.0)
+
+    def add_teaching_right_angle_marker(
+        self,
+        alias: str,
+        vertex: tuple[float, float],
+        first: tuple[float, float],
+        second: tuple[float, float],
+        *,
+        size: float,
+        color: str = "#d97845",
+    ) -> None:
+        mesh = _right_angle_mesh(vertex, first, second, size)
+        name = f"geometry:teaching:right-angle:{alias}"
+        self._replace_teaching_actor(name, mesh, color=color, line_width=2.5)
+
+    def add_teaching_projection(
+        self,
+        vector: tuple[float, float],
+        direction: tuple[float, float],
+        *,
+        result_alias: str,
+        foot_alias: str,
+        residual_alias: str,
+        color: str = "#2777b6",
+    ) -> None:
+        vx, vy = vector
+        dx, dy = direction
+        denominator = dx * dx + dy * dy
+        if denominator <= 1e-12:
+            raise ValueError("Projection direction cannot be zero")
+        scale = (vx * dx + vy * dy) / denominator
+        foot = (scale * dx, scale * dy)
+        projection = _segments_mesh([((0.0, 0.0), foot)])
+        residual = _segments_mesh([(foot, (vx, vy))])
+        self._replace_teaching_actor(
+            f"geometry:teaching:projection:{result_alias}", projection, color=color, line_width=3.0
+        )
+        self._replace_teaching_actor(
+            f"geometry:teaching:projection:{residual_alias}", residual, color="#d97845", line_width=2.0
+        )
+        foot_mesh = _point_mesh(*foot)
+        self._replace_teaching_actor(
+            f"geometry:teaching:projection:{foot_alias}", foot_mesh, color="#d97845", point_size=10.0, render_points_as_spheres=True
+        )
+        endpoint = _point_mesh(vx, vy)
+        self._replace_teaching_actor(
+            f"geometry:teaching:projection:endpoint", endpoint, color="#2777b6", point_size=10.0, render_points_as_spheres=True
+        )
+
+    def add_teaching_transformed_grid(
+        self,
+        matrix: tuple[tuple[float, float], tuple[float, float]],
+        bounds: tuple[float, float, float, float],
+        *,
+        step: float = 1.0,
+        color: str = "#5b8def",
+    ) -> None:
+        original = _grid_mesh(bounds, step)
+        transformed = _grid_mesh(bounds, step, matrix=matrix)
+        self._replace_teaching_actor("geometry:teaching:grid:original", original, color="#a6afbd", line_width=1.0)
+        self._replace_teaching_actor("geometry:teaching:grid:transformed", transformed, color=color, line_width=2.0)
+
+    def add_teaching_subspace_region(
+        self,
+        basis: Iterable[tuple[float, float]],
+        bounds: tuple[float, float, float, float],
+        *,
+        color: str = "#4c9f70",
+        opacity: float = 0.2,
+    ) -> None:
+        vectors = tuple((float(x), float(y)) for x, y in basis)
+        if len(vectors) == 1:
+            vx, vy = vectors[0]
+            length = max(abs(bounds[1] - bounds[0]), abs(bounds[3] - bounds[2]))
+            norm = hypot(vx, vy)
+            if norm <= 1e-12:
+                raise ValueError("Subspace basis cannot be zero")
+            unit = (vx / norm, vy / norm)
+            segment = ((-length * unit[0], -length * unit[1]), (length * unit[0], length * unit[1]))
+            mesh = _segments_mesh([segment])
+        else:
+            mesh = _polygon_mesh(((0.0, 0.0), vectors[0], (vectors[0][0] + vectors[1][0], vectors[0][1] + vectors[1][1]), vectors[1]))
+        self._replace_teaching_actor("geometry:teaching:subspace", mesh, color=color, opacity=opacity, show_edges=True)
+
+    def add_teaching_staged_transform(
+        self,
+        matrices: Iterable[tuple[tuple[float, float], tuple[float, float]]],
+        points: Iterable[tuple[float, float]],
+        aliases: Iterable[str],
+        *,
+        color: str = "#2777b6",
+    ) -> None:
+        stage_points = [(float(x), float(y)) for x, y in points]
+        for stage_index, matrix in enumerate(matrices, start=1):
+            stage_points = [_mat_vec(matrix, point) for point in stage_points]
+            mesh = pv.PolyData(np.asarray([(x, y, 0.0) for x, y in stage_points], dtype=float))
+            self._replace_teaching_actor(
+                f"geometry:teaching:stage:{stage_index}", mesh, color=color, point_size=10.0, render_points_as_spheres=True
+            )
+        # Keep aliases meaningful in exported actor metadata without affecting hit testing.
+        for alias, point in zip(aliases, stage_points):
+            mesh = _point_mesh(*point)
+            self._replace_teaching_actor(f"geometry:teaching:stage-point:{alias}", mesh, color="#d64545", point_size=9.0, render_points_as_spheres=True)
+
+    def add_teaching_oriented_area(
+        self,
+        vectors: Iterable[tuple[float, float]],
+        *,
+        alias: str = "oriented-area",
+        color: str = "#d97845",
+        opacity: float = 0.28,
+    ) -> None:
+        values = tuple((float(x), float(y)) for x, y in vectors)
+        if len(values) != 2:
+            raise ValueError("Oriented area requires two vectors")
+        a, b = values
+        self._replace_teaching_actor(
+            f"geometry:teaching:oriented-area:{alias}",
+            _polygon_mesh(((0.0, 0.0), a, (a[0] + b[0], a[1] + b[1]), b)),
+            color=color,
+            opacity=opacity,
+            show_edges=True,
+        )
+
+    def _replace_teaching_actor(self, name: str, mesh: pv.PolyData, **kwargs: object) -> object:
+        old = self._teaching_actors.get(name)
+        if old is not None:
+            self.plotter.remove_actor(name, render=False)
+        actor = self.plotter.add_mesh(mesh, name=name, render=False, **kwargs)
+        self._teaching_actors[name] = actor
+        return actor
 
     def _drop_actor(self, name: str) -> None:
         """移除演员并清理持久化缓存。"""
@@ -697,3 +865,84 @@ def _styled_segment_mesh(
             )
         )
     return _segments_mesh(pieces)
+
+
+def _polygon_mesh(vertices: tuple[tuple[float, float], ...]) -> pv.PolyData:
+    points = np.asarray([(x, y, 0.0) for x, y in vertices], dtype=float)
+    faces = np.asarray([len(points), *range(len(points))], dtype=np.int64)
+    return pv.PolyData(points, faces)
+
+
+def _angle_arc_mesh(
+    vertex: tuple[float, float],
+    first: tuple[float, float],
+    second: tuple[float, float],
+    radius: float,
+) -> pv.PolyData:
+    v1 = (first[0] - vertex[0], first[1] - vertex[1])
+    v2 = (second[0] - vertex[0], second[1] - vertex[1])
+    n1 = hypot(*v1)
+    n2 = hypot(*v2)
+    if n1 <= 1e-12 or n2 <= 1e-12 or radius <= 0:
+        return pv.PolyData()
+    start = atan2(v1[1], v1[0])
+    end = atan2(v2[1], v2[0])
+    delta = (end - start) % (2 * pi)
+    if delta > pi:
+        delta -= 2 * pi
+    angles = np.linspace(start, start + delta, 32)
+    points = np.asarray(
+        [(vertex[0] + radius * cos(angle), vertex[1] + radius * sin(angle), 0.0) for angle in angles],
+        dtype=float,
+    )
+    lines = np.asarray([2, *range(len(points))], dtype=np.int64)
+    return pv.PolyData(points, lines)
+
+
+def _right_angle_mesh(
+    vertex: tuple[float, float],
+    first: tuple[float, float],
+    second: tuple[float, float],
+    size: float,
+) -> pv.PolyData:
+    v1 = (first[0] - vertex[0], first[1] - vertex[1])
+    v2 = (second[0] - vertex[0], second[1] - vertex[1])
+    n1 = hypot(*v1)
+    n2 = hypot(*v2)
+    if n1 <= 1e-12 or n2 <= 1e-12 or size <= 0:
+        return pv.PolyData()
+    u1 = (v1[0] / n1, v1[1] / n1)
+    u2 = (v2[0] / n2, v2[1] / n2)
+    p1 = (vertex[0] + size * u1[0], vertex[1] + size * u1[1])
+    p2 = (vertex[0] + size * (u1[0] + u2[0]), vertex[1] + size * (u1[1] + u2[1]))
+    p3 = (vertex[0] + size * u2[0], vertex[1] + size * u2[1])
+    return _segments_mesh(((p1, p2), (p2, p3)))
+
+
+def _mat_vec(matrix: tuple[tuple[float, float], tuple[float, float]], point: tuple[float, float]) -> tuple[float, float]:
+    return (
+        matrix[0][0] * point[0] + matrix[0][1] * point[1],
+        matrix[1][0] * point[0] + matrix[1][1] * point[1],
+    )
+
+
+def _grid_mesh(
+    bounds: tuple[float, float, float, float],
+    step: float,
+    *,
+    matrix: tuple[tuple[float, float], tuple[float, float]] | None = None,
+) -> pv.PolyData:
+    xmin, xmax, ymin, ymax = bounds
+    if step <= 0:
+        return pv.PolyData()
+    segments: list[tuple[tuple[float, float], tuple[float, float]]] = []
+    x_values = np.arange(xmin, xmax + step * 0.5, step)
+    y_values = np.arange(ymin, ymax + step * 0.5, step)
+    for x in x_values:
+        segments.append(((float(x), ymin), (float(x), ymax)))
+    for y in y_values:
+        segments.append(((xmin, float(y)), (xmax, float(y))))
+    if matrix is None:
+        return _segments_mesh(segments)
+    transformed = [(_mat_vec(matrix, start), _mat_vec(matrix, end)) for start, end in segments]
+    return _segments_mesh(transformed)
