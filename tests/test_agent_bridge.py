@@ -115,7 +115,7 @@ def test_web_host_emits_a_json_safe_math_case_event() -> None:
 
     host.show_math_case(
         SimpleNamespace(
-            id="vector-subtraction",
+            id="ch01.ops.subtraction",
             category="向量",
             name="向量减法",
             formula="a-b=(1,-1)",
@@ -126,7 +126,7 @@ def test_web_host_emits_a_json_safe_math_case_event() -> None:
     )
 
     assert emitted[-1]["type"] == "math_case"
-    assert emitted[-1]["payload"]["case_id"] == "vector-subtraction"
+    assert emitted[-1]["payload"]["case_id"] == "ch01.ops.subtraction"
 
 
 def test_web_host_replays_latest_case_after_document_load() -> None:

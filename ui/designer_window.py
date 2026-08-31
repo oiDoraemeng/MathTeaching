@@ -1842,7 +1842,7 @@ class MainWindow:
         self.layers = available_layers
         self._sync_panel_layers(self.layers)
         self.algebra_panel.set_status("三维场景已准备好")
-        for operation in tuple(self._agent_geometry3d.values()):
+        for operation in tuple(getattr(self, "_agent_geometry3d", {}).values()):
             if operation.get("op") == "linear3d.upsert":
                 self._command_upsert_linear3d(operation)
             elif operation.get("op") == "plane3d.upsert":
@@ -1901,7 +1901,7 @@ class MainWindow:
             self.geometry_controller.add_linear(linear)
         for annotation in getattr(self, "annotations", []):
             self.geometry_controller.add_annotation(annotation)
-        for operation in tuple(self._agent_teaching_2d.values()):
+        for operation in tuple(getattr(self, "_agent_teaching_2d", {}).values()):
             self._command_teaching_geometry(operation)
         self._render_agent_areas()
         self._sync_panel_layers(self._two_d_panel_layers())

@@ -133,7 +133,7 @@ def test_math_case_event_is_valid_without_a_session() -> None:
             "request_id": "case-1",
             "session_id": "",
             "payload": {
-                "case_id": "vector-subtraction",
+                "case_id": "ch01.ops.subtraction",
                 "name": "向量减法",
                 "formula": "a-b=(1,-1)",
                 "steps": ["将减法转为加上相反向量"],
@@ -143,4 +143,4 @@ def test_math_case_event_is_valid_without_a_session() -> None:
     )
 
     assert envelope.type == "math_case"
-    assert envelope.payload["case_id"] == "vector-subtraction"
+    assert envelope.payload["case_id"] == "ch01.ops.subtraction"
