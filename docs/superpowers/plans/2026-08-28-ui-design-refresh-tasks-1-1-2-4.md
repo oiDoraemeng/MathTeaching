@@ -539,9 +539,3 @@
   Run: `uv run pytest tests/test_ui_typography.py tests/test_algebra_panel.py tests/test_ui_tokens.py tests/test_main_window_layout.py -q`
 
   Expected: PASS. Commit with `git add ui/algebra_panel.py widgets/LightRotationWidget.py ui/styles/base.qss.in tests && git commit -m "style: normalize Qt typography hierarchy"`.
-
-
-
-
-
-
