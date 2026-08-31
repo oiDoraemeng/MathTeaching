@@ -14,11 +14,13 @@
 
 ## What Changes
 
-- **设计令牌单一事实源**：新增 `ui/tokens.py` 定义语义化颜色、字号阶梯、间距、圆角、阴影令牌，导出 Qt QSS 生成器与 Web CSS 变量输出；`ui/agent_web` 构建时消费同一份令牌。
-- **明暗双主题**：Qt 侧提供 light/dark 两套完整令牌与主题切换入口（设置面板 + QSettings 持久化）；WebView 不再跟随 `prefers-color-scheme`，改为接收宿主通过 bridge 注入的主题模式与令牌。
-- **主窗口信息架构**：新增 32px 底部状态栏（当前 2D/3D 模式、渲染状态、Agent 连接状态、主题切换）；统一三栏面板标题层级（20px → 15px）；修正窗口标题。
+- **视觉设计方向**：确立"现代教育工具风"（GeoGebra 教学亲和力 × Linear 现代精致感）：色阶分隔替代面板边框、图层行卡片化（4px 左色条 + hover/选中态）、阴影两级表达层级、圆角统一 8/10px、控件高度三档 36/32/28、动效三档 120/150/200ms、键盘焦点环——从"边框网格"观感升级为"安静有序"的现代界面。
+- **设计令牌单一事实源**：`design/tokens.json` 定义语义化颜色、字号阶梯、间距、圆角、阴影、动效令牌（light/dark 双主题），Python typed loader 渲染 Qt QSS，`ui/agent_web` 构建时消费同一份令牌生成 CSS 变量。
+- **明暗双主题**：以 `design/tokens.json` 为令牌单一源（Python typed loader + 前端构建消费）；Qt 侧提供 light/dark/system 三态切换入口（状态栏 + QSettings 持久化）；WebView 不再跟随 `prefers-color-scheme`，首帧主题由 URL 参数 + DocumentCreation 用户脚本保证，运行时切换经 bridge `theme_state` 事件（仅含模式）。
+- **主窗口信息架构**：新增 30px 底部状态栏（当前 2D/3D 模式、激活工具、渲染状态、Agent 连接状态、主题切换）；统一三栏面板标题层级（20px → 15px）；修正窗口标题。
 - **图标统一**：Qt 侧引入内嵌 lucide SVG 图标渲染（与 Web 侧同名同形），替换全部 Unicode 字符按钮；悬浮工具栏、2D 工具栏、场景设置弹层样式令牌化。
-- **布局行为**：右侧 Agent 面板由固定 440px 改为可拖拽 360–560px（分隔手柄），左栏保持 300–360px；删除死样式、死选择器与废弃文件。
+- **布局行为**：右侧 Agent 面板由固定 440px 改为可拖拽 360–560px，左侧代数面板由 300–360px 约束改为可拖拽 260–420px（默认 320，原约束区间放宽以释放可调空间）；两侧均为专用 5px 分隔手柄（双击复位默认值，宽度持久化）；删除死样式、死选择器与废弃文件。
+- **对齐后续实装的代数案例 UI**：将已实装的教学案例体系纳入设计规范——Qt 侧案例弹窗（`LinearAlgebraCasePopup`，当前无任何样式覆盖）纳入 QSS 模板与弹层规范；Web 侧案例标签页增加类型区分图标、案例阅读页（`MathCaseView`）卡片从 5px 圆角+边框的旧样式升级为令牌化卡片规范；案例标签保持瞬态语义（不持久化）。
 
 ## 非目标
 
@@ -30,12 +32,12 @@
 
 ## 成功标准
 
-浅色与深色主题下，主窗口三栏、悬浮工具栏、弹层、对话框与右侧 Agent 侧栏呈现同一套颜色、字体、圆角与阴影语言；切换主题时 Qt 侧与 Web 侧同步变化且无需重启；Agent 面板在 360/440/560px 宽度下布局完整；全部 Unicode 图标按钮被 SVG 图标替代；死样式、废弃窗口文件与不一致注释被清除；现有 2D/3D 渲染回归与 Agent 桥接测试全部通过。
+浅色与深色主题下，主窗口三栏、悬浮工具栏、弹层、对话框与右侧 Agent 侧栏呈现同一套颜色、字体、圆角与阴影语言；切换主题时 Qt 侧与 Web 侧同步变化且无需重启；左侧代数面板在 260/320/420px、Agent 面板在 360/440/560px 宽度下布局完整；全部 Unicode 图标按钮被 SVG 图标替代；死样式、废弃窗口文件与不一致注释被清除；现有 2D/3D 渲染回归与 Agent 桥接测试全部通过。
 
 ## Impact
 
 - **UI（Qt）**：`designer_window.py`（状态栏、样式重写、悬浮层样式）、`algebra_panel.py`、`scene_settings.py`、`two_d_tools.py`、`agent_sidebar.py`、`lighting_dialog.py`、`widgets/LightRotationWidget.py`；删除 `ui/main_window.py`；`main_window.ui` 移除死配置。
 - **UI（Web）**：`ui/agent_web` 的 `theme.css` 改为令牌生成产物，`qtBridge`/reducer 增加主题状态接收，组件移除硬编码颜色。
-- **桥接**：`agent/ui_projection.py`/`web_protocol.py` 增加主题初始化与变更事件（纯 JSON，不含敏感信息）。
-- **构建**：前端构建新增令牌生成步骤（Node 脚本读取 Python 令牌导出的 JSON）；Python 测试套件仍为主验证。
+- **桥接**：`agent/web_protocol.py` 增加 `theme_state` 事件类型（纯 JSON、仅模式字段，不含敏感信息）。
+- **构建**：前端构建新增令牌生成步骤（Node 脚本读取 `design/tokens.json`，缺失时内置浅色 fallback）；Python 测试套件仍为主验证。
 - **依赖**：Qt 侧图标使用内嵌 SVG 字符串（`QtSvg` 已随 PySide6 提供），不新增第三方依赖。
