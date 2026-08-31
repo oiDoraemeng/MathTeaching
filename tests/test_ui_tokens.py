@@ -108,7 +108,7 @@ def test_overlay_and_dialog_chrome_use_token_metrics(theme: str) -> None:
         "#intersectionPopup",
         "#functionCatalogPopup",
         "#formulaEditorPopup",
-        "#linearAlgebraCasePopup",
+        "#linearAlgebraDialog",
     ):
         block = _block_for_selector(qss, selector)
         assert f"background: {flat['bg_overlay']}" in block
@@ -167,7 +167,7 @@ def test_algebra_panel_popups_sync_overlay_theme() -> None:
         (panel.intersection_popup, "intersectionPopup"),
         (panel.catalog_popup, "functionCatalogPopup"),
         (panel.formula_popup, "formulaEditorPopup"),
-        (panel.linear_algebra_popup, "linearAlgebraCasePopup"),
+        (panel.linear_algebra_popup, "linearAlgebraDialog"),
     )
     for popup, object_name in popup_widgets:
         assert popup.objectName() == object_name

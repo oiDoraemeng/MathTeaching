@@ -11,10 +11,14 @@ QMainWindow, #viewportHost { background: $bg_canvas; color: $text_primary; }
 #catalogCategory { font-weight: 700; padding: ${space_s2}px 2px 2px 2px; }
 #algebraStatus { padding-top: 2px; }
 #algebraStatus[isError="true"] { color: $status_error; }
-#linearAlgebraCaseRow { background: $bg_elevated; border: 1px solid transparent; border-radius: ${radius_md}px; padding: ${space_s2}px ${space_s3}px; }
-#linearAlgebraCaseRow:hover { background: $accent_soft_bg; border-left: 3px solid $accent_default; }
-#linearAlgebraCaseTitle { color: $text_primary; font-size: ${size_body}px; font-weight: 600; }
-#linearAlgebraCaseSummary { color: $text_secondary; font-size: ${size_caption}px; }
+#linearAlgebraSearch { min-height: 32px; padding: 2px ${space_s2}px; }
+#linearAlgebraTree { background: $bg_overlay; color: $text_primary; border: 1px solid $border_subtle; border-radius: ${radius_md}px; outline: 0; }
+#linearAlgebraTree::item { min-height: 30px; padding: 2px ${space_s1}px; }
+#linearAlgebraTree::item:hover { background: $accent_soft_bg; }
+#linearAlgebraTree::item:selected { background: $accent_soft_bg; color: $text_primary; border-left: 2px solid $accent_default; }
+#linearAlgebraExpandButton, #linearAlgebraCollapseButton { min-width: 32px; min-height: 32px; }
+#linearAlgebraContentTitle { color: $text_primary; font-size: ${size_subtitle}px; font-weight: 600; }
+#linearAlgebraFormula { color: $accent_default; }
 #appStatusBar { background: $bg_panel; border-top: 1px solid $border_default; }
 #appStatusBar QLabel { color: $text_secondary; font-size: ${size_caption}px; }
 #appStatusBar QToolButton { min-width: 24px; min-height: 24px; border-radius: ${radius_sm}px; }
@@ -64,7 +68,7 @@ QGroupBox::title {
   background: $bg_overlay; border: 1px solid $border_subtle; border-radius: ${radius_md}px;
 }
 #layerSettingsPopup, #geometrySettingsPopup, #intersectionPopup, #functionCatalogPopup, #formulaEditorPopup,
-#linearAlgebraCasePopup {
+#linearAlgebraDialog {
   background: $bg_overlay; border: 1px solid $border_default; border-radius: ${radius_lg}px;
 }
 #settingsPopupTitle { color: $text_primary; font-size: ${size_subtitle}px; font-weight: 600; }

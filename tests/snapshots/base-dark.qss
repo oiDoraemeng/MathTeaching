@@ -11,10 +11,14 @@ QMainWindow, #viewportHost { background: #1a1b1e; color: #e8eaed; }
 #catalogCategory { font-weight: 700; padding: 8px 2px 2px 2px; }
 #algebraStatus { padding-top: 2px; }
 #algebraStatus[isError="true"] { color: #f48771; }
-#linearAlgebraCaseRow { background: #26282c; border: 1px solid transparent; border-radius: 8px; padding: 8px 12px; }
-#linearAlgebraCaseRow:hover { background: rgba(76,158,232,.16); border-left: 3px solid #4c9ee8; }
-#linearAlgebraCaseTitle { color: #e8eaed; font-size: 12px; font-weight: 600; }
-#linearAlgebraCaseSummary { color: #b3b8c0; font-size: 11px; }
+#linearAlgebraSearch { min-height: 32px; padding: 2px 8px; }
+#linearAlgebraTree { background: #24262a; color: #e8eaed; border: 1px solid #33363b; border-radius: 8px; outline: 0; }
+#linearAlgebraTree::item { min-height: 30px; padding: 2px 4px; }
+#linearAlgebraTree::item:hover { background: rgba(76,158,232,.16); }
+#linearAlgebraTree::item:selected { background: rgba(76,158,232,.16); color: #e8eaed; border-left: 2px solid #4c9ee8; }
+#linearAlgebraExpandButton, #linearAlgebraCollapseButton { min-width: 32px; min-height: 32px; }
+#linearAlgebraContentTitle { color: #e8eaed; font-size: 13px; font-weight: 600; }
+#linearAlgebraFormula { color: #4c9ee8; }
 #appStatusBar { background: #202124; border-top: 1px solid #3c4046; }
 #appStatusBar QLabel { color: #b3b8c0; font-size: 11px; }
 #appStatusBar QToolButton { min-width: 24px; min-height: 24px; border-radius: 4px; }
@@ -64,7 +68,7 @@ QGroupBox::title {
   background: #24262a; border: 1px solid #33363b; border-radius: 8px;
 }
 #layerSettingsPopup, #geometrySettingsPopup, #intersectionPopup, #functionCatalogPopup, #formulaEditorPopup,
-#linearAlgebraCasePopup {
+#linearAlgebraDialog {
   background: #24262a; border: 1px solid #3c4046; border-radius: 10px;
 }
 #settingsPopupTitle { color: #e8eaed; font-size: 13px; font-weight: 600; }
