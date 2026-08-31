@@ -5,7 +5,8 @@ from typing import Literal
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QFrame, QLabel, QToolButton, QHBoxLayout
 
-from ui.icons import apply_icon
+from ui.icons import apply_icon, icon_color, retint_icons
+from ui.tokens import ThemeName
 
 ThemeMode = Literal["light", "dark", "system"]
 
@@ -35,7 +36,14 @@ class AppStatusBar(QFrame):
         layout.addStretch(1)
         layout.addWidget(self.theme_button)
         self._theme_mode: ThemeMode = "system"
+        self._icon_theme: ThemeName = "light"
         self.set_theme_mode(self._theme_mode)
+
+    def set_theme(self, theme: ThemeName) -> None:
+        """Re-tint the status bar icon for the resolved theme."""
+        self._icon_theme = theme
+        self.set_theme_mode(self._theme_mode)
+        retint_icons(self, theme)
 
     def set_scene_mode(self, mode) -> None:
         self.scene_label.setText("2D" if getattr(mode, "value", mode) in ("2d", "2D") else "3D")
@@ -59,7 +67,7 @@ class AppStatusBar(QFrame):
         label = labels[mode]
         self.theme_button.setToolTip(f"{label}（点击切换）")
         self.theme_button.setAccessibleName(label)
-        apply_icon(self.theme_button, icons[mode], "#687386", icon_size=16, hit_size=28)
+        apply_icon(self.theme_button, icons[mode], icon_color(self._icon_theme, "muted"), icon_size=16, hit_size=28)
 
     @property
     def theme_mode(self) -> ThemeMode:

@@ -4,11 +4,14 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from types import MappingProxyType
+from typing import Literal
 
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QColor, QIcon, QPainter, QPixmap
 from PySide6.QtSvg import QSvgRenderer
-from PySide6.QtWidgets import QAbstractButton, QApplication
+from PySide6.QtWidgets import QAbstractButton, QApplication, QWidget
+
+from ui.tokens import ThemeName, flatten_theme
 
 
 _SVG_HEAD = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
@@ -48,11 +51,24 @@ LUCIDE_SVG: Mapping[str, str] = MappingProxyType(
 _ICON_CACHE: dict[tuple[str, str, int, float], QIcon] = {}
 
 
-def _rgba(color: QColor | str) -> str:
-    resolved = QColor(color) if isinstance(color, str) else QColor(color)
+def _svg_color(color: QColor | str) -> str:
+    """Return an SVG-compatible ``#RRGGBB`` string.
+
+    Qt's ``HexArgb`` form (``#AARRGGBB``) is *not* valid SVG/CSS, and Qt's own
+    SVG parser silently drops the stroke when it sees one, rendering a fully
+    transparent icon. Alpha is applied via painter opacity instead.
+    """
+    resolved = QColor(color)
     if not resolved.isValid():
         raise ValueError(f"invalid icon color: {color!r}")
-    return resolved.name(QColor.NameFormat.HexArgb)
+    return resolved.name(QColor.NameFormat.HexRgb)
+
+
+def _svg_alpha(color: QColor | str) -> float:
+    resolved = QColor(color)
+    if not resolved.isValid():
+        raise ValueError(f"invalid icon color: {color!r}")
+    return float(resolved.alphaF())
 
 
 def _screen_dpr(screen) -> float | None:
@@ -82,13 +98,14 @@ def icon(name: str, color: QColor | str, size: int = 16, dpr: float = 1.0) -> QI
         raise KeyError(name)
     if size <= 0 or dpr <= 0:
         raise ValueError("size and dpr must be positive")
-    rgba = _rgba(color)
-    key = (name, rgba, int(size), round(float(dpr), 2))
+    stroke = _svg_color(color)
+    alpha = _svg_alpha(color)
+    key = (name, f"{stroke}@{alpha:.3f}", int(size), round(float(dpr), 2))
     cached = _ICON_CACHE.get(key)
     if cached is not None:
         return cached
 
-    svg = LUCIDE_SVG[name].replace("currentColor", rgba).encode("utf-8")
+    svg = LUCIDE_SVG[name].replace("currentColor", stroke).encode("utf-8")
     renderer = QSvgRenderer(svg)
     if not renderer.isValid():
         raise ValueError(f"unable to render icon: {name}")
@@ -97,6 +114,8 @@ def icon(name: str, color: QColor | str, size: int = 16, dpr: float = 1.0) -> QI
     pixmap.fill(Qt.GlobalColor.transparent)
     painter = QPainter(pixmap)
     try:
+        if alpha < 1.0:
+            painter.setOpacity(alpha)
         renderer.render(painter)
     finally:
         painter.end()
@@ -106,6 +125,52 @@ def icon(name: str, color: QColor | str, size: int = 16, dpr: float = 1.0) -> QI
     return rendered
 
 
+IconRole = Literal["default", "active", "muted"]
+
+_ROLE_TOKENS: Mapping[IconRole, str] = MappingProxyType(
+    {
+        "default": "text_secondary",
+        "active": "accent_default",
+        "muted": "text_muted",
+    }
+)
+
+# Buttons remember how they were tinted so a theme switch can re-render them.
+# QSS cannot restyle a QIcon, so the pixmap has to be rebuilt by hand.
+_ICON_STATE_PROPERTY = "_kiro_icon_state"
+
+
+def icon_color(theme: ThemeName = "light", role: IconRole = "default") -> str:
+    """Return the token icon color for a theme and semantic role."""
+    if role not in _ROLE_TOKENS:
+        raise KeyError(role)
+    value = flatten_theme(theme)[_ROLE_TOKENS[role]]
+    return str(value)
+
+
+def retint_icons(root: QWidget, theme: ThemeName) -> int:
+    """Re-render every token-tinted icon under ``root`` for ``theme``.
+
+    Returns the number of buttons repainted so callers can assert on it.
+    """
+    repainted = 0
+    candidates: list[QAbstractButton] = []
+    if isinstance(root, QAbstractButton):
+        candidates.append(root)
+    candidates.extend(root.findChildren(QAbstractButton))
+    for button in candidates:
+        state = button.property(_ICON_STATE_PROPERTY)
+        if not state:
+            continue
+        name, role, icon_size = state
+        if name not in LUCIDE_SVG:
+            continue
+        button.setIcon(icon(name, icon_color(theme, role), icon_size, _button_dpr(button)))
+        button.setIconSize(QSize(icon_size, icon_size))
+        repainted += 1
+    return repainted
+
+
 def apply_icon(
     button: QAbstractButton,
     name: str,
@@ -113,9 +178,13 @@ def apply_icon(
     *,
     icon_size: int = 16,
     hit_size: int = 36,
+    role: IconRole = "default",
 ) -> None:
     """Apply a bundled icon while preserving the button's existing behavior."""
     button.setText("")
     button.setIcon(icon(name, color, icon_size, _button_dpr(button)))
     button.setIconSize(QSize(icon_size, icon_size))
     button.setFixedSize(hit_size, hit_size)
+    setter = getattr(button, "setProperty", None)
+    if callable(setter):
+        setter(_ICON_STATE_PROPERTY, (name, role, icon_size))

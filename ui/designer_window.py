@@ -47,11 +47,11 @@ from ui.algebra_panel import AlgebraPanel
 from ui.agent_sidebar import AgentSidebar
 from ui.agent_settings import AgentSettingsDialog
 from ui.lighting_dialog import LightingDialog
-from ui.icons import apply_icon
+from ui.icons import apply_icon, icon_color, retint_icons
 from ui.scene_settings import SceneSettingsPanel
 from ui.status_bar import AppStatusBar
 from ui.panel_resize_handle import PanelResizeSpec, _PanelResizeHandle
-from ui.tokens import apply_drop_shadow
+from ui.tokens import apply_drop_shadow, apply_rounded_overlay
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 from services.agent_worker import RuntimeTurnWorker
 from services.agent_provider import (
@@ -705,12 +705,13 @@ class MainWindow:
         self.viewport_toolbar = QFrame(self.viewport_host)
         self.viewport_toolbar.setObjectName("viewportToolbar")
         apply_drop_shadow(self.viewport_toolbar, "overlay")
+        apply_rounded_overlay(self.viewport_toolbar, "md")
         toolbar_layout = QVBoxLayout(self.viewport_toolbar)
         toolbar_layout.setContentsMargins(4, 4, 4, 4)
         toolbar_layout.setSpacing(4)
         self.scene_settings_button = QToolButton(self.viewport_toolbar)
         self.scene_settings_button.setToolTip("场景设置")
-        apply_icon(self.scene_settings_button, "settings-2", "#3f4c5c", icon_size=16, hit_size=36)
+        apply_icon(self.scene_settings_button, "settings-2", icon_color(getattr(self, "effective_theme", "light")), icon_size=16, hit_size=36)
         self.scene_mode_button = QToolButton(self.viewport_toolbar)
         self.scene_mode_button.setToolTip("切换二维和三维场景")
         self.scene_mode_button.setFixedSize(36, 36)
@@ -718,7 +719,7 @@ class MainWindow:
         self.agent_button.setObjectName("agentButton")
         self.agent_button.setToolTip("AI 教学助手")
         self.agent_button.setCheckable(True)
-        apply_icon(self.agent_button, "sparkles", "#3f4c5c", icon_size=16, hit_size=36)
+        apply_icon(self.agent_button, "sparkles", icon_color(getattr(self, "effective_theme", "light")), icon_size=16, hit_size=36)
         toolbar_layout.addWidget(self.scene_settings_button)
         toolbar_layout.addWidget(self.scene_mode_button)
         toolbar_layout.addWidget(self.agent_button)
@@ -3133,6 +3134,14 @@ class MainWindow:
         ):
             if widget is not None:
                 apply_drop_shadow(widget, "overlay", effective_theme)
+                # QSS cannot restyle a QIcon, so icons need an explicit repaint.
+                retint_icons(widget, effective_theme)
+        status_bar = getattr(self, "status_bar", None)
+        if status_bar is not None and hasattr(status_bar, "set_theme"):
+            status_bar.set_theme(effective_theme)
+        two_d_toolbar = getattr(self, "two_d_geometry_toolbar", None)
+        if two_d_toolbar is not None and hasattr(two_d_toolbar, "set_theme"):
+            two_d_toolbar.set_theme(effective_theme)
         agent_settings_dialog = getattr(self, "_agent_settings_dialog", None)
         if agent_settings_dialog is not None:
             agent_settings_dialog.set_effective_theme(effective_theme)

@@ -6,8 +6,8 @@ from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnima
 from PySide6.QtWidgets import QFrame, QToolButton, QVBoxLayout, QWidget
 
 from models.geometry_2d import LinearKind
-from ui.icons import apply_icon
-from ui.tokens import apply_drop_shadow
+from ui.icons import apply_icon, icon_color, retint_icons
+from ui.tokens import ThemeName, apply_drop_shadow, apply_rounded_overlay
 
 ToolKind = LinearKind | str
 
@@ -20,12 +20,14 @@ class TwoDGeometryToolbar(QFrame):
     undo_requested = Signal()
     redo_requested = Signal()
 
-    def __init__(self, parent: QWidget) -> None:
+    def __init__(self, parent: QWidget, theme: ThemeName = "light") -> None:
         super().__init__(parent)
         self._active_tool: ToolKind | None = None
+        self._theme: ThemeName = theme
         self.setObjectName("twoDGeometryToolbar")
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         apply_drop_shadow(self, "overlay")
+        apply_rounded_overlay(self, "md")
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
@@ -49,6 +51,7 @@ class TwoDGeometryToolbar(QFrame):
         self.line_flyout = QFrame(parent)
         self.line_flyout.setObjectName("twoDLineFlyout")
         apply_drop_shadow(self.line_flyout, "overlay")
+        apply_rounded_overlay(self.line_flyout, "md")
         self._flyout_animation = QPropertyAnimation(self.line_flyout, b"windowOpacity", self)
         self._flyout_animation.setDuration(150)
         self._flyout_animation.setEasingCurve(QEasingCurve.Type.OutCubic)
@@ -90,6 +93,14 @@ class TwoDGeometryToolbar(QFrame):
 
     def is_snap_enabled(self) -> bool:
         return self.snap_button.isChecked()
+
+    def set_theme(self, theme: ThemeName) -> None:
+        """Re-tint icons so the toolbar stays legible after a theme switch."""
+        self._theme = theme
+        apply_drop_shadow(self, "overlay", theme)
+        apply_drop_shadow(self.line_flyout, "overlay", theme)
+        retint_icons(self, theme)
+        retint_icons(self.line_flyout, theme)
 
     def set_history_state(self, *, can_undo: bool, can_redo: bool) -> None:
         self.undo_button.setEnabled(can_undo)
@@ -151,19 +162,17 @@ class TwoDGeometryToolbar(QFrame):
         if not self.line_button.underMouse() and not self.line_flyout.underMouse():
             self.line_flyout.hide()
 
-    @staticmethod
-    def _button(icon_name: str, tooltip: str, object_name: str) -> QToolButton:
+    def _button(self, icon_name: str, tooltip: str, object_name: str) -> QToolButton:
         button = QToolButton()
         button.setObjectName(object_name)
         button.setToolTip(tooltip)
         button.setCheckable(True)
-        apply_icon(button, icon_name, "#3f4c5c", icon_size=16, hit_size=36)
+        apply_icon(button, icon_name, icon_color(self._theme), icon_size=16, hit_size=36)
         return button
 
-    @staticmethod
-    def _action_button(icon_name: str, tooltip: str, object_name: str) -> QToolButton:
+    def _action_button(self, icon_name: str, tooltip: str, object_name: str) -> QToolButton:
         button = QToolButton()
         button.setObjectName(object_name)
         button.setToolTip(tooltip)
-        apply_icon(button, icon_name, "#3f4c5c", icon_size=16, hit_size=36)
+        apply_icon(button, icon_name, icon_color(self._theme), icon_size=16, hit_size=36)
         return button

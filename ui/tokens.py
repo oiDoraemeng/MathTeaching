@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Literal
 from collections.abc import Mapping
 
-from PySide6.QtGui import QColor
+from PySide6.QtCore import QEvent, QObject, Qt
+from PySide6.QtGui import QColor, QPainterPath, QRegion
 from PySide6.QtWidgets import QGraphicsDropShadowEffect, QWidget
 
 ThemeName = Literal["light", "dark"]
@@ -99,6 +100,73 @@ def build_qss(theme: ThemeName) -> str:
     template_path = Path(__file__).with_name("styles") / "base.qss.in"
     from string import Template
     return Template(template_path.read_text(encoding="utf-8")).substitute(flatten_theme(theme))
+
+RadiusLevel = Literal["sm", "md", "lg"]
+
+
+def radius(level: RadiusLevel, theme: ThemeName = "light") -> int:
+    """Return the pixel radius for a semantic radius token."""
+    value = flatten_theme(theme).get(f"radius_{level}")
+    if not isinstance(value, int):
+        raise TokenError(f"unknown radius token: {level}")
+    return value
+
+
+class _RoundedMaskFilter(QObject):
+    """Keep a rounded mask in sync with its widget's size.
+
+    Qt clips a QSS ``border-radius`` only when it owns the paint surface. A
+    frameless top-level window, or a child that Qt force-promotes to a native
+    window because it is a sibling of the native VTK interactor, is painted
+    straight into platform backing store — the corners then expose whatever the
+    compositor left there, which is black on Windows. An explicit mask makes the
+    rounding real instead of merely painted.
+    """
+
+    def __init__(self, widget: QWidget, corner_radius: int) -> None:
+        super().__init__(widget)
+        self._radius = corner_radius
+        self._widget = widget
+        widget.installEventFilter(self)
+        self.apply()
+
+    def apply(self) -> None:
+        widget = self._widget
+        width, height = widget.width(), widget.height()
+        if width <= 0 or height <= 0:
+            return
+        path = QPainterPath()
+        path.addRoundedRect(0, 0, width, height, self._radius, self._radius)
+        widget.setMask(QRegion(path.toFillPolygon().toPolygon()))
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if watched is self._widget and event.type() in (
+            QEvent.Type.Resize,
+            QEvent.Type.Show,
+        ):
+            self.apply()
+        return False
+
+
+def apply_rounded_overlay(
+    widget: QWidget, level: RadiusLevel = "md", theme: ThemeName = "light"
+) -> None:
+    """Make a widget's token radius render as real rounded corners.
+
+    Top-level frameless chrome opts into ``WA_TranslucentBackground`` so Qt
+    composites the rounded QSS background over a transparent surface, which
+    keeps the corners antialiased. Child overlays have no window of their own,
+    so translucency does not apply to them; they get a resize-tracking mask
+    instead, which is the only way to clip a natively promoted child.
+    """
+    if widget.isWindow():
+        widget.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+        return
+    existing = widget.findChild(_RoundedMaskFilter)
+    if existing is not None:
+        existing.deleteLater()
+    _RoundedMaskFilter(widget, radius(level, theme))
+
 
 def _shadow_effect_values(level: ShadowLevel, theme: ThemeName) -> tuple[int, int, int, QColor]:
     """Map the strongest CSS shadow layer to Qt's single drop-shadow effect."""

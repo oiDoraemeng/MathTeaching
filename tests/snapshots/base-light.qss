@@ -60,9 +60,12 @@ QGroupBox::title {
   color: #3f4c5c;
   background: #ffffff;
 }
-#layerSettingsPopup, #geometrySettingsPopup, #intersectionPopup, #functionCatalogPopup, #sceneSettingsPanel, #formulaEditorPopup,
-#linearAlgebraCasePopup, #viewportToolbar, #twoDGeometryToolbar, #twoDLineFlyout {
+#viewportToolbar, #twoDGeometryToolbar, #twoDLineFlyout, #sceneSettingsPanel {
   background: #ffffff; border: 1px solid #eceff3; border-radius: 8px;
+}
+#layerSettingsPopup, #geometrySettingsPopup, #intersectionPopup, #functionCatalogPopup, #formulaEditorPopup,
+#linearAlgebraCasePopup {
+  background: #ffffff; border: 1px solid #d5dbe3; border-radius: 10px;
 }
 #settingsPopupTitle { color: #17212e; font-size: 13px; font-weight: 600; }
 #viewportToolbar QToolButton, #twoDGeometryToolbar QToolButton, #twoDLineFlyout QToolButton { font-size: 18px; font-weight: 700; }

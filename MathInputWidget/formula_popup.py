@@ -6,6 +6,8 @@ from PySide6.QtCore import QEvent, QObject, QPoint, QTimer, Qt, Signal
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QApplication, QDialog, QVBoxLayout, QWidget
 
+from ui.tokens import apply_rounded_overlay
+
 from .widget import MathInputWidget
 
 
@@ -25,6 +27,7 @@ class FormulaEditorPopup(QDialog):
         self.setObjectName("formulaEditorPopup")
         self.setWindowTitle("编辑公式")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
+        apply_rounded_overlay(self, "lg")
         self.setWindowModality(Qt.WindowModality.NonModal)
         self.setMinimumSize(self._MINIMUM_WIDTH, self._MINIMUM_HEIGHT)
 

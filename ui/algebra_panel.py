@@ -32,8 +32,8 @@ from models.linear_algebra_cases import LinearAlgebraCase, linear_algebra_cases
 from models.geometry_2d import GeometryObject, Linear2D, Point2D
 from models.scene_mode import SceneMode
 from models.surface_layer import SurfaceLayer
-from ui.icons import apply_icon
-from ui.tokens import ThemeName, apply_drop_shadow
+from ui.icons import apply_icon, icon_color, retint_icons
+from ui.tokens import ThemeName, apply_drop_shadow, apply_rounded_overlay
 
 
 Layer = SurfaceLayer | CurveLayer | GeometryObject
@@ -71,6 +71,7 @@ class LayerSettingsPopup(QDialog):
         self.setObjectName("layerSettingsPopup")
         self.setWindowTitle("函数设置")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
+        apply_rounded_overlay(self, "lg")
         self.setWindowModality(Qt.WindowModality.NonModal)
         self._show_animation = QPropertyAnimation(self, b"windowOpacity", self)
         self._show_animation.setDuration(150)
@@ -278,6 +279,7 @@ class GeometrySettingsPopup(QDialog):
         self.setObjectName("geometrySettingsPopup")
         self.setWindowTitle("几何对象")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
+        apply_rounded_overlay(self, "lg")
         self.setWindowModality(Qt.WindowModality.NonModal)
         self._show_animation = QPropertyAnimation(self, b"windowOpacity", self)
         self._show_animation.setDuration(150)
@@ -326,6 +328,7 @@ class IntersectionPopup(QDialog):
         super().__init__(parent)
         self.setObjectName("intersectionPopup")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
+        apply_rounded_overlay(self, "lg")
         layout = QHBoxLayout(self)
         self.first_combo = QComboBox(self)
         self.second_combo = QComboBox(self)
@@ -390,6 +393,7 @@ class FunctionCatalogPopup(QDialog):
         self.setObjectName("functionCatalogPopup")
         self.setWindowTitle("函数")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
+        apply_rounded_overlay(self, "lg")
         self.setWindowModality(Qt.WindowModality.NonModal)
         self.setMinimumSize(440, 420)
         self.resize(460, 500)
@@ -495,6 +499,7 @@ class LinearAlgebraCasePopup(QDialog):
         self.setObjectName("linearAlgebraCasePopup")
         self.setWindowTitle("线性代数")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
+        apply_rounded_overlay(self, "lg")
         self.setWindowModality(Qt.WindowModality.NonModal)
         self._show_animation = QPropertyAnimation(self, b"windowOpacity", self)
         self._show_animation.setDuration(150)
@@ -590,7 +595,7 @@ class LayerRow(QFrame):
         self.expression_button.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
         self.expression_button.setToolTip(layer.latex or layer.expression)
         self.settings_button = QToolButton(self)
-        apply_icon(self.settings_button, "ellipsis", "#3f4c5c", icon_size=16, hit_size=28)
+        apply_icon(self.settings_button, "ellipsis", icon_color(), icon_size=16, hit_size=28)
         self.settings_button.setToolTip("函数显示与采样设置")
         layout.addWidget(self.visible_button)
         layout.addWidget(self.expression_button, 1)
@@ -639,7 +644,7 @@ class LayerRow(QFrame):
         apply_icon(
             self.visible_button,
             "eye" if visible else "eye-off",
-            "#3f4c5c",
+            icon_color(),
             icon_size=16,
             hit_size=28,
         )
@@ -768,6 +773,9 @@ class AlgebraPanel(QFrame):
             self.linear_algebra_popup,
         ):
             apply_drop_shadow(popup, "overlay", theme)
+            retint_icons(popup, theme)
+        # QSS cannot restyle a QIcon, so panel buttons must be repainted too.
+        retint_icons(self, theme)
 
     @staticmethod
     def _tool_button(text: str, tooltip: str) -> QToolButton:
@@ -781,7 +789,7 @@ class AlgebraPanel(QFrame):
     def _icon_button(name: str, tooltip: str) -> QToolButton:
         button = QToolButton()
         button.setToolTip(tooltip)
-        apply_icon(button, name, "#3f4c5c", icon_size=16, hit_size=28)
+        apply_icon(button, name, icon_color(), icon_size=16, hit_size=28)
         return button
 
     def set_scene_mode(self, mode: SceneMode) -> None:

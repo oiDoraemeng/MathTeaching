@@ -86,13 +86,9 @@ def test_qss_has_required_and_no_retired_content(theme: str) -> None:
 def test_overlay_and_dialog_chrome_use_token_metrics(theme: str) -> None:
     flat = flatten_theme(theme)
     qss = build_qss(theme)
+    # Overlay chrome (app-shell spec, "Overlay chrome consistency"): the floating
+    # viewport controls share one style — subtle border, medium radius.
     for selector in (
-        "#layerSettingsPopup",
-        "#geometrySettingsPopup",
-        "#intersectionPopup",
-        "#functionCatalogPopup",
-        "#formulaEditorPopup",
-        "#linearAlgebraCasePopup",
         "#viewportToolbar",
         "#twoDGeometryToolbar",
         "#twoDLineFlyout",
@@ -102,6 +98,22 @@ def test_overlay_and_dialog_chrome_use_token_metrics(theme: str) -> None:
         assert f"background: {flat['bg_overlay']}" in block
         assert f"border: 1px solid {flat['border_subtle']}" in block
         assert f"border-radius: {flat['radius_md']}px" in block
+
+    # Popovers and dialogs use the large radius with the default border
+    # (app-shell spec: "Dialogs and large popovers SHALL use the large radius",
+    # and the teaching case popup requires the default border).
+    for selector in (
+        "#layerSettingsPopup",
+        "#geometrySettingsPopup",
+        "#intersectionPopup",
+        "#functionCatalogPopup",
+        "#formulaEditorPopup",
+        "#linearAlgebraCasePopup",
+    ):
+        block = _block_for_selector(qss, selector)
+        assert f"background: {flat['bg_overlay']}" in block
+        assert f"border: 1px solid {flat['border_default']}" in block
+        assert f"border-radius: {flat['radius_lg']}px" in block
 
     dialog_block = _block_for_selector(qss, "QDialog")
     assert f"border-radius: {flat['radius_lg']}px" in dialog_block
