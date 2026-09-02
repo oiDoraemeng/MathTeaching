@@ -30,17 +30,28 @@ class VisualizationRecipe:
 
 
 def recipe_for_entry(entry: LessonEntry) -> VisualizationRecipe:
-    scene: Literal["2d", "3d"] = "3d" if _uses_3d(entry.required_capabilities) else "2d"
+    """Create visualization recipe from lesson entry using topic-specific builders."""
+    from .builders import get_builder_for
 
-    def build(context: RenderContext) -> CommandPlan:
-        return _build_plan(context, entry, scene)
+    # Get topic-specific builder
+    builder_func = get_builder_for(entry.visualization_id)
+
+    if builder_func is None:
+        # All 54 topics must have builders - no fallback
+        raise ValueError(
+            f"No builder found for {entry.visualization_id}. "
+            f"All topics must have a specific builder."
+        )
+
+    scene: Literal["2d", "3d"] = "3d" if _uses_3d(entry.required_capabilities) else "2d"
 
     return VisualizationRecipe(
         id=entry.visualization_id,
         scene=scene,
         required_capabilities=entry.required_capabilities,
-        builder=build,
+        builder=builder_func,
     )
+
 
 
 def _uses_3d(capabilities: tuple[str, ...]) -> bool:

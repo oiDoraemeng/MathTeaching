@@ -4,6 +4,7 @@ import math
 
 import pytest
 
+from linear_algebra.catalog.model import LessonEntry, SourceAnchor
 from linear_algebra.visualizations.builders import get_builder_for
 from linear_algebra.visualizations.builders.math_utils import (
     angle_between,
@@ -100,3 +101,23 @@ def test_make_view_fit():
 
     assert op["op"] == "view.fit"
     assert op["padding"] == 1.15
+
+
+def test_recipe_for_entry_raises_for_missing_builder():
+    """Test that recipe_for_entry raises when no builder found"""
+    from linear_algebra.visualizations.common import recipe_for_entry
+
+    entry = LessonEntry(
+        id="test.topic",
+        chapter_number=1,
+        section_id="test.s1",
+        title="Test Topic",
+        source_path=("Chapter", "Section", "Topic"),
+        source_anchor=SourceAnchor(("Chapter",), 2),
+        explanation_id="explain.test.topic",
+        visualization_id="draw.test.topic",
+        required_capabilities=("vector_2d",),
+    )
+
+    with pytest.raises(ValueError, match="No builder found"):
+        recipe_for_entry(entry)
