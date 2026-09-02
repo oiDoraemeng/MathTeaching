@@ -736,7 +736,7 @@ class MainWindow:
         self.two_d_geometry_toolbar = TwoDGeometryToolbar(self.viewport_host)
 
         # Linear algebra horizontal toolbar (top-left)
-        self.linear_algebra_toolbar = LinearAlgebraToolbar(self.viewport_host, theme=self._effective_theme())
+        self.linear_algebra_toolbar = LinearAlgebraToolbar(self.viewport_host, theme=self.effective_theme)
         self.linear_algebra_toolbar.hide()  # Hidden by default, shown when in linear algebra context
 
         self.scene_settings_panel = SceneSettingsPanel(self.viewport_host)
