@@ -55,6 +55,7 @@ from ui.status_bar import AppStatusBar
 from ui.panel_resize_handle import PanelResizeSpec, _PanelResizeHandle
 from ui.tokens import apply_drop_shadow, apply_rounded_overlay
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
+from ui.linear_algebra_toolbar import LinearAlgebraToolbar
 from services.agent_worker import RuntimeTurnWorker
 from services.agent_provider import (
     AgentSettings,
@@ -734,6 +735,10 @@ class MainWindow:
 
         self.two_d_geometry_toolbar = TwoDGeometryToolbar(self.viewport_host)
 
+        # Linear algebra horizontal toolbar (top-left)
+        self.linear_algebra_toolbar = LinearAlgebraToolbar(self.viewport_host, theme=self._effective_theme())
+        self.linear_algebra_toolbar.hide()  # Hidden by default, shown when in linear algebra context
+
         self.scene_settings_panel = SceneSettingsPanel(self.viewport_host)
         self.scene_settings_panel.hide()
         self._scene_settings_animation = QPropertyAnimation(self.scene_settings_panel, b"geometry", self.window)
@@ -751,6 +756,12 @@ class MainWindow:
         self.two_d_geometry_toolbar.undo_requested.connect(self._undo_2d_geometry)
         self.two_d_geometry_toolbar.redo_requested.connect(self._redo_2d_geometry)
         self._configure_2d_history_shortcuts()
+
+        # Connect linear algebra toolbar signals
+        self.linear_algebra_toolbar.tool_selected.connect(self._on_linear_algebra_tool_selected)
+        self.linear_algebra_toolbar.undo_requested.connect(self._undo_2d_geometry)
+        self.linear_algebra_toolbar.redo_requested.connect(self._redo_2d_geometry)
+
         self.scene_settings_panel.background_changed.connect(self._set_scene_background)
         self.scene_settings_panel.axis_color_mode_changed.connect(self._set_axis_color_mode)
         self.scene_settings_panel.grid_changed.connect(self._set_grid_visible)
@@ -928,6 +939,9 @@ class MainWindow:
         if hasattr(self, "two_d_geometry_toolbar"):
             self.two_d_geometry_toolbar.position_in_host()
             self.two_d_geometry_toolbar.raise_()
+        if hasattr(self, "linear_algebra_toolbar"):
+            self.linear_algebra_toolbar.position_in_host()
+            self.linear_algebra_toolbar.raise_()
         if (
             self.scene_settings_panel.isVisible()
             and self._scene_settings_animation.state() != QPropertyAnimation.State.Running
@@ -2567,6 +2581,40 @@ class MainWindow:
                 "select": Qt.CursorShape.ArrowCursor,
             }.get(tool, Qt.CursorShape.CrossCursor)
             self.plotter.interactor.setCursor(cursor)
+
+    def _on_linear_algebra_tool_selected(self, tool: str) -> None:
+        """Handle linear algebra toolbar tool selection."""
+        # Map linear algebra tools to existing 2D geometry tools when possible
+        tool_mapping = {
+            "select": "select",
+            "point": "point",
+            "vector": "vector",
+            # New tools that don't have direct mapping yet
+            "angle": None,
+            "projection": None,
+            "polygon": None,
+            "transform": None,
+            "subspace": None,
+            "area": None,
+        }
+
+        mapped_tool = tool_mapping.get(tool)
+        if mapped_tool is not None:
+            # Use existing tool infrastructure
+            self._set_2d_geometry_tool(mapped_tool)
+        else:
+            # New tool - for now just set active state
+            # Future: implement specific handlers for angle, projection, etc.
+            if hasattr(self, "status_bar"):
+                tool_labels = {
+                    "angle": "角度测量",
+                    "projection": "投影",
+                    "polygon": "多边形",
+                    "transform": "矩阵变换",
+                    "subspace": "子空间",
+                    "area": "有向面积",
+                }
+                self.status_bar.set_active_tool(tool_labels.get(tool, tool))
             if tool is not None:
                 self.plotter.interactor.setFocus()
         if tool == "select":
@@ -3208,10 +3256,25 @@ class MainWindow:
         self.scene_mode_button.setText("2D" if self.scene_mode is SceneMode.TWO_D else "3D")
         if hasattr(self, "two_d_geometry_toolbar"):
             is_2d = self.scene_mode is SceneMode.TWO_D
-            self.two_d_geometry_toolbar.setVisible(is_2d)
+            # Hide traditional toolbar when linear algebra toolbar is active
+            show_traditional = is_2d and not self._is_linear_algebra_context()
+            self.two_d_geometry_toolbar.setVisible(show_traditional)
             if not is_2d:
                 self.two_d_geometry_toolbar.line_flyout.hide()
+        if hasattr(self, "linear_algebra_toolbar"):
+            # Show linear algebra toolbar only in 2D linear algebra context
+            is_linear_algebra = self.scene_mode is SceneMode.TWO_D and self._is_linear_algebra_context()
+            self.linear_algebra_toolbar.setVisible(is_linear_algebra)
         self.scene_settings_panel.set_mode(self.scene_mode)
+
+    def _is_linear_algebra_context(self) -> bool:
+        """Check if current scene is in linear algebra context."""
+        # Check if we have any linear algebra dialog or context active
+        if hasattr(self, "linear_algebra_dialog") and hasattr(self.linear_algebra_dialog, "isVisible"):
+            if self.linear_algebra_dialog.isVisible():
+                return True
+        # For now, return False by default (can be enhanced later)
+        return False
         if hasattr(self, "agent_panel"):
             self.agent_panel.set_scene_mode(self.scene_mode is SceneMode.TWO_D)
         self.scene_settings_panel.set_values(
@@ -3323,6 +3386,7 @@ class MainWindow:
             getattr(self, "viewport_toolbar", None),
             getattr(self, "two_d_geometry_toolbar", None),
             getattr(getattr(self, "two_d_geometry_toolbar", None), "line_flyout", None),
+            getattr(self, "linear_algebra_toolbar", None),
             getattr(self, "scene_settings_panel", None),
         ):
             if widget is not None:
@@ -3335,6 +3399,9 @@ class MainWindow:
         two_d_toolbar = getattr(self, "two_d_geometry_toolbar", None)
         if two_d_toolbar is not None and hasattr(two_d_toolbar, "set_theme"):
             two_d_toolbar.set_theme(effective_theme)
+        linear_algebra_toolbar = getattr(self, "linear_algebra_toolbar", None)
+        if linear_algebra_toolbar is not None and hasattr(linear_algebra_toolbar, "set_theme"):
+            linear_algebra_toolbar.set_theme(effective_theme)
         agent_settings_dialog = getattr(self, "_agent_settings_dialog", None)
         if agent_settings_dialog is not None:
             agent_settings_dialog.set_effective_theme(effective_theme)
