@@ -15,7 +15,7 @@ from typing import Literal
 from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QThread, QTimer, Signal, Slot
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent, QShortcut, QWheelEvent
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QInputDialog, QLineEdit, QToolButton, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
 
 from MathInputWidget import LatexParseError, LatexParser
@@ -55,7 +55,12 @@ from ui.status_bar import AppStatusBar
 from ui.panel_resize_handle import PanelResizeSpec, _PanelResizeHandle
 from ui.tokens import apply_drop_shadow, apply_rounded_overlay
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
-from ui.linear_algebra_toolbar import LinearAlgebraToolbar
+from ui.linear_algebra_tools import (
+    build_polygon_tool_plan,
+    build_transform_tool_plan,
+    build_vector_tool_plan,
+    parse_matrix,
+)
 from services.agent_worker import RuntimeTurnWorker
 from services.agent_provider import (
     AgentSettings,
@@ -279,6 +284,10 @@ class MainWindow:
         self._agent_points3d: dict[str, tuple[float, float, float]] = {}
         self._agent_teaching_2d: dict[str, dict[str, object]] = {}
         self._agent_geometry3d: dict[str, dict[str, object]] = {}
+        # Identifies the last successfully loaded lecture topic.  The toolbar
+        # must follow the loaded scene, not the transient popup visibility.
+        self._active_linear_algebra_topic_id: str | None = None
+        self._linear_algebra_workspace_active = False
         self._two_d_object_order: list[str] = []
         self.layer_controller: LayerSceneController | None = None
         self.curve_controller: CurveSceneController | None = None
@@ -308,6 +317,11 @@ class MainWindow:
         self._intersection_color_revision = 0
         self._scene_settings_closing = False
         self._active_2d_tool: ToolKind | None = None
+        self._active_linear_algebra_tool: str | None = None
+        self._linear_algebra_pending_vector_ids: list[str] = []
+        self._linear_algebra_polygon_point_ids: list[str] = []
+        self._linear_algebra_tool_sequence = 0
+        self._linear_algebra_tool_preclear_state: _SceneCommandState | None = None
         self._pending_geometry_point_id: str | None = None
         # Preserve the exact cursor coordinate unless grid snapping is enabled.
         self._snap_to_grid = False
@@ -733,11 +747,13 @@ class MainWindow:
         toolbar_layout.addWidget(self.agent_button)
         self.viewport_toolbar.adjustSize()
 
-        self.two_d_geometry_toolbar = TwoDGeometryToolbar(self.viewport_host)
-
-        # Linear algebra horizontal toolbar (top-left)
-        self.linear_algebra_toolbar = LinearAlgebraToolbar(self.viewport_host, theme=self.effective_theme)
-        self.linear_algebra_toolbar.hide()  # Hidden by default, shown when in linear algebra context
+        # 线性代数工具直接扩展现有二维工具栏；不创建第二个可见工具栏。
+        self.two_d_geometry_toolbar = TwoDGeometryToolbar(
+            self.viewport_host,
+            theme=getattr(self, "effective_theme", "light"),
+        )
+        # 保留属性别名，供旧的状态同步和插件调用，但两者指向同一实例。
+        self.linear_algebra_toolbar = self.two_d_geometry_toolbar
 
         self.scene_settings_panel = SceneSettingsPanel(self.viewport_host)
         self.scene_settings_panel.hide()
@@ -751,16 +767,11 @@ class MainWindow:
         self.scene_settings_button.clicked.connect(self._toggle_scene_settings)
         self.scene_mode_button.clicked.connect(self._toggle_scene_mode)
         self.agent_button.clicked.connect(self._toggle_agent_panel)
-        self.two_d_geometry_toolbar.tool_selected.connect(self._set_2d_geometry_tool)
+        self.two_d_geometry_toolbar.tool_selected.connect(self._on_unified_2d_tool_selected)
         self.two_d_geometry_toolbar.snap_toggled.connect(self._set_snap_to_grid)
         self.two_d_geometry_toolbar.undo_requested.connect(self._undo_2d_geometry)
         self.two_d_geometry_toolbar.redo_requested.connect(self._redo_2d_geometry)
         self._configure_2d_history_shortcuts()
-
-        # Connect linear algebra toolbar signals
-        self.linear_algebra_toolbar.tool_selected.connect(self._on_linear_algebra_tool_selected)
-        self.linear_algebra_toolbar.undo_requested.connect(self._undo_2d_geometry)
-        self.linear_algebra_toolbar.redo_requested.connect(self._redo_2d_geometry)
 
         self.scene_settings_panel.background_changed.connect(self._set_scene_background)
         self.scene_settings_panel.axis_color_mode_changed.connect(self._set_axis_color_mode)
@@ -939,9 +950,6 @@ class MainWindow:
         if hasattr(self, "two_d_geometry_toolbar"):
             self.two_d_geometry_toolbar.position_in_host()
             self.two_d_geometry_toolbar.raise_()
-        if hasattr(self, "linear_algebra_toolbar"):
-            self.linear_algebra_toolbar.position_in_host()
-            self.linear_algebra_toolbar.raise_()
         if (
             self.scene_settings_panel.isVisible()
             and self._scene_settings_animation.state() != QPropertyAnimation.State.Running
@@ -967,6 +975,7 @@ class MainWindow:
         panel.set_builtin_surfaces((surface.id, surface.name) for surface in BUILTIN_SURFACES)
         panel.add_requested.connect(self._add_formula_for_scene)
         panel.catalog_requested.connect(self._add_catalog_entry)
+        panel.linear_algebra_opened.connect(self._enter_linear_algebra_workspace)
         panel.linear_algebra_requested.connect(self._load_linear_algebra_topic)
         panel.builtin_requested.connect(self._add_builtin_surface)
         panel.lighting_requested.connect(self._show_lighting_dialog)
@@ -1391,20 +1400,20 @@ class MainWindow:
         elif name == "geometry.right_angle_marker":
             self.geometry_controller.add_teaching_right_angle_marker(alias, tuple(float(v) for v in operation["vertex"]), tuple(float(v) for v in operation["first"]), tuple(float(v) for v in operation["second"]), size=float(operation["size"]), color=str(operation.get("color", "#d97845")))  # type: ignore[arg-type]
         elif name == "geometry.projection":
-            self.geometry_controller.add_teaching_projection(tuple(float(v) for v in operation["vector"]), tuple(float(v) for v in operation["direction"]), result_alias=str(operation["result_alias"]), foot_alias=str(operation["foot_alias"]), residual_alias=str(operation["residual_alias"]), color=str(operation.get("color", "#2777b6")))  # type: ignore[arg-type]
+            self.geometry_controller.add_teaching_projection(tuple(float(v) for v in operation["vector"]), tuple(float(v) for v in operation["direction"]), result_alias=str(operation["result_alias"]), foot_alias=str(operation["foot_alias"]), residual_alias=str(operation["residual_alias"]), alias=str(operation["alias"]) if operation.get("alias") else None, origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#2777b6")))  # type: ignore[arg-type]
         elif name == "geometry.transformed_grid":
             matrix = tuple(tuple(float(v) for v in row) for row in operation["matrix"])  # type: ignore[index]
-            self.geometry_controller.add_teaching_transformed_grid(matrix, tuple(float(v) for v in operation["bounds"]), step=float(operation.get("step", 1.0)), color=str(operation.get("color", "#5b8def")))  # type: ignore[arg-type]
+            self.geometry_controller.add_teaching_transformed_grid(matrix, tuple(float(v) for v in operation["bounds"]), step=float(operation.get("step", 1.0)), alias=str(operation["alias"]) if operation.get("alias") else None, color=str(operation.get("color", "#5b8def")))  # type: ignore[arg-type]
         elif name == "geometry.subspace_region":
             basis = tuple(tuple(float(v) for v in row) for row in operation["basis"])  # type: ignore[index]
-            self.geometry_controller.add_teaching_subspace_region(basis, tuple(float(v) for v in operation["bounds"]), color=str(operation.get("color", "#4c9f70")), opacity=float(operation.get("opacity", 0.2)))  # type: ignore[arg-type]
+            self.geometry_controller.add_teaching_subspace_region(basis, tuple(float(v) for v in operation["bounds"]), alias=str(operation["alias"]) if operation.get("alias") else None, origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#4c9f70")), opacity=float(operation.get("opacity", 0.2)))  # type: ignore[arg-type]
         elif name == "geometry.staged_transform":
             matrices = tuple(tuple(tuple(float(v) for v in row) for row in matrix) for matrix in operation["matrices"])  # type: ignore[index]
             points = tuple(tuple(float(v) for v in point) for point in operation["points"])  # type: ignore[index]
-            self.geometry_controller.add_teaching_staged_transform(matrices, points, tuple(str(v) for v in operation["aliases"]))  # type: ignore[arg-type]
+            self.geometry_controller.add_teaching_staged_transform(matrices, points, tuple(str(v) for v in operation["aliases"]), alias=str(operation["alias"]) if operation.get("alias") else None)  # type: ignore[arg-type]
         elif name == "geometry.oriented_area":
             vectors = tuple(tuple(float(v) for v in vector) for vector in operation["vectors"])  # type: ignore[index]
-            self.geometry_controller.add_teaching_oriented_area(vectors, alias=str(operation.get("alias", "oriented-area")), color=str(operation.get("color", "#d97845")), opacity=float(operation.get("opacity", 0.28)))  # type: ignore[arg-type]
+            self.geometry_controller.add_teaching_oriented_area(vectors, alias=str(operation.get("alias", "oriented-area")), origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#d97845")), opacity=float(operation.get("opacity", 0.28)))  # type: ignore[arg-type]
         else:
             raise CommandError(f"宿主不支持操作: {name}")
 
@@ -1412,6 +1421,13 @@ class MainWindow:
         if scope not in {"all", "curves", "surfaces", "geometry", "annotations"}:
             raise CommandError("scene.clear.scope 不受支持。")
         if scope == "all":
+            self._active_linear_algebra_topic_id = None
+            self._active_linear_algebra_tool = None
+            self._linear_algebra_pending_vector_ids = []
+            self._linear_algebra_polygon_point_ids = []
+            self._linear_algebra_tool_preclear_state = None
+            if hasattr(self, "linear_algebra_toolbar"):
+                self.linear_algebra_toolbar.set_active_tool(None, emit_signal=False)
             self.layers.clear()
             self._agent_points3d = {}
             self._agent_geometry3d = {}
@@ -2185,6 +2201,12 @@ class MainWindow:
         except CommandError as error:
             self.algebra_panel.set_status(f"无法加载主题 {topic.title}: {error}", is_error=True)
             return
+        self._active_linear_algebra_topic_id = topic.id
+        if plan.scene == "2d":
+            self._set_2d_geometry_tool("select")
+            if hasattr(self, "linear_algebra_toolbar"):
+                self.linear_algebra_toolbar.set_active_tool("select", emit_signal=False)
+        self._sync_scene_controls()
         self.algebra_panel.set_status(f"已加载主题: {topic.title}")
         if hasattr(self, "agent_panel"):
             if hasattr(self, "agent_sidebar"):
@@ -2195,6 +2217,19 @@ class MainWindow:
                 category=topic.source_path[1],
                 scene_mode=plan.scene,
             )
+
+    def _enter_linear_algebra_workspace(self) -> None:
+        """Reveal the linear-algebra tools as soon as its catalog is opened."""
+        self._linear_algebra_workspace_active = True
+        self._active_linear_algebra_topic_id = None
+        if self.scene_mode is not SceneMode.TWO_D:
+            self._set_scene_mode(SceneMode.TWO_D)
+        self._set_2d_geometry_tool("select")
+        if hasattr(self, "linear_algebra_toolbar"):
+            self.linear_algebra_toolbar.set_active_tool("select", emit_signal=False)
+        self._sync_scene_controls()
+        self._position_viewport_overlays()
+        self.algebra_panel.set_status("线性代数工具栏已显示在画布左上角")
 
     def _add_cas_surface(self, kind: str, latex: str) -> None:
         try:
@@ -2548,6 +2583,8 @@ class MainWindow:
             return
         if self.scene_mode is SceneMode.TWO_D:
             self._set_2d_geometry_tool(None)
+            if hasattr(self, "linear_algebra_toolbar"):
+                self.linear_algebra_toolbar.set_active_tool(None, emit_signal=False)
         self._save_current_view_state()
         self.scene_mode = mode
         if hasattr(self, "status_bar"):
@@ -2571,6 +2608,9 @@ class MainWindow:
                 self.geometry_controller.set_hover(None)
                 self.geometry_controller.set_selected(None)
         self._active_2d_tool = tool
+        self._active_linear_algebra_tool = None
+        self._linear_algebra_pending_vector_ids = []
+        self._linear_algebra_polygon_point_ids = []
         if hasattr(self, "status_bar"):
             self.status_bar.set_active_tool(self._TOOL_LABELS.get(tool or ""))
         if hasattr(self, "two_d_geometry_toolbar"):
@@ -2582,38 +2622,42 @@ class MainWindow:
             }.get(tool, Qt.CursorShape.CrossCursor)
             self.plotter.interactor.setCursor(cursor)
 
+    def _on_unified_2d_tool_selected(self, tool: ToolKind | None) -> None:
+        """Route the single toolbar's selection to the active workspace."""
+        if getattr(self, "_linear_algebra_workspace_active", False):
+            if tool in {"angle", "projection", "polygon", "transform", "subspace", "area"}:
+                self._on_linear_algebra_tool_selected(str(tool))
+                return
+        self._set_2d_geometry_tool(tool)
+
     def _on_linear_algebra_tool_selected(self, tool: str) -> None:
         """Handle linear algebra toolbar tool selection."""
-        # Map linear algebra tools to existing 2D geometry tools when possible
+        tool_labels = {
+            "angle": "角度测量",
+            "projection": "投影",
+            "polygon": "多边形",
+            "transform": "矩阵变换",
+            "subspace": "子空间",
+            "area": "有向面积",
+        }
+        # Map the basic tools to the existing 2D geometry infrastructure.
         tool_mapping = {
             "select": "select",
             "point": "point",
             "vector": "vector",
-            # New tools that don't have direct mapping yet
-            "angle": None,
-            "projection": None,
-            "polygon": None,
-            "transform": None,
-            "subspace": None,
-            "area": None,
         }
 
         mapped_tool = tool_mapping.get(tool)
         if mapped_tool is not None:
-            # Use existing tool infrastructure
             self._set_2d_geometry_tool(mapped_tool)
         else:
-            # New tool - for now just set active state
-            # Future: implement specific handlers for angle, projection, etc.
+            self._set_2d_geometry_tool(None)
+            # `_set_2d_geometry_tool` also synchronizes the shared toolbar;
+            # restore the specialized selection after clearing the basic tool.
+            if hasattr(self, "two_d_geometry_toolbar"):
+                self.two_d_geometry_toolbar.set_active_tool(tool)
+            self._active_linear_algebra_tool = tool
             if hasattr(self, "status_bar"):
-                tool_labels = {
-                    "angle": "角度测量",
-                    "projection": "投影",
-                    "polygon": "多边形",
-                    "transform": "矩阵变换",
-                    "subspace": "子空间",
-                    "area": "有向面积",
-                }
                 self.status_bar.set_active_tool(tool_labels.get(tool, tool))
             if tool is not None:
                 self.plotter.interactor.setFocus()
@@ -2622,7 +2666,179 @@ class MainWindow:
         elif tool == "point":
             self.algebra_panel.set_status("点工具：单击画布创建点")
         elif tool is not None:
-            self.algebra_panel.set_status(f"{self._TOOL_LABELS[tool]}工具：单击第一个点")
+            if tool == "polygon":
+                self.algebra_panel.set_status("多边形工具：依次单击顶点，双击完成")
+            elif tool == "transform":
+                self.algebra_panel.set_status("矩阵变换工具：单击后输入 2×2 矩阵")
+            else:
+                self.algebra_panel.set_status(f"{tool_labels.get(tool, tool)}工具：单击第一个向量")
+
+    def _next_linear_algebra_tool_alias(self, kind: str) -> str:
+        self._linear_algebra_tool_sequence = getattr(self, "_linear_algebra_tool_sequence", 0) + 1
+        return f"la_tool_{kind}_{self._linear_algebra_tool_sequence}"
+
+    def _clear_linear_algebra_tool_overlays(self) -> None:
+        """Remove only interactive overlays created by the linear algebra toolbar."""
+        teaching = getattr(self, "_agent_teaching_2d", {})
+        aliases = {
+            annotation.agent_alias
+            for annotation in getattr(self, "annotations", [])
+            if isinstance(annotation.agent_alias, str)
+            and annotation.agent_alias.startswith("la_tool_")
+        }
+        has_overlays = bool(aliases) or any(str(alias).startswith("la_tool_") for alias in teaching)
+        if has_overlays and getattr(self, "_linear_algebra_tool_preclear_state", None) is None:
+            capture = getattr(self, "_capture_scene_command_state", None)
+            if callable(capture):
+                try:
+                    self._linear_algebra_tool_preclear_state = capture()
+                except AttributeError:
+                    # Lightweight test hosts do not carry the full scene state.
+                    self._linear_algebra_tool_preclear_state = None
+        controller = getattr(self, "geometry_controller", None)
+        if controller is not None and hasattr(controller, "clear_teaching_prefix"):
+            controller.clear_teaching_prefix("la_tool_")
+        if aliases:
+            removed_ids = {annotation.id for annotation in self.annotations if annotation.agent_alias in aliases}
+            self.annotations = [annotation for annotation in self.annotations if annotation.agent_alias not in aliases]
+            self._two_d_object_order = [item_id for item_id in self._two_d_object_order if item_id not in removed_ids]
+            if controller is not None:
+                for object_id in removed_ids:
+                    controller.remove_object(object_id)
+        self._agent_teaching_2d = {
+            alias: operation for alias, operation in teaching.items() if not str(alias).startswith("la_tool_")
+        }
+
+    def _restore_linear_algebra_preclear_state(self) -> None:
+        state = getattr(self, "_linear_algebra_tool_preclear_state", None)
+        self._linear_algebra_tool_preclear_state = None
+        if state is not None:
+            self._restore_scene_command_state(state)
+
+    def _linear_algebra_vector_at(self, x: float, y: float) -> Linear2D | None:
+        controller = getattr(self, "geometry_controller", None)
+        if controller is None:
+            return None
+        hit_id = controller.hit_test(x, y, self._hit_tolerance())
+        if hit_id is None or hit_id not in controller.linears:
+            return None
+        linear = self._geometry_object(hit_id)
+        if isinstance(linear, Linear2D) and linear.kind == "vector":
+            return linear
+        return None
+
+    def _build_linear_algebra_tool_plan(self, tool: str, vectors: tuple[Linear2D, Linear2D]) -> CommandPlan | None:
+        alias = self._next_linear_algebra_tool_alias(tool)
+        points = {point.id: point for point in self.geometry_points}
+        return build_vector_tool_plan(tool, vectors, points, self._current_2d_bounds(), alias)
+
+    def _apply_linear_algebra_tool_plan(self, plan: CommandPlan) -> bool:
+        preclear_state = getattr(self, "_linear_algebra_tool_preclear_state", None)
+        try:
+            self.scene_command_service.execute(plan)
+        except (CommandError, ValueError) as error:
+            self._restore_linear_algebra_preclear_state()
+            self.algebra_panel.set_status(f"无法执行{plan.summary}: {error}", is_error=True)
+            return False
+        self._linear_algebra_tool_preclear_state = None
+        if preclear_state is not None and getattr(self, "_scene_command_undo_stack", None):
+            # The interactive overlay replacement happened just before the
+            # command service opened its transaction.  Point the new undo entry
+            # at the true pre-replacement scene so undo restores the old tool.
+            self._scene_command_undo_stack[-1] = preclear_state
+        self.plotter.render()
+        return True
+
+    def _handle_linear_algebra_vector_click(self, x: float, y: float) -> bool:
+        vector = self._linear_algebra_vector_at(x, y)
+        if vector is None:
+            self.algebra_panel.set_status("请单击已有的向量线段", is_error=True)
+            return True
+        pending = getattr(self, "_linear_algebra_pending_vector_ids", [])
+        if vector.id in pending:
+            self.algebra_panel.set_status("请再选择另一条向量", is_error=True)
+            return True
+        pending.append(vector.id)
+        self._linear_algebra_pending_vector_ids = pending
+        self._select_geometry_object(vector.id)
+        if len(pending) == 1:
+            self.algebra_panel.set_status("已选择第一条向量，请单击第二条向量")
+            self.plotter.render()
+            return True
+        first = self._geometry_object(pending[0])
+        second = self._geometry_object(pending[1])
+        self._linear_algebra_pending_vector_ids = []
+        if not isinstance(first, Linear2D) or not isinstance(second, Linear2D):
+            return True
+        self._clear_linear_algebra_tool_overlays()
+        plan = self._build_linear_algebra_tool_plan(self._active_linear_algebra_tool or "", (first, second))
+        if plan is not None and self._apply_linear_algebra_tool_plan(plan):
+            self.algebra_panel.set_status(f"已完成{self._active_linear_algebra_tool}计算")
+        elif plan is None:
+            self._restore_linear_algebra_preclear_state()
+            self.algebra_panel.set_status("所选向量不能用于该工具，请检查向量长度", is_error=True)
+        self._select_geometry_object(None)
+        return True
+
+    def _handle_linear_algebra_polygon_click(self, x: float, y: float) -> bool:
+        x, y = self._maybe_snap(x, y)
+        before = self._capture_geometry_state()
+        point, _created = self._get_or_create_geometry_point(x, y, record_history=False)
+        pending = getattr(self, "_linear_algebra_polygon_point_ids", [])
+        if len(pending) >= 3 and point.id == pending[0]:
+            return self._finish_linear_algebra_polygon(x, y)
+        if point.id not in pending:
+            pending.append(point.id)
+            self._linear_algebra_polygon_point_ids = pending
+            self._record_geometry_change(before)
+        self.algebra_panel.set_status(f"已添加顶点 {point.name}，当前 {len(pending)} 个顶点；双击完成")
+        self.plotter.render()
+        return True
+
+    def _finish_linear_algebra_polygon(self, x: float, y: float) -> bool:
+        pending = getattr(self, "_linear_algebra_polygon_point_ids", [])
+        if len(pending) < 3:
+            self.algebra_panel.set_status("多边形至少需要三个顶点", is_error=True)
+            return True
+        points = [self._point_2d(point_id) for point_id in pending]
+        if any(point is None for point in points):
+            self._linear_algebra_polygon_point_ids = []
+            return True
+        alias = self._next_linear_algebra_tool_alias("polygon")
+        self._clear_linear_algebra_tool_overlays()
+        plan = build_polygon_tool_plan(tuple(point for point in points if point is not None), alias)
+        self._linear_algebra_polygon_point_ids = []
+        if self._apply_linear_algebra_tool_plan(plan):
+            self.algebra_panel.set_status("已完成多边形")
+        return True
+
+    @staticmethod
+    def _parse_linear_algebra_matrix(text: str) -> tuple[tuple[float, float], tuple[float, float]] | None:
+        return parse_matrix(text)
+
+    def _handle_linear_algebra_transform(self) -> bool:
+        parent = getattr(self, "window", None)
+        text, accepted = QInputDialog.getText(
+            parent,
+            "矩阵变换",
+            "输入 2×2 矩阵（例如 1,0;0,1）：",
+            QLineEdit.EchoMode.Normal,
+            "1,0;0,1",
+        )
+        if not accepted:
+            return True
+        matrix = self._parse_linear_algebra_matrix(text)
+        if matrix is None:
+            self.algebra_panel.set_status("矩阵格式无效，请使用 a,b;c,d", is_error=True)
+            return True
+        self._clear_linear_algebra_tool_overlays()
+        alias = self._next_linear_algebra_tool_alias("transform")
+        points = [(point.x, point.y) for point in self.geometry_points] or [(1.0, 0.0), (0.0, 1.0), (1.0, 1.0)]
+        bounds = self._current_2d_bounds()
+        plan = build_transform_tool_plan(matrix, points, bounds, alias)
+        if self._apply_linear_algebra_tool_plan(plan):
+            self.algebra_panel.set_status("已应用矩阵变换")
+        return True
 
     def _set_snap_to_grid(self, enabled: bool) -> None:
         self._snap_to_grid = bool(enabled)
@@ -2658,13 +2874,18 @@ class MainWindow:
         self._update_geometry_history_controls()
 
     def _update_geometry_history_controls(self) -> None:
-        toolbar = getattr(self, "two_d_geometry_toolbar", None)
-        if toolbar is not None and hasattr(toolbar, "set_history_state"):
+        can_undo = bool(getattr(self, "_geometry_undo_stack", [])) or bool(
+            getattr(self, "_scene_command_undo_stack", [])
+        )
+        can_redo = bool(getattr(self, "_geometry_redo_stack", [])) or bool(
+            getattr(self, "_scene_command_redo_stack", [])
+        )
+        for toolbar in (getattr(self, "two_d_geometry_toolbar", None),):
+            if toolbar is None or not hasattr(toolbar, "set_history_state"):
+                continue
             toolbar.set_history_state(
-                can_undo=bool(getattr(self, "_geometry_undo_stack", []))
-                or bool(getattr(self, "_scene_command_undo_stack", [])),
-                can_redo=bool(getattr(self, "_geometry_redo_stack", []))
-                or bool(getattr(self, "_scene_command_redo_stack", [])),
+                can_undo=can_undo,
+                can_redo=can_redo,
             )
 
     def _undo_2d_geometry(self) -> None:
@@ -2737,14 +2958,30 @@ class MainWindow:
     def _handle_geometry_mouse_press(self, event: QMouseEvent) -> bool:
         """处理被激活工具的左键单击；其他输入仍交给 PyVista。"""
         tool = self._active_2d_tool
+        linear_algebra_tool = getattr(self, "_active_linear_algebra_tool", None)
         if (
             self.scene_mode is not SceneMode.TWO_D
-            or tool is None
             or event.button() != Qt.MouseButton.LeftButton
         ):
             return False
+        if tool is None and linear_algebra_tool is None:
+            return False
         coordinates = self._viewport_to_world(event.position().x(), event.position().y())
         if coordinates is None:
+            return False
+        if linear_algebra_tool is not None:
+            if linear_algebra_tool == "transform":
+                handled = self._handle_linear_algebra_transform()
+                if handled:
+                    event.accept()
+                return handled
+            coordinates = self._maybe_snap(*coordinates)
+            if linear_algebra_tool == "polygon":
+                event.accept()
+                return self._handle_linear_algebra_polygon_click(*coordinates)
+            if linear_algebra_tool in {"angle", "projection", "subspace", "area"}:
+                event.accept()
+                return self._handle_linear_algebra_vector_click(*coordinates)
             return False
         if tool == "select":
             return self._begin_select_or_drag(*coordinates)
@@ -2858,6 +3095,17 @@ class MainWindow:
         return False
 
     def _handle_geometry_double_click(self, event: QMouseEvent) -> bool:
+        linear_algebra_tool = getattr(self, "_active_linear_algebra_tool", None)
+        if (
+            self.scene_mode is SceneMode.TWO_D
+            and linear_algebra_tool == "polygon"
+            and event.button() == Qt.MouseButton.LeftButton
+        ):
+            coordinates = self._viewport_to_world(event.position().x(), event.position().y())
+            if coordinates is None:
+                return False
+            event.accept()
+            return self._finish_linear_algebra_polygon(*self._maybe_snap(*coordinates))
         if (
             self.scene_mode is not SceneMode.TWO_D
             or self._active_2d_tool != "select"
@@ -2903,6 +3151,16 @@ class MainWindow:
             return False
         if key != Qt.Key.Key_Escape:
             return False
+        if getattr(self, "_active_linear_algebra_tool", None) is not None:
+            self._active_linear_algebra_tool = None
+            self._linear_algebra_pending_vector_ids = []
+            self._linear_algebra_polygon_point_ids = []
+            self._set_2d_geometry_tool(None)
+            if hasattr(self, "linear_algebra_toolbar"):
+                self.linear_algebra_toolbar.set_active_tool(None, emit_signal=False)
+            self.algebra_panel.set_status("已返回平移模式")
+            event.accept()
+            return True
         if self._active_2d_tool == "select" and self.geometry_controller is not None:
             self._select_geometry_object(None)
             self.plotter.render()
@@ -2911,6 +3169,8 @@ class MainWindow:
         if self._active_2d_tool is None:
             return False
         self._set_2d_geometry_tool(None)
+        if hasattr(self, "linear_algebra_toolbar"):
+            self.linear_algebra_toolbar.set_active_tool(None, emit_signal=False)
         self.algebra_panel.set_status("已返回平移模式")
         event.accept()
         return True
@@ -3256,25 +3516,12 @@ class MainWindow:
         self.scene_mode_button.setText("2D" if self.scene_mode is SceneMode.TWO_D else "3D")
         if hasattr(self, "two_d_geometry_toolbar"):
             is_2d = self.scene_mode is SceneMode.TWO_D
-            # Hide traditional toolbar when linear algebra toolbar is active
-            show_traditional = is_2d and not self._is_linear_algebra_context()
-            self.two_d_geometry_toolbar.setVisible(show_traditional)
+            is_linear_algebra = is_2d and self._is_linear_algebra_context()
+            self.two_d_geometry_toolbar.set_linear_algebra_mode(is_linear_algebra)
+            self.two_d_geometry_toolbar.setVisible(is_2d)
             if not is_2d:
                 self.two_d_geometry_toolbar.line_flyout.hide()
-        if hasattr(self, "linear_algebra_toolbar"):
-            # Show linear algebra toolbar only in 2D linear algebra context
-            is_linear_algebra = self.scene_mode is SceneMode.TWO_D and self._is_linear_algebra_context()
-            self.linear_algebra_toolbar.setVisible(is_linear_algebra)
         self.scene_settings_panel.set_mode(self.scene_mode)
-
-    def _is_linear_algebra_context(self) -> bool:
-        """Check if current scene is in linear algebra context."""
-        # Check if we have any linear algebra dialog or context active
-        if hasattr(self, "linear_algebra_dialog") and hasattr(self.linear_algebra_dialog, "isVisible"):
-            if self.linear_algebra_dialog.isVisible():
-                return True
-        # For now, return False by default (can be enhanced later)
-        return False
         if hasattr(self, "agent_panel"):
             self.agent_panel.set_scene_mode(self.scene_mode is SceneMode.TWO_D)
         self.scene_settings_panel.set_values(
@@ -3286,6 +3533,20 @@ class MainWindow:
             tick_spacing=appearance.tick_spacing,
             intersections=appearance.show_intersections,
         )
+
+    def _is_linear_algebra_context(self) -> bool:
+        """Check if current scene is in linear algebra context."""
+        if getattr(self, "scene_mode", None) is not SceneMode.TWO_D:
+            return False
+        topic_id = getattr(self, "_active_linear_algebra_topic_id", None)
+        if not topic_id:
+            return bool(getattr(self, "_linear_algebra_workspace_active", False))
+        try:
+            topic = catalog_registry().get_topic(topic_id)
+            recipe = catalog_registry().get_recipe(topic.visualization_id)
+        except (KeyError, ValueError):
+            return False
+        return recipe.scene == "2d"
 
     def _show_lighting_dialog(self) -> None:
         if self.scene_mode is SceneMode.TWO_D:
@@ -3386,7 +3647,6 @@ class MainWindow:
             getattr(self, "viewport_toolbar", None),
             getattr(self, "two_d_geometry_toolbar", None),
             getattr(getattr(self, "two_d_geometry_toolbar", None), "line_flyout", None),
-            getattr(self, "linear_algebra_toolbar", None),
             getattr(self, "scene_settings_panel", None),
         ):
             if widget is not None:
@@ -3399,9 +3659,6 @@ class MainWindow:
         two_d_toolbar = getattr(self, "two_d_geometry_toolbar", None)
         if two_d_toolbar is not None and hasattr(two_d_toolbar, "set_theme"):
             two_d_toolbar.set_theme(effective_theme)
-        linear_algebra_toolbar = getattr(self, "linear_algebra_toolbar", None)
-        if linear_algebra_toolbar is not None and hasattr(linear_algebra_toolbar, "set_theme"):
-            linear_algebra_toolbar.set_theme(effective_theme)
         agent_settings_dialog = getattr(self, "_agent_settings_dialog", None)
         if agent_settings_dialog is not None:
             agent_settings_dialog.set_effective_theme(effective_theme)

@@ -249,6 +249,20 @@ class GeometrySceneController:
             self.plotter.remove_actor(name, render=False)
         self._teaching_actors.clear()
 
+    def clear_teaching_prefix(self, prefix: str) -> None:
+        """Remove only teaching actors whose names contain a caller-owned prefix.
+
+        Interactive tools use names such as ``la_tool_projection_1`` so they can
+        replace their own overlays without clearing lecture-provided drawings.
+        The method intentionally operates on the controller registry rather than
+        scanning all plotter actors, keeping curves, guides, and geometry intact.
+        """
+        marker = f":{prefix}"
+        for name in tuple(self._teaching_actors):
+            if marker in name:
+                self.plotter.remove_actor(name, render=False)
+                self._teaching_actors.pop(name, None)
+
     def add_teaching_polygon(
         self,
         alias: str,
@@ -301,6 +315,8 @@ class GeometrySceneController:
         result_alias: str,
         foot_alias: str,
         residual_alias: str,
+        alias: str | None = None,
+        origin: tuple[float, float] = (0.0, 0.0),
         color: str = "#2777b6",
     ) -> None:
         vx, vy = vector
@@ -309,9 +325,11 @@ class GeometrySceneController:
         if denominator <= 1e-12:
             raise ValueError("Projection direction cannot be zero")
         scale = (vx * dx + vy * dy) / denominator
-        foot = (scale * dx, scale * dy)
-        projection = _segments_mesh([((0.0, 0.0), foot)])
-        residual = _segments_mesh([(foot, (vx, vy))])
+        ox, oy = origin
+        foot = (ox + scale * dx, oy + scale * dy)
+        endpoint_xy = (ox + vx, oy + vy)
+        projection = _segments_mesh([(origin, foot)])
+        residual = _segments_mesh([(foot, endpoint_xy)])
         self._replace_teaching_actor(
             f"geometry:teaching:projection:{result_alias}", projection, color=color, line_width=3.0
         )
@@ -322,9 +340,14 @@ class GeometrySceneController:
         self._replace_teaching_actor(
             f"geometry:teaching:projection:{foot_alias}", foot_mesh, color="#d97845", point_size=10.0, render_points_as_spheres=True
         )
-        endpoint = _point_mesh(vx, vy)
+        endpoint = _point_mesh(*endpoint_xy)
+        endpoint_name = (
+            f"geometry:teaching:projection:{alias}:endpoint"
+            if alias
+            else "geometry:teaching:projection:endpoint"
+        )
         self._replace_teaching_actor(
-            f"geometry:teaching:projection:endpoint", endpoint, color="#2777b6", point_size=10.0, render_points_as_spheres=True
+            endpoint_name, endpoint, color="#2777b6", point_size=10.0, render_points_as_spheres=True
         )
 
     def add_teaching_transformed_grid(
@@ -333,34 +356,55 @@ class GeometrySceneController:
         bounds: tuple[float, float, float, float],
         *,
         step: float = 1.0,
+        alias: str | None = None,
         color: str = "#5b8def",
     ) -> None:
         original = _grid_mesh(bounds, step)
         transformed = _grid_mesh(bounds, step, matrix=matrix)
-        self._replace_teaching_actor("geometry:teaching:grid:original", original, color="#a6afbd", line_width=1.0)
-        self._replace_teaching_actor("geometry:teaching:grid:transformed", transformed, color=color, line_width=2.0)
+        suffix = f":{alias}" if alias else ""
+        self._replace_teaching_actor(f"geometry:teaching:grid{suffix}:original", original, color="#a6afbd", line_width=1.0)
+        self._replace_teaching_actor(f"geometry:teaching:grid{suffix}:transformed", transformed, color=color, line_width=2.0)
 
     def add_teaching_subspace_region(
         self,
         basis: Iterable[tuple[float, float]],
         bounds: tuple[float, float, float, float],
         *,
+        alias: str | None = None,
+        origin: tuple[float, float] = (0.0, 0.0),
         color: str = "#4c9f70",
         opacity: float = 0.2,
     ) -> None:
         vectors = tuple((float(x), float(y)) for x, y in basis)
-        if len(vectors) == 1:
-            vx, vy = vectors[0]
+        ox, oy = origin
+        is_line = len(vectors) == 1 or (
+            len(vectors) >= 2
+            and abs(vectors[0][0] * vectors[1][1] - vectors[0][1] * vectors[1][0]) <= 1e-12
+        )
+        if is_line:
+            vx, vy = next((vector for vector in vectors if hypot(*vector) > 1e-12), (0.0, 0.0))
             length = max(abs(bounds[1] - bounds[0]), abs(bounds[3] - bounds[2]))
             norm = hypot(vx, vy)
             if norm <= 1e-12:
                 raise ValueError("Subspace basis cannot be zero")
             unit = (vx / norm, vy / norm)
-            segment = ((-length * unit[0], -length * unit[1]), (length * unit[0], length * unit[1]))
+            segment = (
+                (ox - length * unit[0], oy - length * unit[1]),
+                (ox + length * unit[0], oy + length * unit[1]),
+            )
             mesh = _segments_mesh([segment])
         else:
-            mesh = _polygon_mesh(((0.0, 0.0), vectors[0], (vectors[0][0] + vectors[1][0], vectors[0][1] + vectors[1][1]), vectors[1]))
-        self._replace_teaching_actor("geometry:teaching:subspace", mesh, color=color, opacity=opacity, show_edges=True)
+            x_min, x_max, y_min, y_max = bounds
+            mesh = _polygon_mesh(
+                (
+                    (x_min, y_min),
+                    (x_max, y_min),
+                    (x_max, y_max),
+                    (x_min, y_max),
+                )
+            )
+        name = f"geometry:teaching:subspace:{alias}" if alias else "geometry:teaching:subspace"
+        self._replace_teaching_actor(name, mesh, color=color, opacity=opacity, show_edges=True)
 
     def add_teaching_staged_transform(
         self,
@@ -368,25 +412,37 @@ class GeometrySceneController:
         points: Iterable[tuple[float, float]],
         aliases: Iterable[str],
         *,
+        alias: str | None = None,
         color: str = "#2777b6",
     ) -> None:
         stage_points = [(float(x), float(y)) for x, y in points]
         for stage_index, matrix in enumerate(matrices, start=1):
             stage_points = [_mat_vec(matrix, point) for point in stage_points]
             mesh = pv.PolyData(np.asarray([(x, y, 0.0) for x, y in stage_points], dtype=float))
+            stage_name = (
+                f"geometry:teaching:stage:{alias}:{stage_index}"
+                if alias
+                else f"geometry:teaching:stage:{stage_index}"
+            )
             self._replace_teaching_actor(
-                f"geometry:teaching:stage:{stage_index}", mesh, color=color, point_size=10.0, render_points_as_spheres=True
+                stage_name, mesh, color=color, point_size=10.0, render_points_as_spheres=True
             )
         # Keep aliases meaningful in exported actor metadata without affecting hit testing.
-        for alias, point in zip(aliases, stage_points):
+        for point_alias, point in zip(aliases, stage_points):
             mesh = _point_mesh(*point)
-            self._replace_teaching_actor(f"geometry:teaching:stage-point:{alias}", mesh, color="#d64545", point_size=9.0, render_points_as_spheres=True)
+            point_name = (
+                f"geometry:teaching:stage-point:{alias}:{point_alias}"
+                if alias
+                else f"geometry:teaching:stage-point:{point_alias}"
+            )
+            self._replace_teaching_actor(point_name, mesh, color="#d64545", point_size=9.0, render_points_as_spheres=True)
 
     def add_teaching_oriented_area(
         self,
         vectors: Iterable[tuple[float, float]],
         *,
         alias: str = "oriented-area",
+        origin: tuple[float, float] = (0.0, 0.0),
         color: str = "#d97845",
         opacity: float = 0.28,
     ) -> None:
@@ -394,9 +450,17 @@ class GeometrySceneController:
         if len(values) != 2:
             raise ValueError("Oriented area requires two vectors")
         a, b = values
+        ox, oy = origin
         self._replace_teaching_actor(
             f"geometry:teaching:oriented-area:{alias}",
-            _polygon_mesh(((0.0, 0.0), a, (a[0] + b[0], a[1] + b[1]), b)),
+            _polygon_mesh(
+                (
+                    (ox, oy),
+                    (ox + a[0], oy + a[1]),
+                    (ox + a[0] + b[0], oy + a[1] + b[1]),
+                    (ox + b[0], oy + b[1]),
+                )
+            ),
             color=color,
             opacity=opacity,
             show_edges=True,

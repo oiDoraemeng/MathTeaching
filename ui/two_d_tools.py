@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QTimer, Qt, Signal
-from PySide6.QtWidgets import QFrame, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QBoxLayout, QFrame, QToolButton, QVBoxLayout, QWidget
 
 from models.geometry_2d import LinearKind
 from ui.icons import apply_icon, icon_color, retint_icons
@@ -13,7 +13,7 @@ ToolKind = LinearKind | str
 
 
 class TwoDGeometryToolbar(QFrame):
-    """提供选择、点工具及悬浮展开的线工具组，并含网格吸附开关。"""
+    """二维工具栏；在线性代数工作区中扩展为横向教学工具栏。"""
 
     tool_selected = Signal(object)
     snap_toggled = Signal(bool)
@@ -24,20 +24,25 @@ class TwoDGeometryToolbar(QFrame):
         super().__init__(parent)
         self._active_tool: ToolKind | None = None
         self._theme: ThemeName = theme
+        self._linear_algebra_mode = False
         self.setObjectName("twoDGeometryToolbar")
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         apply_drop_shadow(self, "overlay")
         apply_rounded_overlay(self, "md")
-        layout = QVBoxLayout(self)
+        layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, self)
+        self._layout = layout
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
 
         self.select_button = self._button("move", "选择/移动", "selectToolButton")
         self.point_button = self._button("circle-dot", "点", "pointToolButton")
         self.line_button = self._button("slash", "线工具", "lineToolButton")
+        self.vector_button = self._button("arrow-up-right", "向量", "linearVectorToolButton")
+        self.vector_button.hide()
         layout.addWidget(self.select_button)
         layout.addWidget(self.point_button)
         layout.addWidget(self.line_button)
+        layout.addWidget(self.vector_button)
 
         self.snap_button = self._button("grid-3x3", "吸附到网格", "snapToggleButton")
         self.snap_button.setChecked(False)
@@ -62,16 +67,43 @@ class TwoDGeometryToolbar(QFrame):
             "line": self._button("slash", "直线", "lineGeometryButton"),
             "segment": self._button("minus", "线段", "segmentToolButton"),
             "ray": self._button("arrow-up-right", "射线", "rayToolButton"),
-            "vector": self._button("arrow-up-right", "向量", "vectorToolButton"),
+            # "vector" removed - now a separate top-level tool in linear algebra mode
         }
         for button in self.line_buttons.values():
             flyout_layout.addWidget(button)
             button.installEventFilter(self)
         self.line_flyout.hide()
 
+        self.angle_button = self._button("corner-down-right", "角度测量", "angleToolButton")
+        self.projection_button = self._button("corner-down-right", "投影", "projectionToolButton")
+        self.polygon_button = self._button("hexagon", "多边形", "polygonToolButton")
+        self.transform_button = self._button("grid-2x2", "矩阵变换", "transformToolButton")
+        self.subspace_button = self._button("square-dashed", "子空间", "subspaceToolButton")
+        self.area_button = self._button("square", "有向面积", "areaToolButton")
+        self._linear_algebra_buttons = (
+            self.vector_button,
+            self.angle_button,
+            self.projection_button,
+            self.polygon_button,
+            self.transform_button,
+            self.subspace_button,
+            self.area_button,
+        )
+        for button in self._linear_algebra_buttons[1:]:
+            button.hide()
+        for button in self._linear_algebra_buttons[1:]:
+            layout.addWidget(button)
+
         self.select_button.clicked.connect(lambda: self._toggle_tool("select"))
         self.point_button.clicked.connect(lambda: self._toggle_tool("point"))
         self.line_button.clicked.connect(lambda: self._toggle_tool("line"))
+        self.vector_button.clicked.connect(lambda: self._toggle_tool("vector"))
+        self.angle_button.clicked.connect(lambda: self._select_tool("angle"))
+        self.projection_button.clicked.connect(lambda: self._select_tool("projection"))
+        self.polygon_button.clicked.connect(lambda: self._select_tool("polygon"))
+        self.transform_button.clicked.connect(lambda: self._select_tool("transform"))
+        self.subspace_button.clicked.connect(lambda: self._select_tool("subspace"))
+        self.area_button.clicked.connect(lambda: self._select_tool("area"))
         for kind, button in self.line_buttons.items():
             button.clicked.connect(lambda _checked=False, value=kind: self._select_tool(value))
         self.snap_button.toggled.connect(self.snap_toggled)
@@ -83,16 +115,48 @@ class TwoDGeometryToolbar(QFrame):
         self.line_flyout.adjustSize()
         self.set_history_state(can_undo=False, can_redo=False)
 
-    def set_active_tool(self, tool: ToolKind | None) -> None:
+    def set_active_tool(self, tool: ToolKind | None, *, emit_signal: bool = False) -> None:
         self._active_tool = tool
         self.select_button.setChecked(tool == "select")
         self.point_button.setChecked(tool == "point")
         self.line_button.setChecked(tool in self.line_buttons)
+        self.vector_button.setChecked(tool == "vector")
+        self.angle_button.setChecked(tool == "angle")
+        self.projection_button.setChecked(tool == "projection")
+        self.polygon_button.setChecked(tool == "polygon")
+        self.transform_button.setChecked(tool == "transform")
+        self.subspace_button.setChecked(tool == "subspace")
+        self.area_button.setChecked(tool == "area")
         for kind, button in self.line_buttons.items():
             button.setChecked(tool == kind)
+        if emit_signal:
+            self.tool_selected.emit(tool)
+
+    def set_linear_algebra_mode(self, enabled: bool) -> None:
+        """Switch this toolbar between the normal and linear algebra layouts."""
+        self._linear_algebra_mode = bool(enabled)
+        self._layout.setDirection(
+            QBoxLayout.Direction.LeftToRight
+            if self._linear_algebra_mode
+            else QBoxLayout.Direction.TopToBottom
+        )
+        self.vector_button.setVisible(self._linear_algebra_mode)
+        for button in self._linear_algebra_buttons[1:]:
+            button.setVisible(self._linear_algebra_mode)
+        if not self._linear_algebra_mode:
+            self.set_active_tool(
+                self._active_tool
+                if self._active_tool in {"select", "point", "line", "segment", "ray", "vector"}
+                else None
+            )
+        self.adjustSize()
+        self.line_flyout.hide()
 
     def is_snap_enabled(self) -> bool:
         return self.snap_button.isChecked()
+
+    def is_linear_algebra_mode(self) -> bool:
+        return self._linear_algebra_mode
 
     def set_theme(self, theme: ThemeName) -> None:
         """Re-tint icons so the toolbar stays legible after a theme switch."""
@@ -110,10 +174,13 @@ class TwoDGeometryToolbar(QFrame):
         parent = self.parentWidget()
         if parent is None:
             return
-        self.move(
-            max(8, parent.width() - self.width() - 12),
-            max(12, (parent.height() - self.height()) // 2),
-        )
+        if self._linear_algebra_mode:
+            self.move(12, 12)
+        else:
+            self.move(
+                max(8, parent.width() - self.width() - 12),
+                max(12, (parent.height() - self.height()) // 2),
+            )
         if self.line_flyout.isVisible():
             self._position_flyout()
 

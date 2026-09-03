@@ -124,6 +124,18 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertEqual(events, ["ch01.vector.magnitude"])
         self.assertEqual(panel.linear_algebra_button.text(), "线性代数")
 
+    def test_linear_algebra_button_announces_workspace_before_opening_catalog(self) -> None:
+        panel = AlgebraPanel()
+        events: list[tuple[str, bool]] = []
+        panel.linear_algebra_opened.connect(
+            lambda: events.append(("opened", panel.linear_algebra_popup.isVisible()))
+        )
+
+        panel.linear_algebra_button.click()
+
+        self.assertEqual(events, [("opened", False)])
+        self.assertTrue(panel.linear_algebra_popup.isVisible())
+
     def test_linear_algebra_popup_uses_tokenized_tree_surface(self) -> None:
         panel = AlgebraPanel()
         self.assertEqual(panel.linear_algebra_popup.tree.objectName(), "linearAlgebraTree")

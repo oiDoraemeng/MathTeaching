@@ -1,7 +1,7 @@
 """二维画布点线工具的坐标和对象生命周期测试。"""
 
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from models.geometry_2d import Point2D
 from models.scene_mode import SceneMode
@@ -136,13 +136,19 @@ def _make_window() -> MainWindow:
     window.plotter = FakePlotter()
     window.geometry_points = []
     window.linear_objects = []
+    window.annotations = []
     window.curve_layers = []
     window._two_d_object_order = []
+    window._agent_teaching_2d = {}
+    window._linear_algebra_pending_vector_ids = []
+    window._linear_algebra_polygon_point_ids = []
+    window._linear_algebra_tool_sequence = 0
     window.geometry_controller = GeometrySceneController(
         window.plotter,
         window._current_2d_bounds(),
     )
     window.algebra_panel = FakeAlgebraPanel()
+    window.scene_command_service = MagicMock()
     window._active_2d_tool = None
     window._pending_geometry_point_id = None
     window._snap_to_grid = False
@@ -340,6 +346,95 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
             [linear.kind for linear in window.linear_objects],
             ["line", "segment", "ray", "vector"],
         )
+
+    def test_linear_algebra_vector_tools_execute_after_two_vector_clicks(self) -> None:
+        window = _make_window()
+        origin = Point2D("O", 0, 0)
+        first_end = Point2D("A", 8, 0)
+        second_end = Point2D("B", 0, 8)
+        window.geometry_points = [origin, first_end, second_end]
+        for point in window.geometry_points:
+            window.geometry_controller.add_point(point)
+        first = window._create_linear_geometry("vector", origin, first_end)
+        second = window._create_linear_geometry("vector", origin, second_end)
+
+        for tool, expected_operation in (
+            ("angle", "geometry.angle_arc"),
+            ("projection", "geometry.projection"),
+            ("subspace", "geometry.subspace_region"),
+            ("area", "geometry.oriented_area"),
+        ):
+            window._active_linear_algebra_tool = tool
+            window._linear_algebra_pending_vector_ids = []
+            window.scene_command_service.reset_mock()
+
+            self.assertTrue(window._handle_linear_algebra_vector_click(4, 0))
+            self.assertTrue(window._handle_linear_algebra_vector_click(0, 4))
+
+            window.scene_command_service.execute.assert_called_once()
+            plan = window.scene_command_service.execute.call_args.args[0]
+            self.assertEqual(plan.scene, "2d")
+            self.assertIn(expected_operation, [operation["op"] for operation in plan.operations])
+            self.assertEqual(window._linear_algebra_pending_vector_ids, [])
+
+        self.assertEqual(first.kind, "vector")
+        self.assertEqual(second.kind, "vector")
+
+    def test_linear_algebra_polygon_finishes_on_double_click(self) -> None:
+        window = _make_window()
+        window._active_linear_algebra_tool = "polygon"
+
+        for x, y in ((25, 50), (50, 25), (75, 50)):
+            event = FakeMouseEvent(x, y)
+            self.assertTrue(window._handle_geometry_mouse_press(event))
+            self.assertTrue(event.accepted)
+
+        event = FakeMouseEvent(75, 50)
+        self.assertTrue(window._handle_geometry_double_click(event))
+        self.assertTrue(event.accepted)
+        plan = window.scene_command_service.execute.call_args.args[0]
+        self.assertEqual(plan.operations[0]["op"], "geometry.polygon")
+        self.assertEqual(len(plan.operations[0]["vertices"]), 3)
+        self.assertEqual(window._linear_algebra_polygon_point_ids, [])
+
+    def test_linear_algebra_polygon_can_close_by_clicking_its_first_point(self) -> None:
+        window = _make_window()
+        window._active_linear_algebra_tool = "polygon"
+        for coordinates in ((-4, 0), (0, 4), (4, 0)):
+            window._handle_linear_algebra_polygon_click(*coordinates)
+
+        self.assertTrue(window._handle_linear_algebra_polygon_click(-4, 0))
+
+        plan = window.scene_command_service.execute.call_args.args[0]
+        self.assertEqual(plan.operations[0]["op"], "geometry.polygon")
+        self.assertEqual(window._linear_algebra_polygon_point_ids, [])
+
+    def test_linear_algebra_transform_uses_matrix_dialog_and_separate_overlays(self) -> None:
+        window = _make_window()
+        window._active_linear_algebra_tool = "transform"
+        with patch("ui.designer_window.QInputDialog.getText", return_value=("1,0;0,2", True)):
+            event = FakeMouseEvent(50, 50)
+            self.assertTrue(window._handle_geometry_mouse_press(event))
+
+        plan = window.scene_command_service.execute.call_args.args[0]
+        self.assertEqual(
+            [operation["op"] for operation in plan.operations],
+            ["geometry.transformed_grid", "geometry.staged_transform", "annotation.formula"],
+        )
+        self.assertNotEqual(plan.operations[0]["alias"], plan.operations[1]["alias"])
+        self.assertEqual(plan.operations[1]["matrices"], [[[1.0, 0.0], [0.0, 2.0]]])
+
+    def test_escape_cancels_linear_algebra_tool(self) -> None:
+        window = _make_window()
+        window._active_linear_algebra_tool = "area"
+        window._linear_algebra_pending_vector_ids = ["v"]
+        event = FakeKeyEvent()
+
+        self.assertTrue(window._handle_geometry_key_press(event))
+        self.assertTrue(event.accepted)
+        self.assertIsNone(window._active_linear_algebra_tool)
+        self.assertIsNone(window._active_2d_tool)
+        self.assertEqual(window._linear_algebra_pending_vector_ids, [])
 
 
 if __name__ == "__main__":

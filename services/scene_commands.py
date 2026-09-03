@@ -367,6 +367,8 @@ class SceneCommandService:
         elif name == "geometry.projection":
             _require_coordinates(operation.get("vector"), dimensions=2)
             direction = _require_coordinates(operation.get("direction"), dimensions=2)
+            if operation.get("origin") is not None:
+                _require_coordinates(operation.get("origin"), dimensions=2)
             if math.hypot(*direction) <= 1e-12:
                 raise CommandError("geometry.projection.direction 不能是零向量。")
             for key in ("result_alias", "foot_alias", "residual_alias"):
@@ -383,6 +385,8 @@ class SceneCommandService:
                 raise CommandError("basis 必须包含 1 到 2 个二维向量。")
             for vector in basis:
                 _require_coordinates(vector, dimensions=2)
+            if operation.get("origin") is not None:
+                _require_coordinates(operation.get("origin"), dimensions=2)
             _validate_bounds(operation.get("bounds"))
             _validate_opacity(operation.get("opacity", 0.2))
         elif name == "geometry.staged_transform":
@@ -408,6 +412,8 @@ class SceneCommandService:
                 raise CommandError("vectors 必须包含两个二维向量。")
             for vector in vectors:
                 _require_coordinates(vector, dimensions=2)
+            if operation.get("origin") is not None:
+                _require_coordinates(operation.get("origin"), dimensions=2)
         elif name == "plane3d.upsert":
             _require_text(operation, "alias")
             _require_coordinates(operation.get("origin"), dimensions=3)

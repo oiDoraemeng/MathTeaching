@@ -12,6 +12,8 @@ def test_every_topic_has_a_recipe_that_validates() -> None:
         second = recipe.builder(RenderContext.default(topic.id))
         assert first == second
         assert first.operations and first.operations[-1]["op"] == "view.fit"
+        aliases = [str(operation["alias"]) for operation in first.operations if "alias" in operation]
+        assert len(aliases) == len(set(aliases)), (topic.id, aliases)
         result = validator.validate(first)
         assert result.valid, (topic.id, result.messages)
 

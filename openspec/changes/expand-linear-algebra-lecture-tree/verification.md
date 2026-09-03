@@ -1,16 +1,21 @@
 # Verification: expand-linear-algebra-lecture-tree
 
-**Date:** 2026-09-01  
-**Status:** ✅ COMPLETE  
-**Method:** Topic-Specific Builder Implementation
+> **复验更新（2026-09-02）：** 按 `fix-plan.md` 修复后，
+> `python -m linear_algebra.validation` 报告 54 个主题通过；六个工具栏专用交互处理器
+> 已接入二维画布，并由独立规划模块和回归测试覆盖。
+
+**Date:** 2026-09-01; revalidated 2026-09-02
+**Status:** ✅ COMMAND PATH AND TOOLBAR INTERACTION REVALIDATED; VISUAL ACCEPTANCE PENDING
+**Method:** Topic-specific builders plus command-protocol and loading regression checks
 
 ## Summary
 
-可视化系统已通过实现 54 个主题特定构建器完全修复：
+当前实现已完成 54 个主题特定构建器的命令级复验：
 
-- ✅ **所有 54 个主题显示正确的几何图形**
+- ✅ **所有 54 个主题生成可执行的、维度正确的几何计划**
 - ✅ **每个主题有专门的坐标和数学关系**
-- ✅ **所有构建器经过测试和验证**
+- ✅ **所有构建器通过 `SceneCommandService.validate` 和回归测试**
+- ⏳ **逐主题视觉/数学验收仍需人工检查，不在本次命令级复验结论内**
 
 ## Solution: Topic-Specific Builders
 
@@ -117,8 +122,12 @@ def build_vector_addition(context: RenderContext) -> CommandPlan:
 
 ## Known Limitations
 
-**Toolbar (Tasks 6-7 deferred):**
-Horizontal toolbar with 6 linear algebra tools was planned but deferred as non-critical. The core visualization fix (54 builders) addresses the main issue. Toolbar can be added in future enhancement.
+**Toolbar (Tasks 6-7):**
+Horizontal toolbar with six linear-algebra tools is implemented.  Basic tools create or
+select vectors; angle, projection, subspace, and oriented-area tools consume two selected
+vectors; polygon completes on double-click; matrix transform accepts a 2×2 matrix dialog.
+Planning and math-explanation text live in `ui/linear_algebra_tools.py` so each tool can be
+changed independently.
 
 ## Files Changed
 
@@ -130,6 +139,8 @@ Horizontal toolbar with 6 linear algebra tools was planned but deferred as non-c
 - `linear_algebra/visualizations/builders/chapter_02.py` - 15 Chapter 2 builders
 - `linear_algebra/visualizations/builders/chapter_03.py` - 15 Chapter 3 builders
 - `tests/test_linear_algebra_builders.py` - Builder tests
+- `ui/linear_algebra_tools.py` - Toolbar command-plan and math helpers
+- `tests/test_linear_algebra_tools.py` - Toolbar planning and overlay-isolation tests
 
 **Modified files:**
 - `linear_algebra/visualizations/common.py` - Uses builder registry
@@ -159,7 +170,9 @@ Horizontal toolbar with 6 linear algebra tools was planned but deferred as non-c
 - `tests/test_linear_algebra_toolbar.py` - Toolbar tests
 
 **Files Modified:**
-- `ui/designer_window.py` - Toolbar integration
+- `ui/designer_window.py` - Toolbar integration and canvas event routing
+- `rendering/geometry_scene.py` - Namespaced teaching overlays and prefix cleanup
+- `tests/test_2d_geometry_interaction.py` - Toolbar canvas interaction tests
 
 **Commits:**
 - 4d5381e: feat: add horizontal linear algebra toolbar component

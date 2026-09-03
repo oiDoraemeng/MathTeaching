@@ -53,6 +53,26 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
 
         self.assertFalse(toolbar.snap_button.isChecked())
 
+    def test_linear_algebra_mode_reuses_toolbar_and_moves_it_to_the_top_left(self) -> None:
+        host = QWidget()
+        host.resize(900, 600)
+        toolbar = TwoDGeometryToolbar(host)
+        host.show()
+        toolbar.show()
+
+        toolbar.set_linear_algebra_mode(True)
+        toolbar.position_in_host()
+        QApplication.processEvents()
+
+        self.assertTrue(toolbar.is_linear_algebra_mode())
+        self.assertEqual((toolbar.x(), toolbar.y()), (12, 12))
+        self.assertTrue(toolbar.angle_button.isVisible())
+        self.assertTrue(toolbar.area_button.isVisible())
+
+        toolbar.set_linear_algebra_mode(False)
+        self.assertFalse(toolbar.is_linear_algebra_mode())
+        self.assertFalse(toolbar.angle_button.isVisible())
+
     def test_toolbar_icon_controls_use_consistent_metrics(self) -> None:
         host = QWidget()
         toolbar = TwoDGeometryToolbar(host)
@@ -127,9 +147,13 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
             def __init__(self) -> None:
                 self.visible = None
                 self.line_flyout = FakeFlyout()
+                self.linear_algebra_mode = None
 
             def setVisible(self, visible: bool) -> None:
                 self.visible = visible
+
+            def set_linear_algebra_mode(self, enabled: bool) -> None:
+                self.linear_algebra_mode = enabled
 
         class FakeSettings:
             def set_mode(self, _mode) -> None:
@@ -147,9 +171,17 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
             SceneMode.THREE_D: SceneAppearance(),
         }
         window.scene_mode = SceneMode.TWO_D
+        window._linear_algebra_workspace_active = False
+        window._active_linear_algebra_topic_id = None
 
         MainWindow._sync_scene_controls(window)
         self.assertTrue(window.two_d_geometry_toolbar.visible)
+        self.assertFalse(window.two_d_geometry_toolbar.linear_algebra_mode)
+
+        window._linear_algebra_workspace_active = True
+        MainWindow._sync_scene_controls(window)
+        self.assertTrue(window.two_d_geometry_toolbar.visible)
+        self.assertTrue(window.two_d_geometry_toolbar.linear_algebra_mode)
 
         window.scene_mode = SceneMode.THREE_D
         MainWindow._sync_scene_controls(window)

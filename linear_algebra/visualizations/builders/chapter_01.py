@@ -62,13 +62,15 @@ def build_vector_point_distinction(context: RenderContext) -> CommandPlan:
 def build_vector_coordinate_system(context: RenderContext) -> CommandPlan:
     """坐标系与右手约定"""
     ops = []
-    ops.extend(make_vector_2d([0, 0], [1, 0], "e1", role="primary"))
-    ops.extend(make_vector_2d([0, 0], [0, 1], "e2", role="secondary"))
-    ops.append(make_label("e₁", [0.5, 0], offset=[0, -0.3]))
-    ops.append(make_label("e₂", [0, 0.5], offset=[-0.3, 0]))
+    ops.append(make_vector_3d([0, 0, 0], [1, 0, 0], "e1", role="primary"))
+    ops.append(make_vector_3d([0, 0, 0], [0, 1, 0], "e2", role="construction"))
+    ops.append(make_vector_3d([0, 0, 0], [0, 0, 1], "e3", role="result"))
+    ops.append(make_label("e₁", [0.5, 0, 0]))
+    ops.append(make_label("e₂", [0, 0.5, 0]))
+    ops.append(make_label("e₃", [0, 0, 0.5]))
     ops.append(make_view_fit(padding=1.3))
 
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="标准基与坐标约定")
+    return CommandPlan(scene="3d", operations=tuple(ops), summary="标准基与右手坐标约定")
 
 
 def build_vector_direction_examples(context: RenderContext) -> CommandPlan:
@@ -189,25 +191,23 @@ def build_linear_combination(context: RenderContext) -> CommandPlan:
 
 def build_velocity_composition(context: RenderContext) -> CommandPlan:
     """速度合成的几何表示"""
-    v_carrier = [2.5, 0.5]
-    v_relative = [0.5, 1.8]
-    v_total = [v_carrier[0] + v_relative[0], v_carrier[1] + v_relative[1]]
+    v_carrier = [2.5, 0.5, 0.0]
+    v_relative = [0.5, 1.8, 0.6]
+    v_total = [
+        v_carrier[0] + v_relative[0],
+        v_carrier[1] + v_relative[1],
+        v_carrier[2] + v_relative[2],
+    ]
 
     ops = []
-    ops.extend(make_vector_2d([0, 0], v_carrier, "v_carrier", role="primary"))
-    ops.extend(make_vector_2d([0, 0], v_relative, "v_relative", role="secondary"))
-    ops.extend(
-        make_vector_2d(
-            v_carrier, v_total, "v_rel_translated", role="auxiliary", style="dashed"
-        )
-    )
-    ops.extend(make_vector_2d([0, 0], v_total, "v_total", role="result"))
-    ops.append(
-        make_polygon([[0, 0], v_carrier, v_total, v_relative], opacity=0.12)
-    )
+    ops.append(make_vector_3d([0, 0, 0], v_carrier, "v_carrier", role="primary"))
+    ops.append(make_vector_3d([0, 0, 0], v_relative, "v_relative", role="construction"))
+    ops.append(make_vector_3d(v_carrier, v_total, "v_rel_translated", role="construction"))
+    ops.append(make_vector_3d([0, 0, 0], v_total, "v_total", role="result"))
+    ops.append(make_parallelepiped([0, 0, 0], [v_carrier, v_relative, [0.0, 0.0, 0.25]], opacity=0.10))
     ops.append(make_view_fit(padding=1.15))
 
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="速度的平行四边形合成")
+    return CommandPlan(scene="3d", operations=tuple(ops), summary="速度的三维向量合成")
 
 
 def build_cross_product(context: RenderContext) -> CommandPlan:
@@ -324,7 +324,7 @@ def build_inner_product_examples(context: RenderContext) -> CommandPlan:
     ops.append(make_angle_arc([0, 0], a1, b1, radius=0.4))
     ops.extend(make_vector_2d([0, 0], a2, "a2", role="primary"))
     ops.extend(make_vector_2d([0, 0], b2, "b2", role="result"))
-    ops.append(make_angle_arc([0, 0], a2, b2, radius=0.4))
+    ops.append(make_angle_arc([0, 0], a2, b2, radius=0.4, alias="angle_obtuse"))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="锐角和钝角的内积符号")
@@ -356,8 +356,8 @@ def build_projection_properties(context: RenderContext) -> CommandPlan:
     ops.extend(make_vector_2d([0, 0], v, "v", role="primary"))
     ops.extend(make_vector_2d([0, 0], w, "w", role="secondary"))
     ops.extend(make_vector_2d([0, 0], u, "u", role="result"))
-    ops.append(make_projection(v, u))
-    ops.append(make_projection(w, u))
+    ops.append(make_projection(v, u, alias="projection_v"))
+    ops.append(make_projection(w, u, alias="projection_w"))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="投影算子的线性性质")
@@ -454,13 +454,14 @@ def build_parallelogram_diagonals(context: RenderContext) -> CommandPlan:
 
 def build_high_dimensional_analogy(context: RenderContext) -> CommandPlan:
     """从二维、三维到 n 维的向量类比"""
-    v2d = [2.0, 1.5]
+    v2d = [2.0, 1.5, 0.0]
     v3d = [1.5, 1.2, 1.8]
 
     ops = []
-    ops.extend(make_vector_2d([0, 0], v2d, "v2d", role="primary"))
-    ops.append(make_vector_3d([0, 0, 0], v3d, "v3d", role="secondary"))
-    ops.append(make_label("2D", [v2d[0] / 2, v2d[1] / 2], offset=[0.2, 0]))
+    ops.append(make_vector_3d([0, 0, 0], v2d, "v2d", role="primary"))
+    ops.append(make_vector_3d([0, 0, 0], v3d, "v3d", role="construction"))
+    ops.append(make_label("2D 嵌入", [v2d[0] / 2, v2d[1] / 2, 0.0]))
+    ops.append(make_label("3D", [v3d[0] / 2, v3d[1] / 2, v3d[2] / 2]))
     ops.append(make_view_fit(padding=1.3))
 
     return CommandPlan(scene="3d", operations=tuple(ops), summary="低维类比理解高维结构")

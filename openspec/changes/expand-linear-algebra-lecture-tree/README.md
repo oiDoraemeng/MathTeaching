@@ -1,6 +1,6 @@
 # expand-linear-algebra-lecture-tree
 
-**Status:** ⚠️ Partially Complete - Needs Rework  
+**Status:** ✅ Topic loading and toolbar interaction repaired
 **Date:** 2026-08-31 → 2026-09-01
 
 ## Overview
@@ -13,32 +13,29 @@
 - **Explanation System:** 54 个主题的完整数学解释
 - **Integration:** 选择主题加载场景和解释
 - **Tests:** 目录、加载、交互测试全部通过
+- **Toolbar:** 角度、投影、多边形、矩阵变换、子空间、有向面积均已接入二维画布
 
-## What Needs Rework ❌
+## Follow-up Work
 
-- **Visualization System:** 约 40/54 主题显示不正确的几何图形
-  - 使用通用模板而非主题特定构建器
-  - 硬编码坐标无法表达不同主题的数学内容
-- **2D Toolbar:** 缺少 6 个线性代数专用工具
+- 旧的 40/54 可视化问题已由主题构建器、协议修复和 3D 维度修复解决。
+- 工具栏绘图与数学解释逻辑位于独立的 `ui/linear_algebra_tools.py`，可继续单独扩展。
 
 ## Verification Result
 
-❌ **FAILED** - See [verification.md](./verification.md)
+✅ **Revalidated 2026-09-02** - See [verification.md](./verification.md) and [fix-plan.md](./fix-plan.md)
 
-虽然实现完成，但可视化系统存在架构性缺陷，无法达成教学目标。
+主题树、讲义解释、主题绘图和工具栏交互均已纳入当前变更。
 
 ## Next Steps
 
-1. 创建新 change: `fix-linear-algebra-visualizations`
-2. 保留树形 UI 和解释系统（工作正常）
-3. 重新设计可视化生成逻辑（主题特定构建器）
-4. 扩展二维工具栏（线性代数工具）
+1. 继续补充需要的新讲义绘图工具（如有）
+2. 按讲义内容增加对应数学解释和回归测试
 
-**Estimated effort:** 10-11 days
+**Estimated effort:** 10-11 days（已完成）
 
 ## Files
 
 - [proposal.md](./proposal.md) - 变更提议
 - [design.md](./design.md) - 设计决策
 - [tasks.md](./tasks.md) - 实现任务（已完成）
-- [verification.md](./verification.md) - 验证报告（发现问题）
+- [verification.md](./verification.md) - 验证报告

@@ -550,12 +550,13 @@ class AlgebraPanel(QFrame):
     line_width_changed = Signal(str, float)
     range_changed = Signal(str, float)
     catalog_requested = Signal(str)
-        # 为插件和旧测试保留该信号；工具栏中已没有对应的可见操作入口。
+    # 为插件和旧测试保留该信号；工具栏中已没有对应的可见操作入口。
     builtin_requested = Signal(str)
     lighting_requested = Signal()
     auto_intersections_changed = Signal(bool)
     manual_intersection_requested = Signal(str, str)
     linear_algebra_requested = Signal(str)
+    linear_algebra_opened = Signal()
     MIN_WIDTH = 260
     DEFAULT_WIDTH = 320
     MAX_WIDTH = 420
@@ -756,6 +757,9 @@ class AlgebraPanel(QFrame):
         self.settings_popup.hide()
         self.catalog_popup.hide()
         self.formula_list.cancel_edit()
+        # 先让主窗口进入二维线性代数工作区，再打开目录。否则场景切换刷新
+        # 面板时会把刚刚显示的目录弹窗隐藏。
+        self.linear_algebra_opened.emit()
         self.linear_algebra_popup.open_at(self._popup_anchor(self.linear_algebra_button))
 
     def _open_formula_for_layer(self, layer_id: str, kind: str, latex: str, anchor: QPoint | None) -> None:

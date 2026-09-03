@@ -9,6 +9,8 @@ from .primitives import (
     make_label,
     make_polygon,
     make_vector_2d,
+    make_vector_3d,
+    make_parallelepiped,
     make_view_fit,
 )
 
@@ -52,10 +54,10 @@ def build_det_sign_zero_one(context: RenderContext) -> CommandPlan:
     ops = []
     ops.extend(make_vector_2d([0, 0], a1, "a1", role="primary"))
     ops.extend(make_vector_2d([0, 0], b1, "b1", role="secondary"))
-    ops.append(make_polygon([[0, 0], a1, [a1[0] + b1[0], a1[1] + b1[1]], b1], opacity=0.15))
+    ops.append(make_polygon([[0, 0], a1, [a1[0] + b1[0], a1[1] + b1[1]], b1], opacity=0.15, alias="positive_area"))
     ops.extend(make_vector_2d([0, 0], a2, "a2", role="result"))
     ops.extend(make_vector_2d([0, 0], b2, "b2", role="auxiliary"))
-    ops.append(make_polygon([[0, 0], a2, [a2[0] + b2[0], a2[1] + b2[1]], b2], opacity=0.1, outline=True, color="#888888"))
+    ops.append(make_polygon([[0, 0], a2, [a2[0] + b2[0], a2[1] + b2[1]], b2], opacity=0.1, outline=True, color="#888888", alias="unit_area"))
     ops.append(make_view_fit(padding=1.3))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="det的符号、零、一")
@@ -83,10 +85,10 @@ def build_det_row_swap(context: RenderContext) -> CommandPlan:
     ops = []
     ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
     ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2, color="#5b8def"))
+    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2, color="#5b8def", alias="original_area"))
     ops.extend(make_vector_2d([0, 0], b, "b_swap", role="auxiliary"))
     ops.extend(make_vector_2d([0, 0], a, "a_swap", role="result"))
-    ops.append(make_polygon([[0, 0], b, [a[0] + b[0], a[1] + b[1]], a], opacity=0.15, color="#ef5b5b"))
+    ops.append(make_polygon([[0, 0], b, [a[0] + b[0], a[1] + b[1]], a], opacity=0.15, color="#ef5b5b", alias="swapped_area"))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="行交换改变行列式符号")
@@ -101,9 +103,9 @@ def build_det_scaling(context: RenderContext) -> CommandPlan:
     ops = []
     ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
     ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.15))
+    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.15, alias="original_area"))
     ops.extend(make_vector_2d([0, 0], scaled_a, "3a", role="result"))
-    ops.append(make_polygon([[0, 0], scaled_a, [scaled_a[0] + b[0], scaled_a[1] + b[1]], b], opacity=0.2))
+    ops.append(make_polygon([[0, 0], scaled_a, [scaled_a[0] + b[0], scaled_a[1] + b[1]], b], opacity=0.2, alias="scaled_area"))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="行数乘使行列式倍增")
@@ -118,9 +120,9 @@ def build_det_shear(context: RenderContext) -> CommandPlan:
     ops = []
     ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
     ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.15))
+    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.15, alias="original_area"))
     ops.extend(make_vector_2d([0, 0], sheared_a, "a_sheared", role="result"))
-    ops.append(make_polygon([[0, 0], sheared_a, [sheared_a[0] + b[0], sheared_a[1] + b[1]], b], opacity=0.2))
+    ops.append(make_polygon([[0, 0], sheared_a, [sheared_a[0] + b[0], sheared_a[1] + b[1]], b], opacity=0.2, alias="sheared_area"))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="切变不改变行列式")
@@ -151,8 +153,8 @@ def build_cramer_area_ratio(context: RenderContext) -> CommandPlan:
     ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
     ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
     ops.extend(make_vector_2d([0, 0], target, "target", role="result"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.15))
-    ops.append(make_polygon([[0, 0], target, b], opacity=0.2, color="#9f70c0"))
+    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.15, alias="basis_area"))
+    ops.append(make_polygon([[0, 0], target, b], opacity=0.2, color="#9f70c0", alias="target_area"))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="面积比求解线性方程组")
@@ -182,7 +184,7 @@ def build_inverse_formula(context: RenderContext) -> CommandPlan:
     ops = []
     ops.extend(make_vector_2d([0, 0], a, "col1", role="primary"))
     ops.extend(make_vector_2d([0, 0], b, "col2", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2))
+    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2, alias="cramer_area"))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="逆矩阵公式的几何含义")
@@ -222,17 +224,19 @@ def build_det_zero_equivalence(context: RenderContext) -> CommandPlan:
 
 def build_det_high_dimensional_volume(context: RenderContext) -> CommandPlan:
     """n 阶行列式与面积、体积类比"""
-    a = [2.0, 0.5]
-    b = [0.5, 2.0]
+    a = [2.0, 0.5, 0.2]
+    b = [0.5, 2.0, 0.4]
+    c = [0.2, 0.4, 1.8]
 
     ops = []
-    ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2))
-    ops.append(make_label("2D → area", [1.5, 1.5], offset=[0, 0]))
+    ops.append(make_vector_3d([0, 0, 0], a, "a", role="primary"))
+    ops.append(make_vector_3d([0, 0, 0], b, "b", role="construction"))
+    ops.append(make_vector_3d([0, 0, 0], c, "c", role="result"))
+    ops.append(make_parallelepiped([0, 0, 0], [a, b, c], opacity=0.2))
+    ops.append(make_label("3D → volume", [1.0, 1.0, 0.8]))
     ops.append(make_view_fit(padding=1.2))
 
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="从2D面积类比到高维体积")
+    return CommandPlan(scene="3d", operations=tuple(ops), summary="从2D面积类比到高维体积")
 
 
 def build_inverse_reverse_order(context: RenderContext) -> CommandPlan:

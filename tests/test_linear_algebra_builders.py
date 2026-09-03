@@ -73,14 +73,19 @@ def test_make_vector_2d():
     assert ops[2]["style"] == "solid"
 
 
+def test_make_vector_role_aliases_use_scene_protocol_roles():
+    assert make_vector_2d([0, 0], [1, 1], "secondary", role="secondary")[2]["role"] == "construction"
+    assert make_vector_2d([0, 0], [1, 1], "aux", role="auxiliary")[2]["role"] == "construction"
+
+
 def test_make_label():
     """Test label primitive creation"""
     op = make_label("a", [1.0, 0.5], offset=[-0.2, -0.2])
 
-    assert op["op"] == "annotation.label"
+    assert op["op"] == "annotation.formula"
     assert op["text"] == "a"
     assert op["position"] == [1.0, 0.5]
-    assert op["offset"] == [-0.2, -0.2]
+    assert op["alias"] == "label_a"
 
 
 def test_make_polygon():

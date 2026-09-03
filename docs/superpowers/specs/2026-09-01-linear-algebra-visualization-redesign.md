@@ -4,6 +4,10 @@
 **Status:** Approved  
 **Related Change:** expand-linear-algebra-lecture-tree
 
+> **Execution audit (2026-09-02):** The command path validates all 54 topic
+> builders. The toolbar component and six canvas interaction handlers are
+> implemented, with planning/math helpers isolated in `ui/linear_algebra_tools.py`.
+
 ## Problem Statement
 
 Current visualization system uses capability-tag-based generic templates, causing ~40/54 topics (75%) to display incorrect geometry. The generic template approach cannot express topic-specific mathematical content.
@@ -38,10 +42,10 @@ Topic → Topic-Specific Builder Function → CommandPlan
 4. Update `recipe_for_entry()` to use topic-specific builders
 
 **Scope:**
-- ✅ All 54 topics (24 Chapter 1 + 16 Chapter 2 + 14 Chapter 3)
+- ✅ All 54 topics (24 Chapter 1 + 15 Chapter 2 + 15 Chapter 3)
 - ✅ 2D and 3D visualizations
-- ✅ Horizontal toolbar with 6 linear algebra tools
-- ✅ Representative unit tests + manual verification
+- ✅ Horizontal toolbar with 6 linear algebra tools and canvas handlers
+- ⏳ Representative unit tests + manual verification (command-level tests pass; visual review pending)
 
 ## Architecture Design
 
@@ -56,14 +60,15 @@ linear_algebra/visualizations/
 │   ├── primitives.py       # Primitive builders (vectors, labels, projections)
 │   ├── math_utils.py       # Math calculations (projection, angle, cross product)
 │   ├── chapter_01.py       # 24 Chapter 1 builders
-│   ├── chapter_02.py       # 16 Chapter 2 builders
-│   └── chapter_03.py       # 14 Chapter 3 builders
+│   ├── chapter_02.py       # 15 Chapter 2 builders
+│   └── chapter_03.py       # 15 Chapter 3 builders
 ├── chapter_01.py           # RECIPES tuple (unchanged)
 ├── chapter_02.py           # RECIPES tuple (unchanged)
 └── chapter_03.py           # RECIPES tuple (unchanged)
 
 ui/
 ├── linear_algebra_toolbar.py    # New horizontal toolbar (top-left)
+├── linear_algebra_tools.py      # Independent toolbar math and plan builders
 ├── two_d_tools.py              # Keep existing (may become unused)
 └── designer_window.py          # Update: integrate new toolbar
 ```
@@ -92,11 +97,10 @@ def make_vector_2d(start, end, alias, role="primary", style="solid"):
 def make_label(text, position, offset=[0, 0]):
     """Create text label"""
     return {
-        "op": "annotation.label",
+        "op": "annotation.formula",
         "alias": f"label_{text.replace(' ', '_')}",
         "text": text,
         "position": position,
-        "offset": offset,
     }
 
 def make_polygon(vertices, color="#5b8def", opacity=0.15, outline=True):
@@ -118,8 +122,8 @@ def build_vector_addition(context: RenderContext) -> CommandPlan:
     
     ops = []
     ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.extend(make_vector_2d(a, c, "b_translated", role="auxiliary", style="dashed"))
+    ops.extend(make_vector_2d([0, 0], b, "b", role="construction"))
+    ops.extend(make_vector_2d(a, c, "b_translated", role="construction", style="dashed"))
     ops.extend(make_vector_2d([0, 0], c, "result", role="result"))
     ops.append(make_polygon([[0, 0], a, c, b]))
     ops.append(make_label("a", [a[0]/2, a[1]/2], [-0.2, -0.2]))
@@ -452,7 +456,7 @@ def test_toolbar_tool_selection():
 **Per-topic verification:**
 - [ ] Geometry mathematically correct (vectors, angles, projections, etc.)
 - [ ] Labels clear and well-positioned
-- [ ] Color distinction clear (primary/secondary/result/auxiliary)
+- [ ] Color distinction clear (primary/construction/result)
 - [ ] View fitting correct, no clipping
 - [ ] Consistent with explanation text
 
@@ -477,14 +481,14 @@ def test_toolbar_tool_selection():
 7. Manual verification of all 24 topics
 
 ### Phase 3: Chapter 2 Builders (2 days)
-8. Implement 16 Chapter 2 builders
+8. Implement 15 Chapter 2 builders
 9. Write representative tests (4 tests)
-10. Manual verification of all 16 topics
+10. Manual verification of all 15 topics
 
 ### Phase 4: Chapter 3 Builders (1 day)
-11. Implement 14 Chapter 3 builders
+11. Implement 15 Chapter 3 builders
 12. Write representative tests (4 tests)
-13. Manual verification of all 14 topics
+13. Manual verification of all 15 topics
 
 ### Phase 5: Toolbar (2-3 days)
 14. Implement `LinearAlgebraToolbar` component
@@ -505,10 +509,10 @@ def test_toolbar_tool_selection():
 **Migration:**
 - All 54 topics transition to new builders in single change
 - No gradual rollout (all-or-nothing approach)
-- Old generic template code remains temporarily for reference
+- The old generic template functions are no longer selected by the registry; missing builders are errors.
 
 **Rollback:**
-- If critical issues found, revert to generic templates
+- If critical issues are found, stop loading the affected topic and fix its builder; do not reintroduce a compatibility fallback.
 - Tree UI and explanation system unaffected
 - Only `linear_algebra/visualizations/` needs rollback
 
@@ -519,12 +523,12 @@ def test_toolbar_tool_selection():
 
 ## Success Criteria
 
-- ✅ All 54 topics display mathematically correct visualizations
-- ✅ Each visualization matches its explanation text
-- ✅ Horizontal toolbar with 6 new linear algebra tools functional
+- ⏳ All 54 topics display mathematically correct visualizations (command-valid; visual review pending)
+- ⏳ Each visualization matches its explanation text (visual review pending)
+- ✅ Horizontal toolbar with 6 new linear algebra tools functional (canvas handlers and tests)
 - ✅ No regression in tree UI and explanation system
 - ✅ Representative unit tests pass
-- ✅ Manual verification complete for all topics
+- ⏳ Manual verification complete for all topics
 - ✅ Code maintainable and well-documented
 
 ## Risks & Mitigation
@@ -542,7 +546,7 @@ def test_toolbar_tool_selection():
 **Risk 3: Toolbar integration issues**
 - Mitigation: Implement toolbar as independent component
 - Mitigation: Test toolbar separately before integration
-- Mitigation: Fallback to existing toolbar if needed
+- Mitigation: Keep the existing geometry toolbar for non-lecture contexts while the linear-algebra toolbar is independently completed
 
 **Risk 4: Coordinate choices not pedagogically optimal**
 - Mitigation: Review sample visualizations early

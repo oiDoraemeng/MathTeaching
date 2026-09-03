@@ -4,6 +4,11 @@
 
 **Goal:** Replace generic template-based visualization system with 54 topic-specific builders and add horizontal linear algebra toolbar with 6 new tools.
 
+> **Execution audit (2026-09-02):** The builder portion is command-valid after the
+> repair recorded in `openspec/changes/expand-linear-algebra-lecture-tree/fix-plan.md`.
+> The catalog is 24/15/15 (54 total). The six canvas interaction handlers are now
+> implemented, with independent planning/math helpers and focused regression tests.
+
 **Architecture:** Three-layer builder system: (1) Primitive builders (reusable geometry), (2) Topic builders (compose primitives), (3) Builder registry (map topic ID → builder function). Horizontal toolbar at top-left.
 
 **Tech Stack:** Python 3.11, PySide6, pytest
@@ -31,8 +36,8 @@ All 54 builders follow the same structure:
 
 **Topic IDs from catalog:**
 - Chapter 1: 24 topics (ch01.vector.*, ch01.ops.*, ch01.inner.*, ch01.projection.*, ch01.proof.*)
-- Chapter 2: 16 topics (ch02.batch.*, ch02.matrix.*, ch02.subspace.*)
-- Chapter 3: 14 topics (ch03.det.*, ch03.cramer.*, ch03.inverse.*)
+- Chapter 2: 15 topics (ch02.batch.*, ch02.matrix.*, ch02.subspace.*)
+- Chapter 3: 15 topics (ch03.det.*, ch03.cramer.*, ch03.inverse.*)
 
 See `linear_algebra/catalog/chapter_*.py` for complete topic lists and IDs.
 
@@ -140,7 +145,7 @@ def build_<topic>(context: RenderContext) -> CommandPlan:
 
 ### Task 4: Chapter 2 Builders (Matrices and Transformations)
 
-Implement all 16 Chapter 2 builders.
+Implement all 15 Chapter 2 builders.
 
 **Files:**
 - Create: `linear_algebra/visualizations/builders/chapter_02.py`
@@ -171,13 +176,13 @@ Implement all 16 Chapter 2 builders.
 
 **Register:** Add to `builders/__init__.py`
 
-**Commit:** `feat: implement all 16 Chapter 2 visualization builders`
+**Commit:** `feat: implement all 15 Chapter 2 visualization builders`
 
 ---
 
 ### Task 5: Chapter 3 Builders (Determinants)
 
-Implement all 14 Chapter 3 builders.
+Implement all 15 Chapter 3 builders.
 
 **Files:**
 - Create: `linear_algebra/visualizations/builders/chapter_03.py`
@@ -208,11 +213,11 @@ Implement all 14 Chapter 3 builders.
 
 **Register:** Add to `builders/__init__.py`
 
-**Commit:** `feat: implement all 14 Chapter 3 visualization builders`
+**Commit:** `feat: implement all 15 Chapter 3 visualization builders`
 
 ---
 
-### Task 6: Horizontal Toolbar Component
+### Task 6: Horizontal Toolbar Component [x]
 
 Create new horizontal toolbar component with 6 linear algebra tools.
 
@@ -256,20 +261,26 @@ class LinearAlgebraToolbar(QWidget):
 
 ---
 
-### Task 7: Toolbar Integration
+### Task 7: Toolbar Integration [x]
 
 Integrate toolbar into designer window.
 
 **Files:**
 - Modify: `ui/designer_window.py`
+- Create: `ui/linear_algebra_tools.py`
+- Modify: `rendering/geometry_scene.py`
+- Modify: `tests/test_2d_geometry_interaction.py`
+- Create: `tests/test_linear_algebra_tools.py`
 
 **Changes:**
 1. Import `LinearAlgebraToolbar`
-2. Create toolbar instance: `self.linear_algebra_toolbar = LinearAlgebraToolbar(self.canvas_2d, theme=self._theme)`
+2. Create toolbar instance: `self.linear_algebra_toolbar = LinearAlgebraToolbar(self.viewport_host, theme=self.effective_theme)`
 3. Position at top-left: Call `toolbar.position_in_host()` on resize
 4. Connect signals to existing 2D scene interaction handlers
 5. Hide/show based on scene type
-6. Optional: Hide old vertical toolbar (`two_d_tools.py`) or keep as fallback
+6. Keep the existing geometry toolbar visible outside an active 2D lecture topic; do not use a generic visualization fallback.
+7. Route specialized tools through validated scene commands: two-vector selection for angle/projection/subspace/area, double-click completion for polygons, and a 2×2 matrix dialog for transforms.
+8. Namespace interactive teaching actors so replacing a toolbar result does not clear lecture-provided drawings.
 
 **Testing:**
 - Manual: Verify toolbar appears at top-left
@@ -285,7 +296,7 @@ Integrate toolbar into designer window.
 Run all tests and perform manual verification.
 
 **Unit Tests:**
-Run: `pytest tests/test_linear_algebra_builders.py -v`
+Run: `pytest tests/test_linear_algebra_builders.py tests/test_linear_algebra_tools.py tests/test_2d_geometry_interaction.py -v`
 Expected: All tests PASS
 
 **Integration Test:**
@@ -308,7 +319,7 @@ for entry in topic_entries():
 For each of 54 topics:
 - [ ] Load topic in application
 - [ ] Verify geometry matches explanation
-- [ ] Verify colors (primary/secondary/result/auxiliary)
+- [ ] Verify colors (primary/construction/result)
 - [ ] Verify labels clear and positioned well
 - [ ] No clipping or overflow
 
@@ -317,6 +328,8 @@ For each of 54 topics:
 - [ ] All 9 tool buttons visible
 - [ ] Tool selection toggles correctly
 - [ ] Theme switching updates appearance
+- [x] Specialized tools route to command plans and explanatory annotations
+- [x] Escape cancels an active specialized tool
 
 **Commit:** `test: verify all 54 builders and toolbar functionality`
 
@@ -361,8 +374,7 @@ Update documentation for new system.
 - ✅ All 54 topics have specific builders
 - ✅ All builders use primitive helpers (no code duplication)
 - ✅ All visualizations mathematically correct
-- ✅ Horizontal toolbar functional with 6 new tools
+- ⏳ Horizontal toolbar buttons and signals exist; six canvas handlers remain pending
 - ✅ No regression in tree UI or explanations
 - ✅ Representative unit tests pass
 - ✅ Manual verification complete
-
