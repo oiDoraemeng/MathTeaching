@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { IntentSender, ModelCatalog, ModelDescriptor } from "../types";
 
 const fallbackCatalog: ModelCatalog = {
@@ -35,10 +35,25 @@ function ModelRow({ item, selected, onSelect }: { item: ModelDescriptor; selecte
 
 export function ModelSelector({ model, sessionId, onIntent, catalog = fallbackCatalog }: { model: string; sessionId: string; onIntent: IntentSender; catalog?: ModelCatalog }) {
   const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const closeOnOutside = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", closeOnOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
   const selected = [...catalog.builtin, ...catalog.custom].find((item) => item.id === model || item.name === model);
   const select = (item: ModelDescriptor) => { onIntent({ protocol_version: 1, type: "change_model", request_id: crypto.randomUUID(), session_id: sessionId, payload: { model: item.id } }); setOpen(false); };
-  return <div className="model-selector model-picker">
-    <button className="model-picker-button" aria-label="模型" title="模型" onClick={() => setOpen(!open)}>{selected?.name ?? model}<span aria-hidden="true">▾</span></button>
+  return <div ref={rootRef} className="model-selector model-picker">
+    <button className="model-picker-button" aria-label="模型" title="模型" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen(!open)}>{selected?.name ?? model}<span aria-hidden="true">▾</span></button>
     {open && <div className="model-popover" role="menu">
       <strong>内置模型</strong>
       {catalog.builtin.map((item) => <ModelRow key={item.id} item={item} selected={item.id === model || item.name === model} onSelect={() => select(item)} />)}
