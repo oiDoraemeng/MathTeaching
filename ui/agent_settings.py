@@ -23,6 +23,7 @@ from agent.instruction import InstructionStore
 from agent.memory import MemoryProfile, MemoryStore
 from agent.providers import ModelProvider
 from services.agent_provider import AgentSettings
+from ui.icons import apply_icon, icon_color, retint_icons
 from ui.tokens import ThemeName, apply_drop_shadow
 
 
@@ -93,9 +94,9 @@ class AgentSettingsDialog(QDialog):
         self.api_key_edit.setEchoMode(QLineEdit.EchoMode.Password)
         self.api_key_edit.setPlaceholderText("API Key")
         self.reveal_key_button = QToolButton(self)
-        self.reveal_key_button.setText("👁")
         self.reveal_key_button.setCheckable(True)
         self.reveal_key_button.setToolTip("临时显示 API Key")
+        self._sync_reveal_key_icon(False)
         key_row = QHBoxLayout()
         key_row.setContentsMargins(0, 0, 0, 0)
         key_row.addWidget(self.api_key_edit, 1)
@@ -148,6 +149,8 @@ class AgentSettingsDialog(QDialog):
     def set_effective_theme(self, effective_theme: ThemeName) -> None:
         self.effective_theme = effective_theme
         apply_drop_shadow(self, "modal", effective_theme)
+        if hasattr(self, "reveal_key_button"):
+            retint_icons(self, effective_theme)
 
     @classmethod
     def _qsettings(cls) -> QSettings:
@@ -214,6 +217,16 @@ class AgentSettingsDialog(QDialog):
     def _toggle_key_echo(self, revealed: bool) -> None:
         self.api_key_edit.setEchoMode(
             QLineEdit.EchoMode.Normal if revealed else QLineEdit.EchoMode.Password
+        )
+        self._sync_reveal_key_icon(revealed)
+
+    def _sync_reveal_key_icon(self, revealed: bool) -> None:
+        apply_icon(
+            self.reveal_key_button,
+            "circle-filled" if revealed else "circle-outline",
+            icon_color(self.effective_theme),
+            icon_size=16,
+            hit_size=28,
         )
 
     def _save(self) -> None:

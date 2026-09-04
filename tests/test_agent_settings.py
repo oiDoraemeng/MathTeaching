@@ -61,6 +61,16 @@ class AgentSettingsTests(unittest.TestCase):
         self.assertEqual(dialog.api_key_edit.echoMode(), dialog.api_key_edit.EchoMode.Password)
         dialog.deleteLater()
 
+    def test_api_key_visibility_uses_circle_icons(self) -> None:
+        dialog = AgentSettingsDialog(effective_theme="light")
+        self.assertEqual(dialog.reveal_key_button.text(), "")
+        self.assertEqual(dialog.reveal_key_button.property("_kiro_icon_state")[0], "circle-outline")
+        dialog.reveal_key_button.setChecked(True)
+        self.assertEqual(dialog.reveal_key_button.property("_kiro_icon_state")[0], "circle-filled")
+        dialog.set_effective_theme("dark")
+        self.assertEqual(dialog.reveal_key_button.property("_kiro_icon_state")[0], "circle-filled")
+        dialog.deleteLater()
+
     def test_form_values_are_trimmed_and_base_url_loses_trailing_slash(self) -> None:
         dialog = AgentSettingsDialog()
         dialog.base_url_edit.setText("  https://example.test/v1/  ")
