@@ -563,6 +563,7 @@ class AlgebraPanel(QFrame):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self._effective_theme: ThemeName = getattr(parent, "effective_theme", "light")
         self.rows: dict[str, LayerRow] = {}
         self._layers: list[Layer] = []
         self._scene_mode = SceneMode.THREE_D
@@ -604,7 +605,7 @@ class AlgebraPanel(QFrame):
         self.intersection_menu.addAction(self.auto_intersections_action)
         self.intersection_menu.addAction(self.manual_intersection_action)
 
-        self.formula_list = FormulaListWidget(self)
+        self.formula_list = FormulaListWidget(self, initial_theme=self._effective_theme)
         self.rows_container = self.formula_list
         self.rows_scroll = self.formula_list
         layout.addWidget(self.formula_list, 1)
@@ -614,13 +615,13 @@ class AlgebraPanel(QFrame):
         self.status_label.setVisible(False)
         layout.addWidget(self.status_label)
 
-        self.formula_popup = FormulaEditorPopup(self)
+        self.formula_popup = FormulaEditorPopup(self, initial_theme=self._effective_theme)
         self.settings_popup = LayerSettingsPopup(self)
         self.geometry_settings_popup = GeometrySettingsPopup(self)
         self.intersection_popup = IntersectionPopup(self)
         self.catalog_popup = FunctionCatalogPopup(self)
         self.linear_algebra_popup = LinearAlgebraDialog(self)
-        self.sync_overlay_theme("light")
+        self.sync_overlay_theme(self._effective_theme)
         self.new_formula_button.clicked.connect(self._open_new_formula)
         self.function_catalog_button.clicked.connect(self._open_catalog)
         self.linear_algebra_button.clicked.connect(self._open_linear_algebra)
@@ -650,6 +651,11 @@ class AlgebraPanel(QFrame):
         super().showEvent(event)
 
     def sync_overlay_theme(self, theme: ThemeName) -> None:
+        self._effective_theme = theme
+        self.formula_list.set_theme(theme)
+        self.formula_popup.set_theme(theme)
+        for preview in self.findChildren(FormulaPreviewWidget):
+            preview.set_theme(theme)
         for popup in (
             self.settings_popup,
             self.geometry_settings_popup,
