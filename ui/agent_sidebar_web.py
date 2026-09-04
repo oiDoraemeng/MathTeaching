@@ -22,6 +22,23 @@ from PySide6.QtWidgets import QVBoxLayout, QWidget
 from .agent_bridge import AgentBridge
 
 
+def register_mathagent_url_scheme() -> None:
+    """Register the local asset scheme before QApplication is constructed."""
+    if QWebEngineUrlScheme.schemeByName(b"mathagent").name():
+        return
+    scheme = QWebEngineUrlScheme(b"mathagent")
+    scheme.setSyntax(QWebEngineUrlScheme.Syntax.Host)
+    scheme.setFlags(
+        QWebEngineUrlScheme.Flag.LocalScheme
+        | QWebEngineUrlScheme.Flag.LocalAccessAllowed
+        | QWebEngineUrlScheme.Flag.SecureScheme
+    )
+    QWebEngineUrlScheme.registerScheme(scheme)
+
+
+register_mathagent_url_scheme()
+
+
 class _LocalAssetHandler(QWebEngineUrlSchemeHandler):
     _ALLOWED_NAMES = {"index.html", "manifest.json"}
     _ALLOWED_SUFFIXES = {".js", ".css", ".map", ".svg", ".png", ".woff", ".woff2", ".ttf", ".html", ".json"}
@@ -82,7 +99,19 @@ class AgentSidebarWeb(QWidget):
 
     _THEME_BOOTSTRAP_SOURCE = """(() => {
   const mode = new URLSearchParams(location.search).get(\"theme\");
-  if (mode === \"light\" || mode === \"dark\") document.documentElement.dataset.theme = mode;
+  if (mode !== \"light\" && mode !== \"dark\") return;
+  const apply = () => {
+    const root = document.documentElement;
+    if (!root) return false;
+    root.dataset.theme = mode;
+    return true;
+  };
+  if (!apply()) {
+    const observer = new MutationObserver(() => {
+      if (apply()) observer.disconnect();
+    });
+    observer.observe(document, { childList: true });
+  }
 })();"""
 
     @staticmethod
@@ -241,14 +270,6 @@ class AgentSidebarWeb(QWidget):
         self._emit_math_case_payload(payload)
 
     def _install_scheme_handler(self) -> None:
-        scheme = QWebEngineUrlScheme(b"mathagent")
-        scheme.setSyntax(QWebEngineUrlScheme.Syntax.HostAndPort)
-        scheme.setFlags(
-            QWebEngineUrlScheme.Flag.LocalScheme
-            | QWebEngineUrlScheme.Flag.LocalAccessAllowed
-            | QWebEngineUrlScheme.Flag.SecureScheme
-        )
-        QWebEngineUrlScheme.registerScheme(scheme)
         handler = _LocalAssetHandler(self.asset_root, QWebEngineProfile.defaultProfile())
         QWebEngineProfile.defaultProfile().installUrlSchemeHandler(b"mathagent", handler)
         self._asset_handler = handler

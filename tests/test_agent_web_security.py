@@ -3,9 +3,17 @@ from __future__ import annotations
 from pathlib import Path
 
 from PySide6.QtCore import QUrl
+from PySide6.QtWebEngineCore import QWebEngineUrlScheme
 from PySide6.QtWidgets import QApplication
 
 from ui.agent_sidebar_web import _LocalAssetHandler, _LocalPage
+
+
+def test_local_scheme_uses_host_syntax_without_a_required_port() -> None:
+    scheme = QWebEngineUrlScheme.schemeByName(b"mathagent")
+    assert scheme.name() == b"mathagent"
+    assert scheme.syntax() == QWebEngineUrlScheme.Syntax.Host
+    assert scheme.defaultPort() == -1
 
 
 def test_asset_handler_rejects_traversal_and_unknown_files(tmp_path: Path) -> None:

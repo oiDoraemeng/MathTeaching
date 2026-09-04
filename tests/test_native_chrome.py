@@ -23,7 +23,7 @@ def test_dwm_receives_dark_and_light_integer_values(monkeypatch) -> None:
 
     class DwmApi:
         def DwmSetWindowAttribute(self, hwnd, attribute, value, size):
-            calls.append((int(hwnd), attribute, value._obj.value, size))
+            calls.append((hwnd.value, attribute.value, value._obj.value, size.value))
             return 0
 
     monkeypatch.setattr(native_chrome.sys, "platform", "win32")
@@ -34,6 +34,24 @@ def test_dwm_receives_dark_and_light_integer_values(monkeypatch) -> None:
     assert [call[2] for call in calls] == [1, 0]
     assert all(call[1] == 20 for call in calls)
     assert all(call[3] == ctypes.sizeof(ctypes.c_int) for call in calls)
+
+
+def test_dwm_accepts_pointer_width_window_handles(monkeypatch) -> None:
+    seen = []
+
+    class Window(QWidget):
+        def winId(self):  # noqa: N802 - Qt API
+            return 0x1_0000_0001
+
+    class DwmApi:
+        def DwmSetWindowAttribute(self, hwnd, *_args):
+            seen.append(hwnd.value)
+            return 0
+
+    monkeypatch.setattr(native_chrome.sys, "platform", "win32")
+    monkeypatch.setattr(native_chrome.ctypes, "windll", SimpleNamespace(dwmapi=DwmApi()), raising=False)
+    assert apply_native_titlebar_theme(Window(), "dark") is True
+    assert seen == [0x1_0000_0001]
 
 
 def test_native_chrome_fallbacks_never_raise(monkeypatch) -> None:

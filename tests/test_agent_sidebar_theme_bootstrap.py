@@ -31,7 +31,9 @@ def test_theme_bootstrap_script_is_document_creation_and_reads_location_theme() 
     assert script.injectionPoint() == QWebEngineScript.InjectionPoint.DocumentCreation
     assert script.worldId() == QWebEngineScript.ScriptWorldId.MainWorld
     assert "new URLSearchParams(location.search).get(\"theme\")" in script.sourceCode()
-    assert "document.documentElement.dataset.theme" in script.sourceCode()
+    assert "root.dataset.theme = mode" in script.sourceCode()
+    assert "if (!root) return false" in script.sourceCode()
+    assert "MutationObserver" in script.sourceCode()
 
 
 def test_theme_bootstrap_uses_loaded_theme_when_initializing() -> None:

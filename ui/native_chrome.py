@@ -17,13 +17,25 @@ def apply_native_titlebar_theme(window: QWidget, effective_theme: str) -> bool:
         return False
     try:
         enabled = ctypes.c_int(1 if effective_theme == "dark" else 0)
-        result = ctypes.windll.dwmapi.DwmSetWindowAttribute(
-            int(window.winId()),
-            DWMWA_USE_IMMERSIVE_DARK_MODE,
+        set_window_attribute = ctypes.windll.dwmapi.DwmSetWindowAttribute
+        try:
+            set_window_attribute.argtypes = (
+                ctypes.c_void_p,
+                ctypes.c_uint,
+                ctypes.c_void_p,
+                ctypes.c_uint,
+            )
+            set_window_attribute.restype = ctypes.c_long
+        except (AttributeError, TypeError):
+            # Python test doubles do not expose ctypes function metadata.
+            pass
+        result = set_window_attribute(
+            ctypes.c_void_p(int(window.winId())),
+            ctypes.c_uint(DWMWA_USE_IMMERSIVE_DARK_MODE),
             ctypes.byref(enabled),
-            ctypes.sizeof(enabled),
+            ctypes.c_uint(ctypes.sizeof(enabled)),
         )
-    except (AttributeError, OSError, TypeError, ValueError):
+    except (AttributeError, OSError, OverflowError, TypeError, ValueError, ctypes.ArgumentError):
         return False
     return result == 0
 
