@@ -419,6 +419,7 @@ class MainWindow:
             ),
             parent=self.window,
         )
+        self.agent_sidebar.set_panel_width(self.agent_resize_handle.restore_width())
         self.agent_resize_handle.width_changed.connect(self.agent_sidebar.set_panel_width)
         self.agent_panel = self.agent_sidebar.expanded_panel
         root_layout.addWidget(self.agent_sidebar)
@@ -3353,6 +3354,7 @@ class MainWindow:
             self._close_scene_settings(immediate=True)
         self.agent_button.setChecked(True)
         self.agent_sidebar.show()
+        self.agent_resize_handle.show()
         self.agent_sidebar.expand()
         self.agent_sidebar.select_tab("agent")
         self._root_layout.activate()
@@ -3361,6 +3363,7 @@ class MainWindow:
     def _close_agent_panel(self, immediate: bool = False) -> None:
         self.agent_button.setChecked(False)
         self.agent_sidebar.collapse()
+        self.agent_resize_handle.hide()
         self._root_layout.activate()
 
     def _show_agent_settings(self) -> None:
