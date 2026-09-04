@@ -8,6 +8,7 @@ from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication
 
 from ui.designer_window import MainWindow
+from ui.native_chrome import install_titlebar_tracker
 from ui.tokens import font_family_stack, load_tokens
 
 ThemeMode = Literal["light", "dark", "system"]
@@ -46,6 +47,7 @@ def build_application_font() -> QFont:
 
 def main() -> int:
     app = QApplication(sys.argv)
+    install_titlebar_tracker(app)
     app.setStyle("Fusion")
     settings = QSettings()
     mode = normalize_theme_mode(settings.value("ui/theme", "system"))
