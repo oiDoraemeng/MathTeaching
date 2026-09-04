@@ -12,8 +12,8 @@ ROOT = Path(__file__).parents[1]
 def test_qss_removes_region_divider_and_adds_focus_ring() -> None:
     qss = build_qss("light")
     assert "border-right" not in qss
-    assert ":focus-visible" in qss
-    assert re.search(r":focus-visible[^{}]*\{[^{}]*2px solid \#?", qss)
+    assert ":focus-visible" not in qss
+    assert re.search(r":focus[^{}]*\{[^{}]*2px solid \#?", qss)
 
 
 def test_layer_rows_are_cards_with_color_strip_and_states() -> None:
