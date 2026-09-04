@@ -141,3 +141,18 @@ def test_formula_cell_scrolls_long_content_without_visible_scrollbar() -> None:
     assert re.search(r"html, body\s*\{[^}]*overflow-x:\s*hidden", html, re.S)
     row_block = re.search(r"\.layer-row\s*\{([^}]*)\}", html, re.S)
     assert row_block is not None and "white-space: nowrap" not in row_block.group(1)
+
+
+@pytest.mark.parametrize("filename", ["mathlive.html", "inline_formula_overlay.html", "formula_preview.html"])
+def test_math_input_document_uses_theme_variables(filename: str) -> None:
+    html = (ROOT / "MathInputWidget" / filename).read_text(encoding="utf-8")
+    assert "var(--mi-bg-panel," in html or "var(--mi-editing-bg," in html
+    assert "var(--mi-text-primary," in html
+    assert "var(--mi-focus," in html
+    assert "--selection-background-color: var(--mi-selected-bg" in html
+
+
+def test_formula_preview_fallback_has_no_inline_theme_color() -> None:
+    source = (ROOT / "MathInputWidget" / "formula_preview.py").read_text(encoding="utf-8")
+    assert "#1f2937" not in source
+    assert 'setObjectName("formulaPreviewFallback")' in source
