@@ -19,10 +19,16 @@ class LinearAlgebraTreeModel:
         self._items: dict[str, QTreeWidgetItem] = {}
         self._searchable = self._build_search_index()
         self._query = ""
+        self._expanded_node_ids: set[str] | None = None
         self._rebuild(None)
 
     def filter(self, query: str) -> None:
-        self._query = _normalize(query)
+        normalized_query = _normalize(query)
+        if normalized_query:
+            self._capture_expansion()
+        else:
+            self._expanded_node_ids = None
+        self._query = normalized_query
         matches = None
         if self._query:
             matches = {
@@ -35,17 +41,32 @@ class LinearAlgebraTreeModel:
     def visible_topic_ids(self) -> tuple[str, ...]:
         return tuple(topic.id for topic in self.registry.topics if topic.id in self._items)
 
+    @property
+    def query(self) -> str:
+        """Return the normalized query currently represented by the tree."""
+        return self._query
+
+    def needs_filter(self, query: str) -> bool:
+        """Return whether applying ``query`` would change the tree contents."""
+        return self._query != _normalize(query)
+
     def restore_default_expansion(self) -> None:
+        self._expanded_node_ids = set()
         for node_id, item in self._items.items():
             node = self._nodes[node_id]
             item.setExpanded(node.kind == "chapter")
+            if node.kind == "chapter" and item.childCount():
+                self._expanded_node_ids.add(node_id)
 
     def expand_all(self) -> None:
-        for item in self._items.values():
+        self._expanded_node_ids = set()
+        for node_id, item in self._items.items():
             if item.childCount():
                 item.setExpanded(True)
+                self._expanded_node_ids.add(node_id)
 
     def collapse_to_chapters(self) -> None:
+        self._expanded_node_ids = set()
         for item in self._items.values():
             if item.childCount():
                 item.setExpanded(False)
@@ -69,38 +90,58 @@ class LinearAlgebraTreeModel:
         return self._items.get(node_id)
 
     def _rebuild(self, matched_topics: set[str] | None) -> None:
-        self.tree.clear()
-        self._items.clear()
-        visible_sections: set[str] | None = None
-        visible_chapters: set[str] | None = None
-        if matched_topics is not None:
-            visible_sections = {self._topics[topic_id].section_id for topic_id in matched_topics}
-            visible_chapters = {f"ch{self._topics[topic_id].chapter_number:02d}" for topic_id in matched_topics}
-        for chapter in (node for node in self.registry.nodes if node.kind == "chapter"):
-            if visible_chapters is not None and chapter.id not in visible_chapters:
-                continue
-            chapter_item = self._branch_item(chapter.id, chapter.title)
-            self.tree.addTopLevelItem(chapter_item)
-            for section_id in chapter.children:
-                if visible_sections is not None and section_id not in visible_sections:
+        self.tree.setUpdatesEnabled(False)
+        try:
+            self.tree.clear()
+            self._items.clear()
+            visible_sections: set[str] | None = None
+            visible_chapters: set[str] | None = None
+            if matched_topics is not None:
+                visible_sections = {self._topics[topic_id].section_id for topic_id in matched_topics}
+                visible_chapters = {f"ch{self._topics[topic_id].chapter_number:02d}" for topic_id in matched_topics}
+            for chapter in (node for node in self.registry.nodes if node.kind == "chapter"):
+                if visible_chapters is not None and chapter.id not in visible_chapters:
                     continue
-                section = self._nodes[section_id]
-                section_item = self._branch_item(section.id, section.title)
-                chapter_item.addChild(section_item)
-                for topic_id in section.children:
-                    if matched_topics is not None and topic_id not in matched_topics:
+                chapter_item = self._branch_item(chapter.id, chapter.title)
+                self.tree.addTopLevelItem(chapter_item)
+                for section_id in chapter.children:
+                    if visible_sections is not None and section_id not in visible_sections:
                         continue
-                    topic = self._topics[topic_id]
-                    item = QTreeWidgetItem([topic.title])
-                    item.setData(0, Qt.ItemDataRole.UserRole, topic.id)
-                    explanation = self.registry.get_explanation(topic.explanation_id)
-                    item.setToolTip(0, explanation.summary)
-                    self._items[topic.id] = item
-                    section_item.addChild(item)
-        if matched_topics is None:
-            self.restore_default_expansion()
-        else:
-            self.expand_all()
+                    section = self._nodes[section_id]
+                    section_item = self._branch_item(section.id, section.title)
+                    chapter_item.addChild(section_item)
+                    for topic_id in section.children:
+                        if matched_topics is not None and topic_id not in matched_topics:
+                            continue
+                        topic = self._topics[topic_id]
+                        item = QTreeWidgetItem([topic.title])
+                        item.setData(0, Qt.ItemDataRole.UserRole, topic.id)
+                        explanation = self.registry.get_explanation(topic.explanation_id)
+                        item.setToolTip(0, explanation.summary)
+                        self._items[topic.id] = item
+                        section_item.addChild(item)
+            if matched_topics is None:
+                if self._expanded_node_ids is None:
+                    self.restore_default_expansion()
+                else:
+                    self._restore_expansion()
+            else:
+                self.expand_all()
+        finally:
+            self.tree.setUpdatesEnabled(True)
+            self.tree.viewport().update()
+
+    def _capture_expansion(self) -> None:
+        self._expanded_node_ids = {
+            node_id for node_id, item in self._items.items() if item.childCount()
+            and item.isExpanded()
+        }
+
+    def _restore_expansion(self) -> None:
+        expanded = self._expanded_node_ids or set()
+        for node_id, item in self._items.items():
+            if item.childCount():
+                item.setExpanded(node_id in expanded)
 
     def _branch_item(self, node_id: str, title: str) -> QTreeWidgetItem:
         item = QTreeWidgetItem([title])

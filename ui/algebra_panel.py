@@ -697,7 +697,6 @@ class AlgebraPanel(QFrame):
         self.settings_popup.hide()
         self.geometry_settings_popup.hide()
         self.catalog_popup.hide()
-        self.linear_algebra_popup.hide()
 
     def set_catalog_entries(self, entries: Iterable[CatalogEntry]) -> None:
         self.catalog_popup.set_entries(entries)
@@ -762,7 +761,6 @@ class AlgebraPanel(QFrame):
 
     def _open_catalog(self) -> None:
         self.settings_popup.hide()
-        self.linear_algebra_popup.hide()
         self.formula_list.cancel_edit()
         self.catalog_popup.open_at(self._popup_anchor(self.function_catalog_button))
 
@@ -770,9 +768,6 @@ class AlgebraPanel(QFrame):
         self.settings_popup.hide()
         self.catalog_popup.hide()
         self.formula_list.cancel_edit()
-        if self.linear_algebra_popup.isVisible():
-            self.linear_algebra_popup.hide()
-            return
         # 先让主窗口进入二维工作区，再打开目录。工具栏本身已经默认完整显示，
         # 这里仅负责打开讲义目录，不负责决定工具栏是否可见。
         self.linear_algebra_opened.emit()

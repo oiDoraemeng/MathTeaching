@@ -1,5 +1,5 @@
-from PySide6.QtCore import QRect, Qt
-from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QEvent, QRect, Qt
+from PySide6.QtWidgets import QApplication, QToolButton, QWidget
 
 from ui.linear_algebra_dialog import LinearAlgebraDialog
 
@@ -115,4 +115,65 @@ def test_short_content_does_not_force_a_scrollbar() -> None:
     dialog.show()
     QApplication.processEvents()
     assert dialog.content_scroll.verticalScrollBar().maximum() == 0
+    dialog.close()
+
+
+def test_external_click_closes_popup_but_reactivation_cancels_pending_close() -> None:
+    host = QWidget()
+    outside_button = QToolButton(host)
+    dialog = make_linear_algebra_dialog()
+    anchor = QRect(20, 20, 1, 1).topLeft()
+    dialog.open_at(anchor)
+    dialog.eventFilter(outside_button, QEvent(QEvent.Type.MouseButtonPress))
+    dialog.open_at(anchor)
+    QApplication.processEvents()
+    assert dialog.isVisible()
+
+    dialog.eventFilter(outside_button, QEvent(QEvent.Type.MouseButtonPress))
+    QApplication.processEvents()
+    assert not dialog.isVisible()
+
+
+def test_reopening_popup_does_not_duplicate_chapters_or_reset_expansion() -> None:
+    dialog = make_linear_algebra_dialog()
+    anchor = QRect(20, 20, 1, 1).topLeft()
+    dialog.open_at(anchor)
+    chapter = dialog.tree.topLevelItem(1)
+    section = chapter.child(0)
+    section_id = next(
+        node.children[0]
+        for node in dialog.registry.nodes
+        if node.id == "ch02"
+    )
+    section.setExpanded(True)
+    assert dialog.tree.topLevelItemCount() == 3
+
+    dialog.hide()
+    dialog.open_at(anchor)
+    QApplication.processEvents()
+
+    chapter_two = dialog.tree_model.item_for("ch02")
+    assert chapter_two is not None
+    assert dialog.tree.topLevelItemCount() == 3
+    assert sum(
+        dialog.tree.topLevelItem(index) is chapter_two
+        for index in range(dialog.tree.topLevelItemCount())
+    ) == 1
+    restored_section = dialog.tree_model.item_for(section_id)
+    assert restored_section is not None and restored_section.isExpanded()
+    assert dialog.tree.viewport().isEnabled()
+    dialog.close()
+
+
+def test_topic_click_keeps_popup_open_when_scene_mode_is_synchronized() -> None:
+    dialog = make_linear_algebra_dialog()
+    dialog.open_at(QRect(20, 20, 1, 1).topLeft())
+    dialog.requested.connect(lambda _topic_id: None)
+    topic = dialog.tree.topLevelItem(0).child(0).child(0)
+
+    dialog.activate_item(topic)
+    QApplication.processEvents()
+
+    assert dialog.isVisible()
+    assert dialog.content_scroll.isVisible()
     dialog.close()

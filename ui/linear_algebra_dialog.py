@@ -90,11 +90,15 @@ class LinearAlgebraDialog(QDialog):
         self._show_animation = QPropertyAnimation(self, b"windowOpacity", self)
         self._show_animation.setDuration(150)
         self._show_animation.setEasingCurve(QEasingCurve.Type.OutCubic)
+        self._outside_click_timer = QTimer(self)
+        self._outside_click_timer.setSingleShot(True)
+        self._outside_click_timer.timeout.connect(self.hide)
         application = QApplication.instance()
         if application is not None:
             application.installEventFilter(self)
 
     def activate_item(self, item) -> None:
+        self._outside_click_timer.stop()
         topic_id = item.data(0, Qt.ItemDataRole.UserRole)
         if not topic_id:
             item.setExpanded(not item.isExpanded())
@@ -102,9 +106,8 @@ class LinearAlgebraDialog(QDialog):
         topic = self.registry.get_topic(str(topic_id))
         self.content_view.set_content(self.registry.get_explanation(topic.explanation_id))
         self.content_scroll.show()
-        # Keep the non-modal catalog visible while the explanation is loaded so
-        # the newly added scroll area is an actual user-facing lecture surface.
-        # The existing outside-click filter still provides the dismissal path.
+        # Keep the non-modal catalog visible while the explanation is loaded.
+        # The application-level filter is the only dismissal path for this popup.
         self.show()
         self.raise_()
         self.requested.emit(str(topic_id))
@@ -116,11 +119,17 @@ class LinearAlgebraDialog(QDialog):
         self.tree_model.collapse_to_chapters()
 
     def open_at(self, anchor: QPoint) -> None:
-        self.tree_model.filter(self.search_edit.text())
-        self.setWindowOpacity(0.0)
-        self.show()
+        self._outside_click_timer.stop()
+        if self.tree_model.needs_filter(self.search_edit.text()):
+            self.tree_model.filter(self.search_edit.text())
+        was_visible = self.isVisible()
         self.move(anchor)
         self.raise_()
+        if was_visible:
+            self.activateWindow()
+            return
+        self.setWindowOpacity(0.0)
+        self.show()
         self._show_animation.stop()
         self._show_animation.setStartValue(0.0)
         self._show_animation.setEndValue(1.0)
@@ -141,5 +150,5 @@ class LinearAlgebraDialog(QDialog):
             and watched is not self
             and not self.isAncestorOf(watched)
         ):
-            QTimer.singleShot(0, self.hide)
+            self._outside_click_timer.start(0)
         return super().eventFilter(watched, event)

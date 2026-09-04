@@ -152,7 +152,17 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertTrue(panel.linear_algebra_popup.isVisible())
         panel.linear_algebra_button.click()
         QApplication.processEvents()
-        self.assertFalse(panel.linear_algebra_popup.isVisible())
+        self.assertTrue(panel.linear_algebra_popup.isVisible())
+
+    def test_scene_mode_and_other_catalog_do_not_force_close_linear_algebra_popup(self) -> None:
+        panel = AlgebraPanel()
+        panel.linear_algebra_button.click()
+        self.assertTrue(panel.linear_algebra_popup.isVisible())
+
+        panel.set_scene_mode(SceneMode.TWO_D)
+        self.assertTrue(panel.linear_algebra_popup.isVisible())
+        panel._open_catalog()
+        self.assertTrue(panel.linear_algebra_popup.isVisible())
 
     def test_linear_algebra_popup_uses_tokenized_tree_surface(self) -> None:
         panel = AlgebraPanel()
