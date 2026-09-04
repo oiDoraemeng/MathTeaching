@@ -15,7 +15,7 @@ from typing import Literal
 from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QThread, QTimer, Signal, Slot
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent, QShortcut, QWheelEvent
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QInputDialog, QLineEdit, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QInputDialog, QLineEdit, QToolButton, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
 
 from MathInputWidget import LatexParseError, LatexParser
@@ -54,6 +54,7 @@ from ui.scene_settings import SceneSettingsPanel
 from ui.status_bar import AppStatusBar
 from ui.panel_resize_handle import PanelResizeSpec, _PanelResizeHandle
 from ui.tokens import apply_drop_shadow, apply_rounded_overlay
+from ui.native_chrome import apply_native_titlebar_theme
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 from ui.linear_algebra_tools import (
     build_polygon_tool_plan,
@@ -3635,6 +3636,11 @@ class MainWindow:
         effective_theme = getattr(self, "effective_theme", "light")
         self.window.setStyleSheet(build_qss(effective_theme))
         self.window.effective_theme = effective_theme
+        application = QApplication.instance()
+        if application is not None:
+            application.setProperty("math3d_effective_theme", effective_theme)
+            for top_level in application.topLevelWidgets():
+                apply_native_titlebar_theme(top_level, effective_theme)
         for widget in (
             getattr(self, "viewport_toolbar", None),
             getattr(self, "two_d_geometry_toolbar", None),

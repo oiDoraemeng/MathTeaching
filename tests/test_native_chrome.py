@@ -6,10 +6,11 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QEvent
 import pytest
-from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtWidgets import QApplication, QDialog, QWidget
 
 from ui import native_chrome
 from ui.native_chrome import apply_native_titlebar_theme, install_titlebar_tracker
+from ui.designer_window import MainWindow
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -62,3 +63,25 @@ def test_titlebar_tracker_is_idempotent_and_handles_window_events(monkeypatch) -
     tracker.eventFilter(window, QEvent(QEvent.Type.Show))
     tracker.eventFilter(window, QEvent(QEvent.Type.WinIdChange))
     assert calls == [(window, "dark"), (window, "dark")]
+
+
+def test_apply_style_updates_app_property_and_all_top_level_windows(monkeypatch) -> None:
+    app = QApplication.instance() or QApplication([])
+    shell = QWidget()
+    dialog = QDialog()
+    seen = []
+    monkeypatch.setattr(QApplication, "topLevelWidgets", staticmethod(lambda: [shell, dialog]))
+    monkeypatch.setattr("ui.designer_window.apply_native_titlebar_theme", lambda widget, theme: seen.append((widget, theme)) or True)
+
+    window = object.__new__(MainWindow)
+    window.window = shell
+    window.effective_theme = "dark"
+    MainWindow._apply_style(window)
+    assert app.property("math3d_effective_theme") == "dark"
+    assert seen == [(shell, "dark"), (dialog, "dark")]
+
+    seen.clear()
+    window.effective_theme = "light"
+    MainWindow._apply_style(window)
+    assert app.property("math3d_effective_theme") == "light"
+    assert seen == [(shell, "light"), (dialog, "light")]
