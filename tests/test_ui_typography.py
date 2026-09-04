@@ -12,6 +12,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication
 
+from main import build_application_font
 from ui.algebra_panel import AlgebraPanel
 from ui.tokens import build_qss
 from widgets.LightRotationWidget import LightRotationWidget
@@ -24,6 +25,29 @@ def _application() -> QApplication:
 
 def _source_path() -> Path:
     return Path(__file__).resolve().parents[1]
+
+
+def test_application_font_uses_pixel_size_and_chinese_fallbacks() -> None:
+    font = build_application_font()
+    assert font.pixelSize() == 12
+    assert font.pointSize() == -1
+    assert font.families()[:3] == [
+        "Segoe UI",
+        "Microsoft YaHei UI",
+        "PingFang SC",
+    ]
+    assert font.styleStrategy() & QFont.StyleStrategy.PreferAntialias
+
+
+def test_qapplication_accepts_the_token_font() -> None:
+    app = QApplication.instance() or QApplication([])
+    original = app.font()
+    try:
+        app.setFont(build_application_font())
+        assert app.font().pixelSize() == 12
+        assert "Microsoft YaHei UI" in app.font().families()
+    finally:
+        app.setFont(original)
 
 
 def test_algebra_panel_title_and_section_labels_follow_global_tokens() -> None:
