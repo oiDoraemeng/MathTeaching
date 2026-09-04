@@ -50,6 +50,13 @@ def _validate(data: object) -> dict[str, object]:
     for name, value in sections.items():
         if not isinstance(value, Mapping): raise TokenError(f"{name} must be an object")
     if "size" not in sections["font"] or not isinstance(sections["font"]["size"], Mapping): raise TokenError("font.size must be an object")
+    family_stack = sections["font"].get("family_stack")
+    if (
+        not isinstance(family_stack, list)
+        or not family_stack
+        or any(not isinstance(name, str) or not name.strip() for name in family_stack)
+    ):
+        raise TokenError("font.family_stack must be a non-empty string list")
     if "duration" not in sections["motion"] or not isinstance(sections["motion"]["duration"], Mapping): raise TokenError("motion.duration must be an object")
     themes = sections["themes"]
     if set(themes) != {"light", "dark"}: raise TokenError("themes must contain exactly light and dark")
@@ -86,12 +93,34 @@ def load_tokens(path: Path | None = None) -> dict[str, object]:
     except (OSError, json.JSONDecodeError) as exc: raise TokenError(f"unable to read tokens: {exc}") from exc
     return _validate(data)
 
+
+def font_family_stack(
+    tokens: Mapping[str, object] | None = None,
+) -> list[str]:
+    source = dict(tokens or load_tokens())
+    _validate(source)
+    font = source["font"]
+    assert isinstance(font, Mapping)
+    return [str(name) for name in font["family_stack"]]
+
+
+def _common_scalar_tokens(source: Mapping[str, object]) -> dict[str, object]:
+    common = {
+        key: value
+        for key, value in source.items()
+        if key not in {"$schema", "$comment", "themes"}
+    }
+    font = dict(common["font"])
+    font.pop("family_stack", None)
+    common["font"] = font
+    return common
+
 def flatten_theme(theme: ThemeName, tokens: Mapping[str, object] | None = None) -> dict[str, str | int]:
     if theme not in ("light", "dark"): raise TokenError(f"unknown theme: {theme}")
     if tokens is not None and not isinstance(tokens, Mapping): raise TokenError("tokens must be a mapping")
     source = dict(tokens or load_tokens())
     _validate(source)
-    common = _flatten({key: value for key, value in source.items() if key not in {"$schema", "$comment", "themes"}})
+    common = _flatten(_common_scalar_tokens(source))
     themed = _flatten(source["themes"][theme])
     return {_flat_name(key): value for key, value in {**common, **themed}.items()}
 

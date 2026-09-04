@@ -17,7 +17,14 @@ from ui.designer_window import MainWindow
 from ui.algebra_panel import AlgebraPanel
 from ui.lighting_dialog import LightingDialog
 from ui.scene_settings import SceneSettingsPanel
-from ui.tokens import TokenError, _shadow_effect_values, build_qss, flatten_theme, load_tokens
+from ui.tokens import (
+    TokenError,
+    _shadow_effect_values,
+    build_qss,
+    flatten_theme,
+    font_family_stack,
+    load_tokens,
+)
 from ui.two_d_tools import TwoDGeometryToolbar
 from rendering.lighting import LightSettings
 
@@ -241,3 +248,25 @@ def test_malformed_shadow_color_fails(tmp_path, shadow):
     data = deepcopy(load_tokens()); data["themes"]["dark"]["shadow"]["overlay"] = shadow
     path = tmp_path / "tokens.json"; path.write_text(json.dumps(data), encoding="utf-8")
     with pytest.raises(TokenError, match="shadow.overlay"): load_tokens(path)
+
+
+def test_font_family_stack_preserves_declared_fallback_order() -> None:
+    assert font_family_stack() == [
+        "Segoe UI",
+        "Microsoft YaHei UI",
+        "PingFang SC",
+        "Noto Sans CJK SC",
+    ]
+
+
+@pytest.mark.parametrize(
+    "value",
+    [[], ["Segoe UI", ""], ["Segoe UI", 7], "Segoe UI"],
+)
+def test_font_family_stack_must_be_a_non_empty_string_list(tmp_path, value) -> None:
+    data = deepcopy(load_tokens())
+    data["font"]["family_stack"] = value
+    path = tmp_path / "tokens.json"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(TokenError, match=r"font\.family_stack"):
+        load_tokens(path)
