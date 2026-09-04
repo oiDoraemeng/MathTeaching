@@ -259,6 +259,12 @@ def test_font_family_stack_preserves_declared_fallback_order() -> None:
     ]
 
 
+def test_status_bar_labels_and_buttons_share_caption_size() -> None:
+    qss = build_qss("light")
+    assert "font-size: 11px" in _block_for_selector(qss, "#appStatusBar QLabel")
+    assert "font-size: 11px" in _block_for_selector(qss, "#appStatusBar QToolButton")
+
+
 @pytest.mark.parametrize(
     "value",
     [[], ["Segoe UI", ""], ["Segoe UI", 7], "Segoe UI"],

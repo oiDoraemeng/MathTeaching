@@ -79,3 +79,14 @@ def test_color_button_styles_only_set_swatch_background() -> None:
     assert 'setStyleSheet(f"background: {color};")' in source
     assert "border: 1px solid #687385" not in block
     assert "font:" not in block
+
+
+@pytest.mark.parametrize("theme", ["light", "dark"])
+def test_unstyled_qt_chrome_uses_token_pixel_sizes(theme: str) -> None:
+    qss = build_qss(theme)
+    assert "QToolButton {" in qss and "font-size: 11px" in qss
+    assert "QMenu {" in qss and "font-size: 12px" in qss
+    assert "QToolTip {" in qss and "font-size: 11px" in qss
+    assert "QComboBox QAbstractItemView" in qss
+    assert "QTreeView, QListView, QListWidget" in qss
+    assert "#appStatusBar QToolButton" in qss

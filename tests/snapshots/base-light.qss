@@ -21,7 +21,7 @@ QMainWindow, #viewportHost { background: #eef1f4; color: #17212e; }
 #linearAlgebraFormula { color: #2f7ebd; }
 #appStatusBar { background: #ffffff; border-top: 1px solid #d5dbe3; }
 #appStatusBar QLabel { color: #3f4c5c; font-size: 11px; }
-#appStatusBar QToolButton { min-width: 24px; min-height: 24px; border-radius: 4px; }
+#appStatusBar QToolButton { min-width: 24px; min-height: 24px; border-radius: 4px; font-size: 11px; }
 #appStatusBar QToolButton:hover { background: #f5f7f9; }
 QScrollArea { border: 0; background: #ffffff; }
 QLabel { color: #3f4c5c; font-size: 12px; }
@@ -34,8 +34,12 @@ QLineEdit:focus, QComboBox:focus, QPushButton:focus { border: 1px solid #d5dbe3;
 QLineEdit:focus-visible, QComboBox:focus-visible, QPushButton:focus-visible, QToolButton:focus-visible { border: 2px solid #2f7ebd; }
 QPushButton { background: #f5f7f9; color: #2f7ebd; padding: 3px 8px; font-weight: 600; }
 QPushButton:hover { background: #e4f0f9; }
-QToolButton { min-width: 24px; min-height: 24px; color: #3f4c5c; border: 1px solid transparent; border-radius: 4px; }
+QToolButton { min-width: 24px; min-height: 24px; color: #3f4c5c; border: 1px solid transparent; border-radius: 4px; font-size: 11px; }
 QToolButton:hover { background: #f5f7f9; border-color: #d5dbe3; }
+QToolTip { font-size: 11px; }
+QMenu { font-size: 12px; }
+QComboBox QAbstractItemView { font-size: 12px; }
+QTreeView, QListView, QListWidget { font-size: 12px; }
 QCheckBox { color: #3f4c5c; spacing: 4px; }
 QCheckBox::indicator { width: 14px; height: 14px; border: 1px solid #b8c2cd; border-radius: 3px; background: #ffffff; }
 QCheckBox::indicator:checked { background: #2f7ebd; border-color: #2f7ebd; }
