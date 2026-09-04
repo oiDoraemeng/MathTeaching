@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 
-from PySide6.QtCore import QTimer, Qt, Signal
+from PySide6.QtCore import QSignalBlocker, QTimer, Qt, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QColorDialog, QComboBox, QDialog, QDialogButtonBox, QFormLayout, QGroupBox,
@@ -38,6 +38,9 @@ class LightingDialog(QDialog):
         self.settings = deepcopy(settings)
         self.material_name = material_name if material_name in MATERIAL_PRESETS else "光泽塑料"
         self._color_buttons: dict[str, QPushButton] = {}
+        self._intensity_sliders: dict[str, QSlider] = {}
+        self._intensity_value_labels: dict[str, QLabel] = {}
+        self._position_spins: dict[str, list[QSpinBox]] = {}
         self._update_timer = QTimer(self)
         self._update_timer.setSingleShot(True)
         self._update_timer.timeout.connect(self._emit_change_now)
@@ -59,11 +62,12 @@ class LightingDialog(QDialog):
         self.material_combo.addItems(MATERIAL_PRESETS)
         self.material_combo.setCurrentText(self.material_name)
         self.material_combo.currentTextChanged.connect(self._set_material)
-        ambient = self._slider(0, 100, round(self.settings.ambient * 100))
-        ambient.valueChanged.connect(lambda value: self._set_ambient(value / 100))
+        self.ambient_slider = self._slider(0, 100, round(self.settings.ambient * 100))
+        self.ambient_slider.valueChanged.connect(lambda value: self._set_ambient(value / 100))
+        ambient_host, self.ambient_value_label = self._slider_row(self.ambient_slider)
         form = QFormLayout()
         form.addRow("曲面材质", self.material_combo)
-        form.addRow("曲面环境光", ambient)
+        form.addRow("曲面环境光", ambient_host)
         layout.addLayout(form)
         self.rotation_widget = LightRotationWidget(self.settings.rotation_angle)
         self.rotation_widget.angle_changed.connect(self._set_rotation)
@@ -89,9 +93,13 @@ class LightingDialog(QDialog):
         form = QFormLayout(group)
         light = getattr(self.settings, key)
         intensity = self._slider(0, 200, round(light["intensity"] * 100))
+        self._intensity_sliders[key] = intensity
         intensity.valueChanged.connect(lambda value, name=key: self._set_light(name, "intensity", value / 100))
-        form.addRow("强度", intensity)
+        intensity_host, intensity_value_label = self._slider_row(intensity)
+        self._intensity_value_labels[key] = intensity_value_label
+        form.addRow("强度", intensity_host)
         direction = QHBoxLayout()
+        position_spins: list[QSpinBox] = []
         for index, axis in enumerate(("X", "Y", "Z")):
             spin = QSpinBox()
             spin.setRange(-200, 200)
@@ -99,6 +107,8 @@ class LightingDialog(QDialog):
             spin.setSuffix(f"  {axis}")
             spin.valueChanged.connect(lambda value, name=key, coordinate=index: self._set_position(name, coordinate, value / 100))
             direction.addWidget(spin)
+            position_spins.append(spin)
+        self._position_spins[key] = position_spins
         direction_host = QWidget()
         direction_host.setLayout(direction)
         form.addRow("方向", direction_host)
@@ -115,6 +125,18 @@ class LightingDialog(QDialog):
         slider.setRange(minimum, maximum)
         slider.setValue(value)
         return slider
+
+    def _slider_row(self, slider: QSlider) -> tuple[QWidget, QLabel]:
+        host = QWidget(self)
+        row = QHBoxLayout(host)
+        row.setContentsMargins(0, 0, 0, 0)
+        value_label = QLabel(f"{slider.value()}%", host)
+        value_label.setMinimumWidth(38)
+        value_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        slider.valueChanged.connect(lambda value: value_label.setText(f"{value}%"))
+        row.addWidget(slider, 1)
+        row.addWidget(value_label)
+        return host, value_label
 
     def _set_ambient(self, value: float) -> None:
         self.settings.ambient = value
@@ -155,16 +177,30 @@ class LightingDialog(QDialog):
         self._color_buttons[name].setText(color.name().upper())
         self._color_buttons[name].setStyleSheet(f"background: {color.name()}; color: {foreground};")
 
+    def _sync_controls_from_settings(self) -> None:
+        """Refresh all controls after an external settings replacement."""
+        with QSignalBlocker(self.material_combo):
+            self.material_combo.setCurrentText(self.material_name)
+        with QSignalBlocker(self.ambient_slider):
+            self.ambient_slider.setValue(round(self.settings.ambient * 100))
+        self.ambient_value_label.setText(f"{self.ambient_slider.value()}%")
+        for key, slider in self._intensity_sliders.items():
+            with QSignalBlocker(slider):
+                slider.setValue(round(getattr(self.settings, key)["intensity"] * 100))
+            self._intensity_value_labels[key].setText(f"{slider.value()}%")
+            for index, spin in enumerate(self._position_spins[key]):
+                with QSignalBlocker(spin):
+                    spin.setValue(round(getattr(self.settings, key)["position"][index] * 100))
+        with QSignalBlocker(self.rotation_widget):
+            self.rotation_widget.set_angle(self.settings.rotation_angle)
+        for name in self._color_buttons:
+            self._set_color_button(name)
+
     def _reset_defaults(self) -> None:
         self.settings = LightSettings()
         self.material_name = "光泽塑料"
-        self.material_combo.blockSignals(True)
-        try:
-            self.material_combo.setCurrentText(self.material_name)
-        finally:
-            self.material_combo.blockSignals(False)
+        self._sync_controls_from_settings()
         self.material_changed.emit(self.material_name)
-        self.close()
         self._emit_change_now()
 
     def _emit_change(self) -> None:
