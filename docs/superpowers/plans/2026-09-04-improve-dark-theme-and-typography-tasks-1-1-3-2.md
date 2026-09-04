@@ -365,7 +365,7 @@
 - Produces in both theme branches: `--agent-font-family: "Segoe UI", "Microsoft YaHei UI", "PingFang SC", sans-serif;`.
 - Preserves: the existing `pnpm prebuild -> theme:generate -> vite build` chain.
 
-- [ ] **Step 1: Add failing generator and CSS parity assertions**
+- [x] **Step 1: Add failing generator and CSS parity assertions**
 
   In `scripts/gen-theme.test.mjs`, assert generated CSS contains the exact stack twice:
 
@@ -384,13 +384,13 @@
   });
   ```
 
-- [ ] **Step 2: Run the theme tests and confirm the single-family output**
+- [x] **Step 2: Run the theme tests and confirm the single-family output**
 
   Run from `ui/agent_web`: `node --test scripts/gen-theme.test.mjs && pnpm test -- src/styles/theme.test.ts`
 
   Expected: FAIL because the generator currently emits only `Segoe UI` and appends another `sans-serif` in `body`.
 
-- [ ] **Step 3: Serialize the Web subset of the token stack safely**
+- [x] **Step 3: Serialize the Web subset of the token stack safely**
 
   Add a helper that quotes the first three approved UI families and appends the generic family exactly once:
 
@@ -405,13 +405,13 @@
 
   Make `declarations()` emit `--agent-font-family: ${webFontStack(tokens)};`, update `FALLBACK.font.family_stack`, and change the body rule to `font-family: var(--agent-font-family);` so `sans-serif` is not duplicated.
 
-- [ ] **Step 4: Rebuild committed source and production assets**
+- [x] **Step 4: Rebuild committed source and production assets**
 
   Run from `ui/agent_web`: `pnpm build`
 
   Expected: `src/styles/theme.css` and the current hashed CSS asset under `dist/assets/` contain the quoted stack; `dist/manifest.json` points to the rebuilt asset.
 
-- [ ] **Step 5: Run frontend and packaging checks, then commit**
+- [x] **Step 5: Run frontend and packaging checks, then commit**
 
   Run from the repository root:
 

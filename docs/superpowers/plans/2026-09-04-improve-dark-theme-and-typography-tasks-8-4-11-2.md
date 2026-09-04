@@ -44,7 +44,7 @@
 - Produces exact formula-list copy: `隐藏函数`, `显示函数`, `函数显示与采样设置`, `公式`, `几何对象`, and `删除`.
 - Produces Chinese history/settings headings, empty states, tooltips, and aria labels.
 
-- [ ] **Step 1: Add failing component and HTML copy assertions**
+- [x] **Step 1: Add failing component and HTML copy assertions**
 
   Update `App.test.tsx` to expect `历史记录`, `暂无会话`, `设置`, and `返回当前对话`. Extend `HistoryView.test.tsx` to assert `1 轮` and Chinese action labels.
 
@@ -61,7 +61,7 @@
 
   Add a source scan for retired phrases `History`, `No conversations`, `Hidden`, `Back to conversation`, `Settings`, `Skills`, `Memory`, `Rules`, `Add image`, and `Add file` in the listed user-interface components.
 
-- [ ] **Step 2: Run focused Web and MathInput tests**
+- [x] **Step 2: Run focused Web and MathInput tests**
 
   Run:
 
@@ -74,7 +74,7 @@
 
   Expected: FAIL on the current English headings, actions, empty states, aria labels, and formula-list tooltips.
 
-- [ ] **Step 3: Translate History, Settings, composer tools, tabs, and timeline semantics**
+- [x] **Step 3: Translate History, Settings, composer tools, tabs, and timeline semantics**
 
   Apply these exact UI mappings while leaving values unchanged:
 
@@ -94,11 +94,11 @@
 
   In `ModeSelector`, keep option values `Agent`, `Ask`, `Plan`, but display `代理`, `问答`, `计划`. Translate only prose around Geometry/Calculus/Linear algebra; do not translate provider/model identifiers or URL placeholders.
 
-- [ ] **Step 4: Translate formula-list tooltip and aria strings**
+- [x] **Step 4: Translate formula-list tooltip and aria strings**
 
   Replace the six approved formula-list strings in both initial markup and JavaScript-generated attributes. Do not change CSS class names, dataset keys, serialized layer kinds, or bridge method names.
 
-- [ ] **Step 5: Run full frontend/copy tests, rebuild, and commit**
+- [x] **Step 5: Run full frontend/copy tests, rebuild, and commit**
 
   Run:
 
@@ -134,7 +134,7 @@
 - Produces mappings: line-tool entry → `pen-line`; vector → `vector`; angle → `angle`; ray remains `arrow-up-right`; straight line remains `slash`; projection remains `corner-down-right`.
 - Preserves: `_kiro_icon_state` metadata used by `retint_icons()`.
 
-- [ ] **Step 1: Add failing render and toolbar uniqueness tests**
+- [x] **Step 1: Add failing render and toolbar uniqueness tests**
 
   Extend `tests/test_ui_icons.py` required names with `pen-line`, `vector`, and `angle`. In `tests/test_2d_geometry_toolbar.py`, inspect each button's remembered icon state:
 
@@ -157,13 +157,13 @@
 
   Add a retint test that includes the three new names.
 
-- [ ] **Step 2: Run icon tests and reproduce the duplicate glyphs**
+- [x] **Step 2: Run icon tests and reproduce the duplicate glyphs**
 
   Run: `uv run pytest tests/test_ui_icons.py tests/test_icon_theming.py tests/test_2d_geometry_toolbar.py -q`
 
   Expected: FAIL because the names are absent and vector/ray, line-entry/straight-line, and angle/projection currently share icons.
 
-- [ ] **Step 3: Add the exact SVG path data to `LUCIDE_SVG`**
+- [x] **Step 3: Add the exact SVG path data to `LUCIDE_SVG`**
 
   Add:
 
@@ -175,11 +175,11 @@
 
   Keep the common 24×24 head, `currentColor`, stroke width, cap, and join behavior so rendering and high-DPI caching remain unchanged.
 
-- [ ] **Step 4: Change only the three duplicate toolbar mappings**
+- [x] **Step 4: Change only the three duplicate toolbar mappings**
 
   In `TwoDGeometryToolbar.__init__`, construct `line_button` with `pen-line`, `vector_button` with `vector`, and `angle_button` with `angle`. Leave the concrete flyout and projection mappings as specified above.
 
-- [ ] **Step 5: Run icon/toolbar regressions and commit**
+- [x] **Step 5: Run icon/toolbar regressions and commit**
 
   Run: `uv run pytest tests/test_ui_icons.py tests/test_icon_theming.py tests/test_2d_geometry_toolbar.py -q`
 
@@ -207,7 +207,7 @@
 - Visible key (`QLineEdit.Normal`) uses `circle-filled`; hidden key (`QLineEdit.Password`) uses `circle-outline`.
 - Produces: `AgentSettingsDialog._sync_reveal_key_icon(revealed: bool) -> None`.
 
-- [ ] **Step 1: Add failing icon-state and no-emoji tests**
+- [x] **Step 1: Add failing icon-state and no-emoji tests**
 
   Extend `tests/test_agent_settings.py`:
 
@@ -224,13 +224,13 @@
 
   Assert `👁` is absent from `ui/agent_settings.py`; add both icon names to render tests.
 
-- [ ] **Step 2: Run focused tests and confirm emoji/current eye behavior**
+- [x] **Step 2: Run focused tests and confirm emoji/current eye behavior**
 
   Run: `uv run pytest tests/test_agent_settings.py tests/test_ui_icons.py tests/test_icon_theming.py -q`
 
   Expected: FAIL because the button text is an emoji and circle icons do not exist.
 
-- [ ] **Step 3: Add exact filled/hollow SVG paths**
+- [x] **Step 3: Add exact filled/hollow SVG paths**
 
   Add to `LUCIDE_SVG`:
 
@@ -239,7 +239,7 @@
   "circle-outline": _svg('<circle cx="12" cy="12" r="7"/>'),
   ```
 
-- [ ] **Step 4: Centralize icon updates with echo-mode changes**
+- [x] **Step 4: Centralize icon updates with echo-mode changes**
 
   Import `apply_icon`, `icon_color`, and `retint_icons`. Remove `setText("👁")`; after creating the checkable button call `_sync_reveal_key_icon(False)`. Implement:
 
@@ -262,7 +262,7 @@
 
   In `set_effective_theme`, call `retint_icons(self, effective_theme)` when controls already exist. Preserve the tooltip text.
 
-- [ ] **Step 5: Run icon/settings tests and commit**
+- [x] **Step 5: Run icon/settings tests and commit**
 
   Run: `uv run pytest tests/test_agent_settings.py tests/test_ui_icons.py tests/test_icon_theming.py -q`
 
@@ -294,7 +294,7 @@
 - Produces: `sceneModeButton` object name and `${size_title}px` text size; generated QSS contains no `font-size: 18px`.
 - Produces: every interactive viewport toolbar, 2D toolbar, and status-bar control has a non-empty accessible name matching its tooltip or visible purpose.
 
-- [ ] **Step 1: Add failing typography and accessible-name tests**
+- [x] **Step 1: Add failing typography and accessible-name tests**
 
   In `tests/test_ui_tokens.py`, assert `18px` is absent and `_block_for_selector(qss, "#sceneModeButton")` contains `font-size: 15px`.
 
@@ -307,13 +307,13 @@
 
   Assert `scene_mode_button.objectName() == "sceneModeButton"`.
 
-- [ ] **Step 2: Run focused shell tests and list unnamed controls**
+- [x] **Step 2: Run focused shell tests and list unnamed controls**
 
   Run: `uv run pytest tests/test_ui_tokens.py tests/test_ui_design_integration.py tests/test_app_status_bar.py tests/test_2d_geometry_toolbar.py -q`
 
   Expected: FAIL for the hardcoded 18px group, missing scene-mode object name, and unnamed buttons.
 
-- [ ] **Step 3: Scope the text rule to the scene-mode button**
+- [x] **Step 3: Scope the text rule to the scene-mode button**
 
   Replace the group font declaration with:
 
@@ -323,7 +323,7 @@
 
   Keep hover styles grouped for all overlay buttons. Set `self.scene_mode_button.setObjectName("sceneModeButton")` before its fixed size.
 
-- [ ] **Step 4: Assign accessible names at each control factory/construction point**
+- [x] **Step 4: Assign accessible names at each control factory/construction point**
 
   In `_configure_viewport`, set names to `场景设置`, `切换二维和三维场景`, and `AI 教学助手`. In `TwoDGeometryToolbar._button/_action_button`, call `button.setAccessibleName(tooltip)`. In `AppStatusBar`, give the Agent button a stable purpose name and update it with status text:
 
@@ -334,7 +334,7 @@
 
   Keep the theme button's existing dynamic accessible name.
 
-- [ ] **Step 5: Update snapshots, run shell tests, and commit**
+- [x] **Step 5: Update snapshots, run shell tests, and commit**
 
   Regenerate/review both QSS snapshots, then run:
 
@@ -361,7 +361,7 @@
 - Produces: `_sync_controls_from_settings() -> None`.
 - Reset defaults: ambient 20, key 105, fill 45, rim 70, rotation 0°, material `光泽塑料`; dialog remains visible.
 
-- [ ] **Step 1: Add failing reset and live-readout tests**
+- [x] **Step 1: Add failing reset and live-readout tests**
 
   Extend `tests/test_lighting_dialog.py`:
 
@@ -393,13 +393,13 @@
 
   Spy on `settings_changed` and `material_changed` to assert the reset emits final default state rather than intermediate stale values.
 
-- [ ] **Step 2: Run the focused test and reproduce close/no-readout behavior**
+- [x] **Step 2: Run the focused test and reproduce close/no-readout behavior**
 
   Run: `uv run pytest tests/test_lighting_dialog.py -q`
 
   Expected: FAIL because sliders are local variables, labels do not exist, and `_reset_defaults()` closes the dialog.
 
-- [ ] **Step 3: Build reusable slider-with-value rows**
+- [x] **Step 3: Build reusable slider-with-value rows**
 
   Store control references. Create a helper returning a host plus label:
 
@@ -419,7 +419,7 @@
 
   Use it for ambient and all three intensity sliders. Store position spinboxes by light name so reset can restore them.
 
-- [ ] **Step 4: Synchronize every control from `LightSettings` and keep the dialog open**
+- [x] **Step 4: Synchronize every control from `LightSettings` and keep the dialog open**
 
   Implement `_sync_controls_from_settings()` with `QSignalBlocker` for material, sliders, spins, and rotation widget. It sets values from `self.settings`, refreshes color buttons, and updates numeric labels. In `_reset_defaults()`:
 
@@ -433,7 +433,7 @@
 
   Delete `self.close()`. Emit only after all controls show defaults.
 
-- [ ] **Step 5: Run dialog tests and commit**
+- [x] **Step 5: Run dialog tests and commit**
 
   Run: `uv run pytest tests/test_lighting_dialog.py tests/test_lighting.py tests/test_dialog_theming.py -q`
 
@@ -458,7 +458,7 @@
 - Produces: `showEvent()` maximum height `int(screen.availableGeometry().height() * 0.8)`.
 - Preserves: the current tree/search actions, frameless popup behavior, and short-content natural layout.
 
-- [ ] **Step 1: Add failing scroll-area and maximum-height tests**
+- [x] **Step 1: Add failing scroll-area and maximum-height tests**
 
   Extend `tests/test_linear_algebra_dialog.py`:
 
@@ -482,13 +482,13 @@
 
   Add long-content and short-content cases: long content makes `verticalScrollBar().maximum() > 0`; short content leaves it at 0 after layout processing.
 
-- [ ] **Step 2: Run the focused tests and reproduce unbounded content**
+- [x] **Step 2: Run the focused tests and reproduce unbounded content**
 
   Run: `uv run pytest tests/test_linear_algebra_dialog.py -q`
 
   Expected: FAIL because `content_view` is inserted directly and `showEvent()` does not constrain height.
 
-- [ ] **Step 3: Wrap only lecture content in a transparent scroll area**
+- [x] **Step 3: Wrap only lecture content in a transparent scroll area**
 
   Import `QScrollArea` and create:
 
@@ -504,7 +504,7 @@
 
   Remove the previous direct `layout.addWidget(self.content_view)`. Synchronize `content_scroll` visibility with whether lecture content is visible so an empty/short catalog view does not reserve a blank region.
 
-- [ ] **Step 4: Apply the active-screen height limit on every show**
+- [x] **Step 4: Apply the active-screen height limit on every show**
 
   Implement:
 
@@ -518,7 +518,7 @@
 
   After content changes, call `adjustSize()` but cap the final height at `maximumHeight()`. Do not force a fixed height; short content must retain a zero scrollbar range.
 
-- [ ] **Step 5: Run lecture and loading regressions, then commit**
+- [x] **Step 5: Run lecture and loading regressions, then commit**
 
   Run: `uv run pytest tests/test_linear_algebra_dialog.py tests/test_linear_algebra_loading.py tests/test_linear_algebra_explanations.py -q`
 
@@ -544,7 +544,7 @@
 - Verifies: all Python tests, all frontend tests, TypeScript compilation through the Vite build, generated Agent assets, and strict OpenSpec validation.
 - Produces: no source change when all preceding tasks are complete.
 
-- [ ] **Step 1: Run focused suites for every changed subsystem**
+- [x] **Step 1: Run focused suites for every changed subsystem**
 
   Run:
 
@@ -554,13 +554,13 @@
 
   Expected: PASS.
 
-- [ ] **Step 2: Run the full Python suite**
+- [x] **Step 2: Run the full Python suite**
 
   Run: `uv run pytest tests -q`
 
   Expected: PASS, including existing 2D toolbar, linear algebra loading, Agent Web theme/bootstrap, sidebar visibility, scene theme, and icon tests.
 
-- [ ] **Step 3: Run the complete frontend suite and production build**
+- [x] **Step 3: Run the complete frontend suite and production build**
 
   Run:
 
@@ -573,7 +573,7 @@
 
   Expected: Vitest PASS and Vite emits a fresh `dist/manifest.json` whose referenced files all exist.
 
-- [ ] **Step 4: Validate packaging and OpenSpec consistency**
+- [x] **Step 4: Validate packaging and OpenSpec consistency**
 
   Run:
 
@@ -584,7 +584,7 @@
 
   Expected: PASS. If any command fails, return to the owning mapped task instead of making an untested release-only patch: typography/QSS → 1.1–1.4/7.1/9.3; native chrome → 2.1–2.2; MathInput → 3.1–3.6; Agent Web → 1.5/4.1–4.3/8.1–8.4; panels → 5.1–5.3; lighting → 6.1/10.1; toolbar/icons → 7.2/9.1–9.2; lecture dialog → 10.2.
 
-- [ ] **Step 5: Confirm the verification task has no accidental source diff**
+- [x] **Step 5: Confirm the verification task has no accidental source diff**
 
   Run: `git status --short` and inspect `git diff --check`.
 

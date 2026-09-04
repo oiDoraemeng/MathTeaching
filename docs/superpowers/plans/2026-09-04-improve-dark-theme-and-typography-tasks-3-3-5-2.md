@@ -41,7 +41,7 @@
 - Preserves: `window.mathInput`, `window.inlineFormulaEditor`, `window.formulaPreview`, and all current QWebChannel callbacks.
 - Produces: a QSS-controlled `#formulaPreviewFallback` label with no inline text color.
 
-- [ ] **Step 1: Add failing coverage for all three HTML documents and the fallback**
+- [x] **Step 1: Add failing coverage for all three HTML documents and the fallback**
 
   Extend `tests/test_math_input_theme.py`:
 
@@ -66,13 +66,13 @@
 
   Add a helper that finds `background`, `color`, and `border` declarations containing the retired light literals outside `var(...)` fallbacks.
 
-- [ ] **Step 2: Run the focused tests and identify each light-only declaration**
+- [x] **Step 2: Run the focused tests and identify each light-only declaration**
 
   Run: `uv run pytest tests/test_math_input_theme.py -q`
 
   Expected: FAIL for the editor, inline overlay, preview, MathLive selection variables, and the fallback label inline color.
 
-- [ ] **Step 3: Replace editor and inline-overlay colors with semantic variables**
+- [x] **Step 3: Replace editor and inline-overlay colors with semantic variables**
 
   In both `mathlive.html` and `inline_formula_overlay.html`, use the approved mappings:
 
@@ -91,7 +91,7 @@
 
   Use `--mi-toolbar-hover` and `--mi-toolbar-accent` for toolbar controls. Preserve transparent overlay regions and existing geometry calculations.
 
-- [ ] **Step 4: Theme preview HTML and return fallback text color to QSS**
+- [x] **Step 4: Theme preview HTML and return fallback text color to QSS**
 
   Migrate `formula_preview.html` text, transparent background, selection, and highlight colors to variables. In `formula_preview.py`, replace:
 
@@ -113,7 +113,7 @@
 
   Add a `tests/test_ui_tokens.py` assertion for the light/dark token value and regenerate/review both QSS snapshots.
 
-- [ ] **Step 5: Run MathInput and QSS tests, then commit**
+- [x] **Step 5: Run MathInput and QSS tests, then commit**
 
   Run: `uv run pytest tests/test_math_input_theme.py tests/test_math_input_widget.py tests/test_ui_tokens.py -q`
 
@@ -143,7 +143,7 @@
 - Produces methods: `install(theme: ThemeName) -> None`, `set_theme(theme: ThemeName) -> None`, and `on_load_finished(success: bool) -> None`.
 - Produces optional `initial_theme: ThemeName = "light"` constructor parameters and `set_theme(theme)` APIs on `FormulaListWidget`, `MathInputWidget`, `FormulaEditorPopup`, `FormulaPreviewWidget`, and `InlineFormulaEditorOverlay`.
 
-- [ ] **Step 1: Write failing ThemeBridge state-machine tests with fakes**
+- [x] **Step 1: Write failing ThemeBridge state-machine tests with fakes**
 
   Add fake scripts/page/view objects to `tests/test_math_input_theme.py` and assert:
 
@@ -165,13 +165,13 @@
 
   Also assert invalid themes raise `TokenError` and failed loads retain the pending theme for a later successful load.
 
-- [ ] **Step 2: Run the focused test and confirm the bridge is missing**
+- [x] **Step 2: Run the focused test and confirm the bridge is missing**
 
   Run: `uv run pytest tests/test_math_input_theme.py -q`
 
   Expected: FAIL during import because `MathInputWidget.theme_bridge` does not exist.
 
-- [ ] **Step 3: Implement script installation and pending state**
+- [x] **Step 3: Implement script installation and pending state**
 
   Construct a new `QWebEngineScript` for `math_input_theme_script(theme)`:
 
@@ -187,7 +187,7 @@
 
   Store `_loaded` and `_pending_theme`. `set_theme()` must cache before load and run exactly `document.documentElement.dataset.theme = <json>;` after load. `on_load_finished(False)` must not clear pending state.
 
-- [ ] **Step 4: Wire each host exactly once**
+- [x] **Step 4: Wire each host exactly once**
 
   Add an optional `initial_theme` parameter to each host constructor. Create the bridge immediately after each `QWebEngineView` is created and before `setUrl()`; call `install(initial_theme)`. In every existing `_on_load_finished`, call `theme_bridge.on_load_finished(success)` before sending content. Public APIs delegate:
 
@@ -198,7 +198,7 @@
 
   `FormulaEditorPopup` passes its constructor theme to `MathInputWidget` and `set_theme()` delegates to `self.editor.set_theme(theme)`. Lazy `FormulaPreviewWidget` stores `_theme` before `_ensure_web_view()` and installs that theme on creation. Wire the currently standalone `InlineFormulaEditorOverlay` as well, satisfying the design's fourth WebView without forcing it into AlgebraPanel construction.
 
-- [ ] **Step 5: Run theme state and existing WebEngine lifecycle tests, then commit**
+- [x] **Step 5: Run theme state and existing WebEngine lifecycle tests, then commit**
 
   Run: `uv run pytest tests/test_math_input_theme.py tests/test_math_input_widget.py tests/test_algebra_panel.py -q`
 
@@ -224,7 +224,7 @@
 - Produces: `AlgebraPanel._effective_theme: ThemeName` as the source for previews created after a switch.
 - Extends: `AlgebraPanel.sync_overlay_theme(theme)` to theme formula list, editor popup, and every `FormulaPreviewWidget` descendant.
 
-- [ ] **Step 1: Add a failing propagation test using spies**
+- [x] **Step 1: Add a failing propagation test using spies**
 
   In `tests/test_algebra_panel.py`, add:
 
@@ -246,13 +246,13 @@
       assert preview_themes == ["dark"]
   ```
 
-- [ ] **Step 2: Run the test and observe missing WebView forwarding**
+- [x] **Step 2: Run the test and observe missing WebView forwarding**
 
   Run: `uv run pytest tests/test_algebra_panel.py::test_sync_overlay_theme_forwards_to_math_input_surfaces -q`
 
   Expected: FAIL because `sync_overlay_theme()` currently updates only shadows and icons.
 
-- [ ] **Step 3: Store and forward the effective theme**
+- [x] **Step 3: Store and forward the effective theme**
 
   Derive the initial theme at the start of `AlgebraPanel.__init__` from `getattr(parent, "effective_theme", "light")`, store it in `_effective_theme`, and pass it to `FormulaListWidget` and `FormulaEditorPopup` constructors. This prevents a dark startup from installing a light DocumentCreation script. At the top of `sync_overlay_theme`:
 
@@ -266,7 +266,7 @@
 
   Retain the existing popup shadow and icon retint loop. Replace the constructor's unconditional `sync_overlay_theme("light")` with `sync_overlay_theme(self._effective_theme)`.
 
-- [ ] **Step 4: Ensure newly created previews inherit the stored theme**
+- [x] **Step 4: Ensure newly created previews inherit the stored theme**
 
   At both `FormulaPreviewWidget(...)` construction sites used by algebra rows/settings rows, immediately call `preview.set_theme(self.window().effective_theme)` only if the owner has a valid theme, or pass the panel's stored theme through the owning row constructor. Prefer the smallest change that results in this invariant:
 
@@ -276,7 +276,7 @@
 
   Add a test that switches the panel to dark, creates a row/preview afterward, and asserts the new preview caches `dark` before its WebView is loaded.
 
-- [ ] **Step 5: Run AlgebraPanel and theme integration tests, then commit**
+- [x] **Step 5: Run AlgebraPanel and theme integration tests, then commit**
 
   Run: `uv run pytest tests/test_algebra_panel.py tests/test_math_input_theme.py tests/test_ui_tokens.py -q`
 
@@ -366,7 +366,7 @@
 **Interfaces:**
 - Produces exact CSS values: `.assistant-content` 12px/1.5; `.event-card` padding `8px 10px`, margin `6px 0`, font 12px; `.turn-block` bottom margin 18px; `.timeline` padding `16px 14px 20px`; paragraph margin 6px; reasoning/thinking values from Design D4.
 
-- [ ] **Step 1: Write a failing stylesheet contract test**
+- [x] **Step 1: Write a failing stylesheet contract test**
 
   Create `src/styles/layout.test.ts` using `readFileSync` and a small `block(selector)` helper. Assert exact declarations:
 
@@ -382,23 +382,23 @@
 
   Assert `.reasoning-block` has `padding: 7px 9px` and 11px font, and `.thinking-section` has `margin: 8px 0 10px`.
 
-- [ ] **Step 2: Run the test and record the relaxed values**
+- [x] **Step 2: Run the test and record the relaxed values**
 
   Run from `ui/agent_web`: `pnpm test -- src/styles/layout.test.ts`
 
   Expected: FAIL on 13px/1.55 text, larger card padding, 28px turn spacing, and 22px timeline padding.
 
-- [ ] **Step 3: Replace only the approved density declarations**
+- [x] **Step 3: Replace only the approved density declarations**
 
   Change the exact D4 values and leave user bubble geometry, composer height, model popover dimensions, and all colors untouched. Where `.turn-actions` has two rule blocks, do not consolidate it in this task; Task 6 locks its layout behavior.
 
-- [ ] **Step 4: Rebuild production assets and inspect the generated CSS**
+- [x] **Step 4: Rebuild production assets and inspect the generated CSS**
 
   Run from `ui/agent_web`: `pnpm build`
 
   Expected: the current hashed CSS asset in `dist/assets/` contains `font-size:12px;line-height:1.5`, `padding:8px 10px`, and `margin:0 auto 18px` after minification.
 
-- [ ] **Step 5: Run frontend/package checks and commit**
+- [x] **Step 5: Run frontend/package checks and commit**
 
   Run:
 
@@ -430,7 +430,7 @@
 - Verifies: `.turn-block { position: relative; max-width: 620px; }` and centered reading surfaces.
 - Verifies: `.turn-actions` remains absolutely positioned and visibility/opacity changes do not participate in document layout.
 
-- [ ] **Step 1: Add failing/readability guard assertions**
+- [x] **Step 1: Add failing/readability guard assertions**
 
   Extend `layout.test.ts`:
 
@@ -446,13 +446,13 @@
 
   In `Timeline.test.tsx`, assert toggling hover adds the `visible` class to the same absolutely positioned element without adding/removing any wrapper around `.assistant-content`.
 
-- [ ] **Step 2: Run the focused tests**
+- [x] **Step 2: Run the focused tests**
 
   Run from `ui/agent_web`: `pnpm test -- src/styles/layout.test.ts src/components/Timeline.test.tsx`
 
   Expected: the new guards may expose duplicate selector parsing or a missing class transition assertion; fix tests/helper precision before changing product CSS.
 
-- [ ] **Step 3: Preserve the locked geometry while resolving duplicate rules**
+- [x] **Step 3: Preserve the locked geometry while resolving duplicate rules**
 
   If the helper sees two `.turn-actions` blocks, merge their declarations into one block with:
 
@@ -471,13 +471,13 @@
 
   Keep `.turn-actions.visible` limited to visibility/opacity. Do not add margins, fixed flow height, or a grid row for the controls.
 
-- [ ] **Step 4: Run the layout and timeline tests after cleanup**
+- [x] **Step 4: Run the layout and timeline tests after cleanup**
 
   Run from `ui/agent_web`: `pnpm test -- src/styles/layout.test.ts src/components/Timeline.test.tsx`
 
   Expected: PASS, with max-width exactly 620px and action visibility causing no DOM-flow change.
 
-- [ ] **Step 5: Commit the locked layout contract**
+- [x] **Step 5: Commit the locked layout contract**
 
   ```bash
   git add ui/agent_web/src/styles/layout.css ui/agent_web/src/styles/layout.test.ts ui/agent_web/src/components/Timeline.test.tsx
@@ -496,7 +496,7 @@
 - Resets pinning when `session.id` changes and when a new user turn appears.
 - Preserves: the existing `scrollIntoView({ block: "nearest" })` mechanism when pinned.
 
-- [ ] **Step 1: Add failing pinned and unpinned streaming tests**
+- [x] **Step 1: Add failing pinned and unpinned streaming tests**
 
   Add a helper that defines writable scroll metrics on the rendered timeline and spies on the terminal div's `scrollIntoView`. Cover:
 
@@ -521,13 +521,13 @@
 
   Add a third test: appending a new user turn sets pinning true even if the previous turn was unpinned.
 
-- [ ] **Step 2: Run the component test and reproduce forced scrolling**
+- [x] **Step 2: Run the component test and reproduce forced scrolling**
 
   Run from `ui/agent_web`: `pnpm test -- src/components/Timeline.test.tsx`
 
   Expected: FAIL because the current effect scrolls on every streamed text change.
 
-- [ ] **Step 3: Add the local scroll state machine**
+- [x] **Step 3: Add the local scroll state machine**
 
   Implement:
 
@@ -548,7 +548,7 @@
 
   Before the streaming effect checks `pinnedRef`, detect `session.turns.length > previousTurnCountRef.current`, set pinned true, and update the previous count. Attach `onScroll` to the timeline section.
 
-- [ ] **Step 4: Keep the existing streaming dependencies and gate the effect**
+- [x] **Step 4: Keep the existing streaming dependencies and gate the effect**
 
   Retain dependencies on turn count, event count, assistant text, reasoning text, and progress log count:
 
@@ -560,7 +560,7 @@
 
   Do not debounce token rendering or store scroll state in the session reducer.
 
-- [ ] **Step 5: Run timeline/frontend tests and commit**
+- [x] **Step 5: Run timeline/frontend tests and commit**
 
   Run from `ui/agent_web`: `pnpm test -- src/components/Timeline.test.tsx src/App.test.tsx && pnpm build`
 
@@ -589,7 +589,7 @@
 - Produces: `_PanelResizeHandle.FIXED_WIDTH = 6`, object name `panelResizeHandle`, tooltip `拖动调整宽度，双击复位`, and dynamic property `dragging`.
 - Produces QSS selectors: `#panelResizeHandle`, `#panelResizeHandle:hover`, and `#panelResizeHandle[dragging="true"]`.
 
-- [ ] **Step 1: Add failing construction, interaction, and QSS tests**
+- [x] **Step 1: Add failing construction, interaction, and QSS tests**
 
   In `tests/test_panel_resize_handle.py`, assert width, name, tooltip, and dynamic property changes using `QTest.mousePress`/`mouseRelease`:
 
@@ -605,13 +605,13 @@
 
   In `tests/test_ui_tokens.py`, assert the idle block uses `border-left: 1px solid <border_default>` and hover/drag blocks use accent soft background and 2px accent border.
 
-- [ ] **Step 2: Run focused tests and confirm invisible-handle behavior**
+- [x] **Step 2: Run focused tests and confirm invisible-handle behavior**
 
   Run: `uv run pytest tests/test_panel_resize_handle.py tests/test_ui_tokens.py tests/test_main_window_layout.py -q`
 
   Expected: FAIL on width 5, empty name/tooltip, absent dragging property, missing QSS, and stale snapshots/layout assertion.
 
-- [ ] **Step 3: Add discoverability state to the widget**
+- [x] **Step 3: Add discoverability state to the widget**
 
   In `_PanelResizeHandle`:
 
@@ -626,7 +626,7 @@
 
   Add `_set_dragging(value)` that sets the property and calls `self.style().unpolish(self)`, `polish(self)`, and `self.update()`. Call it on accepted left press and on every release/cancel path.
 
-- [ ] **Step 4: Add token QSS and update snapshots/layout expectations**
+- [x] **Step 4: Add token QSS and update snapshots/layout expectations**
 
   Add:
 
@@ -641,7 +641,7 @@
 
   Update `tests/test_main_window_layout.py` from width 5 to 6, regenerate both QSS snapshots, and inspect the diff.
 
-- [ ] **Step 5: Run panel/QSS regressions and commit**
+- [x] **Step 5: Run panel/QSS regressions and commit**
 
   Run: `uv run pytest tests/test_panel_resize_handle.py tests/test_main_window_layout.py tests/test_ui_tokens.py -q`
 
@@ -669,7 +669,7 @@
 - Produces: `_install_agent_panel()` `PanelResizeSpec(360, 720, 440, "ui/agent_panel_width", "left")`.
 - Preserves: persistence key, inverse drag direction, and collapsed-panel layout behavior.
 
-- [ ] **Step 1: Update tests first for the new bound and old persisted values**
+- [x] **Step 1: Update tests first for the new bound and old persisted values**
 
   Change `tests/test_sidebar.py` to expect 720. Extend `tests/test_panel_resize_handle.py`:
 
@@ -687,13 +687,13 @@
 
   Add a source/construction assertion in `tests/test_main_window_layout.py` that the installed spec maximum equals `AgentSidebar.MAX_WIDTH` rather than duplicating a literal.
 
-- [ ] **Step 2: Run focused layout tests and see the 560 clamp**
+- [x] **Step 2: Run focused layout tests and see the 560 clamp**
 
   Run: `uv run pytest tests/test_sidebar.py tests/test_panel_resize_handle.py tests/test_main_window_layout.py -q`
 
   Expected: FAIL because both `AgentSidebar` and the installed resize spec still clamp at 560.
 
-- [ ] **Step 3: Change both public and persistence clamps together**
+- [x] **Step 3: Change both public and persistence clamps together**
 
   Set `AgentSidebar.MAX_WIDTH = 720`. In `_install_agent_panel`, construct the spec from public constants:
 
@@ -709,11 +709,11 @@
 
   Keep `AgentSidebar.set_panel_width()` clamping through the class constants.
 
-- [ ] **Step 4: Verify wide layout retains its readable column**
+- [x] **Step 4: Verify wide layout retains its readable column**
 
   Run the Agent CSS contract from Task 6 and add/retain an assertion that `.turn-block` max-width is 620px. Construct the sidebar at 720px in a Qt test and assert composer/WebView width is positive and no fixed child requests more than 720px.
 
-- [ ] **Step 5: Run panel and Web layout regressions, then commit**
+- [x] **Step 5: Run panel and Web layout regressions, then commit**
 
   Run:
 

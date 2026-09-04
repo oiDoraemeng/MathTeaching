@@ -102,7 +102,7 @@
 - Produces internal paint palette keys: `card`, `label`, `value`, `ring_default`, `ring_hover`, `ring_pressed`, `sphere_light`, `sphere_mid`, `sphere_dark`, `sphere_border`, and `marker_border`.
 - `LightingDialog.set_effective_theme(theme)` supplies `flatten_theme(theme)` and requests repaint.
 
-- [ ] **Step 1: Add failing light/dark token palette tests**
+- [x] **Step 1: Add failing light/dark token palette tests**
 
   Extend `tests/test_lighting_dialog.py`:
 
@@ -121,13 +121,13 @@
 
   Spy on `rotation_widget.update` and assert `set_effective_theme("dark")` requests a repaint.
 
-- [ ] **Step 2: Run the test and reproduce hardcoded light colors**
+- [x] **Step 2: Run the test and reproduce hardcoded light colors**
 
   Run: `uv run pytest tests/test_lighting_dialog.py tests/test_ui_typography.py -q`
 
   Expected: FAIL because `LightRotationWidget.paintEvent()` embeds light literals and has no theme API.
 
-- [ ] **Step 3: Resolve a complete paint palette in `set_theme`**
+- [x] **Step 3: Resolve a complete paint palette in `set_theme`**
 
   Add a mapping-based API and initialize it from `flatten_theme("light")` in the widget constructor:
 
@@ -151,7 +151,7 @@
 
   Keep sun fill/ray constants `#fbbf24` and `#f59e0b`, which the design explicitly approves in both themes.
 
-- [ ] **Step 4: Replace every retired paint literal and connect the dialog**
+- [x] **Step 4: Replace every retired paint literal and connect the dialog**
 
   Make `paintEvent()` read only `_paint_colors` for the card, labels, ring, sphere, marker border, and value. In `LightingDialog.set_effective_theme`:
 
@@ -164,7 +164,7 @@
 
   Because the constructor currently calls `set_effective_theme` before `_build_ui`, call it once more after `_build_ui`, or move the initial call after widget creation while preserving modal shadow setup.
 
-- [ ] **Step 5: Run light/dark paint and typography tests, then commit**
+- [x] **Step 5: Run light/dark paint and typography tests, then commit**
 
   Run: `uv run pytest tests/test_lighting_dialog.py tests/test_ui_typography.py tests/test_dialog_theming.py -q`
 
@@ -187,7 +187,7 @@
 - Verifies: dark lighting card/labels/accent equal dark tokens.
 - Verifies: FormulaPreview fallback is visible before load and inherits `#formulaPreviewFallback` QSS color instead of an inline light-theme color.
 
-- [ ] **Step 1: Create an integrated dark-theme test**
+- [x] **Step 1: Create an integrated dark-theme test**
 
   Add:
 
@@ -210,23 +210,23 @@
 
   Restore the prior application stylesheet in `finally` to avoid cross-test leakage.
 
-- [ ] **Step 2: Run the integrated test before changing production code**
+- [x] **Step 2: Run the integrated test before changing production code**
 
   Run: `uv run pytest tests/test_dark_theme_surfaces.py -q`
 
   Expected: PASS after Tasks 3.3 and 6.1. If it fails, fix the owning earlier implementation rather than weakening the assertions.
 
-- [ ] **Step 3: Render one offscreen image for visual sanity**
+- [x] **Step 3: Render one offscreen image for visual sanity**
 
   Show both widgets under `QT_QPA_PLATFORM=offscreen`, process events, render them to `QImage`, and assert a representative center pixel is not the retired light card color `#f4f6f9` and that the fallback text region contains non-background pixels. Keep assertions broad enough for platform antialiasing.
 
-- [ ] **Step 4: Run the neighboring theme suite**
+- [x] **Step 4: Run the neighboring theme suite**
 
   Run: `uv run pytest tests/test_dark_theme_surfaces.py tests/test_lighting_dialog.py tests/test_math_input_theme.py tests/test_dialog_theming.py -q`
 
   Expected: PASS in a single process without stylesheet leakage.
 
-- [ ] **Step 5: Commit the integrated regression**
+- [x] **Step 5: Commit the integrated regression**
 
   ```bash
   git add tests/test_dark_theme_surfaces.py
@@ -248,7 +248,7 @@
 - Produces: transparent 2px default borders for `QPushButton` and `QToolButton`, replaced by a 2px accent border on focus.
 - Produces: accent focus borders for text/combo/spin/edit controls that already have bordered chrome.
 
-- [ ] **Step 1: Add failing QSS focus contracts**
+- [x] **Step 1: Add failing QSS focus contracts**
 
   In `tests/test_ui_tokens.py` add:
 
@@ -267,13 +267,13 @@
 
   Add a typography assertion that button fixed sizes remain unchanged when focus is applied, using a 36px `QToolButton` rendered under both QSS themes.
 
-- [ ] **Step 2: Run tests and reproduce the unsupported/dropped rule**
+- [x] **Step 2: Run tests and reproduce the unsupported/dropped rule**
 
   Run: `uv run pytest tests/test_ui_tokens.py tests/test_ui_typography.py -q`
 
   Expected: FAIL because QSS contains `:focus-visible` and its supported `:focus` rule resets the border to the default color.
 
-- [ ] **Step 3: Reserve button border space and add supported focus rules**
+- [x] **Step 3: Reserve button border space and add supported focus rules**
 
   Change the base controls to:
 
@@ -287,11 +287,11 @@
 
   Merge these declarations with existing blocks so hover/checked rules keep their background behavior. Remove the entire `:focus-visible` selector group and the rule that restores `border_default` on focus.
 
-- [ ] **Step 4: Update snapshots and keyboard-smoke the main shell**
+- [x] **Step 4: Update snapshots and keyboard-smoke the main shell**
 
   Regenerate/review both QSS snapshots. Run the app in light and dark mode, press Tab across viewport toolbar, algebra controls, status controls, and dialog fields, and verify the ring is visible without changing fixed button dimensions.
 
-- [ ] **Step 5: Run QSS/UI tests and commit**
+- [x] **Step 5: Run QSS/UI tests and commit**
 
   Run: `uv run pytest tests/test_ui_tokens.py tests/test_ui_typography.py tests/test_ui_design_integration.py -q`
 
@@ -316,7 +316,7 @@
 - Flyout order is exactly line, segment, ray.
 - Key contract: Up/Left previous; Down/Right next; Enter/Space activates; Escape closes and focuses `line_button`.
 
-- [ ] **Step 1: Add failing click and keyboard interaction tests**
+- [x] **Step 1: Add failing click and keyboard interaction tests**
 
   Extend `tests/test_2d_geometry_toolbar.py` with `QTest`:
 
@@ -345,17 +345,17 @@
       self.assertTrue(toolbar.line_button.hasFocus())
   ```
 
-- [ ] **Step 2: Run the toolbar test and reproduce mouse-hover-only access**
+- [x] **Step 2: Run the toolbar test and reproduce mouse-hover-only access**
 
   Run: `uv run pytest tests/test_2d_geometry_toolbar.py -q`
 
   Expected: FAIL because clicking currently selects the abstract `line` tool and arrow/Escape keys are unhandled.
 
-- [ ] **Step 3: Separate flyout toggling from concrete tool activation**
+- [x] **Step 3: Separate flyout toggling from concrete tool activation**
 
   Replace `line_button.clicked.connect(lambda: self._toggle_tool("line"))` with `_toggle_line_flyout`. Showing positions/raises the flyout and focuses the first concrete button; closing hides it and optionally returns focus. Keep hover `Enter/Leave` calls to `_show_line_flyout()` and the delayed unhover close.
 
-- [ ] **Step 4: Handle keys in the existing event filter**
+- [x] **Step 4: Handle keys in the existing event filter**
 
   For watched concrete buttons and `QEvent.KeyPress`, calculate the current index from `list(self.line_buttons.values())`:
 
@@ -376,7 +376,7 @@
 
   Set concrete buttons to `Qt.FocusPolicy.StrongFocus`. Preserve `_select_tool` toggle semantics and hover opening.
 
-- [ ] **Step 5: Run toolbar regressions and commit**
+- [x] **Step 5: Run toolbar regressions and commit**
 
   Run: `uv run pytest tests/test_2d_geometry_toolbar.py tests/test_2d_geometry_interaction.py -q`
 
@@ -400,7 +400,7 @@
 - Produces: `cancelledRef` local to each `HistoryRow`.
 - Enter and blur save a non-empty changed title; Escape restores the original title and emits no `rename_session` intent.
 
-- [ ] **Step 1: Add failing rename-path component tests**
+- [x] **Step 1: Add failing rename-path component tests**
 
   Create `HistoryView.test.tsx` with a single visible history item. Cover:
 
@@ -418,13 +418,13 @@
 
   Add Enter-save and blur-save tests that assert exactly one intent with the trimmed title.
 
-- [ ] **Step 2: Run the test and reproduce Escape triggering blur save**
+- [x] **Step 2: Run the test and reproduce Escape triggering blur save**
 
   Run from `ui/agent_web`: `pnpm test -- src/components/HistoryView.test.tsx`
 
   Expected: FAIL because Escape only calls `setEditing(false)` and the input's blur invokes `save()`.
 
-- [ ] **Step 3: Add the cancellation guard and restore original draft**
+- [x] **Step 3: Add the cancellation guard and restore original draft**
 
   Import `useRef`. At edit start, reset `cancelledRef.current = false` and draft title to `item.title`. At the first line of `save()`:
 
@@ -438,13 +438,13 @@
 
   On Escape, set the flag before leaving edit mode, restore the title, and prevent default. Enter continues through `save()`.
 
-- [ ] **Step 4: Run the three rename paths**
+- [x] **Step 4: Run the three rename paths**
 
   Run from `ui/agent_web`: `pnpm test -- src/components/HistoryView.test.tsx`
 
   Expected: PASS: Escape zero saves, Enter one save, blur one save.
 
-- [ ] **Step 5: Commit the rename fix**
+- [x] **Step 5: Commit the rename fix**
 
   ```bash
   git add ui/agent_web/src/components/HistoryView.tsx ui/agent_web/src/components/HistoryView.test.tsx
@@ -462,7 +462,7 @@
 - Produces: a root `ref`, document `mousedown`/`keydown` cleanup lifecycle, trigger `aria-haspopup="listbox"`, and `aria-expanded={open}`.
 - Preserves: selection emits `change_model` and closes the popover.
 
-- [ ] **Step 1: Add failing dismissal and aria tests**
+- [x] **Step 1: Add failing dismissal and aria tests**
 
   Extend `ModelSelector.test.tsx`:
 
@@ -482,13 +482,13 @@
 
   Keep/add a selection-path test as the third close route.
 
-- [ ] **Step 2: Run the focused test and reproduce the stuck popover**
+- [x] **Step 2: Run the focused test and reproduce the stuck popover**
 
   Run from `ui/agent_web`: `pnpm test -- src/components/ModelSelector.test.tsx`
 
   Expected: FAIL because only selection and trigger clicks currently close it.
 
-- [ ] **Step 3: Reuse the AttachmentActions listener pattern**
+- [x] **Step 3: Reuse the AttachmentActions listener pattern**
 
   Import `useEffect`/`useRef`, attach a root ref, and install document listeners once:
 
@@ -509,11 +509,11 @@
   }, []);
   ```
 
-- [ ] **Step 4: Expose trigger state without changing selection semantics**
+- [x] **Step 4: Expose trigger state without changing selection semantics**
 
   Add `ref={rootRef}` to the wrapper and `aria-haspopup="listbox" aria-expanded={open}` to the trigger. Keep popover role `menu` unless a separate accessibility refactor changes row roles together; the requested state must be accurate.
 
-- [ ] **Step 5: Run component tests and commit**
+- [x] **Step 5: Run component tests and commit**
 
   Run from `ui/agent_web`: `pnpm test -- src/components/ModelSelector.test.tsx src/components/Composer.test.tsx`
 
@@ -539,7 +539,7 @@
 - Produces: at least 11px for context ring, turn actions, model details, capability headings/descriptions, thinking/progress metadata, and settings context labels.
 - Produces: at least 28×28px for attachment buttons, session-tab close buttons, turn-action buttons, history row actions, and context ring.
 
-- [ ] **Step 1: Add failing floor assertions to the stylesheet test**
+- [x] **Step 1: Add failing floor assertions to the stylesheet test**
 
   Extend `layout.test.ts` with a table-driven contract:
 
@@ -569,23 +569,23 @@
   }
   ```
 
-- [ ] **Step 2: Run the test and enumerate every below-floor declaration**
+- [x] **Step 2: Run the test and enumerate every below-floor declaration**
 
   Run from `ui/agent_web`: `pnpm test -- src/styles/layout.test.ts`
 
   Expected: FAIL on current 8–10px labels and 22–26px targets.
 
-- [ ] **Step 3: Raise text values and target metrics exactly to the floor**
+- [x] **Step 3: Raise text values and target metrics exactly to the floor**
 
   Update the named selectors to 11px. Set `.session-tab-close`, `.turn-actions button`, `.attachment-actions button`, `.history-row-actions button`, and `.context-ring` to `width: 28px; height: 28px`; adjust margins/flex-basis so the composer and tabs do not overflow at 360px. Keep icons at 13–15px.
 
   For `ContextRing`, retain the existing semantic text span and percentage clamp; no SVG recalculation is needed in this implementation because the percentage is HTML text, not SVG text. Add `aria-hidden="true"` to the inner visual span while keeping the outer computed `aria-label`.
 
-- [ ] **Step 4: Rebuild and smoke at 360px/720px widths**
+- [x] **Step 4: Rebuild and smoke at 360px/720px widths**
 
   Run from `ui/agent_web`: `pnpm build`. In browser tests or the embedded sidebar, verify the composer controls do not wrap out of bounds at 360px and the 620px reading column remains centered at 720px.
 
-- [ ] **Step 5: Run frontend and packaging regressions, then commit**
+- [x] **Step 5: Run frontend and packaging regressions, then commit**
 
   Run:
 
