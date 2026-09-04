@@ -9,7 +9,9 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtWidgets import QApplication, QFrame, QLabel
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
-from MathInputWidget import FormulaListWidget
+from MathInputWidget import FormulaListWidget, FormulaPreviewWidget
+from models.function_catalog import CatalogEntry
+from models.scene_mode import SceneMode
 from models.geometry_2d import Linear2D, Point2D
 from models.surface_layer import SurfaceLayer
 from ui.algebra_panel import AlgebraPanel
@@ -29,6 +31,14 @@ class AlgebraPanelTests(unittest.TestCase):
         panel._submit_formula("implicit", r"x^2+y^2+z^2=1")
 
         self.assertEqual(events, [("implicit", r"x^2+y^2+z^2=1")])
+
+    def test_catalog_previews_inherit_the_effective_theme_when_created_later(self) -> None:
+        panel = AlgebraPanel()
+        panel.sync_overlay_theme("dark")
+        panel.set_catalog_entries([CatalogEntry("f", "测试", "f", "explicit", "y=x", "y=x", {}, "#123456", SceneMode.TWO_D)])
+        previews = panel.catalog_popup.findChildren(FormulaPreviewWidget)
+        self.assertTrue(previews)
+        self.assertEqual(previews[0]._theme, "dark")
 
     def test_function_list_uses_one_webengine_for_all_layers(self) -> None:
         first = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")

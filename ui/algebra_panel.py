@@ -360,7 +360,7 @@ class CatalogEntryRow(QFrame):
 
     selected = Signal(str)
 
-    def __init__(self, entry: CatalogEntry, parent: QWidget | None = None) -> None:
+    def __init__(self, entry: CatalogEntry, parent: QWidget | None = None, *, initial_theme: ThemeName = "light") -> None:
         super().__init__(parent)
         self.entry_id = entry.id
         self.setObjectName("catalogEntryRow")
@@ -369,7 +369,7 @@ class CatalogEntryRow(QFrame):
         layout.setSpacing(8)
         name = QLabel(entry.name, self)
         name.setMinimumWidth(76)
-        self.preview = FormulaPreviewWidget(entry.latex, self)
+        self.preview = FormulaPreviewWidget(entry.latex, self, initial_theme=initial_theme)
         self.preview.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
         layout.addWidget(name)
         layout.addWidget(self.preview, 1)
@@ -390,6 +390,7 @@ class FunctionCatalogPopup(QDialog):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self._theme: ThemeName = "light"
         self.setObjectName("functionCatalogPopup")
         self.setWindowTitle("函数")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
@@ -425,7 +426,7 @@ class FunctionCatalogPopup(QDialog):
                 category.setObjectName("catalogCategory")
                 self.content_layout.insertWidget(self.content_layout.count() - 1, category)
                 last_category = entry.category
-            row = CatalogEntryRow(entry, self.content)
+            row = CatalogEntryRow(entry, self.content, initial_theme=self._theme)
             row.selected.connect(self._request)
             self.content_layout.insertWidget(self.content_layout.count() - 1, row)
 
@@ -449,6 +450,11 @@ class FunctionCatalogPopup(QDialog):
             QTimer.singleShot(0, self.hide)
         return super().eventFilter(watched, event)
 
+    def set_theme(self, theme: ThemeName) -> None:
+        self._theme = theme
+        for preview in self.findChildren(FormulaPreviewWidget):
+            preview.set_theme(theme)
+
 
 class LayerRow(QFrame):
     """包含可见性、MathLive 直接编辑和设置入口的紧凑图层行。"""
@@ -461,7 +467,7 @@ class LayerRow(QFrame):
     _MINIMUM_FORMULA_HEIGHT = 32
     _VERTICAL_MARGINS = 8
 
-    def __init__(self, layer: Layer, parent: QWidget | None = None) -> None:
+    def __init__(self, layer: Layer, parent: QWidget | None = None, *, initial_theme: ThemeName = "light") -> None:
         super().__init__(parent)
         self.layer_id = layer.id
         self.setObjectName("algebraLayerRow")
@@ -475,7 +481,7 @@ class LayerRow(QFrame):
         self.visible_button.setChecked(layer.visible)
         self.visible_button.setFixedSize(28, 28)
         self._set_visibility_icon(layer.visible)
-        self.expression_button = FormulaPreviewWidget(layer.latex or layer.expression, self)
+        self.expression_button = FormulaPreviewWidget(layer.latex or layer.expression, self, initial_theme=initial_theme)
         self.expression_button.setObjectName("layerExpressionButton")
         self.expression_button.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
         self.expression_button.setToolTip(layer.latex or layer.expression)
@@ -654,6 +660,7 @@ class AlgebraPanel(QFrame):
         self._effective_theme = theme
         self.formula_list.set_theme(theme)
         self.formula_popup.set_theme(theme)
+        self.catalog_popup.set_theme(theme)
         for preview in self.findChildren(FormulaPreviewWidget):
             preview.set_theme(theme)
         for popup in (
