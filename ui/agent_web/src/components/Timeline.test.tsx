@@ -37,4 +37,60 @@ describe("Timeline", () => {
     fireEvent.click(screen.getByRole("button", { name: "撤销" }));
     expect(onIntent).toHaveBeenCalledWith(expect.objectContaining({ type: "undo_turn", turn_id: "t1" }));
   });
+
+  const sessionWith = (assistantText: string, turns = 1) => ({
+    id: "stream-session",
+    title: "Chat",
+    mode: "Agent" as const,
+    executionMode: "confirm" as const,
+    model: "DeepSeek",
+    turns: Array.from({ length: turns }, (_, index) => ({
+      id: `t${index}`,
+      userMessage: `question ${index}`,
+      status: "running",
+      hovered: false,
+      assistantText,
+      reasoningText: "",
+      events: [],
+    })),
+  });
+
+  const props = { onIntent: vi.fn(), onHover: vi.fn(), onToggleDetails: vi.fn() };
+
+  it("does not pull the reader down after they scroll up", () => {
+    const scrollIntoView = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    const { rerender } = render(<Timeline session={sessionWith("partial")} {...props} />);
+    const timeline = screen.getByLabelText("Conversation timeline");
+    Object.defineProperties(timeline, {
+      scrollHeight: { configurable: true, value: 1000 },
+      scrollTop: { configurable: true, value: 300 },
+      clientHeight: { configurable: true, value: 400 },
+    });
+    fireEvent.scroll(timeline);
+    scrollIntoView.mockClear();
+    rerender(<Timeline session={sessionWith("partial more")} {...props} />);
+    expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("keeps following while pinned and resets for a new user turn", () => {
+    const scrollIntoView = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    const { rerender } = render(<Timeline session={sessionWith("partial")} {...props} />);
+    const timeline = screen.getByLabelText("Conversation timeline");
+    Object.defineProperties(timeline, {
+      scrollHeight: { configurable: true, value: 1000 },
+      scrollTop: { configurable: true, value: 580 },
+      clientHeight: { configurable: true, value: 400 },
+    });
+    fireEvent.scroll(timeline);
+    scrollIntoView.mockClear();
+    rerender(<Timeline session={sessionWith("next token")} {...props} />);
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: "nearest" });
+    scrollIntoView.mockClear();
+    Object.defineProperty(timeline, "scrollTop", { configurable: true, value: 100 });
+    fireEvent.scroll(timeline);
+    rerender(<Timeline session={sessionWith("new turn", 2)} {...props} />);
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: "nearest" });
+  });
 });
