@@ -139,7 +139,7 @@
 - Produces: `build_application_font() -> QFont` for construction and focused testing.
 - `main()` applies the returned font before constructing `MainWindow`.
 
-- [ ] **Step 1: Add a failing application-font test**
+- [x] **Step 1: Add a failing application-font test**
 
   Extend `tests/test_ui_typography.py`:
 
@@ -159,13 +159,13 @@
       assert font.styleStrategy() & QFont.StyleStrategy.PreferAntialias
   ```
 
-- [ ] **Step 2: Run the test and confirm the old point-size behavior**
+- [x] **Step 2: Run the test and confirm the old point-size behavior**
 
   Run: `uv run pytest tests/test_ui_typography.py -q`
 
   Expected: FAIL because `build_application_font` does not exist and `main()` still constructs `QFont(family, 12)` as a point size.
 
-- [ ] **Step 3: Build the font from tokens**
+- [x] **Step 3: Build the font from tokens**
 
   Replace the direct `QFont` constructor with a pure helper:
 
@@ -185,7 +185,7 @@
 
   In `main()`, call `app.setFont(build_application_font())` before `MainWindow(...)`.
 
-- [ ] **Step 4: Assert QApplication receives the same font object semantics**
+- [x] **Step 4: Assert QApplication receives the same font object semantics**
 
   Add a Qt-level assertion to the same test file:
 
@@ -201,7 +201,7 @@
           app.setFont(original)
   ```
 
-- [ ] **Step 5: Run typography and startup helpers, then commit**
+- [x] **Step 5: Run typography and startup helpers, then commit**
 
   Run: `uv run pytest tests/test_ui_typography.py tests/test_theme_mode.py -q`
 
