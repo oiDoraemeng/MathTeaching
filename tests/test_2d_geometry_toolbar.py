@@ -20,7 +20,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.application = QApplication.instance() or QApplication([])
 
-    def test_toolbar_stays_at_the_right_middle_and_line_hover_opens_the_flyout(self) -> None:
+    def test_toolbar_stays_at_the_top_left_and_line_hover_opens_the_flyout(self) -> None:
         host = QWidget()
         host.resize(800, 600)
         toolbar = TwoDGeometryToolbar(host)
@@ -29,8 +29,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         toolbar.position_in_host()
         QApplication.processEvents()
 
-        self.assertEqual(toolbar.x(), 800 - toolbar.width() - 12)
-        self.assertEqual(toolbar.y(), (600 - toolbar.height()) // 2)
+        self.assertEqual((toolbar.x(), toolbar.y()), (12, 12))
         QApplication.sendEvent(toolbar.line_button, QEvent(QEvent.Type.Enter))
         QApplication.processEvents()
         self.assertTrue(toolbar.line_flyout.isVisible())
@@ -70,8 +69,8 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         self.assertTrue(toolbar.area_button.isVisible())
 
         toolbar.set_linear_algebra_mode(False)
-        self.assertFalse(toolbar.is_linear_algebra_mode())
-        self.assertFalse(toolbar.angle_button.isVisible())
+        self.assertTrue(toolbar.is_linear_algebra_mode())
+        self.assertTrue(toolbar.angle_button.isVisible())
 
     def test_toolbar_icon_controls_use_consistent_metrics(self) -> None:
         host = QWidget()
@@ -81,6 +80,13 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
             toolbar.select_button,
             toolbar.point_button,
             toolbar.line_button,
+            toolbar.vector_button,
+            toolbar.angle_button,
+            toolbar.projection_button,
+            toolbar.polygon_button,
+            toolbar.transform_button,
+            toolbar.subspace_button,
+            toolbar.area_button,
             toolbar.snap_button,
             toolbar.undo_button,
             toolbar.redo_button,
@@ -90,6 +96,15 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
             self.assertEqual(button.text(), "")
             self.assertEqual(button.size(), QSize(36, 36))
             self.assertEqual(button.iconSize(), QSize(16, 16))
+
+    def test_complete_toolbar_is_expanded_by_default(self) -> None:
+        host = QWidget()
+        toolbar = TwoDGeometryToolbar(host)
+
+        self.assertTrue(toolbar.is_linear_algebra_mode())
+        self.assertTrue(toolbar.angle_button.isVisibleTo(toolbar))
+        self.assertTrue(toolbar.projection_button.isVisibleTo(toolbar))
+        self.assertTrue(toolbar.area_button.isVisibleTo(toolbar))
 
     def test_undo_and_redo_buttons_emit_actions_and_follow_history_state(self) -> None:
         host = QWidget()
@@ -128,7 +143,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         window._undo_2d_geometry.assert_called_once_with()
         window._redo_2d_geometry.assert_called_once_with()
 
-    def test_main_window_only_shows_the_geometry_toolbar_in_two_d_mode(self) -> None:
+    def test_main_window_keeps_the_complete_toolbar_visible_in_both_scenes(self) -> None:
         class FakeButton:
             def __init__(self) -> None:
                 self.text = ""
@@ -171,21 +186,15 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
             SceneMode.THREE_D: SceneAppearance(),
         }
         window.scene_mode = SceneMode.TWO_D
-        window._linear_algebra_workspace_active = False
         window._active_linear_algebra_topic_id = None
 
-        MainWindow._sync_scene_controls(window)
-        self.assertTrue(window.two_d_geometry_toolbar.visible)
-        self.assertFalse(window.two_d_geometry_toolbar.linear_algebra_mode)
-
-        window._linear_algebra_workspace_active = True
         MainWindow._sync_scene_controls(window)
         self.assertTrue(window.two_d_geometry_toolbar.visible)
         self.assertTrue(window.two_d_geometry_toolbar.linear_algebra_mode)
 
         window.scene_mode = SceneMode.THREE_D
         MainWindow._sync_scene_controls(window)
-        self.assertFalse(window.two_d_geometry_toolbar.visible)
+        self.assertTrue(window.two_d_geometry_toolbar.visible)
         self.assertTrue(window.two_d_geometry_toolbar.line_flyout.hidden)
 
 

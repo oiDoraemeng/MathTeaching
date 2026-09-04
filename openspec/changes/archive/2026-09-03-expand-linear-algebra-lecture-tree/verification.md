@@ -1,5 +1,19 @@
 # Verification: expand-linear-algebra-lecture-tree
 
+## Final verification (2026-09-03)
+
+- Python focused tests: 50 passed
+- Python full suite: 478 passed, 1 skipped
+- Frontend tests: 39 passed
+- Frontend production build: passed
+- Lecture validation: 54 topics validated
+- OpenSpec strict validation: passed
+- Unified toolbar smoke check: visible, horizontal, at `(12, 12)`, all 10 teaching tools visible
+
+The final toolbar implementation keeps one `TwoDGeometryToolbar` instance. It is
+always fully expanded and positioned at the canvas top-left; opening the lecture
+catalog only opens the tree and does not control toolbar visibility.
+
 > **复验更新（2026-09-02）：** 按 `fix-plan.md` 修复后，
 > `python -m linear_algebra.validation` 报告 54 个主题通过；六个工具栏专用交互处理器
 > 已接入二维画布，并由独立规划模块和回归测试覆盖。

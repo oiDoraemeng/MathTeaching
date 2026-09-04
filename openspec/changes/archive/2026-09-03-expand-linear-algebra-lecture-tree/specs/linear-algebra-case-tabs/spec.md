@@ -1,4 +1,27 @@
-## MODIFIED Requirements
+## REMOVED Requirements
+
+### Requirement: Linear algebra entry
+
+**Reason**: The flat first-version vector case list is replaced by the lecture-driven tree for chapters 1-3.
+
+**Migration**: Use the new `Linear algebra lecture entry` requirement and its 54 geometry-focused lecture topics.
+
+#### Scenario: Open vector case list
+- **WHEN** 用户点击“线性代数”按钮
+- **THEN** 弹出列表包含“向量加法”“向量减法”“向量数乘”“向量内积”“向量外积”
+
+### Requirement: Built-in case loading
+
+**Reason**: Legacy built-in cases are replaced by stable lecture topic IDs and topic-specific visualization plans.
+
+**Migration**: Use the new `Lecture topic loading` requirement.
+
+#### Scenario: Load vector subtraction
+- **WHEN** 用户选择“向量减法”
+- **THEN** 当前画布被清空并显示预置向量、结果向量和辅助构造线
+- **AND** 场景状态对应案例的固定公式与向量数据
+
+## ADDED Requirements
 
 ### Requirement: Linear algebra lecture entry
 
@@ -22,8 +45,6 @@
 - **WHEN** 用户选择“3.3 克拉默法则”下的“面积比解方程组”主题
 - **THEN** 当前画布被清空并显示系数列向量、目标向量和面积比构造
 - **AND** 主题解释页显示对应公式、推导步骤和结论
-
-## ADDED Requirements
 
 ### Requirement: Tree expansion controls
 

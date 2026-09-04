@@ -13,7 +13,7 @@
 - **Explanation System:** 54 个主题的完整数学解释
 - **Integration:** 选择主题加载场景和解释
 - **Tests:** 目录、加载、交互测试全部通过
-- **Toolbar:** 角度、投影、多边形、矩阵变换、子空间、有向面积均已接入二维画布
+- **Toolbar:** 现有二维工具栏已扩展为完整横向工具集，固定在画布左上角并默认展开
 
 ## Follow-up Work
 
@@ -25,10 +25,10 @@
 ✅ **Revalidated 2026-09-03** - All issues resolved
 
 - 54个主题特定构建器：正确的几何可视化
-- 统一工具栏系统：TwoDGeometryToolbar支持线性代数模式
+- 统一工具栏系统：TwoDGeometryToolbar始终显示完整工具集，不依赖“线性代数”入口
 - 线工具中移除向量（向量现为独立顶级工具）
 - 无重复功能：单一撤销/重做系统
-- 所有测试通过：19/19
+- 所有测试通过：478 passed, 1 skipped
 
 ## Next Steps
 

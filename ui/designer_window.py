@@ -284,10 +284,9 @@ class MainWindow:
         self._agent_points3d: dict[str, tuple[float, float, float]] = {}
         self._agent_teaching_2d: dict[str, dict[str, object]] = {}
         self._agent_geometry3d: dict[str, dict[str, object]] = {}
-        # Identifies the last successfully loaded lecture topic.  The toolbar
-        # must follow the loaded scene, not the transient popup visibility.
+        # Identifies the last successfully loaded lecture topic for explanation
+        # and scene routing. Toolbar visibility is independent of this state.
         self._active_linear_algebra_topic_id: str | None = None
-        self._linear_algebra_workspace_active = False
         self._two_d_object_order: list[str] = []
         self.layer_controller: LayerSceneController | None = None
         self.curve_controller: CurveSceneController | None = None
@@ -752,9 +751,6 @@ class MainWindow:
             self.viewport_host,
             theme=getattr(self, "effective_theme", "light"),
         )
-        # 保留属性别名，供旧的状态同步和插件调用，但两者指向同一实例。
-        self.linear_algebra_toolbar = self.two_d_geometry_toolbar
-
         self.scene_settings_panel = SceneSettingsPanel(self.viewport_host)
         self.scene_settings_panel.hide()
         self._scene_settings_animation = QPropertyAnimation(self.scene_settings_panel, b"geometry", self.window)
@@ -1426,8 +1422,8 @@ class MainWindow:
             self._linear_algebra_pending_vector_ids = []
             self._linear_algebra_polygon_point_ids = []
             self._linear_algebra_tool_preclear_state = None
-            if hasattr(self, "linear_algebra_toolbar"):
-                self.linear_algebra_toolbar.set_active_tool(None, emit_signal=False)
+            if hasattr(self, "two_d_geometry_toolbar"):
+                self.two_d_geometry_toolbar.set_active_tool(None, emit_signal=False)
             self.layers.clear()
             self._agent_points3d = {}
             self._agent_geometry3d = {}
@@ -2204,8 +2200,8 @@ class MainWindow:
         self._active_linear_algebra_topic_id = topic.id
         if plan.scene == "2d":
             self._set_2d_geometry_tool("select")
-            if hasattr(self, "linear_algebra_toolbar"):
-                self.linear_algebra_toolbar.set_active_tool("select", emit_signal=False)
+            if hasattr(self, "two_d_geometry_toolbar"):
+                self.two_d_geometry_toolbar.set_active_tool("select", emit_signal=False)
         self._sync_scene_controls()
         self.algebra_panel.set_status(f"已加载主题: {topic.title}")
         if hasattr(self, "agent_panel"):
@@ -2219,17 +2215,8 @@ class MainWindow:
             )
 
     def _enter_linear_algebra_workspace(self) -> None:
-        """Reveal the linear-algebra tools as soon as its catalog is opened."""
-        self._linear_algebra_workspace_active = True
-        self._active_linear_algebra_topic_id = None
-        if self.scene_mode is not SceneMode.TWO_D:
-            self._set_scene_mode(SceneMode.TWO_D)
-        self._set_2d_geometry_tool("select")
-        if hasattr(self, "linear_algebra_toolbar"):
-            self.linear_algebra_toolbar.set_active_tool("select", emit_signal=False)
-        self._sync_scene_controls()
-        self._position_viewport_overlays()
-        self.algebra_panel.set_status("线性代数工具栏已显示在画布左上角")
+        """Open the lecture catalog without changing the current scene."""
+        self.algebra_panel.set_status("已打开线性代数讲义目录")
 
     def _add_cas_surface(self, kind: str, latex: str) -> None:
         try:
@@ -2583,8 +2570,8 @@ class MainWindow:
             return
         if self.scene_mode is SceneMode.TWO_D:
             self._set_2d_geometry_tool(None)
-            if hasattr(self, "linear_algebra_toolbar"):
-                self.linear_algebra_toolbar.set_active_tool(None, emit_signal=False)
+            if hasattr(self, "two_d_geometry_toolbar"):
+                self.two_d_geometry_toolbar.set_active_tool(None, emit_signal=False)
         self._save_current_view_state()
         self.scene_mode = mode
         if hasattr(self, "status_bar"):
@@ -2624,10 +2611,11 @@ class MainWindow:
 
     def _on_unified_2d_tool_selected(self, tool: ToolKind | None) -> None:
         """Route the single toolbar's selection to the active workspace."""
-        if getattr(self, "_linear_algebra_workspace_active", False):
-            if tool in {"angle", "projection", "polygon", "transform", "subspace", "area"}:
-                self._on_linear_algebra_tool_selected(str(tool))
-                return
+        if tool is not None and self.scene_mode is not SceneMode.TWO_D:
+            self._set_scene_mode(SceneMode.TWO_D)
+        if tool in {"angle", "projection", "polygon", "transform", "subspace", "area"}:
+            self._on_linear_algebra_tool_selected(str(tool))
+            return
         self._set_2d_geometry_tool(tool)
 
     def _on_linear_algebra_tool_selected(self, tool: str) -> None:
@@ -3156,8 +3144,8 @@ class MainWindow:
             self._linear_algebra_pending_vector_ids = []
             self._linear_algebra_polygon_point_ids = []
             self._set_2d_geometry_tool(None)
-            if hasattr(self, "linear_algebra_toolbar"):
-                self.linear_algebra_toolbar.set_active_tool(None, emit_signal=False)
+            if hasattr(self, "two_d_geometry_toolbar"):
+                self.two_d_geometry_toolbar.set_active_tool(None, emit_signal=False)
             self.algebra_panel.set_status("已返回平移模式")
             event.accept()
             return True
@@ -3169,8 +3157,8 @@ class MainWindow:
         if self._active_2d_tool is None:
             return False
         self._set_2d_geometry_tool(None)
-        if hasattr(self, "linear_algebra_toolbar"):
-            self.linear_algebra_toolbar.set_active_tool(None, emit_signal=False)
+        if hasattr(self, "two_d_geometry_toolbar"):
+            self.two_d_geometry_toolbar.set_active_tool(None, emit_signal=False)
         self.algebra_panel.set_status("已返回平移模式")
         event.accept()
         return True
@@ -3516,9 +3504,13 @@ class MainWindow:
         self.scene_mode_button.setText("2D" if self.scene_mode is SceneMode.TWO_D else "3D")
         if hasattr(self, "two_d_geometry_toolbar"):
             is_2d = self.scene_mode is SceneMode.TWO_D
-            is_linear_algebra = is_2d and self._is_linear_algebra_context()
-            self.two_d_geometry_toolbar.set_linear_algebra_mode(is_linear_algebra)
-            self.two_d_geometry_toolbar.setVisible(is_2d)
+            # The existing toolbar is the complete toolbar and is always
+            # expanded. It stays visible in both scenes for discoverability.
+            self.two_d_geometry_toolbar.set_linear_algebra_mode(True)
+            # The unified toolbar is a persistent canvas affordance. It stays
+            # visible even while the 3D scene is active so users can discover
+            # the complete set of tools without opening another panel.
+            self.two_d_geometry_toolbar.setVisible(True)
             if not is_2d:
                 self.two_d_geometry_toolbar.line_flyout.hide()
         self.scene_settings_panel.set_mode(self.scene_mode)
@@ -3540,7 +3532,7 @@ class MainWindow:
             return False
         topic_id = getattr(self, "_active_linear_algebra_topic_id", None)
         if not topic_id:
-            return bool(getattr(self, "_linear_algebra_workspace_active", False))
+            return True
         try:
             topic = catalog_registry().get_topic(topic_id)
             recipe = catalog_registry().get_recipe(topic.visualization_id)

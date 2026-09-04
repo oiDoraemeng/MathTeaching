@@ -1,4 +1,4 @@
-"""二维右侧点线工具栏。"""
+"""二维画布左上角统一工具栏。"""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ ToolKind = LinearKind | str
 
 
 class TwoDGeometryToolbar(QFrame):
-    """二维工具栏；在线性代数工作区中扩展为横向教学工具栏。"""
+    """统一的二维/线性代数工具栏，始终横向显示在画布左上角。"""
 
     tool_selected = Signal(object)
     snap_toggled = Signal(bool)
@@ -24,12 +24,15 @@ class TwoDGeometryToolbar(QFrame):
         super().__init__(parent)
         self._active_tool: ToolKind | None = None
         self._theme: ThemeName = theme
-        self._linear_algebra_mode = False
+        # The toolbar always contains the complete set of geometry and
+        # linear-algebra tools.  There is no second toolbar or mode switch in
+        # the user interface.
+        self._linear_algebra_mode = True
         self.setObjectName("twoDGeometryToolbar")
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         apply_drop_shadow(self, "overlay")
         apply_rounded_overlay(self, "md")
-        layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, self)
+        layout = QBoxLayout(QBoxLayout.Direction.LeftToRight, self)
         self._layout = layout
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
@@ -38,20 +41,10 @@ class TwoDGeometryToolbar(QFrame):
         self.point_button = self._button("circle-dot", "点", "pointToolButton")
         self.line_button = self._button("slash", "线工具", "lineToolButton")
         self.vector_button = self._button("arrow-up-right", "向量", "linearVectorToolButton")
-        self.vector_button.hide()
         layout.addWidget(self.select_button)
         layout.addWidget(self.point_button)
         layout.addWidget(self.line_button)
         layout.addWidget(self.vector_button)
-
-        self.snap_button = self._button("grid-3x3", "吸附到网格", "snapToggleButton")
-        self.snap_button.setChecked(False)
-        layout.addWidget(self.snap_button)
-
-        self.undo_button = self._action_button("undo-2", "撤回", "undoToolButton")
-        self.redo_button = self._action_button("redo-2", "反撤回", "redoToolButton")
-        layout.addWidget(self.undo_button)
-        layout.addWidget(self.redo_button)
 
         self.line_flyout = QFrame(parent)
         self.line_flyout.setObjectName("twoDLineFlyout")
@@ -90,9 +83,17 @@ class TwoDGeometryToolbar(QFrame):
             self.area_button,
         )
         for button in self._linear_algebra_buttons[1:]:
-            button.hide()
-        for button in self._linear_algebra_buttons[1:]:
             layout.addWidget(button)
+
+        layout.addSpacing(8)
+        self.snap_button = self._button("grid-3x3", "吸附到网格", "snapToggleButton")
+        self.snap_button.setChecked(False)
+        layout.addWidget(self.snap_button)
+
+        self.undo_button = self._action_button("undo-2", "撤回", "undoToolButton")
+        self.redo_button = self._action_button("redo-2", "反撤回", "redoToolButton")
+        layout.addWidget(self.undo_button)
+        layout.addWidget(self.redo_button)
 
         self.select_button.clicked.connect(lambda: self._toggle_tool("select"))
         self.point_button.clicked.connect(lambda: self._toggle_tool("point"))
@@ -132,9 +133,9 @@ class TwoDGeometryToolbar(QFrame):
         if emit_signal:
             self.tool_selected.emit(tool)
 
-    def set_linear_algebra_mode(self, enabled: bool) -> None:
-        """Switch this toolbar between the normal and linear algebra layouts."""
-        self._linear_algebra_mode = bool(enabled)
+    def set_linear_algebra_mode(self, _enabled: bool = True) -> None:
+        """Compatibility hook; the visible toolbar is always fully expanded."""
+        self._linear_algebra_mode = True
         self._layout.setDirection(
             QBoxLayout.Direction.LeftToRight
             if self._linear_algebra_mode
@@ -174,13 +175,7 @@ class TwoDGeometryToolbar(QFrame):
         parent = self.parentWidget()
         if parent is None:
             return
-        if self._linear_algebra_mode:
-            self.move(12, 12)
-        else:
-            self.move(
-                max(8, parent.width() - self.width() - 12),
-                max(12, (parent.height() - self.height()) // 2),
-            )
+        self.move(12, 12)
         if self.line_flyout.isVisible():
             self._position_flyout()
 
@@ -219,10 +214,7 @@ class TwoDGeometryToolbar(QFrame):
         parent = self.parentWidget()
         if parent is None:
             return
-        origin = self.mapTo(
-            parent,
-            QPoint(-self.line_flyout.width() - 8, self.line_button.y()),
-        )
+        origin = self.mapTo(parent, QPoint(self.line_button.x(), self.height() + 8))
         self.line_flyout.move(max(8, origin.x()), max(8, origin.y()))
 
     def _hide_flyout_if_unhovered(self) -> None:

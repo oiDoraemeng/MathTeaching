@@ -757,8 +757,8 @@ class AlgebraPanel(QFrame):
         self.settings_popup.hide()
         self.catalog_popup.hide()
         self.formula_list.cancel_edit()
-        # 先让主窗口进入二维线性代数工作区，再打开目录。否则场景切换刷新
-        # 面板时会把刚刚显示的目录弹窗隐藏。
+        # 先让主窗口进入二维工作区，再打开目录。工具栏本身已经默认完整显示，
+        # 这里仅负责打开讲义目录，不负责决定工具栏是否可见。
         self.linear_algebra_opened.emit()
         self.linear_algebra_popup.open_at(self._popup_anchor(self.linear_algebra_button))
 
