@@ -30,6 +30,9 @@ describe("Timeline", () => {
     expect(screen.getByText("执行: 已执行")).toBeInTheDocument();
     expect(screen.getByText("校验: 已通过")).toBeInTheDocument();
     fireEvent.mouseEnter(screen.getByText("画点").closest(".turn-block")!);
+    const actions = document.querySelector(".turn-actions");
+    expect(actions).toHaveClass("visible");
+    expect(document.querySelectorAll(".assistant-content")).toHaveLength(1);
     expect(screen.getByRole("button", { name: "复制" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "撤销" }));
     expect(onIntent).toHaveBeenCalledWith(expect.objectContaining({ type: "undo_turn", turn_id: "t1" }));

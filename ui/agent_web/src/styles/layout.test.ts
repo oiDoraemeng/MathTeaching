@@ -24,4 +24,12 @@ describe("Agent Web timeline layout", () => {
     expect(block(".reasoning-block")).toContain("font-size: 11px");
     expect(block(".thinking-section")).toContain("margin: 8px 0 10px");
   });
+
+  it("keeps actions out of layout and preserves the readable measure", () => {
+    expect(block(".turn-block")).toContain("position: relative");
+    expect(block(".turn-block")).toContain("max-width: 620px");
+    expect(block(".turn-actions")).toContain("position: absolute");
+    expect(block(".turn-actions")).toContain("visibility: hidden");
+    expect(block(".turn-actions.visible")).toContain("visibility: visible");
+  });
 });
