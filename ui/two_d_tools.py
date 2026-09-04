@@ -64,6 +64,7 @@ class TwoDGeometryToolbar(QFrame):
         }
         for button in self.line_buttons.values():
             flyout_layout.addWidget(button)
+            button.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
             button.installEventFilter(self)
         self.line_flyout.hide()
 
@@ -97,7 +98,7 @@ class TwoDGeometryToolbar(QFrame):
 
         self.select_button.clicked.connect(lambda: self._toggle_tool("select"))
         self.point_button.clicked.connect(lambda: self._toggle_tool("point"))
-        self.line_button.clicked.connect(lambda: self._toggle_tool("line"))
+        self.line_button.clicked.connect(self._toggle_line_flyout)
         self.vector_button.clicked.connect(lambda: self._toggle_tool("vector"))
         self.angle_button.clicked.connect(lambda: self._select_tool("angle"))
         self.projection_button.clicked.connect(lambda: self._select_tool("projection"))
@@ -185,10 +186,45 @@ class TwoDGeometryToolbar(QFrame):
                 self._show_line_flyout()
             elif event.type() == QEvent.Type.Leave:
                 QTimer.singleShot(90, self._hide_flyout_if_unhovered)
+            elif watched in self.line_buttons.values() and event.type() == QEvent.Type.KeyPress:
+                buttons = list(self.line_buttons.values())
+                index = buttons.index(watched)
+                key = event.key()
+                if key in (Qt.Key.Key_Up, Qt.Key.Key_Left, Qt.Key.Key_Down, Qt.Key.Key_Right):
+                    delta = -1 if key in (Qt.Key.Key_Up, Qt.Key.Key_Left) else 1
+                    self._focus_line_button((index + delta) % len(buttons))
+                    return True
+                if key in (Qt.Key.Key_Return, Qt.Key.Key_Enter, Qt.Key.Key_Space):
+                    buttons[index].click()
+                    return True
+                if key == Qt.Key.Key_Escape:
+                    self._close_line_flyout()
+                    return True
         return super().eventFilter(watched, event)
 
     def _toggle_tool(self, tool: ToolKind) -> None:
         self._select_tool(None if self._active_tool == tool else tool)
+
+    def _toggle_line_flyout(self) -> None:
+        """Toggle the concrete line-tool menu without selecting an abstract tool."""
+        if self.line_flyout.isVisible():
+            self._close_line_flyout()
+            return
+        self.line_button.setChecked(self._active_tool in self.line_buttons)
+        self._show_line_flyout()
+        self._focus_line_button(0)
+
+    def _focus_line_button(self, index: int) -> None:
+        buttons = list(self.line_buttons.values())
+        if not buttons:
+            return
+        buttons[index % len(buttons)].setFocus(Qt.FocusReason.OtherFocusReason)
+
+    def _close_line_flyout(self, return_focus: bool = True) -> None:
+        self._flyout_animation.stop()
+        self.line_flyout.hide()
+        if return_focus:
+            self.line_button.setFocus(Qt.FocusReason.OtherFocusReason)
 
     def _select_tool(self, tool: ToolKind | None) -> None:
         if tool is not None and tool == self._active_tool:
@@ -218,8 +254,14 @@ class TwoDGeometryToolbar(QFrame):
         self.line_flyout.move(max(8, origin.x()), max(8, origin.y()))
 
     def _hide_flyout_if_unhovered(self) -> None:
-        if not self.line_button.underMouse() and not self.line_flyout.underMouse():
-            self.line_flyout.hide()
+        concrete_focused = any(button.hasFocus() for button in self.line_buttons.values())
+        if (
+            not self.line_button.underMouse()
+            and not self.line_flyout.underMouse()
+            and not self.line_button.hasFocus()
+            and not concrete_focused
+        ):
+            self._close_line_flyout(return_focus=False)
 
     def _button(self, icon_name: str, tooltip: str, object_name: str) -> QToolButton:
         button = QToolButton()

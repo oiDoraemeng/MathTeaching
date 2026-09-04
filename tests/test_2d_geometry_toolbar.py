@@ -6,8 +6,9 @@ from unittest.mock import MagicMock
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtCore import QEvent, QSize
+from PySide6.QtCore import QEvent, QSize, Qt
 from PySide6.QtGui import QKeySequence
+from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QWidget
 
 from models.scene_mode import SceneAppearance, SceneMode
@@ -45,6 +46,44 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
 
         self.assertEqual(events, ["ray", None])
         self.assertFalse(toolbar.line_button.isChecked())
+
+    def test_line_button_click_toggles_flyout(self) -> None:
+        host = QWidget()
+        host.resize(800, 600)
+        toolbar = TwoDGeometryToolbar(host)
+        host.show()
+        toolbar.show()
+        toolbar.position_in_host()
+        QApplication.processEvents()
+
+        QTest.mouseClick(toolbar.line_button, Qt.MouseButton.LeftButton)
+        self.assertTrue(toolbar.line_flyout.isVisible())
+        QTest.mouseClick(toolbar.line_button, Qt.MouseButton.LeftButton)
+        self.assertFalse(toolbar.line_flyout.isVisible())
+
+    def test_line_flyout_keyboard_cycle_select_and_escape(self) -> None:
+        host = QWidget()
+        host.resize(800, 600)
+        toolbar = TwoDGeometryToolbar(host)
+        host.show()
+        toolbar.show()
+        toolbar.position_in_host()
+        QApplication.processEvents()
+        events: list[object] = []
+        toolbar.tool_selected.connect(events.append)
+
+        QTest.mouseClick(toolbar.line_button, Qt.MouseButton.LeftButton)
+        self.assertTrue(toolbar.line_buttons["line"].hasFocus())
+        QTest.keyClick(toolbar.line_buttons["line"], Qt.Key.Key_Down)
+        self.assertTrue(toolbar.line_buttons["segment"].hasFocus())
+        QTest.keyClick(toolbar.line_buttons["segment"], Qt.Key.Key_Return)
+        self.assertEqual(events[-1], "segment")
+        self.assertFalse(toolbar.line_flyout.isVisible())
+
+        QTest.mouseClick(toolbar.line_button, Qt.MouseButton.LeftButton)
+        QTest.keyClick(toolbar.line_buttons["line"], Qt.Key.Key_Escape)
+        self.assertTrue(toolbar.line_button.hasFocus())
+        self.assertFalse(toolbar.line_flyout.isVisible())
 
     def test_grid_snap_is_opt_in(self) -> None:
         host = QWidget()
