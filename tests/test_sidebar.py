@@ -22,7 +22,7 @@ assert AgentSidebarState.EXPANDED.value == "expanded"
 print("✓ AgentSidebarState enum works")
 assert AgentSidebar.MIN_WIDTH == 360
 assert AgentSidebar.DEFAULT_WIDTH == 440
-assert AgentSidebar.MAX_WIDTH == 560
+assert AgentSidebar.MAX_WIDTH == 720
 
 # 测试基本逻辑（不需要 Qt）
 print("\nTesting logic without Qt...")

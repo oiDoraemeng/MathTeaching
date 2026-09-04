@@ -410,7 +410,13 @@ class MainWindow:
         self.agent_sidebar = AgentSidebar(self.window, dispatcher=self._dispatch_agent_web_intent)
         self.agent_sidebar.set_panel_width(self.agent_sidebar.DEFAULT_WIDTH)
         self.agent_resize_handle = _PanelResizeHandle(
-            PanelResizeSpec(360, 560, 440, "ui/agent_panel_width", "left"),
+            PanelResizeSpec(
+                self.agent_sidebar.MIN_WIDTH,
+                self.agent_sidebar.MAX_WIDTH,
+                self.agent_sidebar.DEFAULT_WIDTH,
+                "ui/agent_panel_width",
+                "left",
+            ),
             parent=self.window,
         )
         self.agent_resize_handle.width_changed.connect(self.agent_sidebar.set_panel_width)

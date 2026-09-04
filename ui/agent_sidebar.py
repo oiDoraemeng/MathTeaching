@@ -38,7 +38,7 @@ class AgentSidebar(QWidget):
     state_changed = Signal(AgentSidebarState)
     MIN_WIDTH = 360
     DEFAULT_WIDTH = 440
-    MAX_WIDTH = 560
+    MAX_WIDTH = 720
 
     def __init__(self, parent: QWidget | None = None, dispatcher: Callable[[object], object] | None = None) -> None:
         super().__init__(parent)
