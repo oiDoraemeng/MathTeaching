@@ -10,6 +10,7 @@ from PySide6.QtGui import QHideEvent, QShowEvent
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
+from .theme_bridge import ThemeBridge
 
 
 class _FormulaBridge(QObject):
@@ -48,7 +49,7 @@ class MathInputWidget(QWidget):
     _EDITOR_HEIGHT = 56
     _KEYBOARD_MIN_HEIGHT = 286
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(self, parent: QWidget | None = None, initial_theme: str = "light") -> None:
         super().__init__(parent)
         self._latex = ""
         self._placeholder = ""
@@ -57,6 +58,7 @@ class MathInputWidget(QWidget):
         self._keyboard_height = 0
         self._formula_height = self._EDITOR_HEIGHT
         self.web_view: QWebEngineView | None = None
+        self._initial_theme = initial_theme
         self._bridge = _FormulaBridge(self)
         self._bridge.latex_changed.connect(self._on_latex_changed)
         self._bridge.submission_received.connect(self._on_submitted)
@@ -123,6 +125,8 @@ class MathInputWidget(QWidget):
         super().hideEvent(event)
 
     def _on_load_finished(self, success: bool) -> None:
+        if self.web_view is not None:
+            self._theme_bridge.on_load_finished(success)
         self._page_ready = success
         if not success:
             self._failure_label.setVisible(True)
@@ -202,6 +206,8 @@ class MathInputWidget(QWidget):
         if self.web_view is not None:
             return self.web_view
         self.web_view = QWebEngineView(self)
+        self._theme_bridge = ThemeBridge(self.web_view, self._initial_theme)
+        self._theme_bridge.install(self._initial_theme)
         self.web_view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self._channel = QWebChannel(self.web_view.page())
         self._channel.registerObject("bridge", self._bridge)
@@ -210,3 +216,8 @@ class MathInputWidget(QWidget):
         self._layout.insertWidget(0, self.web_view)
         self.web_view.setUrl(QUrl.fromLocalFile(str(Path(__file__).with_name("mathlive.html").resolve())))
         return self.web_view
+
+    def set_theme(self, theme: str) -> None:
+        self._initial_theme = theme
+        if self.web_view is not None:
+            self._theme_bridge.set_theme(theme)

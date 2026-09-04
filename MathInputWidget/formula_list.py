@@ -15,6 +15,7 @@ from PySide6.QtWidgets import QVBoxLayout, QWidget
 from models.curve_layer import CurveLayer
 from models.geometry_2d import GeometryObject, Linear2D, Point2D, geometry_latex
 from models.surface_layer import SurfaceLayer
+from .theme_bridge import ThemeBridge
 
 
 Layer = SurfaceLayer | CurveLayer | GeometryObject
@@ -59,7 +60,7 @@ class FormulaListWidget(QWidget):
     visibility_changed = Signal(str, bool)
     settings_requested = Signal(str, object)
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(self, parent: QWidget | None = None, initial_theme: str = "light") -> None:
         super().__init__(parent)
         self._layers: dict[str, Layer] = {}
         self._page_ready = False
@@ -71,6 +72,8 @@ class FormulaListWidget(QWidget):
 
         # 将函数列表合并到一个网页，避免多个原生 QWebEngineView 相互遮挡或闪烁。
         self.web_view = QWebEngineView(self)
+        self._theme_bridge = ThemeBridge(self.web_view, initial_theme)
+        self._theme_bridge.install(initial_theme)
         self.web_view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.web_view.page().setBackgroundColor(QColor(0, 0, 0, 0))
         self._bridge = _FormulaListBridge(self)
@@ -187,9 +190,13 @@ class FormulaListWidget(QWidget):
         self.web_view.page().runJavaScript(source)
 
     def _on_load_finished(self, success: bool) -> None:
+        self._theme_bridge.on_load_finished(success)
         self._page_ready = success
         if success:
             self._send_layers()
+
+    def set_theme(self, theme: str) -> None:
+        self._theme_bridge.set_theme(theme)
 
     def _on_edit_requested(self, layer_id: str) -> None:
         if layer_id not in self._layers:

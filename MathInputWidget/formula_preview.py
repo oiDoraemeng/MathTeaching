@@ -10,6 +10,7 @@ from PySide6.QtGui import QColor, QMouseEvent, QShowEvent
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QLabel, QStackedLayout, QWidget
+from .theme_bridge import ThemeBridge
 
 
 class _FormulaPreviewBridge(QObject):
@@ -53,12 +54,13 @@ class FormulaPreviewWidget(QWidget):
 
     _MINIMUM_FORMULA_HEIGHT = 38
 
-    def __init__(self, latex: str = "", parent: QWidget | None = None) -> None:
+    def __init__(self, latex: str = "", parent: QWidget | None = None, initial_theme: str = "light") -> None:
         super().__init__(parent)
         self._latex = latex
         self._page_ready = False
         self._editing_mode = False  # 其他公式处于编辑状态时暂时隐藏当前网页预览。
         self.web_view: QWebEngineView | None = None
+        self._theme = initial_theme
         self._bridge = _FormulaPreviewBridge(self)
         self._bridge.edit_requested.connect(self.edit_requested)
         self._bridge.content_height_changed.connect(self._set_content_height)
@@ -115,6 +117,8 @@ class FormulaPreviewWidget(QWidget):
         if self.web_view is not None:
             return self.web_view
         self.web_view = QWebEngineView(self)
+        self._theme_bridge = ThemeBridge(self.web_view, self._theme)
+        self._theme_bridge.install(self._theme)
         self.web_view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         # 预览仅负责显示，所有点击交给父控件处理，避免原生 WebEngine 命中测试
         # 阻塞即时行内编辑。
@@ -145,12 +149,19 @@ class FormulaPreviewWidget(QWidget):
         self.content_height_changed.emit(height)
 
     def _on_load_finished(self, success: bool) -> None:
+        if self.web_view is not None:
+            self._theme_bridge.on_load_finished(success)
         self._page_ready = success
         if not success or self.web_view is None:
             return
         self._set_browser_latex(self._latex)
         self.web_view.setVisible(True)
         self._fallback_label.setVisible(False)
+
+    def set_theme(self, theme: str) -> None:
+        self._theme = theme
+        if self.web_view is not None:
+            self._theme_bridge.set_theme(theme)
 
     def _set_browser_latex(self, latex: str) -> None:
         if self.web_view is None:

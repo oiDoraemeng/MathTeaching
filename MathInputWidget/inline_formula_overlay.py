@@ -10,6 +10,7 @@ from PySide6.QtGui import QColor, QMouseEvent
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QWidget
+from .theme_bridge import ThemeBridge
 
 
 class _InlineFormulaEditorBridge(QObject):
@@ -41,7 +42,7 @@ class InlineFormulaEditorOverlay(QWidget):
 
     _MINIMUM_FORMULA_HEIGHT = 38
 
-    def __init__(self, host: QWidget) -> None:
+    def __init__(self, host: QWidget, initial_theme: str = "light") -> None:
         super().__init__(host)
         self._host = host
         self._page_ready = False
@@ -64,6 +65,8 @@ class InlineFormulaEditorOverlay(QWidget):
         # FormulaPreviewWidget。Windows 中每个 QWebEngineView 都对应原生 HWND，
         # 一个 HWND 覆盖另一个时，被遮住的视图会变成空白。
         self.web_view = QWebEngineView(self)
+        self._theme_bridge = ThemeBridge(self.web_view, initial_theme)
+        self._theme_bridge.install(initial_theme)
         self.web_view.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.web_view.setStyleSheet("background: transparent;")
         self.web_view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
@@ -136,9 +139,13 @@ class InlineFormulaEditorOverlay(QWidget):
         self.web_view.setGeometry(0, top, self.width(), self.height() - top)
 
     def _on_load_finished(self, success: bool) -> None:
+        self._theme_bridge.on_load_finished(success)
         self._page_ready = success
         if success and self._active:
             self._open_browser_formula()
+
+    def set_theme(self, theme: str) -> None:
+        self._theme_bridge.set_theme(theme)
 
     def _open_browser_formula(self) -> None:
         self._reposition_webview()

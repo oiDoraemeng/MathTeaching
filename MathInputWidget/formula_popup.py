@@ -20,7 +20,7 @@ class FormulaEditorPopup(QDialog):
     _MINIMUM_WIDTH = 560
     _MINIMUM_HEIGHT = 420
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(self, parent: QWidget | None = None, initial_theme: str = "light") -> None:
         super().__init__(parent)
         self._anchor: QPoint | None = None
         self._kind = "explicit"
@@ -34,7 +34,7 @@ class FormulaEditorPopup(QDialog):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
         layout.setSpacing(0)
-        self.editor = MathInputWidget(self)
+        self.editor = MathInputWidget(self, initial_theme=initial_theme)
         layout.addWidget(self.editor)
 
         self.editor.submitted.connect(self._submit)
@@ -63,6 +63,9 @@ class FormulaEditorPopup(QDialog):
     def current_kind(self) -> str:
         """编辑现有图层时保持原类型；新增图层仍由公式语法决定类型。"""
         return self._kind
+
+    def set_theme(self, theme: str) -> None:
+        self.editor.set_theme(theme)
 
     def accept_submission(self) -> None:
         """仅在宿主确认解析和渲染成功后关闭弹窗。"""

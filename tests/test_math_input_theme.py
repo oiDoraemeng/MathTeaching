@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 from ui.tokens import TokenError, flatten_theme
 from MathInputWidget.theme_tokens import math_input_theme_css, math_input_theme_script
+from MathInputWidget.theme_bridge import ThemeBridge
+from PySide6.QtWebEngineCore import QWebEngineScript
 
 EXPECTED_VARIABLES = {
     "--mi-bg-panel", "--mi-text-primary", "--mi-row-bg", "--mi-border",
@@ -16,6 +18,35 @@ EXPECTED_VARIABLES = {
     "--mi-editing-border", "--mi-focus", "--mi-toolbar-bg", "--mi-toolbar-accent",
     "--mi-toolbar-hover", "--mi-layer-fallback",
 }
+
+
+class _FakeScripts:
+    def __init__(self) -> None:
+        self.inserted = []
+
+    def insert(self, script) -> None:
+        self.inserted.append(script)
+
+
+class _FakePage:
+    def __init__(self) -> None:
+        self.scripts_value = _FakeScripts()
+        self.javascript = []
+
+    def scripts(self):
+        return self.scripts_value
+
+    def runJavaScript(self, source: str) -> None:
+        self.javascript.append(source)
+
+
+class _FakeView:
+    def __init__(self) -> None:
+        self.page_value = _FakePage()
+        self.set_url_calls = []
+
+    def page(self):
+        return self.page_value
 
 
 def test_math_input_css_has_complete_matching_theme_branches() -> None:
@@ -73,3 +104,30 @@ def test_formula_list_variables_are_emitted_by_theme_generator() -> None:
     emitted = set(re.findall(r"(--mi-[a-z-]+):", math_input_theme_css()))
     assert referenced <= emitted
     assert all("," in match.group(0) for match in re.finditer(r"var\(--mi-[^)]+\)", html))
+
+
+def test_theme_bridge_caches_until_load_then_switches_without_reload() -> None:
+    view = _FakeView()
+    bridge = ThemeBridge(view, "light")
+    bridge.install("dark")
+    assert view.page_value.scripts_value.inserted[0].injectionPoint() == QWebEngineScript.InjectionPoint.DocumentCreation
+    bridge.set_theme("dark")
+    assert view.page_value.javascript == []
+    bridge.on_load_finished(True)
+    assert view.page_value.javascript[-1] == 'document.documentElement.dataset.theme = "dark";'
+    url_calls = view.set_url_calls
+    bridge.set_theme("light")
+    assert view.page_value.javascript[-1] == 'document.documentElement.dataset.theme = "light";'
+    assert view.set_url_calls == url_calls
+
+
+def test_theme_bridge_rejects_invalid_theme_and_retains_failed_load_state() -> None:
+    view = _FakeView()
+    bridge = ThemeBridge(view, "light")
+    with pytest.raises(TokenError):
+        bridge.set_theme("sepia")
+    bridge.set_theme("dark")
+    bridge.on_load_finished(False)
+    assert view.page_value.javascript == []
+    bridge.on_load_finished(True)
+    assert view.page_value.javascript[-1].endswith('"dark";')
