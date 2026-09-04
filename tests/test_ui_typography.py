@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+import re
 
 import pytest
 
@@ -25,6 +26,13 @@ def _application() -> QApplication:
 
 def _source_path() -> Path:
     return Path(__file__).resolve().parents[1]
+
+
+def _block_for_selector(qss: str, selector: str) -> str:
+    for selector_group, declarations in re.findall(r"([^{}]+)\{([^{}]+)\}", qss):
+        if selector in (candidate.strip() for candidate in selector_group.split(",")):
+            return declarations
+    raise AssertionError(f"Missing QSS block for {selector!r}")
 
 
 def test_application_font_uses_pixel_size_and_chinese_fallbacks() -> None:
@@ -84,9 +92,11 @@ def test_color_button_styles_only_set_swatch_background() -> None:
 @pytest.mark.parametrize("theme", ["light", "dark"])
 def test_unstyled_qt_chrome_uses_token_pixel_sizes(theme: str) -> None:
     qss = build_qss(theme)
-    assert "QToolButton {" in qss and "font-size: 11px" in qss
-    assert "QMenu {" in qss and "font-size: 12px" in qss
-    assert "QToolTip {" in qss and "font-size: 11px" in qss
-    assert "QComboBox QAbstractItemView" in qss
-    assert "QTreeView, QListView, QListWidget" in qss
-    assert "#appStatusBar QToolButton" in qss
+    assert "font-size: 11px" in _block_for_selector(qss, "QToolButton")
+    assert "font-size: 12px" in _block_for_selector(qss, "QMenu")
+    assert "font-size: 11px" in _block_for_selector(qss, "QToolTip")
+    assert "font-size: 12px" in _block_for_selector(qss, "QComboBox QAbstractItemView")
+    assert "font-size: 12px" in _block_for_selector(qss, "QTreeView")
+    assert "font-size: 12px" in _block_for_selector(qss, "QListView")
+    assert "font-size: 12px" in _block_for_selector(qss, "QListWidget")
+    assert "font-size: 11px" in _block_for_selector(qss, "#appStatusBar QToolButton")
