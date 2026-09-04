@@ -45,16 +45,16 @@ export function AttachmentActions({ sessionId, capabilityCatalog, onIntent, onIn
     setOpen(null);
   };
 
-  return <div ref={rootRef} className="attachment-actions" aria-label="Composer tools">
-    <button aria-label="Tools" title="Tools" aria-expanded={open === "skills"} onClick={() => {
+  return <div ref={rootRef} className="attachment-actions" aria-label="编辑器工具">
+    <button aria-label="工具" title="工具" aria-expanded={open === "skills"} onClick={() => {
       setOpen(open === "skills" ? null : "skills");
       onIntent({ protocol_version: 1, type: "open_skills", request_id: crypto.randomUUID(), session_id: sessionId, payload: {} });
     }}><Wrench size={15} /></button>
-    <button aria-label="Add attachment" title="Add attachment" aria-expanded={open === "attachments"} onClick={() => setOpen(open === "attachments" ? null : "attachments")}><Paperclip size={15} /></button>
+    <button aria-label="添加附件" title="添加附件" aria-expanded={open === "attachments"} onClick={() => setOpen(open === "attachments" ? null : "attachments")}><Paperclip size={15} /></button>
     {open === "skills" && <div className="composer-popover skills-popover" role="menu"><strong>可用能力</strong>{Object.entries(categoryLabels).map(([category, label]) => {
       const items = capabilityCatalog?.capabilities.filter((item) => item.category === category) ?? [];
       return items.length ? <section className="capability-group" key={category}><span>{label}</span>{items.map((item) => <button key={item.name} role="menuitem" title={item.description} onClick={() => { onInsertPrompt(starter(item)); setOpen(null); }}><b>{item.name}</b><small>{item.description}</small></button>)}</section> : null;
     })}</div>}
-    {open === "attachments" && <div className="composer-popover attachment-popover" role="menu"><button role="menuitem" onClick={() => sendAttachment("image")}><FilePlus size={14} />Add image</button><button role="menuitem" onClick={() => sendAttachment("file")}><FilePlus size={14} />Add file</button></div>}
+    {open === "attachments" && <div className="composer-popover attachment-popover" role="menu"><button role="menuitem" onClick={() => sendAttachment("image")}><FilePlus size={14} />添加图片</button><button role="menuitem" onClick={() => sendAttachment("file")}><FilePlus size={14} />添加文件</button></div>}
   </div>;
 }

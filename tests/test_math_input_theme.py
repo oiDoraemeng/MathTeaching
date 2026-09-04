@@ -156,3 +156,21 @@ def test_formula_preview_fallback_has_no_inline_theme_color() -> None:
     source = (ROOT / "MathInputWidget" / "formula_preview.py").read_text(encoding="utf-8")
     assert "#1f2937" not in source
     assert 'setObjectName("formulaPreviewFallback")' in source
+
+
+def test_formula_list_user_copy_is_chinese() -> None:
+    html = (ROOT / "MathInputWidget" / "formula_list.html").read_text(encoding="utf-8")
+    for expected in ("隐藏函数", "显示函数", "函数显示与采样设置", "公式", "几何对象", "删除"):
+        assert expected in html
+    for retired in ("Hide function", "Show function", "Function display and sampling settings", 'aria-label="Formula"', 'aria-label="Geometry object"', ">Delete<"):
+        assert retired not in html
+
+
+def test_agent_web_user_copy_has_no_retired_english_labels() -> None:
+    root = ROOT / "ui" / "agent_web" / "src" / "components"
+    files = ["HistoryView.tsx", "SettingsView.tsx", "AttachmentActions.tsx", "SessionTabs.tsx", "Timeline.tsx", "ModeSelector.tsx"]
+    retired = ("History", "No conversations", "Hidden", "Back to conversation", "Settings", "Skills", "Memory", "Rules", "Add image", "Add file")
+    for filename in files:
+        source = (root / filename).read_text(encoding="utf-8")
+        for phrase in retired:
+            assert not re.search(rf'(?:"|>)\s*{re.escape(phrase)}\s*(?:<|"|`)', source)

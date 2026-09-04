@@ -311,7 +311,7 @@
             const visible = !Boolean(layers.get(layer.id).visible);
             layers.get(layer.id).visible = visible;
             event.currentTarget.innerHTML = visibilityIcon(visible);
-            event.currentTarget.title = visible ? 'Hide function' : 'Show function';
+            event.currentTarget.title = visible ? '隐藏函数' : '显示函数';
             bridge.visibilityChanged(layer.id, visible);
           });
           row.querySelector('.settings-button').addEventListener('click', (event) => {
@@ -334,17 +334,18 @@
             visibility.className = 'visibility-button';
             visibility.type = 'button';
             visibility.innerHTML = visibilityIcon(layer.visible);
-            visibility.title = layer.visible ? 'Hide function' : 'Show function';
+            visibility.title = layer.visible ? '隐藏函数' : '显示函数';
             const cell = document.createElement('div');
             cell.className = 'formula-cell';
             const field = document.createElement('math-field');
-            field.setAttribute('aria-label', layer.editable ? 'Formula' : 'Geometry object');
+            field.setAttribute('aria-label', layer.editable ? '公式' : '几何对象');
             const settings = document.createElement('button');
             settings.className = 'settings-button';
             settings.type = 'button';
             settings.innerHTML = settingsIcon();
+            settings.dataset.deleteLabel = '删除';
             row.style.setProperty('--layer-color', layer.color || '#8ab4f8');
-            settings.title = 'Function display and sampling settings';
+            settings.title = '函数显示与采样设置';
             cell.append(field);
             row.append(visibility, cell, settings);
             list.append(row);
@@ -362,7 +363,7 @@
             setReadOnly(field, true);
           }
           row.querySelector('.visibility-button').innerHTML = visibilityIcon(layer.visible);
-          row.querySelector('.visibility-button').title = layer.visible ? 'Hide function' : 'Show function';
+          row.querySelector('.visibility-button').title = layer.visible ? '隐藏函数' : '显示函数';
           syncRowHeight(row, field);
         };
         document.addEventListener('pointerdown', (event) => {

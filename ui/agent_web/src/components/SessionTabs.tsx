@@ -16,6 +16,7 @@ export function SessionTabs({ sessions, activeSessionId, onSelect, onClose, case
   const tabsRef = useRef<HTMLElement>(null);
   const openSessions = sessions.filter((session) => !session.closed && !session.hidden);
   const selectedTab = activeTab ?? `session:${activeSessionId}`;
+  const displayTitle = (title?: string) => !title || title === "New Chat" ? "新对话" : title;
   const handleWheel = (event: WheelEvent<HTMLElement>) => {
     if (!tabsRef.current || event.deltaY === 0) return;
     if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
@@ -25,8 +26,8 @@ export function SessionTabs({ sessions, activeSessionId, onSelect, onClose, case
   };
   return <nav ref={tabsRef} onWheel={handleWheel} className="session-tabs" aria-label="会话">
     {openSessions.map((session) => <div key={`session-${session.id}`} className={`session-tab ${selectedTab === `session:${session.id}` ? "active" : ""}`}>
-      <button className="session-tab-select" onClick={() => onSelect(session.id)} aria-current={selectedTab === `session:${session.id}` ? "page" : undefined}>{session.title || "New Chat"}</button>
-      {openSessions.length > 1 && <button className="session-tab-close" aria-label={`关闭 ${session.title || "New Chat"}`} title="关闭会话" onClick={() => onClose(session.id)}><X size={13} /></button>}
+      <button className="session-tab-select" onClick={() => onSelect(session.id)} aria-current={selectedTab === `session:${session.id}` ? "page" : undefined}>{displayTitle(session.title)}</button>
+      {openSessions.length > 1 && <button className="session-tab-close" aria-label={`关闭 ${displayTitle(session.title)}`} title="关闭会话" onClick={() => onClose(session.id)}><X size={13} /></button>}
     </div>)}
     {cases.map((caseData) => <div key={`case-${caseData.id}`} className={`session-tab session-tab-case ${selectedTab === `case:${caseData.id}` ? "active" : ""}`}>
       <button className="session-tab-select" onClick={() => onSelectCase?.(caseData.id)} aria-current={selectedTab === `case:${caseData.id}` ? "page" : undefined}><BookOpen size={12} aria-hidden="true" />{caseData.name}</button>

@@ -26,7 +26,7 @@ function TurnView({ sessionId, turn, onIntent, onToggleThinking, onTogglePlan }:
   const reasoning = turn.reasoningText ?? "";
   const answer = turn.assistantText ?? "";
   return <div className="turn-block">
-    <div className="user-message" role="article" aria-label="User message"><span className="sr-only">User</span><p>{turn.userMessage}</p></div>
+    <div className="user-message" role="article" aria-label="用户消息"><span className="sr-only">用户</span><p>{turn.userMessage}</p></div>
     {(reasoning || logs.length > 0) && <section className="thinking-section"><button className="thinking-toggle" onClick={onToggleThinking} aria-expanded={turn.thinkingExpanded}><ChevronDown size={14} className={turn.thinkingExpanded ? "rotated" : ""} /><span>思考过程</span><small>{turn.status === "running" ? "进行中" : "已完成"}</small></button>{turn.thinkingExpanded && <div className="thinking-content">{reasoning && <div className="reasoning-text"><MarkdownContent>{reasoning}</MarkdownContent></div>}{logs.map((log) => <div className={`progress-log progress-${log.kind}`} key={log.id}><span className="progress-dot" /><strong>{log.label}</strong>{log.detail && <span>{log.detail}</span>}{log.status && <small>{log.status}</small>}</div>)}</div>}</section>}
     {answer && <div className="assistant-content"><MarkdownContent>{answer}</MarkdownContent></div>}
     <PlanStatusBar sessionId={sessionId} turn={turn} onIntent={onIntent} onToggle={onTogglePlan} />
@@ -54,5 +54,5 @@ export function Timeline({ session, onIntent, onHover, onToggleDetails, onToggle
     const element = event.currentTarget;
     pinnedRef.current = element.scrollHeight - element.scrollTop - element.clientHeight < 40;
   };
-  return <section className="timeline" aria-label="Conversation timeline" onScroll={onScroll}>{session.turns.length === 0 ? <div className="timeline-empty" /> : session.turns.map((turn) => <div key={turn.id} onMouseEnter={() => onHover(turn.id, true)} onMouseLeave={() => onHover(turn.id, false)}><TurnView sessionId={session.id} turn={turn} onIntent={onIntent} onToggleThinking={() => onToggleDetails(turn.id)} onTogglePlan={() => onTogglePlan?.(turn.id)} /></div>)}<div ref={endRef} /></section>;
+  return <section className="timeline" aria-label="对话时间线" onScroll={onScroll}>{session.turns.length === 0 ? <div className="timeline-empty" /> : session.turns.map((turn) => <div key={turn.id} onMouseEnter={() => onHover(turn.id, true)} onMouseLeave={() => onHover(turn.id, false)}><TurnView sessionId={session.id} turn={turn} onIntent={onIntent} onToggleThinking={() => onToggleDetails(turn.id)} onTogglePlan={() => onTogglePlan?.(turn.id)} /></div>)}<div ref={endRef} /></section>;
 }
