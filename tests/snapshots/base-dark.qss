@@ -33,11 +33,13 @@ QLineEdit, QComboBox, QPushButton {
   border: 1px solid #3c4046; border-radius: 4px;
 }
 QLineEdit, QComboBox { padding: 2px 7px; }
-QLineEdit:focus, QComboBox:focus, QPushButton:focus { border: 1px solid #3c4046; }
-QLineEdit:focus-visible, QComboBox:focus-visible, QPushButton:focus-visible, QToolButton:focus-visible { border: 2px solid #4c9ee8; }
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus,
+QPlainTextEdit:focus, QTextEdit:focus { border: 2px solid #4c9ee8; }
 QPushButton { background: #26282c; color: #4c9ee8; padding: 3px 8px; font-weight: 600; }
 QPushButton:hover { background: rgba(76,158,232,.16); }
-QToolButton { min-width: 24px; min-height: 24px; color: #b3b8c0; border: 1px solid transparent; border-radius: 4px; font-size: 11px; }
+QToolButton { min-width: 24px; min-height: 24px; color: #b3b8c0; border: 2px solid transparent; border-radius: 4px; font-size: 11px; }
+QPushButton { border: 2px solid transparent; }
+QPushButton:focus, QToolButton:focus { border: 2px solid #4c9ee8; }
 QToolButton:hover { background: #26282c; border-color: #3c4046; }
 QToolTip { font-size: 11px; }
 QMenu { font-size: 12px; }
@@ -79,7 +81,7 @@ QGroupBox::title {
   background: #24262a; border: 1px solid #3c4046; border-radius: 10px;
 }
 #settingsPopupTitle { color: #e8eaed; font-size: 13px; font-weight: 600; }
-#viewportToolbar QToolButton, #twoDGeometryToolbar QToolButton, #twoDLineFlyout QToolButton { font-size: 18px; font-weight: 700; }
+#viewportToolbar QToolButton, #twoDGeometryToolbar QToolButton, #twoDLineFlyout QToolButton { font-size: 15px; font-weight: 700; }
 #viewportToolbar QToolButton:hover, #twoDGeometryToolbar QToolButton:hover, #twoDLineFlyout QToolButton:hover {
   background: rgba(76,158,232,.16); border-color: #33363b; color: #4c9ee8;
 }
