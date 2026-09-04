@@ -36,7 +36,7 @@ class MainWindowLayoutTests(unittest.TestCase):
 
         root_layout = designer_window.findChild(QHBoxLayout, "rootLayout")
         self.assertIsInstance(root_layout.itemAt(0).widget(), AlgebraPanel)
-        self.assertEqual(root_layout.itemAt(1).widget().width(), 5)
+        self.assertEqual(root_layout.itemAt(1).widget().width(), 6)
         self.assertEqual(root_layout.itemAt(2).widget().objectName(), "viewportHost")
         self.assertEqual(window.algebra_panel.MIN_WIDTH, 260)
         self.assertEqual(window.algebra_panel.MAX_WIDTH, 420)

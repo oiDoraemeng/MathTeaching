@@ -16,7 +16,7 @@
 .session-tab-case.active .session-tab-select svg { color: var(--agent-accent); }
 .session-tab-close { flex: 0 0 23px; width: 23px; height: 23px; margin-right: 3px; border-radius: 3px; }
 .session-tab-close:hover { background: color-mix(in srgb, var(--agent-text) 12%, transparent); }
-.timeline { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 22px 16px 24px; scrollbar-color: var(--agent-border) transparent; }
+.timeline { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 16px 14px 20px; scrollbar-color: var(--agent-border) transparent; }
 .math-case-view { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 22px 18px 28px; background: var(--agent-bg); }
 .math-case-header { margin: 0 auto 18px; max-width: 620px; }
 .math-case-header span { color: var(--agent-accent); font-size: 11px; }
@@ -33,10 +33,10 @@
 .starter-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .starter-card { min-height: 52px; padding: 10px; color: var(--agent-text); text-align: left; background: var(--agent-elevated); border: 1px solid var(--agent-border); border-radius: 5px; transition: border-color .14s ease, background .14s ease; }
 .starter-card:hover { border-color: var(--agent-accent); background: color-mix(in srgb, var(--agent-accent) 9%, var(--agent-elevated)); }
-.turn-block { position: relative; max-width: 620px; margin: 0 auto 28px; }
+.turn-block { position: relative; max-width: 620px; margin: 0 auto 18px; }
 .user-message { display: flex; justify-content: flex-end; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
 .user-message p { max-width: 82%; margin: 0; padding: 7px 10px; color: var(--agent-text); background: color-mix(in srgb, var(--agent-accent) 13%, var(--agent-surface)); border: 1px solid color-mix(in srgb, var(--agent-accent) 30%, var(--agent-border)); border-radius: 6px; overflow-wrap: anywhere; white-space: pre-wrap; }
-.event-card { position: relative; margin: 8px 0; padding: 11px 12px; background: var(--agent-surface); border: 1px solid var(--agent-border); border-left: 2px solid var(--agent-border); border-radius: 5px; font-size: 13px; line-height: 1.5; }
+.event-card { position: relative; margin: 6px 0; padding: 8px 10px; background: var(--agent-surface); border: 1px solid var(--agent-border); border-left: 2px solid var(--agent-border); border-radius: 5px; font-size: 12px; line-height: 1.5; }
 .event-card header { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; color: var(--agent-muted); font-size: 11px; }
 .event-card header strong { color: var(--agent-text); font-weight: 600; }
 .event-explanation { border-left-color: var(--agent-accent); }
@@ -49,14 +49,14 @@
 .event-card p { margin: 0; white-space: pre-wrap; }
 .markdown-content > :first-child { margin-top: 0; }
 .markdown-content > :last-child { margin-bottom: 0; }
-.markdown-content p { margin: 7px 0; }
+.markdown-content p { margin: 6px 0; }
 .markdown-content code { padding: 1px 4px; background: var(--agent-elevated); border-radius: 3px; }
 .event-status { margin-left: auto; color: var(--agent-muted); font-size: 11px; }
 .plan-meta { color: var(--agent-muted); font-size: 11px; }
 .details-toggle { display: inline-flex; align-items: center; gap: 4px; margin-top: 9px; padding: 2px 0; color: var(--agent-muted); font-size: 11px; }
 .details-toggle:hover { color: var(--agent-text); }
 .technical-details { max-height: 180px; overflow: auto; margin: 8px 0 0; padding: 8px; color: var(--agent-muted); background: var(--agent-bg); border: 1px solid var(--agent-border); border-radius: 3px; font-size: 10px; white-space: pre-wrap; }
-.reasoning-block { margin: 0 0 8px; padding: 8px 10px; color: var(--agent-muted); background: var(--agent-bg); border: 1px dashed var(--agent-border); border-radius: 4px; font-size: 12px; }
+.reasoning-block { margin: 0 0 8px; padding: 7px 9px; color: var(--agent-muted); background: var(--agent-bg); border: 1px dashed var(--agent-border); border-radius: 4px; font-size: 11px; }
 .reasoning-block summary { cursor: pointer; font-size: 11px; font-weight: 600; color: var(--agent-muted); }
 .reasoning-block[open] summary { margin-bottom: 6px; }
 .plan-approve { display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; padding: 5px 9px; color: var(--agent-text-on-accent); background: var(--agent-accent); border-radius: 4px; font-size: 12px; }
@@ -65,7 +65,7 @@
 .turn-actions.visible { visibility: visible; opacity: 1; }
 .turn-actions button { display: inline-flex; align-items: center; gap: 4px; padding: 3px 6px; color: var(--agent-muted); background: var(--agent-surface); border: 1px solid var(--agent-border); border-radius: 3px; font-size: 10px; }
 .turn-actions button:hover { color: var(--agent-text); border-color: var(--agent-accent); }
-.thinking-section { margin: 10px 0 12px; border-top: 1px solid var(--agent-border); border-bottom: 1px solid var(--agent-border); }
+.thinking-section { margin: 8px 0 10px; border-top: 1px solid var(--agent-border); border-bottom: 1px solid var(--agent-border); }
 .thinking-toggle, .plan-status-toggle { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 30px; padding: 4px 0; color: var(--agent-muted); font-size: 11px; text-align: left; }
 .thinking-toggle:hover, .plan-status-toggle:hover { color: var(--agent-text); }
 .thinking-toggle small, .plan-status-toggle small { margin-left: auto; color: var(--agent-muted); font-size: 10px; }
@@ -80,7 +80,7 @@
 .progress-dot { width: 5px; height: 5px; flex: 0 0 5px; border-radius: 50%; background: var(--agent-accent); }
 .progress-validation .progress-dot { background: var(--agent-warning); }
 .progress-error .progress-dot { background: var(--agent-error); }
-.assistant-content { padding: 2px 0 4px; font-size: 13px; line-height: 1.55; }
+.assistant-content { padding: 2px 0 4px; font-size: 12px; line-height: 1.5; }
 .plan-status-bar { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 12px; padding-top: 7px; border-top: 1px solid var(--agent-border); }
 .plan-status-toggle { width: auto; flex: 1 1 auto; min-width: 0; }
 .plan-status-toggle span { color: var(--agent-text); }

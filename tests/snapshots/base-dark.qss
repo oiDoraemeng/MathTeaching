@@ -24,6 +24,8 @@ QMainWindow, #viewportHost { background: #1a1b1e; color: #e8eaed; }
 #appStatusBar QToolButton { min-width: 24px; min-height: 24px; border-radius: 4px; font-size: 11px; }
 #appStatusBar QToolButton:hover { background: #26282c; }
 #formulaPreviewFallback { color: #e8eaed; }
+#panelResizeHandle { border-left: 1px solid #3c4046; }
+#panelResizeHandle:hover, #panelResizeHandle[dragging="true"] { background: rgba(76,158,232,.16); border-left: 2px solid #4c9ee8; }
 QScrollArea { border: 0; background: #202124; }
 QLabel { color: #b3b8c0; font-size: 12px; }
 QLineEdit, QComboBox, QPushButton {

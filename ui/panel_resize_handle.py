@@ -19,13 +19,17 @@ class PanelResizeSpec:
 
 
 class _PanelResizeHandle(QWidget):
+    FIXED_WIDTH = 6
     width_changed = Signal(int)
 
     def __init__(self, spec: PanelResizeSpec, *, settings: QSettings | None = None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.spec = spec
         self.settings = settings or QSettings()
-        self.setFixedWidth(5)
+        self.setObjectName("panelResizeHandle")
+        self.setFixedWidth(self.FIXED_WIDTH)
+        self.setToolTip("拖动调整宽度，双击复位")
+        self.setProperty("dragging", False)
         self.setCursor(Qt.CursorShape.SizeHorCursor)
         self._press_x: int | None = None
         self._press_width = self.restore_width()
@@ -56,6 +60,7 @@ class _PanelResizeHandle(QWidget):
         if event.button() == Qt.MouseButton.LeftButton:
             self._press_x = event.globalPosition().toPoint().x()
             self._press_width = self.restore_width()
+            self._set_dragging(True)
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event) -> None:  # noqa: N802
@@ -66,9 +71,16 @@ class _PanelResizeHandle(QWidget):
 
     def mouseReleaseEvent(self, event) -> None:  # noqa: N802
         self._press_x = None
+        self._set_dragging(False)
         super().mouseReleaseEvent(event)
 
     def mouseDoubleClickEvent(self, event) -> None:  # noqa: N802
         if event.button() == Qt.MouseButton.LeftButton:
             self.set_width(self.spec.default)
         super().mouseDoubleClickEvent(event)
+
+    def _set_dragging(self, value: bool) -> None:
+        self.setProperty("dragging", value)
+        self.style().unpolish(self)
+        self.style().polish(self)
+        self.update()
