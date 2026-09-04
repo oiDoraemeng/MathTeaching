@@ -267,6 +267,7 @@ class TwoDGeometryToolbar(QFrame):
         button = QToolButton()
         button.setObjectName(object_name)
         button.setToolTip(tooltip)
+        button.setAccessibleName(tooltip)
         button.setCheckable(True)
         apply_icon(button, icon_name, icon_color(self._theme), icon_size=16, hit_size=36)
         return button
@@ -275,5 +276,6 @@ class TwoDGeometryToolbar(QFrame):
         button = QToolButton()
         button.setObjectName(object_name)
         button.setToolTip(tooltip)
+        button.setAccessibleName(tooltip)
         apply_icon(button, icon_name, icon_color(self._theme), icon_size=16, hit_size=36)
         return button

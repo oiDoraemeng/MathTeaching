@@ -10,6 +10,7 @@ def test_status_bar_contract() -> None:
     bar = AppStatusBar()
     assert bar.height() == 30
     assert bar.theme_button.width() == 28
+    assert bar.agent_button.accessibleName() == "AI 教学助手状态"
     calls: list[bool] = []
     bar.agent_toggle_requested.connect(lambda: calls.append(True))
     bar.agent_button.click()

@@ -81,7 +81,7 @@ QGroupBox::title {
   background: $bg_overlay; border: 1px solid $border_default; border-radius: ${radius_lg}px;
 }
 #settingsPopupTitle { color: $text_primary; font-size: ${size_subtitle}px; font-weight: 600; }
-#viewportToolbar QToolButton, #twoDGeometryToolbar QToolButton, #twoDLineFlyout QToolButton { font-size: ${size_title}px; font-weight: 700; }
+#sceneModeButton { font-size: ${size_title}px; font-weight: 700; }
 #viewportToolbar QToolButton:hover, #twoDGeometryToolbar QToolButton:hover, #twoDLineFlyout QToolButton:hover {
   background: $accent_soft_bg; border-color: $border_subtle; color: $accent_default;
 }

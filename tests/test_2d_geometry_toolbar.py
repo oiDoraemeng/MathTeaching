@@ -133,6 +133,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         )
         for button in controls:
             self.assertEqual(button.text(), "")
+            self.assertTrue(button.accessibleName())
             self.assertEqual(button.size(), QSize(36, 36))
             self.assertEqual(button.iconSize(), QSize(16, 16))
 

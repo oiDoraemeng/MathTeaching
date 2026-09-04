@@ -73,6 +73,10 @@ def test_qss_template_is_fully_substituted(theme: str) -> None:
     assert "#viewportToolbar" in qss
     assert "QLineEdit:focus" in qss
     assert "min-height: 32px" in qss
+    assert "font-size: 18px" not in qss
+    assert "#sceneModeButton" in qss
+    assert "font-size: 15px" in _block_for_selector(qss, "#sceneModeButton")
+    assert ":focus-visible" not in qss
 
 
 @pytest.mark.parametrize("theme", ["light", "dark"])

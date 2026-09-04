@@ -27,6 +27,8 @@ class AppStatusBar(QFrame):
         self.render_label = QLabel("就绪", self)
         self.agent_button = QToolButton(self)
         self.agent_button.setText("Agent")
+        self.agent_button.setToolTip("AI 教学助手状态")
+        self.agent_button.setAccessibleName("AI 教学助手状态")
         self.agent_button.clicked.connect(self.agent_toggle_requested)
         self.theme_button = QToolButton(self)
         self.theme_button.setFixedSize(28, 28)
