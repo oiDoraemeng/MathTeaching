@@ -21,7 +21,7 @@ describe("Composer", () => {
   it("changes mode and sends stop while busy", () => {
     const onIntent = vi.fn();
     render(<Composer sessionId="s1" mode="Agent" model="DeepSeek" contextUsage={contextUsage} busy onIntent={onIntent} />);
-    fireEvent.change(screen.getByRole("combobox", { name: "Agent 模式" }), { target: { value: "Plan" } });
+    fireEvent.change(screen.getByRole("combobox", { name: "助手模式" }), { target: { value: "Plan" } });
     expect(onIntent).toHaveBeenCalledWith(expect.objectContaining({ type: "change_mode" }));
     expect(screen.queryByRole("combobox", { name: "执行方式" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "停止" }));

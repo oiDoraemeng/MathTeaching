@@ -61,7 +61,7 @@ describe("Timeline", () => {
     const scrollIntoView = vi.fn();
     Element.prototype.scrollIntoView = scrollIntoView;
     const { rerender } = render(<Timeline session={sessionWith("partial")} {...props} />);
-    const timeline = screen.getByLabelText("Conversation timeline");
+    const timeline = screen.getByLabelText("对话时间线");
     Object.defineProperties(timeline, {
       scrollHeight: { configurable: true, value: 1000 },
       scrollTop: { configurable: true, value: 300 },
@@ -77,7 +77,7 @@ describe("Timeline", () => {
     const scrollIntoView = vi.fn();
     Element.prototype.scrollIntoView = scrollIntoView;
     const { rerender } = render(<Timeline session={sessionWith("partial")} {...props} />);
-    const timeline = screen.getByLabelText("Conversation timeline");
+    const timeline = screen.getByLabelText("对话时间线");
     Object.defineProperties(timeline, {
       scrollHeight: { configurable: true, value: 1000 },
       scrollTop: { configurable: true, value: 580 },
