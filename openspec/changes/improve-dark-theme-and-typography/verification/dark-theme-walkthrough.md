@@ -10,7 +10,7 @@
 
 ## Automated evidence
 
-- Python: `538 passed, 1 skipped` (`uv run --with pytest python -m pytest tests -q`)
+- Python: `539 passed, 1 skipped` (`uv run --with pytest python -m pytest tests -q`)
 - Frontend: `52 passed` (`pnpm test` from `ui/agent_web`)
 - Frontend build: passed (`pnpm build`)
 - Packaging/docs: `5 passed`
