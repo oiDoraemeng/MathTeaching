@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QApplication
 
 from rendering.lighting import LightSettings
 from ui.lighting_dialog import LightingDialog
+from ui.tokens import flatten_theme
 
 
 class LightingDialogTests(unittest.TestCase):
@@ -24,6 +25,22 @@ class LightingDialogTests(unittest.TestCase):
         dialog.material_combo.setCurrentText("抛光金属")
 
         self.assertEqual(events, ["抛光金属"])
+
+    def test_rotation_widget_uses_effective_theme_tokens(self) -> None:
+        dialog = LightingDialog(LightSettings(), effective_theme="light")
+        light = dict(dialog.rotation_widget._paint_colors)
+        updates: list[bool] = []
+        original_update = dialog.rotation_widget.update
+        dialog.rotation_widget.update = lambda: updates.append(True)  # type: ignore[method-assign]
+        dialog.set_effective_theme("dark")
+        dialog.rotation_widget.update = original_update  # type: ignore[method-assign]
+        dark = dialog.rotation_widget._paint_colors
+        self.assertEqual(light["card"], flatten_theme("light")["bg_elevated"])
+        self.assertEqual(dark["card"], flatten_theme("dark")["bg_elevated"])
+        self.assertEqual(dark["label"], flatten_theme("dark")["text_secondary"])
+        self.assertEqual(dark["value"], flatten_theme("dark")["accent_default"])
+        self.assertNotEqual(light, dark)
+        self.assertTrue(updates)
 
     def test_slider_readouts_update_live(self) -> None:
         dialog = LightingDialog(LightSettings())
