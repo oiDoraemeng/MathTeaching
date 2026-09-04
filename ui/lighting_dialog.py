@@ -42,6 +42,7 @@ class LightingDialog(QDialog):
         self._update_timer.setSingleShot(True)
         self._update_timer.timeout.connect(self._emit_change_now)
         self._build_ui()
+        self.set_effective_theme(self.effective_theme)
 
     @staticmethod
     def _resolve_effective_theme(parent: QWidget | None) -> ThemeName:
@@ -80,6 +81,8 @@ class LightingDialog(QDialog):
     def set_effective_theme(self, effective_theme: ThemeName) -> None:
         self.effective_theme = effective_theme
         apply_drop_shadow(self, "modal", effective_theme)
+        if hasattr(self, "rotation_widget"):
+            self.rotation_widget.set_theme(flatten_theme(effective_theme))
 
     def _light_group(self, label: str, key: str) -> QGroupBox:
         group = QGroupBox(label)
