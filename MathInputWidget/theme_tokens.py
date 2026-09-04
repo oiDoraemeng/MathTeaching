@@ -56,13 +56,36 @@ def math_input_theme_script(theme: str, tokens: Mapping[str, object] | None = No
     selected = json.dumps(theme)
     return (
         "(() => {"
+        f"const theme = {selected};"
         "const apply = () => {"
         "const root = document.documentElement; if (!root) return false;"
         "let style = document.getElementById('mi-theme-vars');"
         "if (!style) { style = document.createElement('style'); style.id = 'mi-theme-vars'; root.appendChild(style); }"
-        f"style.textContent = {css};"
-        f"root.dataset.theme = {selected}; return true;"
+        f"if (style.textContent !== {css}) style.textContent = {css};"
+        "root.dataset.theme = theme; root.style.colorScheme = theme;"
+        "if (document.body) { document.body.dataset.theme = theme; document.body.style.colorScheme = theme; }"
+        "document.querySelectorAll('math-field').forEach((field) => field.setAttribute('theme', theme));"
+        "return true;"
         "};"
-        "if (!apply()) { const observer = new MutationObserver(() => { if (apply()) observer.disconnect(); }); observer.observe(document, { childList: true, subtree: true }); }"
+        "window.__math3dThemeObserver?.disconnect();"
+        "window.__math3dThemeObserver = new MutationObserver(apply);"
+        "window.__math3dThemeObserver.observe(document, { childList: true, subtree: true });"
+        "apply();"
+        "})();"
+    )
+
+
+def math_input_theme_runtime_script(theme: str) -> str:
+    """Return a runtime script that synchronizes MathLive-owned theme state."""
+    if theme not in CONSTANTS:
+        raise TokenError(f"unknown theme: {theme}")
+    selected = json.dumps(theme)
+    return (
+        "(() => {"
+        f"const theme = {selected};"
+        "const root = document.documentElement; if (!root) return;"
+        "root.dataset.theme = theme; root.style.colorScheme = theme;"
+        "if (document.body) { document.body.dataset.theme = theme; document.body.style.colorScheme = theme; }"
+        "document.querySelectorAll('math-field').forEach((field) => field.setAttribute('theme', theme));"
         "})();"
     )

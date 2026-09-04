@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 from ui.tokens import TokenError, flatten_theme
-from MathInputWidget.theme_tokens import math_input_theme_css, math_input_theme_script
+from MathInputWidget.theme_tokens import math_input_theme_css, math_input_theme_runtime_script, math_input_theme_script
 from MathInputWidget.theme_bridge import ThemeBridge
 from PySide6.QtWebEngineCore import QWebEngineScript
 
@@ -67,7 +67,18 @@ def test_math_input_theme_script_is_document_creation_safe() -> None:
     script = math_input_theme_script("dark")
     assert "mi-theme-vars" in script
     assert "dataset.theme" in script
+    assert "colorScheme" in script
+    assert "document.body" in script
+    assert "math-field" in script
+    assert "MutationObserver" in script
     assert json.dumps(math_input_theme_css()) in script
+
+
+def test_math_input_runtime_script_syncs_mathlive_owned_theme_state() -> None:
+    script = math_input_theme_runtime_script("dark")
+    assert 'root.style.colorScheme = theme' in script
+    assert 'document.body.dataset.theme = theme' in script
+    assert "setAttribute('theme', theme)" in script
 
 
 def test_math_input_theme_script_rejects_unknown_theme() -> None:
@@ -114,10 +125,11 @@ def test_theme_bridge_caches_until_load_then_switches_without_reload() -> None:
     bridge.set_theme("dark")
     assert view.page_value.javascript == []
     bridge.on_load_finished(True)
-    assert view.page_value.javascript[-1] == 'document.documentElement.dataset.theme = "dark";'
+    assert 'root.style.colorScheme = theme' in view.page_value.javascript[-1]
+    assert 'document.body.dataset.theme = theme' in view.page_value.javascript[-1]
     url_calls = view.set_url_calls
     bridge.set_theme("light")
-    assert view.page_value.javascript[-1] == 'document.documentElement.dataset.theme = "light";'
+    assert 'const theme = "light"' in view.page_value.javascript[-1]
     assert view.set_url_calls == url_calls
 
 
@@ -130,7 +142,7 @@ def test_theme_bridge_rejects_invalid_theme_and_retains_failed_load_state() -> N
     bridge.on_load_finished(False)
     assert view.page_value.javascript == []
     bridge.on_load_finished(True)
-    assert view.page_value.javascript[-1].endswith('"dark";')
+    assert 'const theme = "dark"' in view.page_value.javascript[-1]
 
 
 def test_formula_cell_scrolls_long_content_without_visible_scrollbar() -> None:
@@ -150,6 +162,7 @@ def test_math_input_document_uses_theme_variables(filename: str) -> None:
     assert "var(--mi-text-primary," in html
     assert "var(--mi-focus," in html
     assert "--selection-background-color: var(--mi-selected-bg" in html
+    assert "color-scheme: light" not in html
 
 
 def test_formula_preview_fallback_has_no_inline_theme_color() -> None:

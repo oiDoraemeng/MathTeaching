@@ -31,6 +31,19 @@ def test_branch_click_does_not_emit_but_topic_leaf_does() -> None:
     assert received == [topic.data(0, Qt.ItemDataRole.UserRole)]
 
 
+def test_activating_topic_keeps_lecture_surface_visible() -> None:
+    dialog = make_linear_algebra_dialog()
+    dialog.open_at(QRect(20, 20, 1, 1).topLeft())
+    topic = dialog.tree.topLevelItem(0).child(0).child(0)
+
+    dialog.activate_item(topic)
+    QApplication.processEvents()
+
+    assert dialog.isVisible()
+    assert dialog.content_scroll.isVisible()
+    dialog.close()
+
+
 def test_search_and_expansion_controls_are_deterministic() -> None:
     dialog = make_linear_algebra_dialog()
     dialog.search_edit.setText("克拉默")

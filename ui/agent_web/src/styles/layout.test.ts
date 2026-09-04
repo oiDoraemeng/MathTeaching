@@ -43,6 +43,8 @@ describe("Agent Web timeline layout", () => {
       ".progress-log small",
       ".settings-context-grid label",
       ".context-ring",
+      ".technical-details",
+      ".model-popover strong",
     ];
     for (const selector of textFloor) expect(block(selector)).toContain("font-size: 11px");
 
@@ -52,6 +54,9 @@ describe("Agent Web timeline layout", () => {
       ".attachment-actions button",
       ".history-row-actions button",
       ".context-ring",
+      ".plan-action",
+      ".model-popover button",
+      ".composer-popover button",
     ];
     for (const selector of targetFloor) {
       expect(block(selector)).toContain("width: 28px");

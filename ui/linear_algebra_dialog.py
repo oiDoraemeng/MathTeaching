@@ -102,7 +102,11 @@ class LinearAlgebraDialog(QDialog):
         topic = self.registry.get_topic(str(topic_id))
         self.content_view.set_content(self.registry.get_explanation(topic.explanation_id))
         self.content_scroll.show()
-        self.hide()
+        # Keep the non-modal catalog visible while the explanation is loaded so
+        # the newly added scroll area is an actual user-facing lecture surface.
+        # The existing outside-click filter still provides the dismissal path.
+        self.show()
+        self.raise_()
         self.requested.emit(str(topic_id))
 
     def expand_all(self) -> None:

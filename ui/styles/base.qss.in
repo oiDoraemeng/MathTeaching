@@ -34,7 +34,7 @@ QLineEdit, QComboBox, QPushButton {
 }
 QLineEdit, QComboBox { padding: 2px 7px; }
 QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus,
-QPlainTextEdit:focus, QTextEdit:focus { border: 2px solid $accent_default; }
+QPlainTextEdit:focus, QTextEdit:focus, QSlider:focus { border: 2px solid $accent_default; }
 QPushButton { background: $bg_elevated; color: $accent_default; padding: 3px 8px; font-weight: 600; }
 QPushButton:hover { background: $accent_soft_bg; }
 QToolButton { min-width: 24px; min-height: 24px; color: $text_secondary; border: 2px solid transparent; border-radius: ${radius_sm}px; font-size: ${size_caption}px; }
@@ -48,6 +48,8 @@ QTreeView, QListView, QListWidget { font-size: ${size_body}px; }
 QCheckBox { color: $text_secondary; spacing: ${space_s1}px; }
 QCheckBox::indicator { width: 14px; height: 14px; border: 1px solid $border_strong; border-radius: 3px; background: $bg_panel; }
 QCheckBox::indicator:checked { background: $accent_default; border-color: $accent_default; }
+QSlider { border: 2px solid transparent; border-radius: ${radius_sm}px; }
+QSlider:focus { border-color: $accent_default; }
 QSlider::groove:horizontal { height: 4px; background: $border_default; border-radius: 2px; }
 QSlider::handle:horizontal { width: 13px; margin: -5px 0; border-radius: 6px; background: $accent_default; }
 QDialog {

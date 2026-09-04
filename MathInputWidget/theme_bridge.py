@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-import json
-
 from PySide6.QtWebEngineCore import QWebEngineScript
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from ui.tokens import TokenError
 
-from .theme_tokens import math_input_theme_script
+from .theme_tokens import math_input_theme_runtime_script, math_input_theme_script
 
 
 class ThemeBridge:
@@ -39,9 +37,7 @@ class ThemeBridge:
         theme = self._validate(theme)
         self._pending_theme = theme
         if self._loaded:
-            self._view.page().runJavaScript(
-                f"document.documentElement.dataset.theme = {json.dumps(theme)};"
-            )
+            self._view.page().runJavaScript(math_input_theme_runtime_script(theme))
 
     def on_load_finished(self, success: bool) -> None:
         if success:
