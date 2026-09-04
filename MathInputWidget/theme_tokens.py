@@ -56,9 +56,10 @@ def math_input_theme_script(theme: str, tokens: Mapping[str, object] | None = No
     selected = json.dumps(theme)
     return (
         "(() => {"
-        f"const theme = {selected};"
+        f"window.__math3dTheme = {selected};"
         "const apply = () => {"
         "const root = document.documentElement; if (!root) return false;"
+        "const theme = window.__math3dTheme || 'light';"
         "let style = document.getElementById('mi-theme-vars');"
         "if (!style) { style = document.createElement('style'); style.id = 'mi-theme-vars'; root.appendChild(style); }"
         f"if (style.textContent !== {css}) style.textContent = {css};"
@@ -82,8 +83,9 @@ def math_input_theme_runtime_script(theme: str) -> str:
     selected = json.dumps(theme)
     return (
         "(() => {"
-        f"const theme = {selected};"
+        f"window.__math3dTheme = {selected};"
         "const root = document.documentElement; if (!root) return;"
+        "const theme = window.__math3dTheme;"
         "root.dataset.theme = theme; root.style.colorScheme = theme;"
         "if (document.body) { document.body.dataset.theme = theme; document.body.style.colorScheme = theme; }"
         "document.querySelectorAll('math-field').forEach((field) => field.setAttribute('theme', theme));"

@@ -71,6 +71,7 @@ def test_math_input_theme_script_is_document_creation_safe() -> None:
     assert "document.body" in script
     assert "math-field" in script
     assert "MutationObserver" in script
+    assert "window.__math3dTheme" in script
     assert json.dumps(math_input_theme_css()) in script
 
 
@@ -79,6 +80,7 @@ def test_math_input_runtime_script_syncs_mathlive_owned_theme_state() -> None:
     assert 'root.style.colorScheme = theme' in script
     assert 'document.body.dataset.theme = theme' in script
     assert "setAttribute('theme', theme)" in script
+    assert "window.__math3dTheme" in script
 
 
 def test_math_input_theme_script_rejects_unknown_theme() -> None:
@@ -129,7 +131,7 @@ def test_theme_bridge_caches_until_load_then_switches_without_reload() -> None:
     assert 'document.body.dataset.theme = theme' in view.page_value.javascript[-1]
     url_calls = view.set_url_calls
     bridge.set_theme("light")
-    assert 'const theme = "light"' in view.page_value.javascript[-1]
+    assert 'window.__math3dTheme = "light"' in view.page_value.javascript[-1]
     assert view.set_url_calls == url_calls
 
 
@@ -142,7 +144,7 @@ def test_theme_bridge_rejects_invalid_theme_and_retains_failed_load_state() -> N
     bridge.on_load_finished(False)
     assert view.page_value.javascript == []
     bridge.on_load_finished(True)
-    assert 'const theme = "dark"' in view.page_value.javascript[-1]
+    assert 'window.__math3dTheme = "dark"' in view.page_value.javascript[-1]
 
 
 def test_formula_cell_scrolls_long_content_without_visible_scrollbar() -> None:
