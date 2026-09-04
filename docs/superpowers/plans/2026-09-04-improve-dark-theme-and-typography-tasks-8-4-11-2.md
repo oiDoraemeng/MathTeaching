@@ -621,7 +621,7 @@
 
   Crop only outside desktop chrome; do not edit colors or hide visual defects.
 
-- [ ] **Step 3: Write the walkthrough index with explicit pass criteria**
+- [x] **Step 3: Write the walkthrough index with explicit pass criteria**
 
   Create `dark-theme-walkthrough.md`:
 

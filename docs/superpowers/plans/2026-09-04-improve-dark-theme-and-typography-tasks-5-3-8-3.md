@@ -35,7 +35,7 @@
 - Verifies: left-edge Agent drag uses inverse delta and clamps to 360–720px.
 - Verifies: double-click resets to 320/440, persisted values survive a new handle, and a collapsed Agent panel hides the divider.
 
-- [ ] **Step 1: Add failing end-to-end handle interaction tests**
+- [x] **Step 1: Add failing end-to-end handle interaction tests**
 
   Use `QTest` and a real temporary `QSettings` file:
 
@@ -61,11 +61,11 @@
 
   Add a double-click test for both specs and reconstruct a second handle from the same settings to verify persistence.
 
-- [ ] **Step 2: Add a failing divider visibility assertion**
+- [x] **Step 2: Add a failing divider visibility assertion**
 
   Extend `tests/test_sidebar_visibility.py` around the existing show/hide seam: after expanding, `agent_resize_handle.isVisible()` is true; after collapsing, both sidebar and handle are hidden and the viewport layout contains no visible placeholder strip.
 
-- [ ] **Step 3: Run the panel-focused tests and fix only uncovered regressions**
+- [x] **Step 3: Run the panel-focused tests and fix only uncovered regressions**
 
   Run: `uv run pytest tests/test_panel_resize_handle.py tests/test_sidebar_visibility.py tests/test_main_window_layout.py -q`
 
@@ -75,7 +75,7 @@
 
   Verify both dividers in light and dark themes: the width follows the pointer; both bounds clamp; double-click returns 320/440; closing Agent hides its divider; reopening restores the last persisted width; restarting the app retains both values. Record any discrepancy as a focused test before fixing it.
 
-- [ ] **Step 5: Commit the repeatable regression coverage**
+- [x] **Step 5: Commit the repeatable regression coverage**
 
   Run: `uv run pytest tests/test_panel_resize_handle.py tests/test_sidebar_visibility.py tests/test_main_window_layout.py -q`
 
@@ -287,7 +287,7 @@
 
   Merge these declarations with existing blocks so hover/checked rules keep their background behavior. Remove the entire `:focus-visible` selector group and the rule that restores `border_default` on focus.
 
-- [x] **Step 4: Update snapshots and keyboard-smoke the main shell**
+- [ ] **Step 4: Update snapshots and keyboard-smoke the main shell**
 
   Regenerate/review both QSS snapshots. Run the app in light and dark mode, press Tab across viewport toolbar, algebra controls, status controls, and dialog fields, and verify the ring is visible without changing fixed button dimensions.
 
@@ -581,7 +581,7 @@
 
   For `ContextRing`, retain the existing semantic text span and percentage clamp; no SVG recalculation is needed in this implementation because the percentage is HTML text, not SVG text. Add `aria-hidden="true"` to the inner visual span while keeping the outer computed `aria-label`.
 
-- [x] **Step 4: Rebuild and smoke at 360px/720px widths**
+- [ ] **Step 4: Rebuild and smoke at 360px/720px widths**
 
   Run from `ui/agent_web`: `pnpm build`. In browser tests or the embedded sidebar, verify the composer controls do not wrap out of bounds at 360px and the 620px reading column remains centered at 720px.
 

@@ -300,7 +300,7 @@
 - Produces: row-local horizontal scrolling on `.formula-cell`.
 - Preserves: `body { overflow-x: hidden; }`, `math-field` no-wrap rendering, and the absolutely positioned visibility/settings controls.
 
-- [ ] **Step 1: Add a failing CSS contract for hidden row scrolling**
+- [x] **Step 1: Add a failing CSS contract for hidden row scrolling**
 
   Add to `tests/test_math_input_theme.py`:
 
@@ -315,13 +315,13 @@
 
   Add an assertion that `white-space: nowrap` is not applied to the whole formula row; it may remain on the MathLive field/content element.
 
-- [ ] **Step 2: Run the test and confirm long content is currently clipped**
+- [x] **Step 2: Run the test and confirm long content is currently clipped**
 
   Run: `uv run pytest tests/test_math_input_theme.py::test_formula_cell_scrolls_long_content_without_visible_scrollbar -q`
 
   Expected: FAIL because the row/cell has no horizontal scroll container.
 
-- [ ] **Step 3: Move overflow ownership to the formula cell**
+- [x] **Step 3: Move overflow ownership to the formula cell**
 
   Implement:
 
@@ -342,7 +342,7 @@
 
   Inject a formula substantially wider than 360px, then verify with wheel+Shift or touchpad horizontal input that the right end becomes visible, the row stays within the algebra panel, and no horizontal scrollbar is painted. Repeat in light and dark themes.
 
-- [ ] **Step 5: Run formula regressions and commit**
+- [x] **Step 5: Run formula regressions and commit**
 
   Run: `uv run pytest tests/test_math_input_theme.py tests/test_algebra_panel.py -q`
 

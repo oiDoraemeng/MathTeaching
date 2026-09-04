@@ -39,14 +39,14 @@
 
 ## 7. 键盘焦点环与 2D 工具可达性
 
-- [x] 7.1 修复 `base.qss.in` 焦点规则：删除不支持的 `:focus-visible` 规则，`:focus` 改为 2px accent 描边（必要时 padding 补偿防跳动），生成 QSS 断言无 Qt 不支持伪态且焦点规则存在；Tab 遍历主窗口控件验证描边可见
+- [ ] 7.1 修复 `base.qss.in` 焦点规则：删除不支持的 `:focus-visible` 规则，`:focus` 改为 2px accent 描边（必要时 padding 补偿防跳动），生成 QSS 断言无 Qt 不支持伪态且焦点规则存在；Tab 遍历主窗口控件验证描边可见
 - [x] 7.2 2D 线工具 flyout 键盘/点击可达：点击线按钮切换浮层、方向键在直线/线段/射线间移动、Enter 选择、Esc 关闭并回焦，保留 hover 展开行为；交互测试覆盖键盘全流程
 
 ## 8. Agent Web 交互修复
 
 - [x] 8.1 `HistoryView.tsx` 重命名 Escape 真正取消：Escape 置取消标记使 blur 保存短路，组件测试覆盖 Escape 不保存、Enter/blur 保存两路径
 - [x] 8.2 `ModelSelector.tsx` 弹层补 Esc/外部点击关闭与触发按钮 `aria-expanded`（复用 AttachmentActions 模式），组件测试覆盖三种关闭路径
-- [x] 8.3 `layout.css` 字号/点击目标下限：8–10px 文本提至 11px（context-ring、turn-actions、model-details、capability 描述等），22–25px 点击目标统一到 28px（附件按钮、tab 关闭、turn-actions），重建 dist 核对
+- [ ] 8.3 `layout.css` 字号/点击目标下限：8–10px 文本提至 11px（context-ring、turn-actions、model-details、capability 描述等），22–25px 点击目标统一到 28px（附件按钮、tab 关闭、turn-actions），重建 dist 核对
 - [x] 8.4 界面文案统一中文：`HistoryView.tsx`（History/No conversations/turns）、`SettingsView.tsx`（Settings/Skills/Memory/Rules）、`formula_list.html`（Hide function 等 tooltip/aria-label），验证无英文残留
 
 ## 9. 图标体系统一
