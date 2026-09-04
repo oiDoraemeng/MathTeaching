@@ -10,8 +10,8 @@
       min-height: 100%;
       margin: 0;
       overflow-x: hidden;
-      background: #ffffff;
-      color: #1f2937;
+      background: var(--mi-bg-panel, #ffffff);
+      color: var(--mi-text-primary, #1f2937);
     }
     #formula-list {
       box-sizing: border-box;
@@ -29,7 +29,7 @@
       gap: 4px;
       min-height: 48px;
       padding: 4px 6px 4px 10px;
-      background: #f9fafb;
+      background: var(--mi-row-bg, #f9fafb);
       border: 1px solid transparent;
       border-radius: 8px;
       transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
@@ -45,12 +45,12 @@
       border-radius: 2px;
     }
     .layer-row:hover {
-      border-color: #cfd8e1;
+      border-color: var(--mi-border, #cfd8e1);
     }
     .layer-row.selected {
-      background: #eaf2fd;
-      border-color: #8ab4f8;
-      box-shadow: 0 0 0 1px #8ab4f8 inset;
+      background: var(--mi-selected-bg, #eaf2fd);
+      border-color: var(--mi-selected-border, #8ab4f8);
+      box-shadow: 0 0 0 1px var(--mi-selected-border, #8ab4f8) inset;
     }
     .layer-row button {
       flex: 0 0 auto;
@@ -58,7 +58,7 @@
       border: 1px solid transparent;
       border-radius: 4px;
       background: transparent;
-      color: #334155;
+      color: var(--mi-text-primary, #1f2937);
       cursor: pointer;
     }
     .visibility-button {
@@ -83,8 +83,8 @@
       line-height: 1;
     }
     .layer-row button:hover {
-      background: #eef2f5;
-      border-color: #cfd8e1;
+      background: var(--mi-btn-hover, #eef2f5);
+      border-color: var(--mi-border, #cfd8e1);
     }
     .formula-cell {
       box-sizing: border-box;
@@ -93,9 +93,12 @@
       flex: 1 1 auto;
       min-width: 0;
       min-height: 32px;
-      overflow: visible;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
       cursor: text;
     }
+    .formula-cell::-webkit-scrollbar { display: none; }
     math-field {
       box-sizing: border-box;
       display: block;
@@ -103,7 +106,8 @@
       min-height: 32px;
       padding: 1px 4px;
       overflow: visible;
-      color: #1f2937;
+      min-width: max-content;
+      color: var(--mi-text-primary, #1f2937);
       background: transparent;
       border: 0;
       font-size: 18px;
@@ -112,17 +116,22 @@
     }
     math-field.editing {
       padding: 1px 4px;
-      background: #fffdf4;
-      border: 2px solid #e59b00;
+      background: var(--mi-editing-bg, #fffdf4);
+      border: 2px solid var(--mi-editing-border, #e59b00);
       border-radius: 5px;
     }
     .layer-row button:focus-visible, math-field:focus-visible {
-      outline: 2px solid #2f7ebd;
+      outline: 2px solid var(--mi-focus, #2f7ebd);
       outline-offset: 1px;
     }
     math-field::part(virtual-keyboard-toggle),
     math-field::part(menu-toggle) {
       display: none;
+    }
+    math-field {
+      --selection-background-color: var(--mi-selected-bg, #eaf2fd);
+      --contains-highlight-background-color: var(--mi-selected-bg, #eaf2fd);
+      --caret-color: var(--mi-focus, #2f7ebd);
     }
     .mathlive-native-actions {
       display: flex;
@@ -137,15 +146,15 @@
       width: 32px;
       height: 28px;
       padding: 0;
-      color: var(--_toolbar-text, #2c2e2f);
-      background: var(--_toolbar-background, transparent);
+      color: var(--mi-toolbar-accent, #2f7ebd);
+      background: var(--mi-toolbar-bg, transparent);
       border: 0;
       border-radius: 4px;
       cursor: pointer;
     }
     .mathlive-native-action:hover {
-      color: var(--_toolbar-text-active, #2f7ebd);
-      background: var(--_toolbar-background-hover, #eeeeee);
+      color: var(--mi-toolbar-accent, #2f7ebd);
+      background: var(--mi-toolbar-hover, #eeeeee);
     }
     .mathlive-native-actions svg {
       width: 18px;
