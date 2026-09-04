@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QTimer, Qt, Signal
-from PySide6.QtWidgets import QApplication, QDialog, QHBoxLayout, QLineEdit, QToolButton, QTreeWidget, QVBoxLayout, QWidget
+from PySide6.QtGui import QShowEvent
+from PySide6.QtWidgets import QApplication, QDialog, QHBoxLayout, QLineEdit, QScrollArea, QToolButton, QTreeWidget, QVBoxLayout, QWidget
 
 from linear_algebra.registry import CurriculumRegistry, catalog_registry
 from ui.icons import apply_icon, icon_color
@@ -69,7 +70,15 @@ class LinearAlgebraDialog(QDialog):
         self.tree.setExpandsOnDoubleClick(False)
         layout.addWidget(self.tree, 1)
         self.content_view = LinearAlgebraContentView(self)
-        layout.addWidget(self.content_view)
+        self.content_scroll = QScrollArea(self)
+        self.content_scroll.setObjectName("linearAlgebraContentScroll")
+        self.content_scroll.setWidgetResizable(True)
+        self.content_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.content_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.content_scroll.setFrameShape(QScrollArea.Shape.NoFrame)
+        self.content_scroll.setWidget(self.content_view)
+        self.content_scroll.hide()
+        layout.addWidget(self.content_scroll)
         self.tree_model = LinearAlgebraTreeModel(self.tree, self.registry)
 
         self.search_edit.textChanged.connect(self.tree_model.filter)
@@ -92,6 +101,7 @@ class LinearAlgebraDialog(QDialog):
             return
         topic = self.registry.get_topic(str(topic_id))
         self.content_view.set_content(self.registry.get_explanation(topic.explanation_id))
+        self.content_scroll.show()
         self.hide()
         self.requested.emit(str(topic_id))
 
@@ -112,6 +122,12 @@ class LinearAlgebraDialog(QDialog):
         self._show_animation.setEndValue(1.0)
         self._show_animation.start()
         self.search_edit.setFocus()
+
+    def showEvent(self, event: QShowEvent) -> None:  # noqa: N802 - Qt 事件名
+        screen = self.screen() or QApplication.primaryScreen()
+        if screen is not None:
+            self.setMaximumHeight(int(screen.availableGeometry().height() * 0.8))
+        super().showEvent(event)
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         if (
