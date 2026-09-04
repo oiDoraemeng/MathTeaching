@@ -131,3 +131,13 @@ def test_theme_bridge_rejects_invalid_theme_and_retains_failed_load_state() -> N
     assert view.page_value.javascript == []
     bridge.on_load_finished(True)
     assert view.page_value.javascript[-1].endswith('"dark";')
+
+
+def test_formula_cell_scrolls_long_content_without_visible_scrollbar() -> None:
+    html = (ROOT / "MathInputWidget" / "formula_list.html").read_text(encoding="utf-8")
+    assert re.search(r"\.formula-cell\s*\{[^}]*overflow-x:\s*auto", html, re.S)
+    assert re.search(r"\.formula-cell\s*\{[^}]*scrollbar-width:\s*none", html, re.S)
+    assert re.search(r"\.formula-cell::?-webkit-scrollbar\s*\{[^}]*display:\s*none", html, re.S)
+    assert re.search(r"html, body\s*\{[^}]*overflow-x:\s*hidden", html, re.S)
+    row_block = re.search(r"\.layer-row\s*\{([^}]*)\}", html, re.S)
+    assert row_block is not None and "white-space: nowrap" not in row_block.group(1)
