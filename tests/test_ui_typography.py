@@ -81,6 +81,12 @@ def test_light_rotation_widget_derives_fonts_from_application_font() -> None:
     assert widget.font().weight() == QFont.Weight.Normal
 
 
+def test_agent_sidebar_tool_titles_use_section_header_tokens() -> None:
+    source = (_source_path() / "ui" / "agent_sidebar.py").read_text(encoding="utf-8")
+    assert "font-size: 14px" not in source
+    assert source.count('setObjectName("sectionHeader")') >= 4
+
+
 def test_color_button_styles_only_set_swatch_background() -> None:
     source = (_source_path() / "ui" / "algebra_panel.py").read_text(encoding="utf-8")
     block = source.split("def _set_color_button")[1].split("def _emit_opacity")[0]
