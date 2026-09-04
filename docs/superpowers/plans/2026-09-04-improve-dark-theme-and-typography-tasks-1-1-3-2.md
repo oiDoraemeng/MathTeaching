@@ -228,7 +228,7 @@
 - Consumes: `${size_caption}` and `${size_body}` QSS substitutions.
 - Produces caption-size rules for tool buttons/tooltips/status controls and body-size rules for menus, combo popups, and item views.
 
-- [ ] **Step 1: Add exact selector and size assertions**
+- [x] **Step 1: Add exact selector and size assertions**
 
   Extend `tests/test_ui_typography.py`:
 
@@ -253,13 +253,13 @@
       assert "font-size: 11px" in _block_for_selector(qss, "#appStatusBar QToolButton")
   ```
 
-- [ ] **Step 2: Run the focused tests and capture missing selectors**
+- [x] **Step 2: Run the focused tests and capture missing selectors**
 
   Run: `uv run pytest tests/test_ui_typography.py tests/test_ui_tokens.py -q`
 
   Expected: FAIL for the missing global font declarations and stale QSS snapshots.
 
-- [ ] **Step 3: Add the token-size QSS rules**
+- [x] **Step 3: Add the token-size QSS rules**
 
   Add or extend stable selector blocks in `ui/styles/base.qss.in`:
 
@@ -274,7 +274,7 @@
 
   Merge declarations into existing selector blocks where present; do not create duplicate blocks whose cascade order changes hover, border, or minimum-size behavior.
 
-- [ ] **Step 4: Review and update both generated QSS snapshots**
+- [x] **Step 4: Review and update both generated QSS snapshots**
 
   Generate the two reviewed outputs:
 
@@ -284,7 +284,7 @@
 
   Inspect the diff and confirm only the intended token font declarations changed.
 
-- [ ] **Step 5: Run QSS regressions and commit**
+- [x] **Step 5: Run QSS regressions and commit**
 
   Run: `uv run pytest tests/test_ui_typography.py tests/test_ui_tokens.py tests/test_app_status_bar.py -q`
 
