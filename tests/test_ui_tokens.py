@@ -73,6 +73,7 @@ def test_qss_template_is_fully_substituted(theme: str) -> None:
     assert "#viewportToolbar" in qss
     assert "QLineEdit:focus" in qss
     assert "QSlider:focus" in qss
+    assert "QSpinBox, QDoubleSpinBox, QPlainTextEdit, QTextEdit" in qss
     assert "min-height: 32px" in qss
     assert "font-size: 18px" not in qss
     assert "#sceneModeButton" in qss

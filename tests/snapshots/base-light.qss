@@ -28,11 +28,15 @@ QMainWindow, #viewportHost { background: #eef1f4; color: #17212e; }
 #panelResizeHandle:hover, #panelResizeHandle[dragging="true"] { background: #e4f0f9; border-left: 2px solid #2f7ebd; }
 QScrollArea { border: 0; background: #ffffff; }
 QLabel { color: #3f4c5c; font-size: 12px; }
-QLineEdit, QComboBox, QPushButton {
+QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QPlainTextEdit, QTextEdit, QPushButton {
   min-height: 32px; color: #17212e; background: #ffffff;
   border: 1px solid #d5dbe3; border-radius: 4px;
 }
-QLineEdit, QComboBox { padding: 2px 7px; }
+QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox { padding: 2px 7px; }
+QPlainTextEdit, QTextEdit { padding: 4px 7px; }
+QSpinBox::up-button, QSpinBox::down-button, QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
+  width: 16px; background: #ffffff; border: 0;
+}
 QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus,
 QPlainTextEdit:focus, QTextEdit:focus, QSlider:focus { border: 2px solid #2f7ebd; }
 QPushButton { background: #f5f7f9; color: #2f7ebd; padding: 3px 8px; font-weight: 600; }

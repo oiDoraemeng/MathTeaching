@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from PySide6.QtCore import QPoint
-from PySide6.QtGui import QColor, QImage, QPainter
-from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import QColor, QImage, QPainter, QPalette
+from PySide6.QtWidgets import QApplication, QDoubleSpinBox, QPlainTextEdit, QSpinBox, QTextEdit
 
 from MathInputWidget.formula_preview import FormulaPreviewWidget
 from rendering.lighting import LightSettings
@@ -60,4 +60,24 @@ def test_dark_lighting_and_formula_fallback_are_token_driven() -> None:
     finally:
         preview.close()
         lighting.close()
+        app.setStyleSheet(previous_stylesheet)
+
+
+def test_dark_theme_covers_native_form_control_surfaces() -> None:
+    app = QApplication.instance() or QApplication([])
+    previous_stylesheet = app.styleSheet()
+    app.setStyleSheet(build_qss("dark"))
+    controls = [QSpinBox(), QDoubleSpinBox(), QPlainTextEdit(), QTextEdit()]
+    dark = flatten_theme("dark")
+    try:
+        for control in controls:
+            control.show()
+        app.processEvents()
+        for control in controls:
+            palette = control.palette()
+            assert palette.color(QPalette.ColorRole.Base).name() == dark["bg_panel"]
+            assert palette.color(QPalette.ColorRole.Text).name() == dark["text_primary"]
+    finally:
+        for control in controls:
+            control.close()
         app.setStyleSheet(previous_stylesheet)
