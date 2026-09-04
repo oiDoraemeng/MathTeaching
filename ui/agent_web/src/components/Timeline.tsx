@@ -36,7 +36,23 @@ function TurnView({ sessionId, turn, onIntent, onToggleThinking, onTogglePlan }:
 
 export function Timeline({ session, onIntent, onHover, onToggleDetails, onTogglePlan }: { session: SessionProjection; onIntent: IntentSender; onHover: (turnId: string, hovered: boolean) => void; onToggleDetails: (turnId: string) => void; onTogglePlan?: (turnId: string) => void }) {
   const endRef = useRef<HTMLDivElement>(null);
+  const pinnedRef = useRef(true);
+  const previousTurnCountRef = useRef(session.turns.length);
   const latest = session.turns.at(-1);
-  useEffect(() => { endRef.current?.scrollIntoView?.({ block: "nearest" }); }, [session.turns.length, latest?.events.length, latest?.assistantText, latest?.reasoningText, latest?.progressLogs?.length]);
-  return <section className="timeline" aria-label="Conversation timeline">{session.turns.length === 0 ? <div className="timeline-empty" /> : session.turns.map((turn) => <div key={turn.id} onMouseEnter={() => onHover(turn.id, true)} onMouseLeave={() => onHover(turn.id, false)}><TurnView sessionId={session.id} turn={turn} onIntent={onIntent} onToggleThinking={() => onToggleDetails(turn.id)} onTogglePlan={() => onTogglePlan?.(turn.id)} /></div>)}<div ref={endRef} /></section>;
+  useEffect(() => {
+    pinnedRef.current = true;
+    previousTurnCountRef.current = session.turns.length;
+  }, [session.id]);
+  if (session.turns.length > previousTurnCountRef.current) {
+    pinnedRef.current = true;
+    previousTurnCountRef.current = session.turns.length;
+  }
+  useEffect(() => {
+    if (pinnedRef.current) endRef.current?.scrollIntoView?.({ block: "nearest" });
+  }, [session.turns.length, latest?.events.length, latest?.assistantText, latest?.reasoningText, latest?.progressLogs?.length]);
+  const onScroll = (event: React.UIEvent<HTMLElement>) => {
+    const element = event.currentTarget;
+    pinnedRef.current = element.scrollHeight - element.scrollTop - element.clientHeight < 40;
+  };
+  return <section className="timeline" aria-label="Conversation timeline" onScroll={onScroll}>{session.turns.length === 0 ? <div className="timeline-empty" /> : session.turns.map((turn) => <div key={turn.id} onMouseEnter={() => onHover(turn.id, true)} onMouseLeave={() => onHover(turn.id, false)}><TurnView sessionId={session.id} turn={turn} onIntent={onIntent} onToggleThinking={() => onToggleDetails(turn.id)} onTogglePlan={() => onTogglePlan?.(turn.id)} /></div>)}<div ref={endRef} /></section>;
 }
