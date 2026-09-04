@@ -3,7 +3,7 @@
 - [x] 1.1 在 `design/tokens.json` 增加 `font.family_stack`（Segoe UI + Microsoft YaHei UI + PingFang SC + Noto Sans CJK SC），更新 `ui/tokens.py` loader 与校验以暴露 `font_family_stack`，验证现有 token 测试通过并新增 family_stack 断言
 - [x] 1.2 修改 `main.py` 应用字体：`setFamilies(font_family_stack)` + `setPixelSize(12)` + `PreferAntialias`，新增测试断言 QApplication 字体的 pixelSize 为 12、families 包含中文字体
 - [x] 1.3 在 `ui/styles/base.qss.in` 为 QToolButton、QMenu、QToolTip、QComboBox QAbstractItemView、QTreeView/QListView/QListWidget 补充令牌字号（caption/body），并为 `#appStatusBar QToolButton` 增加 11px，验证生成 QSS 包含这些选择器且状态栏全部段字号一致
-- [ ] 1.4 删除 `ui/agent_sidebar.py` 四处内联 `font-size: 14px` 标题样式并复用 `#sectionHeader` 样式，验证面板页标题渲染为令牌 caption 样式
+- [x] 1.4 删除 `ui/agent_sidebar.py` 四处内联 `font-size: 14px` 标题样式并复用 `#sectionHeader` 样式，验证面板页标题渲染为令牌 caption 样式
 - [ ] 1.5 更新 `ui/agent_web/src/styles/theme.css` 字体变量为带引号的 `Segoe UI, Microsoft YaHei UI, PingFang SC, sans-serif` 字体栈（light/dark 两组），执行 `npm run build` 重建 dist 并验证产物包含新字体栈
 
 ## 2. 原生标题栏跟随主题

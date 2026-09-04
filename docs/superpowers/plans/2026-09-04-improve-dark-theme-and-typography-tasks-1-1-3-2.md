@@ -308,7 +308,7 @@
 - Consumes: the existing `#sectionHeader` rule in `ui/styles/base.qss.in`.
 - Produces: four Agent tool-page title labels with `objectName == "sectionHeader"` and no inline font declaration.
 
-- [ ] **Step 1: Add a failing source and construction contract**
+- [x] **Step 1: Add a failing source and construction contract**
 
   Extend `tests/test_ui_typography.py`:
 
@@ -319,13 +319,13 @@
       assert source.count('setObjectName("sectionHeader")') >= 4
   ```
 
-- [ ] **Step 2: Run the test and verify all four inline declarations are found**
+- [x] **Step 2: Run the test and verify all four inline declarations are found**
 
   Run: `uv run pytest tests/test_ui_typography.py::test_agent_sidebar_tool_titles_use_section_header_tokens -q`
 
   Expected: FAIL because history, skills, memory, and rules each set `font-size: 14px` inline.
 
-- [ ] **Step 3: Assign the shared object name at each construction site**
+- [x] **Step 3: Assign the shared object name at each construction site**
 
   For each title label in `_build_history_page`, `_build_skills_page`, `_build_memory_page`, and `_build_rules_page`, use:
 
@@ -337,13 +337,13 @@
 
   Preserve each page's current Chinese text; remove only the four `setStyleSheet("font-weight: 700; font-size: 14px;")` calls.
 
-- [ ] **Step 4: Run nearby sidebar and typography coverage**
+- [x] **Step 4: Run nearby sidebar and typography coverage**
 
   Run: `uv run pytest tests/test_ui_typography.py tests/test_sidebar_visibility.py tests/test_agent_panel_migration.py -q`
 
   Expected: PASS with no navigation or visibility behavior changes.
 
-- [ ] **Step 5: Commit the heading cleanup**
+- [x] **Step 5: Commit the heading cleanup**
 
   ```bash
   git add ui/agent_sidebar.py tests/test_ui_typography.py
