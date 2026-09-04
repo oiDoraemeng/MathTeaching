@@ -32,4 +32,30 @@ describe("Agent Web timeline layout", () => {
     expect(block(".turn-actions")).toContain("visibility: hidden");
     expect(block(".turn-actions.visible")).toContain("visibility: visible");
   });
+
+  it("enforces readable text and minimum interaction targets", () => {
+    const textFloor = [
+      ".turn-actions button",
+      ".model-details",
+      ".capability-group > span",
+      ".capability-group button small",
+      ".thinking-toggle small, .plan-status-toggle small",
+      ".progress-log small",
+      ".settings-context-grid label",
+      ".context-ring",
+    ];
+    for (const selector of textFloor) expect(block(selector)).toContain("font-size: 11px");
+
+    const targetFloor = [
+      ".session-tab-close",
+      ".turn-actions button",
+      ".attachment-actions button",
+      ".history-row-actions button",
+      ".context-ring",
+    ];
+    for (const selector of targetFloor) {
+      expect(block(selector)).toContain("width: 28px");
+      expect(block(selector)).toContain("height: 28px");
+    }
+  });
 });
