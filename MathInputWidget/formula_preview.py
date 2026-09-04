@@ -70,7 +70,7 @@ class FormulaPreviewWidget(QWidget):
         self._fallback_label = QLabel(latex, self)
         self._fallback_label.setObjectName("formulaPreviewFallback")
         self._fallback_label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-        self._fallback_label.setStyleSheet("padding-left: 4px; color: #1f2937;")
+        self._fallback_label.setStyleSheet("padding-left: 4px;")
         self._layout.addWidget(self._fallback_label)
         self._click_target = _FormulaPreviewClickTarget(self)
         self._click_target.clicked.connect(self._request_edit)

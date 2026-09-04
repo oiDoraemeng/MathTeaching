@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="mathlive-fonts.css">
   <style>
     :root { color-scheme: light; }
-    html, body { margin: 0; min-height: 100%; background: #ffffff; overflow: hidden; }
+    html, body { margin: 0; min-height: 100%; background: var(--mi-bg-panel, #ffffff); color: var(--mi-text-primary, #1f2937); overflow: hidden; }
     math-field {
       box-sizing: border-box;
       display: block;
@@ -14,16 +14,16 @@
       padding: 8px 10px;
       height: auto;
       overflow: visible;
-      color: #17212e;
-      background: #ffffff;
-      border: 1px solid #cbd3dd;
+      color: var(--mi-text-primary, #17212e);
+      background: var(--mi-bg-panel, #ffffff);
+      border: 1px solid var(--mi-border, #cbd3dd);
       border-radius: 4px;
       font-size: 20px;
-      --caret-color: #1474b8;
-      --selection-background-color: #d8ecfa;
-      --contains-highlight-background-color: #eaf5fd;
+      --caret-color: var(--mi-focus, #1474b8);
+      --selection-background-color: var(--mi-selected-bg, #d8ecfa);
+      --contains-highlight-background-color: var(--mi-selected-bg, #eaf5fd);
     }
-    math-field:focus-within { border: 2px solid #2f7ebd; padding: 7px 9px; }
+    math-field:focus-within { border: 2px solid var(--mi-focus, #2f7ebd); padding: 7px 9px; }
     math-field::part(virtual-keyboard-toggle),
     math-field::part(menu-toggle) {
       display: none;
@@ -40,14 +40,14 @@
       justify-content: center;
       width: 32px;
       height: 28px;
-      color: var(--_toolbar-text, #2c2e2f);
-      background: var(--_toolbar-background, transparent);
+      color: var(--mi-toolbar-accent, #2c2e2f);
+      background: var(--mi-toolbar-bg, transparent);
       border-radius: 4px;
       cursor: pointer;
     }
     .mathlive-native-action:hover {
-      color: var(--_toolbar-text-active, #2f7ebd);
-      background: var(--_toolbar-background-hover, #eeeeee);
+      color: var(--mi-toolbar-accent, #2f7ebd);
+      background: var(--mi-toolbar-hover, #eeeeee);
     }
     .mathlive-native-actions svg {
       width: 18px;

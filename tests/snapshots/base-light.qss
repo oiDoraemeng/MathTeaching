@@ -23,6 +23,7 @@ QMainWindow, #viewportHost { background: #eef1f4; color: #17212e; }
 #appStatusBar QLabel { color: #3f4c5c; font-size: 11px; }
 #appStatusBar QToolButton { min-width: 24px; min-height: 24px; border-radius: 4px; font-size: 11px; }
 #appStatusBar QToolButton:hover { background: #f5f7f9; }
+#formulaPreviewFallback { color: #17212e; }
 QScrollArea { border: 0; background: #ffffff; }
 QLabel { color: #3f4c5c; font-size: 12px; }
 QLineEdit, QComboBox, QPushButton {

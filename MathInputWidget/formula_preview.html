@@ -8,7 +8,7 @@
       width: 100%;
       margin: 0;
       overflow: hidden;
-      background: transparent;
+      background: var(--mi-bg-panel, transparent);
     }
     #formula-container {
       box-sizing: border-box;
@@ -28,11 +28,14 @@
       padding: 1px 4px;
       height: auto;
       overflow: visible;
-      color: #1f2937;
+      color: var(--mi-text-primary, #1f2937);
       font-size: 18px;
       white-space: nowrap;
       border: 0;
-      background: transparent;
+      background: var(--mi-bg-panel, transparent);
+      --caret-color: var(--mi-focus, #2f7ebd);
+      --selection-background-color: var(--mi-selected-bg, #eaf2fd);
+      --contains-highlight-background-color: var(--mi-selected-bg, #eaf2fd);
       cursor: pointer;
     }
   </style>

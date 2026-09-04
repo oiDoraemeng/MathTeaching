@@ -9,7 +9,7 @@
       height: 100%;
       margin: 0;
       overflow: hidden;
-      background: transparent;
+      background: var(--mi-bg-panel, transparent);
     }
     math-field {
       box-sizing: border-box;
@@ -18,9 +18,12 @@
       min-height: 38px;
       padding: 1px 4px;
       overflow: visible;
-      color: #1f2937;
-      background: #f9fafb;
-      border: 1px solid #2f7ebd;
+      color: var(--mi-text-primary, #1f2937);
+      background: var(--mi-editing-bg, #f9fafb);
+      border: 1px solid var(--mi-focus, #2f7ebd);
+      --caret-color: var(--mi-focus, #2f7ebd);
+      --selection-background-color: var(--mi-selected-bg, #eaf2fd);
+      --contains-highlight-background-color: var(--mi-selected-bg, #eaf2fd);
       border-radius: 4px;
       font-size: 18px;
       cursor: text;
@@ -42,15 +45,15 @@
       width: 32px;
       height: 28px;
       padding: 0;
-      color: var(--_toolbar-text, #2c2e2f);
-      background: var(--_toolbar-background, transparent);
+      color: var(--mi-toolbar-accent, #2c2e2f);
+      background: var(--mi-toolbar-bg, transparent);
       border: 0;
       border-radius: 4px;
       cursor: pointer;
     }
     .mathlive-native-action:hover {
-      color: var(--_toolbar-text-active, #2f7ebd);
-      background: var(--_toolbar-background-hover, #eeeeee);
+      color: var(--mi-toolbar-accent, #2f7ebd);
+      background: var(--mi-toolbar-hover, #eeeeee);
     }
     .mathlive-native-actions svg {
       width: 18px;
