@@ -35,7 +35,7 @@
 - Preserves: `load_tokens()`, `flatten_theme()`, and `build_qss()` behavior for all existing scalar tokens.
 - Produces token value: `font.family_stack = ["Segoe UI", "Microsoft YaHei UI", "PingFang SC", "Noto Sans CJK SC"]`.
 
-- [ ] **Step 1: Add failing validation and accessor tests**
+- [x] **Step 1: Add failing validation and accessor tests**
 
   Extend `tests/test_ui_tokens.py` with positive and malformed cases:
 
@@ -65,13 +65,13 @@
           load_tokens(path)
   ```
 
-- [ ] **Step 2: Run the focused test and verify the missing contract**
+- [x] **Step 2: Run the focused test and verify the missing contract**
 
   Run: `uv run pytest tests/test_ui_tokens.py -q`
 
   Expected: FAIL because `font_family_stack` is not exported and `font.family_stack` is absent.
 
-- [ ] **Step 3: Add the token and exact validation rule**
+- [x] **Step 3: Add the token and exact validation rule**
 
   Change the `font` object in `design/tokens.json` to:
 
@@ -85,7 +85,7 @@
 
   In `_validate`, reject non-lists, empty lists, non-string entries, and blank entries with the path `font.family_stack` in the error. Keep `family_default` for compatibility with existing callers.
 
-- [ ] **Step 4: Implement the accessor without leaking a list into QSS substitution**
+- [x] **Step 4: Implement the accessor without leaking a list into QSS substitution**
 
   Add the public helper and remove the list-valued token before flattening common scalar values:
 
@@ -114,7 +114,7 @@
 
   Make `flatten_theme()` call `_flatten(_common_scalar_tokens(source))`, preserving its `dict[str, str | int]` return contract.
 
-- [ ] **Step 5: Run token regression tests and commit**
+- [x] **Step 5: Run token regression tests and commit**
 
   Run: `uv run pytest tests/test_ui_tokens.py -q`
 
