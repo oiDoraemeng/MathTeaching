@@ -1,5 +1,5 @@
 import { ArrowLeft, EyeOff, Pencil, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { HistoryItem, IntentSender } from "../types";
 
 interface HistoryViewProps {
@@ -13,15 +13,21 @@ interface HistoryViewProps {
 function HistoryRow({ item, hidden, onIntent, onSelect }: { item: HistoryItem; hidden?: boolean; onIntent: IntentSender; onSelect: (item: HistoryItem) => void }) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(item.title);
-  const save = () => { const value = title.trim(); if (value && value !== item.title) onIntent({ protocol_version: 1, type: "rename_session", request_id: crypto.randomUUID(), session_id: item.id, payload: { title: value } }); setEditing(false); };
+  const cancelledRef = useRef(false);
+  const save = () => {
+    if (cancelledRef.current) return;
+    const value = title.trim();
+    if (value && value !== item.title) onIntent({ protocol_version: 1, type: "rename_session", request_id: crypto.randomUUID(), session_id: item.id, payload: { title: value } });
+    setEditing(false);
+  };
   return <article className="history-row" onDoubleClick={() => onSelect(item)}>
     <button className="history-row-main history-row-open" onClick={() => onSelect(item)}>
-      {editing ? <input aria-label={`Rename ${item.title}`} value={title} onChange={(event) => setTitle(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") save(); if (event.key === "Escape") setEditing(false); }} onBlur={save} autoFocus /> : <strong>{item.title}</strong>}
+      {editing ? <input aria-label={`Rename ${item.title}`} value={title} onChange={(event) => setTitle(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") save(); if (event.key === "Escape") { cancelledRef.current = true; setTitle(item.title); setEditing(false); event.preventDefault(); } }} onBlur={save} autoFocus /> : <strong>{item.title}</strong>}
       <span>{item.turn_count} turns</span>
     </button>
     <div className="history-row-actions">
       {hidden ? <button aria-label={`Restore ${item.title}`} title={`Restore ${item.title}`} onClick={() => onIntent({ protocol_version: 1, type: "restore_hidden_session", request_id: crypto.randomUUID(), session_id: item.id, payload: {} })}><RotateCcw size={14} /></button> : <button aria-label={`Hide ${item.title}`} title={`Hide ${item.title}`} onClick={() => onIntent({ protocol_version: 1, type: "hide_session", request_id: crypto.randomUUID(), session_id: item.id, payload: {} })}><EyeOff size={14} /></button>}
-      {!hidden && !editing && <button aria-label={`Rename ${item.title}`} title={`Rename ${item.title}`} onClick={() => setEditing(true)}><Pencil size={14} /></button>}
+      {!hidden && !editing && <button aria-label={`Rename ${item.title}`} title={`Rename ${item.title}`} onClick={() => { cancelledRef.current = false; setTitle(item.title); setEditing(true); }}><Pencil size={14} /></button>}
     </div>
   </article>;
 }
