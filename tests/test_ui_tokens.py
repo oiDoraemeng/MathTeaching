@@ -168,6 +168,14 @@ def test_floating_widget_construction_names_and_token_shadows(monkeypatch) -> No
     for widget, object_name, level in widgets:
         assert widget.objectName() == object_name
         _assert_shadow(widget, level)
+    assert window.scene_mode_button.objectName() == "sceneModeButton"
+    controls = (
+        window.scene_settings_button,
+        window.scene_mode_button,
+        window.agent_button,
+        *window.two_d_geometry_toolbar.findChildren(type(window.two_d_geometry_toolbar.select_button)),
+    )
+    assert all(button.accessibleName().strip() for button in controls)
 
 
 def test_algebra_panel_popups_sync_overlay_theme() -> None:
