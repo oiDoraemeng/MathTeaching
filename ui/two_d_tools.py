@@ -39,8 +39,8 @@ class TwoDGeometryToolbar(QFrame):
 
         self.select_button = self._button("move", "选择/移动", "selectToolButton")
         self.point_button = self._button("circle-dot", "点", "pointToolButton")
-        self.line_button = self._button("slash", "线工具", "lineToolButton")
-        self.vector_button = self._button("arrow-up-right", "向量", "linearVectorToolButton")
+        self.line_button = self._button("pen-line", "线工具", "lineToolButton")
+        self.vector_button = self._button("vector", "向量", "linearVectorToolButton")
         layout.addWidget(self.select_button)
         layout.addWidget(self.point_button)
         layout.addWidget(self.line_button)
@@ -68,7 +68,7 @@ class TwoDGeometryToolbar(QFrame):
             button.installEventFilter(self)
         self.line_flyout.hide()
 
-        self.angle_button = self._button("corner-down-right", "角度测量", "angleToolButton")
+        self.angle_button = self._button("angle", "角度测量", "angleToolButton")
         self.projection_button = self._button("corner-down-right", "投影", "projectionToolButton")
         self.polygon_button = self._button("hexagon", "多边形", "polygonToolButton")
         self.transform_button = self._button("grid-2x2", "矩阵变换", "transformToolButton")

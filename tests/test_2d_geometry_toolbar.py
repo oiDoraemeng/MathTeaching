@@ -136,6 +136,21 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
             self.assertEqual(button.size(), QSize(36, 36))
             self.assertEqual(button.iconSize(), QSize(16, 16))
 
+    def test_co_located_geometry_tools_use_distinct_icons(self) -> None:
+        def icon_name(button) -> str:
+            return button.property("_kiro_icon_state")[0]
+
+        host = QWidget()
+        toolbar = TwoDGeometryToolbar(host)
+        names = [
+            icon_name(toolbar.vector_button),
+            icon_name(toolbar.line_button),
+            icon_name(toolbar.angle_button),
+            icon_name(toolbar.projection_button),
+            *(icon_name(button) for button in toolbar.line_buttons.values()),
+        ]
+        self.assertEqual(len(names), len(set(names)))
+
     def test_complete_toolbar_is_expanded_by_default(self) -> None:
         host = QWidget()
         toolbar = TwoDGeometryToolbar(host)

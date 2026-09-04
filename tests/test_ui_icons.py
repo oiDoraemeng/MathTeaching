@@ -29,7 +29,7 @@ def _opaque_pixel_count(rendered, size=16, dpr=1.0):
 
 @pytest.mark.parametrize(
     "name",
-    ["settings-2", "sparkles", "play", "circle-dot", "slash", "type", "undo-2", "redo-2", "plus", "ellipsis"],
+    ["settings-2", "sparkles", "play", "circle-dot", "circle-filled", "circle-outline", "slash", "pen-line", "vector", "angle", "type", "undo-2", "redo-2", "plus", "ellipsis"],
 )
 def test_required_icons_render(name):
     rendered = icon(name, "#123456")
