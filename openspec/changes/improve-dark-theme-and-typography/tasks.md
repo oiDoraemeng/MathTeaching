@@ -8,13 +8,13 @@
 
 ## 2. 原生标题栏跟随主题
 
-- [ ] 2.1 新建 `ui/native_chrome.py`：`apply_native_titlebar_theme(window, effective_theme)` 用 ctypes 调用 `DwmSetWindowAttribute(DWMWA_USE_IMMERSIVE_DARK_MODE)`，非 Windows 或调用失败时静默跳过，监听 `windowIdChanged` 重应用；单元测试用 monkeypatch 断言 dark=1/light=0 参数与无异常回退
-- [ ] 2.2 在 `designer_window.py` `_apply_style` 中对主窗口及已创建顶层对话框（Agent 设置、光照、记忆对话框）应用标题栏主题，验证主题循环切换时所有顶层窗口 chrome 同步变化（monkeypatch 断言调用次数与参数）
+- [x] 2.1 新建 `ui/native_chrome.py`：`apply_native_titlebar_theme(window, effective_theme)` 用 ctypes 调用 `DwmSetWindowAttribute(DWMWA_USE_IMMERSIVE_DARK_MODE)`，非 Windows 或调用失败时静默跳过，监听 `windowIdChanged` 重应用；单元测试用 monkeypatch 断言 dark=1/light=0 参数与无异常回退
+- [x] 2.2 在 `designer_window.py` `_apply_style` 中对主窗口及已创建顶层对话框（Agent 设置、光照、记忆对话框）应用标题栏主题，验证主题循环切换时所有顶层窗口 chrome 同步变化（monkeypatch 断言调用次数与参数）
 
 ## 3. MathInputWidget WebView 主题化
 
-- [ ] 3.1 新建 `MathInputWidget/theme_tokens.py`：从 `design/tokens.json` 生成 `--mi-*` CSS 变量块（light/dark），单元测试断言变量值与令牌一致且 dark 组完整
-- [ ] 3.2 重写 `formula_list.html` 颜色为 `var(--mi-*, 浅色回退)` 并支持 `[data-theme="dark"]`，覆盖行背景、hover、选中、边框、提示条与 MathLive selection/contains-highlight 变量；浏览器直接打开仍呈浅色可读
+- [x] 3.1 新建 `MathInputWidget/theme_tokens.py`：从 `design/tokens.json` 生成 `--mi-*` CSS 变量块（light/dark），单元测试断言变量值与令牌一致且 dark 组完整
+- [x] 3.2 重写 `formula_list.html` 颜色为 `var(--mi-*, 浅色回退)` 并支持 `[data-theme="dark"]`，覆盖行背景、hover、选中、边框、提示条与 MathLive selection/contains-highlight 变量；浏览器直接打开仍呈浅色可读
 - [ ] 3.3 同样改造 `mathlive.html`、`inline_formula_overlay.html`、`formula_preview.html`，并删除 `formula_preview.py:73` 兜底标签的内联 `#1f2937` 改走 QSS 令牌色
 - [ ] 3.4 为 `FormulaListWidget`、`FormulaEditorPopup`、`FormulaPreviewWidget` 实现 `set_theme(theme)`（DocumentCreation 用户脚本设 `data-theme` + 已加载时 `runJavaScript` 更新 + 未加载缓存 pending），单元测试验证 pending 主题在 loadFinished 后生效、运行时切换不重载
 - [ ] 3.5 在 `AlgebraPanel.sync_overlay_theme` 转发主题到三个组件，端到端验证：启动即深色、运行时切换、深色下打开公式编辑弹窗均无浅色残留

@@ -445,7 +445,7 @@
 - Produces: `install_titlebar_tracker(app: QApplication) -> None`.
 - Consumes application property: `math3d_effective_theme`, whose value is `light` or `dark`.
 
-- [ ] **Step 1: Write failing DWM, fallback, and lifecycle tests**
+- [x] **Step 1: Write failing DWM, fallback, and lifecycle tests**
 
   Create `tests/test_native_chrome.py` with a fake DWM callable:
 
@@ -469,13 +469,13 @@
 
   Also cover `sys.platform = "linux"`, a missing `windll`, a raised `OSError`, and a non-zero HRESULT; all return `False` without raising. Add an event-filter test that sends `QEvent.Show` and `QEvent.WinIdChange` to a top-level widget after setting the app property.
 
-- [ ] **Step 2: Run the focused test and confirm the module is missing**
+- [x] **Step 2: Run the focused test and confirm the module is missing**
 
   Run: `uv run pytest tests/test_native_chrome.py -q`
 
   Expected: FAIL during import because `ui.native_chrome` does not exist.
 
-- [ ] **Step 3: Implement the no-throw DWM adapter**
+- [x] **Step 3: Implement the no-throw DWM adapter**
 
   Create `ui/native_chrome.py` with the exact attribute and value size:
 
@@ -499,7 +499,7 @@
       return result == 0
   ```
 
-- [ ] **Step 4: Install one application-level lifecycle tracker**
+- [x] **Step 4: Install one application-level lifecycle tracker**
 
   Implement a private `QObject` event filter owned by the application. On `Show` or `WinIdChange`, apply only to `QWidget` top-level windows using the app property:
 
@@ -520,7 +520,7 @@
 
   `install_titlebar_tracker(app)` must be idempotent by storing the tracker on an app property or Python attribute. Call it in `main()` immediately after creating `QApplication`.
 
-- [ ] **Step 5: Run native and startup tests, then commit**
+- [x] **Step 5: Run native and startup tests, then commit**
 
   Run: `uv run pytest tests/test_native_chrome.py tests/test_theme_mode.py -q`
 
@@ -545,7 +545,7 @@
 - Produces application property: `math3d_effective_theme` updated in the same `_apply_style()` pass as QSS.
 - Applies immediately to every existing `QApplication.topLevelWidgets()` entry; the tracker handles windows shown later.
 
-- [ ] **Step 1: Add a failing existing-window propagation test**
+- [x] **Step 1: Add a failing existing-window propagation test**
 
   Extend `tests/test_native_chrome.py`:
 
@@ -569,13 +569,13 @@
 
   Give the lightweight object only the optional attributes `_apply_style()` reads, or rely on its existing `getattr` guards.
 
-- [ ] **Step 2: Run the test and observe missing propagation**
+- [x] **Step 2: Run the test and observe missing propagation**
 
   Run: `uv run pytest tests/test_native_chrome.py::test_apply_style_updates_app_property_and_all_top_level_windows -q`
 
   Expected: FAIL because `_apply_style()` currently updates only QSS and in-application surfaces.
 
-- [ ] **Step 3: Import and apply native chrome at the end of `_apply_style()`**
+- [x] **Step 3: Import and apply native chrome at the end of `_apply_style()`**
 
   Add a module import next to the other UI helpers, then append this after the effective theme is known:
 
@@ -589,11 +589,11 @@
 
   Keep this in the same method invocation as `self.window.setStyleSheet(...)`; do not add calls at individual Agent settings, lighting, or memory dialog construction sites.
 
-- [ ] **Step 4: Cover repeated light/dark cycles without duplicate state**
+- [x] **Step 4: Cover repeated light/dark cycles without duplicate state**
 
   Add a second assertion that calls `_apply_style()` with `dark`, then `light`, and verifies each top-level window receives `["dark", "light"]` in order. The app property must finish as `light`.
 
-- [ ] **Step 5: Run theme propagation regressions and commit**
+- [x] **Step 5: Run theme propagation regressions and commit**
 
   Run: `uv run pytest tests/test_native_chrome.py tests/test_theme_mode.py tests/test_dialog_theming.py -q`
 
@@ -618,7 +618,7 @@
 - Produces: `math_input_theme_script(theme: str, tokens: Mapping[str, object] | None = None) -> str`.
 - Variable branches: `:root` for light and `[data-theme="dark"]` for dark, with identical `--mi-*` names.
 
-- [ ] **Step 1: Add failing variable coverage and token parity tests**
+- [x] **Step 1: Add failing variable coverage and token parity tests**
 
   Create `tests/test_math_input_theme.py`:
 
@@ -655,13 +655,13 @@
       assert f"--mi-focus: {flatten_theme('dark')['accent_default']}" in css
   ```
 
-- [ ] **Step 2: Run the focused test and verify the module is missing**
+- [x] **Step 2: Run the focused test and verify the module is missing**
 
   Run: `uv run pytest tests/test_math_input_theme.py -q`
 
   Expected: FAIL during import because `MathInputWidget.theme_tokens` does not exist.
 
-- [ ] **Step 3: Define the semantic variable map and approved constants**
+- [x] **Step 3: Define the semantic variable map and approved constants**
 
   Implement one mapping for token-backed values and one per-theme constant mapping:
 
@@ -685,7 +685,7 @@
   }
   ```
 
-- [ ] **Step 4: Emit deterministic CSS and a DocumentCreation-safe script**
+- [x] **Step 4: Emit deterministic CSS and a DocumentCreation-safe script**
 
   Generate variables in sorted order so snapshots and tests are stable. The script must create or replace a single style element and set the dataset before page code runs:
 
@@ -711,7 +711,7 @@
 
   Add tests that the script contains `mi-theme-vars`, `dataset.theme`, and JSON-escaped CSS, and that an invalid theme raises `TokenError`.
 
-- [ ] **Step 5: Run the generator tests and commit**
+- [x] **Step 5: Run the generator tests and commit**
 
   Run: `uv run pytest tests/test_math_input_theme.py -q`
 
@@ -736,7 +736,7 @@
 - Preserves: all existing FormulaList JavaScript bridge names, row states, selection behavior, and direct-file usability.
 - Produces: token-backed row, hover, selection, border, editing, toolbar, and MathLive highlight colors.
 
-- [ ] **Step 1: Add a failing HTML migration contract**
+- [x] **Step 1: Add a failing HTML migration contract**
 
   Extend `tests/test_math_input_theme.py`:
 
@@ -761,13 +761,13 @@
 
   Add a regex guard that rejects declarations such as `background: #ffffff`, `color: #1f2937`, or `border-color: #cfd8e1` outside a `var()` fallback.
 
-- [ ] **Step 2: Run the focused HTML test and enumerate hardcoded declarations**
+- [x] **Step 2: Run the focused HTML test and enumerate hardcoded declarations**
 
   Run: `uv run pytest tests/test_math_input_theme.py -q`
 
   Expected: FAIL and identify the current light-only row, hover, selection, border, alert, and MathLive variable declarations.
 
-- [ ] **Step 3: Replace each authored color declaration with the semantic variable**
+- [x] **Step 3: Replace each authored color declaration with the semantic variable**
 
   Use the approved fallbacks directly in CSS, for example:
 
@@ -786,11 +786,11 @@
 
   Apply the same treatment to visibility buttons, settings buttons, empty/error hint bars, and all border states. Do not rename JavaScript IDs, callbacks, aria attributes, or QWebChannel bridge functions.
 
-- [ ] **Step 4: Verify the direct-open light fallback and dark variable branch**
+- [x] **Step 4: Verify the direct-open light fallback and dark variable branch**
 
   Add assertions that every variable use has a second argument and that `theme_tokens.math_input_theme_css()` supplies every referenced variable. Open `MathInputWidget/formula_list.html` directly in a browser for a smoke check: without injection it must remain light and readable; after setting `document.documentElement.dataset.theme = "dark"` and injecting the generated CSS in DevTools, all listed surfaces must switch.
 
-- [ ] **Step 5: Run MathInput regressions and commit**
+- [x] **Step 5: Run MathInput regressions and commit**
 
   Run: `uv run pytest tests/test_math_input_theme.py tests/test_math_input_widget.py tests/test_algebra_panel.py -q`
 

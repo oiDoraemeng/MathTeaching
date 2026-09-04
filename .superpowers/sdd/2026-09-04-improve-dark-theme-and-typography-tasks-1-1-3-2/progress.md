@@ -61,7 +61,7 @@ No task contradiction or plan-mandated review-rubric defect remains unresolved.
 - Task 3: complete (commits 1f8d4e0..35861d6, review clean)
 - Task 4: complete (commits 9390886..ca4fdcf, review clean)
 - Task 5: complete (commit ef93ae0, review clean against the correct Plan 1 brief)
-- Task 6: pending
-- Task 7: pending
-- Task 8: pending
-- Task 9: pending
+- Task 6: complete (commit 9a2c9f3, focused tests 6 passed; controller review)
+- Task 7: complete (commit 211a6ce, focused tests 14 passed; controller review)
+- Task 8: complete (commit cc2a9c2, focused tests 4 passed; controller review)
+- Task 9: complete (commit f2dfad6, focused tests 6 passed; controller review)
