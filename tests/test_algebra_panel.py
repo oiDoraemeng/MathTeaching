@@ -146,6 +146,14 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertEqual(events, [("opened", False)])
         self.assertTrue(panel.linear_algebra_popup.isVisible())
 
+    def test_linear_algebra_button_toggles_popup_without_reopen_race(self) -> None:
+        panel = AlgebraPanel()
+        panel.linear_algebra_button.click()
+        self.assertTrue(panel.linear_algebra_popup.isVisible())
+        panel.linear_algebra_button.click()
+        QApplication.processEvents()
+        self.assertFalse(panel.linear_algebra_popup.isVisible())
+
     def test_linear_algebra_popup_uses_tokenized_tree_surface(self) -> None:
         panel = AlgebraPanel()
         self.assertEqual(panel.linear_algebra_popup.tree.objectName(), "linearAlgebraTree")

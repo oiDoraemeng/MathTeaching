@@ -54,7 +54,7 @@ from ui.scene_settings import SceneSettingsPanel
 from ui.status_bar import AppStatusBar
 from ui.panel_resize_handle import PanelResizeSpec, _PanelResizeHandle
 from ui.tokens import apply_drop_shadow, apply_rounded_overlay
-from ui.native_chrome import apply_native_titlebar_theme
+from ui.native_chrome import CustomTitleBar, apply_native_titlebar_theme
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 from ui.linear_algebra_tools import (
     build_polygon_tool_plan,
@@ -356,6 +356,7 @@ class MainWindow:
 
         self.window = self._load_designer_form()
         self.window.effective_theme = self.effective_theme
+        self._install_custom_titlebar()
         self._agent_event_relay = _AgentEventRelay(self._receive_runtime_event, self.window)
         self._install_algebra_panel()
         self._configure_viewport()
@@ -376,6 +377,17 @@ class MainWindow:
         if window is None:
             raise RuntimeError(f"Unable to load Designer form: {form_path}")
         return window
+
+    def _install_custom_titlebar(self) -> None:
+        """Replace the delayed OS title bar with a theme-synchronous Qt chrome."""
+        self.window.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)
+        self.window.setProperty("math3d_custom_titlebar", True)
+        central = self.window.centralWidget()
+        layout = central.layout() if central is not None else None
+        if central is None or not isinstance(layout, QVBoxLayout):
+            raise RuntimeError("Designer form must provide a vertical central layout")
+        self.title_bar = CustomTitleBar(self.window)
+        layout.insertWidget(0, self.title_bar)
 
     def _install_algebra_panel(self) -> None:
         root_layout = self.window.findChild(QHBoxLayout, "rootLayout")
@@ -3649,6 +3661,9 @@ class MainWindow:
         effective_theme = getattr(self, "effective_theme", "light")
         self.window.setStyleSheet(build_qss(effective_theme))
         self.window.effective_theme = effective_theme
+        title_bar = getattr(self, "title_bar", None)
+        if title_bar is not None:
+            title_bar.set_theme(effective_theme)
         application = QApplication.instance()
         if application is not None:
             application.setProperty("math3d_effective_theme", effective_theme)

@@ -9,7 +9,7 @@ import pytest
 from PySide6.QtWidgets import QApplication, QDialog, QWidget
 
 from ui import native_chrome
-from ui.native_chrome import apply_native_titlebar_theme, install_titlebar_tracker
+from ui.native_chrome import CustomTitleBar, apply_native_titlebar_theme, install_titlebar_tracker
 from ui.designer_window import MainWindow
 
 
@@ -66,6 +66,17 @@ def test_native_chrome_fallbacks_never_raise(monkeypatch) -> None:
     monkeypatch.setattr(native_chrome.ctypes, "windll", SimpleNamespace(dwmapi=SimpleNamespace(DwmSetWindowAttribute=lambda *args: 1)), raising=False)
     assert apply_native_titlebar_theme(window, "dark") is False
     assert apply_native_titlebar_theme(window, "sepia") is False
+
+
+def test_custom_titlebar_has_synchronous_controls_and_theme_state() -> None:
+    host = QWidget()
+    host.setWindowTitle("Math3D Teaching")
+    bar = CustomTitleBar(host)
+    bar.set_theme("dark")
+    assert host.property("math3d_custom_titlebar") is None
+    assert bar.title.text() == "Math3D Teaching"
+    assert bar.close_button.accessibleName() == "关闭"
+    assert bar.minimize_button.accessibleName() == "最小化"
 
 
 def test_titlebar_tracker_is_idempotent_and_handles_window_events(monkeypatch) -> None:

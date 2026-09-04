@@ -27,6 +27,11 @@ QMainWindow, #viewportHost { background: #1a1b1e; color: #e8eaed; }
 #panelResizeHandle { border-left: 1px solid #3c4046; }
 #panelResizeHandle:hover, #panelResizeHandle[dragging="true"] { background: rgba(76,158,232,.16); border-left: 2px solid #4c9ee8; }
 QScrollArea { border: 0; background: #202124; }
+#appTitleBar { background: #202124; border-bottom: 1px solid #3c4046; }
+#appTitle { color: #e8eaed; font-size: 12px; font-weight: 600; }
+#appTitleBar QToolButton { min-width: 32px; min-height: 32px; border: 0; border-radius: 4px; }
+#appTitleBar QToolButton:hover { background: #26282c; }
+#appTitleBar #titleBarClose:hover { background: #f48771; color: #202124; }
 QLabel { color: #b3b8c0; font-size: 12px; }
 QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QPlainTextEdit, QTextEdit, QPushButton {
   min-height: 32px; color: #e8eaed; background: #202124;
