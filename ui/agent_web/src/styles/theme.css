@@ -29,7 +29,7 @@
   --agent-font-size-body: 12px;
   --agent-font-size-subtitle: 13px;
   --agent-font-size-title: 15px;
-  --agent-font-family: Segoe UI;
+  --agent-font-family: "Segoe UI", "Microsoft YaHei UI", "PingFang SC", sans-serif;
   --agent-surface: #ffffff;
 }
 
@@ -64,12 +64,12 @@
   --agent-font-size-body: 12px;
   --agent-font-size-subtitle: 13px;
   --agent-font-size-title: 15px;
-  --agent-font-family: Segoe UI;
+  --agent-font-family: "Segoe UI", "Microsoft YaHei UI", "PingFang SC", sans-serif;
   --agent-surface: #202124;
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; background: var(--agent-bg); color: var(--agent-text); font-family: var(--agent-font-family), sans-serif; }
+body { margin: 0; min-width: 320px; background: var(--agent-bg); color: var(--agent-text); font-family: var(--agent-font-family); }
 button, textarea, select { font: inherit; }
 button { color: inherit; background: transparent; border: 0; cursor: pointer; }
 button:disabled { cursor: default; opacity: .45; }

@@ -14,6 +14,8 @@ test("emits complete light and dark branches", async () => {
   assert.match(css, /color-scheme: dark/);
   assert.match(css, /--agent-text-on-accent: #ffffff/);
   assert.match(css, /--agent-motion-easing-out:/);
+  const stack = '--agent-font-family: "Segoe UI", "Microsoft YaHei UI", "PingFang SC", sans-serif;';
+  assert.equal(css.split(stack).length - 1, 2);
 });
 
 test("falls back for malformed structure and import does not write", async () => {

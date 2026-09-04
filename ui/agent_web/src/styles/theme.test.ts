@@ -63,4 +63,10 @@ describe("Agent Web theme CSS", () => {
       "--agent-warning",
     ]);
   });
+
+  it("uses the quoted Latin and Simplified Chinese font stack in both themes", () => {
+    const css = themeCss();
+    const stack = '--agent-font-family: "Segoe UI", "Microsoft YaHei UI", "PingFang SC", sans-serif;';
+    expect(css.split(stack)).toHaveLength(3);
+  });
 });
