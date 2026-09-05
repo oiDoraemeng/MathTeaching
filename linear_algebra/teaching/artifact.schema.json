@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://math3d-teaching.local/schemas/teaching-artifact-v1.json",
+  "title": "Teaching artifact v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "topic_id", "revision", "status", "source", "teaching_profile", "claims", "explanation", "visual_semantics", "generated"],
+  "properties": {
+    "schema_version": {"type": "integer"},
+    "topic_id": {"type": "string"},
+    "revision": {"type": "integer"},
+    "status": {"enum": ["draft", "reviewed", "published"]},
+    "source": {"$ref": "#/$defs/source"},
+    "teaching_profile": {"$ref": "#/$defs/teaching_profile"},
+    "claims": {"type": "array", "items": {"$ref": "#/$defs/claim"}},
+    "explanation": {"$ref": "#/$defs/explanation"},
+    "visual_semantics": {"$ref": "#/$defs/visual_semantics"},
+    "generated": {"$ref": "#/$defs/generation_receipt"}
+  },
+  "$defs": {
+    "string_array": {"type": "array", "items": {"type": "string"}},
+    "source_span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "heading_path", "start_line", "end_line", "fingerprint", "text"],
+      "properties": {
+        "id": {"type": "string"},
+        "heading_path": {"$ref": "#/$defs/string_array"},
+        "start_line": {"type": "integer"},
+        "end_line": {"type": "integer"},
+        "fingerprint": {"type": "string"},
+        "text": {"type": "string"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_path", "heading_path", "heading_level", "occurrence", "excerpt", "source_hash", "spans", "neighboring_titles"],
+      "properties": {
+        "source_path": {"$ref": "#/$defs/string_array"},
+        "heading_path": {"$ref": "#/$defs/string_array"},
+        "heading_level": {"type": "integer"},
+        "occurrence": {"type": "integer"},
+        "excerpt": {"type": "string"},
+        "source_hash": {"type": "string"},
+        "spans": {"type": "array", "items": {"$ref": "#/$defs/source_span"}},
+        "neighboring_titles": {"$ref": "#/$defs/string_array"}
+      }
+    },
+    "teaching_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum_level", "required_sections", "requires_analogy_boundary"],
+      "properties": {
+        "minimum_level": {"type": "integer"},
+        "required_sections": {"$ref": "#/$defs/string_array"},
+        "requires_analogy_boundary": {"type": "boolean"}
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "formula", "formula_symbols", "source_refs", "explanation_refs", "entity_refs", "relation_refs", "stage_refs"],
+      "properties": {
+        "id": {"type": "string"},
+        "statement": {"type": "string"},
+        "formula": {"type": ["string", "null"]},
+        "formula_symbols": {"$ref": "#/$defs/string_array"},
+        "source_refs": {"$ref": "#/$defs/string_array"},
+        "explanation_refs": {"$ref": "#/$defs/string_array"},
+        "entity_refs": {"$ref": "#/$defs/string_array"},
+        "relation_refs": {"$ref": "#/$defs/string_array"},
+        "stage_refs": {"$ref": "#/$defs/string_array"}
+      }
+    },
+    "explanation_section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "text", "claim_refs"],
+      "properties": {
+        "id": {"type": "string"},
+        "title": {"type": "string"},
+        "text": {"type": "string"},
+        "claim_refs": {"$ref": "#/$defs/string_array"}
+      }
+    },
+    "explanation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "summary", "sections", "symbol_roles"],
+      "properties": {
+        "title": {"type": "string"},
+        "summary": {"type": "string"},
+        "sections": {"type": "array", "items": {"$ref": "#/$defs/explanation_section"}},
+        "symbol_roles": {"type": "object", "additionalProperties": {"type": "string"}}
+      }
+    },
+    "semantic_value": {
+      "oneOf": [
+        {"type": "number"},
+        {"type": "array", "minItems": 2, "maxItems": 3, "items": {"type": "number"}},
+        {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "number"}}}
+      ]
+    },
+    "visual_entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "dimension", "value", "role", "label", "claim_refs"],
+      "properties": {
+        "id": {"type": "string"},
+        "kind": {"enum": ["point", "vector", "basis", "matrix", "grid", "region", "area", "volume"]},
+        "dimension": {"enum": [2, 3]},
+        "value": {"$ref": "#/$defs/semantic_value"},
+        "role": {"type": "string"},
+        "label": {"type": "string"},
+        "claim_refs": {"$ref": "#/$defs/string_array"}
+      }
+    },
+    "visual_relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "source_ref", "target_ref", "parameters", "claim_refs"],
+      "properties": {
+        "id": {"type": "string"},
+        "kind": {"enum": ["sum", "difference", "scalar_multiple", "maps_to", "spans", "projects_to", "orthogonal_to", "collapses_to", "composition_order", "compare", "orientation", "decomposes_into", "has_foot", "has_residual", "batch_maps_to", "endpoint_diff", "same_measure", "invariant"]},
+        "source_ref": {"type": "string"},
+        "target_ref": {"type": "string"},
+        "parameters": {"type": "object", "additionalProperties": {"$ref": "#/$defs/semantic_value"}},
+        "claim_refs": {"$ref": "#/$defs/string_array"}
+      }
+    },
+    "visual_stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "caption", "layout", "input_entity_refs", "output_entity_refs", "relation_refs", "expected_invariants"],
+      "properties": {
+        "id": {"type": "string"},
+        "title": {"type": "string"},
+        "caption": {"type": "string"},
+        "layout": {"enum": ["overlay", "side_by_side", "sequence"]},
+        "input_entity_refs": {"$ref": "#/$defs/string_array"},
+        "output_entity_refs": {"$ref": "#/$defs/string_array"},
+        "relation_refs": {"$ref": "#/$defs/string_array"},
+        "expected_invariants": {"$ref": "#/$defs/string_array"}
+      }
+    },
+    "visual_semantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scene_kind", "entities", "relations", "stages"],
+      "properties": {
+        "scene_kind": {"enum": ["2d", "3d"]},
+        "entities": {"type": "array", "items": {"$ref": "#/$defs/visual_entity"}},
+        "relations": {"type": "array", "items": {"$ref": "#/$defs/visual_relation"}},
+        "stages": {"type": "array", "items": {"$ref": "#/$defs/visual_stage"}}
+      }
+    },
+    "generation_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model", "prompt_version", "generated_at", "source_hash", "raw_reply_digest", "artifact_digest"],
+      "properties": {
+        "provider": {"type": "string"},
+        "model": {"type": "string"},
+        "prompt_version": {"type": "string"},
+        "generated_at": {"type": "string"},
+        "source_hash": {"type": "string"},
+        "raw_reply_digest": {"type": "string"},
+        "artifact_digest": {"type": "string"}
+      }
+    }
+  }
+}
