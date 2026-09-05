@@ -59,7 +59,7 @@
 
 - [x] 7.1 扩展 `linear_algebra.validation`：验证 54 个主题为 24/15/15、来源锚点/hash、artifact revision、claims、视觉引用和发布状态；用命令输出记录全量结果
 - [x] 7.2 增加“解释变量 ⇒ 视觉实体”和“视觉关系 ⇒ claim/VisualContract”一致性校验；用断链、错 topic 和漏关系 fixture 验证诊断
-- [ ] 7.3 增加“声明能力 ⇒ 编译 plan 实际 op”校验，并给每个声明性跳过写理由；用 capability mismatch fixture 验证不允许静默降级
+- [x] 7.3 增加“声明能力 ⇒ 编译 plan 实际 op”校验，并给每个声明性跳过写理由；用 capability mismatch fixture 验证不允许静默降级
 - [x] 7.4 更新颜色契约和场景角色值的一致性：验证 palette、builder helper 和 SceneCommandService 的角色词汇一致；用全主题 plan 验证无未知角色
 - [x] 7.5 更新单元、集成和 Web/Qt 测试：覆盖 artifact round-trip、raw reply 审计、agent 防泄漏、算例复算、重点图、storyboard、原子加载和旧资源兼容；用完整测试套件验证
 - [ ] 7.6 运行 `python -m linear_algebra.validation`、完整测试套件和构建检查；保存 54 主题、claim 覆盖和 plan digest 汇总到变更验证记录

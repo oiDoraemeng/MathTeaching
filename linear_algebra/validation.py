@@ -27,6 +27,7 @@ from linear_algebra.visualizations.contracts import contract_for, validate_contr
 from linear_algebra.visualizations.palette import ROLE_COLORS
 from linear_algebra.visualizations.snapshots import CompiledSnapshotStore, snapshot_from
 from linear_algebra.visualizations.compiler import VisualCompileError, VisualSemanticsCompiler
+from services.scene_commands import CommandPlan
 from services.scene_commands import SceneCommandService
 
 _HEADING = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
@@ -93,6 +94,27 @@ def validate_visual_role_palette(registry: CurriculumRegistry) -> tuple[str, ...
     return tuple(errors)
 
 
+def validate_capability_plan(
+    registry: CurriculumRegistry,
+    topic: LessonEntry,
+    plan: CommandPlan,
+) -> tuple[str, ...]:
+    """Ensure every declared topic capability has evidence in the compiled plan."""
+
+    operations = {str(operation.get("op")) for operation in plan.operations}
+    errors: list[str] = []
+    for capability in topic.required_capabilities:
+        expected_operation = registry.capabilities.get(capability)
+        if expected_operation is None:
+            errors.append(f"{topic.id}: capability_mismatch {capability}: no operation mapping")
+        elif expected_operation not in operations:
+            errors.append(
+                f"{topic.id}: capability_mismatch {capability}: expected operation "
+                f"{expected_operation!r} is absent; no declared skip reason"
+            )
+    return tuple(errors)
+
+
 def audit_published_artifacts(
     registry: CurriculumRegistry,
     store: TeachingArtifactStore,
@@ -154,6 +176,7 @@ def audit_published_artifacts(
         except VisualCompileError as error:
             errors.append(f"{topic.id}: visual compilation failed: {error}")
             continue
+        errors.extend(validate_capability_plan(registry, topic, compiled.plan))
         plan_digests.append((topic.id, compiled.plan_digest))
         snapshot = snapshot_store.load(topic.id, artifact.revision) if snapshot_store is not None else snapshot_from(artifact, contract, compiled)
         if snapshot is None:

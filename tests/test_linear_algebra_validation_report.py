@@ -2,11 +2,26 @@ from pathlib import Path
 
 from linear_algebra.registry import catalog_registry
 from linear_algebra.teaching.store import TeachingArtifactStore
-from linear_algebra.validation import audit_published_artifacts, validate_visual_role_palette
+from linear_algebra.validation import audit_published_artifacts, validate_capability_plan, validate_visual_role_palette
+from services.scene_commands import CommandPlan
 
 
 def test_catalog_recipe_roles_use_the_shared_palette() -> None:
     assert validate_visual_role_palette(catalog_registry()) == ()
+
+
+def test_capability_audit_rejects_a_plan_that_silently_drops_a_declared_operation() -> None:
+    registry = catalog_registry()
+    topic = registry.get_topic("ch01.projection.definition")
+
+    errors = validate_capability_plan(
+        registry,
+        topic,
+        CommandPlan(scene="2d", operations=({"op": "linear.upsert"},)),
+    )
+
+    assert any("capability_mismatch projection_2d" in error for error in errors)
+    assert any("no declared skip reason" in error for error in errors)
 
 
 def test_artifact_audit_reports_full_topic_coverage_and_missing_publications(tmp_path: Path) -> None:
