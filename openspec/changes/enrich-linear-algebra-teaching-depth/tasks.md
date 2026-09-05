@@ -47,7 +47,7 @@
 
 ## 6. 树形、案例视图与运行时
 
-- [ ] 6.1 registry 增加按 `topic_id` 解析统一 bundle 的 API：LessonEntry、published artifact、VisualContract、recipe 和 compiled snapshot；用 54 个 topic 的一一对应测试验证无 orphan
+- [x] 6.1 registry 增加按 `topic_id` 解析统一 bundle 的 API：LessonEntry、published artifact、VisualContract、recipe 和 compiled snapshot；用 54 个 topic 的一一对应测试验证无 orphan
 - [ ] 6.2 更新树叶选择流程：先解析/校验 bundle，再 preview/执行 plan，成功后同时提交场景和解释；用失败注入测试验证旧场景和旧解释保持不变
 - [ ] 6.3 更新 Qt 解释视图：分区渲染教学层级、claims、定义、推导、算例、直觉、几何意义、误解、关联和读图提示；用缺省字段和长公式测试验证不留空占位
 - [ ] 6.4 更新 Web `math_case` payload 和案例标签：传递 artifact revision、claim metadata、symbol roles、palette 和 storyboard，不暴露 scene op；用 JSON bridge schema 测试验证字段边界

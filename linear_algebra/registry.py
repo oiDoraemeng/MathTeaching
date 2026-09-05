@@ -11,8 +11,13 @@ from linear_algebra.catalog.model import LessonEntry, LessonNode
 from linear_algebra.explanations import explanation_for
 from linear_algebra.explanations.model import ExplanationContent
 from linear_algebra.teaching.legacy import LegacyTeachingArtifact, adapt_legacy_explanation
+from linear_algebra.teaching.model import TeachingArtifact
+from linear_algebra.teaching.store import TeachingArtifactStore
 from linear_algebra.visualizations import recipe_for
-from linear_algebra.visualizations.common import VisualizationRecipe
+from linear_algebra.visualizations.common import RenderContext, VisualizationRecipe
+from linear_algebra.visualizations.compiler import CompiledVisualization, VisualSemanticsCompiler
+from linear_algebra.visualizations.contracts import VisualContract, contract_for
+from linear_algebra.visualizations.snapshots import CompiledSnapshot, CompiledSnapshotStore, snapshot_from
 
 
 CAPABILITIES: Mapping[str, str] = MappingProxyType({
@@ -32,6 +37,18 @@ CAPABILITIES: Mapping[str, str] = MappingProxyType({
     "subspace_region": "geometry.subspace_region",
     "oriented_area_2d": "geometry.oriented_area",
 })
+
+
+@dataclass(frozen=True)
+class CurriculumBundle:
+    """One topic's source catalog entry and optional published teaching graph."""
+
+    topic: LessonEntry
+    artifact: TeachingArtifact | None
+    contract: VisualContract
+    recipe: VisualizationRecipe
+    compiled: CompiledVisualization | None
+    snapshot: CompiledSnapshot | None
 
 
 @dataclass(frozen=True)
@@ -64,6 +81,36 @@ class CurriculumRegistry:
         topic = self.get_topic(topic_id)
         return adapt_legacy_explanation(topic, self.get_explanation(topic.explanation_id))
 
+    def resolve_bundle(
+        self,
+        topic_id: str,
+        *,
+        artifact_store: TeachingArtifactStore | None = None,
+        snapshot_store: CompiledSnapshotStore | None = None,
+        context: RenderContext | None = None,
+    ) -> CurriculumBundle:
+        """Resolve all topic-owned teaching surfaces without executing a plan."""
+
+        topic = self.get_topic(topic_id)
+        contract = contract_for(topic_id)
+        recipe = self.get_recipe(topic.visualization_id)
+        artifact: TeachingArtifact | None = None
+        if artifact_store is not None:
+            stored = artifact_store.published(topic_id)
+            if stored is not None:
+                artifact = stored.artifact
+        compiled: CompiledVisualization | None = None
+        snapshot: CompiledSnapshot | None = None
+        if artifact is not None:
+            render_context = context or RenderContext.default(topic_id)
+            compiled = VisualSemanticsCompiler().compile(artifact, contract, render_context)
+            snapshot = (
+                snapshot_store.load(topic_id, artifact.revision)
+                if snapshot_store is not None
+                else snapshot_from(artifact, contract, compiled)
+            )
+        return CurriculumBundle(topic, artifact, contract, recipe, compiled, snapshot)
+
 
 _REGISTRY: CurriculumRegistry | None = None
 
@@ -84,4 +131,4 @@ def catalog_registry() -> CurriculumRegistry:
     return _REGISTRY
 
 
-__all__ = ("CAPABILITIES", "CurriculumRegistry", "catalog_registry")
+__all__ = ("CAPABILITIES", "CurriculumBundle", "CurriculumRegistry", "catalog_registry")
