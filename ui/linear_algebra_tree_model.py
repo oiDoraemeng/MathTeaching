@@ -153,13 +153,38 @@ class LinearAlgebraTreeModel:
         index: dict[str, str] = {}
         for topic in self.registry.topics:
             explanation = self.registry.get_explanation(topic.explanation_id)
-            values = (
+            values: list[str] = [
                 topic.title,
                 *topic.source_path,
                 explanation.summary,
                 explanation.formula,
                 *explanation.searchable_text,
-            )
+            ]
+            try:
+                bundle = self.registry.resolve_bundle(topic.id)
+            except (KeyError, OSError, TypeError, ValueError):
+                bundle = None
+            if bundle is not None and bundle.artifact is not None:
+                structured = bundle.artifact.explanation
+                values.extend(
+                    [
+                        structured.definition,
+                        structured.formula,
+                        structured.intuition,
+                        structured.geometric_meaning,
+                        structured.conclusion,
+                        structured.analogy_boundary,
+                        structured.transfer_note,
+                        *structured.derivation,
+                        *structured.pitfalls,
+                        *structured.invariants,
+                        *structured.connections,
+                        *structured.read_guide,
+                        *structured.searchable_text,
+                        *(example.title for example in structured.worked_examples),
+                        *(line for example in structured.worked_examples for line in example.calculation),
+                    ]
+                )
             index[topic.id] = _normalize(" ".join(values))
         return index
 

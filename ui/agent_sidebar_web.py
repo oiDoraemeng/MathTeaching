@@ -296,9 +296,16 @@ class AgentSidebarWeb(QWidget):
         """Publish one bounded, JSON-only teaching case to the Web UI."""
         explanation = getattr(case, "explanation", case)
         claims = tuple(getattr(case, "claims", ()))
+        section_text = {
+            str(getattr(section, "id", "")): str(getattr(section, "text", ""))
+            for section in tuple(getattr(explanation, "sections", ()))
+        }
+        formula_text = str(getattr(explanation, "formula", "")) or section_text.get("formula", "")
+        derivation_values = tuple(getattr(explanation, "derivation", ())) or ((section_text["derivation"],) if section_text.get("derivation") else ())
+        conclusion_text = str(getattr(explanation, "conclusion", "")) or section_text.get("conclusion", "")
         structured = {
             "definition": str(getattr(explanation, "definition", ""))[:2048],
-            "derivation": [str(step)[:1024] for step in tuple(getattr(explanation, "derivation", ()))[:16]],
+            "derivation": [str(step)[:1024] for step in derivation_values[:16]],
             "intuition": str(getattr(explanation, "intuition", ""))[:2048],
             "geometric_meaning": str(getattr(explanation, "geometric_meaning", ""))[:2048],
             "pitfalls": [str(value)[:512] for value in tuple(getattr(explanation, "pitfalls", ()))[:12]],
@@ -318,9 +325,9 @@ class AgentSidebarWeb(QWidget):
             "case_id": str(case_id or getattr(case, "topic_id", getattr(case, "id", "")))[:128],
             "category": str(category or getattr(case, "category", ""))[:64],
             "name": str(getattr(explanation, "title", getattr(case, "name", "")))[:128],
-            "formula": str(getattr(explanation, "formula", getattr(case, "formula", "")))[:512],
-            "steps": [str(step)[:512] for step in tuple(getattr(explanation, "derivation", getattr(case, "steps", ())))[:12]],
-            "conclusion": str(getattr(explanation, "conclusion", getattr(case, "conclusion", "")))[:1024],
+            "formula": formula_text[:512] or str(getattr(case, "formula", ""))[:512],
+            "steps": [str(step)[:512] for step in derivation_values[:12]] or [str(step)[:512] for step in tuple(getattr(case, "steps", ()))[:12]],
+            "conclusion": conclusion_text[:1024] or str(getattr(case, "conclusion", ""))[:1024],
             "summary": str(getattr(explanation, "summary", getattr(case, "summary", "")))[:512],
             "scene_mode": scene_mode if scene_mode in {"2d", "3d"} else "2d",
             "artifact_revision": getattr(case, "revision", None),

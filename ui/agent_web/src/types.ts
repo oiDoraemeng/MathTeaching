@@ -105,6 +105,57 @@ export interface CaseProjection {
   conclusion: string;
   summary?: string;
   sceneMode?: "2d" | "3d";
+  artifactRevision?: number | null;
+  sourceHash?: string | null;
+  definition?: string;
+  derivation?: string[];
+  intuition?: string;
+  geometricMeaning?: string;
+  pitfalls?: string[];
+  invariants?: string[];
+  connections?: string[];
+  analogyBoundary?: string;
+  transferNote?: string;
+  readGuide?: string[];
+  workedExamples?: WorkedExampleProjection[];
+  claims?: ClaimProjection[];
+  symbolRoles?: Record<string, string>;
+  symbolPalette?: Record<string, string>;
+  palette?: Record<string, string>;
+  storyboard?: StoryboardStageProjection[];
+  planDigest?: string | null;
+  compilerVersion?: string | null;
+}
+
+export interface WorkedExampleProjection {
+  id?: string;
+  title?: string;
+  kind?: string;
+  given?: unknown;
+  calculation?: string[];
+  result?: unknown;
+  checks?: Array<{ name: string; expected: unknown; tolerance?: number }>;
+  claimRefs?: string[];
+}
+
+export interface ClaimProjection {
+  id: string;
+  statement: string;
+  formula?: string | null;
+  formulaSymbols?: string[];
+  entityRefs?: string[];
+  relationRefs?: string[];
+  stageRefs?: string[];
+}
+
+export interface StoryboardStageProjection {
+  id: string;
+  title: string;
+  caption: string;
+  layout: "sequence" | "side_by_side" | "overlay" | string;
+  visibleRefs: string[];
+  visibleAliases: string[];
+  anchor: number[];
 }
 
 export interface SnapshotProjection {

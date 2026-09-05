@@ -26,6 +26,23 @@
 .math-case-steps { max-width: 620px; margin: 18px auto; padding-left: 25px; color: var(--agent-text); }
 .math-case-steps li { margin: 12px 0; padding-left: 5px; }
 .math-case-steps li::marker { color: var(--agent-accent); font-weight: 600; }
+.math-case-section { max-width: 620px; margin: 12px auto; padding: 12px; background: var(--agent-surface); border: 1px solid var(--agent-border); border-radius: 6px; }
+.math-case-section h2 { margin: 0 0 7px; font-size: 13px; }
+.math-case-section h3 { margin: 0 0 6px; font-size: 12px; }
+.math-case-example, .math-case-claim { padding: 8px 0; border-top: 1px solid var(--agent-border); }
+.math-case-example:first-of-type, .math-case-claim:first-of-type { border-top: 0; padding-top: 0; }
+.math-case-example p { margin: 6px 0; }
+.math-case-example small { display: block; color: var(--agent-muted); }
+.math-case-evidence { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.math-case-evidence span { padding: 2px 5px; color: var(--agent-muted); border: 1px solid var(--agent-border); border-radius: 3px; font-size: 10px; }
+.math-case-storyboard-header { display: flex; align-items: center; justify-content: space-between; }
+.math-case-storyboard-header span, .math-case-stage small { color: var(--agent-muted); font-size: 11px; }
+.math-case-stage { min-height: 76px; padding: 9px; background: var(--agent-bg); border: 1px solid var(--agent-border); border-radius: 4px; }
+.math-case-stage p { margin: 0 0 5px; color: var(--agent-muted); font-size: 12px; }
+.math-case-stage-actions { display: flex; justify-content: flex-end; gap: 4px; margin-top: 7px; }
+.math-case-stage-actions button { display: inline-grid; place-items: center; width: 28px; height: 28px; color: var(--agent-muted); border: 1px solid var(--agent-border); border-radius: 4px; }
+.math-case-stage-actions button:hover:not(:disabled) { color: var(--agent-text); border-color: var(--agent-accent); }
+.math-case-stage-actions button:disabled { opacity: .4; }
 .math-case-conclusion h2 { margin: 0 0 6px; font-size: 13px; }
 .empty-state { max-width: 360px; margin: 16vh auto 0; text-align: center; }
 .empty-state h1 { margin: 0 0 8px; font-size: 20px; font-weight: 600; }

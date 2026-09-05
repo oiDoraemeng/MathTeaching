@@ -192,7 +192,66 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
   const conclusion = typeof payload.conclusion === "string" ? payload.conclusion : "";
   const steps = Array.isArray(payload.steps) ? payload.steps.filter((value): value is string => typeof value === "string").slice(0, 12) : [];
   if (!id || !name || !formula || !conclusion || !steps.length) return null;
-  return { id, category: typeof payload.category === "string" ? payload.category : "向量", name, formula, steps, conclusion, summary: typeof payload.summary === "string" ? payload.summary : "", sceneMode: payload.scene_mode === "3d" ? "3d" : "2d" };
+  const list = (key: string, limit = 16) => Array.isArray(payload[key]) ? payload[key].filter((value): value is string => typeof value === "string").slice(0, limit) : undefined;
+  const object = (key: string) => payload[key] && typeof payload[key] === "object" && !Array.isArray(payload[key]) ? payload[key] as Record<string, string> : undefined;
+  const claims = Array.isArray(payload.claims) ? payload.claims.filter((value): value is Record<string, unknown> => Boolean(value) && typeof value === "object" && !Array.isArray(value)).slice(0, 24).map((claim) => ({
+    id: typeof claim.id === "string" ? claim.id : "",
+    statement: typeof claim.statement === "string" ? claim.statement : "",
+    formula: typeof claim.formula === "string" ? claim.formula : null,
+    formulaSymbols: Array.isArray(claim.formula_symbols) ? claim.formula_symbols.filter((value): value is string => typeof value === "string").slice(0, 32) : [],
+    entityRefs: Array.isArray(claim.entity_refs) ? claim.entity_refs.filter((value): value is string => typeof value === "string").slice(0, 32) : [],
+    relationRefs: Array.isArray(claim.relation_refs) ? claim.relation_refs.filter((value): value is string => typeof value === "string").slice(0, 32) : [],
+    stageRefs: Array.isArray(claim.stage_refs) ? claim.stage_refs.filter((value): value is string => typeof value === "string").slice(0, 32) : [],
+  })) : undefined;
+  const storyboard = Array.isArray(payload.storyboard) ? payload.storyboard.filter((value): value is Record<string, unknown> => Boolean(value) && typeof value === "object" && !Array.isArray(value)).slice(0, 24).map((stage) => ({
+    id: typeof stage.id === "string" ? stage.id : "",
+    title: typeof stage.title === "string" ? stage.title : "",
+    caption: typeof stage.caption === "string" ? stage.caption : "",
+    layout: typeof stage.layout === "string" ? stage.layout : "sequence",
+    visibleRefs: Array.isArray(stage.visible_refs) ? stage.visible_refs.filter((value): value is string => typeof value === "string") : [],
+    visibleAliases: Array.isArray(stage.visible_aliases) ? stage.visible_aliases.filter((value): value is string => typeof value === "string") : [],
+    anchor: Array.isArray(stage.anchor) ? stage.anchor.filter((value): value is number => typeof value === "number") : [],
+  })) : undefined;
+  const examples = Array.isArray(payload.worked_examples) ? payload.worked_examples.filter((value): value is Record<string, unknown> => Boolean(value) && typeof value === "object" && !Array.isArray(value)).slice(0, 8).map((example) => ({
+    id: typeof example.id === "string" ? example.id : "",
+    title: typeof example.title === "string" ? example.title : "",
+    kind: typeof example.kind === "string" ? example.kind : "",
+    given: example.given,
+    calculation: Array.isArray(example.calculation) ? example.calculation.filter((value): value is string => typeof value === "string") : [],
+    result: example.result,
+    checks: Array.isArray(example.checks) ? example.checks.filter((value): value is { name: string; expected: unknown; tolerance?: number } => Boolean(value) && typeof value === "object" && typeof (value as Record<string, unknown>).name === "string").map((check) => ({ name: check.name, expected: check.expected, tolerance: typeof check.tolerance === "number" ? check.tolerance : undefined })) : [],
+    claimRefs: Array.isArray(example.claim_refs) ? example.claim_refs.filter((value): value is string => typeof value === "string") : [],
+  })) : undefined;
+  return {
+    id,
+    category: typeof payload.category === "string" ? payload.category : "向量",
+    name,
+    formula,
+    steps,
+    conclusion,
+    summary: typeof payload.summary === "string" ? payload.summary : "",
+    sceneMode: payload.scene_mode === "3d" ? "3d" : "2d",
+    artifactRevision: typeof payload.artifact_revision === "number" ? payload.artifact_revision : null,
+    sourceHash: typeof payload.source_hash === "string" ? payload.source_hash : null,
+    definition: typeof payload.definition === "string" ? payload.definition : "",
+    derivation: list("derivation"),
+    intuition: typeof payload.intuition === "string" ? payload.intuition : "",
+    geometricMeaning: typeof payload.geometric_meaning === "string" ? payload.geometric_meaning : "",
+    pitfalls: list("pitfalls", 12),
+    invariants: list("invariants", 12),
+    connections: list("connections", 12),
+    analogyBoundary: typeof payload.analogy_boundary === "string" ? payload.analogy_boundary : "",
+    transferNote: typeof payload.transfer_note === "string" ? payload.transfer_note : "",
+    readGuide: list("read_guide", 12),
+    workedExamples: examples,
+    claims,
+    symbolRoles: object("symbol_roles"),
+    symbolPalette: object("symbol_palette"),
+    palette: object("palette"),
+    storyboard,
+    planDigest: typeof payload.plan_digest === "string" ? payload.plan_digest : null,
+    compilerVersion: typeof payload.compiler_version === "string" ? payload.compiler_version : null,
+  };
 }
 
 export function appReducer(state: AppState, action: AppAction): AppState {
