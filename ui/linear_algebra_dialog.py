@@ -103,11 +103,9 @@ class LinearAlgebraDialog(QDialog):
         if not topic_id:
             item.setExpanded(not item.isExpanded())
             return
-        topic = self.registry.get_topic(str(topic_id))
-        self.content_view.set_content(self.registry.get_explanation(topic.explanation_id))
-        self.content_scroll.show()
-        # Keep the non-modal catalog visible while the explanation is loaded.
-        # The application-level filter is the only dismissal path for this popup.
+        # The catalog only selects a topic. The main window publishes its
+        # explanation after the corresponding scene has loaded successfully.
+        self.content_scroll.hide()
         self.show()
         self.raise_()
         self.requested.emit(str(topic_id))

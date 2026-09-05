@@ -31,7 +31,7 @@ def test_branch_click_does_not_emit_but_topic_leaf_does() -> None:
     assert received == [topic.data(0, Qt.ItemDataRole.UserRole)]
 
 
-def test_activating_topic_keeps_lecture_surface_visible() -> None:
+def test_activating_topic_keeps_catalog_visible_without_inline_explanation() -> None:
     dialog = make_linear_algebra_dialog()
     dialog.open_at(QRect(20, 20, 1, 1).topLeft())
     topic = dialog.tree.topLevelItem(0).child(0).child(0)
@@ -40,7 +40,7 @@ def test_activating_topic_keeps_lecture_surface_visible() -> None:
     QApplication.processEvents()
 
     assert dialog.isVisible()
-    assert dialog.content_scroll.isVisible()
+    assert not dialog.content_scroll.isVisible()
     dialog.close()
 
 
@@ -175,5 +175,5 @@ def test_topic_click_keeps_popup_open_when_scene_mode_is_synchronized() -> None:
     QApplication.processEvents()
 
     assert dialog.isVisible()
-    assert dialog.content_scroll.isVisible()
+    assert not dialog.content_scroll.isVisible()
     dialog.close()
