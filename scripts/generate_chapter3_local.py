@@ -108,14 +108,44 @@ def _normalize_visual(payload: dict, topic_id: str) -> None:
     elif spec["kind"] == "determinant":
         matrix = spec["given"]["matrix"]
         columns = [[matrix[0][0], matrix[1][0]], [matrix[0][1], matrix[1][1]]]
-        entities[:] = [_entity("A", "matrix", 2, matrix, "matrix_a", claim_id, "A"), _entity("area", "area", 2, columns, "area", claim_id, "det(A)")]
+        # Keep the matrix and its two column vectors visible.  The vectors
+        # provide the sides for both the oriented-area and polygon primitives,
+        # while the matrix preserves the algebraic object in the explanation.
+        entities[:] = [
+            _entity("A", "matrix", 2, matrix, "matrix_a", claim_id, "A"),
+            _entity("a", "vector", 2, columns[0], "vector_a", claim_id, "column a"),
+            _entity("b", "vector", 2, columns[1], "vector_b", claim_id, "column b"),
+            _entity("area", "area", 2, columns, "area", claim_id, "det(A)"),
+        ]
         relations[:] = [_relation("det_maps_to_area", "maps_to", "A", "area", claim_id, {"matrix": matrix})]
-        claim["entity_refs"] = ["A", "area"]
+        claim["entity_refs"] = ["A", "a", "b", "area"]
         claim["relation_refs"] = ["det_maps_to_area"]
-        claim["formula_symbols"] = ["A", "area"]
-        payload["explanation"]["symbol_roles"] = {"A": "matrix_a", "area": "area"}
-        stages[:] = [_stage("stage.det.input", "矩阵两列", "把矩阵两列看作平行四边形的两条邻边。", ["A"], [], [], "columns as sides"), _stage("stage.det.measure", "有向面积", "行列式给出有向面积及方向符号。", ["A"], ["area"], ["det_maps_to_area"], "signed area")]
+        claim["formula_symbols"] = ["A", "a", "b", "area"]
+        payload["explanation"]["symbol_roles"] = {"A": "matrix_a", "a": "vector_a", "b": "vector_b", "area": "area"}
+        stages[:] = [
+            _stage("stage.det.input", "矩阵两列", "把矩阵两列看作平行四边形的两条邻边。", ["A", "a", "b"], [], [], "columns as sides"),
+            _stage("stage.det.measure", "有向面积", "行列式给出有向面积及方向符号。", ["a", "b"], ["area"], ["det_maps_to_area"], "signed area"),
+        ]
         claim["stage_refs"] = [item["id"] for item in stages]
+
+        # The determinant-property topics explicitly require a staged transform
+        # capability.  A typed matrix list lets the compiler emit the bounded
+        # staged-transform primitive without embedding renderer operations here.
+        if "staged_transform" in topic_required_capabilities(topic_id):
+            relations.append(_relation("det_stage", "composition_order", "a", "b", claim_id, {"matrix": matrix}))
+            stages.append(_stage("stage.det.transform", "变换阶段", "比较变换前后的两条列向量，观察有向面积如何变化。", ["a", "b"], ["area"], ["det_stage"], "staged transform"))
+            claim["relation_refs"].append("det_stage")
+            claim["stage_refs"] = [item["id"] for item in stages]
+
+        if topic_id == "ch03.det.zero.equivalence":
+            entities.append(_entity("region", "region", 2, columns, "result", claim_id, "collapsed subspace"))
+            relations.append(_relation("collapse_region", "collapses_to", "a", "region", claim_id))
+            claim["entity_refs"].append("region")
+            claim["relation_refs"].append("collapse_region")
+            claim["formula_symbols"].append("region")
+            payload["explanation"]["symbol_roles"]["region"] = "result"
+            stages.append(_stage("stage.det.region", "退化子空间", "两列共线时，平行四边形坍缩为一条子空间区域。", ["a", "b"], ["region"], ["collapse_region"], "collapsed subspace"))
+            claim["stage_refs"] = [item["id"] for item in stages]
 
     if spec.get("volume"):
         a, b, c = spec["given"]["a"], spec["given"]["b"], spec["given"]["c"]
@@ -128,8 +158,8 @@ def _normalize_visual(payload: dict, topic_id: str) -> None:
 
     if spec.get("multiplicativity"):
         relations[:] = [
-            _relation("same_measure", "same_measure", "A", "area", claim_id),
-            _relation("composition_order", "composition_order", "A", "area", claim_id),
+            _relation("same_measure", "same_measure", "a", "area", claim_id),
+            _relation("composition_order", "composition_order", "a", "b", claim_id, {"matrix": spec["given"]["matrix"]}),
         ]
         stages[:] = [_stage("stage.measure.input", "初始面积", "先记录单位平行四边形。", ["A"], [], [], "initial area"), _stage("stage.measure.first", "第一阶段", "第一矩阵贡献一个面积比例。", ["A"], ["area"], ["composition_order"], "first scale"), _stage("stage.measure.final", "乘法守恒", "两个阶段的比例相乘得到总比例。", ["A", "area"], [], ["same_measure"], "product of scales")]
         claim["relation_refs"] = ["same_measure", "composition_order"]
@@ -140,12 +170,23 @@ def _normalize_visual(payload: dict, topic_id: str) -> None:
         target = next((item for item in entities if item["id"] == "y"), None)
         if existing and target:
             relations.extend([
-                _relation("inverse_order", "composition_order", "x", "y", claim_id),
+                _relation("inverse_order", "composition_order", "x", "y", claim_id, {"matrix": spec["given"]["matrix"]}),
                 _relation("inverse_compare", "compare", "x", "y", claim_id),
             ])
             stages[:] = [_stage("stage.inverse.input", "原变换", "记录输入向量和原矩阵。", ["x"], ["y"], ["A_maps_x_to_y"], "forward transform"), _stage("stage.inverse.undo", "撤销", "按逆矩阵执行反向变换。", ["x", "y"], [], ["inverse_order"], "undo transform"), _stage("stage.inverse.identity", "回到输入", "复合结果应表现为单位变换。", ["x", "y"], [], ["inverse_compare"], "identity")]
             claim["relation_refs"] = [item["id"] for item in relations]
             claim["stage_refs"] = [item["id"] for item in stages]
+
+
+def topic_required_capabilities(topic_id: str) -> frozenset[str]:
+    """Return catalog capabilities without coupling generation to the registry."""
+
+    return frozenset(
+        capability
+        for topic in TOPICS
+        if topic.id == topic_id
+        for capability in topic.required_capabilities
+    )
 
 
 def main() -> int:

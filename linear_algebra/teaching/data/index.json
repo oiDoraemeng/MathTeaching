@@ -1,174 +1,384 @@
 {
-  "chapter": 1,
   "schema_version": 1,
+  "topic_count": 54,
   "topics": [
     {
-      "draft_revision": 3,
-      "published_revision": 1,
-      "reviewed_revision": 2,
-      "source_hash": "sha256:2b53dbe40acf6537f3db65a7393acc792022be98e32f278f8f056dfd8013baca",
-      "topic_id": "ch01.vector.magnitude"
+      "artifact_digest": "sha256:972a8e93a2a06248927e7990af7f2d913d06e0352ce8667433ecb5bc65e381f8",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:4b015b6cb5bb0c4b69ee907c70f6e2cab0903c68a52e4d750245354ae93bc756",
+      "topic_id": "ch01.high-dimensional.analogy"
     },
     {
-      "draft_revision": 2,
-      "published_revision": 1,
-      "reviewed_revision": 2,
-      "source_hash": "sha256:c4289ae2a15aadd08eb83ba876a62fd6e8ad71f3038ecef645edbf134bdc93ee",
-      "topic_id": "ch01.vector.point-distinction"
-    },
-    {
-      "draft_revision": 2,
-      "published_revision": 1,
-      "reviewed_revision": 2,
-      "source_hash": "sha256:b13413aa33f880b2787622ef7285b5b593f383f2d6d91670ffe9a262b360da30",
-      "topic_id": "ch01.vector.coordinate-system"
-    },
-    {
-      "draft_revision": 2,
-      "published_revision": 1,
-      "reviewed_revision": 2,
-      "source_hash": "sha256:c919ead1bc4a41fcc9768573ff28bcbdf15001600d5615996da28f7132bdf158",
-      "topic_id": "ch01.vector.direction-examples"
-    },
-    {
-      "draft_revision": 2,
-      "published_revision": 1,
-      "reviewed_revision": 2,
-      "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
-      "topic_id": "ch01.ops.addition"
-    },
-    {
-      "draft_revision": 2,
-      "published_revision": 1,
-      "reviewed_revision": 2,
-      "source_hash": "sha256:13b887d608b560325e74c97308bcf60f892ddea2f61914445bef1fb98e6390fd",
-      "topic_id": "ch01.ops.subtraction"
-    },
-    {
-      "draft_revision": 2,
-      "published_revision": 1,
-      "reviewed_revision": 2,
-      "source_hash": "sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875",
-      "topic_id": "ch01.ops.scalar"
-    },
-    {
-      "draft_revision": 2,
-      "published_revision": 1,
-      "reviewed_revision": 2,
-      "source_hash": "sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32",
-      "topic_id": "ch01.ops.linear-combination"
-    },
-    {
-      "draft_revision": 2,
-      "published_revision": 1,
-      "reviewed_revision": 2,
-      "source_hash": "sha256:36b093c8ac050829f151499dd884e2c8a917f483b3fbe03bfb2688a856278b79",
-      "topic_id": "ch01.ops.velocity"
-    },
-    {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
-      "source_hash": "sha256:10f1b4819f2af3b6c3c2b0373beb97de3b41dbcd3e5f9498fd65ef7466a9b9a6",
-      "topic_id": "ch01.ops.cross-product"
-    },
-    {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
-      "source_hash": "sha256:4e497dc05627bf09c03cba04c8fa9c93828cd0daace46a310f30768c1f541417",
-      "topic_id": "ch01.ops.scalar-triple"
-    },
-    {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
-      "source_hash": "sha256:18371503c870b3e41027bcfb2cc9b77e7f4595fa93f1041b11f68921e280b4f6",
-      "topic_id": "ch01.inner.equivalence"
-    },
-    {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
-      "source_hash": "sha256:f7f7d9ef3f7be4ba1e2483a74a5fee817f38b0fcd899a4965f3c74af9624dd5b",
-      "topic_id": "ch01.inner.definitions"
-    },
-    {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
+      "artifact_digest": "sha256:4d95fbcffd1e9dbbee786c9ec4ba6f6f8060d07d12bb352f6966ffca58873d17",
+      "chapter": 1,
+      "revision": 1,
       "source_hash": "sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c",
       "topic_id": "ch01.inner.applications"
     },
     {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
+      "artifact_digest": "sha256:3f692dd93b5689520d044bb947485058170f28a7bcc2189a0443165187993dd7",
+      "chapter": 1,
+      "revision": 1,
       "source_hash": "sha256:acb3755ccad90340b78463bcebf6fa74e07877c6addc4a61067e5e05d4ec5de0",
       "topic_id": "ch01.inner.cauchy-schwarz"
     },
     {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
+      "artifact_digest": "sha256:6779e8234c5b92780d4852c4fae10bf0bd7096161baf0166619dced7e8443f11",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:f7f7d9ef3f7be4ba1e2483a74a5fee817f38b0fcd899a4965f3c74af9624dd5b",
+      "topic_id": "ch01.inner.definitions"
+    },
+    {
+      "artifact_digest": "sha256:c5276edb190370c0b23f571e6d7dd9c798fd80fd897eae1f9e8d53bacd00dbf3",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:18371503c870b3e41027bcfb2cc9b77e7f4595fa93f1041b11f68921e280b4f6",
+      "topic_id": "ch01.inner.equivalence"
+    },
+    {
+      "artifact_digest": "sha256:a6c3d3141854ca2b5f25633655886160b6619b9c23dea07f358f454f15440d90",
+      "chapter": 1,
+      "revision": 1,
       "source_hash": "sha256:76f421df33e08871c34eb5bea7755ac7eaf5b7ca4a8d68ebeb44f783cb773035",
       "topic_id": "ch01.inner.examples"
     },
     {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
+      "artifact_digest": "sha256:25101cffddf8d0803d2ec43a43cb06e5c38fc3769075d20a8b5f8cc8453d9c8a",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
+      "topic_id": "ch01.ops.addition"
+    },
+    {
+      "artifact_digest": "sha256:edf1b0bb3e6690018d2e3b6170002997c26e3a693efc251279c6ed33a8cd7210",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:10f1b4819f2af3b6c3c2b0373beb97de3b41dbcd3e5f9498fd65ef7466a9b9a6",
+      "topic_id": "ch01.ops.cross-product"
+    },
+    {
+      "artifact_digest": "sha256:8a27e168d47ff44fe572bc82f8202448e595ac4210cbc8942379c37144f17c4b",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32",
+      "topic_id": "ch01.ops.linear-combination"
+    },
+    {
+      "artifact_digest": "sha256:5da3647accd55607bc712ab4a62ab4f44300dd63c26490deafd93dccc7d458ab",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875",
+      "topic_id": "ch01.ops.scalar"
+    },
+    {
+      "artifact_digest": "sha256:8b475583a95ff0ea2eab09834ef1a7582026553d58f9cc8be8ee56ed5e00ec1f",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:4e497dc05627bf09c03cba04c8fa9c93828cd0daace46a310f30768c1f541417",
+      "topic_id": "ch01.ops.scalar-triple"
+    },
+    {
+      "artifact_digest": "sha256:a3af5565bbe24aa3e31a641a47fcd0695021b1306a770b2e6c9889c93e7c284b",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:13b887d608b560325e74c97308bcf60f892ddea2f61914445bef1fb98e6390fd",
+      "topic_id": "ch01.ops.subtraction"
+    },
+    {
+      "artifact_digest": "sha256:635072f2270e51a9cbf0d7f02c9722786c6aef7245610ccf06cc076750701022",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:36b093c8ac050829f151499dd884e2c8a917f483b3fbe03bfb2688a856278b79",
+      "topic_id": "ch01.ops.velocity"
+    },
+    {
+      "artifact_digest": "sha256:ded30b4fc18f2695fab02cc3a371115b419eaa006fe3308a111713d07b8dd96c",
+      "chapter": 1,
+      "revision": 1,
       "source_hash": "sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789",
       "topic_id": "ch01.projection.definition"
     },
     {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
-      "source_hash": "sha256:8aca69b44713fdac8bf4cb3885c96563418db00aaa21ad288a0a0c79c25162c9",
-      "topic_id": "ch01.projection.properties"
-    },
-    {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
+      "artifact_digest": "sha256:64b9a3f4a481b4a7818325ac46a23404ead3dd58a5521aed48562ed3c02acd71",
+      "chapter": 1,
+      "revision": 1,
       "source_hash": "sha256:85f23c9fa0886bbe72549992d8606f7f26a2e68d2e3ef9872dc0f4c4cfd8c66d",
       "topic_id": "ch01.projection.force"
     },
     {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
-      "source_hash": "sha256:ea74cbc672edc3f084c07253b34cf704c8aee2835e88b473795a22a715bf75b4",
-      "topic_id": "ch01.proof.method"
+      "artifact_digest": "sha256:f7c5ac595022c8e72b67aa318d8839655494cd2a1ef84c2b26986771b69bc5e2",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:8aca69b44713fdac8bf4cb3885c96563418db00aaa21ad288a0a0c79c25162c9",
+      "topic_id": "ch01.projection.properties"
     },
     {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
-      "source_hash": "sha256:71150484c6087cdee298ce32f28634cfc4c618d29a90e0e5c1dd0c6890d9e57a",
-      "topic_id": "ch01.proof.midline"
-    },
-    {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
+      "artifact_digest": "sha256:4ad114bbe05adfd887cfd60f2bfa1a9190c10641d2d707b7b3319ef7bc246d59",
+      "chapter": 1,
+      "revision": 1,
       "source_hash": "sha256:3b0b668a61fcc041c6bf6b27cc98a127cf2743ab2ec11b5546419b8dc4316c06",
       "topic_id": "ch01.proof.centroid"
     },
     {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
+      "artifact_digest": "sha256:902e2baaa568425ad2f9b54a1e1a38b471b8907d6fb511c7ba1831ee78397651",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:ea74cbc672edc3f084c07253b34cf704c8aee2835e88b473795a22a715bf75b4",
+      "topic_id": "ch01.proof.method"
+    },
+    {
+      "artifact_digest": "sha256:8e05b9db233082f7d045cbe76187cdfe93d4c393eee7583b46371c13482bc023",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:71150484c6087cdee298ce32f28634cfc4c618d29a90e0e5c1dd0c6890d9e57a",
+      "topic_id": "ch01.proof.midline"
+    },
+    {
+      "artifact_digest": "sha256:e12739e7c9c55a1408e3c3f3e2727db344a16ca128bbd961d136d9d0642d8d25",
+      "chapter": 1,
+      "revision": 1,
       "source_hash": "sha256:ca9691ba96b556f0ecf214baf60ec08e9b71e904972b13e04c52404984c0730d",
       "topic_id": "ch01.proof.parallelogram-diagonals"
     },
     {
-      "draft_revision": 1,
-      "published_revision": 1,
-      "reviewed_revision": 1,
-      "source_hash": "sha256:4b015b6cb5bb0c4b69ee907c70f6e2cab0903c68a52e4d750245354ae93bc756",
-      "topic_id": "ch01.high-dimensional.analogy"
+      "artifact_digest": "sha256:4a2c8a79482e140d7a460960e6a1f873e7ba31b45eeaa15d70b4c773e85c0edd",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:b13413aa33f880b2787622ef7285b5b593f383f2d6d91670ffe9a262b360da30",
+      "topic_id": "ch01.vector.coordinate-system"
+    },
+    {
+      "artifact_digest": "sha256:1a3d3d902c842309356111270f5f30501f9d2cb1008cde827da7c9d7d1ccc21f",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:c919ead1bc4a41fcc9768573ff28bcbdf15001600d5615996da28f7132bdf158",
+      "topic_id": "ch01.vector.direction-examples"
+    },
+    {
+      "artifact_digest": "sha256:31a1ab0b92ab1f1b5f6690729cc8f39df47efd33ebf2caca89040ff95e94f540",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:2b53dbe40acf6537f3db65a7393acc792022be98e32f278f8f056dfd8013baca",
+      "topic_id": "ch01.vector.magnitude"
+    },
+    {
+      "artifact_digest": "sha256:168b0f78f180b6f4270b8b92f7114d1dfc3d9fc37dc1751dd80ea4bfe53a93ad",
+      "chapter": 1,
+      "revision": 1,
+      "source_hash": "sha256:c4289ae2a15aadd08eb83ba876a62fd6e8ad71f3038ecef645edbf134bdc93ee",
+      "topic_id": "ch01.vector.point-distinction"
+    },
+    {
+      "artifact_digest": "sha256:1ac1fd9cb5c4df66f723c1db29f2fa6da4e638ca769292dc4875d7ab667e8f72",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:8d0f7df5e4e32f439e01001cb86315c36061b1ef23c0d23756f5bff315aaa2a2",
+      "topic_id": "ch02.batch.inner-products"
+    },
+    {
+      "artifact_digest": "sha256:4889b49cb9096f0476e213b5624a53cb0c031cf53403cffa622002b829c443a0",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:18e7642a880b874828bfee6824477b44b80aaac5b2c703abc508923f1d009780",
+      "topic_id": "ch02.batch.projection"
+    },
+    {
+      "artifact_digest": "sha256:0ff633f6be46d905881e8146581eda40d98efabc0b832dfceed71808fd77f43a",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:aec0866b91b7031cc30af32b39f6dd7728fe7a7490b88d28680b456e83f83fe6",
+      "topic_id": "ch02.high-dimensional.analogy"
+    },
+    {
+      "artifact_digest": "sha256:075842be54e78b84889d863278317556d75b334f35f4645fd071c8c121496a59",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:84ab593cf1329589b1006d9590fdd31bdc599ba1394f2fd24fbb65989d42c35b",
+      "topic_id": "ch02.matrix.additive-distributivity"
+    },
+    {
+      "artifact_digest": "sha256:ff63043c812cf06bfea6b4601b14d738aaf7fa6d8ca1f662b7e4ca80ee5e4355",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:ef6de7167277e0291b976d335c4a9c431c26d6aa51cb06e8d39f993d7806e088",
+      "topic_id": "ch02.matrix.basis"
+    },
+    {
+      "artifact_digest": "sha256:b4413df9fc563aec93871116bb756b79e6b4e20b82f0dab92c0d4b8a0c382477",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:249f825ba9ab6a2d3d042a39fa709e8e6e22611b121cfdf2759e82f232484499",
+      "topic_id": "ch02.matrix.composition"
+    },
+    {
+      "artifact_digest": "sha256:6cc015d5ca187ad7a30055dcb9ebf1d7c83dd640e759a3b42e0dd6e66b802271",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:69c514d44197850d620d63c0d7f1df0b68e69d1dfdbe1446a5396a9d8aecbd49",
+      "topic_id": "ch02.matrix.powers"
+    },
+    {
+      "artifact_digest": "sha256:1429da5e0f664209866df83ec125ee9b060bb45939e0f5025beb83d71aef1e2f",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:07fbb794fc533cc2655cad99b8e37a59ec70268f4cec18e7c0b6e10d0f91348c",
+      "topic_id": "ch02.matrix.row-column"
+    },
+    {
+      "artifact_digest": "sha256:72facb73f133f4dd73d8963d4e0ffc953af551cdcd6358a39da1b29a696425d8",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:e75201702eb0c61f55827cf094c28b02e0564fdb0fbc76f72d4fe150317b852c",
+      "topic_id": "ch02.matrix.stretch-rotate-scale"
+    },
+    {
+      "artifact_digest": "sha256:2d4a4cfa581eacac801fc8655a67c310bc1e086f68b18c7a982d7bc5c8ccb54a",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:0cde074da638ed97935945c66fb4ae0ef0677d4ad90d6300ca1a3e429c3f2b12",
+      "topic_id": "ch02.matrix.transformed-grid"
+    },
+    {
+      "artifact_digest": "sha256:b2d35d4cdae533f0c1d037477d067e468815c8c460fcfc265a7ced190631a5b7",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:3c3cbf1bf7340f9aac6047bf8f3e00c3818f5371f302700b7cda3f50d368b3e4",
+      "topic_id": "ch02.subspace.column"
+    },
+    {
+      "artifact_digest": "sha256:fda6e8dc57464f8b0bcec49572a74c3f6bdf71dfa62f2581fdb889905fddc947",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:7f30d55c4caabb696d2580af0a348294585bb9d7485a413ae46873e7287124c9",
+      "topic_id": "ch02.subspace.independence"
+    },
+    {
+      "artifact_digest": "sha256:e139eca9404479bead975904b727da5eb58027ba0a94cc87db725d49cb0f6d94",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:d00c8934450a55c3e2cbbab779f31ce99c00bc1d63eb73446d94a01711428fcf",
+      "topic_id": "ch02.subspace.null"
+    },
+    {
+      "artifact_digest": "sha256:82c51c8ba78accff4016dcfb49b8f9838b33d30cedef19ab2042f6448ab859c5",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:504217b49a51096d84540949f881c4ae9ecd6f676c74f04a2843446a6c85697c",
+      "topic_id": "ch02.subspace.rank"
+    },
+    {
+      "artifact_digest": "sha256:859fa735c7ae9f9d7bcf489a629ad87c92fe324c155d017e94856bcbd68a6036",
+      "chapter": 2,
+      "revision": 1,
+      "source_hash": "sha256:076aa1d68e0591a5dde42584d6df6188c128a1bf2d5f18300cfdfe06a29fd13f",
+      "topic_id": "ch02.subspace.rank-nullity"
+    },
+    {
+      "artifact_digest": "sha256:7e723a9dab37b4b261b7da671e63be868436c1563bae124d2abcbb4510a5465d",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
+      "topic_id": "ch03.cramer.area-ratio"
+    },
+    {
+      "artifact_digest": "sha256:e418d0c44a324a7555f965f16be5db32fccb27f695a03464a038bd8f20ecd746",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:cf8be46dd084ee719f2fdc8a314eb6ed8106ff42972a605d2f3e80ea9d061546",
+      "topic_id": "ch03.det.ad-bc"
+    },
+    {
+      "artifact_digest": "sha256:b5de211eac869c1e648d3cb3085b2b612b6a94b1a8049cbdf9254767257d6800",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:64b698a22859115514a2815e7ded5618e1d7b41aac9a28eb5b0ce39d7cee09f4",
+      "topic_id": "ch03.det.examples"
+    },
+    {
+      "artifact_digest": "sha256:94e94c8b8aeb9f77663381434c1eee168f48ce8d41134918f8dcc8a910886710",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:325a14583a942b2e5d5c8f81bca1568ca4281a087bb1e401dec33530f3686d78",
+      "topic_id": "ch03.det.high-dimensional-volume"
+    },
+    {
+      "artifact_digest": "sha256:5a97b3aae3537e8567efcb9b856db53af2cde588461b7102d8fe51c400fb7e89",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
+      "topic_id": "ch03.det.multiplicativity"
+    },
+    {
+      "artifact_digest": "sha256:a04724ea5dbd7ec7b4ddc0625dee74b3ec2872222d14779d8d8a263eea000ba2",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323",
+      "topic_id": "ch03.det.oriented-area"
+    },
+    {
+      "artifact_digest": "sha256:06efe5a942113ff8691c288fe4e7a6794818a181538dcc93bf0d1e29b5da94da",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
+      "topic_id": "ch03.det.row-swap"
+    },
+    {
+      "artifact_digest": "sha256:2973125e7ec12d2255a5f81bdf98d40991f6db435f48762f139bba93e3227366",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
+      "topic_id": "ch03.det.scaling"
+    },
+    {
+      "artifact_digest": "sha256:73d8d7c7cc3d45a55201c5626a095c50d5e4b29b8b33835c979bf8bf367ebe6b",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
+      "topic_id": "ch03.det.shear"
+    },
+    {
+      "artifact_digest": "sha256:94c504b214dc81e13bce9e5627a5c3e50a1f6115d1f4b08fa7db0d5415bf760e",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:85c2dfa15eb9d5444acced285069532710e5182167f8b120e7bf98b9bd7689b4",
+      "topic_id": "ch03.det.sign-zero-one"
+    },
+    {
+      "artifact_digest": "sha256:62a77979dcbd294a5de0f2c3f6d0a5b4e4c8a488e608beb5bd39b5da84202750",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:4eeb58f2ff6eda37648b0c36dd461128c7afdd24872497bbd261dac8f8ed7ab3",
+      "topic_id": "ch03.det.zero.equivalence"
+    },
+    {
+      "artifact_digest": "sha256:3e512d1688fafccf990e9999cc19dc89f3aac0c927ee9670abce936e23fabd47",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:e48d69d1b35b71b0a70f2cf1c38f928dc7d843d93da7ca3deed991ce29004b9e",
+      "topic_id": "ch03.inverse.examples"
+    },
+    {
+      "artifact_digest": "sha256:ee5892b47bfff164a6049c8a40216ff70035b9401478f58adb1fe1d2ad6308c9",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:1e1869e796f6a4440cfab9915bf03553ca938b34742a29655ce1b0ed2334154c",
+      "topic_id": "ch03.inverse.formula"
+    },
+    {
+      "artifact_digest": "sha256:508e5b4725b364d306d385cceaf04bead8c21275ef7c103a55fac29db95937b2",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:ffa4c79ebbf8be28ecd21dcd13d91bfa6b2234bf8797f7fc19ec0d33c0ddd905",
+      "topic_id": "ch03.inverse.reverse-order"
+    },
+    {
+      "artifact_digest": "sha256:47ec64021cab05b2691a19ff7c85d734ac3ce067ad469cadff742152fd8f9177",
+      "chapter": 3,
+      "revision": 1,
+      "source_hash": "sha256:1412f3abb56f905fb252ee42c4ff91603976acdf1595bb39007c54d5d9efe6e4",
+      "topic_id": "ch03.inverse.undo"
     }
   ]
 }

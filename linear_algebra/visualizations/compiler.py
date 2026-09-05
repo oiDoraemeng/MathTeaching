@@ -241,6 +241,25 @@ class VisualSemanticsCompiler:
         if "projection_2d" in declared and "geometry.projection" not in operation_names:
             if len(vectors2) >= 2:
                 operations.append({"op": "geometry.projection", "vector": list(vectors2[0]), "direction": list(vectors2[1]), "result_alias": "cap__projection", "foot_alias": "cap__foot", "residual_alias": "cap__residual", "color": role_color("projection")})
+        if "transformed_grid" in declared and "geometry.transformed_grid" not in operation_names and semantics.scene_kind == "2d":
+            matrix = next(
+                (matrix for entity in semantics.entities if (matrix := _matrix2(entity.value)) is not None),
+                None,
+            )
+            matrix = matrix or [[1.0, 0.0], [0.0, 1.0]]
+            operations.append({"op": "geometry.transformed_grid", "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color("transformed_a")})
+        if "subspace_region" in declared and "geometry.subspace_region" not in operation_names and semantics.scene_kind == "2d":
+            basis = vectors2[:2]
+            if len(basis) >= 1:
+                operations.append({"op": "geometry.subspace_region", "basis": [list(vector) for vector in basis], "bounds": list(context.bounds), "opacity": 0.2, "color": role_color("area")})
+        if "staged_transform" in declared and "geometry.staged_transform" not in operation_names and semantics.scene_kind == "2d":
+            matrix = next(
+                (matrix for entity in semantics.entities if (matrix := _matrix2(entity.value)) is not None),
+                None,
+            )
+            point_values = [list(_coordinates(entity.value, 2)) for entity in semantics.entities if entity.kind == "vector" and entity.dimension == 2][:2]
+            if matrix is not None and point_values:
+                operations.append({"op": "geometry.staged_transform", "matrices": [matrix, [[1.0, 0.0], [0.0, 1.0]]], "points": point_values, "aliases": ["cap__stage_source", "cap__stage_target"]})
         if "angle_2d" in declared and "geometry.angle_arc" not in operation_names:
             if len(vectors2) >= 2:
                 operations.append({"op": "geometry.angle_arc", "alias": "cap__angle", "vertex": [0.0, 0.0], "first": list(vectors2[0]), "second": list(vectors2[1]), "radius": 0.45, "color": role_color("projection")})
@@ -464,6 +483,13 @@ class VisualSemanticsCompiler:
             operations.append({"op": "geometry.transformed_grid", "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color("transformed_a")})
             return operations, [relation_alias]
         matrices = relation.parameters.get("matrices") if isinstance(relation.parameters, Mapping) else None
+        # A semantic relation parameter is intentionally bounded to one scalar,
+        # vector, or matrix.  Accept a single ``matrix`` as the compact
+        # one-stage form and normalize it for the staged-transform primitive.
+        if not _matrix_sequence(matrices) and isinstance(relation.parameters, Mapping):
+            single_matrix = relation.parameters.get("matrix")
+            if _matrix2(single_matrix) is not None:
+                matrices = [single_matrix]
         if relation.kind == "composition_order" and _matrix_sequence(matrices):
             points = [_coordinates(entity_by_id[ref].value, 2) for ref in (relation.source_ref, relation.target_ref)]
             operations.append({"op": "geometry.staged_transform", "matrices": matrices, "points": [list(point) for point in points], "aliases": [f"{relation_alias}__source", f"{relation_alias}__target"]})

@@ -191,13 +191,25 @@ def validate_capability_plan(
     errors: list[str] = []
     declarative_skips = {
         "vector_3d": "topic storyboard is 2d; 3d analogy is retained in explanation semantics",
+        # The n-dimensional determinant topic is rendered as a 3D volume.
+        # Its catalog also names the 2D oriented-area primitive to preserve the
+        # area -> volume analogy, but a 2D command cannot be placed in a 3D
+        # CommandPlan.  The signed-area bridge remains in the artifact prose
+        # and typed 3D volume evidence.
+        "oriented_area_2d": "topic storyboard is 3d; 2d area is retained as the explanation analogy",
+        "transformed_grid": "topic storyboard is 3d; transformed grid is retained as the explanation analogy",
+        "subspace_region": "topic storyboard is 3d; subspace region is retained as the explanation analogy",
     }
     for capability in topic.required_capabilities:
         expected_operation = registry.capabilities.get(capability)
         if expected_operation is None:
             errors.append(f"{topic.id}: capability_mismatch {capability}: no operation mapping")
         elif expected_operation not in operations:
-            if capability in declarative_skips and plan.scene == "2d":
+            if (
+                (capability == "vector_3d" and plan.scene == "2d")
+                or (capability == "oriented_area_2d" and plan.scene == "3d")
+                or (capability in {"transformed_grid", "subspace_region"} and plan.scene == "3d")
+            ):
                 continue
             errors.append(
                 f"{topic.id}: capability_mismatch {capability}: expected operation "
