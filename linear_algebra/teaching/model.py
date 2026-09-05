@@ -12,6 +12,13 @@ from types import MappingProxyType
 from typing import Literal, Mapping, TypeAlias
 
 from .source import SourceContext, SourceSpan
+from .vocabulary import (
+    ENTITY_KINDS,
+    LAYOUTS,
+    RELATION_KINDS,
+    VECTOR_DIMENSIONS,
+    validate_semantic_value,
+)
 
 
 ArtifactStatus: TypeAlias = Literal["draft", "reviewed", "published"]
@@ -140,9 +147,12 @@ class VisualEntity:
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "id", _constructor_string(self.id, "id"))
-        object.__setattr__(self, "kind", _constructor_string(self.kind, "kind"))
-        object.__setattr__(self, "dimension", _constructor_integer(self.dimension, "dimension"))
-        object.__setattr__(self, "value", _freeze_json(self.value, "$.value"))
+        object.__setattr__(self, "kind", _constructor_vocabulary_choice(self.kind, "kind", ENTITY_KINDS))
+        dimension = _constructor_integer(self.dimension, "dimension")
+        if dimension not in VECTOR_DIMENSIONS:
+            raise ValueError("dimension: expected 2 or 3")
+        object.__setattr__(self, "dimension", dimension)
+        object.__setattr__(self, "value", _freeze_semantic_value(self.value, "$.value"))
         object.__setattr__(self, "role", _constructor_string(self.role, "role"))
         object.__setattr__(self, "label", _constructor_string(self.label, "label"))
         object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
@@ -161,12 +171,10 @@ class VisualRelation:
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "id", _constructor_string(self.id, "id"))
-        object.__setattr__(self, "kind", _constructor_string(self.kind, "kind"))
+        object.__setattr__(self, "kind", _constructor_vocabulary_choice(self.kind, "kind", RELATION_KINDS))
         object.__setattr__(self, "source_ref", _constructor_string(self.source_ref, "source_ref"))
         object.__setattr__(self, "target_ref", _constructor_string(self.target_ref, "target_ref"))
-        parameters = _freeze_json(self.parameters, "$.parameters")
-        if not isinstance(parameters, Mapping):
-            raise ValueError("$.parameters: expected object")
+        parameters = _freeze_semantic_parameters(self.parameters, "$.parameters")
         object.__setattr__(self, "parameters", parameters)
         object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
 
@@ -188,7 +196,7 @@ class VisualStage:
         object.__setattr__(self, "id", _constructor_string(self.id, "id"))
         object.__setattr__(self, "title", _constructor_string(self.title, "title"))
         object.__setattr__(self, "caption", _constructor_string(self.caption, "caption"))
-        object.__setattr__(self, "layout", _constructor_choice(self.layout, "layout", ("overlay", "side_by_side", "sequence")))
+        object.__setattr__(self, "layout", _constructor_vocabulary_choice(self.layout, "layout", LAYOUTS))
         for field in ("input_entity_refs", "output_entity_refs", "relation_refs", "expected_invariants"):
             object.__setattr__(self, field, _constructor_string_tuple(getattr(self, field), field))
 
@@ -419,11 +427,15 @@ def _decode_visual_semantics(payload: Mapping[str, object], path: str) -> Visual
 
 def _decode_visual_entity(payload: Mapping[str, object], path: str) -> VisualEntity:
     record = _object(payload, path, _ENTITY_FIELDS)
+    kind = _vocabulary_choice(record["kind"], f"{path}.kind", ENTITY_KINDS)
+    dimension = _integer(record["dimension"], f"{path}.dimension")
+    if dimension not in VECTOR_DIMENSIONS:
+        raise ValueError(f"{path}.dimension: expected 2 or 3")
     return VisualEntity(
         id=_string(record["id"], f"{path}.id"),
-        kind=_string(record["kind"], f"{path}.kind"),
-        dimension=_integer(record["dimension"], f"{path}.dimension"),
-        value=_freeze_json(record["value"], f"{path}.value"),
+        kind=kind,
+        dimension=dimension,
+        value=_freeze_semantic_value(record["value"], f"{path}.value"),
         role=_string(record["role"], f"{path}.role"),
         label=_string(record["label"], f"{path}.label"),
         claim_refs=_string_tuple(record["claim_refs"], f"{path}.claim_refs"),
@@ -432,24 +444,19 @@ def _decode_visual_entity(payload: Mapping[str, object], path: str) -> VisualEnt
 
 def _decode_visual_relation(payload: Mapping[str, object], path: str) -> VisualRelation:
     record = _object(payload, path, _RELATION_FIELDS)
-    parameters = _freeze_json(record["parameters"], f"{path}.parameters")
-    if not isinstance(parameters, Mapping):
-        raise ValueError(f"{path}.parameters: expected object")
     return VisualRelation(
         id=_string(record["id"], f"{path}.id"),
-        kind=_string(record["kind"], f"{path}.kind"),
+        kind=_vocabulary_choice(record["kind"], f"{path}.kind", RELATION_KINDS),
         source_ref=_string(record["source_ref"], f"{path}.source_ref"),
         target_ref=_string(record["target_ref"], f"{path}.target_ref"),
-        parameters=parameters,
+        parameters=_freeze_semantic_parameters(record["parameters"], f"{path}.parameters"),
         claim_refs=_string_tuple(record["claim_refs"], f"{path}.claim_refs"),
     )
 
 
 def _decode_visual_stage(payload: Mapping[str, object], path: str) -> VisualStage:
     record = _object(payload, path, _STAGE_FIELDS)
-    layout = _string(record["layout"], f"{path}.layout")
-    if layout not in {"overlay", "side_by_side", "sequence"}:
-        raise ValueError(f"{path}.layout: expected overlay, side_by_side, or sequence")
+    layout = _vocabulary_choice(record["layout"], f"{path}.layout", LAYOUTS)
     return VisualStage(
         id=_string(record["id"], f"{path}.id"),
         title=_string(record["title"], f"{path}.title"),
@@ -712,6 +719,13 @@ def _constructor_choice(value: object, field: str, choices: tuple[str, ...]) -> 
     return value
 
 
+def _constructor_vocabulary_choice(value: object, field: str, choices: frozenset[str]) -> str:
+    value = _constructor_string(value, field)
+    if value not in choices:
+        raise TypeError(f"{field}: unsupported value {value!r}")
+    return value
+
+
 def _constructor_string_mapping(value: object, field: str) -> Mapping[str, str]:
     if not isinstance(value, Mapping):
         raise TypeError(f"{field}: expected mapping")
@@ -736,6 +750,28 @@ def _freeze_json(value: object, path: str) -> JsonValue:
             {key: _freeze_json(item, f"{path}.{key}") for key, item in value.items()}
         )
     raise ValueError(f"{path}: expected JSON-safe value")
+
+
+def _vocabulary_choice(value: object, path: str, choices: frozenset[str]) -> str:
+    value = _string(value, path)
+    if value not in choices:
+        raise ValueError(f"{path}: unsupported value {value!r}")
+    return value
+
+
+def _freeze_semantic_value(value: object, path: str) -> JsonValue:
+    issues = validate_semantic_value(value, path)
+    if issues:
+        raise ValueError(str(issues[0]))
+    return _freeze_json(value, path)
+
+
+def _freeze_semantic_parameters(value: object, path: str) -> Mapping[str, JsonValue]:
+    parameters = _mapping(value, path)
+    frozen: dict[str, JsonValue] = {}
+    for key, parameter in parameters.items():
+        frozen[key] = _freeze_semantic_value(parameter, f"{path}.{key}")
+    return MappingProxyType(frozen)
 
 
 def _thaw_json(value: JsonValue) -> object:
