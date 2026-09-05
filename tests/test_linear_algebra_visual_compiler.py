@@ -107,3 +107,72 @@ def test_evidence_ledger_rejects_relation_without_compiled_endpoint() -> None:
     _, issues = build_evidence_ledger(artifact, AliasView())  # type: ignore[arg-type]
 
     assert any(issue.code == "missing_endpoint_evidence" for issue in issues)
+
+
+def test_compiler_maps_signed_area_and_volume_orientation_primitives() -> None:
+    area = VisualSemantics.from_dict(
+        {
+            "scene_kind": "2d",
+            "entities": [
+                {
+                    "id": "area",
+                    "kind": "area",
+                    "dimension": 2,
+                    "value": [[2, 0], [0, 1]],
+                    "role": "area",
+                    "label": "oriented area",
+                    "claim_refs": [],
+                }
+            ],
+            "relations": [],
+            "stages": [
+                {
+                    "id": "stage.area",
+                    "title": "有向面积",
+                    "caption": "",
+                    "layout": "sequence",
+                    "input_entity_refs": ["area"],
+                    "output_entity_refs": ["area"],
+                    "relation_refs": [],
+                    "expected_invariants": [],
+                }
+            ],
+        }
+    )
+    volume = VisualSemantics.from_dict(
+        {
+            "scene_kind": "3d",
+            "entities": [
+                {
+                    "id": "volume",
+                    "kind": "volume",
+                    "dimension": 3,
+                    "value": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                    "role": "volume",
+                    "label": "oriented volume",
+                    "claim_refs": [],
+                }
+            ],
+            "relations": [],
+            "stages": [
+                {
+                    "id": "stage.volume",
+                    "title": "有向体积",
+                    "caption": "",
+                    "layout": "sequence",
+                    "input_entity_refs": ["volume"],
+                    "output_entity_refs": ["volume"],
+                    "relation_refs": [],
+                    "expected_invariants": [],
+                }
+            ],
+        }
+    )
+
+    area_plan = VisualSemanticsCompiler().compile(area, _permissive_contract("ch01.ops.cross-product"), RenderContext.default("ch01.ops.cross-product")).plan
+    volume_plan = VisualSemanticsCompiler().compile(volume, _permissive_contract("ch03.det.multiplicativity"), RenderContext.default("ch03.det.multiplicativity")).plan
+
+    assert any(operation["op"] == "geometry.oriented_area" for operation in area_plan.operations)
+    assert any(operation["op"] == "geometry.oriented_volume" for operation in volume_plan.operations)
+    assert SceneCommandService().validate(area_plan).valid
+    assert SceneCommandService().validate(volume_plan).valid

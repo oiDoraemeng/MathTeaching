@@ -267,7 +267,7 @@ class VisualSemanticsCompiler:
         elif entity.kind == "volume" and scene == "3d":
             vectors = _vectors3(entity.value)
             if len(vectors) == 3:
-                operations.append({"op": "geometry.parallelepiped", "alias": prefix, "origin": [0.0, 0.0, 0.0], "vectors": [list(vector) for vector in vectors], "opacity": 0.2})
+                operations.append({"op": "geometry.oriented_volume", "alias": prefix, "origin": [0.0, 0.0, 0.0], "vectors": [list(vector) for vector in vectors]})
                 aliases.append(prefix)
         return operations, aliases
 
@@ -303,10 +303,23 @@ class VisualSemanticsCompiler:
         if relation.kind == "maps_to" and matrix is not None and semantics.scene_kind == "2d":
             operations.append({"op": "linear_algebra.matrix_transform", "matrix": matrix})
             return operations, [relation_alias]
+        if relation.kind == "batch_maps_to" and matrix is not None and semantics.scene_kind == "2d":
+            operations.append({"op": "geometry.transformed_grid", "matrix": matrix, "bounds": list(context.bounds), "step": 1.0})
+            return operations, [relation_alias]
         matrices = relation.parameters.get("matrices") if isinstance(relation.parameters, Mapping) else None
         if relation.kind == "composition_order" and _matrix_sequence(matrices):
             points = [_coordinates(entity_by_id[ref].value, 2) for ref in (relation.source_ref, relation.target_ref)]
             operations.append({"op": "geometry.staged_transform", "matrices": matrices, "points": [list(point) for point in points], "aliases": [f"{relation_alias}__source", f"{relation_alias}__target"]})
+            return operations, [relation_alias]
+        if relation.kind == "orientation" and semantics.scene_kind == "2d":
+            first = _coordinates(source.value, 2)
+            second = _coordinates(target.value, 2)
+            operations.append({"op": "geometry.angle_arc", "alias": relation_alias, "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "radius": 0.45})
+            return operations, [relation_alias]
+        if relation.kind == "orthogonal_to" and semantics.scene_kind == "2d":
+            first = _coordinates(source.value, 2)
+            second = _coordinates(target.value, 2)
+            operations.append({"op": "geometry.right_angle_marker", "alias": relation_alias, "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "size": 0.3})
             return operations, [relation_alias]
         # Semantic relations without a dedicated primitive remain visible as
         # bounded annotations.  They do not carry executable text or colors.
