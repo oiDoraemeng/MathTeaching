@@ -19,6 +19,7 @@ from .model import (
 )
 from .parser import AgentReplyError, parse_agent_reply
 from .revisions import ArtifactDiff, FieldChange, diff_artifacts
+from .legacy import LegacyTeachingArtifact, adapt_legacy_explanation, publish_legacy_artifact
 from .validation import validate_teaching_depth, validate_source_evidence, validate_worked_examples
 from .source import LectureSourceRepository, SourceContext, SourceSpan, normalize_source_text
 from .store import (
@@ -36,6 +37,7 @@ from .vocabulary import VisualVocabulary
 __all__ = [
     "Claim",
     "AgentReplyError",
+    "LegacyTeachingArtifact",
     "ArtifactDiff",
     "FieldChange",
     "WorkedExample",
@@ -70,6 +72,8 @@ __all__ = [
     "ProviderExplanationAgent",
     "parse_agent_reply",
     "diff_artifacts",
+    "adapt_legacy_explanation",
+    "publish_legacy_artifact",
     "validate_source_evidence",
     "validate_teaching_depth",
     "verify_worked_example",

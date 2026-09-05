@@ -24,7 +24,7 @@
 - [x] 3.3 实现原子发布：临时文件校验通过后替换 index，失败时保留旧 revision；用写入中断和 schema 失败测试验证旧版本可读
 - [x] 3.4 实现 source hash stale 检测和发布回退；用讲义片段变更测试验证旧 published 可继续查看、旧图形可继续使用
 - [x] 3.5 实现 artifact revision 比较：按 claims、解释区块、视觉语义和生成元数据输出差异；用同主题两版 fixture 验证比较不触发场景执行
-- [ ] 3.6 为旧 `ExplanationContent` 增加只读适配器，并将迁移状态写入 registry；用旧资源测试验证兼容读取但禁止无 visual semantics 的新发布
+- [x] 3.6 为旧 `ExplanationContent` 增加只读适配器，并将迁移状态写入 registry；用旧资源测试验证兼容读取但禁止无 visual semantics 的新发布
 
 ## 4. 视觉语义编译器
 

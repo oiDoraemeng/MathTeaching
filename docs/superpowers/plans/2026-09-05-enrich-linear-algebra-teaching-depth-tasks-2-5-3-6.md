@@ -607,7 +607,7 @@ git commit -m "feat: compare teaching artifact revisions"
 - Consumes: current `ExplanationContent` catalog values.
 - Produces: `adapt_legacy_explanation(topic, content) -> LegacyTeachingArtifact` marked `migration_pending` and read-only.
 
-- [ ] **Step 1: Write compatibility and publication-block tests**
+- [x] **Step 1: Write compatibility and publication-block tests**
 
 ```python
 def test_legacy_explanation_can_be_read_as_pending_artifact() -> None:
@@ -623,13 +623,13 @@ def test_legacy_artifact_cannot_be_published() -> None:
         publish_legacy_artifact(adapt_legacy_explanation(topic, explanation_for(topic.id)))
 ```
 
-- [ ] **Step 2: Run legacy tests and verify missing adapter failure**
+- [x] **Step 2: Run legacy tests and verify missing adapter failure**
 
 Run: `pytest tests/test_linear_algebra_teaching_legacy.py -q`
 
 Expected: FAIL because the adapter is missing.
 
-- [ ] **Step 3: Implement a read-only migration adapter**
+- [x] **Step 3: Implement a read-only migration adapter**
 
 ```python
 def adapt_legacy_explanation(entry: LessonEntry, content: ExplanationContent) -> LegacyTeachingArtifact:
@@ -644,19 +644,19 @@ def adapt_legacy_explanation(entry: LessonEntry, content: ExplanationContent) ->
 
 Keep this adapter independent of `catalog_registry()` and `explanation_for()` so `registry.py` can inject both values without a circular import. Keep it outside the published `TeachingArtifact` model; the important contract is read compatibility and an explicit block on new publication without claims/visual semantics.
 
-- [ ] **Step 4: Verify registry compatibility**
+- [x] **Step 4: Verify registry compatibility**
 
 Run: `pytest tests/test_linear_algebra_teaching_legacy.py tests/test_linear_algebra_registry.py tests/test_linear_algebra_explanations.py -q`
 
 Expected: PASS; old explanations remain readable and no legacy artifact enters the published index.
 
-- [ ] **Step 5: Run all plan-2 tests**
+- [x] **Step 5: Run all plan-2 tests**
 
 Run: `pytest tests/test_linear_algebra_teaching_depth.py tests/test_linear_algebra_teaching_examples.py tests/test_linear_algebra_teaching_generation.py tests/test_linear_algebra_teaching_store.py tests/test_linear_algebra_teaching_audit.py tests/test_linear_algebra_teaching_publish.py tests/test_linear_algebra_teaching_stale.py tests/test_linear_algebra_teaching_revisions.py tests/test_linear_algebra_teaching_legacy.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit the complete artifact workflow**
+- [x] **Step 6: Commit the complete artifact workflow**
 
 ```bash
 git add linear_algebra/teaching linear_algebra/registry.py tests/test_linear_algebra_teaching_*.py

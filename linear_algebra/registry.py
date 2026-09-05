@@ -10,6 +10,7 @@ from linear_algebra.catalog.manifest import lecture_manifest, topic_entries
 from linear_algebra.catalog.model import LessonEntry, LessonNode
 from linear_algebra.explanations import explanation_for
 from linear_algebra.explanations.model import ExplanationContent
+from linear_algebra.teaching.legacy import LegacyTeachingArtifact, adapt_legacy_explanation
 from linear_algebra.visualizations import recipe_for
 from linear_algebra.visualizations.common import VisualizationRecipe
 
@@ -58,6 +59,10 @@ class CurriculumRegistry:
             return self.recipes[visualization_id]
         except KeyError as error:
             raise KeyError(f"Unknown linear algebra visualization: {visualization_id}") from error
+
+    def get_legacy_explanation(self, topic_id: str) -> LegacyTeachingArtifact:
+        topic = self.get_topic(topic_id)
+        return adapt_legacy_explanation(topic, self.get_explanation(topic.explanation_id))
 
 
 _REGISTRY: CurriculumRegistry | None = None
