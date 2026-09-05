@@ -178,7 +178,7 @@
         ],
         "checks": [
           {
-            "expected": 10,
+            "expected": 4,
             "name": "result",
             "tolerance": 1e-09
           }
@@ -193,12 +193,12 @@
           ],
           [
             2,
-            4
+            1
           ]
         ],
         "id": "example.claim.ch01.inner.cauchy-schwarz",
         "kind": "inner_product",
-        "result": 10,
+        "result": 4,
         "title": "讲义公式的可复算数值例"
       }
     ]
@@ -289,7 +289,7 @@
         "role": "vector_b",
         "value": [
           2,
-          4
+          1
         ]
       }
     ],
