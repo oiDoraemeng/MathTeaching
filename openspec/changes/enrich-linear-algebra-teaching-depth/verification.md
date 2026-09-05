@@ -3,7 +3,7 @@
 ## Automated checks
 
 - `python -m linear_algebra.validation`: passed, 54 catalog topics with chapter counts 24/15/15.
-- `python -m pytest -q`: passed, 662 tests.
+- `python -m pytest -q`: passed, 663 tests.
 - `ui/agent_web`: `pnpm test -- --run` passed, 53 tests across 17 files.
 - `ui/agent_web`: `pnpm build` passed.
 - `openspec validate --changes enrich-linear-algebra-teaching-depth --strict`: passed.
