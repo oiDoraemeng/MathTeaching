@@ -69,8 +69,18 @@ def validate_closed_references(artifact: TeachingArtifact) -> tuple[ValidationIs
     span_ids = _collect_ids(issues, spans, "$.source.spans", "source span")
 
     known_topic_ids = {topic.id for topic in topic_entries()}
+    connected_topic_ids: set[str] = set()
     for connection_index, connection in enumerate(connections):
         path = f"$.connections[{connection_index}]"
+        if connection.target_topic_id in connected_topic_ids:
+            issues.append(
+                ValidationIssue(
+                    "duplicate_id",
+                    f"{path}.target_topic_id",
+                    f"duplicate connection topic id {connection.target_topic_id!r}",
+                )
+            )
+        connected_topic_ids.add(connection.target_topic_id)
         _append_missing_refs(
             issues,
             (connection.target_topic_id,),

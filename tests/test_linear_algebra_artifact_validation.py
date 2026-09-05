@@ -89,3 +89,18 @@ def test_duplicate_connection_ids_are_reported() -> None:
         issue.path == "$.connections[1].id" and issue.code == "duplicate_id"
         for issue in issues
     )
+
+
+def test_duplicate_connection_topic_ids_are_reported() -> None:
+    payload = composition_artifact_payload()
+    duplicate = dict(payload["connections"][0])  # type: ignore[index]
+    duplicate["id"] = "connection.composition-powers"
+    payload["connections"].append(duplicate)  # type: ignore[index]
+    artifact = TeachingArtifact.from_dict(payload)
+
+    issues = validate_closed_references(artifact)
+
+    assert any(
+        issue.path == "$.connections[1].target_topic_id" and issue.code == "duplicate_id"
+        for issue in issues
+    )
