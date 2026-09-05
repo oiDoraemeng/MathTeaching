@@ -137,6 +137,140 @@ def validate_closed_references(artifact: TeachingArtifact) -> tuple[ValidationIs
     return tuple(_sorted_issues(issues))
 
 
+_VISUAL_SYMBOL_ROLES = frozenset(
+    {
+        "vector_a",
+        "vector_b",
+        "basis_e1",
+        "basis_e2",
+        "transformed_a",
+        "transformed_b",
+        "projection",
+        "residual",
+        "foot",
+        "direction",
+        "area",
+        "volume",
+    }
+)
+
+
+def validate_claim_bindings(artifact: TeachingArtifact) -> tuple[ValidationIssue, ...]:
+    """Validate formula declarations and the visual evidence for every claim.
+
+    Formula strings are presentation text.  They are deliberately not parsed as
+    TeX here; the producer must declare the symbols in ``Claim.formula_symbols``.
+    The declaration is checked against the explanation symbol table and visual
+    entity IDs, while each evidence list is checked against the corresponding
+    visual graph and its reverse claim link.
+    """
+
+    entities = artifact.visual_semantics.entities
+    relations = artifact.visual_semantics.relations
+    stages = artifact.visual_semantics.stages
+    entity_ids = {entity.id for entity in entities}
+    relation_ids = {relation.id for relation in relations}
+    stage_ids = {stage.id for stage in stages}
+    known_symbols = set(artifact.explanation.symbol_roles) | entity_ids
+    issues: list[ValidationIssue] = []
+
+    for claim_index, claim in enumerate(artifact.claims):
+        path = f"$.claims[{claim_index}]"
+        for symbol_index, symbol in enumerate(claim.formula_symbols):
+            if symbol not in known_symbols:
+                issues.append(
+                    ValidationIssue(
+                        "unbound_formula_symbol",
+                        f"{path}.formula_symbols[{symbol_index}]",
+                        f"formula symbol {symbol!r} is not declared in explanation.symbol_roles or visual entities",
+                    )
+                )
+
+        evidence = (
+            ("entity_refs", claim.entity_refs, entity_ids, entities, "entity"),
+            ("relation_refs", claim.relation_refs, relation_ids, relations, "relation"),
+        )
+        for field, references, known_ids, records, label in evidence:
+            field_path = f"{path}.{field}"
+            if not references:
+                issues.append(
+                    ValidationIssue(
+                        "claim_missing_evidence",
+                        field_path,
+                        f"claim {claim.id!r} has no visual {label} evidence",
+                    )
+                )
+                continue
+            _append_missing_refs(issues, references, known_ids, field_path, label)
+            for reference_index, reference in enumerate(references):
+                if reference not in known_ids:
+                    continue
+                record = next(item for item in records if item.id == reference)
+                if claim.id not in record.claim_refs:
+                    issues.append(
+                        ValidationIssue(
+                            "claim_missing_evidence",
+                            f"{field_path}[{reference_index}]",
+                            f"{label} {reference!r} does not link back to claim {claim.id!r}",
+                        )
+                    )
+
+        stage_path = f"{path}.stage_refs"
+        if not claim.stage_refs:
+            issues.append(
+                ValidationIssue(
+                    "claim_missing_evidence",
+                    stage_path,
+                    f"claim {claim.id!r} has no visual stage evidence",
+                )
+            )
+        else:
+            _append_missing_refs(issues, claim.stage_refs, stage_ids, stage_path, "stage")
+            referenced_relations = set(claim.relation_refs) & relation_ids
+            referenced_entities = set(claim.entity_refs) & entity_ids
+            for stage_index, stage_id in enumerate(claim.stage_refs):
+                if stage_id not in stage_ids:
+                    continue
+                stage = next(item for item in stages if item.id == stage_id)
+                visible = (
+                    set(stage.input_entity_refs)
+                    | set(stage.output_entity_refs)
+                    | set(stage.relation_refs)
+                )
+                if not visible & (referenced_entities | referenced_relations):
+                    issues.append(
+                        ValidationIssue(
+                            "claim_missing_evidence",
+                            f"{stage_path}[{stage_index}]",
+                            f"stage {stage_id!r} contains no evidence linked by claim {claim.id!r}",
+                        )
+                    )
+
+        # A declared visual role is meaningful only when the claim actually
+        # references a matching entity.  This catches, for example, a
+        # projection formula that mentions a residual while the residual entity
+        # was omitted from the storyboard.
+        referenced_entities = set(claim.entity_refs) & entity_ids
+        for symbol in claim.formula_symbols:
+            role = artifact.explanation.symbol_roles.get(symbol)
+            if role not in _VISUAL_SYMBOL_ROLES:
+                continue
+            if not any(
+                entity.id in referenced_entities
+                and (entity.id == symbol or entity.role == role)
+                for entity in entities
+            ):
+                issues.append(
+                    ValidationIssue(
+                        "claim_missing_evidence",
+                        f"{path}.entity_refs",
+                        f"formula symbol {symbol!r} with visual role {role!r} has no referenced visual entity",
+                    )
+                )
+
+    return tuple(_sorted_issues(issues))
+
+
 @lru_cache(maxsize=1)
 def _validator() -> Draft202012Validator:
     return Draft202012Validator(load_artifact_schema())
@@ -210,5 +344,6 @@ __all__ = [
     "ArtifactValidationError",
     "ValidationIssue",
     "validate_artifact_payload",
+    "validate_claim_bindings",
     "validate_closed_references",
 ]
