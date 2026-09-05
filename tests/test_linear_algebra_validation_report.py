@@ -2,7 +2,12 @@ from pathlib import Path
 
 from linear_algebra.registry import catalog_registry
 from linear_algebra.teaching.store import TeachingArtifactStore
-from linear_algebra.validation import audit_published_artifacts, validate_capability_plan, validate_visual_role_palette
+from linear_algebra.validation import (
+    audit_published_artifacts,
+    validate_capability_plan,
+    validate_curriculum,
+    validate_visual_role_palette,
+)
 from services.scene_commands import CommandPlan
 
 
@@ -38,3 +43,15 @@ def test_artifact_audit_reports_full_topic_coverage_and_missing_publications(tmp
     assert len(summary.errors) == 54
     assert summary.errors[0].endswith("missing published artifact")
     assert summary.to_dict()["chapter_counts"] == {"1": 24, "2": 15, "3": 15}
+
+
+def test_layered_curriculum_report_can_require_published_content(tmp_path: Path) -> None:
+    report = validate_curriculum(
+        artifact_store=TeachingArtifactStore(tmp_path),
+        require_published=True,
+    )
+
+    assert report.topic_count_by_chapter == {1: 24, 2: 15, 3: 15}
+    assert report.source_errors == ()
+    assert len(report.content_errors) == 54
+    assert report.content_errors[0].startswith("content:ch")

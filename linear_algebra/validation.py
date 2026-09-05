@@ -68,6 +68,92 @@ class TeachingValidationSummary:
         }
 
 
+@dataclass(frozen=True)
+class ValidationReport:
+    """Layered curriculum validation suitable for CI and editor diagnostics."""
+
+    topic_count_by_chapter: dict[int, int]
+    source_errors: tuple[str, ...] = ()
+    content_errors: tuple[str, ...] = ()
+    semantic_errors: tuple[str, ...] = ()
+    execution_errors: tuple[str, ...] = ()
+
+    @property
+    def errors(self) -> tuple[str, ...]:
+        return (*self.source_errors, *self.content_errors, *self.semantic_errors, *self.execution_errors)
+
+
+def validate_curriculum(
+    registry: CurriculumRegistry | None = None,
+    *,
+    source_path: Path | None = None,
+    artifact_store: TeachingArtifactStore | None = None,
+    require_published: bool = False,
+) -> ValidationReport:
+    """Run source/content/semantic/execution checks without mutating resources.
+
+    With no artifact store this validates the legacy catalog and source anchors;
+    callers that provide a store can opt into strict published-resource coverage.
+    """
+
+    registry = registry or catalog_registry()
+    counts = Counter(topic.chapter_number for topic in registry.topics)
+    source_errors = list(validate_lecture_source(source_path or Path(__file__).parents[1] / ".agents" / "线性代数讲义.md", registry.topics))
+    content_errors: list[str] = []
+    semantic_errors: list[str] = []
+    execution_errors: list[str] = []
+    repository = LectureSourceRepository(source_path or Path(__file__).parents[1] / ".agents" / "线性代数讲义.md")
+    compiler = VisualSemanticsCompiler()
+    command_validator = SceneCommandService()
+    if artifact_store is not None:
+        for topic in registry.topics:
+            stored = artifact_store.published(topic.id)
+            if stored is None:
+                if require_published:
+                    content_errors.append(f"content:{topic.id}: missing published artifact")
+                continue
+            artifact = stored.artifact
+            try:
+                context = repository.context_for(topic)
+                source_errors.extend(
+                    f"source:{topic.id}: {issue.code} {issue.path}: {issue.message}"
+                    for issue in validate_source_evidence(artifact, context, topic)
+                )
+            except (OSError, ValueError) as error:
+                source_errors.append(f"source:{topic.id}: {error}")
+            content_errors.extend(
+                f"content:{topic.id}: {issue.code} {issue.path}: {issue.message}"
+                for issue in (
+                    *validate_closed_references(artifact),
+                    *validate_claim_bindings(artifact),
+                    *validate_teaching_depth(artifact),
+                    *validate_worked_examples(artifact),
+                )
+            )
+            contract = contract_for(topic.id)
+            semantic_errors.extend(
+                f"semantic:{topic.id}: {issue.code}: {issue.detail}"
+                for issue in validate_contract(artifact, contract)
+            )
+            try:
+                compiled = compiler.compile(artifact, contract, RenderContext.default(topic.id))
+            except VisualCompileError as error:
+                semantic_errors.append(f"semantic:{topic.id}: visual compilation failed: {error}")
+                continue
+            result = command_validator.validate(compiled.plan)
+            if not result.valid:
+                execution_errors.extend(
+                    f"execution:{topic.id}: {message}" for message in result.messages
+                )
+    return ValidationReport(
+        topic_count_by_chapter=dict(sorted(counts.items())),
+        source_errors=tuple(source_errors),
+        content_errors=tuple(content_errors),
+        semantic_errors=tuple(semantic_errors),
+        execution_errors=tuple(execution_errors),
+    )
+
+
 def validate_visual_role_palette(registry: CurriculumRegistry) -> tuple[str, ...]:
     """Check legacy recipe output uses the shared teaching-role palette."""
 
