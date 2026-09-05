@@ -9,10 +9,12 @@ from typing import Iterable, Mapping
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import ValidationError
 
+from linear_algebra.catalog.model import LessonEntry
 from linear_algebra.catalog.manifest import topic_entries
 
 from .model import TeachingArtifact
 from .schema import load_artifact_schema
+from .source import SourceContext
 
 
 @dataclass(frozen=True)
@@ -271,6 +273,40 @@ def validate_claim_bindings(artifact: TeachingArtifact) -> tuple[ValidationIssue
     return tuple(_sorted_issues(issues))
 
 
+def validate_source_evidence(
+    artifact: TeachingArtifact,
+    context: SourceContext,
+    entry: LessonEntry,
+) -> tuple[ValidationIssue, ...]:
+    """Check that claims still cite the current lecture source context."""
+
+    issues: list[ValidationIssue] = []
+    entry_id = entry.id
+    expected_heading_path = entry.source_anchor.heading_path
+
+    if artifact.topic_id != entry_id:
+        issues.append(ValidationIssue("topic_mismatch", "$.topic_id", artifact.topic_id))
+    if artifact.source.heading_path != expected_heading_path:
+        issues.append(
+            ValidationIssue("source_anchor_mismatch", "$.source.heading_path", str(entry_id))
+        )
+    if artifact.source.source_hash != context.source_hash:
+        issues.append(ValidationIssue("stale_source", "$.source.source_hash", str(entry_id)))
+
+    allowed_spans = {span.id for span in context.spans}
+    for claim_index, claim in enumerate(artifact.claims):
+        for ref_index, span_id in enumerate(claim.source_refs):
+            if span_id not in allowed_spans:
+                issues.append(
+                    ValidationIssue(
+                        "source_ref_out_of_context",
+                        f"$.claims[{claim_index}].source_refs[{ref_index}]",
+                        span_id,
+                    )
+                )
+    return tuple(_sorted_issues(issues))
+
+
 @lru_cache(maxsize=1)
 def _validator() -> Draft202012Validator:
     return Draft202012Validator(load_artifact_schema())
@@ -346,4 +382,5 @@ __all__ = [
     "validate_artifact_payload",
     "validate_claim_bindings",
     "validate_closed_references",
+    "validate_source_evidence",
 ]
