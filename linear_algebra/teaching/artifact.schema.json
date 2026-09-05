@@ -4,7 +4,7 @@
   "title": "Teaching artifact v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "topic_id", "revision", "status", "source", "teaching_profile", "claims", "explanation", "visual_semantics", "generated"],
+  "required": ["schema_version", "topic_id", "revision", "status", "source", "teaching_profile", "claims", "connections", "explanation", "visual_semantics", "generated"],
   "properties": {
     "schema_version": {"type": "integer"},
     "topic_id": {"type": "string"},
@@ -13,6 +13,7 @@
     "source": {"$ref": "#/$defs/source"},
     "teaching_profile": {"$ref": "#/$defs/teaching_profile"},
     "claims": {"type": "array", "items": {"$ref": "#/$defs/claim"}},
+    "connections": {"type": "array", "items": {"$ref": "#/$defs/topic_connection"}},
     "explanation": {"$ref": "#/$defs/explanation"},
     "visual_semantics": {"$ref": "#/$defs/visual_semantics"},
     "generated": {"$ref": "#/$defs/generation_receipt"}
@@ -71,6 +72,18 @@
         "entity_refs": {"$ref": "#/$defs/string_array"},
         "relation_refs": {"$ref": "#/$defs/string_array"},
         "stage_refs": {"$ref": "#/$defs/string_array"}
+      }
+    },
+    "topic_connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "target_topic_id", "relation", "description", "claim_refs"],
+      "properties": {
+        "id": {"type": "string"},
+        "target_topic_id": {"type": "string"},
+        "relation": {"type": "string"},
+        "description": {"type": "string"},
+        "claim_refs": {"$ref": "#/$defs/string_array"}
       }
     },
     "explanation_section": {

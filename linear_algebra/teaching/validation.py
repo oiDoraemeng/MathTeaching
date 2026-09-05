@@ -9,6 +9,8 @@ from typing import Iterable, Mapping
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import ValidationError
 
+from linear_algebra.catalog.manifest import topic_entries
+
 from .model import TeachingArtifact
 from .schema import load_artifact_schema
 
@@ -51,6 +53,7 @@ def validate_closed_references(artifact: TeachingArtifact) -> tuple[ValidationIs
     """Return deterministic diagnostics for duplicate IDs and unresolved graph edges."""
     issues: list[ValidationIssue] = []
     claims = artifact.claims
+    connections = artifact.connections
     entities = artifact.visual_semantics.entities
     relations = artifact.visual_semantics.relations
     stages = artifact.visual_semantics.stages
@@ -58,11 +61,40 @@ def validate_closed_references(artifact: TeachingArtifact) -> tuple[ValidationIs
     spans = artifact.source.spans
 
     claim_ids = _collect_ids(issues, claims, "$.claims", "claim")
+    _collect_ids(issues, connections, "$.connections", "connection")
     entity_ids = _collect_ids(issues, entities, "$.visual_semantics.entities", "entity")
     relation_ids = _collect_ids(issues, relations, "$.visual_semantics.relations", "relation")
     stage_ids = _collect_ids(issues, stages, "$.visual_semantics.stages", "stage")
     section_ids = _collect_ids(issues, sections, "$.explanation.sections", "explanation section")
     span_ids = _collect_ids(issues, spans, "$.source.spans", "source span")
+
+    known_topic_ids = {topic.id for topic in topic_entries()}
+    connected_topic_ids: set[str] = set()
+    for connection_index, connection in enumerate(connections):
+        path = f"$.connections[{connection_index}]"
+        if connection.target_topic_id in connected_topic_ids:
+            issues.append(
+                ValidationIssue(
+                    "duplicate_id",
+                    f"{path}.target_topic_id",
+                    f"duplicate connection topic id {connection.target_topic_id!r}",
+                )
+            )
+        connected_topic_ids.add(connection.target_topic_id)
+        _append_missing_refs(
+            issues,
+            (connection.target_topic_id,),
+            known_topic_ids,
+            f"{path}.target_topic_id",
+            "topic",
+        )
+        _append_missing_refs(
+            issues,
+            connection.claim_refs,
+            claim_ids,
+            f"{path}.claim_refs",
+            "claim",
+        )
 
     for claim_index, claim in enumerate(claims):
         path = f"$.claims[{claim_index}]"
@@ -164,7 +196,7 @@ def _append_missing_refs(
 ) -> None:
     for index, reference in enumerate(references):
         if reference not in known_ids:
-            issue_path = path if path.endswith(("source_ref", "target_ref")) else f"{path}[{index}]"
+            issue_path = path if path.endswith(("source_ref", "target_ref", "target_topic_id")) else f"{path}[{index}]"
             issues.append(
                 ValidationIssue("dangling_reference", issue_path, f"unknown {label} reference {reference!r}")
             )

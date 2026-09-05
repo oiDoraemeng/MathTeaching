@@ -102,6 +102,24 @@ class Claim:
 
 
 @dataclass(frozen=True)
+class TopicConnection:
+    """A stable, claim-backed edge from this topic to a related topic."""
+
+    id: str
+    target_topic_id: str
+    relation: str
+    description: str
+    claim_refs: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "id", _constructor_string(self.id, "id"))
+        object.__setattr__(self, "target_topic_id", _constructor_string(self.target_topic_id, "target_topic_id"))
+        object.__setattr__(self, "relation", _constructor_string(self.relation, "relation"))
+        object.__setattr__(self, "description", _constructor_string(self.description, "description"))
+        object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
+
+
+@dataclass(frozen=True)
 class ExplanationSection:
     """A claim-linked explanatory section, kept separate from the legacy type."""
 
@@ -260,6 +278,7 @@ class TeachingArtifact:
     source: SourceRecord
     teaching_profile: TeachingProfileRecord
     claims: tuple[Claim, ...]
+    connections: tuple[TopicConnection, ...]
     explanation: ExplanationContentV2
     visual_semantics: VisualSemantics
     generated: GenerationReceipt
@@ -272,6 +291,7 @@ class TeachingArtifact:
         object.__setattr__(self, "source", _constructor_instance(self.source, "source", SourceRecord))
         object.__setattr__(self, "teaching_profile", _constructor_instance(self.teaching_profile, "teaching_profile", TeachingProfileRecord))
         object.__setattr__(self, "claims", _constructor_instance_tuple(self.claims, "claims", Claim))
+        object.__setattr__(self, "connections", _constructor_instance_tuple(self.connections, "connections", TopicConnection))
         object.__setattr__(self, "explanation", _constructor_instance(self.explanation, "explanation", ExplanationContentV2))
         object.__setattr__(self, "visual_semantics", _constructor_instance(self.visual_semantics, "visual_semantics", VisualSemantics))
         object.__setattr__(self, "generated", _constructor_instance(self.generated, "generated", GenerationReceipt))
@@ -301,6 +321,10 @@ def _decode_artifact(payload: Mapping[str, object]) -> TeachingArtifact:
         claims=tuple(
             _decode_claim(_mapping(item, f"$.claims[{index}]"), f"$.claims[{index}]")
             for index, item in enumerate(_array(record["claims"], "$.claims"))
+        ),
+        connections=tuple(
+            _decode_topic_connection(_mapping(item, f"$.connections[{index}]"), f"$.connections[{index}]")
+            for index, item in enumerate(_array(record["connections"], "$.connections"))
         ),
         explanation=_decode_explanation(
             _mapping(record["explanation"], "$.explanation"), "$.explanation"
@@ -370,6 +394,17 @@ def _decode_claim(payload: Mapping[str, object], path: str) -> Claim:
         entity_refs=_string_tuple(record["entity_refs"], f"{path}.entity_refs"),
         relation_refs=_string_tuple(record["relation_refs"], f"{path}.relation_refs"),
         stage_refs=_string_tuple(record["stage_refs"], f"{path}.stage_refs"),
+    )
+
+
+def _decode_topic_connection(payload: Mapping[str, object], path: str) -> TopicConnection:
+    record = _object(payload, path, _TOPIC_CONNECTION_FIELDS)
+    return TopicConnection(
+        id=_string(record["id"], f"{path}.id"),
+        target_topic_id=_string(record["target_topic_id"], f"{path}.target_topic_id"),
+        relation=_string(record["relation"], f"{path}.relation"),
+        description=_string(record["description"], f"{path}.description"),
+        claim_refs=_string_tuple(record["claim_refs"], f"{path}.claim_refs"),
     )
 
 
@@ -491,6 +526,7 @@ def _encode_artifact(artifact: TeachingArtifact) -> dict[str, object]:
         "source": _encode_source_record(artifact.source),
         "teaching_profile": _encode_teaching_profile(artifact.teaching_profile),
         "claims": [_encode_claim(claim) for claim in artifact.claims],
+        "connections": [_encode_topic_connection(connection) for connection in artifact.connections],
         "explanation": _encode_explanation(artifact.explanation),
         "visual_semantics": _encode_visual_semantics(artifact.visual_semantics),
         "generated": _encode_generation_receipt(artifact.generated),
@@ -539,6 +575,16 @@ def _encode_claim(claim: Claim) -> dict[str, object]:
         "entity_refs": list(claim.entity_refs),
         "relation_refs": list(claim.relation_refs),
         "stage_refs": list(claim.stage_refs),
+    }
+
+
+def _encode_topic_connection(connection: TopicConnection) -> dict[str, object]:
+    return {
+        "id": connection.id,
+        "target_topic_id": connection.target_topic_id,
+        "relation": connection.relation,
+        "description": connection.description,
+        "claim_refs": list(connection.claim_refs),
     }
 
 
@@ -790,6 +836,7 @@ _ARTIFACT_FIELDS = (
     "source",
     "teaching_profile",
     "claims",
+    "connections",
     "explanation",
     "visual_semantics",
     "generated",
@@ -817,6 +864,7 @@ _CLAIM_FIELDS = (
     "relation_refs",
     "stage_refs",
 )
+_TOPIC_CONNECTION_FIELDS = ("id", "target_topic_id", "relation", "description", "claim_refs")
 _EXPLANATION_FIELDS = ("title", "summary", "sections", "symbol_roles")
 _EXPLANATION_SECTION_FIELDS = ("id", "title", "text", "claim_refs")
 _VISUAL_SEMANTICS_FIELDS = ("scene_kind", "entities", "relations", "stages")
@@ -854,6 +902,7 @@ __all__ = [
     "StageLayout",
     "TeachingArtifact",
     "TeachingProfileRecord",
+    "TopicConnection",
     "VisualEntity",
     "VisualRelation",
     "VisualSemantics",

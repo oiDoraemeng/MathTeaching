@@ -75,6 +75,15 @@ def composition_artifact_payload() -> dict[str, object]:
                 "stage_refs": ["stage.apply-B", "stage.apply-A"],
             }
         ],
+        "connections": [
+            {
+                "id": "connection.composition-basis",
+                "target_topic_id": "ch02.matrix.basis",
+                "relation": "prerequisite",
+                "description": "复合变换建立在矩阵列与基坐标的表示之上。",
+                "claim_refs": ["claim.composition-order"],
+            }
+        ],
         "explanation": {
             "title": "复合变换与 AB ≠ BA",
             "summary": "矩阵乘法按从右到左的顺序复合变换。",

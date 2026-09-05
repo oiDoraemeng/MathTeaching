@@ -53,3 +53,39 @@ def test_duplicate_ids_are_reported_before_membership_checks() -> None:
     assert len(issues) == 1
     assert issues[0].path == "$.visual_semantics.entities[3].id"
     assert issues[0].code == "duplicate_id"
+
+
+def test_topic_connections_round_trip_and_validate_target_topic() -> None:
+    payload = composition_artifact_payload()
+    artifact = validate_artifact_payload(payload)
+
+    assert artifact.connections[0].id == "connection.composition-basis"
+    assert artifact.connections[0].target_topic_id == "ch02.matrix.basis"
+    assert artifact.to_dict() == payload
+
+
+def test_unknown_connection_topic_reports_json_path() -> None:
+    payload = composition_artifact_payload()
+    payload["connections"][0]["target_topic_id"] = "ch99.missing"  # type: ignore[index]
+
+    with pytest.raises(ArtifactValidationError) as raised:
+        validate_artifact_payload(payload)
+
+    assert [(issue.path, issue.code) for issue in raised.value.issues] == [
+        ("$.connections[0].target_topic_id", "dangling_reference")
+    ]
+
+
+def test_duplicate_connection_ids_are_reported() -> None:
+    payload = composition_artifact_payload()
+    payload["connections"].append(  # type: ignore[index]
+        dict(payload["connections"][0])  # type: ignore[index]
+    )
+    artifact = TeachingArtifact.from_dict(payload)
+
+    issues = validate_closed_references(artifact)
+
+    assert any(
+        issue.path == "$.connections[1].id" and issue.code == "duplicate_id"
+        for issue in issues
+    )
