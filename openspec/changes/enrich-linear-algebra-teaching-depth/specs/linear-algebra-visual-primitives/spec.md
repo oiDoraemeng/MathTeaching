@@ -4,12 +4,12 @@
 
 `VisualSemanticsCompiler` SHALL be the only component that converts a `TeachingArtifact.visual_semantics` value into a `CommandPlan`。子智能体、解释存储和树模型 SHALL NOT emit or execute scene operations directly。
 
-视觉语义 SHALL 只包含受控的数学词汇：实体（向量、点、基、矩阵、网格、区域、面积、体积）、关系（求和、映射、张成、投影、正交、塌缩、比较、复合顺序、方向、不变量）和阶段。实体关系必须引用已定义的实体 ID。
+视觉语义 SHALL 只包含受控的数学实体、关系、阶段和不变量。实体关系必须引用已定义的实体 ID，并且每个关系可以引用支撑它的 claim ID。
 
 #### Scenario: Semantic output compiles to a plan
 
 - **WHEN** artifact 描述一个输入向量投影到方向向量
-- **THEN** 编译器生成包含输入向量、投影向量、垂足和正交关系的合法 `CommandPlan`
+- **THEN** 编译器生成包含输入向量、投影向量、垂足和残差的合法 `CommandPlan`
 - **AND** 编译过程不执行模型返回的代码或字符串命令
 
 #### Scenario: Unsupported semantics fail loudly
@@ -18,17 +18,29 @@
 - **THEN** 编译器返回带关系名称和主题 ID 的能力缺口错误
 - **AND** 不生成只画几根无关向量的降级计划
 
+### Requirement: Claim evidence is visually complete
+
+每个 visual claim SHALL 声明必须可见的实体、关系和阶段。编译器 SHALL 保证这些证据在最终 plan 中可定位；若某个 claim 只有文字而无可见证据，编译 SHALL 失败。
+
+#### Scenario: AB and BA claim has two paths
+
+- **WHEN** 主题声明 `(AB)x=A(Bx)` 且 `AB != BA`
+- **THEN** 计划包含相同输入、两条有顺序的阶段链、两个终点和终点比较
+- **AND** 只有一条链或只有三根未关联向量时校验失败
+
 ### Requirement: High-level primitives express core claims
 
-编译器或其 builder helper SHALL 能表达以下高级语义，并通过 `services/scene_commands.py` 的白名单校验：
+编译器或其 builder helper SHALL 能表达以下高级语义：
 
 - `grid_transform`：变换前后网格与基向量；
 - `subspace_span`：由基向量张成的直线/平面区域；
 - `projection_bundle`：多个输入、投影、垂足和残差；
+- `batch_mapping`：同一变换作用于多个输入；
 - `staged_transform`：带阶段标签和输入/输出快照的连续变换；
 - `signed_area`：有向面积、方向和数值；
 - `volume_orientation`：3D 平行六面体或有向体积；
-- `comparison_layout`：并排或双链终点对比。
+- `comparison_layout`：并排或双链终点对比；
+- `orientation_marker`：叉积或行列式方向信息。
 
 优先将这些语义编译为已有 `geometry.transformed_grid`、`geometry.subspace_region`、`geometry.projection`、`geometry.staged_transform`、`geometry.oriented_area`、`geometry.parallelogram3d`、`geometry.parallelepiped`、`geometry.oriented_volume` 和标注操作；只有已有协议不能表达必要信息时才新增受约束 op。
 
@@ -43,13 +55,23 @@
 
 ### Requirement: Topic visual contracts
 
-每个主题 SHALL 有静态 `VisualContract`，声明所需实体、关系、语义原语和最小阶段数。编译器 SHALL 在生成 plan 前检查契约；验证器 SHALL 在生成 plan 后检查对应实际 op。
+每个主题 SHALL 有静态 `VisualContract`，声明所需 claims、实体、关系、语义原语、最小阶段数、不变量和必须彼此区分的对象。编译器 SHALL 在生成 plan 前检查契约；验证器 SHALL 在生成 plan 后检查对应实际 op。
 
 #### Scenario: Declared capability and visual contract agree
 
 - **WHEN** 主题声明 `transformed_grid` 和 `composition_order`
 - **THEN** artifact 的视觉语义、VisualContract 和最终 plan 都包含对应的网格/阶段表达
-- **AND** 任一层缺失都会指出主题 ID、语义关系和预期原语
+- **AND** 任一层缺失都会指出主题 ID、claim、语义关系和预期原语
+
+### Requirement: Static storyboard stages
+
+视觉语义 SHALL 支持静态 storyboard。每个阶段可以声明标题、说明、可见实体、强调关系、不变量和布局槽位；阶段可以按顺序快照、并排车道或叠加图展示，不要求连续动画。
+
+#### Scenario: Read a derivation by stages
+
+- **WHEN** 用户阅读投影公式的 storyboard
+- **THEN** 可以依次看到输入、投影、垂足、残差和正交关系
+- **AND** 切换阶段只改变展示状态，不重新生成数学内容或绕过场景校验
 
 ### Requirement: Deterministic layout and visual roles
 

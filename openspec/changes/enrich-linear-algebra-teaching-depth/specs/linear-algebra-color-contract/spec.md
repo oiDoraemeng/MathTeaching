@@ -1,3 +1,7 @@
+## Purpose
+
+为数学论断、视觉实体、场景对象和解释图例提供稳定的教学角色颜色，使数形结合中的“同一对象”和“不同路径”在各章节中保持可辨识。
+
 ## ADDED Requirements
 
 ### Requirement: Palette is the single source of teaching-role colors
@@ -31,3 +35,23 @@
 - **WHEN** 检索 `linear_algebra/visualizations/` 和视觉编译器实现
 - **THEN** 除 palette 定义外不得存在教学颜色的十六进制字面量
 - **AND** 场景命令中的颜色字段由角色映射产生
+
+### Requirement: Claim and stage color continuity
+
+同一个 claim 在不同 storyboard 阶段中的实体 SHALL 保持相同教学角色颜色；比较关系涉及的对象 SHALL 使用可区分的角色。Qt 和 Web 图例 SHALL 根据 artifact 的 `symbol_roles` 与同一 palette 生成，而不是重新猜测颜色。
+
+#### Scenario: A path keeps its identity across stages
+
+- **WHEN** `AB` 变换链在三个阶段中展示同一个输入向量和其结果
+- **THEN** 输入、第一阶段结果和第二阶段结果的角色颜色符合 artifact 声明
+- **AND** `BA` 链与 `AB` 链可通过角色或布局稳定区分
+
+### Requirement: Palette errors are diagnostic
+
+未知角色 SHALL 返回带主题 ID、实体 ID 和角色名称的可诊断错误或 `neutral` 回退状态。回退不得改变 claim、关系或阶段的身份，也不得注入任意颜色字面量。
+
+#### Scenario: Unknown role does not corrupt semantic identity
+
+- **WHEN** artifact 引用未定义的教学角色
+- **THEN** 编译器返回角色诊断并按约定使用 `neutral` 回退
+- **AND** 解释变量和视觉实体的绑定仍保持不变

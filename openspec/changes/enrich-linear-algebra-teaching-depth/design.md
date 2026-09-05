@@ -1,298 +1,280 @@
 # Design: 线性代数数形结合教学规划器
 
-## 1. 设计结论
+## Context
 
-本变更把讲义解释、视觉语义和绘图计划拆成三层：
+See `proposal.md` for motivation and scope. The current catalog already provides
+54 stable topic IDs and topic-specific builders, while the runtime validates all
+scene changes through `SceneCommandService`. The remaining gap is that the
+explanation model is a flat Python object and the visual builders receive no
+machine-checkable statement of the mathematical claim they are supposed to
+show. `common.py` also contains a capability-based hard-coded plan path that can
+produce a plausible but irrelevant picture.
 
-```text
-线性代数讲义.md
-        |
-        v
-Explanation Agent
-        |
-        v
-TeachingArtifact = 数学解释 + 视觉语义
-        |                         |
-        |                         +--> VisualSemanticsCompiler --> CommandPlan
-        v                                             |
-版本化内容仓库                                      v
-        |                                      SceneCommandService
-        +--> 树节点 topic_id -------------------------> 场景
-```
+The lecture source has irregular heading levels and mixes definitions, proofs,
+examples, and exercises in the same section. A source anchor therefore needs a
+text fingerprint in addition to a heading path. The application is offline-first
+and local, so generated content must be reviewable, versioned, and usable after
+restart without another model request.
 
-子智能体可以理解“要画什么数学关系”，但不能输出执行命令、Python、Qt 或 HTML。只有确定性的编译器能够产生 `CommandPlan`，并且最终计划仍须通过现有 `SceneCommandService` 校验。
+## Goals / Non-Goals
 
-运行时不在用户点击主题时调用模型。子智能体在内容生成/更新阶段运行，输出先保存为 draft，经过结构和来源校验后发布为软件内置资源。这样既保留子智能体回复，又保证同一个树节点每次打开得到一致的解释和图形。
+**Goals:**
 
-## 2. 讲义来源与主题上下文
+- Make a mathematical claim the smallest unit shared by prose, formula,
+  example, and visual semantics.
+- Define five measurable teaching levels so “deeper explanation” is testable,
+  not merely longer.
+- Preserve accepted sub-agent replies while keeping executable rendering data
+  behind a deterministic compiler.
+- Compile semantic relationships into a deterministic storyboard and validated
+  `CommandPlan`.
+- Load explanation and scene as one topic bundle with rollback on any failure.
 
-### 2.1 SourceContext
+**Non-Goals:**
 
-讲义是唯一知识来源。生成一个主题时，`LectureSourceRepository` 根据 `LessonEntry.source_anchor` 提取：
+- Do not let the model emit scene operations, code, or renderer objects.
+- Do not change the lecture source or expand the first three chapters.
+- Do not add a continuous animation timeline. Stages are static snapshots,
+  selectable cards, or side-by-side lanes.
+- Do not require a remote content service or a runtime model call when a topic
+  is opened.
 
-- 当前主题 heading 及其正文；
-- 当前节的定义、公式和例题上下文；
-- 前后相邻的已收录主题标题，用于生成 `connections`；
-- 排除“练习”“自检”“挑战”和未纳入前三章课程树的正文。
+## Decisions
 
-提取结果保存为不可变的 `SourceContext`：
+### 1. Use a claim-first teaching artifact
 
-```text
-source_path: [章, 节, 主题]
-heading_path: string[]
-heading_level: integer
-occurrence: integer
-excerpt: string
-source_hash: sha256(normalized_excerpt)
-```
-
-`source_hash` 用于发现讲义更新。讲义内容发生变化时，旧产物可以继续读取，但验证命令必须将其标记为 stale，不能静默当作最新解释。
-
-### 2.2 主题绑定
-
-`topic_id` 是唯一绑定键，且必须同时出现在：
-
-1. `LessonEntry.id`；
-2. `TeachingArtifact.topic_id`；
-3. `VisualizationRecipe.id` 所对应的主题；
-4. 树叶的 `Qt.ItemDataRole.UserRole`；
-5. 内容和场景加载事件的 payload。
-
-显示标题、公式或搜索词不得用于运行时匹配图形，避免同名主题错配。
-
-## 3. TeachingArtifact 数据模型
-
-### 3.1 顶层结构
-
-保存格式为 JSON，禁止通过 pickle 或动态 Python 导入恢复内容。推荐文件布局：
+`TeachingArtifact` is the persisted unit for a topic. Its logical shape is:
 
 ```text
-linear_algebra/explanations/data/
-  ch01/<topic_id>.json
-  ch02/<topic_id>.json
-  ch03/<topic_id>.json
+TeachingArtifact
+  source
+  teaching_profile
+  claims[]
+  explanation
+  visual_semantics
+  generation_receipt
 ```
 
-每个文件包含：
+Each `Claim` has a stable ID, a student-facing statement, optional formula,
+source references, and references to the semantic entities, relations, and
+stages that provide visual evidence. The explanation sections reference claim
+IDs rather than repeating disconnected prose.
 
-```json
-{
-  "schema_version": 1,
-  "topic_id": "ch01.vector.magnitude",
-  "source": {
-    "source_path": ["第1章 ...", "1.1 ...", "1.1.1 ..."],
-    "heading_path": ["第1章 ...", "1.1 ...", "1.1.1 ..."],
-    "heading_level": 4,
-    "occurrence": 1,
-    "source_hash": "sha256:..."
-  },
-  "generated": {
-    "provider": "...",
-    "model": "...",
-    "prompt_version": "...",
-    "created_at": "...",
-    "status": "published"
-  },
-  "explanation": { "...": "..." },
-  "visual_semantics": { "...": "..." }
-}
-```
-
-时间戳和模型元数据用于审计，不参与搜索和渲染内容。发布文件必须是 UTF-8、稳定排序键和可复现的 JSON 序列化。
-
-### 3.2 ExplanationContent
-
-保留现有兼容字段：`title`、`summary`、`formula`、`steps`、`geometric_meaning`、`conclusion`、`searchable_text`。新增字段如下：
+The five teaching levels are:
 
 ```text
-definition: str
-intuition: str
-derivation: tuple[str, ...]
-worked_examples: tuple[WorkedExample, ...]
-pitfalls: tuple[str, ...]
-connections: tuple[TopicConnection, ...]
-interaction_hint: str
-symbol_roles: dict[str, str]
+L0 看见       识别图中的对象和角色
+L1 读懂       说清定义、符号和公式
+L2 算出       完成可复算的数字例题
+L3 解释       说明几何意义、不变量和边界情况
+L4 迁移       连接主题、比较变体并识别误解
 ```
 
-约束：
+Every topic declares a minimum level and the required sections for that level.
+Core and bridge topics reach L3/L4; high-dimensional analogy topics may stop at
+L3 but must mark analogy boundaries. This is preferred over a free-form word
+count because a short proof can be deeper than a long summary.
 
-- `steps` 是面向学生的主推导链，不再写“点击/拖动/画出”这类 UI 操作；至少 3 条，至少一条包含“因为/所以/即/由…得”等推导连接词。
-- `derivation` 可以比 `steps` 更细，重点主题至少 3 个推导节点；桥接主题至少 2 个；拓展主题可以明确“这是类比而非证明”。
-- `WorkedExample` 使用结构化字段：`given`、`calculation`、`result`、`checks`，其中 `checks` 至少包含一条可由验证器复算的数值关系。
-- `pitfalls` 至少一条，必须对应讲义中实际容易混淆的语义或符号，不得用空泛的“注意细节”。
-- `connections` 只引用存在的 `topic_id`，并说明 `prerequisite`、`extends` 或 `contrasts` 关系。
-- `interaction_hint` 只解释“如何阅读图上的数学关系”，不写绘图命令。
-- `symbol_roles` 是可选的符号到教学角色映射，例如 `a -> vector_a`、`det(A) -> area`。
+Alternatives considered:
 
-`searchable_text` 由标题、摘要、公式、定义、直觉、推导、算例、误解和关联文本规范化聚合生成，不允许手工漏掉新增字段。
+- Keep the current flat `ExplanationContent`: rejected because it cannot bind a
+  formula variable to a visible object or prove that a picture supports a
+  conclusion.
+- Store only Markdown: rejected because heading parsing and free-form blocks
+  make validation and stable rendering fragile.
+- Let the model emit a plan: rejected because it couples untrusted output to
+  the scene protocol.
 
-### 3.3 VisualSemantics
+### 2. Make visual semantics a typed mathematical graph
 
-视觉语义是解释的数学投影，不是场景协议。它只允许以下受控词汇：
+The semantic graph is deliberately not a scene protocol:
 
 ```text
-scene: 2d | 3d
-focus: vector | operation | linear_map | projection | subspace |
-       determinant | inverse | cross_product | volume | analogy
-entities[]: point | vector | basis | matrix | grid | region | area | volume
-relations[]: sum | difference | scalar_multiple | maps_to | spans |
-             projects_to | orthogonal_to | collapses_to | compare |
-             composition_order | orientation | invariant
-stages[]: { name, transform, inputs, outputs, expected_invariant }
-annotations[]: { text, target, role }
-layout: overlay | side_by_side | sequence
+Claim -> Entity -> Relation -> Stage -> semantic primitive
 ```
 
-实体可以携带讲解所需的有限数字向量、矩阵和标签；不得携带 `op`、Qt 对象名、Python 表达式或任意代码。`relations` 引用实体 ID，`stages` 引用定义过的矩阵和输入。
+An entity contains an ID, kind, dimension, mathematical value when needed,
+teaching role, label, and claim references. A relation contains an ID, a
+controlled relation name, source/target entity IDs, parameters, and claim
+references. A stage contains inputs, outputs, relation IDs, expected
+invariants, and a presentation slot.
 
-例如 `ch02.matrix.composition` 的语义是两条 `composition_order` 链和一个 `compare` 关系；编译器再决定使用哪组具体坐标、阶段颜色和标注位置。
+The initial relation vocabulary includes `sum`, `difference`,
+`scalar_multiple`, `maps_to`, `spans`, `projects_to`, `orthogonal_to`,
+`collapses_to`, `composition_order`, `compare`, `orientation`,
+`decomposes_into`, `has_foot`, `has_residual`, `batch_maps_to`,
+`endpoint_diff`, `same_measure`, and `invariant`.
 
-## 4. 数学解释子智能体
+Numeric values are finite 2D/3D vectors, matrices with explicit shape, points,
+or bounded scalar parameters. Arbitrary expressions, colors, aliases, camera
+objects, and executable strings are invalid semantic values.
 
-### 4.1 接口
+This allows a validator to answer questions such as:
 
-新增 `ExplanationAgent` 协议：
+- Does every symbol in `(AB)x=A(Bx)` have an entity binding?
+- Does the `AB != BA` claim reference two distinct paths from the same input?
+- Does a projection claim contain a foot, residual, and orthogonality relation?
 
-```python
-generate(context: SourceContext, topic: LessonEntry,
-         visual_vocabulary: VisualVocabulary) -> TeachingArtifactDraft
-```
+### 3. Ground claims in source spans, not headings alone
 
-适配器可以复用现有 provider 的连接和模型设置，但输出通道与生成 CommandPlan 的 agent 分离。子智能体的 system prompt 必须明确：
+`SourceContext` contains the canonical heading path, heading level, occurrence,
+the selected excerpt, neighboring topic titles, and a normalized excerpt hash.
+Each claim may additionally reference a bounded source span by text fingerprint
+and diagnostic line range. Line numbers are not the identity because the lecture
+contains headings with inconsistent levels and later edits can shift lines.
 
-1. 只能依据提供的 `SourceContext`，不能补写讲义之外的新章节事实；
-2. 使用中文和 KaTeX 兼容公式；
-3. 输出单个结构化 JSON，不输出 Markdown 围栏、代码或命令；
-4. 必须填写定义、推导、数字算例、几何意义和误解；
-5. `visual_semantics` 只描述数学对象、关系和不变量，不出现场景 op；
-6. 所有数字算例必须能由 `checks` 复算。
+The prompt wraps source text as inert reference material. It explicitly forbids
+treating source text as instructions. The agent may derive a calculation from a
+formula in the excerpt, but may not introduce a new chapter concept.
 
-### 4.2 生成和发布流程
+### 4. Preserve the accepted reply separately from runtime content
+
+Generation has three states: `draft`, `reviewed`, and `published`.
+
+- A draft keeps the exact accepted JSON reply, source hash, prompt fingerprint,
+  provider/model metadata, and validation diagnostics.
+- A reviewed artifact contains the normalized deterministic structure plus a
+  content digest and review decision.
+- A published bundle contains the normalized artifact and an audit reference to
+  the exact raw reply. The renderer never reads raw reply text.
+
+Replies that fail safety parsing are not copied into published resources. Only
+their digest, error code, and bounded diagnostics are retained. This preserves
+the accepted sub-agent response without creating an execution or log-injection
+surface.
+
+JSON files remain the source-controlled format because they are diffable and
+portable. An index maps `topic_id` to the latest published revision; old
+revisions remain addressable for comparison and rollback.
+
+### 5. Compile semantics at publish time and cache by digest
+
+`VisualSemanticsCompiler` is the only boundary that can create a `CommandPlan`.
+Publishing compiles the validated semantic graph with a compiler version and a
+`RenderContext` profile, checks the resulting plan, and records its plan digest.
+Runtime may reuse that deterministic compiled snapshot; if the compiler version
+or render profile changes, it recompiles without calling the model.
+
+The compiler performs:
+
+1. semantic schema and reference validation;
+2. topic `VisualContract` validation;
+3. deterministic coordinates, aliases, layout slots, stage labels, and view
+   bounds using the render seed;
+4. teaching-role color lookup;
+5. translation to existing scene operations;
+6. `SceneCommandService` validation and plan hashing.
+
+Unsupported semantics fail with the topic ID and relation name. There is no
+“draw a few vectors” fallback.
+
+Alternatives considered:
+
+- Compile only when a user clicks a topic: rejected because first-open latency
+  hides content errors and makes a published resource non-deterministic.
+- Persist only raw scene commands: rejected because commands become stale when
+  the scene protocol evolves and they lose the mathematical source of truth.
+
+### 6. Use a storyboard instead of an animation timeline
+
+`visual_semantics.stages` is a static storyboard. A stage has a title, caption,
+visible entities, highlighted relations, expected invariants, and optional
+camera/layout hints. The renderer can present stages as:
+
+- a sequence of selectable snapshots for derivations;
+- side-by-side lanes for comparisons such as `AB` versus `BA`;
+- an overlay for before/after transformations.
+
+Stage controls are presentation state only; they do not change the mathematics
+or create new commands. A stage is considered complete only when its required
+claim evidence is visible.
+
+### 7. Define visual contracts by mathematical claims
+
+Each topic has a static `VisualContract` with required claims, entities,
+relations, semantic primitives, minimum stage count, and invariants. It also
+declares which relationships must be visually distinguishable.
+
+Examples:
 
 ```text
-读取 SourceContext
-  -> 调用 ExplanationAgent
-  -> JSON/schema 校验
-  -> 数字算例复算
-  -> topic_id/source_anchor/source_hash 校验
-  -> visual_semantics 引用和词汇校验
-  -> 保存 draft
-  -> 人工确认后发布 bundled artifact
+AB != BA:
+  same input + two composition_order paths + endpoint_diff + compare
+
+projection:
+  input + projection + foot + residual + orthogonal_to
+
+det = 0:
+  nonzero inputs + collapses_to or collinear output + zero area
 ```
 
-生成失败时保留旧的 published 版本，并将 draft 错误写入诊断日志；不得用截断文本或空字段自动发布。
+Verification checks the semantic contract before compilation and the actual
+operations after compilation. Operation counts alone are never sufficient.
 
-## 5. 视觉语义编译器
+### 8. Bind one topic bundle atomically
 
-### 5.1 编译边界
-
-`VisualSemanticsCompiler` 是唯一允许把教学产物转换为 `CommandPlan` 的组件：
-
-```python
-compile(artifact.visual_semantics, contract, context) -> CommandPlan
-```
-
-它负责确定性坐标、命名空间、颜色角色、并排布局、阶段编号和标签位置。模型不得直接控制这些执行细节。
-
-### 5.2 语义到原语的映射
-
-| 数学语义 | 首选原语 | 典型教学用途 |
-|---|---|---|
-| `vector`, `sum`, `difference` | 2D/3D vector + polygon | 向量运算、线性组合 |
-| `grid`, `maps_to`, `invariant` | transformed grid | 基向量变换、重复变换 |
-| `projects_to`, `orthogonal_to` | projection + right-angle marker | 投影、内积、力分解 |
-| `spans`, `collapses_to` | subspace region + vectors | 秩、零空间、列空间 |
-| `composition_order`, `stages` | staged transform + stage snapshots | AB 与 BA、逆序、矩阵幂 |
-| `area`, `orientation` | oriented area + labeled polygon | 行列式符号、面积缩放 |
-| `volume` | parallelogram/parallelepiped/oriented volume | 混合积与高维类比 |
-| `compare`, `annotations` | namespaced annotations and endpoint markers | 数值和终点对比 |
-
-现有原语可以满足大多数 2D 主题。若语义要求“3D 旋转弧”“阶段中的完整形状快照”而现有原语无法表达，先增加 builder-level helper；只有 helper 无法编译为合法场景对象时，才扩展 scene command 白名单和宿主渲染器。
-
-### 5.3 主题视觉契约
-
-每个主题维护一个静态 `VisualContract`，内容包括：
+The registry resolves `topic_id` to `LessonEntry`, published artifact, visual
+contract, and compiled plan. The selection transaction is:
 
 ```text
-required_entities: tuple[str, ...]
-required_relations: tuple[str, ...]
-required_semantic_primitives: tuple[str, ...]
-minimum_stage_count: int
+topic_id
+  -> resolve bundle
+  -> verify source/artifact/contract digests
+  -> preview compiled plan
+  -> begin scene transaction
+  -> apply scene
+  -> commit scene and explanation view together
 ```
 
-例如：
+If resolution, preview, execution, or content rendering fails, the previous
+scene and explanation remain visible. The diagnostic includes `topic_id`, bundle
+revision, failing phase, and the relevant claim/relation when available.
 
-- 零空间：`region + input_vectors + collapses_to`，至少 3 条输入向量；
-- AB 与 BA：两条 `composition_order` 链、两个终点和 `compare`；
-- det(AB)：至少 3 个面积阶段、每阶段数值标注；
-- 叉积：`a`、`b`、`cross_result`、`orientation` 和右手关系。
+### 9. Use a shared palette by teaching role
 
-编译器必须同时满足语义契约和 catalog 的 `required_capabilities`。计划中实际出现的 op 由验证器再次检查。
+Semantic entities refer to roles such as `vector_a`, `projection`, `residual`,
+`area`, or `neutral`. The compiler, scene adapter, Qt view, and Web payload all
+resolve the same role palette. Arbitrary hex colors are not part of the agent
+contract. This preserves visual meaning across the entire lecture tree.
 
-## 6. 树形结合与原子加载
+## Risks / Trade-offs
 
-用户点击树叶时：
+- **[Source edits invalidate many artifacts]** -> Store normalized excerpt hashes,
+  report `stale_source`, and keep the previous published revision readable.
+- **[Model produces plausible but unsupported prose]** -> Require source refs for
+  claims, exact numeric checks, and a human review state before publication.
+- **[Semantic vocabulary grows too quickly]** -> Add a relation only when a
+  required claim cannot be expressed by the current vocabulary; each addition
+  needs a compiler mapping and a contract test.
+- **[Compiled plans become stale after protocol changes]** -> Include compiler
+  and render-profile versions in the plan digest and recompile deterministically.
+- **[Dense diagrams overwhelm beginners]** -> Use the teaching profile to limit
+  visible entities per stage and emphasize one claim at a time.
+- **[Legacy explanation resources remain in use]** -> Read them through an
+  adapter, but do not publish a topic without visual semantics and a bundle
+  identity.
 
-1. `LinearAlgebraTreeModel` 发出 `topic_id`；
-2. registry 解析 `LessonEntry` 和 published `TeachingArtifact`；
-3. 校验来源哈希、解释完整性、视觉契约并编译 plan；
-4. `SceneCommandService.preview()` 成功后，才提交场景清空/执行；
-5. 场景提交成功后，Qt/Web 内容视图显示解释；
-6. 任一步失败，原场景和旧解释保持不变，并显示主题 ID、失败阶段和修复提示。
+## Migration Plan
 
-解释视图按定义、公式、推导、算例、几何意义、常见误解、主题关联和读图提示分区。`visual_semantics` 不直接展示成命令文本；可以依据 `symbol_roles` 和 palette 渲染符号图例。
+1. Introduce the typed artifact, source context, semantic graph, palette, and
+   contract models without changing the current renderer behavior.
+2. Add the deterministic compiler and generate golden semantic fixtures for the
+   focus topics: projection, transformed grid, `AB`/`BA`, null space, and
+   determinant area.
+3. Add draft/review/publish storage and migrate legacy explanations through an
+   adapter while the old builders remain available for rollback.
+4. Publish reviewed artifacts chapter by chapter. Runtime prefers a published
+   bundle and falls back to the legacy explanation only for topics explicitly
+   marked as migration-pending.
+5. Remove the capability-only `_build_plan` path after all 54 topics resolve
+   through semantic compilation and the validation command reports complete
+   coverage.
 
-## 7. 三章教学覆盖标准
+Rollback is a resource-level operation: point the index to the previous
+published revision or enable the legacy adapter. No lecture source changes are
+needed.
 
-### 第 1 章：向量与几何测量
+## Open Questions
 
-核心叙事是“对象、运算、测量和证明方法”：
-
-- 向量/点/坐标：区分位置与位移；
-- 加法/数乘/线性组合：用首尾相接、平行四边形和系数解释可达性；
-- 内积/投影：同一公式同时解释长度、夹角、正交和分解；
-- 叉积/混合积：补方向、法向量、有向面积和体积；
-- 几何证明/n 维类比：明确低维图是结构类比，不是假装画出 n 维空间。
-
-### 第 2 章：矩阵的诞生
-
-核心叙事是“矩阵作为批处理和线性变换”：
-
-- 批量内积/投影：一对多测量和统一方向；
-- 行/列视角：同一个 `Ax` 的两种等价计算；
-- 基向量/网格：两列决定整个网格；
-- 拉伸/旋转/缩放、复合和矩阵幂：阶段和顺序必须可见；
-- 秩/零空间/列空间：输出维度、丢失方向和可达区域必须用区域/汇聚表达；
-- 高维类比：保留规则，不虚构高维图形。
-
-### 第 3 章：行列式与逆矩阵
-
-核心叙事是“有向测度、可逆性和面积/体积缩放”：
-
-- `ad-bc`：面积分解和符号来源；
-- det 的正/零/负/一：方向翻转、塌缩和保持面积；
-- 乘法性：单位区域、A 后区域、B 后区域的三阶段数值对比；
-- 逆矩阵：可逆与退化并排、正向和逆向撤销链；
-- n 阶类比：面积、体积和高维测度的共同结构。
-
-## 8. 验证、测试与回退
-
-验证分为四层：
-
-1. **来源层**：54 个主题仍为 24/15/15，锚点、顺序和 `source_hash` 正确；
-2. **内容层**：字段完整、推导和算例可复算、关联 ID 存在、无模型命令泄漏；
-3. **语义层**：实体/关系引用闭合，语义词汇和主题视觉契约满足；
-4. **执行层**：编译出的 plan 通过 `SceneCommandService`，且 catalog 能力映射的实际 op 全部存在。
-
-测试重点包括：
-
-- agent JSON 解析、拒绝代码/命令和 source-only 约束；
-- artifact round-trip、draft/published 版本和 stale hash；
-- 数字算例复算及错误报告；
-- 54 个 topic 的树节点到 artifact/recipe 一一对应；
-- 重点主题的零空间汇聚、AB/BA 双链、det(AB) 三阶段和叉积方向；
-- Qt/Web 新解释区块和旧 artifact 的向后兼容；
-- 编译器遇到不支持语义时明确失败，不生成降级的无关图。
-
-内容资源可以按章节独立发布；任何一章的产物出错都不影响其他章节和已发布版本。可视化编译器和场景协议的变更必须保留旧命令的兼容行为。
+None. The remaining choices are implementation details constrained by the
+decisions above.

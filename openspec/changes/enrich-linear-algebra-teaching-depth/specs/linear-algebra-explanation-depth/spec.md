@@ -1,27 +1,42 @@
+## Purpose
+
+把前三章线性代数主题从摘要式说明提升为可逐层阅读、可复算、可用图形验证的数学教学解释，并明确每一层的可验收目标。
+
 ## ADDED Requirements
+
+### Requirement: Five-level explanation ladder
+
+每个主题 SHALL 声明最低教学层级和对应内容：L0 看见对象，L1 读懂定义与公式，L2 算出数字例题，L3 解释几何意义与不变量，L4 迁移到关联主题或变式。
+
+核心主题和桥接主题 SHALL 至少达到 L3；需要连接后续章节的主题 SHALL 达到 L4；高维类比主题可以停在 L3，但必须明确类比边界。
+
+#### Scenario: A topic declares measurable depth
+
+- **WHEN** 一个矩阵复合主题声明最低层级 L3
+- **THEN** 产物包含定义、公式、推导、可复算例题、几何过程和不变量
+- **AND** 缺少任一必需部分时校验器报告对应层级和字段
+
+### Requirement: Claim-backed lecture explanation
+
+解释 SHALL 由可追溯的数学 claims 组织。每个 claim SHALL 说明论断、公式或计算依据，并可以引用视觉实体、关系和阶段作为证据。解释区块不得只靠自然语言声称“图形可以说明”。
+
+#### Scenario: Geometric statement has evidence
+
+- **WHEN** 解释声称“投影残差与目标方向正交”
+- **THEN** 至少有一个 claim 引用残差、目标方向和 `orthogonal_to` 关系
+- **AND** 编译后的图形契约要求该关系可见
 
 ### Requirement: Lecture-grounded teaching artifact
 
-`ExplanationContent` SHALL 支持由讲义片段生成的结构化数学解释，并由同一个 `TeachingArtifact` 携带对应的视觉语义。产物 SHALL 记录 `topic_id`、`source_anchor`、`source_hash` 和生成元数据，以便审查和发现讲义更新。
+`ExplanationContent` SHALL 支持由讲义片段生成的结构化数学解释，并由同一个 `TeachingArtifact` 携带对应的视觉语义。产物 SHALL 记录 `topic_id`、`source_anchor`、`source_hash` 和生成元数据。
 
-数学解释 SHALL 至少包含：
-
-- `definition`：概念或对象的严格定义；
-- `formula`：与讲义一致、可渲染的公式；
-- `steps`：面向学生的主推导链，至少 3 条；
-- `derivation`：重点主题的细化推导；
-- `worked_examples`：带具体数字、计算过程和可复算检查的例题；
-- `intuition`：不替代定义的直觉类比；
-- `geometric_meaning`：图形含义；
-- `pitfalls`：至少一条具体易错点；
-- `connections`：与其他已存在主题的关系；
-- `interaction_hint`：如何阅读图中的数学关系。
+数学解释 SHALL 至少包含：定义、与讲义一致的公式、主推导链、细化推导、具体数例、直觉、几何意义、结论、具体易错点、主题关联和读图提示。
 
 #### Scenario: A topic is grounded in the lecture
 
 - **WHEN** 子智能体为一个树叶主题生成教学产物
 - **THEN** 产物包含与 `LessonEntry.source_anchor` 相同的讲义路径和锚点
-- **AND** 解释中的定义、公式和数字例题可以在当前主题讲义片段中找到依据或直接推导
+- **AND** 定义、公式和数字例题可以在当前主题片段中找到依据或直接推导
 - **AND** `source_hash` 与生成时使用的规范化片段一致
 
 ### Requirement: Derivation and visual reading are distinct
@@ -36,13 +51,23 @@
 
 ### Requirement: Worked examples are machine-checkable
 
-每个 `WorkedExample` SHALL 至少包含 `given`、`calculation`、`result` 和 `checks`。验证器 SHALL 对向量加法、内积、投影、行列式、面积/体积和矩阵变换等可支持类型复算；无法复算的例题 SHALL 标为人工审核项，不得伪装成自动通过。
+每个达到 L2 的主题 SHALL 至少包含一个 `WorkedExample`，其字段为 `given`、`calculation`、`result` 和 `checks`。验证器 SHALL 对向量运算、内积、投影、行列式、面积/体积和矩阵变换等支持类型复算；无法复算的例题 SHALL 标为人工审核项。
 
 #### Scenario: Numeric example catches an incorrect explanation
 
 - **WHEN** 例题声称 `det(A)=6`，但 `checks` 按给定矩阵计算得到其他值
 - **THEN** artifact 校验失败
 - **AND** 旧的 published artifact 不被覆盖
+
+### Requirement: Boundary cases and misconceptions
+
+达到 L3 的主题 SHALL 说明至少一个不变量、边界情况或退化情况；所有主题 SHALL 至少列出一个与讲义内容相关的具体误解。误解必须能够被公式或图形证据反驳。
+
+#### Scenario: Degenerate case is explained
+
+- **WHEN** 主题解释 `det=0`
+- **THEN** 同时说明非零向量共线、面积塌缩和不可逆之间的关系
+- **AND** 视觉语义包含 `collapses_to`、零面积或等价的退化证据
 
 ### Requirement: Searchable deep content
 
@@ -53,12 +78,12 @@
 - **WHEN** 用户搜索只出现在 `derivation` 或 `pitfalls` 中的术语
 - **THEN** 对应主题叶子及其祖先路径仍然显示
 
-### Requirement: Explanation agent output contract
+### Requirement: Explanation and visual semantics are paired
 
-数学解释子智能体 SHALL 接收 `SourceContext`、主题元数据和受控视觉词汇，返回单个 `TeachingArtifactDraft`。它 SHALL 只生成数学解释及其视觉语义，不得自行执行工具、写入场景或修改树结构。
+每个已发布主题 SHALL 同时提供数学解释和 `visual_semantics`。数学解释中的公式变量、数字结果和结论 SHALL 能在视觉语义的实体、关系、阶段或不变量中找到对应证据。
 
-#### Scenario: Agent returns a paired explanation
+#### Scenario: Explanation drives a matching visual
 
-- **WHEN** 子智能体处理“矩阵复合与 AB ≠ BA”
-- **THEN** 返回内容包含 `(AB)x=A(Bx)` 的推导、数字算例和两种顺序的 `composition_order` 视觉关系
-- **AND** 返回内容不包含具体 CommandPlan 操作
+- **WHEN** 用户打开任意已发布叶子主题
+- **THEN** 解释中的公式变量可以在视觉语义中找到对应实体
+- **AND** 编译后的图形展示解释所声明的关系，而不是仅显示无关向量
