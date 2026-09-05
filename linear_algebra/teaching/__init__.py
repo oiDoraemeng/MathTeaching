@@ -18,6 +18,7 @@ from .model import (
     WorkedExampleCheck,
 )
 from .parser import AgentReplyError, parse_agent_reply
+from .revisions import ArtifactDiff, FieldChange, diff_artifacts
 from .validation import validate_teaching_depth, validate_source_evidence, validate_worked_examples
 from .source import LectureSourceRepository, SourceContext, SourceSpan, normalize_source_text
 from .store import (
@@ -35,6 +36,8 @@ from .vocabulary import VisualVocabulary
 __all__ = [
     "Claim",
     "AgentReplyError",
+    "ArtifactDiff",
+    "FieldChange",
     "WorkedExample",
     "WorkedExampleCheck",
     "ExplanationContentV2",
@@ -66,6 +69,7 @@ __all__ = [
     "VisualVocabulary",
     "ProviderExplanationAgent",
     "parse_agent_reply",
+    "diff_artifacts",
     "validate_source_evidence",
     "validate_teaching_depth",
     "verify_worked_example",

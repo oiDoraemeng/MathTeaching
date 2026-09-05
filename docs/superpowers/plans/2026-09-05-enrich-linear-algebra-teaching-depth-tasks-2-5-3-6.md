@@ -542,7 +542,7 @@ git commit -m "feat: diagnose stale lecture artifacts"
 - Consumes: two normalized artifact payloads or revisions.
 - Produces: `ArtifactDiff`, `diff_artifacts(old, new)`, and field-level claim/explanation/semantic changes.
 
-- [ ] **Step 1: Write a diff test**
+- [x] **Step 1: Write a diff test**
 
 ```python
 def test_revision_diff_reports_claim_and_visual_changes() -> None:
@@ -553,13 +553,13 @@ def test_revision_diff_reports_claim_and_visual_changes() -> None:
     assert diff.render_requested is False
 ```
 
-- [ ] **Step 2: Run the diff test and verify missing module failure**
+- [x] **Step 2: Run the diff test and verify missing module failure**
 
 Run: `pytest tests/test_linear_algebra_teaching_revisions.py -q`
 
 Expected: FAIL because `revisions.py` is missing.
 
-- [ ] **Step 3: Implement canonical field comparison**
+- [x] **Step 3: Implement canonical field comparison**
 
 ```python
 @dataclass(frozen=True)
@@ -582,13 +582,13 @@ def diff_artifacts(old, new) -> ArtifactDiff:
 
 Sort changes by JSON path and redact raw replies/provider credentials.
 
-- [ ] **Step 4: Run revision and store tests**
+- [x] **Step 4: Run revision and store tests**
 
 Run: `pytest tests/test_linear_algebra_teaching_revisions.py tests/test_linear_algebra_teaching_store.py -q`
 
 Expected: PASS and no scene service is imported by the diff module.
 
-- [ ] **Step 5: Commit revision comparison**
+- [x] **Step 5: Commit revision comparison**
 
 ```bash
 git add linear_algebra/teaching/revisions.py tests/test_linear_algebra_teaching_revisions.py
