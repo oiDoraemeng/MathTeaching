@@ -109,7 +109,7 @@ def parse_heading_sections(source: str) -> tuple[HeadingSection, ...]:
             (
                 candidate_start
                 for candidate_path, _, _, _, candidate_start in headings[index + 1 :]
-                if candidate_path[: len(path)] != path
+                if not _is_strict_descendant(candidate_path, path)
             ),
             len(lines) + 1,
         )
@@ -117,6 +117,10 @@ def parse_heading_sections(source: str) -> tuple[HeadingSection, ...]:
         text = "\n".join(lines[start_line - 1 : end_line]).strip()
         sections.append(HeadingSection(path, level, occurrence, title, start_line, end_line, text))
     return tuple(sections)
+
+
+def _is_strict_descendant(candidate_path: tuple[str, ...], path: tuple[str, ...]) -> bool:
+    return len(candidate_path) > len(path) and candidate_path[: len(path)] == path
 
 
 class LectureSourceRepository:
