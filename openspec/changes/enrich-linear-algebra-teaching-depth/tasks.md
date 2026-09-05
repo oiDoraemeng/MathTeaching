@@ -20,7 +20,7 @@
 ## 3. 教学产物存储与发布
 
 - [x] 3.1 新增版本化 `TeachingArtifactStore`：按章节保存 UTF-8 稳定排序 JSON、revision 和 artifact digest；用文件 round-trip 和跨平台换行测试验证可审查性
-- [ ] 3.2 保存通过校验的精确 raw reply，并与 normalized artifact digest 建立审计关联；用 draft/reviewed/published fixture 验证原始回复可恢复且不作为绘图输入
+- [x] 3.2 保存通过校验的精确 raw reply，并与 normalized artifact digest 建立审计关联；用 draft/reviewed/published fixture 验证原始回复可恢复且不作为绘图输入
 - [ ] 3.3 实现原子发布：临时文件校验通过后替换 index，失败时保留旧 revision；用写入中断和 schema 失败测试验证旧版本可读
 - [ ] 3.4 实现 source hash stale 检测和发布回退；用讲义片段变更测试验证旧 published 可继续查看、旧图形可继续使用
 - [ ] 3.5 实现 artifact revision 比较：按 claims、解释区块、视觉语义和生成元数据输出差异；用同主题两版 fixture 验证比较不触发场景执行
