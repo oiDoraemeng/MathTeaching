@@ -13,6 +13,7 @@ from .compiler import (
     VisualSemanticsCompiler,
 )
 from .evidence import ClaimEvidence, EvidenceIssue, EvidenceLedger, build_evidence_ledger
+from .palette import ROLE_COLORS, known_role, role_color
 
 _RECIPES: tuple[VisualizationRecipe, ...] = (*CHAPTER_01_RECIPES, *CHAPTER_02_RECIPES, *CHAPTER_03_RECIPES)
 _BY_ID = {recipe.id: recipe for recipe in _RECIPES}
@@ -44,4 +45,7 @@ __all__ = (
     "EvidenceIssue",
     "EvidenceLedger",
     "build_evidence_ledger",
+    "ROLE_COLORS",
+    "known_role",
+    "role_color",
 )

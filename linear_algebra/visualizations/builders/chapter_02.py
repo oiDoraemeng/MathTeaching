@@ -11,6 +11,7 @@ from .primitives import (
     make_vector_2d,
     make_view_fit,
 )
+from ..palette import role_color
 
 
 def build_batch_inner_products(context: RenderContext) -> CommandPlan:
@@ -159,7 +160,7 @@ def build_subspace_independence(context: RenderContext) -> CommandPlan:
     ops = []
     ops.extend(make_vector_2d([0, 0], v1, "v1", role="primary"))
     ops.extend(make_vector_2d([0, 0], v2, "v2", role="secondary"))
-    ops.append(make_polygon([[-3, -3], [3, -3], [3, 3], [-3, 3]], color="#d0d0d0", opacity=0.05))
+    ops.append(make_polygon([[-3, -3], [3, -3], [3, 3], [-3, 3]], color=role_color("neutral"), opacity=0.05))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="两个无关向量张成平面")
@@ -173,7 +174,7 @@ def build_subspace_rank(context: RenderContext) -> CommandPlan:
     ops = []
     ops.extend(make_vector_2d([0, 0], v1, "v1", role="primary"))
     ops.extend(make_vector_2d([0, 0], v2, "v2", role="secondary"))
-    ops.append(make_polygon([[-3, -3], [3, -3], [3, 3], [-3, 3]], color="#5b8def", opacity=0.08))
+    ops.append(make_polygon([[-3, -3], [3, -3], [3, 3], [-3, 3]], color=role_color("vector_a"), opacity=0.08))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="输出空间的维数")
@@ -199,7 +200,7 @@ def build_subspace_column(context: RenderContext) -> CommandPlan:
     ops = []
     ops.extend(make_vector_2d([0, 0], v1, "col1", role="primary"))
     ops.extend(make_vector_2d([0, 0], v2, "col2", role="secondary"))
-    ops.append(make_polygon([[-3, -3], [3, -3], [3, 3], [-3, 3]], color="#5b8def", opacity=0.08))
+    ops.append(make_polygon([[-3, -3], [3, -3], [3, 3], [-3, 3]], color=role_color("vector_a"), opacity=0.08))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="列向量张成的输出空间")

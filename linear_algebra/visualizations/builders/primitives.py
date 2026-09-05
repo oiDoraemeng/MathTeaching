@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import List
 
+from ..palette import role_color
+
 
 _ROLE_ALIASES = {
     "primary": "primary",
@@ -54,6 +56,7 @@ def make_vector_2d(
             "end": f"{alias}_end",
             "kind": "vector",
             "role": _normalize_role(role),
+            "color": role_color(role),
             "style": style,
         },
     ]
@@ -82,7 +85,7 @@ def make_label(
 
 def make_polygon(
     vertices: List[List[float]],
-    color: str = "#5b8def",
+    color: str | None = None,
     opacity: float = 0.15,
     outline: bool = True,
     alias: str = "polygon",
@@ -92,7 +95,7 @@ def make_polygon(
         "op": "geometry.polygon",
         "alias": alias,
         "vertices": vertices,
-        "color": color,
+        "color": color or role_color("neutral"),
         "opacity": opacity,
         "outline": outline,
     }
@@ -113,6 +116,7 @@ def make_angle_arc(
         "first": first,
         "second": second,
         "radius": radius,
+        "color": role_color("projection"),
     }
 
 
@@ -130,6 +134,7 @@ def make_projection(
         "result_alias": f"{alias}_result",
         "foot_alias": f"{alias}_foot",
         "residual_alias": f"{alias}_residual",
+        "color": role_color("projection"),
     }
 
 
@@ -148,6 +153,7 @@ def make_right_angle_marker(
         "first": first,
         "second": second,
         "size": size,
+        "color": role_color("neutral"),
     }
 
 
@@ -170,6 +176,7 @@ def make_vector_3d(
         "end": end,
         "kind": "vector",
         "role": _normalize_role(role),
+        "color": role_color(role),
     }
 
 
@@ -177,7 +184,7 @@ def make_plane_3d(
     origin: List[float],
     normal: List[float],
     size: float = 4.0,
-    color: str = "#5b8def",
+    color: str | None = None,
     opacity: float = 0.18,
 ) -> dict:
     """Create 3D plane."""
@@ -187,7 +194,7 @@ def make_plane_3d(
         "origin": origin,
         "normal": normal,
         "size": size,
-        "color": color,
+        "color": color or role_color("neutral"),
         "opacity": opacity,
     }
 
@@ -195,7 +202,7 @@ def make_plane_3d(
 def make_parallelepiped(
     origin: List[float],
     vectors: List[List[float]],
-    color: str = "#4c9f70",
+    color: str | None = None,
     opacity: float = 0.2,
 ) -> dict:
     """Create parallelepiped (3D parallelogram)."""
@@ -204,7 +211,7 @@ def make_parallelepiped(
         "alias": "parallelepiped",
         "origin": origin,
         "vectors": vectors,
-        "color": color,
+        "color": color or role_color("volume"),
         "opacity": opacity,
     }
 

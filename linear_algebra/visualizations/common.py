@@ -8,6 +8,8 @@ from typing import Callable, Literal
 from linear_algebra.catalog.model import LessonEntry
 from services.scene_commands import CommandPlan
 
+from .palette import role_color
+
 
 @dataclass(frozen=True)
 class RenderContext:
@@ -81,7 +83,7 @@ def _two_d_geometry(capabilities: set[str]) -> list[dict[str, object]]:
     if "vector_2d" in capabilities or "angle_2d" in capabilities or "right_angle_2d" in capabilities or "projection_2d" in capabilities:
         operations.extend(_vector_2d_operations())
     if "polygon_2d" in capabilities:
-        operations.append({"op": "geometry.polygon", "alias": "parallelogram", "vertices": [[0, 0], [2, 1], [3, 3], [1, 2]], "color": "#5b8def", "opacity": 0.24, "outline": True})
+        operations.append({"op": "geometry.polygon", "alias": "parallelogram", "vertices": [[0, 0], [2, 1], [3, 3], [1, 2]], "color": role_color("vector_a"), "opacity": 0.24, "outline": True})
     if "angle_2d" in capabilities:
         operations.append({"op": "geometry.angle_arc", "alias": "angle", "vertex": [0, 0], "first": [2, 0], "second": [1, 2], "radius": 0.45})
     if "right_angle_2d" in capabilities:
@@ -91,11 +93,11 @@ def _two_d_geometry(capabilities: set[str]) -> list[dict[str, object]]:
     if "transformed_grid" in capabilities:
         operations.append({"op": "geometry.transformed_grid", "matrix": [[1.2, 0.4], [-0.2, 1.1]], "bounds": [-3, 3, -3, 3], "step": 1.0})
     if "subspace_region" in capabilities:
-        operations.append({"op": "geometry.subspace_region", "basis": [[1, 0], [0.5, 0.5]], "bounds": [-3, 3, -3, 3], "color": "#4c9f70", "opacity": 0.2})
+        operations.append({"op": "geometry.subspace_region", "basis": [[1, 0], [0.5, 0.5]], "bounds": [-3, 3, -3, 3], "color": role_color("projection"), "opacity": 0.2})
     if "staged_transform" in capabilities:
         operations.append({"op": "geometry.staged_transform", "matrices": [[[1.2, 0], [0, 0.8]], [[0, -1], [1, 0]]], "points": [[1, 0], [0, 1], [1, 1]], "aliases": ["p", "q", "r"]})
     if "oriented_area_2d" in capabilities:
-        operations.append({"op": "geometry.oriented_area", "alias": "oriented-area", "vectors": [[2, 0.5], [0.6, 1.8]], "color": "#d97845", "opacity": 0.28})
+        operations.append({"op": "geometry.oriented_area", "alias": "oriented-area", "vectors": [[2, 0.5], [0.6, 1.8]], "color": role_color("area"), "opacity": 0.28})
     return operations
 
 
@@ -113,9 +115,9 @@ def _three_d_geometry(capabilities: set[str]) -> list[dict[str, object]]:
         {"op": "linear3d.upsert", "alias": "v", "start": [0, 0, 0], "end": [-0.3, 2, 0.8], "kind": "vector", "role": "result"},
     ]
     if "parallelepiped_3d" in capabilities or "oriented_volume_3d" in capabilities:
-        operations.append({"op": "geometry.parallelepiped", "alias": "volume-box", "origin": [0, 0, 0], "vectors": [[2, 0.5, 1.5], [-0.3, 2, 0.8], [0.2, -0.4, 2.2]], "color": "#4c9f70", "opacity": 0.2})
+        operations.append({"op": "geometry.parallelepiped", "alias": "volume-box", "origin": [0, 0, 0], "vectors": [[2, 0.5, 1.5], [-0.3, 2, 0.8], [0.2, -0.4, 2.2]], "color": role_color("volume"), "opacity": 0.2})
     else:
-        operations.append({"op": "plane3d.upsert", "alias": "span-plane", "origin": [0, 0, 0], "normal": [0, 0, 1], "size": 4, "color": "#5b8def", "opacity": 0.18})
+        operations.append({"op": "plane3d.upsert", "alias": "span-plane", "origin": [0, 0, 0], "normal": [0, 0, 1], "size": 4, "color": role_color("neutral"), "opacity": 0.18})
     return operations
 
 

@@ -13,6 +13,7 @@ from .primitives import (
     make_parallelepiped,
     make_view_fit,
 )
+from ..palette import role_color
 
 
 def build_oriented_area(context: RenderContext) -> CommandPlan:
@@ -57,7 +58,7 @@ def build_det_sign_zero_one(context: RenderContext) -> CommandPlan:
     ops.append(make_polygon([[0, 0], a1, [a1[0] + b1[0], a1[1] + b1[1]], b1], opacity=0.15, alias="positive_area"))
     ops.extend(make_vector_2d([0, 0], a2, "a2", role="result"))
     ops.extend(make_vector_2d([0, 0], b2, "b2", role="auxiliary"))
-    ops.append(make_polygon([[0, 0], a2, [a2[0] + b2[0], a2[1] + b2[1]], b2], opacity=0.1, outline=True, color="#888888", alias="unit_area"))
+    ops.append(make_polygon([[0, 0], a2, [a2[0] + b2[0], a2[1] + b2[1]], b2], opacity=0.1, outline=True, color=role_color("neutral"), alias="unit_area"))
     ops.append(make_view_fit(padding=1.3))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="det的符号、零、一")
@@ -85,10 +86,10 @@ def build_det_row_swap(context: RenderContext) -> CommandPlan:
     ops = []
     ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
     ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2, color="#5b8def", alias="original_area"))
+    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2, color=role_color("area"), alias="original_area"))
     ops.extend(make_vector_2d([0, 0], b, "b_swap", role="auxiliary"))
     ops.extend(make_vector_2d([0, 0], a, "a_swap", role="result"))
-    ops.append(make_polygon([[0, 0], b, [a[0] + b[0], a[1] + b[1]], a], opacity=0.15, color="#ef5b5b", alias="swapped_area"))
+    ops.append(make_polygon([[0, 0], b, [a[0] + b[0], a[1] + b[1]], a], opacity=0.15, color=role_color("transformed_b"), alias="swapped_area"))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="行交换改变行列式符号")
@@ -154,7 +155,7 @@ def build_cramer_area_ratio(context: RenderContext) -> CommandPlan:
     ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
     ops.extend(make_vector_2d([0, 0], target, "target", role="result"))
     ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.15, alias="basis_area"))
-    ops.append(make_polygon([[0, 0], target, b], opacity=0.2, color="#9f70c0", alias="target_area"))
+    ops.append(make_polygon([[0, 0], target, b], opacity=0.2, color=role_color("projection"), alias="target_area"))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="面积比求解线性方程组")

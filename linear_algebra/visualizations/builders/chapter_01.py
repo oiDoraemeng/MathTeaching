@@ -17,6 +17,7 @@ from .primitives import (
     make_parallelepiped,
     make_view_fit,
 )
+from ..palette import role_color
 
 
 def build_vector_magnitude(context: RenderContext) -> CommandPlan:
@@ -219,7 +220,7 @@ def build_cross_product(context: RenderContext) -> CommandPlan:
     ops.append(make_vector_3d([0, 0, 0], a, "a", role="primary"))
     ops.append(make_vector_3d([0, 0, 0], b, "b", role="secondary"))
     ops.append(
-        make_plane_3d([0, 0, 0], [0, 0, 1], size=3.5, color="#5b8def", opacity=0.15)
+        make_plane_3d([0, 0, 0], [0, 0, 1], size=3.5, color=role_color("neutral"), opacity=0.15)
     )
     ops.append(make_view_fit(padding=1.2))
 
@@ -237,7 +238,7 @@ def build_scalar_triple_product(context: RenderContext) -> CommandPlan:
     ops.append(make_vector_3d([0, 0, 0], b, "b", role="secondary"))
     ops.append(make_vector_3d([0, 0, 0], c, "c", role="result"))
     ops.append(
-        make_parallelepiped([0, 0, 0], [a, b, c], color="#4c9f70", opacity=0.2)
+        make_parallelepiped([0, 0, 0], [a, b, c], color=role_color("volume"), opacity=0.2)
     )
     ops.append(make_view_fit(padding=1.2))
 
@@ -253,7 +254,7 @@ def build_inner_product_equivalence(context: RenderContext) -> CommandPlan:
     ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
     ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
     ops.append(make_angle_arc([0, 0], a, b, radius=0.5))
-    ops.append(make_polygon([[0, 0], a, b], color="#d0d0d0", opacity=0.1))
+    ops.append(make_polygon([[0, 0], a, b], color=role_color("neutral"), opacity=0.1))
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(

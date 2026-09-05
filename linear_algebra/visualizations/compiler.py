@@ -24,6 +24,7 @@ from services.scene_commands import CommandPlan, SceneCommandService
 
 from .common import RenderContext
 from .contracts import VisualContract, contract_for, validate_contract_semantics
+from .palette import role_color
 
 
 COMPILER_VERSION = "visual-compiler-v1"
@@ -306,32 +307,32 @@ class VisualSemanticsCompiler:
                     [
                         {"op": "point.upsert", "alias": origin, "coordinates": [0.0, 0.0], "name": "O"},
                         {"op": "point.upsert", "alias": end, "coordinates": list(coordinates), "name": entity.label},
-                        {"op": "linear.upsert", "alias": prefix, "start": origin, "end": end, "kind": "vector", "role": role, "label": entity.label},
+                        {"op": "linear.upsert", "alias": prefix, "start": origin, "end": end, "kind": "vector", "role": role, "color": role_color(entity.role), "label": entity.label},
                     ]
                 )
             else:
                 operations.append(
-                    {"op": "linear3d.upsert", "alias": prefix, "start": [0.0, 0.0, 0.0], "end": list(coordinates), "kind": "vector", "role": role, "label": entity.label}
+                    {"op": "linear3d.upsert", "alias": prefix, "start": [0.0, 0.0, 0.0], "end": list(coordinates), "kind": "vector", "role": role, "color": role_color(entity.role), "label": entity.label}
                 )
         elif entity.kind in {"matrix", "grid"} and scene == "2d":
             matrix = _matrix2(entity.value)
             if matrix is not None:
-                operations.append({"op": "geometry.transformed_grid", "matrix": matrix, "bounds": list(context.bounds), "step": 1.0})
+                operations.append({"op": "geometry.transformed_grid", "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color(entity.role)})
                 aliases.append(prefix)
         elif entity.kind in {"basis", "region"} and scene == "2d":
             basis = _vectors2(entity.value)
             if basis:
-                operations.append({"op": "geometry.subspace_region", "basis": [list(vector) for vector in basis], "bounds": list(context.bounds), "opacity": 0.2})
+                operations.append({"op": "geometry.subspace_region", "basis": [list(vector) for vector in basis], "bounds": list(context.bounds), "opacity": 0.2, "color": role_color(entity.role)})
                 aliases.append(prefix)
         elif entity.kind == "area" and scene == "2d":
             vectors = _vectors2(entity.value)
             if len(vectors) == 2:
-                operations.append({"op": "geometry.oriented_area", "alias": prefix, "vectors": [list(vector) for vector in vectors]})
+                operations.append({"op": "geometry.oriented_area", "alias": prefix, "vectors": [list(vector) for vector in vectors], "color": role_color(entity.role)})
                 aliases.append(prefix)
         elif entity.kind == "volume" and scene == "3d":
             vectors = _vectors3(entity.value)
             if len(vectors) == 3:
-                operations.append({"op": "geometry.oriented_volume", "alias": prefix, "origin": [0.0, 0.0, 0.0], "vectors": [list(vector) for vector in vectors]})
+                operations.append({"op": "geometry.oriented_volume", "alias": prefix, "origin": [0.0, 0.0, 0.0], "vectors": [list(vector) for vector in vectors], "color": role_color(entity.role)})
                 aliases.append(prefix)
         return operations, aliases
 
@@ -360,6 +361,7 @@ class VisualSemanticsCompiler:
                     "result_alias": _alias(target.id),
                     "foot_alias": _alias(foot.id) if foot else f"{relation_alias}__foot",
                     "residual_alias": _alias(residual.id) if residual else f"{relation_alias}__residual",
+                    "color": role_color("projection"),
                 }
             )
             return operations, [relation_alias]
@@ -368,7 +370,7 @@ class VisualSemanticsCompiler:
             operations.append({"op": "linear_algebra.matrix_transform", "matrix": matrix})
             return operations, [relation_alias]
         if relation.kind == "batch_maps_to" and matrix is not None and semantics.scene_kind == "2d":
-            operations.append({"op": "geometry.transformed_grid", "matrix": matrix, "bounds": list(context.bounds), "step": 1.0})
+            operations.append({"op": "geometry.transformed_grid", "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color("transformed_a")})
             return operations, [relation_alias]
         matrices = relation.parameters.get("matrices") if isinstance(relation.parameters, Mapping) else None
         if relation.kind == "composition_order" and _matrix_sequence(matrices):
@@ -378,12 +380,12 @@ class VisualSemanticsCompiler:
         if relation.kind == "orientation" and semantics.scene_kind == "2d":
             first = _coordinates(source.value, 2)
             second = _coordinates(target.value, 2)
-            operations.append({"op": "geometry.angle_arc", "alias": relation_alias, "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "radius": 0.45})
+            operations.append({"op": "geometry.angle_arc", "alias": relation_alias, "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "radius": 0.45, "color": role_color("projection")})
             return operations, [relation_alias]
         if relation.kind == "orthogonal_to" and semantics.scene_kind == "2d":
             first = _coordinates(source.value, 2)
             second = _coordinates(target.value, 2)
-            operations.append({"op": "geometry.right_angle_marker", "alias": relation_alias, "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "size": 0.3})
+            operations.append({"op": "geometry.right_angle_marker", "alias": relation_alias, "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "size": 0.3, "color": role_color("neutral")})
             return operations, [relation_alias]
         # Semantic relations without a dedicated primitive remain visible as
         # bounded 2D annotations.  3D storyboard metadata carries the label,
