@@ -13,6 +13,7 @@ from linear_algebra.catalog.model import LessonEntry
 from linear_algebra.catalog.manifest import topic_entries
 
 from .model import TeachingArtifact
+from .profiles import TeachingLevel, profile_for
 from .schema import load_artifact_schema
 from .source import SourceContext
 
@@ -307,6 +308,65 @@ def validate_source_evidence(
     return tuple(_sorted_issues(issues))
 
 
+def validate_teaching_depth(artifact: TeachingArtifact) -> tuple[ValidationIssue, ...]:
+    """Check explicit L0-L4 content without inferring depth from prose length."""
+
+    profile = profile_for(artifact.topic_id)
+    explanation = artifact.explanation
+    presence = explanation.section_presence()
+    issues: list[ValidationIssue] = []
+
+    for section in sorted(set(profile.required_sections)):
+        if not presence.get(section, False):
+            issues.append(
+                ValidationIssue(
+                    "missing_profile_section",
+                    f"$.explanation.{section}",
+                    section,
+                )
+            )
+
+    if profile.minimum_level >= TeachingLevel.CALCULATE and not explanation.worked_examples:
+        issues.append(
+            ValidationIssue(
+                "missing_worked_example",
+                "$.explanation.worked_examples",
+                artifact.topic_id,
+            )
+        )
+    if profile.minimum_level >= TeachingLevel.EXPLAIN:
+        if not explanation.geometric_meaning.strip():
+            issues.append(
+                ValidationIssue(
+                    "missing_geometric_meaning",
+                    "$.explanation.geometric_meaning",
+                    artifact.topic_id,
+                )
+            )
+        if not explanation.invariants:
+            issues.append(
+                ValidationIssue("missing_invariant", "$.explanation.invariants", artifact.topic_id)
+            )
+    if profile.minimum_level >= TeachingLevel.TRANSFER:
+        if not explanation.connections:
+            issues.append(
+                ValidationIssue("missing_connection", "$.explanation.connections", artifact.topic_id)
+            )
+        if not explanation.transfer_note.strip():
+            issues.append(
+                ValidationIssue("missing_transfer_note", "$.explanation.transfer_note", artifact.topic_id)
+            )
+    if profile.requires_analogy_boundary and not explanation.analogy_boundary.strip():
+        issues.append(
+            ValidationIssue(
+                "missing_analogy_boundary",
+                "$.explanation.analogy_boundary",
+                artifact.topic_id,
+            )
+        )
+    return tuple(_sorted_issues(issues))
+
+
 @lru_cache(maxsize=1)
 def _validator() -> Draft202012Validator:
     return Draft202012Validator(load_artifact_schema())
@@ -383,4 +443,5 @@ __all__ = [
     "validate_claim_bindings",
     "validate_closed_references",
     "validate_source_evidence",
+    "validate_teaching_depth",
 ]

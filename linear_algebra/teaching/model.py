@@ -136,6 +136,51 @@ class ExplanationSection:
 
 
 @dataclass(frozen=True)
+class WorkedExampleCheck:
+    """One numeric assertion attached to a worked example."""
+
+    name: str
+    expected: JsonValue
+    tolerance: float = 1e-9
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "name", _constructor_string(self.name, "name"))
+        object.__setattr__(self, "expected", _freeze_json(self.expected, "$.expected"))
+        tolerance = _constructor_finite_float(self.tolerance, "tolerance")
+        if tolerance < 0:
+            raise ValueError("tolerance: expected non-negative number")
+        object.__setattr__(self, "tolerance", tolerance)
+
+
+@dataclass(frozen=True)
+class WorkedExample:
+    """Typed, bounded inputs for a reproducible mathematical calculation."""
+
+    kind: str = "manual"
+    given: JsonValue = None
+    calculation: tuple[str, ...] = ()
+    result: JsonValue = None
+    checks: tuple[WorkedExampleCheck, ...] = ()
+    id: str = ""
+    title: str = ""
+    claim_refs: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "kind", _constructor_string(self.kind, "kind"))
+        object.__setattr__(self, "given", _freeze_json(self.given, "$.given"))
+        object.__setattr__(self, "calculation", _constructor_string_tuple(self.calculation, "calculation"))
+        object.__setattr__(self, "result", _freeze_json(self.result, "$.result"))
+        object.__setattr__(
+            self,
+            "checks",
+            _constructor_instance_tuple(self.checks, "checks", WorkedExampleCheck),
+        )
+        object.__setattr__(self, "id", _constructor_string(self.id, "id"))
+        object.__setattr__(self, "title", _constructor_string(self.title, "title"))
+        object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
+
+
+@dataclass(frozen=True)
 class ExplanationContentV2:
     """Structured prose and the symbol-to-teaching-role mapping it uses."""
 
@@ -143,12 +188,64 @@ class ExplanationContentV2:
     summary: str
     sections: tuple[ExplanationSection, ...]
     symbol_roles: Mapping[str, str]
+    definition: str = ""
+    formula: str = ""
+    derivation: tuple[str, ...] = ()
+    worked_examples: tuple[WorkedExample, ...] = ()
+    intuition: str = ""
+    geometric_meaning: str = ""
+    conclusion: str = ""
+    pitfalls: tuple[str, ...] = ()
+    invariants: tuple[str, ...] = ()
+    connections: tuple[str, ...] = ()
+    analogy_boundary: str = ""
+    transfer_note: str = ""
+    read_guide: tuple[str, ...] = ()
+    searchable_text: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "title", _constructor_string(self.title, "title"))
         object.__setattr__(self, "summary", _constructor_string(self.summary, "summary"))
         object.__setattr__(self, "sections", _constructor_instance_tuple(self.sections, "sections", ExplanationSection))
         object.__setattr__(self, "symbol_roles", _constructor_string_mapping(self.symbol_roles, "symbol_roles"))
+        for field in (
+            "definition",
+            "formula",
+            "intuition",
+            "geometric_meaning",
+            "conclusion",
+            "analogy_boundary",
+            "transfer_note",
+        ):
+            object.__setattr__(self, field, _constructor_string(getattr(self, field), field))
+        object.__setattr__(self, "derivation", _constructor_string_tuple(self.derivation, "derivation"))
+        object.__setattr__(self, "worked_examples", _constructor_instance_tuple(self.worked_examples, "worked_examples", WorkedExample))
+        for field in ("pitfalls", "invariants", "connections", "read_guide", "searchable_text"):
+            object.__setattr__(self, field, _constructor_string_tuple(getattr(self, field), field))
+
+    def section_presence(self) -> dict[str, bool]:
+        """Return explicit presence flags used by teaching-depth validation."""
+
+        section_text = {
+            section.id: section.text.strip()
+            for section in self.sections
+            if section.text.strip()
+        }
+        return {
+            "definition": bool(self.definition.strip() or section_text.get("definition")),
+            "formula": bool(self.formula.strip() or section_text.get("formula")),
+            "derivation": bool(self.derivation or section_text.get("derivation")),
+            "worked_examples": bool(self.worked_examples or section_text.get("worked_examples")),
+            "intuition": bool(self.intuition.strip() or section_text.get("intuition")),
+            "geometric_meaning": bool(self.geometric_meaning.strip() or section_text.get("geometric_meaning")),
+            "conclusion": bool(self.conclusion.strip() or section_text.get("conclusion")),
+            "pitfalls": bool(self.pitfalls or section_text.get("pitfalls")),
+            "invariants": bool(self.invariants or section_text.get("invariants")),
+            "connections": bool(self.connections or section_text.get("connections")),
+            "analogy_boundary": bool(self.analogy_boundary.strip() or section_text.get("analogy_boundary")),
+            "transfer_note": bool(self.transfer_note.strip() or section_text.get("transfer_note")),
+            "read_guide": bool(self.read_guide or section_text.get("read_guide")),
+        }
 
 
 @dataclass(frozen=True)
@@ -409,7 +506,7 @@ def _decode_topic_connection(payload: Mapping[str, object], path: str) -> TopicC
 
 
 def _decode_explanation(payload: Mapping[str, object], path: str) -> ExplanationContentV2:
-    record = _object(payload, path, _EXPLANATION_FIELDS)
+    record = _object_optional(payload, path, _EXPLANATION_REQUIRED_FIELDS, _EXPLANATION_FIELDS)
     sections = tuple(
         _decode_explanation_section(
             _mapping(item, f"{path}.sections[{index}]"), f"{path}.sections[{index}]"
@@ -421,6 +518,20 @@ def _decode_explanation(payload: Mapping[str, object], path: str) -> Explanation
         summary=_string(record["summary"], f"{path}.summary"),
         sections=sections,
         symbol_roles=_string_mapping(record["symbol_roles"], f"{path}.symbol_roles"),
+        definition=_optional_string(record, "definition", path),
+        formula=_optional_string(record, "formula", path),
+        derivation=_optional_string_tuple(record, "derivation", path),
+        worked_examples=_optional_worked_examples(record, path),
+        intuition=_optional_string(record, "intuition", path),
+        geometric_meaning=_optional_string(record, "geometric_meaning", path),
+        conclusion=_optional_string(record, "conclusion", path),
+        pitfalls=_optional_string_tuple(record, "pitfalls", path),
+        invariants=_optional_string_tuple(record, "invariants", path),
+        connections=_optional_string_tuple(record, "connections", path),
+        analogy_boundary=_optional_string(record, "analogy_boundary", path),
+        transfer_note=_optional_string(record, "transfer_note", path),
+        read_guide=_optional_string_tuple(record, "read_guide", path),
+        searchable_text=_optional_string_tuple(record, "searchable_text", path),
     )
 
 
@@ -431,6 +542,35 @@ def _decode_explanation_section(payload: Mapping[str, object], path: str) -> Exp
         title=_string(record["title"], f"{path}.title"),
         text=_string(record["text"], f"{path}.text"),
         claim_refs=_string_tuple(record["claim_refs"], f"{path}.claim_refs"),
+    )
+
+
+def _decode_worked_example(payload: Mapping[str, object], path: str) -> WorkedExample:
+    record = _object_optional(payload, path, _WORKED_EXAMPLE_REQUIRED_FIELDS, _WORKED_EXAMPLE_FIELDS)
+    checks = tuple(
+        _decode_worked_example_check(
+            _mapping(item, f"{path}.checks[{index}]"), f"{path}.checks[{index}]"
+        )
+        for index, item in enumerate(_array(record["checks"], f"{path}.checks"))
+    )
+    return WorkedExample(
+        kind=_string(record["kind"], f"{path}.kind"),
+        given=_freeze_json(record["given"], f"{path}.given"),
+        calculation=_string_tuple(record["calculation"], f"{path}.calculation"),
+        result=_freeze_json(record["result"], f"{path}.result"),
+        checks=checks,
+        id=_optional_string(record, "id", path),
+        title=_optional_string(record, "title", path),
+        claim_refs=_optional_string_tuple(record, "claim_refs", path),
+    )
+
+
+def _decode_worked_example_check(payload: Mapping[str, object], path: str) -> WorkedExampleCheck:
+    record = _object(payload, path, _WORKED_EXAMPLE_CHECK_FIELDS)
+    return WorkedExampleCheck(
+        name=_string(record["name"], f"{path}.name"),
+        expected=_freeze_json(record["expected"], f"{path}.expected"),
+        tolerance=_finite_float(record["tolerance"], f"{path}.tolerance"),
     )
 
 
@@ -589,7 +729,7 @@ def _encode_topic_connection(connection: TopicConnection) -> dict[str, object]:
 
 
 def _encode_explanation(explanation: ExplanationContentV2) -> dict[str, object]:
-    return {
+    encoded: dict[str, object] = {
         "title": explanation.title,
         "summary": explanation.summary,
         "sections": [
@@ -602,6 +742,49 @@ def _encode_explanation(explanation: ExplanationContentV2) -> dict[str, object]:
             for section in explanation.sections
         ],
         "symbol_roles": dict(explanation.symbol_roles),
+    }
+    optional_values: dict[str, object] = {
+        "definition": explanation.definition,
+        "formula": explanation.formula,
+        "derivation": list(explanation.derivation),
+        "worked_examples": [_encode_worked_example(item) for item in explanation.worked_examples],
+        "intuition": explanation.intuition,
+        "geometric_meaning": explanation.geometric_meaning,
+        "conclusion": explanation.conclusion,
+        "pitfalls": list(explanation.pitfalls),
+        "invariants": list(explanation.invariants),
+        "connections": list(explanation.connections),
+        "analogy_boundary": explanation.analogy_boundary,
+        "transfer_note": explanation.transfer_note,
+        "read_guide": list(explanation.read_guide),
+        "searchable_text": list(explanation.searchable_text),
+    }
+    encoded.update({key: value for key, value in optional_values.items() if value not in ("", [], ())})
+    return encoded
+
+
+def _encode_worked_example(example: WorkedExample) -> dict[str, object]:
+    encoded: dict[str, object] = {
+        "kind": example.kind,
+        "given": _thaw_json(example.given),
+        "calculation": list(example.calculation),
+        "result": _thaw_json(example.result),
+        "checks": [_encode_worked_example_check(item) for item in example.checks],
+    }
+    if example.id:
+        encoded["id"] = example.id
+    if example.title:
+        encoded["title"] = example.title
+    if example.claim_refs:
+        encoded["claim_refs"] = list(example.claim_refs)
+    return encoded
+
+
+def _encode_worked_example_check(check: WorkedExampleCheck) -> dict[str, object]:
+    return {
+        "name": check.name,
+        "expected": _thaw_json(check.expected),
+        "tolerance": check.tolerance,
     }
 
 
@@ -670,6 +853,22 @@ def _object(payload: Mapping[str, object], path: str, fields: tuple[str, ...]) -
     return payload
 
 
+def _object_optional(
+    payload: Mapping[str, object],
+    path: str,
+    required_fields: tuple[str, ...],
+    allowed_fields: tuple[str, ...],
+) -> Mapping[str, object]:
+    payload = _mapping(payload, path)
+    missing = [field for field in required_fields if field not in payload]
+    if missing:
+        raise ValueError(f"{path}.{missing[0]}: required field is missing")
+    unknown = [key for key in payload if key not in allowed_fields]
+    if unknown:
+        raise ValueError(f"{path}.{unknown[0]}: unknown field")
+    return payload
+
+
 def _mapping(value: object, path: str) -> Mapping[str, object]:
     if not isinstance(value, Mapping):
         raise ValueError(f"{path}: expected object")
@@ -696,6 +895,15 @@ def _integer(value: object, path: str) -> int:
     return value
 
 
+def _finite_float(value: object, path: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"{path}: expected number")
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError(f"{path}: expected finite number")
+    return number
+
+
 def _boolean(value: object, path: str) -> bool:
     if not isinstance(value, bool):
         raise ValueError(f"{path}: expected boolean")
@@ -709,6 +917,24 @@ def _string_tuple(value: object, path: str) -> tuple[str, ...]:
 def _string_mapping(value: object, path: str) -> Mapping[str, str]:
     mapping = _mapping(value, path)
     return MappingProxyType({key: _string(item, f"{path}.{key}") for key, item in mapping.items()})
+
+
+def _optional_string(record: Mapping[str, object], field: str, path: str) -> str:
+    value = record.get(field, "")
+    return _string(value, f"{path}.{field}")
+
+
+def _optional_string_tuple(record: Mapping[str, object], field: str, path: str) -> tuple[str, ...]:
+    value = record.get(field, [])
+    return _string_tuple(value, f"{path}.{field}")
+
+
+def _optional_worked_examples(record: Mapping[str, object], path: str) -> tuple[WorkedExample, ...]:
+    value = record.get("worked_examples", [])
+    return tuple(
+        _decode_worked_example(_mapping(item, f"{path}.worked_examples[{index}]"), f"{path}.worked_examples[{index}]")
+        for index, item in enumerate(_array(value, f"{path}.worked_examples"))
+    )
 
 
 def _constructor_tuple(value: object, field: str) -> tuple[object, ...]:
@@ -750,6 +976,15 @@ def _constructor_integer(value: object, field: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int):
         raise TypeError(f"{field}: expected integer")
     return value
+
+
+def _constructor_finite_float(value: object, field: str) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise TypeError(f"{field}: expected number")
+    number = float(value)
+    if not math.isfinite(number):
+        raise ValueError(f"{field}: expected finite number")
+    return number
 
 
 def _constructor_boolean(value: object, field: str) -> bool:
@@ -865,8 +1100,28 @@ _CLAIM_FIELDS = (
     "stage_refs",
 )
 _TOPIC_CONNECTION_FIELDS = ("id", "target_topic_id", "relation", "description", "claim_refs")
-_EXPLANATION_FIELDS = ("title", "summary", "sections", "symbol_roles")
+_EXPLANATION_REQUIRED_FIELDS = ("title", "summary", "sections", "symbol_roles")
+_EXPLANATION_FIELDS = (
+    *_EXPLANATION_REQUIRED_FIELDS,
+    "definition",
+    "formula",
+    "derivation",
+    "worked_examples",
+    "intuition",
+    "geometric_meaning",
+    "conclusion",
+    "pitfalls",
+    "invariants",
+    "connections",
+    "analogy_boundary",
+    "transfer_note",
+    "read_guide",
+    "searchable_text",
+)
 _EXPLANATION_SECTION_FIELDS = ("id", "title", "text", "claim_refs")
+_WORKED_EXAMPLE_REQUIRED_FIELDS = ("kind", "given", "calculation", "result", "checks")
+_WORKED_EXAMPLE_FIELDS = (*_WORKED_EXAMPLE_REQUIRED_FIELDS, "id", "title", "claim_refs")
+_WORKED_EXAMPLE_CHECK_FIELDS = ("name", "expected", "tolerance")
 _VISUAL_SEMANTICS_FIELDS = ("scene_kind", "entities", "relations", "stages")
 _ENTITY_FIELDS = ("id", "kind", "dimension", "value", "role", "label", "claim_refs")
 _RELATION_FIELDS = ("id", "kind", "source_ref", "target_ref", "parameters", "claim_refs")
@@ -903,6 +1158,8 @@ __all__ = [
     "TeachingArtifact",
     "TeachingProfileRecord",
     "TopicConnection",
+    "WorkedExample",
+    "WorkedExampleCheck",
     "VisualEntity",
     "VisualRelation",
     "VisualSemantics",

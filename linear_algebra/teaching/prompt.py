@@ -90,6 +90,28 @@ _ARTIFACT_SHAPE: dict[str, Any] = {
     "explanation": {
         "title": "string",
         "summary": "string",
+        "definition": "string; explicit definition grounded in the lecture",
+        "formula": "string; displayed formula",
+        "derivation": "array[string]; ordered mathematical reasoning only",
+        "worked_examples": [
+            {
+                "kind": "string; typed numeric kind or manual",
+                "given": "finite numeric input",
+                "calculation": "array[string]; explicit finite steps",
+                "result": "finite numeric result",
+                "checks": [{"name": "string", "expected": "finite value", "tolerance": "non-negative finite number"}],
+            }
+        ],
+        "intuition": "string",
+        "geometric_meaning": "string; connect objects and relations to shape/space",
+        "conclusion": "string",
+        "pitfalls": "array[string]; concrete misconceptions",
+        "invariants": "array[string]; visible or algebraic invariants/boundaries",
+        "connections": "array[string]; related topics or variants",
+        "analogy_boundary": "string; required for high-dimensional analogy topics",
+        "transfer_note": "string; how to reuse or compare the idea",
+        "read_guide": "array[string]; how to read the mathematical storyboard",
+        "searchable_text": "array[string]; optional indexed phrases",
         "sections": [
             {
                 "id": "string",

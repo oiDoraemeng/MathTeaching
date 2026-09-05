@@ -105,7 +105,46 @@
         "title": {"type": "string"},
         "summary": {"type": "string"},
         "sections": {"type": "array", "items": {"$ref": "#/$defs/explanation_section"}},
-        "symbol_roles": {"type": "object", "additionalProperties": {"type": "string"}}
+        "symbol_roles": {"type": "object", "additionalProperties": {"type": "string"}},
+        "definition": {"type": "string"},
+        "formula": {"type": "string"},
+        "derivation": {"$ref": "#/$defs/string_array"},
+        "worked_examples": {"type": "array", "items": {"$ref": "#/$defs/worked_example"}},
+        "intuition": {"type": "string"},
+        "geometric_meaning": {"type": "string"},
+        "conclusion": {"type": "string"},
+        "pitfalls": {"$ref": "#/$defs/string_array"},
+        "invariants": {"$ref": "#/$defs/string_array"},
+        "connections": {"$ref": "#/$defs/string_array"},
+        "analogy_boundary": {"type": "string"},
+        "transfer_note": {"type": "string"},
+        "read_guide": {"$ref": "#/$defs/string_array"},
+        "searchable_text": {"$ref": "#/$defs/string_array"}
+      }
+    },
+    "worked_example": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "given", "calculation", "result", "checks"],
+      "properties": {
+        "kind": {"type": "string"},
+        "given": {"type": ["number", "array", "null"]},
+        "calculation": {"$ref": "#/$defs/string_array"},
+        "result": {"type": ["number", "array", "null"]},
+        "checks": {"type": "array", "items": {"$ref": "#/$defs/worked_example_check"}},
+        "id": {"type": "string"},
+        "title": {"type": "string"},
+        "claim_refs": {"$ref": "#/$defs/string_array"}
+      }
+    },
+    "worked_example_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "expected", "tolerance"],
+      "properties": {
+        "name": {"type": "string"},
+        "expected": {"type": ["number", "array", "null"]},
+        "tolerance": {"type": "number", "minimum": 0}
       }
     },
     "semantic_value": {
