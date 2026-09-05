@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from linear_algebra.catalog.manifest import topic_entries
-from linear_algebra.teaching.model import TeachingArtifact
+from linear_algebra.teaching.model import TeachingArtifact, VisualSemantics
 
 
 @dataclass(frozen=True)
@@ -66,21 +66,35 @@ def contract_for(topic_id: str) -> VisualContract:
 def validate_contract(artifact: TeachingArtifact, contract: VisualContract) -> tuple[ContractIssue, ...]:
     """Report missing semantic evidence before a compiler can emit commands."""
 
-    issues: list[ContractIssue] = []
-    if artifact.topic_id != contract.topic_id:
-        issues.append(ContractIssue("topic_mismatch", contract.topic_id, artifact.topic_id))
+    issues = list(validate_contract_semantics(artifact.visual_semantics, contract))
     claims = {claim.id for claim in artifact.claims}
-    roles = {entity.role for entity in artifact.visual_semantics.entities}
-    relations = {relation.kind for relation in artifact.visual_semantics.relations}
-    primitives = {entity.kind for entity in artifact.visual_semantics.entities} | relations
-    invariants = {
-        invariant
-        for stage in artifact.visual_semantics.stages
-        for invariant in stage.expected_invariants
-    }
     for claim_id in contract.required_claims:
         if claim_id not in claims:
             issues.append(ContractIssue("missing_claim", contract.topic_id, claim_id))
+    return tuple(sorted(issues, key=lambda issue: (issue.code, issue.detail)))
+
+
+def validate_contract_semantics(
+    semantics: VisualSemantics, contract: VisualContract, *, topic_id: str | None = None
+) -> tuple[ContractIssue, ...]:
+    """Validate a semantic graph without requiring a complete artifact.
+
+    The compiler uses this boundary after parsing an artifact.  Keeping the
+    graph-only check separate also makes it impossible for a renderer to be
+    reached when the semantic graph itself violates a topic contract.
+    """
+
+    issues: list[ContractIssue] = []
+    if topic_id is not None and topic_id != contract.topic_id:
+        issues.append(ContractIssue("topic_mismatch", contract.topic_id, topic_id))
+    roles = {entity.role for entity in semantics.entities}
+    relations = {relation.kind for relation in semantics.relations}
+    primitives = {entity.kind for entity in semantics.entities} | relations
+    invariants = {
+        invariant
+        for stage in semantics.stages
+        for invariant in stage.expected_invariants
+    }
     for role in contract.required_entity_roles:
         if role not in roles:
             issues.append(ContractIssue("missing_entity_role", contract.topic_id, role))
@@ -90,7 +104,7 @@ def validate_contract(artifact: TeachingArtifact, contract: VisualContract) -> t
     for primitive in contract.required_primitives:
         if primitive not in primitives:
             issues.append(ContractIssue("missing_primitive", contract.topic_id, primitive))
-    if len(artifact.visual_semantics.stages) < contract.minimum_stage_count:
+    if len(semantics.stages) < contract.minimum_stage_count:
         issues.append(ContractIssue("insufficient_stages", contract.topic_id, str(contract.minimum_stage_count)))
     for invariant in contract.required_invariants:
         if invariant not in invariants:
@@ -102,4 +116,10 @@ def validate_contract(artifact: TeachingArtifact, contract: VisualContract) -> t
     return tuple(sorted(issues, key=lambda issue: (issue.code, issue.detail)))
 
 
-__all__ = ["ContractIssue", "VisualContract", "contract_for", "validate_contract"]
+__all__ = [
+    "ContractIssue",
+    "VisualContract",
+    "contract_for",
+    "validate_contract",
+    "validate_contract_semantics",
+]

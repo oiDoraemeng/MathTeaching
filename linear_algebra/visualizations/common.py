@@ -14,6 +14,7 @@ class RenderContext:
     topic_id: str
     bounds: tuple[float, float, float, float] = (-3.0, 3.0, -3.0, 3.0)
     seed: int = 17
+    render_profile: str = "lecture-v1"
 
     @classmethod
     def default(cls, topic_id: str) -> "RenderContext":
