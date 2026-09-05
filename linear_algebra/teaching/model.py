@@ -7,6 +7,7 @@ semantics only.  They carry no rendering commands or host application objects.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from types import MappingProxyType
 from typing import Literal, Mapping, TypeAlias
 
@@ -33,6 +34,12 @@ class SourceRecord:
     spans: tuple[SourceSpan, ...]
     neighboring_titles: tuple[str, ...]
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "source_path", _constructor_string_tuple(self.source_path, "source_path"))
+        object.__setattr__(self, "heading_path", _constructor_string_tuple(self.heading_path, "heading_path"))
+        object.__setattr__(self, "spans", _constructor_tuple(self.spans, "spans"))
+        object.__setattr__(self, "neighboring_titles", _constructor_string_tuple(self.neighboring_titles, "neighboring_titles"))
+
     @classmethod
     def from_context(cls, context: SourceContext) -> "SourceRecord":
         return cls(
@@ -55,6 +62,9 @@ class TeachingProfileRecord:
     required_sections: tuple[str, ...]
     requires_analogy_boundary: bool
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "required_sections", _constructor_string_tuple(self.required_sections, "required_sections"))
+
 
 @dataclass(frozen=True)
 class Claim:
@@ -70,6 +80,10 @@ class Claim:
     relation_refs: tuple[str, ...]
     stage_refs: tuple[str, ...]
 
+    def __post_init__(self) -> None:
+        for field in ("formula_symbols", "source_refs", "explanation_refs", "entity_refs", "relation_refs", "stage_refs"):
+            object.__setattr__(self, field, _constructor_string_tuple(getattr(self, field), field))
+
 
 @dataclass(frozen=True)
 class ExplanationSection:
@@ -80,6 +94,9 @@ class ExplanationSection:
     text: str
     claim_refs: tuple[str, ...]
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
+
 
 @dataclass(frozen=True)
 class ExplanationContentV2:
@@ -89,6 +106,10 @@ class ExplanationContentV2:
     summary: str
     sections: tuple[ExplanationSection, ...]
     symbol_roles: Mapping[str, str]
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "sections", _constructor_tuple(self.sections, "sections"))
+        object.__setattr__(self, "symbol_roles", _constructor_string_mapping(self.symbol_roles, "symbol_roles"))
 
 
 @dataclass(frozen=True)
@@ -103,6 +124,10 @@ class VisualEntity:
     label: str
     claim_refs: tuple[str, ...]
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "value", _freeze_json(self.value, "$.value"))
+        object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
+
 
 @dataclass(frozen=True)
 class VisualRelation:
@@ -114,6 +139,13 @@ class VisualRelation:
     target_ref: str
     parameters: Mapping[str, JsonValue]
     claim_refs: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        parameters = _freeze_json(self.parameters, "$.parameters")
+        if not isinstance(parameters, Mapping):
+            raise ValueError("$.parameters: expected object")
+        object.__setattr__(self, "parameters", parameters)
+        object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
 
 
 @dataclass(frozen=True)
@@ -129,6 +161,10 @@ class VisualStage:
     relation_refs: tuple[str, ...]
     expected_invariants: tuple[str, ...]
 
+    def __post_init__(self) -> None:
+        for field in ("input_entity_refs", "output_entity_refs", "relation_refs", "expected_invariants"):
+            object.__setattr__(self, field, _constructor_string_tuple(getattr(self, field), field))
+
 
 @dataclass(frozen=True)
 class VisualSemantics:
@@ -138,6 +174,11 @@ class VisualSemantics:
     entities: tuple[VisualEntity, ...]
     relations: tuple[VisualRelation, ...]
     stages: tuple[VisualStage, ...]
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "entities", _constructor_tuple(self.entities, "entities"))
+        object.__setattr__(self, "relations", _constructor_tuple(self.relations, "relations"))
+        object.__setattr__(self, "stages", _constructor_tuple(self.stages, "stages"))
 
     @classmethod
     def from_dict(cls, payload: Mapping[str, object]) -> "VisualSemantics":
@@ -175,6 +216,9 @@ class TeachingArtifact:
     visual_semantics: VisualSemantics
     generated: GenerationReceipt
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "claims", _constructor_tuple(self.claims, "claims"))
+
     @classmethod
     def from_dict(cls, payload: Mapping[str, object]) -> "TeachingArtifact":
         return _decode_artifact(payload)
@@ -184,7 +228,7 @@ class TeachingArtifact:
 
 
 def _decode_artifact(payload: Mapping[str, object]) -> TeachingArtifact:
-    record = _object(payload, "$", _ARTIFACT_FIELDS)
+    record = _object(_mapping(payload, "$"), "$", _ARTIFACT_FIELDS)
     status = _string(record["status"], "$.status")
     if status not in {"draft", "reviewed", "published"}:
         raise ValueError("$.status: expected draft, reviewed, or published")
@@ -514,6 +558,7 @@ def _encode_generation_receipt(receipt: GenerationReceipt) -> dict[str, object]:
 
 
 def _object(payload: Mapping[str, object], path: str, fields: tuple[str, ...]) -> Mapping[str, object]:
+    payload = _mapping(payload, path)
     missing = [field for field in fields if field not in payload]
     if missing:
         raise ValueError(f"{path}.{missing[0]}: required field is missing")
@@ -564,12 +609,38 @@ def _string_mapping(value: object, path: str) -> Mapping[str, str]:
     return MappingProxyType({key: _string(item, f"{path}.{key}") for key, item in mapping.items()})
 
 
+def _constructor_tuple(value: object, field: str) -> tuple[object, ...]:
+    if isinstance(value, (str, bytes)) or not isinstance(value, (list, tuple)):
+        raise TypeError(f"{field}: expected tuple or list")
+    return tuple(value)
+
+
+def _constructor_string_tuple(value: object, field: str) -> tuple[str, ...]:
+    return tuple(_constructor_string(item, f"{field}[{index}]") for index, item in enumerate(_constructor_tuple(value, field)))
+
+
+def _constructor_string(item: object, field: str) -> str:
+    if not isinstance(item, str):
+        raise TypeError(f"{field}: expected string")
+    return item
+
+
+def _constructor_string_mapping(value: object, field: str) -> Mapping[str, str]:
+    if not isinstance(value, Mapping):
+        raise TypeError(f"{field}: expected mapping")
+    if not all(isinstance(key, str) for key in value):
+        raise TypeError(f"{field}: expected string object keys")
+    return MappingProxyType({key: _constructor_string(item, f"{field}.{key}") for key, item in value.items()})
+
+
 def _freeze_json(value: object, path: str) -> JsonValue:
     if value is None or isinstance(value, (str, bool)):
         return value
+    if isinstance(value, float) and not math.isfinite(value):
+        raise ValueError(f"{path}: expected finite JSON number")
     if isinstance(value, (int, float)) and not isinstance(value, bool):
         return value
-    if isinstance(value, list):
+    if isinstance(value, (list, tuple)):
         return tuple(_freeze_json(item, f"{path}[{index}]") for index, item in enumerate(value))
     if isinstance(value, Mapping):
         if not all(isinstance(key, str) for key in value):
