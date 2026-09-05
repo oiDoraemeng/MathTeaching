@@ -161,6 +161,7 @@ _ARTIFACT_SHAPE: dict[str, Any] = {
     "generated": {
         "provider": "string",
         "model": "string",
+        "schema_version": "integer; use 1",
         "prompt_version": "string; use teaching-artifact-v1",
         "generated_at": "string",
         "source_hash": "string",

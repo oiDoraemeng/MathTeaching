@@ -218,7 +218,8 @@
         "generated_at": {"type": "string"},
         "source_hash": {"type": "string"},
         "raw_reply_digest": {"type": "string"},
-        "artifact_digest": {"type": "string"}
+        "artifact_digest": {"type": "string"},
+        "schema_version": {"type": "integer"}
       }
     }
   }

@@ -350,6 +350,7 @@ class GenerationReceipt:
     source_hash: str
     raw_reply_digest: str
     artifact_digest: str
+    schema_version: int | None = None
 
     def __post_init__(self) -> None:
         for field in (
@@ -362,6 +363,8 @@ class GenerationReceipt:
             "artifact_digest",
         ):
             object.__setattr__(self, field, _constructor_string(getattr(self, field), field))
+        if self.schema_version is not None:
+            object.__setattr__(self, "schema_version", _constructor_integer(self.schema_version, "schema_version"))
 
 
 @dataclass(frozen=True)
@@ -645,7 +648,7 @@ def _decode_visual_stage(payload: Mapping[str, object], path: str) -> VisualStag
 
 
 def _decode_generation_receipt(payload: Mapping[str, object], path: str) -> GenerationReceipt:
-    record = _object(payload, path, _GENERATION_FIELDS)
+    record = _object_optional(payload, path, _GENERATION_REQUIRED_FIELDS, _GENERATION_FIELDS)
     return GenerationReceipt(
         provider=_string(record["provider"], f"{path}.provider"),
         model=_string(record["model"], f"{path}.model"),
@@ -654,6 +657,11 @@ def _decode_generation_receipt(payload: Mapping[str, object], path: str) -> Gene
         source_hash=_string(record["source_hash"], f"{path}.source_hash"),
         raw_reply_digest=_string(record["raw_reply_digest"], f"{path}.raw_reply_digest"),
         artifact_digest=_string(record["artifact_digest"], f"{path}.artifact_digest"),
+        schema_version=(
+            _integer(record["schema_version"], f"{path}.schema_version")
+            if "schema_version" in record
+            else None
+        ),
     )
 
 
@@ -831,7 +839,7 @@ def _encode_visual_semantics(semantics: VisualSemantics) -> dict[str, object]:
 
 
 def _encode_generation_receipt(receipt: GenerationReceipt) -> dict[str, object]:
-    return {
+    encoded = {
         "provider": receipt.provider,
         "model": receipt.model,
         "prompt_version": receipt.prompt_version,
@@ -840,6 +848,9 @@ def _encode_generation_receipt(receipt: GenerationReceipt) -> dict[str, object]:
         "raw_reply_digest": receipt.raw_reply_digest,
         "artifact_digest": receipt.artifact_digest,
     }
+    if receipt.schema_version is not None:
+        encoded["schema_version"] = receipt.schema_version
+    return encoded
 
 
 def _object(payload: Mapping[str, object], path: str, fields: tuple[str, ...]) -> Mapping[str, object]:
@@ -1135,7 +1146,7 @@ _STAGE_FIELDS = (
     "relation_refs",
     "expected_invariants",
 )
-_GENERATION_FIELDS = (
+_GENERATION_REQUIRED_FIELDS = (
     "provider",
     "model",
     "prompt_version",
@@ -1144,6 +1155,7 @@ _GENERATION_FIELDS = (
     "raw_reply_digest",
     "artifact_digest",
 )
+_GENERATION_FIELDS = (*_GENERATION_REQUIRED_FIELDS, "schema_version")
 
 
 __all__ = [
