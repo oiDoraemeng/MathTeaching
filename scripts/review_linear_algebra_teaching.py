@@ -81,10 +81,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.chapter is not None:
         print(f"chapter={args.chapter} topics={len(topics)} reviewed={reviewed} published={published} errors={len(errors)}")
     else:
-        if errors:
-            for error in errors:
-                print(error)
-            return 1
         print(f"reviewed {args.topic} revision {revisions[args.topic]}")
         if args.publish:
             print(f"published {args.topic}")

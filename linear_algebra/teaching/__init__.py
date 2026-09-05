@@ -21,13 +21,6 @@ from .parser import AgentReplyError, parse_agent_reply
 from .revisions import ArtifactDiff, FieldChange, diff_artifacts
 from .legacy import LegacyTeachingArtifact, adapt_legacy_explanation, publish_legacy_artifact
 from .validation import validate_teaching_depth, validate_source_evidence, validate_worked_examples
-from .content_validation import (
-    ChapterArtifactReport,
-    bundled_store,
-    lecture_source_repository,
-    validate_all_chapters,
-    validate_chapter_artifacts,
-)
 from .source import LectureSourceRepository, SourceContext, SourceSpan, normalize_source_text
 from .store import (
     ArtifactRevision,
@@ -86,9 +79,4 @@ __all__ = [
     "verify_worked_example",
     "validate_worked_examples",
     "normalize_source_text",
-    "ChapterArtifactReport",
-    "bundled_store",
-    "lecture_source_repository",
-    "validate_all_chapters",
-    "validate_chapter_artifacts",
 ]
