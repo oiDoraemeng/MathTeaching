@@ -47,3 +47,19 @@ pytest tests/test_linear_algebra_teaching_model.py tests/test_linear_algebra_exp
 pytest -q
 557 passed, 3 warnings in 9.20s
 ```
+
+## Review Fix Round 2
+
+Commit: `5504e13 fix: validate teaching model constructors`
+
+The model constructors now validate scalar numeric fields at construction time, rejecting booleans, non-integer values, NaN, positive infinity, and negative infinity where integer fields are required; valid positive schema/revision, heading, dimension, and teaching-level values remain accepted. Regression tests cover direct-constructor non-finite values and normal round-trip behavior.
+
+Verification reported by the implementer:
+
+```text
+pytest tests/test_linear_algebra_teaching_model.py tests/test_linear_algebra_explanations.py -q
+6 passed
+
+pytest -q
+558 passed, 3 pre-existing warnings
+```
