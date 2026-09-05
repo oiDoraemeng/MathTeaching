@@ -576,7 +576,7 @@ git commit -m "feat: bind claims to visual evidence"
 - Consumes: `SourceContext`, `LessonEntry`, `TeachingProfile`, `VisualVocabulary`, and an injected provider.
 - Produces: `ExplanationAgent.generate(...) -> TeachingArtifactDraft` and `ProviderExplanationAgent`.
 
-- [ ] **Step 1: Write a failing fake-provider contract test**
+- [x] **Step 1: Write a failing fake-provider contract test**
 
 ```python
 class FakeProvider:
@@ -594,13 +594,13 @@ def test_provider_adapter_returns_a_draft_without_scene_access(source_context, t
     assert "CommandPlan" not in provider.request[1]
 ```
 
-- [ ] **Step 2: Run the agent test and verify missing protocol failure**
+- [x] **Step 2: Run the agent test and verify missing protocol failure**
 
 Run: `pytest tests/test_linear_algebra_explanation_agent.py -q`
 
 Expected: FAIL because the explanation-agent module is absent.
 
-- [ ] **Step 3: Implement an injected, non-rendering adapter**
+- [x] **Step 3: Implement an injected, non-rendering adapter**
 
 ```python
 class JsonTextProvider(Protocol):
@@ -630,13 +630,13 @@ class ProviderExplanationAgent:
 
 The adapter must not accept a scene host or `SceneCommandService`. Cancellation is delegated to the injected provider and must surface without writing a draft.
 
-- [ ] **Step 4: Run fake-provider and existing provider tests**
+- [x] **Step 4: Run fake-provider and existing provider tests**
 
 Run: `pytest tests/test_linear_algebra_explanation_agent.py tests/test_agent_provider.py -q`
 
 Expected: PASS; existing command-plan providers are unchanged.
 
-- [ ] **Step 5: Commit the agent boundary**
+- [x] **Step 5: Commit the agent boundary**
 
 ```bash
 git add linear_algebra/teaching/agent.py linear_algebra/teaching/__init__.py tests/test_linear_algebra_explanation_agent.py
