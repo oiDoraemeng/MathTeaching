@@ -48,3 +48,17 @@ def test_walkthrough_index_requires_all_focus_digests(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="missing focus topic digests"):
         write_walkthrough_index(digest_path, tmp_path / "manual-walkthrough.md")
+
+
+def test_writer_redacts_provider_tokens_from_persisted_output(tmp_path: Path) -> None:
+    def runner(check: VerificationCheck) -> VerificationResult:
+        return VerificationResult(check.name, check.command, 0, "api_key=secret-value sk-1234567890123456")
+
+    digests = tuple(
+        {"topic_id": f"ch01.topic-{index:02d}", "revision": 1, "source_hash": "s", "artifact_digest": "a", "compiler_version": "c", "plan_digest": "p"}
+        for index in range(54)
+    )
+    run_verification(runner, tmp_path, checks=_checks(), digest_loader=lambda: digests)
+    report = (tmp_path / "automated-validation.md").read_text(encoding="utf-8")
+    assert "secret-value" not in report
+    assert "[REDACTED]" in report

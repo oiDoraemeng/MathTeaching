@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -122,6 +123,28 @@ def _write_atomic(path: Path, text: str) -> None:
     temporary.replace(path)
 
 
+_SECRET_PATTERNS = (
+    re.compile(r"(?i)(api[_-]?key|token|authorization|bearer)\s*[:=]\s*[^\s,;]+"),
+    re.compile(r"\bsk-[A-Za-z0-9_-]{12,}\b"),
+)
+
+
+def _redact_output(output: str) -> str:
+    """Remove common provider credentials before persisting command output."""
+
+    redacted = str(output)
+    for pattern in _SECRET_PATTERNS:
+        def replace(match: re.Match[str]) -> str:
+            value = match.group(0)
+            if value.casefold().startswith("sk-"):
+                return "[REDACTED]"
+            prefix = re.split(r"\s*[:=]\s*", value, maxsplit=1)[0]
+            return f"{prefix}=[REDACTED]"
+
+        redacted = pattern.sub(replace, redacted)
+    return redacted
+
+
 def run_verification(
     command_runner: Callable[[VerificationCheck], object] = _default_runner,
     output_dir: str | Path = Path("openspec/changes/enrich-linear-algebra-teaching-depth/verification"),
@@ -156,7 +179,7 @@ def run_verification(
                 f"- exit code: {result.exit_code}",
                 "- output:",
                 "```text",
-                result.output.rstrip(),
+                _redact_output(result.output).rstrip(),
                 "```",
                 "",
             ]
