@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 from typing import Sequence
 
@@ -43,9 +44,14 @@ def main(argv: Sequence[str] | None = None, *, agent: object | None = None) -> i
             draft.artifact,
             raw_reply=draft.raw_reply,
         )
-        print(
-            f'{{"topic_id":"{entry.id}","status":"{draft.artifact.status}","revision":{revision.revision}}}'
-        )
+        print(json.dumps({
+            "topic_id": entry.id,
+            "status": draft.artifact.status,
+            "revision": revision.revision,
+            "source_hash": draft.artifact.generated.source_hash,
+            "reply_digest": draft.artifact.generated.raw_reply_digest,
+            "artifact_digest": draft.artifact.generated.artifact_digest,
+        }, ensure_ascii=False, sort_keys=True))
     return 0
 
 

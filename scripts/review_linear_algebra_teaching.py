@@ -6,16 +6,22 @@ import argparse
 from pathlib import Path
 from typing import Sequence
 
+from linear_algebra.catalog.manifest import topic_entries
+from linear_algebra.teaching.source import LectureSourceRepository
 from linear_algebra.teaching.store import TeachingArtifactStore
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Review one teaching artifact draft")
     parser.add_argument("--store-root", required=True, type=Path)
-    parser.add_argument("--topic", required=True)
-    parser.add_argument("--revision", required=True, type=int)
+    selection = parser.add_mutually_exclusive_group(required=True)
+    selection.add_argument("--topic")
+    selection.add_argument("--chapter", type=int, choices=(1, 2, 3))
+    parser.add_argument("--revision", type=int)
     parser.add_argument("--reviewer", required=True)
     parser.add_argument("--decision", choices=("review", "reject"), required=True)
+    parser.add_argument("--publish", action="store_true", help="publish each reviewed revision after validation")
+    parser.add_argument("--source", default=Path(".agents/线性代数讲义.md"), type=Path)
     parser.add_argument(
         "--interactive",
         action="store_true",
@@ -33,8 +39,59 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.decision == "reject":
         print("rejected draft; no reviewed or published artifact was written")
         return 0
-    revision = store.review_draft(args.topic, args.revision, args.reviewer)
-    print(f"reviewed {revision.topic_id} revision {revision.revision}")
+    if args.topic is not None:
+        if args.revision is None:
+            parser.error("--revision is required with --topic")
+        topics = (args.topic,)
+        revisions = {args.topic: args.revision}
+    else:
+        topics = tuple(topic.id for topic in topic_entries() if topic.chapter_number == args.chapter)
+        revisions = {
+            topic_id: store.list_revisions(topic_id, "draft")[-1].revision
+            for topic_id in topics
+            if store.list_revisions(topic_id, "draft")
+        }
+    source_repo = LectureSourceRepository(args.source)
+    published = 0
+    reviewed = 0
+    errors: list[str] = []
+    catalog_by_id = {topic.id: topic for topic in topic_entries()}
+    for topic_id in topics:
+        revision_number = revisions.get(topic_id)
+        if revision_number is None:
+            errors.append(f"{topic_id}: missing draft")
+            continue
+        try:
+            reviewed_revision = store.review_draft(topic_id, revision_number, args.reviewer)
+            reviewed += 1
+            if args.publish:
+                topic = catalog_by_id[topic_id]
+                context = source_repo.context_for(topic)
+                result = store.publish(
+                    store.get(topic_id, reviewed_revision.revision, "reviewed").artifact,
+                    source_context=context,
+                    topic=topic,
+                )
+                if not result.ok:
+                    errors.extend(f"{topic_id}: {issue.code} {issue.path}: {issue.message}" for issue in result.issues)
+                else:
+                    published += 1
+        except (FileNotFoundError, KeyError, OSError, ValueError) as error:
+            errors.append(f"{topic_id}: {error}")
+    if args.chapter is not None:
+        print(f"chapter={args.chapter} topics={len(topics)} reviewed={reviewed} published={published} errors={len(errors)}")
+    else:
+        if errors:
+            for error in errors:
+                print(error)
+            return 1
+        print(f"reviewed {args.topic} revision {revisions[args.topic]}")
+        if args.publish:
+            print(f"published {args.topic}")
+    if errors:
+        for error in errors:
+            print(error)
+        return 1
     return 0
 
 
