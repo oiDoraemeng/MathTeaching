@@ -20,6 +20,7 @@ from .model import (
 from .parser import AgentReplyError, parse_agent_reply
 from .validation import validate_teaching_depth, validate_source_evidence, validate_worked_examples
 from .source import LectureSourceRepository, SourceContext, SourceSpan, normalize_source_text
+from .store import ArtifactRevision, StoredArtifact, TeachingArtifactStore
 from .vocabulary import VisualVocabulary
 
 __all__ = [
@@ -39,6 +40,9 @@ __all__ = [
     "SourceSpan",
     "TeachingArtifact",
     "TeachingArtifactDraft",
+    "TeachingArtifactStore",
+    "StoredArtifact",
+    "ArtifactRevision",
     "TeachingProfileRecord",
     "TopicConnection",
     "VisualEntity",

@@ -196,7 +196,7 @@ git commit -m "feat: verify teaching numeric examples"
 - Consumes: `TeachingArtifactDraft` from plan 1.
 - Produces: `GenerationRequest`, `GenerationReceipt`, `generate_draft(agent, request)`, and a chapter/topic CLI that writes drafts through `TeachingArtifactStore`.
 
-- [ ] **Step 1: Write metadata determinism tests**
+- [x] **Step 1: Write metadata determinism tests**
 
 ```python
 def test_generation_receipt_records_source_and_prompt_versions(fake_agent, context, topic) -> None:
@@ -212,13 +212,13 @@ def test_cli_requires_exactly_one_topic_or_chapter() -> None:
     assert result.exit_code == 2
 ```
 
-- [ ] **Step 2: Run generation tests and verify missing function failure**
+- [x] **Step 2: Run generation tests and verify missing function failure**
 
 Run: `pytest tests/test_linear_algebra_teaching_generation.py -q`
 
 Expected: FAIL because `generation.py` is missing.
 
-- [ ] **Step 3: Implement request construction and receipt attachment**
+- [x] **Step 3: Implement request construction and receipt attachment**
 
 ```python
 @dataclass(frozen=True)
@@ -243,7 +243,7 @@ Use provider metadata supplied by the adapter; never invent a model identifier. 
 
 Add a thin CLI with mutually exclusive `--topic TOPIC_ID` and `--chapter {1,2,3}`, required `--output-root`, and injected provider construction. It must save only drafts and print one JSON summary per topic; it must never publish automatically.
 
-- [ ] **Step 4: Verify stable regeneration metadata**
+- [x] **Step 4: Verify stable regeneration metadata**
 
 Run: `pytest tests/test_linear_algebra_teaching_generation.py tests/test_linear_algebra_explanation_agent.py -q`
 
@@ -251,7 +251,7 @@ Run: `python scripts/generate_linear_algebra_teaching.py --help`
 
 Expected: tests PASS and help lists `--topic`, `--chapter`, and `--output-root`.
 
-- [ ] **Step 5: Commit draft generation**
+- [x] **Step 5: Commit draft generation**
 
 ```bash
 git add linear_algebra/teaching/generation.py linear_algebra/teaching/agent.py scripts/generate_linear_algebra_teaching.py tests/test_linear_algebra_teaching_generation.py
@@ -270,7 +270,7 @@ git commit -m "feat: record teaching draft generation metadata"
 - Consumes: `TeachingArtifactDraft` and validated `TeachingArtifact`.
 - Produces: `TeachingArtifactStore.save_draft`, `.get`, `.published`, `.list_revisions`, and deterministic JSON files.
 
-- [ ] **Step 1: Write a filesystem round-trip test**
+- [x] **Step 1: Write a filesystem round-trip test**
 
 ```python
 def test_store_writes_stable_utf8_json(tmp_path) -> None:
@@ -282,13 +282,13 @@ def test_store_writes_stable_utf8_json(tmp_path) -> None:
     assert json.loads(path.read_text(encoding="utf-8"))["topic_id"] == "ch02.matrix.composition"
 ```
 
-- [ ] **Step 2: Run store test and verify missing store failure**
+- [x] **Step 2: Run store test and verify missing store failure**
 
 Run: `pytest tests/test_linear_algebra_teaching_store.py -q`
 
 Expected: FAIL because `TeachingArtifactStore` is missing.
 
-- [ ] **Step 3: Implement stable paths, serialization, and revision allocation**
+- [x] **Step 3: Implement stable paths, serialization, and revision allocation**
 
 ```python
 class TeachingArtifactStore:
@@ -309,13 +309,13 @@ class TeachingArtifactStore:
 
 Use `json.dumps(..., ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"`; write only within the configured store root and reject path traversal in topic IDs.
 
-- [ ] **Step 4: Run store round-trip and path-safety tests**
+- [x] **Step 4: Run store round-trip and path-safety tests**
 
 Run: `pytest tests/test_linear_algebra_teaching_store.py -q`
 
 Expected: PASS; exact raw JSON is recoverable and paths remain inside the store root.
 
-- [ ] **Step 5: Commit artifact storage**
+- [x] **Step 5: Commit artifact storage**
 
 ```bash
 git add linear_algebra/teaching/store.py linear_algebra/teaching/__init__.py tests/test_linear_algebra_teaching_store.py

@@ -15,11 +15,11 @@
 - [x] 2.4 实现来源证据校验：claim source ref 必须落在当前 excerpt 或允许的相邻上下文，且 source hash 一致；用改写讲义 fixture 验证 `stale_source`
 - [x] 2.5 实现五层教学完整性校验：按 profile 检查推导、数字例题、不变量、边界情况和迁移关联；用 L2/L3/L4 缺字段 fixture 验证诊断
 - [x] 2.6 实现数字例题复算器：覆盖向量运算、内积、投影、矩阵变换、行列式、面积和体积；用精确有理数和容差边界测试验证正确/错误结果
-- [ ] 2.7 增加 draft 生成命令和测试夹具：记录 provider、model、prompt_version、schema_version、source_hash 和输入 profile；用相同输入的比较测试验证元数据稳定
+- [x] 2.7 增加 draft 生成命令和测试夹具：记录 provider、model、prompt_version、schema_version、source_hash 和输入 profile；用相同输入的比较测试验证元数据稳定
 
 ## 3. 教学产物存储与发布
 
-- [ ] 3.1 新增版本化 `TeachingArtifactStore`：按章节保存 UTF-8 稳定排序 JSON、revision 和 artifact digest；用文件 round-trip 和跨平台换行测试验证可审查性
+- [x] 3.1 新增版本化 `TeachingArtifactStore`：按章节保存 UTF-8 稳定排序 JSON、revision 和 artifact digest；用文件 round-trip 和跨平台换行测试验证可审查性
 - [ ] 3.2 保存通过校验的精确 raw reply，并与 normalized artifact digest 建立审计关联；用 draft/reviewed/published fixture 验证原始回复可恢复且不作为绘图输入
 - [ ] 3.3 实现原子发布：临时文件校验通过后替换 index，失败时保留旧 revision；用写入中断和 schema 失败测试验证旧版本可读
 - [ ] 3.4 实现 source hash stale 检测和发布回退；用讲义片段变更测试验证旧 published 可继续查看、旧图形可继续使用

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 from typing import Sequence
 
@@ -11,6 +10,7 @@ from linear_algebra.catalog.manifest import topic_entries
 from linear_algebra.teaching.generation import GenerationRequest, generate_draft, topics_for_request
 from linear_algebra.teaching.profiles import profile_for
 from linear_algebra.teaching.source import LectureSourceRepository
+from linear_algebra.teaching.store import TeachingArtifactStore
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -31,7 +31,7 @@ def main(argv: Sequence[str] | None = None, *, agent: object | None = None) -> i
 
     entries = topics_for_request(topic_entries(), topic_id=args.topic, chapter=args.chapter)
     repository = LectureSourceRepository(args.source)
-    args.output_root.mkdir(parents=True, exist_ok=True)
+    store = TeachingArtifactStore(args.output_root)
     for entry in entries:
         request = GenerationRequest(
             context=repository.context_for(entry),
@@ -39,13 +39,13 @@ def main(argv: Sequence[str] | None = None, *, agent: object | None = None) -> i
             profile=profile_for(entry.id),
         )
         draft = generate_draft(agent, request)  # type: ignore[arg-type]
-        output = args.output_root / f"{entry.id}.json"
-        output.write_text(
-            json.dumps(draft.artifact.to_dict(), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-            + "\n",
-            encoding="utf-8",
+        revision = store.save_draft(
+            draft.artifact,
+            raw_reply=draft.raw_reply,
         )
-        print(json.dumps({"topic_id": entry.id, "status": draft.artifact.status}, ensure_ascii=False))
+        print(
+            f'{{"topic_id":"{entry.id}","status":"{draft.artifact.status}","revision":{revision.revision}}}'
+        )
     return 0
 
 
