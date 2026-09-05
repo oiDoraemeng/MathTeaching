@@ -29,6 +29,14 @@ def test_compiler_emits_valid_plan_and_stable_digest() -> None:
     assert first.plan.scene == "2d"
     assert SceneCommandService().validate(first.plan).valid
     assert first.aliases_for("Bx") == ("sem__Bx", "sem__Bx__end")
+    assert tuple(stage.id for stage in first.storyboard) == ("stage.apply-B", "stage.apply-A")
+    assert all(stage.visible_aliases for stage in first.storyboard)
+    assert [operation["op"] for operation in first.plan.operations[-4:]] == [
+        "linear_algebra.matrix_transform",
+        "annotation.upsert",
+        "annotation.upsert",
+        "view.fit",
+    ]
     assert {operation["op"] for operation in first.plan.operations} >= {
         "linear.upsert",
         "linear_algebra.matrix_transform",
@@ -51,6 +59,16 @@ def test_compiler_rejects_contract_gap_before_renderer() -> None:
         VisualSemanticsCompiler().compile(artifact, contract, RenderContext.default(artifact.topic_id))
 
     assert any(issue.code == "missing_entity_role" for issue in error.value.issues)
+
+
+def test_storyboard_anchor_overflow_is_explicit() -> None:
+    artifact = TeachingArtifact.from_dict(composition_artifact_payload())
+    context = RenderContext(artifact.topic_id, bounds=(-0.24, 0.24, -0.24, 0.24), seed=17)
+
+    with pytest.raises(VisualCompileError) as error:
+        VisualSemanticsCompiler().compile(artifact, _permissive_contract(artifact.topic_id), context)
+
+    assert any(issue.code == "layout_overflow" for issue in error.value.issues)
 
 
 def test_compiler_does_not_require_or_invoke_a_scene_host() -> None:

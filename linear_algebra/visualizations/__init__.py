@@ -7,6 +7,7 @@ from .common import RenderContext, VisualizationRecipe
 from .compiler import (
     COMPILER_VERSION,
     CompileIssue,
+    CompiledStoryboardStage,
     CompiledVisualization,
     VisualCompileError,
     VisualSemanticsCompiler,
@@ -36,6 +37,7 @@ __all__ = (
     "COMPILER_VERSION",
     "CompileIssue",
     "CompiledVisualization",
+    "CompiledStoryboardStage",
     "VisualCompileError",
     "VisualSemanticsCompiler",
     "ClaimEvidence",

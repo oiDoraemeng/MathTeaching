@@ -32,8 +32,8 @@
 - [x] 4.2 新增 `VisualSemanticsCompiler`：执行 schema、引用、contract、数值和 scene-scope 校验后再产生 `CommandPlan`；用编译器单元测试验证错误不触发 renderer
 - [x] 4.3 实现 claim evidence 检查：每个 visual claim 必须落到实体、关系和阶段，禁止只有文字而无图形证据；用缺少 endpoint 或 residual 的 fixture 验证失败
 - [x] 4.4 实现语义到现有原语的映射：grid_transform、subspace_span、projection_bundle、batch_mapping、staged_transform、signed_area、volume_orientation 和 orientation_marker；用 golden plan 验证实际 op
-- [ ] 4.5 实现比较布局和静态 storyboard：支持 sequence、side_by_side、overlay，阶段具有独立别名、标题和可见实体；用 AB/BA 和投影阶段 fixture 验证布局不重叠
-- [ ] 4.6 实现稳定 seed、命名空间、标签位置和边界检查；用相同 RenderContext 的两次编译比较 plan digest，并用溢出 fixture 验证明确失败
+- [x] 4.5 实现比较布局和静态 storyboard：支持 sequence、side_by_side、overlay，阶段具有独立别名、标题和可见实体；用 AB/BA 和投影阶段 fixture 验证布局不重叠
+- [x] 4.6 实现稳定 seed、命名空间、标签位置和边界检查；用相同 RenderContext 的两次编译比较 plan digest，并用溢出 fixture 验证明确失败
 - [ ] 4.7 接入教学角色 palette，禁止 semantic payload 和 compiler 产生任意教学颜色字面量；用角色连续性和未知角色测试验证稳定颜色与 neutral 诊断
 - [ ] 4.8 盘点并清理 capability-only `_build_plan` 路径；用全主题编译测试验证每个 plan 都来自 artifact 语义和 VisualContract
 

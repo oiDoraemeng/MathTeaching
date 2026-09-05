@@ -56,12 +56,24 @@ class CompiledVisualization:
     plan_digest: str
     aliases: tuple[tuple[str, tuple[str, ...]], ...] = ()
     evidence: object | None = None
+    storyboard: tuple["CompiledStoryboardStage", ...] = ()
 
     def aliases_for(self, semantic_id: str) -> tuple[str, ...]:
         for key, values in self.aliases:
             if key == semantic_id:
                 return values
         return ()
+
+
+@dataclass(frozen=True)
+class CompiledStoryboardStage:
+    id: str
+    title: str
+    caption: str
+    layout: str
+    visible_refs: tuple[str, ...]
+    visible_aliases: tuple[str, ...]
+    anchor: tuple[float, float]
 
 
 class VisualSemanticsCompiler:
@@ -106,6 +118,11 @@ class VisualSemanticsCompiler:
             operations.extend(relation_operations)
             aliases.setdefault(relation.id, []).extend(relation_aliases)
 
+        storyboard, stage_operations, stage_issues = self._compile_storyboard(semantics, context, aliases)
+        if stage_issues:
+            raise VisualCompileError(tuple(stage_issues))
+        operations.extend(stage_operations)
+
         operations.append({"op": "view.fit", "padding": 1.15})
         summary = artifact.explanation.title if artifact is not None else f"visual semantics: {resolved_topic}"
         plan = CommandPlan(scene=semantics.scene_kind, operations=tuple(operations), summary=summary)
@@ -120,6 +137,8 @@ class VisualSemanticsCompiler:
         digest_payload = {
             "compiler_version": self.compiler_version,
             "render_profile": context.render_profile,
+            "seed": context.seed,
+            "bounds": list(context.bounds),
             "plan": plan.to_dict(),
         }
         digest_source = json.dumps(digest_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
@@ -131,6 +150,7 @@ class VisualSemanticsCompiler:
             plan=plan,
             plan_digest=plan_digest,
             aliases=tuple((key, tuple(values)) for key, values in sorted(aliases.items())),
+            storyboard=storyboard,
         )
         if artifact is not None:
             from .evidence import build_evidence_ledger
@@ -151,8 +171,52 @@ class VisualSemanticsCompiler:
                 plan_digest=compiled.plan_digest,
                 aliases=compiled.aliases,
                 evidence=ledger,
+                storyboard=compiled.storyboard,
             )
         return compiled
+
+    @staticmethod
+    def _compile_storyboard(
+        semantics: VisualSemantics,
+        context: RenderContext,
+        aliases: Mapping[str, list[str]],
+    ) -> tuple[tuple[CompiledStoryboardStage, ...], list[dict[str, Any]], list[CompileIssue]]:
+        stages = semantics.stages
+        compiled: list[CompiledStoryboardStage] = []
+        operations: list[dict[str, Any]] = []
+        issues: list[CompileIssue] = []
+        for index, stage in enumerate(stages):
+            anchor = _stage_anchor(stage.layout, index, len(stages), context.bounds)
+            if anchor is None:
+                issues.append(CompileIssue("layout_overflow", f"$.visual_semantics.stages[{index}]", stage.id))
+                continue
+            visible_refs = tuple(dict.fromkeys((*stage.input_entity_refs, *stage.output_entity_refs, *stage.relation_refs)))
+            visible_aliases = tuple(
+                f"{_alias(stage.id)}__{alias}"
+                for ref in visible_refs
+                for alias in aliases.get(ref, ())
+            )
+            compiled.append(
+                CompiledStoryboardStage(
+                    id=stage.id,
+                    title=stage.title,
+                    caption=stage.caption,
+                    layout=stage.layout,
+                    visible_refs=visible_refs,
+                    visible_aliases=visible_aliases,
+                    anchor=anchor,
+                )
+            )
+            if semantics.scene_kind == "2d":
+                operations.append(
+                    {
+                        "op": "annotation.upsert",
+                        "alias": f"{_alias(stage.id)}__title",
+                        "text": stage.title,
+                        "position": list(anchor),
+                    }
+                )
+        return tuple(compiled), operations, issues
 
     def _validate_input(
         self,
@@ -322,8 +386,11 @@ class VisualSemanticsCompiler:
             operations.append({"op": "geometry.right_angle_marker", "alias": relation_alias, "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "size": 0.3})
             return operations, [relation_alias]
         # Semantic relations without a dedicated primitive remain visible as
-        # bounded annotations.  They do not carry executable text or colors.
+        # bounded 2D annotations.  3D storyboard metadata carries the label,
+        # because the current command protocol has no 3D annotation primitive.
         position = _annotation_position(len(operations), context.bounds, semantics.scene_kind)
+        if semantics.scene_kind == "3d":
+            return operations, [relation_alias]
         operations.append(
             {
                 "op": "annotation.upsert",
@@ -395,10 +462,31 @@ def _annotation_position(index: int, bounds: tuple[float, float, float, float], 
     return [x, y]
 
 
+def _stage_anchor(
+    layout: str, index: int, count: int, bounds: tuple[float, float, float, float]
+) -> tuple[float, float] | None:
+    left, right, bottom, top = bounds
+    width = right - left
+    height = top - bottom
+    if layout == "side_by_side":
+        x = left + width * ((index + 0.5) / max(count, 1))
+        y = top - min(0.35, height * 0.1)
+    elif layout == "overlay":
+        x = left + width * 0.5
+        y = top - min(0.35, height * 0.1)
+    else:  # sequence
+        x = left + min(0.35, width * 0.1)
+        y = top - min(0.35, height * 0.1) - index * max(0.45, height * 0.08)
+    if not (left <= x <= right and bottom <= y <= top):
+        return None
+    return (round(x, 8), round(y, 8))
+
+
 __all__ = [
     "COMPILER_VERSION",
     "CompileIssue",
     "CompiledVisualization",
+    "CompiledStoryboardStage",
     "VisualCompileError",
     "VisualSemanticsCompiler",
 ]
