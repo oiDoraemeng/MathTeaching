@@ -149,3 +149,31 @@ def test_web_host_replays_latest_case_after_document_load() -> None:
 
     assert emitted[-1]["type"] == "math_case"
     assert emitted[-1]["payload"]["case_id"] == "ch01.ops.addition"
+
+
+def test_web_math_case_keeps_structured_artifact_metadata_without_scene_ops() -> None:
+    from linear_algebra.teaching.model import TeachingArtifact
+    from linear_algebra.visualizations.common import RenderContext
+    from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
+    from linear_algebra.visualizations.contracts import contract_for
+    from tests.teaching_fixtures import projection_artifact_payload
+
+    app = QApplication.instance() or QApplication([])
+    host = AgentSidebarWeb(lambda _message: None)
+    emitted: list[dict[str, object]] = []
+    host.bridge.event_json.connect(lambda raw: emitted.append(json.loads(raw)))
+    host._document_loaded = True
+    artifact = TeachingArtifact.from_dict(projection_artifact_payload(with_residual=True))
+    compiled = VisualSemanticsCompiler().compile(
+        artifact,
+        contract_for(artifact.topic_id),
+        RenderContext.default(artifact.topic_id),
+    )
+
+    host.show_math_case(artifact, compiled=compiled)
+    payload = emitted[-1]["payload"]
+    assert payload["artifact_revision"] == artifact.revision
+    assert payload["claims"][0]["id"] == artifact.claims[0].id
+    assert payload["symbol_palette"]["u"]
+    assert payload["storyboard"][0]["id"] == compiled.storyboard[0].id
+    assert "operations" not in payload

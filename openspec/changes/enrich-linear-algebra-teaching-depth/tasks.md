@@ -48,9 +48,9 @@
 ## 6. 树形、案例视图与运行时
 
 - [x] 6.1 registry 增加按 `topic_id` 解析统一 bundle 的 API：LessonEntry、published artifact、VisualContract、recipe 和 compiled snapshot；用 54 个 topic 的一一对应测试验证无 orphan
-- [ ] 6.2 更新树叶选择流程：先解析/校验 bundle，再 preview/执行 plan，成功后同时提交场景和解释；用失败注入测试验证旧场景和旧解释保持不变
-- [ ] 6.3 更新 Qt 解释视图：分区渲染教学层级、claims、定义、推导、算例、直觉、几何意义、误解、关联和读图提示；用缺省字段和长公式测试验证不留空占位
-- [ ] 6.4 更新 Web `math_case` payload 和案例标签：传递 artifact revision、claim metadata、symbol roles、palette 和 storyboard，不暴露 scene op；用 JSON bridge schema 测试验证字段边界
+- [x] 6.2 更新树叶选择流程：先解析/校验 bundle，再 preview/执行 plan，成功后同时提交场景和解释；用失败注入测试验证旧场景和旧解释保持不变
+- [x] 6.3 更新 Qt 解释视图：分区渲染教学层级、claims、定义、推导、算例、直觉、几何意义、误解、关联和读图提示；用缺省字段和长公式测试验证不留空占位
+- [x] 6.4 更新 Web `math_case` payload 和案例标签：传递 artifact revision、claim metadata、symbol roles、palette 和 storyboard，不暴露 scene op；用 JSON bridge schema 测试验证字段边界
 - [ ] 6.5 实现案例 storyboard 导航：支持顺序快照、并排比较和叠加展示，切换阶段不调用模型、不新增标签、不修改会话历史；用 AB/BA 交互测试验证状态隔离
 - [ ] 6.6 更新搜索索引：聚合定义、推导、算例、误解、关联和读图提示，并保留命中叶子的章节/小节祖先；用只出现在 derivation 的关键词测试验证路径保留
 - [ ] 6.7 统一 Qt/Web 的 claim 高亮和角色颜色；用同一 artifact snapshot 比较两个 payload 的 claim IDs、角色和公式变量绑定

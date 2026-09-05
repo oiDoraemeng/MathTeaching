@@ -2210,9 +2210,21 @@ class MainWindow:
     def _load_linear_algebra_topic(self, topic_id: str) -> None:
         registry = catalog_registry()
         try:
-            topic = registry.get_topic(topic_id)
-            explanation = registry.get_explanation(topic.explanation_id)
-            plan = self._linear_algebra_lesson_plan(topic_id)
+            bundle = registry.resolve_bundle(topic_id)
+            topic = bundle.topic
+            explanation_case = bundle.artifact or registry.get_explanation(topic.explanation_id)
+            lesson_plan = bundle.compiled.plan if bundle.compiled is not None else bundle.recipe.builder(RenderContext.default(topic.id))
+            validation = SceneCommandService().validate(lesson_plan)
+            if not validation.valid:
+                raise CommandError("；".join(validation.messages))
+            plan = CommandPlan(
+                scene=lesson_plan.scene,
+                summary=lesson_plan.summary,
+                operations=(
+                    {"op": "scene.clear", "scope": "all"},
+                    *lesson_plan.operations,
+                ),
+            )
         except (KeyError, CommandError, ValueError) as error:
             self.algebra_panel.set_status(f"未知或无效的线性代数主题 {topic_id}: {error}", is_error=True)
             return
@@ -2232,10 +2244,11 @@ class MainWindow:
             if hasattr(self, "agent_sidebar"):
                 self._open_agent_panel()
             self.agent_panel.show_math_case(
-                explanation,
+                explanation_case,
                 case_id=topic.id,
                 category=topic.source_path[1],
                 scene_mode=plan.scene,
+                compiled=bundle.compiled,
             )
 
     def _enter_linear_algebra_workspace(self) -> None:

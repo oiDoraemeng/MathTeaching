@@ -2,6 +2,8 @@ from PySide6.QtCore import QEvent, QRect, Qt
 from PySide6.QtWidgets import QApplication, QToolButton, QWidget
 
 from ui.linear_algebra_dialog import LinearAlgebraDialog
+from linear_algebra.teaching.model import TeachingArtifact
+from tests.teaching_fixtures import composition_artifact_payload
 
 
 def make_linear_algebra_dialog() -> LinearAlgebraDialog:
@@ -115,6 +117,18 @@ def test_short_content_does_not_force_a_scrollbar() -> None:
     dialog.show()
     QApplication.processEvents()
     assert dialog.content_scroll.verticalScrollBar().maximum() == 0
+    dialog.close()
+
+
+def test_structured_teaching_artifact_renders_math_layers() -> None:
+    dialog = make_linear_algebra_dialog()
+    artifact = TeachingArtifact.from_dict(composition_artifact_payload())
+
+    dialog.content_view.set_content(artifact.explanation)
+
+    assert dialog.content_view.definition_label.isHidden() is False
+    assert "先计算 Bx" in dialog.content_view.derivation_label.text()
+    assert dialog.content_view.examples_label.text().startswith("数字例题")
     dialog.close()
 
 

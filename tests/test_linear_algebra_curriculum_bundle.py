@@ -41,3 +41,14 @@ def test_bundle_joins_published_artifact_and_compiled_snapshot(tmp_path: Path) -
         snapshot_store=snapshot_store,
     )
     assert loaded.snapshot == expected
+
+
+def test_bundle_can_discover_artifact_store_from_environment(tmp_path, monkeypatch) -> None:
+    artifact = TeachingArtifact.from_dict(projection_artifact_payload(with_residual=True))
+    TeachingArtifactStore(tmp_path).save_published(artifact)
+    monkeypatch.setenv("MATH3D_TEACHING_ARTIFACT_ROOT", str(tmp_path))
+
+    bundle = catalog_registry().resolve_bundle(artifact.topic_id)
+
+    assert bundle.artifact is not None
+    assert bundle.compiled is not None

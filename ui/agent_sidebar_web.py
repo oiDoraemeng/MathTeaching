@@ -19,6 +19,8 @@ from PySide6.QtWebEngineCore import (
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QVBoxLayout, QWidget
 
+from linear_algebra.visualizations.palette import ROLE_COLORS, role_color
+
 from .agent_bridge import AgentBridge
 
 
@@ -37,6 +39,61 @@ def register_mathagent_url_scheme() -> None:
 
 
 register_mathagent_url_scheme()
+
+
+def _json_value(value: Any) -> object:
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    if isinstance(value, dict):
+        return {str(key): _json_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_value(item) for item in value]
+    return str(value)
+
+
+def _worked_example_payload(example: Any) -> dict[str, object]:
+    return {
+        "id": str(getattr(example, "id", ""))[:128],
+        "title": str(getattr(example, "title", ""))[:256],
+        "kind": str(getattr(example, "kind", ""))[:64],
+        "given": _json_value(getattr(example, "given", None)),
+        "calculation": [str(value)[:1024] for value in tuple(getattr(example, "calculation", ()))[:16]],
+        "result": _json_value(getattr(example, "result", None)),
+        "checks": [
+            {
+                "name": str(getattr(check, "name", ""))[:128],
+                "expected": _json_value(getattr(check, "expected", None)),
+                "tolerance": getattr(check, "tolerance", None),
+            }
+            for check in tuple(getattr(example, "checks", ()))[:12]
+        ],
+        "claim_refs": list(tuple(getattr(example, "claim_refs", ()))[:12]),
+    }
+
+
+def _claim_payload(claim: Any) -> dict[str, object]:
+    return {
+        "id": str(getattr(claim, "id", ""))[:128],
+        "statement": str(getattr(claim, "statement", ""))[:1024],
+        "formula": str(getattr(claim, "formula", ""))[:512],
+        "formula_symbols": list(tuple(getattr(claim, "formula_symbols", ()))[:32]),
+        "entity_refs": list(tuple(getattr(claim, "entity_refs", ()))[:32]),
+        "relation_refs": list(tuple(getattr(claim, "relation_refs", ()))[:32]),
+        "stage_refs": list(tuple(getattr(claim, "stage_refs", ()))[:32]),
+    }
+
+
+def _storyboard_payload(stage: Any) -> dict[str, object]:
+    anchor = tuple(getattr(stage, "anchor", ()))
+    return {
+        "id": str(getattr(stage, "id", ""))[:128],
+        "title": str(getattr(stage, "title", ""))[:256],
+        "caption": str(getattr(stage, "caption", ""))[:1024],
+        "layout": str(getattr(stage, "layout", ""))[:32],
+        "visible_refs": list(tuple(getattr(stage, "visible_refs", ()))[:64]),
+        "visible_aliases": list(tuple(getattr(stage, "visible_aliases", ()))[:64]),
+        "anchor": list(anchor[:3]),
+    }
 
 
 class _LocalAssetHandler(QWebEngineUrlSchemeHandler):
@@ -234,18 +291,47 @@ class AgentSidebarWeb(QWidget):
         case_id: str | None = None,
         category: str | None = None,
         scene_mode: str | None = None,
+        compiled: Any | None = None,
     ) -> None:
         """Publish one bounded, JSON-only teaching case to the Web UI."""
-        payload = {
-            "case_id": str(case_id or getattr(case, "id", ""))[:128],
-            "category": str(category or getattr(case, "category", ""))[:64],
-            "name": str(getattr(case, "name", getattr(case, "title", "")))[:128],
-            "formula": str(getattr(case, "formula", ""))[:512],
-            "steps": [str(step)[:512] for step in tuple(getattr(case, "steps", ()))[:12]],
-            "conclusion": str(getattr(case, "conclusion", ""))[:1024],
-            "summary": str(getattr(case, "summary", ""))[:512],
-            "scene_mode": scene_mode if scene_mode in {"2d", "3d"} else "2d",
+        explanation = getattr(case, "explanation", case)
+        claims = tuple(getattr(case, "claims", ()))
+        structured = {
+            "definition": str(getattr(explanation, "definition", ""))[:2048],
+            "derivation": [str(step)[:1024] for step in tuple(getattr(explanation, "derivation", ()))[:16]],
+            "intuition": str(getattr(explanation, "intuition", ""))[:2048],
+            "geometric_meaning": str(getattr(explanation, "geometric_meaning", ""))[:2048],
+            "pitfalls": [str(value)[:512] for value in tuple(getattr(explanation, "pitfalls", ()))[:12]],
+            "invariants": [str(value)[:512] for value in tuple(getattr(explanation, "invariants", ()))[:12]],
+            "connections": [str(value)[:512] for value in tuple(getattr(explanation, "connections", ()))[:12]],
+            "analogy_boundary": str(getattr(explanation, "analogy_boundary", ""))[:1024],
+            "transfer_note": str(getattr(explanation, "transfer_note", ""))[:1024],
+            "read_guide": [str(value)[:512] for value in tuple(getattr(explanation, "read_guide", ()))[:12]],
+            "symbol_roles": dict(getattr(explanation, "symbol_roles", {})),
+            "symbol_palette": {
+                str(symbol): role_color(str(role))
+                for symbol, role in dict(getattr(explanation, "symbol_roles", {})).items()
+            },
+            "worked_examples": [_worked_example_payload(example) for example in tuple(getattr(explanation, "worked_examples", ()))[:8]],
         }
+        payload = {
+            "case_id": str(case_id or getattr(case, "topic_id", getattr(case, "id", "")))[:128],
+            "category": str(category or getattr(case, "category", ""))[:64],
+            "name": str(getattr(explanation, "title", getattr(case, "name", "")))[:128],
+            "formula": str(getattr(explanation, "formula", getattr(case, "formula", "")))[:512],
+            "steps": [str(step)[:512] for step in tuple(getattr(explanation, "derivation", getattr(case, "steps", ())))[:12]],
+            "conclusion": str(getattr(explanation, "conclusion", getattr(case, "conclusion", "")))[:1024],
+            "summary": str(getattr(explanation, "summary", getattr(case, "summary", "")))[:512],
+            "scene_mode": scene_mode if scene_mode in {"2d", "3d"} else "2d",
+            "artifact_revision": getattr(case, "revision", None),
+            "source_hash": getattr(getattr(case, "source", None), "source_hash", None),
+            "claims": [_claim_payload(claim) for claim in claims[:24]],
+            "palette": dict(ROLE_COLORS),
+            "storyboard": [_storyboard_payload(stage) for stage in tuple(getattr(compiled, "storyboard", ()))[:24]],
+            "plan_digest": getattr(compiled, "plan_digest", None),
+            "compiler_version": getattr(compiled, "compiler_version", None),
+        }
+        payload.update(structured)
         if not self._document_loaded:
             self._pending_math_case = payload
             return

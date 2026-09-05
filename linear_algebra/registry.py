@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
 from types import MappingProxyType
 from typing import Mapping
 
@@ -94,6 +95,10 @@ class CurriculumRegistry:
         topic = self.get_topic(topic_id)
         contract = contract_for(topic_id)
         recipe = self.get_recipe(topic.visualization_id)
+        if artifact_store is None:
+            configured_root = os.environ.get("MATH3D_TEACHING_ARTIFACT_ROOT", "").strip()
+            if configured_root:
+                artifact_store = TeachingArtifactStore(configured_root)
         artifact: TeachingArtifact | None = None
         if artifact_store is not None:
             stored = artifact_store.published(topic_id)
