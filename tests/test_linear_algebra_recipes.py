@@ -24,3 +24,10 @@ def test_3d_topics_use_3d_scene() -> None:
         operation_names = {str(operation["op"]) for operation in plan.operations}
         if any(name.startswith("linear3d") or name.startswith("plane3d") for name in operation_names):
             assert plan.scene == "3d"
+
+
+def test_capability_only_fallback_path_is_removed() -> None:
+    from pathlib import Path
+
+    common_source = (Path(__file__).parents[1] / "linear_algebra" / "visualizations" / "common.py").read_text(encoding="utf-8")
+    assert "def _build_plan" not in common_source

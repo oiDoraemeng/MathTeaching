@@ -35,7 +35,7 @@
 - [x] 4.5 实现比较布局和静态 storyboard：支持 sequence、side_by_side、overlay，阶段具有独立别名、标题和可见实体；用 AB/BA 和投影阶段 fixture 验证布局不重叠
 - [x] 4.6 实现稳定 seed、命名空间、标签位置和边界检查；用相同 RenderContext 的两次编译比较 plan digest，并用溢出 fixture 验证明确失败
 - [x] 4.7 接入教学角色 palette，禁止 semantic payload 和 compiler 产生任意教学颜色字面量；用角色连续性和未知角色测试验证稳定颜色与 neutral 诊断
-- [ ] 4.8 盘点并清理 capability-only `_build_plan` 路径；用全主题编译测试验证每个 plan 都来自 artifact 语义和 VisualContract
+- [x] 4.8 盘点并清理 capability-only `_build_plan` 路径；用全主题编译测试验证每个 plan 都来自 artifact 语义和 VisualContract
 
 ## 5. 三章教学资源与重点图
 
