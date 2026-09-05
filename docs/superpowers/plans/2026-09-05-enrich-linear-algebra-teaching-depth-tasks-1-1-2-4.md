@@ -340,7 +340,7 @@ git commit -m "feat: define teaching depth profiles"
 - Consumes: raw JSON fields used by `VisualEntity`, `VisualRelation`, and `VisualStage`.
 - Produces: vocabulary constants and `validate_semantic_value(value: object, path: str) -> tuple[SemanticIssue, ...]`.
 
-- [ ] **Step 1: Write rejection tests for unsafe or unbounded values**
+- [x] **Step 1: Write rejection tests for unsafe or unbounded values**
 
 ```python
 import math
@@ -365,13 +365,13 @@ def test_semantics_reject_literal_color() -> None:
         VisualSemantics.from_dict(payload)
 ```
 
-- [ ] **Step 2: Run the vocabulary tests and verify they fail**
+- [x] **Step 2: Run the vocabulary tests and verify they fail**
 
 Run: `pytest tests/test_linear_algebra_visual_vocabulary.py -q`
 
 Expected: FAIL because visual models currently accept unvalidated values.
 
-- [ ] **Step 3: Add finite typed values and exact enums**
+- [x] **Step 3: Add finite typed values and exact enums**
 
 ```python
 ENTITY_KINDS = frozenset({"point", "vector", "basis", "matrix", "grid", "region", "area", "volume"})
@@ -396,13 +396,13 @@ def require_finite_number(value: object, path: str) -> float:
 
 Permit only scalar values, 2D/3D vectors, and rectangular matrices with bounded dimensions. Reject unknown keys during model decoding.
 
-- [ ] **Step 4: Verify valid composition semantics and unsafe rejections**
+- [x] **Step 4: Verify valid composition semantics and unsafe rejections**
 
 Run: `pytest tests/test_linear_algebra_visual_vocabulary.py tests/test_linear_algebra_teaching_model.py -q`
 
 Expected: PASS; valid fixtures decode and every unsafe parameter is rejected at its JSON path.
 
-- [ ] **Step 5: Commit the controlled vocabulary**
+- [x] **Step 5: Commit the controlled vocabulary**
 
 ```bash
 git add linear_algebra/teaching/vocabulary.py linear_algebra/teaching/model.py tests/test_linear_algebra_visual_vocabulary.py tests/teaching_fixtures.py
