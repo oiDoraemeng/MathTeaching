@@ -10,7 +10,7 @@
 ## 2. 数学解释子智能体
 
 - [x] 2.1 新增 `ExplanationAgent` 协议和 provider 适配器：输入 SourceContext、LessonEntry、TeachingProfile、视觉词汇，输出单个 draft；用 fake provider 验证请求边界和取消行为
-- [ ] 2.2 编写子智能体提示模板：只依据讲义片段生成定义、公式、推导、例题、直觉、几何意义、误解、关联、claims 和视觉语义；用提示快照测试验证字段和禁止项
+- [x] 2.2 编写子智能体提示模板：只依据讲义片段生成定义、公式、推导、例题、直觉、几何意义、误解、关联、claims 和视觉语义；用提示快照测试验证字段和禁止项
 - [ ] 2.3 实现 JSON 回复解析和防泄漏校验：拒绝 Markdown 代码块、`op` 字段、scene op、Qt/PyVista 名称和越界视觉关系；用恶意回复 fixture 验证不进入 reviewed
 - [ ] 2.4 实现来源证据校验：claim source ref 必须落在当前 excerpt 或允许的相邻上下文，且 source hash 一致；用改写讲义 fixture 验证 `stale_source`
 - [ ] 2.5 实现五层教学完整性校验：按 profile 检查推导、数字例题、不变量、边界情况和迁移关联；用 L2/L3/L4 缺字段 fixture 验证诊断

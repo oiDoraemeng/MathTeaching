@@ -654,7 +654,7 @@ git commit -m "feat: add teaching explanation agent boundary"
 - Consumes: the four inputs of `ExplanationAgent.generate`.
 - Produces: `PROMPT_VERSION` and `build_explanation_prompt(...) -> tuple[str, str]`.
 
-- [ ] **Step 1: Write a failing prompt snapshot test**
+- [x] **Step 1: Write a failing prompt snapshot test**
 
 ```python
 def test_prompt_requires_claims_math_and_visual_semantics(source_context, topic) -> None:
@@ -669,13 +669,13 @@ def test_prompt_requires_claims_math_and_visual_semantics(source_context, topic)
     assert "<lecture-source" in user and "</lecture-source>" in user
 ```
 
-- [ ] **Step 2: Run the prompt test and verify failure**
+- [x] **Step 2: Run the prompt test and verify failure**
 
 Run: `pytest tests/test_linear_algebra_explanation_prompt.py -q`
 
 Expected: FAIL because `prompt.py` is missing.
 
-- [ ] **Step 3: Implement explicit prompt sections and schema projection**
+- [x] **Step 3: Implement explicit prompt sections and schema projection**
 
 ```python
 PROMPT_VERSION = "teaching-artifact-v1"
@@ -704,13 +704,13 @@ def build_explanation_prompt(context, topic, profile, vocabulary) -> tuple[str, 
 
 Include the exact expected JSON shape, L0-L4 requirements, numeric check shape, source span IDs, and relation enum in the contract. Do not include scene-operation names as examples.
 
-- [ ] **Step 4: Verify prompt snapshot stability**
+- [x] **Step 4: Verify prompt snapshot stability**
 
 Run: `pytest tests/test_linear_algebra_explanation_prompt.py -q`
 
 Expected: PASS; changing the prompt requires an intentional `PROMPT_VERSION` update.
 
-- [ ] **Step 5: Commit the prompt contract**
+- [x] **Step 5: Commit the prompt contract**
 
 ```bash
 git add linear_algebra/teaching/prompt.py tests/test_linear_algebra_explanation_prompt.py
