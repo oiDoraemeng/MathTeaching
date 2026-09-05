@@ -55,6 +55,7 @@ class CompiledVisualization:
     plan: CommandPlan
     plan_digest: str
     aliases: tuple[tuple[str, tuple[str, ...]], ...] = ()
+    evidence: object | None = None
 
     def aliases_for(self, semantic_id: str) -> tuple[str, ...]:
         for key, values in self.aliases:
@@ -123,7 +124,7 @@ class VisualSemanticsCompiler:
         }
         digest_source = json.dumps(digest_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         plan_digest = "sha256:" + hashlib.sha256(digest_source.encode("utf-8")).hexdigest()
-        return CompiledVisualization(
+        compiled = CompiledVisualization(
             topic_id=resolved_topic,
             compiler_version=self.compiler_version,
             render_profile=context.render_profile,
@@ -131,6 +132,27 @@ class VisualSemanticsCompiler:
             plan_digest=plan_digest,
             aliases=tuple((key, tuple(values)) for key, values in sorted(aliases.items())),
         )
+        if artifact is not None:
+            from .evidence import build_evidence_ledger
+
+            ledger, evidence_issues = build_evidence_ledger(artifact, compiled)
+            if evidence_issues:
+                raise VisualCompileError(
+                    tuple(
+                        CompileIssue(issue.code, issue.path, issue.message)
+                        for issue in evidence_issues
+                    )
+                )
+            compiled = CompiledVisualization(
+                topic_id=compiled.topic_id,
+                compiler_version=compiled.compiler_version,
+                render_profile=compiled.render_profile,
+                plan=compiled.plan,
+                plan_digest=compiled.plan_digest,
+                aliases=compiled.aliases,
+                evidence=ledger,
+            )
+        return compiled
 
     def _validate_input(
         self,

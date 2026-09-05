@@ -8,6 +8,7 @@ from linear_algebra.teaching.model import TeachingArtifact, VisualSemantics
 from linear_algebra.visualizations.common import RenderContext
 from linear_algebra.visualizations.compiler import VisualCompileError, VisualSemanticsCompiler
 from linear_algebra.visualizations.contracts import VisualContract
+from linear_algebra.visualizations.evidence import build_evidence_ledger
 from services.scene_commands import SceneCommandService
 from tests.teaching_fixtures import composition_artifact_payload, projection_artifact_payload
 
@@ -91,3 +92,18 @@ def test_compiler_does_not_require_or_invoke_a_scene_host() -> None:
     assert compiled.plan.scene == "3d"
     assert any(operation["op"] == "linear3d.upsert" for operation in compiled.plan.operations)
     assert SceneCommandService().validate(compiled.plan).valid
+
+
+def test_evidence_ledger_rejects_relation_without_compiled_endpoint() -> None:
+    artifact = TeachingArtifact.from_dict(composition_artifact_payload())
+
+    class AliasView:
+        def aliases_for(self, semantic_id: str) -> tuple[str, ...]:
+            return {
+                "x": ("x",),
+                "B_maps_x_to_Bx": ("mapping",),
+            }.get(semantic_id, ())
+
+    _, issues = build_evidence_ledger(artifact, AliasView())  # type: ignore[arg-type]
+
+    assert any(issue.code == "missing_endpoint_evidence" for issue in issues)

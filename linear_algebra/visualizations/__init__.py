@@ -11,6 +11,7 @@ from .compiler import (
     VisualCompileError,
     VisualSemanticsCompiler,
 )
+from .evidence import ClaimEvidence, EvidenceIssue, EvidenceLedger, build_evidence_ledger
 
 _RECIPES: tuple[VisualizationRecipe, ...] = (*CHAPTER_01_RECIPES, *CHAPTER_02_RECIPES, *CHAPTER_03_RECIPES)
 _BY_ID = {recipe.id: recipe for recipe in _RECIPES}
@@ -37,4 +38,8 @@ __all__ = (
     "CompiledVisualization",
     "VisualCompileError",
     "VisualSemanticsCompiler",
+    "ClaimEvidence",
+    "EvidenceIssue",
+    "EvidenceLedger",
+    "build_evidence_ledger",
 )
