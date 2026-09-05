@@ -1,0 +1,373 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "P",
+        "Q",
+        "v"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "intuition",
+        "conclusion",
+        "invariants",
+        "read_guide"
+      ],
+      "formula": "v=Q-P",
+      "formula_symbols": [
+        "P",
+        "Q",
+        "v"
+      ],
+      "id": "claim.ch01.vector.point-distinction",
+      "relation_refs": [
+        "rel.0.claim.ch01.vector.point-distinction"
+      ],
+      "source_refs": [
+        "第1章 向量与几何测量 / 1.1 向量的几何表示 / 1.1.2 向量与点的本质区别::1::sha256:c4289ae2a15aadd08eb83ba876a62fd6e8ad71f3038ecef645edbf134bdc93ee"
+      ],
+      "stage_refs": [
+        "stage.claim.ch01.vector.point-distinction.observe",
+        "stage.claim.ch01.vector.point-distinction.derive"
+      ],
+      "statement": "点回答‘在哪里’，向量回答‘沿哪个方向走多远’；二者都可写成 (x,y)，但起点、平移意义和运算角色不同。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch01.vector.point-distinction"
+      ],
+      "description": "当前主题的数学结构连接到 ch01.vector.coordinate-system。",
+      "id": "connection.ch01.vector.point-distinction",
+      "relation": "conceptual_continuation",
+      "target_topic_id": "ch01.vector.coordinate-system"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "",
+    "conclusion": "标准基表示的系数唯一；向量的平移不改变其分量。",
+    "connections": [
+      "连接主题：ch01.vector.coordinate-system",
+      "比较同一结构在下一主题中的表示。"
+    ],
+    "definition": "点回答‘在哪里’，向量回答‘沿哪个方向走多远’；二者都可写成 (x,y)，但起点、平移意义和运算角色不同。",
+    "derivation": [
+      "把 P、Q 看成位置向量，位移箭头的分量逐坐标相减，得到 v=Q−P。",
+      "标准基 e₁=(1,0)、e₂=(0,1) 给出 (x,y)=x e₁+y e₂。"
+    ],
+    "formula": "v=Q-P",
+    "geometric_meaning": "同一个向量箭头可以平移到不同位置而保持位移不变；点的位置则随平移改变。",
+    "intuition": "同一个向量箭头可以平移到不同位置而保持位移不变；点的位置则随平移改变。",
+    "invariants": [
+      "标准基表示的系数唯一；向量的平移不改变其分量。"
+    ],
+    "pitfalls": [
+      "看到 (3,4) 就默认它是某个位置；忘记向量默认从原点出发。"
+    ],
+    "read_guide": [
+      "观察输入实体和标签。",
+      "沿关系读取输出并核对不变量。"
+    ],
+    "searchable_text": [
+      "点与向量的本质区别",
+      "点回答‘在哪里’，向量回答‘沿哪个方向走多远’；二者都可写成 (x,y)，但起点、平移意义和运算角色不同。",
+      "v=Q-P",
+      "把 P、Q 看成位置向量，位移箭头的分量逐坐标相减，得到 v=Q−P。",
+      "标准基 e₁=(1,0)、e₂=(0,1) 给出 (x,y)=x e₁+y e₂。",
+      "看到 (3,4) 就默认它是某个位置；忘记向量默认从原点出发。"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "definition",
+        "text": "点回答‘在哪里’，向量回答‘沿哪个方向走多远’；二者都可写成 (x,y)，但起点、平移意义和运算角色不同。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "formula",
+        "text": "v=Q-P",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "derivation",
+        "text": "把 P、Q 看成位置向量，位移箭头的分量逐坐标相减，得到 v=Q−P。\n标准基 e₁=(1,0)、e₂=(0,1) 给出 (x,y)=x e₁+y e₂。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "worked_examples",
+        "text": "把 P、Q 看成位置向量，位移箭头的分量逐坐标相减，得到 v=Q−P。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "geometric_meaning",
+        "text": "同一个向量箭头可以平移到不同位置而保持位移不变；点的位置则随平移改变。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "pitfalls",
+        "text": "看到 (3,4) 就默认它是某个位置；忘记向量默认从原点出发。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "intuition",
+        "text": "同一个向量箭头可以平移到不同位置而保持位移不变；点的位置则随平移改变。",
+        "title": "intuition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "conclusion",
+        "text": "标准基表示的系数唯一；向量的平移不改变其分量。",
+        "title": "conclusion"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "invariants",
+        "text": "标准基表示的系数唯一；向量的平移不改变其分量。",
+        "title": "invariants"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "read_guide",
+        "text": "先看输入箭头，再沿关系读输出，最后用不变量核对图形。",
+        "title": "read_guide"
+      }
+    ],
+    "summary": "点回答‘在哪里’，向量回答‘沿哪个方向走多远’；二者都可写成 (x,y)，但起点、平移意义和运算角色不同。",
+    "symbol_roles": {
+      "P": "vector_a",
+      "Q": "vector_a",
+      "v": "vector_a"
+    },
+    "title": "点与向量的本质区别",
+    "transfer_note": "将本主题的关系迁移到 ch01.vector.coordinate-system，保持公式和图形不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "将给定的向量/标量代入讲义公式。",
+          "逐分量或按内积/投影定义计算中间值。",
+          "得到 result 对应的数值结果。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              3,
+              5
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "given": [
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "id": "example.claim.ch01.vector.point-distinction",
+        "kind": "vector_addition",
+        "result": [
+          3,
+          5
+        ],
+        "title": "讲义公式的可复算数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:b7e0e1d091275fabde56ce2e4e1b5e9c035e51580b8209d20fc6fd6f35f70919",
+    "generated_at": "2026-09-06T00:00:00Z",
+    "model": "lecture-grounded-v1",
+    "prompt_version": "teaching-artifact-v1",
+    "provider": "math-explanation-sample",
+    "raw_reply_digest": "sha256:b19ac49530996432efa244bfb98279989d0c69e40225ffb04bc5f830567c60c2",
+    "source_hash": "sha256:c4289ae2a15aadd08eb83ba876a62fd6e8ad71f3038ecef645edbf134bdc93ee"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 1.1.2 向量与点的本质区别\n\n这是初学者最容易混淆的地方。虽然向量和点都用 $(x, y)$ 这样的括号表示，但它们的语义完全不同：\n\n|   | 点 | 向量 |\n| --- | --- | --- |\n| **本质** | 空间中的一个**位置** | 一个**方向** $+$ 一个**长度** |\n| **语义** | \"我在$(3,4)$这个位置\" | \"从原点沿某方向走一段距离\" |\n| **起点** | 不涉及起点的概念 | **起点固定为原点** |\n| **示例** | 地图上的\"北京$(116^\\circ E, 40^\\circ N)$\" | 速度：\"向东3m/s，向北4m/s\" |\n\n点的坐标回答\"在哪儿\"；向量的坐标回答\"哪个方向，多远\"。\n因为它们看起来都是\"两个数字\"，初学者常把向量坐标误读为\"位置\"——这是第一道必须跨越的认知障碍。\n定义 1.4（标准基） 在 $R^{2}$ 中，两个特殊的向量：\n$$\ne_{1} = (1, 0), e_{2} = (0, 1)\n$$\n称为标准基向量。它们是两根\"单位尺子\"：\n- $e_{1}$ 是 x 轴方向、长度为 1 的箭头\n- $e_{2}$ 是 y 轴方向、长度为 1 的箭头\n定理 1.1（向量的基表示） 任何二维向量 $(x, y)$ 都可以唯一地写成 $e_{1}$ 和 $e_{2}$ 的线性组合：\n$$\n(x, y) = x \\cdot e_{1} + y \\cdot e_{2} = x \\cdot (1, 0) + y \\cdot (0, 1)\n$$\n这句话的含义是：坐标 x 和 y 就是用 $e_{1}$ 和 $e_{2}$ 这两把尺子分别量出来的\"读数\"。正因如此，一旦换了尺子（换了基），同一个箭头的坐标就会变化。",
+    "heading_level": 4,
+    "heading_path": [
+      "第1章 向量与几何测量",
+      "1.1 向量的几何表示",
+      "1.1.2 向量与点的本质区别"
+    ],
+    "neighboring_titles": [
+      "1.1.1 什么是向量",
+      "1.1.3 坐标系的约定"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:c4289ae2a15aadd08eb83ba876a62fd6e8ad71f3038ecef645edbf134bdc93ee",
+    "source_path": [
+      "第1章 向量与几何测量",
+      "1.1 向量的几何表示",
+      "1.1.2 向量与点的本质区别"
+    ],
+    "spans": [
+      {
+        "end_line": 50,
+        "fingerprint": "sha256:c4289ae2a15aadd08eb83ba876a62fd6e8ad71f3038ecef645edbf134bdc93ee",
+        "heading_path": [
+          "第1章 向量与几何测量",
+          "1.1 向量的几何表示",
+          "1.1.2 向量与点的本质区别"
+        ],
+        "id": "第1章 向量与几何测量 / 1.1 向量的几何表示 / 1.1.2 向量与点的本质区别::1::sha256:c4289ae2a15aadd08eb83ba876a62fd6e8ad71f3038ecef645edbf134bdc93ee",
+        "start_line": 25,
+        "text": "#### 1.1.2 向量与点的本质区别\n\n这是初学者最容易混淆的地方。虽然向量和点都用 $(x, y)$ 这样的括号表示，但它们的语义完全不同：\n\n|   | 点 | 向量 |\n| --- | --- | --- |\n| **本质** | 空间中的一个**位置** | 一个**方向** $+$ 一个**长度** |\n| **语义** | \"我在$(3,4)$这个位置\" | \"从原点沿某方向走一段距离\" |\n| **起点** | 不涉及起点的概念 | **起点固定为原点** |\n| **示例** | 地图上的\"北京$(116^\\circ E, 40^\\circ N)$\" | 速度：\"向东3m/s，向北4m/s\" |\n\n点的坐标回答\"在哪儿\"；向量的坐标回答\"哪个方向，多远\"。\n因为它们看起来都是\"两个数字\"，初学者常把向量坐标误读为\"位置\"——这是第一道必须跨越的认知障碍。\n定义 1.4（标准基） 在 $R^{2}$ 中，两个特殊的向量：\n$$\ne_{1} = (1, 0), e_{2} = (0, 1)\n$$\n称为标准基向量。它们是两根\"单位尺子\"：\n- $e_{1}$ 是 x 轴方向、长度为 1 的箭头\n- $e_{2}$ 是 y 轴方向、长度为 1 的箭头\n定理 1.1（向量的基表示） 任何二维向量 $(x, y)$ 都可以唯一地写成 $e_{1}$ 和 $e_{2}$ 的线性组合：\n$$\n(x, y) = x \\cdot e_{1} + y \\cdot e_{2} = x \\cdot (1, 0) + y \\cdot (0, 1)\n$$\n这句话的含义是：坐标 x 和 y 就是用 $e_{1}$ 和 $e_{2}$ 这两把尺子分别量出来的\"读数\"。正因如此，一旦换了尺子（换了基），同一个箭头的坐标就会变化。"
+      }
+    ]
+  },
+  "status": "published",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch01.vector.point-distinction",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "dimension": 2,
+        "id": "P",
+        "kind": "point",
+        "label": "P",
+        "role": "vector_a",
+        "value": [
+          1,
+          2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "dimension": 2,
+        "id": "Q",
+        "kind": "point",
+        "label": "Q",
+        "role": "vector_b",
+        "value": [
+          3,
+          5
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "dimension": 2,
+        "id": "v",
+        "kind": "vector",
+        "label": "Q-P",
+        "role": "transformed_a",
+        "value": [
+          2,
+          3
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch01.vector.point-distinction"
+        ],
+        "id": "rel.0.claim.ch01.vector.point-distinction",
+        "kind": "difference",
+        "parameters": {},
+        "source_ref": "Q",
+        "target_ref": "P"
+      }
+    ],
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "先读对象、角色和输入输出。",
+        "expected_invariants": [
+          "标准基表示的系数唯一；向量的平移不改变其分量。"
+        ],
+        "id": "stage.claim.ch01.vector.point-distinction.observe",
+        "input_entity_refs": [
+          "P",
+          "Q"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "v"
+        ],
+        "relation_refs": [
+          "rel.0.claim.ch01.vector.point-distinction"
+        ],
+        "title": "观察对象"
+      },
+      {
+        "caption": "按公式计算并检查几何关系。",
+        "expected_invariants": [
+          "标准基表示的系数唯一；向量的平移不改变其分量。"
+        ],
+        "id": "stage.claim.ch01.vector.point-distinction.derive",
+        "input_entity_refs": [
+          "P",
+          "Q"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "v"
+        ],
+        "relation_refs": [
+          "rel.0.claim.ch01.vector.point-distinction"
+        ],
+        "title": "代数验证"
+      }
+    ]
+  }
+}

@@ -1,0 +1,388 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "v1",
+        "v2",
+        "result"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections",
+        "intuition",
+        "conclusion",
+        "invariants",
+        "read_guide"
+      ],
+      "formula": "\\alpha_{1}v_{1}+\\alpha_{2}v_{2}+\\cdots+\\alpha_{n}v_{n}",
+      "formula_symbols": [
+        "v1",
+        "v2",
+        "result"
+      ],
+      "id": "claim.ch01.ops.linear-combination",
+      "relation_refs": [
+        "rel.0.claim.ch01.ops.linear-combination"
+      ],
+      "source_refs": [
+        "第1章 向量与几何测量 / 1.2 向量的线性运算 / 1.2.4 线性组合::1::sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32"
+      ],
+      "stage_refs": [
+        "stage.claim.ch01.ops.linear-combination.observe",
+        "stage.claim.ch01.ops.linear-combination.derive"
+      ],
+      "statement": "给定向量 vᵢ 和标量 αᵢ，把每个向量数乘后相加，所得向量称为线性组合。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch01.ops.linear-combination"
+      ],
+      "description": "当前主题的数学结构连接到 ch02.matrix.row-column。",
+      "id": "connection.ch01.ops.linear-combination",
+      "relation": "conceptual_continuation",
+      "target_topic_id": "ch02.matrix.row-column"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "",
+    "conclusion": "线性组合始终落在这些向量的张成空间中；同一组向量的组合顺序不影响结果。",
+    "connections": [
+      "连接主题：ch02.matrix.row-column",
+      "比较同一结构在下一主题中的表示。"
+    ],
+    "definition": "给定向量 vᵢ 和标量 αᵢ，把每个向量数乘后相加，所得向量称为线性组合。",
+    "derivation": [
+      "先计算每个 αᵢvᵢ，再利用向量加法合并对应分量。",
+      "二维示例把 2(1,0) 与 3(0,1) 相加得到 (2,3)，系数就是两把基尺的读数。"
+    ],
+    "formula": "\\alpha_{1}v_{1}+\\alpha_{2}v_{2}+\\cdots+\\alpha_{n}v_{n}",
+    "geometric_meaning": "改变系数会在由给定向量张成的区域内移动；系数为负时沿相反方向走。",
+    "intuition": "改变系数会在由给定向量张成的区域内移动；系数为负时沿相反方向走。",
+    "invariants": [
+      "线性组合始终落在这些向量的张成空间中；同一组向量的组合顺序不影响结果。"
+    ],
+    "pitfalls": [
+      "把系数当成向量坐标而不先数乘；忽略第 2 章矩阵列组合的同一结构。"
+    ],
+    "read_guide": [
+      "观察输入实体和标签。",
+      "沿关系读取输出并核对不变量。"
+    ],
+    "searchable_text": [
+      "线性组合",
+      "给定向量 vᵢ 和标量 αᵢ，把每个向量数乘后相加，所得向量称为线性组合。",
+      "\\alpha_{1}v_{1}+\\alpha_{2}v_{2}+\\cdots+\\alpha_{n}v_{n}",
+      "先计算每个 αᵢvᵢ，再利用向量加法合并对应分量。",
+      "二维示例把 2(1,0) 与 3(0,1) 相加得到 (2,3)，系数就是两把基尺的读数。",
+      "把系数当成向量坐标而不先数乘；忽略第 2 章矩阵列组合的同一结构。"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "definition",
+        "text": "给定向量 vᵢ 和标量 αᵢ，把每个向量数乘后相加，所得向量称为线性组合。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "formula",
+        "text": "\\alpha_{1}v_{1}+\\alpha_{2}v_{2}+\\cdots+\\alpha_{n}v_{n}",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "derivation",
+        "text": "先计算每个 αᵢvᵢ，再利用向量加法合并对应分量。\n二维示例把 2(1,0) 与 3(0,1) 相加得到 (2,3)，系数就是两把基尺的读数。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "worked_examples",
+        "text": "先计算每个 αᵢvᵢ，再利用向量加法合并对应分量。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "geometric_meaning",
+        "text": "改变系数会在由给定向量张成的区域内移动；系数为负时沿相反方向走。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "pitfalls",
+        "text": "把系数当成向量坐标而不先数乘；忽略第 2 章矩阵列组合的同一结构。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "connections",
+        "text": "本主题连接到 ch02.matrix.row-column，可把当前结构迁移到下一主题。",
+        "title": "connections"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "intuition",
+        "text": "改变系数会在由给定向量张成的区域内移动；系数为负时沿相反方向走。",
+        "title": "intuition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "conclusion",
+        "text": "线性组合始终落在这些向量的张成空间中；同一组向量的组合顺序不影响结果。",
+        "title": "conclusion"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "invariants",
+        "text": "线性组合始终落在这些向量的张成空间中；同一组向量的组合顺序不影响结果。",
+        "title": "invariants"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "read_guide",
+        "text": "先看输入箭头，再沿关系读输出，最后用不变量核对图形。",
+        "title": "read_guide"
+      }
+    ],
+    "summary": "给定向量 vᵢ 和标量 αᵢ，把每个向量数乘后相加，所得向量称为线性组合。",
+    "symbol_roles": {
+      "result": "vector_a",
+      "v1": "vector_a",
+      "v2": "vector_a"
+    },
+    "title": "线性组合",
+    "transfer_note": "将本主题的关系迁移到 ch02.matrix.row-column，保持公式和图形不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "将给定的向量/标量代入讲义公式。",
+          "逐分量或按内积/投影定义计算中间值。",
+          "得到 result 对应的数值结果。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              3
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "given": [
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            3
+          ]
+        ],
+        "id": "example.claim.ch01.ops.linear-combination",
+        "kind": "vector_addition",
+        "result": [
+          2,
+          3
+        ],
+        "title": "讲义公式的可复算数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:35c59c7e7f4bb9757caca2699d82be5f5a38f2af5a2246e13b1e9a8cacc3969a",
+    "generated_at": "2026-09-06T00:00:00Z",
+    "model": "lecture-grounded-v1",
+    "prompt_version": "teaching-artifact-v1",
+    "provider": "math-explanation-sample",
+    "raw_reply_digest": "sha256:3fdbe325707e3c214bef88312976bbc292c4b69d6f8919e870200b00498ccd2a",
+    "source_hash": "sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 1.2.4 线性组合\n\n定义 1.9（线性组合） 给定向量 $v_{1}, v_{2}, ..., v_{n}$ 和标量 $\\alpha_{1}, \\alpha_{2}, ..., \\alpha_{n}$，称\n$$\n\\alpha_{1} \\cdot v_{1} + \\alpha_{2} \\cdot v_{2} + ... + \\alpha_{n} \\cdot v_{n}\n$$\n为 $v_{1}, ..., v_{n}$ 的一个线性组合。$\\alpha_i$ 称为系数。\n这是线性代数中最重要的操作之一。向量的加法与数乘组合在一起，就是线性组合。后面第2章的\"矩阵$\\times$向量\"本质就是矩阵各列的线性组合。",
+    "heading_level": 4,
+    "heading_path": [
+      "第1章 向量与几何测量",
+      "1.2 向量的线性运算",
+      "1.2.4 线性组合"
+    ],
+    "neighboring_titles": [
+      "1.2.3 向量数乘",
+      "1.2.5 分层例题"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32",
+    "source_path": [
+      "第1章 向量与几何测量",
+      "1.2 向量的线性运算",
+      "1.2.4 线性组合"
+    ],
+    "spans": [
+      {
+        "end_line": 138,
+        "fingerprint": "sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32",
+        "heading_path": [
+          "第1章 向量与几何测量",
+          "1.2 向量的线性运算",
+          "1.2.4 线性组合"
+        ],
+        "id": "第1章 向量与几何测量 / 1.2 向量的线性运算 / 1.2.4 线性组合::1::sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32",
+        "start_line": 130,
+        "text": "#### 1.2.4 线性组合\n\n定义 1.9（线性组合） 给定向量 $v_{1}, v_{2}, ..., v_{n}$ 和标量 $\\alpha_{1}, \\alpha_{2}, ..., \\alpha_{n}$，称\n$$\n\\alpha_{1} \\cdot v_{1} + \\alpha_{2} \\cdot v_{2} + ... + \\alpha_{n} \\cdot v_{n}\n$$\n为 $v_{1}, ..., v_{n}$ 的一个线性组合。$\\alpha_i$ 称为系数。\n这是线性代数中最重要的操作之一。向量的加法与数乘组合在一起，就是线性组合。后面第2章的\"矩阵$\\times$向量\"本质就是矩阵各列的线性组合。"
+      }
+    ]
+  },
+  "status": "published",
+  "teaching_profile": {
+    "minimum_level": 4,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch01.ops.linear-combination",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "dimension": 2,
+        "id": "v1",
+        "kind": "vector",
+        "label": "v₁",
+        "role": "vector_a",
+        "value": [
+          1,
+          0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "dimension": 2,
+        "id": "v2",
+        "kind": "vector",
+        "label": "v₂",
+        "role": "vector_b",
+        "value": [
+          0,
+          1
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "dimension": 2,
+        "id": "result",
+        "kind": "vector",
+        "label": "2v₁+3v₂",
+        "role": "transformed_a",
+        "value": [
+          2,
+          3
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch01.ops.linear-combination"
+        ],
+        "id": "rel.0.claim.ch01.ops.linear-combination",
+        "kind": "sum",
+        "parameters": {
+          "coefficients": [
+            2,
+            3
+          ]
+        },
+        "source_ref": "v1",
+        "target_ref": "v2"
+      }
+    ],
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "先读对象、角色和输入输出。",
+        "expected_invariants": [
+          "线性组合始终落在这些向量的张成空间中；同一组向量的组合顺序不影响结果。"
+        ],
+        "id": "stage.claim.ch01.ops.linear-combination.observe",
+        "input_entity_refs": [
+          "v1",
+          "v2"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "result"
+        ],
+        "relation_refs": [
+          "rel.0.claim.ch01.ops.linear-combination"
+        ],
+        "title": "观察对象"
+      },
+      {
+        "caption": "按公式计算并检查几何关系。",
+        "expected_invariants": [
+          "线性组合始终落在这些向量的张成空间中；同一组向量的组合顺序不影响结果。"
+        ],
+        "id": "stage.claim.ch01.ops.linear-combination.derive",
+        "input_entity_refs": [
+          "v1",
+          "v2"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "result"
+        ],
+        "relation_refs": [
+          "rel.0.claim.ch01.ops.linear-combination"
+        ],
+        "title": "代数验证"
+      }
+    ]
+  }
+}

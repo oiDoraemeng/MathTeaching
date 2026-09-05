@@ -1,0 +1,400 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "a",
+        "b",
+        "cross"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "intuition",
+        "conclusion",
+        "invariants",
+        "read_guide"
+      ],
+      "formula": "a\\times b=(a_{2}b_{3}-a_{3}b_{2},a_{3}b_{1}-a_{1}b_{3},a_{1}b_{2}-a_{2}b_{1})",
+      "formula_symbols": [
+        "a",
+        "b",
+        "cross"
+      ],
+      "id": "claim.ch01.ops.cross-product",
+      "relation_refs": [
+        "rel.0.claim.ch01.ops.cross-product",
+        "rel.1.claim.ch01.ops.cross-product",
+        "rel.2.claim.ch01.ops.cross-product"
+      ],
+      "source_refs": [
+        "第1章 向量与几何测量 / 1.2.6 向量的叉积（外积）——三维空间的旋转方向::1::sha256:10f1b4819f2af3b6c3c2b0373beb97de3b41dbcd3e5f9498fd65ef7466a9b9a6"
+      ],
+      "stage_refs": [
+        "stage.claim.ch01.ops.cross-product.observe",
+        "stage.claim.ch01.ops.cross-product.derive"
+      ],
+      "statement": "叉积的模是 |a||b|sinθ，方向由右手定则确定，并同时垂直于 a、b。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch01.ops.cross-product"
+      ],
+      "description": "当前主题的数学结构连接到 ch03.det.oriented-area。",
+      "id": "connection.ch01.ops.cross-product",
+      "relation": "conceptual_continuation",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "",
+    "conclusion": "a×b=−(b×a)；a×a=0；交换顺序只改变方向不改变面积。",
+    "connections": [
+      "连接主题：ch03.det.oriented-area",
+      "比较同一结构在下一主题中的表示。"
+    ],
+    "definition": "叉积的模是 |a||b|sinθ，方向由右手定则确定，并同时垂直于 a、b。",
+    "derivation": [
+      "代入 (1,2,3)×(4,5,6) 得 (-3,6,-3)。",
+      "与 a、b 分别做内积均为 0，验证结果确实垂直于二者。"
+    ],
+    "formula": "a\\times b=(a_{2}b_{3}-a_{3}b_{2},a_{3}b_{1}-a_{1}b_{3},a_{1}b_{2}-a_{2}b_{1})",
+    "geometric_meaning": "a、b 张成的平行四边形面积是 |a×b|；拇指方向记录从 a 转向 b 的旋向。",
+    "intuition": "a、b 张成的平行四边形面积是 |a×b|；拇指方向记录从 a 转向 b 的旋向。",
+    "invariants": [
+      "a×b=−(b×a)；a×a=0；交换顺序只改变方向不改变面积。"
+    ],
+    "pitfalls": [
+      "把叉积当作标量内积；忘记反交换律导致方向符号错误。"
+    ],
+    "read_guide": [
+      "观察输入实体和标签。",
+      "沿关系读取输出并核对不变量。"
+    ],
+    "searchable_text": [
+      "叉积的三维旋转方向",
+      "叉积的模是 |a||b|sinθ，方向由右手定则确定，并同时垂直于 a、b。",
+      "a\\times b=(a_{2}b_{3}-a_{3}b_{2},a_{3}b_{1}-a_{1}b_{3},a_{1}b_{2}-a_{2}b_{1})",
+      "代入 (1,2,3)×(4,5,6) 得 (-3,6,-3)。",
+      "与 a、b 分别做内积均为 0，验证结果确实垂直于二者。",
+      "把叉积当作标量内积；忘记反交换律导致方向符号错误。"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "definition",
+        "text": "叉积的模是 |a||b|sinθ，方向由右手定则确定，并同时垂直于 a、b。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "formula",
+        "text": "a\\times b=(a_{2}b_{3}-a_{3}b_{2},a_{3}b_{1}-a_{1}b_{3},a_{1}b_{2}-a_{2}b_{1})",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "derivation",
+        "text": "代入 (1,2,3)×(4,5,6) 得 (-3,6,-3)。\n与 a、b 分别做内积均为 0，验证结果确实垂直于二者。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "worked_examples",
+        "text": "代入 (1,2,3)×(4,5,6) 得 (-3,6,-3)。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "geometric_meaning",
+        "text": "a、b 张成的平行四边形面积是 |a×b|；拇指方向记录从 a 转向 b 的旋向。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "pitfalls",
+        "text": "把叉积当作标量内积；忘记反交换律导致方向符号错误。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "intuition",
+        "text": "a、b 张成的平行四边形面积是 |a×b|；拇指方向记录从 a 转向 b 的旋向。",
+        "title": "intuition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "conclusion",
+        "text": "a×b=−(b×a)；a×a=0；交换顺序只改变方向不改变面积。",
+        "title": "conclusion"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "invariants",
+        "text": "a×b=−(b×a)；a×a=0；交换顺序只改变方向不改变面积。",
+        "title": "invariants"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "read_guide",
+        "text": "先看输入箭头，再沿关系读输出，最后用不变量核对图形。",
+        "title": "read_guide"
+      }
+    ],
+    "summary": "叉积的模是 |a||b|sinθ，方向由右手定则确定，并同时垂直于 a、b。",
+    "symbol_roles": {
+      "a": "vector_a",
+      "b": "vector_b",
+      "cross": "vector_a"
+    },
+    "title": "叉积的三维旋转方向",
+    "transfer_note": "将本主题的关系迁移到 ch03.det.oriented-area，保持公式和图形不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "将给定的向量/标量代入讲义公式。",
+          "逐分量或按内积/投影定义计算中间值。",
+          "得到 result 对应的数值结果。"
+        ],
+        "checks": [
+          {
+            "expected": 0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "given": [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            -3,
+            6,
+            -3
+          ]
+        ],
+        "id": "example.claim.ch01.ops.cross-product",
+        "kind": "inner_product",
+        "result": 0,
+        "title": "讲义公式的可复算数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:1df66d47448ef49cd9ed1934f83880bad81ce030b41e5cd8b97e3eba11c08236",
+    "generated_at": "2026-09-06T00:00:00Z",
+    "model": "lecture-grounded-v1",
+    "prompt_version": "teaching-artifact-v1",
+    "provider": "math-explanation-sample",
+    "raw_reply_digest": "sha256:6ec128874b897bf86315d63b965203df0e2260970c8c7176db2e98aa445c4151",
+    "source_hash": "sha256:10f1b4819f2af3b6c3c2b0373beb97de3b41dbcd3e5f9498fd65ef7466a9b9a6"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 1.2.6 向量的叉积（外积）——三维空间的旋转方向\n\n一句话动机：内积回答「两个向量有多像」，叉积回答「两个向量张成的平面有多大、旋转方向是什么」。\n\n定义 1.11（叉积/外积） 设 $a = (a_{1}, a_{2}, a_{3}), b = (b_{1}, b_{2}, b_{3}) \\in R^{3}$，其叉积 $a \\times b$ 定义为：\n$$\na \\times b = (|a||b|\\sin\\theta) \\cdot n\n$$\n其中 $\\theta$ 是 a 与 b 的夹角（0 $\\leq \\theta \\leq \\pi$），n 是与 a 和 b 均垂直的单位向量，方向由右手定则确定：\n右手四指从 a 转向 b，拇指所指方向即为 n 的方向。\n\n代数计算公式：\n$$\na \\times b = (a_{2}b_{3} - a_{3}b_{2}, a_{3}b_{1} - a_{1}b_{3}, a_{1}b_{2} - a_{2}b_{1})\n$$\n\n记忆口诀：\n- 第一分量不含下标 1：由 2,3 分量交叉得到\n- 第二分量有负号：$a_{3}b_{1} - a_{1}b_{3}$\n- 第三分量不含下标 3：由 1,2 分量交叉得到\n- 也可用行列式助记：$a \\times b = \\det(\\begin{pmatrix}i & j & k \\\\ a_{1} & a_{2} & a_{3} \\\\ b_{1} & b_{2} & b_{3}\\end{pmatrix})$\n\n几何意义：\n- $|a \\times b| =$ 以 a, b 为邻边的平行四边形的面积\n- 方向垂直于 a 和 b 所在平面，由右手定则确定\n\n基本性质：\n1. 反交换律：$a \\times b = -(b \\times a)$\n2. $a \\times a = 0$（任何向量与自身的叉积为零向量）\n3. $(ka) \\times b = k(a \\times b) = a \\times (kb)$\n4. $a \\times (b + c) = a \\times b + a \\times c$（分配律）\n\n**【分层例题】**\n**【计算层】**计算 $(1, 2, 3) \\times (4, 5, 6)$。\n解：代入公式：\nx 分量 $= 2 \\times 6 - 3 \\times 5 = 12 - 15 = -3$\ny 分量 $= 3 \\times 4 - 1 \\times 6 = 12 - 6 = 6$\nz 分量 $= 1 \\times 5 - 2 \\times 4 = 5 - 8 = -3$\n故 $(1,2,3) \\times (4,5,6) = (-3, 6, -3)$。\n\n**【验证层】**验证结果与两个原向量都正交：\n$$\n(1,2,3) \\cdot (-3,6,-3) = -3+12-9 = 0 ✓\n$$\n$$\n(4,5,6) \\cdot (-3,6,-3) = -12+30-18 = 0 ✓\n$$\n\n**【理解层】**为什么叉积只在 $R^{3}$ 中有定义？\n在 $R^{3}$ 中，垂直于给定平面的方向恰好有一条直线（两个方向）；在更高维中，「垂直于一平面」的方向不止一个——因此叉积是三维空间特有的运算。\n\n联系后续：叉积的模长 $|a \\times b| = |a||b|\\sin\\theta$ 在第3章与行列式产生联系（平行四边形的面积 $= |\\det([a,b])|$）。",
+    "heading_level": 3,
+    "heading_path": [
+      "第1章 向量与几何测量",
+      "1.2.6 向量的叉积（外积）——三维空间的旋转方向"
+    ],
+    "neighboring_titles": [
+      "1.2 向量的线性运算",
+      "1.2.7 混合积——三维平行六面体的有向体积"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:10f1b4819f2af3b6c3c2b0373beb97de3b41dbcd3e5f9498fd65ef7466a9b9a6",
+    "source_path": [
+      "第1章 向量与几何测量",
+      "1.2 向量的线性运算",
+      "1.2.6 向量的叉积（外积）——三维空间的旋转方向"
+    ],
+    "spans": [
+      {
+        "end_line": 217,
+        "fingerprint": "sha256:10f1b4819f2af3b6c3c2b0373beb97de3b41dbcd3e5f9498fd65ef7466a9b9a6",
+        "heading_path": [
+          "第1章 向量与几何测量",
+          "1.2.6 向量的叉积（外积）——三维空间的旋转方向"
+        ],
+        "id": "第1章 向量与几何测量 / 1.2.6 向量的叉积（外积）——三维空间的旋转方向::1::sha256:10f1b4819f2af3b6c3c2b0373beb97de3b41dbcd3e5f9498fd65ef7466a9b9a6",
+        "start_line": 161,
+        "text": "### 1.2.6 向量的叉积（外积）——三维空间的旋转方向\n\n一句话动机：内积回答「两个向量有多像」，叉积回答「两个向量张成的平面有多大、旋转方向是什么」。\n\n定义 1.11（叉积/外积） 设 $a = (a_{1}, a_{2}, a_{3}), b = (b_{1}, b_{2}, b_{3}) \\in R^{3}$，其叉积 $a \\times b$ 定义为：\n$$\na \\times b = (|a||b|\\sin\\theta) \\cdot n\n$$\n其中 $\\theta$ 是 a 与 b 的夹角（0 $\\leq \\theta \\leq \\pi$），n 是与 a 和 b 均垂直的单位向量，方向由右手定则确定：\n右手四指从 a 转向 b，拇指所指方向即为 n 的方向。\n\n代数计算公式：\n$$\na \\times b = (a_{2}b_{3} - a_{3}b_{2}, a_{3}b_{1} - a_{1}b_{3}, a_{1}b_{2} - a_{2}b_{1})\n$$\n\n记忆口诀：\n- 第一分量不含下标 1：由 2,3 分量交叉得到\n- 第二分量有负号：$a_{3}b_{1} - a_{1}b_{3}$\n- 第三分量不含下标 3：由 1,2 分量交叉得到\n- 也可用行列式助记：$a \\times b = \\det(\\begin{pmatrix}i & j & k \\\\ a_{1} & a_{2} & a_{3} \\\\ b_{1} & b_{2} & b_{3}\\end{pmatrix})$\n\n几何意义：\n- $|a \\times b| =$ 以 a, b 为邻边的平行四边形的面积\n- 方向垂直于 a 和 b 所在平面，由右手定则确定\n\n基本性质：\n1. 反交换律：$a \\times b = -(b \\times a)$\n2. $a \\times a = 0$（任何向量与自身的叉积为零向量）\n3. $(ka) \\times b = k(a \\times b) = a \\times (kb)$\n4. $a \\times (b + c) = a \\times b + a \\times c$（分配律）\n\n**【分层例题】**\n**【计算层】**计算 $(1, 2, 3) \\times (4, 5, 6)$。\n解：代入公式：\nx 分量 $= 2 \\times 6 - 3 \\times 5 = 12 - 15 = -3$\ny 分量 $= 3 \\times 4 - 1 \\times 6 = 12 - 6 = 6$\nz 分量 $= 1 \\times 5 - 2 \\times 4 = 5 - 8 = -3$\n故 $(1,2,3) \\times (4,5,6) = (-3, 6, -3)$。\n\n**【验证层】**验证结果与两个原向量都正交：\n$$\n(1,2,3) \\cdot (-3,6,-3) = -3+12-9 = 0 ✓\n$$\n$$\n(4,5,6) \\cdot (-3,6,-3) = -12+30-18 = 0 ✓\n$$\n\n**【理解层】**为什么叉积只在 $R^{3}$ 中有定义？\n在 $R^{3}$ 中，垂直于给定平面的方向恰好有一条直线（两个方向）；在更高维中，「垂直于一平面」的方向不止一个——因此叉积是三维空间特有的运算。\n\n联系后续：叉积的模长 $|a \\times b| = |a||b|\\sin\\theta$ 在第3章与行列式产生联系（平行四边形的面积 $= |\\det([a,b])|$）。"
+      }
+    ]
+  },
+  "status": "published",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch01.ops.cross-product",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "dimension": 3,
+        "id": "a",
+        "kind": "vector",
+        "label": "a",
+        "role": "vector_a",
+        "value": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "dimension": 3,
+        "id": "b",
+        "kind": "vector",
+        "label": "b",
+        "role": "vector_b",
+        "value": [
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "dimension": 3,
+        "id": "cross",
+        "kind": "vector",
+        "label": "a×b",
+        "role": "transformed_a",
+        "value": [
+          -3,
+          6,
+          -3
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "rel.0.claim.ch01.ops.cross-product",
+        "kind": "orientation",
+        "parameters": {
+          "sign": 1
+        },
+        "source_ref": "a",
+        "target_ref": "b"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "rel.1.claim.ch01.ops.cross-product",
+        "kind": "orthogonal_to",
+        "parameters": {
+          "dot": 0
+        },
+        "source_ref": "cross",
+        "target_ref": "a"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.ops.cross-product"
+        ],
+        "id": "rel.2.claim.ch01.ops.cross-product",
+        "kind": "orthogonal_to",
+        "parameters": {
+          "dot": 0
+        },
+        "source_ref": "cross",
+        "target_ref": "b"
+      }
+    ],
+    "scene_kind": "3d",
+    "stages": [
+      {
+        "caption": "先读对象、角色和输入输出。",
+        "expected_invariants": [
+          "a×b=−(b×a)；a×a=0；交换顺序只改变方向不改变面积。"
+        ],
+        "id": "stage.claim.ch01.ops.cross-product.observe",
+        "input_entity_refs": [
+          "a",
+          "b"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "cross"
+        ],
+        "relation_refs": [
+          "rel.0.claim.ch01.ops.cross-product"
+        ],
+        "title": "观察对象"
+      },
+      {
+        "caption": "按公式计算并检查几何关系。",
+        "expected_invariants": [
+          "a×b=−(b×a)；a×a=0；交换顺序只改变方向不改变面积。"
+        ],
+        "id": "stage.claim.ch01.ops.cross-product.derive",
+        "input_entity_refs": [
+          "a",
+          "b"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "cross"
+        ],
+        "relation_refs": [
+          "rel.0.claim.ch01.ops.cross-product",
+          "rel.1.claim.ch01.ops.cross-product",
+          "rel.2.claim.ch01.ops.cross-product"
+        ],
+        "title": "代数验证"
+      }
+    ]
+  }
+}

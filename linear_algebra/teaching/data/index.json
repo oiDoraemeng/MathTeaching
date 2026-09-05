@@ -1,0 +1,174 @@
+{
+  "chapter": 1,
+  "schema_version": 1,
+  "topics": [
+    {
+      "draft_revision": 3,
+      "published_revision": 1,
+      "reviewed_revision": 2,
+      "source_hash": "sha256:2b53dbe40acf6537f3db65a7393acc792022be98e32f278f8f056dfd8013baca",
+      "topic_id": "ch01.vector.magnitude"
+    },
+    {
+      "draft_revision": 2,
+      "published_revision": 1,
+      "reviewed_revision": 2,
+      "source_hash": "sha256:c4289ae2a15aadd08eb83ba876a62fd6e8ad71f3038ecef645edbf134bdc93ee",
+      "topic_id": "ch01.vector.point-distinction"
+    },
+    {
+      "draft_revision": 2,
+      "published_revision": 1,
+      "reviewed_revision": 2,
+      "source_hash": "sha256:b13413aa33f880b2787622ef7285b5b593f383f2d6d91670ffe9a262b360da30",
+      "topic_id": "ch01.vector.coordinate-system"
+    },
+    {
+      "draft_revision": 2,
+      "published_revision": 1,
+      "reviewed_revision": 2,
+      "source_hash": "sha256:c919ead1bc4a41fcc9768573ff28bcbdf15001600d5615996da28f7132bdf158",
+      "topic_id": "ch01.vector.direction-examples"
+    },
+    {
+      "draft_revision": 2,
+      "published_revision": 1,
+      "reviewed_revision": 2,
+      "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
+      "topic_id": "ch01.ops.addition"
+    },
+    {
+      "draft_revision": 2,
+      "published_revision": 1,
+      "reviewed_revision": 2,
+      "source_hash": "sha256:13b887d608b560325e74c97308bcf60f892ddea2f61914445bef1fb98e6390fd",
+      "topic_id": "ch01.ops.subtraction"
+    },
+    {
+      "draft_revision": 2,
+      "published_revision": 1,
+      "reviewed_revision": 2,
+      "source_hash": "sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875",
+      "topic_id": "ch01.ops.scalar"
+    },
+    {
+      "draft_revision": 2,
+      "published_revision": 1,
+      "reviewed_revision": 2,
+      "source_hash": "sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32",
+      "topic_id": "ch01.ops.linear-combination"
+    },
+    {
+      "draft_revision": 2,
+      "published_revision": 1,
+      "reviewed_revision": 2,
+      "source_hash": "sha256:36b093c8ac050829f151499dd884e2c8a917f483b3fbe03bfb2688a856278b79",
+      "topic_id": "ch01.ops.velocity"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:10f1b4819f2af3b6c3c2b0373beb97de3b41dbcd3e5f9498fd65ef7466a9b9a6",
+      "topic_id": "ch01.ops.cross-product"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:4e497dc05627bf09c03cba04c8fa9c93828cd0daace46a310f30768c1f541417",
+      "topic_id": "ch01.ops.scalar-triple"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:18371503c870b3e41027bcfb2cc9b77e7f4595fa93f1041b11f68921e280b4f6",
+      "topic_id": "ch01.inner.equivalence"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:f7f7d9ef3f7be4ba1e2483a74a5fee817f38b0fcd899a4965f3c74af9624dd5b",
+      "topic_id": "ch01.inner.definitions"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c",
+      "topic_id": "ch01.inner.applications"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:acb3755ccad90340b78463bcebf6fa74e07877c6addc4a61067e5e05d4ec5de0",
+      "topic_id": "ch01.inner.cauchy-schwarz"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:76f421df33e08871c34eb5bea7755ac7eaf5b7ca4a8d68ebeb44f783cb773035",
+      "topic_id": "ch01.inner.examples"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789",
+      "topic_id": "ch01.projection.definition"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:8aca69b44713fdac8bf4cb3885c96563418db00aaa21ad288a0a0c79c25162c9",
+      "topic_id": "ch01.projection.properties"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:85f23c9fa0886bbe72549992d8606f7f26a2e68d2e3ef9872dc0f4c4cfd8c66d",
+      "topic_id": "ch01.projection.force"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:ea74cbc672edc3f084c07253b34cf704c8aee2835e88b473795a22a715bf75b4",
+      "topic_id": "ch01.proof.method"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:71150484c6087cdee298ce32f28634cfc4c618d29a90e0e5c1dd0c6890d9e57a",
+      "topic_id": "ch01.proof.midline"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:3b0b668a61fcc041c6bf6b27cc98a127cf2743ab2ec11b5546419b8dc4316c06",
+      "topic_id": "ch01.proof.centroid"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:ca9691ba96b556f0ecf214baf60ec08e9b71e904972b13e04c52404984c0730d",
+      "topic_id": "ch01.proof.parallelogram-diagonals"
+    },
+    {
+      "draft_revision": 1,
+      "published_revision": 1,
+      "reviewed_revision": 1,
+      "source_hash": "sha256:4b015b6cb5bb0c4b69ee907c70f6e2cab0903c68a52e4d750245354ae93bc756",
+      "topic_id": "ch01.high-dimensional.analogy"
+    }
+  ]
+}
