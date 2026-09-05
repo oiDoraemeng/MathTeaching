@@ -46,7 +46,7 @@
 - Consumes: `LessonEntry.source_anchor` from `linear_algebra.catalog.model`.
 - Produces: `SourceSpan`, `SourceContext`, `normalize_source_text(text: str) -> str`, and `LectureSourceRepository.context_for(entry: LessonEntry) -> SourceContext`.
 
-- [ ] **Step 1: Write failing source extraction tests**
+- [x] **Step 1: Write failing source extraction tests**
 
 ```python
 from pathlib import Path
@@ -75,13 +75,13 @@ def test_excluded_headings_are_not_part_of_context() -> None:
     assert "挑战选做" not in context.excerpt
 ```
 
-- [ ] **Step 2: Run the focused test and verify the missing-module failure**
+- [x] **Step 2: Run the focused test and verify the missing-module failure**
 
 Run: `pytest tests/test_linear_algebra_teaching_source.py -q`
 
 Expected: FAIL because `linear_algebra.teaching.source` does not exist.
 
-- [ ] **Step 3: Implement heading-aware extraction and normalized fingerprints**
+- [x] **Step 3: Implement heading-aware extraction and normalized fingerprints**
 
 ```python
 @dataclass(frozen=True)
@@ -137,13 +137,13 @@ class LectureSourceRepository:
 
 Keep line ranges diagnostic only; use `heading_path + occurrence + fingerprint` as identity. Reuse the heading semantics from `linear_algebra.validation` without importing private functions from that module.
 
-- [ ] **Step 4: Verify all 54 source contexts**
+- [x] **Step 4: Verify all 54 source contexts**
 
 Run: `pytest tests/test_linear_algebra_teaching_source.py tests/test_lecture_source_validation.py -q`
 
 Expected: PASS; contexts resolve in catalog order and contain no excluded heading blocks.
 
-- [ ] **Step 5: Commit the source contract**
+- [x] **Step 5: Commit the source contract**
 
 ```bash
 git add linear_algebra/teaching/source.py linear_algebra/teaching/__init__.py tests/test_linear_algebra_teaching_source.py
