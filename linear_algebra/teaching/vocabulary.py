@@ -23,6 +23,41 @@ MAX_MATRIX_COLUMNS = 3
 
 
 @dataclass(frozen=True)
+class VisualVocabulary:
+    """Versioned projection of the closed vocabulary passed to the agent.
+
+    The model sees names only; this record intentionally contains no rendering
+    operations, colors, camera values, or other executable scene data.
+    """
+
+    version: str
+    entity_kinds: tuple[str, ...]
+    relation_kinds: tuple[str, ...]
+    layouts: tuple[str, ...]
+
+    @classmethod
+    def v1(cls) -> "VisualVocabulary":
+        """Return the canonical, deterministically ordered vocabulary."""
+
+        return cls(
+            version="visual-vocabulary-v1",
+            entity_kinds=tuple(sorted(ENTITY_KINDS)),
+            relation_kinds=tuple(sorted(RELATION_KINDS)),
+            layouts=tuple(sorted(LAYOUTS)),
+        )
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a JSON-safe projection suitable for a model prompt."""
+
+        return {
+            "version": self.version,
+            "entity_kinds": list(self.entity_kinds),
+            "relation_kinds": list(self.relation_kinds),
+            "layouts": list(self.layouts),
+        }
+
+
+@dataclass(frozen=True)
 class SemanticIssue:
     """One bounded diagnostic produced while checking a semantic value."""
 
@@ -104,5 +139,6 @@ def _is_sequence(value: object) -> bool:
 
 __all__ = [
     "ENTITY_KINDS", "LAYOUTS", "MAX_MATRIX_COLUMNS", "MAX_MATRIX_ROWS", "RELATION_KINDS",
-    "SemanticIssue", "VECTOR_DIMENSIONS", "require_finite_number", "validate_semantic_value",
+    "SemanticIssue", "VECTOR_DIMENSIONS", "VisualVocabulary", "require_finite_number",
+    "validate_semantic_value",
 ]
