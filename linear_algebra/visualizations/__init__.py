@@ -14,6 +14,7 @@ from .compiler import (
 )
 from .evidence import ClaimEvidence, EvidenceIssue, EvidenceLedger, build_evidence_ledger
 from .palette import ROLE_COLORS, known_role, role_color
+from .snapshots import CompiledSnapshot, CompiledSnapshotStore, snapshot_from
 
 _RECIPES: tuple[VisualizationRecipe, ...] = (*CHAPTER_01_RECIPES, *CHAPTER_02_RECIPES, *CHAPTER_03_RECIPES)
 _BY_ID = {recipe.id: recipe for recipe in _RECIPES}
@@ -48,4 +49,7 @@ __all__ = (
     "ROLE_COLORS",
     "known_role",
     "role_color",
+    "CompiledSnapshot",
+    "CompiledSnapshotStore",
+    "snapshot_from",
 )

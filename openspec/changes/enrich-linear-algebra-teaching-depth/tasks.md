@@ -42,8 +42,8 @@
 - [ ] 5.1 基于讲义生成并审核第 1 章 24 个 artifact：向量、运算、内积、投影、叉积、混合积、几何证明和 n 维类比；用章节覆盖和 source hash 校验
 - [ ] 5.2 基于讲义生成并审核第 2 章 15 个 artifact：批量内积/投影、行列视角、基向量网格、复合、幂、秩、零空间、列空间和高维类比；用章节覆盖和 claim 闭合校验
 - [ ] 5.3 基于讲义生成并审核第 3 章 15 个 artifact：有向面积、ad-bc、det 符号/零/一、乘法性、克拉默法则、逆矩阵和高维体积；用章节覆盖和数字复算校验
-- [ ] 5.4 为投影、变换网格、AB/BA、零空间、det(AB)、叉积和逆矩阵编写黄金 visual semantics 与 VisualContract；用关系级回归断言验证数学主张可见
-- [ ] 5.5 为每个重点主题生成已发布 compiled snapshot 和读图提示；用 plan digest、stage count、必需实体和不变量清单验证可回放
+- [x] 5.4 为投影、变换网格、AB/BA、零空间、det(AB)、叉积和逆矩阵编写黄金 visual semantics 与 VisualContract；用关系级回归断言验证数学主张可见
+- [x] 5.5 为每个重点主题生成已发布 compiled snapshot 和读图提示；用 plan digest、stage count、必需实体和不变量清单验证可回放
 
 ## 6. 树形、案例视图与运行时
 
