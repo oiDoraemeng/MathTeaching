@@ -4,7 +4,7 @@
 - [x] 1.2 定义 `Claim`、`TeachingProfile`、`SourceRef`、`VisualEntity`、`VisualRelation`、`VisualStage` 和 `TeachingArtifact` 的 JSON 可序列化模型；用 round-trip 测试验证嵌套引用和旧 `ExplanationContent` 适配读取
 - [x] 1.3 定义 L0-L4 教学层级和 54 个主题的最低 profile；用清单测试验证核心主题达到 L3/L4、高维类比标记类比边界
 - [x] 1.4 定义视觉语义实体/关系/阶段白名单和有限数值类型；用反例测试拒绝代码、颜色、相机对象、任意表达式和非有限数值
-- [ ] 1.5 为 artifact 编写 schema 和闭合引用校验：topic、source、claims、解释区块、视觉实体/关系/阶段和 topic connections 必须完整；用缺字段和断链 fixture 验证错误路径
+- [x] 1.5 为 artifact 编写 schema 和闭合引用校验：topic、source、claims、解释区块、视觉实体/关系/阶段和 topic connections 必须完整；用缺字段和断链 fixture 验证错误路径
 - [ ] 1.6 为每个 claim 增加解释字段、公式变量和视觉证据引用；用矩阵复合、投影和行列式 fixture 验证公式变量可解析到实体或 symbol role
 
 ## 2. 数学解释子智能体

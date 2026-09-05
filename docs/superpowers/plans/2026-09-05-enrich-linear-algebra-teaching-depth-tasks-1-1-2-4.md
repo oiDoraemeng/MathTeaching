@@ -451,7 +451,7 @@ Run: `pytest tests/test_linear_algebra_artifact_validation.py -q`
 
 Expected: FAIL because validation entry points do not exist.
 
-- [ ] **Step 3: Implement schema-first then graph-reference validation**
+- [x] **Step 3: Implement schema-first then graph-reference validation**
 
 ```python
 @dataclass(frozen=True)
@@ -480,13 +480,13 @@ def validate_artifact_payload(payload: Mapping[str, object]) -> TeachingArtifact
 
 Check uniqueness before membership: claim IDs, entity IDs, relation IDs, stage IDs, source span IDs, and connection topic IDs. Keep issues deterministically sorted by path then code.
 
-- [ ] **Step 4: Run schema, model, and source tests**
+- [x] **Step 4: Run schema, model, and source tests**
 
 Run: `pytest tests/test_linear_algebra_artifact_validation.py tests/test_linear_algebra_teaching_model.py tests/test_linear_algebra_teaching_source.py -q`
 
 Expected: PASS with exact JSON-path diagnostics.
 
-- [ ] **Step 5: Commit schema validation**
+- [x] **Step 5: Commit schema validation**
 
 ```bash
 git add linear_algebra/teaching/schema.py linear_algebra/teaching/validation.py linear_algebra/teaching/artifact.schema.json tests/test_linear_algebra_artifact_validation.py
