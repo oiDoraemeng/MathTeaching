@@ -486,7 +486,7 @@ git commit -m "feat: add atomic teaching artifact publish"
 - Consumes: published index and current `SourceContext`.
 - Produces: `load_published(topic_id, current_context) -> StoredArtifact` with stale status.
 
-- [ ] **Step 1: Write stale read and stale publish tests**
+- [x] **Step 1: Write stale read and stale publish tests**
 
 ```python
 def test_stale_published_revision_remains_readable(tmp_path, source_context, topic) -> None:
@@ -497,13 +497,13 @@ def test_stale_published_revision_remains_readable(tmp_path, source_context, top
     assert loaded.artifact.topic_id == topic.id
 ```
 
-- [ ] **Step 2: Run stale tests and verify missing behavior**
+- [x] **Step 2: Run stale tests and verify missing behavior**
 
 Run: `pytest tests/test_linear_algebra_teaching_stale.py -q`
 
 Expected: FAIL because stale-aware loading is missing.
 
-- [ ] **Step 3: Implement diagnostic stale status without destructive cleanup**
+- [x] **Step 3: Implement diagnostic stale status without destructive cleanup**
 
 ```python
 def load_published(self, topic_id: str, *, current_context: SourceContext) -> LoadedArtifact:
@@ -518,13 +518,13 @@ def load_published(self, topic_id: str, *, current_context: SourceContext) -> Lo
 
 Publishing with a stale draft returns `stale_source`; reading the prior revision remains supported and must expose the diagnostic to the UI.
 
-- [ ] **Step 4: Verify stale and publish regression tests**
+- [x] **Step 4: Verify stale and publish regression tests**
 
 Run: `pytest tests/test_linear_algebra_teaching_stale.py tests/test_linear_algebra_teaching_publish.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit stale-source handling**
+- [x] **Step 5: Commit stale-source handling**
 
 ```bash
 git add linear_algebra/teaching/store.py linear_algebra/teaching/validation.py tests/test_linear_algebra_teaching_stale.py

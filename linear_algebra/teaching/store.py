@@ -54,6 +54,13 @@ class StoredArtifact:
 
 
 @dataclass(frozen=True)
+class LoadedArtifact:
+    artifact: TeachingArtifact
+    stale: bool
+    diagnostic: tuple[str, str, str] | None = None
+
+
+@dataclass(frozen=True)
 class RawReplyAudit:
     """Audit record kept outside the runtime artifact payload."""
 
@@ -114,6 +121,18 @@ class TeachingArtifactStore:
         if not revisions:
             return None
         return self.get(topic_id, revisions[-1].revision, "published")
+
+    def load_published(self, topic_id: str, *, current_context: object) -> LoadedArtifact | None:
+        stored = self.published(topic_id)
+        if stored is None:
+            return None
+        current_hash = getattr(current_context, "source_hash", None)
+        if not isinstance(current_hash, str):
+            raise TypeError("current_context must provide source_hash")
+        old_hash = stored.artifact.source.source_hash
+        stale = old_hash != current_hash
+        diagnostic = ("stale_source", old_hash, current_hash) if stale else None
+        return LoadedArtifact(artifact=stored.artifact, stale=stale, diagnostic=diagnostic)
 
     def get_published_payload(self, revision: ArtifactRevision) -> dict[str, object]:
         if revision.state != "published":
@@ -293,6 +312,7 @@ class TeachingArtifactStore:
 
 __all__ = [
     "ArtifactRevision",
+    "LoadedArtifact",
     "PublishResult",
     "RawReplyAudit",
     "ReviewRecord",

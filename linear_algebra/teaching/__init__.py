@@ -22,6 +22,7 @@ from .validation import validate_teaching_depth, validate_source_evidence, valid
 from .source import LectureSourceRepository, SourceContext, SourceSpan, normalize_source_text
 from .store import (
     ArtifactRevision,
+    LoadedArtifact,
     PublishResult,
     RawReplyAudit,
     ReviewRecord,
@@ -51,6 +52,7 @@ __all__ = [
     "TeachingArtifactStore",
     "StoredArtifact",
     "ArtifactRevision",
+    "LoadedArtifact",
     "RawReplyAudit",
     "PublishResult",
     "ReviewRecord",
