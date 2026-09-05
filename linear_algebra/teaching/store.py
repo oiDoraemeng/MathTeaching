@@ -110,6 +110,10 @@ class TeachingArtifactStore:
 
     def get(self, topic_id: str, revision: int, state: StoreState) -> StoredArtifact:
         path = self._path(state, topic_id, revision)
+        if state == "published" and not path.is_file():
+            flat_path = self._flat_published_path(topic_id)
+            if flat_path.is_file():
+                path = flat_path
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
         except FileNotFoundError as error:
@@ -227,6 +231,17 @@ class TeachingArtifactStore:
                 match = re.fullmatch(r"r([1-9][0-9]*)\.json", path.name)
                 if match:
                     result.append(ArtifactRevision(topic_id, int(match.group(1)), current_state))
+            if current_state == "published":
+                flat_path = self._flat_published_path(topic_id)
+                if flat_path.is_file():
+                    try:
+                        payload = json.loads(flat_path.read_text(encoding="utf-8"))
+                        artifact_payload = payload.get("artifact", payload) if isinstance(payload, dict) else {}
+                        revision = artifact_payload.get("revision", 1) if isinstance(artifact_payload, dict) else 1
+                        if isinstance(revision, int) and revision >= 1:
+                            result.append(ArtifactRevision(topic_id, revision, current_state))
+                    except (OSError, ValueError, TypeError, json.JSONDecodeError):
+                        pass
         return tuple(sorted(result, key=lambda item: (item.state, item.revision)))
 
     def _save(self, state: StoreState, artifact: TeachingArtifact, *, raw_reply: str | None) -> ArtifactRevision:
@@ -271,7 +286,19 @@ class TeachingArtifactStore:
 
     def _topic_directory(self, state: StoreState, topic_id: str) -> Path:
         chapter = topic_id.split(".", 1)[0]
-        return self.root / f"{state}s" / chapter / topic_id
+        # ``published`` is already a natural collection name.  Keep the
+        # historical plural directories for drafts/reviews for compatibility,
+        # while avoiding the accidental ``publisheds`` path that made runtime
+        # audits unable to discover released artifacts.
+        directory_name = "published" if state == "published" else f"{state}s"
+        return self.root / directory_name / chapter / topic_id
+
+    def _flat_published_path(self, topic_id: str) -> Path:
+        """Return the plan-compatible flat published resource path."""
+
+        self._validate_topic_id(topic_id)
+        chapter = topic_id.split(".", 1)[0]
+        return self.root / "published" / chapter / f"{topic_id}.json"
 
     def _audit_path(self, topic_id: str, revision: int) -> Path:
         self._validate_topic_id(topic_id)

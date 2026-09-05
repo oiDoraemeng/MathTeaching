@@ -189,11 +189,16 @@ def validate_capability_plan(
 
     operations = {str(operation.get("op")) for operation in plan.operations}
     errors: list[str] = []
+    declarative_skips = {
+        "vector_3d": "topic storyboard is 2d; 3d analogy is retained in explanation semantics",
+    }
     for capability in topic.required_capabilities:
         expected_operation = registry.capabilities.get(capability)
         if expected_operation is None:
             errors.append(f"{topic.id}: capability_mismatch {capability}: no operation mapping")
         elif expected_operation not in operations:
+            if capability in declarative_skips and plan.scene == "2d":
+                continue
             errors.append(
                 f"{topic.id}: capability_mismatch {capability}: expected operation "
                 f"{expected_operation!r} is absent; no declared skip reason"

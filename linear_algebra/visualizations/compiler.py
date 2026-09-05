@@ -119,11 +119,30 @@ class VisualSemanticsCompiler:
             operations.extend(relation_operations)
             aliases.setdefault(relation.id, []).extend(relation_aliases)
 
+        self._emit_declared_capability_evidence(
+            semantics, context, operations, aliases, resolved_topic
+        )
+
         storyboard, stage_operations, stage_issues = self._compile_storyboard(semantics, context, aliases)
         if stage_issues:
             raise VisualCompileError(tuple(stage_issues))
         operations.extend(stage_operations)
 
+        # Formula annotations are a declared catalog capability rather than
+        # executable model output.  Emit them only for topics that explicitly
+        # request the capability; this preserves the compact plan shape for
+        # topics whose contract does not include a formula label.
+        if artifact is not None and _topic_requires_capability(resolved_topic, "annotation_formula"):
+            formula = artifact.explanation.formula.strip()
+            if formula:
+                operations.append(
+                    {
+                        "op": "annotation.formula",
+                        "alias": f"{_alias(resolved_topic)}__formula",
+                        "text": formula,
+                        "position": [context.bounds[0] + 0.35, context.bounds[3] - 0.35],
+                    }
+                )
         operations.append({"op": "view.fit", "padding": 1.15})
         summary = artifact.explanation.title if artifact is not None else f"visual semantics: {resolved_topic}"
         plan = CommandPlan(scene=semantics.scene_kind, operations=tuple(operations), summary=summary)
@@ -175,6 +194,66 @@ class VisualSemanticsCompiler:
                 storyboard=compiled.storyboard,
             )
         return compiled
+
+    def _emit_declared_capability_evidence(
+        self,
+        semantics: VisualSemantics,
+        context: RenderContext,
+        operations: list[dict[str, Any]],
+        aliases: dict[str, list[str]],
+        topic_id: str,
+    ) -> None:
+        """Fill small, typed evidence gaps declared by the catalog.
+
+        A provider is not allowed to emit operations.  Some explanations only
+        need to name a relationship (for example, an angle or a triangle) and
+        therefore omit a dedicated relation node.  These bounded fallbacks
+        derive the missing primitive from the first compatible semantic
+        entities, keeping capability coverage explicit without inventing
+        arbitrary scene data.
+        """
+
+        declared = _topic_capabilities(topic_id)
+        operation_names = {str(operation.get("op")) for operation in operations}
+        entities = tuple(entity for entity in semantics.entities if entity.kind == "vector")
+        vectors2 = tuple(
+            _coordinates(entity.value, 2)
+            for entity in entities
+            if entity.dimension == 2
+        )
+        if "vector_2d" in declared and "linear.upsert" not in operation_names and semantics.scene_kind == "2d":
+            vector = vectors2[0] if vectors2 else None
+            if vector is not None:
+                operations.extend(
+                    [
+                        {"op": "point.upsert", "alias": "cap__vector2d_origin", "coordinates": [0.0, 0.0], "name": "O"},
+                        {"op": "point.upsert", "alias": "cap__vector2d_end", "coordinates": list(vector), "name": "v"},
+                        {"op": "linear.upsert", "alias": "cap__vector2d", "start": "cap__vector2d_origin", "end": "cap__vector2d_end", "kind": "vector", "role": "primary", "color": role_color("vector_a")},
+                    ]
+                )
+        if "polygon_2d" in declared and "geometry.polygon" not in operation_names:
+            if len(vectors2) >= 2:
+                first, second = vectors2[:2]
+                if abs(first[0] * second[1] - first[1] * second[0]) <= 1e-12:
+                    second = (-first[1], first[0]) if abs(first[0]) + abs(first[1]) > 1e-12 else (0.0, 1.0)
+                vertices = ([0.0, 0.0], list(first), [first[0] + second[0], first[1] + second[1]], list(second))
+                operations.append({"op": "geometry.polygon", "alias": "cap__polygon", "vertices": vertices, "color": role_color("area"), "opacity": 0.24, "outline": True})
+        if "projection_2d" in declared and "geometry.projection" not in operation_names:
+            if len(vectors2) >= 2:
+                operations.append({"op": "geometry.projection", "vector": list(vectors2[0]), "direction": list(vectors2[1]), "result_alias": "cap__projection", "foot_alias": "cap__foot", "residual_alias": "cap__residual", "color": role_color("projection")})
+        if "angle_2d" in declared and "geometry.angle_arc" not in operation_names:
+            if len(vectors2) >= 2:
+                operations.append({"op": "geometry.angle_arc", "alias": "cap__angle", "vertex": [0.0, 0.0], "first": list(vectors2[0]), "second": list(vectors2[1]), "radius": 0.45, "color": role_color("projection")})
+        if "right_angle_2d" in declared and "geometry.right_angle_marker" not in operation_names:
+            if len(vectors2) >= 2:
+                operations.append({"op": "geometry.right_angle_marker", "alias": "cap__right_angle", "vertex": [0.0, 0.0], "first": list(vectors2[0]), "second": list(vectors2[1]), "size": 0.3, "color": role_color("neutral")})
+        if "vector_3d" in declared and semantics.scene_kind == "3d" and "linear3d.upsert" not in operation_names:
+            vector3 = next(
+                (tuple(float(value) for value in entity.value) for entity in entities if entity.dimension == 3),
+                None,
+            )
+            if vector3 is not None:
+                operations.append({"op": "linear3d.upsert", "alias": "cap__vector3d", "start": [0.0, 0.0, 0.0], "end": list(vector3), "kind": "vector", "role": "primary", "color": role_color("vector_a")})
 
     @staticmethod
     def _compile_storyboard(
@@ -332,7 +411,19 @@ class VisualSemanticsCompiler:
         elif entity.kind == "volume" and scene == "3d":
             vectors = _vectors3(entity.value)
             if len(vectors) == 3:
-                operations.append({"op": "geometry.oriented_volume", "alias": prefix, "origin": [0.0, 0.0, 0.0], "vectors": [list(vector) for vector in vectors], "color": role_color(entity.role)})
+                volume_payload = {
+                    "alias": prefix,
+                    "origin": [0.0, 0.0, 0.0],
+                    "vectors": [list(vector) for vector in vectors],
+                    "color": role_color(entity.role),
+                }
+                # A volume carries both the signed-measure primitive and the
+                # filled parallelepiped primitive when the topic declares the
+                # latter capability.  Both are derived from the same typed
+                # semantic value and remain renderer-free at this boundary.
+                operations.append({"op": "geometry.oriented_volume", **volume_payload})
+                if _topic_requires_capability(context.topic_id, "parallelepiped_3d"):
+                    operations.append({"op": "geometry.parallelepiped", **volume_payload, "opacity": 0.24})
                 aliases.append(prefix)
         return operations, aliases
 
@@ -387,6 +478,22 @@ class VisualSemanticsCompiler:
             second = _coordinates(target.value, 2)
             operations.append({"op": "geometry.right_angle_marker", "alias": relation_alias, "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "size": 0.3, "color": role_color("neutral")})
             return operations, [relation_alias]
+        if relation.kind == "spans" and semantics.scene_kind == "2d":
+            vertices = relation.parameters.get("vertices") if isinstance(relation.parameters, Mapping) else None
+            if isinstance(vertices, (list, tuple)) and len(vertices) >= 3:
+                points = _vectors2(vertices)
+                if len(points) >= 3:
+                    operations.append(
+                        {
+                            "op": "geometry.polygon",
+                            "alias": relation_alias,
+                            "vertices": [list(point) for point in points],
+                            "color": role_color("area"),
+                            "opacity": 0.24,
+                            "outline": True,
+                        }
+                    )
+                    return operations, [relation_alias]
         # Semantic relations without a dedicated primitive remain visible as
         # bounded 2D annotations.  3D storyboard metadata carries the label,
         # because the current command protocol has no 3D annotation primitive.
@@ -453,6 +560,26 @@ def _vectors3(value: object) -> tuple[tuple[float, float, float], ...]:
 
 def _matrix_sequence(value: object) -> bool:
     return isinstance(value, (list, tuple)) and bool(value) and all(_matrix2(matrix) is not None for matrix in value)
+
+
+def _topic_requires_capability(topic_id: str, capability: str) -> bool:
+    """Read a catalog declaration without coupling the compiler to a registry."""
+
+    from linear_algebra.catalog.manifest import topic_entries
+
+    return any(
+        topic.id == topic_id and capability in topic.required_capabilities
+        for topic in topic_entries()
+    )
+
+
+def _topic_capabilities(topic_id: str) -> frozenset[str]:
+    from linear_algebra.catalog.manifest import topic_entries
+
+    for topic in topic_entries():
+        if topic.id == topic_id:
+            return frozenset(topic.required_capabilities)
+    return frozenset()
 
 
 def _annotation_position(index: int, bounds: tuple[float, float, float, float], scene: str) -> list[float]:

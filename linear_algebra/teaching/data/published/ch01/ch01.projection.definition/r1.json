@@ -1,1 +1,464 @@
-{"artifact":{"claims":[{"entity_refs":["v","u","p","H","r"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls"],"formula":"p=((v·u)/(u·u))u","formula_symbols":["H","p","r","u","v"],"id":"claim.ch01.projection.definition","relation_refs":["v_projects_to_u","v_decomposes_p_r","r_orthogonal_u"],"source_refs":["第1章 向量与几何测量 / 1.4 投影 / 1.4.1 投影的定义::1::sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789"],"stage_refs":["stage.input","stage.projection","stage.residual"],"statement":"投影把 v 分解成沿 u 的分量 p 与垂直残差 r。"}],"connections":[{"claim_refs":["claim.ch01.projection.definition"],"description":"该主题与相邻线性代数概念共享同一向量表示。","id":"connection.ch01.projection.definition.related","relation":"related","target_topic_id":"ch01.vector.magnitude"}],"explanation":{"conclusion":"因此，投影把 v 分解成沿 u 的分量 p 与垂直残差 r。","connections":["可迁移到同章相邻的向量、内积或投影概念。"],"definition":"投影把 v 分解成沿 u 的分量 p 与垂直残差 r。","derivation":["从讲义定义出发：投影把 v 分解成沿 u 的分量 p 与垂直残差 r。","代入给定数值，得到 [3.0, 0.0]。"],"formula":"p=((v·u)/(u·u))u","geometric_meaning":"图中实体和关系表达：投影把 v 分解成沿 u 的分量 p 与垂直残差 r。 数值结果由对应向量、关系和阶段共同见证。","intuition":"把 投影、垂足与残差 看成可测量的方向、长度或面积关系。","invariants":["有限数值复算与视觉阶段中的对象关系一致。"],"pitfalls":["把点的位置和向量的位移混为一谈，或忽略方向符号。"],"read_guide":["先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"],"searchable_text":["投影、垂足与残差","p=((v·u)/(u·u))u","投影把 v 分解成沿 u 的分量 p 与垂直残差 r。"],"sections":[{"claim_refs":["claim.ch01.projection.definition"],"id":"definition","text":"投影把 v 分解成沿 u 的分量 p 与垂直残差 r。 讲义锚点：投影、垂足与残差。","title":"definition"},{"claim_refs":["claim.ch01.projection.definition"],"id":"formula","text":"投影把 v 分解成沿 u 的分量 p 与垂直残差 r。 讲义锚点：投影、垂足与残差。","title":"formula"},{"claim_refs":["claim.ch01.projection.definition"],"id":"derivation","text":"投影把 v 分解成沿 u 的分量 p 与垂直残差 r。 讲义锚点：投影、垂足与残差。","title":"derivation"},{"claim_refs":["claim.ch01.projection.definition"],"id":"worked_examples","text":"投影把 v 分解成沿 u 的分量 p 与垂直残差 r。 讲义锚点：投影、垂足与残差。","title":"worked_examples"},{"claim_refs":["claim.ch01.projection.definition"],"id":"geometric_meaning","text":"投影把 v 分解成沿 u 的分量 p 与垂直残差 r。 讲义锚点：投影、垂足与残差。","title":"geometric_meaning"},{"claim_refs":["claim.ch01.projection.definition"],"id":"pitfalls","text":"投影把 v 分解成沿 u 的分量 p 与垂直残差 r。 讲义锚点：投影、垂足与残差。","title":"pitfalls"}],"summary":"投影把 v 分解成沿 u 的分量 p 与垂直残差 r。","symbol_roles":{"H":"foot","p":"projection","r":"residual","u":"direction","v":"vector_a"},"title":"投影、垂足与残差","transfer_note":"先识别对象和关系，再代入数值，最后检查方向、正交性或尺度不变量。","worked_examples":[{"calculation":["按定义计算 p=((v·u)/(u·u))u","得到 [3.0, 0.0]"],"checks":[{"expected":[3.0,0.0],"name":"projection","tolerance":1e-09}],"claim_refs":["claim.ch01.projection.definition"],"given":[[3,4],[1,0]],"id":"example.ch01.projection.definition","kind":"projection","result":[3.0,0.0],"title":"讲义数值例"}]},"generated":{"artifact_digest":"sha256:pending","generated_at":"2026-09-05T16:49:37Z","model":"deterministic-v1","prompt_version":"teaching-artifact-v1","provider":"local-lecture-template","raw_reply_digest":"sha256:pending","schema_version":1,"source_hash":"sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789"},"revision":1,"schema_version":1,"source":{"excerpt":"#### 1.4.1 投影的定义\n\n定义 1.13（投影向量） 设 u 是一个非零向量。向量 v 在 u 所在直线上的正交投影（简称投影）为一个沿 u 方向的向量，记为 $\\operatorname{Proj}_{u}(v)$，满足：\n$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交\n即\"从 v 的终点向 u 所在直线作垂线，垂足对应的向量\"。\n定理 1.6（投影公式）\n$$\n\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\times u = [(v \\cdot u) / |u|^{2}] \\times u\n$$\n当 u 为单位向量（$|u| = 1$）时，公式简化为：\n$$\n\\operatorname{Proj}_{u}(v) = (v \\cdot u) \\times u\n$$\n公式的含义：系数 $\\frac{v \\cdot u}{u \\cdot u}$ 计算的是\"v 在 u 上的影子长度是 u 的多少倍\"；乘以 u 是赋予它 u 的方向。\n\n##### 定理 1.6（投影公式）的推导\n\n由定义 1.13：$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交，即 $(v - \\operatorname{Proj}_{u}(v)) \\cdot u = 0$。\n设 $\\operatorname{Proj}_{u}(v) = \\alpha \\cdot u$（投影必然沿 u 的方向，$\\alpha$ 是待定系数）。\n代入：$(v - \\alpha u) \\cdot u = 0 \\rightarrow v \\cdot u - \\alpha(u \\cdot u) = 0 \\rightarrow \\alpha = \\frac{v \\cdot u}{u \\cdot u}$。\n因此 $\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\cdot u$。■\n直观: 系数 $\\alpha$ 是「v 在 u 方向上的影子长度是 u 的多少倍」。当 $|u|=1$ 时，$\\alpha = v \\cdot u$。","heading_level":4,"heading_path":["第1章 向量与几何测量","1.4 投影","1.4.1 投影的定义"],"neighboring_titles":["1.4.2 投影的关键性质"],"occurrence":1,"source_hash":"sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789","source_path":["第1章 向量与几何测量","1.4 投影","1.4.1 投影的定义"],"spans":[{"end_line":449,"fingerprint":"sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789","heading_path":["第1章 向量与几何测量","1.4 投影","1.4.1 投影的定义"],"id":"第1章 向量与几何测量 / 1.4 投影 / 1.4.1 投影的定义::1::sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789","start_line":427,"text":"#### 1.4.1 投影的定义\n\n定义 1.13（投影向量） 设 u 是一个非零向量。向量 v 在 u 所在直线上的正交投影（简称投影）为一个沿 u 方向的向量，记为 $\\operatorname{Proj}_{u}(v)$，满足：\n$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交\n即\"从 v 的终点向 u 所在直线作垂线，垂足对应的向量\"。\n定理 1.6（投影公式）\n$$\n\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\times u = [(v \\cdot u) / |u|^{2}] \\times u\n$$\n当 u 为单位向量（$|u| = 1$）时，公式简化为：\n$$\n\\operatorname{Proj}_{u}(v) = (v \\cdot u) \\times u\n$$\n公式的含义：系数 $\\frac{v \\cdot u}{u \\cdot u}$ 计算的是\"v 在 u 上的影子长度是 u 的多少倍\"；乘以 u 是赋予它 u 的方向。\n\n##### 定理 1.6（投影公式）的推导\n\n由定义 1.13：$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交，即 $(v - \\operatorname{Proj}_{u}(v)) \\cdot u = 0$。\n设 $\\operatorname{Proj}_{u}(v) = \\alpha \\cdot u$（投影必然沿 u 的方向，$\\alpha$ 是待定系数）。\n代入：$(v - \\alpha u) \\cdot u = 0 \\rightarrow v \\cdot u - \\alpha(u \\cdot u) = 0 \\rightarrow \\alpha = \\frac{v \\cdot u}{u \\cdot u}$。\n因此 $\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\cdot u$。■\n直观: 系数 $\\alpha$ 是「v 在 u 方向上的影子长度是 u 的多少倍」。当 $|u|=1$ 时，$\\alpha = v \\cdot u$。"}]},"status":"published","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls"],"requires_analogy_boundary":false},"topic_id":"ch01.projection.definition","visual_semantics":{"entities":[{"claim_refs":["claim.ch01.projection.definition"],"dimension":2,"id":"v","kind":"vector","label":"v","role":"vector_a","value":[3,4]},{"claim_refs":["claim.ch01.projection.definition"],"dimension":2,"id":"u","kind":"vector","label":"u","role":"direction","value":[1,0]},{"claim_refs":["claim.ch01.projection.definition"],"dimension":2,"id":"p","kind":"vector","label":"p","role":"projection","value":[3.0,0.0]},{"claim_refs":["claim.ch01.projection.definition"],"dimension":2,"id":"H","kind":"point","label":"H","role":"foot","value":[3.0,0.0]},{"claim_refs":["claim.ch01.projection.definition"],"dimension":2,"id":"r","kind":"vector","label":"r","role":"residual","value":[0.0,4.0]}],"relations":[{"claim_refs":["claim.ch01.projection.definition"],"id":"v_projects_to_u","kind":"projects_to","parameters":{},"source_ref":"v","target_ref":"u"},{"claim_refs":["claim.ch01.projection.definition"],"id":"v_decomposes_p_r","kind":"decomposes_into","parameters":{},"source_ref":"v","target_ref":"p"},{"claim_refs":["claim.ch01.projection.definition"],"id":"r_orthogonal_u","kind":"orthogonal_to","parameters":{},"source_ref":"r","target_ref":"u"}],"scene_kind":"2d","stages":[{"caption":"先观察 v 和目标方向 u。","expected_invariants":["direction fixed"],"id":"stage.input","input_entity_refs":["v","u"],"layout":"sequence","output_entity_refs":[],"relation_refs":["v_projects_to_u"],"title":"输入向量"},{"caption":"垂足 H 给出沿 u 的投影 p。","expected_invariants":["projection lies on direction"],"id":"stage.projection","input_entity_refs":["v","u"],"layout":"sequence","output_entity_refs":["p","H"],"relation_refs":["v_projects_to_u","v_decomposes_p_r"],"title":"投影分量"},{"caption":"残差 r 与 u 垂直，且 v=p+r。","expected_invariants":["orthogonality"],"id":"stage.residual","input_entity_refs":["p","r"],"layout":"sequence","output_entity_refs":["v"],"relation_refs":["v_decomposes_p_r","r_orthogonal_u"],"title":"正交残差"}]}}}
+{"artifact":{
+  "claims": [
+    {
+      "entity_refs": [
+        "v",
+        "u",
+        "projection",
+        "foot",
+        "residual"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "intuition",
+        "conclusion",
+        "invariants",
+        "read_guide"
+      ],
+      "formula": "\\operatorname{Proj}_{u}(v)=\\frac{v\\cdot u}{u\\cdot u}u",
+      "formula_symbols": [
+        "v",
+        "u",
+        "projection",
+        "foot",
+        "residual"
+      ],
+      "id": "claim.ch01.projection.definition",
+      "relation_refs": [
+        "rel.0.claim.ch01.projection.definition",
+        "rel.1.claim.ch01.projection.definition",
+        "rel.2.claim.ch01.projection.definition"
+      ],
+      "source_refs": [
+        "第1章 向量与几何测量 / 1.4 投影 / 1.4.1 投影的定义::1::sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789"
+      ],
+      "stage_refs": [
+        "stage.claim.ch01.projection.definition.observe",
+        "stage.claim.ch01.projection.definition.derive",
+        "stage.claim.ch01.projection.definition.decompose"
+      ],
+      "statement": "投影是沿 u 方向的向量，使残差 v−Proj_u(v) 与 u 正交；垂足是投影终点。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch01.projection.definition"
+      ],
+      "description": "当前主题的数学结构连接到 ch01.projection.properties。",
+      "id": "connection.ch01.projection.definition",
+      "relation": "conceptual_continuation",
+      "target_topic_id": "ch01.projection.properties"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "",
+    "conclusion": "投影沿 u；残差与 u 正交；v=投影+残差。",
+    "connections": [
+      "连接主题：ch01.projection.properties",
+      "比较同一结构在下一主题中的表示。"
+    ],
+    "definition": "投影是沿 u 方向的向量，使残差 v−Proj_u(v) 与 u 正交；垂足是投影终点。",
+    "derivation": [
+      "设投影为 αu，由 (v−αu)·u=0 得 α=(v·u)/(u·u)。",
+      "代回得到投影公式；u 为单位向量时 α=v·u。"
+    ],
+    "formula": "\\operatorname{Proj}_{u}(v)=\\frac{v\\cdot u}{u\\cdot u}u",
+    "geometric_meaning": "从 v 的终点向 u 所在直线作垂线，垂足对应投影；残差是垂线方向。",
+    "intuition": "从 v 的终点向 u 所在直线作垂线，垂足对应投影；残差是垂线方向。",
+    "invariants": [
+      "投影沿 u；残差与 u 正交；v=投影+残差。"
+    ],
+    "pitfalls": [
+      "把分子写成 |v||u| 而忽略夹角；u=0 时仍套用公式。"
+    ],
+    "read_guide": [
+      "观察输入实体和标签。",
+      "沿关系读取输出并核对不变量。"
+    ],
+    "searchable_text": [
+      "投影、垂足与残差",
+      "投影是沿 u 方向的向量，使残差 v−Proj_u(v) 与 u 正交；垂足是投影终点。",
+      "\\operatorname{Proj}_{u}(v)=\\frac{v\\cdot u}{u\\cdot u}u",
+      "设投影为 αu，由 (v−αu)·u=0 得 α=(v·u)/(u·u)。",
+      "代回得到投影公式；u 为单位向量时 α=v·u。",
+      "把分子写成 |v||u| 而忽略夹角；u=0 时仍套用公式。"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "definition",
+        "text": "投影是沿 u 方向的向量，使残差 v−Proj_u(v) 与 u 正交；垂足是投影终点。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "formula",
+        "text": "\\operatorname{Proj}_{u}(v)=\\frac{v\\cdot u}{u\\cdot u}u",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "derivation",
+        "text": "设投影为 αu，由 (v−αu)·u=0 得 α=(v·u)/(u·u)。\n代回得到投影公式；u 为单位向量时 α=v·u。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "worked_examples",
+        "text": "设投影为 αu，由 (v−αu)·u=0 得 α=(v·u)/(u·u)。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "geometric_meaning",
+        "text": "从 v 的终点向 u 所在直线作垂线，垂足对应投影；残差是垂线方向。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "pitfalls",
+        "text": "把分子写成 |v||u| 而忽略夹角；u=0 时仍套用公式。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "intuition",
+        "text": "从 v 的终点向 u 所在直线作垂线，垂足对应投影；残差是垂线方向。",
+        "title": "intuition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "conclusion",
+        "text": "投影沿 u；残差与 u 正交；v=投影+残差。",
+        "title": "conclusion"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "invariants",
+        "text": "投影沿 u；残差与 u 正交；v=投影+残差。",
+        "title": "invariants"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "read_guide",
+        "text": "先看输入箭头，再沿关系读输出，最后用不变量核对图形。",
+        "title": "read_guide"
+      }
+    ],
+    "summary": "投影是沿 u 方向的向量，使残差 v−Proj_u(v) 与 u 正交；垂足是投影终点。",
+    "symbol_roles": {
+      "foot": "vector_a",
+      "projection": "vector_a",
+      "residual": "vector_a",
+      "u": "direction",
+      "v": "vector_a"
+    },
+    "title": "投影、垂足与残差",
+    "transfer_note": "将本主题的关系迁移到 ch01.projection.properties，保持公式和图形不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "将给定的向量/标量代入讲义公式。",
+          "逐分量或按内积/投影定义计算中间值。",
+          "得到 projection 对应的数值结果。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              3,
+              0
+            ],
+            "name": "projection",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "given": [
+          [
+            3,
+            4
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "example.claim.ch01.projection.definition",
+        "kind": "projection",
+        "result": [
+          3,
+          0
+        ],
+        "title": "讲义公式的可复算数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:92aa8cae0ad7a73f18d81121663e896414b0902a6b6288a3e446d85aaabcecbb",
+    "generated_at": "2026-09-06T00:00:00Z",
+    "model": "lecture-grounded-v1",
+    "prompt_version": "teaching-artifact-v1",
+    "provider": "math-explanation-sample",
+    "raw_reply_digest": "sha256:b5444054d0d5a8c97afe851628fa004178b75636a0848e36ec1bd89641056fb4",
+    "source_hash": "sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 1.4.1 投影的定义\n\n定义 1.13（投影向量） 设 u 是一个非零向量。向量 v 在 u 所在直线上的正交投影（简称投影）为一个沿 u 方向的向量，记为 $\\operatorname{Proj}_{u}(v)$，满足：\n$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交\n即\"从 v 的终点向 u 所在直线作垂线，垂足对应的向量\"。\n定理 1.6（投影公式）\n$$\n\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\times u = [(v \\cdot u) / |u|^{2}] \\times u\n$$\n当 u 为单位向量（$|u| = 1$）时，公式简化为：\n$$\n\\operatorname{Proj}_{u}(v) = (v \\cdot u) \\times u\n$$\n公式的含义：系数 $\\frac{v \\cdot u}{u \\cdot u}$ 计算的是\"v 在 u 上的影子长度是 u 的多少倍\"；乘以 u 是赋予它 u 的方向。\n\n##### 定理 1.6（投影公式）的推导\n\n由定义 1.13：$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交，即 $(v - \\operatorname{Proj}_{u}(v)) \\cdot u = 0$。\n设 $\\operatorname{Proj}_{u}(v) = \\alpha \\cdot u$（投影必然沿 u 的方向，$\\alpha$ 是待定系数）。\n代入：$(v - \\alpha u) \\cdot u = 0 \\rightarrow v \\cdot u - \\alpha(u \\cdot u) = 0 \\rightarrow \\alpha = \\frac{v \\cdot u}{u \\cdot u}$。\n因此 $\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\cdot u$。■\n直观: 系数 $\\alpha$ 是「v 在 u 方向上的影子长度是 u 的多少倍」。当 $|u|=1$ 时，$\\alpha = v \\cdot u$。",
+    "heading_level": 4,
+    "heading_path": [
+      "第1章 向量与几何测量",
+      "1.4 投影",
+      "1.4.1 投影的定义"
+    ],
+    "neighboring_titles": [
+      "1.4.2 投影的关键性质"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789",
+    "source_path": [
+      "第1章 向量与几何测量",
+      "1.4 投影",
+      "1.4.1 投影的定义"
+    ],
+    "spans": [
+      {
+        "end_line": 449,
+        "fingerprint": "sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789",
+        "heading_path": [
+          "第1章 向量与几何测量",
+          "1.4 投影",
+          "1.4.1 投影的定义"
+        ],
+        "id": "第1章 向量与几何测量 / 1.4 投影 / 1.4.1 投影的定义::1::sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789",
+        "start_line": 427,
+        "text": "#### 1.4.1 投影的定义\n\n定义 1.13（投影向量） 设 u 是一个非零向量。向量 v 在 u 所在直线上的正交投影（简称投影）为一个沿 u 方向的向量，记为 $\\operatorname{Proj}_{u}(v)$，满足：\n$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交\n即\"从 v 的终点向 u 所在直线作垂线，垂足对应的向量\"。\n定理 1.6（投影公式）\n$$\n\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\times u = [(v \\cdot u) / |u|^{2}] \\times u\n$$\n当 u 为单位向量（$|u| = 1$）时，公式简化为：\n$$\n\\operatorname{Proj}_{u}(v) = (v \\cdot u) \\times u\n$$\n公式的含义：系数 $\\frac{v \\cdot u}{u \\cdot u}$ 计算的是\"v 在 u 上的影子长度是 u 的多少倍\"；乘以 u 是赋予它 u 的方向。\n\n##### 定理 1.6（投影公式）的推导\n\n由定义 1.13：$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交，即 $(v - \\operatorname{Proj}_{u}(v)) \\cdot u = 0$。\n设 $\\operatorname{Proj}_{u}(v) = \\alpha \\cdot u$（投影必然沿 u 的方向，$\\alpha$ 是待定系数）。\n代入：$(v - \\alpha u) \\cdot u = 0 \\rightarrow v \\cdot u - \\alpha(u \\cdot u) = 0 \\rightarrow \\alpha = \\frac{v \\cdot u}{u \\cdot u}$。\n因此 $\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\cdot u$。■\n直观: 系数 $\\alpha$ 是「v 在 u 方向上的影子长度是 u 的多少倍」。当 $|u|=1$ 时，$\\alpha = v \\cdot u$。"
+      }
+    ]
+  },
+  "status": "published",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch01.projection.definition",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "dimension": 2,
+        "id": "v",
+        "kind": "vector",
+        "label": "v",
+        "role": "vector_a",
+        "value": [
+          3,
+          4
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "dimension": 2,
+        "id": "u",
+        "kind": "vector",
+        "label": "u",
+        "role": "direction",
+        "value": [
+          1,
+          0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "dimension": 2,
+        "id": "projection",
+        "kind": "vector",
+        "label": "Proj_u(v)",
+        "role": "projection",
+        "value": [
+          3,
+          0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "dimension": 2,
+        "id": "foot",
+        "kind": "point",
+        "label": "垂足",
+        "role": "foot",
+        "value": [
+          3,
+          0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "dimension": 2,
+        "id": "residual",
+        "kind": "vector",
+        "label": "残差",
+        "role": "residual",
+        "value": [
+          0,
+          4
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "rel.0.claim.ch01.projection.definition",
+        "kind": "projects_to",
+        "parameters": {
+          "direction": [
+            1,
+            0
+          ]
+        },
+        "source_ref": "v",
+        "target_ref": "projection"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "rel.1.claim.ch01.projection.definition",
+        "kind": "decomposes_into",
+        "parameters": {},
+        "source_ref": "v",
+        "target_ref": "projection"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.projection.definition"
+        ],
+        "id": "rel.2.claim.ch01.projection.definition",
+        "kind": "orthogonal_to",
+        "parameters": {
+          "dot": 0
+        },
+        "source_ref": "residual",
+        "target_ref": "u"
+      }
+    ],
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "先读对象、角色和输入输出。",
+        "expected_invariants": [
+          "投影沿 u；残差与 u 正交；v=投影+残差。"
+        ],
+        "id": "stage.claim.ch01.projection.definition.observe",
+        "input_entity_refs": [
+          "v",
+          "u"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "projection",
+          "foot",
+          "residual"
+        ],
+        "relation_refs": [
+          "rel.0.claim.ch01.projection.definition"
+        ],
+        "title": "观察对象"
+      },
+      {
+        "caption": "按公式计算并检查几何关系。",
+        "expected_invariants": [
+          "投影沿 u；残差与 u 正交；v=投影+残差。"
+        ],
+        "id": "stage.claim.ch01.projection.definition.derive",
+        "input_entity_refs": [
+          "v",
+          "u"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "projection",
+          "foot",
+          "residual"
+        ],
+        "relation_refs": [
+          "rel.0.claim.ch01.projection.definition",
+          "rel.1.claim.ch01.projection.definition",
+          "rel.2.claim.ch01.projection.definition"
+        ],
+        "title": "代数验证"
+      },
+      {
+        "caption": "观察投影、垂足和正交残差。",
+        "expected_invariants": [
+          "orthogonality"
+        ],
+        "id": "stage.claim.ch01.projection.definition.decompose",
+        "input_entity_refs": [
+          "v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "projection",
+          "foot",
+          "residual"
+        ],
+        "relation_refs": [
+          "rel.0.claim.ch01.projection.definition",
+          "rel.1.claim.ch01.projection.definition",
+          "rel.2.claim.ch01.projection.definition"
+        ],
+        "title": "投影分解"
+      }
+    ]
+  }
+}}

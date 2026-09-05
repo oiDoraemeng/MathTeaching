@@ -1,1 +1,356 @@
-{"artifact":{"claims":[{"entity_refs":["a","b","r"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"a·b=0⇔a⊥b","formula_symbols":["a","b","r"],"id":"claim.ch01.inner.applications","relation_refs":["main_relation"],"source_refs":["第1章 向量与几何测量 / 1.3 内积 / 1.3.2 内积的三条核心应用::1::sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c"],"stage_refs":["stage.main"],"statement":"内积同时测量长度、夹角和正交性。"}],"connections":[{"claim_refs":["claim.ch01.inner.applications"],"description":"该主题与相邻线性代数概念共享同一向量表示。","id":"connection.ch01.inner.applications.related","relation":"related","target_topic_id":"ch01.vector.magnitude"}],"explanation":{"conclusion":"因此，内积同时测量长度、夹角和正交性。","connections":["可迁移到同章相邻的向量、内积或投影概念。"],"definition":"内积同时测量长度、夹角和正交性。","derivation":["从讲义定义出发：内积同时测量长度、夹角和正交性。","代入给定数值，得到 0.0。"],"formula":"a·b=0⇔a⊥b","geometric_meaning":"图中实体和关系表达：内积同时测量长度、夹角和正交性。 数值结果由对应向量、关系和阶段共同见证。","intuition":"把 内积的长度、正交与夹角应用 看成可测量的方向、长度或面积关系。","invariants":["有限数值复算与视觉阶段中的对象关系一致。"],"pitfalls":["把点的位置和向量的位移混为一谈，或忽略方向符号。"],"read_guide":["先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"],"searchable_text":["内积的长度、正交与夹角应用","a·b=0⇔a⊥b","内积同时测量长度、夹角和正交性。"],"sections":[{"claim_refs":["claim.ch01.inner.applications"],"id":"definition","text":"内积同时测量长度、夹角和正交性。 讲义锚点：内积的长度、正交与夹角应用。","title":"definition"},{"claim_refs":["claim.ch01.inner.applications"],"id":"formula","text":"内积同时测量长度、夹角和正交性。 讲义锚点：内积的长度、正交与夹角应用。","title":"formula"},{"claim_refs":["claim.ch01.inner.applications"],"id":"derivation","text":"内积同时测量长度、夹角和正交性。 讲义锚点：内积的长度、正交与夹角应用。","title":"derivation"},{"claim_refs":["claim.ch01.inner.applications"],"id":"worked_examples","text":"内积同时测量长度、夹角和正交性。 讲义锚点：内积的长度、正交与夹角应用。","title":"worked_examples"},{"claim_refs":["claim.ch01.inner.applications"],"id":"geometric_meaning","text":"内积同时测量长度、夹角和正交性。 讲义锚点：内积的长度、正交与夹角应用。","title":"geometric_meaning"},{"claim_refs":["claim.ch01.inner.applications"],"id":"pitfalls","text":"内积同时测量长度、夹角和正交性。 讲义锚点：内积的长度、正交与夹角应用。","title":"pitfalls"},{"claim_refs":["claim.ch01.inner.applications"],"id":"connections","text":"内积同时测量长度、夹角和正交性。 讲义锚点：内积的长度、正交与夹角应用。","title":"connections"}],"summary":"内积同时测量长度、夹角和正交性。","symbol_roles":{"a":"vector_a","b":"vector_b","r":"result"},"title":"内积的长度、正交与夹角应用","transfer_note":"先识别对象和关系，再代入数值，最后检查方向、正交性或尺度不变量。","worked_examples":[{"calculation":["按定义计算 a·b=0⇔a⊥b","得到 0.0"],"checks":[{"expected":0.0,"name":"dot","tolerance":1e-09}],"claim_refs":["claim.ch01.inner.applications"],"given":[[2,0],[0,3]],"id":"example.ch01.inner.applications","kind":"inner_product","result":0.0,"title":"讲义数值例"}]},"generated":{"artifact_digest":"sha256:pending","generated_at":"2026-09-05T16:49:37Z","model":"deterministic-v1","prompt_version":"teaching-artifact-v1","provider":"local-lecture-template","raw_reply_digest":"sha256:pending","schema_version":1,"source_hash":"sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c"},"revision":1,"schema_version":1,"source":{"excerpt":"#### 1.3.2 内积的三条核心应用\n\n定理 1.3（内积与模长） $|a| = \\sqrt{a \\cdot a}$\n验证：$(a \\cdot a) = a_{1}^{2} + a_{2}^{2} = |a|^{2} \\rightarrow$ 开方即得模长。\n定义 1.12（正交） 如果 $a \\cdot b = 0$，则称 a 与 b 正交（vertical, orthogonal）。\n\"正交\"就是\"垂直\"的代数表达。这是线性代数中最高频出现的概念之一。\n定理 1.4（内积与夹角） $\\cos\\theta = \\frac{a \\cdot b}{|a| \\cdot |b|}$","heading_level":4,"heading_path":["第1章 向量与几何测量","1.3 内积","1.3.2 内积的三条核心应用"],"neighboring_titles":["1.3.1 内积的两种定义","1.3.3 柯西-施瓦茨不等式"],"occurrence":1,"source_hash":"sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c","source_path":["第1章 向量与几何测量","1.3 内积","1.3.2 内积的三条核心应用"],"spans":[{"end_line":329,"fingerprint":"sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c","heading_path":["第1章 向量与几何测量","1.3 内积","1.3.2 内积的三条核心应用"],"id":"第1章 向量与几何测量 / 1.3 内积 / 1.3.2 内积的三条核心应用::1::sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c","start_line":322,"text":"#### 1.3.2 内积的三条核心应用\n\n定理 1.3（内积与模长） $|a| = \\sqrt{a \\cdot a}$\n验证：$(a \\cdot a) = a_{1}^{2} + a_{2}^{2} = |a|^{2} \\rightarrow$ 开方即得模长。\n定义 1.12（正交） 如果 $a \\cdot b = 0$，则称 a 与 b 正交（vertical, orthogonal）。\n\"正交\"就是\"垂直\"的代数表达。这是线性代数中最高频出现的概念之一。\n定理 1.4（内积与夹角） $\\cos\\theta = \\frac{a \\cdot b}{|a| \\cdot |b|}$"}]},"status":"published","teaching_profile":{"minimum_level":4,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch01.inner.applications","visual_semantics":{"entities":[{"claim_refs":["claim.ch01.inner.applications"],"dimension":2,"id":"a","kind":"vector","label":"a","role":"vector_a","value":[2,0]},{"claim_refs":["claim.ch01.inner.applications"],"dimension":2,"id":"b","kind":"vector","label":"b","role":"vector_b","value":[0,3]},{"claim_refs":["claim.ch01.inner.applications"],"dimension":2,"id":"r","kind":"vector","label":"result","role":"result","value":[2,0]}],"relations":[{"claim_refs":["claim.ch01.inner.applications"],"id":"main_relation","kind":"orthogonal_to","parameters":{},"source_ref":"a","target_ref":"r"}],"scene_kind":"2d","stages":[{"caption":"从输入向量读出公式中的结果与不变量。","expected_invariants":["typed calculation"],"id":"stage.main","input_entity_refs":["a","b"],"layout":"overlay","output_entity_refs":["r"],"relation_refs":["main_relation"],"title":"数学关系"}]}}}
+{"artifact":{
+  "claims": [
+    {
+      "entity_refs": [
+        "a",
+        "b"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections",
+        "intuition",
+        "conclusion",
+        "invariants",
+        "read_guide"
+      ],
+      "formula": "|a|=\\sqrt{a\\cdot a},\\quad \\cos\\theta=\\frac{a\\cdot b}{|a||b|}",
+      "formula_symbols": [
+        "a",
+        "b"
+      ],
+      "id": "claim.ch01.inner.applications",
+      "relation_refs": [
+        "rel.0.claim.ch01.inner.applications"
+      ],
+      "source_refs": [
+        "第1章 向量与几何测量 / 1.3 内积 / 1.3.2 内积的三条核心应用::1::sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c"
+      ],
+      "stage_refs": [
+        "stage.claim.ch01.inner.applications.observe",
+        "stage.claim.ch01.inner.applications.derive"
+      ],
+      "statement": "内积的三条直接应用是求模长、判定正交以及计算夹角。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch01.inner.applications"
+      ],
+      "description": "当前主题的数学结构连接到 ch01.projection.definition。",
+      "id": "connection.ch01.inner.applications",
+      "relation": "conceptual_continuation",
+      "target_topic_id": "ch01.projection.definition"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "",
+    "conclusion": "正交向量内积恒为 0；夹角余弦必须位于 [−1,1]。",
+    "connections": [
+      "连接主题：ch01.projection.definition",
+      "比较同一结构在下一主题中的表示。"
+    ],
+    "definition": "内积的三条直接应用是求模长、判定正交以及计算夹角。",
+    "derivation": [
+      "令 b=a 得 a·a=|a|²，从而 |a|=√(a·a)。",
+      "由 a·b=|a||b|cosθ 移项得到夹角公式；a·b=0 等价于垂直。"
+    ],
+    "formula": "|a|=\\sqrt{a\\cdot a},\\quad \\cos\\theta=\\frac{a\\cdot b}{|a||b|}",
+    "geometric_meaning": "内积把长度、垂直和角度统一为同一测量；力与位移的内积则给出功。",
+    "intuition": "内积把长度、垂直和角度统一为同一测量；力与位移的内积则给出功。",
+    "invariants": [
+      "正交向量内积恒为 0；夹角余弦必须位于 [−1,1]。"
+    ],
+    "pitfalls": [
+      "未先检查零向量就计算夹角；把功写成长度乘长度而漏掉 cosθ。"
+    ],
+    "read_guide": [
+      "观察输入实体和标签。",
+      "沿关系读取输出并核对不变量。"
+    ],
+    "searchable_text": [
+      "内积的长度、正交与夹角应用",
+      "内积的三条直接应用是求模长、判定正交以及计算夹角。",
+      "|a|=\\sqrt{a\\cdot a},\\quad \\cos\\theta=\\frac{a\\cdot b}{|a||b|}",
+      "令 b=a 得 a·a=|a|²，从而 |a|=√(a·a)。",
+      "由 a·b=|a||b|cosθ 移项得到夹角公式；a·b=0 等价于垂直。",
+      "未先检查零向量就计算夹角；把功写成长度乘长度而漏掉 cosθ。"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "definition",
+        "text": "内积的三条直接应用是求模长、判定正交以及计算夹角。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "formula",
+        "text": "|a|=\\sqrt{a\\cdot a},\\quad \\cos\\theta=\\frac{a\\cdot b}{|a||b|}",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "derivation",
+        "text": "令 b=a 得 a·a=|a|²，从而 |a|=√(a·a)。\n由 a·b=|a||b|cosθ 移项得到夹角公式；a·b=0 等价于垂直。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "worked_examples",
+        "text": "令 b=a 得 a·a=|a|²，从而 |a|=√(a·a)。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "geometric_meaning",
+        "text": "内积把长度、垂直和角度统一为同一测量；力与位移的内积则给出功。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "pitfalls",
+        "text": "未先检查零向量就计算夹角；把功写成长度乘长度而漏掉 cosθ。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "connections",
+        "text": "本主题连接到 ch01.projection.definition，可把当前结构迁移到下一主题。",
+        "title": "connections"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "intuition",
+        "text": "内积把长度、垂直和角度统一为同一测量；力与位移的内积则给出功。",
+        "title": "intuition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "conclusion",
+        "text": "正交向量内积恒为 0；夹角余弦必须位于 [−1,1]。",
+        "title": "conclusion"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "invariants",
+        "text": "正交向量内积恒为 0；夹角余弦必须位于 [−1,1]。",
+        "title": "invariants"
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "read_guide",
+        "text": "先看输入箭头，再沿关系读输出，最后用不变量核对图形。",
+        "title": "read_guide"
+      }
+    ],
+    "summary": "内积的三条直接应用是求模长、判定正交以及计算夹角。",
+    "symbol_roles": {
+      "a": "vector_a",
+      "b": "vector_b"
+    },
+    "title": "内积的长度、正交与夹角应用",
+    "transfer_note": "将本主题的关系迁移到 ch01.projection.definition，保持公式和图形不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "将给定的向量/标量代入讲义公式。",
+          "逐分量或按内积/投影定义计算中间值。",
+          "得到 result 对应的数值结果。"
+        ],
+        "checks": [
+          {
+            "expected": 18,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "given": [
+          [
+            3,
+            4
+          ],
+          [
+            6,
+            0
+          ]
+        ],
+        "id": "example.claim.ch01.inner.applications",
+        "kind": "inner_product",
+        "result": 18,
+        "title": "讲义公式的可复算数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:f8167618c97b8cb9906e10760d8fda8bd15413734f5db2f11a5a7ba14812d924",
+    "generated_at": "2026-09-06T00:00:00Z",
+    "model": "lecture-grounded-v1",
+    "prompt_version": "teaching-artifact-v1",
+    "provider": "math-explanation-sample",
+    "raw_reply_digest": "sha256:65fcd1cb472dd8b2f20eabf07d9b3a5e016bf12660f1723704885137935b16b3",
+    "source_hash": "sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 1.3.2 内积的三条核心应用\n\n定理 1.3（内积与模长） $|a| = \\sqrt{a \\cdot a}$\n验证：$(a \\cdot a) = a_{1}^{2} + a_{2}^{2} = |a|^{2} \\rightarrow$ 开方即得模长。\n定义 1.12（正交） 如果 $a \\cdot b = 0$，则称 a 与 b 正交（vertical, orthogonal）。\n\"正交\"就是\"垂直\"的代数表达。这是线性代数中最高频出现的概念之一。\n定理 1.4（内积与夹角） $\\cos\\theta = \\frac{a \\cdot b}{|a| \\cdot |b|}$",
+    "heading_level": 4,
+    "heading_path": [
+      "第1章 向量与几何测量",
+      "1.3 内积",
+      "1.3.2 内积的三条核心应用"
+    ],
+    "neighboring_titles": [
+      "1.3.1 内积的两种定义",
+      "1.3.3 柯西-施瓦茨不等式"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c",
+    "source_path": [
+      "第1章 向量与几何测量",
+      "1.3 内积",
+      "1.3.2 内积的三条核心应用"
+    ],
+    "spans": [
+      {
+        "end_line": 329,
+        "fingerprint": "sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c",
+        "heading_path": [
+          "第1章 向量与几何测量",
+          "1.3 内积",
+          "1.3.2 内积的三条核心应用"
+        ],
+        "id": "第1章 向量与几何测量 / 1.3 内积 / 1.3.2 内积的三条核心应用::1::sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c",
+        "start_line": 322,
+        "text": "#### 1.3.2 内积的三条核心应用\n\n定理 1.3（内积与模长） $|a| = \\sqrt{a \\cdot a}$\n验证：$(a \\cdot a) = a_{1}^{2} + a_{2}^{2} = |a|^{2} \\rightarrow$ 开方即得模长。\n定义 1.12（正交） 如果 $a \\cdot b = 0$，则称 a 与 b 正交（vertical, orthogonal）。\n\"正交\"就是\"垂直\"的代数表达。这是线性代数中最高频出现的概念之一。\n定理 1.4（内积与夹角） $\\cos\\theta = \\frac{a \\cdot b}{|a| \\cdot |b|}$"
+      }
+    ]
+  },
+  "status": "published",
+  "teaching_profile": {
+    "minimum_level": 4,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch01.inner.applications",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "dimension": 2,
+        "id": "a",
+        "kind": "vector",
+        "label": "力 F",
+        "role": "vector_a",
+        "value": [
+          3,
+          4
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "dimension": 2,
+        "id": "b",
+        "kind": "vector",
+        "label": "位移 d",
+        "role": "vector_b",
+        "value": [
+          6,
+          0
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch01.inner.applications"
+        ],
+        "id": "rel.0.claim.ch01.inner.applications",
+        "kind": "orthogonal_to",
+        "parameters": {},
+        "source_ref": "a",
+        "target_ref": "b"
+      }
+    ],
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "先读对象、角色和输入输出。",
+        "expected_invariants": [
+          "正交向量内积恒为 0；夹角余弦必须位于 [−1,1]。"
+        ],
+        "id": "stage.claim.ch01.inner.applications.observe",
+        "input_entity_refs": [
+          "a",
+          "b"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [],
+        "relation_refs": [
+          "rel.0.claim.ch01.inner.applications"
+        ],
+        "title": "观察对象"
+      },
+      {
+        "caption": "按公式计算并检查几何关系。",
+        "expected_invariants": [
+          "正交向量内积恒为 0；夹角余弦必须位于 [−1,1]。"
+        ],
+        "id": "stage.claim.ch01.inner.applications.derive",
+        "input_entity_refs": [
+          "a",
+          "b"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [],
+        "relation_refs": [
+          "rel.0.claim.ch01.inner.applications"
+        ],
+        "title": "代数验证"
+      }
+    ]
+  }
+}}
