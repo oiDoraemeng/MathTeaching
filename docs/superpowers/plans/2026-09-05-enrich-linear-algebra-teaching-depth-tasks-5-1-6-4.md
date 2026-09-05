@@ -44,7 +44,7 @@
 - Consumes: chapter-1 `LessonEntry` values, `LectureSourceRepository`, `ExplanationAgent`, and `TeachingArtifactStore`.
 - Produces: 24 reviewed/published chapter-1 artifacts and `validate_chapter_artifacts(chapter, store, source_repo)`.
 
-- [ ] **Step 1: Write the failing chapter coverage test**
+- [x] **Step 1: Write the failing chapter coverage test**
 
 ```python
 def test_chapter_01_has_24_published_grounded_artifacts() -> None:
@@ -54,13 +54,13 @@ def test_chapter_01_has_24_published_grounded_artifacts() -> None:
     assert report.minimum_level_counts["L3"] + report.minimum_level_counts["L4"] == 24
 ```
 
-- [ ] **Step 2: Run the coverage test and verify resources are missing**
+- [x] **Step 2: Run the coverage test and verify resources are missing**
 
 Run: `pytest tests/test_linear_algebra_chapter_01_artifacts.py -q`
 
 Expected: FAIL listing the 24 missing chapter-1 topic IDs.
 
-- [ ] **Step 3: Dispatch the mathematical explanation sub-agent for each chapter-1 topic**
+- [x] **Step 3: Dispatch the mathematical explanation sub-agent for each chapter-1 topic**
 
 For every chapter-1 `LessonEntry`, pass only its `SourceContext`, teaching profile, and v1 visual vocabulary to the explanation-agent workflow. Require one bare JSON response containing claims, mathematical explanation, worked example where required, source refs, and visual semantics. Import each exact accepted reply as a draft; do not hand-author scene operations.
 
@@ -68,7 +68,7 @@ Run: `python scripts/generate_linear_algebra_teaching.py --chapter 1 --output-ro
 
 Expected: 24 draft summaries, each with `topic_id`, `source_hash`, `reply_digest`, and no publish action.
 
-- [ ] **Step 4: Review and publish the chapter artifacts**
+- [x] **Step 4: Review and publish the chapter artifacts**
 
 Review every draft against the lecture excerpt and resolve all schema, source, depth, numeric, claim-binding, and visual-contract diagnostics. The command below is interactive: it shows one source/draft comparison at a time, records reviewer identity and decision, and publishes only explicitly accepted revisions while preserving exact raw replies in `data/audit/ch01`.
 
@@ -76,13 +76,13 @@ Run: `python scripts/review_linear_algebra_teaching.py --chapter 1 --store-root 
 
 Expected: `chapter=1 topics=24 published=24 errors=0`.
 
-- [ ] **Step 5: Run chapter-1 artifact tests**
+- [x] **Step 5: Run chapter-1 artifact tests**
 
 Run: `pytest tests/test_linear_algebra_chapter_01_artifacts.py tests/test_linear_algebra_teaching_examples.py tests/test_linear_algebra_visual_contracts.py -q`
 
 Expected: PASS; every formula symbol and visual claim is closed.
 
-- [ ] **Step 6: Commit chapter-1 resources**
+- [x] **Step 6: Commit chapter-1 resources**
 
 ```bash
 git add linear_algebra/teaching/content_validation.py linear_algebra/teaching/data tests/test_linear_algebra_chapter_01_artifacts.py
@@ -102,7 +102,7 @@ git commit -m "content: publish chapter one teaching artifacts"
 - Consumes: the same generation/review pipeline as Task 1 for chapter 2.
 - Produces: 15 published artifacts, including complete composition, rank, null-space, and column-space claim graphs.
 
-- [ ] **Step 1: Write chapter-2 coverage and focus-claim tests**
+- [x] **Step 1: Write chapter-2 coverage and focus-claim tests**
 
 ```python
 def test_chapter_02_has_15_published_artifacts() -> None:
@@ -117,31 +117,31 @@ def test_matrix_composition_artifact_has_two_ordered_paths() -> None:
     assert {"endpoint_diff", "compare"} <= set(relation_kinds)
 ```
 
-- [ ] **Step 2: Run the tests and verify chapter-2 resources are missing**
+- [x] **Step 2: Run the tests and verify chapter-2 resources are missing**
 
 Run: `pytest tests/test_linear_algebra_chapter_02_artifacts.py -q`
 
 Expected: FAIL listing 15 missing topics.
 
-- [ ] **Step 3: Generate chapter-2 drafts with the explanation sub-agent**
+- [x] **Step 3: Generate chapter-2 drafts with the explanation sub-agent**
 
 Run: `python scripts/generate_linear_algebra_teaching.py --chapter 2 --output-root linear_algebra/teaching/data`
 
 Expected: 15 drafts. The matrix-composition response contains `(AB)x=A(Bx)`, a reproducible numeric example, two `composition_order` relations, and distinct endpoints. Null-space content contains at least three nonzero inputs and collapse evidence.
 
-- [ ] **Step 4: Review and publish chapter 2**
+- [x] **Step 4: Review and publish chapter 2**
 
 Run: `python scripts/review_linear_algebra_teaching.py --chapter 2 --store-root linear_algebra/teaching/data --publish`
 
 Expected: `chapter=2 topics=15 published=15 errors=0`; raw accepted replies remain under `data/audit/ch02`.
 
-- [ ] **Step 5: Run chapter-2 and claim tests**
+- [x] **Step 5: Run chapter-2 and claim tests**
 
 Run: `pytest tests/test_linear_algebra_chapter_02_artifacts.py tests/test_linear_algebra_claim_bindings.py tests/test_linear_algebra_teaching_examples.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit chapter-2 resources**
+- [x] **Step 6: Commit chapter-2 resources**
 
 ```bash
 git add linear_algebra/teaching/data tests/test_linear_algebra_chapter_02_artifacts.py
@@ -161,7 +161,7 @@ git commit -m "content: publish chapter two teaching artifacts"
 - Consumes: the same generation/review pipeline as Tasks 1-2 for chapter 3.
 - Produces: 15 published determinant/inverse artifacts with recomputable signed-area and volume examples.
 
-- [ ] **Step 1: Write chapter-3 coverage and determinant tests**
+- [x] **Step 1: Write chapter-3 coverage and determinant tests**
 
 ```python
 def test_chapter_03_has_15_published_artifacts() -> None:
@@ -175,31 +175,31 @@ def test_determinant_multiplicativity_has_three_area_stages() -> None:
     assert "same_measure" in {relation.kind for relation in artifact.visual_semantics.relations}
 ```
 
-- [ ] **Step 2: Run the tests and verify chapter-3 resources are missing**
+- [x] **Step 2: Run the tests and verify chapter-3 resources are missing**
 
 Run: `pytest tests/test_linear_algebra_chapter_03_artifacts.py -q`
 
 Expected: FAIL listing 15 missing topics.
 
-- [ ] **Step 3: Generate chapter-3 drafts with the explanation sub-agent**
+- [x] **Step 3: Generate chapter-3 drafts with the explanation sub-agent**
 
 Run: `python scripts/generate_linear_algebra_teaching.py --chapter 3 --output-root linear_algebra/teaching/data`
 
 Expected: 15 drafts. Determinant examples include signed area checks; inverse examples distinguish reversible and degenerate maps; high-dimensional content states its analogy boundary.
 
-- [ ] **Step 4: Review and publish chapter 3**
+- [x] **Step 4: Review and publish chapter 3**
 
 Run: `python scripts/review_linear_algebra_teaching.py --chapter 3 --store-root linear_algebra/teaching/data --publish`
 
 Expected: `chapter=3 topics=15 published=15 errors=0`.
 
-- [ ] **Step 5: Run chapter-3 and numeric tests**
+- [x] **Step 5: Run chapter-3 and numeric tests**
 
 Run: `pytest tests/test_linear_algebra_chapter_03_artifacts.py tests/test_linear_algebra_teaching_examples.py tests/test_linear_algebra_source_evidence.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit chapter-3 resources**
+- [x] **Step 6: Commit chapter-3 resources**
 
 ```bash
 git add linear_algebra/teaching/data tests/test_linear_algebra_chapter_03_artifacts.py
@@ -282,7 +282,7 @@ git commit -m "test: lock focus topic visual claims"
 - Consumes: all published artifacts, contracts, compiler version, and render profile.
 - Produces: compiled snapshot records with `artifact_digest`, `compiler_version`, `render_profile`, `plan_digest`, stage metadata, and reading hints.
 
-- [ ] **Step 1: Write failing compiled-resource integrity tests**
+- [x] **Step 1: Write failing compiled-resource integrity tests**
 
 ```python
 def test_every_published_artifact_has_matching_compiled_snapshot() -> None:
@@ -297,13 +297,13 @@ def test_compiled_snapshot_digest_reproduces() -> None:
     assert rebuilt.plan_digest == snapshot.plan_digest
 ```
 
-- [ ] **Step 2: Run compiled-resource tests and verify missing snapshots**
+- [x] **Step 2: Run compiled-resource tests and verify missing snapshots**
 
 Run: `pytest tests/test_linear_algebra_compiled_resources.py -q`
 
 Expected: FAIL listing topics without a compiled snapshot.
 
-- [ ] **Step 3: Implement resource compilation and digest records**
+- [x] **Step 3: Implement resource compilation and digest records**
 
 ```python
 def compile_published_topic(topic_id: str) -> CompiledResource:
@@ -326,7 +326,7 @@ def compile_published_topic(topic_id: str) -> CompiledResource:
 
 Add `python -m linear_algebra.teaching.compile_resources --all` to write stable sorted JSON. On digest mismatch, runtime recompiles from normalized semantics and never calls the model.
 
-- [ ] **Step 4: Generate and validate all snapshots**
+- [x] **Step 4: Generate and validate all snapshots**
 
 Run: `python -m linear_algebra.teaching.compile_resources --all`
 
@@ -334,7 +334,7 @@ Run: `pytest tests/test_linear_algebra_compiled_resources.py tests/test_linear_a
 
 Expected: 54 snapshots written; tests PASS.
 
-- [ ] **Step 5: Commit compiled resources**
+- [x] **Step 5: Commit compiled resources**
 
 ```bash
 git add linear_algebra/teaching/compile_resources.py linear_algebra/teaching/data/compiled tests/test_linear_algebra_compiled_resources.py

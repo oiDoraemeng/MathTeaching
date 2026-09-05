@@ -1,0 +1,267 @@
+{
+  "artifact_digest": "sha256:64b9a3f4a481b4a7818325ac46a23404ead3dd58a5521aed48562ed3c02acd71",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__F__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__F__end",
+        "coordinates": [
+          10.0,
+          20.0
+        ],
+        "name": "F",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__F",
+        "color": "#2F6BFF",
+        "end": "sem__F__end",
+        "kind": "vector",
+        "label": "F",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__F__origin"
+      },
+      {
+        "alias": "sem__u__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__u__end",
+        "coordinates": [
+          3.0,
+          1.0
+        ],
+        "name": "斜面方向",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__u",
+        "color": "#2A9D8F",
+        "end": "sem__u__end",
+        "kind": "vector",
+        "label": "斜面方向",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__u__origin"
+      },
+      {
+        "alias": "sem__parallel__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__parallel__end",
+        "coordinates": [
+          15.0,
+          5.0
+        ],
+        "name": "F∥",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__parallel",
+        "color": "#2A9D8F",
+        "end": "sem__parallel__end",
+        "kind": "vector",
+        "label": "F∥",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__parallel__origin"
+      },
+      {
+        "alias": "sem__residual__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__residual__end",
+        "coordinates": [
+          -5.0,
+          15.0
+        ],
+        "name": "F⊥",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__residual",
+        "color": "#E76F51",
+        "end": "sem__residual__end",
+        "kind": "vector",
+        "label": "F⊥",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__residual__origin"
+      },
+      {
+        "color": "#2A9D8F",
+        "direction": [
+          15.0,
+          5.0
+        ],
+        "foot_alias": "sem__rel.0.claim.ch01.projection.force__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__residual",
+        "result_alias": "sem__parallel",
+        "vector": [
+          10.0,
+          20.0
+        ]
+      },
+      {
+        "alias": "sem__rel.1.claim.ch01.projection.force",
+        "color": "#6B7280",
+        "first": [
+          -5.0,
+          15.0
+        ],
+        "op": "geometry.right_angle_marker",
+        "second": [
+          3.0,
+          1.0
+        ],
+        "size": 0.3,
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "cap__angle",
+        "color": "#2A9D8F",
+        "first": [
+          10.0,
+          20.0
+        ],
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          3.0,
+          1.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__stage.claim.ch01.projection.force.observe__title",
+        "op": "annotation.upsert",
+        "position": [
+          -1.5,
+          2.65
+        ],
+        "text": "观察对象"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.projection.force.derive__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "代数验证"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "坐标轴与斜面上的力分解",
+    "version": 1
+  },
+  "plan_digest": "sha256:56ebc7ff57a833ec6da54469ae3c574307fd85550961c00e567be19763c00c57",
+  "read_guide": [
+    "观察输入实体和标签。",
+    "沿关系读取输出并核对不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:85f23c9fa0886bbe72549992d8606f7f26a2e68d2e3ef9872dc0f4c4cfd8c66d",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "先读对象、角色和输入输出。",
+      "id": "stage.claim.ch01.projection.force.observe",
+      "layout": "side_by_side",
+      "title": "观察对象",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.projection.force.observe__sem__F",
+        "sem__stage.claim.ch01.projection.force.observe__sem__F__end",
+        "sem__stage.claim.ch01.projection.force.observe__sem__u",
+        "sem__stage.claim.ch01.projection.force.observe__sem__u__end",
+        "sem__stage.claim.ch01.projection.force.observe__sem__parallel",
+        "sem__stage.claim.ch01.projection.force.observe__sem__parallel__end",
+        "sem__stage.claim.ch01.projection.force.observe__sem__residual",
+        "sem__stage.claim.ch01.projection.force.observe__sem__residual__end",
+        "sem__stage.claim.ch01.projection.force.observe__sem__rel.0.claim.ch01.projection.force"
+      ],
+      "visible_refs": [
+        "F",
+        "u",
+        "parallel",
+        "residual",
+        "rel.0.claim.ch01.projection.force"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "按公式计算并检查几何关系。",
+      "id": "stage.claim.ch01.projection.force.derive",
+      "layout": "sequence",
+      "title": "代数验证",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.projection.force.derive__sem__F",
+        "sem__stage.claim.ch01.projection.force.derive__sem__F__end",
+        "sem__stage.claim.ch01.projection.force.derive__sem__u",
+        "sem__stage.claim.ch01.projection.force.derive__sem__u__end",
+        "sem__stage.claim.ch01.projection.force.derive__sem__parallel",
+        "sem__stage.claim.ch01.projection.force.derive__sem__parallel__end",
+        "sem__stage.claim.ch01.projection.force.derive__sem__residual",
+        "sem__stage.claim.ch01.projection.force.derive__sem__residual__end",
+        "sem__stage.claim.ch01.projection.force.derive__sem__rel.0.claim.ch01.projection.force",
+        "sem__stage.claim.ch01.projection.force.derive__sem__rel.1.claim.ch01.projection.force"
+      ],
+      "visible_refs": [
+        "F",
+        "u",
+        "parallel",
+        "residual",
+        "rel.0.claim.ch01.projection.force",
+        "rel.1.claim.ch01.projection.force"
+      ]
+    }
+  ],
+  "topic_id": "ch01.projection.force"
+}

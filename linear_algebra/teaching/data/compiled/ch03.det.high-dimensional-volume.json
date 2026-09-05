@@ -1,0 +1,144 @@
+{
+  "artifact_digest": "sha256:080e14b84afbeccdb335b663785a23234b600637460fc6b60f4737f51f8c7265",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__a",
+        "color": "#2F6BFF",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "label": "a",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__b",
+        "color": "#F08A24",
+        "end": [
+          0.0,
+          2.0,
+          0.0
+        ],
+        "kind": "vector",
+        "label": "b",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__c",
+        "color": "#2A9D8F",
+        "end": [
+          0.0,
+          0.0,
+          3.0
+        ],
+        "kind": "vector",
+        "label": "c",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__V",
+        "color": "#2A9D8F",
+        "op": "geometry.oriented_volume",
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vectors": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__ch03.det.high-dimensional-volume__formula",
+        "op": "annotation.formula",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "det(A)=\\text{oriented n-volume}"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "3d",
+    "summary": "n 阶行列式与面积、体积类比",
+    "version": 1
+  },
+  "plan_digest": "sha256:5744129f7bcfd9e0ae494768d9cc7a05943a23e4d4ab6df1e5a93d06de05ff47",
+  "read_guide": [
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 3,
+  "schema_version": 1,
+  "source_hash": "sha256:325a14583a942b2e5d5c8f81bca1568ca4281a087bb1e401dec33530f3686d78",
+  "stages": [
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "三条向量张成平行六面体。",
+      "id": "stage.volume",
+      "layout": "overlay",
+      "title": "有向体积",
+      "visible_aliases": [
+        "sem__stage.volume__sem__a",
+        "sem__stage.volume__sem__a__end",
+        "sem__stage.volume__sem__b",
+        "sem__stage.volume__sem__b__end",
+        "sem__stage.volume__sem__c",
+        "sem__stage.volume__sem__c__end",
+        "sem__stage.volume__sem__V",
+        "sem__stage.volume__sem__spans_volume"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "c",
+        "V",
+        "spans_volume"
+      ]
+    }
+  ],
+  "topic_id": "ch03.det.high-dimensional-volume"
+}

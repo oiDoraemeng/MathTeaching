@@ -1,0 +1,202 @@
+{
+  "artifact_digest": "sha256:4ad114bbe05adfd887cfd60f2bfa1a9190c10641d2d707b7b3319ef7bc246d59",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "AB",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a",
+        "color": "#2F6BFF",
+        "end": "sem__a__end",
+        "kind": "vector",
+        "label": "AB",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__a__origin"
+      },
+      {
+        "alias": "sem__b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "AC",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b",
+        "color": "#F08A24",
+        "end": "sem__b__end",
+        "kind": "vector",
+        "label": "AC",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__b__origin"
+      },
+      {
+        "alias": "sem__G",
+        "coordinates": [
+          0.3333333333,
+          0.3333333333
+        ],
+        "name": "G",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__rel.0.claim.ch01.proof.centroid",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "scalar_multiple: G → AB"
+      },
+      {
+        "alias": "cap__polygon",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.claim.ch01.proof.centroid.observe__title",
+        "op": "annotation.upsert",
+        "position": [
+          -1.5,
+          2.65
+        ],
+        "text": "观察对象"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.proof.centroid.derive__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "代数验证"
+      },
+      {
+        "alias": "sem__ch01.proof.centroid__formula",
+        "op": "annotation.formula",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "AG=\\frac{a+b}{3},\\quad AG:GD=2:1"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "三角形重心定理",
+    "version": 1
+  },
+  "plan_digest": "sha256:f3de649934b9bab2debd929004384989bcc1963dde5434de592849f29e0b7796",
+  "read_guide": [
+    "观察输入实体和标签。",
+    "沿关系读取输出并核对不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:3b0b668a61fcc041c6bf6b27cc98a127cf2743ab2ec11b5546419b8dc4316c06",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "先读对象、角色和输入输出。",
+      "id": "stage.claim.ch01.proof.centroid.observe",
+      "layout": "side_by_side",
+      "title": "观察对象",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.proof.centroid.observe__sem__a",
+        "sem__stage.claim.ch01.proof.centroid.observe__sem__a__end",
+        "sem__stage.claim.ch01.proof.centroid.observe__sem__b",
+        "sem__stage.claim.ch01.proof.centroid.observe__sem__b__end",
+        "sem__stage.claim.ch01.proof.centroid.observe__sem__G",
+        "sem__stage.claim.ch01.proof.centroid.observe__sem__rel.0.claim.ch01.proof.centroid"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "G",
+        "rel.0.claim.ch01.proof.centroid"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "按公式计算并检查几何关系。",
+      "id": "stage.claim.ch01.proof.centroid.derive",
+      "layout": "sequence",
+      "title": "代数验证",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.proof.centroid.derive__sem__a",
+        "sem__stage.claim.ch01.proof.centroid.derive__sem__a__end",
+        "sem__stage.claim.ch01.proof.centroid.derive__sem__b",
+        "sem__stage.claim.ch01.proof.centroid.derive__sem__b__end",
+        "sem__stage.claim.ch01.proof.centroid.derive__sem__G",
+        "sem__stage.claim.ch01.proof.centroid.derive__sem__rel.0.claim.ch01.proof.centroid"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "G",
+        "rel.0.claim.ch01.proof.centroid"
+      ]
+    }
+  ],
+  "topic_id": "ch01.proof.centroid"
+}

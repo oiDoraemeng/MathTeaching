@@ -1,0 +1,321 @@
+{
+  "artifact_digest": "sha256:50d859631a209353a02f0790b3f7702d7d0d44fc6a3821bd9cb6675b409355c9",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "column a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a",
+        "color": "#2F6BFF",
+        "end": "sem__a__end",
+        "kind": "vector",
+        "label": "column a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__a__origin"
+      },
+      {
+        "alias": "sem__b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "column b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b",
+        "color": "#F08A24",
+        "end": "sem__b__end",
+        "kind": "vector",
+        "label": "column b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__b__origin"
+      },
+      {
+        "alias": "sem__area",
+        "color": "#E09F3E",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ]
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "matrix": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "linear_algebra.matrix_transform"
+      },
+      {
+        "aliases": [
+          "sem__det_stage__source",
+          "sem__det_stage__target"
+        ],
+        "matrices": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              4
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__collapse_region",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "collapses_to: column a → collapsed subspace"
+      },
+      {
+        "alias": "sem__stage.det.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "矩阵两列"
+      },
+      {
+        "alias": "sem__stage.det.measure__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "有向面积"
+      },
+      {
+        "alias": "sem__stage.det.transform__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "变换阶段"
+      },
+      {
+        "alias": "sem__stage.det.region__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.21
+        ],
+        "text": "退化子空间"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "det=0 的等价几何条件",
+    "version": 1
+  },
+  "plan_digest": "sha256:fefa34b8ecfca5819651be5ea60af036fa120693a335560c5f6942081931509d",
+  "read_guide": [
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 3,
+  "schema_version": 1,
+  "source_hash": "sha256:4eeb58f2ff6eda37648b0c36dd461128c7afdd24872497bbd261dac8f8ed7ab3",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "把矩阵两列看作平行四边形的两条邻边。",
+      "id": "stage.det.input",
+      "layout": "sequence",
+      "title": "矩阵两列",
+      "visible_aliases": [
+        "sem__stage.det.input__sem__A",
+        "sem__stage.det.input__sem__a",
+        "sem__stage.det.input__sem__a__end",
+        "sem__stage.det.input__sem__b",
+        "sem__stage.det.input__sem__b__end"
+      ],
+      "visible_refs": [
+        "A",
+        "a",
+        "b"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "行列式给出有向面积及方向符号。",
+      "id": "stage.det.measure",
+      "layout": "sequence",
+      "title": "有向面积",
+      "visible_aliases": [
+        "sem__stage.det.measure__sem__a",
+        "sem__stage.det.measure__sem__a__end",
+        "sem__stage.det.measure__sem__b",
+        "sem__stage.det.measure__sem__b__end",
+        "sem__stage.det.measure__sem__area",
+        "sem__stage.det.measure__sem__det_maps_to_area"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "area",
+        "det_maps_to_area"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "比较变换前后的两条列向量，观察有向面积如何变化。",
+      "id": "stage.det.transform",
+      "layout": "sequence",
+      "title": "变换阶段",
+      "visible_aliases": [
+        "sem__stage.det.transform__sem__a",
+        "sem__stage.det.transform__sem__a__end",
+        "sem__stage.det.transform__sem__b",
+        "sem__stage.det.transform__sem__b__end",
+        "sem__stage.det.transform__sem__area",
+        "sem__stage.det.transform__sem__det_stage"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "area",
+        "det_stage"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.21
+      ],
+      "caption": "两列共线时，平行四边形坍缩为一条子空间区域。",
+      "id": "stage.det.region",
+      "layout": "sequence",
+      "title": "退化子空间",
+      "visible_aliases": [
+        "sem__stage.det.region__sem__a",
+        "sem__stage.det.region__sem__a__end",
+        "sem__stage.det.region__sem__b",
+        "sem__stage.det.region__sem__b__end",
+        "sem__stage.det.region__sem__region",
+        "sem__stage.det.region__sem__collapse_region"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "region",
+        "collapse_region"
+      ]
+    }
+  ],
+  "topic_id": "ch03.det.zero.equivalence"
+}

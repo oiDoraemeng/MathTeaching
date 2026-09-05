@@ -1,0 +1,229 @@
+{
+  "artifact_digest": "sha256:f7c5ac595022c8e72b67aa318d8839655494cd2a1ef84c2b26986771b69bc5e2",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__v1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__v1__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v₁",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__v1",
+        "color": "#2F6BFF",
+        "end": "sem__v1__end",
+        "kind": "vector",
+        "label": "v₁",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__v1__origin"
+      },
+      {
+        "alias": "sem__v2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__v2__end",
+        "coordinates": [
+          2.0,
+          2.0
+        ],
+        "name": "v₂",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__v2",
+        "color": "#F08A24",
+        "end": "sem__v2__end",
+        "kind": "vector",
+        "label": "v₂",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__v2__origin"
+      },
+      {
+        "alias": "sem__sum__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__sum__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "v₁+v₂",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__sum",
+        "color": "#7B61FF",
+        "end": "sem__sum__end",
+        "kind": "vector",
+        "label": "v₁+v₂",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__sum__origin"
+      },
+      {
+        "alias": "sem__u__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__u__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "u",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__u",
+        "color": "#2A9D8F",
+        "end": "sem__u__end",
+        "kind": "vector",
+        "label": "u",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__u__origin"
+      },
+      {
+        "color": "#2A9D8F",
+        "direction": [
+          1.0,
+          0.0
+        ],
+        "foot_alias": "sem__rel.0.claim.ch01.projection.properties__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__rel.0.claim.ch01.projection.properties__residual",
+        "result_alias": "sem__u",
+        "vector": [
+          3.0,
+          4.0
+        ]
+      },
+      {
+        "alias": "sem__stage.claim.ch01.projection.properties.observe__title",
+        "op": "annotation.upsert",
+        "position": [
+          -1.5,
+          2.65
+        ],
+        "text": "观察对象"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.projection.properties.derive__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "代数验证"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "投影的可加性与齐次性",
+    "version": 1
+  },
+  "plan_digest": "sha256:d3b24f595b40da418e6c388db56088c6efe3e2337e8ffd2edf7f7d6a67c6e570",
+  "read_guide": [
+    "观察输入实体和标签。",
+    "沿关系读取输出并核对不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:8aca69b44713fdac8bf4cb3885c96563418db00aaa21ad288a0a0c79c25162c9",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "先读对象、角色和输入输出。",
+      "id": "stage.claim.ch01.projection.properties.observe",
+      "layout": "side_by_side",
+      "title": "观察对象",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.projection.properties.observe__sem__v1",
+        "sem__stage.claim.ch01.projection.properties.observe__sem__v1__end",
+        "sem__stage.claim.ch01.projection.properties.observe__sem__v2",
+        "sem__stage.claim.ch01.projection.properties.observe__sem__v2__end",
+        "sem__stage.claim.ch01.projection.properties.observe__sem__sum",
+        "sem__stage.claim.ch01.projection.properties.observe__sem__sum__end",
+        "sem__stage.claim.ch01.projection.properties.observe__sem__u",
+        "sem__stage.claim.ch01.projection.properties.observe__sem__u__end",
+        "sem__stage.claim.ch01.projection.properties.observe__sem__rel.0.claim.ch01.projection.properties"
+      ],
+      "visible_refs": [
+        "v1",
+        "v2",
+        "sum",
+        "u",
+        "rel.0.claim.ch01.projection.properties"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "按公式计算并检查几何关系。",
+      "id": "stage.claim.ch01.projection.properties.derive",
+      "layout": "sequence",
+      "title": "代数验证",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.projection.properties.derive__sem__v1",
+        "sem__stage.claim.ch01.projection.properties.derive__sem__v1__end",
+        "sem__stage.claim.ch01.projection.properties.derive__sem__v2",
+        "sem__stage.claim.ch01.projection.properties.derive__sem__v2__end",
+        "sem__stage.claim.ch01.projection.properties.derive__sem__sum",
+        "sem__stage.claim.ch01.projection.properties.derive__sem__sum__end",
+        "sem__stage.claim.ch01.projection.properties.derive__sem__u",
+        "sem__stage.claim.ch01.projection.properties.derive__sem__u__end",
+        "sem__stage.claim.ch01.projection.properties.derive__sem__rel.0.claim.ch01.projection.properties"
+      ],
+      "visible_refs": [
+        "v1",
+        "v2",
+        "sum",
+        "u",
+        "rel.0.claim.ch01.projection.properties"
+      ]
+    }
+  ],
+  "topic_id": "ch01.projection.properties"
+}

@@ -92,6 +92,20 @@ def reply_digest(raw_reply: str) -> str:
     return "sha256:" + hashlib.sha256(raw_reply.encode("utf-8")).hexdigest()
 
 
+def artifact_digest(artifact: TeachingArtifact) -> str:
+    """Hash the semantic artifact without circular generation metadata."""
+
+    payload = artifact.to_dict()
+    generated = payload.get("generated")
+    if isinstance(generated, dict):
+        generated = dict(generated)
+        generated["artifact_digest"] = ""
+        generated["raw_reply_digest"] = ""
+        payload["generated"] = generated
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return "sha256:" + hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
 class TeachingArtifactStore:
     """Persist drafts and review states under one configured root directory."""
 
@@ -189,7 +203,14 @@ class TeachingArtifactStore:
         )
         return reviewed
 
-    def publish(self, artifact: TeachingArtifact, *, source_context: object, topic: object) -> PublishResult:
+    def publish(
+        self,
+        artifact: TeachingArtifact,
+        *,
+        source_context: object,
+        topic: object,
+        raw_reply: str | None = None,
+    ) -> PublishResult:
         """Validate and atomically add a published revision."""
 
         if artifact.status != "reviewed":
@@ -216,7 +237,7 @@ class TeachingArtifactStore:
         if issues:
             return PublishResult(ok=False, issues=tuple(sorted(issues, key=lambda issue: (issue.path, issue.code, issue.message))))
         published = replace(artifact, status="published")
-        revision = self.save_published(published)
+        revision = self.save_published(published, raw_reply=raw_reply)
         return PublishResult(ok=True, revision=revision)
 
     def list_revisions(self, topic_id: str, state: StoreState | None = None) -> tuple[ArtifactRevision, ...]:
@@ -249,6 +270,17 @@ class TeachingArtifactStore:
             raise TypeError("raw_reply must be text")
         normalized = replace(artifact, status=state)
         revision = self._next_revision(state, normalized.topic_id)
+        # The on-disk revision is the artifact revision exposed to readers.
+        # Keeping these values identical prevents rN files from masquerading as r1.
+        normalized = replace(normalized, revision=revision)
+        receipt = normalized.generated
+        if raw_reply is not None and (
+            receipt.raw_reply_digest == "sha256:pending"
+            or state in {"reviewed", "published"}
+        ):
+            receipt = replace(receipt, raw_reply_digest=reply_digest(raw_reply))
+        if receipt.artifact_digest == "sha256:pending" or receipt is not normalized.generated or revision != artifact.revision:
+            normalized = replace(normalized, generated=replace(receipt, artifact_digest=artifact_digest(normalized)))
         payload: dict[str, object] = {"artifact": normalized.to_dict()}
         if state == "draft" and raw_reply is not None:
             payload["raw_reply"] = raw_reply
@@ -345,6 +377,7 @@ __all__ = [
     "ReviewRecord",
     "StoredArtifact",
     "TeachingArtifactStore",
+    "artifact_digest",
     "reply_digest",
 ]
 

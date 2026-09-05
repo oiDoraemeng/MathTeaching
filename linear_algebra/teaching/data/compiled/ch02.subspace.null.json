@@ -1,0 +1,276 @@
+{
+  "artifact_digest": "sha256:e139eca9404479bead975904b727da5eb58027ba0a94cc87db725d49cb0f6d94",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__x__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__x__end",
+        "coordinates": [
+          0.0,
+          2.0
+        ],
+        "name": "x",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__x",
+        "color": "#2F6BFF",
+        "end": "sem__x__end",
+        "kind": "vector",
+        "label": "x",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__x__origin"
+      },
+      {
+        "alias": "sem__y__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__y__end",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "Ax",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__y",
+        "color": "#7B61FF",
+        "end": "sem__y__end",
+        "kind": "vector",
+        "label": "Ax",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__y__origin"
+      },
+      {
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "linear_algebra.matrix_transform"
+      },
+      {
+        "alias": "sem__collapse_to_origin",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "collapses_to: x → Ax"
+      },
+      {
+        "basis": [
+          [
+            0.0,
+            2.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "aliases": [
+          "cap__stage_source",
+          "cap__stage_target"
+        ],
+        "matrices": [
+          [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            0.0,
+            2.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          2.65
+        ],
+        "text": "输入与变换"
+      },
+      {
+        "alias": "sem__stage.null_input__title",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          2.65
+        ],
+        "text": "输入方向"
+      },
+      {
+        "alias": "sem__stage.null_output__title",
+        "op": "annotation.upsert",
+        "position": [
+          2.0,
+          2.65
+        ],
+        "text": "压到原点"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "零空间是被压到原点的方向",
+    "version": 1
+  },
+  "plan_digest": "sha256:00e6e8c2352eabdfd1fe2d52a7c46d5322b4d1a5b4184332a3f55844856f419c",
+  "read_guide": [
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:d00c8934450a55c3e2cbbab779f31ce99c00bc1d63eb73446d94a01711428fcf",
+  "stages": [
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "矩阵 A 作用于向量 x。",
+      "id": "stage.input",
+      "layout": "overlay",
+      "title": "输入与变换",
+      "visible_aliases": [
+        "sem__stage.input__sem__A",
+        "sem__stage.input__sem__x",
+        "sem__stage.input__sem__x__end",
+        "sem__stage.input__sem__y",
+        "sem__stage.input__sem__y__end",
+        "sem__stage.input__sem__A_maps_x_to_y"
+      ],
+      "visible_refs": [
+        "A",
+        "x",
+        "y",
+        "A_maps_x_to_y"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "选择零空间中的 y 轴方向。",
+      "id": "stage.null_input",
+      "layout": "side_by_side",
+      "title": "输入方向",
+      "visible_aliases": [
+        "sem__stage.null_input__sem__x",
+        "sem__stage.null_input__sem__x__end"
+      ],
+      "visible_refs": [
+        "x"
+      ]
+    },
+    {
+      "anchor": [
+        2.0,
+        2.65
+      ],
+      "caption": "A 作用后该方向变成零向量。",
+      "id": "stage.null_output",
+      "layout": "side_by_side",
+      "title": "压到原点",
+      "visible_aliases": [
+        "sem__stage.null_output__sem__x",
+        "sem__stage.null_output__sem__x__end",
+        "sem__stage.null_output__sem__y",
+        "sem__stage.null_output__sem__y__end",
+        "sem__stage.null_output__sem__collapse_to_origin"
+      ],
+      "visible_refs": [
+        "x",
+        "y",
+        "collapse_to_origin"
+      ]
+    }
+  ],
+  "topic_id": "ch02.subspace.null"
+}

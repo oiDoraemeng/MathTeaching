@@ -1,0 +1,232 @@
+{
+  "artifact_digest": "sha256:c5276edb190370c0b23f571e6d7dd9c798fd80fd897eae1f9e8d53bacd00dbf3",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a",
+        "color": "#2F6BFF",
+        "end": "sem__a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__a__origin"
+      },
+      {
+        "alias": "sem__b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b",
+        "color": "#F08A24",
+        "end": "sem__b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__b__origin"
+      },
+      {
+        "alias": "sem__difference__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__difference__end",
+        "coordinates": [
+          -2.0,
+          -2.0
+        ],
+        "name": "a-b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__difference",
+        "color": "#7B61FF",
+        "end": "sem__difference__end",
+        "kind": "vector",
+        "label": "a-b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__difference__origin"
+      },
+      {
+        "alias": "sem__rel.0.claim.ch01.inner.equivalence",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "compare: a → b"
+      },
+      {
+        "alias": "cap__polygon",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            2.0
+          ],
+          [
+            4.0,
+            6.0
+          ],
+          [
+            3.0,
+            4.0
+          ]
+        ]
+      },
+      {
+        "alias": "cap__angle",
+        "color": "#2A9D8F",
+        "first": [
+          1.0,
+          2.0
+        ],
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          3.0,
+          4.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__stage.claim.ch01.inner.equivalence.observe__title",
+        "op": "annotation.upsert",
+        "position": [
+          -1.5,
+          2.65
+        ],
+        "text": "观察对象"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.inner.equivalence.derive__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "代数验证"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "内积两种定义的几何等价",
+    "version": 1
+  },
+  "plan_digest": "sha256:3c175e718394065e64e9218a462d9886f01c3f3c118d58ec50cad6fe0b65e581",
+  "read_guide": [
+    "观察输入实体和标签。",
+    "沿关系读取输出并核对不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:18371503c870b3e41027bcfb2cc9b77e7f4595fa93f1041b11f68921e280b4f6",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "先读对象、角色和输入输出。",
+      "id": "stage.claim.ch01.inner.equivalence.observe",
+      "layout": "side_by_side",
+      "title": "观察对象",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.inner.equivalence.observe__sem__a",
+        "sem__stage.claim.ch01.inner.equivalence.observe__sem__a__end",
+        "sem__stage.claim.ch01.inner.equivalence.observe__sem__b",
+        "sem__stage.claim.ch01.inner.equivalence.observe__sem__b__end",
+        "sem__stage.claim.ch01.inner.equivalence.observe__sem__difference",
+        "sem__stage.claim.ch01.inner.equivalence.observe__sem__difference__end",
+        "sem__stage.claim.ch01.inner.equivalence.observe__sem__rel.0.claim.ch01.inner.equivalence"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "difference",
+        "rel.0.claim.ch01.inner.equivalence"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "按公式计算并检查几何关系。",
+      "id": "stage.claim.ch01.inner.equivalence.derive",
+      "layout": "sequence",
+      "title": "代数验证",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.inner.equivalence.derive__sem__a",
+        "sem__stage.claim.ch01.inner.equivalence.derive__sem__a__end",
+        "sem__stage.claim.ch01.inner.equivalence.derive__sem__b",
+        "sem__stage.claim.ch01.inner.equivalence.derive__sem__b__end",
+        "sem__stage.claim.ch01.inner.equivalence.derive__sem__difference",
+        "sem__stage.claim.ch01.inner.equivalence.derive__sem__difference__end",
+        "sem__stage.claim.ch01.inner.equivalence.derive__sem__rel.0.claim.ch01.inner.equivalence"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "difference",
+        "rel.0.claim.ch01.inner.equivalence"
+      ]
+    }
+  ],
+  "topic_id": "ch01.inner.equivalence"
+}

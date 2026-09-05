@@ -1,0 +1,248 @@
+{
+  "artifact_digest": "sha256:d6192c659779b2578c637f98c4048f8c86211b3499358a5cac11a2b9aca63898",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__x__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__x__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "x",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__x",
+        "color": "#2F6BFF",
+        "end": "sem__x__end",
+        "kind": "vector",
+        "label": "x",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__x__origin"
+      },
+      {
+        "alias": "sem__y__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__y__end",
+        "coordinates": [
+          6.0,
+          4.0
+        ],
+        "name": "Ax",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__y",
+        "color": "#7B61FF",
+        "end": "sem__y__end",
+        "kind": "vector",
+        "label": "Ax",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__y__origin"
+      },
+      {
+        "matrix": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "linear_algebra.matrix_transform"
+      },
+      {
+        "aliases": [
+          "sem__inverse_order__source",
+          "sem__inverse_order__target"
+        ],
+        "matrices": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            3.0,
+            4.0
+          ],
+          [
+            6.0,
+            4.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__inverse_compare",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "compare: x → Ax"
+      },
+      {
+        "alias": "sem__stage.inverse.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "原变换"
+      },
+      {
+        "alias": "sem__stage.inverse.undo__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "撤销"
+      },
+      {
+        "alias": "sem__stage.inverse.identity__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "回到输入"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "可逆与退化变换的分层例题",
+    "version": 1
+  },
+  "plan_digest": "sha256:aeb59b9582791fd8eb2fc86091c6d3526aaad372d2e2d9a0954497d3c5b63283",
+  "read_guide": [
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 3,
+  "schema_version": 1,
+  "source_hash": "sha256:e48d69d1b35b71b0a70f2cf1c38f928dc7d843d93da7ca3deed991ce29004b9e",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "记录输入向量和原矩阵。",
+      "id": "stage.inverse.input",
+      "layout": "sequence",
+      "title": "原变换",
+      "visible_aliases": [
+        "sem__stage.inverse.input__sem__x",
+        "sem__stage.inverse.input__sem__x__end",
+        "sem__stage.inverse.input__sem__y",
+        "sem__stage.inverse.input__sem__y__end",
+        "sem__stage.inverse.input__sem__A_maps_x_to_y"
+      ],
+      "visible_refs": [
+        "x",
+        "y",
+        "A_maps_x_to_y"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "按逆矩阵执行反向变换。",
+      "id": "stage.inverse.undo",
+      "layout": "sequence",
+      "title": "撤销",
+      "visible_aliases": [
+        "sem__stage.inverse.undo__sem__x",
+        "sem__stage.inverse.undo__sem__x__end",
+        "sem__stage.inverse.undo__sem__y",
+        "sem__stage.inverse.undo__sem__y__end",
+        "sem__stage.inverse.undo__sem__inverse_order"
+      ],
+      "visible_refs": [
+        "x",
+        "y",
+        "inverse_order"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "复合结果应表现为单位变换。",
+      "id": "stage.inverse.identity",
+      "layout": "sequence",
+      "title": "回到输入",
+      "visible_aliases": [
+        "sem__stage.inverse.identity__sem__x",
+        "sem__stage.inverse.identity__sem__x__end",
+        "sem__stage.inverse.identity__sem__y",
+        "sem__stage.inverse.identity__sem__y__end",
+        "sem__stage.inverse.identity__sem__inverse_compare"
+      ],
+      "visible_refs": [
+        "x",
+        "y",
+        "inverse_compare"
+      ]
+    }
+  ],
+  "topic_id": "ch03.inverse.examples"
+}

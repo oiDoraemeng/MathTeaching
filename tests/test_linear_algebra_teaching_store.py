@@ -32,6 +32,7 @@ def test_store_allocates_revisions_and_published_is_separate(tmp_path: Path) -> 
     store.save_draft(artifact, raw_reply="{}")
     second = store.save_draft(artifact, raw_reply="{}")
     assert second.revision == 2
+    assert store.get(artifact.topic_id, 2, "draft").artifact.revision == 2
     assert store.published(artifact.topic_id) is None
 
 

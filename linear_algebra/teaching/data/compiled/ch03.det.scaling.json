@@ -1,0 +1,258 @@
+{
+  "artifact_digest": "sha256:f5a2597f80a6684b92ab79cbf674b62e1de88e22fb3e61967bdf6465bbe9fe51",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            3.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a__end",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "column a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a",
+        "color": "#2F6BFF",
+        "end": "sem__a__end",
+        "kind": "vector",
+        "label": "column a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__a__origin"
+      },
+      {
+        "alias": "sem__b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b__end",
+        "coordinates": [
+          0.0,
+          3.0
+        ],
+        "name": "column b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b",
+        "color": "#F08A24",
+        "end": "sem__b__end",
+        "kind": "vector",
+        "label": "column b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__b__origin"
+      },
+      {
+        "alias": "sem__area",
+        "color": "#E09F3E",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "matrix": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            3.0
+          ]
+        ],
+        "op": "linear_algebra.matrix_transform"
+      },
+      {
+        "aliases": [
+          "sem__det_stage__source",
+          "sem__det_stage__target"
+        ],
+        "matrices": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              0,
+              3
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.det.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "矩阵两列"
+      },
+      {
+        "alias": "sem__stage.det.measure__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "有向面积"
+      },
+      {
+        "alias": "sem__stage.det.transform__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "变换阶段"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "一行数乘改变面积比例",
+    "version": 1
+  },
+  "plan_digest": "sha256:c29e54bb354c79bf1f97f39d0618d4ab20e7eb4a480d8ead9b98186f786fa5a8",
+  "read_guide": [
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 3,
+  "schema_version": 1,
+  "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "把矩阵两列看作平行四边形的两条邻边。",
+      "id": "stage.det.input",
+      "layout": "sequence",
+      "title": "矩阵两列",
+      "visible_aliases": [
+        "sem__stage.det.input__sem__A",
+        "sem__stage.det.input__sem__a",
+        "sem__stage.det.input__sem__a__end",
+        "sem__stage.det.input__sem__b",
+        "sem__stage.det.input__sem__b__end"
+      ],
+      "visible_refs": [
+        "A",
+        "a",
+        "b"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "行列式给出有向面积及方向符号。",
+      "id": "stage.det.measure",
+      "layout": "sequence",
+      "title": "有向面积",
+      "visible_aliases": [
+        "sem__stage.det.measure__sem__a",
+        "sem__stage.det.measure__sem__a__end",
+        "sem__stage.det.measure__sem__b",
+        "sem__stage.det.measure__sem__b__end",
+        "sem__stage.det.measure__sem__area",
+        "sem__stage.det.measure__sem__det_maps_to_area"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "area",
+        "det_maps_to_area"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "比较变换前后的两条列向量，观察有向面积如何变化。",
+      "id": "stage.det.transform",
+      "layout": "sequence",
+      "title": "变换阶段",
+      "visible_aliases": [
+        "sem__stage.det.transform__sem__a",
+        "sem__stage.det.transform__sem__a__end",
+        "sem__stage.det.transform__sem__b",
+        "sem__stage.det.transform__sem__b__end",
+        "sem__stage.det.transform__sem__area",
+        "sem__stage.det.transform__sem__det_stage"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "area",
+        "det_stage"
+      ]
+    }
+  ],
+  "topic_id": "ch03.det.scaling"
+}

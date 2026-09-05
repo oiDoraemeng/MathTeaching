@@ -39,9 +39,9 @@
 
 ## 5. 三章教学资源与重点图
 
-- [ ] 5.1 基于讲义生成并审核第 1 章 24 个 artifact：向量、运算、内积、投影、叉积、混合积、几何证明和 n 维类比；用章节覆盖和 source hash 校验
-- [ ] 5.2 基于讲义生成并审核第 2 章 15 个 artifact：批量内积/投影、行列视角、基向量网格、复合、幂、秩、零空间、列空间和高维类比；用章节覆盖和 claim 闭合校验
-- [ ] 5.3 基于讲义生成并审核第 3 章 15 个 artifact：有向面积、ad-bc、det 符号/零/一、乘法性、克拉默法则、逆矩阵和高维体积；用章节覆盖和数字复算校验
+- [x] 5.1 基于讲义生成并审核第 1 章 24 个 artifact：向量、运算、内积、投影、叉积、混合积、几何证明和 n 维类比；用章节覆盖和 source hash 校验
+- [x] 5.2 基于讲义生成并审核第 2 章 15 个 artifact：批量内积/投影、行列视角、基向量网格、复合、幂、秩、零空间、列空间和高维类比；用章节覆盖和 claim 闭合校验
+- [x] 5.3 基于讲义生成并审核第 3 章 15 个 artifact：有向面积、ad-bc、det 符号/零/一、乘法性、克拉默法则、逆矩阵和高维体积；用章节覆盖和数字复算校验
 - [x] 5.4 为投影、变换网格、AB/BA、零空间、det(AB)、叉积和逆矩阵编写黄金 visual semantics 与 VisualContract；用关系级回归断言验证数学主张可见
 - [x] 5.5 为每个重点主题生成已发布 compiled snapshot 和读图提示；用 plan digest、stage count、必需实体和不变量清单验证可回放
 
@@ -62,5 +62,5 @@
 - [x] 7.3 增加“声明能力 ⇒ 编译 plan 实际 op”校验，并给每个声明性跳过写理由；用 capability mismatch fixture 验证不允许静默降级
 - [x] 7.4 更新颜色契约和场景角色值的一致性：验证 palette、builder helper 和 SceneCommandService 的角色词汇一致；用全主题 plan 验证无未知角色
 - [x] 7.5 更新单元、集成和 Web/Qt 测试：覆盖 artifact round-trip、raw reply 审计、agent 防泄漏、算例复算、重点图、storyboard、原子加载和旧资源兼容；用完整测试套件验证
-- [ ] 7.6 运行 `python -m linear_algebra.validation`、完整测试套件和构建检查；保存 54 主题、claim 覆盖和 plan digest 汇总到变更验证记录
+- [x] 7.6 运行 `python -m linear_algebra.validation`、完整测试套件和构建检查；保存 54 主题、claim 覆盖和 plan digest 汇总到变更验证记录
 - [ ] 7.7 手动逐章走查树形选择、解释分层、数字例题、claim 高亮、视觉阶段和失败回退；为重点主题保存截图并记录 artifact revision、source hash 和编译器版本

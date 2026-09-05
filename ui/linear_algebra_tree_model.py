@@ -5,7 +5,7 @@ from __future__ import annotations
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTreeWidget, QTreeWidgetItem
 
-from linear_algebra.registry import CurriculumRegistry
+from linear_algebra.registry import CurriculumRegistry, runtime_teaching_store
 
 
 class LinearAlgebraTreeModel:
@@ -161,7 +161,7 @@ class LinearAlgebraTreeModel:
                 *explanation.searchable_text,
             ]
             try:
-                bundle = self.registry.resolve_bundle(topic.id)
+                bundle = self.registry.resolve_bundle(topic.id, artifact_store=runtime_teaching_store())
             except (KeyError, OSError, TypeError, ValueError):
                 bundle = None
             if bundle is not None and bundle.artifact is not None:

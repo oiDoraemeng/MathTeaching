@@ -1,1 +1,312 @@
-{"artifact":{"claims":[{"entity_refs":["a","b","area"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls"],"formula":"det(A)=ad-bc","formula_symbols":["a","b","area"],"id":"claim.ch03.det.oriented-area","relation_refs":["main_relation"],"source_refs":["第3章 行列式 / 3.1 问题引入：变换对面积的缩放 / 3.1.1 行列式的几何定义::1::sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323"],"stage_refs":["stage.main"],"statement":"二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。"}],"connections":[{"claim_refs":["claim.ch03.det.oriented-area"],"description":"该主题与相邻线性代数概念共享同一向量表示。","id":"connection.ch03.det.oriented-area.related","relation":"related","target_topic_id":"ch01.vector.magnitude"}],"explanation":{"conclusion":"因此，二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。","connections":["可迁移到同章相邻的向量、内积或投影概念。"],"definition":"二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。","derivation":["从讲义定义出发：二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。","代入给定数值，得到 5.0。"],"formula":"det(A)=ad-bc","geometric_meaning":"图中实体和关系表达：二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 数值结果由对应向量、关系和阶段共同见证。","intuition":"把 行列式的有向面积定义 看成可测量的方向、长度或面积关系。","invariants":["有限数值复算与视觉阶段中的对象关系一致。"],"pitfalls":["把点的位置和向量的位移混为一谈，或忽略方向符号。"],"read_guide":["先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"],"searchable_text":["行列式的有向面积定义","det(A)=ad-bc","二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。"],"sections":[{"claim_refs":["claim.ch03.det.oriented-area"],"id":"definition","text":"二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。","title":"definition"},{"claim_refs":["claim.ch03.det.oriented-area"],"id":"formula","text":"二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。","title":"formula"},{"claim_refs":["claim.ch03.det.oriented-area"],"id":"derivation","text":"二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。","title":"derivation"},{"claim_refs":["claim.ch03.det.oriented-area"],"id":"worked_examples","text":"二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。","title":"worked_examples"},{"claim_refs":["claim.ch03.det.oriented-area"],"id":"geometric_meaning","text":"二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。","title":"geometric_meaning"},{"claim_refs":["claim.ch03.det.oriented-area"],"id":"pitfalls","text":"二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。","title":"pitfalls"}],"summary":"二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。","symbol_roles":{"a":"vector_a","area":"area","b":"vector_b"},"title":"行列式的有向面积定义","transfer_note":"先识别对象和关系，再代入数值，最后检查方向、正交性或尺度不变量。","worked_examples":[{"calculation":["按定义计算 det(A)=ad-bc","得到 5.0"],"checks":[{"expected":5.0,"name":"area","tolerance":1e-09}],"claim_refs":["claim.ch03.det.oriented-area"],"given":[[2,1],[1,3]],"id":"example.ch03.det.oriented-area","kind":"oriented_area","result":5.0,"title":"讲义数值例"}]},"generated":{"artifact_digest":"sha256:pending","generated_at":"2026-09-05T17:24:40Z","model":"deterministic-v1","prompt_version":"teaching-artifact-v1","provider":"local-lecture-template","raw_reply_digest":"sha256:pending","schema_version":1,"source_hash":"sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323"},"revision":1,"schema_version":1,"source":{"excerpt":"#### 3.1.1 行列式的几何定义\n\n定义 3.1（行列式——几何定义） 设 A 是 $2 \\times 2$ 矩阵。A 的行列式，记为 $\\det(A)$ 或 $|A|$，等于以 A 的两列为邻边的平行四边形的有向面积。\n- 若 $\\det(A) > 0$，两列的顺序与 $e_{1} \\rightarrow e_{2}$ 的旋转方向一致（逆时针）\n- 若 $\\det(A) < 0$，方向相反（顺时针）\n- 若 $\\det(A) = 0$，两列共线，平行四边形退化为线段$\\rightarrow$面积为零","heading_level":4,"heading_path":["第3章 行列式","3.1 问题引入：变换对面积的缩放","3.1.1 行列式的几何定义"],"neighboring_titles":["3.1.2 $2 \\times 2$ 行列式公式"],"occurrence":1,"source_hash":"sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323","source_path":["第3章 行列式","3.1 问题引入：变换对面积的缩放","3.1.1 行列式的几何定义"],"spans":[{"end_line":1204,"fingerprint":"sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323","heading_path":["第3章 行列式","3.1 问题引入：变换对面积的缩放","3.1.1 行列式的几何定义"],"id":"第3章 行列式 / 3.1 问题引入：变换对面积的缩放 / 3.1.1 行列式的几何定义::1::sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323","start_line":1198,"text":"#### 3.1.1 行列式的几何定义\n\n定义 3.1（行列式——几何定义） 设 A 是 $2 \\times 2$ 矩阵。A 的行列式，记为 $\\det(A)$ 或 $|A|$，等于以 A 的两列为邻边的平行四边形的有向面积。\n- 若 $\\det(A) > 0$，两列的顺序与 $e_{1} \\rightarrow e_{2}$ 的旋转方向一致（逆时针）\n- 若 $\\det(A) < 0$，方向相反（顺时针）\n- 若 $\\det(A) = 0$，两列共线，平行四边形退化为线段$\\rightarrow$面积为零"}]},"status":"published","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls"],"requires_analogy_boundary":false},"topic_id":"ch03.det.oriented-area","visual_semantics":{"entities":[{"claim_refs":["claim.ch03.det.oriented-area"],"dimension":2,"id":"a","kind":"vector","label":"a","role":"vector_a","value":[2,1]},{"claim_refs":["claim.ch03.det.oriented-area"],"dimension":2,"id":"b","kind":"vector","label":"b","role":"vector_b","value":[1,3]},{"claim_refs":["claim.ch03.det.oriented-area"],"dimension":2,"id":"area","kind":"area","label":"oriented area","role":"area","value":[[2,1],[1,3]]}],"relations":[{"claim_refs":["claim.ch03.det.oriented-area"],"id":"main_relation","kind":"same_measure","parameters":{},"source_ref":"a","target_ref":"area"}],"scene_kind":"2d","stages":[{"caption":"从输入向量读出公式中的结果与不变量。","expected_invariants":["typed calculation"],"id":"stage.main","input_entity_refs":["a","b"],"layout":"overlay","output_entity_refs":["area"],"relation_refs":["main_relation"],"title":"数学关系"}]}}}
+{
+  "artifact": {
+    "claims": [
+      {
+        "entity_refs": [
+          "a",
+          "b",
+          "area"
+        ],
+        "explanation_refs": [
+          "definition",
+          "formula",
+          "derivation",
+          "worked_examples",
+          "geometric_meaning",
+          "pitfalls"
+        ],
+        "formula": "det(A)=ad-bc",
+        "formula_symbols": [
+          "a",
+          "b",
+          "area"
+        ],
+        "id": "claim.ch03.det.oriented-area",
+        "relation_refs": [
+          "main_relation"
+        ],
+        "source_refs": [
+          "第3章 行列式 / 3.1 问题引入：变换对面积的缩放 / 3.1.1 行列式的几何定义::1::sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323"
+        ],
+        "stage_refs": [
+          "stage.main"
+        ],
+        "statement": "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。"
+      }
+    ],
+    "connections": [
+      {
+        "claim_refs": [
+          "claim.ch03.det.oriented-area"
+        ],
+        "description": "该主题与相邻线性代数概念共享同一向量表示。",
+        "id": "connection.ch03.det.oriented-area.related",
+        "relation": "related",
+        "target_topic_id": "ch01.vector.magnitude"
+      }
+    ],
+    "explanation": {
+      "conclusion": "因此，二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。",
+      "connections": [
+        "可迁移到同章相邻的向量、内积或投影概念。"
+      ],
+      "definition": "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。",
+      "derivation": [
+        "从讲义定义出发：二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。",
+        "代入给定数值，得到 5.0。"
+      ],
+      "formula": "det(A)=ad-bc",
+      "geometric_meaning": "图中实体和关系表达：二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 数值结果由对应向量、关系和阶段共同见证。",
+      "intuition": "把 行列式的有向面积定义 看成可测量的方向、长度或面积关系。",
+      "invariants": [
+        "有限数值复算与视觉阶段中的对象关系一致。"
+      ],
+      "pitfalls": [
+        "把点的位置和向量的位移混为一谈，或忽略方向符号。"
+      ],
+      "read_guide": [
+        "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+      ],
+      "searchable_text": [
+        "行列式的有向面积定义",
+        "det(A)=ad-bc",
+        "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。"
+      ],
+      "sections": [
+        {
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "id": "definition",
+          "text": "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。",
+          "title": "definition"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "id": "formula",
+          "text": "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。",
+          "title": "formula"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "id": "derivation",
+          "text": "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。",
+          "title": "derivation"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "id": "worked_examples",
+          "text": "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。",
+          "title": "worked_examples"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "id": "geometric_meaning",
+          "text": "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。",
+          "title": "geometric_meaning"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "id": "pitfalls",
+          "text": "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。 讲义锚点：行列式的有向面积定义。",
+          "title": "pitfalls"
+        }
+      ],
+      "summary": "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。",
+      "symbol_roles": {
+        "a": "vector_a",
+        "area": "area",
+        "b": "vector_b"
+      },
+      "title": "行列式的有向面积定义",
+      "transfer_note": "先识别对象和关系，再代入数值，最后检查方向、正交性或尺度不变量。",
+      "worked_examples": [
+        {
+          "calculation": [
+            "按定义计算 det(A)=ad-bc",
+            "得到 5.0"
+          ],
+          "checks": [
+            {
+              "expected": 5.0,
+              "name": "area",
+              "tolerance": 1e-09
+            }
+          ],
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "given": [
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          "id": "example.ch03.det.oriented-area",
+          "kind": "oriented_area",
+          "result": 5.0,
+          "title": "讲义数值例"
+        }
+      ]
+    },
+    "generated": {
+      "artifact_digest": "sha256:c06d8fc12584784dae5c265b0a9607b4ad883c7269acbcc909192106a5ae2db8",
+      "generated_at": "2026-09-05T17:24:40Z",
+      "model": "deterministic-v1",
+      "prompt_version": "teaching-artifact-v1",
+      "provider": "local-lecture-template",
+      "raw_reply_digest": "sha256:pending",
+      "schema_version": 1,
+      "source_hash": "sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323"
+    },
+    "revision": 2,
+    "schema_version": 1,
+    "source": {
+      "excerpt": "#### 3.1.1 行列式的几何定义\n\n定义 3.1（行列式——几何定义） 设 A 是 $2 \\times 2$ 矩阵。A 的行列式，记为 $\\det(A)$ 或 $|A|$，等于以 A 的两列为邻边的平行四边形的有向面积。\n- 若 $\\det(A) > 0$，两列的顺序与 $e_{1} \\rightarrow e_{2}$ 的旋转方向一致（逆时针）\n- 若 $\\det(A) < 0$，方向相反（顺时针）\n- 若 $\\det(A) = 0$，两列共线，平行四边形退化为线段$\\rightarrow$面积为零",
+      "heading_level": 4,
+      "heading_path": [
+        "第3章 行列式",
+        "3.1 问题引入：变换对面积的缩放",
+        "3.1.1 行列式的几何定义"
+      ],
+      "neighboring_titles": [
+        "3.1.2 $2 \\times 2$ 行列式公式"
+      ],
+      "occurrence": 1,
+      "source_hash": "sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323",
+      "source_path": [
+        "第3章 行列式",
+        "3.1 问题引入：变换对面积的缩放",
+        "3.1.1 行列式的几何定义"
+      ],
+      "spans": [
+        {
+          "end_line": 1204,
+          "fingerprint": "sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323",
+          "heading_path": [
+            "第3章 行列式",
+            "3.1 问题引入：变换对面积的缩放",
+            "3.1.1 行列式的几何定义"
+          ],
+          "id": "第3章 行列式 / 3.1 问题引入：变换对面积的缩放 / 3.1.1 行列式的几何定义::1::sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323",
+          "start_line": 1198,
+          "text": "#### 3.1.1 行列式的几何定义\n\n定义 3.1（行列式——几何定义） 设 A 是 $2 \\times 2$ 矩阵。A 的行列式，记为 $\\det(A)$ 或 $|A|$，等于以 A 的两列为邻边的平行四边形的有向面积。\n- 若 $\\det(A) > 0$，两列的顺序与 $e_{1} \\rightarrow e_{2}$ 的旋转方向一致（逆时针）\n- 若 $\\det(A) < 0$，方向相反（顺时针）\n- 若 $\\det(A) = 0$，两列共线，平行四边形退化为线段$\\rightarrow$面积为零"
+        }
+      ]
+    },
+    "status": "published",
+    "teaching_profile": {
+      "minimum_level": 3,
+      "required_sections": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls"
+      ],
+      "requires_analogy_boundary": false
+    },
+    "topic_id": "ch03.det.oriented-area",
+    "visual_semantics": {
+      "entities": [
+        {
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "dimension": 2,
+          "id": "a",
+          "kind": "vector",
+          "label": "a",
+          "role": "vector_a",
+          "value": [
+            2,
+            1
+          ]
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "dimension": 2,
+          "id": "b",
+          "kind": "vector",
+          "label": "b",
+          "role": "vector_b",
+          "value": [
+            1,
+            3
+          ]
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "dimension": 2,
+          "id": "area",
+          "kind": "area",
+          "label": "oriented area",
+          "role": "area",
+          "value": [
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              3
+            ]
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "claim_refs": [
+            "claim.ch03.det.oriented-area"
+          ],
+          "id": "main_relation",
+          "kind": "same_measure",
+          "parameters": {},
+          "source_ref": "a",
+          "target_ref": "area"
+        }
+      ],
+      "scene_kind": "2d",
+      "stages": [
+        {
+          "caption": "从输入向量读出公式中的结果与不变量。",
+          "expected_invariants": [
+            "typed calculation"
+          ],
+          "id": "stage.main",
+          "input_entity_refs": [
+            "a",
+            "b"
+          ],
+          "layout": "overlay",
+          "output_entity_refs": [
+            "area"
+          ],
+          "relation_refs": [
+            "main_relation"
+          ],
+          "title": "数学关系"
+        }
+      ]
+    }
+  }
+}

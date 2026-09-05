@@ -206,9 +206,9 @@
       "topic_id": "ch02.matrix.basis"
     },
     {
-      "artifact_digest": "sha256:b4413df9fc563aec93871116bb756b79e6b4e20b82f0dab92c0d4b8a0c382477",
+      "artifact_digest": "sha256:f9a667de8569eb70150b8dcaa53ddbf5a6ee27e837d9432f5b645684f19992de",
       "chapter": 2,
-      "revision": 1,
+      "revision": 2,
       "source_hash": "sha256:249f825ba9ab6a2d3d042a39fa709e8e6e22611b121cfdf2759e82f232484499",
       "topic_id": "ch02.matrix.composition"
     },
@@ -276,107 +276,107 @@
       "topic_id": "ch02.subspace.rank-nullity"
     },
     {
-      "artifact_digest": "sha256:7e723a9dab37b4b261b7da671e63be868436c1563bae124d2abcbb4510a5465d",
+      "artifact_digest": "sha256:cdb022228934fdda1125076e90dca4fddb062965f36ac1754aa03654ca6548ad",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
       "topic_id": "ch03.cramer.area-ratio"
     },
     {
-      "artifact_digest": "sha256:e418d0c44a324a7555f965f16be5db32fccb27f695a03464a038bd8f20ecd746",
+      "artifact_digest": "sha256:2a7e19ece56ad3ea25d38caf1e275857eb91ec60d5b432517591c159b61ca059",
       "chapter": 3,
-      "revision": 1,
+      "revision": 4,
       "source_hash": "sha256:cf8be46dd084ee719f2fdc8a314eb6ed8106ff42972a605d2f3e80ea9d061546",
       "topic_id": "ch03.det.ad-bc"
     },
     {
-      "artifact_digest": "sha256:b5de211eac869c1e648d3cb3085b2b612b6a94b1a8049cbdf9254767257d6800",
+      "artifact_digest": "sha256:0ecd735957fb63f29c396d438fe5a523d6a1b7d8b9bef820d465be052dab6437",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:64b698a22859115514a2815e7ded5618e1d7b41aac9a28eb5b0ce39d7cee09f4",
       "topic_id": "ch03.det.examples"
     },
     {
-      "artifact_digest": "sha256:94e94c8b8aeb9f77663381434c1eee168f48ce8d41134918f8dcc8a910886710",
+      "artifact_digest": "sha256:080e14b84afbeccdb335b663785a23234b600637460fc6b60f4737f51f8c7265",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:325a14583a942b2e5d5c8f81bca1568ca4281a087bb1e401dec33530f3686d78",
       "topic_id": "ch03.det.high-dimensional-volume"
     },
     {
-      "artifact_digest": "sha256:5a97b3aae3537e8567efcb9b856db53af2cde588461b7102d8fe51c400fb7e89",
+      "artifact_digest": "sha256:ff1da59da9971e704b2f40fcce8730f6c0c4ea4498ef8e537b90b1dd3edad626",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
       "topic_id": "ch03.det.multiplicativity"
     },
     {
-      "artifact_digest": "sha256:a04724ea5dbd7ec7b4ddc0625dee74b3ec2872222d14779d8d8a263eea000ba2",
+      "artifact_digest": "sha256:1f516a90e661d8bf590e2eb25122207f4e57d3b3e9e9bc91363ce9f215dc4271",
       "chapter": 3,
-      "revision": 1,
+      "revision": 4,
       "source_hash": "sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323",
       "topic_id": "ch03.det.oriented-area"
     },
     {
-      "artifact_digest": "sha256:06efe5a942113ff8691c288fe4e7a6794818a181538dcc93bf0d1e29b5da94da",
+      "artifact_digest": "sha256:3294c623bc315b2d2006784e558ed4cb1e9e29e92c4c77dff565b55abff30e1a",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
       "topic_id": "ch03.det.row-swap"
     },
     {
-      "artifact_digest": "sha256:2973125e7ec12d2255a5f81bdf98d40991f6db435f48762f139bba93e3227366",
+      "artifact_digest": "sha256:f5a2597f80a6684b92ab79cbf674b62e1de88e22fb3e61967bdf6465bbe9fe51",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
       "topic_id": "ch03.det.scaling"
     },
     {
-      "artifact_digest": "sha256:73d8d7c7cc3d45a55201c5626a095c50d5e4b29b8b33835c979bf8bf367ebe6b",
+      "artifact_digest": "sha256:c72bb53ee82b619cc734fc2d82a54fd00e7147c0f3a2884637a26c2f1d157163",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
       "topic_id": "ch03.det.shear"
     },
     {
-      "artifact_digest": "sha256:94c504b214dc81e13bce9e5627a5c3e50a1f6115d1f4b08fa7db0d5415bf760e",
+      "artifact_digest": "sha256:05e09681a322350f15215523557eae0746417fa660a19e38878db53fa8b9226c",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:85c2dfa15eb9d5444acced285069532710e5182167f8b120e7bf98b9bd7689b4",
       "topic_id": "ch03.det.sign-zero-one"
     },
     {
-      "artifact_digest": "sha256:62a77979dcbd294a5de0f2c3f6d0a5b4e4c8a488e608beb5bd39b5da84202750",
+      "artifact_digest": "sha256:50d859631a209353a02f0790b3f7702d7d0d44fc6a3821bd9cb6675b409355c9",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:4eeb58f2ff6eda37648b0c36dd461128c7afdd24872497bbd261dac8f8ed7ab3",
       "topic_id": "ch03.det.zero.equivalence"
     },
     {
-      "artifact_digest": "sha256:3e512d1688fafccf990e9999cc19dc89f3aac0c927ee9670abce936e23fabd47",
+      "artifact_digest": "sha256:d6192c659779b2578c637f98c4048f8c86211b3499358a5cac11a2b9aca63898",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:e48d69d1b35b71b0a70f2cf1c38f928dc7d843d93da7ca3deed991ce29004b9e",
       "topic_id": "ch03.inverse.examples"
     },
     {
-      "artifact_digest": "sha256:ee5892b47bfff164a6049c8a40216ff70035b9401478f58adb1fe1d2ad6308c9",
+      "artifact_digest": "sha256:2f736136b326a22f199d87b236bf7ee42952ce31ff3beb66e766a931bcd23c53",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:1e1869e796f6a4440cfab9915bf03553ca938b34742a29655ce1b0ed2334154c",
       "topic_id": "ch03.inverse.formula"
     },
     {
-      "artifact_digest": "sha256:508e5b4725b364d306d385cceaf04bead8c21275ef7c103a55fac29db95937b2",
+      "artifact_digest": "sha256:8d461a6a414c590c48edc3c91eb96f84a92d55232db1c0a5900da4a8251c4ffa",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:ffa4c79ebbf8be28ecd21dcd13d91bfa6b2234bf8797f7fc19ec0d33c0ddd905",
       "topic_id": "ch03.inverse.reverse-order"
     },
     {
-      "artifact_digest": "sha256:47ec64021cab05b2691a19ff7c85d734ac3ce067ad469cadff742152fd8f9177",
+      "artifact_digest": "sha256:b0dbe8050e2215557d907eef1e7aa94caebd03339c449d4a2da086a3f05a4286",
       "chapter": 3,
-      "revision": 1,
+      "revision": 3,
       "source_hash": "sha256:1412f3abb56f905fb252ee42c4ff91603976acdf1595bb39007c54d5d9efe6e4",
       "topic_id": "ch03.inverse.undo"
     }

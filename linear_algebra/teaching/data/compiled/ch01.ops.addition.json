@@ -1,0 +1,214 @@
+{
+  "artifact_digest": "sha256:25101cffddf8d0803d2ec43a43cb06e5c38fc3769075d20a8b5f8cc8453d9c8a",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a__end",
+        "coordinates": [
+          3.0,
+          1.0
+        ],
+        "name": "a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a",
+        "color": "#2F6BFF",
+        "end": "sem__a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__a__origin"
+      },
+      {
+        "alias": "sem__b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b",
+        "color": "#F08A24",
+        "end": "sem__b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__b__origin"
+      },
+      {
+        "alias": "sem__sum__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__sum__end",
+        "coordinates": [
+          4.0,
+          3.0
+        ],
+        "name": "a+b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__sum",
+        "color": "#7B61FF",
+        "end": "sem__sum__end",
+        "kind": "vector",
+        "label": "a+b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__sum__origin"
+      },
+      {
+        "alias": "sem__rel.0.claim.ch01.ops.addition",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "sum: a → b"
+      },
+      {
+        "alias": "cap__polygon",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            3.0,
+            1.0
+          ],
+          [
+            4.0,
+            3.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.claim.ch01.ops.addition.observe__title",
+        "op": "annotation.upsert",
+        "position": [
+          -1.5,
+          2.65
+        ],
+        "text": "观察对象"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.ops.addition.derive__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "代数验证"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "向量加法",
+    "version": 1
+  },
+  "plan_digest": "sha256:99ee8fa6ed6ada9f02a2994896e1056b4114cc614913ccab1d8bbddcf2a890ae",
+  "read_guide": [
+    "观察输入实体和标签。",
+    "沿关系读取输出并核对不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "先读对象、角色和输入输出。",
+      "id": "stage.claim.ch01.ops.addition.observe",
+      "layout": "side_by_side",
+      "title": "观察对象",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.ops.addition.observe__sem__a",
+        "sem__stage.claim.ch01.ops.addition.observe__sem__a__end",
+        "sem__stage.claim.ch01.ops.addition.observe__sem__b",
+        "sem__stage.claim.ch01.ops.addition.observe__sem__b__end",
+        "sem__stage.claim.ch01.ops.addition.observe__sem__sum",
+        "sem__stage.claim.ch01.ops.addition.observe__sem__sum__end",
+        "sem__stage.claim.ch01.ops.addition.observe__sem__rel.0.claim.ch01.ops.addition"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "sum",
+        "rel.0.claim.ch01.ops.addition"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "按公式计算并检查几何关系。",
+      "id": "stage.claim.ch01.ops.addition.derive",
+      "layout": "sequence",
+      "title": "代数验证",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.ops.addition.derive__sem__a",
+        "sem__stage.claim.ch01.ops.addition.derive__sem__a__end",
+        "sem__stage.claim.ch01.ops.addition.derive__sem__b",
+        "sem__stage.claim.ch01.ops.addition.derive__sem__b__end",
+        "sem__stage.claim.ch01.ops.addition.derive__sem__sum",
+        "sem__stage.claim.ch01.ops.addition.derive__sem__sum__end",
+        "sem__stage.claim.ch01.ops.addition.derive__sem__rel.0.claim.ch01.ops.addition"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "sum",
+        "rel.0.claim.ch01.ops.addition"
+      ]
+    }
+  ],
+  "topic_id": "ch01.ops.addition"
+}

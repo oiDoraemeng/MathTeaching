@@ -1,0 +1,94 @@
+{
+  "artifact_digest": "sha256:0ff633f6be46d905881e8146581eda40d98efabc0b832dfceed71808fd77f43a",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__x",
+        "color": "#2F6BFF",
+        "end": [
+          1.0,
+          2.0,
+          3.0
+        ],
+        "kind": "vector",
+        "label": "x",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__y",
+        "color": "#7B61FF",
+        "end": [
+          1.0,
+          4.0,
+          9.0
+        ],
+        "kind": "vector",
+        "label": "T(x)",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__ch02.high-dimensional.analogy__formula",
+        "op": "annotation.formula",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "T(x)=Ax,\\quad \\operatorname{rank}(A)\\leq\\min(m,n)"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "3d",
+    "summary": "n 维矩阵运算的低维类比",
+    "version": 1
+  },
+  "plan_digest": "sha256:c30f98ebf5f2d6aadf71f9138918b32d46117874069661f4bace8e96cdca3e9d",
+  "read_guide": [
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:aec0866b91b7031cc30af32b39f6dd7728fe7a7490b88d28680b456e83f83fe6",
+  "stages": [
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "逐坐标计算在三维示例中可见，并可推广到 n 维。",
+      "id": "stage.analogy",
+      "layout": "overlay",
+      "title": "高维类比",
+      "visible_aliases": [
+        "sem__stage.analogy__sem__x",
+        "sem__stage.analogy__sem__x__end",
+        "sem__stage.analogy__sem__y",
+        "sem__stage.analogy__sem__y__end",
+        "sem__stage.analogy__sem__x_maps_to_y"
+      ],
+      "visible_refs": [
+        "x",
+        "y",
+        "x_maps_to_y"
+      ]
+    }
+  ],
+  "topic_id": "ch02.high-dimensional.analogy"
+}

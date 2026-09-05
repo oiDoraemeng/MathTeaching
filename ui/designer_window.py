@@ -32,7 +32,7 @@ from models.geometry_2d import (
     parse_point_coordinates,
 )
 from models.function_catalog import catalog_entries, catalog_entry
-from linear_algebra.registry import catalog_registry
+from linear_algebra.registry import catalog_registry, runtime_teaching_store
 from linear_algebra.visualizations.common import RenderContext
 from models.scene_mode import SceneAppearance, SceneMode
 from models.surface_layer import PlotDomain, SurfaceLayer
@@ -2210,7 +2210,7 @@ class MainWindow:
     def _load_linear_algebra_topic(self, topic_id: str) -> None:
         registry = catalog_registry()
         try:
-            bundle = registry.resolve_bundle(topic_id)
+            bundle = registry.resolve_bundle(topic_id, artifact_store=runtime_teaching_store())
             topic = bundle.topic
             explanation_case = bundle.artifact or registry.get_explanation(topic.explanation_id)
             lesson_plan = bundle.compiled.plan if bundle.compiled is not None else bundle.recipe.builder(RenderContext.default(topic.id))

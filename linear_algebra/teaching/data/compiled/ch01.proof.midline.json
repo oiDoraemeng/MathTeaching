@@ -1,0 +1,248 @@
+{
+  "artifact_digest": "sha256:8e05b9db233082f7d045cbe76187cdfe93d4c393eee7583b46371c13482bc023",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "AB",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a",
+        "color": "#2F6BFF",
+        "end": "sem__a__end",
+        "kind": "vector",
+        "label": "AB",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__a__origin"
+      },
+      {
+        "alias": "sem__b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "AC",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b",
+        "color": "#F08A24",
+        "end": "sem__b__end",
+        "kind": "vector",
+        "label": "AC",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__b__origin"
+      },
+      {
+        "alias": "sem__DE__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__DE__end",
+        "coordinates": [
+          -0.5,
+          0.5
+        ],
+        "name": "DE",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__DE",
+        "color": "#7B61FF",
+        "end": "sem__DE__end",
+        "kind": "vector",
+        "label": "DE",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__DE__origin"
+      },
+      {
+        "alias": "sem__BC__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__BC__end",
+        "coordinates": [
+          -1.0,
+          1.0
+        ],
+        "name": "BC",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__BC",
+        "color": "#D64550",
+        "end": "sem__BC__end",
+        "kind": "vector",
+        "label": "BC",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__BC__origin"
+      },
+      {
+        "alias": "sem__rel.0.claim.ch01.proof.midline",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "scalar_multiple: DE → BC"
+      },
+      {
+        "alias": "cap__polygon",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.claim.ch01.proof.midline.observe__title",
+        "op": "annotation.upsert",
+        "position": [
+          -1.5,
+          2.65
+        ],
+        "text": "观察对象"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.proof.midline.derive__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "代数验证"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "三角形中位线定理",
+    "version": 1
+  },
+  "plan_digest": "sha256:745a20705298c9e7e59d0ab32522400b5b8df69e68017e05c417b62b8684f159",
+  "read_guide": [
+    "观察输入实体和标签。",
+    "沿关系读取输出并核对不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:71150484c6087cdee298ce32f28634cfc4c618d29a90e0e5c1dd0c6890d9e57a",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "先读对象、角色和输入输出。",
+      "id": "stage.claim.ch01.proof.midline.observe",
+      "layout": "side_by_side",
+      "title": "观察对象",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.proof.midline.observe__sem__a",
+        "sem__stage.claim.ch01.proof.midline.observe__sem__a__end",
+        "sem__stage.claim.ch01.proof.midline.observe__sem__b",
+        "sem__stage.claim.ch01.proof.midline.observe__sem__b__end",
+        "sem__stage.claim.ch01.proof.midline.observe__sem__DE",
+        "sem__stage.claim.ch01.proof.midline.observe__sem__DE__end",
+        "sem__stage.claim.ch01.proof.midline.observe__sem__BC",
+        "sem__stage.claim.ch01.proof.midline.observe__sem__BC__end",
+        "sem__stage.claim.ch01.proof.midline.observe__sem__rel.0.claim.ch01.proof.midline"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "DE",
+        "BC",
+        "rel.0.claim.ch01.proof.midline"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "按公式计算并检查几何关系。",
+      "id": "stage.claim.ch01.proof.midline.derive",
+      "layout": "sequence",
+      "title": "代数验证",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.proof.midline.derive__sem__a",
+        "sem__stage.claim.ch01.proof.midline.derive__sem__a__end",
+        "sem__stage.claim.ch01.proof.midline.derive__sem__b",
+        "sem__stage.claim.ch01.proof.midline.derive__sem__b__end",
+        "sem__stage.claim.ch01.proof.midline.derive__sem__DE",
+        "sem__stage.claim.ch01.proof.midline.derive__sem__DE__end",
+        "sem__stage.claim.ch01.proof.midline.derive__sem__BC",
+        "sem__stage.claim.ch01.proof.midline.derive__sem__BC__end",
+        "sem__stage.claim.ch01.proof.midline.derive__sem__rel.0.claim.ch01.proof.midline"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "DE",
+        "BC",
+        "rel.0.claim.ch01.proof.midline"
+      ]
+    }
+  ],
+  "topic_id": "ch01.proof.midline"
+}

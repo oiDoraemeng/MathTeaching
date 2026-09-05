@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import os
+from pathlib import Path
 from types import MappingProxyType
 from typing import Mapping
 
@@ -120,6 +121,19 @@ class CurriculumRegistry:
 _REGISTRY: CurriculumRegistry | None = None
 
 
+def bundled_teaching_store() -> TeachingArtifactStore:
+    """Return the checked-in teaching artifact store used by the application."""
+
+    return TeachingArtifactStore(Path(__file__).resolve().parent / "teaching" / "data")
+
+
+def runtime_teaching_store() -> TeachingArtifactStore:
+    """Resolve the store for runtime readers, honoring test/pack overrides."""
+
+    configured_root = os.environ.get("MATH3D_TEACHING_ARTIFACT_ROOT", "").strip()
+    return TeachingArtifactStore(configured_root) if configured_root else bundled_teaching_store()
+
+
 def catalog_registry() -> CurriculumRegistry:
     global _REGISTRY
     if _REGISTRY is None:
@@ -136,4 +150,4 @@ def catalog_registry() -> CurriculumRegistry:
     return _REGISTRY
 
 
-__all__ = ("CAPABILITIES", "CurriculumBundle", "CurriculumRegistry", "catalog_registry")
+__all__ = ("CAPABILITIES", "CurriculumBundle", "CurriculumRegistry", "bundled_teaching_store", "runtime_teaching_store", "catalog_registry")

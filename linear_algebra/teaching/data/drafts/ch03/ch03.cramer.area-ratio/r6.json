@@ -1,1 +1,322 @@
-{"artifact":{"claims":[{"entity_refs":["a","b","area"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"x_i=det(A_i)/det(A)","formula_symbols":["a","b","area"],"id":"claim.ch03.cramer.area-ratio","relation_refs":["main_relation"],"source_refs":["第3章 行列式 / 3.3 克拉默法则::1::sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70"],"stage_refs":["stage.main"],"statement":"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。"}],"connections":[{"claim_refs":["claim.ch03.cramer.area-ratio"],"description":"该主题与相邻线性代数概念共享同一向量表示。","id":"connection.ch03.cramer.area-ratio.related","relation":"related","target_topic_id":"ch01.vector.magnitude"}],"explanation":{"conclusion":"因此，克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。","connections":["可迁移到同章相邻的向量、内积或投影概念。"],"definition":"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。","derivation":["从讲义定义出发：克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。","代入给定数值，得到 5.0。"],"formula":"x_i=det(A_i)/det(A)","geometric_meaning":"图中实体和关系表达：克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 数值结果由对应向量、关系和阶段共同见证。","intuition":"把 克拉默法则的面积比解方程组 看成可测量的方向、长度或面积关系。","invariants":["有限数值复算与视觉阶段中的对象关系一致。"],"pitfalls":["把点的位置和向量的位移混为一谈，或忽略方向符号。"],"read_guide":["先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"],"searchable_text":["克拉默法则的面积比解方程组","x_i=det(A_i)/det(A)","克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。"],"sections":[{"claim_refs":["claim.ch03.cramer.area-ratio"],"id":"definition","text":"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。","title":"definition"},{"claim_refs":["claim.ch03.cramer.area-ratio"],"id":"formula","text":"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。","title":"formula"},{"claim_refs":["claim.ch03.cramer.area-ratio"],"id":"derivation","text":"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。","title":"derivation"},{"claim_refs":["claim.ch03.cramer.area-ratio"],"id":"worked_examples","text":"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。","title":"worked_examples"},{"claim_refs":["claim.ch03.cramer.area-ratio"],"id":"geometric_meaning","text":"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。","title":"geometric_meaning"},{"claim_refs":["claim.ch03.cramer.area-ratio"],"id":"pitfalls","text":"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。","title":"pitfalls"},{"claim_refs":["claim.ch03.cramer.area-ratio"],"id":"connections","text":"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。","title":"connections"}],"summary":"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。","symbol_roles":{"a":"vector_a","area":"area","b":"vector_b"},"title":"克拉默法则的面积比解方程组","transfer_note":"先识别对象和关系，再代入数值，最后检查方向、正交性或尺度不变量。","worked_examples":[{"calculation":["按定义计算 x_i=det(A_i)/det(A)","得到 5.0"],"checks":[{"expected":5.0,"name":"area","tolerance":1e-09}],"claim_refs":["claim.ch03.cramer.area-ratio"],"given":[[2,1],[1,3]],"id":"example.ch03.cramer.area-ratio","kind":"oriented_area","result":5.0,"title":"讲义数值例"}]},"generated":{"artifact_digest":"sha256:pending","generated_at":"2026-09-05T17:24:40Z","model":"deterministic-v1","prompt_version":"teaching-artifact-v1","provider":"local-lecture-template","raw_reply_digest":"sha256:pending","schema_version":1,"source_hash":"sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70"},"revision":1,"schema_version":1,"source":{"excerpt":"### 3.3 克拉默法则\n\n定理 3.5（Cramer 法则） 对于线性方程组 $Ax = b$（A 为 $n \\times n$ 可逆矩阵），解的第 i 个分量为：\n$$\nx_{i} = \\frac{\\det(A_{i})}{\\det(A)}\n$$\n其中 $A_{i}$ 是将 A 的第 i 列替换为 b 后得到的新矩阵。\n几何解读（$2 \\times 2$）：\n- $x_{1} =$ \"以 b 替第一列\"的平行四边形面积 / 原始平行四边形面积\n- $x_{2} =$ \"以 b 替第二列\"的平行四边形面积 / 原始平行四边形面积\n\n#### 例题\n\n方程组：$2x + y = 5$，$x + 3y = 5$。\n$$\n\\det(A) = 5\n$$\n$$\n\\det(\\begin{pmatrix}5 & 1 \\\\ 5 & 3\\end{pmatrix}) = 10 \\rightarrow x = \\frac{10}{5} = 2\n$$\n$$\n\\det(\\begin{pmatrix}2 & 5 \\\\ 1 & 5\\end{pmatrix}) = 5 \\rightarrow y = \\frac{5}{5} = 1\n$$\n$$\n(x, y) = (2, 1) ✓\n$$","heading_level":3,"heading_path":["第3章 行列式","3.3 克拉默法则"],"neighboring_titles":["3.2 行列式的核心性质","3.4 逆矩阵"],"occurrence":1,"source_hash":"sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70","source_path":["第3章 行列式","3.3 克拉默法则","面积比解方程组"],"spans":[{"end_line":1318,"fingerprint":"sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70","heading_path":["第3章 行列式","3.3 克拉默法则"],"id":"第3章 行列式 / 3.3 克拉默法则::1::sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70","start_line":1285,"text":"### 3.3 克拉默法则\n\n定理 3.5（Cramer 法则） 对于线性方程组 $Ax = b$（A 为 $n \\times n$ 可逆矩阵），解的第 i 个分量为：\n$$\nx_{i} = \\frac{\\det(A_{i})}{\\det(A)}\n$$\n其中 $A_{i}$ 是将 A 的第 i 列替换为 b 后得到的新矩阵。\n几何解读（$2 \\times 2$）：\n- $x_{1} =$ \"以 b 替第一列\"的平行四边形面积 / 原始平行四边形面积\n- $x_{2} =$ \"以 b 替第二列\"的平行四边形面积 / 原始平行四边形面积\n\n#### 例题\n\n方程组：$2x + y = 5$，$x + 3y = 5$。\n$$\n\\det(A) = 5\n$$\n$$\n\\det(\\begin{pmatrix}5 & 1 \\\\ 5 & 3\\end{pmatrix}) = 10 \\rightarrow x = \\frac{10}{5} = 2\n$$\n$$\n\\det(\\begin{pmatrix}2 & 5 \\\\ 1 & 5\\end{pmatrix}) = 5 \\rightarrow y = \\frac{5}{5} = 1\n$$\n$$\n(x, y) = (2, 1) ✓\n$$"}]},"status":"draft","teaching_profile":{"minimum_level":4,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch03.cramer.area-ratio","visual_semantics":{"entities":[{"claim_refs":["claim.ch03.cramer.area-ratio"],"dimension":2,"id":"a","kind":"vector","label":"a","role":"vector_a","value":[2,1]},{"claim_refs":["claim.ch03.cramer.area-ratio"],"dimension":2,"id":"b","kind":"vector","label":"b","role":"vector_b","value":[1,3]},{"claim_refs":["claim.ch03.cramer.area-ratio"],"dimension":2,"id":"area","kind":"area","label":"oriented area","role":"area","value":[[2,1],[1,3]]}],"relations":[{"claim_refs":["claim.ch03.cramer.area-ratio"],"id":"main_relation","kind":"same_measure","parameters":{},"source_ref":"a","target_ref":"area"}],"scene_kind":"2d","stages":[{"caption":"从输入向量读出公式中的结果与不变量。","expected_invariants":["typed calculation"],"id":"stage.main","input_entity_refs":["a","b"],"layout":"overlay","output_entity_refs":["area"],"relation_refs":["main_relation"],"title":"数学关系"}]}},"raw_reply":"{\"claims\":[{\"entity_refs\":[\"a\",\"b\",\"area\"],\"explanation_refs\":[\"definition\",\"formula\",\"derivation\",\"worked_examples\",\"geometric_meaning\",\"pitfalls\",\"connections\"],\"formula\":\"x_i=det(A_i)/det(A)\",\"formula_symbols\":[\"a\",\"b\",\"area\"],\"id\":\"claim.ch03.cramer.area-ratio\",\"relation_refs\":[\"main_relation\"],\"source_refs\":[\"第3章 行列式 / 3.3 克拉默法则::1::sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70\"],\"stage_refs\":[\"stage.main\"],\"statement\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\"}],\"connections\":[{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"description\":\"该主题与相邻线性代数概念共享同一向量表示。\",\"id\":\"connection.ch03.cramer.area-ratio.related\",\"relation\":\"related\",\"target_topic_id\":\"ch01.vector.magnitude\"}],\"explanation\":{\"conclusion\":\"因此，克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\",\"connections\":[\"可迁移到同章相邻的向量、内积或投影概念。\"],\"definition\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\",\"derivation\":[\"从讲义定义出发：克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\",\"代入给定数值，得到 5.0。\"],\"formula\":\"x_i=det(A_i)/det(A)\",\"geometric_meaning\":\"图中实体和关系表达：克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 数值结果由对应向量、关系和阶段共同见证。\",\"intuition\":\"把 克拉默法则的面积比解方程组 看成可测量的方向、长度或面积关系。\",\"invariants\":[\"有限数值复算与视觉阶段中的对象关系一致。\"],\"pitfalls\":[\"把点的位置和向量的位移混为一谈，或忽略方向符号。\"],\"read_guide\":[\"先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。\"],\"searchable_text\":[\"克拉默法则的面积比解方程组\",\"x_i=det(A_i)/det(A)\",\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\"],\"sections\":[{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"definition\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"definition\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"formula\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"formula\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"derivation\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"derivation\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"worked_examples\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"worked_examples\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"geometric_meaning\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"geometric_meaning\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"pitfalls\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"pitfalls\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"connections\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"connections\"}],\"summary\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\",\"symbol_roles\":{\"a\":\"vector_a\",\"area\":\"area\",\"b\":\"vector_b\"},\"title\":\"克拉默法则的面积比解方程组\",\"transfer_note\":\"先识别对象和关系，再代入数值，最后检查方向、正交性或尺度不变量。\",\"worked_examples\":[{\"calculation\":[\"按定义计算 x_i=det(A_i)/det(A)\",\"得到 5.0\"],\"checks\":[{\"expected\":5.0,\"name\":\"area\",\"tolerance\":1e-09}],\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"given\":[[2,1],[1,3]],\"id\":\"example.ch03.cramer.area-ratio\",\"kind\":\"oriented_area\",\"result\":5.0,\"title\":\"讲义数值例\"}]},\"generated\":{\"artifact_digest\":\"sha256:pending\",\"generated_at\":\"2026-09-05T17:24:40Z\",\"model\":\"deterministic-v1\",\"prompt_version\":\"teaching-artifact-v1\",\"provider\":\"local-lecture-template\",\"raw_reply_digest\":\"sha256:pending\",\"schema_version\":1,\"source_hash\":\"sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70\"},\"revision\":1,\"schema_version\":1,\"source\":{\"excerpt\":\"### 3.3 克拉默法则\\n\\n定理 3.5（Cramer 法则） 对于线性方程组 $Ax = b$（A 为 $n \\\\times n$ 可逆矩阵），解的第 i 个分量为：\\n$$\\nx_{i} = \\\\frac{\\\\det(A_{i})}{\\\\det(A)}\\n$$\\n其中 $A_{i}$ 是将 A 的第 i 列替换为 b 后得到的新矩阵。\\n几何解读（$2 \\\\times 2$）：\\n- $x_{1} =$ \\\"以 b 替第一列\\\"的平行四边形面积 / 原始平行四边形面积\\n- $x_{2} =$ \\\"以 b 替第二列\\\"的平行四边形面积 / 原始平行四边形面积\\n\\n#### 例题\\n\\n方程组：$2x + y = 5$，$x + 3y = 5$。\\n$$\\n\\\\det(A) = 5\\n$$\\n$$\\n\\\\det(\\\\begin{pmatrix}5 & 1 \\\\\\\\ 5 & 3\\\\end{pmatrix}) = 10 \\\\rightarrow x = \\\\frac{10}{5} = 2\\n$$\\n$$\\n\\\\det(\\\\begin{pmatrix}2 & 5 \\\\\\\\ 1 & 5\\\\end{pmatrix}) = 5 \\\\rightarrow y = \\\\frac{5}{5} = 1\\n$$\\n$$\\n(x, y) = (2, 1) ✓\\n$$\",\"heading_level\":3,\"heading_path\":[\"第3章 行列式\",\"3.3 克拉默法则\"],\"neighboring_titles\":[\"3.2 行列式的核心性质\",\"3.4 逆矩阵\"],\"occurrence\":1,\"source_hash\":\"sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70\",\"source_path\":[\"第3章 行列式\",\"3.3 克拉默法则\",\"面积比解方程组\"],\"spans\":[{\"end_line\":1318,\"fingerprint\":\"sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70\",\"heading_path\":[\"第3章 行列式\",\"3.3 克拉默法则\"],\"id\":\"第3章 行列式 / 3.3 克拉默法则::1::sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70\",\"start_line\":1285,\"text\":\"### 3.3 克拉默法则\\n\\n定理 3.5（Cramer 法则） 对于线性方程组 $Ax = b$（A 为 $n \\\\times n$ 可逆矩阵），解的第 i 个分量为：\\n$$\\nx_{i} = \\\\frac{\\\\det(A_{i})}{\\\\det(A)}\\n$$\\n其中 $A_{i}$ 是将 A 的第 i 列替换为 b 后得到的新矩阵。\\n几何解读（$2 \\\\times 2$）：\\n- $x_{1} =$ \\\"以 b 替第一列\\\"的平行四边形面积 / 原始平行四边形面积\\n- $x_{2} =$ \\\"以 b 替第二列\\\"的平行四边形面积 / 原始平行四边形面积\\n\\n#### 例题\\n\\n方程组：$2x + y = 5$，$x + 3y = 5$。\\n$$\\n\\\\det(A) = 5\\n$$\\n$$\\n\\\\det(\\\\begin{pmatrix}5 & 1 \\\\\\\\ 5 & 3\\\\end{pmatrix}) = 10 \\\\rightarrow x = \\\\frac{10}{5} = 2\\n$$\\n$$\\n\\\\det(\\\\begin{pmatrix}2 & 5 \\\\\\\\ 1 & 5\\\\end{pmatrix}) = 5 \\\\rightarrow y = \\\\frac{5}{5} = 1\\n$$\\n$$\\n(x, y) = (2, 1) ✓\\n$$\"}]},\"status\":\"draft\",\"teaching_profile\":{\"minimum_level\":4,\"required_sections\":[\"definition\",\"formula\",\"derivation\",\"worked_examples\",\"geometric_meaning\",\"pitfalls\",\"connections\"],\"requires_analogy_boundary\":false},\"topic_id\":\"ch03.cramer.area-ratio\",\"visual_semantics\":{\"entities\":[{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"dimension\":2,\"id\":\"a\",\"kind\":\"vector\",\"label\":\"a\",\"role\":\"vector_a\",\"value\":[2,1]},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"dimension\":2,\"id\":\"b\",\"kind\":\"vector\",\"label\":\"b\",\"role\":\"vector_b\",\"value\":[1,3]},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"dimension\":2,\"id\":\"area\",\"kind\":\"area\",\"label\":\"oriented area\",\"role\":\"area\",\"value\":[[2,1],[1,3]]}],\"relations\":[{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"main_relation\",\"kind\":\"same_measure\",\"parameters\":{},\"source_ref\":\"a\",\"target_ref\":\"area\"}],\"scene_kind\":\"2d\",\"stages\":[{\"caption\":\"从输入向量读出公式中的结果与不变量。\",\"expected_invariants\":[\"typed calculation\"],\"id\":\"stage.main\",\"input_entity_refs\":[\"a\",\"b\"],\"layout\":\"overlay\",\"output_entity_refs\":[\"area\"],\"relation_refs\":[\"main_relation\"],\"title\":\"数学关系\"}]}}"}
+{
+  "artifact": {
+    "claims": [
+      {
+        "entity_refs": [
+          "a",
+          "b",
+          "area"
+        ],
+        "explanation_refs": [
+          "definition",
+          "formula",
+          "derivation",
+          "worked_examples",
+          "geometric_meaning",
+          "pitfalls",
+          "connections"
+        ],
+        "formula": "x_i=det(A_i)/det(A)",
+        "formula_symbols": [
+          "a",
+          "b",
+          "area"
+        ],
+        "id": "claim.ch03.cramer.area-ratio",
+        "relation_refs": [
+          "main_relation"
+        ],
+        "source_refs": [
+          "第3章 行列式 / 3.3 克拉默法则::1::sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70"
+        ],
+        "stage_refs": [
+          "stage.main"
+        ],
+        "statement": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。"
+      }
+    ],
+    "connections": [
+      {
+        "claim_refs": [
+          "claim.ch03.cramer.area-ratio"
+        ],
+        "description": "该主题与相邻线性代数概念共享同一向量表示。",
+        "id": "connection.ch03.cramer.area-ratio.related",
+        "relation": "related",
+        "target_topic_id": "ch01.vector.magnitude"
+      }
+    ],
+    "explanation": {
+      "conclusion": "因此，克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。",
+      "connections": [
+        "可迁移到同章相邻的向量、内积或投影概念。"
+      ],
+      "definition": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。",
+      "derivation": [
+        "从讲义定义出发：克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。",
+        "代入给定数值，得到 5.0。"
+      ],
+      "formula": "x_i=det(A_i)/det(A)",
+      "geometric_meaning": "图中实体和关系表达：克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 数值结果由对应向量、关系和阶段共同见证。",
+      "intuition": "把 克拉默法则的面积比解方程组 看成可测量的方向、长度或面积关系。",
+      "invariants": [
+        "有限数值复算与视觉阶段中的对象关系一致。"
+      ],
+      "pitfalls": [
+        "把点的位置和向量的位移混为一谈，或忽略方向符号。"
+      ],
+      "read_guide": [
+        "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+      ],
+      "searchable_text": [
+        "克拉默法则的面积比解方程组",
+        "x_i=det(A_i)/det(A)",
+        "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。"
+      ],
+      "sections": [
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "id": "definition",
+          "text": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。",
+          "title": "definition"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "id": "formula",
+          "text": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。",
+          "title": "formula"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "id": "derivation",
+          "text": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。",
+          "title": "derivation"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "id": "worked_examples",
+          "text": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。",
+          "title": "worked_examples"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "id": "geometric_meaning",
+          "text": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。",
+          "title": "geometric_meaning"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "id": "pitfalls",
+          "text": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。",
+          "title": "pitfalls"
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "id": "connections",
+          "text": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。",
+          "title": "connections"
+        }
+      ],
+      "summary": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。",
+      "symbol_roles": {
+        "a": "vector_a",
+        "area": "area",
+        "b": "vector_b"
+      },
+      "title": "克拉默法则的面积比解方程组",
+      "transfer_note": "先识别对象和关系，再代入数值，最后检查方向、正交性或尺度不变量。",
+      "worked_examples": [
+        {
+          "calculation": [
+            "按定义计算 x_i=det(A_i)/det(A)",
+            "得到 5.0"
+          ],
+          "checks": [
+            {
+              "expected": 5.0,
+              "name": "area",
+              "tolerance": 1e-09
+            }
+          ],
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "given": [
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              3
+            ]
+          ],
+          "id": "example.ch03.cramer.area-ratio",
+          "kind": "oriented_area",
+          "result": 5.0,
+          "title": "讲义数值例"
+        }
+      ]
+    },
+    "generated": {
+      "artifact_digest": "sha256:cebf426246adaba3a97f349bba40df5e269c29122dc4d21ed0a364bd2229bb50",
+      "generated_at": "2026-09-05T17:24:40Z",
+      "model": "deterministic-v1",
+      "prompt_version": "teaching-artifact-v1",
+      "provider": "local-lecture-template",
+      "raw_reply_digest": "sha256:pending",
+      "schema_version": 1,
+      "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70"
+    },
+    "revision": 6,
+    "schema_version": 1,
+    "source": {
+      "excerpt": "### 3.3 克拉默法则\n\n定理 3.5（Cramer 法则） 对于线性方程组 $Ax = b$（A 为 $n \\times n$ 可逆矩阵），解的第 i 个分量为：\n$$\nx_{i} = \\frac{\\det(A_{i})}{\\det(A)}\n$$\n其中 $A_{i}$ 是将 A 的第 i 列替换为 b 后得到的新矩阵。\n几何解读（$2 \\times 2$）：\n- $x_{1} =$ \"以 b 替第一列\"的平行四边形面积 / 原始平行四边形面积\n- $x_{2} =$ \"以 b 替第二列\"的平行四边形面积 / 原始平行四边形面积\n\n#### 例题\n\n方程组：$2x + y = 5$，$x + 3y = 5$。\n$$\n\\det(A) = 5\n$$\n$$\n\\det(\\begin{pmatrix}5 & 1 \\\\ 5 & 3\\end{pmatrix}) = 10 \\rightarrow x = \\frac{10}{5} = 2\n$$\n$$\n\\det(\\begin{pmatrix}2 & 5 \\\\ 1 & 5\\end{pmatrix}) = 5 \\rightarrow y = \\frac{5}{5} = 1\n$$\n$$\n(x, y) = (2, 1) ✓\n$$",
+      "heading_level": 3,
+      "heading_path": [
+        "第3章 行列式",
+        "3.3 克拉默法则"
+      ],
+      "neighboring_titles": [
+        "3.2 行列式的核心性质",
+        "3.4 逆矩阵"
+      ],
+      "occurrence": 1,
+      "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
+      "source_path": [
+        "第3章 行列式",
+        "3.3 克拉默法则",
+        "面积比解方程组"
+      ],
+      "spans": [
+        {
+          "end_line": 1318,
+          "fingerprint": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
+          "heading_path": [
+            "第3章 行列式",
+            "3.3 克拉默法则"
+          ],
+          "id": "第3章 行列式 / 3.3 克拉默法则::1::sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
+          "start_line": 1285,
+          "text": "### 3.3 克拉默法则\n\n定理 3.5（Cramer 法则） 对于线性方程组 $Ax = b$（A 为 $n \\times n$ 可逆矩阵），解的第 i 个分量为：\n$$\nx_{i} = \\frac{\\det(A_{i})}{\\det(A)}\n$$\n其中 $A_{i}$ 是将 A 的第 i 列替换为 b 后得到的新矩阵。\n几何解读（$2 \\times 2$）：\n- $x_{1} =$ \"以 b 替第一列\"的平行四边形面积 / 原始平行四边形面积\n- $x_{2} =$ \"以 b 替第二列\"的平行四边形面积 / 原始平行四边形面积\n\n#### 例题\n\n方程组：$2x + y = 5$，$x + 3y = 5$。\n$$\n\\det(A) = 5\n$$\n$$\n\\det(\\begin{pmatrix}5 & 1 \\\\ 5 & 3\\end{pmatrix}) = 10 \\rightarrow x = \\frac{10}{5} = 2\n$$\n$$\n\\det(\\begin{pmatrix}2 & 5 \\\\ 1 & 5\\end{pmatrix}) = 5 \\rightarrow y = \\frac{5}{5} = 1\n$$\n$$\n(x, y) = (2, 1) ✓\n$$"
+        }
+      ]
+    },
+    "status": "draft",
+    "teaching_profile": {
+      "minimum_level": 4,
+      "required_sections": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "requires_analogy_boundary": false
+    },
+    "topic_id": "ch03.cramer.area-ratio",
+    "visual_semantics": {
+      "entities": [
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "dimension": 2,
+          "id": "a",
+          "kind": "vector",
+          "label": "a",
+          "role": "vector_a",
+          "value": [
+            2,
+            1
+          ]
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "dimension": 2,
+          "id": "b",
+          "kind": "vector",
+          "label": "b",
+          "role": "vector_b",
+          "value": [
+            1,
+            3
+          ]
+        },
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "dimension": 2,
+          "id": "area",
+          "kind": "area",
+          "label": "oriented area",
+          "role": "area",
+          "value": [
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              3
+            ]
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "claim_refs": [
+            "claim.ch03.cramer.area-ratio"
+          ],
+          "id": "main_relation",
+          "kind": "same_measure",
+          "parameters": {},
+          "source_ref": "a",
+          "target_ref": "area"
+        }
+      ],
+      "scene_kind": "2d",
+      "stages": [
+        {
+          "caption": "从输入向量读出公式中的结果与不变量。",
+          "expected_invariants": [
+            "typed calculation"
+          ],
+          "id": "stage.main",
+          "input_entity_refs": [
+            "a",
+            "b"
+          ],
+          "layout": "overlay",
+          "output_entity_refs": [
+            "area"
+          ],
+          "relation_refs": [
+            "main_relation"
+          ],
+          "title": "数学关系"
+        }
+      ]
+    }
+  },
+  "raw_reply": "{\"claims\":[{\"entity_refs\":[\"a\",\"b\",\"area\"],\"explanation_refs\":[\"definition\",\"formula\",\"derivation\",\"worked_examples\",\"geometric_meaning\",\"pitfalls\",\"connections\"],\"formula\":\"x_i=det(A_i)/det(A)\",\"formula_symbols\":[\"a\",\"b\",\"area\"],\"id\":\"claim.ch03.cramer.area-ratio\",\"relation_refs\":[\"main_relation\"],\"source_refs\":[\"第3章 行列式 / 3.3 克拉默法则::1::sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70\"],\"stage_refs\":[\"stage.main\"],\"statement\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\"}],\"connections\":[{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"description\":\"该主题与相邻线性代数概念共享同一向量表示。\",\"id\":\"connection.ch03.cramer.area-ratio.related\",\"relation\":\"related\",\"target_topic_id\":\"ch01.vector.magnitude\"}],\"explanation\":{\"conclusion\":\"因此，克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\",\"connections\":[\"可迁移到同章相邻的向量、内积或投影概念。\"],\"definition\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\",\"derivation\":[\"从讲义定义出发：克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\",\"代入给定数值，得到 5.0。\"],\"formula\":\"x_i=det(A_i)/det(A)\",\"geometric_meaning\":\"图中实体和关系表达：克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 数值结果由对应向量、关系和阶段共同见证。\",\"intuition\":\"把 克拉默法则的面积比解方程组 看成可测量的方向、长度或面积关系。\",\"invariants\":[\"有限数值复算与视觉阶段中的对象关系一致。\"],\"pitfalls\":[\"把点的位置和向量的位移混为一谈，或忽略方向符号。\"],\"read_guide\":[\"先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。\"],\"searchable_text\":[\"克拉默法则的面积比解方程组\",\"x_i=det(A_i)/det(A)\",\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\"],\"sections\":[{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"definition\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"definition\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"formula\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"formula\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"derivation\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"derivation\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"worked_examples\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"worked_examples\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"geometric_meaning\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"geometric_meaning\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"pitfalls\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"pitfalls\"},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"connections\",\"text\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。 讲义锚点：克拉默法则的面积比解方程组。\",\"title\":\"connections\"}],\"summary\":\"克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。\",\"symbol_roles\":{\"a\":\"vector_a\",\"area\":\"area\",\"b\":\"vector_b\"},\"title\":\"克拉默法则的面积比解方程组\",\"transfer_note\":\"先识别对象和关系，再代入数值，最后检查方向、正交性或尺度不变量。\",\"worked_examples\":[{\"calculation\":[\"按定义计算 x_i=det(A_i)/det(A)\",\"得到 5.0\"],\"checks\":[{\"expected\":5.0,\"name\":\"area\",\"tolerance\":1e-09}],\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"given\":[[2,1],[1,3]],\"id\":\"example.ch03.cramer.area-ratio\",\"kind\":\"oriented_area\",\"result\":5.0,\"title\":\"讲义数值例\"}]},\"generated\":{\"artifact_digest\":\"sha256:pending\",\"generated_at\":\"2026-09-05T17:24:40Z\",\"model\":\"deterministic-v1\",\"prompt_version\":\"teaching-artifact-v1\",\"provider\":\"local-lecture-template\",\"raw_reply_digest\":\"sha256:pending\",\"schema_version\":1,\"source_hash\":\"sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70\"},\"revision\":1,\"schema_version\":1,\"source\":{\"excerpt\":\"### 3.3 克拉默法则\\n\\n定理 3.5（Cramer 法则） 对于线性方程组 $Ax = b$（A 为 $n \\\\times n$ 可逆矩阵），解的第 i 个分量为：\\n$$\\nx_{i} = \\\\frac{\\\\det(A_{i})}{\\\\det(A)}\\n$$\\n其中 $A_{i}$ 是将 A 的第 i 列替换为 b 后得到的新矩阵。\\n几何解读（$2 \\\\times 2$）：\\n- $x_{1} =$ \\\"以 b 替第一列\\\"的平行四边形面积 / 原始平行四边形面积\\n- $x_{2} =$ \\\"以 b 替第二列\\\"的平行四边形面积 / 原始平行四边形面积\\n\\n#### 例题\\n\\n方程组：$2x + y = 5$，$x + 3y = 5$。\\n$$\\n\\\\det(A) = 5\\n$$\\n$$\\n\\\\det(\\\\begin{pmatrix}5 & 1 \\\\\\\\ 5 & 3\\\\end{pmatrix}) = 10 \\\\rightarrow x = \\\\frac{10}{5} = 2\\n$$\\n$$\\n\\\\det(\\\\begin{pmatrix}2 & 5 \\\\\\\\ 1 & 5\\\\end{pmatrix}) = 5 \\\\rightarrow y = \\\\frac{5}{5} = 1\\n$$\\n$$\\n(x, y) = (2, 1) ✓\\n$$\",\"heading_level\":3,\"heading_path\":[\"第3章 行列式\",\"3.3 克拉默法则\"],\"neighboring_titles\":[\"3.2 行列式的核心性质\",\"3.4 逆矩阵\"],\"occurrence\":1,\"source_hash\":\"sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70\",\"source_path\":[\"第3章 行列式\",\"3.3 克拉默法则\",\"面积比解方程组\"],\"spans\":[{\"end_line\":1318,\"fingerprint\":\"sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70\",\"heading_path\":[\"第3章 行列式\",\"3.3 克拉默法则\"],\"id\":\"第3章 行列式 / 3.3 克拉默法则::1::sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70\",\"start_line\":1285,\"text\":\"### 3.3 克拉默法则\\n\\n定理 3.5（Cramer 法则） 对于线性方程组 $Ax = b$（A 为 $n \\\\times n$ 可逆矩阵），解的第 i 个分量为：\\n$$\\nx_{i} = \\\\frac{\\\\det(A_{i})}{\\\\det(A)}\\n$$\\n其中 $A_{i}$ 是将 A 的第 i 列替换为 b 后得到的新矩阵。\\n几何解读（$2 \\\\times 2$）：\\n- $x_{1} =$ \\\"以 b 替第一列\\\"的平行四边形面积 / 原始平行四边形面积\\n- $x_{2} =$ \\\"以 b 替第二列\\\"的平行四边形面积 / 原始平行四边形面积\\n\\n#### 例题\\n\\n方程组：$2x + y = 5$，$x + 3y = 5$。\\n$$\\n\\\\det(A) = 5\\n$$\\n$$\\n\\\\det(\\\\begin{pmatrix}5 & 1 \\\\\\\\ 5 & 3\\\\end{pmatrix}) = 10 \\\\rightarrow x = \\\\frac{10}{5} = 2\\n$$\\n$$\\n\\\\det(\\\\begin{pmatrix}2 & 5 \\\\\\\\ 1 & 5\\\\end{pmatrix}) = 5 \\\\rightarrow y = \\\\frac{5}{5} = 1\\n$$\\n$$\\n(x, y) = (2, 1) ✓\\n$$\"}]},\"status\":\"draft\",\"teaching_profile\":{\"minimum_level\":4,\"required_sections\":[\"definition\",\"formula\",\"derivation\",\"worked_examples\",\"geometric_meaning\",\"pitfalls\",\"connections\"],\"requires_analogy_boundary\":false},\"topic_id\":\"ch03.cramer.area-ratio\",\"visual_semantics\":{\"entities\":[{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"dimension\":2,\"id\":\"a\",\"kind\":\"vector\",\"label\":\"a\",\"role\":\"vector_a\",\"value\":[2,1]},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"dimension\":2,\"id\":\"b\",\"kind\":\"vector\",\"label\":\"b\",\"role\":\"vector_b\",\"value\":[1,3]},{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"dimension\":2,\"id\":\"area\",\"kind\":\"area\",\"label\":\"oriented area\",\"role\":\"area\",\"value\":[[2,1],[1,3]]}],\"relations\":[{\"claim_refs\":[\"claim.ch03.cramer.area-ratio\"],\"id\":\"main_relation\",\"kind\":\"same_measure\",\"parameters\":{},\"source_ref\":\"a\",\"target_ref\":\"area\"}],\"scene_kind\":\"2d\",\"stages\":[{\"caption\":\"从输入向量读出公式中的结果与不变量。\",\"expected_invariants\":[\"typed calculation\"],\"id\":\"stage.main\",\"input_entity_refs\":[\"a\",\"b\"],\"layout\":\"overlay\",\"output_entity_refs\":[\"area\"],\"relation_refs\":[\"main_relation\"],\"title\":\"数学关系\"}]}}"
+}

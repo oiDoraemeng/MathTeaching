@@ -1,0 +1,165 @@
+{
+  "artifact_digest": "sha256:1f516a90e661d8bf590e2eb25122207f4e57d3b3e9e9bc91363ce9f215dc4271",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a",
+        "color": "#2F6BFF",
+        "end": "sem__a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__a__origin"
+      },
+      {
+        "alias": "sem__b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b__end",
+        "coordinates": [
+          1.0,
+          3.0
+        ],
+        "name": "b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b",
+        "color": "#F08A24",
+        "end": "sem__b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__b__origin"
+      },
+      {
+        "alias": "sem__area",
+        "color": "#E09F3E",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__main_relation",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "same_measure: a → oriented area"
+      },
+      {
+        "alias": "cap__polygon",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            1.0
+          ],
+          [
+            3.0,
+            4.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.main__title",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          2.65
+        ],
+        "text": "数学关系"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "行列式的有向面积定义",
+    "version": 1
+  },
+  "plan_digest": "sha256:7c1a0156921aafbf2a7f2e7f8e4a769196f103a826037356eb8574a123c66c45",
+  "read_guide": [
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 4,
+  "schema_version": 1,
+  "source_hash": "sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323",
+  "stages": [
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "从输入向量读出公式中的结果与不变量。",
+      "id": "stage.main",
+      "layout": "overlay",
+      "title": "数学关系",
+      "visible_aliases": [
+        "sem__stage.main__sem__a",
+        "sem__stage.main__sem__a__end",
+        "sem__stage.main__sem__b",
+        "sem__stage.main__sem__b__end",
+        "sem__stage.main__sem__area",
+        "sem__stage.main__sem__main_relation"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "area",
+        "main_relation"
+      ]
+    }
+  ],
+  "topic_id": "ch03.det.oriented-area"
+}

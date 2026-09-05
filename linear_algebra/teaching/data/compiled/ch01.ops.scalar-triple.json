@@ -1,0 +1,193 @@
+{
+  "artifact_digest": "sha256:8b475583a95ff0ea2eab09834ef1a7582026553d58f9cc8be8ee56ed5e00ec1f",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__a",
+        "color": "#2F6BFF",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "label": "a",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__b",
+        "color": "#F08A24",
+        "end": [
+          0.0,
+          2.0,
+          0.0
+        ],
+        "kind": "vector",
+        "label": "b",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__c",
+        "color": "#7B61FF",
+        "end": [
+          0.0,
+          0.0,
+          3.0
+        ],
+        "kind": "vector",
+        "label": "c",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__volume",
+        "color": "#2A9D8F",
+        "op": "geometry.oriented_volume",
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vectors": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__volume",
+        "color": "#2A9D8F",
+        "op": "geometry.parallelepiped",
+        "opacity": 0.24,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vectors": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "3d",
+    "summary": "混合积与平行六面体体积",
+    "version": 1
+  },
+  "plan_digest": "sha256:bb76bde8dde1e95fef4abba8db37e52848971a5863586ab960f6a19c16958a53",
+  "read_guide": [
+    "观察输入实体和标签。",
+    "沿关系读取输出并核对不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:4e497dc05627bf09c03cba04c8fa9c93828cd0daace46a310f30768c1f541417",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "先读对象、角色和输入输出。",
+      "id": "stage.claim.ch01.ops.scalar-triple.observe",
+      "layout": "side_by_side",
+      "title": "观察对象",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__a",
+        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__a__end",
+        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__b",
+        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__b__end",
+        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__c",
+        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__c__end",
+        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__volume",
+        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__rel.0.claim.ch01.ops.scalar-triple"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "c",
+        "volume",
+        "rel.0.claim.ch01.ops.scalar-triple"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "按公式计算并检查几何关系。",
+      "id": "stage.claim.ch01.ops.scalar-triple.derive",
+      "layout": "sequence",
+      "title": "代数验证",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__a",
+        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__a__end",
+        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__b",
+        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__b__end",
+        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__c",
+        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__c__end",
+        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__volume",
+        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__rel.0.claim.ch01.ops.scalar-triple",
+        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__rel.1.claim.ch01.ops.scalar-triple"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "c",
+        "volume",
+        "rel.0.claim.ch01.ops.scalar-triple",
+        "rel.1.claim.ch01.ops.scalar-triple"
+      ]
+    }
+  ],
+  "topic_id": "ch01.ops.scalar-triple"
+}

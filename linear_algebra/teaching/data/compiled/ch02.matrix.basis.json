@@ -1,0 +1,159 @@
+{
+  "artifact_digest": "sha256:ff63043c812cf06bfea6b4601b14d738aaf7fa6d8ca1f662b7e4ca80ee5e4355",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__x__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__x__end",
+        "coordinates": [
+          2.0,
+          3.0
+        ],
+        "name": "x",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__x",
+        "color": "#2F6BFF",
+        "end": "sem__x__end",
+        "kind": "vector",
+        "label": "x",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__x__origin"
+      },
+      {
+        "alias": "sem__y__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__y__end",
+        "coordinates": [
+          5.0,
+          3.0
+        ],
+        "name": "Ax",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__y",
+        "color": "#7B61FF",
+        "end": "sem__y__end",
+        "kind": "vector",
+        "label": "Ax",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__y__origin"
+      },
+      {
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "linear_algebra.matrix_transform"
+      },
+      {
+        "alias": "sem__stage.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          2.65
+        ],
+        "text": "输入与变换"
+      },
+      {
+        "alias": "sem__ch02.matrix.basis__formula",
+        "op": "annotation.formula",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "[T]_\\mathcal B= S^{-1}AS"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "矩阵的列与新基坐标",
+    "version": 1
+  },
+  "plan_digest": "sha256:3e8eaacf5225b7a62b623cfe366edec71dbdc20aa0210dfe8f70f054cd055a75",
+  "read_guide": [
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:ef6de7167277e0291b976d335c4a9c431c26d6aa51cb06e8d39f993d7806e088",
+  "stages": [
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "矩阵 A 作用于向量 x。",
+      "id": "stage.input",
+      "layout": "overlay",
+      "title": "输入与变换",
+      "visible_aliases": [
+        "sem__stage.input__sem__A",
+        "sem__stage.input__sem__x",
+        "sem__stage.input__sem__x__end",
+        "sem__stage.input__sem__y",
+        "sem__stage.input__sem__y__end",
+        "sem__stage.input__sem__A_maps_x_to_y"
+      ],
+      "visible_refs": [
+        "A",
+        "x",
+        "y",
+        "A_maps_x_to_y"
+      ]
+    }
+  ],
+  "topic_id": "ch02.matrix.basis"
+}

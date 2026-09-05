@@ -1,0 +1,313 @@
+{
+  "artifact": {
+    "claims": [
+      {
+        "entity_refs": [
+          "a",
+          "b",
+          "r"
+        ],
+        "explanation_refs": [
+          "definition",
+          "formula",
+          "derivation",
+          "worked_examples",
+          "geometric_meaning",
+          "pitfalls"
+        ],
+        "formula": "2v=v+v",
+        "formula_symbols": [
+          "a",
+          "b",
+          "r"
+        ],
+        "id": "claim.ch01.ops.scalar",
+        "relation_refs": [
+          "main_relation"
+        ],
+        "source_refs": [
+          "第1章 向量与几何测量 / 1.2 向量的线性运算 / 1.2.3 向量数乘::1::sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875"
+        ],
+        "stage_refs": [
+          "stage.main"
+        ],
+        "statement": "数乘改变长度，正负号决定同向或反向，共线性保持不变。"
+      }
+    ],
+    "connections": [
+      {
+        "claim_refs": [
+          "claim.ch01.ops.scalar"
+        ],
+        "description": "该主题与相邻线性代数概念共享同一向量表示。",
+        "id": "connection.ch01.ops.scalar.related",
+        "relation": "related",
+        "target_topic_id": "ch01.vector.magnitude"
+      }
+    ],
+    "explanation": {
+      "conclusion": "因此，数乘改变长度，正负号决定同向或反向，共线性保持不变。",
+      "connections": [
+        "可迁移到同章相邻的向量、内积或投影概念。"
+      ],
+      "definition": "数乘改变长度，正负号决定同向或反向，共线性保持不变。",
+      "derivation": [
+        "从讲义定义出发：数乘改变长度，正负号决定同向或反向，共线性保持不变。",
+        "代入给定数值，得到 [2.0, 4.0]。"
+      ],
+      "formula": "2v=v+v",
+      "geometric_meaning": "图中实体和关系表达：数乘改变长度，正负号决定同向或反向，共线性保持不变。 数值结果由对应向量、关系和阶段共同见证。",
+      "intuition": "把 向量数乘与共线 看成可测量的方向、长度或面积关系。",
+      "invariants": [
+        "有限数值复算与视觉阶段中的对象关系一致。"
+      ],
+      "pitfalls": [
+        "把点的位置和向量的位移混为一谈，或忽略方向符号。"
+      ],
+      "read_guide": [
+        "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+      ],
+      "searchable_text": [
+        "向量数乘与共线",
+        "2v=v+v",
+        "数乘改变长度，正负号决定同向或反向，共线性保持不变。"
+      ],
+      "sections": [
+        {
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "id": "definition",
+          "text": "数乘改变长度，正负号决定同向或反向，共线性保持不变。 讲义锚点：向量数乘与共线。",
+          "title": "definition"
+        },
+        {
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "id": "formula",
+          "text": "数乘改变长度，正负号决定同向或反向，共线性保持不变。 讲义锚点：向量数乘与共线。",
+          "title": "formula"
+        },
+        {
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "id": "derivation",
+          "text": "数乘改变长度，正负号决定同向或反向，共线性保持不变。 讲义锚点：向量数乘与共线。",
+          "title": "derivation"
+        },
+        {
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "id": "worked_examples",
+          "text": "数乘改变长度，正负号决定同向或反向，共线性保持不变。 讲义锚点：向量数乘与共线。",
+          "title": "worked_examples"
+        },
+        {
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "id": "geometric_meaning",
+          "text": "数乘改变长度，正负号决定同向或反向，共线性保持不变。 讲义锚点：向量数乘与共线。",
+          "title": "geometric_meaning"
+        },
+        {
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "id": "pitfalls",
+          "text": "数乘改变长度，正负号决定同向或反向，共线性保持不变。 讲义锚点：向量数乘与共线。",
+          "title": "pitfalls"
+        }
+      ],
+      "summary": "数乘改变长度，正负号决定同向或反向，共线性保持不变。",
+      "symbol_roles": {
+        "a": "vector_a",
+        "b": "vector_b",
+        "r": "result"
+      },
+      "title": "向量数乘与共线",
+      "transfer_note": "先识别对象和关系，再代入数值，最后检查方向、正交性或尺度不变量。",
+      "worked_examples": [
+        {
+          "calculation": [
+            "按定义计算 2v=v+v",
+            "得到 [2.0, 4.0]"
+          ],
+          "checks": [
+            {
+              "expected": [
+                2.0,
+                4.0
+              ],
+              "name": "sum",
+              "tolerance": 1e-09
+            }
+          ],
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "given": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "id": "example.ch01.ops.scalar",
+          "kind": "vector_addition",
+          "result": [
+            2.0,
+            4.0
+          ],
+          "title": "讲义数值例"
+        }
+      ]
+    },
+    "generated": {
+      "artifact_digest": "sha256:a8fc0c22e53ee4caeff923c703292588e4770a0fd64edd55268a2dd3078fa76b",
+      "generated_at": "2026-09-05T16:49:36Z",
+      "model": "deterministic-v1",
+      "prompt_version": "teaching-artifact-v1",
+      "provider": "local-lecture-template",
+      "raw_reply_digest": "sha256:pending",
+      "schema_version": 1,
+      "source_hash": "sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875"
+    },
+    "revision": 2,
+    "schema_version": 1,
+    "source": {
+      "excerpt": "#### 1.2.3 向量数乘\n\n定义 1.7（数乘，标量乘法） 设 k 是一个实数（标量），$a = (x, y)$ 是一个向量，则 k 与 a 的数乘为：\n$$\nk \\cdot a = (kx, ky)\n$$\n几何解释：数乘就是缩放——把箭头的长度变为原来的 $|k|$ 倍；若 $k < 0$，则同时反转方向。\n\n| k 的值 | 几何效果 |\n| --- | --- |\n| $k > 1$ | 拉伸（伸长） |\n| 0 $< k < 1$ | 压缩（缩短） |\n| $k = -1$ | 反向，长度不变 |\n| $k < 0$ | 反向且缩放 |\n\n定义 1.8（共线） 如果存在实数 k 使得 $b = k \\cdot a$，则称 a 与 b 共线（方向相同或相反）。此时 b 的箭头落在 a 所在的直线上。",
+      "heading_level": 4,
+      "heading_path": [
+        "第1章 向量与几何测量",
+        "1.2 向量的线性运算",
+        "1.2.3 向量数乘"
+      ],
+      "neighboring_titles": [
+        "1.2.2 向量减法",
+        "1.2.4 线性组合"
+      ],
+      "occurrence": 1,
+      "source_hash": "sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875",
+      "source_path": [
+        "第1章 向量与几何测量",
+        "1.2 向量的线性运算",
+        "1.2.3 向量数乘"
+      ],
+      "spans": [
+        {
+          "end_line": 129,
+          "fingerprint": "sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875",
+          "heading_path": [
+            "第1章 向量与几何测量",
+            "1.2 向量的线性运算",
+            "1.2.3 向量数乘"
+          ],
+          "id": "第1章 向量与几何测量 / 1.2 向量的线性运算 / 1.2.3 向量数乘::1::sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875",
+          "start_line": 113,
+          "text": "#### 1.2.3 向量数乘\n\n定义 1.7（数乘，标量乘法） 设 k 是一个实数（标量），$a = (x, y)$ 是一个向量，则 k 与 a 的数乘为：\n$$\nk \\cdot a = (kx, ky)\n$$\n几何解释：数乘就是缩放——把箭头的长度变为原来的 $|k|$ 倍；若 $k < 0$，则同时反转方向。\n\n| k 的值 | 几何效果 |\n| --- | --- |\n| $k > 1$ | 拉伸（伸长） |\n| 0 $< k < 1$ | 压缩（缩短） |\n| $k = -1$ | 反向，长度不变 |\n| $k < 0$ | 反向且缩放 |\n\n定义 1.8（共线） 如果存在实数 k 使得 $b = k \\cdot a$，则称 a 与 b 共线（方向相同或相反）。此时 b 的箭头落在 a 所在的直线上。"
+        }
+      ]
+    },
+    "status": "reviewed",
+    "teaching_profile": {
+      "minimum_level": 3,
+      "required_sections": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls"
+      ],
+      "requires_analogy_boundary": false
+    },
+    "topic_id": "ch01.ops.scalar",
+    "visual_semantics": {
+      "entities": [
+        {
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "dimension": 2,
+          "id": "a",
+          "kind": "vector",
+          "label": "a",
+          "role": "vector_a",
+          "value": [
+            1,
+            2
+          ]
+        },
+        {
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "dimension": 2,
+          "id": "b",
+          "kind": "vector",
+          "label": "b",
+          "role": "vector_b",
+          "value": [
+            1,
+            2
+          ]
+        },
+        {
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "dimension": 2,
+          "id": "r",
+          "kind": "vector",
+          "label": "result",
+          "role": "result",
+          "value": [
+            2.0,
+            4.0
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "claim_refs": [
+            "claim.ch01.ops.scalar"
+          ],
+          "id": "main_relation",
+          "kind": "scalar_multiple",
+          "parameters": {},
+          "source_ref": "a",
+          "target_ref": "r"
+        }
+      ],
+      "scene_kind": "2d",
+      "stages": [
+        {
+          "caption": "从输入向量读出公式中的结果与不变量。",
+          "expected_invariants": [
+            "typed calculation"
+          ],
+          "id": "stage.main",
+          "input_entity_refs": [
+            "a",
+            "b"
+          ],
+          "layout": "overlay",
+          "output_entity_refs": [
+            "r"
+          ],
+          "relation_refs": [
+            "main_relation"
+          ],
+          "title": "数学关系"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "artifact_digest": "sha256:4a2c8a79482e140d7a460960e6a1f873e7ba31b45eeaa15d70b4c773e85c0edd",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#2F6BFF",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__x__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__x__end",
+        "coordinates": [
+          3.0,
+          5.0
+        ],
+        "name": "x",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__x",
+        "color": "#2F6BFF",
+        "end": "sem__x__end",
+        "kind": "vector",
+        "label": "x",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__x__origin"
+      },
+      {
+        "alias": "sem__rel.0.claim.ch01.vector.coordinate-system",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "compare: 标准基 → x"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.vector.coordinate-system.observe__title",
+        "op": "annotation.upsert",
+        "position": [
+          -1.5,
+          2.65
+        ],
+        "text": "观察对象"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.vector.coordinate-system.derive__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "代数验证"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "坐标系与右手约定",
+    "version": 1
+  },
+  "plan_digest": "sha256:9a44002b56cfc8abb6a7630244ed674970ac6b0e045724f3896c073e9ef4a415",
+  "read_guide": [
+    "观察输入实体和标签。",
+    "沿关系读取输出并核对不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:b13413aa33f880b2787622ef7285b5b593f383f2d6d91670ffe9a262b360da30",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "先读对象、角色和输入输出。",
+      "id": "stage.claim.ch01.vector.coordinate-system.observe",
+      "layout": "side_by_side",
+      "title": "观察对象",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.vector.coordinate-system.observe__sem__e1",
+        "sem__stage.claim.ch01.vector.coordinate-system.observe__sem__x",
+        "sem__stage.claim.ch01.vector.coordinate-system.observe__sem__x__end",
+        "sem__stage.claim.ch01.vector.coordinate-system.observe__sem__rel.0.claim.ch01.vector.coordinate-system"
+      ],
+      "visible_refs": [
+        "e1",
+        "x",
+        "rel.0.claim.ch01.vector.coordinate-system"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "按公式计算并检查几何关系。",
+      "id": "stage.claim.ch01.vector.coordinate-system.derive",
+      "layout": "sequence",
+      "title": "代数验证",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.vector.coordinate-system.derive__sem__e1",
+        "sem__stage.claim.ch01.vector.coordinate-system.derive__sem__x",
+        "sem__stage.claim.ch01.vector.coordinate-system.derive__sem__x__end",
+        "sem__stage.claim.ch01.vector.coordinate-system.derive__sem__rel.0.claim.ch01.vector.coordinate-system"
+      ],
+      "visible_refs": [
+        "e1",
+        "x",
+        "rel.0.claim.ch01.vector.coordinate-system"
+      ]
+    }
+  ],
+  "topic_id": "ch01.vector.coordinate-system"
+}

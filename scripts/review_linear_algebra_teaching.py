@@ -71,10 +71,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.publish:
                 topic = catalog_by_id[topic_id]
                 context = source_repo.context_for(topic)
+                reviewed_artifact = store.get(topic_id, reviewed_revision.revision, "reviewed")
                 result = store.publish(
-                    store.get(topic_id, reviewed_revision.revision, "reviewed").artifact,
+                    reviewed_artifact.artifact,
                     source_context=context,
                     topic=topic,
+                    raw_reply=reviewed_artifact.raw_reply,
                 )
                 if not result.ok:
                     errors.extend(f"{topic_id}: {issue.code} {issue.path}: {issue.message}" for issue in result.issues)

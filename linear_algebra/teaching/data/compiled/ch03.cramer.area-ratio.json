@@ -1,0 +1,174 @@
+{
+  "artifact_digest": "sha256:cdb022228934fdda1125076e90dca4fddb062965f36ac1754aa03654ca6548ad",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__a",
+        "color": "#2F6BFF",
+        "end": "sem__a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__a__origin"
+      },
+      {
+        "alias": "sem__b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b__end",
+        "coordinates": [
+          1.0,
+          3.0
+        ],
+        "name": "b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__b",
+        "color": "#F08A24",
+        "end": "sem__b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__b__origin"
+      },
+      {
+        "alias": "sem__area",
+        "color": "#E09F3E",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__main_relation",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "same_measure: a → oriented area"
+      },
+      {
+        "alias": "cap__polygon",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            1.0
+          ],
+          [
+            3.0,
+            4.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.main__title",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          2.65
+        ],
+        "text": "数学关系"
+      },
+      {
+        "alias": "sem__ch03.cramer.area-ratio__formula",
+        "op": "annotation.formula",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "x_i=det(A_i)/det(A)"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "克拉默法则的面积比解方程组",
+    "version": 1
+  },
+  "plan_digest": "sha256:7d33ba2c30549b5dd2272692446dba20407ce0f11a4411d32e27321ca59bf110",
+  "read_guide": [
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 3,
+  "schema_version": 1,
+  "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
+  "stages": [
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "从输入向量读出公式中的结果与不变量。",
+      "id": "stage.main",
+      "layout": "overlay",
+      "title": "数学关系",
+      "visible_aliases": [
+        "sem__stage.main__sem__a",
+        "sem__stage.main__sem__a__end",
+        "sem__stage.main__sem__b",
+        "sem__stage.main__sem__b__end",
+        "sem__stage.main__sem__area",
+        "sem__stage.main__sem__main_relation"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "area",
+        "main_relation"
+      ]
+    }
+  ],
+  "topic_id": "ch03.cramer.area-ratio"
+}

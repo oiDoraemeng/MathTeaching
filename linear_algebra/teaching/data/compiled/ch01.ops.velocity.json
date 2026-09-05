@@ -1,0 +1,189 @@
+{
+  "artifact_digest": "sha256:635072f2270e51a9cbf0d7f02c9722786c6aef7245610ccf06cc076750701022",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__v1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__v1__end",
+        "coordinates": [
+          10.0,
+          0.0
+        ],
+        "name": "船速",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__v1",
+        "color": "#2F6BFF",
+        "end": "sem__v1__end",
+        "kind": "vector",
+        "label": "船速",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__v1__origin"
+      },
+      {
+        "alias": "sem__v2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__v2__end",
+        "coordinates": [
+          0.0,
+          5.0
+        ],
+        "name": "水流",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__v2",
+        "color": "#F08A24",
+        "end": "sem__v2__end",
+        "kind": "vector",
+        "label": "水流",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__v2__origin"
+      },
+      {
+        "alias": "sem__actual__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__actual__end",
+        "coordinates": [
+          10.0,
+          5.0
+        ],
+        "name": "实际速度",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__actual",
+        "color": "#7B61FF",
+        "end": "sem__actual__end",
+        "kind": "vector",
+        "label": "实际速度",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__actual__origin"
+      },
+      {
+        "alias": "sem__rel.0.claim.ch01.ops.velocity",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "sum: 船速 → 水流"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.ops.velocity.observe__title",
+        "op": "annotation.upsert",
+        "position": [
+          -1.5,
+          2.65
+        ],
+        "text": "观察对象"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.ops.velocity.derive__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "代数验证"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "速度合成的几何表示",
+    "version": 1
+  },
+  "plan_digest": "sha256:57d60fae4a28e941fe1884b9735d5a9e80787e19db18dee76d4b6fedb3e62e9a",
+  "read_guide": [
+    "观察输入实体和标签。",
+    "沿关系读取输出并核对不变量。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "schema_version": 1,
+  "source_hash": "sha256:36b093c8ac050829f151499dd884e2c8a917f483b3fbe03bfb2688a856278b79",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "先读对象、角色和输入输出。",
+      "id": "stage.claim.ch01.ops.velocity.observe",
+      "layout": "side_by_side",
+      "title": "观察对象",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.ops.velocity.observe__sem__v1",
+        "sem__stage.claim.ch01.ops.velocity.observe__sem__v1__end",
+        "sem__stage.claim.ch01.ops.velocity.observe__sem__v2",
+        "sem__stage.claim.ch01.ops.velocity.observe__sem__v2__end",
+        "sem__stage.claim.ch01.ops.velocity.observe__sem__actual",
+        "sem__stage.claim.ch01.ops.velocity.observe__sem__actual__end",
+        "sem__stage.claim.ch01.ops.velocity.observe__sem__rel.0.claim.ch01.ops.velocity"
+      ],
+      "visible_refs": [
+        "v1",
+        "v2",
+        "actual",
+        "rel.0.claim.ch01.ops.velocity"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "按公式计算并检查几何关系。",
+      "id": "stage.claim.ch01.ops.velocity.derive",
+      "layout": "sequence",
+      "title": "代数验证",
+      "visible_aliases": [
+        "sem__stage.claim.ch01.ops.velocity.derive__sem__v1",
+        "sem__stage.claim.ch01.ops.velocity.derive__sem__v1__end",
+        "sem__stage.claim.ch01.ops.velocity.derive__sem__v2",
+        "sem__stage.claim.ch01.ops.velocity.derive__sem__v2__end",
+        "sem__stage.claim.ch01.ops.velocity.derive__sem__actual",
+        "sem__stage.claim.ch01.ops.velocity.derive__sem__actual__end",
+        "sem__stage.claim.ch01.ops.velocity.derive__sem__rel.0.claim.ch01.ops.velocity"
+      ],
+      "visible_refs": [
+        "v1",
+        "v2",
+        "actual",
+        "rel.0.claim.ch01.ops.velocity"
+      ]
+    }
+  ],
+  "topic_id": "ch01.ops.velocity"
+}

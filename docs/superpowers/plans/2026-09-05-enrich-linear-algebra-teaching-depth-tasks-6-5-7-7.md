@@ -595,7 +595,7 @@ git commit -m "test: cover teaching artifact workflow end to end"
 - Consumes: final validator, Python/Web test and build commands, and 54 bundle digests.
 - Produces: `VerificationCheck`, `run_verification(command_runner, output_dir)`, a CLI, and reproducible automated evidence containing observed exit codes and output summaries.
 
-- [ ] **Step 1: Write failing verification-writer tests**
+- [x] **Step 1: Write failing verification-writer tests**
 
 ```python
 def test_writer_stops_on_failed_check_and_does_not_claim_success(tmp_path) -> None:
@@ -614,13 +614,13 @@ def test_writer_records_exact_success_output_and_sorted_digests(tmp_path) -> Non
     assert [item["topic_id"] for item in digests] == sorted(item["topic_id"] for item in digests)
 ```
 
-- [ ] **Step 2: Run the writer test and verify the script is missing**
+- [x] **Step 2: Run the writer test and verify the script is missing**
 
 Run: `pytest tests/test_linear_algebra_verification_writer.py -q`
 
 Expected: FAIL because the verification writer is missing.
 
-- [ ] **Step 3: Implement fail-closed command capture and report writing**
+- [x] **Step 3: Implement fail-closed command capture and report writing**
 
 ```python
 CHECKS = (
@@ -645,13 +645,13 @@ def run_verification(command_runner, output_dir: Path) -> None:
 
 Capture stdout and stderr without a shell, retain each exact command and exit code, and write files only after every check succeeds. Redact environment variables and provider credentials. Add a `walkthrough-index` subcommand that reads the digest file and creates seven focus-topic rows with status `not-checked` for Task 7.7.
 
-- [ ] **Step 4: Run the complete verification workflow**
+- [x] **Step 4: Run the complete verification workflow**
 
 Run: `python scripts/write_linear_algebra_verification.py automated --output-dir openspec/changes/enrich-linear-algebra-teaching-depth/verification`
 
 Expected: validation reports `54 topics validated: source=54 content=54 semantics=54 plans=54`; all Python tests and Web tests pass; the Web production build succeeds; both evidence files are written atomically.
 
-- [ ] **Step 5: Inspect evidence completeness**
+- [x] **Step 5: Inspect evidence completeness**
 
 Run: `pytest tests/test_linear_algebra_verification_writer.py -q`
 
@@ -659,7 +659,7 @@ Run: `python -m linear_algebra.teaching.compile_resources --verify --write-diges
 
 Expected: writer tests PASS; the check file is byte-identical to `topic-digests.json`. Delete only `topic-digests.check.json` after this equality check.
 
-- [ ] **Step 6: Commit automated evidence**
+- [x] **Step 6: Commit automated evidence**
 
 ```bash
 git add scripts/write_linear_algebra_verification.py tests/test_linear_algebra_verification_writer.py openspec/changes/enrich-linear-algebra-teaching-depth/verification ui/agent_web/dist

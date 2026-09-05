@@ -241,7 +241,7 @@ class VisualSemanticsCompiler:
         if "projection_2d" in declared and "geometry.projection" not in operation_names:
             if len(vectors2) >= 2:
                 operations.append({"op": "geometry.projection", "vector": list(vectors2[0]), "direction": list(vectors2[1]), "result_alias": "cap__projection", "foot_alias": "cap__foot", "residual_alias": "cap__residual", "color": role_color("projection")})
-        if "transformed_grid" in declared and "geometry.transformed_grid" not in operation_names and semantics.scene_kind == "2d":
+        if "transformed_grid" in declared and "geometry.transformed_grid" not in operation_names and semantics.scene_kind == "2d" and "staged_transform" not in declared:
             matrix = next(
                 (matrix for entity in semantics.entities if (matrix := _matrix2(entity.value)) is not None),
                 None,
@@ -252,7 +252,7 @@ class VisualSemanticsCompiler:
             basis = vectors2[:2]
             if len(basis) >= 1:
                 operations.append({"op": "geometry.subspace_region", "basis": [list(vector) for vector in basis], "bounds": list(context.bounds), "opacity": 0.2, "color": role_color("area")})
-        if "staged_transform" in declared and "geometry.staged_transform" not in operation_names and semantics.scene_kind == "2d":
+        if "staged_transform" in declared and "geometry.staged_transform" not in operation_names and semantics.scene_kind == "2d" and _topic_has_matrix_relation(semantics):
             matrix = next(
                 (matrix for entity in semantics.entities if (matrix := _matrix2(entity.value)) is not None),
                 None,
@@ -606,6 +606,15 @@ def _topic_capabilities(topic_id: str) -> frozenset[str]:
         if topic.id == topic_id:
             return frozenset(topic.required_capabilities)
     return frozenset()
+
+
+def _topic_has_matrix_relation(semantics: VisualSemantics) -> bool:
+    return any(
+        relation.kind in {"maps_to", "batch_maps_to"}
+        and isinstance(relation.parameters, Mapping)
+        and _matrix2(relation.parameters.get("matrix")) is not None
+        for relation in semantics.relations
+    )
 
 
 def _annotation_position(index: int, bounds: tuple[float, float, float, float], scene: str) -> list[float]:
