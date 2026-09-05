@@ -253,7 +253,7 @@ git commit -m "feat: define claim-first teaching models"
 - Consumes: the 54 topic IDs from `linear_algebra.catalog.manifest.topic_entries()`.
 - Produces: `TeachingLevel`, `TeachingProfile`, `profile_for(topic_id: str) -> TeachingProfile`, and `validate_profile_coverage() -> tuple[str, ...]`.
 
-- [ ] **Step 1: Write failing profile coverage tests**
+- [x] **Step 1: Write failing profile coverage tests**
 
 ```python
 from linear_algebra.catalog.manifest import topic_entries
@@ -274,13 +274,13 @@ def test_bridge_and_analogy_profiles_are_explicit() -> None:
     assert analogy.requires_analogy_boundary is True
 ```
 
-- [ ] **Step 2: Run the test and verify missing profile behavior**
+- [x] **Step 2: Run the test and verify missing profile behavior**
 
 Run: `pytest tests/test_linear_algebra_teaching_profiles.py -q`
 
 Expected: FAIL because `profiles.py` is missing.
 
-- [ ] **Step 3: Implement explicit profiles, not title heuristics**
+- [x] **Step 3: Implement explicit profiles, not title heuristics**
 
 ```python
 class TeachingLevel(IntEnum):
@@ -315,13 +315,13 @@ _ANALOGY = TeachingProfile(
 
 Define `_PROFILES` with every concrete topic ID. Use `_CORE`, `_BRIDGE`, and `_ANALOGY` values to reduce duplication, but do not infer a profile from the topic title at runtime.
 
-- [ ] **Step 4: Verify the catalog/profile join**
+- [x] **Step 4: Verify the catalog/profile join**
 
 Run: `pytest tests/test_linear_algebra_teaching_profiles.py tests/test_linear_algebra_catalog.py -q`
 
 Expected: PASS with exactly 54 assigned profiles and no unknown IDs.
 
-- [ ] **Step 5: Commit profile assignments**
+- [x] **Step 5: Commit profile assignments**
 
 ```bash
 git add linear_algebra/teaching/profiles.py linear_algebra/teaching/model.py tests/test_linear_algebra_teaching_profiles.py
