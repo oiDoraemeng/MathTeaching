@@ -44,7 +44,7 @@
 - Consumes: `TeachingArtifact`, catalog topic IDs, and semantic graph IDs.
 - Produces: `VisualContract`, `ContractIssue`, `contract_for(topic_id)`, and `validate_contract(artifact, contract)`.
 
-- [ ] **Step 1: Write failing contract fixture tests**
+- [x] **Step 1: Write failing contract fixture tests**
 
 ```python
 def test_composition_contract_requires_two_paths_and_endpoint_difference() -> None:
@@ -59,13 +59,13 @@ def test_projection_contract_rejects_missing_residual() -> None:
     assert "missing_entity_role" in {issue.code for issue in issues}
 ```
 
-- [ ] **Step 2: Run contract tests and verify missing module failure**
+- [x] **Step 2: Run contract tests and verify missing module failure**
 
 Run: `pytest tests/test_linear_algebra_visual_contracts.py -q`
 
 Expected: FAIL because `contracts.py` is missing.
 
-- [ ] **Step 3: Implement explicit contracts and validation**
+- [x] **Step 3: Implement explicit contracts and validation**
 
 ```python
 @dataclass(frozen=True)
@@ -93,13 +93,13 @@ def validate_contract(artifact: TeachingArtifact, contract: VisualContract) -> t
 
 Start with full contracts for projection, transformed grid, matrix composition, null space, determinant multiplicativity, cross product, and inverse undo. Define a conservative base contract for the remaining topic IDs so all 54 resolve explicitly.
 
-- [ ] **Step 4: Verify all 54 topics resolve a contract**
+- [x] **Step 4: Verify all 54 topics resolve a contract**
 
 Run: `pytest tests/test_linear_algebra_visual_contracts.py tests/test_linear_algebra_catalog.py -q`
 
 Expected: PASS with no title-based contract inference.
 
-- [ ] **Step 5: Commit visual contracts**
+- [x] **Step 5: Commit visual contracts**
 
 ```bash
 git add linear_algebra/visualizations/contracts.py tests/visual_semantics_fixtures.py tests/test_linear_algebra_visual_contracts.py

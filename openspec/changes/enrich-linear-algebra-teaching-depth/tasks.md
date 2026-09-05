@@ -28,7 +28,7 @@
 
 ## 4. 视觉语义编译器
 
-- [ ] 4.1 定义 `VisualContract`：required claims/entities/relations/primitives、minimum stages、invariants 和 distinguishable roles；用投影、零空间、AB/BA、det(AB) fixture 验证契约解析
+- [x] 4.1 定义 `VisualContract`：required claims/entities/relations/primitives、minimum stages、invariants 和 distinguishable roles；用投影、零空间、AB/BA、det(AB) fixture 验证契约解析
 - [ ] 4.2 新增 `VisualSemanticsCompiler`：执行 schema、引用、contract、数值和 scene-scope 校验后再产生 `CommandPlan`；用编译器单元测试验证错误不触发 renderer
 - [ ] 4.3 实现 claim evidence 检查：每个 visual claim 必须落到实体、关系和阶段，禁止只有文字而无图形证据；用缺少 endpoint 或 residual 的 fixture 验证失败
 - [ ] 4.4 实现语义到现有原语的映射：grid_transform、subspace_span、projection_bundle、batch_mapping、staged_transform、signed_area、volume_orientation 和 orientation_marker；用 golden plan 验证实际 op
