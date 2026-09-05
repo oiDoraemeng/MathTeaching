@@ -528,7 +528,7 @@ Run: `pytest tests/test_linear_algebra_claim_bindings.py -q`
 
 Expected: FAIL because `validate_claim_bindings` is missing.
 
-- [ ] **Step 3: Implement explicit symbol and evidence checks**
+- [x] **Step 3: Implement explicit symbol and evidence checks**
 
 ```python
 def validate_claim_bindings(artifact: TeachingArtifact) -> tuple[ValidationIssue, ...]:
@@ -551,13 +551,13 @@ def validate_claim_bindings(artifact: TeachingArtifact) -> tuple[ValidationIssue
 
 Do not attempt general TeX parsing. Require `formula_symbols` in the claim payload and verify those declared symbols against `symbol_roles`/entity IDs; use the formula string only for presentation.
 
-- [ ] **Step 4: Verify all fixture claim graphs**
+- [x] **Step 4: Verify all fixture claim graphs**
 
 Run: `pytest tests/test_linear_algebra_claim_bindings.py tests/test_linear_algebra_artifact_validation.py -q`
 
 Expected: PASS for complete fixtures and deterministic failures for missing residual, endpoint, or area evidence.
 
-- [ ] **Step 5: Commit claim bindings**
+- [x] **Step 5: Commit claim bindings**
 
 ```bash
 git add linear_algebra/teaching/validation.py tests/teaching_fixtures.py tests/test_linear_algebra_claim_bindings.py
