@@ -334,7 +334,7 @@ git commit -m "feat: persist versioned teaching artifacts"
 - Consumes: accepted/rejected `TeachingArtifactDraft` results.
 - Produces: `RawReplyAudit`, `reply_digest`, and store methods that never expose raw reply to compiler callers.
 
-- [ ] **Step 1: Write audit isolation tests**
+- [x] **Step 1: Write audit isolation tests**
 
 ```python
 def test_accepted_raw_reply_is_recoverable_but_not_in_runtime_artifact(tmp_path) -> None:
@@ -352,13 +352,13 @@ def test_rejected_reply_keeps_only_bounded_diagnostics(tmp_path) -> None:
     assert audit.raw_reply is None
 ```
 
-- [ ] **Step 2: Run audit tests and verify missing audit behavior**
+- [x] **Step 2: Run audit tests and verify missing audit behavior**
 
 Run: `pytest tests/test_linear_algebra_teaching_audit.py -q`
 
 Expected: FAIL because audit methods are missing.
 
-- [ ] **Step 3: Implement separate audit storage and digesting**
+- [x] **Step 3: Implement separate audit storage and digesting**
 
 ```python
 def reply_digest(raw_reply: str) -> str:
@@ -381,13 +381,13 @@ def save_rejection(self, *, topic_id, raw_reply, code, message):
 
 Store raw accepted replies under an audit-only path. `get_published_payload` strips audit fields and returns only normalized artifact data.
 
-- [ ] **Step 4: Run store, audit, and parser tests**
+- [x] **Step 4: Run store, audit, and parser tests**
 
 Run: `pytest tests/test_linear_algebra_teaching_store.py tests/test_linear_algebra_teaching_audit.py tests/test_linear_algebra_explanation_parser.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit raw-reply audit isolation**
+- [x] **Step 5: Commit raw-reply audit isolation**
 
 ```bash
 git add linear_algebra/teaching/store.py linear_algebra/teaching/model.py tests/test_linear_algebra_teaching_audit.py

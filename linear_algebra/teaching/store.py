@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -44,6 +45,22 @@ class StoredArtifact:
         return cls(artifact=artifact, raw_reply=raw_reply)
 
 
+@dataclass(frozen=True)
+class RawReplyAudit:
+    """Audit record kept outside the runtime artifact payload."""
+
+    reply_digest: str
+    raw_reply: str | None
+    error_code: str | None
+    message: str
+    topic_id: str = ""
+    revision: int | None = None
+
+
+def reply_digest(raw_reply: str) -> str:
+    return "sha256:" + hashlib.sha256(raw_reply.encode("utf-8")).hexdigest()
+
+
 class TeachingArtifactStore:
     """Persist drafts and review states under one configured root directory."""
 
@@ -74,6 +91,39 @@ class TeachingArtifactStore:
             return None
         return self.get(topic_id, revisions[-1].revision, "published")
 
+    def get_published_payload(self, revision: ArtifactRevision) -> dict[str, object]:
+        if revision.state != "published":
+            raise ValueError("published payload requires a published revision")
+        return self.get(revision.topic_id, revision.revision, "published").artifact.to_dict()
+
+    def audit_raw_reply(self, revision: ArtifactRevision) -> RawReplyAudit:
+        path = self._audit_path(revision.topic_id, revision.revision)
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except FileNotFoundError as error:
+            raise FileNotFoundError(f"missing raw reply audit for {revision.topic_id!r} revision {revision.revision}") from error
+        return _audit_from_payload(payload)
+
+    def save_rejection(self, *, topic_id: str, raw_reply: str, code: str, message: str) -> RawReplyAudit:
+        self._validate_topic_id(topic_id)
+        if not isinstance(raw_reply, str) or not isinstance(code, str) or not isinstance(message, str):
+            raise TypeError("rejection audit fields must be text")
+        audit = RawReplyAudit(
+            reply_digest=reply_digest(raw_reply),
+            raw_reply=None,
+            error_code=code,
+            message=message[:512],
+            topic_id=topic_id,
+        )
+        directory = self.root / "audit" / "rejections" / topic_id.split(".", 1)[0] / topic_id
+        existing = sorted(directory.glob("r*.json")) if directory.exists() else []
+        next_revision = 1
+        if existing:
+            numbers = [int(match.group(1)) for path in existing if (match := re.fullmatch(r"r([1-9][0-9]*)\.json", path.name))]
+            next_revision = max(numbers, default=0) + 1
+        self._write_stable_json(directory / f"r{next_revision}.json", _audit_to_payload(audit))
+        return audit
+
     def list_revisions(self, topic_id: str, state: StoreState | None = None) -> tuple[ArtifactRevision, ...]:
         self._validate_topic_id(topic_id)
         states = (state,) if state is not None else ("draft", "reviewed", "published")
@@ -89,16 +139,29 @@ class TeachingArtifactStore:
         return tuple(sorted(result, key=lambda item: (item.state, item.revision)))
 
     def _save(self, state: StoreState, artifact: TeachingArtifact, *, raw_reply: str | None) -> ArtifactRevision:
-        if artifact.status != state:
-            raise ValueError(f"artifact status {artifact.status!r} does not match {state!r}")
         if raw_reply is not None and not isinstance(raw_reply, str):
             raise TypeError("raw_reply must be text")
-        revision = self._next_revision(state, artifact.topic_id)
-        payload: dict[str, object] = {"artifact": artifact.to_dict()}
-        if raw_reply is not None:
+        normalized = replace(artifact, status=state)
+        revision = self._next_revision(state, normalized.topic_id)
+        payload: dict[str, object] = {"artifact": normalized.to_dict()}
+        if state == "draft" and raw_reply is not None:
             payload["raw_reply"] = raw_reply
-        self._write_stable_json(self._path(state, artifact.topic_id, revision), payload)
-        return ArtifactRevision(artifact.topic_id, revision, state)
+        self._write_stable_json(self._path(state, normalized.topic_id, revision), payload)
+        if raw_reply is not None and state in {"reviewed", "published"}:
+            self._write_stable_json(
+                self._audit_path(normalized.topic_id, revision),
+                _audit_to_payload(
+                    RawReplyAudit(
+                        reply_digest=reply_digest(raw_reply),
+                        raw_reply=raw_reply,
+                        error_code=None,
+                        message="accepted",
+                        topic_id=normalized.topic_id,
+                        revision=revision,
+                    )
+                ),
+            )
+        return ArtifactRevision(normalized.topic_id, revision, state)
 
     def _next_revision(self, state: StoreState, topic_id: str) -> int:
         existing = self.list_revisions(topic_id, state)
@@ -118,6 +181,12 @@ class TeachingArtifactStore:
     def _topic_directory(self, state: StoreState, topic_id: str) -> Path:
         chapter = topic_id.split(".", 1)[0]
         return self.root / f"{state}s" / chapter / topic_id
+
+    def _audit_path(self, topic_id: str, revision: int) -> Path:
+        self._validate_topic_id(topic_id)
+        if isinstance(revision, bool) or not isinstance(revision, int) or revision < 1:
+            raise ValueError("revision must be a positive integer")
+        return self.root / "audit" / topic_id.split(".", 1)[0] / topic_id / f"r{revision}.json"
 
     @staticmethod
     def _validate_topic_id(topic_id: str) -> None:
@@ -140,4 +209,28 @@ class TeachingArtifactStore:
                 os.unlink(temporary_name)
 
 
-__all__ = ["ArtifactRevision", "StoredArtifact", "TeachingArtifactStore"]
+__all__ = ["ArtifactRevision", "RawReplyAudit", "StoredArtifact", "TeachingArtifactStore", "reply_digest"]
+
+
+def _audit_to_payload(audit: RawReplyAudit) -> dict[str, object]:
+    return {
+        "reply_digest": audit.reply_digest,
+        "raw_reply": audit.raw_reply,
+        "error_code": audit.error_code,
+        "message": audit.message,
+        "topic_id": audit.topic_id,
+        "revision": audit.revision,
+    }
+
+
+def _audit_from_payload(payload: object) -> RawReplyAudit:
+    if not isinstance(payload, dict):
+        raise ValueError("audit payload must be an object")
+    return RawReplyAudit(
+        reply_digest=str(payload.get("reply_digest", "")),
+        raw_reply=payload.get("raw_reply") if isinstance(payload.get("raw_reply"), str) else None,
+        error_code=payload.get("error_code") if isinstance(payload.get("error_code"), str) else None,
+        message=str(payload.get("message", "")),
+        topic_id=str(payload.get("topic_id", "")),
+        revision=payload.get("revision") if isinstance(payload.get("revision"), int) else None,
+    )
