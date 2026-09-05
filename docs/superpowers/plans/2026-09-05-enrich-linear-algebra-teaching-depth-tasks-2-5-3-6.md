@@ -42,7 +42,7 @@
 - Consumes: `TeachingArtifact.teaching_profile` and `TeachingArtifact.explanation`.
 - Produces: `validate_teaching_depth(artifact) -> tuple[ValidationIssue, ...]`.
 
-- [ ] **Step 1: Write failing L2/L3/L4 completeness tests**
+- [x] **Step 1: Write failing L2/L3/L4 completeness tests**
 
 ```python
 def test_l3_requires_example_geometry_and_invariant() -> None:
@@ -58,13 +58,13 @@ def test_l4_requires_connection_and_variant() -> None:
     assert "missing_connection" in {issue.code for issue in issues}
 ```
 
-- [ ] **Step 2: Run depth tests and verify failure**
+- [x] **Step 2: Run depth tests and verify failure**
 
 Run: `pytest tests/test_linear_algebra_teaching_depth.py -q`
 
 Expected: FAIL because `validate_teaching_depth` is missing.
 
-- [ ] **Step 3: Implement profile-driven field checks**
+- [x] **Step 3: Implement profile-driven field checks**
 
 ```python
 def validate_teaching_depth(artifact: TeachingArtifact) -> tuple[ValidationIssue, ...]:
@@ -89,13 +89,13 @@ def validate_teaching_depth(artifact: TeachingArtifact) -> tuple[ValidationIssue
 
 Treat empty strings, empty arrays, and whitespace-only Markdown as missing. Do not infer depth from word count.
 
-- [ ] **Step 4: Run depth and artifact validation tests**
+- [x] **Step 4: Run depth and artifact validation tests**
 
 Run: `pytest tests/test_linear_algebra_teaching_depth.py tests/test_linear_algebra_artifact_validation.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit depth validation**
+- [x] **Step 5: Commit depth validation**
 
 ```bash
 git add linear_algebra/teaching/validation.py linear_algebra/teaching/profiles.py tests/test_linear_algebra_teaching_depth.py
