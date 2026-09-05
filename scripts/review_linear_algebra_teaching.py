@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import sys
 from typing import Sequence
+
+if __package__ in {None, ""}:  # pragma: no cover - direct script invocation
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from linear_algebra.catalog.manifest import topic_entries
 from linear_algebra.teaching.source import LectureSourceRepository

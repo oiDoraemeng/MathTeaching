@@ -12,6 +12,9 @@ import subprocess
 import sys
 from typing import Callable, Iterable, Sequence
 
+if __package__ in {None, ""}:  # pragma: no cover - direct script invocation
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from linear_algebra.registry import catalog_registry
 from linear_algebra.teaching.store import TeachingArtifactStore
 from linear_algebra.visualizations.common import RenderContext
