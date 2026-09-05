@@ -12,6 +12,7 @@ from jsonschema.exceptions import ValidationError
 from linear_algebra.catalog.model import LessonEntry
 from linear_algebra.catalog.manifest import topic_entries
 
+from .examples import verify_worked_example
 from .model import TeachingArtifact
 from .profiles import TeachingLevel, profile_for
 from .schema import load_artifact_schema
@@ -47,8 +48,9 @@ def validate_artifact_payload(payload: Mapping[str, object]) -> TeachingArtifact
         raise ArtifactValidationError((_model_issue(error),)) from None
 
     reference_issues = validate_closed_references(artifact)
-    if reference_issues:
-        raise ArtifactValidationError(reference_issues)
+    example_issues = validate_worked_examples(artifact)
+    if reference_issues or example_issues:
+        raise ArtifactValidationError((*reference_issues, *example_issues))
     return artifact
 
 
@@ -367,6 +369,20 @@ def validate_teaching_depth(artifact: TeachingArtifact) -> tuple[ValidationIssue
     return tuple(_sorted_issues(issues))
 
 
+def validate_worked_examples(artifact: TeachingArtifact) -> tuple[ValidationIssue, ...]:
+    """Return diagnostics for every machine-checkable worked example."""
+
+    issues: list[ValidationIssue] = []
+    for index, example in enumerate(artifact.explanation.worked_examples):
+        result = verify_worked_example(example)
+        path = f"$.explanation.worked_examples[{index}]"
+        if result.manual_review:
+            issues.append(ValidationIssue("manual_review_required", path, result.reason or example.kind))
+        elif not result.valid:
+            issues.append(ValidationIssue("worked_example_mismatch", path, example.kind))
+    return tuple(_sorted_issues(issues))
+
+
 @lru_cache(maxsize=1)
 def _validator() -> Draft202012Validator:
     return Draft202012Validator(load_artifact_schema())
@@ -444,4 +460,5 @@ __all__ = [
     "validate_closed_references",
     "validate_source_evidence",
     "validate_teaching_depth",
+    "validate_worked_examples",
 ]
