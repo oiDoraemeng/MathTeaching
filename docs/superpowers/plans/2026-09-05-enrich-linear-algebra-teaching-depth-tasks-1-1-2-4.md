@@ -162,7 +162,7 @@ git commit -m "feat: add lecture source contexts"
 - Consumes: `SourceContext` from Task 1.
 - Produces: immutable JSON-safe types `Claim`, `ExplanationContentV2`, `VisualEntity`, `VisualRelation`, `VisualStage`, `VisualSemantics`, `GenerationReceipt`, and `TeachingArtifact`.
 
-- [ ] **Step 1: Write a failing nested round-trip test**
+- [x] **Step 1: Write a failing nested round-trip test**
 
 ```python
 from linear_algebra.teaching.model import TeachingArtifact
@@ -180,13 +180,13 @@ def test_teaching_artifact_round_trip_keeps_claim_links() -> None:
 
 Create `tests/teaching_fixtures.py` with a complete, small `ch02.matrix.composition` payload rather than mocking individual fields.
 
-- [ ] **Step 2: Run the model test and verify it fails**
+- [x] **Step 2: Run the model test and verify it fails**
 
 Run: `pytest tests/test_linear_algebra_teaching_model.py -q`
 
 Expected: FAIL because `TeachingArtifact` and the fixture do not exist.
 
-- [ ] **Step 3: Implement immutable models with explicit serializers**
+- [x] **Step 3: Implement immutable models with explicit serializers**
 
 ```python
 ArtifactStatus = Literal["draft", "reviewed", "published"]
@@ -228,13 +228,13 @@ class TeachingArtifact:
 
 Use tuples internally, lists in JSON, ordered mappings for symbol roles, and reject implicit coercion such as a string where a list is required.
 
-- [ ] **Step 4: Run round-trip and existing explanation tests**
+- [x] **Step 4: Run round-trip and existing explanation tests**
 
 Run: `pytest tests/test_linear_algebra_teaching_model.py tests/test_linear_algebra_explanations.py -q`
 
 Expected: PASS; existing `ExplanationContent` remains unchanged in this task.
 
-- [ ] **Step 5: Commit the teaching models**
+- [x] **Step 5: Commit the teaching models**
 
 ```bash
 git add linear_algebra/teaching/model.py linear_algebra/teaching/__init__.py tests/teaching_fixtures.py tests/test_linear_algebra_teaching_model.py
