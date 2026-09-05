@@ -14,11 +14,13 @@ from .model import (
     VisualSemantics,
     VisualStage,
 )
+from .parser import AgentReplyError, parse_agent_reply
 from .source import LectureSourceRepository, SourceContext, SourceSpan, normalize_source_text
 from .vocabulary import VisualVocabulary
 
 __all__ = [
     "Claim",
+    "AgentReplyError",
     "ExplanationContentV2",
     "ExplanationAgent",
     "GenerationReceipt",
@@ -37,5 +39,6 @@ __all__ = [
     "VisualStage",
     "VisualVocabulary",
     "ProviderExplanationAgent",
+    "parse_agent_reply",
     "normalize_source_text",
 ]
