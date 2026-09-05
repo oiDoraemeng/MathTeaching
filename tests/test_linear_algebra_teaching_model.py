@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import pytest
 
 from linear_algebra.teaching.model import TeachingArtifact, VisualRelation
@@ -44,3 +46,25 @@ def test_directly_constructed_nested_json_is_immutable() -> None:
 def test_artifact_requires_an_object_root() -> None:
     with pytest.raises(ValueError, match=r"\$: expected object"):
         TeachingArtifact.from_dict([])  # type: ignore[arg-type]
+
+
+def test_direct_construction_rejects_invalid_scalar_values() -> None:
+    artifact = TeachingArtifact.from_dict(composition_artifact_payload())
+
+    invalid_constructions = (
+        lambda: replace(artifact.source, heading_level=True),
+        lambda: replace(artifact.teaching_profile, requires_analogy_boundary=1),
+        lambda: replace(artifact.claims[0], formula=1),
+        lambda: replace(artifact.explanation.sections[0], text=1),
+        lambda: replace(artifact.explanation, title=1),
+        lambda: replace(artifact.visual_semantics.entities[0], dimension=True),
+        lambda: replace(artifact.visual_semantics.relations[0], source_ref=1),
+        lambda: replace(artifact.visual_semantics.stages[0], layout="grid"),
+        lambda: replace(artifact.visual_semantics, scene_kind="4d"),
+        lambda: replace(artifact.generated, provider=1),
+        lambda: replace(artifact, status="queued"),
+    )
+
+    for construct in invalid_constructions:
+        with pytest.raises(TypeError):
+            construct()

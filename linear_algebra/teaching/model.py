@@ -37,7 +37,11 @@ class SourceRecord:
     def __post_init__(self) -> None:
         object.__setattr__(self, "source_path", _constructor_string_tuple(self.source_path, "source_path"))
         object.__setattr__(self, "heading_path", _constructor_string_tuple(self.heading_path, "heading_path"))
-        object.__setattr__(self, "spans", _constructor_tuple(self.spans, "spans"))
+        object.__setattr__(self, "heading_level", _constructor_integer(self.heading_level, "heading_level"))
+        object.__setattr__(self, "occurrence", _constructor_integer(self.occurrence, "occurrence"))
+        object.__setattr__(self, "excerpt", _constructor_string(self.excerpt, "excerpt"))
+        object.__setattr__(self, "source_hash", _constructor_string(self.source_hash, "source_hash"))
+        object.__setattr__(self, "spans", _constructor_instance_tuple(self.spans, "spans", SourceSpan))
         object.__setattr__(self, "neighboring_titles", _constructor_string_tuple(self.neighboring_titles, "neighboring_titles"))
 
     @classmethod
@@ -63,7 +67,9 @@ class TeachingProfileRecord:
     requires_analogy_boundary: bool
 
     def __post_init__(self) -> None:
+        object.__setattr__(self, "minimum_level", _constructor_integer(self.minimum_level, "minimum_level"))
         object.__setattr__(self, "required_sections", _constructor_string_tuple(self.required_sections, "required_sections"))
+        object.__setattr__(self, "requires_analogy_boundary", _constructor_boolean(self.requires_analogy_boundary, "requires_analogy_boundary"))
 
 
 @dataclass(frozen=True)
@@ -81,6 +87,9 @@ class Claim:
     stage_refs: tuple[str, ...]
 
     def __post_init__(self) -> None:
+        object.__setattr__(self, "id", _constructor_string(self.id, "id"))
+        object.__setattr__(self, "statement", _constructor_string(self.statement, "statement"))
+        object.__setattr__(self, "formula", _constructor_optional_string(self.formula, "formula"))
         for field in ("formula_symbols", "source_refs", "explanation_refs", "entity_refs", "relation_refs", "stage_refs"):
             object.__setattr__(self, field, _constructor_string_tuple(getattr(self, field), field))
 
@@ -95,6 +104,9 @@ class ExplanationSection:
     claim_refs: tuple[str, ...]
 
     def __post_init__(self) -> None:
+        object.__setattr__(self, "id", _constructor_string(self.id, "id"))
+        object.__setattr__(self, "title", _constructor_string(self.title, "title"))
+        object.__setattr__(self, "text", _constructor_string(self.text, "text"))
         object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
 
 
@@ -108,7 +120,9 @@ class ExplanationContentV2:
     symbol_roles: Mapping[str, str]
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "sections", _constructor_tuple(self.sections, "sections"))
+        object.__setattr__(self, "title", _constructor_string(self.title, "title"))
+        object.__setattr__(self, "summary", _constructor_string(self.summary, "summary"))
+        object.__setattr__(self, "sections", _constructor_instance_tuple(self.sections, "sections", ExplanationSection))
         object.__setattr__(self, "symbol_roles", _constructor_string_mapping(self.symbol_roles, "symbol_roles"))
 
 
@@ -125,7 +139,12 @@ class VisualEntity:
     claim_refs: tuple[str, ...]
 
     def __post_init__(self) -> None:
+        object.__setattr__(self, "id", _constructor_string(self.id, "id"))
+        object.__setattr__(self, "kind", _constructor_string(self.kind, "kind"))
+        object.__setattr__(self, "dimension", _constructor_integer(self.dimension, "dimension"))
         object.__setattr__(self, "value", _freeze_json(self.value, "$.value"))
+        object.__setattr__(self, "role", _constructor_string(self.role, "role"))
+        object.__setattr__(self, "label", _constructor_string(self.label, "label"))
         object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
 
 
@@ -141,6 +160,10 @@ class VisualRelation:
     claim_refs: tuple[str, ...]
 
     def __post_init__(self) -> None:
+        object.__setattr__(self, "id", _constructor_string(self.id, "id"))
+        object.__setattr__(self, "kind", _constructor_string(self.kind, "kind"))
+        object.__setattr__(self, "source_ref", _constructor_string(self.source_ref, "source_ref"))
+        object.__setattr__(self, "target_ref", _constructor_string(self.target_ref, "target_ref"))
         parameters = _freeze_json(self.parameters, "$.parameters")
         if not isinstance(parameters, Mapping):
             raise ValueError("$.parameters: expected object")
@@ -162,6 +185,10 @@ class VisualStage:
     expected_invariants: tuple[str, ...]
 
     def __post_init__(self) -> None:
+        object.__setattr__(self, "id", _constructor_string(self.id, "id"))
+        object.__setattr__(self, "title", _constructor_string(self.title, "title"))
+        object.__setattr__(self, "caption", _constructor_string(self.caption, "caption"))
+        object.__setattr__(self, "layout", _constructor_choice(self.layout, "layout", ("overlay", "side_by_side", "sequence")))
         for field in ("input_entity_refs", "output_entity_refs", "relation_refs", "expected_invariants"):
             object.__setattr__(self, field, _constructor_string_tuple(getattr(self, field), field))
 
@@ -176,9 +203,10 @@ class VisualSemantics:
     stages: tuple[VisualStage, ...]
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "entities", _constructor_tuple(self.entities, "entities"))
-        object.__setattr__(self, "relations", _constructor_tuple(self.relations, "relations"))
-        object.__setattr__(self, "stages", _constructor_tuple(self.stages, "stages"))
+        object.__setattr__(self, "scene_kind", _constructor_choice(self.scene_kind, "scene_kind", ("2d", "3d")))
+        object.__setattr__(self, "entities", _constructor_instance_tuple(self.entities, "entities", VisualEntity))
+        object.__setattr__(self, "relations", _constructor_instance_tuple(self.relations, "relations", VisualRelation))
+        object.__setattr__(self, "stages", _constructor_instance_tuple(self.stages, "stages", VisualStage))
 
     @classmethod
     def from_dict(cls, payload: Mapping[str, object]) -> "VisualSemantics":
@@ -200,6 +228,18 @@ class GenerationReceipt:
     raw_reply_digest: str
     artifact_digest: str
 
+    def __post_init__(self) -> None:
+        for field in (
+            "provider",
+            "model",
+            "prompt_version",
+            "generated_at",
+            "source_hash",
+            "raw_reply_digest",
+            "artifact_digest",
+        ):
+            object.__setattr__(self, field, _constructor_string(getattr(self, field), field))
+
 
 @dataclass(frozen=True)
 class TeachingArtifact:
@@ -217,7 +257,16 @@ class TeachingArtifact:
     generated: GenerationReceipt
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "claims", _constructor_tuple(self.claims, "claims"))
+        object.__setattr__(self, "schema_version", _constructor_integer(self.schema_version, "schema_version"))
+        object.__setattr__(self, "topic_id", _constructor_string(self.topic_id, "topic_id"))
+        object.__setattr__(self, "revision", _constructor_integer(self.revision, "revision"))
+        object.__setattr__(self, "status", _constructor_choice(self.status, "status", ("draft", "reviewed", "published")))
+        object.__setattr__(self, "source", _constructor_instance(self.source, "source", SourceRecord))
+        object.__setattr__(self, "teaching_profile", _constructor_instance(self.teaching_profile, "teaching_profile", TeachingProfileRecord))
+        object.__setattr__(self, "claims", _constructor_instance_tuple(self.claims, "claims", Claim))
+        object.__setattr__(self, "explanation", _constructor_instance(self.explanation, "explanation", ExplanationContentV2))
+        object.__setattr__(self, "visual_semantics", _constructor_instance(self.visual_semantics, "visual_semantics", VisualSemantics))
+        object.__setattr__(self, "generated", _constructor_instance(self.generated, "generated", GenerationReceipt))
 
     @classmethod
     def from_dict(cls, payload: Mapping[str, object]) -> "TeachingArtifact":
@@ -615,6 +664,19 @@ def _constructor_tuple(value: object, field: str) -> tuple[object, ...]:
     return tuple(value)
 
 
+def _constructor_instance_tuple(value: object, field: str, expected_type: type[object]) -> tuple[object, ...]:
+    return tuple(
+        _constructor_instance(item, f"{field}[{index}]", expected_type)
+        for index, item in enumerate(_constructor_tuple(value, field))
+    )
+
+
+def _constructor_instance(value: object, field: str, expected_type: type[object]) -> object:
+    if not isinstance(value, expected_type):
+        raise TypeError(f"{field}: expected {expected_type.__name__}")
+    return value
+
+
 def _constructor_string_tuple(value: object, field: str) -> tuple[str, ...]:
     return tuple(_constructor_string(item, f"{field}[{index}]") for index, item in enumerate(_constructor_tuple(value, field)))
 
@@ -623,6 +685,31 @@ def _constructor_string(item: object, field: str) -> str:
     if not isinstance(item, str):
         raise TypeError(f"{field}: expected string")
     return item
+
+
+def _constructor_optional_string(value: object, field: str) -> str | None:
+    if value is None:
+        return None
+    return _constructor_string(value, field)
+
+
+def _constructor_integer(value: object, field: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TypeError(f"{field}: expected integer")
+    return value
+
+
+def _constructor_boolean(value: object, field: str) -> bool:
+    if not isinstance(value, bool):
+        raise TypeError(f"{field}: expected boolean")
+    return value
+
+
+def _constructor_choice(value: object, field: str, choices: tuple[str, ...]) -> str:
+    value = _constructor_string(value, field)
+    if value not in choices:
+        raise TypeError(f"{field}: expected one of {', '.join(choices)}")
+    return value
 
 
 def _constructor_string_mapping(value: object, field: str) -> Mapping[str, str]:
