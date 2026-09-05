@@ -114,7 +114,7 @@ git commit -m "feat: validate teaching depth profiles"
 - Consumes: `WorkedExample` typed inputs and checks.
 - Produces: `ExampleCheckResult`, `verify_worked_example(example)`, and `validate_worked_examples(artifact)`.
 
-- [ ] **Step 1: Write exact and tolerance-bound tests**
+- [x] **Step 1: Write exact and tolerance-bound tests**
 
 ```python
 def test_matrix_transform_example_is_recomputed() -> None:
@@ -131,13 +131,13 @@ def test_wrong_determinant_is_rejected() -> None:
     assert result.checks[0].code == "value_mismatch"
 ```
 
-- [ ] **Step 2: Run numeric tests and verify missing verifier failure**
+- [x] **Step 2: Run numeric tests and verify missing verifier failure**
 
 Run: `pytest tests/test_linear_algebra_teaching_examples.py -q`
 
 Expected: FAIL because `examples.py` is missing.
 
-- [ ] **Step 3: Implement typed calculators only**
+- [x] **Step 3: Implement typed calculators only**
 
 ```python
 SUPPORTED_KINDS = frozenset({
@@ -156,7 +156,7 @@ def verify_worked_example(example: WorkedExample) -> ExampleCheckResult:
 
 Use explicit matrix/vector operations and `math.isclose` with a documented absolute/relative tolerance. Reject unsupported symbolic calculations as `manual_review_required`; never execute strings as Python.
 
-- [ ] **Step 4: Integrate numeric checks into artifact validation**
+- [x] **Step 4: Integrate numeric checks into artifact validation**
 
 ```python
 def validate_worked_examples(artifact: TeachingArtifact) -> tuple[ValidationIssue, ...]:
@@ -170,13 +170,13 @@ def validate_worked_examples(artifact: TeachingArtifact) -> tuple[ValidationIssu
     return tuple(issues)
 ```
 
-- [ ] **Step 5: Run all numeric and artifact tests**
+- [x] **Step 5: Run all numeric and artifact tests**
 
 Run: `pytest tests/test_linear_algebra_teaching_examples.py tests/test_linear_algebra_artifact_validation.py -q`
 
 Expected: PASS; wrong calculations never reach publish.
 
-- [ ] **Step 6: Commit the verifier**
+- [x] **Step 6: Commit the verifier**
 
 ```bash
 git add linear_algebra/teaching/examples.py linear_algebra/teaching/validation.py tests/test_linear_algebra_teaching_examples.py
