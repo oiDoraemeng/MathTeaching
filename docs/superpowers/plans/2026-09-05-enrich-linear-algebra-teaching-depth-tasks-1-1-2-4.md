@@ -729,7 +729,7 @@ git commit -m "feat: define lecture-grounded teaching prompt"
 - Consumes: exact provider response text and expected topic ID.
 - Produces: `parse_agent_reply(raw_reply: str, expected_topic_id: str) -> TeachingArtifact` and `AgentReplyError`.
 
-- [ ] **Step 1: Write failing malicious-reply tests**
+- [x] **Step 1: Write failing malicious-reply tests**
 
 ```python
 @pytest.mark.parametrize("raw", [
@@ -749,13 +749,13 @@ def test_parser_rejects_wrong_topic_id() -> None:
         parse_agent_reply(raw, expected_topic_id="ch02.matrix.composition")
 ```
 
-- [ ] **Step 2: Run parser tests and verify failure**
+- [x] **Step 2: Run parser tests and verify failure**
 
 Run: `pytest tests/test_linear_algebra_explanation_parser.py -q`
 
 Expected: FAIL because parser and error types do not exist.
 
-- [ ] **Step 3: Implement exact-JSON parsing and recursive key/value scanning**
+- [x] **Step 3: Implement exact-JSON parsing and recursive key/value scanning**
 
 ```python
 FORBIDDEN_KEYS = frozenset({"op", "operations", "command_plan", "python", "html", "qt"})
@@ -782,13 +782,13 @@ def parse_agent_reply(raw_reply: str, expected_topic_id: str) -> TeachingArtifac
 
 Scan all keys and string values with bounded recursion and message length. Allow mathematical words such as “operation” only when they do not match a namespaced scene command.
 
-- [ ] **Step 4: Run parser and agent tests**
+- [x] **Step 4: Run parser and agent tests**
 
 Run: `pytest tests/test_linear_algebra_explanation_parser.py tests/test_linear_algebra_explanation_agent.py -q`
 
 Expected: PASS; rejected replies never produce a `TeachingArtifactDraft`.
 
-- [ ] **Step 5: Commit safe response parsing**
+- [x] **Step 5: Commit safe response parsing**
 
 ```bash
 git add linear_algebra/teaching/parser.py linear_algebra/teaching/agent.py tests/test_linear_algebra_explanation_parser.py
@@ -806,7 +806,7 @@ git commit -m "feat: reject executable teaching replies"
 - Consumes: `TeachingArtifact`, current `SourceContext`, and catalog `LessonEntry`.
 - Produces: `validate_source_evidence(artifact, context, entry) -> tuple[ValidationIssue, ...]`.
 
-- [ ] **Step 1: Write failing source evidence tests**
+- [x] **Step 1: Write failing source evidence tests**
 
 ```python
 def test_claim_source_refs_must_resolve_in_current_context(source_context, topic) -> None:
@@ -822,13 +822,13 @@ def test_changed_excerpt_reports_stale_source(source_context, topic) -> None:
     assert [issue.code for issue in issues] == ["stale_source"]
 ```
 
-- [ ] **Step 2: Run evidence tests and verify failure**
+- [x] **Step 2: Run evidence tests and verify failure**
 
 Run: `pytest tests/test_linear_algebra_source_evidence.py -q`
 
 Expected: FAIL because the source-evidence validator is missing.
 
-- [ ] **Step 3: Implement anchor, hash, and span-reference checks**
+- [x] **Step 3: Implement anchor, hash, and span-reference checks**
 
 ```python
 def validate_source_evidence(artifact, context, entry) -> tuple[ValidationIssue, ...]:
@@ -851,13 +851,13 @@ def validate_source_evidence(artifact, context, entry) -> tuple[ValidationIssue,
 
 If source references include a quote fingerprint, recompute it against the referenced span. Neighboring titles may support `connections`, but not definitions or formulas.
 
-- [ ] **Step 4: Run all plan-1 tests**
+- [x] **Step 4: Run all plan-1 tests**
 
 Run: `pytest tests/test_linear_algebra_teaching_source.py tests/test_linear_algebra_teaching_model.py tests/test_linear_algebra_teaching_profiles.py tests/test_linear_algebra_visual_vocabulary.py tests/test_linear_algebra_artifact_validation.py tests/test_linear_algebra_claim_bindings.py tests/test_linear_algebra_explanation_agent.py tests/test_linear_algebra_explanation_prompt.py tests/test_linear_algebra_explanation_parser.py tests/test_linear_algebra_source_evidence.py -q`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit source evidence validation**
+- [x] **Step 5: Commit source evidence validation**
 
 ```bash
 git add linear_algebra/teaching/validation.py tests/test_linear_algebra_source_evidence.py
