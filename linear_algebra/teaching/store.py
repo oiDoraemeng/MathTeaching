@@ -12,7 +12,15 @@ import tempfile
 from typing import Literal
 
 from .model import ArtifactStatus, TeachingArtifact
-from .validation import validate_artifact_payload
+from .validation import (
+    ArtifactValidationError,
+    ValidationIssue,
+    validate_artifact_payload,
+    validate_claim_bindings,
+    validate_source_evidence,
+    validate_teaching_depth,
+    validate_worked_examples,
+)
 
 
 StoreState = Literal["draft", "reviewed", "published"]
@@ -55,6 +63,22 @@ class RawReplyAudit:
     message: str
     topic_id: str = ""
     revision: int | None = None
+
+
+@dataclass(frozen=True)
+class PublishResult:
+    ok: bool
+    revision: ArtifactRevision | None = None
+    issues: tuple[ValidationIssue, ...] = ()
+
+
+@dataclass(frozen=True)
+class ReviewRecord:
+    topic_id: str
+    revision: int
+    reviewer: str
+    decision: str
+    timestamp: str
 
 
 def reply_digest(raw_reply: str) -> str:
@@ -124,6 +148,54 @@ class TeachingArtifactStore:
         self._write_stable_json(directory / f"r{next_revision}.json", _audit_to_payload(audit))
         return audit
 
+    def review_draft(self, topic_id: str, revision: int, reviewer: str) -> ArtifactRevision:
+        """Copy one draft into reviewed state after an explicit reviewer action."""
+
+        if not isinstance(reviewer, str) or not reviewer.strip():
+            raise ValueError("reviewer must be non-empty")
+        stored = self.get(topic_id, revision, "draft")
+        reviewed = self.save_reviewed(stored.artifact, raw_reply=stored.raw_reply or "")
+        self._write_review_record(
+            ReviewRecord(
+                topic_id=topic_id,
+                revision=reviewed.revision,
+                reviewer=reviewer,
+                decision="review",
+                timestamp=_utc_timestamp(),
+            )
+        )
+        return reviewed
+
+    def publish(self, artifact: TeachingArtifact, *, source_context: object, topic: object) -> PublishResult:
+        """Validate and atomically add a published revision."""
+
+        if artifact.status != "reviewed":
+            return PublishResult(
+                ok=False,
+                issues=(
+                    ValidationIssue(
+                        "review_required",
+                        "$.status",
+                        "publish requires an explicitly reviewed revision",
+                    ),
+                ),
+            )
+        try:
+            validate_artifact_payload(artifact.to_dict())
+        except ArtifactValidationError as error:
+            return PublishResult(ok=False, issues=error.issues)
+        issues = (
+            *validate_source_evidence(artifact, source_context, topic),  # type: ignore[arg-type]
+            *validate_teaching_depth(artifact),
+            *validate_worked_examples(artifact),
+            *validate_claim_bindings(artifact),
+        )
+        if issues:
+            return PublishResult(ok=False, issues=tuple(sorted(issues, key=lambda issue: (issue.path, issue.code, issue.message))))
+        published = replace(artifact, status="published")
+        revision = self.save_published(published)
+        return PublishResult(ok=True, revision=revision)
+
     def list_revisions(self, topic_id: str, state: StoreState | None = None) -> tuple[ArtifactRevision, ...]:
         self._validate_topic_id(topic_id)
         states = (state,) if state is not None else ("draft", "reviewed", "published")
@@ -188,6 +260,16 @@ class TeachingArtifactStore:
             raise ValueError("revision must be a positive integer")
         return self.root / "audit" / topic_id.split(".", 1)[0] / topic_id / f"r{revision}.json"
 
+    def _write_review_record(self, record: ReviewRecord) -> None:
+        path = self.root / "audit" / "reviews" / record.topic_id.split(".", 1)[0] / record.topic_id / f"r{record.revision}.json"
+        self._write_stable_json(path, {
+            "topic_id": record.topic_id,
+            "revision": record.revision,
+            "reviewer": record.reviewer,
+            "decision": record.decision,
+            "timestamp": record.timestamp,
+        })
+
     @staticmethod
     def _validate_topic_id(topic_id: str) -> None:
         if not isinstance(topic_id, str) or not _TOPIC_ID.fullmatch(topic_id):
@@ -209,7 +291,15 @@ class TeachingArtifactStore:
                 os.unlink(temporary_name)
 
 
-__all__ = ["ArtifactRevision", "RawReplyAudit", "StoredArtifact", "TeachingArtifactStore", "reply_digest"]
+__all__ = [
+    "ArtifactRevision",
+    "PublishResult",
+    "RawReplyAudit",
+    "ReviewRecord",
+    "StoredArtifact",
+    "TeachingArtifactStore",
+    "reply_digest",
+]
 
 
 def _audit_to_payload(audit: RawReplyAudit) -> dict[str, object]:
@@ -234,3 +324,9 @@ def _audit_from_payload(payload: object) -> RawReplyAudit:
         topic_id=str(payload.get("topic_id", "")),
         revision=payload.get("revision") if isinstance(payload.get("revision"), int) else None,
     )
+
+
+def _utc_timestamp() -> str:
+    from datetime import datetime, timezone
+
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")

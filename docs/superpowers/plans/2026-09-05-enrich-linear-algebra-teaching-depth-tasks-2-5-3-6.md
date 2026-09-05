@@ -408,7 +408,7 @@ git commit -m "feat: preserve teaching reply audit records"
 - Consumes: stored draft revision, explicit reviewer decision, current source context, validation pipeline.
 - Produces: `review_draft(topic_id, revision, reviewer)`, `publish(reviewed_artifact, ...)`, `PublishResult`, and an interactive chapter review CLI.
 
-- [ ] **Step 1: Write publish rollback tests**
+- [x] **Step 1: Write publish rollback tests**
 
 ```python
 def test_publish_replaces_index_only_after_all_validation_passes(tmp_path, source_context, topic) -> None:
@@ -427,13 +427,13 @@ def test_publish_rejects_a_valid_but_unreviewed_draft(tmp_path, source_context, 
     assert result.issues[0].code == "review_required"
 ```
 
-- [ ] **Step 2: Run publish tests and verify missing workflow failure**
+- [x] **Step 2: Run publish tests and verify missing workflow failure**
 
 Run: `pytest tests/test_linear_algebra_teaching_publish.py -q`
 
 Expected: FAIL because review/publish methods are missing.
 
-- [ ] **Step 3: Implement review gate and temporary-file replacement**
+- [x] **Step 3: Implement review gate and temporary-file replacement**
 
 ```python
 def publish(self, artifact, *, source_context, topic) -> PublishResult:
@@ -461,13 +461,13 @@ def publish(self, artifact, *, source_context, topic) -> PublishResult:
 
 Implement `review_draft` as a separate transition that copies an immutable draft into the reviewed area and writes reviewer ID, UTC timestamp, source hash, artifact digest, and decision to the audit log. The CLI displays the exact source excerpt, structured explanation, claim bindings, numeric checks, and visual semantics before accepting `review` or `reject`; it must refuse non-interactive bulk approval. Use `os.replace` only after all validations and fsync the temporary file before replacement. Do not remove the old index until the new index is in place.
 
-- [ ] **Step 4: Verify failure injection and successful publication**
+- [x] **Step 4: Verify failure injection and successful publication**
 
 Run: `pytest tests/test_linear_algebra_teaching_publish.py tests/test_linear_algebra_teaching_review_cli.py tests/test_linear_algebra_teaching_store.py -q`
 
 Expected: PASS; publication is all-or-nothing and old revision remains readable.
 
-- [ ] **Step 5: Commit review/publish workflow**
+- [x] **Step 5: Commit review/publish workflow**
 
 ```bash
 git add linear_algebra/teaching/store.py linear_algebra/teaching/validation.py scripts/review_linear_algebra_teaching.py tests/test_linear_algebra_teaching_publish.py tests/test_linear_algebra_teaching_review_cli.py
