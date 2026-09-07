@@ -10,11 +10,12 @@
 
 ## Automated evidence
 
-- Python: `539 passed, 1 skipped` (`uv run --with pytest python -m pytest tests -q`)
-- Frontend: `52 passed` (`pnpm test` from `ui/agent_web`)
+- Target-focused Python suites: `76 passed, 2 warnings` (theme, MathInput, panel, sidebar, typography, dark-surface, packaging, and documentation contracts)
+- Frontend: `56 passed` (`pnpm test -- --run` from `ui/agent_web`)
 - Frontend build: passed (`pnpm build`)
 - Packaging/docs: `5 passed`
 - OpenSpec: `openspec validate improve-dark-theme-and-typography --strict` passed
+- Full repository suite: `687 passed, 1 failed, 3 warnings`; the failing structured-teaching assertion is owned by the separate `enrich-linear-algebra-teaching-depth` change and is outside this change's scope.
 
 ## Environment
 
