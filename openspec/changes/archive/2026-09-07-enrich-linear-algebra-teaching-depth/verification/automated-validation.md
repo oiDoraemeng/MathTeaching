@@ -16,15 +16,15 @@ Topic digests: 54
 - output:
 ```text
 ........................................................................ [ 10%]
-........................................................................ [ 21%]
+........................................................................ [ 20%]
 ........................................................................ [ 31%]
-........................................................................ [ 42%]
-........................................................................ [ 53%]
-........................................................................ [ 63%]
-........................................................................ [ 74%]
-........................................................................ [ 85%]
-........................................................................ [ 95%]
-.............................                                            [100%]
+........................................................................ [ 41%]
+........................................................................ [ 52%]
+........................................................................ [ 62%]
+........................................................................ [ 73%]
+........................................................................ [ 83%]
+........................................................................ [ 94%]
+......................................                                   [100%]
 ============================== warnings summary ===============================
 ..\..\anaconda3\Lib\site-packages\paramiko\pkey.py:82
   D:\anaconda3\Lib\site-packages\paramiko\pkey.py:82: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
@@ -39,7 +39,7 @@ tests\test_ui_only.py:12
     class TestWindow(QMainWindow):
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-677 passed, 3 warnings in 28.03s
+686 passed, 3 warnings in 29.27s
 ```
 
 ## web-tests
@@ -50,28 +50,29 @@ tests\test_ui_only.py:12
 
  RUN  v2.1.9 D:/github/Math3DTeaching/ui/agent_web
 
- ✓ src/styles/layout.test.ts (3 tests) 10ms
+ ✓ src/state/reducer.test.ts (14 tests) 10ms
  ✓ src/styles/theme.test.ts (3 tests) 5ms
- ✓ src/components/SessionTabs.test.tsx (3 tests) 151ms
- ✓ src/state/reducer.test.ts (14 tests) 11ms
- ✓ src/components/ModelSelector.test.tsx (4 tests) 184ms
- ✓ src/bridge/qtBridge.test.ts (3 tests) 8ms
- ✓ src/components/Timeline.test.tsx (3 tests) 209ms
- ✓ src/components/HistoryView.test.tsx (4 tests) 223ms
- ✓ src/components/Composer.test.tsx (3 tests) 169ms
- ✓ src/components/MathCaseView.structured.test.tsx (1 test) 168ms
- ✓ src/App.test.tsx (4 tests) 333ms
- ✓ src/state/theme.test.ts (2 tests) 4ms
- ✓ src/components/EventCard.test.tsx (2 tests) 47ms
- ✓ src/components/PlanCard.test.tsx (1 test) 37ms
- ✓ src/components/MarkdownContent.test.tsx (1 test) 58ms
- ✓ src/components/SessionTabs.case.test.tsx (1 test) 69ms
- ✓ src/components/MathCaseView.test.tsx (1 test) 89ms
+ ✓ src/styles/layout.test.ts (3 tests) 10ms
+ ✓ src/bridge/qtBridge.test.ts (3 tests) 6ms
+ ✓ src/components/ModelSelector.test.tsx (4 tests) 163ms
+ ✓ src/components/HistoryView.test.tsx (4 tests) 183ms
+ ✓ src/components/Timeline.test.tsx (3 tests) 203ms
+ ✓ src/components/SessionTabs.test.tsx (3 tests) 149ms
+ ✓ src/components/Composer.test.tsx (3 tests) 177ms
+ ✓ src/components/MathCaseView.structured.test.tsx (3 tests) 299ms
+ ✓ src/App.test.tsx (4 tests) 308ms
+ ✓ src/state/theme.test.ts (2 tests) 5ms
+ ✓ src/components/EventCard.test.tsx (2 tests) 50ms
+ ✓ src/components/PlanCard.test.tsx (1 test) 31ms
+ ✓ src/components/MarkdownContent.test.tsx (1 test) 62ms
+ ✓ src/index.csp.test.ts (1 test) 2ms
+ ✓ src/components/SessionTabs.case.test.tsx (1 test) 73ms
+ ✓ src/components/MathCaseView.test.tsx (1 test) 75ms
 
- Test Files  17 passed (17)
-      Tests  53 passed (53)
-   Start at  02:29:31
-   Duration  7.22s (transform 891ms, setup 10.66s, collect 4.00s, tests 1.78s, environment 36.59s, prepare 7.29s)
+ Test Files  18 passed (18)
+      Tests  56 passed (56)
+   Start at  04:50:51
+   Duration  5.88s (transform 502ms, setup 10.16s, collect 3.21s, tests 1.81s, environment 30.68s, prepare 3.97s)
 
 $ vitest run "--" "--run"
 ```
@@ -86,7 +87,7 @@ transforming...
 ✓ 1673 modules transformed.
 rendering chunks...
 computing gzip size...
-dist/index.html                                         0.71 kB │ gzip:   0.40 kB
+dist/index.html                                         0.73 kB │ gzip:   0.41 kB
 dist/assets/KaTeX_Size3-Regular-CTq5MqoE.woff           4.42 kB
 dist/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2          4.93 kB
 dist/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2          5.21 kB
@@ -147,9 +148,9 @@ dist/assets/KaTeX_Main-Italic-3WenGoN9.ttf             33.58 kB
 dist/assets/KaTeX_Main-Bold-waoOVXN0.ttf               51.34 kB
 dist/assets/KaTeX_Main-Regular-ypZvNtVU.ttf            53.58 kB
 dist/assets/KaTeX_AMS-Regular-DRggAlZN.ttf             63.63 kB
-dist/assets/index-D4YoIuUf.css                         50.34 kB │ gzip:  12.56 kB
-dist/assets/index-BKlbGOaE.js                         598.48 kB │ gzip: 197.29 kB
-✓ built in 2.74s
+dist/assets/index-DLNlD51w.css                         52.66 kB │ gzip:  12.91 kB
+dist/assets/index-DMz_0c-X.js                         598.83 kB │ gzip: 197.45 kB
+✓ built in 2.35s
 $ pnpm theme:generate
 $ node scripts/gen-theme.mjs
 $ vite build
