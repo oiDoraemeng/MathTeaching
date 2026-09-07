@@ -24,6 +24,7 @@ from linear_algebra.catalog.manifest import topic_entries
 from linear_algebra.teaching.generation import GenerationRequest, generate_draft
 from linear_algebra.teaching.model import TeachingArtifact
 from linear_algebra.teaching.profiles import profile_for
+from linear_algebra.teaching.quality import refine_payload
 from linear_algebra.teaching.source import LectureSourceRepository
 from linear_algebra.teaching.store import TeachingArtifactStore
 from linear_algebra.teaching.validation import (
@@ -42,7 +43,7 @@ class LocalChapterOneAgent:
     """A source-grounded, deterministic explanation-agent implementation."""
 
     def generate(self, context, topic, profile, vocabulary):
-        payload = build_payload(context, topic, profile)
+        payload = refine_payload(build_payload(context, topic, profile))
         artifact = TeachingArtifact.from_dict(payload)
         raw_reply = json.dumps(artifact.to_dict(), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         return __import__("linear_algebra.teaching.agent", fromlist=["TeachingArtifactDraft"]).TeachingArtifactDraft(

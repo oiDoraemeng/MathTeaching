@@ -290,16 +290,22 @@ class VisualSemanticsCompiler:
                 issues.append(CompileIssue("layout_overflow", f"$.visual_semantics.stages[{index}]", stage.id))
                 continue
             visible_refs = tuple(dict.fromkeys((*stage.input_entity_refs, *stage.output_entity_refs, *stage.relation_refs)))
-            visible_aliases = tuple(
-                f"{_alias(stage.id)}__{alias}"
-                for ref in visible_refs
-                for alias in aliases.get(ref, ())
-            )
+            visible_aliases_list = []
+            for ref in visible_refs:
+                for alias in aliases.get(ref, ()):
+                    visible_aliases_list.append(alias)
+                    if alias.endswith("__end"):
+                        visible_aliases_list.append(f"{alias[:-5]}__origin")
+            title_alias = f"{_alias(stage.id)}__title"
+            visible_aliases_list.append(title_alias)
+            operations.extend(_stage_geometry_operations(semantics, stage, index, aliases, context))
+            visible_aliases_list.extend(_stage_specific_aliases(semantics, index))
+            visible_aliases = tuple(dict.fromkeys(visible_aliases_list))
             compiled.append(
                 CompiledStoryboardStage(
                     id=stage.id,
-                    title=stage.title,
-                    caption=stage.caption,
+                    title=_stage_title(semantics, stage.title, index),
+                    caption=_stage_caption(semantics, stage.caption, index),
                     layout=stage.layout,
                     visible_refs=visible_refs,
                     visible_aliases=visible_aliases,
@@ -310,8 +316,8 @@ class VisualSemanticsCompiler:
                 operations.append(
                     {
                         "op": "annotation.upsert",
-                        "alias": f"{_alias(stage.id)}__title",
-                        "text": stage.title,
+                        "alias": title_alias,
+                        "text": _stage_title(semantics, stage.title, index),
                         "position": list(anchor),
                     }
                 )
@@ -415,12 +421,12 @@ class VisualSemanticsCompiler:
         elif entity.kind in {"matrix", "grid"} and scene == "2d":
             matrix = _matrix2(entity.value)
             if matrix is not None:
-                operations.append({"op": "geometry.transformed_grid", "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color(entity.role)})
+                operations.append({"op": "geometry.transformed_grid", "alias": prefix, "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color(entity.role)})
                 aliases.append(prefix)
         elif entity.kind in {"basis", "region"} and scene == "2d":
             basis = _vectors2(entity.value)
             if basis:
-                operations.append({"op": "geometry.subspace_region", "basis": [list(vector) for vector in basis], "bounds": list(context.bounds), "opacity": 0.2, "color": role_color(entity.role)})
+                operations.append({"op": "geometry.subspace_region", "alias": prefix, "basis": [list(vector) for vector in basis], "bounds": list(context.bounds), "opacity": 0.2, "color": role_color(entity.role)})
                 aliases.append(prefix)
         elif entity.kind == "area" and scene == "2d":
             vectors = _vectors2(entity.value)
@@ -466,6 +472,7 @@ class VisualSemanticsCompiler:
             operations.append(
                 {
                     "op": "geometry.projection",
+                    "alias": relation_alias,
                     "vector": list(source_coordinates),
                     "direction": list(direction_coordinates),
                     "result_alias": _alias(target.id),
@@ -477,10 +484,16 @@ class VisualSemanticsCompiler:
             return operations, [relation_alias]
         matrix = _matrix2(relation.parameters.get("matrix")) if isinstance(relation.parameters, Mapping) else None
         if relation.kind == "maps_to" and matrix is not None and semantics.scene_kind == "2d":
-            operations.append({"op": "linear_algebra.matrix_transform", "matrix": matrix})
+            operations.append(
+                {
+                    "op": "linear_algebra.matrix_transform",
+                    "alias": relation_alias,
+                    "matrix": matrix,
+                }
+            )
             return operations, [relation_alias]
         if relation.kind == "batch_maps_to" and matrix is not None and semantics.scene_kind == "2d":
-            operations.append({"op": "geometry.transformed_grid", "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color("transformed_a")})
+            operations.append({"op": "geometry.transformed_grid", "alias": relation_alias, "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color("transformed_a")})
             return operations, [relation_alias]
         matrices = relation.parameters.get("matrices") if isinstance(relation.parameters, Mapping) else None
         # A semantic relation parameter is intentionally bounded to one scalar,
@@ -540,6 +553,184 @@ class VisualSemanticsCompiler:
 def _alias(value: str) -> str:
     result = _SAFE_ALIAS.sub("_", value).strip("_") or "semantic"
     return f"sem__{result}"
+
+
+def _stage_title(semantics: VisualSemantics, title: str, index: int) -> str:
+    """Turn generator-only stage labels into student-facing geometry names."""
+    if title not in {"观察对象", "代数验证"}:
+        return title
+    relation_kinds = {relation.kind for relation in semantics.relations}
+    if "sum" in relation_kinds and len(semantics.stages) >= 2:
+        return ("三角形法则", "平行四边形法则")[min(index, 1)]
+    if "composition_order" in relation_kinds:
+        return ("先做右侧变换", "再做左侧变换")[min(index, 1)]
+    if "projects_to" in relation_kinds:
+        return ("投影分量", "残差分量")[min(index, 1)]
+    if "maps_to" in relation_kinds:
+        return ("观察输入网格", "观察输出网格")[min(index, 1)]
+    if "spans" in relation_kinds:
+        return ("生成的张成区域", "张成区域的边界")[min(index, 1)]
+    if "orientation" in relation_kinds:
+        return ("第一个向量", "第二个向量")[min(index, 1)]
+    if "orthogonal_to" in relation_kinds:
+        return ("基准向量", "垂直向量")[min(index, 1)]
+    return f"几何意义 {index + 1}"
+
+
+def _stage_caption(semantics: VisualSemantics, caption: str, index: int) -> str:
+    if caption.strip() and caption not in {"先读对象、角色和输入输出。", "按公式计算并检查几何关系。"}:
+        return caption
+    if any(relation.kind == "sum" for relation in semantics.relations):
+        return ("把第二个向量平移到第一个向量的终点，和向量是三角形的第三边。", "以两个向量为邻边作平行四边形，对角线就是和向量。")[min(index, 1)]
+    if any(relation.kind == "composition_order" for relation in semantics.relations):
+        return ("先观察右侧变换如何移动向量。", "再观察左侧变换如何作用在中间结果上。")[min(index, 1)]
+    if any(relation.kind == "projects_to" for relation in semantics.relations):
+        return ("沿着方向线读出投影分量。", "看垂直方向上剩下的残差。")[min(index, 1)]
+    if any(relation.kind == "maps_to" for relation in semantics.relations):
+        return ("先看输入网格，再看它被矩阵拉伸、旋转或剪切后的形状。", "对比同一网格在变换后的方向和面积变化。")[min(index, 1)]
+    return caption
+
+
+def _stage_specific_aliases(semantics: VisualSemantics, index: int) -> tuple[str, ...]:
+    """Return aliases for stage-only construction geometry."""
+    relation_kinds = {relation.kind for relation in semantics.relations}
+    if "sum" in relation_kinds:
+        return ("sem__addition_triangle",) if index == 0 else ("sem__addition_parallelogram",)
+    if "composition_order" in relation_kinds:
+        stage_alias = f"sem__stage_order__{index + 1}"
+        return (stage_alias,)
+    if "projects_to" in relation_kinds:
+        stage_alias = f"sem__projection__{index + 1}"
+        return (stage_alias,)
+    if "maps_to" in relation_kinds:
+        return (f"sem__mapping_grid__{index + 1}",)
+    if "spans" in relation_kinds:
+        return (f"sem__span__{index + 1}",)
+    if "orientation" in relation_kinds:
+        return (f"sem__orientation__{index + 1}",)
+    if "orthogonal_to" in relation_kinds:
+        return (f"sem__orthogonal__{index + 1}",)
+    return ()
+
+
+def _stage_geometry_operations(
+    semantics: VisualSemantics,
+    stage: Any,
+    index: int,
+    aliases: Mapping[str, list[str]],
+    context: RenderContext,
+) -> list[dict[str, Any]]:
+    """Compile visible construction geometry for vector-addition examples."""
+    if semantics.scene_kind != "2d":
+        return []
+    entity_by_id = {entity.id: entity for entity in semantics.entities}
+    relation_kinds = {relation.kind for relation in semantics.relations}
+    vectors = [entity_by_id[ref] for ref in stage.input_entity_refs if ref in entity_by_id and entity_by_id[ref].kind == "vector"]
+    if "sum" in relation_kinds:
+        if len(vectors) < 2:
+            return []
+        a = _coordinates(vectors[0].value, 2)
+        b = _coordinates(vectors[1].value, 2)
+        if index == 0:
+            return [{"op": "geometry.polygon", "alias": "sem__addition_triangle", "vertices": [[0.0, 0.0], list(a), [a[0] + b[0], a[1] + b[1]]], "color": role_color("construction"), "opacity": 0.14, "outline": True}]
+        return [{"op": "geometry.polygon", "alias": "sem__addition_parallelogram", "vertices": [[0.0, 0.0], list(a), [a[0] + b[0], a[1] + b[1]], list(b)], "color": role_color("construction"), "opacity": 0.14, "outline": True}]
+    if "composition_order" in relation_kinds:
+        relation = next(
+            (
+                item
+                for item in semantics.relations
+                if item.kind == "composition_order"
+                and (not stage.relation_refs or item.id in stage.relation_refs)
+            ),
+            None,
+        )
+        if relation is None or not isinstance(relation.parameters, Mapping):
+            return []
+        matrices = relation.parameters.get("matrices")
+        if not _matrix_sequence(matrices):
+            single_matrix = relation.parameters.get("matrix")
+            if _matrix2(single_matrix) is not None:
+                matrices = [single_matrix]
+        if not _matrix_sequence(matrices):
+            return []
+        stage_alias = f"sem__stage_order__{index + 1}"
+        point_entities: list[VisualEntity] = []
+        for entity_id in (relation.source_ref, relation.target_ref):
+            entity = entity_by_id.get(entity_id)
+            if entity is not None and entity.kind == "vector" and entity not in point_entities:
+                point_entities.append(entity)
+        if not point_entities:
+            point_entities = vectors[:2]
+        if not point_entities:
+            return []
+        point_values = [list(_coordinates(entity.value, 2)) for entity in point_entities]
+        point_aliases = [
+            f"{stage_alias}__{'source' if item_index == 0 else 'target'}"
+            for item_index in range(len(point_values))
+        ]
+        return [
+            {
+                "op": "geometry.staged_transform",
+                "alias": stage_alias,
+                "matrices": list(matrices)[: min(index + 1, len(matrices))],
+                "points": point_values,
+                "aliases": point_aliases,
+            }
+        ]
+    if "projects_to" in relation_kinds:
+        relation = next((item for item in semantics.relations if item.kind == "projects_to"), None)
+        if relation is None:
+            return []
+        source = entity_by_id.get(relation.source_ref)
+        direction = entity_by_id.get(relation.target_ref)
+        if source is None or direction is None or source.kind != "vector" or direction.kind != "vector":
+            return []
+        stage_alias = f"sem__projection__{index + 1}"
+        return [{
+            "op": "geometry.projection",
+            "alias": stage_alias,
+            "vector": list(_coordinates(source.value, 2)),
+            "direction": list(_coordinates(direction.value, 2)),
+            "result_alias": stage_alias,
+            "foot_alias": f"{stage_alias}__foot",
+            "residual_alias": f"{stage_alias}__residual",
+            "color": role_color("projection"),
+        }]
+    if "maps_to" in relation_kinds:
+        matrix = next(
+            (_matrix2(relation.parameters.get("matrix")) for relation in semantics.relations if relation.kind == "maps_to" and isinstance(relation.parameters, Mapping) and _matrix2(relation.parameters.get("matrix")) is not None),
+            None,
+        )
+        if matrix is None:
+            return []
+        stage_alias = f"sem__mapping_grid__{index + 1}"
+        return [{"op": "geometry.transformed_grid", "alias": stage_alias, "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color("transformed_a")}]
+    if "spans" in relation_kinds:
+        relation = next((item for item in semantics.relations if item.kind == "spans"), None)
+        if relation is None or not isinstance(relation.parameters, Mapping):
+            return []
+        vertices = relation.parameters.get("vertices")
+        if not isinstance(vertices, (list, tuple)) or len(vertices) < 3:
+            return []
+        points = _vectors2(vertices)
+        if len(points) < 3:
+            return []
+        return [{"op": "geometry.polygon", "alias": f"sem__span__{index + 1}", "vertices": [list(point) for point in points], "color": role_color("area"), "opacity": 0.24, "outline": True}]
+    if "orientation" in relation_kinds:
+        relation = next((item for item in semantics.relations if item.kind == "orientation"), None)
+        if relation is None:
+            return []
+        first = _coordinates(entity_by_id[relation.source_ref].value, 2)
+        second = _coordinates(entity_by_id[relation.target_ref].value, 2)
+        return [{"op": "geometry.angle_arc", "alias": f"sem__orientation__{index + 1}", "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "radius": 0.45, "color": role_color("projection")}]
+    if "orthogonal_to" in relation_kinds:
+        relation = next((item for item in semantics.relations if item.kind == "orthogonal_to"), None)
+        if relation is None:
+            return []
+        first = _coordinates(entity_by_id[relation.source_ref].value, 2)
+        second = _coordinates(entity_by_id[relation.target_ref].value, 2)
+        return [{"op": "geometry.right_angle_marker", "alias": f"sem__orthogonal__{index + 1}", "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "size": 0.3, "color": role_color("neutral")}]
+    return []
 
 
 def _coordinates(value: object, dimension: int) -> tuple[float, ...]:
@@ -646,6 +837,17 @@ def _stage_anchor(
     return (round(x, 8), round(y, 8))
 
 
+def storyboard_visibility(compiled: CompiledVisualization, stage_id: str) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """Return aliases controlled by a storyboard and those shown for one stage."""
+    stage = next((item for item in compiled.storyboard if item.id == stage_id), None)
+    if stage is None:
+        raise ValueError(f"unknown storyboard stage: {stage_id}")
+    all_aliases = tuple(
+        dict.fromkeys(alias for item in compiled.storyboard for alias in item.visible_aliases)
+    )
+    return all_aliases, stage.visible_aliases
+
+
 __all__ = [
     "COMPILER_VERSION",
     "CompileIssue",
@@ -653,4 +855,5 @@ __all__ = [
     "CompiledStoryboardStage",
     "VisualCompileError",
     "VisualSemanticsCompiler",
+    "storyboard_visibility",
 ]

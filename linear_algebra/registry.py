@@ -13,6 +13,7 @@ from linear_algebra.catalog.model import LessonEntry, LessonNode
 from linear_algebra.explanations import explanation_for
 from linear_algebra.explanations.model import ExplanationContent
 from linear_algebra.teaching.legacy import LegacyTeachingArtifact, adapt_legacy_explanation
+from linear_algebra.teaching.source import LectureSourceRepository, SourceContext
 from linear_algebra.teaching.model import TeachingArtifact
 from linear_algebra.teaching.store import TeachingArtifactStore
 from linear_algebra.visualizations import recipe_for
@@ -51,6 +52,8 @@ class CurriculumBundle:
     recipe: VisualizationRecipe
     compiled: CompiledVisualization | None
     snapshot: CompiledSnapshot | None
+    source_context: SourceContext | None = None
+    source_diagnostic: tuple[str, str, str] | None = None
 
 
 @dataclass(frozen=True)
@@ -89,6 +92,7 @@ class CurriculumRegistry:
         *,
         artifact_store: TeachingArtifactStore | None = None,
         snapshot_store: CompiledSnapshotStore | None = None,
+        source_repository: LectureSourceRepository | None = None,
         context: RenderContext | None = None,
     ) -> CurriculumBundle:
         """Resolve all topic-owned teaching surfaces without executing a plan."""
@@ -96,26 +100,38 @@ class CurriculumRegistry:
         topic = self.get_topic(topic_id)
         contract = contract_for(topic_id)
         recipe = self.get_recipe(topic.visualization_id)
+        source_context: SourceContext | None = None
+        source_diagnostic: tuple[str, str, str] | None = None
         if artifact_store is None:
             configured_root = os.environ.get("MATH3D_TEACHING_ARTIFACT_ROOT", "").strip()
             if configured_root:
                 artifact_store = TeachingArtifactStore(configured_root)
         artifact: TeachingArtifact | None = None
         if artifact_store is not None:
-            stored = artifact_store.published(topic_id)
-            if stored is not None:
-                artifact = stored.artifact
+            if source_repository is not None:
+                source_context = source_repository.context_for(topic)
+                loaded = artifact_store.load_published(topic_id, current_context=source_context)
+                if loaded is not None:
+                    artifact = loaded.artifact
+                    source_diagnostic = loaded.diagnostic
+            else:
+                stored = artifact_store.published(topic_id)
+                if stored is not None:
+                    artifact = stored.artifact
         compiled: CompiledVisualization | None = None
         snapshot: CompiledSnapshot | None = None
         if artifact is not None:
             render_context = context or RenderContext.default(topic_id)
             compiled = VisualSemanticsCompiler().compile(artifact, contract, render_context)
+            expected_snapshot = snapshot_from(artifact, contract, compiled)
             snapshot = (
                 snapshot_store.load(topic_id, artifact.revision)
                 if snapshot_store is not None
-                else snapshot_from(artifact, contract, compiled)
+                else expected_snapshot
             )
-        return CurriculumBundle(topic, artifact, contract, recipe, compiled, snapshot)
+            if snapshot is None or snapshot != expected_snapshot:
+                snapshot = expected_snapshot
+        return CurriculumBundle(topic, artifact, contract, recipe, compiled, snapshot, source_context, source_diagnostic)
 
 
 _REGISTRY: CurriculumRegistry | None = None

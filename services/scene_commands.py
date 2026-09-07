@@ -436,6 +436,8 @@ class SceneCommandService:
             if name != "geometry.oriented_volume":
                 _validate_opacity(operation.get("opacity", 0.24))
         elif name == "linear_algebra.matrix_transform":
+            if "alias" in operation:
+                _require_text(operation, "alias")
             matrix = operation.get("matrix")
             if not isinstance(matrix, (list, tuple)) or len(matrix) != 2 or any(
                 not isinstance(row, (list, tuple)) or len(row) != 2 for row in matrix
@@ -470,11 +472,16 @@ def _expand_vector_addition(operation: dict[str, Any]) -> list[dict[str, Any]]:
     origin = _point(operation.get("origin", [0, 0]), "origin")
     a = _point(operation.get("a"), "a")
     b = _point(operation.get("b"), "b")
+    prefix = str(operation.get("alias_prefix", "")).strip()
+
+    def scoped(default: str) -> str:
+        return f"{prefix}__{default}" if prefix else default
+
     aliases = {
-        "origin": str(operation.get("origin_alias", "O")),
-        "a_end": str(operation.get("a_alias", "A")),
-        "b_end": str(operation.get("b_alias", "B")),
-        "sum_end": str(operation.get("sum_alias", "C")),
+        "origin": str(operation.get("origin_alias", scoped("O"))),
+        "a_end": str(operation.get("a_alias", scoped("A"))),
+        "b_end": str(operation.get("b_alias", scoped("B"))),
+        "sum_end": str(operation.get("sum_alias", scoped("C"))),
     }
     if len(set(aliases.values())) != len(aliases):
         raise CommandError("向量加法中的点别名必须互不相同。")
@@ -490,22 +497,22 @@ def _expand_vector_addition(operation: dict[str, Any]) -> list[dict[str, Any]]:
         {"op": "point.upsert", "alias": aliases["a_end"], "coordinates": [origin[0] + a[0], origin[1] + a[1]], "name": aliases["a_end"]},
         {"op": "point.upsert", "alias": aliases["b_end"], "coordinates": [origin[0] + b[0], origin[1] + b[1]], "name": aliases["b_end"]},
         {"op": "point.upsert", "alias": aliases["sum_end"], "coordinates": [origin[0] + c[0], origin[1] + c[1]], "name": aliases["sum_end"]},
-        {"op": "linear.upsert", "alias": str(operation.get("a_vector_alias", "a")), "kind": "vector", "start": aliases["origin"], "end": aliases["a_end"], "color": color, "label": "a"},
-        {"op": "linear.upsert", "alias": str(operation.get("b_vector_alias", "b")), "kind": "vector", "start": aliases["origin"], "end": aliases["b_end"], "color": color, "label": "b"},
-        {"op": "linear.upsert", "alias": "construction_a_to_c", "kind": "segment", "start": aliases["a_end"], "end": aliases["sum_end"], "style": "dashed", "role": "construction", "color": construction},
-        {"op": "linear.upsert", "alias": "construction_b_to_c", "kind": "segment", "start": aliases["b_end"], "end": aliases["sum_end"], "style": "dashed", "role": "construction", "color": construction},
-        {"op": "linear.upsert", "alias": str(operation.get("sum_vector_alias", "a_plus_b")), "kind": "vector", "start": aliases["origin"], "end": aliases["sum_end"], "color": result, "role": "result", "label": f"a+b=({format_number(c[0])},{format_number(c[1])})"},
-        {"op": "annotation.upsert", "alias": "vector_addition_result", "text": f"a+b=({format_number(c[0])}, {format_number(c[1])})", "position": [origin[0] + c[0] * 0.62, origin[1] + c[1] * 0.62], "color": result},
+        {"op": "linear.upsert", "alias": str(operation.get("a_vector_alias", scoped("a"))), "kind": "vector", "start": aliases["origin"], "end": aliases["a_end"], "color": color, "label": "a"},
+        {"op": "linear.upsert", "alias": str(operation.get("b_vector_alias", scoped("b"))), "kind": "vector", "start": aliases["origin"], "end": aliases["b_end"], "color": color, "label": "b"},
+        {"op": "linear.upsert", "alias": scoped("construction_a_to_c"), "kind": "segment", "start": aliases["a_end"], "end": aliases["sum_end"], "style": "dashed", "role": "construction", "color": construction},
+        {"op": "linear.upsert", "alias": scoped("construction_b_to_c"), "kind": "segment", "start": aliases["b_end"], "end": aliases["sum_end"], "style": "dashed", "role": "construction", "color": construction},
+        {"op": "linear.upsert", "alias": str(operation.get("sum_vector_alias", scoped("a_plus_b"))), "kind": "vector", "start": aliases["origin"], "end": aliases["sum_end"], "color": result, "role": "result", "label": f"a+b=({format_number(c[0])},{format_number(c[1])})"},
+        {"op": "annotation.upsert", "alias": scoped("vector_addition_result"), "text": f"a+b=({format_number(c[0])}, {format_number(c[1])})", "position": [origin[0] + c[0] * 0.62, origin[1] + c[1] * 0.62], "color": result},
     ]
     if operation.get("show_triangle_rule", True):
         ops.extend(
             [
-                {"op": "linear.upsert", "alias": "triangle_translated_b", "kind": "vector", "start": aliases["a_end"], "end": aliases["sum_end"], "color": "#2f9e5b", "role": "result", "label": "b"},
-                {"op": "annotation.upsert", "alias": "vector_addition_equivalent", "text": "平行四边形法 = 三角形法", "position": [origin[0] + c[0] * 0.48, origin[1] + c[1] * 0.48 + 0.55], "color": "#2f9e5b"},
+                {"op": "linear.upsert", "alias": scoped("triangle_translated_b"), "kind": "vector", "start": aliases["a_end"], "end": aliases["sum_end"], "color": "#2f9e5b", "role": "result", "label": "b"},
+                {"op": "annotation.upsert", "alias": scoped("vector_addition_equivalent"), "text": "平行四边形法 = 三角形法", "position": [origin[0] + c[0] * 0.48, origin[1] + c[1] * 0.48 + 0.55], "color": "#2f9e5b"},
             ]
         )
     if not operation.get("show_parallelogram", True):
-        ops = [item for item in ops if not item.get("alias", "").startswith("construction_")]
+        ops = [item for item in ops if not item.get("alias", "").startswith(scoped("construction_"))]
     try:
         padding = float(operation.get("padding", 1.15))
     except (TypeError, ValueError) as error:
@@ -625,19 +632,21 @@ def _expand_matrix_transform(operation: dict[str, Any]) -> list[dict[str, Any]]:
         raise CommandError("matrix_transform.matrix 必须是 2x2 矩阵。")
     a, b = (float(value) for value in matrix[0])
     c, d = (float(value) for value in matrix[1])
+    alias = str(operation.get("alias", "matrix_transform")).strip() or "matrix_transform"
     return _expand_vector_addition(
         {
             "op": "teach.vector_addition",
             "a": [a, c],
             "b": [b, d],
-            "a_alias": "T(e1)",
-            "b_alias": "T(e2)",
-            "sum_alias": "T(e1+e2)",
+            "alias_prefix": alias,
+            "a_alias": f"{alias}__T(e1)",
+            "b_alias": f"{alias}__T(e2)",
+            "sum_alias": f"{alias}__T(e1+e2)",
             "show_triangle_rule": False,
             "padding": 1.25,
         }
     ) + [
-        {"op": "annotation.upsert", "alias": "matrix_transform_label", "text": f"T=[[{format_number(a)}, {format_number(b)}], [{format_number(c)}, {format_number(d)}]]", "position": [0.3, -0.7]},
+        {"op": "annotation.upsert", "alias": f"{alias}__label", "text": f"T=[[{format_number(a)}, {format_number(b)}], [{format_number(c)}, {format_number(d)}]]", "position": [0.3, -0.7]},
     ]
 
 

@@ -18,6 +18,7 @@ if __package__ in {None, ""}:  # pragma: no cover - direct script invocation
 from linear_algebra.catalog.chapter_02 import TOPICS
 from linear_algebra.teaching.generation import GenerationRequest, generate_draft
 from linear_algebra.teaching.profiles import profile_for
+from linear_algebra.teaching.quality import refine_payload
 from linear_algebra.teaching.source import LectureSourceRepository
 from linear_algebra.teaching.store import TeachingArtifactStore
 from linear_algebra.teaching.validation import (
@@ -193,7 +194,7 @@ _SPEC = {
 class LocalChapterTwoAgent:
     def generate(self, context, topic, profile, vocabulary):
         chapter1._SPEC = _SPEC
-        payload = chapter1.build_payload(context, topic, profile)
+        payload = refine_payload(chapter1.build_payload(context, topic, profile))
         _add_contract_semantics(payload, topic.id)
         from linear_algebra.teaching.model import TeachingArtifact
         from linear_algebra.teaching.agent import TeachingArtifactDraft

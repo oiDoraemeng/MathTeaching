@@ -95,6 +95,12 @@ def validate_semantic_value(value: object, path: str) -> tuple[SemanticIssue, ..
 
 
 def _validate_semantic_value(value: object, path: str) -> None:
+    # A staged composition carries a bounded sequence of matrices.  Keep this
+    # exception explicit and path-scoped so arbitrary nested payloads remain
+    # rejected by the normal semantic vocabulary.
+    if path.endswith(".matrices"):
+        _validate_matrix_sequence(value, path)
+        return
     if isinstance(value, (int, float)) and not isinstance(value, bool):
         require_finite_number(value, path)
         return
@@ -135,6 +141,29 @@ def _is_number(value: object) -> bool:
 
 def _is_sequence(value: object) -> bool:
     return not isinstance(value, (str, bytes)) and isinstance(value, (list, tuple))
+
+
+def _validate_matrix_sequence(value: object, path: str) -> None:
+    if not isinstance(value, (list, tuple)) or not value or len(value) > 3:
+        raise ValueError(f"{path}: expected one to three matrices")
+    for index, matrix in enumerate(value):
+        _validate_semantic_matrix(matrix, f"{path}[{index}]")
+
+
+def _validate_semantic_matrix(value: object, path: str) -> None:
+    if not isinstance(value, (list, tuple)) or not value or len(value) > MAX_MATRIX_ROWS:
+        raise ValueError(f"{path}: expected a bounded matrix")
+    if not all(isinstance(row, (list, tuple)) for row in value):
+        raise ValueError(f"{path}: expected a bounded matrix")
+    first_row = value[0]
+    if not first_row or len(first_row) > MAX_MATRIX_COLUMNS:
+        raise ValueError(f"{path}: matrix has invalid column count")
+    column_count = len(first_row)
+    for row_index, row in enumerate(value):
+        if len(row) != column_count:
+            raise ValueError(f"{path}[{row_index}]: matrix rows must have equal length")
+        for column_index, item in enumerate(row):
+            require_finite_number(item, f"{path}[{row_index}][{column_index}]")
 
 
 __all__ = [

@@ -151,8 +151,15 @@
       "oneOf": [
         {"type": "number"},
         {"type": "array", "minItems": 2, "maxItems": 3, "items": {"type": "number"}},
-        {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "number"}}}
+        {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "number"}}},
+        {"$ref": "#/$defs/matrix_sequence"}
       ]
+    },
+    "matrix_sequence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "number"}}}
     },
     "visual_entity": {
       "type": "object",

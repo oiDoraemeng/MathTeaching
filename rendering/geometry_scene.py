@@ -161,6 +161,32 @@ class GeometrySceneController:
             self.annotations[object_id].visible = visible
             self._refresh_annotations()
 
+    def set_agent_alias_visible(self, alias: str, visible: bool) -> None:
+        """Show or hide regular scene objects owned by a semantic alias.
+
+        Agent commands store their stable alias on the model object while the
+        geometry controller indexes actors by generated object IDs.  Child
+        aliases follow their semantic parent, so a composite operation such as
+        ``sem__map__source`` is governed by ``sem__map`` as well.
+        """
+        prefix = f"{alias}__"
+
+        def belongs_to(item: Point2D | Linear2D | Annotation2D) -> bool:
+            agent_alias = getattr(item, "agent_alias", None)
+            return isinstance(agent_alias, str) and (
+                agent_alias == alias or agent_alias.startswith(prefix)
+            )
+
+        for point in tuple(self.points.values()):
+            if belongs_to(point):
+                self.set_visible(point.id, visible)
+        for linear in tuple(self.linears.values()):
+            if belongs_to(linear):
+                self.set_visible(linear.id, visible)
+        for annotation in tuple(self.annotations.values()):
+            if belongs_to(annotation):
+                self.set_visible(annotation.id, visible)
+
     def set_hover(self, object_id: str | None) -> bool:
         """设置悬浮对象，返回悬浮目标是否发生变化。"""
         if object_id == self._hover_id:
@@ -262,6 +288,18 @@ class GeometrySceneController:
             if marker in name:
                 self.plotter.remove_actor(name, render=False)
                 self._teaching_actors.pop(name, None)
+
+    def set_teaching_visible(self, alias: str, visible: bool) -> None:
+        """Show or hide every teaching actor owned by one semantic alias."""
+        marker = f":{alias}"
+        for name, actor in self._teaching_actors.items():
+            if not (name.endswith(marker) or f"{marker}:" in name):
+                continue
+            set_visibility = getattr(actor, "SetVisibility", None)
+            if callable(set_visibility):
+                set_visibility(bool(visible))
+            elif hasattr(actor, "visibility"):
+                actor.visibility = bool(visible)
 
     def add_teaching_polygon(
         self,

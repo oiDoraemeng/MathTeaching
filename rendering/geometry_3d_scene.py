@@ -46,6 +46,18 @@ class Geometry3DSceneController:
         self.planes.pop(alias, None)
         self.solids.pop(alias, None)
 
+    def set_visible(self, alias: str, visible: bool) -> None:
+        """Show or hide all 3D actors belonging to one semantic alias."""
+        for name, actor in self.actors.items():
+            actor_alias = name.rsplit(":", 1)[-1]
+            if actor_alias != alias and not actor_alias.startswith(f"{alias}__"):
+                continue
+            set_visibility = getattr(actor, "SetVisibility", None)
+            if callable(set_visibility):
+                set_visibility(bool(visible))
+            elif hasattr(actor, "visibility"):
+                actor.visibility = bool(visible)
+
     def add_linear(
         self,
         alias: str,
