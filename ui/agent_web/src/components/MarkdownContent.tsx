@@ -1,9 +1,21 @@
 import DOMPurify from "dompurify";
 import MarkdownIt from "markdown-it";
 import katex from "katex";
+import { memo } from "react";
 import "katex/dist/katex.min.css";
 
 const markdown = new MarkdownIt({ html: false, linkify: false, breaks: true });
+const formulaCache = new Map<string, string>();
+
+function renderFormula(expression: string, displayMode: boolean): string {
+  const key = `${displayMode ? "display" : "inline"}:${expression}`;
+  const cached = formulaCache.get(key);
+  if (cached !== undefined) return cached;
+
+  const rendered = katex.renderToString(expression, { displayMode, throwOnError: false });
+  formulaCache.set(key, rendered);
+  return rendered;
+}
 
 function normalizeKaTeXHtml(source: string): string {
   if (!source.includes("katex") || typeof DOMParser === "undefined") return source;
@@ -24,13 +36,21 @@ function renderMath(source: string): string {
   const tokens: string[] = [];
   const normalized = normalizeKaTeXHtml(source);
   const protectedSource = normalized
-    .replace(/\\\[([\s\S]*?)\\\]/g, (_, expression: string) => { const token = `MATH_TOKEN_${tokens.length}`; tokens.push(katex.renderToString(expression, { displayMode: true, throwOnError: false })); return token; })
-    .replace(/\$\$([\s\S]*?)\$\$/g, (_, expression: string) => { const token = `MATH_TOKEN_${tokens.length}`; tokens.push(katex.renderToString(expression, { displayMode: true, throwOnError: false })); return token; })
-    .replace(/\$([^$\n]+)\$/g, (_, expression: string) => { const token = `MATH_TOKEN_${tokens.length}`; tokens.push(katex.renderToString(expression, { throwOnError: false })); return token; });
+    .replace(/\\\[([\s\S]*?)\\\]/g, (_, expression: string) => { const token = `MATH_TOKEN_${tokens.length}`; tokens.push(renderFormula(expression, true)); return token; })
+    .replace(/\$\$([\s\S]*?)\$\$/g, (_, expression: string) => { const token = `MATH_TOKEN_${tokens.length}`; tokens.push(renderFormula(expression, true)); return token; })
+    .replace(/\$([^$\n]+)\$/g, (_, expression: string) => { const token = `MATH_TOKEN_${tokens.length}`; tokens.push(renderFormula(expression, false)); return token; });
   return markdown.render(protectedSource).replace(/MATH_TOKEN_(\d+)/g, (_, index: string) => tokens[Number(index)] ?? "");
 }
 
-export function MarkdownContent({ children }: { children: string }) {
-  const html = DOMPurify.sanitize(renderMath(children), { USE_PROFILES: { html: true }, ADD_TAGS: ["math", "semantics", "mrow", "mi", "mn", "mo", "msup", "mfrac", "annotation"], ADD_ATTR: ["class", "style", "xmlns", "display", "encoding", "aria-hidden"] });
+export const MarkdownContent = memo(function MarkdownContent({ children }: { children: string }) {
+  const html = DOMPurify.sanitize(renderMath(children), {
+    USE_PROFILES: { html: true, mathMl: true },
+    ADD_TAGS: [
+      "math", "semantics", "mrow", "mi", "mn", "mo", "msup", "msub", "msubsup",
+      "mfrac", "msqrt", "mroot", "mtable", "mtr", "mtd", "menclose", "mpadded",
+      "mstyle", "mspace", "annotation",
+    ],
+    ADD_ATTR: ["class", "style", "xmlns", "display", "encoding", "aria-hidden", "columnalign", "rowalign"],
+  });
   return <div className="markdown-content" dangerouslySetInnerHTML={{ __html: html }} />;
-}
+});
