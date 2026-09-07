@@ -329,6 +329,11 @@ class AgentSidebarWeb(QWidget):
             "steps": [str(step)[:512] for step in derivation_values[:12]] or [str(step)[:512] for step in tuple(getattr(case, "steps", ()))[:12]],
             "conclusion": conclusion_text[:1024] or str(getattr(case, "conclusion", ""))[:1024],
             "summary": str(getattr(explanation, "summary", getattr(case, "summary", "")))[:512],
+            # Keep the lecture excerpt available to the document renderer.  It
+            # is source-grounded prose, not a renderer instruction, and lets
+            # the reader see the definitions, derivations and examples that
+            # motivated the bounded artifact.
+            "source_excerpt": str(getattr(getattr(case, "source", None), "excerpt", ""))[:20000],
             "scene_mode": scene_mode if scene_mode in {"2d", "3d"} else "2d",
             "artifact_revision": getattr(case, "revision", None),
             "source_hash": getattr(getattr(case, "source", None), "source_hash", None),

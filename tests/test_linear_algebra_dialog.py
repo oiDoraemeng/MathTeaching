@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 from PySide6.QtCore import QEvent, QRect, Qt
 from PySide6.QtWidgets import QApplication, QToolButton, QWidget
 
@@ -128,7 +130,25 @@ def test_structured_teaching_artifact_renders_math_layers() -> None:
 
     assert dialog.content_view.definition_label.isHidden() is False
     assert "先计算 Bx" in dialog.content_view.derivation_label.text()
-    assert dialog.content_view.examples_label.text().startswith("数字例题")
+    assert dialog.content_view.examples_label.isHidden() is True
+    assert dialog.content_view.analogy_boundary_label.isHidden() is True
+    assert dialog.content_view.read_guide_label.isHidden() is True
+    dialog.close()
+
+
+def test_structured_teaching_artifact_shows_analogy_boundary_when_present() -> None:
+    dialog = make_linear_algebra_dialog()
+    artifact = TeachingArtifact.from_dict(composition_artifact_payload())
+    structured = replace(
+        artifact.explanation,
+        analogy_boundary="二维图像只保留可见几何直觉，高维情形不再依赖同一幅图。",
+        read_guide=("先看输入，再看中间结果，最后核对终点。",),
+    )
+
+    dialog.content_view.set_content(replace(artifact, explanation=structured).explanation)
+
+    assert dialog.content_view.analogy_boundary_label.isHidden() is False
+    assert dialog.content_view.read_guide_label.isHidden() is False
     dialog.close()
 
 

@@ -6,7 +6,7 @@ import pytest
 
 from linear_algebra.teaching.model import TeachingArtifact, VisualSemantics
 from linear_algebra.visualizations.common import RenderContext
-from linear_algebra.visualizations.compiler import VisualCompileError, VisualSemanticsCompiler
+from linear_algebra.visualizations.compiler import VisualCompileError, VisualSemanticsCompiler, storyboard_visibility
 from linear_algebra.visualizations.contracts import VisualContract
 from linear_algebra.visualizations.evidence import build_evidence_ledger
 from services.scene_commands import SceneCommandService
@@ -31,17 +31,40 @@ def test_compiler_emits_valid_plan_and_stable_digest() -> None:
     assert first.aliases_for("Bx") == ("sem__Bx", "sem__Bx__end")
     assert tuple(stage.id for stage in first.storyboard) == ("stage.apply-B", "stage.apply-A")
     assert all(stage.visible_aliases for stage in first.storyboard)
-    assert [operation["op"] for operation in first.plan.operations[-4:]] == [
-        "linear_algebra.matrix_transform",
-        "annotation.upsert",
-        "annotation.upsert",
-        "view.fit",
-    ]
-    assert {operation["op"] for operation in first.plan.operations} >= {
+    assert storyboard_visibility(first, "stage.apply-B")[1] != storyboard_visibility(first, "stage.apply-A")[1]
+    assert "sem__stage.apply-B__title" in storyboard_visibility(first, "stage.apply-B")[1]
+    assert "sem__stage.apply-A__title" not in storyboard_visibility(first, "stage.apply-B")[1]
+    operation_names = [operation["op"] for operation in first.plan.operations]
+    assert operation_names[-1] == "view.fit"
+    assert operation_names.count("annotation.upsert") >= 2
+    assert set(operation_names) >= {
         "linear.upsert",
         "linear_algebra.matrix_transform",
         "view.fit",
     }
+
+
+def test_addition_storyboard_contains_distinct_geometry_examples() -> None:
+    semantics = VisualSemantics.from_dict({
+            "scene_kind": "2d",
+            "entities": [
+                {"id": "a", "kind": "vector", "dimension": 2, "value": [3, 1], "role": "vector_a", "label": "a", "claim_refs": []},
+                {"id": "b", "kind": "vector", "dimension": 2, "value": [1, 2], "role": "vector_b", "label": "b", "claim_refs": []},
+                {"id": "sum", "kind": "vector", "dimension": 2, "value": [4, 3], "role": "transformed_a", "label": "a+b", "claim_refs": []},
+            ],
+            "relations": [{"id": "sum-rel", "kind": "sum", "source_ref": "a", "target_ref": "b", "parameters": {}, "claim_refs": []}],
+            "stages": [
+                {"id": "stage.triangle", "title": "观察对象", "caption": "", "layout": "sequence", "input_entity_refs": ["a", "b"], "output_entity_refs": ["sum"], "relation_refs": ["sum-rel"], "expected_invariants": []},
+                {"id": "stage.parallelogram", "title": "代数验证", "caption": "", "layout": "sequence", "input_entity_refs": ["a", "b"], "output_entity_refs": ["sum"], "relation_refs": ["sum-rel"], "expected_invariants": []},
+            ],
+        })
+    compiled = VisualSemanticsCompiler().compile(semantics, _permissive_contract("ch01.ops.addition"), RenderContext.default("ch01.ops.addition"), topic_id="ch01.ops.addition")
+    first, second = compiled.storyboard
+    assert first.title == "三角形法则"
+    assert second.title == "平行四边形法则"
+    assert first.visible_aliases != second.visible_aliases
+    assert any("triangle" in alias for alias in first.visible_aliases)
+    assert any("parallelogram" in alias for alias in second.visible_aliases)
 
 
 def test_compiler_rejects_contract_gap_before_renderer() -> None:

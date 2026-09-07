@@ -230,6 +230,7 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
     steps,
     conclusion,
     summary: typeof payload.summary === "string" ? payload.summary : "",
+    sourceExcerpt: typeof payload.source_excerpt === "string" ? payload.source_excerpt : "",
     sceneMode: payload.scene_mode === "3d" ? "3d" : "2d",
     artifactRevision: typeof payload.artifact_revision === "number" ? payload.artifact_revision : null,
     sourceHash: typeof payload.source_hash === "string" ? payload.source_hash : null,

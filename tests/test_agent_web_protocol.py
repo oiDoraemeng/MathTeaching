@@ -94,6 +94,23 @@ def test_snapshot_and_stop_intents_keep_id_rules() -> None:
         )
 
 
+def test_select_math_stage_requires_case_and_stage_identifiers() -> None:
+    envelope = {
+        "protocol_version": 1,
+        "type": "select_math_stage",
+        "request_id": "req-3",
+        "session_id": "s1",
+        "payload": {"case_id": "ch01.ops.addition", "stage_id": "stage.triangle"},
+    }
+
+    parsed = parse_envelope(envelope)
+
+    assert parsed.type == "select_math_stage"
+    assert parsed.payload == {"case_id": "ch01.ops.addition", "stage_id": "stage.triangle"}
+    with pytest.raises(ProtocolError, match="select_math_stage"):
+        parse_envelope({**envelope, "payload": {"case_id": "", "stage_id": "stage.triangle"}})
+
+
 def test_unknown_envelope_type_uses_stable_protocol_error_code() -> None:
     with pytest.raises(ProtocolError) as raised:
         parse_envelope({"protocol_version": 1, "type": "run_python", "request_id": "r", "session_id": "s", "payload": {}})

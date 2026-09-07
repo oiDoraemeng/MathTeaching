@@ -10,7 +10,12 @@ def test_protocol_matrix_and_oversized_payload_are_rejected() -> None:
     for message_type in CLIENT_MESSAGE_TYPES:
         session_id = "s1"
         turn_id = "t1" if message_type in {"approve_plan", "restore_turn", "undo_turn", "branch_turn", "branch_from_turn"} else None
-        raw = {"protocol_version": 1, "type": message_type, "request_id": message_type, "session_id": session_id, "payload": {}}
+        payload = (
+            {"case_id": "ch01.ops.addition", "stage_id": "stage.triangle"}
+            if message_type == "select_math_stage"
+            else {}
+        )
+        raw = {"protocol_version": 1, "type": message_type, "request_id": message_type, "session_id": session_id, "payload": payload}
         if turn_id:
             raw["turn_id"] = turn_id
         assert parse_envelope(raw).type == message_type

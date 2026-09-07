@@ -104,6 +104,8 @@ export interface CaseProjection {
   steps: string[];
   conclusion: string;
   summary?: string;
+  /** Lecture-grounded prose kept with the artifact for the continuous note view. */
+  sourceExcerpt?: string;
   sceneMode?: "2d" | "3d";
   artifactRevision?: number | null;
   sourceHash?: string | null;
@@ -259,7 +261,8 @@ export type IntentType =
   | "delete_custom_model"
   | "set_selected_model"
   | "set_thinking_preferences"
-  | "open_skills";
+  | "open_skills"
+  | "select_math_stage";
 
 export interface ClientIntent extends Omit<BridgeEnvelope, "type"> {
   type: IntentType;

@@ -72,3 +72,20 @@ def test_vocabulary_is_closed_and_valid_fixture_round_trips() -> None:
 
     payload = composition_artifact_payload()["visual_semantics"]
     assert VisualSemantics.from_dict(payload).to_dict() == payload
+
+
+def test_staged_composition_accepts_a_bounded_matrix_sequence() -> None:
+    payload = composition_artifact_payload()["visual_semantics"]
+    payload["relations"][0]["parameters"] = {  # type: ignore[index]
+        "matrices": [
+            [[0, -1], [1, 0]],
+            [[2, 0], [0, 1]],
+        ]
+    }
+
+    semantics = VisualSemantics.from_dict(payload)  # type: ignore[arg-type]
+
+    assert semantics.relations[0].parameters["matrices"] == (
+        ((0, -1), (1, 0)),
+        ((2, 0), (0, 1)),
+    )

@@ -44,6 +44,7 @@ CLIENT_MESSAGE_TYPES = frozenset(
         "open_skills",
         "attach_files",
         "request_snapshot",
+        "select_math_stage",
     }
 )
 
@@ -196,6 +197,22 @@ def parse_envelope(value: str | dict[str, Any]) -> BridgeEnvelope:
 
 def _validate_event_payload(message_type: str, payload: dict[str, Any]) -> None:
     """Reject malformed capability events before they reach the Web reducer."""
+    if message_type == "select_math_stage":
+        if set(payload) != {"case_id", "stage_id"}:
+            raise ProtocolError(
+                "invalid_event_payload",
+                "select_math_stage requires only case_id and stage_id",
+                field="payload",
+            )
+        for field in ("case_id", "stage_id"):
+            value = payload.get(field)
+            if not isinstance(value, str) or not value.strip():
+                raise ProtocolError(
+                    "invalid_event_payload",
+                    f"select_math_stage requires a non-empty {field}",
+                    field=field,
+                )
+        return
     if message_type == "theme_state":
         if set(payload) != {"mode"} or payload.get("mode") not in {"light", "dark"}:
             raise ProtocolError("invalid_event_payload", "theme_state requires only mode=light|dark", field="mode")

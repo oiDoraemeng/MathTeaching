@@ -71,3 +71,43 @@ def test_loading_a_2d_topic_activates_the_visible_select_tool() -> None:
         "select",
         emit_signal=False,
     )
+
+
+def test_selecting_a_geometric_example_controls_its_scene_aliases() -> None:
+    calls: list[tuple[str, str, bool]] = []
+    renders: list[bool] = []
+
+    class GeometryController:
+        def set_agent_alias_visible(self, alias: str, visible: bool) -> None:
+            calls.append(("regular", alias, visible))
+
+        def set_teaching_visible(self, alias: str, visible: bool) -> None:
+            calls.append(("teaching", alias, visible))
+
+    window = MainWindow.__new__(MainWindow)
+    window.scene_mode = SceneMode.TWO_D
+    window.geometry_controller = GeometryController()
+    window.geometry3d_controller = None
+    window.plotter = SimpleNamespace(render=lambda: renders.append(True))
+    window._active_linear_algebra_compiled = SimpleNamespace(
+        topic_id="ch01.ops.addition",
+        storyboard=(
+            SimpleNamespace(
+                id="stage.triangle",
+                visible_aliases=("sem__a", "sem__addition_triangle"),
+            ),
+            SimpleNamespace(
+                id="stage.parallelogram",
+                visible_aliases=("sem__a", "sem__addition_parallelogram"),
+            ),
+        ),
+    )
+    window._hidden_linear_algebra_aliases = set()
+
+    window._select_linear_algebra_stage("ch01.ops.addition", "stage.parallelogram")
+
+    assert window._active_linear_algebra_stage_id == "stage.parallelogram"
+    assert window._hidden_linear_algebra_aliases == {"sem__addition_triangle"}
+    assert ("regular", "sem__addition_triangle", False) in calls
+    assert ("teaching", "sem__addition_parallelogram", True) in calls
+    assert renders == [True]

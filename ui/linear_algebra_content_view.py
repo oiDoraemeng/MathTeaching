@@ -32,6 +32,7 @@ class LinearAlgebraContentView(QWidget):
         self.pitfalls_label = QLabel(self)
         self.invariants_label = QLabel(self)
         self.connections_label = QLabel(self)
+        self.analogy_boundary_label = QLabel(self)
         self.read_guide_label = QLabel(self)
         self._structured_labels = (
             self.definition_label,
@@ -42,6 +43,7 @@ class LinearAlgebraContentView(QWidget):
             self.pitfalls_label,
             self.invariants_label,
             self.connections_label,
+            self.analogy_boundary_label,
             self.read_guide_label,
         )
         for label in (
@@ -100,17 +102,18 @@ class LinearAlgebraContentView(QWidget):
             calculation = "\n".join(example.calculation)
             checks = "; ".join(f"{check.name}={check.expected}" for check in example.checks)
             examples.append(f"{index}. {title}\n{calculation}\n结果：{example.result}\n校验：{checks}".strip())
-        values = {
-            self.definition_label: f"定义\n{definition}",
-            self.derivation_label: f"推导\n{self.steps_label.text()}",
-            self.examples_label: "数字例题\n" + "\n\n".join(examples),
-            self.intuition_label: f"直觉\n{content.intuition}",
-            self.geometry_label: f"几何意义\n{geometric_meaning}",
-            self.pitfalls_label: "误区\n" + "\n".join(f"• {value}" for value in content.pitfalls),
-            self.invariants_label: "不变量\n" + "\n".join(f"• {value}" for value in content.invariants),
-            self.connections_label: "关联\n" + "\n".join(f"• {value}" for value in content.connections),
-            self.read_guide_label: "读图提示\n" + "\n".join(f"{index}. {value}" for index, value in enumerate(content.read_guide, start=1)),
-        }
-        for label, text in values.items():
-            label.setText(text.strip())
-            label.setVisible(bool(text.strip().split("\n", 1)[-1]))
+        def set_section(label: QLabel, title: str, body: str) -> None:
+            body = body.strip()
+            label.setText(f"{title}\n{body}" if body else "")
+            label.setVisible(bool(body))
+
+        set_section(self.definition_label, "定义", definition)
+        set_section(self.derivation_label, "推导", self.steps_label.text())
+        set_section(self.examples_label, "数字例题", "\n\n".join(examples))
+        set_section(self.intuition_label, "直觉", content.intuition)
+        set_section(self.geometry_label, "几何意义", geometric_meaning)
+        set_section(self.pitfalls_label, "误区", "\n".join(f"• {value}" for value in content.pitfalls))
+        set_section(self.invariants_label, "不变量", "\n".join(f"• {value}" for value in content.invariants))
+        set_section(self.connections_label, "关联", "\n".join(f"• {value}" for value in content.connections))
+        set_section(self.analogy_boundary_label, "类比边界", content.analogy_boundary)
+        set_section(self.read_guide_label, "读图提示", "\n".join(f"{index}. {value}" for index, value in enumerate(content.read_guide, start=1)))

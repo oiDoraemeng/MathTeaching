@@ -33,7 +33,9 @@ from models.geometry_2d import (
 )
 from models.function_catalog import catalog_entries, catalog_entry
 from linear_algebra.registry import catalog_registry, runtime_teaching_store
+from linear_algebra.teaching.source import LectureSourceRepository
 from linear_algebra.visualizations.common import RenderContext
+from linear_algebra.visualizations.compiler import CompiledVisualization, storyboard_visibility
 from models.scene_mode import SceneAppearance, SceneMode
 from models.surface_layer import PlotDomain, SurfaceLayer
 from rendering.axis import ThreeDAxes, add_cartesian_axes
@@ -288,6 +290,9 @@ class MainWindow:
         # Identifies the last successfully loaded lecture topic for explanation
         # and scene routing. Toolbar visibility is independent of this state.
         self._active_linear_algebra_topic_id: str | None = None
+        self._active_linear_algebra_compiled: CompiledVisualization | None = None
+        self._active_linear_algebra_stage_id: str | None = None
+        self._hidden_linear_algebra_aliases: set[str] = set()
         self._two_d_object_order: list[str] = []
         self.layer_controller: LayerSceneController | None = None
         self.curve_controller: CurveSceneController | None = None
@@ -501,6 +506,9 @@ class MainWindow:
             return
         if message_type == "open_skills":
             self._emit_agent_snapshot(session_id, getattr(envelope, "request_id", message_type))
+            return
+        if message_type == "select_math_stage":
+            self._select_linear_algebra_stage(str(payload.get("case_id", "")), str(payload.get("stage_id", "")))
             return
         if message_type == "save_model_provider":
             from ui.agent_settings import AgentSettingsDialog
@@ -1442,6 +1450,9 @@ class MainWindow:
             raise CommandError("scene.clear.scope 不受支持。")
         if scope == "all":
             self._active_linear_algebra_topic_id = None
+            self._active_linear_algebra_compiled = None
+            self._active_linear_algebra_stage_id = None
+            self._hidden_linear_algebra_aliases = set()
             self._active_linear_algebra_tool = None
             self._linear_algebra_pending_vector_ids = []
             self._linear_algebra_polygon_point_ids = []
@@ -1679,6 +1690,41 @@ class MainWindow:
                 continue
         self.plotter.render()
 
+    def _select_linear_algebra_stage(self, case_id: str, stage_id: str) -> None:
+        compiled = getattr(self, "_active_linear_algebra_compiled", None)
+        if compiled is None or compiled.topic_id != case_id:
+            return
+        try:
+            all_aliases, visible_aliases = storyboard_visibility(compiled, stage_id)
+        except ValueError:
+            return
+        self._active_linear_algebra_stage_id = stage_id
+        visible = set(visible_aliases)
+        self._hidden_linear_algebra_aliases = {alias for alias in all_aliases if alias not in visible}
+        self._apply_linear_algebra_storyboard_visibility()
+
+    def _apply_linear_algebra_storyboard_visibility(self) -> None:
+        compiled = getattr(self, "_active_linear_algebra_compiled", None)
+        if compiled is None:
+            return
+        hidden = getattr(self, "_hidden_linear_algebra_aliases", set())
+        all_aliases = tuple(dict.fromkeys(alias for item in compiled.storyboard for alias in item.visible_aliases))
+        geometry_controller = getattr(self, "geometry_controller", None)
+        if self.scene_mode is SceneMode.TWO_D and geometry_controller is not None:
+            for alias in all_aliases:
+                visible = alias not in hidden
+                geometry_controller.set_agent_alias_visible(alias, visible)
+                geometry_controller.set_teaching_visible(alias, visible)
+            plotter = getattr(self, "plotter", None)
+            if plotter is not None:
+                plotter.render()
+            return
+        geometry3d_controller = getattr(self, "geometry3d_controller", None)
+        if self.scene_mode is SceneMode.THREE_D and geometry3d_controller is not None:
+            for alias in all_aliases:
+                geometry3d_controller.set_visible(alias, alias not in hidden)
+            self._render_agent_points3d()
+
     def _command_upsert_point3d(self, operation: dict[str, object]) -> None:
         """在 3D 视口中用一个受控球体表示点。
 
@@ -1706,7 +1752,10 @@ class MainWindow:
 
         for alias in getattr(self, "_agent_points3d", {}):
             self.plotter.remove_actor(f"agent-point:{alias}", render=False)
+        hidden = getattr(self, "_hidden_linear_algebra_aliases", set())
         for alias, coordinates in getattr(self, "_agent_points3d", {}).items():
+            if any(alias == hidden_alias or alias.startswith(f"{hidden_alias}__") for hidden_alias in hidden):
+                continue
             mesh = pv.Sphere(radius=0.08, center=coordinates, theta_resolution=16, phi_resolution=8)
             self.plotter.add_mesh(mesh, name=f"agent-point:{alias}", color="#d64545")
         self.plotter.render()
@@ -1902,6 +1951,7 @@ class MainWindow:
             elif operation.get("op") == "annotation.formula":
                 self._command_formula_annotation(operation)
         self._render_agent_points3d()
+        self._apply_linear_algebra_storyboard_visibility()
         self._refresh_3d_viewport(resample=True, render=False)
         self.plotter.render()
 
@@ -1955,6 +2005,7 @@ class MainWindow:
             self._command_teaching_geometry(operation)
         self._render_agent_areas()
         self._sync_panel_layers(self._two_d_panel_layers())
+        self._apply_linear_algebra_storyboard_visibility()
         self.algebra_panel.set_status("二维场景已准备好")
         self.plotter.render()
 
@@ -2207,10 +2258,18 @@ class MainWindow:
             operations=({"op": "scene.clear", "scope": "all"}, *lesson_plan.operations),
         )
 
+    @staticmethod
+    def _linear_algebra_source_repository() -> LectureSourceRepository:
+        return LectureSourceRepository(Path(__file__).resolve().parents[1] / ".agents" / "线性代数讲义.md")
+
     def _load_linear_algebra_topic(self, topic_id: str) -> None:
         registry = catalog_registry()
         try:
-            bundle = registry.resolve_bundle(topic_id, artifact_store=runtime_teaching_store())
+            bundle = registry.resolve_bundle(
+                topic_id,
+                artifact_store=runtime_teaching_store(),
+                source_repository=self._linear_algebra_source_repository(),
+            )
             topic = bundle.topic
             explanation_case = bundle.artifact or registry.get_explanation(topic.explanation_id)
             lesson_plan = bundle.compiled.plan if bundle.compiled is not None else bundle.recipe.builder(RenderContext.default(topic.id))
@@ -2234,12 +2293,21 @@ class MainWindow:
             self.algebra_panel.set_status(f"无法加载主题 {topic.title}: {error}", is_error=True)
             return
         self._active_linear_algebra_topic_id = topic.id
+        self._active_linear_algebra_compiled = bundle.compiled
+        self._active_linear_algebra_stage_id = None
+        self._hidden_linear_algebra_aliases = set()
         if plan.scene == "2d":
             self._set_2d_geometry_tool("select")
             if hasattr(self, "two_d_geometry_toolbar"):
                 self.two_d_geometry_toolbar.set_active_tool("select", emit_signal=False)
         self._sync_scene_controls()
-        self.algebra_panel.set_status(f"已加载主题: {topic.title}")
+        if bundle.compiled is not None and bundle.compiled.storyboard:
+            self._select_linear_algebra_stage(topic.id, bundle.compiled.storyboard[0].id)
+        if bundle.source_diagnostic is not None:
+            _, old_hash, current_hash = bundle.source_diagnostic
+            self.algebra_panel.set_status(f"已加载主题: {topic.title}（stale_source: {old_hash} → {current_hash}）")
+        else:
+            self.algebra_panel.set_status(f"已加载主题: {topic.title}")
         if hasattr(self, "agent_panel"):
             if hasattr(self, "agent_sidebar"):
                 self._open_agent_panel()

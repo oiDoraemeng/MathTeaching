@@ -176,4 +176,5 @@ def test_web_math_case_keeps_structured_artifact_metadata_without_scene_ops() ->
     assert payload["claims"][0]["id"] == artifact.claims[0].id
     assert payload["symbol_palette"]["u"]
     assert payload["storyboard"][0]["id"] == compiled.storyboard[0].id
+    assert payload["source_excerpt"] == artifact.source.excerpt
     assert "operations" not in payload
