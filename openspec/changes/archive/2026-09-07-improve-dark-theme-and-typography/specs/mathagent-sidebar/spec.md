@@ -74,6 +74,8 @@ The model picker SHALL show an `内置模型` group with fixed DeepSeek presets 
 - **THEN** the popover closes without changing the selected model
 - **AND** the trigger button's `aria-expanded` state reflects the popover visibility
 
+## ADDED Requirements
+
 ### Requirement: Web UI typography and interaction floor
 
 Text in the sidebar SHALL not render below the 11px caption token size except where the token system defines a smaller size, and interactive click targets SHALL be at least 28px in both dimensions. User-facing sidebar copy SHALL be in Chinese, consistent with the rest of the application UI.
@@ -89,6 +91,8 @@ Text in the sidebar SHALL not render below the 11px caption token size except wh
 #### Scenario: Chinese copy
 - **WHEN** the user opens the history or settings views or hovers formula list controls
 - **THEN** headings, empty states, tooltips, and aria labels are in Chinese instead of mixed English
+
+## MODIFIED Requirements
 
 ### Requirement: Resizable sidebar layout integrity
 

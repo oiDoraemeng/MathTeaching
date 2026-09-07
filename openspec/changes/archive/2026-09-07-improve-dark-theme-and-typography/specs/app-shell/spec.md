@@ -65,6 +65,8 @@ Floating viewport controls — the main viewport toolbar, the 2D geometry toolba
 - **WHEN** assistive technology inspects the main window toolbars and status bar controls
 - **THEN** every interactive control exposes an accessible name matching its tooltip or visible label
 
+## ADDED Requirements
+
 ### Requirement: Lighting dialog theming and interaction
 
 The lighting dialog's self-drawn rotation widget SHALL take its card, label, and accent colors from the design tokens of the effective theme. Resetting lighting to defaults SHALL update the dialog controls in place without closing the dialog, and value sliders SHALL display their current numeric value next to the slider.

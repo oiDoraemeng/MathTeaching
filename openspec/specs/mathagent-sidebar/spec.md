@@ -239,14 +239,14 @@ All Agent sidebar surfaces — conversation timeline, event cards, plan cards, c
 
 ### Requirement: Resizable sidebar layout integrity
 
-The Agent sidebar SHALL remain usable across its 360–560px width range: session tabs scroll horizontally, the composer controls do not overflow, model popovers stay within the sidebar bounds, and the conversation column keeps its maximum readable width centered. The existing narrow-width (≤359px) fallback rules SHALL remain for undersized rendering contexts.
+The Agent sidebar SHALL remain usable across its 360–720px width range: session tabs scroll horizontally, the composer controls do not overflow, model popovers stay within the sidebar bounds, and the conversation column keeps its maximum readable width centered. The existing narrow-width (≤359px) fallback rules SHALL remain for undersized rendering contexts.
 
 #### Scenario: Narrow bound
 - **WHEN** the user drags the sidebar to its 360px minimum
 - **THEN** header actions, session tabs, composer toolbar, and send controls remain visible and functional
 
 #### Scenario: Wide bound
-- **WHEN** the user drags the sidebar to its 560px maximum
+- **WHEN** the user drags the sidebar to its 720px maximum
 - **THEN** event cards do not stretch full width and the timeline stays centered with readable measure
 
 ### Requirement: Teaching case tabs
@@ -289,3 +289,19 @@ The teaching case view SHALL present the case as a reading page: a category eyeb
 #### Scenario: Case pending before document load
 - **WHEN** the host publishes a case before the sidebar document finishes loading
 - **THEN** the case is delivered after load and opens without loss
+
+### Requirement: Web UI typography and interaction floor
+
+Text in the sidebar SHALL not render below the 11px caption token size except where the token system defines a smaller size, and interactive click targets SHALL be at least 28px in both dimensions. User-facing sidebar copy SHALL be in Chinese, consistent with the rest of the application UI.
+
+#### Scenario: Small text floor
+- **WHEN** the sidebar renders status, capability, model metadata, or turn action labels
+- **THEN** no text renders below 11px
+
+#### Scenario: Click target floor
+- **WHEN** the sidebar renders attachment buttons, tab close buttons, or turn action buttons
+- **THEN** each interactive target is at least 28 by 28 pixels
+
+#### Scenario: Chinese copy
+- **WHEN** the user opens the history or settings views or hovers formula list controls
+- **THEN** headings, empty states, tooltips, and aria labels are in Chinese instead of mixed English
