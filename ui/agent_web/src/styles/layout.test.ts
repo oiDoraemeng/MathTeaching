@@ -45,6 +45,7 @@ describe("Agent Web timeline layout", () => {
       ".context-ring",
       ".technical-details",
       ".model-popover strong",
+      ".math-case-evidence span",
     ];
     for (const selector of textFloor) expect(block(selector)).toContain("font-size: 11px");
 
