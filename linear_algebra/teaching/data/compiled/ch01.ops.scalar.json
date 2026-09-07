@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:5da3647accd55607bc712ab4a62ab4f44300dd63c26490deafd93dccc7d458ab",
+  "artifact_digest": "sha256:d74f312e32fa8722dd98f05de06bd46be7222dcd54c5a8a093cb115fcf4cc2a3",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -76,7 +76,7 @@
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "几何意义 1"
       },
       {
         "alias": "sem__stage.claim.ch01.ops.scalar.derive__title",
@@ -85,7 +85,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "几何意义 2"
       },
       {
         "op": "view.fit",
@@ -96,13 +96,12 @@
     "summary": "向量数乘与共线",
     "version": 1
   },
-  "plan_digest": "sha256:464afbb9688640c3f3a650235609afc94767a2accb0e95ef2050a39f0367c7af",
+  "plan_digest": "sha256:2ef4d70a439d3b49e0a83b73c59d41d532dc1871e032dce3b0feb97e054dd338",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875",
   "stages": [
@@ -114,13 +113,16 @@
       "caption": "先读对象、角色和输入输出。",
       "id": "stage.claim.ch01.ops.scalar.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "几何意义 1",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.scalar.observe__sem__a",
-        "sem__stage.claim.ch01.ops.scalar.observe__sem__a__end",
-        "sem__stage.claim.ch01.ops.scalar.observe__sem__b",
-        "sem__stage.claim.ch01.ops.scalar.observe__sem__b__end",
-        "sem__stage.claim.ch01.ops.scalar.observe__sem__rel.0.claim.ch01.ops.scalar"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__rel.0.claim.ch01.ops.scalar",
+        "sem__stage.claim.ch01.ops.scalar.observe__title"
       ],
       "visible_refs": [
         "a",
@@ -136,13 +138,16 @@
       "caption": "按公式计算并检查几何关系。",
       "id": "stage.claim.ch01.ops.scalar.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "几何意义 2",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.scalar.derive__sem__a",
-        "sem__stage.claim.ch01.ops.scalar.derive__sem__a__end",
-        "sem__stage.claim.ch01.ops.scalar.derive__sem__b",
-        "sem__stage.claim.ch01.ops.scalar.derive__sem__b__end",
-        "sem__stage.claim.ch01.ops.scalar.derive__sem__rel.0.claim.ch01.ops.scalar"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__rel.0.claim.ch01.ops.scalar",
+        "sem__stage.claim.ch01.ops.scalar.derive__title"
       ],
       "visible_refs": [
         "a",

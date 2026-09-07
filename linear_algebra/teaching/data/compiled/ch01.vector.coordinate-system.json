@@ -1,10 +1,11 @@
 {
-  "artifact_digest": "sha256:4a2c8a79482e140d7a460960e6a1f873e7ba31b45eeaa15d70b4c773e85c0edd",
+  "artifact_digest": "sha256:2d176dd7bcab76a943f62cd33710347d4b8eaced0df78723e2fde1d632351f74",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
+        "alias": "sem__e1",
         "basis": [
           [
             1.0,
@@ -69,7 +70,7 @@
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "几何意义 1"
       },
       {
         "alias": "sem__stage.claim.ch01.vector.coordinate-system.derive__title",
@@ -78,7 +79,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "几何意义 2"
       },
       {
         "op": "view.fit",
@@ -89,13 +90,12 @@
     "summary": "坐标系与右手约定",
     "version": 1
   },
-  "plan_digest": "sha256:9a44002b56cfc8abb6a7630244ed674970ac6b0e045724f3896c073e9ef4a415",
+  "plan_digest": "sha256:220c22fc2c00aae480d167d67dc29e0e73da8e6e432b8889423128f70cf4a43a",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:b13413aa33f880b2787622ef7285b5b593f383f2d6d91670ffe9a262b360da30",
   "stages": [
@@ -107,12 +107,14 @@
       "caption": "先读对象、角色和输入输出。",
       "id": "stage.claim.ch01.vector.coordinate-system.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "几何意义 1",
       "visible_aliases": [
-        "sem__stage.claim.ch01.vector.coordinate-system.observe__sem__e1",
-        "sem__stage.claim.ch01.vector.coordinate-system.observe__sem__x",
-        "sem__stage.claim.ch01.vector.coordinate-system.observe__sem__x__end",
-        "sem__stage.claim.ch01.vector.coordinate-system.observe__sem__rel.0.claim.ch01.vector.coordinate-system"
+        "sem__e1",
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__rel.0.claim.ch01.vector.coordinate-system",
+        "sem__stage.claim.ch01.vector.coordinate-system.observe__title"
       ],
       "visible_refs": [
         "e1",
@@ -128,12 +130,14 @@
       "caption": "按公式计算并检查几何关系。",
       "id": "stage.claim.ch01.vector.coordinate-system.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "几何意义 2",
       "visible_aliases": [
-        "sem__stage.claim.ch01.vector.coordinate-system.derive__sem__e1",
-        "sem__stage.claim.ch01.vector.coordinate-system.derive__sem__x",
-        "sem__stage.claim.ch01.vector.coordinate-system.derive__sem__x__end",
-        "sem__stage.claim.ch01.vector.coordinate-system.derive__sem__rel.0.claim.ch01.vector.coordinate-system"
+        "sem__e1",
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__rel.0.claim.ch01.vector.coordinate-system",
+        "sem__stage.claim.ch01.vector.coordinate-system.derive__title"
       ],
       "visible_refs": [
         "e1",

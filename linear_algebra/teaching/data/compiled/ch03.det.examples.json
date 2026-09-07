@@ -1,10 +1,11 @@
 {
-  "artifact_digest": "sha256:0ecd735957fb63f29c396d438fe5a523d6a1b7d8b9bef820d465be052dab6437",
+  "artifact_digest": "sha256:a8f4b727951dae5212d5cd3b01dcba6169af49fab115bca789d107ce67ca4eb5",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
+        "alias": "sem__A",
         "bounds": [
           -3.0,
           3.0,
@@ -97,6 +98,7 @@
         ]
       },
       {
+        "alias": "sem__det_maps_to_area",
         "matrix": [
           [
             3.0,
@@ -110,6 +112,28 @@
         "op": "linear_algebra.matrix_transform"
       },
       {
+        "alias": "sem__mapping_grid__1",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            3.0,
+            1.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__stage.det.input__title",
         "op": "annotation.upsert",
         "position": [
@@ -117,6 +141,28 @@
           2.65
         ],
         "text": "矩阵两列"
+      },
+      {
+        "alias": "sem__mapping_grid__2",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            3.0,
+            1.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
         "alias": "sem__stage.det.measure__title",
@@ -136,12 +182,12 @@
     "summary": "行列式面积缩放分层例题",
     "version": 1
   },
-  "plan_digest": "sha256:4cdd68d4db07e6ebf8c58c548b4ed2787c814714801d2e92d57e35f960f207b0",
+  "plan_digest": "sha256:d98d8757759564bbb24d8549217ce1e188c326a0066a1bf82cfdd3fff3924299",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 3,
+  "revision": 6,
   "schema_version": 1,
   "source_hash": "sha256:64b698a22859115514a2815e7ded5618e1d7b41aac9a28eb5b0ce39d7cee09f4",
   "stages": [
@@ -155,11 +201,15 @@
       "layout": "sequence",
       "title": "矩阵两列",
       "visible_aliases": [
-        "sem__stage.det.input__sem__A",
-        "sem__stage.det.input__sem__a",
-        "sem__stage.det.input__sem__a__end",
-        "sem__stage.det.input__sem__b",
-        "sem__stage.det.input__sem__b__end"
+        "sem__A",
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__stage.det.input__title",
+        "sem__mapping_grid__1"
       ],
       "visible_refs": [
         "A",
@@ -177,12 +227,16 @@
       "layout": "sequence",
       "title": "有向面积",
       "visible_aliases": [
-        "sem__stage.det.measure__sem__a",
-        "sem__stage.det.measure__sem__a__end",
-        "sem__stage.det.measure__sem__b",
-        "sem__stage.det.measure__sem__b__end",
-        "sem__stage.det.measure__sem__area",
-        "sem__stage.det.measure__sem__det_maps_to_area"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__area",
+        "sem__det_maps_to_area",
+        "sem__stage.det.measure__title",
+        "sem__mapping_grid__2"
       ],
       "visible_refs": [
         "a",

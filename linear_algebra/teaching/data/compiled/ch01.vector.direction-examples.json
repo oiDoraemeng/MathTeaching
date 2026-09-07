@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:1a3d3d902c842309356111270f5f30501f9d2cb1008cde827da7c9d7d1ccc21f",
+  "artifact_digest": "sha256:58b02c7ab364dee6388f3d0b47ed2586576482728396f6c033c117f5eea64377",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -94,7 +94,7 @@
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "几何意义 1"
       },
       {
         "alias": "sem__stage.claim.ch01.vector.direction-examples.derive__title",
@@ -103,7 +103,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "几何意义 2"
       },
       {
         "op": "view.fit",
@@ -114,13 +114,12 @@
     "summary": "方向、象限与分层例题",
     "version": 1
   },
-  "plan_digest": "sha256:ecc0aa43e6c3801981add6cf7a7776e8035e07b5861107fea3f1134da39349ef",
+  "plan_digest": "sha256:b5f8681e341813d2846cb006b623d388c80ed086a8d4ec831decab4630890d44",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:c919ead1bc4a41fcc9768573ff28bcbdf15001600d5615996da28f7132bdf158",
   "stages": [
@@ -132,13 +131,16 @@
       "caption": "先读对象、角色和输入输出。",
       "id": "stage.claim.ch01.vector.direction-examples.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "几何意义 1",
       "visible_aliases": [
-        "sem__stage.claim.ch01.vector.direction-examples.observe__sem__a",
-        "sem__stage.claim.ch01.vector.direction-examples.observe__sem__a__end",
-        "sem__stage.claim.ch01.vector.direction-examples.observe__sem__b",
-        "sem__stage.claim.ch01.vector.direction-examples.observe__sem__b__end",
-        "sem__stage.claim.ch01.vector.direction-examples.observe__sem__rel.0.claim.ch01.vector.direction-examples"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__rel.0.claim.ch01.vector.direction-examples",
+        "sem__stage.claim.ch01.vector.direction-examples.observe__title"
       ],
       "visible_refs": [
         "a",
@@ -154,13 +156,16 @@
       "caption": "按公式计算并检查几何关系。",
       "id": "stage.claim.ch01.vector.direction-examples.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "几何意义 2",
       "visible_aliases": [
-        "sem__stage.claim.ch01.vector.direction-examples.derive__sem__a",
-        "sem__stage.claim.ch01.vector.direction-examples.derive__sem__a__end",
-        "sem__stage.claim.ch01.vector.direction-examples.derive__sem__b",
-        "sem__stage.claim.ch01.vector.direction-examples.derive__sem__b__end",
-        "sem__stage.claim.ch01.vector.direction-examples.derive__sem__rel.0.claim.ch01.vector.direction-examples"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__rel.0.claim.ch01.vector.direction-examples",
+        "sem__stage.claim.ch01.vector.direction-examples.derive__title"
       ],
       "visible_refs": [
         "a",

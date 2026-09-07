@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:a3af5565bbe24aa3e31a641a47fcd0695021b1306a770b2e6c9889c93e7c284b",
+  "artifact_digest": "sha256:09dfae23c8d551c5716689a4d45f0a20419704af543ce036471a9d0a6c79399c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -119,7 +119,7 @@
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "几何意义 1"
       },
       {
         "alias": "sem__stage.claim.ch01.ops.subtraction.derive__title",
@@ -128,7 +128,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "几何意义 2"
       },
       {
         "op": "view.fit",
@@ -139,13 +139,12 @@
     "summary": "向量减法",
     "version": 1
   },
-  "plan_digest": "sha256:af980dd6190de969e86d439ce7a769fd0ae5aafc033502feca67a37b6c350eae",
+  "plan_digest": "sha256:b4c00af18782609f50a443a7ec33ca3d582a6a2d337ab46ebb261e5d73ec6682",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:13b887d608b560325e74c97308bcf60f892ddea2f61914445bef1fb98e6390fd",
   "stages": [
@@ -157,15 +156,19 @@
       "caption": "先读对象、角色和输入输出。",
       "id": "stage.claim.ch01.ops.subtraction.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "几何意义 1",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.subtraction.observe__sem__a",
-        "sem__stage.claim.ch01.ops.subtraction.observe__sem__a__end",
-        "sem__stage.claim.ch01.ops.subtraction.observe__sem__b",
-        "sem__stage.claim.ch01.ops.subtraction.observe__sem__b__end",
-        "sem__stage.claim.ch01.ops.subtraction.observe__sem__difference",
-        "sem__stage.claim.ch01.ops.subtraction.observe__sem__difference__end",
-        "sem__stage.claim.ch01.ops.subtraction.observe__sem__rel.0.claim.ch01.ops.subtraction"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__difference",
+        "sem__difference__end",
+        "sem__difference__origin",
+        "sem__rel.0.claim.ch01.ops.subtraction",
+        "sem__stage.claim.ch01.ops.subtraction.observe__title"
       ],
       "visible_refs": [
         "a",
@@ -182,15 +185,19 @@
       "caption": "按公式计算并检查几何关系。",
       "id": "stage.claim.ch01.ops.subtraction.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "几何意义 2",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.subtraction.derive__sem__a",
-        "sem__stage.claim.ch01.ops.subtraction.derive__sem__a__end",
-        "sem__stage.claim.ch01.ops.subtraction.derive__sem__b",
-        "sem__stage.claim.ch01.ops.subtraction.derive__sem__b__end",
-        "sem__stage.claim.ch01.ops.subtraction.derive__sem__difference",
-        "sem__stage.claim.ch01.ops.subtraction.derive__sem__difference__end",
-        "sem__stage.claim.ch01.ops.subtraction.derive__sem__rel.0.claim.ch01.ops.subtraction"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__difference",
+        "sem__difference__end",
+        "sem__difference__origin",
+        "sem__rel.0.claim.ch01.ops.subtraction",
+        "sem__stage.claim.ch01.ops.subtraction.derive__title"
       ],
       "visible_refs": [
         "a",

@@ -1,10 +1,11 @@
 {
-  "artifact_digest": "sha256:2d4a4cfa581eacac801fc8655a67c310bc1e086f68b18c7a982d7bc5c8ccb54a",
+  "artifact_digest": "sha256:29e57c0a54cdbb2d9dd38eb32caa39c2c6aef82887b93caf397d8b9ba264dd86",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
+        "alias": "sem__A",
         "bounds": [
           -3.0,
           3.0,
@@ -82,6 +83,7 @@
         "start": "sem__y__origin"
       },
       {
+        "alias": "sem__grid",
         "bounds": [
           -3.0,
           3.0,
@@ -103,6 +105,7 @@
         "step": 1.0
       },
       {
+        "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
             2.0,
@@ -125,6 +128,28 @@
         "text": "invariant: coordinate grid → Ax"
       },
       {
+        "alias": "sem__mapping_grid__1",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
@@ -134,6 +159,28 @@
         "text": "输入与变换"
       },
       {
+        "alias": "sem__mapping_grid__2",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__stage.grid_input__title",
         "op": "annotation.upsert",
         "position": [
@@ -141,6 +188,28 @@
           2.65
         ],
         "text": "标准网格"
+      },
+      {
+        "alias": "sem__mapping_grid__3",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
         "alias": "sem__stage.grid_output__title",
@@ -160,12 +229,12 @@
     "summary": "基向量变换与网格变形",
     "version": 1
   },
-  "plan_digest": "sha256:beee16c32909dd120ec73a20779762a075c61f0232ffa5c89e7000252696bc23",
+  "plan_digest": "sha256:b7fd0ed4641f2685263e51303bf3cf50e28347ea4da06522dd08c25ff89a91f8",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:0cde074da638ed97935945c66fb4ae0ef0677d4ad90d6300ca1a3e429c3f2b12",
   "stages": [
@@ -179,12 +248,16 @@
       "layout": "overlay",
       "title": "输入与变换",
       "visible_aliases": [
-        "sem__stage.input__sem__A",
-        "sem__stage.input__sem__x",
-        "sem__stage.input__sem__x__end",
-        "sem__stage.input__sem__y",
-        "sem__stage.input__sem__y__end",
-        "sem__stage.input__sem__A_maps_x_to_y"
+        "sem__A",
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__A_maps_x_to_y",
+        "sem__stage.input__title",
+        "sem__mapping_grid__1"
       ],
       "visible_refs": [
         "A",
@@ -203,10 +276,13 @@
       "layout": "side_by_side",
       "title": "标准网格",
       "visible_aliases": [
-        "sem__stage.grid_input__sem__A",
-        "sem__stage.grid_input__sem__x",
-        "sem__stage.grid_input__sem__x__end",
-        "sem__stage.grid_input__sem__grid"
+        "sem__A",
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__grid",
+        "sem__stage.grid_input__title",
+        "sem__mapping_grid__2"
       ],
       "visible_refs": [
         "A",
@@ -224,13 +300,17 @@
       "layout": "side_by_side",
       "title": "变换后网格",
       "visible_aliases": [
-        "sem__stage.grid_output__sem__A",
-        "sem__stage.grid_output__sem__x",
-        "sem__stage.grid_output__sem__x__end",
-        "sem__stage.grid_output__sem__y",
-        "sem__stage.grid_output__sem__y__end",
-        "sem__stage.grid_output__sem__grid",
-        "sem__stage.grid_output__sem__grid_invariant"
+        "sem__A",
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__grid",
+        "sem__grid_invariant",
+        "sem__stage.grid_output__title",
+        "sem__mapping_grid__3"
       ],
       "visible_refs": [
         "A",

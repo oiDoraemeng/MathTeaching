@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:4889b49cb9096f0476e213b5624a53cb0c031cf53403cffa622002b829c443a0",
+  "artifact_digest": "sha256:affcd641b4a64f1192e948276a165670bc7983c4860e00ebc9d61dc2032286da",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -126,6 +126,7 @@
         "start": "sem__r__origin"
       },
       {
+        "alias": "sem__v_projects_to_u",
         "color": "#2A9D8F",
         "direction": [
           1.0,
@@ -189,6 +190,22 @@
         "step": 1.0
       },
       {
+        "alias": "sem__projection__1",
+        "color": "#2A9D8F",
+        "direction": [
+          1.0,
+          0.0
+        ],
+        "foot_alias": "sem__projection__1__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__projection__1__residual",
+        "result_alias": "sem__projection__1",
+        "vector": [
+          3.0,
+          4.0
+        ]
+      },
+      {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
@@ -198,6 +215,22 @@
         "text": "输入向量"
       },
       {
+        "alias": "sem__projection__2",
+        "color": "#2A9D8F",
+        "direction": [
+          1.0,
+          0.0
+        ],
+        "foot_alias": "sem__projection__2__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__projection__2__residual",
+        "result_alias": "sem__projection__2",
+        "vector": [
+          3.0,
+          4.0
+        ]
+      },
+      {
         "alias": "sem__stage.projection__title",
         "op": "annotation.upsert",
         "position": [
@@ -205,6 +238,22 @@
           2.17
         ],
         "text": "投影分量"
+      },
+      {
+        "alias": "sem__projection__3",
+        "color": "#2A9D8F",
+        "direction": [
+          1.0,
+          0.0
+        ],
+        "foot_alias": "sem__projection__3__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__projection__3__residual",
+        "result_alias": "sem__projection__3",
+        "vector": [
+          3.0,
+          4.0
+        ]
       },
       {
         "alias": "sem__stage.residual__title",
@@ -224,12 +273,12 @@
     "summary": "投影矩阵把一批向量压到方向上",
     "version": 1
   },
-  "plan_digest": "sha256:66638b5d08f127a40db59cdf7ffd74bdad137ad8cf06bdd8c606aa6623299cc9",
+  "plan_digest": "sha256:651f6b03a975bbf479bdb92b043799229bbc2c951fc0aef1999e743b46411d20",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:18e7642a880b874828bfee6824477b44b80aaac5b2c703abc508923f1d009780",
   "stages": [
@@ -243,11 +292,15 @@
       "layout": "sequence",
       "title": "输入向量",
       "visible_aliases": [
-        "sem__stage.input__sem__v",
-        "sem__stage.input__sem__v__end",
-        "sem__stage.input__sem__u",
-        "sem__stage.input__sem__u__end",
-        "sem__stage.input__sem__v_projects_to_u"
+        "sem__v",
+        "sem__v__end",
+        "sem__v__origin",
+        "sem__u",
+        "sem__u__end",
+        "sem__u__origin",
+        "sem__v_projects_to_u",
+        "sem__stage.input__title",
+        "sem__projection__1"
       ],
       "visible_refs": [
         "v",
@@ -265,15 +318,20 @@
       "layout": "sequence",
       "title": "投影分量",
       "visible_aliases": [
-        "sem__stage.projection__sem__v",
-        "sem__stage.projection__sem__v__end",
-        "sem__stage.projection__sem__u",
-        "sem__stage.projection__sem__u__end",
-        "sem__stage.projection__sem__p",
-        "sem__stage.projection__sem__p__end",
-        "sem__stage.projection__sem__H",
-        "sem__stage.projection__sem__v_projects_to_u",
-        "sem__stage.projection__sem__v_decomposes_p_r"
+        "sem__v",
+        "sem__v__end",
+        "sem__v__origin",
+        "sem__u",
+        "sem__u__end",
+        "sem__u__origin",
+        "sem__p",
+        "sem__p__end",
+        "sem__p__origin",
+        "sem__H",
+        "sem__v_projects_to_u",
+        "sem__v_decomposes_p_r",
+        "sem__stage.projection__title",
+        "sem__projection__2"
       ],
       "visible_refs": [
         "v",
@@ -294,14 +352,19 @@
       "layout": "sequence",
       "title": "正交残差",
       "visible_aliases": [
-        "sem__stage.residual__sem__p",
-        "sem__stage.residual__sem__p__end",
-        "sem__stage.residual__sem__r",
-        "sem__stage.residual__sem__r__end",
-        "sem__stage.residual__sem__v",
-        "sem__stage.residual__sem__v__end",
-        "sem__stage.residual__sem__v_decomposes_p_r",
-        "sem__stage.residual__sem__r_orthogonal_u"
+        "sem__p",
+        "sem__p__end",
+        "sem__p__origin",
+        "sem__r",
+        "sem__r__end",
+        "sem__r__origin",
+        "sem__v",
+        "sem__v__end",
+        "sem__v__origin",
+        "sem__v_decomposes_p_r",
+        "sem__r_orthogonal_u",
+        "sem__stage.residual__title",
+        "sem__projection__3"
       ],
       "visible_refs": [
         "p",

@@ -1,10 +1,11 @@
 {
-  "artifact_digest": "sha256:05e09681a322350f15215523557eae0746417fa660a19e38878db53fa8b9226c",
+  "artifact_digest": "sha256:e11a4e10b6e2a921338ceb162f750a443e1cafe5434462e28bd1c428948c5219",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
+        "alias": "sem__A",
         "bounds": [
           -3.0,
           3.0,
@@ -97,6 +98,7 @@
         ]
       },
       {
+        "alias": "sem__det_maps_to_area",
         "matrix": [
           [
             1.0,
@@ -113,6 +115,36 @@
         "aliases": [
           "sem__det_stage__source",
           "sem__det_stage__target"
+        ],
+        "matrices": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              4
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage_order__1",
+        "aliases": [
+          "sem__stage_order__1__source",
+          "sem__stage_order__1__target"
         ],
         "matrices": [
           [
@@ -157,6 +189,36 @@
         "text": "有向面积"
       },
       {
+        "alias": "sem__stage_order__3",
+        "aliases": [
+          "sem__stage_order__3__source",
+          "sem__stage_order__3__target"
+        ],
+        "matrices": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              4
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ]
+      },
+      {
         "alias": "sem__stage.det.transform__title",
         "op": "annotation.upsert",
         "position": [
@@ -174,12 +236,12 @@
     "summary": "行列式符号、零和一的几何意义",
     "version": 1
   },
-  "plan_digest": "sha256:341bd9739ff1369d6c2566c7c4679c9abc6e26c65ca463645d5b5474c79b101b",
+  "plan_digest": "sha256:2e7b6839ff3f6da268514565b3ec60091511d3fb263311062622d0e019484d54",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 3,
+  "revision": 6,
   "schema_version": 1,
   "source_hash": "sha256:85c2dfa15eb9d5444acced285069532710e5182167f8b120e7bf98b9bd7689b4",
   "stages": [
@@ -193,11 +255,15 @@
       "layout": "sequence",
       "title": "矩阵两列",
       "visible_aliases": [
-        "sem__stage.det.input__sem__A",
-        "sem__stage.det.input__sem__a",
-        "sem__stage.det.input__sem__a__end",
-        "sem__stage.det.input__sem__b",
-        "sem__stage.det.input__sem__b__end"
+        "sem__A",
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__stage.det.input__title",
+        "sem__stage_order__1"
       ],
       "visible_refs": [
         "A",
@@ -215,12 +281,16 @@
       "layout": "sequence",
       "title": "有向面积",
       "visible_aliases": [
-        "sem__stage.det.measure__sem__a",
-        "sem__stage.det.measure__sem__a__end",
-        "sem__stage.det.measure__sem__b",
-        "sem__stage.det.measure__sem__b__end",
-        "sem__stage.det.measure__sem__area",
-        "sem__stage.det.measure__sem__det_maps_to_area"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__area",
+        "sem__det_maps_to_area",
+        "sem__stage.det.measure__title",
+        "sem__stage_order__2"
       ],
       "visible_refs": [
         "a",
@@ -239,12 +309,16 @@
       "layout": "sequence",
       "title": "变换阶段",
       "visible_aliases": [
-        "sem__stage.det.transform__sem__a",
-        "sem__stage.det.transform__sem__a__end",
-        "sem__stage.det.transform__sem__b",
-        "sem__stage.det.transform__sem__b__end",
-        "sem__stage.det.transform__sem__area",
-        "sem__stage.det.transform__sem__det_stage"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__area",
+        "sem__det_stage",
+        "sem__stage.det.transform__title",
+        "sem__stage_order__3"
       ],
       "visible_refs": [
         "a",

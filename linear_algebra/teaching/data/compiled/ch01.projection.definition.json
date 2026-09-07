@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:ded30b4fc18f2695fab02cc3a371115b419eaa006fe3308a111713d07b8dd96c",
+  "artifact_digest": "sha256:56aba79684ddcf2b8453595e7d7d5127506b4bde0bd4e097a297824bdc339ff8",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -126,6 +126,7 @@
         "start": "sem__residual__origin"
       },
       {
+        "alias": "sem__rel.0.claim.ch01.projection.definition",
         "color": "#2A9D8F",
         "direction": [
           3.0,
@@ -168,13 +169,45 @@
         ]
       },
       {
+        "alias": "sem__projection__1",
+        "color": "#2A9D8F",
+        "direction": [
+          3.0,
+          0.0
+        ],
+        "foot_alias": "sem__projection__1__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__projection__1__residual",
+        "result_alias": "sem__projection__1",
+        "vector": [
+          3.0,
+          4.0
+        ]
+      },
+      {
         "alias": "sem__stage.claim.ch01.projection.definition.observe__title",
         "op": "annotation.upsert",
         "position": [
           -2.0,
           2.65
         ],
-        "text": "观察对象"
+        "text": "投影分量"
+      },
+      {
+        "alias": "sem__projection__2",
+        "color": "#2A9D8F",
+        "direction": [
+          3.0,
+          0.0
+        ],
+        "foot_alias": "sem__projection__2__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__projection__2__residual",
+        "result_alias": "sem__projection__2",
+        "vector": [
+          3.0,
+          4.0
+        ]
       },
       {
         "alias": "sem__stage.claim.ch01.projection.definition.derive__title",
@@ -183,7 +216,23 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "残差分量"
+      },
+      {
+        "alias": "sem__projection__3",
+        "color": "#2A9D8F",
+        "direction": [
+          3.0,
+          0.0
+        ],
+        "foot_alias": "sem__projection__3__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__projection__3__residual",
+        "result_alias": "sem__projection__3",
+        "vector": [
+          3.0,
+          4.0
+        ]
       },
       {
         "alias": "sem__stage.claim.ch01.projection.definition.decompose__title",
@@ -203,13 +252,12 @@
     "summary": "投影、垂足与残差",
     "version": 1
   },
-  "plan_digest": "sha256:c68b1ae34da2cdffade42171c20a23966595b318225f0d178caeb073241061b3",
+  "plan_digest": "sha256:1b1c8107669fa562ad8f8a8669026936a46eaaf929cabb5cb1284b0cc87b7ff3",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789",
   "stages": [
@@ -218,21 +266,27 @@
         -2.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
+      "caption": "沿着方向线读出投影分量。",
       "id": "stage.claim.ch01.projection.definition.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "投影分量",
       "visible_aliases": [
-        "sem__stage.claim.ch01.projection.definition.observe__sem__v",
-        "sem__stage.claim.ch01.projection.definition.observe__sem__v__end",
-        "sem__stage.claim.ch01.projection.definition.observe__sem__u",
-        "sem__stage.claim.ch01.projection.definition.observe__sem__u__end",
-        "sem__stage.claim.ch01.projection.definition.observe__sem__projection",
-        "sem__stage.claim.ch01.projection.definition.observe__sem__projection__end",
-        "sem__stage.claim.ch01.projection.definition.observe__sem__foot",
-        "sem__stage.claim.ch01.projection.definition.observe__sem__residual",
-        "sem__stage.claim.ch01.projection.definition.observe__sem__residual__end",
-        "sem__stage.claim.ch01.projection.definition.observe__sem__rel.0.claim.ch01.projection.definition"
+        "sem__v",
+        "sem__v__end",
+        "sem__v__origin",
+        "sem__u",
+        "sem__u__end",
+        "sem__u__origin",
+        "sem__projection",
+        "sem__projection__end",
+        "sem__projection__origin",
+        "sem__foot",
+        "sem__residual",
+        "sem__residual__end",
+        "sem__residual__origin",
+        "sem__rel.0.claim.ch01.projection.definition",
+        "sem__stage.claim.ch01.projection.definition.observe__title",
+        "sem__projection__1"
       ],
       "visible_refs": [
         "v",
@@ -248,23 +302,29 @@
         -2.65,
         2.17
       ],
-      "caption": "按公式计算并检查几何关系。",
+      "caption": "看垂直方向上剩下的残差。",
       "id": "stage.claim.ch01.projection.definition.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "残差分量",
       "visible_aliases": [
-        "sem__stage.claim.ch01.projection.definition.derive__sem__v",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__v__end",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__u",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__u__end",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__projection",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__projection__end",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__foot",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__residual",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__residual__end",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__rel.0.claim.ch01.projection.definition",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__rel.1.claim.ch01.projection.definition",
-        "sem__stage.claim.ch01.projection.definition.derive__sem__rel.2.claim.ch01.projection.definition"
+        "sem__v",
+        "sem__v__end",
+        "sem__v__origin",
+        "sem__u",
+        "sem__u__end",
+        "sem__u__origin",
+        "sem__projection",
+        "sem__projection__end",
+        "sem__projection__origin",
+        "sem__foot",
+        "sem__residual",
+        "sem__residual__end",
+        "sem__residual__origin",
+        "sem__rel.0.claim.ch01.projection.definition",
+        "sem__rel.1.claim.ch01.projection.definition",
+        "sem__rel.2.claim.ch01.projection.definition",
+        "sem__stage.claim.ch01.projection.definition.derive__title",
+        "sem__projection__2"
       ],
       "visible_refs": [
         "v",
@@ -287,16 +347,21 @@
       "layout": "sequence",
       "title": "投影分解",
       "visible_aliases": [
-        "sem__stage.claim.ch01.projection.definition.decompose__sem__v",
-        "sem__stage.claim.ch01.projection.definition.decompose__sem__v__end",
-        "sem__stage.claim.ch01.projection.definition.decompose__sem__projection",
-        "sem__stage.claim.ch01.projection.definition.decompose__sem__projection__end",
-        "sem__stage.claim.ch01.projection.definition.decompose__sem__foot",
-        "sem__stage.claim.ch01.projection.definition.decompose__sem__residual",
-        "sem__stage.claim.ch01.projection.definition.decompose__sem__residual__end",
-        "sem__stage.claim.ch01.projection.definition.decompose__sem__rel.0.claim.ch01.projection.definition",
-        "sem__stage.claim.ch01.projection.definition.decompose__sem__rel.1.claim.ch01.projection.definition",
-        "sem__stage.claim.ch01.projection.definition.decompose__sem__rel.2.claim.ch01.projection.definition"
+        "sem__v",
+        "sem__v__end",
+        "sem__v__origin",
+        "sem__projection",
+        "sem__projection__end",
+        "sem__projection__origin",
+        "sem__foot",
+        "sem__residual",
+        "sem__residual__end",
+        "sem__residual__origin",
+        "sem__rel.0.claim.ch01.projection.definition",
+        "sem__rel.1.claim.ch01.projection.definition",
+        "sem__rel.2.claim.ch01.projection.definition",
+        "sem__stage.claim.ch01.projection.definition.decompose__title",
+        "sem__projection__3"
       ],
       "visible_refs": [
         "v",

@@ -1,10 +1,11 @@
 {
-  "artifact_digest": "sha256:fda6e8dc57464f8b0bcec49572a74c3f6bdf71dfa62f2581fdb889905fddc947",
+  "artifact_digest": "sha256:b90f515c8fdf6f1d2b7a0592aeb49d5e4bd0ee25db11a5dfff2d0a3c294be2b3",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
+        "alias": "sem__A",
         "bounds": [
           -3.0,
           3.0,
@@ -82,6 +83,7 @@
         "start": "sem__y__origin"
       },
       {
+        "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
             1.0,
@@ -116,6 +118,28 @@
         "opacity": 0.2
       },
       {
+        "alias": "sem__mapping_grid__1",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
@@ -133,12 +157,12 @@
     "summary": "线性无关与线性相关的方向图",
     "version": 1
   },
-  "plan_digest": "sha256:b1ae514d3c5b9e8238f218c940494fa4a53915ba3e687317b289dac9e1d3edaf",
+  "plan_digest": "sha256:0cc8933557df45bf1ca52afb1379682b7b899941e6a5999869bd5e87853c9248",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 4,
   "schema_version": 1,
   "source_hash": "sha256:7f30d55c4caabb696d2580af0a348294585bb9d7485a413ae46873e7287124c9",
   "stages": [
@@ -152,12 +176,16 @@
       "layout": "overlay",
       "title": "输入与变换",
       "visible_aliases": [
-        "sem__stage.input__sem__A",
-        "sem__stage.input__sem__x",
-        "sem__stage.input__sem__x__end",
-        "sem__stage.input__sem__y",
-        "sem__stage.input__sem__y__end",
-        "sem__stage.input__sem__A_maps_x_to_y"
+        "sem__A",
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__A_maps_x_to_y",
+        "sem__stage.input__title",
+        "sem__mapping_grid__1"
       ],
       "visible_refs": [
         "A",

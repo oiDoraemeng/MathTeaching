@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:0ff633f6be46d905881e8146581eda40d98efabc0b832dfceed71808fd77f43a",
+  "artifact_digest": "sha256:75261a710c11ef8d44657510e83cdb488d959df85c80846f0c2dbec70713d8cb",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -60,10 +60,10 @@
   },
   "plan_digest": "sha256:c30f98ebf5f2d6aadf71f9138918b32d46117874069661f4bace8e96cdca3e9d",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 4,
   "schema_version": 1,
   "source_hash": "sha256:aec0866b91b7031cc30af32b39f6dd7728fe7a7490b88d28680b456e83f83fe6",
   "stages": [
@@ -77,11 +77,15 @@
       "layout": "overlay",
       "title": "高维类比",
       "visible_aliases": [
-        "sem__stage.analogy__sem__x",
-        "sem__stage.analogy__sem__x__end",
-        "sem__stage.analogy__sem__y",
-        "sem__stage.analogy__sem__y__end",
-        "sem__stage.analogy__sem__x_maps_to_y"
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__x_maps_to_y",
+        "sem__stage.analogy__title",
+        "sem__mapping_grid__1"
       ],
       "visible_refs": [
         "x",

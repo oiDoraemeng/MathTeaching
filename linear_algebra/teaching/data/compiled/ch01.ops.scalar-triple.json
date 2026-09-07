@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:8b475583a95ff0ea2eab09834ef1a7582026553d58f9cc8be8ee56ed5e00ec1f",
+  "artifact_digest": "sha256:6c31b64da17d5e0a9197c9026346e6f7e663c9b2bef8fdb458de629ced096d62",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -124,11 +124,10 @@
   },
   "plan_digest": "sha256:bb76bde8dde1e95fef4abba8db37e52848971a5863586ab960f6a19c16958a53",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:4e497dc05627bf09c03cba04c8fa9c93828cd0daace46a310f30768c1f541417",
   "stages": [
@@ -140,16 +139,21 @@
       "caption": "先读对象、角色和输入输出。",
       "id": "stage.claim.ch01.ops.scalar-triple.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "第一个向量",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__a",
-        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__a__end",
-        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__b",
-        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__b__end",
-        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__c",
-        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__c__end",
-        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__volume",
-        "sem__stage.claim.ch01.ops.scalar-triple.observe__sem__rel.0.claim.ch01.ops.scalar-triple"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__c",
+        "sem__c__end",
+        "sem__c__origin",
+        "sem__volume",
+        "sem__rel.0.claim.ch01.ops.scalar-triple",
+        "sem__stage.claim.ch01.ops.scalar-triple.observe__title",
+        "sem__orientation__1"
       ],
       "visible_refs": [
         "a",
@@ -167,17 +171,22 @@
       "caption": "按公式计算并检查几何关系。",
       "id": "stage.claim.ch01.ops.scalar-triple.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "第二个向量",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__a",
-        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__a__end",
-        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__b",
-        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__b__end",
-        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__c",
-        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__c__end",
-        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__volume",
-        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__rel.0.claim.ch01.ops.scalar-triple",
-        "sem__stage.claim.ch01.ops.scalar-triple.derive__sem__rel.1.claim.ch01.ops.scalar-triple"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__c",
+        "sem__c__end",
+        "sem__c__origin",
+        "sem__volume",
+        "sem__rel.0.claim.ch01.ops.scalar-triple",
+        "sem__rel.1.claim.ch01.ops.scalar-triple",
+        "sem__stage.claim.ch01.ops.scalar-triple.derive__title",
+        "sem__orientation__2"
       ],
       "visible_refs": [
         "a",

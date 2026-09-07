@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:902e2baaa568425ad2f9b54a1e1a38b471b8907d6fb511c7ba1831ee78397651",
+  "artifact_digest": "sha256:dcedae05e196b6d0adcc401f50a52426a657989644a95e407140a9bf434692c4",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -104,7 +104,7 @@
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "几何意义 1"
       },
       {
         "alias": "sem__stage.claim.ch01.proof.method.derive__title",
@@ -113,7 +113,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "几何意义 2"
       },
       {
         "alias": "sem__ch01.proof.method__formula",
@@ -133,13 +133,12 @@
     "summary": "几何问题转向量的四步方法",
     "version": 1
   },
-  "plan_digest": "sha256:4803afbb8c83c347212f4849141168ed2013ec889262f883fcf779c08ab7293e",
+  "plan_digest": "sha256:4cde605075aeb6d5ec454c9cb93d9249225da6e0e9c6121a16b9ff330059b9a3",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:ea74cbc672edc3f084c07253b34cf704c8aee2835e88b473795a22a715bf75b4",
   "stages": [
@@ -151,15 +150,19 @@
       "caption": "先读对象、角色和输入输出。",
       "id": "stage.claim.ch01.proof.method.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "几何意义 1",
       "visible_aliases": [
-        "sem__stage.claim.ch01.proof.method.observe__sem__a",
-        "sem__stage.claim.ch01.proof.method.observe__sem__a__end",
-        "sem__stage.claim.ch01.proof.method.observe__sem__b",
-        "sem__stage.claim.ch01.proof.method.observe__sem__b__end",
-        "sem__stage.claim.ch01.proof.method.observe__sem__sum",
-        "sem__stage.claim.ch01.proof.method.observe__sem__sum__end",
-        "sem__stage.claim.ch01.proof.method.observe__sem__rel.0.claim.ch01.proof.method"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__sum",
+        "sem__sum__end",
+        "sem__sum__origin",
+        "sem__rel.0.claim.ch01.proof.method",
+        "sem__stage.claim.ch01.proof.method.observe__title"
       ],
       "visible_refs": [
         "a",
@@ -176,15 +179,19 @@
       "caption": "按公式计算并检查几何关系。",
       "id": "stage.claim.ch01.proof.method.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "几何意义 2",
       "visible_aliases": [
-        "sem__stage.claim.ch01.proof.method.derive__sem__a",
-        "sem__stage.claim.ch01.proof.method.derive__sem__a__end",
-        "sem__stage.claim.ch01.proof.method.derive__sem__b",
-        "sem__stage.claim.ch01.proof.method.derive__sem__b__end",
-        "sem__stage.claim.ch01.proof.method.derive__sem__sum",
-        "sem__stage.claim.ch01.proof.method.derive__sem__sum__end",
-        "sem__stage.claim.ch01.proof.method.derive__sem__rel.0.claim.ch01.proof.method"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__sum",
+        "sem__sum__end",
+        "sem__sum__origin",
+        "sem__rel.0.claim.ch01.proof.method",
+        "sem__stage.claim.ch01.proof.method.derive__title"
       ],
       "visible_refs": [
         "a",

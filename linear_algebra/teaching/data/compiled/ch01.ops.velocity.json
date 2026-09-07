@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:635072f2270e51a9cbf0d7f02c9722786c6aef7245610ccf06cc076750701022",
+  "artifact_digest": "sha256:7bdb7f1c0c1804ad0f9db4ac420feaaceb8b0e90d7200552bb079275b4d486ae",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -98,13 +98,59 @@
         "text": "sum: 船速 → 水流"
       },
       {
+        "alias": "sem__addition_triangle",
+        "color": "#6B7280",
+        "op": "geometry.polygon",
+        "opacity": 0.14,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            10.0,
+            0.0
+          ],
+          [
+            10.0,
+            5.0
+          ]
+        ]
+      },
+      {
         "alias": "sem__stage.claim.ch01.ops.velocity.observe__title",
         "op": "annotation.upsert",
         "position": [
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "三角形法则"
+      },
+      {
+        "alias": "sem__addition_parallelogram",
+        "color": "#6B7280",
+        "op": "geometry.polygon",
+        "opacity": 0.14,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            10.0,
+            0.0
+          ],
+          [
+            10.0,
+            5.0
+          ],
+          [
+            0.0,
+            5.0
+          ]
+        ]
       },
       {
         "alias": "sem__stage.claim.ch01.ops.velocity.derive__title",
@@ -113,7 +159,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "平行四边形法则"
       },
       {
         "op": "view.fit",
@@ -124,13 +170,12 @@
     "summary": "速度合成的几何表示",
     "version": 1
   },
-  "plan_digest": "sha256:57d60fae4a28e941fe1884b9735d5a9e80787e19db18dee76d4b6fedb3e62e9a",
+  "plan_digest": "sha256:3a0f19afd95bee5399a8a425d5b387bcfc9e7def9095c40667a2c9862e789f24",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:36b093c8ac050829f151499dd884e2c8a917f483b3fbe03bfb2688a856278b79",
   "stages": [
@@ -139,18 +184,23 @@
         -1.5,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
+      "caption": "把第二个向量平移到第一个向量的终点，和向量是三角形的第三边。",
       "id": "stage.claim.ch01.ops.velocity.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "三角形法则",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.velocity.observe__sem__v1",
-        "sem__stage.claim.ch01.ops.velocity.observe__sem__v1__end",
-        "sem__stage.claim.ch01.ops.velocity.observe__sem__v2",
-        "sem__stage.claim.ch01.ops.velocity.observe__sem__v2__end",
-        "sem__stage.claim.ch01.ops.velocity.observe__sem__actual",
-        "sem__stage.claim.ch01.ops.velocity.observe__sem__actual__end",
-        "sem__stage.claim.ch01.ops.velocity.observe__sem__rel.0.claim.ch01.ops.velocity"
+        "sem__v1",
+        "sem__v1__end",
+        "sem__v1__origin",
+        "sem__v2",
+        "sem__v2__end",
+        "sem__v2__origin",
+        "sem__actual",
+        "sem__actual__end",
+        "sem__actual__origin",
+        "sem__rel.0.claim.ch01.ops.velocity",
+        "sem__stage.claim.ch01.ops.velocity.observe__title",
+        "sem__addition_triangle"
       ],
       "visible_refs": [
         "v1",
@@ -164,18 +214,23 @@
         -2.65,
         2.17
       ],
-      "caption": "按公式计算并检查几何关系。",
+      "caption": "以两个向量为邻边作平行四边形，对角线就是和向量。",
       "id": "stage.claim.ch01.ops.velocity.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "平行四边形法则",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.velocity.derive__sem__v1",
-        "sem__stage.claim.ch01.ops.velocity.derive__sem__v1__end",
-        "sem__stage.claim.ch01.ops.velocity.derive__sem__v2",
-        "sem__stage.claim.ch01.ops.velocity.derive__sem__v2__end",
-        "sem__stage.claim.ch01.ops.velocity.derive__sem__actual",
-        "sem__stage.claim.ch01.ops.velocity.derive__sem__actual__end",
-        "sem__stage.claim.ch01.ops.velocity.derive__sem__rel.0.claim.ch01.ops.velocity"
+        "sem__v1",
+        "sem__v1__end",
+        "sem__v1__origin",
+        "sem__v2",
+        "sem__v2__end",
+        "sem__v2__origin",
+        "sem__actual",
+        "sem__actual__end",
+        "sem__actual__origin",
+        "sem__rel.0.claim.ch01.ops.velocity",
+        "sem__stage.claim.ch01.ops.velocity.derive__title",
+        "sem__addition_parallelogram"
       ],
       "visible_refs": [
         "v1",

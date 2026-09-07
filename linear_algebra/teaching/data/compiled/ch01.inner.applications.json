@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:4d95fbcffd1e9dbbee786c9ec4ba6f6f8060d07d12bb352f6966ffca58873d17",
+  "artifact_digest": "sha256:19dcfcccb4a4afcaff479b1302049667c84b294030e40616996889344be806fc",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -97,13 +97,49 @@
         ]
       },
       {
+        "alias": "sem__orthogonal__1",
+        "color": "#6B7280",
+        "first": [
+          3.0,
+          4.0
+        ],
+        "op": "geometry.right_angle_marker",
+        "second": [
+          6.0,
+          0.0
+        ],
+        "size": 0.3,
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
         "alias": "sem__stage.claim.ch01.inner.applications.observe__title",
         "op": "annotation.upsert",
         "position": [
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "基准向量"
+      },
+      {
+        "alias": "sem__orthogonal__2",
+        "color": "#6B7280",
+        "first": [
+          3.0,
+          4.0
+        ],
+        "op": "geometry.right_angle_marker",
+        "second": [
+          6.0,
+          0.0
+        ],
+        "size": 0.3,
+        "vertex": [
+          0.0,
+          0.0
+        ]
       },
       {
         "alias": "sem__stage.claim.ch01.inner.applications.derive__title",
@@ -112,7 +148,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "垂直向量"
       },
       {
         "op": "view.fit",
@@ -123,13 +159,12 @@
     "summary": "内积的长度、正交与夹角应用",
     "version": 1
   },
-  "plan_digest": "sha256:f6b4d4a0b80c7ef896f4d96edfda642b48cb3242095ac214215d42487c8df0e5",
+  "plan_digest": "sha256:4c028c746dc162f5b97abb40393cb617fcc80eb10dcde41ec552f97b650587b1",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c",
   "stages": [
@@ -141,13 +176,17 @@
       "caption": "先读对象、角色和输入输出。",
       "id": "stage.claim.ch01.inner.applications.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "基准向量",
       "visible_aliases": [
-        "sem__stage.claim.ch01.inner.applications.observe__sem__a",
-        "sem__stage.claim.ch01.inner.applications.observe__sem__a__end",
-        "sem__stage.claim.ch01.inner.applications.observe__sem__b",
-        "sem__stage.claim.ch01.inner.applications.observe__sem__b__end",
-        "sem__stage.claim.ch01.inner.applications.observe__sem__rel.0.claim.ch01.inner.applications"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__rel.0.claim.ch01.inner.applications",
+        "sem__stage.claim.ch01.inner.applications.observe__title",
+        "sem__orthogonal__1"
       ],
       "visible_refs": [
         "a",
@@ -163,13 +202,17 @@
       "caption": "按公式计算并检查几何关系。",
       "id": "stage.claim.ch01.inner.applications.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "垂直向量",
       "visible_aliases": [
-        "sem__stage.claim.ch01.inner.applications.derive__sem__a",
-        "sem__stage.claim.ch01.inner.applications.derive__sem__a__end",
-        "sem__stage.claim.ch01.inner.applications.derive__sem__b",
-        "sem__stage.claim.ch01.inner.applications.derive__sem__b__end",
-        "sem__stage.claim.ch01.inner.applications.derive__sem__rel.0.claim.ch01.inner.applications"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__rel.0.claim.ch01.inner.applications",
+        "sem__stage.claim.ch01.inner.applications.derive__title",
+        "sem__orthogonal__2"
       ],
       "visible_refs": [
         "a",

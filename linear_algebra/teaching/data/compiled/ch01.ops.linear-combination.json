@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:8a27e168d47ff44fe572bc82f8202448e595ac4210cbc8942379c37144f17c4b",
+  "artifact_digest": "sha256:9a6e3a64cde8e7bfa7ac66e816fb7e63b7d02e192709e2bf6344352676cafef2",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -123,13 +123,59 @@
         ]
       },
       {
+        "alias": "sem__addition_triangle",
+        "color": "#6B7280",
+        "op": "geometry.polygon",
+        "opacity": 0.14,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
         "alias": "sem__stage.claim.ch01.ops.linear-combination.observe__title",
         "op": "annotation.upsert",
         "position": [
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "三角形法则"
+      },
+      {
+        "alias": "sem__addition_parallelogram",
+        "color": "#6B7280",
+        "op": "geometry.polygon",
+        "opacity": 0.14,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
       },
       {
         "alias": "sem__stage.claim.ch01.ops.linear-combination.derive__title",
@@ -138,7 +184,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "平行四边形法则"
       },
       {
         "op": "view.fit",
@@ -149,13 +195,12 @@
     "summary": "线性组合",
     "version": 1
   },
-  "plan_digest": "sha256:ff9c934d23b7243877d63f384da8c9e24fb64076699f86e2e7c639def925a62d",
+  "plan_digest": "sha256:0e3cd9004cadab4f80a100ef131b266ac44807475f45a166f9d61389b2014248",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32",
   "stages": [
@@ -164,18 +209,23 @@
         -1.5,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
+      "caption": "把第二个向量平移到第一个向量的终点，和向量是三角形的第三边。",
       "id": "stage.claim.ch01.ops.linear-combination.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "三角形法则",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.linear-combination.observe__sem__v1",
-        "sem__stage.claim.ch01.ops.linear-combination.observe__sem__v1__end",
-        "sem__stage.claim.ch01.ops.linear-combination.observe__sem__v2",
-        "sem__stage.claim.ch01.ops.linear-combination.observe__sem__v2__end",
-        "sem__stage.claim.ch01.ops.linear-combination.observe__sem__result",
-        "sem__stage.claim.ch01.ops.linear-combination.observe__sem__result__end",
-        "sem__stage.claim.ch01.ops.linear-combination.observe__sem__rel.0.claim.ch01.ops.linear-combination"
+        "sem__v1",
+        "sem__v1__end",
+        "sem__v1__origin",
+        "sem__v2",
+        "sem__v2__end",
+        "sem__v2__origin",
+        "sem__result",
+        "sem__result__end",
+        "sem__result__origin",
+        "sem__rel.0.claim.ch01.ops.linear-combination",
+        "sem__stage.claim.ch01.ops.linear-combination.observe__title",
+        "sem__addition_triangle"
       ],
       "visible_refs": [
         "v1",
@@ -189,18 +239,23 @@
         -2.65,
         2.17
       ],
-      "caption": "按公式计算并检查几何关系。",
+      "caption": "以两个向量为邻边作平行四边形，对角线就是和向量。",
       "id": "stage.claim.ch01.ops.linear-combination.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "平行四边形法则",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.linear-combination.derive__sem__v1",
-        "sem__stage.claim.ch01.ops.linear-combination.derive__sem__v1__end",
-        "sem__stage.claim.ch01.ops.linear-combination.derive__sem__v2",
-        "sem__stage.claim.ch01.ops.linear-combination.derive__sem__v2__end",
-        "sem__stage.claim.ch01.ops.linear-combination.derive__sem__result",
-        "sem__stage.claim.ch01.ops.linear-combination.derive__sem__result__end",
-        "sem__stage.claim.ch01.ops.linear-combination.derive__sem__rel.0.claim.ch01.ops.linear-combination"
+        "sem__v1",
+        "sem__v1__end",
+        "sem__v1__origin",
+        "sem__v2",
+        "sem__v2__end",
+        "sem__v2__origin",
+        "sem__result",
+        "sem__result__end",
+        "sem__result__origin",
+        "sem__rel.0.claim.ch01.ops.linear-combination",
+        "sem__stage.claim.ch01.ops.linear-combination.derive__title",
+        "sem__addition_parallelogram"
       ],
       "visible_refs": [
         "v1",

@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:edf1b0bb3e6690018d2e3b6170002997c26e3a693efc251279c6ed33a8cd7210",
+  "artifact_digest": "sha256:f7e1d39d72fbebb7c91326cee6df13c30f4c1dfa6ccf3dbbe004393fc5a3ce6d",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -69,11 +69,10 @@
   },
   "plan_digest": "sha256:c16cc749b0e80a48ecf77633c0088e428af7039280114a6a5357db1b455043dc",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:10f1b4819f2af3b6c3c2b0373beb97de3b41dbcd3e5f9498fd65ef7466a9b9a6",
   "stages": [
@@ -85,15 +84,20 @@
       "caption": "先读对象、角色和输入输出。",
       "id": "stage.claim.ch01.ops.cross-product.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "第一个向量",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.cross-product.observe__sem__a",
-        "sem__stage.claim.ch01.ops.cross-product.observe__sem__a__end",
-        "sem__stage.claim.ch01.ops.cross-product.observe__sem__b",
-        "sem__stage.claim.ch01.ops.cross-product.observe__sem__b__end",
-        "sem__stage.claim.ch01.ops.cross-product.observe__sem__cross",
-        "sem__stage.claim.ch01.ops.cross-product.observe__sem__cross__end",
-        "sem__stage.claim.ch01.ops.cross-product.observe__sem__rel.0.claim.ch01.ops.cross-product"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__cross",
+        "sem__cross__end",
+        "sem__cross__origin",
+        "sem__rel.0.claim.ch01.ops.cross-product",
+        "sem__stage.claim.ch01.ops.cross-product.observe__title",
+        "sem__orientation__1"
       ],
       "visible_refs": [
         "a",
@@ -110,17 +114,22 @@
       "caption": "按公式计算并检查几何关系。",
       "id": "stage.claim.ch01.ops.cross-product.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "第二个向量",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.cross-product.derive__sem__a",
-        "sem__stage.claim.ch01.ops.cross-product.derive__sem__a__end",
-        "sem__stage.claim.ch01.ops.cross-product.derive__sem__b",
-        "sem__stage.claim.ch01.ops.cross-product.derive__sem__b__end",
-        "sem__stage.claim.ch01.ops.cross-product.derive__sem__cross",
-        "sem__stage.claim.ch01.ops.cross-product.derive__sem__cross__end",
-        "sem__stage.claim.ch01.ops.cross-product.derive__sem__rel.0.claim.ch01.ops.cross-product",
-        "sem__stage.claim.ch01.ops.cross-product.derive__sem__rel.1.claim.ch01.ops.cross-product",
-        "sem__stage.claim.ch01.ops.cross-product.derive__sem__rel.2.claim.ch01.ops.cross-product"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__cross",
+        "sem__cross__end",
+        "sem__cross__origin",
+        "sem__rel.0.claim.ch01.ops.cross-product",
+        "sem__rel.1.claim.ch01.ops.cross-product",
+        "sem__rel.2.claim.ch01.ops.cross-product",
+        "sem__stage.claim.ch01.ops.cross-product.derive__title",
+        "sem__orientation__2"
       ],
       "visible_refs": [
         "a",

@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:080e14b84afbeccdb335b663785a23234b600637460fc6b60f4737f51f8c7265",
+  "artifact_digest": "sha256:01c2f004145e3cc803728c571f7df1039d8e19bed9086eea6596e9547a9aa3af",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -105,10 +105,10 @@
   },
   "plan_digest": "sha256:5744129f7bcfd9e0ae494768d9cc7a05943a23e4d4ab6df1e5a93d06de05ff47",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 3,
+  "revision": 6,
   "schema_version": 1,
   "source_hash": "sha256:325a14583a942b2e5d5c8f81bca1568ca4281a087bb1e401dec33530f3686d78",
   "stages": [
@@ -122,14 +122,19 @@
       "layout": "overlay",
       "title": "有向体积",
       "visible_aliases": [
-        "sem__stage.volume__sem__a",
-        "sem__stage.volume__sem__a__end",
-        "sem__stage.volume__sem__b",
-        "sem__stage.volume__sem__b__end",
-        "sem__stage.volume__sem__c",
-        "sem__stage.volume__sem__c__end",
-        "sem__stage.volume__sem__V",
-        "sem__stage.volume__sem__spans_volume"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__c",
+        "sem__c__end",
+        "sem__c__origin",
+        "sem__V",
+        "sem__spans_volume",
+        "sem__stage.volume__title",
+        "sem__span__1"
       ],
       "visible_refs": [
         "a",

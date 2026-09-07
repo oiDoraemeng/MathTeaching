@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:cdb022228934fdda1125076e90dca4fddb062965f36ac1754aa03654ca6548ad",
+  "artifact_digest": "sha256:56914e6bed4a17f93312524f69930e0627083309eab5ccf9699e3100a3b8aad4",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -138,10 +138,10 @@
   },
   "plan_digest": "sha256:7d33ba2c30549b5dd2272692446dba20407ce0f11a4411d32e27321ca59bf110",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 3,
+  "revision": 6,
   "schema_version": 1,
   "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
   "stages": [
@@ -155,12 +155,15 @@
       "layout": "overlay",
       "title": "数学关系",
       "visible_aliases": [
-        "sem__stage.main__sem__a",
-        "sem__stage.main__sem__a__end",
-        "sem__stage.main__sem__b",
-        "sem__stage.main__sem__b__end",
-        "sem__stage.main__sem__area",
-        "sem__stage.main__sem__main_relation"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__area",
+        "sem__main_relation",
+        "sem__stage.main__title"
       ],
       "visible_refs": [
         "a",

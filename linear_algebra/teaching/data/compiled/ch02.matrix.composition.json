@@ -1,10 +1,11 @@
 {
-  "artifact_digest": "sha256:f9a667de8569eb70150b8dcaa53ddbf5a6ee27e837d9432f5b645684f19992de",
+  "artifact_digest": "sha256:bebdf0775c85c137430a727577d3cd5d0d3bda4f61874d4e30668806389e3800",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
+        "alias": "sem__A",
         "bounds": [
           -3.0,
           3.0,
@@ -38,7 +39,7 @@
         "alias": "sem__x__end",
         "coordinates": [
           1.0,
-          2.0
+          1.0
         ],
         "name": "x",
         "op": "point.upsert"
@@ -65,10 +66,10 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          2.0,
-          2.0
+          -2.0,
+          1.0
         ],
-        "name": "Ax",
+        "name": "ABx",
         "op": "point.upsert"
       },
       {
@@ -76,7 +77,7 @@
         "color": "#7B61FF",
         "end": "sem__y__end",
         "kind": "vector",
-        "label": "Ax",
+        "label": "ABx",
         "op": "linear.upsert",
         "role": "primary",
         "start": "sem__y__origin"
@@ -93,7 +94,7 @@
       {
         "alias": "sem__z__end",
         "coordinates": [
-          1.0,
+          -1.0,
           2.0
         ],
         "name": "BAx",
@@ -110,6 +111,29 @@
         "start": "sem__z__origin"
       },
       {
+        "alias": "sem__B",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            0.0,
+            -1.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
             2.0,
@@ -123,22 +147,82 @@
         "op": "linear_algebra.matrix_transform"
       },
       {
-        "alias": "sem__composition_order",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "aliases": [
+          "sem__composition_order__source",
+          "sem__composition_order__target"
         ],
-        "text": "composition_order: x → Ax"
+        "matrices": [
+          [
+            [
+              0,
+              -1
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          [
+            [
+              2,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            -2.0,
+            1.0
+          ]
+        ]
       },
       {
-        "alias": "sem__composition_order_ba",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "aliases": [
+          "sem__composition_order_ba__source",
+          "sem__composition_order_ba__target"
         ],
-        "text": "composition_order: x → BAx"
+        "matrices": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              0,
+              -1
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            -1.0,
+            2.0
+          ]
+        ]
       },
       {
         "alias": "sem__endpoint_diff",
@@ -147,7 +231,7 @@
           -2.65,
           2.65
         ],
-        "text": "endpoint_diff: Ax → BAx"
+        "text": "endpoint_diff: ABx → BAx"
       },
       {
         "alias": "sem__composition_compare",
@@ -156,32 +240,23 @@
           -2.65,
           2.65
         ],
-        "text": "compare: Ax → BAx"
+        "text": "compare: ABx → BAx"
       },
       {
+        "alias": "sem__stage_order__1",
         "aliases": [
-          "cap__stage_source",
-          "cap__stage_target"
+          "sem__stage_order__1__source",
+          "sem__stage_order__1__target"
         ],
         "matrices": [
           [
             [
-              2.0,
-              0.0
+              0,
+              -1
             ],
             [
-              0.0,
-              1.0
-            ]
-          ],
-          [
-            [
-              1.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0
+              1,
+              0
             ]
           ]
         ],
@@ -189,25 +264,65 @@
         "points": [
           [
             1.0,
-            2.0
+            1.0
           ],
           [
-            2.0,
-            2.0
+            -2.0,
+            1.0
           ]
         ]
       },
       {
-        "alias": "sem__stage.composition.0__title",
+        "alias": "sem__stage.composition.input__title",
         "op": "annotation.upsert",
         "position": [
-          -2.65,
+          0.0,
           2.65
         ],
-        "text": "输入向量"
+        "text": "固定输入"
       },
       {
-        "alias": "sem__stage.composition.1__title",
+        "alias": "sem__stage_order__2",
+        "aliases": [
+          "sem__stage_order__2__source",
+          "sem__stage_order__2__target"
+        ],
+        "matrices": [
+          [
+            [
+              0,
+              -1
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          [
+            [
+              2,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            -2.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.composition.ab__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
@@ -216,7 +331,47 @@
         "text": "先 B 后 A"
       },
       {
-        "alias": "sem__stage.composition.2__title",
+        "alias": "sem__stage_order__3",
+        "aliases": [
+          "sem__stage_order__3__source",
+          "sem__stage_order__3__target"
+        ],
+        "matrices": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            [
+              0,
+              -1
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            -1.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.composition.ba__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
@@ -225,22 +380,22 @@
         "text": "先 A 后 B"
       },
       {
-        "alias": "sem__stage.composition.3__title",
+        "alias": "sem__stage.composition.compare__title",
         "op": "annotation.upsert",
         "position": [
-          -2.65,
-          1.21
+          1.2,
+          2.65
         ],
-        "text": "终点差异"
+        "text": "终点比较"
       },
       {
-        "alias": "sem__stage.composition.4__title",
+        "alias": "sem__stage.composition.formula__title",
         "op": "annotation.upsert",
         "position": [
-          -2.65,
-          0.73
+          0.0,
+          2.65
         ],
-        "text": "比较"
+        "text": "代数结论"
       },
       {
         "op": "view.fit",
@@ -248,30 +403,33 @@
       }
     ],
     "scene": "2d",
-    "summary": "复合变换与 AB ≠ BA",
+    "summary": "复合变换与 AB≠BA",
     "version": 1
   },
-  "plan_digest": "sha256:c634eb9510c08eeebdf9b5fb0af0d1895de8da7954049ad65566c988cd066d19",
+  "plan_digest": "sha256:efa1dd269ebe968fdc49db7cf500597b29f8b721d476250857f6192f7c620c41",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先固定输入向量，再分别沿 AB、BA 两条路径读中间结果和最终终点。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 2,
+  "revision": 5,
   "schema_version": 1,
   "source_hash": "sha256:249f825ba9ab6a2d3d042a39fa709e8e6e22611b121cfdf2759e82f232484499",
   "stages": [
     {
       "anchor": [
-        -2.65,
+        0.0,
         2.65
       ],
-      "caption": "同一向量作为两条复合路径的输入。",
-      "id": "stage.composition.0",
-      "layout": "sequence",
-      "title": "输入向量",
+      "caption": "同一向量 x 作为两条路径的输入。",
+      "id": "stage.composition.input",
+      "layout": "overlay",
+      "title": "固定输入",
       "visible_aliases": [
-        "sem__stage.composition.0__sem__x",
-        "sem__stage.composition.0__sem__x__end"
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__stage.composition.input__title",
+        "sem__stage_order__1"
       ],
       "visible_refs": [
         "x"
@@ -282,19 +440,25 @@
         -2.65,
         2.17
       ],
-      "caption": "AB 路径按从右到左执行。",
-      "id": "stage.composition.1",
+      "caption": "B 先旋转，再由 A 沿水平方向拉伸，终点为 ABx=(-2,1)。",
+      "id": "stage.composition.ab",
       "layout": "sequence",
       "title": "先 B 后 A",
       "visible_aliases": [
-        "sem__stage.composition.1__sem__x",
-        "sem__stage.composition.1__sem__x__end",
-        "sem__stage.composition.1__sem__y",
-        "sem__stage.composition.1__sem__y__end",
-        "sem__stage.composition.1__sem__composition_order"
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__B",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__composition_order",
+        "sem__stage.composition.ab__title",
+        "sem__stage_order__2"
       ],
       "visible_refs": [
         "x",
+        "B",
         "y",
         "composition_order"
       ]
@@ -304,64 +468,82 @@
         -2.65,
         1.69
       ],
-      "caption": "BA 路径改变操作次序。",
-      "id": "stage.composition.2",
+      "caption": "A 先拉伸，再由 B 旋转，终点为 BAx=(-1,2)。",
+      "id": "stage.composition.ba",
       "layout": "sequence",
       "title": "先 A 后 B",
       "visible_aliases": [
-        "sem__stage.composition.2__sem__x",
-        "sem__stage.composition.2__sem__x__end",
-        "sem__stage.composition.2__sem__z",
-        "sem__stage.composition.2__sem__z__end",
-        "sem__stage.composition.2__sem__composition_order",
-        "sem__stage.composition.2__sem__composition_order_ba"
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__A",
+        "sem__z",
+        "sem__z__end",
+        "sem__z__origin",
+        "sem__composition_order_ba",
+        "sem__stage.composition.ba__title",
+        "sem__stage_order__3"
       ],
       "visible_refs": [
         "x",
+        "A",
         "z",
-        "composition_order",
         "composition_order_ba"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        1.21
+        1.2,
+        2.65
       ],
-      "caption": "两条路径的终点通常不同。",
-      "id": "stage.composition.3",
-      "layout": "sequence",
-      "title": "终点差异",
+      "caption": "ABx 与 BAx 不同，因此 AB≠BA。",
+      "id": "stage.composition.compare",
+      "layout": "side_by_side",
+      "title": "终点比较",
       "visible_aliases": [
-        "sem__stage.composition.3__sem__y",
-        "sem__stage.composition.3__sem__y__end",
-        "sem__stage.composition.3__sem__z",
-        "sem__stage.composition.3__sem__z__end",
-        "sem__stage.composition.3__sem__endpoint_diff"
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__z",
+        "sem__z__end",
+        "sem__z__origin",
+        "sem__endpoint_diff",
+        "sem__composition_compare",
+        "sem__stage.composition.compare__title",
+        "sem__stage_order__4"
       ],
       "visible_refs": [
         "y",
         "z",
-        "endpoint_diff"
+        "endpoint_diff",
+        "composition_compare"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        0.73
+        0.0,
+        2.65
       ],
-      "caption": "比较阶段呈现 AB 与 BA 不交换。",
-      "id": "stage.composition.4",
-      "layout": "sequence",
-      "title": "比较",
+      "caption": "两条路径对应不同的矩阵乘积，得到 AB≠BA。",
+      "id": "stage.composition.formula",
+      "layout": "overlay",
+      "title": "代数结论",
       "visible_aliases": [
-        "sem__stage.composition.4__sem__y",
-        "sem__stage.composition.4__sem__y__end",
-        "sem__stage.composition.4__sem__z",
-        "sem__stage.composition.4__sem__z__end",
-        "sem__stage.composition.4__sem__composition_compare"
+        "sem__A",
+        "sem__B",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__z",
+        "sem__z__end",
+        "sem__z__origin",
+        "sem__composition_compare",
+        "sem__stage.composition.formula__title",
+        "sem__stage_order__5"
       ],
       "visible_refs": [
+        "A",
+        "B",
         "y",
         "z",
         "composition_compare"

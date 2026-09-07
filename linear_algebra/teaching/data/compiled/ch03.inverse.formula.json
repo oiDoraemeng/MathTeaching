@@ -1,10 +1,11 @@
 {
-  "artifact_digest": "sha256:2f736136b326a22f199d87b236bf7ee42952ce31ff3beb66e766a931bcd23c53",
+  "artifact_digest": "sha256:dd0927b5a36a2a4c8ff28d624db3347e24af560099a681e749b57e7784afb3c1",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
+        "alias": "sem__A",
         "bounds": [
           -3.0,
           3.0,
@@ -97,6 +98,7 @@
         ]
       },
       {
+        "alias": "sem__det_maps_to_area",
         "matrix": [
           [
             3.0,
@@ -110,6 +112,28 @@
         "op": "linear_algebra.matrix_transform"
       },
       {
+        "alias": "sem__mapping_grid__1",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            3.0,
+            1.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__stage.det.input__title",
         "op": "annotation.upsert",
         "position": [
@@ -117,6 +141,28 @@
           2.65
         ],
         "text": "矩阵两列"
+      },
+      {
+        "alias": "sem__mapping_grid__2",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            3.0,
+            1.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
         "alias": "sem__stage.det.measure__title",
@@ -145,12 +191,12 @@
     "summary": "2×2 求逆公式的几何参数",
     "version": 1
   },
-  "plan_digest": "sha256:2b9a1bacf47abcd056135f6d504d3be7d86325334a03a9f2dbdac3bf324fd23d",
+  "plan_digest": "sha256:419e4bf15d1e2dba73018b7a1710691f1391f0477c60b2aeba8c35b3bac79bc5",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 3,
+  "revision": 6,
   "schema_version": 1,
   "source_hash": "sha256:1e1869e796f6a4440cfab9915bf03553ca938b34742a29655ce1b0ed2334154c",
   "stages": [
@@ -164,11 +210,15 @@
       "layout": "sequence",
       "title": "矩阵两列",
       "visible_aliases": [
-        "sem__stage.det.input__sem__A",
-        "sem__stage.det.input__sem__a",
-        "sem__stage.det.input__sem__a__end",
-        "sem__stage.det.input__sem__b",
-        "sem__stage.det.input__sem__b__end"
+        "sem__A",
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__stage.det.input__title",
+        "sem__mapping_grid__1"
       ],
       "visible_refs": [
         "A",
@@ -186,12 +236,16 @@
       "layout": "sequence",
       "title": "有向面积",
       "visible_aliases": [
-        "sem__stage.det.measure__sem__a",
-        "sem__stage.det.measure__sem__a__end",
-        "sem__stage.det.measure__sem__b",
-        "sem__stage.det.measure__sem__b__end",
-        "sem__stage.det.measure__sem__area",
-        "sem__stage.det.measure__sem__det_maps_to_area"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__area",
+        "sem__det_maps_to_area",
+        "sem__stage.det.measure__title",
+        "sem__mapping_grid__2"
       ],
       "visible_refs": [
         "a",

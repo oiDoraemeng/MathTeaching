@@ -1,10 +1,11 @@
 {
-  "artifact_digest": "sha256:8d461a6a414c590c48edc3c91eb96f84a92d55232db1c0a5900da4a8251c4ffa",
+  "artifact_digest": "sha256:9bd7daf4a16db5f4334ecf76e1120b6d7e594e7e90fba09fd2613735d949881f",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
+        "alias": "sem__A",
         "bounds": [
           -3.0,
           3.0,
@@ -82,6 +83,7 @@
         "start": "sem__y__origin"
       },
       {
+        "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
             2.0,
@@ -142,6 +144,36 @@
         "text": "原变换"
       },
       {
+        "alias": "sem__stage_order__2",
+        "aliases": [
+          "sem__stage_order__2__source",
+          "sem__stage_order__2__target"
+        ],
+        "matrices": [
+          [
+            [
+              2,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            2.0
+          ]
+        ]
+      },
+      {
         "alias": "sem__stage.inverse.undo__title",
         "op": "annotation.upsert",
         "position": [
@@ -168,12 +200,12 @@
     "summary": "逆矩阵乘积的逆序撤销",
     "version": 1
   },
-  "plan_digest": "sha256:66169651f4410769a57f6a90e02c697b03ddffbac968be6f70542c62073c76cb",
+  "plan_digest": "sha256:d4ef9954671d74564885686c13a75e019650dd7065951ea654e37be5bcc794b8",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 3,
+  "revision": 6,
   "schema_version": 1,
   "source_hash": "sha256:ffa4c79ebbf8be28ecd21dcd13d91bfa6b2234bf8797f7fc19ec0d33c0ddd905",
   "stages": [
@@ -187,11 +219,15 @@
       "layout": "sequence",
       "title": "原变换",
       "visible_aliases": [
-        "sem__stage.inverse.input__sem__x",
-        "sem__stage.inverse.input__sem__x__end",
-        "sem__stage.inverse.input__sem__y",
-        "sem__stage.inverse.input__sem__y__end",
-        "sem__stage.inverse.input__sem__A_maps_x_to_y"
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__A_maps_x_to_y",
+        "sem__stage.inverse.input__title",
+        "sem__stage_order__1"
       ],
       "visible_refs": [
         "x",
@@ -209,11 +245,15 @@
       "layout": "sequence",
       "title": "撤销",
       "visible_aliases": [
-        "sem__stage.inverse.undo__sem__x",
-        "sem__stage.inverse.undo__sem__x__end",
-        "sem__stage.inverse.undo__sem__y",
-        "sem__stage.inverse.undo__sem__y__end",
-        "sem__stage.inverse.undo__sem__inverse_order"
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__inverse_order",
+        "sem__stage.inverse.undo__title",
+        "sem__stage_order__2"
       ],
       "visible_refs": [
         "x",
@@ -231,11 +271,15 @@
       "layout": "sequence",
       "title": "回到输入",
       "visible_aliases": [
-        "sem__stage.inverse.identity__sem__x",
-        "sem__stage.inverse.identity__sem__x__end",
-        "sem__stage.inverse.identity__sem__y",
-        "sem__stage.inverse.identity__sem__y__end",
-        "sem__stage.inverse.identity__sem__inverse_compare"
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__inverse_compare",
+        "sem__stage.inverse.identity__title",
+        "sem__stage_order__3"
       ],
       "visible_refs": [
         "x",

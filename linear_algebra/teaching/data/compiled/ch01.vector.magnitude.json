@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:31a1ab0b92ab1f1b5f6690729cc8f39df47efd33ebf2caca89040ff95e94f540",
+  "artifact_digest": "sha256:7828b0993e4b837a53f24eb3b9ed6f11c9d3ae56b64ba15affa1944d57ac0d6a",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -66,7 +66,7 @@
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "几何意义 1"
       },
       {
         "alias": "sem__stage.claim.ch01.vector.magnitude.derive__title",
@@ -75,7 +75,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "几何意义 2"
       },
       {
         "op": "view.fit",
@@ -86,13 +86,12 @@
     "summary": "向量的几何量：方向、长度与零向量",
     "version": 1
   },
-  "plan_digest": "sha256:87972487d5caf79adc8a21c765c1fa5e3c3d8f44d6e25998c35682ac158616c1",
+  "plan_digest": "sha256:e5dff5ba931db9868a1e5751571324d24266a0e5b64417292be6661dd8810ded",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:2b53dbe40acf6537f3db65a7393acc792022be98e32f278f8f056dfd8013baca",
   "stages": [
@@ -104,13 +103,15 @@
       "caption": "先读对象、角色和输入输出。",
       "id": "stage.claim.ch01.vector.magnitude.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "几何意义 1",
       "visible_aliases": [
-        "sem__stage.claim.ch01.vector.magnitude.observe__sem__v",
-        "sem__stage.claim.ch01.vector.magnitude.observe__sem__v__end",
-        "sem__stage.claim.ch01.vector.magnitude.observe__sem__x",
-        "sem__stage.claim.ch01.vector.magnitude.observe__sem__y",
-        "sem__stage.claim.ch01.vector.magnitude.observe__sem__rel.0.claim.ch01.vector.magnitude"
+        "sem__v",
+        "sem__v__end",
+        "sem__v__origin",
+        "sem__x",
+        "sem__y",
+        "sem__rel.0.claim.ch01.vector.magnitude",
+        "sem__stage.claim.ch01.vector.magnitude.observe__title"
       ],
       "visible_refs": [
         "v",
@@ -127,13 +128,15 @@
       "caption": "按公式计算并检查几何关系。",
       "id": "stage.claim.ch01.vector.magnitude.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "几何意义 2",
       "visible_aliases": [
-        "sem__stage.claim.ch01.vector.magnitude.derive__sem__v",
-        "sem__stage.claim.ch01.vector.magnitude.derive__sem__v__end",
-        "sem__stage.claim.ch01.vector.magnitude.derive__sem__x",
-        "sem__stage.claim.ch01.vector.magnitude.derive__sem__y",
-        "sem__stage.claim.ch01.vector.magnitude.derive__sem__rel.0.claim.ch01.vector.magnitude"
+        "sem__v",
+        "sem__v__end",
+        "sem__v__origin",
+        "sem__x",
+        "sem__y",
+        "sem__rel.0.claim.ch01.vector.magnitude",
+        "sem__stage.claim.ch01.vector.magnitude.derive__title"
       ],
       "visible_refs": [
         "v",

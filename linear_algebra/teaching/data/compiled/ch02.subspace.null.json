@@ -1,10 +1,11 @@
 {
-  "artifact_digest": "sha256:e139eca9404479bead975904b727da5eb58027ba0a94cc87db725d49cb0f6d94",
+  "artifact_digest": "sha256:3bfdf593acfae89f687d308c0e15cb164da2380c8c5b74ab71e92ee94454ee9f",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
+        "alias": "sem__A",
         "bounds": [
           -3.0,
           3.0,
@@ -82,6 +83,7 @@
         "start": "sem__y__origin"
       },
       {
+        "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
             1.0,
@@ -164,6 +166,28 @@
         ]
       },
       {
+        "alias": "sem__mapping_grid__1",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
@@ -173,6 +197,28 @@
         "text": "输入与变换"
       },
       {
+        "alias": "sem__mapping_grid__2",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__stage.null_input__title",
         "op": "annotation.upsert",
         "position": [
@@ -180,6 +226,28 @@
           2.65
         ],
         "text": "输入方向"
+      },
+      {
+        "alias": "sem__mapping_grid__3",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
         "alias": "sem__stage.null_output__title",
@@ -199,12 +267,12 @@
     "summary": "零空间是被压到原点的方向",
     "version": 1
   },
-  "plan_digest": "sha256:00e6e8c2352eabdfd1fe2d52a7c46d5322b4d1a5b4184332a3f55844856f419c",
+  "plan_digest": "sha256:62891894f9e01b74c04ff3b740af8b2073c0d6304015c8afdd0886ca13d0cc1a",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 4,
   "schema_version": 1,
   "source_hash": "sha256:d00c8934450a55c3e2cbbab779f31ce99c00bc1d63eb73446d94a01711428fcf",
   "stages": [
@@ -218,12 +286,16 @@
       "layout": "overlay",
       "title": "输入与变换",
       "visible_aliases": [
-        "sem__stage.input__sem__A",
-        "sem__stage.input__sem__x",
-        "sem__stage.input__sem__x__end",
-        "sem__stage.input__sem__y",
-        "sem__stage.input__sem__y__end",
-        "sem__stage.input__sem__A_maps_x_to_y"
+        "sem__A",
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__A_maps_x_to_y",
+        "sem__stage.input__title",
+        "sem__mapping_grid__1"
       ],
       "visible_refs": [
         "A",
@@ -242,8 +314,11 @@
       "layout": "side_by_side",
       "title": "输入方向",
       "visible_aliases": [
-        "sem__stage.null_input__sem__x",
-        "sem__stage.null_input__sem__x__end"
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__stage.null_input__title",
+        "sem__mapping_grid__2"
       ],
       "visible_refs": [
         "x"
@@ -259,11 +334,15 @@
       "layout": "side_by_side",
       "title": "压到原点",
       "visible_aliases": [
-        "sem__stage.null_output__sem__x",
-        "sem__stage.null_output__sem__x__end",
-        "sem__stage.null_output__sem__y",
-        "sem__stage.null_output__sem__y__end",
-        "sem__stage.null_output__sem__collapse_to_origin"
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__collapse_to_origin",
+        "sem__stage.null_output__title",
+        "sem__mapping_grid__3"
       ],
       "visible_refs": [
         "x",

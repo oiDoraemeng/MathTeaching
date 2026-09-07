@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:25101cffddf8d0803d2ec43a43cb06e5c38fc3769075d20a8b5f8cc8453d9c8a",
+  "artifact_digest": "sha256:ca308cc678ff0c92d26b63f92138d083f91b2bd7f0471ef7cc7d886bda5afc1f",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -16,7 +16,7 @@
       {
         "alias": "sem__a__end",
         "coordinates": [
-          3.0,
+          2.0,
           1.0
         ],
         "name": "a",
@@ -45,7 +45,7 @@
         "alias": "sem__b__end",
         "coordinates": [
           1.0,
-          2.0
+          3.0
         ],
         "name": "b",
         "op": "point.upsert"
@@ -72,8 +72,8 @@
       {
         "alias": "sem__sum__end",
         "coordinates": [
-          4.0,
-          3.0
+          3.0,
+          4.0
         ],
         "name": "a+b",
         "op": "point.upsert"
@@ -109,16 +109,37 @@
             0.0
           ],
           [
-            3.0,
+            2.0,
             1.0
           ],
           [
-            4.0,
-            3.0
+            3.0,
+            4.0
           ],
           [
             1.0,
-            2.0
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__addition_triangle",
+        "color": "#6B7280",
+        "op": "geometry.polygon",
+        "opacity": 0.14,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            1.0
+          ],
+          [
+            3.0,
+            4.0
           ]
         ]
       },
@@ -129,7 +150,32 @@
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "三角形法则"
+      },
+      {
+        "alias": "sem__addition_parallelogram",
+        "color": "#6B7280",
+        "op": "geometry.polygon",
+        "opacity": 0.14,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            2.0,
+            1.0
+          ],
+          [
+            3.0,
+            4.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ]
       },
       {
         "alias": "sem__stage.claim.ch01.ops.addition.derive__title",
@@ -138,7 +184,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "平行四边形法则"
       },
       {
         "op": "view.fit",
@@ -149,13 +195,12 @@
     "summary": "向量加法",
     "version": 1
   },
-  "plan_digest": "sha256:99ee8fa6ed6ada9f02a2994896e1056b4114cc614913ccab1d8bbddcf2a890ae",
+  "plan_digest": "sha256:93c603a74c9cd5c7dc7607774c4fb40ca77d0b97f645dde8b70577868bfe13bd",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先看 a、b 的共同起点，再看首尾相接或平行四边形对角线，最后核对终点坐标。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
   "stages": [
@@ -164,18 +209,23 @@
         -1.5,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
+      "caption": "把 b 接到 a 的终点，合成箭头指向 (3,4)。",
       "id": "stage.claim.ch01.ops.addition.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "三角形法则",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.addition.observe__sem__a",
-        "sem__stage.claim.ch01.ops.addition.observe__sem__a__end",
-        "sem__stage.claim.ch01.ops.addition.observe__sem__b",
-        "sem__stage.claim.ch01.ops.addition.observe__sem__b__end",
-        "sem__stage.claim.ch01.ops.addition.observe__sem__sum",
-        "sem__stage.claim.ch01.ops.addition.observe__sem__sum__end",
-        "sem__stage.claim.ch01.ops.addition.observe__sem__rel.0.claim.ch01.ops.addition"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__sum",
+        "sem__sum__end",
+        "sem__sum__origin",
+        "sem__rel.0.claim.ch01.ops.addition",
+        "sem__stage.claim.ch01.ops.addition.observe__title",
+        "sem__addition_triangle"
       ],
       "visible_refs": [
         "a",
@@ -189,18 +239,23 @@
         -2.65,
         2.17
       ],
-      "caption": "按公式计算并检查几何关系。",
+      "caption": "以 a、b 为邻边，对角线同样指向 (3,4)。",
       "id": "stage.claim.ch01.ops.addition.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "平行四边形法则",
       "visible_aliases": [
-        "sem__stage.claim.ch01.ops.addition.derive__sem__a",
-        "sem__stage.claim.ch01.ops.addition.derive__sem__a__end",
-        "sem__stage.claim.ch01.ops.addition.derive__sem__b",
-        "sem__stage.claim.ch01.ops.addition.derive__sem__b__end",
-        "sem__stage.claim.ch01.ops.addition.derive__sem__sum",
-        "sem__stage.claim.ch01.ops.addition.derive__sem__sum__end",
-        "sem__stage.claim.ch01.ops.addition.derive__sem__rel.0.claim.ch01.ops.addition"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__sum",
+        "sem__sum__end",
+        "sem__sum__origin",
+        "sem__rel.0.claim.ch01.ops.addition",
+        "sem__stage.claim.ch01.ops.addition.derive__title",
+        "sem__addition_parallelogram"
       ],
       "visible_refs": [
         "a",

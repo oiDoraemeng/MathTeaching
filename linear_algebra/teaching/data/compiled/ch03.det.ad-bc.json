@@ -1,10 +1,11 @@
 {
-  "artifact_digest": "sha256:2a7e19ece56ad3ea25d38caf1e275857eb91ec60d5b432517591c159b61ca059",
+  "artifact_digest": "sha256:9f309b0c77a5d2dfed2b02dfbde9d8bf6400f62bacb18ef9fdc27f5fc02ae5d2",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
+        "alias": "sem__A",
         "bounds": [
           -3.0,
           3.0,
@@ -97,6 +98,7 @@
         ]
       },
       {
+        "alias": "sem__det_maps_to_area",
         "matrix": [
           [
             3.0,
@@ -135,6 +137,28 @@
         ]
       },
       {
+        "alias": "sem__mapping_grid__1",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            3.0,
+            1.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__stage.det.input__title",
         "op": "annotation.upsert",
         "position": [
@@ -142,6 +166,28 @@
           2.65
         ],
         "text": "矩阵两列"
+      },
+      {
+        "alias": "sem__mapping_grid__2",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            3.0,
+            1.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
         "alias": "sem__stage.det.measure__title",
@@ -170,12 +216,12 @@
     "summary": "ad-bc 的面积分解",
     "version": 1
   },
-  "plan_digest": "sha256:c972ddbce4d01a56ee4ee40dedf44d264edf9f0d0bb49811d1991bb51e534a05",
+  "plan_digest": "sha256:8c1dc65f2efde7cad8451a867eb7a81ab7977dda69d683a72ed27dc8ce83f4fc",
   "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 4,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:cf8be46dd084ee719f2fdc8a314eb6ed8106ff42972a605d2f3e80ea9d061546",
   "stages": [
@@ -189,11 +235,15 @@
       "layout": "sequence",
       "title": "矩阵两列",
       "visible_aliases": [
-        "sem__stage.det.input__sem__A",
-        "sem__stage.det.input__sem__a",
-        "sem__stage.det.input__sem__a__end",
-        "sem__stage.det.input__sem__b",
-        "sem__stage.det.input__sem__b__end"
+        "sem__A",
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__stage.det.input__title",
+        "sem__mapping_grid__1"
       ],
       "visible_refs": [
         "A",
@@ -211,12 +261,16 @@
       "layout": "sequence",
       "title": "有向面积",
       "visible_aliases": [
-        "sem__stage.det.measure__sem__a",
-        "sem__stage.det.measure__sem__a__end",
-        "sem__stage.det.measure__sem__b",
-        "sem__stage.det.measure__sem__b__end",
-        "sem__stage.det.measure__sem__area",
-        "sem__stage.det.measure__sem__det_maps_to_area"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__area",
+        "sem__det_maps_to_area",
+        "sem__stage.det.measure__title",
+        "sem__mapping_grid__2"
       ],
       "visible_refs": [
         "a",

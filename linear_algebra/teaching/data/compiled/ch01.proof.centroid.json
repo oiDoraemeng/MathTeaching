@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:4ad114bbe05adfd887cfd60f2bfa1a9190c10641d2d707b7b3319ef7bc246d59",
+  "artifact_digest": "sha256:ff739a4d9cd1ff119085aaf68e4b967b23568bee3627a58bd2613c32d7c4067e",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -110,7 +110,7 @@
           -1.5,
           2.65
         ],
-        "text": "观察对象"
+        "text": "几何意义 1"
       },
       {
         "alias": "sem__stage.claim.ch01.proof.centroid.derive__title",
@@ -119,7 +119,7 @@
           -2.65,
           2.17
         ],
-        "text": "代数验证"
+        "text": "几何意义 2"
       },
       {
         "alias": "sem__ch01.proof.centroid__formula",
@@ -139,13 +139,12 @@
     "summary": "三角形重心定理",
     "version": 1
   },
-  "plan_digest": "sha256:f3de649934b9bab2debd929004384989bcc1963dde5434de592849f29e0b7796",
+  "plan_digest": "sha256:00253b4f8614388c5aa05921076b1a45a7fcc45d7225716231c338efd93fbd44",
   "read_guide": [
-    "观察输入实体和标签。",
-    "沿关系读取输出并核对不变量。"
+    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 1,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:3b0b668a61fcc041c6bf6b27cc98a127cf2743ab2ec11b5546419b8dc4316c06",
   "stages": [
@@ -157,14 +156,17 @@
       "caption": "先读对象、角色和输入输出。",
       "id": "stage.claim.ch01.proof.centroid.observe",
       "layout": "side_by_side",
-      "title": "观察对象",
+      "title": "几何意义 1",
       "visible_aliases": [
-        "sem__stage.claim.ch01.proof.centroid.observe__sem__a",
-        "sem__stage.claim.ch01.proof.centroid.observe__sem__a__end",
-        "sem__stage.claim.ch01.proof.centroid.observe__sem__b",
-        "sem__stage.claim.ch01.proof.centroid.observe__sem__b__end",
-        "sem__stage.claim.ch01.proof.centroid.observe__sem__G",
-        "sem__stage.claim.ch01.proof.centroid.observe__sem__rel.0.claim.ch01.proof.centroid"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__G",
+        "sem__rel.0.claim.ch01.proof.centroid",
+        "sem__stage.claim.ch01.proof.centroid.observe__title"
       ],
       "visible_refs": [
         "a",
@@ -181,14 +183,17 @@
       "caption": "按公式计算并检查几何关系。",
       "id": "stage.claim.ch01.proof.centroid.derive",
       "layout": "sequence",
-      "title": "代数验证",
+      "title": "几何意义 2",
       "visible_aliases": [
-        "sem__stage.claim.ch01.proof.centroid.derive__sem__a",
-        "sem__stage.claim.ch01.proof.centroid.derive__sem__a__end",
-        "sem__stage.claim.ch01.proof.centroid.derive__sem__b",
-        "sem__stage.claim.ch01.proof.centroid.derive__sem__b__end",
-        "sem__stage.claim.ch01.proof.centroid.derive__sem__G",
-        "sem__stage.claim.ch01.proof.centroid.derive__sem__rel.0.claim.ch01.proof.centroid"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__G",
+        "sem__rel.0.claim.ch01.proof.centroid",
+        "sem__stage.claim.ch01.proof.centroid.derive__title"
       ],
       "visible_refs": [
         "a",
