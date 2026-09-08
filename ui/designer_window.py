@@ -1262,7 +1262,8 @@ class MainWindow:
         panel.linear_algebra_requested.connect(self._load_linear_algebra_topic)
         panel.builtin_requested.connect(self._add_builtin_surface)
         panel.lighting_requested.connect(self._show_lighting_dialog)
-        panel.update_requested.connect(self._update_formula_for_scene)
+        panel.pane_update_requested.connect(self._update_formula_for_scene)
+        panel.pane_visibility_requested.connect(self._reveal_algebra_pane)
         panel.delete_requested.connect(self._remove_layer_for_scene)
         panel.visibility_changed.connect(self._set_layer_visibility)
         panel.intersections_visibility_changed.connect(self._set_surface_intersections_visibility)
@@ -2606,7 +2607,21 @@ class MainWindow:
         else:
             self._add_cas_surface(kind, latex)
 
-    def _update_formula_for_scene(self, layer_id: str, kind: str, latex: str) -> None:
+    def _reveal_algebra_pane(self, _pane_id: str, count: int) -> None:
+        container = getattr(self, "scene_pane_widget", None)
+        if container is not None:
+            container.set_layout(count)
+
+    def _update_formula_for_scene(self, *args: str) -> None:
+        pane_id = args[0] if len(args) == 4 else None
+        layer_id, kind, latex = args[-3:]
+        manager = getattr(self, "pane_manager", None)
+        previous = getattr(manager, "active_pane_id", None)
+        if pane_id and manager is not None and pane_id != previous:
+            try:
+                manager.focus_pane(pane_id)
+            except (AttributeError, ValueError):
+                pane_id = None
         if self._pane_scene().scene_mode is SceneMode.TWO_D:
             if self._point_2d(layer_id) is not None:
                 self._update_point_coordinates(layer_id, latex)
@@ -2614,6 +2629,11 @@ class MainWindow:
                 self._update_curve_expression(layer_id, kind, latex)
         else:
             self._update_surface_expression(layer_id, kind, latex)
+        if pane_id and previous and previous != pane_id:
+            try:
+                manager.focus_pane(previous)
+            except (AttributeError, ValueError):
+                pass
 
     def _update_point_coordinates(self, point_id: str, latex: str) -> None:
         point = self._point_2d(point_id)

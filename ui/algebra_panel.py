@@ -549,6 +549,8 @@ class AlgebraPanel(QFrame):
 
     add_requested = Signal(str, str)
     update_requested = Signal(str, str, str)
+    pane_update_requested = Signal(str, str, str, str)
+    pane_visibility_requested = Signal(str, int)
     delete_requested = Signal(str)
     visibility_changed = Signal(str, bool)
     intersections_visibility_changed = Signal(str, bool)
@@ -775,7 +777,7 @@ class AlgebraPanel(QFrame):
                     visible_getter = getattr(self._pane_manager, "visible_pane_ids", None)
                     visible = tuple(visible_getter()) if callable(visible_getter) else (pane_id,)
                     if pane_id not in visible and hasattr(self._pane_manager, "set_layout"):
-                        self._pane_manager.set_layout(index + 1)
+                        self.pane_visibility_requested.emit(pane_id, index + 1)
                     self._pane_manager.focus_pane(pane_id)
                 except (AttributeError, KeyError, ValueError):
                     pass
@@ -927,6 +929,10 @@ class AlgebraPanel(QFrame):
         if layer is not None and not isinstance(layer, Linear2D) and latex.strip():
             self._inline_active_layer_id = layer_id
             self.update_requested.emit(layer_id, layer.kind, latex)
+            self.pane_update_requested.emit(self._pane_id_for_model(model), layer_id, layer.kind, latex)
+
+    def _pane_id_for_model(self, model: FormulaListWidget) -> str:
+        return next((pane_id for pane_id, candidate in self._pane_models.items() if candidate is model), self._pane_id)
 
     def _cancel_formula_edit(self) -> None:
         self._active_layer_id = None
