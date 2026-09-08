@@ -50,9 +50,14 @@ def test_recreated_interactor_invokes_restore_callback(qapp):
     manager = ScenePaneManager()
     restored = []
     renderer_refs = []
+    restored_content = []
+    def on_created(pane_id, renderer):
+        restored.append((pane_id, renderer))
+        renderer_refs.append(manager.pane(pane_id).renderer_2d)
+        restored_content.append(manager.pane(pane_id).scene_2d.get("objects"))
     widget = ScenePaneWidget(
         manager, interactor_factory=FakeInteractor,
-        on_interactor_created=lambda pane_id, renderer: (restored.append((pane_id, renderer)), renderer_refs.append(manager.pane(pane_id).renderer_2d)),
+        on_interactor_created=on_created,
     )
     pane_two = widget.set_layout(2)[1]
     old = widget.interactor(pane_two)
@@ -63,6 +68,8 @@ def test_recreated_interactor_invokes_restore_callback(qapp):
     assert new is not old
     assert restored[-1] == (pane_two, new)
     assert renderer_refs[-1] is new
+    assert manager.pane(pane_two).scene_2d["objects"] == ["kept"]
+    assert restored_content[-1] == ["kept"]
 
 
 def test_designer_restore_callback_defers_until_ready():
