@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QApplication, QWidget
 
 from ui.scene_pane_widget import ScenePaneWidget
 from ui.scene_pane_manager import ScenePaneManager
+from ui.designer_window import MainWindow
 
 
 class FakeInteractor(QWidget):
@@ -62,4 +63,22 @@ def test_recreated_interactor_invokes_restore_callback(qapp):
     assert new is not old
     assert restored[-1] == (pane_two, new)
     assert renderer_refs[-1] is new
-    assert manager.pane(pane_two).scene_2d["objects"] == ["kept"]
+
+
+def test_designer_restore_callback_defers_until_ready():
+    window = MainWindow.__new__(MainWindow)
+    window._pane_widgets_ready = False
+    window._on_pane_interactor_created("pane-1", object())
+    assert window._pending_pane_redraws == {"pane-1"}
+
+
+def test_designer_restore_callback_renders_when_ready(monkeypatch):
+    window = MainWindow.__new__(MainWindow)
+    window._pane_widgets_ready = True
+    window.window = object()
+    calls = []
+    window._render_scene = lambda: calls.append(True)
+    window._using_pane = lambda pane_id: __import__("contextlib").nullcontext()
+    window.pane_manager = type("M", (), {"pane": lambda self, pane_id: type("P", (), {"runtime": None})()})()
+    window._on_pane_interactor_created("pane-1", object())
+    assert calls == [True]

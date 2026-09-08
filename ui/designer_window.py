@@ -415,6 +415,11 @@ class MainWindow:
         self._bind_algebra_panel()
         self._apply_style()
         self._render_scene()
+        self._pane_widgets_ready = True
+        for pane_id in tuple(getattr(self, "_pending_pane_redraws", ())):
+            with self._using_pane(pane_id):
+                self._render_scene()
+        self._pending_pane_redraws = set()
 
     def _pane(self, pane_id: str | None = None) -> ScenePaneState:
         manager = getattr(self, "pane_manager", None)
@@ -2009,6 +2014,9 @@ class MainWindow:
 
     def _on_pane_interactor_created(self, pane_id: str, renderer: object) -> None:
         """Rebind runtime controllers and redraw retained state after recreation."""
+        if not getattr(self, "_pane_widgets_ready", False):
+            self._pending_pane_redraws = set(getattr(self, "_pending_pane_redraws", ())) | {pane_id}
+            return
         pane = self.pane_manager.pane(pane_id)
         if pane.runtime is not None:
             for name in ("curve_controller", "geometry_controller", "geometry3d_controller", "layer_controller"):
