@@ -1,3 +1,4 @@
+from ui.scene_pane_manager import ScenePaneManager
 """三维曲面显示范围行为的回归测试。"""
 
 import unittest
@@ -52,20 +53,21 @@ class RangeViewTests(unittest.TestCase):
         from ui.designer_window import MainWindow
 
         window = object.__new__(MainWindow)
-        window.layers = [SurfaceLayer("plane", "explicit", "z = x + y")]
-        window.plotter = FakePlotter()
+        window.pane_manager = ScenePaneManager()
+        window._pane_scene().layers = [SurfaceLayer("plane", "explicit", "z = x + y")]
+        window._pane().renderer_2d = window._pane().renderer_3d = FakePlotter()
         window.algebra_panel = FakeAlgebraPanel()
-        window.layer_controller = LayerSceneController(
+        window._pane_scene().layer_controller = LayerSceneController(
             ActorPlotter(),
             PlotDomain(explicit_resolution=20, implicit_resolution=20),
         )
-        window.layer_controller.add_layer(window.layers[0])
+        window._pane_scene().layer_controller.add_layer(window._pane_scene().layers[0])
 
-        original_position = window.plotter.camera.position
-        MainWindow._set_surface_range(window, window.layers[0].id, 0.5)
+        original_position = window._pane_renderer().camera.position
+        MainWindow._set_surface_range(window, window._pane_scene().layers[0].id, 0.5)
 
-        self.assertEqual(window.plotter.camera.position, original_position)
-        self.assertEqual(window.layers[0].range_scale, 0.5)
+        self.assertEqual(window._pane_renderer().camera.position, original_position)
+        self.assertEqual(window._pane_scene().layers[0].range_scale, 0.5)
 
     def test_default_range_scale_is_golden_ratio(self) -> None:
         layer = SurfaceLayer("plane", "explicit", "z = x + y")

@@ -223,22 +223,31 @@ class SceneCommandService:
     def preview(self, plan: CommandPlan) -> CommandValidation:
         return self.validate(plan)
 
-    def execute(self, plan: CommandPlan, *, expected_scene_fingerprint: str | None = None) -> CommandValidation:
+    def execute(self, plan: CommandPlan, *, expected_scene_fingerprint: str | None = None,
+                pane_id: str | None = None) -> CommandValidation:
         validation = self.validate(plan)
         if not validation.valid:
             raise CommandError("；".join(validation.messages))
         if self.host is None:
             raise CommandError("命令服务尚未绑定场景宿主。")
-        check_fingerprint = getattr(self.host, "check_scene_fingerprint", None)
+        host = self.host
+        bind_pane = getattr(host, "for_pane", None)
+        if callable(bind_pane):
+            # Resolve focus once, before the first mutation, on the host's GUI
+            # thread. Every operation and rollback uses that same pane.
+            host = bind_pane(pane_id)
+        elif pane_id is not None:
+            raise CommandError("当前场景宿主不支持 pane_id 路由。")
+        check_fingerprint = getattr(host, "check_scene_fingerprint", None)
         if expected_scene_fingerprint is not None and callable(check_fingerprint) and not check_fingerprint(expected_scene_fingerprint):
             raise CommandError("scene_changed_since_plan")
-        self.host.begin_scene_command_transaction()
+        host.begin_scene_command_transaction()
         try:
             for operation in validation.expanded_operations:
-                self.host.apply_scene_command(operation)
-            self.host.commit_scene_command_transaction()
+                host.apply_scene_command(operation)
+            host.commit_scene_command_transaction()
         except Exception:
-            self.host.rollback_scene_command_transaction()
+            host.rollback_scene_command_transaction()
             raise
         self._last_plan = plan
         return validation

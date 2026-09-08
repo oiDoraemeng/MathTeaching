@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 from linear_algebra.catalog.manifest import topic_entries
 from models.scene_mode import SceneMode
 from services.scene_commands import CommandPlan
+from ui.scene_pane_manager import ScenePaneManager
 from ui.designer_window import MainWindow
 
 
@@ -20,6 +21,7 @@ def test_unknown_topic_reports_error_without_executing() -> None:
     statuses: list[tuple[str, bool]] = []
     executed: list[CommandPlan] = []
     window = MainWindow.__new__(MainWindow)
+    window.pane_manager = ScenePaneManager()
     window.algebra_panel = SimpleNamespace(set_status=lambda text, is_error=False: statuses.append((text, is_error)))
     window.scene_command_service = SimpleNamespace(execute=executed.append)
 
@@ -32,7 +34,8 @@ def test_unknown_topic_reports_error_without_executing() -> None:
 
 def test_linear_algebra_toolbar_context_tracks_loaded_topic() -> None:
     window = MainWindow.__new__(MainWindow)
-    window.scene_mode = SceneMode.TWO_D
+    window.pane_manager = ScenePaneManager()
+    window._pane_scene().scene_mode = SceneMode.TWO_D
     window._active_linear_algebra_topic_id = "ch01.ops.addition"
     assert window._is_linear_algebra_context() is True
 
@@ -45,7 +48,8 @@ def test_linear_algebra_toolbar_context_tracks_loaded_topic() -> None:
 
 def test_opening_linear_algebra_enters_2d_workspace_and_reveals_tools() -> None:
     window = MainWindow.__new__(MainWindow)
-    window.scene_mode = SceneMode.THREE_D
+    window.pane_manager = ScenePaneManager()
+    window._pane_scene().scene_mode = SceneMode.THREE_D
     window._active_linear_algebra_topic_id = "ch01.ops.cross-product"
     window.algebra_panel = MagicMock()
 
@@ -56,7 +60,8 @@ def test_opening_linear_algebra_enters_2d_workspace_and_reveals_tools() -> None:
 
 def test_loading_a_2d_topic_activates_the_visible_select_tool() -> None:
     window = MainWindow.__new__(MainWindow)
-    window.scene_mode = SceneMode.TWO_D
+    window.pane_manager = ScenePaneManager()
+    window._pane_scene().scene_mode = SceneMode.TWO_D
     window.algebra_panel = SimpleNamespace(set_status=lambda *_args, **_kwargs: None)
     window.scene_command_service = SimpleNamespace(execute=lambda _plan: None)
     window._set_2d_geometry_tool = MagicMock()
@@ -85,10 +90,11 @@ def test_selecting_a_geometric_example_controls_its_scene_aliases() -> None:
             calls.append(("teaching", alias, visible))
 
     window = MainWindow.__new__(MainWindow)
-    window.scene_mode = SceneMode.TWO_D
-    window.geometry_controller = GeometryController()
-    window.geometry3d_controller = None
-    window.plotter = SimpleNamespace(render=lambda: renders.append(True))
+    window.pane_manager = ScenePaneManager()
+    window._pane_scene().scene_mode = SceneMode.TWO_D
+    window._pane_scene().geometry_controller = GeometryController()
+    window._pane_scene().geometry3d_controller = None
+    window._pane().renderer_2d = window._pane().renderer_3d = SimpleNamespace(render=lambda: renders.append(True))
     window._active_linear_algebra_compiled = SimpleNamespace(
         topic_id="ch01.ops.addition",
         storyboard=(

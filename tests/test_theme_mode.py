@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QApplication
 
 from main import effective_theme, normalize_theme_mode
 from ui.designer_window import MainWindow
+from ui.scene_pane_manager import ScenePaneManager
 
 
 def test_theme_mode_defaults_invalid_values_to_system() -> None:
@@ -28,6 +29,7 @@ def test_set_theme_persists_without_rerendering_scene() -> None:
     settings = QSettings()
     settings.remove("ui/theme")
     window = object.__new__(MainWindow)
+    window.pane_manager = ScenePaneManager()
     window._apply_style = lambda: None
     window._render_scene = lambda: (_ for _ in ()).throw(AssertionError("scene rerendered"))
     MainWindow.set_theme(window, "dark", "dark")

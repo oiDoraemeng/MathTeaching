@@ -12,6 +12,7 @@ from PySide6.QtWidgets import QApplication, QHBoxLayout, QWidget
 
 from MathInputWidget import LatexParser
 from ui.algebra_panel import AlgebraPanel
+from ui.scene_pane_manager import ScenePaneManager
 from ui.designer_window import MainWindow
 from geometry.standard_surfaces import BUILTIN_SURFACES
 
@@ -30,6 +31,7 @@ class MainWindowLayoutTests(unittest.TestCase):
             form.close()
         self.assertIsNotNone(designer_window)
         window = object.__new__(MainWindow)
+        window.pane_manager = ScenePaneManager()
         window.window = designer_window
 
         MainWindow._install_algebra_panel(window)
@@ -43,6 +45,7 @@ class MainWindowLayoutTests(unittest.TestCase):
 
     def test_binding_populates_the_builtin_surface_menu(self) -> None:
         window = object.__new__(MainWindow)
+        window.pane_manager = ScenePaneManager()
         window.algebra_panel = AlgebraPanel()
         window.latex_parser = LatexParser()
 
@@ -52,6 +55,7 @@ class MainWindowLayoutTests(unittest.TestCase):
 
     def test_mathlive_formula_is_normalized_before_the_existing_cas_parser(self) -> None:
         window = object.__new__(MainWindow)
+        window.pane_manager = ScenePaneManager()
         window.latex_parser = LatexParser()
 
         formula, parsed = MainWindow._parse_mathlive_surface(window, r"z=x+y", "explicit")
@@ -61,21 +65,22 @@ class MainWindowLayoutTests(unittest.TestCase):
 
     def test_scene_mode_switch_keeps_independent_layer_lists(self) -> None:
         window = object.__new__(MainWindow)
-        window.scene_mode = __import__("models.scene_mode", fromlist=["SceneMode"]).SceneMode.THREE_D
-        window.layers = [object()]
-        window.curve_layers = []
+        window.pane_manager = ScenePaneManager()
+        window._pane_scene().scene_mode = __import__("models.scene_mode", fromlist=["SceneMode"]).SceneMode.THREE_D
+        window._pane_scene().layers = [object()]
+        window._pane_scene().curve_layers = []
         window._save_current_view_state = lambda: None
         window._close_scene_settings = lambda **_kwargs: None
         rendered: list[object] = []
-        window._render_scene = lambda: rendered.append(window.scene_mode)
+        window._render_scene = lambda: rendered.append(window._pane_scene().scene_mode)
 
         MainWindow._set_scene_mode(
             window,
             __import__("models.scene_mode", fromlist=["SceneMode"]).SceneMode.TWO_D,
         )
 
-        self.assertEqual(len(window.layers), 1)
-        self.assertEqual(window.curve_layers, [])
+        self.assertEqual(len(window._pane_scene().layers), 1)
+        self.assertEqual(window._pane_scene().curve_layers, [])
         self.assertEqual(len(rendered), 1)
 
     def test_agent_web_panel_is_fixed_on_the_right_and_hidden_without_a_slot(self) -> None:

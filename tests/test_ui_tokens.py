@@ -13,6 +13,7 @@ from PySide6.QtCore import Qt
 from unittest.mock import MagicMock
 
 from models.scene_mode import SceneAppearance, SceneMode
+from ui.scene_pane_manager import ScenePaneManager
 from ui.designer_window import MainWindow
 from ui.algebra_panel import AlgebraPanel
 from ui.lighting_dialog import LightingDialog
@@ -147,9 +148,10 @@ def test_floating_widget_construction_names_and_token_shadows(monkeypatch) -> No
     viewport_host.setObjectName("viewportHost")
     QHBoxLayout(shell).addWidget(viewport_host)
     window = object.__new__(MainWindow)
+    window.pane_manager = ScenePaneManager()
     window.window = shell
-    window.scene_mode = SceneMode.THREE_D
-    window.scene_appearances = {
+    window._pane_scene().scene_mode = SceneMode.THREE_D
+    window._pane_scene().scene_appearances = {
         SceneMode.TWO_D: SceneAppearance(),
         SceneMode.THREE_D: SceneAppearance(),
     }

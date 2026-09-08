@@ -13,6 +13,8 @@ Both need an explicit opt-in, so assert it here rather than trusting the QSS.
 
 from __future__ import annotations
 
+from ui.scene_pane_manager import ScenePaneManager
+
 import os
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
@@ -93,9 +95,10 @@ def test_viewport_toolbar_built_by_configure_viewport_is_masked(monkeypatch) -> 
     viewport_host.setObjectName("viewportHost")
     QHBoxLayout(shell).addWidget(viewport_host)
     window = object.__new__(MainWindow)
+    window.pane_manager = ScenePaneManager()
     window.window = shell
-    window.scene_mode = SceneMode.THREE_D
-    window.scene_appearances = {
+    window._pane_scene().scene_mode = SceneMode.THREE_D
+    window._pane_scene().scene_appearances = {
         SceneMode.TWO_D: SceneAppearance(),
         SceneMode.THREE_D: SceneAppearance(),
     }

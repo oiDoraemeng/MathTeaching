@@ -51,6 +51,7 @@ class ScenePaneState:
     # Runtime-only references.  They are intentionally omitted from snapshots.
     renderer_2d: Any = field(default=None, repr=False, compare=False)
     renderer_3d: Any = field(default=None, repr=False, compare=False)
+    runtime: Any = field(default=None, repr=False, compare=False)
 
     SNAPSHOT_VERSION: ClassVar[int] = SNAPSHOT_VERSION
 

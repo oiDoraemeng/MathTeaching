@@ -12,6 +12,7 @@ from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication, QWidget
 
 from models.scene_mode import SceneAppearance, SceneMode
+from ui.scene_pane_manager import ScenePaneManager
 from ui.designer_window import MainWindow
 from ui.two_d_tools import TwoDGeometryToolbar
 
@@ -185,6 +186,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
 
     def test_main_window_registers_undo_and_redo_shortcuts(self) -> None:
         window = object.__new__(MainWindow)
+        window.pane_manager = ScenePaneManager()
         window.window = QWidget()
         window._undo_2d_geometry = MagicMock()
         window._redo_2d_geometry = MagicMock()
@@ -233,21 +235,22 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
                 pass
 
         window = object.__new__(MainWindow)
+        window.pane_manager = ScenePaneManager()
         window.scene_mode_button = FakeButton()
         window.two_d_geometry_toolbar = FakeToolbar()
         window.scene_settings_panel = FakeSettings()
-        window.scene_appearances = {
+        window._pane_scene().scene_appearances = {
             SceneMode.TWO_D: SceneAppearance(),
             SceneMode.THREE_D: SceneAppearance(),
         }
-        window.scene_mode = SceneMode.TWO_D
+        window._pane_scene().scene_mode = SceneMode.TWO_D
         window._active_linear_algebra_topic_id = None
 
         MainWindow._sync_scene_controls(window)
         self.assertTrue(window.two_d_geometry_toolbar.visible)
         self.assertTrue(window.two_d_geometry_toolbar.linear_algebra_mode)
 
-        window.scene_mode = SceneMode.THREE_D
+        window._pane_scene().scene_mode = SceneMode.THREE_D
         MainWindow._sync_scene_controls(window)
         self.assertTrue(window.two_d_geometry_toolbar.visible)
         self.assertTrue(window.two_d_geometry_toolbar.line_flyout.hidden)

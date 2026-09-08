@@ -6,6 +6,18 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QObject, QThread, QTimer, Signal, Slot
 from PySide6.QtWidgets import QApplication
+import pytest
+from types import SimpleNamespace
+from unittest.mock import MagicMock
+from MathInputWidget import LatexParser
+
+from models.curve_layer import Plot2DDomain
+from rendering.curve_scene import CurveSceneController
+from rendering.geometry_scene import GeometrySceneController
+from rendering.ticks import ViewportBounds
+from services.scene_commands import CommandError, CommandPlan, SceneCommandService
+from ui.designer_window import MainWindow
+from ui.scene_pane_manager import ScenePaneManager
 
 from ui.designer_window import _SceneCommandBridge, _SceneCommandHostProxy
 
@@ -100,3 +112,158 @@ def test_scene_command_host_proxy_rethrows_gui_thread_errors() -> None:
     worker_thread.wait(1000)
 
     assert errors == ["scene mutation failed"]
+
+
+def _pane_window() -> MainWindow:
+    """Exercise real scene mutation helpers with independent renderer doubles."""
+    app = QApplication.instance() or QApplication([])
+    window = object.__new__(MainWindow)
+    window._test_app = app
+    window.pane_manager = ScenePaneManager()
+    window.pane_manager.set_layout(2)
+    window.latex_parser = LatexParser()
+    window.algebra_panel = MagicMock()
+    window._sync_panel_layers = MagicMock()
+    window._refresh_2d_viewport = MagicMock()
+    window._render_scene = MagicMock()
+    for pane_id in window.pane_manager.visible_pane_ids():
+        pane = window.pane_manager.pane(pane_id)
+        renderer = MagicMock()
+        renderer.camera = SimpleNamespace(
+            focal_point=(0.0, 0.0, 0.0), position=(0.0, 0.0, 20.0), parallel_scale=6.0
+        )
+        renderer.camera_position = [(0.0, 0.0, 20.0), (0.0, 0.0, 0.0), (0.0, 1.0, 0.0)]
+        pane.renderer_2d = pane.renderer_3d = renderer
+        scene = window._pane_scene(pane_id)
+        scene.geometry_controller = GeometrySceneController(renderer, ViewportBounds((-6, 6), (-6, 6)))
+        scene.curve_controller = CurveSceneController(renderer, Plot2DDomain())
+    return window
+
+
+def _drawing_plan() -> CommandPlan:
+    return CommandPlan(operations=(
+        {"op": "point.upsert", "alias": "A", "coordinates": [1, 2]},
+        {"op": "point.upsert", "alias": "B", "coordinates": [4, 6]},
+        {"op": "linear.upsert", "alias": "AB", "kind": "segment", "start": "A", "end": "B"},
+        {"op": "curve.create", "alias": "f", "kind": "explicit", "expression": "y=x^2"},
+        {"op": "annotation.upsert", "alias": "label", "text": "A to B", "position": [2, 3]},
+        {"op": "view.fit", "padding": 1.2},
+    ))
+
+
+@pytest.mark.parametrize("explicit", [False, True])
+def test_scene_commands_mutate_only_the_resolved_pane(explicit: bool) -> None:
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    target = second if explicit else first
+    untouched = first if explicit else second
+    renderer = window._pane_renderer(untouched)
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+
+    service.execute(_drawing_plan(), pane_id=target if explicit else None)
+
+    scene = window._pane_scene(target)
+    assert len(scene.geometry_points) == 2
+    assert len(scene.linear_objects) == len(scene.curve_layers) == len(scene.annotations) == 1
+    assert window._pane_renderer(target).camera.focal_point == (2.5, 4.0, 0.0)
+    assert window._pane_scene(untouched).geometry_points == []
+    assert window._pane_scene(untouched).linear_objects == []
+    assert window._pane_scene(untouched).curve_layers == []
+    assert window._pane_scene(untouched).annotations == []
+    assert window._pane_renderer(untouched).camera.parallel_scale == 6.0
+    assert renderer.mock_calls == []
+    assert window.pane_manager.active_pane_id == first
+    assert len(window.pane_manager.pane(target).scene_2d["geometry"]) == 4
+    assert not hasattr(window, "plotter")
+    assert not hasattr(window, "geometry_controller")
+
+
+def test_scene_service_keeps_target_when_focus_changes_during_execution() -> None:
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    original_apply = window.apply_scene_command
+
+    def apply_and_change_focus(operation, pane_id=None):
+        original_apply(operation, pane_id)
+        window.pane_manager.focus_pane(second)
+
+    window.apply_scene_command = apply_and_change_focus
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    service.execute(_drawing_plan())
+
+    assert window.pane_manager.active_pane_id == second
+    assert len(window._pane_scene(first).geometry_points) == 2
+    assert window._pane_scene(second).geometry_points == []
+    assert window._pane_renderer(second).mock_calls == []
+
+
+def test_direct_scene_command_accepts_an_explicit_pane() -> None:
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    window.apply_scene_command({"op": "point.upsert", "alias": "A", "coordinates": [1, 2]}, second)
+    assert len(window._pane_scene(second).geometry_points) == 1
+    assert window._pane_scene(first).geometry_points == []
+    assert window.pane_manager.active_pane_id == first
+
+
+@pytest.mark.parametrize("pane_id", ["deleted-pane", ""])
+def test_missing_command_pane_fails_before_any_mutation(pane_id: str) -> None:
+    window = _pane_window()
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    with pytest.raises(CommandError, match="窗格不存在|pane_id"):
+        service.execute(_drawing_plan(), pane_id=pane_id)
+    assert all(window._pane_scene(key).geometry_points == [] for key in window.pane_manager.panes)
+
+
+def test_missing_manager_and_renderer_have_explicit_errors() -> None:
+    window = object.__new__(MainWindow)
+    with pytest.raises(CommandError, match="窗格管理器"):
+        window.apply_scene_command({"op": "view.fit"})
+    window.pane_manager = ScenePaneManager()
+    with pytest.raises(CommandError, match="渲染器尚未初始化"):
+        window.apply_scene_command({"op": "view.fit"})
+
+
+def test_failure_rolls_back_only_the_target_pane_after_focus_changes() -> None:
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    original_apply = window.apply_scene_command
+
+    def fail_curve(operation, pane_id=None):
+        if operation["op"] == "curve.create":
+            window.pane_manager.focus_pane(second)
+            raise RuntimeError("curve failed")
+        original_apply(operation, pane_id)
+
+    window.apply_scene_command = fail_curve
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    with pytest.raises(RuntimeError, match="curve failed"):
+        service.execute(_drawing_plan())
+    assert window._pane_scene(first).geometry_points == []
+    assert window._pane_scene(second).geometry_points == []
+    assert window._pane_renderer(second).mock_calls == []
+    assert window._transaction_pane_id is None
+
+
+def test_explicit_command_cannot_escape_an_open_transaction_pane() -> None:
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    window.begin_scene_command_transaction(first)
+    try:
+        with pytest.raises(CommandError, match="事务的目标窗格"):
+            window.apply_scene_command({"op": "point.upsert", "alias": "A", "coordinates": [1, 2]}, second)
+        assert window._pane_scene(second).geometry_points == []
+    finally:
+        window.rollback_scene_command_transaction(first)
+
+
+def test_3d_mode_and_camera_commands_leave_other_pane_unchanged() -> None:
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    window.apply_scene_command({"op": "scene.set_mode", "mode": "3d"}, second)
+    window.apply_scene_command({"op": "view.fit"}, second)
+    assert window.pane_manager.pane(first).scene_mode == "2d"
+    assert window.pane_manager.pane(second).scene_mode == "3d"
+    window._pane_renderer(second).reset_camera.assert_called_once()
+    assert window._pane_renderer(first).mock_calls == []
+    assert window.pane_manager.active_pane_id == first

@@ -8,6 +8,7 @@ import ui.designer_window as designer_window
 from models.scene_mode import SceneAppearance, SceneMode
 from rendering.lighting import LightSettings
 from rendering.ticks import ViewportBounds
+from ui.scene_pane_manager import ScenePaneManager
 from ui.designer_window import MainWindow
 
 
@@ -26,22 +27,24 @@ def test_legacy_background_values_remain_explicit() -> None:
 
 def test_set_theme_rerenders_only_the_active_auto_background_scene() -> None:
     auto_window = object.__new__(MainWindow)
+    auto_window.pane_manager = ScenePaneManager()
     auto_window._apply_style = lambda: None
     auto_window._render_scene = MagicMock()
-    auto_window.plotter = object()
-    auto_window.scene_mode = SceneMode.TWO_D
-    auto_window.scene_appearances = {SceneMode.TWO_D: SceneAppearance(background="auto")}
+    auto_window._pane().renderer_2d = auto_window._pane().renderer_3d = object()
+    auto_window._pane_scene().scene_mode = SceneMode.TWO_D
+    auto_window._pane_scene().scene_appearances = {SceneMode.TWO_D: SceneAppearance(background="auto")}
 
     MainWindow.set_theme(auto_window, "dark", "dark")
 
     auto_window._render_scene.assert_called_once_with()
 
     explicit_window = object.__new__(MainWindow)
+    explicit_window.pane_manager = ScenePaneManager()
     explicit_window._apply_style = lambda: None
     explicit_window._render_scene = MagicMock()
-    explicit_window.plotter = object()
-    explicit_window.scene_mode = SceneMode.TWO_D
-    explicit_window.scene_appearances = {SceneMode.TWO_D: SceneAppearance(background="light")}
+    explicit_window._pane().renderer_2d = explicit_window._pane().renderer_3d = object()
+    explicit_window._pane_scene().scene_mode = SceneMode.TWO_D
+    explicit_window._pane_scene().scene_appearances = {SceneMode.TWO_D: SceneAppearance(background="light")}
 
     MainWindow.set_theme(explicit_window, "dark", "dark")
 
@@ -64,16 +67,17 @@ def test_render_2d_scene_passes_effective_theme_to_guides(monkeypatch) -> None:
     monkeypatch.setattr(designer_window, "GeometrySceneController", lambda *_args: object())
 
     window = object.__new__(MainWindow)
+    window.pane_manager = ScenePaneManager()
     window.effective_theme = "dark"
-    window.scene_appearances = {SceneMode.TWO_D: SceneAppearance()}
-    window.plotter = MagicMock()
+    window._pane_scene().scene_appearances = {SceneMode.TWO_D: SceneAppearance()}
+    window._pane().renderer_2d = window._pane().renderer_3d = MagicMock()
     window._restore_2d_camera = lambda: None
     window._current_2d_bounds = lambda: ViewportBounds((-4.0, 4.0), (-3.0, 3.0))
     window._curve_sampling_domain = lambda bounds: bounds
-    window.curve_layers = []
-    window.geometry_points = []
-    window.linear_objects = []
-    window.annotations = []
+    window._pane_scene().curve_layers = []
+    window._pane_scene().geometry_points = []
+    window._pane_scene().linear_objects = []
+    window._pane_scene().annotations = []
     window._render_agent_areas = lambda: None
     window._two_d_panel_layers = lambda: []
     window._sync_panel_layers = lambda _layers: None
@@ -107,17 +111,18 @@ def test_render_3d_scene_passes_effective_theme_to_builder(monkeypatch) -> None:
     monkeypatch.setattr(designer_window, "LayerSceneController", FakeLayerController)
 
     window = object.__new__(MainWindow)
+    window.pane_manager = ScenePaneManager()
     window.effective_theme = "dark"
-    window.scene_appearances = {SceneMode.THREE_D: SceneAppearance()}
-    window.plotter = MagicMock()
-    window.plotter.camera.focal_point = (0.0, 0.0, 0.0)
-    window.lighting = LightSettings()
-    window._three_d_camera_position = None
-    window._three_d_spacing = None
+    window._pane_scene().scene_appearances = {SceneMode.THREE_D: SceneAppearance()}
+    window._pane().renderer_2d = window._pane().renderer_3d = MagicMock()
+    window._pane_renderer().camera.focal_point = (0.0, 0.0, 0.0)
+    window._pane_scene().lighting = LightSettings()
+    window._pane_scene()._three_d_camera_position = None
+    window._pane_scene()._three_d_spacing = None
     window._current_3d_axis_extent = lambda: 4.0
-    window.plot_domain = SimpleNamespace(explicit_resolution=64, implicit_resolution=32)
-    window.material_name = "光泽塑料"
-    window.layers = []
+    window._pane_scene().plot_domain = SimpleNamespace(explicit_resolution=64, implicit_resolution=32)
+    window._pane_scene().material_name = "光泽塑料"
+    window._pane_scene().layers = []
     window._sync_panel_layers = lambda _layers: None
     window.algebra_panel = SimpleNamespace(set_status=lambda *_args, **_kwargs: None)
     window._render_agent_points3d = lambda: None
