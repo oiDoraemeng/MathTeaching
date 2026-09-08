@@ -15,6 +15,7 @@ from models.scene_mode import SceneMode
 from models.geometry_2d import Linear2D, Point2D
 from models.surface_layer import SurfaceLayer
 from ui.algebra_panel import AlgebraPanel
+from ui.scene_pane_manager import ScenePaneManager
 from ui.tokens import build_qss
 
 
@@ -116,6 +117,32 @@ class AlgebraPanelTests(unittest.TestCase):
 
         self.assertEqual(updates, [(second.id, "explicit", r"z=2*x+y")])
         self.assertEqual(panel._inline_active_layer_id, second.id)
+
+    def test_late_formula_submission_stays_bound_to_originating_pane(self) -> None:
+        first = SurfaceLayer("first", "implicit", "x=1")
+        second = SurfaceLayer("second", "explicit", "y=x")
+        panel = AlgebraPanel()
+        panel.set_layers([first])
+        panel.set_pane_id("pane-2")
+        panel.set_layers([second])
+        updates: list[tuple[str, str, str]] = []
+        panel.update_requested.connect(lambda *event: updates.append(event))
+        panel.set_pane_id("pane-1")
+        panel.set_pane_id("pane-2")
+        panel._pane_models["pane-1"]._bridge.formula_submitted.emit(first.id, "x=2")
+        self.assertEqual(updates, [(first.id, "implicit", "x=2")])
+
+    def test_selecting_retained_hidden_tab_reveals_and_focuses_manager(self) -> None:
+        panel = AlgebraPanel()
+        manager = ScenePaneManager()
+        manager.set_layout(2)
+        panel.set_pane_manager(manager)
+        panel.set_pane_id("pane-2")
+        manager.set_layout(1)
+        panel.formula_tabs.setCurrentIndex(0)
+        panel.formula_tabs.setCurrentIndex(1)
+        self.assertIn("pane-2", manager.visible_pane_ids())
+        self.assertEqual(manager.active_pane_id, "pane-2")
 
     def test_formula_list_visibility_is_scoped_to_the_selected_layer(self) -> None:
         first = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1")

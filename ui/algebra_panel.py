@@ -662,7 +662,11 @@ class AlgebraPanel(QFrame):
         self.catalog_popup.requested.connect(self.catalog_requested)
         self.linear_algebra_popup.requested.connect(self.linear_algebra_requested)
         self.formula_list.edit_requested.connect(self._open_inline_formula_for_layer)
-        self.formula_list.formula_submitted.connect(self._submit_inline_formula)
+        self.formula_list.formula_submitted.connect(
+            lambda layer_id, latex, model=self.formula_list: self._submit_inline_formula_from_model(
+                model, layer_id, latex
+            )
+        )
         self.formula_list.edit_cancelled.connect(self._cancel_inline_formula_edit)
         self.formula_list.visibility_changed.connect(self.visibility_changed)
         self.formula_list.settings_requested.connect(self._open_settings)
@@ -765,6 +769,13 @@ class AlgebraPanel(QFrame):
                 previous_model.accept_edit()
             if self._pane_manager is not None:
                 try:
+                    # Retained panes beyond the current layout are valid tabs.
+                    # Reveal the pane before focusing it so the UI and manager
+                    # cannot disagree about the active pane.
+                    visible_getter = getattr(self._pane_manager, "visible_pane_ids", None)
+                    visible = tuple(visible_getter()) if callable(visible_getter) else (pane_id,)
+                    if pane_id not in visible and hasattr(self._pane_manager, "set_layout"):
+                        self._pane_manager.set_layout(index + 1)
                     self._pane_manager.focus_pane(pane_id)
                 except (AttributeError, KeyError, ValueError):
                     pass
@@ -776,7 +787,14 @@ class AlgebraPanel(QFrame):
 
     def _wire_formula_list(self, formula_list: FormulaListWidget) -> None:
         formula_list.edit_requested.connect(self._open_inline_formula_for_layer)
-        formula_list.formula_submitted.connect(self._submit_inline_formula)
+        # Capture the originating model.  WebView callbacks can arrive after
+        # the user has switched tabs; routing through ``self.formula_list``
+        # would then apply the edit to the newly selected pane.
+        formula_list.formula_submitted.connect(
+            lambda layer_id, latex, model=formula_list: self._submit_inline_formula_from_model(
+                model, layer_id, latex
+            )
+        )
         formula_list.edit_cancelled.connect(self._cancel_inline_formula_edit)
         formula_list.visibility_changed.connect(self.visibility_changed)
         formula_list.settings_requested.connect(self._open_settings)
@@ -900,7 +918,12 @@ class AlgebraPanel(QFrame):
         self._inline_active_layer_id = layer_id
 
     def _submit_inline_formula(self, layer_id: str, latex: str) -> None:
-        layer = self._layer(layer_id)
+        self._submit_inline_formula_from_model(self.formula_list, layer_id, latex)
+
+    def _submit_inline_formula_from_model(
+        self, model: FormulaListWidget, layer_id: str, latex: str
+    ) -> None:
+        layer = model._layers.get(layer_id)
         if layer is not None and not isinstance(layer, Linear2D) and latex.strip():
             self._inline_active_layer_id = layer_id
             self.update_requested.emit(layer_id, layer.kind, latex)
