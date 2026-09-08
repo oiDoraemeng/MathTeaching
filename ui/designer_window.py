@@ -1249,6 +1249,7 @@ class MainWindow:
         # Keep the editable algebra tab synchronized with the scene pane focus.
         manager = getattr(self, "pane_manager", None)
         if manager is not None:
+            panel.set_pane_manager(manager)
             panel.set_pane_id(manager.active_pane_id, getattr(manager.pane(manager.active_pane_id), "name", None))
             manager.active_pane_changed.connect(self._on_algebra_pane_focus_changed)
         mode = getattr(self._pane_scene(), "scene_mode", SceneMode.THREE_D)

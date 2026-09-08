@@ -51,6 +51,32 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertEqual(len(panel.formula_list.findChildren(QWebEngineView)), 1)
         self.assertEqual(list(panel.formula_list._layers), [first.id, second.id])
 
+    def test_switching_tabs_commits_previous_formula_and_focuses_manager(self) -> None:
+        class Manager:
+            active_pane_id = "pane-1"
+            def __init__(self): self.focused = []
+            def focus_pane(self, pane_id): self.focused.append(pane_id)
+            def pane(self, pane_id): return type("Pane", (), {"name": pane_id})()
+        panel = AlgebraPanel()
+        manager = Manager(); panel.set_pane_manager(manager)
+        panel.set_pane_id("pane-2", "窗格 2")
+        manager.focused.clear()
+        first = panel._pane_models["pane-1"]
+        first._active_layer_id = "layer-1"
+        called = []
+        first.accept_edit = lambda: called.append(True)
+        panel.formula_tabs.setCurrentIndex(0)
+        manager.focused.clear()
+        panel.formula_tabs.setCurrentIndex(1)
+        self.assertEqual(called, [True])
+        self.assertEqual(manager.focused, ["pane-2"])
+
+    def test_theme_sync_updates_every_retained_pane_model(self) -> None:
+        panel = AlgebraPanel()
+        panel.set_pane_id("pane-2")
+        panel.sync_overlay_theme("dark")
+        self.assertTrue(all(model._theme_bridge._pending_theme == "dark" for model in panel._pane_models.values()))
+
     def test_formula_list_bridge_starts_editing_only_for_the_selected_layer(self) -> None:
         first = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1", latex=r"x^2+y^2+z^2=1")
         second = SurfaceLayer("plane", "explicit", "z=x+y", latex=r"z=x+y")

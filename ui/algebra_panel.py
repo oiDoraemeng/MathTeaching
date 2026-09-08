@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QDialog,
     QFrame,
     QHBoxLayout,
+    QInputDialog,
     QLabel,
     QMenu,
     QPushButton,
@@ -579,6 +580,7 @@ class AlgebraPanel(QFrame):
         self._inline_active_layer_id: str | None = None
         self._pane_id = "pane-1"
         self._pane_models: dict[str, FormulaListWidget] = {}
+        self._pane_manager = None
         self.inline_editor = None
         self.setObjectName("algebraPanel")
         self.setMinimumWidth(self.MIN_WIDTH)
@@ -622,6 +624,7 @@ class AlgebraPanel(QFrame):
         self._pane_models[self._pane_id] = self.formula_list
         self.formula_tabs.addTab(self.formula_list, "窗格 1")
         self.formula_tabs.currentChanged.connect(self._on_tab_changed)
+        self.formula_tabs.tabBarDoubleClicked.connect(self._edit_tab_title)
         self.formula_tabs.tabBar().setMovable(False)
         self.rows_container = self.formula_list
         self.rows_scroll = self.formula_list
@@ -669,7 +672,8 @@ class AlgebraPanel(QFrame):
 
     def sync_overlay_theme(self, theme: ThemeName) -> None:
         self._effective_theme = theme
-        self.formula_list.set_theme(theme)
+        for model in self._pane_models.values():
+            model.set_theme(theme)
         self.formula_popup.set_theme(theme)
         self.catalog_popup.set_theme(theme)
         for preview in self.findChildren(FormulaPreviewWidget):
@@ -725,6 +729,25 @@ class AlgebraPanel(QFrame):
         self.rows_scroll = self.formula_list
         self.pane_changed.emit(pane_id)
 
+    def set_pane_manager(self, manager) -> None:
+        """Bind tab focus and title edits to the scene pane manager."""
+        self._pane_manager = manager
+
+    def _edit_tab_title(self, index: int) -> None:
+        if index < 0 or index >= len(self._pane_models):
+            return
+        pane_id = list(self._pane_models)[index]
+        current = self.formula_tabs.tabText(index)
+        title, accepted = QInputDialog.getText(self, "重命名窗格", "窗格名称", text=current)
+        if not accepted or not title.strip():
+            return
+        self.formula_tabs.setTabText(index, title.strip())
+        if self._pane_manager is not None:
+            try:
+                self._pane_manager.pane(pane_id).name = title.strip()
+            except (AttributeError, KeyError, ValueError):
+                pass
+
     def set_pane_titles(self, titles: dict[str, str]) -> None:
         for pane_id, title in titles.items():
             self.set_pane_id(pane_id, title)
@@ -735,13 +758,20 @@ class AlgebraPanel(QFrame):
         if index < 0 or index >= len(self._pane_models):
             return
         pane_id = list(self._pane_models)[index]
+        previous_pane = self._pane_id
+        if previous_pane != pane_id:
+            previous_model = self._pane_models.get(previous_pane)
+            if previous_model is not None and previous_model._active_layer_id is not None:
+                previous_model.accept_edit()
+            if self._pane_manager is not None:
+                try:
+                    self._pane_manager.focus_pane(pane_id)
+                except (AttributeError, KeyError, ValueError):
+                    pass
         self._pane_id = pane_id
         self.formula_list = self._pane_models[pane_id]
         self.rows_container = self.formula_list
         self.rows_scroll = self.formula_list
-        # Leaving a pane commits an unfinished inline formula.
-        if getattr(self.formula_list, "_active_layer_id", None):
-            self.formula_list.accept_edit()
         self.pane_changed.emit(pane_id)
 
     def _wire_formula_list(self, formula_list: FormulaListWidget) -> None:
