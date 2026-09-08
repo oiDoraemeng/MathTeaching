@@ -56,6 +56,7 @@ from ui.icons import apply_icon, icon_color, retint_icons
 from ui.scene_settings import SceneSettingsPanel
 from ui.scene_pane_manager import ScenePaneManager
 from ui.scene_pane_state import ScenePaneState
+from ui.scene_pane_widget import ScenePaneWidget
 from ui.status_bar import AppStatusBar
 from ui.panel_resize_handle import PanelResizeSpec, _PanelResizeHandle
 from ui.tokens import apply_drop_shadow, apply_rounded_overlay
@@ -944,11 +945,9 @@ class MainWindow:
         self.viewport_host = self._widget("viewportHost", QWidget)
         layout = QVBoxLayout(self.viewport_host)
         layout.setContentsMargins(0, 0, 0, 0)
-        pane = self._pane()
-        pane.renderer_2d = pane.renderer_3d = QtInteractor(self.viewport_host)
-        self._pane_renderer().setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self._pane_renderer().interactor.setMouseTracking(True)
-        layout.addWidget(self._pane_renderer().interactor)
+        self.scene_pane_widget = ScenePaneWidget(self.pane_manager, self.viewport_host)
+        layout.addWidget(self.scene_pane_widget, 1)
+        self.scene_pane_widget.interactor().interactor.setMouseTracking(True)
         self.teaching_case_pane_host = QFrame(self.viewport_host)
         self.teaching_case_pane_host.setObjectName("teachingCasePaneHost")
         self.teaching_case_pane_layout = QVBoxLayout(self.teaching_case_pane_host)
@@ -1998,7 +1997,7 @@ class MainWindow:
 
     def _on_layout_button_clicked(self, count: int) -> None:
         """Route layout selection through ScenePaneManager only."""
-        self.pane_manager.set_layout(count)
+        self.scene_pane_widget.set_layout(count)
         self._sync_layout_buttons()
 
     def _set_teaching_case_pane_count(self, count: int) -> bool:
