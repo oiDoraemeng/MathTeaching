@@ -1246,6 +1246,11 @@ class MainWindow:
 
     def _bind_algebra_panel(self) -> None:
         panel = self.algebra_panel
+        # Keep the editable algebra tab synchronized with the scene pane focus.
+        manager = getattr(self, "pane_manager", None)
+        if manager is not None:
+            panel.set_pane_id(manager.active_pane_id, getattr(manager.pane(manager.active_pane_id), "name", None))
+            manager.active_pane_changed.connect(self._on_algebra_pane_focus_changed)
         mode = getattr(self._pane_scene(), "scene_mode", SceneMode.THREE_D)
         panel.set_scene_mode(mode)
         panel.set_catalog_entries(catalog_entries(mode))
@@ -1268,6 +1273,23 @@ class MainWindow:
         # 扩展程序仍可能连接旧信号；界面中已不再提供对应的工具栏操作。
         panel.auto_intersections_changed.connect(self._set_auto_intersections)
         panel.manual_intersection_requested.connect(self._add_manual_intersection)
+
+    def _on_algebra_pane_focus_changed(self, pane_id: str) -> None:
+        panel = getattr(self, "algebra_panel", None)
+        manager = getattr(self, "pane_manager", None)
+        if panel is None:
+            return
+        title = None
+        if manager is not None:
+            try:
+                title = manager.pane(pane_id).name
+            except (KeyError, ValueError, AttributeError):
+                pass
+        panel.set_pane_id(pane_id, title)
+        with self._using_pane(pane_id):
+            mode = self._pane_scene().scene_mode
+            panel.set_scene_mode(mode)
+            panel.set_layers(self._two_d_panel_layers() if mode is SceneMode.TWO_D else self._pane_scene().layers)
 
     # ------------------------------------------------------------------
     # AI 场景命令适配层

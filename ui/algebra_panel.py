@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QSlider,
     QToolButton,
+    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
@@ -563,6 +564,7 @@ class AlgebraPanel(QFrame):
     manual_intersection_requested = Signal(str, str)
     linear_algebra_requested = Signal(str)
     linear_algebra_opened = Signal()
+    pane_changed = Signal(str)
     MIN_WIDTH = 260
     DEFAULT_WIDTH = 320
     MAX_WIDTH = 420
@@ -575,6 +577,8 @@ class AlgebraPanel(QFrame):
         self._scene_mode = SceneMode.THREE_D
         self._active_layer_id: str | None = None
         self._inline_active_layer_id: str | None = None
+        self._pane_id = "pane-1"
+        self._pane_models: dict[str, FormulaListWidget] = {}
         self.inline_editor = None
         self.setObjectName("algebraPanel")
         self.setMinimumWidth(self.MIN_WIDTH)
@@ -611,10 +615,17 @@ class AlgebraPanel(QFrame):
         self.intersection_menu.addAction(self.auto_intersections_action)
         self.intersection_menu.addAction(self.manual_intersection_action)
 
-        self.formula_list = FormulaListWidget(self, initial_theme=self._effective_theme)
+        self.formula_tabs = QTabWidget(self)
+        self.formula_tabs.setObjectName("algebraPaneTabs")
+        self.formula_tabs.setDocumentMode(True)
+        self.formula_list = FormulaListWidget(self.formula_tabs, initial_theme=self._effective_theme)
+        self._pane_models[self._pane_id] = self.formula_list
+        self.formula_tabs.addTab(self.formula_list, "窗格 1")
+        self.formula_tabs.currentChanged.connect(self._on_tab_changed)
+        self.formula_tabs.tabBar().setMovable(False)
         self.rows_container = self.formula_list
         self.rows_scroll = self.formula_list
-        layout.addWidget(self.formula_list, 1)
+        layout.addWidget(self.formula_tabs, 1)
         self.status_label = QLabel("", self)
         self.status_label.setObjectName("algebraStatus")
         self.status_label.setWordWrap(True)
@@ -697,6 +708,48 @@ class AlgebraPanel(QFrame):
         self.settings_popup.hide()
         self.geometry_settings_popup.hide()
         self.catalog_popup.hide()
+
+    def set_pane_id(self, pane_id: str, title: str | None = None) -> None:
+        """Activate (or create) the algebra tab associated with a scene pane."""
+        pane_id = str(pane_id)
+        if pane_id not in self._pane_models:
+            model = FormulaListWidget(self.formula_tabs, initial_theme=self._effective_theme)
+            self._pane_models[pane_id] = model
+            self.formula_tabs.addTab(model, title or pane_id)
+            self._wire_formula_list(model)
+        index = list(self._pane_models).index(pane_id)
+        self.formula_tabs.setCurrentIndex(index)
+        self._pane_id = pane_id
+        self.formula_list = self._pane_models[pane_id]
+        self.rows_container = self.formula_list
+        self.rows_scroll = self.formula_list
+        self.pane_changed.emit(pane_id)
+
+    def set_pane_titles(self, titles: dict[str, str]) -> None:
+        for pane_id, title in titles.items():
+            self.set_pane_id(pane_id, title)
+            self.formula_tabs.setTabText(list(self._pane_models).index(pane_id), str(title))
+        self.set_pane_id(self._pane_id)
+
+    def _on_tab_changed(self, index: int) -> None:
+        if index < 0 or index >= len(self._pane_models):
+            return
+        pane_id = list(self._pane_models)[index]
+        self._pane_id = pane_id
+        self.formula_list = self._pane_models[pane_id]
+        self.rows_container = self.formula_list
+        self.rows_scroll = self.formula_list
+        # Leaving a pane commits an unfinished inline formula.
+        if getattr(self.formula_list, "_active_layer_id", None):
+            self.formula_list.accept_edit()
+        self.pane_changed.emit(pane_id)
+
+    def _wire_formula_list(self, formula_list: FormulaListWidget) -> None:
+        formula_list.edit_requested.connect(self._open_inline_formula_for_layer)
+        formula_list.formula_submitted.connect(self._submit_inline_formula)
+        formula_list.edit_cancelled.connect(self._cancel_inline_formula_edit)
+        formula_list.visibility_changed.connect(self.visibility_changed)
+        formula_list.settings_requested.connect(self._open_settings)
 
     def set_catalog_entries(self, entries: Iterable[CatalogEntry]) -> None:
         self.catalog_popup.set_entries(entries)
