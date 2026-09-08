@@ -464,6 +464,11 @@ class VisualSemanticsCompiler:
         target = entity_by_id[relation.target_ref]
         operations: list[dict[str, Any]] = []
         relation_alias = _alias(relation.id)
+        if relation.kind == "sum" and relation.id.startswith("rel.addition."):
+            # Vector-addition cases already render their input and result
+            # vectors.  A generic source-to-target annotation is misleading
+            # because the target is the second addend, not the sum vector.
+            return operations, [relation_alias]
         if relation.kind == "projects_to" and semantics.scene_kind == "2d":
             source_coordinates = _coordinates(source.value, 2)
             direction_coordinates = _coordinates(target.value, 2)
@@ -595,6 +600,21 @@ def _stage_specific_aliases(semantics: VisualSemantics, index: int) -> tuple[str
     """Return aliases for stage-only construction geometry."""
     relation_kinds = {relation.kind for relation in semantics.relations}
     if "sum" in relation_kinds:
+        stage_id = str(getattr(semantics.stages[index], "id", "")) if index < len(semantics.stages) else ""
+        if "components" in stage_id:
+            return ()
+        if "geometry" in stage_id:
+            return (
+                "sem__addition_geometry__translated_b",
+                "sem__addition_geometry__triangle",
+                "sem__addition_geometry__parallelogram",
+            )
+        if "velocity" in stage_id:
+            return ()
+        if "triangle" in stage_id:
+            return ("sem__addition_triangle",)
+        if "parallelogram" in stage_id:
+            return ("sem__addition_parallelogram",)
         return ("sem__addition_triangle",) if index == 0 else ("sem__addition_parallelogram",)
     if "composition_order" in relation_kinds:
         stage_alias = f"sem__stage_order__{index + 1}"
@@ -631,7 +651,42 @@ def _stage_geometry_operations(
             return []
         a = _coordinates(vectors[0].value, 2)
         b = _coordinates(vectors[1].value, 2)
-        if index == 0:
+        stage_id = str(getattr(stage, "id", ""))
+        if "components" in stage_id:
+            return []
+        if "geometry" in stage_id:
+            endpoint = (a[0] + b[0], a[1] + b[1])
+            return [
+                {
+                    "op": "linear.upsert",
+                    "alias": "sem__addition_geometry__translated_b",
+                    "start": f"{_alias(vectors[0].id)}__end",
+                    "end": f"{_alias(stage.output_entity_refs[0])}__end",
+                    "kind": "vector",
+                    "role": "construction",
+                    "color": role_color("vector_b"),
+                    "label": "b",
+                },
+                {
+                    "op": "geometry.polygon",
+                    "alias": "sem__addition_geometry__triangle",
+                    "vertices": [[0.0, 0.0], list(a), list(endpoint)],
+                    "color": role_color("vector_b"),
+                    "opacity": 0.10,
+                    "outline": True,
+                },
+                {
+                    "op": "geometry.polygon",
+                    "alias": "sem__addition_geometry__parallelogram",
+                    "vertices": [[0.0, 0.0], list(a), list(endpoint), list(b)],
+                    "color": role_color("construction"),
+                    "opacity": 0.08,
+                    "outline": True,
+                },
+            ]
+        if "velocity" in stage_id:
+            return []
+        if "triangle" in stage_id or ("parallelogram" not in stage_id and index == 0):
             return [{"op": "geometry.polygon", "alias": "sem__addition_triangle", "vertices": [[0.0, 0.0], list(a), [a[0] + b[0], a[1] + b[1]]], "color": role_color("construction"), "opacity": 0.14, "outline": True}]
         return [{"op": "geometry.polygon", "alias": "sem__addition_parallelogram", "vertices": [[0.0, 0.0], list(a), [a[0] + b[0], a[1] + b[1]], list(b)], "color": role_color("construction"), "opacity": 0.14, "outline": True}]
     if "composition_order" in relation_kinds:

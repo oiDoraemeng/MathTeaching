@@ -45,6 +45,8 @@ CLIENT_MESSAGE_TYPES = frozenset(
         "attach_files",
         "request_snapshot",
         "select_math_stage",
+        "select_math_case_pane",
+        "set_math_case_pane_count",
     }
 )
 
@@ -79,6 +81,7 @@ EVENT_MESSAGE_TYPES = frozenset(
         "plan_composed",
         "scene_conflict",
         "math_case",
+        "math_case_focus",
         "theme_state",
     }
 )
@@ -161,7 +164,7 @@ def parse_envelope(value: str | dict[str, Any]) -> BridgeEnvelope:
     if len(request_id) > MAX_IDENTIFIER_LENGTH:
         raise ProtocolError("identifier_too_long", "request_id exceeds maximum length", field="request_id")
     session_id = str(decoded.get("session_id", "")).strip()
-    if not session_id and message_type not in {"request_snapshot", "math_case", "theme_state"}:
+    if not session_id and message_type not in {"request_snapshot", "math_case", "math_case_focus", "theme_state"}:
         raise ProtocolError("missing_session_id", "session_id is required", field="session_id")
     if len(session_id) > MAX_IDENTIFIER_LENGTH:
         raise ProtocolError("identifier_too_long", "session_id exceeds maximum length", field="session_id")
@@ -210,6 +213,52 @@ def _validate_event_payload(message_type: str, payload: dict[str, Any]) -> None:
                 raise ProtocolError(
                     "invalid_event_payload",
                     f"select_math_stage requires a non-empty {field}",
+                    field=field,
+                )
+        return
+    if message_type == "select_math_case_pane":
+        if set(payload) != {"case_id", "pane_id", "stage_id"}:
+            raise ProtocolError(
+                "invalid_event_payload",
+                "select_math_case_pane requires only case_id, pane_id and stage_id",
+                field="payload",
+            )
+        for field in ("case_id", "pane_id", "stage_id"):
+            value = payload.get(field)
+            if not isinstance(value, str) or not value.strip():
+                raise ProtocolError(
+                    "invalid_event_payload",
+                    f"select_math_case_pane requires a non-empty {field}",
+                    field=field,
+                )
+        return
+    if message_type == "set_math_case_pane_count":
+        if set(payload) != {"case_id", "pane_count"}:
+            raise ProtocolError(
+                "invalid_event_payload",
+                "set_math_case_pane_count requires only case_id and pane_count",
+                field="payload",
+            )
+        case_id = payload.get("case_id")
+        pane_count = payload.get("pane_count")
+        if not isinstance(case_id, str) or not case_id.strip():
+            raise ProtocolError("invalid_event_payload", "set_math_case_pane_count requires a non-empty case_id", field="case_id")
+        if isinstance(pane_count, bool) or pane_count not in {1, 2, 3, 4}:
+            raise ProtocolError("invalid_event_payload", "pane_count must be 1, 2, 3, or 4", field="pane_count")
+        return
+    if message_type == "math_case_focus":
+        if set(payload) != {"case_id", "pane_id"}:
+            raise ProtocolError(
+                "invalid_event_payload",
+                "math_case_focus requires only case_id and pane_id",
+                field="payload",
+            )
+        for field in ("case_id", "pane_id"):
+            value = payload.get(field)
+            if not isinstance(value, str) or not value.strip():
+                raise ProtocolError(
+                    "invalid_event_payload",
+                    f"math_case_focus requires a non-empty {field}",
                     field=field,
                 )
         return

@@ -15,7 +15,7 @@ from typing import Literal
 from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QThread, QTimer, Signal, Slot
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent, QShortcut, QWheelEvent
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QInputDialog, QLineEdit, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QInputDialog, QLineEdit, QMenu, QToolButton, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
 
 from MathInputWidget import LatexParseError, LatexParser
@@ -64,6 +64,7 @@ from ui.linear_algebra_tools import (
     build_vector_tool_plan,
     parse_matrix,
 )
+from ui.teaching_case_panes import PANE_COUNTS, TeachingCasePaneGrid
 from services.agent_worker import RuntimeTurnWorker
 from services.agent_provider import (
     AgentSettings,
@@ -212,6 +213,20 @@ class _ViewportResizeFilter(QObject):
         return False
 
 
+class _WindowRestoreFilter(QObject):
+    """在主窗口从最小化恢复后重新激活原生/网页渲染表面。"""
+
+    def __init__(self, callback: Callable[[], None], parent: QObject) -> None:
+        super().__init__(parent)
+        self._callback = callback
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if event.type() == QEvent.Type.WindowStateChange and isinstance(watched, QWidget):
+            if not watched.isMinimized():
+                QTimer.singleShot(0, self._callback)
+        return False
+
+
 class _GeometryInputFilter(QObject):
     """拦截二维定点缩放和激活工具的视口鼠标、键盘事件。"""
 
@@ -293,6 +308,7 @@ class MainWindow:
         self._active_linear_algebra_compiled: CompiledVisualization | None = None
         self._active_linear_algebra_stage_id: str | None = None
         self._hidden_linear_algebra_aliases: set[str] = set()
+        self._teaching_case_pane_grid: TeachingCasePaneGrid | None = None
         self._two_d_object_order: list[str] = []
         self.layer_controller: LayerSceneController | None = None
         self.curve_controller: CurveSceneController | None = None
@@ -360,6 +376,8 @@ class MainWindow:
         self._math_teacher_agent = self._agent_runtime.agent
 
         self.window = self._load_designer_form()
+        self._window_restore_filter = _WindowRestoreFilter(self._restore_render_surfaces, self.window)
+        self.window.installEventFilter(self._window_restore_filter)
         self.window.effective_theme = self.effective_theme
         self._install_custom_titlebar()
         self._agent_event_relay = _AgentEventRelay(self._receive_runtime_event, self.window)
@@ -369,6 +387,71 @@ class MainWindow:
         self._bind_algebra_panel()
         self._apply_style()
         self._render_scene()
+
+    def _restore_render_surfaces(self) -> None:
+        """恢复最小化后的 Qt/VTK/WebEngine 合成表面。"""
+        window = getattr(self, "window", None)
+        if window is None or window.isMinimized():
+            return
+        root_layout = getattr(self, "_root_layout", None)
+        if root_layout is not None:
+            root_layout.activate()
+
+        plotter = getattr(self, "plotter", None)
+        if plotter is not None:
+            interactor = getattr(plotter, "interactor", None)
+            if interactor is not None:
+                interactor.show()
+                interactor.update()
+            try:
+                self._render_scene()
+            except Exception:
+                # 恢复阶段的重绘失败不应阻断窗口显示。
+                pass
+            try:
+                self._apply_linear_algebra_storyboard_visibility()
+            except Exception:
+                pass
+
+        case_host = getattr(self, "teaching_case_pane_host", None)
+        case_grid = getattr(self, "_teaching_case_pane_grid", None)
+        if case_host is not None and case_grid is not None:
+            case_host.show()
+            if plotter is not None and getattr(plotter, "interactor", None) is not None:
+                plotter.interactor.hide()
+            case_grid.updateGeometry()
+            case_grid.update()
+
+        panel = getattr(self, "agent_panel", None)
+        view = getattr(panel, "view", None) if panel is not None else None
+        if view is not None:
+            view.show()
+            view.update()
+            view.repaint()
+            page = getattr(panel, "page", None)
+            if page is not None:
+                try:
+                    page.runJavaScript("window.dispatchEvent(new Event('resize')); void document.body.offsetHeight;")
+                except Exception:
+                    pass
+        window.update()
+        QTimer.singleShot(120, self._deferred_render_surfaces)
+
+    def _deferred_render_surfaces(self) -> None:
+        """在窗口合成器完成恢复后再补一次轻量刷新。"""
+        window = getattr(self, "window", None)
+        if window is None or window.isMinimized():
+            return
+        plotter = getattr(self, "plotter", None)
+        if plotter is not None:
+            try:
+                plotter.render()
+            except Exception:
+                pass
+        panel = getattr(self, "agent_panel", None)
+        view = getattr(panel, "view", None) if panel is not None else None
+        if view is not None:
+            view.update()
 
     def _load_designer_form(self) -> QWidget:
         form_path = Path(__file__).with_name("main_window.ui")
@@ -509,6 +592,22 @@ class MainWindow:
             return
         if message_type == "select_math_stage":
             self._select_linear_algebra_stage(str(payload.get("case_id", "")), str(payload.get("stage_id", "")))
+            return
+        if message_type == "select_math_case_pane":
+            topic_id = str(payload.get("case_id", ""))
+            pane_id = str(payload.get("pane_id", ""))
+            stage_id = str(payload.get("stage_id", "")) or None
+            grid = getattr(self, "_teaching_case_pane_grid", None)
+            if grid is not None and topic_id == getattr(self, "_active_linear_algebra_topic_id", None):
+                self._set_teaching_case_pane_count(1)
+                self._on_teaching_case_focus(pane_id, stage_id or "")
+            return
+        if message_type == "set_math_case_pane_count":
+            topic_id = str(payload.get("case_id", ""))
+            pane_count = payload.get("pane_count")
+            grid = getattr(self, "_teaching_case_pane_grid", None)
+            if grid is not None and topic_id == getattr(self, "_active_linear_algebra_topic_id", None) and isinstance(pane_count, int):
+                self._set_teaching_case_pane_count(pane_count)
             return
         if message_type == "save_model_provider":
             from ui.agent_settings import AgentSettingsDialog
@@ -750,6 +849,12 @@ class MainWindow:
         self.plotter.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.plotter.interactor.setMouseTracking(True)
         layout.addWidget(self.plotter.interactor)
+        self.teaching_case_pane_host = QFrame(self.viewport_host)
+        self.teaching_case_pane_host.setObjectName("teachingCasePaneHost")
+        self.teaching_case_pane_layout = QVBoxLayout(self.teaching_case_pane_host)
+        self.teaching_case_pane_layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(self.teaching_case_pane_host)
+        self.teaching_case_pane_host.hide()
 
         self.viewport_toolbar = QFrame(self.viewport_host)
         self.viewport_toolbar.setObjectName("viewportToolbar")
@@ -773,8 +878,21 @@ class MainWindow:
         self.agent_button.setAccessibleName("AI 教学助手")
         self.agent_button.setCheckable(True)
         apply_icon(self.agent_button, "sparkles", icon_color(getattr(self, "effective_theme", "light")), icon_size=16, hit_size=36)
+        self.case_pane_layout_button = QToolButton(self.viewport_toolbar)
+        self.case_pane_layout_button.setObjectName("casePaneLayoutButton")
+        self.case_pane_layout_button.setText("窗格 1")
+        self.case_pane_layout_button.setToolTip("选择案例二维窗格数量")
+        self.case_pane_layout_button.setAccessibleName("选择案例二维窗格数量")
+        self.case_pane_layout_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        case_pane_menu = QMenu(self.case_pane_layout_button)
+        for count, label in ((1, "单窗格"), (2, "双窗格"), (3, "三窗格"), (4, "四窗格")):
+            action = case_pane_menu.addAction(label)
+            action.triggered.connect(lambda _checked=False, value=count: self._set_teaching_case_pane_count(value))
+        self.case_pane_layout_button.setMenu(case_pane_menu)
+        self.case_pane_layout_button.hide()
         toolbar_layout.addWidget(self.scene_settings_button)
         toolbar_layout.addWidget(self.scene_mode_button)
+        toolbar_layout.addWidget(self.case_pane_layout_button)
         toolbar_layout.addWidget(self.agent_button)
         self.viewport_toolbar.adjustSize()
 
@@ -1449,6 +1567,7 @@ class MainWindow:
         if scope not in {"all", "curves", "surfaces", "geometry", "annotations"}:
             raise CommandError("scene.clear.scope 不受支持。")
         if scope == "all":
+            self._close_teaching_case_panes()
             self._active_linear_algebra_topic_id = None
             self._active_linear_algebra_compiled = None
             self._active_linear_algebra_stage_id = None
@@ -1702,6 +1821,67 @@ class MainWindow:
         visible = set(visible_aliases)
         self._hidden_linear_algebra_aliases = {alias for alias in all_aliases if alias not in visible}
         self._apply_linear_algebra_storyboard_visibility()
+
+    def _on_teaching_case_focus(self, pane_id: str, stage_id: str) -> None:
+        """Focus one pane while retaining every other pane on screen."""
+        grid = getattr(self, "_teaching_case_pane_grid", None)
+        topic_id = getattr(self, "_active_linear_algebra_topic_id", None)
+        if grid is None or not topic_id:
+            return
+        if not grid.select_case(pane_id, stage_id or None, emit=False):
+            return
+        pane = next((item for item in grid.panes if getattr(item, "case", None) is not None and str(getattr(item.case, "id", "")) == pane_id), None)
+        selected_stage = stage_id or (str(getattr(pane, "_stage_id", lambda: "")()) if pane is not None else "")
+        if selected_stage:
+            self._select_linear_algebra_stage(topic_id, selected_stage)
+        if hasattr(self, "agent_panel"):
+            self.agent_panel.show_math_case_focus(topic_id, pane_id)
+
+    def _close_teaching_case_panes(self) -> None:
+        grid = getattr(self, "_teaching_case_pane_grid", None)
+        if grid is not None:
+            self.teaching_case_pane_layout.removeWidget(grid)
+            grid.close()
+            grid.deleteLater()
+        self._teaching_case_pane_grid = None
+        if hasattr(self, "teaching_case_pane_host"):
+            self.teaching_case_pane_host.hide()
+        if hasattr(self, "plotter"):
+            self.plotter.interactor.show()
+        if hasattr(self, "case_pane_layout_button"):
+            self.case_pane_layout_button.hide()
+
+    def _set_teaching_case_pane_count(self, count: int) -> bool:
+        grid = getattr(self, "_teaching_case_pane_grid", None)
+        if grid is None:
+            return False
+        if not grid.set_pane_count(count):
+            self.algebra_panel.set_status("案例窗格数量无效", is_error=True)
+            return False
+        self.case_pane_layout_button.setText(f"窗格 {count}")
+        self._on_teaching_case_focus(grid.selected_case_id, "")
+        return True
+
+    def _open_teaching_case_panes(self, explanation_case: object, compiled: object | None) -> None:
+        self._close_teaching_case_panes()
+        if not hasattr(self, "teaching_case_pane_host") or not hasattr(self, "teaching_case_pane_layout"):
+            return
+        if compiled is None or getattr(compiled, "plan", None) is None:
+            return
+        explanation = getattr(explanation_case, "explanation", explanation_case)
+        layout = getattr(explanation, "case_layout", None)
+        cases = tuple(getattr(layout, "cases", ()))[:4] if layout is not None else ()
+        if not cases or getattr(compiled.plan, "scene", "") != "2d":
+            return
+        grid = TeachingCasePaneGrid(compiled, cases, self.teaching_case_pane_host)
+        grid.case_focused.connect(self._on_teaching_case_focus)
+        self.teaching_case_pane_layout.addWidget(grid)
+        self._teaching_case_pane_grid = grid
+        self.plotter.interactor.hide()
+        self.teaching_case_pane_host.show()
+        default_count = int(getattr(layout, "default_pane_count", len(cases)))
+        self._set_teaching_case_pane_count(default_count)
+        self.case_pane_layout_button.show()
 
     def _apply_linear_algebra_storyboard_visibility(self) -> None:
         compiled = getattr(self, "_active_linear_algebra_compiled", None)
@@ -2303,21 +2483,29 @@ class MainWindow:
         self._sync_scene_controls()
         if bundle.compiled is not None and bundle.compiled.storyboard:
             self._select_linear_algebra_stage(topic.id, bundle.compiled.storyboard[0].id)
+        try:
+            self._open_teaching_case_panes(explanation_case, bundle.compiled)
+            if hasattr(self, "agent_panel"):
+                if hasattr(self, "agent_sidebar"):
+                    self._open_agent_panel()
+                self.agent_panel.show_math_case(
+                    explanation_case,
+                    case_id=topic.id,
+                    category=topic.source_path[1],
+                    scene_mode=plan.scene,
+                    compiled=bundle.compiled,
+                )
+        except Exception as error:
+            # 场景已成功加载时，案例窗格/WebView 的异常不应中断主界面；
+            # 清理半成品窗格并保留代数区域可用，同时给出可见错误。
+            self._close_teaching_case_panes()
+            self.algebra_panel.set_status(f"主题已加载，但案例面板显示失败: {error}", is_error=True)
+            return
         if bundle.source_diagnostic is not None:
             _, old_hash, current_hash = bundle.source_diagnostic
             self.algebra_panel.set_status(f"已加载主题: {topic.title}（stale_source: {old_hash} → {current_hash}）")
         else:
             self.algebra_panel.set_status(f"已加载主题: {topic.title}")
-        if hasattr(self, "agent_panel"):
-            if hasattr(self, "agent_sidebar"):
-                self._open_agent_panel()
-            self.agent_panel.show_math_case(
-                explanation_case,
-                case_id=topic.id,
-                category=topic.source_path[1],
-                scene_mode=plan.scene,
-                compiled=bundle.compiled,
-            )
 
     def _enter_linear_algebra_workspace(self) -> None:
         """Open the lecture catalog without changing the current scene."""
@@ -2674,6 +2862,7 @@ class MainWindow:
         if mode is self.scene_mode:
             return
         if self.scene_mode is SceneMode.TWO_D:
+            self._close_teaching_case_panes()
             self._set_2d_geometry_tool(None)
             if hasattr(self, "two_d_geometry_toolbar"):
                 self.two_d_geometry_toolbar.set_active_tool(None, emit_signal=False)

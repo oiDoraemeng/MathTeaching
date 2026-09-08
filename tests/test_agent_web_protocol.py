@@ -111,6 +111,46 @@ def test_select_math_stage_requires_case_and_stage_identifiers() -> None:
         parse_envelope({**envelope, "payload": {"case_id": "", "stage_id": "stage.triangle"}})
 
 
+def test_case_pane_selection_and_count_are_strictly_bounded() -> None:
+    selected = parse_envelope(
+        {
+            "protocol_version": 1,
+            "type": "select_math_case_pane",
+            "request_id": "req-pane",
+            "session_id": "s1",
+            "payload": {"case_id": "ch01.ops.addition", "pane_id": "case.components", "stage_id": "stage.components"},
+        }
+    )
+    assert selected.payload == {"case_id": "ch01.ops.addition", "pane_id": "case.components", "stage_id": "stage.components"}
+    count = parse_envelope(
+        {
+            "protocol_version": 1,
+            "type": "set_math_case_pane_count",
+            "request_id": "req-count",
+            "session_id": "s1",
+            "payload": {"case_id": "ch01.ops.addition", "pane_count": 3},
+        }
+    )
+    assert count.payload == {"case_id": "ch01.ops.addition", "pane_count": 3}
+    with pytest.raises(ProtocolError, match="pane_count"):
+        parse_envelope({**count.to_dict(), "payload": {"case_id": "ch01.ops.addition", "pane_count": 5}})
+
+
+def test_math_case_focus_event_accepts_empty_session_and_validates_payload() -> None:
+    event = parse_envelope(
+        {
+            "protocol_version": 1,
+            "type": "math_case_focus",
+            "request_id": "req-focus",
+            "session_id": "",
+            "payload": {"case_id": "ch01.ops.addition", "pane_id": "case.components"},
+        }
+    )
+    assert event.payload == {"case_id": "ch01.ops.addition", "pane_id": "case.components"}
+    with pytest.raises(ProtocolError, match="math_case_focus"):
+        parse_envelope({**event.to_dict(), "payload": {"case_id": "", "pane_id": "case.components"}})
+
+
 def test_unknown_envelope_type_uses_stable_protocol_error_code() -> None:
     with pytest.raises(ProtocolError) as raised:
         parse_envelope({"protocol_version": 1, "type": "run_python", "request_id": "r", "session_id": "s", "payload": {}})

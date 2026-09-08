@@ -26,6 +26,7 @@ export type AppAction =
   | { type: "register_mutation"; key: string; requestId: string; sessionId: string; previous: string }
   | { type: "clear_session"; sessionId: string }
   | { type: "select_case"; caseId: string }
+  | { type: "select_case_pane"; caseId: string; paneId: string }
   | { type: "close_case"; caseId: string };
 
 function applyTheme(mode: unknown): "light" | "dark" | null {
@@ -191,7 +192,10 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
   const formula = typeof payload.formula === "string" ? payload.formula : "";
   const conclusion = typeof payload.conclusion === "string" ? payload.conclusion : "";
   const steps = Array.isArray(payload.steps) ? payload.steps.filter((value): value is string => typeof value === "string").slice(0, 12) : [];
-  if (!id || !name || !formula || !conclusion || !steps.length) return null;
+  // Definition/formula identify a valid structured case.  Derivation steps
+  // and conclusion are optional for lecture sections whose source does not
+  // justify them; the view omits those blocks when empty.
+  if (!id || !name || !formula) return null;
   const list = (key: string, limit = 16) => Array.isArray(payload[key]) ? payload[key].filter((value): value is string => typeof value === "string").slice(0, limit) : undefined;
   const object = (key: string) => payload[key] && typeof payload[key] === "object" && !Array.isArray(payload[key]) ? payload[key] as Record<string, string> : undefined;
   const claims = Array.isArray(payload.claims) ? payload.claims.filter((value): value is Record<string, unknown> => Boolean(value) && typeof value === "object" && !Array.isArray(value)).slice(0, 24).map((claim) => ({
@@ -222,6 +226,23 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
     checks: Array.isArray(example.checks) ? example.checks.filter((value): value is { name: string; expected: unknown; tolerance?: number } => Boolean(value) && typeof value === "object" && typeof (value as Record<string, unknown>).name === "string").map((check) => ({ name: check.name, expected: check.expected, tolerance: typeof check.tolerance === "number" ? check.tolerance : undefined })) : [],
     claimRefs: Array.isArray(example.claim_refs) ? example.claim_refs.filter((value): value is string => typeof value === "string") : [],
   })) : undefined;
+  const rawLayout = payload.case_layout;
+  const caseLayout = rawLayout && typeof rawLayout === "object" && !Array.isArray(rawLayout)
+    ? (() => {
+        const value = rawLayout as Record<string, unknown>;
+        const count = value.default_pane_count;
+        const defaultPaneCount = count === 1 || count === 2 || count === 3 || count === 4 ? count : 1;
+        const entries = Array.isArray(value.cases) ? value.cases.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object" && !Array.isArray(item)).slice(0, 4).map((item) => ({
+          id: typeof item.id === "string" ? item.id : "",
+          topicId: typeof item.topic_id === "string" ? item.topic_id : "",
+          exampleRef: typeof item.example_ref === "string" ? item.example_ref : "",
+          claimRefs: Array.isArray(item.claim_refs) ? item.claim_refs.filter((v): v is string => typeof v === "string") : [],
+          stageRefs: Array.isArray(item.stage_refs) ? item.stage_refs.filter((v): v is string => typeof v === "string") : [],
+          purpose: typeof item.purpose === "string" ? item.purpose : "",
+        })) : [];
+        return { defaultPaneCount: defaultPaneCount as 1 | 2 | 3 | 4, cases: entries };
+      })()
+    : undefined;
   return {
     id,
     category: typeof payload.category === "string" ? payload.category : "向量",
@@ -252,6 +273,8 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
     storyboard,
     planDigest: typeof payload.plan_digest === "string" ? payload.plan_digest : null,
     compilerVersion: typeof payload.compiler_version === "string" ? payload.compiler_version : null,
+    caseLayout,
+    activeCaseId: typeof payload.active_case_id === "string" ? payload.active_case_id : caseLayout?.cases[0]?.id,
   };
 }
 
@@ -293,6 +316,15 @@ export function appReducer(state: AppState, action: AppAction): AppState {
           ? state.cases.map((item) => item.id === nextCase.id ? nextCase : item)
           : [...state.cases, nextCase];
         return { ...state, cases, activeTab: `case:${nextCase.id}` };
+      }
+      if (event.type === "math_case_focus") {
+        const caseId = typeof event.payload.case_id === "string" ? event.payload.case_id : "";
+        const paneId = typeof event.payload.pane_id === "string" ? event.payload.pane_id : "";
+        if (!caseId || !paneId) return state;
+        return {
+          ...state,
+          cases: state.cases.map((item) => item.id === caseId ? { ...item, activeCaseId: paneId } : item),
+        };
       }
       if ((event.type === "mutation_succeeded" || event.type === "provider_test_result") && event.request_id) {
         const pendingMutations = { ...state.pendingMutations };
@@ -352,6 +384,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, sessions: state.sessions.map((session) => session.id === action.sessionId ? { ...session, turns: [] } : session) };
     case "select_case":
       return state.cases.some((item) => item.id === action.caseId) ? { ...state, activeTab: `case:${action.caseId}` } : state;
+    case "select_case_pane":
+      return state.cases.some((item) => item.id === action.caseId)
+        ? { ...state, cases: state.cases.map((item) => item.id === action.caseId ? { ...item, activeCaseId: action.paneId } : item) }
+        : state;
     case "close_case": {
       const cases = state.cases.filter((item) => item.id !== action.caseId);
       return { ...state, cases, activeTab: state.activeTab === `case:${action.caseId}` ? `session:${state.activeSessionId}` : state.activeTab };

@@ -66,14 +66,14 @@
     "topic_id": "ch01.inner.examples"
   },
   {
-    "artifact_digest": "sha256:25101cffddf8d0803d2ec43a43cb06e5c38fc3769075d20a8b5f8cc8453d9c8a",
+    "artifact_digest": "sha256:ceebf89aaeb3c30279ed436ce792c435fd207648638e136d7eed971655970be6",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:99ee8fa6ed6ada9f02a2994896e1056b4114cc614913ccab1d8bbddcf2a890ae",
+    "plan_digest": "sha256:ad38d0982cad6e4ce7a4c876cf492a98222539f984bfe805822ccb889845bb16",
     "render_profile": "lecture-v1",
-    "revision": 1,
+    "revision": 12,
     "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
-    "stage_count": 2,
+    "stage_count": 3,
     "topic_id": "ch01.ops.addition"
   },
   {

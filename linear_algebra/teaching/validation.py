@@ -65,6 +65,24 @@ def validate_closed_references(artifact: TeachingArtifact) -> tuple[ValidationIs
     sections = artifact.explanation.sections
     spans = artifact.source.spans
 
+    case_layout = artifact.explanation.case_layout
+    if case_layout is not None:
+        case_ids: set[str] = set()
+        example_ids = {example.id for example in artifact.explanation.worked_examples if example.id}
+        claim_ids_for_cases = {claim.id for claim in claims}
+        stage_ids_for_cases = {stage.id for stage in stages}
+        for index, case in enumerate(case_layout.cases):
+            path = f"$.explanation.case_layout.cases[{index}]"
+            if case.id in case_ids:
+                issues.append(ValidationIssue("duplicate_id", f"{path}.id", f"duplicate case id {case.id!r}"))
+            case_ids.add(case.id)
+            if case.topic_id != artifact.topic_id:
+                issues.append(ValidationIssue("case_topic_mismatch", f"{path}.topic_id", case.topic_id))
+            if case.example_ref not in example_ids:
+                issues.append(ValidationIssue("dangling_reference", f"{path}.example_ref", case.example_ref))
+            _append_missing_refs(issues, case.claim_refs, claim_ids_for_cases, f"{path}.claim_refs", "claim")
+            _append_missing_refs(issues, case.stage_refs, stage_ids_for_cases, f"{path}.stage_refs", "stage")
+
     claim_ids = _collect_ids(issues, claims, "$.claims", "claim")
     _collect_ids(issues, connections, "$.connections", "connection")
     entity_ids = _collect_ids(issues, entities, "$.visual_semantics.entities", "entity")

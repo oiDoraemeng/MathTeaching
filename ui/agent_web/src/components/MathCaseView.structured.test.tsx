@@ -87,6 +87,52 @@ describe("MathCaseView structured artifact", () => {
     expect(screen.getByText("以 a、b 为邻边作平行四边形。")).toBeInTheDocument();
   });
 
+  it("uses one selector for one-to-one vector-addition cases and hides verification metadata", () => {
+    const onSelectStage = vi.fn();
+    const onSetCasePaneCount = vi.fn();
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id: "ch01.ops.addition",
+          category: "向量",
+          name: "向量加法",
+          formula: "a+b",
+          steps: [],
+          conclusion: "",
+          definition: "设\n\n$$a=(1,2)$$",
+          invariants: ["交换律：\n\n$$a+b=b+a$$"],
+          geometricMeaning: "三角形法则。\n\n平行四边形法则。",
+          workedExamples: [{ id: "components", title: "案例一：分量计算", calculation: ["$a=(3,1)$，$b=(1,2)$。", "$$a+b=(4,3)$$", "两种作图得到同一个和向量。"], result: [4, 3], checks: [{ name: "result", expected: [4, 3] }] }],
+          storyboard: [
+            { id: "stage.components", title: "案例一：分量计算", caption: "对应分量相加。", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+            { id: "stage.geometry", title: "案例二：几何作图", caption: "两种作图。", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 1] },
+          ],
+          caseLayout: {
+            defaultPaneCount: 2,
+            cases: [
+              { id: "case.components", topicId: "ch01.ops.addition", exampleRef: "components", claimRefs: [], stageRefs: ["stage.components"], purpose: "案例一：分量计算" },
+              { id: "case.geometry", topicId: "ch01.ops.addition", exampleRef: "geometry", claimRefs: [], stageRefs: ["stage.geometry"], purpose: "案例二：几何作图" },
+            ],
+          },
+        }}
+        onSelectStage={onSelectStage}
+        onSetCasePaneCount={onSetCasePaneCount}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "向量加法的基本性质", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByText("结果：[4,3]")).not.toBeInTheDocument();
+    expect(screen.queryByText("校验 result: [4,3]")).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "几何图形例子" })).not.toBeInTheDocument();
+    expect(screen.queryByText("对应分量相加。")).not.toBeInTheDocument();
+    expect(Array.from(container.querySelectorAll(".math-case-example-prose .markdown-content")).some((item) => item.textContent?.includes("两种作图得到同一个和向量。"))).toBe(true);
+    expect(container.querySelector(".math-case-example-formula .katex-display")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "案例二：几何作图" }));
+    expect(onSelectStage).toHaveBeenCalledWith("stage.geometry");
+    fireEvent.click(screen.getByRole("button", { name: "全部显示" }));
+    expect(onSetCasePaneCount).toHaveBeenCalledWith(2);
+  });
+
   it("uses the lecture excerpt as a continuous note instead of section cards", () => {
     render(
       <MathCaseView

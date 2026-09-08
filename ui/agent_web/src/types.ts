@@ -127,6 +127,13 @@ export interface CaseProjection {
   storyboard?: StoryboardStageProjection[];
   planDigest?: string | null;
   compilerVersion?: string | null;
+  caseLayout?: CaseLayoutProjection;
+  activeCaseId?: string;
+}
+
+export interface CaseLayoutProjection {
+  defaultPaneCount: 1 | 2 | 3 | 4;
+  cases: Array<{ id: string; topicId: string; exampleRef: string; claimRefs: string[]; stageRefs: string[]; purpose: string }>;
 }
 
 export interface WorkedExampleProjection {
@@ -262,7 +269,9 @@ export type IntentType =
   | "set_selected_model"
   | "set_thinking_preferences"
   | "open_skills"
-  | "select_math_stage";
+  | "select_math_stage"
+  | "select_math_case_pane"
+  | "set_math_case_pane_count";
 
 export interface ClientIntent extends Omit<BridgeEnvelope, "type"> {
   type: IntentType;

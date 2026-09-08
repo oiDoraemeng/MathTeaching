@@ -58,6 +58,14 @@
 .math-case-stage-track button { min-height: 28px; padding: 4px 9px; color: var(--agent-muted); border: 1px solid var(--agent-border); border-radius: 4px; font-size: 11px; text-align: left; }
 .math-case-stage-track button:hover { color: var(--agent-text); border-color: var(--agent-accent); }
 .math-case-stage-track button.active { color: var(--agent-text-on-accent); border-color: var(--agent-accent); background: var(--agent-accent); }
+.math-case-pane-cases { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.math-case-pane-cases button { min-height: 28px; padding: 4px 9px; color: var(--agent-muted); border: 1px solid var(--agent-border); border-radius: 4px; font-size: 11px; text-align: left; }
+.math-case-pane-cases button:hover { color: var(--agent-text); border-color: var(--agent-accent); }
+.math-case-pane-cases button.active { color: var(--agent-text-on-accent); border-color: var(--agent-accent); background: var(--agent-accent); }
+.math-case-example-controls { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 0; }
+.math-case-example-controls button { min-height: 28px; padding: 4px 9px; color: var(--agent-muted); border: 1px solid var(--agent-border); border-radius: 4px; font-size: 11px; text-align: left; }
+.math-case-example-controls button:hover { color: var(--agent-text); border-color: var(--agent-accent); }
+.math-case-example-controls button.active { color: var(--agent-text-on-accent); border-color: var(--agent-accent); background: var(--agent-accent); }
 .math-case-stage { min-height: 76px; padding: 10px 0; }
 .math-case-stage small { color: var(--agent-muted); font-size: 11px; }
 .math-case-stage p { margin: 0 0 5px; color: var(--agent-muted); font-size: 12px; }
@@ -66,6 +74,24 @@
 .math-case-stage-actions button:hover:not(:disabled) { color: var(--agent-text); border-color: var(--agent-accent); }
 .math-case-stage-actions button:disabled { opacity: .4; }
 .math-case-conclusion { padding-bottom: 20px; }
+.math-case-view--vector-addition .math-case-header,
+.math-case-view--vector-addition .math-case-structured,
+.math-case-view--vector-addition .math-case-storyboard { max-width: 760px; }
+.math-case-view--vector-addition .math-case-structured { font-size: 15px; line-height: 1.85; }
+.math-case-view--vector-addition .math-case-header h1 { font-size: 24px; }
+.math-case-view--vector-addition .math-case-section { margin: 30px 0; padding-bottom: 22px; }
+.math-case-view--vector-addition .math-case-section h2,
+.math-case-view--vector-addition .math-case-storyboard h2 { margin-bottom: 12px; font-size: 16px; }
+.math-case-view--vector-addition .math-case-section h3 { margin: 4px 0 10px; font-size: 14px; }
+.math-case-view--vector-addition .math-case-example { padding: 16px 0; }
+.math-case-view--vector-addition .math-case-example h3 { text-align: left; }
+.math-case-view--vector-addition .math-case-example-formula,
+.math-case-view--vector-addition .math-case-example-formula .markdown-content,
+.math-case-view--vector-addition .math-case-example-formula .markdown-content p { text-align: center; }
+.math-case-view--vector-addition .math-case-example-prose,
+.math-case-view--vector-addition .math-case-example-prose .markdown-content,
+.math-case-view--vector-addition .math-case-example-prose .markdown-content p { text-align: left; }
+.math-case-view--vector-addition .math-case-example-controls button { font-size: 12px; }
 .empty-state { max-width: 360px; margin: 16vh auto 0; text-align: center; }
 .empty-state h1 { margin: 0 0 8px; font-size: 20px; font-weight: 600; }
 .empty-state p { margin: 0 0 22px; color: var(--agent-muted); font-size: 13px; }

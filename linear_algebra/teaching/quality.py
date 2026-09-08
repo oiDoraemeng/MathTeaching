@@ -23,6 +23,24 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
 
     if topic_id == "ch01.ops.addition":
         _refine_vector_addition(explanation, visual, example)
+        result["connections"] = []
+        section_ids = [str(section.get("id")) for section in explanation.get("sections", []) if isinstance(section, Mapping) and section.get("id")]
+        stage_ids = [str(stage.get("id")) for stage in visual.get("stages", []) if isinstance(stage, Mapping) and stage.get("id")]
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = section_ids
+                claim["formula"] = r"\boldsymbol a+\boldsymbol b=(x_1+x_2,\,y_1+y_2)"
+                claim["entity_refs"] = [
+                    "components_a", "components_b", "components_sum",
+                    "geometry_a", "geometry_b", "geometry_sum",
+                    "velocity_1", "velocity_2", "velocity_sum",
+                ]
+                claim["relation_refs"] = [
+                    "rel.addition.components",
+                    "rel.addition.geometry",
+                    "rel.addition.velocity",
+                ]
+                claim["stage_refs"] = stage_ids
     elif topic_id == "ch02.matrix.composition":
         _refine_matrix_composition(result, explanation, visual, example)
     else:
@@ -42,51 +60,175 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
 def _refine_vector_addition(explanation: dict[str, Any], visual: dict[str, Any], example: dict[str, Any]) -> None:
     explanation.update({
         "title": "向量加法",
-        "summary": "向量加法按对应分量相加；几何上既可用三角形法则，也可用平行四边形法则表示。",
-        "definition": "设 a=(x_1,y_1)、b=(x_2,y_2)，向量和按对应分量相加。",
-        "formula": r"a+b=(x_1+x_2,\,y_1+y_2)",
-        "derivation": [
-            r"先分别相加水平和竖直位移：a+b=(x_1+x_2,\,y_1+y_2)。",
-            r"取 a=(2,1)、b=(1,3)，得到 a+b=(3,4)；交换两条位移的顺序，终点仍为 (3,4)。",
-        ],
-        "intuition": "把两个位移合成为一次总位移；分量相加对应水平、竖直方向的位移分别累积。",
-        "geometric_meaning": (
-            r"三角形法则：把 b 平移到 a 的终点，首点到新终点的箭头就是 a+b。"
-            " 在 a=(2,1)、b=(1,3) 的例子中，路径先到 (2,1)，再到 (3,4)。\n\n"
-            r"平行四边形法则：让 a、b 从同一点出发，以它们为邻边作平行四边形，对角线指向 (3,4)，仍得到 a+b。"
+        "summary": r"向量加法按对应分量相加；三角形法则和平行四边形法则给出同一个和向量。",
+        "definition": (
+            "设\n\n"
+            r"$$\boldsymbol a=(x_1,y_1),\qquad \boldsymbol b=(x_2,y_2).$$"
+            "\n\n向量加法定义为\n\n"
+            r"$$\boldsymbol a+\boldsymbol b=(x_1+x_2,\,y_1+y_2).$$"
+            "\n\n即两个向量的对应分量分别相加。"
         ),
-        "conclusion": r"两种图解给出同一个向量；因此 a+b=b+a，且 a+0=a、a+(-a)=0。",
-        "pitfalls": [
-            "不要把向量长度直接相加；这里相加的是对应分量。",
-            "三角形法则中第二个箭头需要平移，方向和长度保持不变。",
+        # This concise formula remains the claim's machine-readable formula.
+        # The definition above owns its reader-facing placement and typography.
+        "formula": r"\boldsymbol a+\boldsymbol b=(x_1+x_2,\,y_1+y_2)",
+        "derivation": [],
+        "invariants": [
+            (
+                r"对任意向量 $\boldsymbol a,\boldsymbol b,\boldsymbol c$，有："
+                "\n\n交换律：\n\n"
+                r"$$\boldsymbol a+\boldsymbol b=\boldsymbol b+\boldsymbol a$$"
+                "\n\n结合律：\n\n"
+                r"$$(\boldsymbol a+\boldsymbol b)+\boldsymbol c=\boldsymbol a+(\boldsymbol b+\boldsymbol c)$$"
+                "\n\n零向量为加法单位元：\n\n"
+                r"$$\boldsymbol a+\boldsymbol 0=\boldsymbol a$$"
+                "\n\n负向量满足：\n\n"
+                r"$$\boldsymbol a+(-\boldsymbol a)=\boldsymbol 0$$"
+            )
         ],
-        "invariants": [r"两种作图的终点都是 (3,4)；交换律和首尾相接的终点不变。"],
-        "read_guide": ["先看 a、b 的共同起点，再看首尾相接或平行四边形对角线，最后核对终点坐标。"],
+        "geometric_meaning": (
+            r"三角形法则：将 $\boldsymbol b$ 平移，使其起点与 $\boldsymbol a$ 的终点重合；"
+            r"从 $\boldsymbol a$ 的起点指向平移后 $\boldsymbol b$ 的终点的向量为 $\boldsymbol a+\boldsymbol b$。"
+            "\n\n"
+            r"平行四边形法则：让 $\boldsymbol a$、$\boldsymbol b$ 从同一点出发，以它们为邻边作平行四边形；"
+            r"从该点出发的对角线为 $\boldsymbol a+\boldsymbol b$。"
+        ),
+        "worked_examples": [],
+        "symbol_roles": {"a": "vector_a", "b": "vector_b", "sum": "transformed_a"},
     })
-    if example:
-        example.update({
-            "title": "三角形法则与平行四边形法则的同一数值例",
-            "given": [[2, 1], [1, 3]],
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide", "pitfalls",
+        "analogy_boundary",
+    ):
+        explanation.pop(key, None)
+
+    component_example = example if example is not None else {}
+    component_example.update({
+        "id": "example.addition.components",
+        "title": "案例一：分量计算",
+        "kind": "vector_addition",
+        "given": [[3, 1], [1, 2]],
+        "calculation": [
+            r"$$\boldsymbol a=(3,1),\quad \boldsymbol b=(1,2)$$",
+            r"$$\boldsymbol a+\boldsymbol b=(3+1,\,1+2)=(4,3)$$",
+        ],
+        "result": [4, 3],
+        "checks": [{"name": "result", "expected": [4, 3], "tolerance": 1e-9}],
+        "claim_refs": ["claim.ch01.ops.addition"],
+    })
+    explanation["worked_examples"] = [
+        component_example,
+        {
+            "id": "example.addition.geometry",
+            "title": "案例二：三角形法则与平行四边形法则",
+            "kind": "vector_addition",
+            "given": [[1, 2], [3, 4]],
             "calculation": [
-                r"a=(2,1),\quad b=(1,3)。",
-                r"a+b=(2+1,\,1+3)=(3,4)。",
-                r"三角形法则和平行四边形法则都把终点确定为 (3,4)。",
+                r"$$\boldsymbol a=(1,2),\quad \boldsymbol b=(3,4)$$",
+                r"$$\boldsymbol a+\boldsymbol b=(1+3,\,2+4)=(4,6)$$",
+                r"三角形法则和平行四边形法则得到的和向量均为 $\boldsymbol a+\boldsymbol b=(4,6)$。",
             ],
-            "result": [3, 4],
-            "checks": [{"name": "result", "expected": [3, 4], "tolerance": 1e-9}],
-        })
-    entities = visual.setdefault("entities", [])
-    _upsert_entity(entities, "a", "vector", [2, 1], "vector_a", "a")
-    _upsert_entity(entities, "b", "vector", [1, 3], "vector_b", "b")
-    _upsert_entity(entities, "sum", "vector", [3, 4], "transformed_a", "a+b")
-    relations = visual.setdefault("relations", [])
-    relation = next((item for item in relations if item.get("id") == "rel.0.claim.ch01.ops.addition"), None)
-    if relation is not None:
-        relation["parameters"] = {"result": [3, 4]}
-    _set_stage_text(visual, {
-        "stage.claim.ch01.ops.addition.observe": ("三角形法则", "把 b 接到 a 的终点，合成箭头指向 (3,4)。"),
-        "stage.claim.ch01.ops.addition.derive": ("平行四边形法则", "以 a、b 为邻边，对角线同样指向 (3,4)。"),
-    })
+            "result": [4, 6],
+            "checks": [{"name": "result", "expected": [4, 6], "tolerance": 1e-9}],
+            "claim_refs": ["claim.ch01.ops.addition"],
+        },
+        {
+            "id": "example.addition.velocity",
+            "title": "案例三：速度向量相加",
+            "kind": "vector_addition",
+            "given": [[10, 0], [0, 5]],
+            "calculation": [
+                r"$$\boldsymbol v_1=(10,0),\quad \boldsymbol v_2=(0,5)$$",
+                r"$$\boldsymbol v=\boldsymbol v_1+\boldsymbol v_2=(10,5)$$",
+                r"$$\lvert\boldsymbol v\rvert=\sqrt{10^2+5^2}=\sqrt{125}\approx11.18$$",
+                r"$$\tan\theta=\frac{5}{10},\qquad\theta\approx26.6^\circ$$",
+            ],
+            "result": [10, 5],
+            "checks": [{"name": "result", "expected": [10, 5], "tolerance": 1e-9}],
+            "claim_refs": ["claim.ch01.ops.addition"],
+        },
+    ]
+    claim_ref = ["claim.ch01.ops.addition"]
+    visual["entities"] = [
+        {"id": "components_a", "kind": "vector", "dimension": 2, "value": [3, 1], "role": "vector_a", "label": "a", "claim_refs": claim_ref},
+        {"id": "components_b", "kind": "vector", "dimension": 2, "value": [1, 2], "role": "vector_b", "label": "b", "claim_refs": claim_ref},
+        {"id": "components_sum", "kind": "vector", "dimension": 2, "value": [4, 3], "role": "transformed_a", "label": "a+b", "claim_refs": claim_ref},
+        {"id": "geometry_a", "kind": "vector", "dimension": 2, "value": [1, 2], "role": "vector_a", "label": "a", "claim_refs": claim_ref},
+        {"id": "geometry_b", "kind": "vector", "dimension": 2, "value": [3, 4], "role": "vector_b", "label": "b", "claim_refs": claim_ref},
+        {"id": "geometry_sum", "kind": "vector", "dimension": 2, "value": [4, 6], "role": "transformed_a", "label": "a+b", "claim_refs": claim_ref},
+        {"id": "velocity_1", "kind": "vector", "dimension": 2, "value": [10, 0], "role": "vector_a", "label": "v1", "claim_refs": claim_ref},
+        {"id": "velocity_2", "kind": "vector", "dimension": 2, "value": [0, 5], "role": "vector_b", "label": "v2", "claim_refs": claim_ref},
+        {"id": "velocity_sum", "kind": "vector", "dimension": 2, "value": [10, 5], "role": "transformed_a", "label": "v", "claim_refs": claim_ref},
+    ]
+    visual["relations"] = [
+        {"id": "rel.addition.components", "kind": "sum", "source_ref": "components_a", "target_ref": "components_b", "parameters": {}, "claim_refs": claim_ref},
+        {"id": "rel.addition.geometry", "kind": "sum", "source_ref": "geometry_a", "target_ref": "geometry_b", "parameters": {}, "claim_refs": claim_ref},
+        {"id": "rel.addition.velocity", "kind": "sum", "source_ref": "velocity_1", "target_ref": "velocity_2", "parameters": {}, "claim_refs": claim_ref},
+    ]
+    explanation["sections"] = [
+        {"id": section_id, "title": section_id, "text": "", "claim_refs": claim_ref}
+        for section_id in ("definition", "formula", "invariants", "worked_examples", "geometric_meaning")
+    ]
+    visual["stages"] = [
+        {
+            "id": "stage.claim.ch01.ops.addition.components",
+            "title": "案例一：分量计算",
+            "caption": r"由 $\boldsymbol a=(3,1)$、$\boldsymbol b=(1,2)$ 得到 $\boldsymbol a+\boldsymbol b=(4,3)$。",
+            "layout": "overlay",
+            "input_entity_refs": ["components_a", "components_b"],
+            "output_entity_refs": ["components_sum"],
+            "relation_refs": ["rel.addition.components"],
+            "expected_invariants": ["component sum is (4,3)"],
+        },
+        {
+            "id": "stage.claim.ch01.ops.addition.geometry",
+            "title": "案例二：三角形法则与平行四边形法则",
+            "caption": r"$\boldsymbol a=(1,2)$、$\boldsymbol b=(3,4)$ 的两种作图均给出 $\boldsymbol a+\boldsymbol b=(4,6)$。",
+            "layout": "overlay",
+            "input_entity_refs": ["geometry_a", "geometry_b"],
+            "output_entity_refs": ["geometry_sum"],
+            "relation_refs": ["rel.addition.geometry"],
+            "expected_invariants": ["both constructions end at (4,6)"],
+        },
+        {
+            "id": "stage.claim.ch01.ops.addition.velocity",
+            "title": "案例三：速度向量相加",
+            "caption": r"$\boldsymbol v_1=(10,0)$、$\boldsymbol v_2=(0,5)$ 的和为 $\boldsymbol v=(10,5)$。",
+            "layout": "overlay",
+            "input_entity_refs": ["velocity_1", "velocity_2"],
+            "output_entity_refs": ["velocity_sum"],
+            "relation_refs": ["rel.addition.velocity"],
+            "expected_invariants": ["velocity sum is (10,5)"],
+        },
+    ]
+    explanation["case_layout"] = {
+        "default_pane_count": 1,
+        "cases": [
+            {
+                "id": "case.components",
+                "topic_id": "ch01.ops.addition",
+                "example_ref": "example.addition.components",
+                "claim_refs": ["claim.ch01.ops.addition"],
+                "stage_refs": ["stage.claim.ch01.ops.addition.components"],
+                "purpose": "案例一：分量计算",
+            },
+            {
+                "id": "case.geometry",
+                "topic_id": "ch01.ops.addition",
+                "example_ref": "example.addition.geometry",
+                "claim_refs": ["claim.ch01.ops.addition"],
+                "stage_refs": ["stage.claim.ch01.ops.addition.geometry"],
+                "purpose": "案例二：几何作图",
+            },
+            {
+                "id": "case.velocity",
+                "topic_id": "ch01.ops.addition",
+                "example_ref": "example.addition.velocity",
+                "claim_refs": ["claim.ch01.ops.addition"],
+                "stage_refs": ["stage.claim.ch01.ops.addition.velocity"],
+                "purpose": "案例三：速度向量",
+            },
+        ],
+    }
 
 
 def _refine_matrix_composition(result: dict[str, Any], explanation: dict[str, Any], visual: dict[str, Any], example: dict[str, Any]) -> None:
@@ -304,7 +446,7 @@ def _sync_sections(explanation: dict[str, Any]) -> None:
 
 def _sync_searchable_text(explanation: dict[str, Any]) -> None:
     values = [explanation.get("title", ""), explanation.get("summary", ""), explanation.get("formula", "")]
-    for key in ("definition", "derivation", "geometric_meaning", "pitfalls", "connections", "read_guide"):
+    for key in ("definition", "derivation", "geometric_meaning", "invariants", "pitfalls", "connections", "read_guide"):
         value = explanation.get(key, "")
         values.extend(value if isinstance(value, list) else [value])
     explanation["searchable_text"] = list(dict.fromkeys(str(value) for value in values if str(value).strip()))

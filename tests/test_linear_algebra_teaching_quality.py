@@ -25,6 +25,9 @@ def test_vector_addition_refinement_keeps_two_classic_geometric_readings() -> No
     meaning = refined["explanation"]["geometric_meaning"]
     assert "三角形法则" in meaning
     assert "平行四边形法则" in meaning
+    assert "\\n\\n" not in meaning
+    assert "\b" not in meaning
+    assert "交换律" in refined["explanation"]["invariants"][0]
 
 
 def test_vector_addition_refinement_aligns_visual_values_with_the_explanation() -> None:
@@ -35,10 +38,15 @@ def test_vector_addition_refinement_aligns_visual_values_with_the_explanation() 
     refined = refine_payload(payload)
 
     entities = {item["id"]: item for item in refined["visual_semantics"]["entities"]}
-    assert entities["a"]["value"] == [2, 1]
-    assert entities["b"]["value"] == [1, 3]
-    assert entities["sum"]["value"] == [3, 4]
-    assert refined["visual_semantics"]["relations"][0]["parameters"]["result"] == [3, 4]
+    assert entities["components_a"]["value"] == [3, 1]
+    assert entities["components_b"]["value"] == [1, 2]
+    assert entities["components_sum"]["value"] == [4, 3]
+    assert [case["id"] for case in refined["explanation"]["case_layout"]["cases"]] == [
+        "case.components",
+        "case.geometry",
+        "case.velocity",
+    ]
+    assert refined["explanation"]["case_layout"]["default_pane_count"] == 1
 
 
 def test_composition_refinement_binds_both_endpoints_to_the_visual_graph() -> None:

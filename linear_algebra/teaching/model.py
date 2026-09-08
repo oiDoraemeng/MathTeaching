@@ -181,6 +181,41 @@ class WorkedExample:
 
 
 @dataclass(frozen=True)
+class TeachingCase:
+    """One independently renderable, claim-backed teaching case."""
+
+    id: str
+    topic_id: str
+    example_ref: str
+    claim_refs: tuple[str, ...]
+    stage_refs: tuple[str, ...]
+    purpose: str
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "id", _constructor_string(self.id, "id"))
+        object.__setattr__(self, "topic_id", _constructor_string(self.topic_id, "topic_id"))
+        object.__setattr__(self, "example_ref", _constructor_string(self.example_ref, "example_ref"))
+        object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
+        object.__setattr__(self, "stage_refs", _constructor_string_tuple(self.stage_refs, "stage_refs"))
+        object.__setattr__(self, "purpose", _constructor_string(self.purpose, "purpose"))
+
+
+@dataclass(frozen=True)
+class CaseLayoutSpec:
+    """Declarative case collection; pane count remains user-selectable at runtime."""
+
+    default_pane_count: int
+    cases: tuple[TeachingCase, ...]
+
+    def __post_init__(self) -> None:
+        count = _constructor_integer(self.default_pane_count, "default_pane_count")
+        if count not in (1, 2, 3, 4):
+            raise ValueError("default_pane_count: expected 1, 2, 3, or 4")
+        object.__setattr__(self, "default_pane_count", count)
+        object.__setattr__(self, "cases", _constructor_instance_tuple(self.cases, "cases", TeachingCase))
+
+
+@dataclass(frozen=True)
 class ExplanationContentV2:
     """Structured prose and the symbol-to-teaching-role mapping it uses."""
 
@@ -202,12 +237,15 @@ class ExplanationContentV2:
     transfer_note: str = ""
     read_guide: tuple[str, ...] = ()
     searchable_text: tuple[str, ...] = ()
+    case_layout: CaseLayoutSpec | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "title", _constructor_string(self.title, "title"))
         object.__setattr__(self, "summary", _constructor_string(self.summary, "summary"))
         object.__setattr__(self, "sections", _constructor_instance_tuple(self.sections, "sections", ExplanationSection))
         object.__setattr__(self, "symbol_roles", _constructor_string_mapping(self.symbol_roles, "symbol_roles"))
+        if self.case_layout is not None:
+            object.__setattr__(self, "case_layout", _constructor_instance(self.case_layout, "case_layout", CaseLayoutSpec))
         for field in (
             "definition",
             "formula",
@@ -504,7 +542,7 @@ def _decode_topic_connection(payload: Mapping[str, object], path: str) -> TopicC
         target_topic_id=_string(record["target_topic_id"], f"{path}.target_topic_id"),
         relation=_string(record["relation"], f"{path}.relation"),
         description=_string(record["description"], f"{path}.description"),
-        claim_refs=_string_tuple(record["claim_refs"], f"{path}.claim_refs"),
+        claim_refs=_optional_string_tuple(record, "claim_refs", path),
     )
 
 
@@ -535,6 +573,7 @@ def _decode_explanation(payload: Mapping[str, object], path: str) -> Explanation
         transfer_note=_optional_string(record, "transfer_note", path),
         read_guide=_optional_string_tuple(record, "read_guide", path),
         searchable_text=_optional_string_tuple(record, "searchable_text", path),
+        case_layout=_optional_case_layout(record, path),
     )
 
 
@@ -544,7 +583,7 @@ def _decode_explanation_section(payload: Mapping[str, object], path: str) -> Exp
         id=_string(record["id"], f"{path}.id"),
         title=_string(record["title"], f"{path}.title"),
         text=_string(record["text"], f"{path}.text"),
-        claim_refs=_string_tuple(record["claim_refs"], f"{path}.claim_refs"),
+        claim_refs=_optional_string_tuple(record, "claim_refs", path),
     )
 
 
@@ -574,6 +613,33 @@ def _decode_worked_example_check(payload: Mapping[str, object], path: str) -> Wo
         name=_string(record["name"], f"{path}.name"),
         expected=_freeze_json(record["expected"], f"{path}.expected"),
         tolerance=_finite_float(record["tolerance"], f"{path}.tolerance"),
+    )
+
+
+def _decode_teaching_case(payload: Mapping[str, object], path: str) -> TeachingCase:
+    record = _object_optional(payload, path, _CASE_REQUIRED_FIELDS, _CASE_FIELDS)
+    return TeachingCase(
+        id=_string(record["id"], f"{path}.id"),
+        topic_id=_string(record["topic_id"], f"{path}.topic_id"),
+        example_ref=_string(record["example_ref"], f"{path}.example_ref"),
+        claim_refs=_optional_string_tuple(record, "claim_refs", path),
+        stage_refs=_string_tuple(record["stage_refs"], f"{path}.stage_refs"),
+        purpose=_string(record["purpose"], f"{path}.purpose"),
+    )
+
+
+def _optional_case_layout(record: Mapping[str, object], path: str) -> CaseLayoutSpec | None:
+    value = record.get("case_layout")
+    if value is None:
+        return None
+    layout = _object(value, f"{path}.case_layout", _CASE_LAYOUT_FIELDS)
+    cases = tuple(
+        _decode_teaching_case(_mapping(item, f"{path}.case_layout.cases[{index}]"), f"{path}.case_layout.cases[{index}]")
+        for index, item in enumerate(_array(layout["cases"], f"{path}.case_layout.cases"))
+    )
+    return CaseLayoutSpec(
+        default_pane_count=_integer(layout["default_pane_count"], f"{path}.case_layout.default_pane_count"),
+        cases=cases,
     )
 
 
@@ -766,9 +832,27 @@ def _encode_explanation(explanation: ExplanationContentV2) -> dict[str, object]:
         "transfer_note": explanation.transfer_note,
         "read_guide": list(explanation.read_guide),
         "searchable_text": list(explanation.searchable_text),
+        "case_layout": _encode_case_layout(explanation.case_layout) if explanation.case_layout is not None else None,
     }
-    encoded.update({key: value for key, value in optional_values.items() if value not in ("", [], ())})
+    encoded.update({key: value for key, value in optional_values.items() if value not in (None, "", [], ())})
     return encoded
+
+
+def _encode_case_layout(layout: CaseLayoutSpec) -> dict[str, object]:
+    return {
+        "default_pane_count": layout.default_pane_count,
+        "cases": [
+            {
+                "id": case.id,
+                "topic_id": case.topic_id,
+                "example_ref": case.example_ref,
+                "claim_refs": list(case.claim_refs),
+                "stage_refs": list(case.stage_refs),
+                "purpose": case.purpose,
+            }
+            for case in layout.cases
+        ],
+    }
 
 
 def _encode_worked_example(example: WorkedExample) -> dict[str, object]:
@@ -1128,11 +1212,15 @@ _EXPLANATION_FIELDS = (
     "transfer_note",
     "read_guide",
     "searchable_text",
+    "case_layout",
 )
 _EXPLANATION_SECTION_FIELDS = ("id", "title", "text", "claim_refs")
 _WORKED_EXAMPLE_REQUIRED_FIELDS = ("kind", "given", "calculation", "result", "checks")
 _WORKED_EXAMPLE_FIELDS = (*_WORKED_EXAMPLE_REQUIRED_FIELDS, "id", "title", "claim_refs")
 _WORKED_EXAMPLE_CHECK_FIELDS = ("name", "expected", "tolerance")
+_CASE_LAYOUT_FIELDS = ("default_pane_count", "cases")
+_CASE_REQUIRED_FIELDS = ("id", "topic_id", "example_ref", "stage_refs", "purpose")
+_CASE_FIELDS = (*_CASE_REQUIRED_FIELDS, "claim_refs")
 _VISUAL_SEMANTICS_FIELDS = ("scene_kind", "entities", "relations", "stages")
 _ENTITY_FIELDS = ("id", "kind", "dimension", "value", "role", "label", "claim_refs")
 _RELATION_FIELDS = ("id", "kind", "source_ref", "target_ref", "parameters", "claim_refs")
@@ -1172,6 +1260,8 @@ __all__ = [
     "TopicConnection",
     "WorkedExample",
     "WorkedExampleCheck",
+    "TeachingCase",
+    "CaseLayoutSpec",
     "VisualEntity",
     "VisualRelation",
     "VisualSemantics",

@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:ca308cc678ff0c92d26b63f92138d083f91b2bd7f0471ef7cc7d886bda5afc1f",
+  "artifact_digest": "sha256:ceebf89aaeb3c30279ed436ce792c435fd207648638e136d7eed971655970be6",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -123,6 +123,15 @@
         ]
       },
       {
+        "alias": "sem__stage.claim.ch01.ops.addition.components__title",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          2.65
+        ],
+        "text": "对应分量计算"
+      },
+      {
         "alias": "sem__addition_triangle",
         "color": "#6B7280",
         "op": "geometry.polygon",
@@ -144,10 +153,10 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.ops.addition.observe__title",
+        "alias": "sem__stage.claim.ch01.ops.addition.triangle__title",
         "op": "annotation.upsert",
         "position": [
-          -1.5,
+          0.0,
           2.65
         ],
         "text": "三角形法则"
@@ -178,11 +187,11 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.ops.addition.derive__title",
+        "alias": "sem__stage.claim.ch01.ops.addition.parallelogram__title",
         "op": "annotation.upsert",
         "position": [
-          -2.65,
-          2.17
+          0.0,
+          2.65
         ],
         "text": "平行四边形法则"
       },
@@ -195,23 +204,50 @@
     "summary": "向量加法",
     "version": 1
   },
-  "plan_digest": "sha256:93c603a74c9cd5c7dc7607774c4fb40ca77d0b97f645dde8b70577868bfe13bd",
-  "read_guide": [
-    "先看 a、b 的共同起点，再看首尾相接或平行四边形对角线，最后核对终点坐标。"
-  ],
+  "plan_digest": "sha256:ad38d0982cad6e4ce7a4c876cf492a98222539f984bfe805822ccb889845bb16",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 7,
+  "revision": 12,
   "schema_version": 1,
   "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "把 b 接到 a 的终点，合成箭头指向 (3,4)。",
-      "id": "stage.claim.ch01.ops.addition.observe",
-      "layout": "side_by_side",
+      "caption": "由 $\\boldsymbol a=(2,1)$、$\\boldsymbol b=(1,3)$ 得到 $\\boldsymbol a+\\boldsymbol b=(3,4)$。",
+      "id": "stage.claim.ch01.ops.addition.components",
+      "layout": "overlay",
+      "title": "对应分量计算",
+      "visible_aliases": [
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__sum",
+        "sem__sum__end",
+        "sem__sum__origin",
+        "sem__rel.0.claim.ch01.ops.addition",
+        "sem__stage.claim.ch01.ops.addition.components__title"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "sum",
+        "rel.0.claim.ch01.ops.addition"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "把 $\\boldsymbol b$ 接到 $\\boldsymbol a$ 的终点，合成箭头指向 $(3,4)$。",
+      "id": "stage.claim.ch01.ops.addition.triangle",
+      "layout": "overlay",
       "title": "三角形法则",
       "visible_aliases": [
         "sem__a",
@@ -224,7 +260,7 @@
         "sem__sum__end",
         "sem__sum__origin",
         "sem__rel.0.claim.ch01.ops.addition",
-        "sem__stage.claim.ch01.ops.addition.observe__title",
+        "sem__stage.claim.ch01.ops.addition.triangle__title",
         "sem__addition_triangle"
       ],
       "visible_refs": [
@@ -236,12 +272,12 @@
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
-      "caption": "以 a、b 为邻边，对角线同样指向 (3,4)。",
-      "id": "stage.claim.ch01.ops.addition.derive",
-      "layout": "sequence",
+      "caption": "以 $\\boldsymbol a$、$\\boldsymbol b$ 为邻边，对角线同样指向 $(3,4)$。",
+      "id": "stage.claim.ch01.ops.addition.parallelogram",
+      "layout": "overlay",
       "title": "平行四边形法则",
       "visible_aliases": [
         "sem__a",
@@ -254,7 +290,7 @@
         "sem__sum__end",
         "sem__sum__origin",
         "sem__rel.0.claim.ch01.ops.addition",
-        "sem__stage.claim.ch01.ops.addition.derive__title",
+        "sem__stage.claim.ch01.ops.addition.parallelogram__title",
         "sem__addition_parallelogram"
       ],
       "visible_refs": [

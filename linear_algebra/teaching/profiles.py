@@ -51,6 +51,10 @@ _CORE = TeachingProfile(
     TeachingLevel.EXPLAIN,
     ("definition", "formula", "derivation", "worked_examples", "geometric_meaning", "pitfalls"),
 )
+_VECTOR_ADDITION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "formula", "worked_examples", "geometric_meaning"),
+)
 _BRIDGE = TeachingProfile(
     TeachingLevel.TRANSFER,
     (*_CORE.required_sections, "connections"),
@@ -69,7 +73,7 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch01.vector.point-distinction": _CORE,
     "ch01.vector.coordinate-system": _CORE,
     "ch01.vector.direction-examples": _CORE,
-    "ch01.ops.addition": _CORE,
+    "ch01.ops.addition": _VECTOR_ADDITION,
     "ch01.ops.subtraction": _CORE,
     "ch01.ops.scalar": _CORE,
     "ch01.ops.linear-combination": _BRIDGE,

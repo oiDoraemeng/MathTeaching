@@ -96,6 +96,22 @@ def _storyboard_payload(stage: Any) -> dict[str, object]:
     }
 
 
+def _case_layout_payload(layout: Any) -> dict[str, object] | None:
+    if layout is None:
+        return None
+    cases = []
+    for case in tuple(getattr(layout, "cases", ())[:4]):
+        cases.append({
+            "id": str(getattr(case, "id", ""))[:128],
+            "topic_id": str(getattr(case, "topic_id", ""))[:128],
+            "example_ref": str(getattr(case, "example_ref", ""))[:128],
+            "claim_refs": list(tuple(getattr(case, "claim_refs", ()))[:8]),
+            "stage_refs": list(tuple(getattr(case, "stage_refs", ()))[:8]),
+            "purpose": str(getattr(case, "purpose", ""))[:512],
+        })
+    return {"default_pane_count": int(getattr(layout, "default_pane_count", 1)), "cases": cases}
+
+
 class _LocalAssetHandler(QWebEngineUrlSchemeHandler):
     _ALLOWED_NAMES = {"index.html", "manifest.json"}
     _ALLOWED_SUFFIXES = {".js", ".css", ".map", ".svg", ".png", ".woff", ".woff2", ".ttf", ".html", ".json"}
@@ -320,6 +336,7 @@ class AgentSidebarWeb(QWidget):
                 for symbol, role in dict(getattr(explanation, "symbol_roles", {})).items()
             },
             "worked_examples": [_worked_example_payload(example) for example in tuple(getattr(explanation, "worked_examples", ()))[:8]],
+            "case_layout": _case_layout_payload(getattr(explanation, "case_layout", None)),
         }
         payload = {
             "case_id": str(case_id or getattr(case, "topic_id", getattr(case, "id", "")))[:128],
@@ -357,6 +374,18 @@ class AgentSidebarWeb(QWidget):
                 "request_id": f"math-case-{payload['case_id']}",
                 "session_id": "",
                 "payload": payload,
+            }
+        )
+
+    def show_math_case_focus(self, case_id: str, pane_id: str) -> None:
+        """Synchronize the native case-pane focus without touching Agent sessions."""
+        self.bridge.emit_event(
+            {
+                "protocol_version": 1,
+                "type": "math_case_focus",
+                "request_id": f"math-case-focus-{case_id}-{pane_id}",
+                "session_id": "",
+                "payload": {"case_id": str(case_id)[:128], "pane_id": str(pane_id)[:128]},
             }
         )
 
