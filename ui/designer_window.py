@@ -158,6 +158,9 @@ class _SceneCommandHostProxy:
         target = self._invoke("resolve_scene_pane_id", pane_id if pane_id is not None else self._pane_id)
         return _SceneCommandHostProxy(self._bridge, str(target))
 
+    def activate_for_tool(self) -> None:
+        self._invoke("activate_scene_pane_for_tool", self._pane_id)
+
     def _invoke_scene(self, method: str, *args: object) -> object:
         if self._pane_id is not None:
             return self._invoke(method, *args, self._pane_id)
@@ -247,8 +250,8 @@ class _GeometryInputFilter(QObject):
         container = getattr(self.owner, "scene_pane_widget", None)
         if container is not None and event.type() in (QEvent.Type.MouseButtonPress, QEvent.Type.FocusIn):
             for pane_id, widget in container.interactors.items():
-                if watched is widget:
-                    self.owner.pane_manager.focus_pane(pane_id)
+                if watched is widget or watched is getattr(widget, "interactor", None):
+                    self.owner.pane_manager.activate_for_tool(pane_id)
                     break
         if event.type() == QEvent.Type.Wheel and isinstance(event, QWheelEvent):
             return self.owner._handle_viewport_wheel(event)
@@ -445,6 +448,9 @@ class MainWindow:
     def resolve_scene_pane_id(self, pane_id: str | None = None) -> str:
         return self._pane(pane_id).pane_id
 
+    def activate_scene_pane_for_tool(self, pane_id: str | None = None) -> str:
+        return self.pane_manager.activate_for_tool(self.resolve_scene_pane_id(pane_id))
+
     def _command_pane_id(self, pane_id: str | None = None) -> str:
         transaction_pane = getattr(self, "_transaction_pane_id", None)
         target = self.resolve_scene_pane_id(pane_id if pane_id is not None else transaction_pane)
@@ -511,10 +517,10 @@ class MainWindow:
 
         container = getattr(self, "scene_pane_widget", None)
         if container is not None:
-            try:
-                container.refresh_visible_panes()
-            except Exception:
-                pass
+            def redraw(pane_id: str) -> None:
+                with self._using_pane(pane_id):
+                    self._render_scene()
+            container.refresh_visible_panes(on_refresh=redraw)
 
         plotter = self._pane_renderer(required=False)
         if plotter is not None:
@@ -522,11 +528,12 @@ class MainWindow:
             if interactor is not None:
                 interactor.show()
                 interactor.update()
-            try:
-                self._render_scene()
-            except Exception:
-                # 恢复阶段的重绘失败不应阻断窗口显示。
-                pass
+            if container is None:
+                try:
+                    self._render_scene()
+                except Exception:
+                    # Lightweight hosts without a container retain one pane.
+                    pass
             try:
                 self._apply_linear_algebra_storyboard_visibility()
             except Exception:
@@ -561,7 +568,10 @@ class MainWindow:
         window = getattr(self, "window", None)
         if window is None or window.isMinimized():
             return
-        plotter = self._pane_renderer(required=False)
+        container = getattr(self, "scene_pane_widget", None)
+        if container is not None:
+            container.refresh_visible_panes()
+        plotter = self._pane_renderer(required=False) if container is None else None
         if plotter is not None:
             try:
                 plotter.render()

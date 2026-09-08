@@ -224,7 +224,7 @@ class SceneCommandService:
         return self.validate(plan)
 
     def execute(self, plan: CommandPlan, *, expected_scene_fingerprint: str | None = None,
-                pane_id: str | None = None) -> CommandValidation:
+                pane_id: str | None = None, activate_pane: bool = True) -> CommandValidation:
         validation = self.validate(plan)
         if not validation.valid:
             raise CommandError("；".join(validation.messages))
@@ -241,6 +241,11 @@ class SceneCommandService:
         check_fingerprint = getattr(host, "check_scene_fingerprint", None)
         if expected_scene_fingerprint is not None and callable(check_fingerprint) and not check_fingerprint(expected_scene_fingerprint):
             raise CommandError("scene_changed_since_plan")
+        # User tools select their explicit destination before mutation. Agent
+        # callers can keep a pinned destination without moving user focus.
+        activate = getattr(host, "activate_for_tool", None)
+        if activate_pane and pane_id is not None and callable(activate):
+            activate()
         host.begin_scene_command_transaction()
         try:
             for operation in validation.expanded_operations:

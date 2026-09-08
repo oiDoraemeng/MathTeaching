@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from typing import Callable, Any
 
-from PySide6.QtCore import Qt, QEvent, QTimer
+from PySide6.QtCore import Qt, QEvent, QTimer, QObject
 from PySide6.QtWidgets import QWidget
+from shiboken6 import isValid
 
 from ui.scene_pane_manager import ScenePaneManager
 
@@ -26,8 +27,10 @@ class ScenePaneWidget(QWidget):
         self._factory = interactor_factory or self._default_factory
         self._on_interactor_created = on_interactor_created
         self._interactors: dict[str, Any] = {}
-        self._layout = None
         self._retry_attempts: dict[str, int] = {}
+        self._retry_timers: dict[str, QTimer] = {}
+        self._refresh_callbacks: dict[str, Callable[[str], None]] = {}
+        self._refreshing = False
         manager.active_pane_changed.connect(self._on_active_changed)
         self.sync_layout()
 
@@ -46,41 +49,64 @@ class ScenePaneWidget(QWidget):
     def sync_layout(self) -> tuple[str, ...]:
         visible = self.manager.visible_pane_ids()
         visible_set = set(visible)
-        for pane_id in tuple(self._interactors):
+        for pane_id in set(self._interactors) | set(self._retry_attempts):
             if pane_id not in visible_set:
-                widget = self._interactors.pop(pane_id)
-                widget.hide()
-                widget.setParent(None)
-                widget.deleteLater()
-                if pane_id in self.manager.panes:
-                    state = self.manager.pane(pane_id)
-                    state.renderer_2d = state.renderer_3d = None
-        for pane_id in visible:
-            created = False
-            if pane_id not in self._interactors:
-                widget = self._factory(self)
-                widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-                widget.installEventFilter(self)
-                self._interactors[pane_id] = widget
-                created = True
-            state = self.manager.pane(pane_id)
-            state.renderer_2d = state.renderer_3d = self._interactors[pane_id]
-            if created and self._on_interactor_created is not None:
-                # Invoke after assigning refs so callbacks can rebuild safely.
-                self._on_interactor_created(pane_id, self._interactors[pane_id])
-        self._arrange()
+                self._clear_retry(pane_id)
+                self._discard_interactor(pane_id)
         self.refresh_visible_panes()
         return visible
+
+    def _discard_interactor(self, pane_id: str) -> None:
+        widget = self._interactors.pop(pane_id, None)
+        if pane_id in self.manager.panes:
+            state = self.manager.pane(pane_id)
+            state.renderer_2d = state.renderer_3d = None
+        if widget is not None and isValid(widget):
+            try:
+                widget.hide()
+                widget.close()
+            except RuntimeError:
+                pass
+            if isValid(widget):
+                widget.setParent(None)
+                widget.deleteLater()
+
+    def _create_interactor(self, pane_id: str) -> Any:
+        widget = self._factory(self)
+        self._interactors[pane_id] = widget
+        widget.setObjectName("scenePane")
+        widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        widget.installEventFilter(self)
+        receiver = getattr(widget, "interactor", widget)
+        if receiver is not widget:
+            receiver.installEventFilter(self)
+        state = self.manager.pane(pane_id)
+        state.renderer_2d = state.renderer_3d = widget
+        if not self._renderer_valid(widget):
+            raise RuntimeError("renderer initialization failed")
+        if self._on_interactor_created is not None:
+            self._on_interactor_created(pane_id, widget)
+        return widget
 
     @staticmethod
     def _renderer_valid(renderer: Any) -> bool:
         if renderer is None:
             return False
         try:
-            if getattr(renderer, "_deleted", False):
+            if isinstance(renderer, QObject) and not isValid(renderer):
                 return False
-            for owner in (getattr(renderer, "interactor", None), getattr(renderer, "iren", None), getattr(renderer, "render_window", None), getattr(renderer, "ren_win", None)):
-                if owner is not None and getattr(owner, "_deleted", False):
+            if getattr(renderer, "_closed", False) or getattr(renderer, "_deleted", False):
+                return False
+            # Plain QWidget test renderers need no VTK surface. For real
+            # interactors a missing underlying surface means it was finalized.
+            missing = object()
+            for name in ("interactor", "render_window", "ren_win"):
+                owner = getattr(renderer, name, missing)
+                if owner is missing:
+                    continue
+                if owner is None or (isinstance(owner, QObject) and not isValid(owner)):
+                    return False
+                if getattr(owner, "_deleted", False):
                     return False
             checker = getattr(renderer, "isValid", None)
             if callable(checker):
@@ -92,41 +118,83 @@ class ScenePaneWidget(QWidget):
             return False
         return True
 
-    def refresh_visible_panes(self, _retry: bool = True) -> None:
-        """Refresh visible controls and recreate invalid renderer widgets."""
-        invalid = []
-        for pane_id in self.manager.visible_pane_ids():
-            widget = self._interactors.get(pane_id)
-            if widget is None or not self._renderer_valid(widget):
-                invalid.append(pane_id)
-        for pane_id in invalid:
-            old = self._interactors.pop(pane_id, None)
-            if old is not None:
-                old.hide(); old.setParent(None); old.deleteLater()
-            widget = self._factory(self)
-            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-            widget.installEventFilter(self)
-            self._interactors[pane_id] = widget
-            state = self.manager.pane(pane_id)
-            state.renderer_2d = state.renderer_3d = widget
-            if self._on_interactor_created:
-                self._on_interactor_created(pane_id, widget)
-        self._arrange()
-        if invalid and _retry:
-            for pane_id in invalid:
-                attempt = self._retry_attempts.get(pane_id, 0) + 1
-                if attempt <= 4:
-                    self._retry_attempts[pane_id] = attempt
-                    QTimer.singleShot(min(800, 50 * (2 ** (attempt - 1))), self.refresh_visible_panes)
-        else:
-            for pane_id in tuple(self._retry_attempts):
-                if pane_id not in invalid:
+    def refresh_visible_panes(self, on_refresh: Callable[[str], None] | None = None) -> None:
+        """Refresh each surface; recovery failure never prevents sibling redraws."""
+        if self._refreshing:
+            return
+        self._refreshing = True
+        try:
+            for pane_id in self.manager.visible_pane_ids():
+                if on_refresh is not None:
+                    self._refresh_callbacks[pane_id] = on_refresh
+                if pane_id not in self._retry_timers:
+                    # A later show/resize/restore can start a fresh bounded cycle.
                     self._retry_attempts.pop(pane_id, None)
+                    self._refresh_pane(pane_id)
+            self._update_highlight()
+        finally:
+            self._refreshing = False
+
+    def _refresh_pane(self, pane_id: str) -> None:
+        if pane_id not in self.manager.visible_pane_ids():
+            self._clear_retry(pane_id)
+            return
+        try:
+            widget = self._interactors.get(pane_id)
+            if not self._renderer_valid(widget):
+                self._discard_interactor(pane_id)
+                widget = self._create_interactor(pane_id)
+            widget.setGeometry(self.manager.layout_rects(self.size())[pane_id])
+            # Hidden/unmapped is expected during minimization; show then render
+            # first instead of treating invisibility as context loss.
+            widget.show()
+            widget.update()
+            callback = self._refresh_callbacks.get(pane_id)
+            if callback is not None:
+                callback(pane_id)
+            else:
+                render = getattr(widget, "render", None)
+                if callable(render) and getattr(type(widget), "render", None) is not QWidget.render:
+                    render()
+        except Exception:
+            self._discard_interactor(pane_id)
+            self._schedule_retry(pane_id)
+        else:
+            self._clear_retry(pane_id)
+        self._update_highlight()
+
+    def _schedule_retry(self, pane_id: str) -> None:
+        if pane_id in self._retry_timers:
+            return
+        attempt = self._retry_attempts.get(pane_id, 0)
+        if attempt >= 4:
+            return
+        self._retry_attempts[pane_id] = attempt + 1
+        timer = QTimer(self)
+        timer.setSingleShot(True)
+        timer.setInterval(50 * 2 ** attempt)
+        self._retry_timers[pane_id] = timer
+
+        def retry() -> None:
+            self._retry_timers.pop(pane_id, None)
+            timer.deleteLater()
+            self._refresh_pane(pane_id)
+
+        timer.timeout.connect(retry)
+        timer.start()
+
+    def _clear_retry(self, pane_id: str) -> None:
+        timer = self._retry_timers.pop(pane_id, None)
+        if timer is not None:
+            timer.stop()
+            timer.deleteLater()
+        self._retry_attempts.pop(pane_id, None)
+        self._refresh_callbacks.pop(pane_id, None)
 
     def eventFilter(self, watched: object, event: QEvent) -> bool:
         if event.type() in (QEvent.Type.MouseButtonPress, QEvent.Type.FocusIn):
             for pane_id, widget in self._interactors.items():
-                if watched is widget:
+                if watched is widget or watched is getattr(widget, "interactor", None):
                     self.manager.focus_pane(pane_id)
                     self._update_highlight()
                     break
@@ -135,8 +203,11 @@ class ScenePaneWidget(QWidget):
     def _update_highlight(self) -> None:
         active = self.manager.active_pane_id
         for pane_id, widget in self._interactors.items():
+            if not isValid(widget):
+                continue
             widget.setProperty("activePane", pane_id == active)
-            widget.style().unpolish(widget); widget.style().polish(widget)
+            widget.style().unpolish(widget)
+            widget.style().polish(widget)
 
     def delete_pane(self, pane_id: str) -> tuple[str, ...]:
         self.manager.delete_pane(pane_id)
@@ -148,22 +219,14 @@ class ScenePaneWidget(QWidget):
 
     def _on_active_changed(self, pane_id: str) -> None:
         widget = self._interactors.get(pane_id)
-        if widget is not None:
+        if widget is not None and isValid(widget):
             widget.show()
         self._update_highlight()
 
     def resizeEvent(self, event: Any) -> None:
         super().resizeEvent(event)
-        self._arrange()
         self.refresh_visible_panes()
 
     def showEvent(self, event: Any) -> None:
         super().showEvent(event)
         self.refresh_visible_panes()
-
-    def _arrange(self) -> None:
-        rects = self.manager.layout_rects(self.size())
-        for pane_id, widget in self._interactors.items():
-            if pane_id in rects:
-                widget.setGeometry(rects[pane_id])
-                widget.show()

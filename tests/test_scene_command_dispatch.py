@@ -172,7 +172,7 @@ def test_scene_commands_mutate_only_the_resolved_pane(explicit: bool) -> None:
     assert window._pane_scene(untouched).annotations == []
     assert window._pane_renderer(untouched).camera.parallel_scale == 6.0
     assert renderer.mock_calls == []
-    assert window.pane_manager.active_pane_id == first
+    assert window.pane_manager.active_pane_id == target
     assert len(window.pane_manager.pane(target).scene_2d["geometry"]) == 4
     assert not hasattr(window, "plotter")
     assert not hasattr(window, "geometry_controller")
