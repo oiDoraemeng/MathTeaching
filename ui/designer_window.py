@@ -509,6 +509,13 @@ class MainWindow:
         if root_layout is not None:
             root_layout.activate()
 
+        container = getattr(self, "scene_pane_widget", None)
+        if container is not None:
+            try:
+                container.refresh_visible_panes()
+            except Exception:
+                pass
+
         plotter = self._pane_renderer(required=False)
         if plotter is not None:
             interactor = getattr(plotter, "interactor", None)
@@ -3094,6 +3101,7 @@ class MainWindow:
 
     def _on_unified_2d_tool_selected(self, tool: ToolKind | None) -> None:
         """Route the single toolbar's selection to the active workspace."""
+        self.pane_manager.activate_for_tool()
         if tool is not None and self._pane_scene().scene_mode is not SceneMode.TWO_D:
             self._set_scene_mode(SceneMode.TWO_D)
         if tool in {"angle", "projection", "polygon", "transform", "subspace", "area"}:

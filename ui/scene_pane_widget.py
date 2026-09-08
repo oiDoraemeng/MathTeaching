@@ -27,7 +27,7 @@ class ScenePaneWidget(QWidget):
         self._on_interactor_created = on_interactor_created
         self._interactors: dict[str, Any] = {}
         self._layout = None
-        self._retry_pending: set[str] = set()
+        self._retry_attempts: dict[str, int] = {}
         manager.active_pane_changed.connect(self._on_active_changed)
         self.sync_layout()
 
@@ -77,6 +77,11 @@ class ScenePaneWidget(QWidget):
         if renderer is None:
             return False
         try:
+            if getattr(renderer, "_deleted", False):
+                return False
+            for owner in (getattr(renderer, "interactor", None), getattr(renderer, "iren", None), getattr(renderer, "render_window", None), getattr(renderer, "ren_win", None)):
+                if owner is not None and getattr(owner, "_deleted", False):
+                    return False
             checker = getattr(renderer, "isValid", None)
             if callable(checker):
                 return bool(checker())
@@ -108,7 +113,15 @@ class ScenePaneWidget(QWidget):
                 self._on_interactor_created(pane_id, widget)
         self._arrange()
         if invalid and _retry:
-            QTimer.singleShot(50, lambda: self.refresh_visible_panes(False))
+            for pane_id in invalid:
+                attempt = self._retry_attempts.get(pane_id, 0) + 1
+                if attempt <= 4:
+                    self._retry_attempts[pane_id] = attempt
+                    QTimer.singleShot(min(800, 50 * (2 ** (attempt - 1))), self.refresh_visible_panes)
+        else:
+            for pane_id in tuple(self._retry_attempts):
+                if pane_id not in invalid:
+                    self._retry_attempts.pop(pane_id, None)
 
     def eventFilter(self, watched: object, event: QEvent) -> bool:
         if event.type() in (QEvent.Type.MouseButtonPress, QEvent.Type.FocusIn):
