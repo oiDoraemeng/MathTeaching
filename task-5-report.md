@@ -5,3 +5,5 @@
 验证：`pytest -q tests/test_scene_pane_widget.py tests/test_scene_pane_manager.py`（10 passed）。
 
 暂未处理代数标签页、恢复重试和复制粘贴，符合 Task 5 范围。
+
+复审修订：布局按钮在轻量测试窗口中无容器时直接回退到 manager；窗格 interactor 重建支持回调，以便主窗口清空旧控制器并按 pane 状态重绘。追加回归测试覆盖 2→1→2 恢复。

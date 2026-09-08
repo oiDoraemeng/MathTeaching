@@ -19,10 +19,12 @@ class ScenePaneWidget(QWidget):
     """
 
     def __init__(self, manager: ScenePaneManager, parent: QWidget | None = None,
-                 interactor_factory: Callable[[QWidget], Any] | None = None) -> None:
+                 interactor_factory: Callable[[QWidget], Any] | None = None,
+                 on_interactor_created: Callable[[str, Any], None] | None = None) -> None:
         super().__init__(parent)
         self.manager = manager
         self._factory = interactor_factory or self._default_factory
+        self._on_interactor_created = on_interactor_created
         self._interactors: dict[str, Any] = {}
         self._layout = None
         manager.active_pane_changed.connect(self._on_active_changed)
@@ -57,6 +59,8 @@ class ScenePaneWidget(QWidget):
                 widget = self._factory(self)
                 widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
                 self._interactors[pane_id] = widget
+                if self._on_interactor_created is not None:
+                    self._on_interactor_created(pane_id, widget)
             state = self.manager.pane(pane_id)
             state.renderer_2d = state.renderer_3d = self._interactors[pane_id]
         self._arrange()

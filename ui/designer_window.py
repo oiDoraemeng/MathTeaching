@@ -945,7 +945,10 @@ class MainWindow:
         self.viewport_host = self._widget("viewportHost", QWidget)
         layout = QVBoxLayout(self.viewport_host)
         layout.setContentsMargins(0, 0, 0, 0)
-        self.scene_pane_widget = ScenePaneWidget(self.pane_manager, self.viewport_host)
+        self.scene_pane_widget = ScenePaneWidget(
+            self.pane_manager, self.viewport_host,
+            on_interactor_created=self._on_pane_interactor_created,
+        )
         layout.addWidget(self.scene_pane_widget, 1)
         self.scene_pane_widget.interactor().interactor.setMouseTracking(True)
         self.teaching_case_pane_host = QFrame(self.viewport_host)
@@ -1997,8 +2000,22 @@ class MainWindow:
 
     def _on_layout_button_clicked(self, count: int) -> None:
         """Route layout selection through ScenePaneManager only."""
-        self.scene_pane_widget.set_layout(count)
+        container = getattr(self, "scene_pane_widget", None)
+        if container is not None:
+            container.set_layout(count)
+        else:
+            self.pane_manager.set_layout(count)
         self._sync_layout_buttons()
+
+    def _on_pane_interactor_created(self, pane_id: str, renderer: object) -> None:
+        """Rebind runtime controllers and redraw retained state after recreation."""
+        pane = self.pane_manager.pane(pane_id)
+        if pane.runtime is not None:
+            for name in ("curve_controller", "geometry_controller", "geometry3d_controller", "layer_controller"):
+                setattr(pane.runtime, name, None)
+        if getattr(self, "window", None) is not None and hasattr(self, "_render_scene"):
+            with self._using_pane(pane_id):
+                self._render_scene()
 
     def _set_teaching_case_pane_count(self, count: int) -> bool:
         grid = getattr(self, "_teaching_case_pane_grid", None)

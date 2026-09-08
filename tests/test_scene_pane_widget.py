@@ -43,3 +43,21 @@ def test_delete_repairs_layout_and_active_focus(qapp):
     assert manager.visible_pane_ids() == (ids[0], ids[2])
     assert manager.active_pane_id == ids[0]
     assert ids[1] not in widget.interactors
+
+
+def test_recreated_interactor_invokes_restore_callback(qapp):
+    manager = ScenePaneManager()
+    restored = []
+    widget = ScenePaneWidget(
+        manager, interactor_factory=FakeInteractor,
+        on_interactor_created=lambda pane_id, renderer: restored.append((pane_id, renderer)),
+    )
+    pane_two = widget.set_layout(2)[1]
+    old = widget.interactor(pane_two)
+    manager.pane(pane_two).scene_2d["objects"] = ["kept"]
+    widget.set_layout(1)
+    widget.set_layout(2)
+    new = widget.interactor(pane_two)
+    assert new is not old
+    assert restored[-1] == (pane_two, new)
+    assert manager.pane(pane_two).scene_2d["objects"] == ["kept"]
