@@ -55,14 +55,17 @@ class ScenePaneWidget(QWidget):
                     state = self.manager.pane(pane_id)
                     state.renderer_2d = state.renderer_3d = None
         for pane_id in visible:
+            created = False
             if pane_id not in self._interactors:
                 widget = self._factory(self)
                 widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
                 self._interactors[pane_id] = widget
-                if self._on_interactor_created is not None:
-                    self._on_interactor_created(pane_id, widget)
+                created = True
             state = self.manager.pane(pane_id)
             state.renderer_2d = state.renderer_3d = self._interactors[pane_id]
+            if created and self._on_interactor_created is not None:
+                # Invoke after assigning refs so callbacks can rebuild safely.
+                self._on_interactor_created(pane_id, self._interactors[pane_id])
         self._arrange()
         return visible
 

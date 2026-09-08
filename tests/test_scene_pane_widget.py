@@ -48,9 +48,10 @@ def test_delete_repairs_layout_and_active_focus(qapp):
 def test_recreated_interactor_invokes_restore_callback(qapp):
     manager = ScenePaneManager()
     restored = []
+    renderer_refs = []
     widget = ScenePaneWidget(
         manager, interactor_factory=FakeInteractor,
-        on_interactor_created=lambda pane_id, renderer: restored.append((pane_id, renderer)),
+        on_interactor_created=lambda pane_id, renderer: (restored.append((pane_id, renderer)), renderer_refs.append(manager.pane(pane_id).renderer_2d)),
     )
     pane_two = widget.set_layout(2)[1]
     old = widget.interactor(pane_two)
@@ -60,4 +61,5 @@ def test_recreated_interactor_invokes_restore_callback(qapp):
     new = widget.interactor(pane_two)
     assert new is not old
     assert restored[-1] == (pane_two, new)
+    assert renderer_refs[-1] is new
     assert manager.pane(pane_two).scene_2d["objects"] == ["kept"]
