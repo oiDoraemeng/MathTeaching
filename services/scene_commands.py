@@ -238,6 +238,20 @@ class SceneCommandService:
             host = bind_pane(pane_id)
         elif pane_id is not None:
             raise CommandError("当前场景宿主不支持 pane_id 路由。")
+        # A user tool must never switch a focused pane's mode implicitly.  If
+        # the destination pane is in another mode, return a structured
+        # unsupported result before opening a transaction or mutating state.
+        current_mode = getattr(host, "scene_mode", None)
+        if current_mode is None:
+            current_mode = getattr(host, "mode", None)
+        if current_mode is not None:
+            current_mode = getattr(current_mode, "value", current_mode)
+            if str(current_mode).lower() != str(plan.scene).lower():
+                return CommandValidation(
+                    False,
+                    (f"unsupported_mode: pane 当前为 {current_mode}，命令需要 {plan.scene}",),
+                    (),
+                )
         check_fingerprint = getattr(host, "check_scene_fingerprint", None)
         if expected_scene_fingerprint is not None and callable(check_fingerprint) and not check_fingerprint(expected_scene_fingerprint):
             raise CommandError("scene_changed_since_plan")

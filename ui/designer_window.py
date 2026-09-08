@@ -435,9 +435,11 @@ class MainWindow:
         manager = getattr(self, "pane_manager", None)
         if manager is None:
             raise CommandError("场景窗格管理器尚未初始化。")
-        target = pane_id if pane_id is not None else (
-            getattr(self, "_scene_target_pane_id", None) or manager.active_pane_id
-        )
+        if pane_id is not None:
+            target = pane_id
+        else:
+            pinned = getattr(self, "_scene_target_pane_id", None)
+            target = pinned or getattr(manager.active_pane(), "pane_id", manager.active_pane_id)
         if not isinstance(target, str) or not target.strip():
             raise CommandError("缺少有效的场景 pane_id。")
         try:

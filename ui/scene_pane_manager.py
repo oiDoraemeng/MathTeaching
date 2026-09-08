@@ -46,6 +46,10 @@ class ScenePaneManager(QObject):
     def active_pane_id(self) -> str:
         return self._active_pane_id
 
+    def active_pane(self) -> ScenePaneState:
+        """Return the state receiving user tool operations."""
+        return self._panes[self._active_pane_id]
+
     @property
     def panes(self) -> dict[str, ScenePaneState]:
         """The live pane-state mapping (keyed by stable pane ID)."""
