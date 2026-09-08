@@ -57,6 +57,16 @@ def test_focus_limits_and_delete_repair() -> None:
         manager.focus_pane(manager.create_pane())
 
 
+def test_replacement_reuses_lowest_available_display_number() -> None:
+    manager = ScenePaneManager()
+    pane_ids = manager.set_layout(4)
+    manager.delete_pane(pane_ids[1])
+
+    replacement = manager.create_pane()
+    assert replacement == "pane-5"
+    assert manager.pane(replacement).name == "窗格 2"
+
+
 def test_cannot_delete_last_pane_and_layout_range_is_checked() -> None:
     manager = ScenePaneManager()
     with pytest.raises(RuntimeError, match="last"):
@@ -81,4 +91,60 @@ def test_global_history_undoes_and_redoes_across_panes() -> None:
     assert events == ["undo-second", "undo-first", "redo-first", "redo-second"]
     assert manager.undo() is True
     manager.push(first, lambda: None, lambda: None)
+    assert manager.redo() is False
+
+
+def test_history_callback_failure_keeps_source_stack_and_order() -> None:
+    manager = ScenePaneManager()
+    pane_id = manager.active_pane_id
+    failures = [True]
+    events: list[str] = []
+
+    def undo_top() -> None:
+        if failures[0]:
+            raise RuntimeError("undo failed")
+        events.append("undo-top")
+
+    manager.push(pane_id, lambda: events.append("undo-bottom"), lambda: events.append("redo-bottom"))
+    manager.push(pane_id, undo_top, lambda: events.append("redo-top"))
+    with pytest.raises(RuntimeError, match="undo failed"):
+        manager.undo()
+    failures[0] = False
+    assert manager.undo() is True
+    assert manager.undo() is True
+    assert events == ["undo-top", "undo-bottom"]
+
+    redo_failures = [True]
+
+    def redo_bottom() -> None:
+        if redo_failures[0]:
+            raise RuntimeError("redo failed")
+        events.append("redo-bottom")
+
+    # Redo uses the oldest just-undone entry first.  Replace that behavior in
+    # a standalone pair so a failed callback proves it remains retryable.
+    manager = ScenePaneManager()
+    pane_id = manager.active_pane_id
+    manager.push(pane_id, lambda: None, redo_bottom)
+    assert manager.undo() is True
+    with pytest.raises(RuntimeError, match="redo failed"):
+        manager.redo()
+    redo_failures[0] = False
+    assert manager.redo() is True
+    assert events[-1] == "redo-bottom"
+
+
+def test_deleting_pane_purges_its_undo_and_redo_history() -> None:
+    manager = ScenePaneManager()
+    first, second = manager.set_layout(2)
+    events: list[str] = []
+    manager.push(first, lambda: events.append("undo-first"), lambda: events.append("redo-first"))
+    manager.push(second, lambda: events.append("undo-second"), lambda: events.append("redo-second"))
+    assert manager.undo() is True  # second pane's entry moves to redo
+
+    manager.delete_pane(second)
+    assert manager.undo() is True
+    assert events == ["undo-second", "undo-first"]
+    assert manager.redo() is True
+    assert events[-1] == "redo-first"
     assert manager.redo() is False

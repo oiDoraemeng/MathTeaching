@@ -36,7 +36,8 @@ class ScenePaneManager(QObject):
         self._panes: dict[str, ScenePaneState] = {}
         self._pane_order: list[str] = []
         self._layout_count = 1
-        self._next_pane_number = 1
+        self._next_pane_id_number = 1
+        self._display_numbers: dict[str, int] = {}
         self._undo_stack: list[HistoryEntry] = []
         self._redo_stack: list[HistoryEntry] = []
         self._active_pane_id = self.create_pane()
@@ -91,11 +92,15 @@ class ScenePaneManager(QObject):
         """Create a retained, initially hidden-or-visible blank pane state."""
         if len(self._pane_order) >= self.MAX_PANES:
             raise RuntimeError("cannot create more than four panes")
-        number = self._next_pane_number
-        self._next_pane_number += 1
-        pane_id = f"pane-{number}"
-        self._panes[pane_id] = ScenePaneState(pane_id, f"窗格 {number}")
+        pane_id = f"pane-{self._next_pane_id_number}"
+        self._next_pane_id_number += 1
+        display_number = next(
+            number for number in range(1, self.MAX_PANES + 1)
+            if number not in self._display_numbers.values()
+        )
+        self._panes[pane_id] = ScenePaneState(pane_id, f"窗格 {display_number}")
         self._pane_order.append(pane_id)
+        self._display_numbers[pane_id] = display_number
         return pane_id
 
     def delete_pane(self, pane_id: str) -> None:
@@ -107,6 +112,11 @@ class ScenePaneManager(QObject):
         was_active = pane_id == self._active_pane_id
         self._pane_order.remove(pane_id)
         del self._panes[pane_id]
+        del self._display_numbers[pane_id]
+        # A deleted pane's callbacks may close over state that no longer
+        # exists.  They cannot safely be replayed by global history.
+        self._undo_stack = [entry for entry in self._undo_stack if entry.pane_id != pane_id]
+        self._redo_stack = [entry for entry in self._redo_stack if entry.pane_id != pane_id]
         self._layout_count = min(self._layout_count, len(self._pane_order))
         visible = self.visible_pane_ids()
         if was_active or self._active_pane_id not in visible:
@@ -164,16 +174,18 @@ class ScenePaneManager(QObject):
     def undo(self) -> bool:
         if not self._undo_stack:
             return False
-        entry = self._undo_stack.pop()
+        entry = self._undo_stack[-1]
         entry.undo()
+        self._undo_stack.pop()
         self._redo_stack.append(entry)
         return True
 
     def redo(self) -> bool:
         if not self._redo_stack:
             return False
-        entry = self._redo_stack.pop()
+        entry = self._redo_stack[-1]
         entry.redo()
+        self._redo_stack.pop()
         self._undo_stack.append(entry)
         return True
 
