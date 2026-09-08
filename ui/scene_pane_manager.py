@@ -88,6 +88,10 @@ class ScenePaneManager(QObject):
         self._set_active_pane(pane_id)
         return pane_id
 
+    def activate_for_tool(self, pane_id: str | None = None) -> str:
+        """Activate the pane receiving a tool command (or keep current)."""
+        return self.focus_pane(pane_id or self._active_pane_id)
+
     def create_pane(self) -> str:
         """Create a retained, initially hidden-or-visible blank pane state."""
         if len(self._pane_order) >= self.MAX_PANES:

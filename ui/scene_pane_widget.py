@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Callable, Any
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QEvent, QTimer
 from PySide6.QtWidgets import QWidget
 
 from ui.scene_pane_manager import ScenePaneManager
@@ -27,6 +27,7 @@ class ScenePaneWidget(QWidget):
         self._on_interactor_created = on_interactor_created
         self._interactors: dict[str, Any] = {}
         self._layout = None
+        self._retry_pending: set[str] = set()
         manager.active_pane_changed.connect(self._on_active_changed)
         self.sync_layout()
 
@@ -59,6 +60,7 @@ class ScenePaneWidget(QWidget):
             if pane_id not in self._interactors:
                 widget = self._factory(self)
                 widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+                widget.installEventFilter(self)
                 self._interactors[pane_id] = widget
                 created = True
             state = self.manager.pane(pane_id)
@@ -67,7 +69,61 @@ class ScenePaneWidget(QWidget):
                 # Invoke after assigning refs so callbacks can rebuild safely.
                 self._on_interactor_created(pane_id, self._interactors[pane_id])
         self._arrange()
+        self.refresh_visible_panes()
         return visible
+
+    @staticmethod
+    def _renderer_valid(renderer: Any) -> bool:
+        if renderer is None:
+            return False
+        try:
+            checker = getattr(renderer, "isValid", None)
+            if callable(checker):
+                return bool(checker())
+            checker = getattr(renderer, "is_valid", None)
+            if callable(checker):
+                return bool(checker())
+        except Exception:
+            return False
+        return True
+
+    def refresh_visible_panes(self, _retry: bool = True) -> None:
+        """Refresh visible controls and recreate invalid renderer widgets."""
+        invalid = []
+        for pane_id in self.manager.visible_pane_ids():
+            widget = self._interactors.get(pane_id)
+            if widget is None or not self._renderer_valid(widget):
+                invalid.append(pane_id)
+        for pane_id in invalid:
+            old = self._interactors.pop(pane_id, None)
+            if old is not None:
+                old.hide(); old.setParent(None); old.deleteLater()
+            widget = self._factory(self)
+            widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            widget.installEventFilter(self)
+            self._interactors[pane_id] = widget
+            state = self.manager.pane(pane_id)
+            state.renderer_2d = state.renderer_3d = widget
+            if self._on_interactor_created:
+                self._on_interactor_created(pane_id, widget)
+        self._arrange()
+        if invalid and _retry:
+            QTimer.singleShot(50, lambda: self.refresh_visible_panes(False))
+
+    def eventFilter(self, watched: object, event: QEvent) -> bool:
+        if event.type() in (QEvent.Type.MouseButtonPress, QEvent.Type.FocusIn):
+            for pane_id, widget in self._interactors.items():
+                if watched is widget:
+                    self.manager.focus_pane(pane_id)
+                    self._update_highlight()
+                    break
+        return super().eventFilter(watched, event)
+
+    def _update_highlight(self) -> None:
+        active = self.manager.active_pane_id
+        for pane_id, widget in self._interactors.items():
+            widget.setProperty("activePane", pane_id == active)
+            widget.style().unpolish(widget); widget.style().polish(widget)
 
     def delete_pane(self, pane_id: str) -> tuple[str, ...]:
         self.manager.delete_pane(pane_id)
@@ -81,10 +137,16 @@ class ScenePaneWidget(QWidget):
         widget = self._interactors.get(pane_id)
         if widget is not None:
             widget.show()
+        self._update_highlight()
 
     def resizeEvent(self, event: Any) -> None:
         super().resizeEvent(event)
         self._arrange()
+        self.refresh_visible_panes()
+
+    def showEvent(self, event: Any) -> None:
+        super().showEvent(event)
+        self.refresh_visible_panes()
 
     def _arrange(self) -> None:
         rects = self.manager.layout_rects(self.size())

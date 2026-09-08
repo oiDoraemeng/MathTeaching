@@ -243,6 +243,13 @@ class _GeometryInputFilter(QObject):
         self.owner = owner
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        # Route every viewport interaction to the pane that received it first.
+        container = getattr(self.owner, "scene_pane_widget", None)
+        if container is not None and event.type() in (QEvent.Type.MouseButtonPress, QEvent.Type.FocusIn):
+            for pane_id, widget in container.interactors.items():
+                if watched is widget:
+                    self.owner.pane_manager.focus_pane(pane_id)
+                    break
         if event.type() == QEvent.Type.Wheel and isinstance(event, QWheelEvent):
             return self.owner._handle_viewport_wheel(event)
         if event.type() == QEvent.Type.MouseButtonPress and isinstance(event, QMouseEvent):
@@ -2014,6 +2021,14 @@ class MainWindow:
 
     def _on_pane_interactor_created(self, pane_id: str, renderer: object) -> None:
         """Rebind runtime controllers and redraw retained state after recreation."""
+        interactor = getattr(renderer, "interactor", None)
+        if interactor is not None:
+            try:
+                interactor.setMouseTracking(True)
+                # Every recreated pane receives the same input routing filter.
+                interactor.installEventFilter(_GeometryInputFilter(self, interactor))
+            except (AttributeError, RuntimeError):
+                pass
         if not getattr(self, "_pane_widgets_ready", False):
             self._pending_pane_redraws = set(getattr(self, "_pending_pane_redraws", ())) | {pane_id}
             return
