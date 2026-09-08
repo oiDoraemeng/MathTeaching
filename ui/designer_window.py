@@ -371,6 +371,7 @@ class MainWindow:
         self.pane_manager = ScenePaneManager()
         self._scene_target_pane_id: str | None = None
         self._transaction_pane_id: str | None = None
+        self._transaction_scene: _PaneSceneRuntime | None = None
         self._pane_scene().scene_mode = SceneMode.THREE_D
         self._pane_scene().layers = [create_builtin_layer(DEFAULT_BUILTIN_ID)]
         self._lighting_dialog: LightingDialog | None = None
@@ -1318,8 +1319,12 @@ class MainWindow:
             raise CommandError("已有场景命令事务正在执行。")
         with self._using_pane(pane_id):
             self._pane_renderer()
-            self._pane_scene()._scene_command_snapshot = self._capture_scene_command_state()
-            self._pane_scene()._scene_command_active = True
+            scene = self._pane_scene()
+            scene._scene_command_snapshot = self._capture_scene_command_state()
+            scene._scene_command_active = True
+            # Keep bookkeeping reachable if the manager deletes this pane
+            # before the transaction can finish or roll back.
+            self._transaction_scene = scene
             self._transaction_pane_id = self._pane().pane_id
 
     def check_scene_fingerprint(self, expected: str, pane_id: str | None = None) -> bool:
@@ -1341,21 +1346,27 @@ class MainWindow:
             scene._scene_command_snapshot = None
             scene._scene_command_active = False
             self._transaction_pane_id = None
+            self._transaction_scene = None
             self._update_geometry_history_controls()
 
     def rollback_scene_command_transaction(self, pane_id: str | None = None) -> None:
-        with self._using_pane(self._command_pane_id(pane_id)):
-            scene = self._pane_scene()
-            snapshot = scene._scene_command_snapshot
-            try:
+        scene = getattr(self, "_transaction_scene", None)
+        try:
+            with self._using_pane(self._command_pane_id(pane_id)):
+                scene = self._pane_scene()
+                snapshot = scene._scene_command_snapshot
                 if snapshot is not None:
                     self._restore_scene_command_state(snapshot)
                 self._sync_pane_state()
-            finally:
+        finally:
+            # Resolution itself can fail after pane deletion. Cleanup must
+            # therefore surround resolution as well as scene restoration.
+            if scene is not None:
                 scene._scene_command_snapshot = None
                 scene._scene_command_active = False
-                self._transaction_pane_id = None
-                self._update_geometry_history_controls()
+            self._transaction_pane_id = None
+            self._transaction_scene = None
+            self._update_geometry_history_controls()
 
     def _capture_scene_command_state(self) -> _SceneCommandState:
         return _SceneCommandState(

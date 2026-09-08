@@ -267,3 +267,46 @@ def test_3d_mode_and_camera_commands_leave_other_pane_unchanged() -> None:
     window._pane_renderer(second).reset_camera.assert_called_once()
     assert window._pane_renderer(first).mock_calls == []
     assert window.pane_manager.active_pane_id == first
+
+
+def test_deleted_transaction_pane_does_not_block_surviving_pane_commands() -> None:
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    deleted_scene = window._pane_scene(first)
+    operation = {"op": "point.upsert", "alias": "A", "coordinates": [1, 2]}
+    window.begin_scene_command_transaction(first)
+    window.apply_scene_command(operation, first)
+    window.pane_manager.delete_pane(first)
+
+    with pytest.raises(CommandError, match="窗格不存在"):
+        window.apply_scene_command(operation, first)
+    with pytest.raises(CommandError, match="窗格不存在"):
+        window.rollback_scene_command_transaction(first)
+
+    assert window._transaction_pane_id is None
+    assert window._transaction_scene is None
+    assert deleted_scene._scene_command_snapshot is None
+    assert deleted_scene._scene_command_active is False
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    service.execute(_drawing_plan(), pane_id=second)
+    assert len(window._pane_scene(second).geometry_points) == 2
+
+
+def test_service_cleans_up_when_pane_is_deleted_during_execution() -> None:
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    original_apply = window.apply_scene_command
+
+    def delete_after_first_operation(operation, pane_id=None):
+        original_apply(operation, pane_id)
+        if first in window.pane_manager.panes:
+            window.pane_manager.delete_pane(first)
+
+    window.apply_scene_command = delete_after_first_operation
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    with pytest.raises(CommandError, match="窗格不存在"):
+        service.execute(_drawing_plan(), pane_id=first)
+
+    window.apply_scene_command = original_apply
+    service.execute(_drawing_plan(), pane_id=second)
+    assert len(window._pane_scene(second).geometry_points) == 2
