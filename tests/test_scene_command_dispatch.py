@@ -310,3 +310,27 @@ def test_service_cleans_up_when_pane_is_deleted_during_execution() -> None:
     window.apply_scene_command = original_apply
     service.execute(_drawing_plan(), pane_id=second)
     assert len(window._pane_scene(second).geometry_points) == 2
+
+
+def test_wrong_rollback_pane_preserves_original_transaction_for_valid_rollback() -> None:
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    scene = window._pane_scene(first)
+    window.begin_scene_command_transaction(first)
+    snapshot = scene._scene_command_snapshot
+    window.apply_scene_command({"op": "point.upsert", "alias": "A", "coordinates": [1, 2]}, first)
+
+    with pytest.raises(CommandError, match="事务的目标窗格"):
+        window.rollback_scene_command_transaction(second)
+
+    assert window._transaction_pane_id == first
+    assert window._transaction_scene is scene
+    assert scene._scene_command_snapshot is snapshot
+    assert scene._scene_command_active is True
+    assert len(scene.geometry_points) == 1
+    window.rollback_scene_command_transaction(first)
+    assert scene.geometry_points == []
+    assert scene._scene_command_snapshot is None
+    assert scene._scene_command_active is False
+    assert window._transaction_pane_id is None
+    assert window._transaction_scene is None

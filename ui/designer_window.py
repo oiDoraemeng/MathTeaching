@@ -1350,6 +1350,11 @@ class MainWindow:
             self._update_geometry_history_controls()
 
     def rollback_scene_command_transaction(self, pane_id: str | None = None) -> None:
+        transaction_pane = getattr(self, "_transaction_pane_id", None)
+        if transaction_pane is not None and pane_id is not None and pane_id != transaction_pane:
+            # A caller targeting another pane has not requested this
+            # transaction's rollback. Preserve its snapshot and lock.
+            raise CommandError("场景命令不能跨越当前事务的目标窗格。")
         scene = getattr(self, "_transaction_scene", None)
         try:
             with self._using_pane(self._command_pane_id(pane_id)):
