@@ -73,7 +73,7 @@ def test_edit_operations_are_scoped_to_selected_pane():
         {"op": "point.upsert", "alias": "Q", "coordinates": [1, 1]},
         {"op": "linear.upsert", "alias": "L", "kind": "segment", "start": "P", "end": "Q"},
         {"op": "annotation.upsert", "alias": "A", "text": "old", "position": [0, 0]},
-        {"op": "annotation.formula", "alias": "A", "text": "x²", "latex": "x^2"},
+        {"op": "annotation.formula", "alias": "A", "text": "x²", "position": [0, 0], "latex": "x^2"},
     ))
     assert SceneCommandService(host).execute(plan).valid
     assert host.calls["pane-1"] == []
