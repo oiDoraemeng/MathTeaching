@@ -96,7 +96,7 @@ QGroupBox::title {
 #viewportToolbar QToolButton:hover, #twoDGeometryToolbar QToolButton:hover, #twoDLineFlyout QToolButton:hover {
   background: $accent_soft_bg; border-color: $border_subtle; color: $accent_default;
 }
-#agentButton:checked, #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
+#agentButton:checked, #viewportToolbar QToolButton:checked, #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
   background: $accent_soft_bg; border-color: $accent_default; color: $accent_default;
 }
 #teachingCasePaneHost { background: $bg_canvas; }

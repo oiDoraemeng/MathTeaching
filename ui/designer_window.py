@@ -16,7 +16,7 @@ from typing import Literal
 from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QThread, QTimer, Signal, Slot
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent, QShortcut, QWheelEvent
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QInputDialog, QLineEdit, QMenu, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QInputDialog, QLineEdit, QToolButton, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
 
 from MathInputWidget import LatexParseError, LatexParser
@@ -978,20 +978,7 @@ class MainWindow:
         self.agent_button.setAccessibleName("AI 教学助手")
         self.agent_button.setCheckable(True)
         apply_icon(self.agent_button, "sparkles", icon_color(getattr(self, "effective_theme", "light")), icon_size=16, hit_size=36)
-        self.layout_buttons: dict[int, QToolButton] = {}
-        layout_labels = {1: "单窗格布局", 2: "双窗格布局", 3: "三窗格布局", 4: "四窗格布局"}
-        for count in range(1, 5):
-            button = QToolButton(self.viewport_toolbar)
-            button.setObjectName(f"layout{count}Button")
-            button.setCheckable(True)
-            button.setAutoExclusive(True)
-            button.setToolTip(layout_labels[count])
-            button.setAccessibleName(layout_labels[count])
-            apply_icon(button, f"layout-{count}", icon_color(getattr(self, "effective_theme", "light")), icon_size=16, hit_size=36)
-            button.clicked.connect(lambda _checked=False, value=count: self._on_layout_button_clicked(value))
-            self.layout_buttons[count] = button
-            toolbar_layout.addWidget(button)
-        self._sync_layout_buttons()
+        self._install_layout_buttons(toolbar_layout)
         toolbar_layout.addWidget(self.scene_settings_button)
         toolbar_layout.addWidget(self.scene_mode_button)
         toolbar_layout.addWidget(self.agent_button)
@@ -1019,6 +1006,22 @@ class MainWindow:
         self.two_d_geometry_toolbar.undo_requested.connect(self._undo_2d_geometry)
         self.two_d_geometry_toolbar.redo_requested.connect(self._redo_2d_geometry)
         self._configure_2d_history_shortcuts()
+        self._pane_scene()._viewport_refresh_timer = QTimer(self.window)
+        self._pane_scene()._viewport_refresh_timer.setSingleShot(True)
+        self._pane_scene()._viewport_refresh_timer.setInterval(130)
+        self._pane_scene()._viewport_refresh_timer.timeout.connect(self._refresh_visible_viewport)
+        interactor = getattr(self._pane_renderer(), "iren", None)
+        if interactor is not None:
+            try:
+                self._pane_scene()._viewport_interaction_observer = interactor.add_observer("EndInteractionEvent", self._on_viewport_interaction_finished)
+                self._pane_scene()._viewport_motion_observer = interactor.add_observer("InteractionEvent", self._on_viewport_interacting)
+            except (AttributeError, RuntimeError, TypeError):
+                self._pane_scene()._viewport_interaction_observer = None
+                self._pane_scene()._viewport_motion_observer = None
+        self._geometry_input_filter = _GeometryInputFilter(self, self._pane_renderer().interactor)
+        self._pane_renderer().interactor.installEventFilter(self._geometry_input_filter)
+        self._update_geometry_history_controls()
+        self._sync_scene_controls()
 
         self.scene_settings_panel.background_changed.connect(self._set_scene_background)
         self.scene_settings_panel.axis_color_mode_changed.connect(self._set_axis_color_mode)
@@ -1028,26 +1031,22 @@ class MainWindow:
         self.scene_settings_panel.tick_spacing_changed.connect(self._set_tick_spacing)
         self.scene_settings_panel.intersections_changed.connect(self._set_global_intersections_visible)
         self.scene_settings_panel.lighting_requested.connect(self._show_lighting_dialog)
-        self._pane_scene()._viewport_refresh_timer = QTimer(self.window)
-        self._pane_scene()._viewport_refresh_timer.setSingleShot(True)
-        self._pane_scene()._viewport_refresh_timer.setInterval(130)
-        self._pane_scene()._viewport_refresh_timer.timeout.connect(self._refresh_visible_viewport)
-        interactor = getattr(self._pane_renderer(), "iren", None)
-        if interactor is not None:
-            try:
-                self._pane_scene()._viewport_interaction_observer = interactor.add_observer(
-                    "EndInteractionEvent", self._on_viewport_interaction_finished
-                )
-                self._pane_scene()._viewport_motion_observer = interactor.add_observer(
-                    "InteractionEvent", self._on_viewport_interacting
-                )
-            except (AttributeError, RuntimeError, TypeError):
-                self._pane_scene()._viewport_interaction_observer = None
-                self._pane_scene()._viewport_motion_observer = None
-        self._geometry_input_filter = _GeometryInputFilter(self, self._pane_renderer().interactor)
-        self._pane_renderer().interactor.installEventFilter(self._geometry_input_filter)
-        self._update_geometry_history_controls()
-        self._sync_scene_controls()
+
+    def _install_layout_buttons(self, toolbar_layout: QVBoxLayout) -> None:
+        self.layout_buttons = {}
+        labels = {1: "单窗格布局", 2: "双窗格布局", 3: "三窗格布局", 4: "四窗格布局"}
+        for count, label in labels.items():
+            button = QToolButton(self.viewport_toolbar)
+            button.setObjectName(f"layout{count}Button")
+            button.setCheckable(True)
+            button.setAutoExclusive(True)
+            button.setToolTip(label)
+            button.setAccessibleName(label)
+            apply_icon(button, f"layout-{count}", icon_color(getattr(self, "effective_theme", "light")), icon_size=16, hit_size=36)
+            button.clicked.connect(lambda _checked=False, value=count: self._on_layout_button_clicked(value))
+            self.layout_buttons[count] = button
+            toolbar_layout.addWidget(button)
+        self._sync_layout_buttons()
 
     def _configure_2d_history_shortcuts(self) -> None:
         """注册主窗口级二维几何撤回快捷键，避免依赖当前控件焦点。"""

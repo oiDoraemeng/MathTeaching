@@ -22,3 +22,5 @@ visible pane count, and routes clicks through `ScenePaneManager.set_layout`.
 Theme changes re-render the icons through the existing `retint_icons` path.
 
 Verification: `pytest -q tests/test_designer_window_toolbar.py tests/test_ui_icons.py tests/test_icon_theming.py` (66 passed).
+
+Review follow-up added real MainWindow toolbar construction coverage and checked-state QSS styling.
