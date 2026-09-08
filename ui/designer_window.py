@@ -978,21 +978,22 @@ class MainWindow:
         self.agent_button.setAccessibleName("AI 教学助手")
         self.agent_button.setCheckable(True)
         apply_icon(self.agent_button, "sparkles", icon_color(getattr(self, "effective_theme", "light")), icon_size=16, hit_size=36)
-        self.case_pane_layout_button = QToolButton(self.viewport_toolbar)
-        self.case_pane_layout_button.setObjectName("casePaneLayoutButton")
-        self.case_pane_layout_button.setText("窗格 1")
-        self.case_pane_layout_button.setToolTip("选择案例二维窗格数量")
-        self.case_pane_layout_button.setAccessibleName("选择案例二维窗格数量")
-        self.case_pane_layout_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
-        case_pane_menu = QMenu(self.case_pane_layout_button)
-        for count, label in ((1, "单窗格"), (2, "双窗格"), (3, "三窗格"), (4, "四窗格")):
-            action = case_pane_menu.addAction(label)
-            action.triggered.connect(lambda _checked=False, value=count: self._set_teaching_case_pane_count(value))
-        self.case_pane_layout_button.setMenu(case_pane_menu)
-        self.case_pane_layout_button.hide()
+        self.layout_buttons: dict[int, QToolButton] = {}
+        layout_labels = {1: "单窗格布局", 2: "双窗格布局", 3: "三窗格布局", 4: "四窗格布局"}
+        for count in range(1, 5):
+            button = QToolButton(self.viewport_toolbar)
+            button.setObjectName(f"layout{count}Button")
+            button.setCheckable(True)
+            button.setAutoExclusive(True)
+            button.setToolTip(layout_labels[count])
+            button.setAccessibleName(layout_labels[count])
+            apply_icon(button, f"layout-{count}", icon_color(getattr(self, "effective_theme", "light")), icon_size=16, hit_size=36)
+            button.clicked.connect(lambda _checked=False, value=count: self._on_layout_button_clicked(value))
+            self.layout_buttons[count] = button
+            toolbar_layout.addWidget(button)
+        self._sync_layout_buttons()
         toolbar_layout.addWidget(self.scene_settings_button)
         toolbar_layout.addWidget(self.scene_mode_button)
-        toolbar_layout.addWidget(self.case_pane_layout_button)
         toolbar_layout.addWidget(self.agent_button)
         self.viewport_toolbar.adjustSize()
 
@@ -1985,8 +1986,21 @@ class MainWindow:
             self.teaching_case_pane_host.hide()
         if (self._pane_renderer(required=False) is not None):
             self._pane_renderer().interactor.show()
-        if hasattr(self, "case_pane_layout_button"):
-            self.case_pane_layout_button.hide()
+        self._sync_layout_buttons()
+
+    def _sync_layout_buttons(self) -> None:
+        """Reflect the manager's visible pane count in the exclusive buttons."""
+        buttons = getattr(self, "layout_buttons", {})
+        count = len(self.pane_manager.visible_pane_ids()) if hasattr(self, "pane_manager") else 1
+        for value, button in buttons.items():
+            button.blockSignals(True)
+            button.setChecked(value == count)
+            button.blockSignals(False)
+
+    def _on_layout_button_clicked(self, count: int) -> None:
+        """Route layout selection through ScenePaneManager only."""
+        self.pane_manager.set_layout(count)
+        self._sync_layout_buttons()
 
     def _set_teaching_case_pane_count(self, count: int) -> bool:
         grid = getattr(self, "_teaching_case_pane_grid", None)
@@ -1995,7 +2009,7 @@ class MainWindow:
         if not grid.set_pane_count(count):
             self.algebra_panel.set_status("案例窗格数量无效", is_error=True)
             return False
-        self.case_pane_layout_button.setText(f"窗格 {count}")
+        self._sync_layout_buttons()
         self._on_teaching_case_focus(grid.selected_case_id, "")
         return True
 
@@ -2018,7 +2032,7 @@ class MainWindow:
         self.teaching_case_pane_host.show()
         default_count = int(getattr(layout, "default_pane_count", len(cases)))
         self._set_teaching_case_pane_count(default_count)
-        self.case_pane_layout_button.show()
+        self._sync_layout_buttons()
 
     def _apply_linear_algebra_storyboard_visibility(self) -> None:
         compiled = getattr(self, "_active_linear_algebra_compiled", None)
