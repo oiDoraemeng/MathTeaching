@@ -79,6 +79,11 @@ class ScenePaneManager(QObject):
     def visible_pane_ids(self) -> tuple[str, ...]:
         return tuple(self._pane_order[: self._layout_count])
 
+    def layout_count_for_pane(self, pane_id: str) -> int:
+        """Return the smallest layout that includes this pane in scene order."""
+        self.pane(pane_id)
+        return self._pane_order.index(pane_id) + 1
+
     def focus_pane(self, pane_id: str) -> str:
         """Make a visible pane active and notify listeners when it changes."""
         if pane_id not in self._panes:

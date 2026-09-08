@@ -6,7 +6,7 @@ from pathlib import Path
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtWidgets import QApplication, QFrame, QLabel
+from PySide6.QtWidgets import QApplication, QFrame, QLabel, QWidget
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from MathInputWidget import FormulaListWidget, FormulaPreviewWidget
@@ -16,6 +16,7 @@ from models.geometry_2d import Linear2D, Point2D
 from models.surface_layer import SurfaceLayer
 from ui.algebra_panel import AlgebraPanel
 from ui.scene_pane_manager import ScenePaneManager
+from ui.scene_pane_widget import ScenePaneWidget
 from ui.tokens import build_qss
 
 
@@ -146,6 +147,35 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertEqual(requested, [2])
         self.assertIn("pane-2", manager.visible_pane_ids())
         self.assertEqual(manager.active_pane_id, "pane-2")
+
+    def test_hidden_tab_reveal_uses_scene_order_after_out_of_order_visits(self) -> None:
+        from ui.designer_window import MainWindow
+
+        panel = AlgebraPanel()
+        manager = ScenePaneManager()
+        container = ScenePaneWidget(manager, interactor_factory=QWidget)
+        window = MainWindow.__new__(MainWindow)
+        window.scene_pane_widget = container
+        first, second, third = container.set_layout(3)
+        panel.set_pane_manager(manager)
+        requested: list[tuple[str, int]] = []
+        panel.pane_visibility_requested.connect(lambda pane_id, count: requested.append((pane_id, count)))
+        panel.pane_visibility_requested.connect(window._reveal_algebra_pane)
+        panel.set_pane_id(third)
+        panel.set_pane_id(second)
+        self.assertEqual(list(panel._pane_models), [first, third, second])
+        container.set_layout(1)
+        panel.set_pane_id(first)
+        self.assertIsNone(container.interactor(third))
+
+        panel.formula_tabs.setCurrentIndex(1)
+
+        self.assertEqual(requested, [(third, 3)])
+        self.assertEqual(manager.visible_pane_ids(), (first, second, third))
+        self.assertIsNotNone(container.interactor(third))
+        self.assertEqual(manager.active_pane_id, third)
+        self.assertEqual(panel._pane_id, third)
+        container.close()
 
     def test_formula_list_visibility_is_scoped_to_the_selected_layer(self) -> None:
         first = SurfaceLayer("sphere", "implicit", "x^2+y^2+z^2=1")

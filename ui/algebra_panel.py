@@ -777,7 +777,8 @@ class AlgebraPanel(QFrame):
                     visible_getter = getattr(self._pane_manager, "visible_pane_ids", None)
                     visible = tuple(visible_getter()) if callable(visible_getter) else (pane_id,)
                     if pane_id not in visible and hasattr(self._pane_manager, "set_layout"):
-                        self.pane_visibility_requested.emit(pane_id, index + 1)
+                        count = self._pane_manager.layout_count_for_pane(pane_id)
+                        self.pane_visibility_requested.emit(pane_id, count)
                     self._pane_manager.focus_pane(pane_id)
                 except (AttributeError, KeyError, ValueError):
                     pass
