@@ -8,7 +8,6 @@ the agent protocol without importing Qt or PyVista.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-import copy
 import json
 from typing import Any, ClassVar, Mapping
 
@@ -18,7 +17,18 @@ SNAPSHOT_VERSION = 1
 
 def _json_copy(value: Any, field_name: str) -> Any:
     """Validate and detach a value that is intended for a JSON snapshot."""
+    def validate_keys(item: Any) -> None:
+        if isinstance(item, dict):
+            if any(not isinstance(key, str) for key in item):
+                raise ValueError(f"{field_name} object keys must be strings")
+            for child in item.values():
+                validate_keys(child)
+        elif isinstance(item, (list, tuple)):
+            for child in item:
+                validate_keys(child)
+
     try:
+        validate_keys(value)
         encoded = json.dumps(value, ensure_ascii=False, allow_nan=False)
         return json.loads(encoded)
     except (TypeError, ValueError) as error:
@@ -49,7 +59,7 @@ class ScenePaneState:
             raise ValueError("pane_id must be a non-empty string")
         if not isinstance(self.name, str):
             raise ValueError("name must be a string")
-        if self.scene_mode not in {"2d", "3d"}:
+        if not isinstance(self.scene_mode, str) or self.scene_mode not in {"2d", "3d"}:
             # StrEnum values compare equal to their string values, so this also
             # accepts models.scene_mode.SceneMode without importing it here.
             raise ValueError("scene_mode must be 2d or 3d")
@@ -83,10 +93,11 @@ class ScenePaneState:
         """Construct a pane from a validated JSON-compatible mapping."""
         if not isinstance(snapshot, Mapping):
             raise ValueError("scene pane snapshot must be an object")
-        try:
-            version = int(snapshot.get("version", cls.SNAPSHOT_VERSION))
-        except (TypeError, ValueError) as error:
-            raise ValueError("scene pane snapshot version must be an integer") from error
+        if "version" not in snapshot:
+            raise ValueError("scene pane snapshot missing fields: version")
+        version = snapshot["version"]
+        if type(version) is not int:
+            raise ValueError("scene pane snapshot version must be an integer")
         if version != cls.SNAPSHOT_VERSION:
             raise ValueError(f"unsupported scene pane snapshot version: {version}")
         # Validate the complete input before extracting fields, including any
@@ -107,4 +118,3 @@ class ScenePaneState:
             selected_object_ids=payload["selected_object_ids"],
             algebra_model=payload["algebra_model"],
         )
-

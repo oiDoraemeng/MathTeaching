@@ -56,3 +56,23 @@ def test_snapshot_rejects_invalid_ids_modes_and_non_json_values() -> None:
     with pytest.raises(ValueError):
         ScenePaneState.from_snapshot({"version": 1, "pane_id": "pane"})
 
+
+def test_snapshot_rejects_malformed_version_mode_and_object_keys() -> None:
+    base = ScenePaneState("pane", "窗格").to_snapshot()
+    for invalid_version in (True, 1.0, "1"):
+        malformed = {**base, "version": invalid_version}
+        with pytest.raises(ValueError, match="version"):
+            ScenePaneState.from_snapshot(malformed)
+
+    missing_version = {key: value for key, value in base.items() if key != "version"}
+    with pytest.raises(ValueError, match="version"):
+        ScenePaneState.from_snapshot(missing_version)
+
+    for invalid_mode in ([], {"mode": "2d"}, 2):
+        malformed = {**base, "scene_mode": invalid_mode}
+        with pytest.raises(ValueError, match="scene_mode"):
+            ScenePaneState.from_snapshot(malformed)
+
+    malformed = {**base, "scene_2d": {1: "not a JSON object key"}}
+    with pytest.raises(ValueError, match="JSON-safe"):
+        ScenePaneState.from_snapshot(malformed)
