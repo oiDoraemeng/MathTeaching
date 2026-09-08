@@ -161,6 +161,11 @@ class _SceneCommandHostProxy:
     def activate_for_tool(self) -> None:
         self._invoke("activate_scene_pane_for_tool", self._pane_id)
 
+    @property
+    def scene_mode(self):
+        """Expose the pinned pane mode for command validation."""
+        return self._invoke("_pane_scene_mode", self._pane_id)
+
     def _invoke_scene(self, method: str, *args: object) -> object:
         if self._pane_id is not None:
             return self._invoke(method, *args, self._pane_id)
@@ -452,6 +457,10 @@ class MainWindow:
 
     def activate_scene_pane_for_tool(self, pane_id: str | None = None) -> str:
         return self.pane_manager.activate_for_tool(self.resolve_scene_pane_id(pane_id))
+
+    def _pane_scene_mode(self, pane_id: str | None = None) -> SceneMode:
+        """Return a pane's mode without creating a renderer or mutating it."""
+        return self._pane(pane_id).scene_mode
 
     def _command_pane_id(self, pane_id: str | None = None) -> str:
         transaction_pane = getattr(self, "_transaction_pane_id", None)

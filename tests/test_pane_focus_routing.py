@@ -50,3 +50,32 @@ def test_2d_command_on_3d_pane_returns_unsupported_without_mutation():
     assert not result.valid
     assert "unsupported_mode" in result.messages[0]
     assert host.calls["pane-1"] == [] and host.calls["pane-2"] == []
+
+
+def test_real_host_proxy_style_mode_guard_runs_before_transaction():
+    host = PaneHost({"pane-1": "3d"})
+    host.active = "pane-1"
+    # This mirrors _SceneCommandHostProxy: scene_mode is read from the pinned
+    # pane before begin/apply/commit are invoked.
+    result = SceneCommandService(host).execute(
+        CommandPlan(scene="2d", operations=({"op": "annotation.upsert", "alias": "a", "text": "x", "position": [0, 0]},))
+    )
+    assert result.valid is False
+    assert result.messages[0].startswith("unsupported_mode:")
+    assert host.calls["pane-1"] == []
+
+
+def test_edit_operations_are_scoped_to_selected_pane():
+    host = PaneHost({"pane-1": "2d", "pane-2": "2d"})
+    host.active = "pane-2"
+    plan = CommandPlan(operations=(
+        {"op": "point.upsert", "alias": "P", "coordinates": [0, 0]},
+        {"op": "point.upsert", "alias": "Q", "coordinates": [1, 1]},
+        {"op": "linear.upsert", "alias": "L", "kind": "segment", "start": "P", "end": "Q"},
+        {"op": "annotation.upsert", "alias": "A", "text": "old", "position": [0, 0]},
+        {"op": "annotation.formula", "alias": "A", "text": "x²", "latex": "x^2"},
+    ))
+    assert SceneCommandService(host).execute(plan).valid
+    assert host.calls["pane-1"] == []
+    edits = [x for x in host.calls["pane-2"] if isinstance(x, dict)]
+    assert [x["op"] for x in edits if "op" in x] == ["scene.set_mode", "point.upsert", "point.upsert", "linear.upsert", "annotation.upsert", "annotation.formula"]
