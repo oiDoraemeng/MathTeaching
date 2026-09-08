@@ -78,6 +78,7 @@ from services.agent_provider import (
     SceneContext,
 )
 from services.scene_commands import CommandError, CommandPlan, RuleBasedAgentProvider, SceneCommandService
+from services.scene_clipboard import SceneClipboard
 from agent.runtime import AgentRuntime
 from agent.scene_snapshot import SceneSnapshot
 from agent.session_store import SessionStore
@@ -375,6 +376,27 @@ class _PaneSceneRuntime:
 
 
 class MainWindow:
+    def copy_selected_scene_objects(self, pane_id: str | None = None) -> str:
+        """Serialize selected 2-D objects to the process clipboard."""
+        pane = self._pane(pane_id)
+        runtime = self._pane_scene(pane.pane_id)
+        ids = set(getattr(pane, "selected_object_ids", []))
+        objects = [o for o in (*runtime.geometry_points, *runtime.linear_objects, *runtime.annotations, *runtime.curve_layers) if o.id in ids]
+        if not hasattr(self, "scene_clipboard"): self.scene_clipboard = SceneClipboard()
+        return self.scene_clipboard.copy(objects, pane_id=pane.pane_id)
+
+    def paste_scene_objects(self, pane_id: str | None = None):
+        if not getattr(self, "scene_clipboard", None) or not self.scene_clipboard.payload: return []
+        pane = self._pane(pane_id); runtime = self._pane_scene(pane.pane_id)
+        before = self._capture_geometry_state()
+        from services.scene_clipboard import paste_objects
+        pasted = paste_objects(self.scene_clipboard.payload, point_cls=Point2D, linear_cls=Linear2D, annotation_cls=Annotation2D, curve_cls=CurveLayer,
+                               offset=(self.scene_clipboard._repeat + 1, self.scene_clipboard._repeat + 1) if pane.pane_id == self.scene_clipboard.source_pane else (0, 0))
+        self.scene_clipboard._repeat += pane.pane_id == self.scene_clipboard.source_pane
+        runtime.geometry_points.extend(o for o in pasted if isinstance(o, Point2D)); runtime.linear_objects.extend(o for o in pasted if isinstance(o, Linear2D)); runtime.annotations.extend(o for o in pasted if isinstance(o, Annotation2D))
+        runtime.curve_layers.extend(o for o in pasted if isinstance(o, CurveLayer))
+        self._record_geometry_change(before)
+        return pasted
     """加载 Designer 窗口骨架，并协调两个相互独立的绘图工作区。"""
 
     def __init__(

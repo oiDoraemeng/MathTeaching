@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QWidget
 from shiboken6 import isValid
 
 from ui.scene_pane_manager import ScenePaneManager
+from services.scene_clipboard import SceneClipboard, rectangle_select
 
 
 class ScenePaneWidget(QWidget):
@@ -31,8 +32,18 @@ class ScenePaneWidget(QWidget):
         self._retry_timers: dict[str, QTimer] = {}
         self._refresh_callbacks: dict[str, Callable[[str], None]] = {}
         self._refreshing = False
+        self.clipboard = SceneClipboard()
         manager.active_pane_changed.connect(self._on_active_changed)
         self.sync_layout()
+
+    def select_rectangle(self, rect, pane_id=None):
+        """Return and retain 2-D objects whose anchor lies within rect."""
+        pane = self.manager.pane(pane_id or self.manager.active_pane_id)
+        runtime = getattr(pane, "runtime", None)
+        objects = [] if runtime is None else [*getattr(runtime, "geometry_points", []), *getattr(runtime, "linear_objects", []), *getattr(runtime, "annotations", [])]
+        selected = rectangle_select(objects, rect)
+        pane.selected_object_ids = [getattr(item, "id", "") for item in selected]
+        return selected
 
     @staticmethod
     def _default_factory(parent: QWidget) -> Any:
