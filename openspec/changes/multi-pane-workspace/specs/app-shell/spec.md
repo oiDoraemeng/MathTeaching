@@ -12,7 +12,7 @@
 
 ### Requirement: Algebra panel follows viewport focus
 
-代数区域 SHALL 按可用窗格显示可编辑 Tab；当前窗格获得焦点时，代数区域 SHALL 自动激活对应 Tab，所有编辑和图层操作 SHALL 只修改该窗格。
+代数区域 SHALL 按 Pane 显示可编辑 Tab；当前 Pane 获得焦点时，代数区域 SHALL 自动激活对应 Tab，所有编辑和图层操作 SHALL 只修改该 Pane。撤销/重做 SHALL 使用所有 Pane 共享的全局历史，按操作发生的顺序执行。
 
 #### Scenario: Algebra tab follows focus
 

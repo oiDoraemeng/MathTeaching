@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `openspec-executing-plans` to implement this plan task-by-task and sync completed work back to OpenSpec tasks.
 
-**Goal:** 在主工作区实现运行期间的 1–4 独立 2D/3D 窗格、焦点路由、代数 Tab、复制粘贴和教学案例隔离。
+**Goal:** 在主工作区实现运行期间任意数量、最多四个同时可见的独立 2D/3D Pane、焦点路由、代数 Tab、复制粘贴和统一教学案例显示集合。
 
-**Architecture:** 使用与 Qt 控件无关的 `ScenePaneState` 保存每个窗格状态，由 `ScenePaneManager` 统一管理布局、焦点、renderer 生命周期和全局历史。主窗口、代数面板、场景命令和 Agent 上下文全部通过 pane ID 路由；教学案例继续使用独立视图。
+**Architecture:** 使用与 Qt 控件无关的 `ScenePaneState` 保存每个 Pane 状态，由 `ScenePaneManager` 统一管理布局、焦点、renderer 生命周期、显示集合和全局历史。主窗口、代数面板、场景命令和 Agent 上下文全部通过 pane ID 路由；教学案例保留数据/会话语义但使用统一 Pane 视图。
 
 **Tech Stack:** Python 3、PySide6、PyVista/QtInteractor、现有场景控制器、JSON 快照协议、pytest。
 
@@ -20,7 +20,7 @@
 - 所有工具操作均作用于焦点窗格；Agent 请求开始时锁定目标 pane。
 - 设计修订：普通 Pane 与讲义案例 Pane 不再区分类型；窗格总数可超过 4，但最多 4 个可见。
 - 设计修订：点击讲义默认只显示一个案例并隐藏所有用户 Pane；Agent“全部显示”只显示当前讲义案例。
-- 设计修订：所有 Pane 和代数 Tab 使用统一标题/边框/悬浮关闭行为；教程 2D 使用无限画布。
+- 设计修订：所有 Pane 使用统一标题/边框/隐藏/全屏/始终可见关闭（确认后关闭）；代数 Tab 关闭仅悬浮显示并双向关闭；教程 2D 使用无限画布。
 
 ---
 
@@ -52,7 +52,7 @@
 - `set_layout(count: int) -> tuple[str, ...]`、`visible_pane_ids()`、`focus_pane(pane_id: str)`、`create_pane()`、`delete_pane(pane_id: str)`、`layout_rects(size: QSize) -> dict[str, QRect]`。
 - `active_pane_id` 变更信号供主窗口和代数面板订阅；维护跨窗格 `HistoryEntry` 栈。
 
-- [x] 写四种布局、隐藏恢复、焦点切换、不能删除最后窗格、最多四窗格和删除后布局修正测试。
+- [x] 写四种布局、隐藏恢复、焦点切换、不能删除最后窗格、任意总数与最多四个可见及删除后布局修正测试。
 - [x] 运行 manager 测试确认失败。
 - [x] 实现稳定 pane ID、非对称三窗格矩形、可见集合和 active pane 规则。
 - [x] 实现全局历史 `push/undo/redo` 接口并测试跨窗格顺序。
@@ -122,7 +122,7 @@
 
 - [x] 测试 pane 与 Tab 一一对应、焦点切换自动激活、Tab 点击反向聚焦 pane、Tab 标题可编辑。
 - [x] 将单模型改为按 pane ID 的模型映射；切换前提交未完成公式编辑。
-- [x] 隐藏 pane 保留 Tab 模型；教学案例 Tab 保持在独立容器。
+- [x] 隐藏 Pane 保留 Tab 模型；教学案例 Pane 使用同一 Tab 容器和显示集合。
 - [x] 运行测试并提交 `git commit -m "feat: 增加按窗格同步的代数标签页"`。
 
 <!-- openspec-task: 3.2 -->
@@ -190,8 +190,8 @@
 - Modify: `ui/agent_sidebar_web.py`
 - Test: `tests/test_teaching_case_panes.py`
 
-- [x] 测试已有普通 pane 时打开向量加法不会创建、替换或删除普通 pane，也不会改变普通代数 Tab。
-- [x] 将案例 Pane 注册到统一 Pane Manager，保留独立案例渲染器与 Agent 案例 Tab，并按讲义显示集合切换。
+- [x] 测试已有用户 Pane 时打开向量加法不会删除或替换用户 Pane/代数 Tab；用户 Pane 可隐藏并在离开讲义后恢复。
+- [x] 将案例 Pane 注册到统一 Pane Manager，保留案例数据与 Agent 会话语义，并按讲义显示集合切换。
 - [x] 运行案例回归测试并提交实现提交（`ba90bb3` 至 `d723e39`）。
 
 <!-- openspec-task: 4.2 -->

@@ -24,6 +24,12 @@
 - **WHEN** 用户再次增加窗格数量
 - **THEN** 之前隐藏的窗格恢复其原有内容
 
+#### Scenario: Keep more panes than can be displayed
+
+- **WHEN** 用户创建第五个或更多 Pane
+- **THEN** 系统保留这些 Pane 的内容和 Tab
+- **AND** 同一时刻仅显示用户选择的最多四个 Pane
+
 ### Requirement: Icon layout controls
 
 右上角 SHALL 提供四个可识别的 SVG 图标按钮，分别表示单、双、三、四窗格；控件 SHALL 不使用下拉菜单承载布局选择，并 SHALL 提供中文可访问名称和选中状态。
@@ -46,13 +52,19 @@
 
 ### Requirement: Pane-scoped algebra tabs
 
-代数区域 SHALL 为每个窗格提供可编辑 Tab；激活窗格后 SHALL 自动切换到对应 Tab，Tab 中的图层列表、公式编辑、显隐、删除和撤销/重做 SHALL 只作用于该窗格。
+代数区域 SHALL 为每个窗格提供可编辑 Tab；激活窗格后 SHALL 自动切换到对应 Tab，Tab 中的图层列表、公式编辑、显隐和删除 SHALL 只作用于该窗格。撤销/重做 SHALL 使用所有窗格共享的全局历史，按操作发生顺序执行。
 
 #### Scenario: Switch focus updates algebra tab
 
 - **WHEN** 用户点击第三个窗格
 - **THEN** 左侧代数区域自动激活第三个窗格的 Tab
 - **AND** Tab 显示第三个窗格的对象而不显示其他窗格对象
+
+#### Scenario: Undo follows global operation order
+
+- **WHEN** 用户先在 Pane A 操作、再在 Pane B 操作并执行撤销
+- **THEN** 系统先撤销 Pane B 的最近一次操作
+- **AND** 不因当前焦点属于哪个 Pane 而改变撤销顺序
 
 ### Requirement: Safe pane copy and paste
 
@@ -74,9 +86,25 @@
 - **THEN** 每个可见窗格显示独立的 3D 视图
 - **AND** 对一个窗格的相机操作不会改变其他窗格相机
 
+### Requirement: Agent multi-pane snapshots and request lock
+
+Agent 场景上下文和快照 SHALL 包含所有 Pane 的状态、可见集合和活动 Pane，同时保留旧单场景字段以兼容读取。Agent 请求开始时 SHALL 锁定目标 Pane；请求执行期间用户焦点变化不得改变该请求的写入目标，恢复该回合 SHALL 恢复完整多 Pane 快照。
+
+#### Scenario: Focus changes during an Agent request
+
+- **WHEN** Agent 请求开始时锁定 Pane A，随后用户把焦点切换到 Pane B
+- **THEN** 该请求后续场景操作仍只写入 Pane A
+- **AND** Pane B 不被该请求修改
+
+#### Scenario: Restore an Agent turn
+
+- **WHEN** 系统恢复一个包含多 Pane 的 Agent 回合
+- **THEN** 所有 Pane 的名称、场景、相机、可见集合和活动 Pane 均按快照恢复
+- **AND** 旧单场景字段仍可被旧消费者读取
+
 ### Requirement: Unified pane chrome and visibility sets
 
-所有用户 Pane 和讲义案例 Pane SHALL 使用统一标题栏、边框、隐藏、全屏和关闭按钮；关闭按钮仅在标题栏悬浮时显示。窗格总数可超过 4，但可见 Pane 不得超过 4。
+所有用户 Pane 和讲义案例 Pane SHALL 使用统一标题栏、边框、隐藏、全屏和关闭按钮；Pane 标题栏的关闭按钮 SHALL 始终显示，并在关闭前要求确认。代数 Tab 的关闭按钮 SHALL 仅在悬浮时显示，关闭任一方 SHALL 同时关闭其对应 Pane/Tab。窗格总数可超过 4，但可见 Pane 不得超过 4。
 
 #### Scenario: Open lecture with existing panes
 
