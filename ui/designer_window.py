@@ -1659,11 +1659,21 @@ class MainWindow:
             pane_id = str(record.get("pane_id", ""))
             if not pane_id or pane_id not in manager.panes:
                 continue
+            name = record.get("name")
+            if isinstance(name, str) and name.strip():
+                manager.panes[pane_id].name = name
             raw = record.get("snapshot")
             if not isinstance(raw, dict):
                 continue
             with self._using_pane(pane_id):
                 self._restore_scene_command_state(self._state_from_scene_snapshot(SceneSnapshot.from_dict(raw)))
+        visible_ids = [
+            str(record.get("pane_id"))
+            for record in records
+            if record.get("visible") is True and str(record.get("pane_id")) in manager.panes
+        ][: manager.MAX_PANES]
+        if visible_ids:
+            manager.set_visible_panes(visible_ids)
         active = snapshot.active_pane_id
         if active in manager.panes and active in manager.visible_pane_ids():
             manager.focus_pane(active)
