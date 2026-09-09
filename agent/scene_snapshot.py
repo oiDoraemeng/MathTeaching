@@ -46,6 +46,9 @@ class SceneSnapshot:
     annotations: tuple[dict[str, Any], ...] = ()
     camera: dict[str, Any] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
+    # Multi-pane extension. Legacy fields above remain the active-pane view.
+    panes: tuple[dict[str, Any], ...] = ()
+    active_pane_id: str | None = None
 
     def __post_init__(self) -> None:
         if self.version != SNAPSHOT_VERSION:
@@ -58,6 +61,8 @@ class SceneSnapshot:
                 raise ValueError(f"{name} must contain object records")
         if not isinstance(self.camera, dict) or not isinstance(self.metadata, dict):
             raise ValueError("camera and metadata must be objects")
+        if self.active_pane_id is not None and (not isinstance(self.active_pane_id, str) or not self.active_pane_id.strip()):
+            raise ValueError("active_pane_id must be a non-empty string or None")
         # Validate and detach mutable nested data at construction time.
         object.__setattr__(self, "curves", _tuple_records(self.curves, "curves"))
         object.__setattr__(self, "geometry", _tuple_records(self.geometry, "geometry"))
@@ -65,6 +70,7 @@ class SceneSnapshot:
         object.__setattr__(self, "annotations", _tuple_records(self.annotations, "annotations"))
         object.__setattr__(self, "camera", _json_value(self.camera))
         object.__setattr__(self, "metadata", _json_value(self.metadata))
+        object.__setattr__(self, "panes", _tuple_records(self.panes, "panes"))
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -76,6 +82,8 @@ class SceneSnapshot:
             "annotations": copy.deepcopy(list(self.annotations)),
             "camera": copy.deepcopy(self.camera),
             "metadata": copy.deepcopy(self.metadata),
+            "panes": copy.deepcopy(list(self.panes)),
+            "active_pane_id": self.active_pane_id,
         }
 
     def to_json(self) -> str:
@@ -104,6 +112,8 @@ class SceneSnapshot:
             annotations=_tuple_records(payload.get("annotations", ()), "annotations"),
             camera=dict(payload.get("camera", {})),
             metadata=dict(payload.get("metadata", {})),
+            panes=_tuple_records(payload.get("panes", ()), "panes"),
+            active_pane_id=payload.get("active_pane_id"),
         )
 
     @classmethod

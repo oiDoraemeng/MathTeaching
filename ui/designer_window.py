@@ -1546,7 +1546,29 @@ class MainWindow:
         return record
 
     def _scene_snapshot_from_current_state(self) -> SceneSnapshot:
-        return self._scene_snapshot_from_state(self._capture_scene_command_state())
+        active = self._scene_snapshot_from_state(self._capture_scene_command_state())
+        manager = getattr(self, "pane_manager", None)
+        if manager is None:
+            return active
+        pane_records = []
+        for pane_id, pane in manager.panes.items():
+            if pane_id == manager.active_pane_id:
+                pane_scene = active
+            else:
+                # Pane models are kept synchronized even while hidden.
+                scene_2d = dict(getattr(pane, "scene_2d", {}) or {})
+                scene_3d = dict(getattr(pane, "scene_3d", {}) or {})
+                mode = str(getattr(pane, "scene_mode", "2d"))
+                pane_scene = SceneSnapshot(
+                    scene_mode=mode,
+                    geometry=tuple(scene_2d.get("geometry", ())),
+                    curves=tuple(scene_2d.get("curves", ())),
+                    layers=tuple(scene_3d.get("layers", ())),
+                    metadata={"object_order": scene_2d.get("object_order", []), "areas": scene_2d.get("areas", []), "teaching_2d": scene_2d.get("teaching_2d", []), "points3d": scene_3d.get("points3d", []), "geometry_3d": scene_3d.get("geometry_3d", [])},
+                    camera=dict(getattr(pane, "camera_2d", {}) if mode == "2d" else getattr(pane, "camera_3d", {})),
+                )
+            pane_records.append({"pane_id": pane_id, "name": pane.name, "source": pane.source, "source_id": pane.source_id, "visible": pane_id in manager.visible_pane_ids(), "snapshot": pane_scene.to_dict()})
+        return replace(active, panes=tuple(pane_records), active_pane_id=manager.active_pane_id)
 
     @classmethod
     def _scene_snapshot_from_state(cls, state: _SceneCommandState) -> SceneSnapshot:
@@ -1625,7 +1647,23 @@ class MainWindow:
         )
 
     def _restore_agent_scene_snapshot(self, snapshot: SceneSnapshot) -> None:
-        self._restore_scene_command_state(self._state_from_scene_snapshot(snapshot))
+        manager = getattr(self, "pane_manager", None)
+        records = snapshot.panes
+        if manager is None or not records:
+            self._restore_scene_command_state(self._state_from_scene_snapshot(snapshot))
+            return
+        for record in records:
+            pane_id = str(record.get("pane_id", ""))
+            if not pane_id or pane_id not in manager.panes:
+                continue
+            raw = record.get("snapshot")
+            if not isinstance(raw, dict):
+                continue
+            with self._using_pane(pane_id):
+                self._restore_scene_command_state(self._state_from_scene_snapshot(SceneSnapshot.from_dict(raw)))
+        active = snapshot.active_pane_id
+        if active in manager.panes and active in manager.visible_pane_ids():
+            manager.focus_pane(active)
 
     def _restore_scene_command_state(self, state: _SceneCommandState) -> None:
         self._pane_scene().geometry_points = [replace(point) for point in state.points]

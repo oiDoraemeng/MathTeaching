@@ -35,3 +35,25 @@ def test_snapshot_emits_json_compatible_primitives() -> None:
     assert payload["version"] == 1
     assert isinstance(payload["geometry"], list)
     assert payload["geometry"][0]["coordinates"] == [1, 2, 3]
+
+
+def test_snapshot_round_trip_preserves_multi_pane_extension_and_legacy_fields() -> None:
+    snapshot = SceneSnapshot(
+        scene_mode="2d",
+        geometry=({"alias": "active"},),
+        active_pane_id="pane-2",
+        panes=(
+            {"pane_id": "pane-1", "visible": False, "snapshot": {"scene_mode": "2d"}},
+            {"pane_id": "pane-2", "visible": True, "snapshot": {"scene_mode": "3d"}},
+        ),
+    )
+    restored = SceneSnapshot.from_dict(snapshot.to_dict())
+    assert restored.active_pane_id == "pane-2"
+    assert len(restored.panes) == 2
+    # Existing consumers still receive the active-pane legacy projection.
+    assert restored.geometry == ({"alias": "active"},)
+
+
+def test_snapshot_rejects_invalid_active_pane_id() -> None:
+    with pytest.raises(ValueError, match="active_pane_id"):
+        SceneSnapshot(active_pane_id=" ")

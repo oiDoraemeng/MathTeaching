@@ -79,6 +79,8 @@ class ContextBroker:
             "geometry": list(snapshot.geometry),
             "layers": list(snapshot.layers),
             "annotations": list(snapshot.annotations),
+            "panes": list(snapshot.panes),
+            "active_pane_id": snapshot.active_pane_id,
         }
         recent = tuple(str(message) for message in messages[-self.recent_message_count:])
         older = tuple(str(message) for message in messages[:-self.recent_message_count])
