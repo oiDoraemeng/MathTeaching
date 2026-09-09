@@ -157,6 +157,8 @@ class TeachingCasePane(PaneChrome):
     def _render_case(self) -> None:
         plan = case_plan(self.compiled, self._stage_id())
         configure_2d_camera(self.plotter)
+        state = self.pane_manager.pane(self.pane_id) if self.pane_manager and self.pane_id else None
+        saved_camera = dict(state.camera_2d) if state is not None else {}
         self.plotter.set_background(SceneAppearance().background_color("light"))
         self.bounds = self._current_bounds()
         self.guides.render(self.bounds, SceneAppearance(show_grid=True), effective_theme="light")
@@ -202,6 +204,17 @@ class TeachingCasePane(PaneChrome):
         self.plotter.reset_camera()
         configure_2d_camera(self.plotter)
         self.plotter.camera.parallel_scale = max(6.5, float(self.plotter.camera.parallel_scale))
+        if saved_camera:
+            try:
+                self.plotter.camera.focal_point = tuple(saved_camera.get("focal_point", self.plotter.camera.focal_point))
+                self.plotter.camera.parallel_scale = float(saved_camera.get("parallel_scale", self.plotter.camera.parallel_scale))
+            except (TypeError, ValueError):
+                pass
+        if state is not None:
+            state.scene_2d = {"case_id": str(getattr(self.case, "id", "")), "stage_id": self._stage_id(),
+                              "operations": [dict(op) for op in plan.operations]}
+            state.algebra_model = {"case_id": str(getattr(self.case, "id", ""))}
+            state.selected_object_ids = list(getattr(state, "selected_object_ids", []))
         self._sync_viewport_bounds()
         self.plotter.render()
 
@@ -326,6 +339,12 @@ class TeachingCasePaneGrid(QFrame):
             item = self._layout.takeAt(0)
             widget = item.widget()
             if widget is not None:
+                if isinstance(widget, TeachingCasePane) and widget.pane_manager is not None and widget.pane_id is not None:
+                    widget._sync_viewport_bounds()
+                    try:
+                        widget.pane_manager.pane(widget.pane_id).runtime = None
+                    except ValueError:
+                        pass
                 widget.close()
                 widget.deleteLater()
         self.panes.clear()
