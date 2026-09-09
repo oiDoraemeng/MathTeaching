@@ -32,7 +32,7 @@
 
 ### Requirement: Icon layout controls
 
-右上角 SHALL 提供四个可识别的 SVG 图标按钮，分别表示单、双、三、四窗格；控件 SHALL 不使用下拉菜单承载布局选择，并 SHALL 提供中文可访问名称和选中状态。
+视口右侧垂直居中的工具栏 SHALL 提供四个可识别的 SVG 图标按钮，分别表示单、双、三、四窗格；控件 SHALL 不使用下拉菜单承载布局选择，并 SHALL 提供中文可访问名称和选中状态。二维几何工具栏 SHALL 位于视口左侧垂直居中。
 
 #### Scenario: Select layout icon
 
