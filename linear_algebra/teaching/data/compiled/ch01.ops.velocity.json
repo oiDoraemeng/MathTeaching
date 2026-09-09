@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:7bdb7f1c0c1804ad0f9db4ac420feaaceb8b0e90d7200552bb079275b4d486ae",
+  "artifact_digest": "sha256:ded9c9942b553749c1eb44630759f3fd305d4e30ce1a0002c6cce7ad6a49dfe8",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -98,27 +98,6 @@
         "text": "sum: 船速 → 水流"
       },
       {
-        "alias": "sem__addition_triangle",
-        "color": "#6B7280",
-        "op": "geometry.polygon",
-        "opacity": 0.14,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            10.0,
-            0.0
-          ],
-          [
-            10.0,
-            5.0
-          ]
-        ]
-      },
-      {
         "alias": "sem__stage.claim.ch01.ops.velocity.observe__title",
         "op": "annotation.upsert",
         "position": [
@@ -126,31 +105,6 @@
           2.65
         ],
         "text": "三角形法则"
-      },
-      {
-        "alias": "sem__addition_parallelogram",
-        "color": "#6B7280",
-        "op": "geometry.polygon",
-        "opacity": 0.14,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            10.0,
-            0.0
-          ],
-          [
-            10.0,
-            5.0
-          ],
-          [
-            0.0,
-            5.0
-          ]
-        ]
       },
       {
         "alias": "sem__stage.claim.ch01.ops.velocity.derive__title",
@@ -170,12 +124,12 @@
     "summary": "速度合成的几何表示",
     "version": 1
   },
-  "plan_digest": "sha256:3a0f19afd95bee5399a8a425d5b387bcfc9e7def9095c40667a2c9862e789f24",
+  "plan_digest": "sha256:dedfc2069cf8cb40c4bed85c44ab89be99799242e0fc75bcd161d70c8237ee9b",
   "read_guide": [
     "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 7,
+  "revision": 9,
   "schema_version": 1,
   "source_hash": "sha256:36b093c8ac050829f151499dd884e2c8a917f483b3fbe03bfb2688a856278b79",
   "stages": [
@@ -199,8 +153,7 @@
         "sem__actual__end",
         "sem__actual__origin",
         "sem__rel.0.claim.ch01.ops.velocity",
-        "sem__stage.claim.ch01.ops.velocity.observe__title",
-        "sem__addition_triangle"
+        "sem__stage.claim.ch01.ops.velocity.observe__title"
       ],
       "visible_refs": [
         "v1",
@@ -229,8 +182,7 @@
         "sem__actual__end",
         "sem__actual__origin",
         "sem__rel.0.claim.ch01.ops.velocity",
-        "sem__stage.claim.ch01.ops.velocity.derive__title",
-        "sem__addition_parallelogram"
+        "sem__stage.claim.ch01.ops.velocity.derive__title"
       ],
       "visible_refs": [
         "v1",

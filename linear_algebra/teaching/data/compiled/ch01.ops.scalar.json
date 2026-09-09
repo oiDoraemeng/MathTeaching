@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:d74f312e32fa8722dd98f05de06bd46be7222dcd54c5a8a093cb115fcf4cc2a3",
+  "artifact_digest": "sha256:c07b18cdf2ac2e71cc91c74351ba5a38def0acbe24c8be0718fc61b0a8a8b17c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -101,7 +101,7 @@
     "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 7,
+  "revision": 9,
   "schema_version": 1,
   "source_hash": "sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875",
   "stages": [

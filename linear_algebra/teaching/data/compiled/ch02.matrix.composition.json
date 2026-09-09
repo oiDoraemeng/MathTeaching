@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:bebdf0775c85c137430a727577d3cd5d0d3bda4f61874d4e30668806389e3800",
+  "artifact_digest": "sha256:907f169b437c519428dd2fd5daf450edbecca280eee679ee7a03770a4330dfd5",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -411,7 +411,7 @@
     "先固定输入向量，再分别沿 AB、BA 两条路径读中间结果和最终终点。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 5,
+  "revision": 7,
   "schema_version": 1,
   "source_hash": "sha256:249f825ba9ab6a2d3d042a39fa709e8e6e22611b121cfdf2759e82f232484499",
   "stages": [

@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:ceebf89aaeb3c30279ed436ce792c435fd207648638e136d7eed971655970be6",
+  "artifact_digest": "sha256:67f7cccb27f77d02094e975d49d38c32813cbc811bd1a2180a5acaf69c381ad6",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__a__origin",
+        "alias": "sem__components_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +14,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a__end",
+        "alias": "sem__components_a__end",
         "coordinates": [
-          2.0,
+          3.0,
           1.0
         ],
         "name": "a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a",
+        "alias": "sem__components_a",
         "color": "#2F6BFF",
-        "end": "sem__a__end",
+        "end": "sem__components_a__end",
         "kind": "vector",
         "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__a__origin"
+        "start": "sem__components_a__origin"
       },
       {
-        "alias": "sem__b__origin",
+        "alias": "sem__components_b__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,26 +42,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b__end",
+        "alias": "sem__components_b__end",
         "coordinates": [
           1.0,
-          3.0
+          2.0
         ],
         "name": "b",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b",
+        "alias": "sem__components_b",
         "color": "#F08A24",
-        "end": "sem__b__end",
+        "end": "sem__components_b__end",
         "kind": "vector",
         "label": "b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__b__origin"
+        "start": "sem__components_b__origin"
       },
       {
-        "alias": "sem__sum__origin",
+        "alias": "sem__components_sum__origin",
         "coordinates": [
           0.0,
           0.0
@@ -70,32 +70,191 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__sum__end",
+        "alias": "sem__components_sum__end",
         "coordinates": [
-          3.0,
-          4.0
+          4.0,
+          3.0
         ],
         "name": "a+b",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__sum",
+        "alias": "sem__components_sum",
         "color": "#7B61FF",
-        "end": "sem__sum__end",
+        "end": "sem__components_sum__end",
         "kind": "vector",
         "label": "a+b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__sum__origin"
+        "start": "sem__components_sum__origin"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.ops.addition",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "sem__geometry_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "sum: a → b"
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__geometry_a__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__geometry_a",
+        "color": "#2F6BFF",
+        "end": "sem__geometry_a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__geometry_a__origin"
+      },
+      {
+        "alias": "sem__geometry_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__geometry_b__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__geometry_b",
+        "color": "#F08A24",
+        "end": "sem__geometry_b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__geometry_b__origin"
+      },
+      {
+        "alias": "sem__geometry_sum__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__geometry_sum__end",
+        "coordinates": [
+          4.0,
+          6.0
+        ],
+        "name": "a+b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__geometry_sum",
+        "color": "#7B61FF",
+        "end": "sem__geometry_sum__end",
+        "kind": "vector",
+        "label": "a+b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__geometry_sum__origin"
+      },
+      {
+        "alias": "sem__velocity_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__velocity_1__end",
+        "coordinates": [
+          10.0,
+          0.0
+        ],
+        "name": "v1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__velocity_1",
+        "color": "#2F6BFF",
+        "end": "sem__velocity_1__end",
+        "kind": "vector",
+        "label": "v1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__velocity_1__origin"
+      },
+      {
+        "alias": "sem__velocity_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__velocity_2__end",
+        "coordinates": [
+          0.0,
+          5.0
+        ],
+        "name": "v2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__velocity_2",
+        "color": "#F08A24",
+        "end": "sem__velocity_2__end",
+        "kind": "vector",
+        "label": "v2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__velocity_2__origin"
+      },
+      {
+        "alias": "sem__velocity_sum__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__velocity_sum__end",
+        "coordinates": [
+          10.0,
+          5.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__velocity_sum",
+        "color": "#7B61FF",
+        "end": "sem__velocity_sum__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__velocity_sum__origin"
       },
       {
         "alias": "cap__polygon",
@@ -109,16 +268,16 @@
             0.0
           ],
           [
-            2.0,
+            3.0,
             1.0
           ],
           [
-            3.0,
-            4.0
+            4.0,
+            3.0
           ],
           [
             1.0,
-            3.0
+            2.0
           ]
         ]
       },
@@ -129,71 +288,81 @@
           0.0,
           2.65
         ],
-        "text": "对应分量计算"
+        "text": "案例一：分量计算"
       },
       {
-        "alias": "sem__addition_triangle",
-        "color": "#6B7280",
+        "alias": "sem__addition_geometry__translated_b",
+        "color": "#F08A24",
+        "end": "sem__geometry_sum__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "construction",
+        "start": "sem__geometry_a__end"
+      },
+      {
+        "alias": "sem__addition_geometry__triangle",
+        "color": "#F08A24",
         "op": "geometry.polygon",
-        "opacity": 0.14,
+        "opacity": 0.1,
         "outline": true,
         "vertices": [
           [
             0.0,
             0.0
-          ],
-          [
-            2.0,
-            1.0
-          ],
-          [
-            3.0,
-            4.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__stage.claim.ch01.ops.addition.triangle__title",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          2.65
-        ],
-        "text": "三角形法则"
-      },
-      {
-        "alias": "sem__addition_parallelogram",
-        "color": "#6B7280",
-        "op": "geometry.polygon",
-        "opacity": 0.14,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            2.0,
-            1.0
-          ],
-          [
-            3.0,
-            4.0
           ],
           [
             1.0,
-            3.0
+            2.0
+          ],
+          [
+            4.0,
+            6.0
           ]
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.ops.addition.parallelogram__title",
+        "alias": "sem__addition_geometry__parallelogram",
+        "color": "#6B7280",
+        "op": "geometry.polygon",
+        "opacity": 0.08,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            2.0
+          ],
+          [
+            4.0,
+            6.0
+          ],
+          [
+            3.0,
+            4.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.claim.ch01.ops.addition.geometry__title",
         "op": "annotation.upsert",
         "position": [
           0.0,
           2.65
         ],
-        "text": "平行四边形法则"
+        "text": "案例二：三角形法则与平行四边形法则"
+      },
+      {
+        "alias": "sem__stage.claim.ch01.ops.addition.velocity__title",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          2.65
+        ],
+        "text": "案例三：速度向量相加"
       },
       {
         "op": "view.fit",
@@ -204,10 +373,10 @@
     "summary": "向量加法",
     "version": 1
   },
-  "plan_digest": "sha256:ad38d0982cad6e4ce7a4c876cf492a98222539f984bfe805822ccb889845bb16",
+  "plan_digest": "sha256:d93737e51039cd25858631918e4f3e796e0851b0ad6fd3fc721ed4d9ceacec6b",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 12,
+  "revision": 18,
   "schema_version": 1,
   "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
   "stages": [
@@ -216,28 +385,28 @@
         0.0,
         2.65
       ],
-      "caption": "由 $\\boldsymbol a=(2,1)$、$\\boldsymbol b=(1,3)$ 得到 $\\boldsymbol a+\\boldsymbol b=(3,4)$。",
+      "caption": "由 $\\boldsymbol a=(3,1)$、$\\boldsymbol b=(1,2)$ 得到 $\\boldsymbol a+\\boldsymbol b=(4,3)$。",
       "id": "stage.claim.ch01.ops.addition.components",
       "layout": "overlay",
-      "title": "对应分量计算",
+      "title": "案例一：分量计算",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__sum",
-        "sem__sum__end",
-        "sem__sum__origin",
-        "sem__rel.0.claim.ch01.ops.addition",
+        "sem__components_a",
+        "sem__components_a__end",
+        "sem__components_a__origin",
+        "sem__components_b",
+        "sem__components_b__end",
+        "sem__components_b__origin",
+        "sem__components_sum",
+        "sem__components_sum__end",
+        "sem__components_sum__origin",
+        "sem__rel.addition.components",
         "sem__stage.claim.ch01.ops.addition.components__title"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "sum",
-        "rel.0.claim.ch01.ops.addition"
+        "components_a",
+        "components_b",
+        "components_sum",
+        "rel.addition.components"
       ]
     },
     {
@@ -245,29 +414,31 @@
         0.0,
         2.65
       ],
-      "caption": "把 $\\boldsymbol b$ 接到 $\\boldsymbol a$ 的终点，合成箭头指向 $(3,4)$。",
-      "id": "stage.claim.ch01.ops.addition.triangle",
+      "caption": "$\\boldsymbol a=(1,2)$、$\\boldsymbol b=(3,4)$ 的两种作图均给出 $\\boldsymbol a+\\boldsymbol b=(4,6)$。",
+      "id": "stage.claim.ch01.ops.addition.geometry",
       "layout": "overlay",
-      "title": "三角形法则",
+      "title": "案例二：三角形法则与平行四边形法则",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__sum",
-        "sem__sum__end",
-        "sem__sum__origin",
-        "sem__rel.0.claim.ch01.ops.addition",
-        "sem__stage.claim.ch01.ops.addition.triangle__title",
-        "sem__addition_triangle"
+        "sem__geometry_a",
+        "sem__geometry_a__end",
+        "sem__geometry_a__origin",
+        "sem__geometry_b",
+        "sem__geometry_b__end",
+        "sem__geometry_b__origin",
+        "sem__geometry_sum",
+        "sem__geometry_sum__end",
+        "sem__geometry_sum__origin",
+        "sem__rel.addition.geometry",
+        "sem__stage.claim.ch01.ops.addition.geometry__title",
+        "sem__addition_geometry__translated_b",
+        "sem__addition_geometry__triangle",
+        "sem__addition_geometry__parallelogram"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "sum",
-        "rel.0.claim.ch01.ops.addition"
+        "geometry_a",
+        "geometry_b",
+        "geometry_sum",
+        "rel.addition.geometry"
       ]
     },
     {
@@ -275,29 +446,28 @@
         0.0,
         2.65
       ],
-      "caption": "以 $\\boldsymbol a$、$\\boldsymbol b$ 为邻边，对角线同样指向 $(3,4)$。",
-      "id": "stage.claim.ch01.ops.addition.parallelogram",
+      "caption": "$\\boldsymbol v_1=(10,0)$、$\\boldsymbol v_2=(0,5)$ 的和为 $\\boldsymbol v=(10,5)$。",
+      "id": "stage.claim.ch01.ops.addition.velocity",
       "layout": "overlay",
-      "title": "平行四边形法则",
+      "title": "案例三：速度向量相加",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__sum",
-        "sem__sum__end",
-        "sem__sum__origin",
-        "sem__rel.0.claim.ch01.ops.addition",
-        "sem__stage.claim.ch01.ops.addition.parallelogram__title",
-        "sem__addition_parallelogram"
+        "sem__velocity_1",
+        "sem__velocity_1__end",
+        "sem__velocity_1__origin",
+        "sem__velocity_2",
+        "sem__velocity_2__end",
+        "sem__velocity_2__origin",
+        "sem__velocity_sum",
+        "sem__velocity_sum__end",
+        "sem__velocity_sum__origin",
+        "sem__rel.addition.velocity",
+        "sem__stage.claim.ch01.ops.addition.velocity__title"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "sum",
-        "rel.0.claim.ch01.ops.addition"
+        "velocity_1",
+        "velocity_2",
+        "velocity_sum",
+        "rel.addition.velocity"
       ]
     }
   ],

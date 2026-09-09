@@ -96,7 +96,7 @@ QGroupBox::title {
 #viewportToolbar QToolButton:hover, #twoDGeometryToolbar QToolButton:hover, #twoDLineFlyout QToolButton:hover {
   background: rgba(76,158,232,.16); border-color: #33363b; color: #4c9ee8;
 }
-#agentButton:checked, #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
+#agentButton:checked, #viewportToolbar QToolButton:checked, #twoDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
   background: rgba(76,158,232,.16); border-color: #4c9ee8; color: #4c9ee8;
 }
 #teachingCasePaneHost { background: #1a1b1e; }
@@ -104,3 +104,9 @@ QGroupBox::title {
 #teachingCasePane[selected="true"] { border: 2px solid #4c9ee8; }
 #teachingCasePaneTitle { color: #e8eaed; font-size: 11px; font-weight: 600; }
 #teachingCasePaneEmpty { background: #202124; border: 1px dashed #3c4046; border-radius: 8px; }
+#scenePane[activePane="true"] { border: 2px solid #4c9ee8; border-radius: 8px; }
+#paneChrome { background: #202124; border: 1px solid #3c4046; border-radius: 8px; }
+#paneChrome[activePane="true"] { border: 2px solid #4c9ee8; }
+#paneChromeTitle { color: #e8eaed; font-size: 11px; font-weight: 600; }
+#paneChromeClose { color: #b3b8c0; }
+#paneChromeClose:hover { color: #4c9ee8; background: #202124; }
