@@ -1,70 +1,43 @@
 ## Context
 
-当前 `MainWindow` 将 `plotter`、`geometry_controller`、`curve_controller`、代数面板图层列表和撤销栈作为单例状态；右上角布局控件仍是面向教学案例的下拉按钮。现有 `TeachingCasePaneGrid` 使用案例 plan 创建专用视口，不适合作为普通绘图工作区。详见 `proposal.md` 的问题范围。
+统一所有普通内容和教学案例 Pane 的状态、外观、生命周期与焦点路由，并修复教程视口缩放后显示边界的问题。
 
-## Goals / Non-Goals
+## Goals
 
-**Goals:**
+- 普通内容与教学案例使用同一种 `ScenePaneState`/`ScenePaneManager`。
+- 窗格总数可超过 4，但同一时刻最多显示 4 个；布局为单、双、左大右上下三窗格、四窗格。
+- 每个 Pane 有独立 2D/3D 场景、相机、选择、代数模型和 renderer。
+- 所有 Pane 使用标题栏、边框、隐藏、全屏、关闭按钮；关闭按钮只在标题栏悬浮时显示。
+- 代数 Tab 与 Pane 双向同步，Tab 关闭按钮同样悬浮显示，超宽时无滚动条横向滚动。
+- 2D 场景使用无限画布，不绘制世界边界，缩放/平移不显示边界线。
 
-- 建立与教学案例无关的 `ScenePaneState` 和 `ScenePaneManager`。
-- 每个窗格拥有独立的 2D/3D 场景模型、相机、渲染控制器、选择状态和历史栈。
-- 用 1×1、1×2、1×3、2×2 统一表达 1–4 窗格布局；布局变化只改变可见性和网格位置。
-- 让焦点窗格成为所有代数面板和绘图工具的唯一操作目标。
-- 以稳定窗格 ID 保存内容，使减少窗格后再增加可以恢复原状态。
-- 为复制/粘贴建立经过校验的场景对象序列化边界。
+## Display rules
 
-**Non-Goals:**
+启动时显示一个用户 Pane。点击讲义时，将案例注册为统一 Pane，默认只显示当前案例；其他案例 Pane 和用户 Pane 全部隐藏但保留内容。Agent 界面的“全部显示”只显示当前讲义的案例 Pane，用户 Pane 继续隐藏。退出讲义恢复进入讲义前的用户可见集合。
 
-- 不改变线性代数教学 artifact、案例内容或 Agent 会话协议的语义。
-- 不在本变更中实现跨窗格联动绘制、同步相机或实时协作。
-- 不把多个窗格合并为一个 PyVista renderer，也不依赖截图复制场景。
+## Architecture
+
+`ScenePaneState` 保存 pane ID、来源元数据、名称、2D/3D 模型、模式、相机、选择、代数模型和 renderer 引用。`ScenePaneManager` 管理任意数量的稳定 Pane、最多四个可见 Pane、布局、焦点、显示集合和全局历史。
+
+主窗口直接通过 pane ID 获取状态、renderer 和控制器，不保留 `self.plotter` 兼容代理。用户工具路由到焦点 Pane；Agent 请求开始时锁定目标 Pane。案例 Pane 与用户 Pane 共用标题栏、边框、隐藏/全屏/关闭行为和代数 Tab。
+
+Pane 容器负责可见 renderer 创建、隐藏、销毁和重建；隐藏只释放视口控件，不删除模型。恢复时刷新所有可见 Pane，失效 renderer 按 Pane 状态重建并自动重试。
+
+复制粘贴使用版本化、白名单、大小受限的 JSON-safe 快照；支持点、线、函数、标注和矩形多选。跨 Pane 保持坐标，同 Pane 重复粘贴按一个网格单位偏移；粘贴是一次全局原子历史操作。
+
+## Error handling
+
+- 至少保留一个 Pane；删除后自动修正布局和焦点。
+- 可见 Pane 超过 4 个时拒绝显示请求并保持当前集合。
+- 非法剪贴板不修改模型或历史。
+- renderer 初始化失败时显示占位状态并进行有限退避重试。
+
+## Testing
+
+覆盖状态隔离、任意 Pane 数量与最多四个可见、统一 Pane Chrome、案例显示集合、Tab 双向同步/关闭/无滚动条、无限画布缩放、焦点路由、全局历史、复制粘贴、Agent 快照和最小化恢复。
 
 ## Decisions
 
-### 1. 独立窗格状态而非共享 renderer
-
-新增 `ScenePaneState`，保存 pane ID、scene mode、2D/3D model、camera state、controllers、selection 和 history；`ScenePaneManager` 负责创建最多四个状态、布局和焦点。每个窗格使用自己的 `QtInteractor`，避免 actor、相机和输入事件互相污染。
-
-替代方案：在一个 plotter 中按 alias 分组绘制。拒绝，因为无法满足独立编辑、独立缩放和焦点路由。
-
-### 2. 主窗口保留兼容代理，渐进迁移调用链
-
-先把现有 `self.plotter`、`self.geometry_controller` 等访问收敛到“当前焦点窗格代理”，再迁移绘图入口和场景快照。这样旧的场景命令、Agent 和 2D 工具可以逐步接入，不需要一次性重写全部业务逻辑。
-
-替代方案：复制四份 `MainWindow` 场景代码。拒绝，因为状态容易分叉、维护成本高且无法保证协议一致。
-
-### 3. 代数 Tab 由窗格 ID 驱动
-
-代数面板改为 `QTabWidget` 或等价的 Tab 容器，Tab 与 pane ID 一一对应。每个 Tab 绑定该窗格的图层模型；焦点事件只更新当前 Tab，不复制或重置数据。切换布局隐藏 Tab 的同时保留其模型，新增 pane 创建空模型。
-
-### 4. 焦点路由优先于显式选择
-
-每个 interactor 在鼠标按下、键盘焦点和 Tab 切换时通知 manager；工具事件通过 `active_pane_id` 路由。右上角四个布局按钮只改变布局，不改变焦点，除非当前焦点窗格被隐藏，此时选择第一个可见窗格。
-
-### 5. 复制/粘贴使用 JSON-safe 对象快照
-
-复制只读取当前窗格选中对象或选区，生成有版本号、有大小限制的对象快照；粘贴只写入当前焦点窗格并重新生成对象 ID，避免 alias/id 冲突。剪贴板不包含 renderer、Qt 对象或任意代码。
-
-### 6. 教学案例继续使用独立通道
-
-`TeachingCasePaneGrid` 和 `linear-algebra-case-tabs` 继续负责案例展示；通用 `ScenePaneManager` 不接受案例 plan。案例 Tab 可以在 Agent 侧显示，但不得覆盖普通窗格的代数 Tab 或焦点状态。
-
-## Risks / Trade-offs
-
-- [Risk] 最多四个 `QtInteractor` 增加 GPU/内存占用 → 懒创建窗格，隐藏窗格保留轻量状态；关闭工作区时统一释放 renderer。
-- [Risk] 旧方法直接访问单例 `self.plotter` → 先引入当前窗格代理并增加断言，逐步迁移调用点。
-- [Risk] 窄窗口下四窗格难以操作 → 保留布局按钮可切换回单窗格，并为窗格设置最小尺寸和焦点高亮。
-- [Risk] 复制粘贴破坏历史或产生 ID 冲突 → 粘贴作为一次原子场景操作，失败时回滚并不改变剪贴板。
-- [Risk] 多个 Web/Qt 子表面恢复时重绘失败 → 统一由 pane manager 处理 show/resize/render 生命周期，并覆盖最小化恢复测试。
-
-## Migration Plan
-
-1. 新增窗格状态、布局和焦点模型，先以空白窗格替代案例专用布局按钮。
-2. 迁移 2D 点、线、函数、标注及代数 Tab；补齐复制/粘贴和历史隔离。
-3. 迁移 3D 图层、相机和场景命令代理；保持 Agent 默认操作当前焦点窗格。
-4. 更新右上角图标控件、主题、无障碍名称和最小化恢复重绘。
-5. 最后接入教学案例显示适配和回归测试；失败时可回退到单窗格模式。
-
-## Open Questions
-
-- 复制对象的默认粘贴偏移量（保持原坐标还是自动平移）可在实现阶段根据现有 2D 编辑习惯确定，不改变窗格契约。
+- 不把普通 Pane 状态持久化到数据库；快照增加 `panes` 并保留旧字段兼容。
+- 不保留旧 `self.plotter` 代理，直接迁移调用链。
+- 教学案例不再使用独立 Pane 类型，只保留案例数据和 Agent 会话语义。

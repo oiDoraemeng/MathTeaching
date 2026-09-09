@@ -9,3 +9,7 @@
 - **WHEN** 用户在普通多窗格工作区中打开线性代数教学案例
 - **THEN** 案例 Tab 按既有规则打开
 - **AND** 普通窗格对象、布局、焦点和代数 Tab 不被清空或替换
+
+### Requirement: Case panes share the unified workspace
+
+案例视口 SHALL 注册为统一工作区 Pane，不再使用独立 Pane 类型。打开讲义默认只显示一个案例 Pane；Agent“全部显示”只显示当前讲义案例 Pane，用户 Pane 继续隐藏。案例焦点与代数 Tab SHALL 双向同步。

@@ -73,3 +73,23 @@
 - **WHEN** 用户在 3D 模式切换到多窗格
 - **THEN** 每个可见窗格显示独立的 3D 视图
 - **AND** 对一个窗格的相机操作不会改变其他窗格相机
+
+### Requirement: Unified pane chrome and visibility sets
+
+所有用户 Pane 和讲义案例 Pane SHALL 使用统一标题栏、边框、隐藏、全屏和关闭按钮；关闭按钮仅在标题栏悬浮时显示。窗格总数可超过 4，但可见 Pane 不得超过 4。
+
+#### Scenario: Open lecture with existing panes
+
+- **WHEN** 用户已有多个 Pane 并点击讲义
+- **THEN** 默认只显示当前案例 Pane
+- **AND** 其他案例 Pane 和用户 Pane 隐藏但内容保留
+
+#### Scenario: Agent show all cases
+
+- **WHEN** 用户在 Agent 界面点击“全部显示”
+- **THEN** 只显示当前讲义的案例 Pane
+- **AND** 用户 Pane 继续隐藏
+
+### Requirement: Infinite 2D canvas
+
+教程和普通 2D Pane SHALL 不绘制人工世界边界；缩放、平移和恢复 SHALL 只裁剪视口内容，不显示边界矩形。

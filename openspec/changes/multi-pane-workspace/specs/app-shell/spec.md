@@ -19,3 +19,7 @@
 - **WHEN** 用户点击不同场景窗格
 - **THEN** 左侧代数 Tab 自动切换到该窗格
 - **AND** 其他 Tab 的对象和编辑状态保持不变
+
+### Requirement: Pane title bar and algebra tab overflow
+
+每个场景 Pane SHALL 显示标题和边框，并在标题栏提供隐藏、全屏和悬浮关闭按钮；关闭后 SHALL 自动修正布局和焦点。代数 Tab 的关闭按钮仅在悬浮时显示，Tab 超宽时支持横向滚动且不显示滚动条。
