@@ -4235,6 +4235,11 @@ class MainWindow:
             curves=curves + surfaces,
             geometry=points + linears + annotations + points3d,
             last_plan_summary=self._last_agent_plan_summary,
+            panes=tuple(
+                {"pane_id": pid, "name": pane.name, "source": pane.source, "scene_mode": pane.scene_mode}
+                for pid, pane in getattr(self.pane_manager, "panes", {}).items()
+            ),
+            active_pane_id=getattr(self.pane_manager, "active_pane_id", None),
         )
 
     def _toggle_scene_settings(self) -> None:
