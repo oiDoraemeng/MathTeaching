@@ -11,7 +11,7 @@ from collections.abc import Callable, Iterable, Mapping
 from typing import Any
 
 from PySide6.QtCore import QEvent, Qt, Signal
-from PySide6.QtWidgets import QFrame, QGridLayout, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QFrame, QGridLayout, QLabel, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
 
 from models.geometry_2d import Annotation2D, Linear2D, Point2D
@@ -20,6 +20,7 @@ from rendering.geometry_scene import GeometrySceneController
 from rendering.ticks import ViewportBounds
 from rendering.two_d_scene import TwoDGuides, configure_2d_camera
 from services.scene_commands import CommandPlan, SceneCommandService
+from ui.scene_pane_widget import PaneChrome
 
 
 PANE_COUNTS = (1, 2, 3, 4)
@@ -89,27 +90,23 @@ def case_plan(compiled: Any, stage_id: str) -> CommandPlan:
     return CommandPlan(scene=plan.scene, summary=plan.summary, operations=validation.expanded_operations)
 
 
-class TeachingCasePane(QFrame):
+class TeachingCasePane(PaneChrome):
     """One independently camera-controlled 2D case viewport."""
 
     focused = Signal(str, str)
 
     def __init__(self, case: Any, compiled: Any, parent: QFrame | None = None) -> None:
-        super().__init__(parent)
+        content = QWidget(parent)
+        super().__init__(str(getattr(case, "purpose", "案例")), content=content, parent=parent)
         self.case = case
         self.compiled = compiled
         self.setObjectName("teachingCasePane")
-        self.setFrameShape(QFrame.Shape.StyledPanel)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self._selected = False
 
-        layout = QVBoxLayout(self)
+        layout = QVBoxLayout(content)
         layout.setContentsMargins(6, 6, 6, 6)
         layout.setSpacing(4)
-        self.title_label = QLabel(str(getattr(case, "purpose", "案例")), self)
-        self.title_label.setObjectName("teachingCasePaneTitle")
-        self.title_label.setWordWrap(True)
-        layout.addWidget(self.title_label)
         self.plotter = QtInteractor(self)
         self.plotter.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.plotter.interactor.setMouseTracking(True)

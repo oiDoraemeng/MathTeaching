@@ -14,7 +14,8 @@
 .session-tab-select { display: inline-flex; align-items: center; gap: 4px; flex: 1 1 auto; min-width: 0; overflow: hidden; padding: 0 4px 0 9px; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
 .session-tab-select svg { flex: 0 0 12px; color: var(--agent-muted); }
 .session-tab-case.active .session-tab-select svg { color: var(--agent-accent); }
-.session-tab-close { flex: 0 0 28px; width: 28px; height: 28px; margin-right: 3px; border-radius: 3px; }
+.session-tab-close { flex: 0 0 28px; width: 28px; height: 28px; margin-right: 3px; border-radius: 3px; opacity: 0; pointer-events: none; transition: opacity .12s ease; }
+.session-tab:hover .session-tab-close, .session-tab:focus-within .session-tab-close { opacity: 1; pointer-events: auto; }
 .session-tab-close:hover { background: color-mix(in srgb, var(--agent-text) 12%, transparent); }
 .timeline { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 16px 14px 20px; scrollbar-color: var(--agent-border) transparent; }
 .math-case-view { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 30px 24px 42px; background: var(--agent-bg); }

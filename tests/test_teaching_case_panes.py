@@ -4,6 +4,8 @@ import pytest
 
 from services.scene_commands import CommandPlan
 from ui.teaching_case_panes import case_pane_layout, case_pane_placement, case_plan
+from ui.scene_pane_widget import PaneChrome
+from ui.teaching_case_panes import TeachingCasePane
 
 
 @pytest.mark.parametrize("count, expected", [(1, (1, 1)), (2, (1, 2)), (3, (2, 2)), (4, (2, 2))])
@@ -47,3 +49,8 @@ def test_case_plan_filters_stage_aliases_and_capability_polygon():
     assert "sem__addition_triangle" in aliases
     assert "sem__addition_parallelogram" not in aliases
     assert "cap__polygon" not in aliases
+
+
+def test_case_pane_uses_shared_pane_chrome():
+    """Case viewports keep the shared title/control chrome contract."""
+    assert issubclass(TeachingCasePane, PaneChrome)
