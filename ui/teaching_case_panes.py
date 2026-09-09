@@ -130,6 +130,10 @@ class TeachingCasePane(PaneChrome):
         if watched is self.plotter.interactor and event.type() == QEvent.Type.MouseButtonPress:
             self.setFocus(Qt.FocusReason.MouseFocusReason)
             self.focused.emit(str(getattr(self.case, "id", "")), self._stage_id())
+        if watched is self.plotter.interactor and event.type() in (
+            QEvent.Type.MouseMove, QEvent.Type.Resize, QEvent.Type.Wheel
+        ):
+            self._sync_viewport_bounds()
         return super().eventFilter(watched, event)
 
     def _stage_id(self) -> str:
@@ -186,6 +190,16 @@ class TeachingCasePane(PaneChrome):
                     outline=bool(operation.get("outline", True)),
                 )
         self.plotter.render()
+
+    def _sync_viewport_bounds(self) -> None:
+        """Update geometry and guide extents after camera or viewport changes."""
+        try:
+            bounds = self._current_bounds()
+            self.bounds = bounds
+            self.geometry.set_bounds(bounds)
+            self.guides.render(bounds, SceneAppearance(show_grid=True), effective_theme="light")
+        except (AttributeError, RuntimeError, ValueError):
+            return
 
     def _current_bounds(self) -> ViewportBounds:
         interactor = getattr(self.plotter, "interactor", None)

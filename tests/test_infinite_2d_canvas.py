@@ -44,7 +44,7 @@ def test_teaching_case_bounds_follow_camera_after_large_pan_and_zoom() -> None:
         def width(self): return 800
         def height(self): return 400
     class Camera:
-        focal_point = (25.0, -18.0, 0.0)
+        focal_point = (40.0, -18.0, 0.0)
         parallel_scale = 12.0
     pane = TeachingCasePane.__new__(TeachingCasePane)
     pane.plotter = type("Plotter", (), {"interactor": Interactor(), "camera": Camera()})()
