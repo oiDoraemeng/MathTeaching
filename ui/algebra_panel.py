@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QRect, QTimer, Qt, Signal
+from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QRect, QSignalBlocker, QTimer, Qt, Signal
 from PySide6.QtGui import QAction, QColor, QMouseEvent, QShowEvent
 from PySide6.QtWidgets import (
     QApplication,
@@ -765,7 +765,17 @@ class AlgebraPanel(QFrame):
             self.formula_tabs.addTab(model, title or pane_id)
             self._wire_formula_list(model)
         index = list(self._pane_models).index(pane_id)
-        self.formula_tabs.setCurrentIndex(index)
+        # ``set_pane_id`` mirrors an already-selected scene pane (manager
+        # focus, workspace restore, or tab materialization).  It is not a user
+        # tab selection: letting ``currentChanged`` handle it can reveal the
+        # previously hidden pane and feed a spurious visibility request back
+        # into the manager.  User clicks/keyboard tab changes still flow
+        # through ``_on_tab_changed`` normally.
+        blocker = QSignalBlocker(self.formula_tabs)
+        try:
+            self.formula_tabs.setCurrentIndex(index)
+        finally:
+            del blocker
         self._pane_id = pane_id
         self.formula_list = self._pane_models[pane_id]
         self.rows_container = self.formula_list
