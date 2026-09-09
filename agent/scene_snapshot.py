@@ -71,6 +71,10 @@ class SceneSnapshot:
         object.__setattr__(self, "camera", _json_value(self.camera))
         object.__setattr__(self, "metadata", _json_value(self.metadata))
         object.__setattr__(self, "panes", _tuple_records(self.panes, "panes"))
+        for pane in self.panes:
+            pane_id = pane.get("pane_id")
+            if not isinstance(pane_id, str) or not pane_id.strip():
+                raise ValueError("panes entries require a non-empty pane_id")
 
     def to_dict(self) -> dict[str, Any]:
         return {

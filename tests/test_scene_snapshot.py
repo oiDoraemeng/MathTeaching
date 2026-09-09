@@ -57,3 +57,8 @@ def test_snapshot_round_trip_preserves_multi_pane_extension_and_legacy_fields() 
 def test_snapshot_rejects_invalid_active_pane_id() -> None:
     with pytest.raises(ValueError, match="active_pane_id"):
         SceneSnapshot(active_pane_id=" ")
+
+
+def test_snapshot_rejects_pane_without_id() -> None:
+    with pytest.raises(ValueError, match="pane_id"):
+        SceneSnapshot(panes=({"visible": True},))
