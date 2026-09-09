@@ -1641,13 +1641,16 @@ class MainWindow:
         if self._pane_scene().scene_mode is not state.scene_mode:
             # Hidden panes do not own a renderer yet.  Restore their serializable
             # state directly and let pane creation render it later.
-            self._pane_scene().scene_mode = state.scene_mode
-            renderer = self._pane_renderer(required=False)
+            pane = self._pane()
+            renderer = pane.renderer_2d if state.scene_mode is SceneMode.TWO_D else pane.renderer_3d
             if renderer is None:
+                self._pane_scene().scene_mode = state.scene_mode
                 self._pane_scene().curve_controller = None
                 self._pane_scene().geometry_controller = None
                 self._pane_scene().geometry3d_controller = None
                 return
+            self._set_scene_mode(state.scene_mode)
+            return
         else:
             renderer = self._pane_renderer(required=False)
         if renderer is not None:
