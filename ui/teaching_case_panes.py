@@ -111,6 +111,10 @@ class TeachingCasePane(PaneChrome):
         self.plotter.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.plotter.interactor.setMouseTracking(True)
         self.plotter.interactor.installEventFilter(self)
+        add_observer = getattr(self.plotter, "add_observer", None)
+        if callable(add_observer):
+            add_observer("InteractionEvent", lambda *_args: self._sync_viewport_bounds())
+            add_observer("EndInteractionEvent", lambda *_args: self._sync_viewport_bounds())
         layout.addWidget(self.plotter.interactor, 1)
 
         # Bounds are initialized before the renderer has a valid size, then
@@ -144,11 +148,7 @@ class TeachingCasePane(PaneChrome):
         plan = case_plan(self.compiled, self._stage_id())
         configure_2d_camera(self.plotter)
         self.plotter.set_background(SceneAppearance().background_color("light"))
-        self.plotter.reset_camera()
-        configure_2d_camera(self.plotter)
-        self.plotter.camera.parallel_scale = 6.5
         self.bounds = self._current_bounds()
-        self.geometry.set_bounds(self.bounds)
         self.guides.render(self.bounds, SceneAppearance(show_grid=True), effective_theme="light")
         points: dict[str, Point2D] = {}
         for operation in plan.operations:
@@ -189,6 +189,10 @@ class TeachingCasePane(PaneChrome):
                     opacity=float(operation.get("opacity", 0.24)),
                     outline=bool(operation.get("outline", True)),
                 )
+        self.plotter.reset_camera()
+        configure_2d_camera(self.plotter)
+        self.plotter.camera.parallel_scale = max(6.5, float(self.plotter.camera.parallel_scale))
+        self._sync_viewport_bounds()
         self.plotter.render()
 
     def _sync_viewport_bounds(self) -> None:
