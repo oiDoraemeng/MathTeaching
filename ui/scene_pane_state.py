@@ -41,6 +41,8 @@ class ScenePaneState:
 
     pane_id: str
     name: str
+    source: str = "user"
+    source_id: str | None = None
     scene_mode: str = "2d"
     scene_2d: dict[str, Any] = field(default_factory=dict)
     scene_3d: dict[str, Any] = field(default_factory=dict)
@@ -55,11 +57,20 @@ class ScenePaneState:
 
     SNAPSHOT_VERSION: ClassVar[int] = SNAPSHOT_VERSION
 
+    @property
+    def source_kind(self) -> str:
+        """Compatibility name for callers describing the pane origin."""
+        return self.source
+
     def __post_init__(self) -> None:
         if not isinstance(self.pane_id, str) or not self.pane_id.strip():
             raise ValueError("pane_id must be a non-empty string")
         if not isinstance(self.name, str):
             raise ValueError("name must be a string")
+        if self.source not in {"user", "case"}:
+            raise ValueError("source must be user or case")
+        if self.source_id is not None and not isinstance(self.source_id, str):
+            raise ValueError("source_id must be a string or None")
         if not isinstance(self.scene_mode, str) or self.scene_mode not in {"2d", "3d"}:
             # StrEnum values compare equal to their string values, so this also
             # accepts models.scene_mode.SceneMode without importing it here.
@@ -79,6 +90,8 @@ class ScenePaneState:
             "version": self.SNAPSHOT_VERSION,
             "pane_id": self.pane_id,
             "name": self.name,
+            "source": self.source,
+            "source_id": self.source_id,
             "scene_mode": str(self.scene_mode),
             "scene_2d": self.scene_2d,
             "scene_3d": self.scene_3d,
@@ -111,6 +124,8 @@ class ScenePaneState:
         return cls(
             pane_id=payload["pane_id"],
             name=payload["name"],
+            source=payload.get("source", "user"),
+            source_id=payload.get("source_id"),
             scene_mode=payload["scene_mode"],
             scene_2d=payload["scene_2d"],
             scene_3d=payload["scene_3d"],
