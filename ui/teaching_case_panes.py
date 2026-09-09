@@ -105,13 +105,13 @@ class TeachingCasePane(PaneChrome):
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self._selected = False
         self.pane_id, self.pane_manager = pane_id, pane_manager
-        if pane_manager is not None and pane_id is not None:
-            pane_manager.pane(pane_id).runtime = self
 
         layout = QVBoxLayout(content)
         layout.setContentsMargins(6, 6, 6, 6)
         layout.setSpacing(4)
         self.plotter = QtInteractor(self)
+        if pane_manager is not None and pane_id is not None:
+            pane_manager.pane(pane_id).renderer_2d = self.plotter
         self.plotter.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.plotter.interactor.setMouseTracking(True)
         self.plotter.interactor.installEventFilter(self)
@@ -342,7 +342,8 @@ class TeachingCasePaneGrid(QFrame):
                 if isinstance(widget, TeachingCasePane) and widget.pane_manager is not None and widget.pane_id is not None:
                     widget._sync_viewport_bounds()
                     try:
-                        widget.pane_manager.pane(widget.pane_id).runtime = None
+                        state = widget.pane_manager.pane(widget.pane_id)
+                        state.renderer_2d = None
                     except ValueError:
                         pass
                 widget.close()
