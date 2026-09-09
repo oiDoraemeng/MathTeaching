@@ -13,10 +13,11 @@ from collections.abc import Callable
 import inspect
 from typing import Literal
 
-from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPropertyAnimation, QRect, Qt, QThread, QTimer, Signal, Slot
+from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPoint, QPropertyAnimation, QRect, Qt, QThread, QTimer, Signal, Slot
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent, QShortcut, QWheelEvent
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QInputDialog, QLineEdit, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QInputDialog, QLineEdit, QRubberBand, QToolButton, QVBoxLayout, QWidget
+from shiboken6 import isValid
 from pyvistaqt import QtInteractor
 
 from MathInputWidget import LatexParseError, LatexParser
@@ -3753,7 +3754,19 @@ class MainWindow:
                 return self._handle_linear_algebra_vector_click(*coordinates)
             return False
         if tool == "select":
-            return self._begin_select_or_drag(*coordinates)
+            if self._begin_select_or_drag(*coordinates):
+                return True
+            scene = self._pane_scene()
+            scene._selection_start = coordinates
+            scene._selection_pixel_start = QPoint(int(event.position().x()), int(event.position().y()))
+            surface = self._pane_renderer().interactor
+            if isinstance(surface, QWidget):
+                if scene._selection_band is None or not isValid(scene._selection_band):
+                    scene._selection_band = QRubberBand(QRubberBand.Shape.Rectangle, surface)
+                scene._selection_band.setGeometry(QRect(scene._selection_pixel_start, scene._selection_pixel_start))
+                scene._selection_band.show()
+            event.accept()
+            return True
         coordinates = self._maybe_snap(*coordinates)
         before = self._capture_geometry_state()
         point, created = self._get_or_create_geometry_point(*coordinates, record_history=False)
@@ -3817,6 +3830,13 @@ class MainWindow:
         if coordinates is None:
             return False
         if tool == "select":
+            if self._pane_scene()._selection_start is not None:
+                scene = self._pane_scene()
+                if scene._selection_band is not None and isValid(scene._selection_band):
+                    position = QPoint(int(event.position().x()), int(event.position().y()))
+                    scene._selection_band.setGeometry(QRect(scene._selection_pixel_start, position).normalized())
+                event.accept()
+                return True
             if self._pane_scene()._dragging_point_id is not None:
                 snapped = self._maybe_snap(*coordinates)
                 self._pane_scene().geometry_controller.move_point(self._pane_scene()._dragging_point_id, *snapped)
@@ -3851,6 +3871,20 @@ class MainWindow:
         return False
 
     def _handle_geometry_mouse_release(self, event: QMouseEvent) -> bool:
+        scene = self._pane_scene()
+        if scene._selection_start is not None:
+            from services.scene_clipboard import rectangle_select
+            end = self._viewport_to_world(event.position().x(), event.position().y())
+            start, scene._selection_start = scene._selection_start, None
+            if scene._selection_band is not None and isValid(scene._selection_band):
+                scene._selection_band.hide()
+            if end is not None:
+                objects = (*scene.geometry_points, *scene.linear_objects, *scene.annotations, *scene.curve_layers)
+                selected = rectangle_select(objects, (*start, *end))
+                self._pane().selected_object_ids = [item.id for item in selected]
+                self.algebra_panel.set_status(f"已选择 {len(selected)} 个对象，可复制到其他窗格")
+            event.accept()
+            return True
         if self._pane_scene()._dragging_point_id is None:
             return False
         point = self._point_2d(self._pane_scene()._dragging_point_id)

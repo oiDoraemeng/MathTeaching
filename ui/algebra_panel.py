@@ -783,6 +783,8 @@ class AlgebraPanel(QFrame):
         self._pane_manager = manager
         if manager is not None and hasattr(manager, "pane_deleted"):
             manager.pane_deleted.connect(self._on_manager_pane_deleted)
+        if manager is not None and hasattr(manager, "pane_renamed"):
+            manager.pane_renamed.connect(self._on_manager_pane_renamed)
         if manager is not None and hasattr(manager, "workspace_restored"):
             manager.workspace_restored.connect(self.sync_pane_tabs)
 
@@ -809,6 +811,10 @@ class AlgebraPanel(QFrame):
         if pane_id not in self._pane_models or len(self._pane_models) <= 1:
             return
         self._remove_tab_model(pane_id)
+
+    def _on_manager_pane_renamed(self, pane_id: str, title: str) -> None:
+        if pane_id in self._pane_models:
+            self.formula_tabs.setTabText(list(self._pane_models).index(pane_id), title)
 
     def _remove_tab_model(self, pane_id: str) -> None:
         """Detach one tab/model while keeping the current tab valid."""
@@ -851,12 +857,13 @@ class AlgebraPanel(QFrame):
         title, accepted = QInputDialog.getText(self, "重命名窗格", "窗格名称", text=current)
         if not accepted or not title.strip():
             return
-        self.formula_tabs.setTabText(index, title.strip())
         if self._pane_manager is not None:
             try:
-                self._pane_manager.pane(pane_id).name = title.strip()
+                self._pane_manager.rename_pane(pane_id, title)
             except (AttributeError, KeyError, ValueError):
                 pass
+        else:
+            self.formula_tabs.setTabText(index, title.strip())
 
     def set_pane_titles(self, titles: dict[str, str]) -> None:
         for pane_id, title in titles.items():

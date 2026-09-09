@@ -28,7 +28,7 @@ def test_layouts_have_expected_visible_panes_and_rectangles() -> None:
     ]
 
 
-def test_hiding_preserves_state_and_repairs_hidden_focus() -> None:
+def test_hiding_preserves_state_and_keeps_active_pane_visible() -> None:
     manager = ScenePaneManager()
     pane_two = manager.set_layout(2)[1]
     manager.pane(pane_two).scene_2d["objects"] = [{"id": "P"}]
@@ -37,10 +37,20 @@ def test_hiding_preserves_state_and_repairs_hidden_focus() -> None:
     manager.focus_pane(pane_two)
     assert changes == [pane_two]
 
-    assert manager.set_layout(1) == ("pane-1",)
-    assert manager.active_pane_id == "pane-1"
-    assert manager.set_layout(2)[1] == pane_two
+    assert manager.set_layout(1) == (pane_two,)
+    assert manager.active_pane_id == pane_two
+    assert manager.set_layout(2) == (pane_two, "pane-1")
     assert manager.pane(pane_two).scene_2d["objects"] == [{"id": "P"}]
+
+
+@pytest.mark.parametrize("active_index", [2, 3])
+def test_shrinking_layout_keeps_later_active_pane_visible(active_index: int) -> None:
+    manager = ScenePaneManager()
+    pane_ids = manager.set_layout(4)
+    manager.focus_pane(pane_ids[active_index])
+
+    assert manager.set_layout(1) == (pane_ids[active_index],)
+    assert manager.active_pane_id == pane_ids[active_index]
 
 
 def test_focus_limits_and_delete_repair() -> None:

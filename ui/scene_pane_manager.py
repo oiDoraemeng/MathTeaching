@@ -30,6 +30,9 @@ class ScenePaneManager(QObject):
     # Emitted after a pane is permanently removed.  UI hosts use this to
     # discard associated tabs/widgets without duplicating deletion logic.
     pane_deleted = Signal(str)
+    pane_renamed = Signal(str, str)
+    workspace_restored = Signal()
+    visible_panes_changed = Signal()
 
     MIN_PANES = 1
     MAX_PANES = 4  # maximum visible panes; total retained panes is unbounded
@@ -70,6 +73,68 @@ class ScenePaneManager(QObject):
             return self._panes[pane_id]
         except KeyError as error:
             raise ValueError(f"unknown pane ID: {pane_id}") from error
+
+    def rename_pane(self, pane_id: str, name: str) -> str:
+        """Rename a retained pane and notify every materialized pane view."""
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("pane name must be non-empty text")
+        pane = self.pane(pane_id)
+        name = name.strip()
+        if pane.name != name:
+            pane.name = name
+            self.pane_renamed.emit(pane_id, name)
+        return name
+
+    def restore_workspace(self, states: list[ScenePaneState], visible_ids: list[str], active_pane_id: str,
+                          *, lecture_case_ids: tuple[str, ...] = (),
+                          lecture_user_visible: tuple[str, ...] | None = None) -> None:
+        """Atomically replace retained states, preserving matching runtime handles.
+
+        Validate the entire collection before changing live state. Observers see
+        the final collection even while processing deletion notifications.
+        """
+        restored = [ScenePaneState.from_snapshot(state.to_snapshot()) for state in states]
+        ids = [state.pane_id for state in restored]
+        if not ids or len(ids) != len(set(ids)):
+            raise ValueError("workspace requires unique pane IDs")
+        if not 1 <= len(visible_ids) <= self.MAX_PANES or len(visible_ids) != len(set(visible_ids)):
+            raise ValueError("workspace requires one to four unique visible panes")
+        if any(pid not in ids for pid in visible_ids) or active_pane_id not in visible_ids:
+            raise ValueError("workspace focus must be a visible retained pane")
+        if any(pid not in ids for pid in (*lecture_case_ids, *(lecture_user_visible or ()))):
+            raise ValueError("workspace lecture references an unknown pane")
+        old = self._panes
+        for state in restored:
+            previous = old.get(state.pane_id)
+            if previous is not None:
+                state.renderer_2d = previous.renderer_2d
+                state.renderer_3d = previous.renderer_3d
+                state.runtime = previous.runtime
+                if state.runtime is not None:
+                    state.runtime.pane = state
+        self._panes = {state.pane_id: state for state in restored}
+        self._pane_order = ids
+        self._visible_ids = list(visible_ids)
+        self._layout_count = len(visible_ids)
+        self._active_pane_id = active_pane_id
+        self._display_numbers = {pid: index for index, pid in enumerate(ids, 1)}
+        used_numbers = [int(pid[5:]) for pid in ids if pid.startswith("pane-") and pid[5:].isdigit()]
+        self._next_pane_id_number = max([self._next_pane_id_number, *(number + 1 for number in used_numbers)])
+        self._lecture_user_visible = lecture_user_visible
+        self._lecture_case_ids = lecture_case_ids
+        # Existing callbacks refer to the pre-restore scene history.
+        self._undo_stack.clear()
+        self._redo_stack.clear()
+        for pid in old.keys() - self._panes.keys():
+            self.pane_deleted.emit(pid)
+        self.workspace_restored.emit()
+        self.active_pane_changed.emit(active_pane_id)
+        self.active_pane_id_changed.emit(active_pane_id)
+
+    def workspace_metadata(self) -> dict[str, Any]:
+        return {"visible_pane_ids": list(self.visible_pane_ids()),
+                "lecture_case_ids": list(self._lecture_case_ids),
+                "lecture_user_visible": list(self._lecture_user_visible) if self._lecture_user_visible is not None else None}
 
     def set_layout(self, count: int) -> tuple[str, ...]:
         """Show *count* panes, allocating blank states as needed.
@@ -114,6 +179,7 @@ class ScenePaneManager(QObject):
         self._layout_count = max(1, len(ids)) if ids else 1
         if self._active_pane_id not in ids and ids:
             self._set_active_pane(ids[0])
+        self.visible_panes_changed.emit()
         return tuple(ids)
 
     def enter_lecture(self, case_id: str, case_ids: tuple[str, ...] | list[str] | None = None) -> tuple[str, ...]:

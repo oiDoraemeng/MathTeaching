@@ -1,7 +1,7 @@
 import pytest
 from types import SimpleNamespace
 from unittest.mock import MagicMock
-from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtWidgets import QApplication, QRubberBand, QWidget
 
 from ui.scene_pane_widget import ScenePaneWidget
 from ui.scene_pane_manager import ScenePaneManager
@@ -58,6 +58,38 @@ def test_active_pane_styles_renderer_and_chrome(qapp):
     assert widget._chromes[second].property("activePane") is True
     assert widget.interactor(first).property("activePane") is False
     assert widget._chromes[first].property("activePane") is False
+
+
+def test_rename_updates_materialized_pane_chrome(qapp):
+    manager = ScenePaneManager()
+    widget = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
+
+    manager.rename_pane(manager.active_pane_id, "重命名的窗格")
+
+    assert widget._chromes[manager.active_pane_id].title_label.text() == "重命名的窗格"
+
+
+def test_hiding_pane_clears_selection_band_before_interactor_is_recreated(qapp):
+    manager = ScenePaneManager()
+    widget = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
+    first, second = widget.set_layout(2)
+    runtime = manager.pane(second).runtime = SimpleNamespace(
+        _selection_band=QRubberBand(QRubberBand.Shape.Rectangle, widget.interactor(second)),
+        _selection_start=(1.0, 2.0), _selection_pixel_start=object(),
+        _dragging_point_id="P", _drag_start_geometry_state=object(), _drag_moved=True,
+    )
+
+    manager.focus_pane(first)
+    widget.set_layout(1)
+    widget.set_layout(2)
+
+    assert runtime._selection_band is None
+    assert runtime._selection_start is None
+    assert runtime._selection_pixel_start is None
+    assert runtime._dragging_point_id is None
+    assert runtime._drag_start_geometry_state is None
+    assert runtime._drag_moved is False
+    assert widget.interactor(second) is not None
 
 
 def test_recreated_interactor_invokes_restore_callback(qapp):

@@ -121,6 +121,7 @@ class ScenePaneWidget(QWidget):
         chrome = self._chromes.pop(pane_id, None)
         if pane_id in self.manager.panes:
             state = self.manager.pane(pane_id)
+            self._clear_interactor_transients(state.runtime)
             camera = getattr(widget, "camera", None)
             if camera is not None and save_camera:
                 try:
@@ -155,6 +156,26 @@ class ScenePaneWidget(QWidget):
             if isValid(widget):
                 widget.setParent(None)
                 widget.deleteLater()
+
+    @staticmethod
+    def _clear_interactor_transients(runtime: Any | None) -> None:
+        """Drop Qt selection objects and drag state tied to a discarded surface."""
+        if runtime is None:
+            return
+        band = getattr(runtime, "_selection_band", None)
+        if band is not None:
+            try:
+                if isValid(band):
+                    band.hide()
+            except (RuntimeError, TypeError):
+                pass
+        for name, value in (
+            ("_selection_band", None), ("_selection_start", None),
+            ("_selection_pixel_start", None), ("_dragging_point_id", None),
+            ("_drag_start_geometry_state", None), ("_drag_moved", False),
+        ):
+            if hasattr(runtime, name):
+                setattr(runtime, name, value)
 
     def _create_interactor(self, pane_id: str) -> Any:
         chrome = PaneChrome(self.manager.pane(pane_id).name, parent=self)
@@ -331,6 +352,11 @@ class ScenePaneWidget(QWidget):
         if widget is not None and isValid(widget):
             widget.show()
         self._update_highlight()
+
+    def _on_pane_renamed(self, pane_id: str, title: str) -> None:
+        chrome = self._chromes.get(pane_id)
+        if chrome is not None and isValid(chrome):
+            chrome.set_title(title)
 
     def resizeEvent(self, event: Any) -> None:
         super().resizeEvent(event)
