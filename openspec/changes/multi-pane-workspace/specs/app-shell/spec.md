@@ -22,14 +22,14 @@
 
 ### Requirement: Pane title bar and algebra tab overflow
 
-每个场景 Pane SHALL 显示标题和边框，并在标题栏提供隐藏、全屏和始终可见的关闭按钮；关闭前 SHALL 弹出确认，关闭后 SHALL 自动修正布局和焦点。代数 Tab 的关闭按钮仅在悬浮时显示，且与 Pane 双向关闭；Tab 超宽时支持横向滚动且不显示滚动条。
+每个场景 Pane SHALL 显示标题和边框，并在标题栏提供隐藏、全屏和始终可见的关闭按钮；关闭前 SHALL 弹出确认，关闭后 SHALL 自动修正布局和焦点。代数 Tab 的关闭按钮仅在悬浮时显示，且与 Pane 双向关闭；Tab 超宽时支持横向滚动且不显示滚动条或左右翻页箭头。
 
 #### Scenario: Hover close and overflow tabs
 
 - **WHEN** 用户查看 Pane 标题栏或悬浮代数 Tab
 - **THEN** Pane 关闭按钮始终显示，Tab 关闭按钮在悬浮时显示
 - **WHEN** Tab 数量超过区域宽度
-- **THEN** Tab 可横向滚动且滚动条不可见
+- **THEN** Tab 可横向滚动，且滚动条和左右翻页箭头均不可见
 
 #### Scenario: Pane and algebra tab close together
 
