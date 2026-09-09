@@ -277,9 +277,15 @@ class ScenePaneWidget(QWidget):
         for pane_id, widget in self._interactors.items():
             if not isValid(widget):
                 continue
-            widget.setProperty("activePane", pane_id == active)
-            widget.style().unpolish(widget)
-            widget.style().polish(widget)
+            is_active = pane_id == active
+            # The visible border is drawn by PaneChrome; keep the renderer
+            # property too for backwards-compatible styling and tests.
+            for target in (widget, self._chromes.get(pane_id)):
+                if target is None or not isValid(target):
+                    continue
+                target.setProperty("activePane", is_active)
+                target.style().unpolish(target)
+                target.style().polish(target)
 
     def delete_pane(self, pane_id: str) -> tuple[str, ...]:
         self.manager.delete_pane(pane_id)

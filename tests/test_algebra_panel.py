@@ -148,6 +148,31 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertIn("pane-2", manager.visible_pane_ids())
         self.assertEqual(manager.active_pane_id, "pane-2")
 
+    def test_closing_scene_pane_removes_its_algebra_tab(self) -> None:
+        panel = AlgebraPanel()
+        manager = ScenePaneManager()
+        manager.set_layout(2)
+        panel.set_pane_manager(manager)
+        panel.set_pane_id("pane-2", "窗格 2")
+
+        manager.delete_pane("pane-2")
+
+        self.assertEqual(list(panel._pane_models), ["pane-1"])
+        self.assertEqual(panel.formula_tabs.count(), 1)
+
+    def test_closing_algebra_tab_removes_scene_pane(self) -> None:
+        panel = AlgebraPanel()
+        manager = ScenePaneManager()
+        manager.set_layout(2)
+        panel.set_pane_manager(manager)
+        panel.set_pane_id("pane-2", "窗格 2")
+
+        panel._close_tab(1)
+
+        self.assertNotIn("pane-2", manager.panes)
+        self.assertEqual(manager.visible_pane_ids(), ("pane-1",))
+        self.assertEqual(list(panel._pane_models), ["pane-1"])
+
     def test_hidden_tab_reveal_uses_scene_order_after_out_of_order_visits(self) -> None:
         from ui.designer_window import MainWindow
 

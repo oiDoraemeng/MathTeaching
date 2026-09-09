@@ -77,6 +77,20 @@ def test_cannot_delete_last_pane_and_layout_range_is_checked() -> None:
             manager.set_layout(count)
 
 
+def test_deleting_last_visible_pane_promotes_a_retained_sibling() -> None:
+    manager = ScenePaneManager()
+    first, second = manager.set_layout(2)
+    manager.set_visible_panes([first])
+
+    deleted: list[str] = []
+    manager.pane_deleted.connect(deleted.append)
+    manager.delete_pane(first)
+
+    assert manager.visible_pane_ids() == (second,)
+    assert manager.active_pane_id == second
+    assert deleted == [first]
+
+
 def test_global_history_undoes_and_redoes_across_panes() -> None:
     manager = ScenePaneManager()
     first, second = manager.set_layout(2)

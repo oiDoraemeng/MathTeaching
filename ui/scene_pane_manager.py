@@ -27,6 +27,9 @@ class ScenePaneManager(QObject):
     # A descriptive alias for consumers which prefer signal names that mirror
     # the property they observe.
     active_pane_id_changed = Signal(str)
+    # Emitted after a pane is permanently removed.  UI hosts use this to
+    # discard associated tabs/widgets without duplicating deletion logic.
+    pane_deleted = Signal(str)
 
     MIN_PANES = 1
     MAX_PANES = 4  # maximum visible panes; total retained panes is unbounded
@@ -102,6 +105,11 @@ class ScenePaneManager(QObject):
             raise ValueError("visible pane count cannot exceed four")
         if any(pid not in self._panes for pid in ids):
             raise ValueError("unknown pane ID")
+        # Keep at least one visible pane whenever retained states exist.  A
+        # transient empty set (for example while closing the last visible
+        # pane) leaves layout and active-focus consumers without a target.
+        if not ids and self._pane_order:
+            ids = [self._pane_order[0]]
         self._visible_ids = ids
         self._layout_count = max(1, len(ids)) if ids else 1
         if self._active_pane_id not in ids and ids:
@@ -196,8 +204,13 @@ class ScenePaneManager(QObject):
         self._redo_stack = [entry for entry in self._redo_stack if entry.pane_id != pane_id]
         self._layout_count = max(1, min(self._layout_count, len(self._visible_ids) or len(self._pane_order)))
         visible = self.visible_pane_ids()
+        if not visible and self._pane_order:
+            self._visible_ids = [self._pane_order[0]]
+            self._layout_count = 1
+            visible = self.visible_pane_ids()
         if was_active or self._active_pane_id not in visible:
             self._set_active_pane(visible[0])
+        self.pane_deleted.emit(pane_id)
 
     def layout_rects(self, size: QSize) -> dict[str, QRect]:
         """Return each visible pane's rectangle for the requested viewport size."""

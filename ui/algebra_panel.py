@@ -774,7 +774,41 @@ class AlgebraPanel(QFrame):
 
     def set_pane_manager(self, manager) -> None:
         """Bind tab focus and title edits to the scene pane manager."""
+        previous = self._pane_manager
+        if previous is not None and hasattr(previous, "pane_deleted"):
+            try:
+                previous.pane_deleted.disconnect(self._on_manager_pane_deleted)
+            except (RuntimeError, TypeError):
+                pass
         self._pane_manager = manager
+        if manager is not None and hasattr(manager, "pane_deleted"):
+            manager.pane_deleted.connect(self._on_manager_pane_deleted)
+
+    def _on_manager_pane_deleted(self, pane_id: str) -> None:
+        """Remove the algebra model whose scene pane was closed elsewhere."""
+        pane_id = str(pane_id)
+        if pane_id not in self._pane_models or len(self._pane_models) <= 1:
+            return
+        self._remove_tab_model(pane_id)
+
+    def _remove_tab_model(self, pane_id: str) -> None:
+        """Detach one tab/model while keeping the current tab valid."""
+        pane_ids = list(self._pane_models)
+        if pane_id not in pane_ids or len(pane_ids) <= 1:
+            return
+        index = pane_ids.index(pane_id)
+        was_current = self._pane_id == pane_id
+        model = self._pane_models.pop(pane_id)
+        self.formula_tabs.blockSignals(True)
+        try:
+            self.formula_tabs.removeTab(index)
+        finally:
+            self.formula_tabs.blockSignals(False)
+        model.deleteLater()
+        self.tab_closed.emit(pane_id)
+        if was_current:
+            fallback = next(iter(self._pane_models))
+            self.set_pane_id(fallback)
 
     def _close_tab(self, index: int) -> None:
         if index < 0 or index >= len(self._pane_models) or len(self._pane_models) <= 1:
@@ -785,12 +819,10 @@ class AlgebraPanel(QFrame):
                 self._pane_manager.delete_pane(pane_id)
             except (RuntimeError, ValueError):
                 return
-        model = self._pane_models.pop(pane_id)
-        self.formula_tabs.removeTab(index)
-        model.deleteLater()
-        self.tab_closed.emit(pane_id)
-        if self._pane_id == pane_id:
-            self.set_pane_id(next(iter(self._pane_models)))
+            # ScenePaneManager.pane_deleted synchronously removes this tab.
+            if pane_id not in self._pane_models:
+                return
+        self._remove_tab_model(pane_id)
 
     def _edit_tab_title(self, index: int) -> None:
         if index < 0 or index >= len(self._pane_models):

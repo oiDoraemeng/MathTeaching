@@ -46,6 +46,18 @@ def test_delete_repairs_layout_and_active_focus(qapp):
     assert ids[1] not in widget.interactors
 
 
+def test_active_pane_styles_renderer_and_chrome(qapp):
+    manager = ScenePaneManager()
+    widget = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
+    first, second = widget.set_layout(2)
+    manager.focus_pane(second)
+
+    assert widget.interactor(second).property("activePane") is True
+    assert widget._chromes[second].property("activePane") is True
+    assert widget.interactor(first).property("activePane") is False
+    assert widget._chromes[first].property("activePane") is False
+
+
 def test_recreated_interactor_invokes_restore_callback(qapp):
     manager = ScenePaneManager()
     restored = []
