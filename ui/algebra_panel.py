@@ -35,7 +35,7 @@ class HoverCloseTabBar(QTabBar):
         super().__init__(parent)
         self.setDrawBase(False)
         self.setUsesScrollButtons(True)
-        self.setStyleSheet("QTabBar { qproperty-expanding: false; } QTabBar QToolButton { width: 16px; } QTabBar::scroller { width: 0px; } QTabBar QScrollBar:horizontal { height: 0px; width: 0px; }")
+        self.setStyleSheet("QTabBar { qproperty-expanding: false; } QTabBar QToolButton { width: 16px; } QTabBar QScrollBar:horizontal { height: 0px; }")
 
     def tabInserted(self, index: int) -> None:
         super().tabInserted(index)

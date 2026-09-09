@@ -67,6 +67,7 @@ class ScenePaneWidget(QWidget):
         self._factory = interactor_factory or self._default_factory
         self._on_interactor_created = on_interactor_created
         self._interactors: dict[str, Any] = {}
+        self._chromes: dict[str, PaneChrome] = {}
         self._retry_attempts: dict[str, int] = {}
         self._retry_timers: dict[str, QTimer] = {}
         self._refresh_callbacks: dict[str, Callable[[str], None]] = {}
@@ -108,10 +109,13 @@ class ScenePaneWidget(QWidget):
 
     def _discard_interactor(self, pane_id: str) -> None:
         widget = self._interactors.pop(pane_id, None)
+        chrome = self._chromes.pop(pane_id, None)
         if pane_id in self.manager.panes:
             state = self.manager.pane(pane_id)
             state.renderer_2d = state.renderer_3d = None
-        if widget is not None and isValid(widget):
+        if chrome is not None and isValid(chrome):
+            chrome.hide(); chrome.setParent(None); chrome.deleteLater()
+        elif widget is not None and isValid(widget):
             try:
                 widget.hide()
                 widget.close()
@@ -122,7 +126,13 @@ class ScenePaneWidget(QWidget):
                 widget.deleteLater()
 
     def _create_interactor(self, pane_id: str) -> Any:
-        widget = self._factory(self)
+        chrome = PaneChrome(self.manager.pane(pane_id).name, parent=self)
+        widget = self._factory(chrome)
+        chrome.layout().addWidget(widget, 1)
+        self._chromes[pane_id] = chrome
+        chrome.hide_requested.connect(lambda pid=pane_id: self._hide_pane(pid))
+        chrome.fullscreen_requested.connect(lambda pid=pane_id: self._fullscreen_pane(pid))
+        chrome.close_requested.connect(lambda pid=pane_id: self.delete_pane(pid))
         self._interactors[pane_id] = widget
         widget.setObjectName("scenePane")
         widget.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
@@ -137,6 +147,14 @@ class ScenePaneWidget(QWidget):
         if self._on_interactor_created is not None:
             self._on_interactor_created(pane_id, widget)
         return widget
+
+    def _hide_pane(self, pane_id: str) -> None:
+        visible = [pid for pid in self.manager.visible_pane_ids() if pid != pane_id]
+        if visible:
+            self.manager.set_visible_panes(visible); self.sync_layout()
+
+    def _fullscreen_pane(self, pane_id: str) -> None:
+        self.manager.set_visible_panes([pane_id]); self.sync_layout()
 
     @staticmethod
     def _renderer_valid(renderer: Any) -> bool:
@@ -194,10 +212,12 @@ class ScenePaneWidget(QWidget):
             if not self._renderer_valid(widget):
                 self._discard_interactor(pane_id)
                 widget = self._create_interactor(pane_id)
-            widget.setGeometry(self.manager.layout_rects(self.size())[pane_id])
+            chrome = self._chromes.get(pane_id)
+            target = chrome or widget
+            target.setGeometry(self.manager.layout_rects(self.size())[pane_id])
             # Hidden/unmapped is expected during minimization; show then render
             # first instead of treating invisibility as context loss.
-            widget.show()
+            target.show(); widget.show()
             widget.update()
             callback = self._refresh_callbacks.get(pane_id)
             if callback is not None:

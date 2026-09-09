@@ -105,3 +105,8 @@ QGroupBox::title {
 #teachingCasePaneTitle { color: $text_primary; font-size: ${size_caption}px; font-weight: 600; }
 #teachingCasePaneEmpty { background: $bg_panel; border: 1px dashed $border_default; border-radius: ${radius_md}px; }
 #scenePane[activePane="true"] { border: 2px solid $accent_default; border-radius: ${radius_md}px; }
+#paneChrome { background: $bg_panel; border: 1px solid $border_default; border-radius: ${radius_md}px; }
+#paneChrome[activePane="true"] { border: 2px solid $accent_default; }
+#paneChromeTitle { color: $text_primary; font-size: ${size_caption}px; font-weight: 600; }
+#paneChromeClose { color: $text_secondary; }
+#paneChromeClose:hover { color: $accent_default; background: $bg_panel; }
