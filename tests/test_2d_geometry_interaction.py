@@ -162,6 +162,20 @@ def _make_window() -> MainWindow:
 
 
 class TwoDGeometryInteractionTests(unittest.TestCase):
+    def test_select_drag_marquee_copies_only_enclosed_objects(self) -> None:
+        window = _make_window()
+        points = [Point2D("A", 0, 0), Point2D("B", 1, 1), Point2D("C", 7, 7)]
+        window._pane_scene().geometry_points = points
+        for point in points:
+            window._pane_scene().geometry_controller.add_point(point)
+        window._pane_scene()._active_2d_tool = "select"
+        self.assertTrue(window._handle_geometry_mouse_press(FakeMouseEvent(40, 60)))
+        self.assertTrue(window._handle_geometry_mouse_release(FakeMouseEvent(60, 40)))
+        self.assertEqual(set(window._pane().selected_object_ids), {points[0].id, points[1].id})
+        from services.scene_clipboard import parse_payload
+        payload = parse_payload(window.copy_selected_scene_objects())
+        self.assertEqual({record["data"]["name"] for record in payload["objects"]}, {"A", "B"})
+
     def test_viewport_coordinates_match_the_camera_bounds(self) -> None:
         window = _make_window()
 

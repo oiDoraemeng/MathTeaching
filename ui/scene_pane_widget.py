@@ -76,6 +76,13 @@ class ScenePaneWidget(QWidget):
         self._refreshing = False
         self.clipboard = SceneClipboard()
         manager.active_pane_changed.connect(self._on_active_changed)
+        manager.visible_panes_changed.connect(self.sync_layout)
+        manager.workspace_restored.connect(self._restore_workspace)
+        self.sync_layout()
+
+    def _restore_workspace(self) -> None:
+        for pane_id in tuple(self._interactors):
+            self._discard_interactor(pane_id, save_camera=False)
         self.sync_layout()
 
     def select_rectangle(self, rect, pane_id=None):
@@ -109,12 +116,34 @@ class ScenePaneWidget(QWidget):
         self.refresh_visible_panes()
         return visible
 
-    def _discard_interactor(self, pane_id: str) -> None:
+    def _discard_interactor(self, pane_id: str, *, save_camera: bool = True) -> None:
         widget = self._interactors.pop(pane_id, None)
         chrome = self._chromes.pop(pane_id, None)
         if pane_id in self.manager.panes:
             state = self.manager.pane(pane_id)
+            camera = getattr(widget, "camera", None)
+            if camera is not None and save_camera:
+                try:
+                    position = [list(camera.position), list(camera.focal_point), list(camera.up)]
+                    saved = {"position": position}
+                    if state.scene_mode == "2d":
+                        saved["parallel_scale"] = float(camera.parallel_scale)
+                        state.camera_2d = saved
+                    else:
+                        state.camera_3d = saved
+                    if state.runtime is not None:
+                        if state.scene_mode == "2d":
+                            state.runtime._two_d_camera_position = position
+                            state.runtime._two_d_parallel_scale = saved["parallel_scale"]
+                        else:
+                            state.runtime._three_d_camera_position = position
+                except (AttributeError, TypeError, ValueError, RuntimeError):
+                    pass
             state.renderer_2d = state.renderer_3d = None
+        if widget is not None and isValid(widget):
+            # Finalize the VTK render window before materializing replacements;
+            # deferred Qt deletion alone can keep more than four contexts live.
+            widget.close()
         if chrome is not None and isValid(chrome):
             chrome.hide(); chrome.setParent(None); chrome.deleteLater()
         elif widget is not None and isValid(widget):

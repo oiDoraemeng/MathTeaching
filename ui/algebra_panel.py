@@ -783,6 +783,25 @@ class AlgebraPanel(QFrame):
         self._pane_manager = manager
         if manager is not None and hasattr(manager, "pane_deleted"):
             manager.pane_deleted.connect(self._on_manager_pane_deleted)
+        if manager is not None and hasattr(manager, "workspace_restored"):
+            manager.workspace_restored.connect(self.sync_pane_tabs)
+
+    def sync_pane_tabs(self) -> None:
+        """Materialize retained tabs without activating their hidden viewports."""
+        manager = self._pane_manager
+        if manager is None:
+            return
+        blocked = self.formula_tabs.blockSignals(True)
+        try:
+            for pane_id in tuple(self._pane_models):
+                if pane_id not in manager.panes:
+                    self._remove_tab_model(pane_id)
+            for pane in manager.panes.values():
+                self.set_pane_id(pane.pane_id, pane.name)
+                self.formula_tabs.setTabText(list(self._pane_models).index(pane.pane_id), pane.name)
+            self.set_pane_id(manager.active_pane_id)
+        finally:
+            self.formula_tabs.blockSignals(blocked)
 
     def _on_manager_pane_deleted(self, pane_id: str) -> None:
         """Remove the algebra model whose scene pane was closed elsewhere."""
@@ -861,9 +880,9 @@ class AlgebraPanel(QFrame):
                     # cannot disagree about the active pane.
                     visible_getter = getattr(self._pane_manager, "visible_pane_ids", None)
                     visible = tuple(visible_getter()) if callable(visible_getter) else (pane_id,)
-                    if pane_id not in visible and hasattr(self._pane_manager, "set_layout"):
-                        count = self._pane_manager.layout_count_for_pane(pane_id)
-                        self.pane_visibility_requested.emit(pane_id, count)
+                    if pane_id not in visible:
+                        self._pane_manager.reveal_pane(pane_id)
+                        self.pane_visibility_requested.emit(pane_id, len(visible))
                     self._pane_manager.focus_pane(pane_id)
                 except (AttributeError, KeyError, ValueError):
                     pass

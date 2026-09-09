@@ -139,12 +139,12 @@ class AlgebraPanelTests(unittest.TestCase):
         manager.set_layout(2)
         panel.set_pane_manager(manager)
         requested: list[int] = []
-        panel.pane_visibility_requested.connect(lambda _pane_id, count: (requested.append(count), manager.set_layout(count)))
+        panel.pane_visibility_requested.connect(lambda _pane_id, count: requested.append(count))
         panel.set_pane_id("pane-2")
         manager.set_layout(1)
         panel.formula_tabs.setCurrentIndex(0)
         panel.formula_tabs.setCurrentIndex(1)
-        self.assertEqual(requested, [2])
+        self.assertEqual(requested, [1])
         self.assertIn("pane-2", manager.visible_pane_ids())
         self.assertEqual(manager.active_pane_id, "pane-2")
 
@@ -195,8 +195,8 @@ class AlgebraPanelTests(unittest.TestCase):
 
         panel.formula_tabs.setCurrentIndex(1)
 
-        self.assertEqual(requested, [(third, 3)])
-        self.assertEqual(manager.visible_pane_ids(), (first, second, third))
+        self.assertEqual(requested, [(third, 1)])
+        self.assertEqual(manager.visible_pane_ids(), (third,))
         self.assertIsNotNone(container.interactor(third))
         self.assertEqual(manager.active_pane_id, third)
         self.assertEqual(panel._pane_id, third)

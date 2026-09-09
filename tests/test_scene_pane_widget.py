@@ -1,4 +1,6 @@
 import pytest
+from types import SimpleNamespace
+from unittest.mock import MagicMock
 from PySide6.QtWidgets import QApplication, QWidget
 
 from ui.scene_pane_widget import ScenePaneWidget
@@ -98,6 +100,84 @@ def test_designer_restore_callback_renders_when_ready(monkeypatch):
     calls = []
     window._render_scene = lambda: calls.append(True)
     window._using_pane = lambda pane_id: __import__("contextlib").nullcontext()
-    window.pane_manager = type("M", (), {"pane": lambda self, pane_id: type("P", (), {"runtime": None})()})()
+    window.pane_manager = ScenePaneManager()
     window._on_pane_interactor_created("pane-1", object())
     assert calls == [True]
+
+
+def test_lecture_and_user_tabs_share_one_container_and_case_chrome_controls(qapp):
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    container = window.scene_pane_widget = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
+    users = container.set_layout(4)
+    window.algebra_panel = MagicMock()
+    window._sync_scene_controls = lambda: None
+    window._set_2d_geometry_tool = lambda _tool: None
+
+    window._load_linear_algebra_topic("ch01.ops.addition")
+
+    cases = window._teaching_case_pane_ids
+    assert tuple(container.interactors) == (cases[0],)
+    assert getattr(window, "_teaching_case_pane_grid", None) is None
+    window._set_teaching_case_pane_count(3)
+    assert set(container.interactors) == set(cases)
+    container._chromes[cases[1]].hide_requested.emit()
+    assert cases[1] not in container.interactors
+    container._chromes[cases[0]].fullscreen_requested.emit()
+    assert tuple(container.interactors) == (cases[0],)
+    window._reveal_algebra_pane(users[-1], 1)
+    assert tuple(container.interactors) == (users[-1],)
+    assert len(manager.panes) == 7
+    container.close()
+
+
+def test_manager_visibility_changes_refresh_retained_case_surfaces(qapp):
+    manager = ScenePaneManager()
+    container = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
+    case = manager.register_case("case")
+    manager.enter_lecture("case")
+    assert tuple(container.interactors) == (case,)
+    manager.delete_pane(case)
+    assert tuple(container.interactors) == (manager.active_pane_id,)
+    container.close()
+
+
+def test_lazy_case_plan_initializes_only_its_own_renderer_once():
+    from services.scene_commands import CommandPlan
+
+    window = MainWindow.__new__(MainWindow)
+    window.pane_manager = ScenePaneManager()
+    case_id = window.pane_manager.register_case("case")
+    case = window.pane_manager.pane(case_id)
+    case.scene_2d["pending_plan"] = CommandPlan(scene="2d", operations=()).to_dict()
+    window._pane_widgets_ready = True
+    window.window = object()
+    window._render_scene = lambda: None
+    calls = []
+    def execute(plan, *, pane_id, activate_pane):
+        calls.append((pane_id, activate_pane))
+        return SimpleNamespace(valid=True)
+    window.scene_command_service = SimpleNamespace(execute=execute)
+
+    window._on_pane_interactor_created(case_id, object())
+    window._on_pane_interactor_created(case_id, object())
+
+    assert calls == [(case_id, False)]
+    assert window.pane_manager.active_pane_id == "pane-1"
+    assert "pending_plan" not in case.scene_2d
+
+
+def test_agent_workspace_refresh_notifies_only_after_runtime_is_restored():
+    from models.geometry_2d import Point2D
+
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    window._pane_scene().geometry_points = [Point2D("saved", 3, 4)]
+    snapshot = window._scene_snapshot_from_current_state()
+    window._pane_scene().geometry_points = [Point2D("changed", 8, 9)]
+    refreshed = []
+    manager.workspace_restored.connect(lambda: refreshed.append(window._pane_scene().geometry_points[0].x))
+
+    window._restore_agent_scene_snapshot(snapshot)
+
+    assert refreshed == [3]

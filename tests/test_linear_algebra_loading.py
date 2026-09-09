@@ -78,7 +78,35 @@ def test_loading_a_2d_topic_activates_the_visible_select_tool() -> None:
     )
 
 
-def test_selecting_a_geometric_example_controls_its_scene_aliases() -> None:
+def test_opening_lecture_retains_user_content_and_registers_only_one_visible_case():
+    window = MainWindow.__new__(MainWindow)
+    window.pane_manager = ScenePaneManager()
+    user_ids = window.pane_manager.set_layout(4)
+    user = window.pane_manager.pane(user_ids[-1])
+    user.scene_2d = {"objects": [{"id": "user-point", "x": 7}]}
+    window.pane_manager.focus_pane(user.pane_id)
+    runtime = window._pane_scene()
+    runtime._active_2d_tool = "vector"
+    window.algebra_panel = MagicMock()
+    executed = []
+    window.scene_command_service = SimpleNamespace(execute=lambda plan, **kw: executed.append((plan, kw)))
+    window._sync_scene_controls = MagicMock()
+
+    window._load_linear_algebra_topic("ch01.ops.addition")
+
+    assert user.scene_2d == {"objects": [{"id": "user-point", "x": 7}]}
+    assert runtime._active_2d_tool == "vector"
+    assert executed == []  # hidden case plans are initialized only when materialized
+    assert len(window.pane_manager.panes) == 7
+    visible = window.pane_manager.visible_pane_ids()
+    assert len(visible) == 1
+    assert window.pane_manager.pane(visible[0]).source == "case"
+    window._set_teaching_case_pane_count(3)
+    assert len(window.pane_manager.visible_pane_ids()) == 3
+    assert not set(user_ids).intersection(window.pane_manager.visible_pane_ids())
+
+
+def test_selecting_a_geometric_example_does_not_filter_user_scene_aliases() -> None:
     calls: list[tuple[str, str, bool]] = []
     renders: list[bool] = []
 
@@ -114,6 +142,5 @@ def test_selecting_a_geometric_example_controls_its_scene_aliases() -> None:
 
     assert window._active_linear_algebra_stage_id == "stage.parallelogram"
     assert window._hidden_linear_algebra_aliases == {"sem__addition_triangle"}
-    assert ("regular", "sem__addition_triangle", False) in calls
-    assert ("teaching", "sem__addition_parallelogram", True) in calls
-    assert renders == [True]
+    assert calls == []
+    assert renders == []

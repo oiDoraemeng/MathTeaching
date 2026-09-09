@@ -41,3 +41,20 @@ def test_leave_without_enter_does_not_restore_all_user_panes():
     first = manager.visible_pane_ids()[0]
     manager.set_visible_panes([first])
     assert manager.leave_lecture() == (first,)
+
+
+def test_hidden_tab_replaces_active_slot_without_allocating_or_expanding():
+    manager = ScenePaneManager()
+    first, second, third = manager.set_layout(3)
+    hidden = [manager.create_pane() for _ in range(5)][-1]
+    manager.focus_pane(second)
+    retained = tuple(manager.panes)
+
+    manager.reveal_pane(hidden)
+
+    assert manager.visible_pane_ids() == (first, hidden, third)
+    assert manager.active_pane_id == hidden
+    assert tuple(manager.panes) == retained
+    manager.reveal_pane(first)
+    assert manager.visible_pane_ids() == (first, hidden, third)
+    assert manager.active_pane_id == first
