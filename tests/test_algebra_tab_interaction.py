@@ -73,9 +73,31 @@ def test_overflow_scrolls_without_arrows_or_scrollbars_and_selection_reveals_tab
     assert tabs.scroll.frameWidth() == 0
     scrollbar = tabs.scroll.horizontalScrollBar()
     assert scrollbar.maximum() > 0
+    tabs.setCurrentIndex(0)
+    changes = []
+    tabs.currentChanged.connect(changes.append)
     event = QWheelEvent(QPointF(30, 10), QPointF(30, 10), QPoint(), QPoint(0, -120), Qt.MouseButton.NoButton, Qt.KeyboardModifier.NoModifier, Qt.ScrollPhase.NoScrollPhase, False)
     QApplication.sendEvent(tabs.scroll.viewport(), event)
     assert scrollbar.value() > 0
+    assert tabs.currentIndex() == 0
+    assert changes == []
+
+    # The tab bar itself receives wheel events when the pointer is over its
+    # visible labels.  Its default implementation would change the current
+    # tab, so this must have the same inspect-only behaviour as the viewport.
+    QApplication.sendEvent(bar, event)
+    assert tabs.currentIndex() == 0
+    assert changes == []
+
+    # Selection remains an intentional click or keyboard operation.
+    QTest.mouseClick(bar, Qt.MouseButton.LeftButton, pos=bar.tabRect(1).center())
+    assert tabs.currentIndex() == 1
+    assert changes == [1]
+    bar.setFocus()
+    QTest.keyClick(bar, Qt.Key.Key_Right)
+    assert tabs.currentIndex() == 2
+    assert changes == [1, 2]
+
     tabs.setCurrentIndex(tabs.count() - 1)
     assert tabs._pages.currentIndex() == tabs.count() - 1
     assert scrollbar.value() > 120

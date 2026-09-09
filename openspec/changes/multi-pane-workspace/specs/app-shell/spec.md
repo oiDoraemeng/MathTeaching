@@ -2,13 +2,19 @@
 
 ### Requirement: Main viewport controls
 
-主窗口 SHALL 在右上角 viewport toolbar 提供场景模式、单/双/三/四窗格布局和 Agent 控件。窗格布局控件 SHALL 使用统一 SVG 图标和至少 36px 命中区域，不得使用下拉菜单替代四种布局按钮，并 SHALL 暴露中文 accessible name。
+主窗口 SHALL 在视口右侧垂直居中的 viewport toolbar 提供场景模式、单/双/三/四窗格布局和 Agent 控件；2D 几何工具栏 SHALL 位于视口左侧垂直居中。窗格布局控件 SHALL 使用统一 SVG 图标和至少 36px 命中区域，不得使用下拉菜单替代四种布局按钮，并 SHALL 暴露中文 accessible name。
 
 #### Scenario: Layout controls are discoverable
 
-- **WHEN** 用户查看 2D 或 3D 主视图右上角
+- **WHEN** 用户查看 2D 或 3D 主视图左右两侧
 - **THEN** 可以直接看到四个窗格布局图标
 - **AND** 当前布局按钮具有选中态
+
+#### Scenario: Vertically centered toolbars
+
+- **WHEN** 视口尺寸改变
+- **THEN** 2D 几何工具栏保持在左侧垂直居中
+- **AND** viewport toolbar 保持在右侧垂直居中
 
 ### Requirement: Algebra panel follows viewport focus
 

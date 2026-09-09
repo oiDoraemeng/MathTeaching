@@ -1328,7 +1328,11 @@ class MainWindow:
             return
         host = self.viewport_host
         toolbar_width = self.viewport_toolbar.width()
-        self.viewport_toolbar.move(max(8, host.width() - toolbar_width - 12), 12)
+        toolbar_height = self.viewport_toolbar.height()
+        self.viewport_toolbar.move(
+            max(8, host.width() - toolbar_width - 12),
+            max(8, (host.height() - toolbar_height) // 2),
+        )
         self.viewport_toolbar.raise_()
         if hasattr(self, "two_d_geometry_toolbar"):
             self.two_d_geometry_toolbar.position_in_host()

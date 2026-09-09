@@ -1,4 +1,4 @@
-"""二维画布左上角统一工具栏。"""
+"""二维画布左侧统一工具栏。"""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ ToolKind = LinearKind | str
 
 
 class TwoDGeometryToolbar(QFrame):
-    """统一的二维/线性代数工具栏，始终横向显示在画布左上角。"""
+    """统一的二维/线性代数工具栏，垂直居中显示在画布左侧。"""
 
     tool_selected = Signal(object)
     snap_toggled = Signal(bool)
@@ -32,7 +32,7 @@ class TwoDGeometryToolbar(QFrame):
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         apply_drop_shadow(self, "overlay")
         apply_rounded_overlay(self, "md")
-        layout = QBoxLayout(QBoxLayout.Direction.LeftToRight, self)
+        layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, self)
         self._layout = layout
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
@@ -137,11 +137,10 @@ class TwoDGeometryToolbar(QFrame):
     def set_linear_algebra_mode(self, _enabled: bool = True) -> None:
         """Compatibility hook; the visible toolbar is always fully expanded."""
         self._linear_algebra_mode = True
-        self._layout.setDirection(
-            QBoxLayout.Direction.LeftToRight
-            if self._linear_algebra_mode
-            else QBoxLayout.Direction.TopToBottom
-        )
+        # The shared geometry toolbar remains vertical in every scene mode.
+        # `_enabled` is retained only for integrations that call the former
+        # mode-specific API.
+        self._layout.setDirection(QBoxLayout.Direction.TopToBottom)
         self.vector_button.setVisible(self._linear_algebra_mode)
         for button in self._linear_algebra_buttons[1:]:
             button.setVisible(self._linear_algebra_mode)
@@ -176,7 +175,10 @@ class TwoDGeometryToolbar(QFrame):
         parent = self.parentWidget()
         if parent is None:
             return
-        self.move(12, 12)
+        self.adjustSize()
+        x = 12
+        y = max(8, (parent.height() - self.height()) // 2)
+        self.move(x, y)
         if self.line_flyout.isVisible():
             self._position_flyout()
 
@@ -250,8 +252,12 @@ class TwoDGeometryToolbar(QFrame):
         parent = self.parentWidget()
         if parent is None:
             return
-        origin = self.mapTo(parent, QPoint(self.line_button.x(), self.height() + 8))
-        self.line_flyout.move(max(8, origin.x()), max(8, origin.y()))
+        # The toolbar is vertical, so open the concrete line choices to its
+        # right and align them with the line button rather than below it.
+        origin = self.mapTo(parent, QPoint(self.width() + 8, self.line_button.y()))
+        x = min(max(8, origin.x()), max(8, parent.width() - self.line_flyout.width() - 8))
+        y = min(max(8, origin.y()), max(8, parent.height() - self.line_flyout.height() - 8))
+        self.line_flyout.move(x, y)
 
     def _hide_flyout_if_unhovered(self) -> None:
         concrete_focused = any(button.hasFocus() for button in self.line_buttons.values())

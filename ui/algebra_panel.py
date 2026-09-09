@@ -67,7 +67,29 @@ class HoverCloseTabBar(QTabBar):
         self._update_close_buttons(-1)
         return super().leaveEvent(event)
 
+    def wheelEvent(self, event) -> None:
+        """Scroll the tab strip without using QTabBar's tab-navigation wheel mode.
+
+        Qt's default QTabBar implementation treats a wheel gesture as a
+        request to activate the previous/next tab.  In this workspace the
+        gesture is purely for inspecting an overflowing tab strip; focus must
+        only change after an explicit click (or keyboard activation).
+        """
+        ancestor = self.parentWidget()
+        while ancestor is not None and not isinstance(ancestor, QScrollArea):
+            ancestor = ancestor.parentWidget()
+        if isinstance(ancestor, PaneTabScrollArea):
+            ancestor.wheelEvent(event)
+            return
+        event.accept()
+
     def eventFilter(self, watched, event):
+        if event.type() == QEvent.Type.Wheel:
+            # Close buttons are child widgets of the tab bar.  Consume their
+            # wheel event in the same way as the bar itself so hovering a
+            # close affordance cannot activate a neighbouring tab.
+            self.wheelEvent(event)
+            return True
         if event.type() in (QEvent.Type.Enter, QEvent.Type.Leave):
             # Moving onto the child close button must keep it clickable.
             point = self.mapFromGlobal(QCursor.pos())

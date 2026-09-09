@@ -75,7 +75,7 @@ def test_viewport_toolbar_built_by_configure_viewport_is_masked(monkeypatch) -> 
     needs its own coverage — a plain constructor test never reaches it."""
     from unittest.mock import MagicMock
 
-    from PySide6.QtWidgets import QHBoxLayout
+    from PySide6.QtWidgets import QBoxLayout, QHBoxLayout
 
     from models.scene_mode import SceneMode
     from rendering.scene import SceneAppearance
@@ -110,6 +110,15 @@ def test_viewport_toolbar_built_by_configure_viewport_is_masked(monkeypatch) -> 
     QApplication.processEvents()
 
     toolbar = window.viewport_toolbar
+    window._position_viewport_overlays()
+    assert toolbar.layout().direction() == QBoxLayout.Direction.TopToBottom
+    assert toolbar.x() == viewport_host.width() - toolbar.width() - 12
+    assert toolbar.y() == (viewport_host.height() - toolbar.height()) // 2
+    assert window.two_d_geometry_toolbar.layout().direction() == QBoxLayout.Direction.TopToBottom
+    assert window.two_d_geometry_toolbar.x() == 12
+    assert window.two_d_geometry_toolbar.y() == (
+        max(8, (viewport_host.height() - window.two_d_geometry_toolbar.height()) // 2)
+    )
     mask = toolbar.mask()
     # An empty region "contains" nothing, so the emptiness check must come first
     # or a missing mask would pass the corner assertion vacuously.

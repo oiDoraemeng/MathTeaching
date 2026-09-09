@@ -9,7 +9,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtCore import QEvent, QSize, Qt
 from PySide6.QtGui import QKeySequence
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtWidgets import QApplication, QBoxLayout, QWidget
 
 from models.scene_mode import SceneAppearance, SceneMode
 from ui.scene_pane_manager import ScenePaneManager
@@ -22,7 +22,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.application = QApplication.instance() or QApplication([])
 
-    def test_toolbar_stays_at_the_top_left_and_line_hover_opens_the_flyout(self) -> None:
+    def test_toolbar_stays_at_the_left_center_and_line_hover_opens_the_flyout(self) -> None:
         host = QWidget()
         host.resize(800, 600)
         toolbar = TwoDGeometryToolbar(host)
@@ -31,7 +31,9 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         toolbar.position_in_host()
         QApplication.processEvents()
 
-        self.assertEqual((toolbar.x(), toolbar.y()), (12, 12))
+        self.assertEqual(toolbar.x(), 12)
+        self.assertEqual(toolbar.y(), (host.height() - toolbar.height()) // 2)
+        self.assertEqual(toolbar.layout().direction(), QBoxLayout.Direction.TopToBottom)
         QApplication.sendEvent(toolbar.line_button, QEvent(QEvent.Type.Enter))
         QApplication.processEvents()
         self.assertTrue(toolbar.line_flyout.isVisible())
@@ -92,7 +94,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
 
         self.assertFalse(toolbar.snap_button.isChecked())
 
-    def test_linear_algebra_mode_reuses_toolbar_and_moves_it_to_the_top_left(self) -> None:
+    def test_linear_algebra_mode_reuses_the_vertical_left_toolbar(self) -> None:
         host = QWidget()
         host.resize(900, 600)
         toolbar = TwoDGeometryToolbar(host)
@@ -104,7 +106,9 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         QApplication.processEvents()
 
         self.assertTrue(toolbar.is_linear_algebra_mode())
-        self.assertEqual((toolbar.x(), toolbar.y()), (12, 12))
+        self.assertEqual(toolbar.x(), 12)
+        self.assertEqual(toolbar.y(), (host.height() - toolbar.height()) // 2)
+        self.assertEqual(toolbar.layout().direction(), QBoxLayout.Direction.TopToBottom)
         self.assertTrue(toolbar.angle_button.isVisible())
         self.assertTrue(toolbar.area_button.isVisible())
 
