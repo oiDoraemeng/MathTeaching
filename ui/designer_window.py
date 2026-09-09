@@ -389,16 +389,45 @@ class MainWindow:
 
     def paste_scene_objects(self, pane_id: str | None = None):
         if not getattr(self, "scene_clipboard", None) or not self.scene_clipboard.payload: return []
-        pane = self._pane(pane_id); runtime = self._pane_scene(pane.pane_id)
-        before = self._capture_geometry_state()
+        pane = self._pane(pane_id)
         from services.scene_clipboard import paste_objects
-        pasted = paste_objects(self.scene_clipboard.payload, point_cls=Point2D, linear_cls=Linear2D, annotation_cls=Annotation2D, curve_cls=CurveLayer,
-                               offset=(self.scene_clipboard._repeat + 1, self.scene_clipboard._repeat + 1) if pane.pane_id == self.scene_clipboard.source_pane else (0, 0))
-        self.scene_clipboard._repeat += pane.pane_id == self.scene_clipboard.source_pane
-        runtime.geometry_points.extend(o for o in pasted if isinstance(o, Point2D)); runtime.linear_objects.extend(o for o in pasted if isinstance(o, Linear2D)); runtime.annotations.extend(o for o in pasted if isinstance(o, Annotation2D))
-        runtime.curve_layers.extend(o for o in pasted if isinstance(o, CurveLayer))
-        self._record_geometry_change(before)
-        return pasted
+        with self._using_pane(pane.pane_id):
+            runtime = self._pane_scene(pane.pane_id)
+            before = self._capture_geometry_state()
+            previous_repeat = self.scene_clipboard._repeat
+            same_pane = pane.pane_id == self.scene_clipboard.source_pane
+            try:
+                existing_ids = {
+                    getattr(obj, "id", "")
+                    for obj in (*runtime.geometry_points, *runtime.linear_objects,
+                                *runtime.annotations, *runtime.curve_layers)
+                    if getattr(obj, "id", "")
+                }
+                repeat = previous_repeat + 1 if same_pane else previous_repeat
+                pasted = paste_objects(
+                    self.scene_clipboard.payload,
+                    point_cls=Point2D, linear_cls=Linear2D,
+                    annotation_cls=Annotation2D, curve_cls=CurveLayer,
+                    existing_ids=existing_ids,
+                    offset=(repeat, repeat) if same_pane else (0, 0),
+                    max_bytes=self.scene_clipboard.max_bytes,
+                )
+                runtime.geometry_points.extend(o for o in pasted if isinstance(o, Point2D))
+                runtime.linear_objects.extend(o for o in pasted if isinstance(o, Linear2D))
+                runtime.annotations.extend(o for o in pasted if isinstance(o, Annotation2D))
+                runtime.curve_layers.extend(o for o in pasted if isinstance(o, CurveLayer))
+                runtime._two_d_object_order.extend(getattr(o, "id", "") for o in pasted if getattr(o, "id", ""))
+                self._sync_pane_state()
+                renderer = self._pane_renderer(required=False)
+                if renderer is not None and callable(getattr(renderer, "render", None)):
+                    renderer.render()
+                self.scene_clipboard._repeat = repeat
+                self._record_geometry_change(before)
+                return pasted
+            except Exception:
+                self.scene_clipboard._repeat = previous_repeat
+                self._restore_geometry_state(before)
+                raise
     """加载 Designer 窗口骨架，并协调两个相互独立的绘图工作区。"""
 
     def __init__(
@@ -3439,12 +3468,18 @@ class MainWindow:
         if before == after:
             return
         self._pane_scene()._geometry_undo_stack.append(before)
-        try:
-            pane_id = self._pane_scene().pane.pane_id
-            self.pane_manager.push(pane_id, lambda b=before: self._restore_geometry_state(b), lambda a=after: self._restore_geometry_state(a), "二维场景")
-        except Exception:
-            pass
-        self._pane_scene()._geometry_redo_stack.clear()
+        pane_id = self._pane_scene().pane.pane_id
+        self.pane_manager.push(
+            pane_id,
+            lambda b=before, p=pane_id: self._restore_geometry_state_for_pane(p, b),
+            lambda a=after, p=pane_id: self._restore_geometry_state_for_pane(p, a),
+            "二维场景",
+        )
+
+    def _restore_geometry_state_for_pane(self, pane_id: str, state: _GeometryHistoryState) -> None:
+        with self._using_pane(pane_id):
+            self._restore_geometry_state(state)
+            self._pane_scene()._geometry_redo_stack.clear()
         self._update_geometry_history_controls()
 
     def _update_geometry_history_controls(self) -> None:
@@ -3463,6 +3498,9 @@ class MainWindow:
             )
 
     def _undo_2d_geometry(self) -> None:
+        if self.pane_manager.undo():
+            self._update_geometry_history_controls()
+            return
         if getattr(self._pane_scene(), "_scene_command_undo_stack", []):
             current = self._capture_scene_command_state()
             target = self._pane_scene()._scene_command_undo_stack.pop()
@@ -3484,6 +3522,9 @@ class MainWindow:
     _undo_scene_command = _undo_2d_geometry
 
     def _redo_2d_geometry(self) -> None:
+        if self.pane_manager.redo():
+            self._update_geometry_history_controls()
+            return
         if getattr(self._pane_scene(), "_scene_command_redo_stack", []):
             current = self._capture_scene_command_state()
             target = self._pane_scene()._scene_command_redo_stack.pop()

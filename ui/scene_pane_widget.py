@@ -40,7 +40,7 @@ class ScenePaneWidget(QWidget):
         """Return and retain 2-D objects whose anchor lies within rect."""
         pane = self.manager.pane(pane_id or self.manager.active_pane_id)
         runtime = getattr(pane, "runtime", None)
-        objects = [] if runtime is None else [*getattr(runtime, "geometry_points", []), *getattr(runtime, "linear_objects", []), *getattr(runtime, "annotations", [])]
+        objects = [] if runtime is None else [*getattr(runtime, "geometry_points", []), *getattr(runtime, "linear_objects", []), *getattr(runtime, "annotations", []), *getattr(runtime, "curve_layers", [])]
         selected = rectangle_select(objects, rect)
         pane.selected_object_ids = [getattr(item, "id", "") for item in selected]
         return selected

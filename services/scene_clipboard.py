@@ -63,8 +63,9 @@ def parse_payload(payload, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> dict:
         seen_ids.add(object_id)
     return value
 
-def paste_objects(payload, *, point_cls, linear_cls, annotation_cls, curve_cls=None, existing_ids=(), offset=(0, 0)):
-    value = parse_payload(payload)
+def paste_objects(payload, *, point_cls, linear_cls, annotation_cls, curve_cls=None,
+                  existing_ids=(), offset=(0, 0), max_bytes: int = MAX_CLIPBOARD_BYTES):
+    value = parse_payload(payload, max_bytes=max_bytes)
     occupied = set(existing_ids)
     idmap = {}; result = []
 
@@ -116,5 +117,7 @@ class SceneClipboard:
     def paste(self, *, pane_id=None, **kwargs):
         if self.payload is None: return []
         same = pane_id is not None and pane_id == self.source_pane
-        self._repeat += 1 if same else 0
-        return paste_objects(self.payload, offset=(self._repeat, self._repeat) if same else (0,0), **kwargs)
+        repeat = self._repeat + 1 if same else self._repeat
+        result = paste_objects(self.payload, offset=(repeat, repeat) if same else (0, 0), max_bytes=self.max_bytes, **kwargs)
+        self._repeat = repeat
+        return result
