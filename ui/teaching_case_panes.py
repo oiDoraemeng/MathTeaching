@@ -210,6 +210,13 @@ class TeachingCasePane(PaneChrome):
         try:
             bounds = self._current_bounds()
             self.bounds = bounds
+            if self.pane_manager is not None and self.pane_id is not None:
+                state = self.pane_manager.pane(self.pane_id)
+                camera = self.plotter.camera
+                state.camera_2d = {
+                    "focal_point": [float(value) for value in camera.focal_point],
+                    "parallel_scale": float(camera.parallel_scale),
+                }
             self.geometry.set_bounds(bounds)
             self.guides.render(bounds, SceneAppearance(show_grid=True), effective_theme="light")
         except (AttributeError, RuntimeError, ValueError):
