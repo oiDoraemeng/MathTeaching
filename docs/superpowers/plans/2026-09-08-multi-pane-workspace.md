@@ -12,11 +12,11 @@
 
 ## Global Constraints
 
-- 最多四个窗格，至少保留一个；启动时单窗格。
+- 窗格总数可超过四个但最多四个同时可见，至少保留一个；启动时单窗格。
 - 三窗格布局为左侧大窗格加右侧上下两个小窗格；双窗格左右布局；四窗格 2×2。
 - 第一版普通窗格状态只保留当前运行期间，不写入数据库；快照增加 `panes` 并保留旧字段。
 - 不保留 `self.plotter` 兼容代理；调用链直接迁移到 Pane Manager。
-- 教学案例视图与普通工作区窗格隔离。
+- 教学案例与普通内容统一由 Pane Manager 管理，讲义切换只改变显示集合。
 - 所有工具操作均作用于焦点窗格；Agent 请求开始时锁定目标 pane。
 - 设计修订：普通 Pane 与讲义案例 Pane 不再区分类型；窗格总数可超过 4，但最多 4 个可见。
 - 设计修订：点击讲义默认只显示一个案例并隐藏所有用户 Pane；Agent“全部显示”只显示当前讲义案例。
@@ -139,6 +139,7 @@
 - [x] 验证 2D 工具在 3D pane 上给出模式不支持结果而不污染其他 pane。
 - [x] 运行测试并提交 `git commit -m "feat: 将编辑工具路由到焦点窗格"`。
 
+<!-- openspec-task: 5.1 -->
 ### Task 13: 统一 Pane Chrome 与讲义显示集合
 
 **Files:**
@@ -149,11 +150,12 @@
 - Modify: `ui/algebra_panel.py`
 - Test: `tests/test_unified_pane_chrome.py`
 
-- [ ] 将案例 Pane 注册到统一 manager；点击讲义保存用户可见集合，只显示一个案例；Agent“全部显示”只显示案例集合，最多四个。
-- [ ] 为 Pane 增加标题栏、边框、隐藏、全屏、悬浮关闭按钮；关闭后删除并修正布局。
-- [ ] 为代数 Tab 增加悬浮关闭按钮；Tab 超宽时启用无滚动条横向滚动。
-- [ ] 增加统一样式和显示集合回归测试。
+- [x] 将案例 Pane 注册到统一 manager；点击讲义保存用户可见集合，只显示一个案例；Agent“全部显示”只显示案例集合，最多四个。
+- [x] 为 Pane 增加标题栏、边框、隐藏、全屏、始终可见关闭按钮和关闭确认；关闭后删除并修正布局。
+- [x] 为代数 Tab 增加悬浮关闭按钮；Tab 超宽时启用无滚动条横向滚动。
+- [x] 增加统一样式和显示集合回归测试（覆盖现有 Pane/案例/无限画布测试集）。
 
+<!-- openspec-task: 5.3 -->
 ### Task 14: 无限画布与教程视口边界修复
 
 **Files:**
@@ -161,9 +163,9 @@
 - Modify: `ui/teaching_case_panes.py`
 - Test: `tests/test_infinite_2d_canvas.py`
 
-- [ ] 移除教程视口世界边界绘制，保留屏幕裁剪。
-- [ ] 验证缩放围绕焦点、平移和最小化恢复不出现边界矩形。
-- [ ] 运行 2D 场景和教程恢复回归测试。
+- [x] 移除教程视口世界边界绘制，保留屏幕裁剪。
+- [x] 验证缩放围绕焦点、平移和最小化恢复不出现边界矩形。
+- [x] 运行 2D 场景和教程恢复回归测试。
 
 <!-- openspec-task: 3.3 -->
 ### Task 9: 多选与 JSON 复制粘贴
@@ -174,13 +176,13 @@
 - Modify: `ui/designer_window.py`
 - Test: `tests/test_scene_clipboard.py`
 
-- [ ] 测试矩形多选和单对象选择生成点、线、函数、标注快照；验证版本、大小上限和字段白名单。
-- [ ] 实现跨 pane 粘贴原坐标、同 pane 粘贴按一个网格单位偏移，并重新生成对象 ID。
-- [ ] 将粘贴作为单个全局历史操作，失败时回滚且不改变剪贴板。
-- [ ] 运行测试并提交 `git commit -m "feat: 支持窗格对象多选复制粘贴"`。
+- [x] 测试矩形多选和单对象选择生成点、线、函数、标注快照；验证版本、大小上限和字段白名单。
+- [x] 实现跨 pane 粘贴原坐标、同 pane 粘贴按一个网格单位偏移，并重新生成对象 ID。
+- [x] 将粘贴作为单个全局历史操作，失败时回滚且不改变剪贴板。
+- [x] 运行测试并提交 `git commit -m "feat: 支持窗格对象多选复制粘贴"`。
 
 <!-- openspec-task: 4.1 -->
-### Task 10: 隔离教学案例视图
+### Task 10: 统一教学案例与工作区窗格
 
 **Files:**
 - Modify: `ui/teaching_case_panes.py`
@@ -188,9 +190,9 @@
 - Modify: `ui/agent_sidebar_web.py`
 - Test: `tests/test_teaching_case_panes.py`
 
-- [ ] 测试已有普通 pane 时打开向量加法不会创建、替换或删除普通 pane，也不会改变普通代数 Tab。
-- [ ] 保持 `TeachingCasePaneGrid` 独立 renderer/生命周期和 Agent 案例 Tab；普通 pane manager 不接受 case plan。
-- [ ] 运行案例回归测试并提交 `git commit -m "refactor: 隔离教学案例与普通工作区窗格"`。
+- [x] 测试已有普通 pane 时打开向量加法不会创建、替换或删除普通 pane，也不会改变普通代数 Tab。
+- [x] 将案例 Pane 注册到统一 Pane Manager，保留独立案例渲染器与 Agent 案例 Tab，并按讲义显示集合切换。
+- [x] 运行案例回归测试并提交实现提交（`ba90bb3` 至 `d723e39`）。
 
 <!-- openspec-task: 4.2 -->
 ### Task 11: 更新快照、Agent 上下文和协议
@@ -202,10 +204,10 @@
 - Test: `tests/test_agent_scene_snapshot_adapter.py`
 - Test: `tests/test_scene_snapshot.py`
 
-- [ ] 测试 `panes` 快照包含所有 pane、active pane 和模式/相机/代数数据，同时旧字段仍可读取。
-- [ ] 在 Agent 请求开始时锁定 pane A，焦点变化后继续写入 A；恢复回合重建完整多窗格状态。
-- [ ] 校验协议事件中的 pane ID，拒绝不存在或被删除的 pane，并保持教学案例事件独立。
-- [ ] 运行 Agent 和协议测试并提交 `git commit -m "feat: 扩展多窗格场景快照协议"`。
+- [x] 测试 `panes` 快照包含所有 pane、active pane 和模式/相机/代数数据，同时旧字段仍可读取。
+- [x] 在 Agent 请求开始时锁定 pane A，焦点变化后继续写入 A；恢复回合重建完整多窗格状态。
+- [x] 校验协议事件中的 pane ID，拒绝不存在或被删除的 pane，并保持教学案例事件独立。
+- [x] 运行 Agent 和协议测试并提交实现提交（`e0b0c25` 至 `66473f7`）。
 
 <!-- openspec-task: 4.3 -->
 ### Task 12: 完整验证与手动走查
