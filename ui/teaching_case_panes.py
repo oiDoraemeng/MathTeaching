@@ -111,7 +111,8 @@ class TeachingCasePane(PaneChrome):
         self.plotter.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.plotter.interactor.setMouseTracking(True)
         self.plotter.interactor.installEventFilter(self)
-        add_observer = getattr(self.plotter, "add_observer", None)
+        iren = getattr(self.plotter, "iren", None)
+        add_observer = getattr(iren, "add_observer", None)
         if callable(add_observer):
             add_observer("InteractionEvent", lambda *_args: self._sync_viewport_bounds())
             add_observer("EndInteractionEvent", lambda *_args: self._sync_viewport_bounds())

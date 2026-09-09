@@ -4,6 +4,7 @@ from models.scene_mode import SceneAppearance
 from rendering.ticks import ViewportBounds
 from rendering.two_d_scene import TwoDGuides, _overscan_bounds
 from ui.teaching_case_panes import TeachingCasePane
+import inspect
 
 
 def test_guide_geometry_overscans_viewport_bounds() -> None:
@@ -51,3 +52,10 @@ def test_teaching_case_bounds_follow_camera_after_large_pan_and_zoom() -> None:
     bounds = pane._current_bounds()
     assert bounds.x_range[0] > 7.0
     assert bounds.y_range[1] < 7.0
+
+
+def test_case_pane_registers_vtk_interaction_observers_on_iren() -> None:
+    source = inspect.getsource(TeachingCasePane.__init__)
+    assert 'getattr(self.plotter, "iren", None)' in source
+    assert '"InteractionEvent"' in source
+    assert '"EndInteractionEvent"' in source
