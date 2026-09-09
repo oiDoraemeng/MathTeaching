@@ -45,11 +45,15 @@ def make_payload(objects, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> str:
         fields = _FIELDS.get(kind)
         if fields is None: raise ValueError(f"unsupported clipboard object: {kind}")
         records.append({"type": kind, "data": {**({"id": data["id"]} if "id" in data else {}), **{k: data[k] for k in fields if k in data}}})
-    point_ids = {record["data"].get("id") for record in records if record["type"] == "point"}
+    point_ids = {
+        record["data"].get("id")
+        for record in records
+        if record["type"] == "point" and isinstance(record["data"].get("id"), str)
+    }
     for record in records:
         if record["type"] in {"line", "segment", "ray", "vector"}:
             endpoints = (record["data"].get("start_point_id"), record["data"].get("end_point_id"))
-            if any(endpoint not in point_ids for endpoint in endpoints):
+            if any(not isinstance(endpoint, str) or endpoint not in point_ids for endpoint in endpoints):
                 raise ValueError("clipboard line references missing endpoint")
     payload = {"version": VERSION, "objects": records}
     text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
