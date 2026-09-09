@@ -17,7 +17,7 @@ from pyvistaqt import QtInteractor
 from models.geometry_2d import Annotation2D, Linear2D, Point2D
 from models.scene_mode import SceneAppearance
 from rendering.geometry_scene import GeometrySceneController
-from rendering.ticks import ViewportBounds
+from rendering.ticks import ViewportBounds, visible_2d_bounds
 from rendering.two_d_scene import TwoDGuides, configure_2d_camera
 from services.scene_commands import CommandPlan, SceneCommandService
 from ui.scene_pane_widget import PaneChrome
@@ -113,7 +113,9 @@ class TeachingCasePane(PaneChrome):
         self.plotter.interactor.installEventFilter(self)
         layout.addWidget(self.plotter.interactor, 1)
 
-        self.bounds = ViewportBounds((-2.0, 5.0), (-1.0, 6.0))
+        # Bounds are initialized before the renderer has a valid size, then
+        # replaced from the camera immediately during the first render.
+        self.bounds = ViewportBounds((-1.0, 1.0), (-1.0, 1.0))
         self.guides = TwoDGuides(self.plotter)
         self.geometry = GeometrySceneController(self.plotter, self.bounds)
         self._render_case()
@@ -138,6 +140,11 @@ class TeachingCasePane(PaneChrome):
         plan = case_plan(self.compiled, self._stage_id())
         configure_2d_camera(self.plotter)
         self.plotter.set_background(SceneAppearance().background_color("light"))
+        self.plotter.reset_camera()
+        configure_2d_camera(self.plotter)
+        self.plotter.camera.parallel_scale = 6.5
+        self.bounds = self._current_bounds()
+        self.geometry.set_bounds(self.bounds)
         self.guides.render(self.bounds, SceneAppearance(show_grid=True), effective_theme="light")
         points: dict[str, Point2D] = {}
         for operation in plan.operations:
@@ -178,10 +185,15 @@ class TeachingCasePane(PaneChrome):
                     opacity=float(operation.get("opacity", 0.24)),
                     outline=bool(operation.get("outline", True)),
                 )
-        self.plotter.reset_camera()
-        configure_2d_camera(self.plotter)
-        self.plotter.camera.parallel_scale = 6.5
         self.plotter.render()
+
+    def _current_bounds(self) -> ViewportBounds:
+        interactor = getattr(self.plotter, "interactor", None)
+        width = max(1, int(interactor.width())) if interactor is not None else 1
+        height = max(1, int(interactor.height())) if interactor is not None else 1
+        camera = self.plotter.camera
+        focal = tuple(float(value) for value in camera.focal_point)
+        return visible_2d_bounds(focal, float(camera.parallel_scale), width / height)
 
     def close(self) -> None:
         try:

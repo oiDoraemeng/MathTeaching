@@ -3,6 +3,7 @@
 from models.scene_mode import SceneAppearance
 from rendering.ticks import ViewportBounds
 from rendering.two_d_scene import TwoDGuides, _overscan_bounds
+from ui.teaching_case_panes import TeachingCasePane
 
 
 def test_guide_geometry_overscans_viewport_bounds() -> None:
@@ -37,3 +38,16 @@ def test_guides_keep_axis_and_grid_continuous_past_visible_edges() -> None:
     assert axis.points[0, 0] < bounds.x_range[0]
     assert axis.points[1, 0] > bounds.x_range[1]
 
+
+def test_teaching_case_bounds_follow_camera_after_large_pan_and_zoom() -> None:
+    class Interactor:
+        def width(self): return 800
+        def height(self): return 400
+    class Camera:
+        focal_point = (25.0, -18.0, 0.0)
+        parallel_scale = 12.0
+    pane = TeachingCasePane.__new__(TeachingCasePane)
+    pane.plotter = type("Plotter", (), {"interactor": Interactor(), "camera": Camera()})()
+    bounds = pane._current_bounds()
+    assert bounds.x_range[0] > 7.0
+    assert bounds.y_range[1] < 7.0
