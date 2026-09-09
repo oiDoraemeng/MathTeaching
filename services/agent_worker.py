@@ -35,6 +35,7 @@ class RuntimeTurnWorker(QObject):
         scene_before=None,
         scene_after=None,
         turn_id: str | None = None,
+        pane_id: str | None = None,
     ) -> None:
         super().__init__()
         self.runtime = runtime
@@ -46,6 +47,7 @@ class RuntimeTurnWorker(QObject):
         self.scene_before = scene_before
         self.scene_after = scene_after
         self.turn_id = turn_id
+        self.pane_id = pane_id
 
     @Slot()
     def run(self) -> None:
@@ -103,6 +105,7 @@ class RuntimeTurnWorker(QObject):
                 scene_after=self.scene_after,
                 turn_id=self.turn_id,
                 on_event=on_event,
+                **({"pane_id": self.pane_id} if self.pane_id is not None else {}),
             )
             flush_stream()
             # Runtime persistence allocates the durable turn id after provider

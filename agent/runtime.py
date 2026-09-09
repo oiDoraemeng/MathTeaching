@@ -72,9 +72,11 @@ class AgentRuntime:
     def validate(self, plan: CommandPlan) -> CommandValidation:
         return self.command_service.preview(plan)
 
-    def execute(self, plan: CommandPlan, *, expected_scene_fingerprint: str | None = None) -> CommandValidation:
+    def execute(self, plan: CommandPlan, *, expected_scene_fingerprint: str | None = None,
+                pane_id: str | None = None) -> CommandValidation:
         """唯一的执行入口：再次校验后交给 SceneCommandService。"""
-        return self.command_service.execute(plan, expected_scene_fingerprint=expected_scene_fingerprint)
+        kwargs = {"pane_id": pane_id, "activate_pane": False} if pane_id is not None else {}
+        return self.command_service.execute(plan, expected_scene_fingerprint=expected_scene_fingerprint, **kwargs)
 
     def _uses_native_tools(self) -> bool:
         provider = self.agent.provider
@@ -240,9 +242,14 @@ class AgentRuntime:
         scene_after: SceneSnapshot | None = None,
         turn_id: str | None = None,
         on_event: Callable[[AgentEvent], None] | None = None,
+        pane_id: str | None = None,
     ) -> RuntimeTurnResult:
         mode, execution_mode, approval_required = self.normalize_visible_mode(mode, execution_mode)
-        base_scene_fingerprint = scene_before.fingerprint() if scene_before is not None else None
+        pane_id = pane_id or (scene_before.active_pane_id if scene_before is not None else None)
+        base_scene_fingerprint = (
+            scene_before.fingerprint_for_pane(pane_id) if pane_id and scene_before and scene_before.panes
+            else scene_before.fingerprint() if scene_before is not None else None
+        )
         # 预分配 turn_id，让流式事件（message_delta）在 UI 上始终归属到
         # 同一个 turn 卡片，避免实时转发时因 turn_id 缺失而拆成两个卡片。
         turn_id = str(turn_id or uuid4().hex)
@@ -270,6 +277,7 @@ class AgentRuntime:
                 execution_mode,
                 turn_id=turn_id,
                 base_scene_fingerprint=base_scene_fingerprint,
+                pane_id=pane_id,
             )
             if self.session_store is not None and persisted_id is not None:
                 for event in events:
@@ -404,7 +412,9 @@ class AgentRuntime:
                 turn_id = finish(status, response, validation, None)
                 return RuntimeTurnResult(status, response, validation, tuple(events), turn_id)
             events.append(AgentEvent("execution_started", {"summary": response.plan.summary}, session_id=session_id))
-            self.command_service.execute(response.plan, expected_scene_fingerprint=base_scene_fingerprint)
+            executed = self.execute(response.plan, expected_scene_fingerprint=base_scene_fingerprint, pane_id=pane_id)
+            if not executed.valid:
+                raise ValueError("；".join(executed.messages))
             events.append(AgentEvent("execution_finished", {"status": "completed"}, session_id=session_id))
             status = "completed"
             turn_id = finish(status, response, validation, scene_after)
@@ -428,6 +438,7 @@ class AgentRuntime:
         execution_mode: str,
         turn_id: str | None = None,
         base_scene_fingerprint: str | None = None,
+        pane_id: str | None = None,
     ) -> str | None:
         if self.session_store is None:
             return None
@@ -437,6 +448,8 @@ class AgentRuntime:
             validation_data = {"valid": validation.valid, "messages": list(validation.messages)}
             if base_scene_fingerprint is not None:
                 validation_data["base_scene_fingerprint"] = base_scene_fingerprint
+            if pane_id is not None:
+                validation_data["pane_id"] = pane_id
         return self.session_store.append_turn(
             session_id,
             user_message=prompt,

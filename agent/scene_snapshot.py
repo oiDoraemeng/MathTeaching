@@ -97,6 +97,18 @@ class SceneSnapshot:
         """Stable SHA-256 identity used to guard delayed scene execution."""
         return hashlib.sha256(self.to_json().encode("utf-8")).hexdigest()
 
+    def fingerprint_for_pane(self, pane_id: str) -> str:
+        """Guard the requested scene without treating focus/layout as edits."""
+        pane = next((item for item in self.panes if item["pane_id"] == pane_id), None)
+        if pane is None:
+            raise ValueError(f"unknown snapshot pane: {pane_id}")
+        scene = pane.get("snapshot", {})
+        # Camera movement and selection are view interactions, not scene edits.
+        payload = {key: scene.get(key) for key in
+                   ("scene_mode", "curves", "geometry", "layers", "annotations", "metadata")}
+        encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True)
+        return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
     @classmethod
     def from_dict(cls, payload: dict[str, Any]) -> "SceneSnapshot":
         if not isinstance(payload, dict):
