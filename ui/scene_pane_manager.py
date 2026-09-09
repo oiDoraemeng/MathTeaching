@@ -116,21 +116,28 @@ class ScenePaneManager(QObject):
             self._set_active_pane(ids[0])
         return tuple(ids)
 
-    def enter_lecture(self, case_id: str) -> tuple[str, ...]:
+    def enter_lecture(self, case_id: str, case_ids: tuple[str, ...] | list[str] | None = None) -> tuple[str, ...]:
         self._lecture_user_visible = self.user_visible_pane_ids
-        cases = [pid for pid in self._pane_order if self._panes[pid].source == "case"]
+        allowed = set(case_ids) if case_ids is not None else None
+        cases = [pid for pid in self._pane_order
+                 if self._panes[pid].source == "case"
+                 and (allowed is None or self._panes[pid].source_id in allowed)]
         self._lecture_case_ids = tuple(cases)
         selected = next((pid for pid in cases if self._panes[pid].source_id == case_id), None)
         return self.set_visible_panes([selected] if selected else [])
 
     def leave_lecture(self) -> tuple[str, ...]:
-        restored = self._lecture_user_visible or tuple(pid for pid in self._pane_order if self._panes[pid].source == "user")
+        restored = self._lecture_user_visible
+        if restored is None:
+            # A defensive fallback for callers that leave without entering:
+            # retain the current layout's first user pane only.
+            restored = tuple(self.user_visible_pane_ids[:1])
         self._lecture_user_visible = None
         self._lecture_case_ids = ()
         return self.set_visible_panes(list(restored))
 
     def show_all_cases(self) -> tuple[str, ...]:
-        return self.set_visible_panes([pid for pid in self._lecture_case_ids if pid in self._panes])
+        return self.set_visible_panes([pid for pid in self._lecture_case_ids if pid in self._panes][: self.MAX_PANES])
 
     def show_case(self, case_id: str) -> tuple[str, ...]:
         pid = next((pid for pid in self._pane_order if self._panes[pid].source == "case" and self._panes[pid].source_id == case_id), None)

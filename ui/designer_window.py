@@ -2233,7 +2233,10 @@ class MainWindow:
                 str(getattr(case, "id", "")),
                 name=str(getattr(case, "purpose", "案例")),
             )
-        self.pane_manager.enter_lecture(str(getattr(cases[0], "id", "")))
+        self.pane_manager.enter_lecture(
+            str(getattr(cases[0], "id", "")),
+            [str(getattr(case, "id", "")) for case in cases],
+        )
         grid = TeachingCasePaneGrid(compiled, cases, self.teaching_case_pane_host)
         grid.case_focused.connect(self._on_teaching_case_focus)
         grid.case_closed.connect(self._on_teaching_case_closed)
