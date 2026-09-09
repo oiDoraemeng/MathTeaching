@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import math
+from numbers import Real
 from dataclasses import asdict, is_dataclass
 from uuid import uuid4
 
@@ -61,6 +63,17 @@ def parse_payload(payload, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> dict:
         if object_id in seen_ids:
             raise ValueError("duplicate clipboard object id")
         seen_ids.add(object_id)
+        for key, item in rec["data"].items():
+            if isinstance(item, Real) and not isinstance(item, bool) and not math.isfinite(float(item)):
+                raise ValueError("clipboard numeric field must be finite")
+            if key in {"x", "y", "line_width", "offset_x", "offset_y", "range_scale"} and not isinstance(item, Real):
+                raise ValueError("clipboard numeric field is invalid")
+            if key in {"name", "kind", "expression", "text", "latex", "builtin_id", "color", "style", "role", "agent_alias", "start_point_id", "end_point_id"} and item is not None and not isinstance(item, str):
+                raise ValueError("clipboard text field is invalid")
+            if key == "visible" and not isinstance(item, bool):
+                raise ValueError("clipboard visible field is invalid")
+            if key == "parameters" and (not isinstance(item, dict) or any(not isinstance(k, str) or not isinstance(v, Real) or isinstance(v, bool) or not math.isfinite(float(v)) for k, v in item.items())):
+                raise ValueError("clipboard parameters field is invalid")
     return value
 
 def paste_objects(payload, *, point_cls, linear_cls, annotation_cls, curve_cls=None,

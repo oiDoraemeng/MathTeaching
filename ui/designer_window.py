@@ -417,6 +417,16 @@ class MainWindow:
                 runtime.annotations.extend(o for o in pasted if isinstance(o, Annotation2D))
                 runtime.curve_layers.extend(o for o in pasted if isinstance(o, CurveLayer))
                 runtime._two_d_object_order.extend(getattr(o, "id", "") for o in pasted if getattr(o, "id", ""))
+                controller = getattr(runtime, "geometry_controller", None)
+                if controller is not None:
+                    for obj in pasted:
+                        if isinstance(obj, Point2D): controller.add_point(obj)
+                        elif isinstance(obj, Linear2D): controller.add_linear(obj)
+                        elif isinstance(obj, Annotation2D): controller.add_annotation(obj)
+                curve_controller = getattr(runtime, "curve_controller", None)
+                if curve_controller is not None:
+                    for obj in pasted:
+                        if isinstance(obj, CurveLayer): curve_controller.add_layer(obj)
                 self._sync_pane_state()
                 renderer = self._pane_renderer(required=False)
                 if renderer is not None and callable(getattr(renderer, "render", None)):
@@ -427,6 +437,10 @@ class MainWindow:
             except Exception:
                 self.scene_clipboard._repeat = previous_repeat
                 self._restore_geometry_state(before)
+                self._sync_pane_state()
+                renderer = self._pane_renderer(required=False)
+                if renderer is not None and callable(getattr(renderer, "render", None)):
+                    renderer.render()
                 raise
     """加载 Designer 窗口骨架，并协调两个相互独立的绘图工作区。"""
 
@@ -1147,10 +1161,14 @@ class MainWindow:
         """注册主窗口级二维几何撤回快捷键，避免依赖当前控件焦点。"""
         self._undo_2d_shortcut = QShortcut(QKeySequence("Ctrl+Z"), self.window)
         self._redo_2d_shortcut = QShortcut(QKeySequence("Ctrl+Shift+Z"), self.window)
-        for shortcut in (self._undo_2d_shortcut, self._redo_2d_shortcut):
+        self._copy_2d_shortcut = QShortcut(QKeySequence("Ctrl+C"), self.window)
+        self._paste_2d_shortcut = QShortcut(QKeySequence("Ctrl+V"), self.window)
+        for shortcut in (self._undo_2d_shortcut, self._redo_2d_shortcut, self._copy_2d_shortcut, self._paste_2d_shortcut):
             shortcut.setContext(Qt.ShortcutContext.WindowShortcut)
         self._undo_2d_shortcut.activated.connect(self._undo_2d_geometry)
         self._redo_2d_shortcut.activated.connect(self._redo_2d_geometry)
+        self._copy_2d_shortcut.activated.connect(self.copy_selected_scene_objects)
+        self._paste_2d_shortcut.activated.connect(self.paste_scene_objects)
 
     def _on_viewport_host_changed(self) -> None:
         self._position_viewport_overlays()
@@ -3499,6 +3517,11 @@ class MainWindow:
 
     def _undo_2d_geometry(self) -> None:
         if self.pane_manager.undo():
+            for state in self.pane_manager.panes.values():
+                runtime = getattr(state, "runtime", None)
+                if runtime is not None:
+                    runtime._geometry_undo_stack.clear()
+                    runtime._geometry_redo_stack.clear()
             self._update_geometry_history_controls()
             return
         if getattr(self._pane_scene(), "_scene_command_undo_stack", []):
@@ -3523,6 +3546,11 @@ class MainWindow:
 
     def _redo_2d_geometry(self) -> None:
         if self.pane_manager.redo():
+            for state in self.pane_manager.panes.values():
+                runtime = getattr(state, "runtime", None)
+                if runtime is not None:
+                    runtime._geometry_undo_stack.clear()
+                    runtime._geometry_redo_stack.clear()
             self._update_geometry_history_controls()
             return
         if getattr(self._pane_scene(), "_scene_command_redo_stack", []):
