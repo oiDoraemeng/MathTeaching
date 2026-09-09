@@ -76,6 +76,7 @@ class ScenePaneWidget(QWidget):
         self._refreshing = False
         self.clipboard = SceneClipboard()
         manager.active_pane_changed.connect(self._on_active_changed)
+        manager.pane_renamed.connect(self._on_pane_renamed)
         manager.visible_panes_changed.connect(self.sync_layout)
         manager.workspace_restored.connect(self._restore_workspace)
         self.sync_layout()

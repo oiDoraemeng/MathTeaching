@@ -69,6 +69,71 @@ def test_invalid_workspace_restore_does_not_partially_mutate_manager():
     assert manager.active_pane().to_snapshot() == before
 
 
+def test_workspace_restore_restores_or_clears_teaching_case_metadata():
+    window = workspace()
+    manager = window.pane_manager
+    case = manager.register_case("addition-case")
+    manager.enter_lecture("addition-case")
+    window._teaching_case_pane_ids = [case]
+    window._teaching_case_stage_refs = {case: ("stage-1",)}
+    window._active_linear_algebra_topic_id = "chapter.addition"
+    window._active_linear_algebra_stage_id = "stage-1"
+    lecture_snapshot = window._scene_snapshot_from_current_state()
+
+    manager.leave_lecture()
+    window._teaching_case_pane_ids = ["stale"]
+    window._teaching_case_stage_refs = {"stale": ("bad",)}
+    window._active_linear_algebra_topic_id = "stale-topic"
+    window._restore_agent_scene_snapshot(lecture_snapshot)
+    assert window._teaching_case_pane_ids == [case]
+    assert window._teaching_case_stage_refs == {case: ("stage-1",)}
+    assert window._active_linear_algebra_topic_id == "chapter.addition"
+
+    manager.leave_lecture()
+    ordinary_snapshot = window._scene_snapshot_from_current_state()
+    window._teaching_case_pane_ids = [case]
+    window._active_linear_algebra_topic_id = "stale-topic"
+    window._restore_agent_scene_snapshot(ordinary_snapshot)
+    assert window._teaching_case_pane_ids == []
+    assert window._active_linear_algebra_topic_id is None
+
+
+def test_workspace_restore_rebuilds_lecture_compilation_for_stage_routing():
+    window = workspace()
+    manager = window.pane_manager
+    compiled_a = window._resolve_linear_algebra_compiled("ch01.ops.addition")
+    compiled_b = window._resolve_linear_algebra_compiled("ch01.ops.cross-product")
+    assert compiled_a is not None
+    assert compiled_b is not None
+    stage_a = compiled_a.storyboard[0].id
+
+    case_a = manager.register_case("addition-case")
+    manager.enter_lecture("addition-case")
+    window._teaching_case_pane_ids = [case_a]
+    window._teaching_case_stage_refs = {case_a: (stage_a,)}
+    window._active_linear_algebra_topic_id = compiled_a.topic_id
+    window._active_linear_algebra_compiled = compiled_a
+    window._active_linear_algebra_stage_id = stage_a
+    snapshot_a = window._scene_snapshot_from_current_state()
+
+    manager.leave_lecture()
+    case_b = manager.register_case("cross-product-case")
+    manager.enter_lecture("cross-product-case")
+    window._teaching_case_pane_ids = [case_b]
+    window._teaching_case_stage_refs = {case_b: (compiled_b.storyboard[0].id,)}
+    window._active_linear_algebra_topic_id = compiled_b.topic_id
+    window._active_linear_algebra_compiled = compiled_b
+
+    window._restore_agent_scene_snapshot(snapshot_a)
+    window._select_linear_algebra_stage(compiled_a.topic_id, stage_a)
+
+    assert window._active_linear_algebra_compiled is not None
+    assert window._active_linear_algebra_compiled.topic_id == compiled_a.topic_id
+    assert window._active_linear_algebra_stage_id == stage_a
+    assert window._teaching_case_pane_ids == [case_a]
+    assert manager.active_pane_id == case_a
+
+
 @pytest.mark.parametrize("mode", ["Agent", "Ask"])
 def test_worker_runtime_and_approval_keep_request_pane_when_focus_changes(tmp_path, mode):
     window = workspace()

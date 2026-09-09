@@ -151,10 +151,19 @@ class ScenePaneManager(QObject):
                 break
             if pid not in self._visible_ids:
                 self._visible_ids.append(pid)
-        visible = tuple(self._visible_ids[:count])
+        # Keep the pane receiving input on screen when a layout is reduced.
+        # Retained panes are deliberately allowed to be hidden, but changing
+        # the layout must not silently redirect subsequent tool operations to
+        # the first pane.  Preserve the existing order where possible and
+        # replace the last retained slot with the active pane when necessary.
+        visible_ids = self._visible_ids[:count]
+        if self._active_pane_id in self._visible_ids and self._active_pane_id not in visible_ids:
+            visible_ids[-1] = self._active_pane_id
+        visible = tuple(visible_ids)
         self._visible_ids = list(visible)
         if self._active_pane_id not in visible:
             self._set_active_pane(visible[0])
+        self.visible_panes_changed.emit()
         return visible
 
     def visible_pane_ids(self) -> tuple[str, ...]:
@@ -241,6 +250,17 @@ class ScenePaneManager(QObject):
         self._set_active_pane(pane_id)
         return pane_id
 
+    def reveal_pane(self, pane_id: str) -> tuple[str, ...]:
+        """Select a retained tab in the active slot without changing layout size."""
+        self.pane(pane_id)
+        visible = list(self.visible_pane_ids())
+        if pane_id not in visible:
+            index = visible.index(self._active_pane_id)
+            visible[index] = pane_id
+            self.set_visible_panes(visible)
+        self.focus_pane(pane_id)
+        return self.visible_pane_ids()
+
     def activate_for_tool(self, pane_id: str | None = None) -> str:
         """Activate the pane receiving a tool command (or keep current)."""
         return self.focus_pane(pane_id or self._active_pane_id)
@@ -284,6 +304,7 @@ class ScenePaneManager(QObject):
         if was_active or self._active_pane_id not in visible:
             self._set_active_pane(visible[0])
         self.pane_deleted.emit(pane_id)
+        self.visible_panes_changed.emit()
 
     def layout_rects(self, size: QSize) -> dict[str, QRect]:
         """Return each visible pane's rectangle for the requested viewport size."""

@@ -69,7 +69,7 @@ from ui.linear_algebra_tools import (
     build_vector_tool_plan,
     parse_matrix,
 )
-from ui.teaching_case_panes import PANE_COUNTS, TeachingCasePaneGrid
+from ui.teaching_case_panes import PANE_COUNTS, TeachingCasePaneGrid, case_plan
 from services.agent_worker import RuntimeTurnWorker
 from services.agent_provider import (
     AgentSettings,
@@ -360,6 +360,9 @@ class _PaneSceneRuntime:
         self._pending_geometry_point_id: str | None = None
         self._snap_to_grid = False
         self._dragging_point_id: str | None = None
+        self._selection_start: tuple[float, float] | None = None
+        self._selection_pixel_start: QPoint | None = None
+        self._selection_band: QRubberBand | None = None
         self._drag_moved = False
         self._drag_start_geometry_state: _GeometryHistoryState | None = None
         self._geometry_undo_stack: list[_GeometryHistoryState] = []
@@ -383,6 +386,8 @@ class MainWindow:
         """Serialize selected 2-D objects to the process clipboard."""
         pane = self._pane(pane_id)
         runtime = self._pane_scene(pane.pane_id)
+        if runtime.scene_mode is not SceneMode.TWO_D:
+            return ""
         ids = set(getattr(pane, "selected_object_ids", []))
         all_objects = (*runtime.geometry_points, *runtime.linear_objects, *runtime.annotations, *runtime.curve_layers)
         objects = [o for o in all_objects if o.id in ids]
@@ -400,6 +405,8 @@ class MainWindow:
     def paste_scene_objects(self, pane_id: str | None = None):
         if not getattr(self, "scene_clipboard", None) or not self.scene_clipboard.payload: return []
         pane = self._pane(pane_id)
+        if self._pane_scene(pane.pane_id).scene_mode is not SceneMode.TWO_D:
+            return []
         from services.scene_clipboard import paste_objects
         with self._using_pane(pane.pane_id):
             runtime = self._pane_scene(pane.pane_id)
@@ -419,7 +426,7 @@ class MainWindow:
                     point_cls=Point2D, linear_cls=Linear2D,
                     annotation_cls=Annotation2D, curve_cls=CurveLayer,
                     existing_ids=existing_ids,
-                    offset=(repeat, repeat) if same_pane else (0, 0),
+                    offset=tuple(repeat * (runtime._two_d_guide_spacing or 1.0) for _ in range(2)) if same_pane else (0, 0),
                     max_bytes=self.scene_clipboard.max_bytes,
                 )
                 runtime.geometry_points.extend(o for o in pasted if isinstance(o, Point2D))
@@ -573,14 +580,16 @@ class MainWindow:
         """Keep the pane's serializable models current after scene commands."""
         pane = self._pane()
         scene = self._pane_scene()
-        snapshot = self._scene_snapshot_from_current_state().to_dict()
+        snapshot = self._scene_snapshot_from_state(self._capture_scene_command_state()).to_dict()
         pane.scene_2d = {
+            **pane.scene_2d,
             "geometry": snapshot["geometry"], "curves": snapshot["curves"],
             "object_order": list(scene._two_d_object_order),
             "areas": snapshot["metadata"].get("areas", []),
             "teaching_2d": snapshot["metadata"].get("teaching_2d", []),
         }
         pane.scene_3d = {
+            **pane.scene_3d,
             "layers": snapshot["layers"],
             "points3d": snapshot["metadata"].get("points3d", []),
             "geometry_3d": snapshot["metadata"].get("geometry_3d", []),
@@ -814,9 +823,7 @@ class MainWindow:
             topic_id = str(payload.get("case_id", ""))
             pane_id = str(payload.get("pane_id", ""))
             stage_id = str(payload.get("stage_id", "")) or None
-            grid = getattr(self, "_teaching_case_pane_grid", None)
-            if grid is not None and topic_id == getattr(self, "_active_linear_algebra_topic_id", None):
-                self._set_teaching_case_pane_count(1)
+            if topic_id == getattr(self, "_active_linear_algebra_topic_id", None):
                 self._on_teaching_case_focus(pane_id, stage_id or "")
             return
         if message_type == "set_math_case_pane_count":
@@ -975,8 +982,12 @@ class MainWindow:
                 "payload": {"status": "started", "summary": turn.command_plan.get("summary", "")},
             })
             fingerprint = turn.validation.get("base_scene_fingerprint") if turn.validation else None
+            pane_id = (turn.validation or {}).get("pane_id") or (turn.scene_before.active_pane_id if turn.scene_before else None)
             try:
-                self._agent_runtime.execute(CommandPlan.from_dict(turn.command_plan), expected_scene_fingerprint=fingerprint)
+                validation = self._agent_runtime.execute(CommandPlan.from_dict(turn.command_plan), expected_scene_fingerprint=fingerprint,
+                                                         **({"pane_id": pane_id} if pane_id is not None else {}))
+                if validation is not None and not validation.valid:
+                    raise CommandError("；".join(validation.messages))
             except CommandError as error:
                 if str(error) == "scene_changed_since_plan":
                     self._agent_session_store.update_turn_scene_snapshots(turn.id, status="scene_changed_since_plan")
@@ -1179,6 +1190,10 @@ class MainWindow:
         self._redo_2d_shortcut.activated.connect(self._redo_2d_geometry)
         self._copy_2d_shortcut.activated.connect(self.copy_selected_scene_objects)
         self._paste_2d_shortcut.activated.connect(self.paste_scene_objects)
+        # Text fields and the Agent/WebEngine editor keep their own clipboard.
+        for shortcut in (self._copy_2d_shortcut, self._paste_2d_shortcut):
+            shortcut.setParent(getattr(self, "viewport_host", self.window))
+            shortcut.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
 
     def _on_viewport_host_changed(self) -> None:
         self._position_viewport_overlays()
@@ -1420,6 +1435,7 @@ class MainWindow:
             scene_context=self._build_scene_context(),
             scene_before=self._scene_snapshot_from_current_state(),
             turn_id=turn_id,
+            pane_id=locked_pane_id,
         )
         worker.moveToThread(thread)
         thread.started.connect(worker.run)
@@ -1479,7 +1495,8 @@ class MainWindow:
 
     def check_scene_fingerprint(self, expected: str, pane_id: str | None = None) -> bool:
         with self._using_pane(pane_id):
-            return self._scene_snapshot_from_current_state().fingerprint() == expected
+            snapshot = self._scene_snapshot_from_current_state()
+            return (snapshot.fingerprint_for_pane(pane_id) if pane_id and snapshot.panes else snapshot.fingerprint()) == expected
 
     def commit_scene_command_transaction(self, pane_id: str | None = None) -> None:
         with self._using_pane(self._command_pane_id(pane_id)):
@@ -1556,23 +1573,52 @@ class MainWindow:
             return active
         pane_records = []
         for pane_id, pane in manager.panes.items():
-            if pane_id == manager.active_pane_id:
-                pane_scene = active
+            state = pane.to_snapshot()
+            if pane.runtime is not None:
+                with self._using_pane(pane_id):
+                    pane_scene = self._scene_snapshot_from_state(self._capture_scene_command_state())
+                state["scene_2d"].update({"geometry": list(pane_scene.geometry), "curves": list(pane_scene.curves),
+                                          **{key: pane_scene.metadata.get(key, []) for key in ("object_order", "areas", "teaching_2d")}})
+                state["scene_3d"].update({"layers": list(pane_scene.layers),
+                                          **{key: pane_scene.metadata.get(key, []) for key in ("points3d", "geometry_3d")}})
             else:
-                # Pane models are kept synchronized even while hidden.
-                scene_2d = dict(getattr(pane, "scene_2d", {}) or {})
-                scene_3d = dict(getattr(pane, "scene_3d", {}) or {})
-                mode = str(getattr(pane, "scene_mode", "2d"))
-                pane_scene = SceneSnapshot(
-                    scene_mode=mode,
-                    geometry=tuple(scene_2d.get("geometry", ())),
-                    curves=tuple(scene_2d.get("curves", ())),
-                    layers=tuple(scene_3d.get("layers", ())),
-                    metadata={"object_order": scene_2d.get("object_order", []), "areas": scene_2d.get("areas", []), "teaching_2d": scene_2d.get("teaching_2d", []), "points3d": scene_3d.get("points3d", []), "geometry_3d": scene_3d.get("geometry_3d", [])},
-                    camera=dict(getattr(pane, "camera_2d", {}) if mode == "2d" else getattr(pane, "camera_3d", {})),
-                )
-            pane_records.append({"pane_id": pane_id, "name": pane.name, "source": pane.source, "source_id": pane.source_id, "visible": pane_id in manager.visible_pane_ids(), "snapshot": pane_scene.to_dict()})
-        return replace(active, panes=tuple(pane_records), active_pane_id=manager.active_pane_id)
+                pane_scene = self._snapshot_from_pane_data(state)
+            renderer = pane.renderer_2d if pane.scene_mode == "2d" else pane.renderer_3d
+            if renderer is not None:
+                camera = dict(state[f"camera_{pane.scene_mode}"])
+                position = getattr(renderer, "camera_position", None)
+                if position is not None:
+                    camera["position"] = [list(vector) for vector in position]
+                renderer_camera = getattr(renderer, "camera", None)
+                if renderer_camera is not None:
+                    camera["parallel_scale"] = float(renderer_camera.parallel_scale)
+                state[f"camera_{pane.scene_mode}"] = camera
+            pane_scene = replace(pane_scene, camera=state[f"camera_{pane.scene_mode}"])
+            pane_records.append({"pane_id": pane_id, "name": pane.name, "source": pane.source, "source_id": pane.source_id,
+                                 "visible": pane_id in manager.visible_pane_ids(), "state": state, "snapshot": pane_scene.to_dict()})
+        target = self._pane().pane_id
+        active = SceneSnapshot.from_dict(next(record["snapshot"] for record in pane_records if record["pane_id"] == target))
+        teaching_pane_ids = tuple(getattr(self, "_teaching_case_pane_ids", ()))
+        return replace(active, panes=tuple(pane_records), active_pane_id=manager.active_pane_id,
+                       metadata={**active.metadata, "workspace": manager.workspace_metadata(),
+                                 "teaching_case": {
+                                     "pane_ids": list(teaching_pane_ids),
+                                     "stage_refs": {pane_id: list(refs) for pane_id, refs in
+                                                    getattr(self, "_teaching_case_stage_refs", {}).items()
+                                                    if pane_id in teaching_pane_ids},
+                                     "topic_id": getattr(self, "_active_linear_algebra_topic_id", None),
+                                     "stage_id": getattr(self, "_active_linear_algebra_stage_id", None),
+                                 }})
+
+    @staticmethod
+    def _snapshot_from_pane_data(state: dict) -> SceneSnapshot:
+        scene_2d, scene_3d = state["scene_2d"], state["scene_3d"]
+        return SceneSnapshot(
+            scene_mode=state["scene_mode"], geometry=tuple(scene_2d.get("geometry", ())),
+            curves=tuple(scene_2d.get("curves", ())), layers=tuple(scene_3d.get("layers", ())),
+            metadata={**{key: scene_2d.get(key, []) for key in ("object_order", "areas", "teaching_2d")},
+                      **{key: scene_3d.get(key, []) for key in ("points3d", "geometry_3d")}},
+            camera=state[f"camera_{state['scene_mode']}"])
 
     @classmethod
     def _scene_snapshot_from_state(cls, state: _SceneCommandState) -> SceneSnapshot:
@@ -1656,28 +1702,114 @@ class MainWindow:
         if manager is None or not records:
             self._restore_scene_command_state(self._state_from_scene_snapshot(snapshot))
             return
+        states, scene_states = [], {}
         for record in records:
-            pane_id = str(record.get("pane_id", ""))
-            if not pane_id or pane_id not in manager.panes:
-                continue
-            name = record.get("name")
-            if isinstance(name, str) and name.strip():
-                manager.panes[pane_id].name = name
-            raw = record.get("snapshot")
-            if not isinstance(raw, dict):
-                continue
-            with self._using_pane(pane_id):
-                self._restore_scene_command_state(self._state_from_scene_snapshot(SceneSnapshot.from_dict(raw)))
-        visible_ids = [
-            str(record.get("pane_id"))
-            for record in records
-            if record.get("visible") is True and str(record.get("pane_id")) in manager.panes
-        ][: manager.MAX_PANES]
-        if visible_ids:
-            manager.set_visible_panes(visible_ids)
-        active = snapshot.active_pane_id
-        if active in manager.panes and active in manager.visible_pane_ids():
-            manager.focus_pane(active)
+            if "state" in record:
+                pane = ScenePaneState.from_snapshot(record["state"])
+                scene_snapshot = self._snapshot_from_pane_data(pane.to_snapshot())
+            else:
+                # Older multi-pane turns stored only the per-pane legacy view.
+                scene_snapshot = SceneSnapshot.from_dict(record["snapshot"])
+                pane = ScenePaneState(record["pane_id"], record.get("name", record["pane_id"]),
+                                      source=record.get("source", "user"), source_id=record.get("source_id"),
+                                      scene_mode=scene_snapshot.scene_mode)
+                metadata = scene_snapshot.metadata
+                pane.scene_2d = {"geometry": list(scene_snapshot.geometry), "curves": list(scene_snapshot.curves),
+                                 **{key: metadata.get(key, []) for key in ("object_order", "areas", "teaching_2d")}}
+                pane.scene_3d = {"layers": list(scene_snapshot.layers),
+                                 **{key: metadata.get(key, []) for key in ("points3d", "geometry_3d")}}
+                setattr(pane, f"camera_{pane.scene_mode}", scene_snapshot.camera)
+            if pane.pane_id != record["pane_id"]:
+                raise ValueError("snapshot pane ID mismatch")
+            states.append(pane)
+            scene_states[pane.pane_id] = self._state_from_scene_snapshot(scene_snapshot)
+        workspace = snapshot.metadata.get("workspace", {})
+        visible_ids = workspace.get("visible_pane_ids", [record["pane_id"] for record in records if record.get("visible") is True])
+        if not visible_ids:
+            visible_ids = [snapshot.active_pane_id or states[0].pane_id]
+        active = snapshot.active_pane_id or visible_ids[0]
+        removed_ids = set(manager.panes) - set(scene_states)
+        was_blocked = manager.blockSignals(True)
+        try:
+            manager.restore_workspace(states, visible_ids, active,
+                                      lecture_case_ids=tuple(workspace.get("lecture_case_ids", ())),
+                                      lecture_user_visible=(tuple(workspace["lecture_user_visible"])
+                                                            if workspace.get("lecture_user_visible") is not None else None))
+            for pane in manager.panes.values():
+                with self._using_pane(pane.pane_id):
+                    runtime = self._pane_scene()
+                    runtime._two_d_camera_position = pane.camera_2d.get("position")
+                    runtime._two_d_parallel_scale = pane.camera_2d.get("parallel_scale")
+                    runtime._three_d_camera_position = pane.camera_3d.get("position")
+                    self._restore_scene_command_state(scene_states[pane.pane_id])
+                    renderer = self._pane_renderer(required=False)
+                    camera = pane.camera_2d if pane.scene_mode == "2d" else pane.camera_3d
+                    if renderer is not None:
+                        if camera.get("position") is not None:
+                            renderer.camera_position = camera["position"]
+                        if "parallel_scale" in camera:
+                            renderer.camera.parallel_scale = camera["parallel_scale"]
+        finally:
+            manager.blockSignals(was_blocked)
+        teaching = snapshot.metadata.get("teaching_case", {})
+        lecture_ids = tuple(workspace.get("lecture_case_ids", ()))
+        if lecture_ids:
+            restored_ids = [pane_id for pane_id in teaching.get("pane_ids", lecture_ids)
+                            if pane_id in manager.panes and pane_id in lecture_ids]
+            self._teaching_case_pane_ids = restored_ids
+            raw_refs = teaching.get("stage_refs", {})
+            self._teaching_case_stage_refs = {
+                pane_id: tuple(raw_refs.get(pane_id, ())) for pane_id in restored_ids
+            }
+            topic_id = teaching.get("topic_id")
+            self._active_linear_algebra_topic_id = topic_id if isinstance(topic_id, str) and topic_id else None
+            # A snapshot captures the lecture identity, not compiled Python
+            # objects.  Never retain a compiled visualization from the
+            # workspace that happened to be open when restore was requested:
+            # its topic may differ and would make stage routing a silent no-op.
+            self._active_linear_algebra_compiled = (
+                self._resolve_linear_algebra_compiled(self._active_linear_algebra_topic_id)
+                if self._active_linear_algebra_topic_id else None
+            )
+            stage_id = teaching.get("stage_id")
+            self._active_linear_algebra_stage_id = stage_id if isinstance(stage_id, str) and stage_id else None
+            self._hidden_linear_algebra_aliases = set()
+            if self._active_linear_algebra_compiled is not None and self._active_linear_algebra_stage_id:
+                try:
+                    all_aliases, visible_aliases = storyboard_visibility(
+                        self._active_linear_algebra_compiled, self._active_linear_algebra_stage_id
+                    )
+                    self._hidden_linear_algebra_aliases = set(all_aliases) - set(visible_aliases)
+                except ValueError:
+                    # Preserve the restored panes even if an old snapshot
+                    # references a removed storyboard stage.
+                    self._active_linear_algebra_stage_id = None
+        else:
+            # An Agent restore can move back to an ordinary workspace.  Do not
+            # leave stale case IDs pointing into the restored pane collection.
+            self._teaching_case_pane_ids = []
+            self._teaching_case_stage_refs = {}
+            self._active_linear_algebra_topic_id = None
+            self._active_linear_algebra_compiled = None
+            self._active_linear_algebra_stage_id = None
+            self._hidden_linear_algebra_aliases = set()
+        for pane_id in removed_ids:
+            manager.pane_deleted.emit(pane_id)
+        manager.workspace_restored.emit()
+        manager.active_pane_changed.emit(active)
+        manager.active_pane_id_changed.emit(active)
+
+    @staticmethod
+    def _resolve_linear_algebra_compiled(topic_id: str) -> CompiledVisualization | None:
+        """Rebuild the runtime-only lecture compiler state for a snapshot."""
+        try:
+            return catalog_registry().resolve_bundle(
+                topic_id,
+                artifact_store=runtime_teaching_store(),
+                source_repository=MainWindow._linear_algebra_source_repository(),
+            ).compiled
+        except (KeyError, ValueError, OSError):
+            return None
 
     def _restore_scene_command_state(self, state: _SceneCommandState) -> None:
         self._pane_scene().geometry_points = [replace(point) for point in state.points]
@@ -2173,27 +2305,24 @@ class MainWindow:
         self._active_linear_algebra_stage_id = stage_id
         visible = set(visible_aliases)
         self._hidden_linear_algebra_aliases = {alias for alias in all_aliases if alias not in visible}
-        self._apply_linear_algebra_storyboard_visibility()
+        for pane_id, refs in getattr(self, "_teaching_case_stage_refs", {}).items():
+            if stage_id in refs and pane_id in self.pane_manager.panes:
+                self._reveal_algebra_pane(pane_id, 0)
+                break
 
     def _on_teaching_case_focus(self, pane_id: str, stage_id: str) -> None:
         """Focus one pane while retaining every other pane on screen."""
-        grid = getattr(self, "_teaching_case_pane_grid", None)
         topic_id = getattr(self, "_active_linear_algebra_topic_id", None)
-        if grid is None or not topic_id:
+        if not topic_id:
             return
-        if not grid.select_case(pane_id, stage_id or None, emit=False):
+        target = next((pid for pid in getattr(self, "_teaching_case_pane_ids", ())
+                       if pid in self.pane_manager.panes and
+                       self.pane_manager.pane(pid).source_id == pane_id), None)
+        if target is None:
             return
-        try:
-            manager_pane = next((pid for pid, state in self.pane_manager.panes.items()
-                                 if state.source == "case" and state.source_id == pane_id), None)
-            if manager_pane is not None and manager_pane in self.pane_manager.visible_pane_ids():
-                self.pane_manager.focus_pane(manager_pane)
-        except (AttributeError, ValueError):
-            pass
-        pane = next((item for item in grid.panes if getattr(item, "case", None) is not None and str(getattr(item.case, "id", "")) == pane_id), None)
-        selected_stage = stage_id or (str(getattr(pane, "_stage_id", lambda: "")()) if pane is not None else "")
-        if selected_stage:
-            self._select_linear_algebra_stage(topic_id, selected_stage)
+        self._reveal_algebra_pane(target, 0)
+        refs = getattr(self, "_teaching_case_stage_refs", {}).get(target, ())
+        self._active_linear_algebra_stage_id = stage_id or next(iter(refs), "")
         if hasattr(self, "agent_panel"):
             self.agent_panel.show_math_case_focus(topic_id, pane_id)
 
@@ -2204,14 +2333,13 @@ class MainWindow:
             grid.close()
             grid.deleteLater()
         self._teaching_case_pane_grid = None
-        try:
+        if getattr(self.pane_manager, "_lecture_user_visible", None) is not None:
             self.pane_manager.leave_lecture()
-        except (AttributeError, ValueError):
-            pass
         if hasattr(self, "teaching_case_pane_host"):
             self.teaching_case_pane_host.hide()
-        if (self._pane_renderer(required=False) is not None):
-            self._pane_renderer().interactor.show()
+        container = getattr(self, "scene_pane_widget", None)
+        if container is not None:
+            container.sync_layout()
         self._sync_layout_buttons()
 
     def _sync_layout_buttons(self) -> None:
@@ -2252,47 +2380,65 @@ class MainWindow:
         if getattr(self, "window", None) is not None and hasattr(self, "_render_scene"):
             with self._using_pane(pane_id):
                 self._render_scene()
+                data = pane.scene_2d if pane.scene_mode == "2d" else pane.scene_3d
+                pending = data.pop("pending_plan", None)
+                if pending is not None:
+                    try:
+                        result = self.scene_command_service.execute(
+                            CommandPlan.from_dict(pending), pane_id=pane_id, activate_pane=False,
+                        )
+                        if not result.valid:
+                            raise CommandError("；".join(result.messages))
+                    except Exception:
+                        data = pane.scene_2d if pane.scene_mode == "2d" else pane.scene_3d
+                        data["pending_plan"] = pending
+                        raise
 
     def _set_teaching_case_pane_count(self, count: int) -> bool:
-        grid = getattr(self, "_teaching_case_pane_grid", None)
-        if grid is None:
+        ids = [pid for pid in getattr(self, "_teaching_case_pane_ids", ()) if pid in self.pane_manager.panes]
+        if not ids:
             return False
-        if not grid.set_pane_count(count):
+        if type(count) is not int or count not in PANE_COUNTS:
             self.algebra_panel.set_status("案例窗格数量无效", is_error=True)
             return False
+        selected = self.pane_manager.active_pane_id
+        shown = [selected] if count == 1 and selected in ids else ids[:count]
+        self.pane_manager.set_visible_panes(shown)
+        container = getattr(self, "scene_pane_widget", None)
+        if container is not None:
+            container.sync_layout()
         self._sync_layout_buttons()
-        self._on_teaching_case_focus(grid.selected_case_id, "")
         return True
 
     def _open_teaching_case_panes(self, explanation_case: object, compiled: object | None) -> None:
         self._close_teaching_case_panes()
-        if not hasattr(self, "teaching_case_pane_host") or not hasattr(self, "teaching_case_pane_layout"):
-            return
         if compiled is None or getattr(compiled, "plan", None) is None:
             return
         explanation = getattr(explanation_case, "explanation", explanation_case)
         layout = getattr(explanation, "case_layout", None)
-        cases = tuple(getattr(layout, "cases", ()))[:4] if layout is not None else ()
-        if not cases or getattr(compiled.plan, "scene", "") != "2d":
-            return
-        for case in cases:
-            self.pane_manager.register_case(
-                str(getattr(case, "id", "")),
-                name=str(getattr(case, "purpose", "案例")),
-            )
-        self.pane_manager.enter_lecture(
-            str(getattr(cases[0], "id", "")),
-            [str(getattr(case, "id", "")) for case in cases],
-        )
-        grid = TeachingCasePaneGrid(compiled, cases, self.teaching_case_pane_host, pane_manager=self.pane_manager)
-        grid.case_focused.connect(self._on_teaching_case_focus)
-        grid.case_closed.connect(self._on_teaching_case_closed)
-        self.teaching_case_pane_layout.addWidget(grid)
-        self._teaching_case_pane_grid = grid
-        self._pane_renderer().interactor.hide()
-        self.teaching_case_pane_host.show()
-        default_count = int(getattr(layout, "default_pane_count", len(cases)))
-        self._set_teaching_case_pane_count(default_count)
+        cases = tuple(getattr(layout, "cases", ())) if layout is not None else ()
+        descriptors = [(str(case.id), str(getattr(case, "purpose", "案例")), tuple(getattr(case, "stage_refs", ()))) for case in cases]
+        if not descriptors:
+            descriptors = [(str(compiled.topic_id), "案例", ())]
+        self._teaching_case_pane_ids = []
+        self._teaching_case_stage_refs = {}
+        for case_id, name, refs in descriptors:
+            pane_id = self.pane_manager.register_case(case_id, name=name)
+            pane = self.pane_manager.pane(pane_id)
+            if pane.runtime is None and not pane.scene_2d and not pane.scene_3d:
+                plan = case_plan(compiled, refs[0]) if refs else compiled.plan
+                pane.scene_mode = plan.scene
+                data = pane.scene_2d if plan.scene == "2d" else pane.scene_3d
+                data["pending_plan"] = plan.to_dict()
+            self._teaching_case_pane_ids.append(pane_id)
+            self._teaching_case_stage_refs[pane_id] = refs
+        self.pane_manager.enter_lecture(descriptors[0][0], [item[0] for item in descriptors])
+        panel = getattr(self, "algebra_panel", None)
+        if panel is not None and hasattr(panel, "sync_pane_tabs"):
+            panel.sync_pane_tabs()
+        container = getattr(self, "scene_pane_widget", None)
+        if container is not None:
+            container.sync_layout()
         self._sync_layout_buttons()
 
     def _on_teaching_case_closed(self, case_id: str) -> None:
@@ -2312,26 +2458,10 @@ class MainWindow:
                 self._close_teaching_case_panes()
 
     def _apply_linear_algebra_storyboard_visibility(self) -> None:
-        compiled = getattr(self, "_active_linear_algebra_compiled", None)
-        if compiled is None:
-            return
-        hidden = getattr(self, "_hidden_linear_algebra_aliases", set())
-        all_aliases = tuple(dict.fromkeys(alias for item in compiled.storyboard for alias in item.visible_aliases))
-        geometry_controller = getattr(self._pane_scene(), "geometry_controller", None)
-        if self._pane_scene().scene_mode is SceneMode.TWO_D and geometry_controller is not None:
-            for alias in all_aliases:
-                visible = alias not in hidden
-                geometry_controller.set_agent_alias_visible(alias, visible)
-                geometry_controller.set_teaching_visible(alias, visible)
-            plotter = self._pane_renderer(required=False)
-            if plotter is not None:
-                plotter.render()
-            return
-        geometry3d_controller = getattr(self._pane_scene(), "geometry3d_controller", None)
-        if self._pane_scene().scene_mode is SceneMode.THREE_D and geometry3d_controller is not None:
-            for alias in all_aliases:
-                geometry3d_controller.set_visible(alias, alias not in hidden)
-            self._render_agent_points3d()
+        # Case plans are filtered once when their own pane is initialized.
+        # Applying the lecture's global stage mask here would change user
+        # objects and hide sibling cases on ordinary redraw/focus events.
+        return
 
     def _command_upsert_point3d(self, operation: dict[str, object]) -> None:
         """在 3D 视口中用一个受控球体表示点。
@@ -2360,10 +2490,7 @@ class MainWindow:
 
         for alias in getattr(self._pane_scene(), "_agent_points3d", {}):
             self._pane_renderer().remove_actor(f"agent-point:{alias}", render=False)
-        hidden = getattr(self, "_hidden_linear_algebra_aliases", set())
         for alias, coordinates in getattr(self._pane_scene(), "_agent_points3d", {}).items():
-            if any(alias == hidden_alias or alias.startswith(f"{hidden_alias}__") for hidden_alias in hidden):
-                continue
             mesh = pv.Sphere(radius=0.08, center=coordinates, theta_resolution=16, phi_resolution=8)
             self._pane_renderer().add_mesh(mesh, name=f"agent-point:{alias}", color="#d64545")
         self._pane_renderer().render()
@@ -2805,10 +2932,14 @@ class MainWindow:
         else:
             self._add_cas_surface(kind, latex)
 
-    def _reveal_algebra_pane(self, _pane_id: str, count: int) -> None:
+    def _reveal_algebra_pane(self, pane_id: str, _count: int) -> None:
         container = getattr(self, "scene_pane_widget", None)
+        manager = getattr(self, "pane_manager", None) or getattr(container, "manager", None)
+        if manager is not None:
+            manager.reveal_pane(pane_id)
         if container is not None:
-            container.set_layout(count)
+            container.sync_layout()
+        self._sync_layout_buttons()
 
     def _update_formula_for_scene(self, *args: str) -> None:
         pane_id = args[0] if len(args) == 4 else None
@@ -2903,35 +3034,24 @@ class MainWindow:
             validation = SceneCommandService().validate(lesson_plan)
             if not validation.valid:
                 raise CommandError("；".join(validation.messages))
-            plan = CommandPlan(
-                scene=lesson_plan.scene,
-                summary=lesson_plan.summary,
-                operations=(
-                    {"op": "scene.clear", "scope": "all"},
-                    *lesson_plan.operations,
-                ),
-            )
         except (KeyError, CommandError, ValueError) as error:
             self.algebra_panel.set_status(f"未知或无效的线性代数主题 {topic_id}: {error}", is_error=True)
-            return
-        try:
-            self.scene_command_service.execute(plan)
-        except CommandError as error:
-            self.algebra_panel.set_status(f"无法加载主题 {topic.title}: {error}", is_error=True)
             return
         self._active_linear_algebra_topic_id = topic.id
         self._active_linear_algebra_compiled = bundle.compiled
         self._active_linear_algebra_stage_id = None
         self._hidden_linear_algebra_aliases = set()
-        if plan.scene == "2d":
-            self._set_2d_geometry_tool("select")
-            if hasattr(self, "two_d_geometry_toolbar"):
-                self.two_d_geometry_toolbar.set_active_tool("select", emit_signal=False)
-        self._sync_scene_controls()
-        if bundle.compiled is not None and bundle.compiled.storyboard:
-            self._select_linear_algebra_stage(topic.id, bundle.compiled.storyboard[0].id)
         try:
-            self._open_teaching_case_panes(explanation_case, bundle.compiled)
+            compiled = bundle.compiled
+            if compiled is None:
+                from types import SimpleNamespace
+                compiled = SimpleNamespace(topic_id=topic.id, plan=lesson_plan, storyboard=())
+            self._open_teaching_case_panes(explanation_case, compiled)
+            if lesson_plan.scene == "2d":
+                self._set_2d_geometry_tool("select")
+                if hasattr(self, "two_d_geometry_toolbar"):
+                    self.two_d_geometry_toolbar.set_active_tool("select", emit_signal=False)
+            self._sync_scene_controls()
             if hasattr(self, "agent_panel"):
                 if hasattr(self, "agent_sidebar"):
                     self._open_agent_panel()
@@ -2939,14 +3059,12 @@ class MainWindow:
                     explanation_case,
                     case_id=topic.id,
                     category=topic.source_path[1],
-                    scene_mode=plan.scene,
+                    scene_mode=lesson_plan.scene,
                     compiled=bundle.compiled,
                 )
         except Exception as error:
-            # 场景已成功加载时，案例窗格/WebView 的异常不应中断主界面；
-            # 清理半成品窗格并保留代数区域可用，同时给出可见错误。
             self._close_teaching_case_panes()
-            self.algebra_panel.set_status(f"主题已加载，但案例面板显示失败: {error}", is_error=True)
+            self.algebra_panel.set_status(f"案例面板显示失败: {error}", is_error=True)
             return
         if bundle.source_diagnostic is not None:
             _, old_hash, current_hash = bundle.source_diagnostic
@@ -3309,7 +3427,6 @@ class MainWindow:
         if mode is self._pane_scene().scene_mode:
             return
         if self._pane_scene().scene_mode is SceneMode.TWO_D:
-            self._close_teaching_case_panes()
             self._set_2d_geometry_tool(None)
             if hasattr(self, "two_d_geometry_toolbar"):
                 self.two_d_geometry_toolbar.set_active_tool(None, emit_signal=False)
@@ -3328,6 +3445,10 @@ class MainWindow:
             tool = None
         self._pane_scene()._pending_geometry_point_id = None
         self._pane_scene()._dragging_point_id = None
+        self._pane_scene()._selection_start = None
+        band = self._pane_scene()._selection_band
+        if band is not None:
+            band.hide()
         self._pane_scene()._drag_start_geometry_state = None
         if self._pane_scene().geometry_controller is not None:
             self._pane_scene().geometry_controller.clear_draft()
@@ -4201,7 +4322,7 @@ class MainWindow:
         self._agent_provider = self._create_agent_provider()
         self._agent_runtime = AgentRuntime(
             provider=self._agent_provider,
-            command_service=SceneCommandService(self._scene_command_host_proxy.for_pane(locked_pane_id)),
+            command_service=SceneCommandService(self._scene_command_host_proxy),
             session_store=self._agent_session_store,
         )
         self._math_teacher_agent = self._agent_runtime.agent
