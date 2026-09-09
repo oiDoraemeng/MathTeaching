@@ -46,8 +46,9 @@ def test_hiding_preserves_state_and_repairs_hidden_focus() -> None:
 def test_focus_limits_and_delete_repair() -> None:
     manager = ScenePaneManager()
     ids = manager.set_layout(4)
-    with pytest.raises(RuntimeError, match="four"):
-        manager.create_pane()
+    fifth = manager.create_pane()
+    assert fifth not in manager.visible_pane_ids()
+    assert len(manager.panes) == 5
     manager.focus_pane(ids[2])
     manager.delete_pane(ids[2])
     assert ids[2] not in manager.panes
