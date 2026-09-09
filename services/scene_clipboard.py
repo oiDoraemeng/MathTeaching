@@ -40,25 +40,45 @@ def make_payload(objects, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> str:
 def parse_payload(payload, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> dict:
     if isinstance(payload, bytes):
         if len(payload) > max_bytes: raise ValueError("clipboard payload exceeds size limit")
-        payload = payload.decode("utf-8")
+        try:
+            payload = payload.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ValueError("invalid clipboard payload") from exc
     if not isinstance(payload, str) or len(payload.encode("utf-8")) > max_bytes: raise ValueError("invalid clipboard payload")
     try:
         value = json.loads(payload)
     except (TypeError, ValueError, UnicodeDecodeError) as exc:
         raise ValueError("invalid clipboard payload") from exc
     if type(value) is not dict or set(value) != {"version", "objects"} or type(value.get("version")) is not int or value.get("version") != VERSION or type(value.get("objects")) is not list: raise ValueError("unsupported clipboard payload")
+    seen_ids = set()
     for rec in value["objects"]:
         if type(rec) is not dict or set(rec) != {"type", "data"} or rec.get("type") not in _FIELDS or type(rec.get("data")) is not dict: raise ValueError("invalid clipboard object")
         if set(rec["data"]) - (set(_FIELDS[rec["type"]]) | {"id"}): raise ValueError("clipboard field is not permitted")
         if "id" not in rec["data"]: raise ValueError("clipboard object missing id")
+        object_id = rec["data"]["id"]
+        if not isinstance(object_id, str) or not object_id:
+            raise ValueError("clipboard object id must be a non-empty string")
+        if object_id in seen_ids:
+            raise ValueError("duplicate clipboard object id")
+        seen_ids.add(object_id)
     return value
 
 def paste_objects(payload, *, point_cls, linear_cls, annotation_cls, curve_cls=None, existing_ids=(), offset=(0, 0)):
     value = parse_payload(payload)
+    occupied = set(existing_ids)
     idmap = {}; result = []
-    for rec in value["objects"]: idmap[rec["data"].get("id")] = uuid4().hex
+
+    def new_id() -> str:
+        candidate = uuid4().hex
+        while candidate in occupied:
+            candidate = uuid4().hex
+        occupied.add(candidate)
+        return candidate
+
     for rec in value["objects"]:
-        d = dict(rec["data"]); old = d.pop("id", None); new = idmap.get(old, uuid4().hex)
+        idmap[rec["data"]["id"]] = new_id()
+    for rec in value["objects"]:
+        d = dict(rec["data"]); old = d.pop("id", None); new = idmap.get(old) or new_id()
         if rec["type"] == "point": d.update(id=new, x=d["x"] + offset[0], y=d["y"] + offset[1]); result.append(point_cls(**d))
         elif rec["type"] == "annotation": d.update(id=new, x=d["x"] + offset[0], y=d["y"] + offset[1]); result.append(annotation_cls(**d))
         elif rec["type"] in {"function", "curve"}:
