@@ -23,9 +23,40 @@ from PySide6.QtWidgets import (
     QSlider,
     QToolButton,
     QTabWidget,
+    QTabBar,
     QVBoxLayout,
     QWidget,
 )
+
+
+class HoverCloseTabBar(QTabBar):
+    """Tab bar whose close affordance appears only while hovering a tab."""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setDrawBase(False)
+        self.setUsesScrollButtons(True)
+        self.setStyleSheet("QTabBar { qproperty-expanding: false; } QTabBar QToolButton { width: 16px; } QTabBar::scroller { width: 0px; } QTabBar QScrollBar:horizontal { height: 0px; width: 0px; }")
+
+    def tabInserted(self, index: int) -> None:
+        super().tabInserted(index)
+        button = self.tabButton(index, QTabBar.ButtonPosition.RightSide)
+        if button is not None:
+            button.setVisible(False)
+
+    def mouseMoveEvent(self, event):
+        hovered = self.tabAt(event.position().toPoint())
+        for index in range(self.count()):
+            button = self.tabButton(index, QTabBar.ButtonPosition.RightSide)
+            if button is not None:
+                button.setVisible(index == hovered)
+        return super().mouseMoveEvent(event)
+
+    def leaveEvent(self, event):
+        for index in range(self.count()):
+            button = self.tabButton(index, QTabBar.ButtonPosition.RightSide)
+            if button is not None:
+                button.setVisible(False)
+        return super().leaveEvent(event)
 
 from MathInputWidget import FormulaEditorPopup, FormulaListWidget, FormulaPreviewWidget
 from models.curve_layer import CurveLayer
@@ -624,11 +655,14 @@ class AlgebraPanel(QFrame):
         self.formula_tabs = QTabWidget(self)
         self.formula_tabs.setObjectName("algebraPaneTabs")
         self.formula_tabs.setDocumentMode(True)
+        self.formula_tabs.setTabBar(HoverCloseTabBar(self.formula_tabs))
+        self.formula_tabs.setTabsClosable(True)
         self.formula_list = FormulaListWidget(self.formula_tabs, initial_theme=self._effective_theme)
         self._pane_models[self._pane_id] = self.formula_list
         self.formula_tabs.addTab(self.formula_list, "窗格 1")
         self.formula_tabs.currentChanged.connect(self._on_tab_changed)
         self.formula_tabs.tabBarDoubleClicked.connect(self._edit_tab_title)
+        self.formula_tabs.tabCloseRequested.connect(self._close_tab)
         self.formula_tabs.tabBar().setMovable(False)
         self.rows_container = self.formula_list
         self.rows_scroll = self.formula_list
@@ -740,6 +774,21 @@ class AlgebraPanel(QFrame):
     def set_pane_manager(self, manager) -> None:
         """Bind tab focus and title edits to the scene pane manager."""
         self._pane_manager = manager
+
+    def _close_tab(self, index: int) -> None:
+        if index < 0 or index >= len(self._pane_models) or len(self._pane_models) <= 1:
+            return
+        pane_id = list(self._pane_models)[index]
+        if self._pane_manager is not None:
+            try:
+                self._pane_manager.delete_pane(pane_id)
+            except (RuntimeError, ValueError):
+                return
+        model = self._pane_models.pop(pane_id)
+        self.formula_tabs.removeTab(index)
+        model.deleteLater()
+        if self._pane_id == pane_id:
+            self.set_pane_id(next(iter(self._pane_models)))
 
     def _edit_tab_title(self, index: int) -> None:
         if index < 0 or index >= len(self._pane_models):

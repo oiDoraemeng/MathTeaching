@@ -5,11 +5,50 @@ from __future__ import annotations
 from typing import Callable, Any
 
 from PySide6.QtCore import Qt, QEvent, QTimer, QObject
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget, QFrame, QHBoxLayout, QLabel, QToolButton, QVBoxLayout
+from PySide6.QtCore import Signal
 from shiboken6 import isValid
 
 from ui.scene_pane_manager import ScenePaneManager
 from services.scene_clipboard import SceneClipboard, rectangle_select
+
+
+class PaneChrome(QFrame):
+    """Reusable pane frame with title and compact window controls."""
+
+    hide_requested = Signal()
+    fullscreen_requested = Signal()
+    close_requested = Signal()
+
+    def __init__(self, title: str = "", content: QWidget | None = None, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.setObjectName("paneChrome")
+        self.setProperty("chrome", True)
+        self.title_label = QLabel(str(title), self)
+        self.title_label.setObjectName("paneChromeTitle")
+        self.hide_button = QToolButton(self); self.hide_button.setText("—"); self.hide_button.setToolTip("隐藏窗格")
+        self.fullscreen_button = QToolButton(self); self.fullscreen_button.setText("□"); self.fullscreen_button.setToolTip("全屏窗格")
+        self.close_button = QToolButton(self); self.close_button.setText("×"); self.close_button.setToolTip("关闭窗格")
+        self.close_button.setObjectName("paneChromeClose")
+        self.close_button.setVisible(False)
+        bar = QHBoxLayout(); bar.setContentsMargins(8, 2, 4, 2); bar.setSpacing(2)
+        bar.addWidget(self.title_label); bar.addStretch(); bar.addWidget(self.hide_button); bar.addWidget(self.fullscreen_button); bar.addWidget(self.close_button)
+        root = QVBoxLayout(self); root.setContentsMargins(0, 0, 0, 0); root.setSpacing(0); root.addLayout(bar)
+        if content is not None: root.addWidget(content, 1)
+        self.hide_button.clicked.connect(self.hide_requested)
+        self.fullscreen_button.clicked.connect(self.fullscreen_requested)
+        self.close_button.clicked.connect(self.close_requested)
+
+    def set_title(self, title: str) -> None:
+        self.title_label.setText(str(title))
+
+    def enterEvent(self, event):
+        self.close_button.setVisible(True)
+        return super().enterEvent(event)
+
+    def leaveEvent(self, event):
+        self.close_button.setVisible(False)
+        return super().leaveEvent(event)
 
 
 class ScenePaneWidget(QWidget):
