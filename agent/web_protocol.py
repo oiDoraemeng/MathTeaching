@@ -200,6 +200,10 @@ def parse_envelope(value: str | dict[str, Any]) -> BridgeEnvelope:
 
 def _validate_event_payload(message_type: str, payload: dict[str, Any]) -> None:
     """Reject malformed capability events before they reach the Web reducer."""
+    if message_type in {"scene_context", "math_case", "math_case_focus", "select_math_case_pane"} and "pane_id" in payload:
+        pane_id = payload.get("pane_id")
+        if not isinstance(pane_id, str) or not pane_id.strip() or len(pane_id) > MAX_IDENTIFIER_LENGTH:
+            raise ProtocolError("invalid_event_payload", "pane_id must be a non-empty identifier", field="pane_id")
     if message_type == "select_math_stage":
         if set(payload) != {"case_id", "stage_id"}:
             raise ProtocolError(

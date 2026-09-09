@@ -1393,6 +1393,9 @@ class MainWindow:
             return
         active_session_id = session_id or self.agent_panel.active_session_id
         turn_id = uuid4().hex
+        # Lock the target pane for the entire Agent turn; subsequent UI focus
+        # changes must not redirect commands to another pane.
+        locked_pane_id = self.pane_manager.active_pane_id
         self.agent_panel.set_active_session(active_session_id)
         self.agent_panel.bridge.emit_event({
             "protocol_version": 1,
@@ -4154,7 +4157,7 @@ class MainWindow:
         self._agent_provider = self._create_agent_provider()
         self._agent_runtime = AgentRuntime(
             provider=self._agent_provider,
-            command_service=self.scene_command_service,
+            command_service=SceneCommandService(self._scene_command_host_proxy.for_pane(locked_pane_id)),
             session_store=self._agent_session_store,
         )
         self._math_teacher_agent = self._agent_runtime.agent

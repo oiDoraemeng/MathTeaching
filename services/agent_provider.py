@@ -34,6 +34,8 @@ class SceneContext:
     curves: tuple[dict[str, object], ...] = ()
     geometry: tuple[dict[str, object], ...] = ()
     last_plan_summary: str = ""
+    panes: tuple[dict[str, object], ...] = ()
+    active_pane_id: str | None = None
 
 
 @dataclass(frozen=True)
