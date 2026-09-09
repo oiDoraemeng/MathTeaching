@@ -19,11 +19,22 @@ _FIELDS = {
     "function": ("name", "kind", "expression", "parameters", "latex", "builtin_id", "visible", "color", "line_width", "range_scale", "agent_alias"),
     "curve": ("name", "kind", "expression", "parameters", "latex", "builtin_id", "visible", "color", "line_width", "range_scale", "agent_alias"),
 }
+_REQUIRED = {
+    "point": ("name", "x", "y"),
+    "annotation": ("name", "text", "x", "y"),
+    "line": ("name", "kind", "start_point_id", "end_point_id"),
+    "segment": ("name", "kind", "start_point_id", "end_point_id"),
+    "ray": ("name", "kind", "start_point_id", "end_point_id"),
+    "vector": ("name", "kind", "start_point_id", "end_point_id"),
+    "function": ("name", "kind", "expression"),
+    "curve": ("name", "kind", "expression"),
+}
 
 def _plain(obj):
     return asdict(obj) if is_dataclass(obj) else dict(obj)
 
 def make_payload(objects, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> str:
+    objects = list(objects)
     records = []
     for obj in objects:
         data = _plain(obj)
@@ -34,6 +45,12 @@ def make_payload(objects, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> str:
         fields = _FIELDS.get(kind)
         if fields is None: raise ValueError(f"unsupported clipboard object: {kind}")
         records.append({"type": kind, "data": {**({"id": data["id"]} if "id" in data else {}), **{k: data[k] for k in fields if k in data}}})
+    point_ids = {record["data"].get("id") for record in records if record["type"] == "point"}
+    for record in records:
+        if record["type"] in {"line", "segment", "ray", "vector"}:
+            endpoints = (record["data"].get("start_point_id"), record["data"].get("end_point_id"))
+            if any(endpoint not in point_ids for endpoint in endpoints):
+                raise ValueError("clipboard line references missing endpoint")
     payload = {"version": VERSION, "objects": records}
     text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
     if len(text.encode("utf-8")) > max_bytes: raise ValueError("clipboard payload exceeds size limit")
@@ -56,6 +73,9 @@ def parse_payload(payload, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> dict:
     for rec in value["objects"]:
         if type(rec) is not dict or set(rec) != {"type", "data"} or rec.get("type") not in _FIELDS or type(rec.get("data")) is not dict: raise ValueError("invalid clipboard object")
         if set(rec["data"]) - (set(_FIELDS[rec["type"]]) | {"id"}): raise ValueError("clipboard field is not permitted")
+        required = _REQUIRED[rec["type"]]
+        if any(field not in rec["data"] or rec["data"][field] is None for field in required):
+            raise ValueError("clipboard object missing required field")
         if "id" not in rec["data"]: raise ValueError("clipboard object missing id")
         object_id = rec["data"]["id"]
         if not isinstance(object_id, str) or not object_id:
@@ -66,7 +86,7 @@ def parse_payload(payload, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> dict:
         for key, item in rec["data"].items():
             if isinstance(item, Real) and not isinstance(item, bool) and not math.isfinite(float(item)):
                 raise ValueError("clipboard numeric field must be finite")
-            if key in {"x", "y", "line_width", "offset_x", "offset_y", "range_scale"} and not isinstance(item, Real):
+            if key in {"x", "y", "line_width", "offset_x", "offset_y", "range_scale"} and (not isinstance(item, Real) or isinstance(item, bool)):
                 raise ValueError("clipboard numeric field is invalid")
             if key in {"name", "kind", "expression", "text", "latex", "builtin_id", "color", "style", "role", "agent_alias", "start_point_id", "end_point_id"} and item is not None and not isinstance(item, str):
                 raise ValueError("clipboard text field is invalid")

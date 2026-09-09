@@ -3,7 +3,8 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from models.geometry_2d import Point2D
+from models.curve_layer import CurveLayer
+from models.geometry_2d import Annotation2D, Point2D
 from models.scene_mode import SceneMode
 from rendering.geometry_scene import GeometrySceneController
 from ui.scene_pane_manager import ScenePaneManager
@@ -225,6 +226,49 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         self.assertEqual(len(window._pane_scene().geometry_points), 1)
         self.assertEqual(window._pane_scene().geometry_points[0].id, point.id)
         self.assertEqual(window._pane_scene().geometry_points[0].x, -2.0)
+
+    def test_undo_redo_restores_annotation_and_curve_controllers(self) -> None:
+        window = _make_window()
+        annotation = Annotation2D("note", "hello", 1.0, 2.0)
+        curve = CurveLayer("f", "explicit", "x")
+        window._pane_scene().annotations = [annotation]
+        window._pane_scene().curve_layers = [curve]
+        window._pane_scene().geometry_controller.add_annotation(annotation)
+        window._pane_scene().curve_controller = MagicMock()
+        window._pane_scene().curve_controller.layers = []
+
+        state = window._capture_geometry_state()
+        window._pane_scene().annotations = []
+        window._pane_scene().curve_layers = []
+        window._restore_geometry_state(state)
+
+        assert window._pane_scene().annotations[0].id == annotation.id
+        window._pane_scene().curve_controller.add_layer.assert_called_once()
+
+    def test_hidden_pane_restore_does_not_require_renderer(self) -> None:
+        window = _make_window()
+        hidden_id = window.pane_manager.create_pane()
+        hidden = window._pane(hidden_id)
+        hidden.renderer_2d = hidden.renderer_3d = None
+        with window._using_pane(hidden_id):
+            state = window._capture_scene_command_state()
+            window._restore_scene_command_state(state)
+        assert window._pane_renderer(hidden_id, required=False) is None
+
+        # Switching a retained pane's mode must also avoid using the renderer
+        # belonging to its previous mode.
+        with window._using_pane(hidden_id):
+            state = window._capture_scene_command_state()
+            state = state.__class__(**{**state.__dict__, "scene_mode": SceneMode.THREE_D})
+            window._restore_scene_command_state(state)
+        assert window._pane_scene(hidden_id).scene_mode is SceneMode.THREE_D
+
+    def test_algebra_layers_include_annotations(self) -> None:
+        window = _make_window()
+        annotation = Annotation2D("note", "hello", 1.0, 2.0)
+        window._pane_scene().annotations = [annotation]
+        layers = window._two_d_panel_layers()
+        assert annotation in layers
 
     def test_keyboard_shortcuts_route_to_undo_and_redo(self) -> None:
         window = _make_window()

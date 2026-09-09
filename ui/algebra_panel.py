@@ -30,7 +30,7 @@ from PySide6.QtWidgets import (
 from MathInputWidget import FormulaEditorPopup, FormulaListWidget, FormulaPreviewWidget
 from models.curve_layer import CurveLayer
 from models.function_catalog import CatalogEntry
-from models.geometry_2d import GeometryObject, Linear2D, Point2D
+from models.geometry_2d import Annotation2D, GeometryObject, Linear2D, Point2D
 from models.scene_mode import SceneMode
 from models.surface_layer import SurfaceLayer
 from ui.icons import apply_icon, icon_color, retint_icons
@@ -38,7 +38,7 @@ from ui.linear_algebra_dialog import LinearAlgebraDialog
 from ui.tokens import ThemeName, apply_drop_shadow, apply_rounded_overlay
 
 
-Layer = SurfaceLayer | CurveLayer | GeometryObject
+Layer = SurfaceLayer | CurveLayer | GeometryObject | Annotation2D
 _PLACEHOLDERS = {
     SceneMode.THREE_D: {
         "explicit": "z = x^2 - y^2",
@@ -296,10 +296,12 @@ class GeometrySettingsPopup(QDialog):
         self.delete_button.clicked.connect(self._request_delete)
         layout.addWidget(self.delete_button)
 
-    def open_geometry(self, geometry: GeometryObject, anchor: QPoint | None) -> None:
+    def open_geometry(self, geometry: GeometryObject | Annotation2D, anchor: QPoint | None) -> None:
         self._object_id = geometry.id
         if isinstance(geometry, Point2D):
             self.title.setText("点设置")
+        elif isinstance(geometry, Annotation2D):
+            self.title.setText("标注设置")
         else:
             names = {"line": "直线", "segment": "线段", "ray": "射线", "vector": "向量"}
             self.title.setText(f"{names[geometry.kind]}设置")
@@ -891,7 +893,7 @@ class AlgebraPanel(QFrame):
         self.formula_popup.dismiss()
         self.catalog_popup.hide()
         self.formula_list.cancel_edit()
-        if isinstance(layer, (Point2D, Linear2D)):
+        if isinstance(layer, (Point2D, Linear2D, Annotation2D)):
             self.settings_popup.hide()
             self.geometry_settings_popup.open_geometry(layer, anchor)
             return

@@ -13,12 +13,12 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QVBoxLayout, QWidget
 
 from models.curve_layer import CurveLayer
-from models.geometry_2d import GeometryObject, Linear2D, Point2D, geometry_latex
+from models.geometry_2d import Annotation2D, GeometryObject, Linear2D, Point2D, geometry_latex
 from models.surface_layer import SurfaceLayer
 from .theme_bridge import ThemeBridge
 
 
-Layer = SurfaceLayer | CurveLayer | GeometryObject
+Layer = SurfaceLayer | CurveLayer | GeometryObject | Annotation2D
 
 
 class _FormulaListBridge(QObject):
@@ -160,6 +160,16 @@ class FormulaListWidget(QWidget):
         )
 
     def _serialize_layer(self, layer: Layer) -> dict[str, Any]:
+        if isinstance(layer, Annotation2D):
+            return {
+                "id": layer.id,
+                "name": layer.name,
+                "kind": "annotation",
+                "latex": layer.latex or layer.text,
+                "visible": layer.visible,
+                "color": layer.color,
+                "editable": False,
+            }
         if isinstance(layer, (Point2D, Linear2D)):
             points = {
                 candidate.id: candidate

@@ -383,7 +383,16 @@ class MainWindow:
         pane = self._pane(pane_id)
         runtime = self._pane_scene(pane.pane_id)
         ids = set(getattr(pane, "selected_object_ids", []))
-        objects = [o for o in (*runtime.geometry_points, *runtime.linear_objects, *runtime.annotations, *runtime.curve_layers) if o.id in ids]
+        all_objects = (*runtime.geometry_points, *runtime.linear_objects, *runtime.annotations, *runtime.curve_layers)
+        objects = [o for o in all_objects if o.id in ids]
+        selected_ids = {o.id for o in objects}
+        point_by_id = {o.id: o for o in runtime.geometry_points}
+        for linear in runtime.linear_objects:
+            if linear.id in selected_ids:
+                for point_id in (linear.start_point_id, linear.end_point_id):
+                    point = point_by_id.get(point_id)
+                    if point is not None and point.id not in selected_ids:
+                        objects.append(point); selected_ids.add(point.id)
         if not hasattr(self, "scene_clipboard"): self.scene_clipboard = SceneClipboard()
         return self.scene_clipboard.copy(objects, pane_id=pane.pane_id)
 
@@ -1630,9 +1639,24 @@ class MainWindow:
         self._pane_scene()._agent_teaching_2d = {alias: dict(operation) for alias, operation in state.teaching_2d}
         self._pane_scene()._agent_geometry3d = {alias: dict(operation) for alias, operation in state.geometry_3d}
         if self._pane_scene().scene_mode is not state.scene_mode:
-            self._set_scene_mode(state.scene_mode)
+            # Hidden panes do not own a renderer yet.  Restore their serializable
+            # state directly and let pane creation render it later.
+            self._pane_scene().scene_mode = state.scene_mode
+            renderer = self._pane_renderer(required=False)
+            if renderer is None:
+                self._pane_scene().curve_controller = None
+                self._pane_scene().geometry_controller = None
+                self._pane_scene().geometry3d_controller = None
+                return
         else:
+            renderer = self._pane_renderer(required=False)
+        if renderer is not None:
             self._render_scene()
+        elif self._pane_scene().scene_mode is SceneMode.TWO_D:
+            # A lightweight/headless pane may retain controllers while its
+            # renderer is temporarily unavailable.  Keep models authoritative;
+            # controllers will be rebuilt when the pane becomes visible.
+            return
 
     def _rebuild_2d_controllers(self) -> None:
         if self._pane_scene().scene_mode is not SceneMode.TWO_D:
@@ -3583,12 +3607,13 @@ class MainWindow:
         self._pane_scene()._drag_moved = False
         self._pane_scene()._drag_start_geometry_state = None
 
+        renderer = self._pane_renderer(required=False)
         controller = getattr(self._pane_scene(), "geometry_controller", None)
-        if controller is not None:
+        if renderer is not None and controller is not None:
             controller.clear_draft()
             controller.set_hover(None)
             controller.set_selected(None)
-            for object_id in [*controller.points, *controller.linears]:
+            for object_id in [*controller.points, *controller.linears, *controller.annotations]:
                 controller.remove_object(object_id)
             for point in self._pane_scene().geometry_points:
                 controller.add_point(point)
@@ -3596,9 +3621,17 @@ class MainWindow:
                 controller.add_linear(linear)
             for annotation in getattr(self._pane_scene(), "annotations", []):
                 controller.add_annotation(annotation)
-        self.algebra_panel.set_layers(self._two_d_panel_layers())
-        self.algebra_panel.set_selected_layer(None)
-        self._pane_renderer().render()
+        curve_controller = getattr(self._pane_scene(), "curve_controller", None)
+        if renderer is not None and curve_controller is not None:
+            for layer_id in list(curve_controller.layers):
+                curve_controller.remove_layer(layer_id)
+            for layer in self._pane_scene().curve_layers:
+                curve_controller.add_layer(layer)
+        if self.pane_manager.active_pane_id == self._pane_scene().pane.pane_id:
+            self.algebra_panel.set_layers(self._two_d_panel_layers())
+            self.algebra_panel.set_selected_layer(None)
+        if renderer is not None and callable(getattr(renderer, "render", None)):
+            renderer.render()
 
     def _handle_geometry_mouse_press(self, event: QMouseEvent) -> bool:
         """处理被激活工具的左键单击；其他输入仍交给 PyVista。"""
@@ -4249,12 +4282,13 @@ class MainWindow:
         ]
         self.algebra_panel.sync_layer(layer_id, self._curve_layer(layer_id))
 
-    def _two_d_panel_layers(self) -> list[CurveLayer | GeometryObject]:
-        objects: dict[str, CurveLayer | GeometryObject] = {
+    def _two_d_panel_layers(self) -> list[CurveLayer | GeometryObject | Annotation2D]:
+        objects: dict[str, CurveLayer | GeometryObject | Annotation2D] = {
             layer.id: layer for layer in self._pane_scene().curve_layers
         }
         objects.update({point.id: point for point in self._pane_scene().geometry_points})
         objects.update({linear.id: linear for linear in self._pane_scene().linear_objects})
+        objects.update({annotation.id: annotation for annotation in self._pane_scene().annotations})
         for object_id in objects:
             if object_id not in self._pane_scene()._two_d_object_order:
                 self._pane_scene()._two_d_object_order.append(object_id)
