@@ -25,7 +25,10 @@ def make_payload(objects, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> str:
     records = []
     for obj in objects:
         data = _plain(obj)
-        kind = data.get("kind", "annotation" if "text" in data else ("function" if "expression" in data else "point"))
+        if "expression" in data:
+            kind = "curve"
+        else:
+            kind = data.get("kind", "annotation" if "text" in data else "point")
         fields = _FIELDS.get(kind)
         if fields is None: raise ValueError(f"unsupported clipboard object: {kind}")
         records.append({"type": kind, "data": {**({"id": data["id"]} if "id" in data else {}), **{k: data[k] for k in fields if k in data}}})
@@ -39,11 +42,15 @@ def parse_payload(payload, *, max_bytes: int = MAX_CLIPBOARD_BYTES) -> dict:
         if len(payload) > max_bytes: raise ValueError("clipboard payload exceeds size limit")
         payload = payload.decode("utf-8")
     if not isinstance(payload, str) or len(payload.encode("utf-8")) > max_bytes: raise ValueError("invalid clipboard payload")
-    value = json.loads(payload)
+    try:
+        value = json.loads(payload)
+    except (TypeError, ValueError, UnicodeDecodeError) as exc:
+        raise ValueError("invalid clipboard payload") from exc
     if type(value) is not dict or set(value) != {"version", "objects"} or type(value.get("version")) is not int or value.get("version") != VERSION or type(value.get("objects")) is not list: raise ValueError("unsupported clipboard payload")
     for rec in value["objects"]:
         if type(rec) is not dict or set(rec) != {"type", "data"} or rec.get("type") not in _FIELDS or type(rec.get("data")) is not dict: raise ValueError("invalid clipboard object")
         if set(rec["data"]) - (set(_FIELDS[rec["type"]]) | {"id"}): raise ValueError("clipboard field is not permitted")
+        if "id" not in rec["data"]: raise ValueError("clipboard object missing id")
     return value
 
 def paste_objects(payload, *, point_cls, linear_cls, annotation_cls, curve_cls=None, existing_ids=(), offset=(0, 0)):
@@ -62,7 +69,26 @@ def paste_objects(payload, *, point_cls, linear_cls, annotation_cls, curve_cls=N
 def rectangle_select(objects, rect):
     """Select points/annotations inside (x1,y1,x2,y2), inclusive."""
     x1,y1,x2,y2 = rect; lo_x,hi_x=sorted((x1,x2)); lo_y,hi_y=sorted((y1,y2))
-    return [o for o in objects if (hasattr(o,"x") and lo_x <= o.x <= hi_x and lo_y <= o.y <= hi_y) or hasattr(o, "expression")]
+    ids = {getattr(o, "id", None): o for o in objects}
+    selected = []
+    for o in objects:
+        if hasattr(o, "x") and lo_x <= o.x <= hi_x and lo_y <= o.y <= hi_y:
+            selected.append(o); continue
+        # Linear objects are selected when either endpoint, or the segment
+        # bounding box, intersects the marquee.
+        if hasattr(o, "start_point_id"):
+            a, b = ids.get(o.start_point_id), ids.get(o.end_point_id)
+            if a and b and not (max(a.x,b.x) < lo_x or min(a.x,b.x) > hi_x or max(a.y,b.y) < lo_y or min(a.y,b.y) > hi_y):
+                selected.append(o); continue
+        # Curves/functions span the plot domain; treat a marquee intersecting
+        # the default domain as selecting the curve.  Objects may optionally
+        # expose a finite bounding box for more precise hit testing.
+        if hasattr(o, "expression"):
+            bounds = getattr(o, "bounds", (-10.0, -10.0, 10.0, 10.0))
+            bx1, by1, bx2, by2 = bounds
+            if not (max(bx1, bx2) < lo_x or min(bx1, bx2) > hi_x or max(by1, by2) < lo_y or min(by1, by2) > hi_y):
+                selected.append(o)
+    return selected
 
 class SceneClipboard:
     def __init__(self, *, max_bytes=MAX_CLIPBOARD_BYTES): self.max_bytes=max_bytes; self.payload=None; self.source_pane=None; self._repeat=0

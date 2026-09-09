@@ -281,6 +281,8 @@ class _GeometryHistoryState:
     points: tuple[Point2D, ...]
     linears: tuple[Linear2D, ...]
     object_order: tuple[str, ...]
+    annotations: tuple[Annotation2D, ...] = ()
+    curves: tuple[CurveLayer, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -3415,6 +3417,8 @@ class MainWindow:
             points=tuple(replace(point) for point in self._pane_scene().geometry_points),
             linears=tuple(replace(linear) for linear in self._pane_scene().linear_objects),
             object_order=tuple(self._pane_scene()._two_d_object_order),
+            annotations=tuple(replace(a) for a in getattr(self._pane_scene(), "annotations", [])),
+            curves=tuple(replace(c) for c in getattr(self._pane_scene(), "curve_layers", [])),
         )
 
     def _ensure_geometry_history(self) -> None:
@@ -3435,6 +3439,11 @@ class MainWindow:
         if before == after:
             return
         self._pane_scene()._geometry_undo_stack.append(before)
+        try:
+            pane_id = self._pane_scene().pane.pane_id
+            self.pane_manager.push(pane_id, lambda b=before: self._restore_geometry_state(b), lambda a=after: self._restore_geometry_state(a), "二维场景")
+        except Exception:
+            pass
         self._pane_scene()._geometry_redo_stack.clear()
         self._update_geometry_history_controls()
 
@@ -3497,6 +3506,8 @@ class MainWindow:
         """恢复几何对象并重建几何控制器，保持函数曲线和当前工具不变。"""
         self._pane_scene().geometry_points = [replace(point) for point in state.points]
         self._pane_scene().linear_objects = [replace(linear) for linear in state.linears]
+        self._pane_scene().annotations = [replace(a) for a in state.annotations]
+        self._pane_scene().curve_layers = [replace(c) for c in state.curves]
         self._pane_scene()._two_d_object_order = list(state.object_order)
         self._pane_scene()._pending_geometry_point_id = None
         self._pane_scene()._dragging_point_id = None

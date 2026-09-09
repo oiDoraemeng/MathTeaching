@@ -188,6 +188,8 @@ class ScenePaneManager(QObject):
         if not self._undo_stack:
             return False
         entry = self._undo_stack[-1]
+        if entry.pane_id in self.visible_pane_ids():
+            self._set_active_pane(entry.pane_id)
         entry.undo()
         self._undo_stack.pop()
         self._redo_stack.append(entry)
@@ -197,6 +199,8 @@ class ScenePaneManager(QObject):
         if not self._redo_stack:
             return False
         entry = self._redo_stack[-1]
+        if entry.pane_id in self.visible_pane_ids():
+            self._set_active_pane(entry.pane_id)
         entry.redo()
         self._redo_stack.pop()
         self._undo_stack.append(entry)
