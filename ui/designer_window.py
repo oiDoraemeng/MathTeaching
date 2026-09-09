@@ -2129,6 +2129,10 @@ class MainWindow:
         topic_id = getattr(self, "_active_linear_algebra_topic_id", None)
         if grid is None or not topic_id:
             return
+        try:
+            self.pane_manager.show_case(pane_id)
+        except (AttributeError, ValueError):
+            pass
         if not grid.select_case(pane_id, stage_id or None, emit=False):
             return
         pane = next((item for item in grid.panes if getattr(item, "case", None) is not None and str(getattr(item.case, "id", "")) == pane_id), None)
@@ -2145,6 +2149,10 @@ class MainWindow:
             grid.close()
             grid.deleteLater()
         self._teaching_case_pane_grid = None
+        try:
+            self.pane_manager.leave_lecture()
+        except (AttributeError, ValueError):
+            pass
         if hasattr(self, "teaching_case_pane_host"):
             self.teaching_case_pane_host.hide()
         if (self._pane_renderer(required=False) is not None):
@@ -2197,6 +2205,14 @@ class MainWindow:
         if not grid.set_pane_count(count):
             self.algebra_panel.set_status("案例窗格数量无效", is_error=True)
             return False
+        try:
+            case_ids = [str(getattr(case, "id", "")) for case in grid.cases]
+            pane_ids = [pid for pid in self.pane_manager._pane_order
+                        if self.pane_manager.panes[pid].source == "case"
+                        and self.pane_manager.panes[pid].source_id in case_ids]
+            self.pane_manager.set_visible_panes(pane_ids[: int(count)])
+        except (AttributeError, ValueError):
+            pass
         self._sync_layout_buttons()
         self._on_teaching_case_focus(grid.selected_case_id, "")
         return True
@@ -2212,8 +2228,15 @@ class MainWindow:
         cases = tuple(getattr(layout, "cases", ()))[:4] if layout is not None else ()
         if not cases or getattr(compiled.plan, "scene", "") != "2d":
             return
+        for case in cases:
+            self.pane_manager.register_case(
+                str(getattr(case, "id", "")),
+                name=str(getattr(case, "purpose", "案例")),
+            )
+        self.pane_manager.enter_lecture(str(getattr(cases[0], "id", "")))
         grid = TeachingCasePaneGrid(compiled, cases, self.teaching_case_pane_host)
         grid.case_focused.connect(self._on_teaching_case_focus)
+        grid.case_closed.connect(self._on_teaching_case_closed)
         self.teaching_case_pane_layout.addWidget(grid)
         self._teaching_case_pane_grid = grid
         self._pane_renderer().interactor.hide()
@@ -2221,6 +2244,22 @@ class MainWindow:
         default_count = int(getattr(layout, "default_pane_count", len(cases)))
         self._set_teaching_case_pane_count(default_count)
         self._sync_layout_buttons()
+
+    def _on_teaching_case_closed(self, case_id: str) -> None:
+        """Remove a retained case pane and return to the lecture selection."""
+        try:
+            self.pane_manager.close_case(case_id)
+        except (AttributeError, RuntimeError, ValueError):
+            return
+        grid = getattr(self, "_teaching_case_pane_grid", None)
+        if grid is not None:
+            remaining = tuple(case for case in grid.cases if str(getattr(case, "id", "")) != case_id)
+            grid.cases = remaining
+            if remaining:
+                grid.selected_case_id = str(getattr(remaining[0], "id", ""))
+                self._set_teaching_case_pane_count(min(grid.pane_count, len(remaining)))
+            else:
+                self._close_teaching_case_panes()
 
     def _apply_linear_algebra_storyboard_visibility(self) -> None:
         compiled = getattr(self, "_active_linear_algebra_compiled", None)

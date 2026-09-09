@@ -225,6 +225,7 @@ class TeachingCasePaneGrid(QFrame):
     """Container that keeps every selected case visible simultaneously."""
 
     case_focused = Signal(str, str)
+    case_closed = Signal(str)
     layout_rejected = Signal(str)
 
     def __init__(self, compiled: Any, cases: Iterable[Any], parent: QFrame | None = None) -> None:
@@ -255,6 +256,7 @@ class TeachingCasePaneGrid(QFrame):
             if index < len(visible_cases):
                 pane = TeachingCasePane(visible_cases[index], self.compiled, self)
                 pane.focused.connect(self._on_pane_focused)
+                pane.close_requested.connect(lambda cid=str(getattr(visible_cases[index], "id", "")): self.case_closed.emit(cid))
                 pane.set_selected(str(getattr(visible_cases[index], "id", "")) == self.selected_case_id)
             else:
                 pane = QFrame(self)
