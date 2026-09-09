@@ -13,3 +13,9 @@
 ### Requirement: Case panes share the unified workspace
 
 案例视口 SHALL 注册为统一工作区 Pane，不再使用独立 Pane 类型。打开讲义默认只显示一个案例 Pane；Agent“全部显示”只显示当前讲义案例 Pane，用户 Pane 继续隐藏。案例焦点与代数 Tab SHALL 双向同步。
+
+#### Scenario: Agent shows only lecture cases
+
+- **WHEN** 用户点击 Agent 界面的“全部显示”
+- **THEN** 当前讲义的案例 Pane 显示
+- **AND** 用户之前创建的 Pane 仍隐藏

@@ -93,3 +93,9 @@
 ### Requirement: Infinite 2D canvas
 
 教程和普通 2D Pane SHALL 不绘制人工世界边界；缩放、平移和恢复 SHALL 只裁剪视口内容，不显示边界矩形。
+
+#### Scenario: Zoom without visible world boundary
+
+- **WHEN** 用户缩小或平移教程 2D Pane
+- **THEN** 视口只显示画布内容
+- **AND** 不出现世界边界矩形
