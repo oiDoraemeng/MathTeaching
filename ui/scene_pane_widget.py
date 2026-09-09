@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Callable, Any
 
 from PySide6.QtCore import Qt, QEvent, QTimer, QObject
-from PySide6.QtWidgets import QWidget, QFrame, QHBoxLayout, QLabel, QToolButton, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QFrame, QHBoxLayout, QLabel, QToolButton, QVBoxLayout, QMessageBox
 from PySide6.QtCore import Signal
 from shiboken6 import isValid
 
@@ -30,24 +30,26 @@ class PaneChrome(QFrame):
         self.fullscreen_button = QToolButton(self); self.fullscreen_button.setText("□"); self.fullscreen_button.setToolTip("全屏窗格")
         self.close_button = QToolButton(self); self.close_button.setText("×"); self.close_button.setToolTip("关闭窗格")
         self.close_button.setObjectName("paneChromeClose")
-        self.close_button.setVisible(False)
         bar = QHBoxLayout(); bar.setContentsMargins(8, 2, 4, 2); bar.setSpacing(2)
         bar.addWidget(self.title_label); bar.addStretch(); bar.addWidget(self.hide_button); bar.addWidget(self.fullscreen_button); bar.addWidget(self.close_button)
         root = QVBoxLayout(self); root.setContentsMargins(0, 0, 0, 0); root.setSpacing(0); root.addLayout(bar)
         if content is not None: root.addWidget(content, 1)
         self.hide_button.clicked.connect(self.hide_requested)
         self.fullscreen_button.clicked.connect(self.fullscreen_requested)
-        self.close_button.clicked.connect(self.close_requested)
+        self.close_button.clicked.connect(self._confirm_close)
+
+    def _confirm_close(self) -> None:
+        answer = QMessageBox.question(self, "关闭窗格", "确定关闭此窗格？", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        if answer == QMessageBox.StandardButton.Yes:
+            self.close_requested.emit()
 
     def set_title(self, title: str) -> None:
         self.title_label.setText(str(title))
 
     def enterEvent(self, event):
-        self.close_button.setVisible(True)
         return super().enterEvent(event)
 
     def leaveEvent(self, event):
-        self.close_button.setVisible(False)
         return super().leaveEvent(event)
 
 
@@ -281,7 +283,9 @@ class ScenePaneWidget(QWidget):
 
     def delete_pane(self, pane_id: str) -> tuple[str, ...]:
         self.manager.delete_pane(pane_id)
-        return self.sync_layout()
+        result = self.sync_layout()
+        self.pane_closed.emit(pane_id)
+        return result
 
     def set_layout(self, count: int) -> tuple[str, ...]:
         visible = self.manager.set_layout(count)
@@ -300,3 +304,4 @@ class ScenePaneWidget(QWidget):
     def showEvent(self, event: Any) -> None:
         super().showEvent(event)
         self.refresh_visible_panes()
+    pane_closed = Signal(str)

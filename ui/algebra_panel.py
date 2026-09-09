@@ -578,6 +578,7 @@ class LayerRow(QFrame):
 
 
 class AlgebraPanel(QFrame):
+    tab_closed = Signal(str)
     """由相互独立的二维和三维场景共用的紧凑代数面板。"""
 
     add_requested = Signal(str, str)
@@ -787,6 +788,7 @@ class AlgebraPanel(QFrame):
         model = self._pane_models.pop(pane_id)
         self.formula_tabs.removeTab(index)
         model.deleteLater()
+        self.tab_closed.emit(pane_id)
         if self._pane_id == pane_id:
             self.set_pane_id(next(iter(self._pane_models)))
 
