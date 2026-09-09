@@ -829,8 +829,7 @@ class MainWindow:
         if message_type == "set_math_case_pane_count":
             topic_id = str(payload.get("case_id", ""))
             pane_count = payload.get("pane_count")
-            grid = getattr(self, "_teaching_case_pane_grid", None)
-            if grid is not None and topic_id == getattr(self, "_active_linear_algebra_topic_id", None) and isinstance(pane_count, int):
+            if topic_id == getattr(self, "_active_linear_algebra_topic_id", None) and type(pane_count) is int:
                 self._set_teaching_case_pane_count(pane_count)
             return
         if message_type == "save_model_provider":

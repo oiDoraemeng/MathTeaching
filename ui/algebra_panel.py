@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QRect, QSignalBlocker, QTimer, Qt, Signal
-from PySide6.QtGui import QAction, QColor, QMouseEvent, QShowEvent
+from PySide6.QtGui import QAction, QColor, QCursor, QMouseEvent, QShowEvent
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QSlider,
     QToolButton,
-    QTabWidget,
+    QStackedWidget,
     QTabBar,
     QVBoxLayout,
     QWidget,
@@ -34,29 +34,130 @@ class HoverCloseTabBar(QTabBar):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setDrawBase(False)
-        self.setUsesScrollButtons(True)
-        self.setStyleSheet("QTabBar { qproperty-expanding: false; } QTabBar QToolButton { width: 16px; } QTabBar QScrollBar:horizontal { height: 0px; }")
+        self.setExpanding(False)
+        self.setUsesScrollButtons(False)
+        self.setMouseTracking(True)
+        self.setElideMode(Qt.TextElideMode.ElideNone)
 
     def tabInserted(self, index: int) -> None:
         super().tabInserted(index)
-        button = self.tabButton(index, QTabBar.ButtonPosition.RightSide)
-        if button is not None:
-            button.setVisible(False)
+        self._update_close_buttons(-1)
+
+    def _update_close_buttons(self, hovered: int) -> None:
+        for index in range(self.count()):
+            for side in (QTabBar.ButtonPosition.LeftSide, QTabBar.ButtonPosition.RightSide):
+                button = self.tabButton(index, side)
+                if button is not None:
+                    policy = button.sizePolicy()
+                    policy.setRetainSizeWhenHidden(True)
+                    button.setSizePolicy(policy)
+                    button.installEventFilter(self)
+                    button.setVisible(index == hovered)
+
+    def enterEvent(self, event):
+        super().enterEvent(event)
+        self._update_close_buttons(self.tabAt(event.position().toPoint()))
 
     def mouseMoveEvent(self, event):
         hovered = self.tabAt(event.position().toPoint())
-        for index in range(self.count()):
-            button = self.tabButton(index, QTabBar.ButtonPosition.RightSide)
-            if button is not None:
-                button.setVisible(index == hovered)
+        self._update_close_buttons(hovered)
         return super().mouseMoveEvent(event)
 
     def leaveEvent(self, event):
-        for index in range(self.count()):
-            button = self.tabButton(index, QTabBar.ButtonPosition.RightSide)
-            if button is not None:
-                button.setVisible(False)
+        self._update_close_buttons(-1)
         return super().leaveEvent(event)
+
+    def eventFilter(self, watched, event):
+        if event.type() in (QEvent.Type.Enter, QEvent.Type.Leave):
+            # Moving onto the child close button must keep it clickable.
+            point = self.mapFromGlobal(QCursor.pos())
+            self._update_close_buttons(self.tabAt(point) if self.rect().contains(point) else -1)
+        return super().eventFilter(watched, event)
+
+
+class PaneTabScrollArea(QScrollArea):
+    """Scroll overflowing tabs with wheel/trackpad without navigation chrome."""
+
+    def wheelEvent(self, event):
+        delta = event.pixelDelta().x() or event.pixelDelta().y()
+        if not delta:
+            delta = event.angleDelta().x() or event.angleDelta().y()
+        scrollbar = self.horizontalScrollBar()
+        scrollbar.setValue(scrollbar.value() - delta)
+        event.accept()
+
+
+class AlgebraPaneTabs(QWidget):
+    """Borderless pages with a separately scrollable, unclipped tab strip."""
+
+    currentChanged = Signal(int)
+    tabBarDoubleClicked = Signal(int)
+    tabCloseRequested = Signal(int)
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        self._bar = HoverCloseTabBar(self)
+        self._bar.setTabsClosable(True)
+        self.scroll = PaneTabScrollArea(self)
+        self.scroll.setFrameShape(QFrame.Shape.NoFrame)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.scroll.setWidget(self._bar)
+        self._pages = QStackedWidget(self)
+        self._pages.setFrameShape(QFrame.Shape.NoFrame)
+        layout.addWidget(self.scroll)
+        layout.addWidget(self._pages, 1)
+        self._bar.currentChanged.connect(self._select_page)
+        self._bar.tabBarDoubleClicked.connect(self.tabBarDoubleClicked)
+        self._bar.tabCloseRequested.connect(self.tabCloseRequested)
+
+    def _resize_strip(self):
+        self._bar.resize(self._bar.sizeHint())
+        self.scroll.setFixedHeight(self._bar.sizeHint().height())
+
+    def _select_page(self, index):
+        self._pages.setCurrentIndex(index)
+        self._ensure_current_visible()
+        self.currentChanged.emit(index)
+
+    def _ensure_current_visible(self):
+        rect = self._bar.tabRect(self._bar.currentIndex())
+        self.scroll.ensureVisible(rect.center().x(), rect.center().y(), rect.width() // 2, 0)
+
+    def tabBar(self):
+        return self._bar
+
+    def count(self):
+        return self._bar.count()
+
+    def currentIndex(self):
+        return self._bar.currentIndex()
+
+    def setCurrentIndex(self, index):
+        self._bar.setCurrentIndex(index)
+
+    def addTab(self, widget, title):
+        self._pages.addWidget(widget)
+        index = self._bar.addTab(title)
+        self._resize_strip()
+        return index
+
+    def removeTab(self, index):
+        self._pages.removeWidget(self._pages.widget(index))
+        self._bar.removeTab(index)
+        self._pages.setCurrentIndex(self._bar.currentIndex())
+        self._resize_strip()
+
+    def tabText(self, index):
+        return self._bar.tabText(index)
+
+    def setTabText(self, index, title):
+        self._bar.setTabText(index, title)
+        self._resize_strip()
+        self._ensure_current_visible()
 
 from MathInputWidget import FormulaEditorPopup, FormulaListWidget, FormulaPreviewWidget
 from models.curve_layer import CurveLayer
@@ -619,6 +720,7 @@ class AlgebraPanel(QFrame):
         self._pane_manager = None
         self.inline_editor = None
         self.setObjectName("algebraPanel")
+        self.setFrameShape(QFrame.Shape.NoFrame)
         self.setMinimumWidth(self.MIN_WIDTH)
         self.setMaximumWidth(self.MAX_WIDTH)
         layout = QVBoxLayout(self)
@@ -653,11 +755,8 @@ class AlgebraPanel(QFrame):
         self.intersection_menu.addAction(self.auto_intersections_action)
         self.intersection_menu.addAction(self.manual_intersection_action)
 
-        self.formula_tabs = QTabWidget(self)
+        self.formula_tabs = AlgebraPaneTabs(self)
         self.formula_tabs.setObjectName("algebraPaneTabs")
-        self.formula_tabs.setDocumentMode(True)
-        self.formula_tabs.setTabBar(HoverCloseTabBar(self.formula_tabs))
-        self.formula_tabs.setTabsClosable(True)
         self.formula_list = FormulaListWidget(self.formula_tabs, initial_theme=self._effective_theme)
         self._pane_models[self._pane_id] = self.formula_list
         self.formula_tabs.addTab(self.formula_list, "窗格 1")

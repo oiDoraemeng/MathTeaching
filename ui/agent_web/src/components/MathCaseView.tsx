@@ -62,7 +62,7 @@ export function MathCaseView({
 
   const showAllPanes = () => {
     setShowingAllPanes(true);
-    onSetCasePaneCount?.(paneCases.length);
+    onSetCasePaneCount?.(Math.min(4, paneCases.length));
   };
 
   const selectStage = (index: number) => {
@@ -142,13 +142,21 @@ export function MathCaseView({
                 <button
                   key={pane.id}
                   type="button"
-                  className={pane.id === activePaneId ? "active" : ""}
-                  aria-current={pane.id === activePaneId ? "true" : undefined}
+                  className={!showingAllPanes && pane.id === activePaneId ? "active" : ""}
+                  aria-current={!showingAllPanes && pane.id === activePaneId ? "true" : undefined}
                   onClick={() => selectPane(pane.id, pane.stageRefs[0])}
                 >
                   {pane.purpose}
                 </button>
               ))}
+              <button
+                type="button"
+                className={showingAllPanes ? "active" : ""}
+                aria-pressed={showingAllPanes}
+                onClick={showAllPanes}
+              >
+                全部显示
+              </button>
             </div>
           )}
           <div className="math-case-section-heading">
