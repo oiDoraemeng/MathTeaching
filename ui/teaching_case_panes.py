@@ -21,6 +21,7 @@ from rendering.ticks import ViewportBounds, visible_2d_bounds
 from rendering.two_d_scene import TwoDGuides, configure_2d_camera
 from services.scene_commands import CommandPlan, SceneCommandService
 from ui.scene_pane_widget import PaneChrome
+from ui.scene_pane_manager import ScenePaneManager
 
 
 PANE_COUNTS = (1, 2, 3, 4)
@@ -95,7 +96,7 @@ class TeachingCasePane(PaneChrome):
 
     focused = Signal(str, str)
 
-    def __init__(self, case: Any, compiled: Any, parent: QFrame | None = None) -> None:
+    def __init__(self, case: Any, compiled: Any, parent: QFrame | None = None, *, pane_id: str | None = None, pane_manager: ScenePaneManager | None = None) -> None:
         content = QWidget(parent)
         super().__init__(str(getattr(case, "purpose", "案例")), content=content, parent=parent)
         self.case = case
@@ -103,6 +104,9 @@ class TeachingCasePane(PaneChrome):
         self.setObjectName("teachingCasePane")
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self._selected = False
+        self.pane_id, self.pane_manager = pane_id, pane_manager
+        if pane_manager is not None and pane_id is not None:
+            pane_manager.pane(pane_id).runtime = self
 
         layout = QVBoxLayout(content)
         layout.setContentsMargins(6, 6, 6, 6)
@@ -131,9 +135,14 @@ class TeachingCasePane(PaneChrome):
         self.style().unpolish(self)
         self.style().polish(self)
 
+    def focus_pane(self) -> None:
+        if self.pane_manager is not None and self.pane_id is not None:
+            self.pane_manager.focus_pane(self.pane_id)
+        self.setFocus(Qt.FocusReason.OtherFocusReason)
+
     def eventFilter(self, watched: object, event: QEvent) -> bool:  # noqa: N802
         if watched is self.plotter.interactor and event.type() == QEvent.Type.MouseButtonPress:
-            self.setFocus(Qt.FocusReason.MouseFocusReason)
+            self.focus_pane()
             self.focused.emit(str(getattr(self.case, "id", "")), self._stage_id())
         if watched is self.plotter.interactor and event.type() in (
             QEvent.Type.MouseMove, QEvent.Type.Resize, QEvent.Type.Wheel
@@ -228,9 +237,10 @@ class TeachingCasePaneGrid(QFrame):
     case_closed = Signal(str)
     layout_rejected = Signal(str)
 
-    def __init__(self, compiled: Any, cases: Iterable[Any], parent: QFrame | None = None) -> None:
+    def __init__(self, compiled: Any, cases: Iterable[Any], parent: QFrame | None = None, *, pane_manager: ScenePaneManager | None = None) -> None:
         super().__init__(parent)
         self.compiled = compiled
+        self.pane_manager = pane_manager
         self.cases = tuple(cases)[:4]
         self.pane_count = 1
         self.selected_case_id = str(getattr(self.cases[0], "id", "")) if self.cases else ""
@@ -254,7 +264,9 @@ class TeachingCasePaneGrid(QFrame):
         for index in range(self.pane_count):
             row, column, row_span, column_span = case_pane_placement(self.pane_count, index)
             if index < len(visible_cases):
-                pane = TeachingCasePane(visible_cases[index], self.compiled, self)
+                case = visible_cases[index]
+                pane_id = self.pane_manager.register_case(str(getattr(case, "id", "")), name=str(getattr(case, "purpose", "案例"))) if self.pane_manager else None
+                pane = TeachingCasePane(case, self.compiled, self, pane_id=pane_id, pane_manager=self.pane_manager)
                 pane.focused.connect(self._on_pane_focused)
                 pane.close_requested.connect(lambda cid=str(getattr(visible_cases[index], "id", "")): self.case_closed.emit(cid))
                 pane.set_selected(str(getattr(visible_cases[index], "id", "")) == self.selected_case_id)
@@ -269,6 +281,10 @@ class TeachingCasePaneGrid(QFrame):
             self._layout.setRowStretch(row, 1)
         for column in range(columns):
             self._layout.setColumnStretch(column, 1)
+        if self.pane_manager is not None:
+            ids = [self.pane_manager.register_case(str(getattr(case, "id", ""))) for case in visible_cases]
+            if ids:
+                self.pane_manager.set_visible_panes(ids)
         return True
 
     def select_case(self, case_id: str, stage_id: str | None = None, *, emit: bool = True) -> bool:
@@ -282,6 +298,12 @@ class TeachingCasePaneGrid(QFrame):
         if pane is None:
             return False
         self.selected_case_id = case_id
+        if self.pane_manager is not None:
+            pane_id = self.pane_manager.register_case(case_id)
+            if pane_id not in self.pane_manager.visible_pane_ids() and len(self.pane_manager.visible_pane_ids()) < self.pane_manager.MAX_PANES:
+                self.pane_manager.set_visible_panes(list(self.pane_manager.visible_pane_ids()) + [pane_id])
+            if pane_id in self.pane_manager.visible_pane_ids():
+                self.pane_manager.focus_pane(pane_id)
         for item in self.panes:
             if isinstance(item, TeachingCasePane):
                 item.set_selected(item is pane)

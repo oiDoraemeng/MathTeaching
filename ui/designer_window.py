@@ -2129,12 +2129,15 @@ class MainWindow:
         topic_id = getattr(self, "_active_linear_algebra_topic_id", None)
         if grid is None or not topic_id:
             return
-        try:
-            self.pane_manager.show_case(pane_id)
-        except (AttributeError, ValueError):
-            pass
         if not grid.select_case(pane_id, stage_id or None, emit=False):
             return
+        try:
+            manager_pane = next((pid for pid, state in self.pane_manager.panes.items()
+                                 if state.source == "case" and state.source_id == pane_id), None)
+            if manager_pane is not None and manager_pane in self.pane_manager.visible_pane_ids():
+                self.pane_manager.focus_pane(manager_pane)
+        except (AttributeError, ValueError):
+            pass
         pane = next((item for item in grid.panes if getattr(item, "case", None) is not None and str(getattr(item.case, "id", "")) == pane_id), None)
         selected_stage = stage_id or (str(getattr(pane, "_stage_id", lambda: "")()) if pane is not None else "")
         if selected_stage:
@@ -2237,7 +2240,7 @@ class MainWindow:
             str(getattr(cases[0], "id", "")),
             [str(getattr(case, "id", "")) for case in cases],
         )
-        grid = TeachingCasePaneGrid(compiled, cases, self.teaching_case_pane_host)
+        grid = TeachingCasePaneGrid(compiled, cases, self.teaching_case_pane_host, pane_manager=self.pane_manager)
         grid.case_focused.connect(self._on_teaching_case_focus)
         grid.case_closed.connect(self._on_teaching_case_closed)
         self.teaching_case_pane_layout.addWidget(grid)
