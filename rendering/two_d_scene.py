@@ -20,6 +20,21 @@ _TICK_KEY = "tick_marks"
 _LABEL_KEY = "tick_labels"
 
 
+def _overscan_bounds(bounds: ViewportBounds, fraction: float = 0.10) -> ViewportBounds:
+    """Return bounds expanded for line geometry while retaining visible ticks.
+
+    The extra span ensures grid and axis actors continue past the viewport;
+    rendering remains clipped by VTK's viewport instead of by finite world
+    endpoints.
+    """
+    x_margin = max(abs(bounds.x_span) * fraction, 1e-6)
+    y_margin = max(abs(bounds.y_span) * fraction, 1e-6)
+    return ViewportBounds(
+        (bounds.x_range[0] - x_margin, bounds.x_range[1] + x_margin),
+        (bounds.y_range[0] - y_margin, bounds.y_range[1] + y_margin),
+    )
+
+
 def configure_2d_camera(plotter: pv.Plotter) -> None:
     """配置二维平移/缩放交互，不重置当前相机位置。"""
     plotter.enable_parallel_projection()
@@ -85,24 +100,31 @@ class TwoDGuides:
             )
         x_ticks = tick_values(bounds.x_range, spacing)
         y_ticks = tick_values(bounds.y_range, spacing)
+        # Extend guide geometry beyond the visible viewport.  VTK clips actors
+        # to the viewport, so terminating lines exactly at the current bounds
+        # creates a faint artificial frame when zooming or panning.  Keeping
+        # the sampled ticks tied to ``bounds`` while overscanning line
+        # endpoints preserves pointer anchored camera interaction and lets the
+        # viewport provide the only clipping boundary.
+        draw_bounds = _overscan_bounds(bounds)
 
         grid_color = _grid_color(appearance, effective_theme)
         self._set_geometry(
             _GRID_KEY,
-            self._grid_mesh(bounds, spacing, x_ticks, y_ticks) if appearance.show_grid else pv.PolyData(),
+            self._grid_mesh(draw_bounds, spacing, x_ticks, y_ticks) if appearance.show_grid else pv.PolyData(),
             color=grid_color,
             line_width=1.0,
         )
 
         self._set_geometry(
             _AXIS_X_KEY,
-            _segments_to_polydata([((bounds.x_range[0], 0, 0), (bounds.x_range[1], 0, 0))]),
+            _segments_to_polydata([((draw_bounds.x_range[0], 0, 0), (draw_bounds.x_range[1], 0, 0))]),
             color=_axis_color(appearance, "X", effective_theme),
             line_width=2.5,
         )
         self._set_geometry(
             _AXIS_Y_KEY,
-            _segments_to_polydata([((0, bounds.y_range[0], 0), (0, bounds.y_range[1], 0))]),
+            _segments_to_polydata([((0, draw_bounds.y_range[0], 0), (0, draw_bounds.y_range[1], 0))]),
             color=_axis_color(appearance, "Y", effective_theme),
             line_width=2.5,
         )
