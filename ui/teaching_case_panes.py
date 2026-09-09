@@ -206,7 +206,11 @@ class TeachingCasePane(PaneChrome):
         self.plotter.camera.parallel_scale = max(6.5, float(self.plotter.camera.parallel_scale))
         if saved_camera:
             try:
+                if saved_camera.get("camera_position") is not None:
+                    self.plotter.camera.position = tuple(saved_camera["camera_position"])
                 self.plotter.camera.focal_point = tuple(saved_camera.get("focal_point", self.plotter.camera.focal_point))
+                if saved_camera.get("view_up") is not None:
+                    self.plotter.camera.up = tuple(saved_camera["view_up"])
                 self.plotter.camera.parallel_scale = float(saved_camera.get("parallel_scale", self.plotter.camera.parallel_scale))
             except (TypeError, ValueError):
                 pass
@@ -227,7 +231,9 @@ class TeachingCasePane(PaneChrome):
                 state = self.pane_manager.pane(self.pane_id)
                 camera = self.plotter.camera
                 state.camera_2d = {
+                    "camera_position": [float(value) for value in camera.position],
                     "focal_point": [float(value) for value in camera.focal_point],
+                    "view_up": [float(value) for value in camera.up],
                     "parallel_scale": float(camera.parallel_scale),
                 }
             self.geometry.set_bounds(bounds)

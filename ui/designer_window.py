@@ -2208,14 +2208,6 @@ class MainWindow:
         if not grid.set_pane_count(count):
             self.algebra_panel.set_status("案例窗格数量无效", is_error=True)
             return False
-        try:
-            case_ids = [str(getattr(case, "id", "")) for case in grid.cases]
-            pane_ids = [pid for pid in self.pane_manager._pane_order
-                        if self.pane_manager.panes[pid].source == "case"
-                        and self.pane_manager.panes[pid].source_id in case_ids]
-            self.pane_manager.set_visible_panes(pane_ids[: int(count)])
-        except (AttributeError, ValueError):
-            pass
         self._sync_layout_buttons()
         self._on_teaching_case_focus(grid.selected_case_id, "")
         return True
