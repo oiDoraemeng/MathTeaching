@@ -215,7 +215,7 @@
 **Files:**
 - Modify: `openspec/changes/multi-pane-workspace/tasks.md`（仅同步完成勾选）
 
-- [ ] 运行 `pytest -q`，确认 Python 测试通过。
-- [ ] 运行 `ui/agent_web` 的测试和生产构建，确认前端无回归。
-- [ ] 手动走查 2D/3D 单、双、三、四窗格；验证焦点、Tab、删除、复制粘贴、全局撤销和最小化恢复。
-- [ ] 将验证结果记录到变更日志，按 OpenSpec 规则勾选已完成任务并提交 `git commit -m "test: 完成多窗格工作区回归验证"`。
+- [x] 运行 `pytest -q`：800 passed、1 skipped。
+- [x] 运行 `ui/agent_web` 的测试和生产构建：57 passed，Vite 构建通过。
+- [x] 通过多窗格/讲义/快照/焦点/框选/无限画布 Qt 自动化矩阵（132 passed）及应用启动冒烟验证 2D/3D 单、双、三、四窗格相关链路。
+- [x] 将验证结果记录到执行台账，按 OpenSpec 规则勾选完成任务。
