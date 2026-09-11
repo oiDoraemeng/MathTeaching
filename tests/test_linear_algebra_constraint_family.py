@@ -41,3 +41,10 @@ def test_scene_command_service_rejects_constraint_budget_before_host_mutation():
     operation = {"op": "geometry.constraint", "matrix": [[1, 0], [0, 1]], "rhs": [1, 2], "solution_state": "unique", "rank": 2, "augmented_rank": 2, "bounds": [-1e9, 1e9, -1, 1]}
     result = SceneCommandService().validate(CommandPlan(scene="2d", operations=(operation,)))
     assert not result.valid
+
+
+def test_scene_command_service_3d_constraint_budget_reports_budget_error():
+    operation = {"op": "geometry.constraint", "scene": "3d", "matrix": [[1,0,0],[0,1,0],[0,0,1]], "rhs": [1,2,3], "solution_state": "unique", "rank": 3, "augmented_rank": 3, "entity_count": 33, "stage_count": 7, "sample_count": 64 * 64 * 64 + 1, "bounds": [-2,2,-2,2,-2,2]}
+    result = SceneCommandService().validate(CommandPlan(scene="3d", operations=(operation,)))
+    assert not result.valid
+    assert any("render_budget" in message or "budget" in message for message in result.messages)

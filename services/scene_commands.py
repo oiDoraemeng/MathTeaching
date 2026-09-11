@@ -14,6 +14,7 @@ import re
 from typing import Any, Protocol
 
 from .agent_provider import AgentProvider
+from linear_algebra.visualizations.limits import validate_budget
 
 
 class CommandError(ValueError):
@@ -506,6 +507,14 @@ class SceneCommandService:
             bounds = operation.get("bounds")
             if not isinstance(bounds, (list, tuple)) or len(bounds) != 2 * len(matrix) or any(not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) for value in bounds) or any(float(bounds[index]) >= float(bounds[index + 1]) for index in range(0, len(bounds), 2)):
                 raise CommandError("constraint bounds are invalid")
+            entity_count = operation.get("entity_count", 1)
+            stage_count = operation.get("stage_count", 1)
+            sample_count = operation.get("sample_count", len(matrix))
+            if any(isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in (entity_count, stage_count, sample_count)):
+                raise CommandError("constraint budget counts must be non-negative integers")
+            budget_errors = validate_budget("lecture-v1", scene=str(operation.get("scene", "3d" if len(matrix) == 3 else "2d")), entity_count=entity_count, stage_count=stage_count, sample_count=sample_count, bounds=tuple(float(value) for value in bounds))
+            if budget_errors:
+                raise CommandError("constraint render_budget: " + "; ".join(budget_errors))
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):
