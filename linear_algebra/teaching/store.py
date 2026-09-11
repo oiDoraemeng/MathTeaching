@@ -144,6 +144,16 @@ class TeachingArtifactStore:
             artifact = stored.artifact
             if artifact.status != "published" or artifact.revision != revision:
                 raise ValueError(f"published revision mismatch for {topic_id!r}")
+            from linear_algebra.visualizations.contracts import contract_for
+            from linear_algebra.visualizations.snapshots import CompiledSnapshotStore, contract_digest_for
+            contract = contract_for(topic_id)
+            snapshot = CompiledSnapshotStore(self.root / "snapshots").load(topic_id, revision)
+            if snapshot is None:
+                raise ValueError(f"missing compiled snapshot for {topic_id!r} revision {revision}")
+            if snapshot.source_hash != artifact.source.source_hash:
+                raise ValueError(f"stale compiled snapshot source for {topic_id!r}")
+            if snapshot.contract_digest and snapshot.contract_digest != contract_digest_for(contract):
+                raise ValueError(f"compiled snapshot contract mismatch for {topic_id!r}")
             entries.append({"topic_id": topic_id, "published_revision": revision, "source_hash": artifact.source.source_hash})
         payload = self.index_payload()
         old_topics = [item for item in payload.get("topics", []) if isinstance(item, dict)]

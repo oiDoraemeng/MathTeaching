@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import json
 from pathlib import Path
 import re
+import hashlib
 from typing import TYPE_CHECKING, Mapping
 
 from linear_algebra.teaching.model import TeachingArtifact
@@ -77,6 +78,20 @@ class CompiledSnapshot:
         )
 
 
+def contract_digest_for(contract: VisualContract) -> str:
+    payload = {
+        "topic_id": contract.topic_id,
+        "required_claims": contract.required_claims,
+        "required_entity_roles": contract.required_entity_roles,
+        "required_relations": contract.required_relations,
+        "required_primitives": contract.required_primitives,
+        "minimum_stage_count": contract.minimum_stage_count,
+        "required_invariants": contract.required_invariants,
+        "distinguishable_role_groups": contract.distinguishable_role_groups,
+    }
+    return "sha256:" + hashlib.sha256(json.dumps(payload, sort_keys=True, default=list).encode("utf-8")).hexdigest()
+
+
 def snapshot_from(
     artifact: TeachingArtifact, contract: VisualContract, compiled: "CompiledVisualization"
 ) -> CompiledSnapshot:
@@ -91,9 +106,7 @@ def snapshot_from(
             }
         )
     )
-    import hashlib
-    import json
-    contract_digest = "sha256:" + hashlib.sha256(json.dumps(contract.__dict__, sort_keys=True, default=list).encode("utf-8")).hexdigest()
+    contract_digest = contract_digest_for(contract)
     return CompiledSnapshot(
         schema_version=1,
         topic_id=artifact.topic_id,
@@ -152,4 +165,4 @@ class CompiledSnapshotStore:
         return self.path_for(topic_id, 1).parent
 
 
-__all__ = ["CompiledSnapshot", "CompiledSnapshotStore", "snapshot_from"]
+__all__ = ["CompiledSnapshot", "CompiledSnapshotStore", "contract_digest_for", "snapshot_from"]

@@ -10,6 +10,7 @@ import pytest
 from linear_algebra.teaching.model import TeachingArtifact
 from linear_algebra.teaching.store import TeachingArtifactStore
 from tests.teaching_fixtures import composition_artifact_payload
+from tests.test_linear_algebra_teaching_publish import _reviewed_valid_artifact
 
 
 def test_store_writes_stable_utf8_json(tmp_path: Path) -> None:
@@ -87,3 +88,28 @@ def test_unpublish_chapter_removes_only_requested_entries(tmp_path: Path) -> Non
     ]})
     payload = store.unpublish_chapter(4)
     assert [item["topic_id"] for item in payload["topics"]] == ["ch01.keep", "ch05.keep"]
+
+
+def test_publish_chapter_requires_compiled_snapshot(tmp_path: Path) -> None:
+    store = TeachingArtifactStore(tmp_path)
+    artifact = _reviewed_valid_artifact()
+    store.save_published(artifact)
+    before = store.index_payload()
+    with pytest.raises(ValueError, match="compiled snapshot"):
+        store.publish_chapter(2, {artifact.topic_id: 1})
+    assert store.index_payload() == before
+
+
+def test_publish_chapter_rejects_stale_snapshot_source(tmp_path: Path) -> None:
+    store = TeachingArtifactStore(tmp_path)
+    artifact = _reviewed_valid_artifact()
+    store.save_published(artifact)
+    path = tmp_path / "snapshots" / "ch02" / artifact.topic_id / "r1.json"
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps({
+        "topic_id": artifact.topic_id, "artifact_revision": 1, "source_hash": "sha256:stale",
+        "compiler_version": "v1", "render_profile": "teaching", "plan_digest": "sha256:p",
+        "stage_ids": [], "required_entity_roles": [], "required_relations": [], "invariants": [],
+    }), encoding="utf-8")
+    with pytest.raises(ValueError, match="stale compiled snapshot"):
+        store.publish_chapter(2, {artifact.topic_id: 1})
