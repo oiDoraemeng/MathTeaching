@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass, replace
+from math import isfinite, radians, sqrt, tan
 import time
 from uuid import uuid4
 from pathlib import Path
@@ -23,7 +24,7 @@ from pyvistaqt import QtInteractor
 from MathInputWidget import LatexParseError, LatexParser
 from geometry.cas_curve import CurveExpressionError, parse_curve_expression
 from geometry.cas_surface import ExpressionError, parse_surface_expression
-from geometry.standard_surfaces import BUILTIN_SURFACES, DEFAULT_BUILTIN_ID, create_builtin_layer
+from geometry.standard_surfaces import BUILTIN_SURFACES, create_builtin_layer
 from models.curve_layer import CurveLayer, Plot2DDomain
 from models.geometry_2d import (
     Annotation2D,
@@ -46,8 +47,8 @@ from rendering.geometry_scene import GeometrySceneController
 from rendering.geometry_3d_scene import Geometry3DSceneController
 from rendering.layer_scene import LayerRenderError, LayerSceneController
 from rendering.lighting import LightSettings
-from rendering.scene import build_scene, configure_3d_camera_interaction, update_lighting
-from rendering.ticks import ViewportBounds, tick_spacing, visible_2d_bounds, visible_3d_axis_extent
+from rendering.scene import DEFAULT_3D_AXIS_EXTENT, build_scene, configure_3d_camera_interaction, update_lighting
+from rendering.ticks import ViewportBounds, tick_spacing, visible_2d_bounds
 from rendering.two_d_scene import TwoDGuides, configure_2d_camera
 from ui.algebra_panel import AlgebraPanel
 from ui.agent_sidebar import AgentSidebar
@@ -343,6 +344,7 @@ class _PaneSceneRuntime:
         self._three_d_axes: ThreeDAxes | None = None
         self._three_d_spacing: float | None = None
         self._three_d_extent: float | None = None
+        self._three_d_reference_projection_scale: float | None = None
         self._last_domain_extent: float | None = None
         self._viewport_refreshing = False
         self._viewport_refresh_pending = False
@@ -472,8 +474,7 @@ class MainWindow:
         self._scene_target_pane_id: str | None = None
         self._transaction_pane_id: str | None = None
         self._transaction_scene: _PaneSceneRuntime | None = None
-        self._pane_scene().scene_mode = SceneMode.THREE_D
-        self._pane_scene().layers = [create_builtin_layer(DEFAULT_BUILTIN_ID)]
+        self._initialize_default_scene()
         self._lighting_dialog: LightingDialog | None = None
         self.latex_parser = LatexParser()
         self._active_linear_algebra_topic_id: str | None = None
@@ -519,6 +520,17 @@ class MainWindow:
             with self._using_pane(pane_id):
                 self._render_scene()
         self._pending_pane_redraws = set()
+
+    def _initialize_default_scene(self) -> None:
+        """Prepare a blank 3-D workspace; axes are rendered separately.
+
+        Built-in surfaces remain available from the algebra menu, but a new
+        workspace must not inject a sample function before the user asks for
+        one.  The 3-D renderer creates the coordinate system independently.
+        """
+        scene = self._pane_scene()
+        scene.scene_mode = SceneMode.THREE_D
+        scene.layers = []
 
     def _pane(self, pane_id: str | None = None) -> ScenePaneState:
         manager = getattr(self, "pane_manager", None)
@@ -601,6 +613,7 @@ class MainWindow:
                 camera["parallel_scale"] = float(renderer.camera.parallel_scale)
                 pane.camera_2d = camera
             else:
+                camera["view_angle"] = float(getattr(renderer.camera, "view_angle", 30.0))
                 pane.camera_3d = camera
 
     def _restore_render_surfaces(self) -> None:
@@ -1252,6 +1265,11 @@ class MainWindow:
         return True
 
     def _on_viewport_interaction_finished(self, *_args: object) -> None:
+        if self._pane_scene().scene_mode is not SceneMode.TWO_D:
+            # Some VTK zoom paths only emit EndInteractionEvent, so apply the
+            # screen-size compensation once more after the interaction ends.
+            self._refresh_3d_axes_for_camera()
+            self._save_current_view_state()
         self._queue_viewport_refresh()
 
     @staticmethod
@@ -1271,7 +1289,10 @@ class MainWindow:
 
     def _on_viewport_interacting(self, *_args: object) -> None:
         # 缩放立即响应（spacing 必变），平移采用节流策略（只补绘网格）。
-        if self._pane_scene().scene_mode is not SceneMode.TWO_D or self._pane_scene()._viewport_refreshing:
+        if self._pane_scene()._viewport_refreshing:
+            return
+        if self._pane_scene().scene_mode is not SceneMode.TWO_D:
+            self._refresh_3d_axes_for_camera()
             return
         try:
             visible = self._current_2d_bounds()
@@ -1594,7 +1615,10 @@ class MainWindow:
                     camera["position"] = [list(vector) for vector in position]
                 renderer_camera = getattr(renderer, "camera", None)
                 if renderer_camera is not None:
-                    camera["parallel_scale"] = float(renderer_camera.parallel_scale)
+                    if pane.scene_mode == "2d":
+                        camera["parallel_scale"] = float(renderer_camera.parallel_scale)
+                    else:
+                        camera["view_angle"] = float(getattr(renderer_camera, "view_angle", 30.0))
                 state[f"camera_{pane.scene_mode}"] = camera
             pane_scene = replace(pane_scene, camera=state[f"camera_{pane.scene_mode}"])
             pane_records.append({"pane_id": pane_id, "name": pane.name, "source": pane.source, "source_id": pane.source_id,
@@ -1750,8 +1774,10 @@ class MainWindow:
                     if renderer is not None:
                         if camera.get("position") is not None:
                             renderer.camera_position = camera["position"]
-                        if "parallel_scale" in camera:
+                        if pane.scene_mode == "2d" and "parallel_scale" in camera:
                             renderer.camera.parallel_scale = camera["parallel_scale"]
+                        elif pane.scene_mode == "3d" and "view_angle" in camera:
+                            renderer.camera.view_angle = camera["view_angle"]
         finally:
             manager.blockSignals(was_blocked)
         teaching = snapshot.metadata.get("teaching_case", {})
@@ -2041,6 +2067,13 @@ class MainWindow:
         elif name == "geometry.subspace_region":
             basis = tuple(tuple(float(v) for v in row) for row in operation["basis"])  # type: ignore[index]
             self._pane_scene().geometry_controller.add_teaching_subspace_region(basis, tuple(float(v) for v in operation["bounds"]), alias=str(operation["alias"]) if operation.get("alias") else None, origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#4c9f70")), opacity=float(operation.get("opacity", 0.2)))  # type: ignore[arg-type]
+        elif name == "geometry.basis_grid":
+            basis = tuple(tuple(float(v) for v in row) for row in operation["basis_matrix"])  # type: ignore[index]
+            self._pane_scene().geometry_controller.add_teaching_basis_grid(basis, tuple(float(v) for v in operation["bounds"]), alias=str(operation.get("alias", "basis-grid")), color=str(operation.get("color", "#5b8def")))  # type: ignore[arg-type]
+        elif name == "geometry.coordinate_readout":
+            self._pane_scene().geometry_controller.add_teaching_coordinate_readout(tuple(float(v) for v in operation["standard_vector"]), tuple(float(v) for v in operation["alternate_coordinates"]), alias=str(operation.get("alias", "coordinate-readout")))  # type: ignore[arg-type]
+        elif name == "geometry.least_squares":
+            self._pane_scene().geometry_controller.add_teaching_least_squares(tuple(float(v) for v in operation["values"]), tuple(float(v) for v in operation["fit"]), tuple(float(v) for v in operation["residual"]), alias=str(operation.get("alias", "least-squares")))  # type: ignore[arg-type]
         elif name == "geometry.staged_transform":
             matrices = tuple(tuple(tuple(float(v) for v in row) for row in matrix) for matrix in operation["matrices"])  # type: ignore[index]
             points = tuple(tuple(float(v) for v in point) for point in operation["points"])  # type: ignore[index]
@@ -2632,10 +2665,15 @@ class MainWindow:
             custom_tick_spacing=appearance.tick_spacing,
             base_surface=False,
         )
+        if self._pane().camera_3d.get("view_angle") is not None:
+            self._pane_renderer().camera.view_angle = float(self._pane().camera_3d["view_angle"])
+            self._pane_renderer().reset_camera_clipping_range()
         configure_3d_camera_interaction(self._pane_renderer())
         # build_scene 内部会调用 plotter.clear() 清除全部 actor，因此坐标轴需要重新创建。
         self._pane_scene()._three_d_axes = ThreeDAxes(self._pane_renderer())
-        extent = self._current_3d_axis_extent()
+        # Use a fixed reference extent.  During interaction the pane applies a
+        # projection compensation so the axes keep a stable on-screen size.
+        extent = DEFAULT_3D_AXIS_EXTENT
         # 切换场景会重新创建坐标轴；沿用上次三维间距，避免同一视角重建后跳到另一档刻度。
         previous_spacing = self._pane_scene()._three_d_spacing
         spacing = self._pane_scene()._three_d_axes.render(
@@ -2648,7 +2686,8 @@ class MainWindow:
             previous_spacing=previous_spacing,
         )
         self._pane_scene()._three_d_spacing = spacing
-        self._pane_scene()._three_d_extent = extent
+        self._pane_scene()._three_d_extent = DEFAULT_3D_AXIS_EXTENT
+        self._pane_scene()._three_d_reference_projection_scale = self._camera_projection_scale()
         focal = tuple(self._pane_renderer().camera.focal_point)
         self._pane_scene().plot_domain = PlotDomain(
             x_range=(focal[0] - extent, focal[0] + extent),
@@ -2872,27 +2911,77 @@ class MainWindow:
             self._pane_renderer().render()
 
     def _current_3d_axis_extent(self) -> float:
-        camera = self._pane_renderer().camera
-        distance = float(camera.distance)
-        view_angle = float(camera.view_angle)
-        interactor = getattr(self._pane_renderer(), "interactor", None)
-        width = max(1, int(interactor.width())) if interactor is not None else 1
-        height = max(1, int(interactor.height())) if interactor is not None else 1
-        return visible_3d_axis_extent(distance, view_angle, width / height)
+        """Return the fixed world-space extent used by the 3-D axes.
+
+        This intentionally does not inspect camera distance.  Camera dolly is
+        a view operation and must not change the coordinate-system geometry.
+        """
+        return DEFAULT_3D_AXIS_EXTENT
+
+    def _camera_distance(self) -> float | None:
+        camera = getattr(self._pane_renderer(), "camera", None)
+        if camera is None:
+            return None
+        try:
+            position = tuple(float(value) for value in camera.position)
+            focal = tuple(float(value) for value in camera.focal_point)
+        except (AttributeError, TypeError, ValueError):
+            return None
+        distance = sqrt(sum((current - target) ** 2 for current, target in zip(position, focal)))
+        return distance if distance > 1e-6 else None
+
+    def _camera_projection_scale(self) -> float | None:
+        """Return the perspective scale that determines on-screen world size.
+
+        A 3-D dolly changes the camera distance while wheel zoom commonly
+        changes ``camera.view_angle``.  Both affect the projected size of a
+        world-space vector, so compensation must account for both values.
+        """
+        camera = getattr(self._pane_renderer(), "camera", None)
+        if camera is None:
+            return None
+        distance = self._camera_distance()
+        try:
+            view_angle = float(camera.view_angle)
+        except (AttributeError, TypeError, ValueError):
+            return distance
+        if distance is None or not isfinite(view_angle) or not 0.0 < view_angle < 180.0:
+            return None
+        scale = distance * tan(radians(view_angle) / 2.0)
+        return scale if isfinite(scale) and scale > 1e-9 else None
+
+    def _refresh_3d_axes_for_camera(self) -> None:
+        axes = self._pane_scene()._three_d_axes
+        reference_scale = self._pane_scene()._three_d_reference_projection_scale
+        current_scale = self._camera_projection_scale()
+        if axes is None or reference_scale is None or current_scale is None:
+            return
+        extent = DEFAULT_3D_AXIS_EXTENT * current_scale / reference_scale
+        previous_extent = self._pane_scene()._three_d_extent or DEFAULT_3D_AXIS_EXTENT
+        # Avoid rebuilding labels for negligible camera changes.
+        if abs(extent - previous_extent) <= max(1e-4, previous_extent * 1e-3):
+            return
+        appearance = self._pane_scene().scene_appearances[SceneMode.THREE_D]
+        effective_theme = getattr(self, "effective_theme", "light")
+        self._pane_scene()._three_d_spacing = axes.render(
+            extent,
+            axis_color_mode=appearance.axis_color_mode,
+            contrast_color=appearance.contrast_axis_color(effective_theme),
+            show_ticks=appearance.show_ticks,
+            tick_spacing_mode=appearance.tick_spacing_mode,
+            custom_tick_spacing=appearance.tick_spacing,
+            previous_spacing=self._pane_scene()._three_d_spacing,
+        )
+        self._pane_renderer().render()
 
     def _refresh_3d_viewport(
         self, *, resample: bool = True, render: bool = True, force: bool = False
     ) -> None:
-        """刷新三维视口。
-
-        坐标轴范围由定义域决定，与相机无关：缩放是纯相机操作，坐标轴会随
-        投影自然变大变小，无需重建几何。只有外观设置变化（force=True）才
-        重新生成坐标轴。
-        """
+        """刷新三维视口，并记录坐标轴的相机投影基准。"""
         if force and self._pane_scene()._three_d_axes is not None:
             appearance = self._pane_scene().scene_appearances[SceneMode.THREE_D]
             effective_theme = getattr(self, "effective_theme", "light")
-            extent = self._pane_scene()._three_d_extent or self._current_3d_axis_extent()
+            extent = DEFAULT_3D_AXIS_EXTENT
             self._pane_scene()._three_d_spacing = self._pane_scene()._three_d_axes.render(
                 extent,
                 axis_color_mode=appearance.axis_color_mode,
@@ -2902,7 +2991,8 @@ class MainWindow:
                 custom_tick_spacing=appearance.tick_spacing,
                 previous_spacing=None,
             )
-            self._pane_scene()._three_d_extent = extent
+            self._pane_scene()._three_d_extent = DEFAULT_3D_AXIS_EXTENT
+            self._pane_scene()._three_d_reference_projection_scale = self._camera_projection_scale()
 
         if render:
             self._pane_renderer().render()
@@ -4226,7 +4316,11 @@ class MainWindow:
             }
         else:
             self._pane_scene()._three_d_camera_position = self._current_camera_position()
-            self._pane().camera_3d = {"position": self._pane_scene()._three_d_camera_position}
+            camera = getattr(self._pane_renderer(), "camera", None)
+            self._pane().camera_3d = {
+                "position": self._pane_scene()._three_d_camera_position,
+                "view_angle": float(getattr(camera, "view_angle", 30.0)) if camera is not None else 30.0,
+            }
 
     def _set_scene_background(self, background: str) -> None:
         self._pane_scene().scene_appearances[self._pane_scene().scene_mode].background = background

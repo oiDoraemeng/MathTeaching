@@ -8,6 +8,7 @@ from typing import Mapping
 import numpy as np
 
 from ..compiler import CompileIssue, VisualCompileError
+from ..limits import validate_budget
 
 
 @dataclass(frozen=True)
@@ -44,9 +45,14 @@ class LeastSquaresFamilyCompiler:
     def compile(cls, payload: Mapping[str, object]) -> dict[str, object]:
         try:
             evidence = least_squares_fit(payload.get("matrix"), payload.get("values"), payload.get("tolerance", 1e-9))
+            dimension = int(evidence.design_matrix.shape[1])
+            bounds = tuple(float(value) for value in payload.get("bounds", (-2, 2, -2, 2)))
+            budget_errors = validate_budget("lecture-v1", scene="2d", entity_count=dimension + 4, stage_count=1, sample_count=int(evidence.design_matrix.shape[0]), bounds=bounds)
+            if budget_errors:
+                raise ValueError("render_budget: " + "; ".join(budget_errors))
             prefix = str(payload.get("alias_prefix", "least_squares")) or "least_squares"
             aliases = (f"{prefix}__data", f"{prefix}__fit", f"{prefix}__projection", f"{prefix}__residual")
-            operation = {"op": "geometry.least_squares", "alias": aliases[0], "matrix": tuple(tuple(float(x) for x in row) for row in evidence.design_matrix), "values": tuple(float(x) for x in evidence.values), "coefficients": tuple(float(x) for x in evidence.coefficients), "fit": tuple(float(x) for x in evidence.fit), "projection": tuple(float(x) for x in evidence.projection), "residual": tuple(float(x) for x in evidence.residual), "data_alias": aliases[0], "fit_alias": aliases[1], "projection_alias": aliases[2], "residual_alias": aliases[3]}
+            operation = {"op": "geometry.least_squares", "alias": aliases[0], "matrix": tuple(tuple(float(x) for x in row) for row in evidence.design_matrix), "values": tuple(float(x) for x in evidence.values), "coefficients": tuple(float(x) for x in evidence.coefficients), "fit": tuple(float(x) for x in evidence.fit), "projection": tuple(float(x) for x in evidence.projection), "residual": tuple(float(x) for x in evidence.residual), "data_alias": aliases[0], "fit_alias": aliases[1], "projection_alias": aliases[2], "residual_alias": aliases[3], "bounds": bounds, "tolerance": float(payload.get("tolerance", 1e-9)), "entity_count": dimension + 4, "sample_count": int(evidence.design_matrix.shape[0])}
             return {"operations": (operation,), "aliases": aliases, "evidence": evidence}
         except (TypeError, ValueError, np.linalg.LinAlgError) as error:
             raise VisualCompileError((CompileIssue("invalid_least_squares", "$.least_squares", str(error)),)) from error

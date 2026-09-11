@@ -213,6 +213,17 @@ def _matrix_rank_for_command(matrix: list[list[Any]]) -> int:
     return rank
 
 
+def _matrix_determinant(matrix: list[list[Any]]) -> float:
+    values = [[float(value) for value in row] for row in matrix]
+    if len(values) == 2:
+        return values[0][0] * values[1][1] - values[0][1] * values[1][0]
+    return (
+        values[0][0] * (values[1][1] * values[2][2] - values[1][2] * values[2][1])
+        - values[0][1] * (values[1][0] * values[2][2] - values[1][2] * values[2][0])
+        + values[0][2] * (values[1][0] * values[2][1] - values[1][1] * values[2][0])
+    )
+
+
 class SceneCommandService:
     """验证、展开并原子执行白名单场景命令。"""
 
@@ -612,6 +623,20 @@ class SceneCommandService:
             for values in (vector, alternate):
                 for value in values:
                     _require_finite_number(value, "coordinate vector")
+            tolerance = operation.get("tolerance", 1e-9)
+            _require_finite_number(tolerance, "coordinate tolerance")
+            products = [sum(float(row[col]) * float(alternate[col]) for col in range(len(basis))) for row in basis]
+            if any(abs(products[index] - float(vector[index])) > max(float(tolerance) * 10, 1e-8) for index in range(len(vector))):
+                raise CommandError("coordinate alternate_coordinates do not reconstruct standard_vector")
+            determinant = _matrix_determinant(basis)
+            if name == "geometry.coordinate_readout" and abs(determinant) <= float(tolerance):
+                raise CommandError("coordinate basis_matrix is singular")
+            bounds = operation.get("bounds")
+            if not isinstance(bounds, (list, tuple)) or len(bounds) not in (4, 6) or any(not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) for value in bounds) or any(float(bounds[index]) >= float(bounds[index + 1]) for index in range(0, len(bounds), 2)):
+                raise CommandError("coordinate bounds are invalid")
+            budget_errors = validate_budget("lecture-v1", scene="3d" if len(basis) == 3 else "2d", entity_count=operation.get("entity_count", len(basis) + 2), stage_count=1, sample_count=operation.get("sample_count", len(basis) ** 2), bounds=tuple(float(value) for value in bounds))
+            if budget_errors:
+                raise CommandError("coordinate render_budget: " + "; ".join(budget_errors))
             _require_text(operation, "basis_alias")
             _require_text(operation, "standard_alias")
             _require_text(operation, "alternate_alias")
@@ -628,8 +653,29 @@ class SceneCommandService:
                     _require_finite_number(value, "least_squares matrix")
             for value in values:
                 _require_finite_number(value, "least_squares values")
+            tolerance = operation.get("tolerance", 1e-9)
+            _require_finite_number(tolerance, "least_squares tolerance")
+            fit = operation.get("fit")
+            projection = operation.get("projection")
+            residual = operation.get("residual")
+            coefficients = operation.get("coefficients")
+            if not all(isinstance(item, (list, tuple)) for item in (fit, projection, residual, coefficients)) or len(fit) != len(values) or len(projection) != len(values) or len(residual) != len(values) or len(coefficients) != width:
+                raise CommandError("least_squares evidence dimensions are invalid")
+            for evidence_values in (fit, projection, residual, coefficients):
+                for value in evidence_values:
+                    _require_finite_number(value, "least_squares evidence")
+            for index in range(len(values)):
+                if abs(float(fit[index]) + float(residual[index]) - float(values[index])) > max(float(tolerance) * 10, 1e-8) or abs(float(projection[index]) - float(fit[index])) > max(float(tolerance) * 10, 1e-8):
+                    raise CommandError("least_squares fit/projection/residual evidence is inconsistent")
+            for column in range(width):
+                if abs(sum(float(matrix[row][column]) * float(residual[row]) for row in range(len(matrix)))) > max(float(tolerance) * 10, 1e-8):
+                    raise CommandError("least_squares residual is not orthogonal to design columns")
             for field in ("data_alias", "fit_alias", "projection_alias", "residual_alias"):
                 _require_text(operation, field)
+            bounds = operation.get("bounds", (-2, 2, -2, 2))
+            budget_errors = validate_budget("lecture-v1", scene="2d", entity_count=operation.get("entity_count", width + 4), stage_count=1, sample_count=operation.get("sample_count", len(matrix)), bounds=tuple(float(value) for value in bounds)) if isinstance(bounds, (list, tuple)) else ("bounds: invalid",)
+            if budget_errors:
+                raise CommandError("least_squares render_budget: " + "; ".join(budget_errors))
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):

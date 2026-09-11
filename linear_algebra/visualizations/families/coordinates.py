@@ -8,6 +8,7 @@ from typing import Mapping
 import numpy as np
 
 from ..compiler import CompileIssue, VisualCompileError
+from ..limits import validate_budget
 
 
 @dataclass(frozen=True)
@@ -50,9 +51,14 @@ class CoordinateFamilyCompiler:
             if primitive not in {"geometry.basis_grid", "geometry.coordinate_readout"}:
                 raise ValueError("unsupported coordinate primitive")
             evidence = coordinate_evidence(payload.get("basis_matrix"), payload.get("standard_vector"), payload.get("tolerance", 1e-9))
+            dimension = int(evidence.basis_matrix.shape[0])
+            bounds = tuple(float(value) for value in payload.get("bounds", (-2, 2, -2, 2) if dimension == 2 else (-2, 2, -2, 2, -2, 2)))
+            budget_errors = validate_budget("lecture-v1", scene=f"{dimension}d", entity_count=dimension + 2, stage_count=1, sample_count=dimension * dimension, bounds=bounds)
+            if budget_errors:
+                raise ValueError("render_budget: " + "; ".join(budget_errors))
             prefix = str(payload.get("alias_prefix", "coords")) or "coords"
             aliases = (f"{prefix}__basis_grid", f"{prefix}__standard", f"{prefix}__alternate")
-            operation = {"op": primitive, "alias": aliases[0], "basis_matrix": tuple(tuple(float(x) for x in row) for row in evidence.basis_matrix), "standard_vector": tuple(float(x) for x in evidence.standard_vector), "alternate_coordinates": tuple(float(x) for x in evidence.alternate_coordinates), "basis_alias": aliases[0], "standard_alias": aliases[1], "alternate_alias": aliases[2], "bounds": tuple(payload.get("bounds", (-2, 2, -2, 2)))}
+            operation = {"op": primitive, "alias": aliases[0], "basis_matrix": tuple(tuple(float(x) for x in row) for row in evidence.basis_matrix), "standard_vector": tuple(float(x) for x in evidence.standard_vector), "alternate_coordinates": tuple(float(x) for x in evidence.alternate_coordinates), "basis_alias": aliases[0], "standard_alias": aliases[1], "alternate_alias": aliases[2], "bounds": bounds, "tolerance": float(payload.get("tolerance", 1e-9)), "entity_count": dimension + 2, "sample_count": dimension * dimension}
             return {"operations": (operation,), "aliases": aliases, "evidence": evidence}
         except (TypeError, ValueError, np.linalg.LinAlgError) as error:
             code = "singular_basis" if "singular" in str(error) else "invalid_coordinate"

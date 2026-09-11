@@ -403,6 +403,45 @@ class GeometrySceneController:
         self._replace_teaching_actor(f"geometry:teaching:grid{suffix}:original", original, color="#a6afbd", line_width=1.0)
         self._replace_teaching_actor(f"geometry:teaching:grid{suffix}:transformed", transformed, color=color, line_width=2.0)
 
+    def add_teaching_basis_grid(
+        self,
+        basis_matrix: tuple[tuple[float, ...], ...],
+        bounds: tuple[float, float, float, float],
+        *,
+        alias: str | None = None,
+        color: str = "#5b8def",
+    ) -> None:
+        """Draw the standard grid and its linear image under a basis."""
+        matrix = tuple(tuple(float(value) for value in row) for row in basis_matrix)
+        self.add_teaching_transformed_grid(matrix, bounds, alias=alias, color=color)
+
+    def add_teaching_coordinate_readout(
+        self,
+        standard_vector: tuple[float, float],
+        alternate_coordinates: tuple[float, float],
+        *,
+        alias: str = "coordinate-readout",
+        color: str = "#2777b6",
+    ) -> None:
+        endpoint = (float(standard_vector[0]), float(standard_vector[1]))
+        mesh = _segments_mesh([((0.0, 0.0), endpoint)])
+        self._replace_teaching_actor(f"geometry:teaching:coordinates:{alias}:standard", mesh, color=color, line_width=3.0)
+        alt = (float(alternate_coordinates[0]), float(alternate_coordinates[1]))
+        self._replace_teaching_actor(f"geometry:teaching:coordinates:{alias}:alternate", _point_mesh(*alt), color="#d97845", point_size=10.0, render_points_as_spheres=True)
+
+    def add_teaching_least_squares(
+        self,
+        values: tuple[float, ...],
+        fit: tuple[float, ...],
+        residual: tuple[float, ...],
+        *,
+        alias: str = "least-squares",
+    ) -> None:
+        points = tuple((float(index), float(value)) for index, value in enumerate(values))
+        fitted = tuple((float(index), float(value)) for index, value in enumerate(fit))
+        self._replace_teaching_actor(f"geometry:teaching:least-squares:{alias}:data", _segments_mesh(list(zip(points, points[1:]))), color="#2777b6", line_width=2.0)
+        self._replace_teaching_actor(f"geometry:teaching:least-squares:{alias}:fit", _segments_mesh(list(zip(fitted, fitted[1:]))), color="#4c9f70", line_width=3.0)
+
     def add_teaching_subspace_region(
         self,
         basis: Iterable[tuple[float, float]],
