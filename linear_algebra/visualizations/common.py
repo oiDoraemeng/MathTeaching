@@ -14,7 +14,7 @@ from .limits import RenderLimits, limits_for
 @dataclass(frozen=True)
 class RenderContext:
     topic_id: str
-    bounds: tuple[float, float, float, float] = (-3.0, 3.0, -3.0, 3.0)
+    bounds: tuple[float, ...] = (-3.0, 3.0, -3.0, 3.0)
     seed: int = 17
     render_profile: str = "lecture-v1"
 

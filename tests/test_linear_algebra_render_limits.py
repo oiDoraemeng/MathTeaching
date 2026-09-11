@@ -4,6 +4,8 @@ import pytest
 
 from linear_algebra.visualizations.common import RenderContext
 from linear_algebra.visualizations.limits import RenderLimits, limits_for, validate_budget
+from linear_algebra.visualizations.compiler import VisualCompileError, VisualSemanticsCompiler
+from linear_algebra.teaching.model import VisualEntity, VisualSemantics
 
 
 def test_lecture_profile_has_fixed_resource_budget():
@@ -26,3 +28,10 @@ def test_context_resolves_immutable_profile_limits():
     assert context.limits == limits_for("lecture-v1")
     with pytest.raises(AttributeError):
         context.limits = limits_for("lecture-v1")
+
+
+def test_compiler_rejects_scene_bounds_dimension_before_plan_output():
+    semantics = VisualSemantics(scene_kind="2d", entities=(), relations=(), stages=())
+    context = RenderContext("ch01.ops.addition", bounds=(-3, 3, -3, 3, -3, 3), render_profile="lecture-v1")
+    with pytest.raises(VisualCompileError, match="bounds"):
+        VisualSemanticsCompiler().compile(semantics, topic_id="ch01.ops.addition", context=context)

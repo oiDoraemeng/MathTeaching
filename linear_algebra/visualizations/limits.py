@@ -44,12 +44,13 @@ def validate_budget(
     if scene not in {"2d", "3d"}:
         errors.append(f"scene: expected 2d or 3d, got {scene!r}")
     expected_bounds = 4 if scene == "2d" else 6
-    if len(bounds) != expected_bounds:
+    valid_lengths = {4} if scene == "2d" else {4, 6}
+    if len(bounds) not in valid_lengths:
         errors.append(f"bounds: expected {expected_bounds} values for {scene}")
     if any(not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) for value in bounds):
         errors.append("bounds: all values must be finite numbers")
-    if len(bounds) == expected_bounds:
-        for index in range(0, expected_bounds, 2):
+    if len(bounds) in valid_lengths:
+        for index in range(0, len(bounds), 2):
             if bounds[index] >= bounds[index + 1]:
                 errors.append("bounds: each lower bound must be less than its upper bound")
     for name, value in (("entities", entity_count), ("stages", stage_count), ("samples", sample_count)):

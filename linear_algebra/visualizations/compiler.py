@@ -25,6 +25,7 @@ from services.scene_commands import CommandPlan, SceneCommandService
 from .common import RenderContext
 from .contracts import VisualContract, contract_for, validate_contract_semantics
 from .palette import role_color
+from .limits import validate_budget
 
 
 COMPILER_VERSION = "visual-compiler-v1"
@@ -297,7 +298,22 @@ class VisualSemanticsCompiler:
                     if alias.endswith("__end"):
                         visible_aliases_list.append(f"{alias[:-5]}__origin")
             title_alias = f"{_alias(stage.id)}__title"
-            visible_aliases_list.append(title_alias)
+            show_case_stage_title = not (
+                stage.id.startswith("stage.magnitude.")
+                or stage.id.startswith("stage.point-distinction.")
+                or stage.id.startswith("stage.coordinate-system.")
+                or stage.id.startswith("stage.direction-examples.")
+                or stage.id.startswith("stage.subtraction.")
+                or stage.id.startswith("stage.scalar.")
+                or stage.id.startswith("stage.linear-combination.")
+                or stage.id.startswith("stage.velocity.")
+                or stage.id.startswith("stage.cross-product.")
+                or stage.id.startswith("stage.scalar-triple.")
+                or stage.id.startswith("stage.claim.ch01.ops.addition.")
+                or stage.id.startswith("stage.case.")
+            )
+            if show_case_stage_title:
+                visible_aliases_list.append(title_alias)
             operations.extend(_stage_geometry_operations(semantics, stage, index, aliases, context))
             visible_aliases_list.extend(_stage_specific_aliases(semantics, index))
             visible_aliases = tuple(dict.fromkeys(visible_aliases_list))
@@ -312,7 +328,7 @@ class VisualSemanticsCompiler:
                     anchor=anchor,
                 )
             )
-            if semantics.scene_kind == "2d":
+            if semantics.scene_kind == "2d" and show_case_stage_title:
                 operations.append(
                     {
                         "op": "annotation.upsert",
@@ -352,6 +368,15 @@ class VisualSemanticsCompiler:
         )
         if semantics.scene_kind not in {"2d", "3d"}:
             issues.append(CompileIssue("scene_scope", "$.visual_semantics.scene_kind", "scene must be 2d or 3d"))
+        for error in validate_budget(
+            context.render_profile,
+            scene=semantics.scene_kind,
+            entity_count=len(semantics.entities),
+            stage_count=len(semantics.stages),
+            sample_count=len(semantics.entities) + len(semantics.relations),
+            bounds=context.bounds,
+        ):
+            issues.append(CompileIssue("render_budget", "$.context", error))
         return issues
 
     @staticmethod
@@ -407,11 +432,53 @@ class VisualSemanticsCompiler:
             end = f"{prefix}__end"
             aliases.extend((prefix, end))
             if scene == "2d":
+                is_magnitude_topic = context.topic_id == "ch01.vector.magnitude"
+                is_point_distinction_topic = context.topic_id == "ch01.vector.point-distinction"
+                is_zero_vector = not any(abs(value) > 1e-12 for value in coordinates)
                 operations.extend(
                     [
-                        {"op": "point.upsert", "alias": origin, "coordinates": [0.0, 0.0], "name": "O"},
-                        {"op": "point.upsert", "alias": end, "coordinates": list(coordinates), "name": entity.label},
-                        {"op": "linear.upsert", "alias": prefix, "start": origin, "end": end, "kind": "vector", "role": role, "color": role_color(entity.role), "label": entity.label},
+                        {
+                            "op": "point.upsert",
+                            "alias": origin,
+                            "coordinates": [0.0, 0.0],
+                            "name": (
+                                ""
+                                if is_magnitude_topic and is_zero_vector
+                                else "O"
+                                if not is_point_distinction_topic or entity.id == "vector_v"
+                                else ""
+                            ),
+                        },
+                        {
+                            "op": "point.upsert",
+                            "alias": end,
+                            "coordinates": list(coordinates),
+                            # The vector label is placed once on the segment;
+                            # repeating it at the endpoint makes the magnitude
+                            # example look cluttered.  A zero vector has no
+                            # segment, so retain its point label instead.
+                            "name": (
+                                ""
+                                if is_point_distinction_topic
+                                else entity.label
+                                if (is_zero_vector or not is_magnitude_topic)
+                                else ""
+                            ),
+                        },
+                        {
+                            "op": "linear.upsert",
+                            "alias": prefix,
+                            "start": origin,
+                            "end": end,
+                            "kind": "vector",
+                            "role": role,
+                            "color": role_color(entity.role),
+                            "label": (
+                                ""
+                                if (is_magnitude_topic and is_zero_vector)
+                                else entity.label
+                            ),
+                        },
                     ]
                 )
             else:
@@ -468,6 +535,63 @@ class VisualSemanticsCompiler:
             # Vector-addition cases already render their input and result
             # vectors.  A generic source-to-target annotation is misleading
             # because the target is the second addend, not the sum vector.
+            return operations, [relation_alias]
+        if relation.id.startswith("rel.magnitude."):
+            # The magnitude case is self-contained in the vector and point
+            # labels.  Do not expose the compiler's internal relation kind or
+            # its source/target labels in the student-facing 2D plot.
+            return operations, [relation_alias]
+        if relation.id.startswith("rel.point-distinction."):
+            # The first pane needs only the position label.  In the second
+            # pane, retain the standard-basis decomposition as a native 2D
+            # text label: this renderer cannot interpret KaTeX source, so a
+            # Unicode subscript label is the stable student-facing form.
+            if relation.id == "rel.point-distinction.basis":
+                operations.append(
+                    {
+                        "op": "annotation.upsert",
+                        "alias": relation_alias,
+                        "text": "v = 3e₁ + 4e₂",
+                        # Keep the formula away from the origin-to-(3,4)
+                        # arrow, which occupies the first quadrant.
+                        "position": [context.bounds[0] + 0.35, context.bounds[2] + 0.55],
+                    }
+                )
+            return operations, [relation_alias]
+        if relation.id.startswith("rel.direction-examples."):
+            # Direction panes use only the student-facing vector labels.  Do
+            # not surface the semantic comparison edge as raw implementation
+            # text such as "compare: v→v".
+            return operations, [relation_alias]
+        if relation.id.startswith("rel.subtraction.") and semantics.scene_kind == "2d":
+            # A difference vector joins the two endpoints.  Semantic vectors
+            # are normally drawn from the origin, so this explicit relation
+            # operation preserves the lecture's endpoint geometry.
+            operations.append(
+                {
+                    "op": "linear.upsert",
+                    "alias": relation_alias,
+                    "start": f"{_alias(source.id)}__end",
+                    "end": f"{_alias(target.id)}__end",
+                    "kind": "vector",
+                    "role": "result",
+                    "color": role_color("result"),
+                    "label": "a-b",
+                }
+            )
+            return operations, [relation_alias]
+        if relation.id.startswith("rel.scalar."):
+            # The two scalar-multiple vectors are the student-facing evidence;
+            # the relation itself carries no additional annotation.
+            return operations, [relation_alias]
+        if relation.id.startswith(("rel.linear-combination.", "rel.velocity.", "rel.cross-product.", "rel.scalar-triple.")):
+            # The formula and typed entities are the student-facing evidence;
+            # these bookkeeping edges do not need a raw relation annotation.
+            return operations, [relation_alias]
+        if relation.id.startswith("rel.case.") and relation.kind != "projects_to":
+            # Case panes already display their source/result vectors.  A
+            # compiler-internal relation label would repeat the case title and
+            # expose implementation vocabulary such as “compare”.
             return operations, [relation_alias]
         if relation.kind == "projects_to" and semantics.scene_kind == "2d":
             source_coordinates = _coordinates(source.value, 2)
