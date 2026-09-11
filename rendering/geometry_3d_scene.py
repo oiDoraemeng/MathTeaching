@@ -111,6 +111,15 @@ class Geometry3DSceneController:
         self.add_linear(f"{alias}__residual", (0.0, 0.0, 0.0), _v3(residual), color="#d97845", kind="segment")
         self.add_linear(f"{alias}__normalized", (0.0, 0.0, 0.0), _v3(normalized), color=color, kind="vector")
 
+    def add_quadratic_mesh(self, alias: str, vertices: Iterable[Vector3], faces: Iterable[tuple[int, int, int]], *, color: str = "#4c9f70") -> None:
+        points = tuple(_v3(point) for point in vertices)
+        cells = tuple(tuple(int(index) for index in face) for face in faces)
+        if not points or not cells:
+            return
+        mesh = pv.PolyData(np.asarray(points), np.asarray([(3, *face) for face in cells], dtype=np.int64).ravel())
+        self._add(mesh, name=f"geometry3d:quadratic:{alias}:mesh", color=color, opacity=0.35)
+        self.actors[f"geometry3d:quadratic:{alias}:mesh"] = self.actors.get(f"geometry3d:quadratic:{alias}:mesh")
+
     def add_plane(
         self,
         alias: str,

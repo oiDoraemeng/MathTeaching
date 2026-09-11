@@ -1931,6 +1931,10 @@ class MainWindow:
         if name in {"geometry.parallelogram3d", "geometry.parallelepiped", "geometry.oriented_volume"}:
             self._command_upsert_solid3d(operation)
             return
+        if name == "geometry.quadratic_level_set" and self._pane_scene().geometry3d_controller is not None:
+            controller = self._pane_scene().geometry3d_controller
+            controller.add_quadratic_mesh(str(operation.get("alias", "quadratic")), operation.get("mesh_vertices", ()), operation.get("mesh_faces", ()))
+            return
         if name in {"geometry.projection3d", "geometry.orthogonalization", "geometry.spectrum"}:
             controller = self._pane_scene().geometry3d_controller
             if controller is None:
@@ -2098,6 +2102,10 @@ class MainWindow:
         elif name == "geometry.oriented_area":
             vectors = tuple(tuple(float(v) for v in vector) for vector in operation["vectors"])  # type: ignore[index]
             self._pane_scene().geometry_controller.add_teaching_oriented_area(vectors, alias=str(operation.get("alias", "oriented-area")), origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#d97845")), opacity=float(operation.get("opacity", 0.28)))  # type: ignore[arg-type]
+        elif name == "geometry.quadratic_level_set":
+            controller = self._pane_scene().geometry_controller
+            controller.add_teaching_quadratic_contour(operation.get("contour_vertices", ()), alias=str(operation.get("alias", "quadratic")))
+            controller.add_teaching_quadratic_axes(operation.get("axis_segments", ()), alias=str(operation.get("alias", "quadratic")))
         else:
             raise CommandError(f"宿主不支持操作: {name}")
 

@@ -750,6 +750,16 @@ class SceneCommandService:
             aliases = operation.get("aliases")
             if not isinstance(aliases, (list, tuple)) or len(aliases) != 3 or any(not isinstance(alias, str) or not alias for alias in aliases) or len(set(aliases)) != 3:
                 raise CommandError("quadratic aliases are invalid")
+            if len(matrix) == 2:
+                vertices = operation.get("contour_vertices"); segments = operation.get("contour_segments")
+                if not isinstance(vertices, (list, tuple)) or not isinstance(segments, (list, tuple)):
+                    raise CommandError("quadratic contour geometry is required")
+                for point in vertices: _require_coordinates(point, dimensions=2)
+            else:
+                vertices = operation.get("mesh_vertices"); faces = operation.get("mesh_faces")
+                if not isinstance(vertices, (list, tuple)) or not isinstance(faces, (list, tuple)):
+                    raise CommandError("quadratic mesh geometry is required")
+                for point in vertices: _require_coordinates(point, dimensions=3)
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):

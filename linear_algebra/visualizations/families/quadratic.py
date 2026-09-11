@@ -44,7 +44,21 @@ class QuadraticFamilyCompiler:
             errors = validate_budget("lecture-v1", scene=f"{dimension}d", entity_count=3, stage_count=3, sample_count=sample_count, bounds=bounds)
             if errors: raise ValueError("render_budget: " + "; ".join(errors))
             evidence = classify_quadratic(values, payload.get("tolerance", 1e-9)); aliases = ("quadratic__original", "quadratic__principal", "quadratic__standard")
-            operation = {"op": "geometry.quadratic_level_set", "alias": aliases[0], "matrix": tuple(tuple(float(x) for x in row) for row in values), "eigenvalues": evidence.eigenvalues, "principal_axes": evidence.principal_axes, "signature": evidence.signature, "classification": evidence.classification, "aliases": aliases, "bounds": bounds, "sample_count": sample_count, "tolerance": float(payload.get("tolerance", 1e-9))}
+            if dimension == 2:
+                angles = np.linspace(0.0, 2.0 * math.pi, min(128, max(16, int(math.sqrt(sample_count)))), endpoint=False)
+                contour = []
+                for angle in angles:
+                    direction = np.array([math.cos(float(angle)), math.sin(float(angle))])
+                    denominator = float(direction @ values @ direction)
+                    radius = 1.0 / math.sqrt(abs(denominator)) if abs(denominator) > float(payload.get("tolerance", 1e-9)) else 0.0
+                    point = direction * radius
+                    if bounds[0] <= point[0] <= bounds[1] and bounds[2] <= point[1] <= bounds[3]: contour.append((float(point[0]), float(point[1])))
+                geometry = {"contour_vertices": tuple(contour), "contour_segments": tuple((index, (index + 1) % len(contour)) for index in range(len(contour))) if contour else ()}
+            else:
+                grid = min(32, max(4, int(round(sample_count ** (1 / 3)))))
+                vertices = tuple((float(x), float(y), float(z)) for x in np.linspace(bounds[0], bounds[1], grid) for y in np.linspace(bounds[2], bounds[3], grid) for z in np.linspace(bounds[4], bounds[5], grid) if abs(float(np.array((x, y, z)) @ values @ np.array((x, y, z))) - 1.0) <= 0.15)
+                geometry = {"mesh_vertices": vertices, "mesh_faces": tuple((index, index + 1, index + 2) for index in range(0, max(0, len(vertices) - 2), 3))}
+            operation = {"op": "geometry.quadratic_level_set", "alias": aliases[0], "matrix": tuple(tuple(float(x) for x in row) for row in values), "eigenvalues": evidence.eigenvalues, "principal_axes": evidence.principal_axes, "signature": evidence.signature, "classification": evidence.classification, "aliases": aliases, "bounds": bounds, "sample_count": sample_count, "tolerance": float(payload.get("tolerance", 1e-9)), "axis_segments": tuple((tuple(0.0 for _ in range(dimension)), axis) for axis in evidence.principal_axes), **geometry}
             return {"operations": (operation,), "aliases": aliases, "evidence": evidence}
         except (TypeError, ValueError, np.linalg.LinAlgError) as error:
             raise VisualCompileError((CompileIssue("invalid_quadratic", "$.quadratic", str(error)),)) from error
