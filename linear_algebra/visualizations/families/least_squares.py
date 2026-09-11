@@ -44,12 +44,19 @@ class LeastSquaresFamilyCompiler:
     @classmethod
     def compile(cls, payload: Mapping[str, object]) -> dict[str, object]:
         try:
-            evidence = least_squares_fit(payload.get("matrix"), payload.get("values"), payload.get("tolerance", 1e-9))
-            dimension = int(evidence.design_matrix.shape[1])
+            raw_matrix = payload.get("matrix")
+            if not isinstance(raw_matrix, (list, tuple)) or not raw_matrix or len(raw_matrix) > 128:
+                raise ValueError("render_budget: matrix rows exceed bounded limit")
+            if not isinstance(raw_matrix[0], (list, tuple)) or len(raw_matrix[0]) not in (1, 2, 3):
+                raise ValueError("matrix columns must be 1, 2, or 3")
+            dimension = len(raw_matrix[0])
             bounds = tuple(float(value) for value in payload.get("bounds", (-2, 2, -2, 2)))
-            budget_errors = validate_budget("lecture-v1", scene="2d", entity_count=dimension + 4, stage_count=1, sample_count=int(evidence.design_matrix.shape[0]), bounds=bounds)
+            if len(bounds) != 4 or any(not math.isfinite(value) for value in bounds) or bounds[0] >= bounds[1] or bounds[2] >= bounds[3] or any(abs(value) > 100.0 for value in bounds):
+                raise ValueError("render_budget: least-squares bounds are invalid or exceed teaching extent")
+            budget_errors = validate_budget("lecture-v1", scene="2d", entity_count=dimension + 4, stage_count=1, sample_count=len(raw_matrix), bounds=bounds)
             if budget_errors:
                 raise ValueError("render_budget: " + "; ".join(budget_errors))
+            evidence = least_squares_fit(raw_matrix, payload.get("values"), payload.get("tolerance", 1e-9))
             prefix = str(payload.get("alias_prefix", "least_squares")) or "least_squares"
             aliases = (f"{prefix}__data", f"{prefix}__fit", f"{prefix}__projection", f"{prefix}__residual")
             operation = {"op": "geometry.least_squares", "alias": aliases[0], "matrix": tuple(tuple(float(x) for x in row) for row in evidence.design_matrix), "values": tuple(float(x) for x in evidence.values), "coefficients": tuple(float(x) for x in evidence.coefficients), "fit": tuple(float(x) for x in evidence.fit), "projection": tuple(float(x) for x in evidence.projection), "residual": tuple(float(x) for x in evidence.residual), "data_alias": aliases[0], "fit_alias": aliases[1], "projection_alias": aliases[2], "residual_alias": aliases[3], "bounds": bounds, "tolerance": float(payload.get("tolerance", 1e-9)), "entity_count": dimension + 4, "sample_count": int(evidence.design_matrix.shape[0])}

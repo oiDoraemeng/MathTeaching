@@ -50,12 +50,17 @@ class CoordinateFamilyCompiler:
             primitive = str(payload.get("primitive", payload.get("op", "geometry.basis_grid")))
             if primitive not in {"geometry.basis_grid", "geometry.coordinate_readout"}:
                 raise ValueError("unsupported coordinate primitive")
-            evidence = coordinate_evidence(payload.get("basis_matrix"), payload.get("standard_vector"), payload.get("tolerance", 1e-9))
-            dimension = int(evidence.basis_matrix.shape[0])
+            raw_basis = payload.get("basis_matrix")
+            if not isinstance(raw_basis, (list, tuple)) or len(raw_basis) not in (2, 3):
+                raise ValueError("basis_matrix dimension must be 2D or 3D")
+            dimension = len(raw_basis)
             bounds = tuple(float(value) for value in payload.get("bounds", (-2, 2, -2, 2) if dimension == 2 else (-2, 2, -2, 2, -2, 2)))
+            if len(bounds) != 2 * dimension or any(not math.isfinite(value) for value in bounds) or any(bounds[index] >= bounds[index + 1] for index in range(0, len(bounds), 2)) or any(abs(value) > 100.0 for value in bounds):
+                raise ValueError("render_budget: coordinate bounds are invalid or exceed teaching extent")
             budget_errors = validate_budget("lecture-v1", scene=f"{dimension}d", entity_count=dimension + 2, stage_count=1, sample_count=dimension * dimension, bounds=bounds)
             if budget_errors:
                 raise ValueError("render_budget: " + "; ".join(budget_errors))
+            evidence = coordinate_evidence(raw_basis, payload.get("standard_vector"), payload.get("tolerance", 1e-9))
             prefix = str(payload.get("alias_prefix", "coords")) or "coords"
             aliases = (f"{prefix}__basis_grid", f"{prefix}__standard", f"{prefix}__alternate")
             operation = {"op": primitive, "alias": aliases[0], "basis_matrix": tuple(tuple(float(x) for x in row) for row in evidence.basis_matrix), "standard_vector": tuple(float(x) for x in evidence.standard_vector), "alternate_coordinates": tuple(float(x) for x in evidence.alternate_coordinates), "basis_alias": aliases[0], "standard_alias": aliases[1], "alternate_alias": aliases[2], "bounds": bounds, "tolerance": float(payload.get("tolerance", 1e-9)), "entity_count": dimension + 2, "sample_count": dimension * dimension}

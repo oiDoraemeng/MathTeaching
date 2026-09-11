@@ -22,3 +22,11 @@ def test_least_squares_rejects_nonfinite_and_singular_tolerance():
         LeastSquaresFamilyCompiler.compile({"matrix": [[1, 0], [1, 1]], "values": [1, float("nan")]})
     with pytest.raises(ValueError, match="tolerance"):
         least_squares_fit([[1], [2]], [1, 2], 0)
+
+
+def test_least_squares_budget_rejects_before_lstsq(monkeypatch):
+    def fail(*args, **kwargs):
+        raise AssertionError("lstsq must not run")
+    monkeypatch.setattr(np.linalg, "lstsq", fail)
+    with pytest.raises(VisualCompileError, match="render_budget"):
+        LeastSquaresFamilyCompiler.compile({"matrix": [[1, 0]] * 20000, "values": [1] * 20000})

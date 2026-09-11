@@ -21,3 +21,11 @@ def test_coordinate_compiler_emits_stable_aliases_and_command_is_validated():
     assert result["aliases"] == ("coords__basis_grid", "coords__standard", "coords__alternate")
     operation = result["operations"][0]
     assert SceneCommandService().validate(CommandPlan(scene="2d", operations=(operation,))).valid
+
+
+def test_coordinate_budget_rejects_before_solve(monkeypatch):
+    def fail(*args, **kwargs):
+        raise AssertionError("solve must not run")
+    monkeypatch.setattr(np.linalg, "solve", fail)
+    with pytest.raises(VisualCompileError, match="render_budget"):
+        CoordinateFamilyCompiler.compile({"primitive": "geometry.basis_grid", "basis_matrix": [[1, 0], [0, 1]], "standard_vector": [2, 3], "bounds": [-1000, 1000, -2, 2]})
