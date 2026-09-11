@@ -113,3 +113,43 @@ def test_publish_chapter_rejects_stale_snapshot_source(tmp_path: Path) -> None:
     }), encoding="utf-8")
     with pytest.raises(ValueError, match="stale compiled snapshot"):
         store.publish_chapter(2, {artifact.topic_id: 1})
+
+
+def test_publish_chapter_rejects_empty_or_mismatched_contract_digest(tmp_path: Path) -> None:
+    store = TeachingArtifactStore(tmp_path)
+    artifact = _reviewed_valid_artifact()
+    store.save_published(artifact)
+    path = tmp_path / "snapshots" / "ch02" / artifact.topic_id / "r1.json"
+    path.parent.mkdir(parents=True)
+    base = {
+        "topic_id": artifact.topic_id, "artifact_revision": 1,
+        "source_hash": artifact.source.source_hash, "compiler_version": "v1",
+        "render_profile": "teaching", "plan_digest": "sha256:p", "stage_ids": [],
+        "required_entity_roles": [], "required_relations": [], "invariants": [],
+    }
+    for digest in ("", "sha256:not-the-contract"):
+        payload = {**base, "contract_digest": digest}
+        path.write_text(json.dumps(payload), encoding="utf-8")
+        with pytest.raises(ValueError, match="contract mismatch"):
+            store.publish_chapter(2, {artifact.topic_id: 1})
+        assert store.index_payload() == {"schema_version": 1, "topics": []}
+
+
+def test_populated_index_preserves_chapter_1_to_3_entries_on_failed_gate(tmp_path: Path) -> None:
+    bundled_index = Path(__file__).parents[1] / "linear_algebra" / "teaching" / "data" / "index.json"
+    payload = json.loads(bundled_index.read_text(encoding="utf-8"))
+    payload["topics"].extend([
+        {"topic_id": "ch02.matrix.composition", "published_revision": 1},
+        {"topic_id": "ch03.det.ad-bc", "published_revision": 1},
+    ])
+    store = TeachingArtifactStore(tmp_path)
+    store._write_stable_json(tmp_path / "index.json", payload)
+    before = store.index_payload()
+    with pytest.raises(ValueError):
+        store.publish_chapter(2, {"ch02.matrix.composition": 1})
+    after = store.index_payload()
+    assert after == before
+    ids = {item["topic_id"] for item in after["topics"]}
+    assert "ch01.vector.magnitude" in ids
+    assert "ch02.matrix.composition" in ids
+    assert "ch03.det.ad-bc" in ids

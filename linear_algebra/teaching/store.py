@@ -152,7 +152,7 @@ class TeachingArtifactStore:
                 raise ValueError(f"missing compiled snapshot for {topic_id!r} revision {revision}")
             if snapshot.source_hash != artifact.source.source_hash:
                 raise ValueError(f"stale compiled snapshot source for {topic_id!r}")
-            if snapshot.contract_digest and snapshot.contract_digest != contract_digest_for(contract):
+            if not snapshot.contract_digest or snapshot.contract_digest != contract_digest_for(contract):
                 raise ValueError(f"compiled snapshot contract mismatch for {topic_id!r}")
             entries.append({"topic_id": topic_id, "published_revision": revision, "source_hash": artifact.source.source_hash})
         payload = self.index_payload()
