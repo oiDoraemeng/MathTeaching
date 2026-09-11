@@ -108,6 +108,21 @@ class VisualSemanticsCompiler:
 
         operations: list[dict[str, Any]] = []
         aliases: dict[str, list[str]] = {}
+        # Family compilers are the semantic source of truth for chapter 4.
+        from .families import family_compiler_for
+        family_result = family_compiler_for(semantics.scene_family).compile(
+            topic_id=resolved_topic, semantics=semantics, context=context
+        )
+        if isinstance(family_result, Mapping):
+            operations.extend(list(family_result.get("operations", ())))
+            family_aliases = family_result.get("aliases", ())
+            if isinstance(family_aliases, Mapping):
+                for key, values in family_aliases.items():
+                    vals = values if isinstance(values, (list, tuple)) else (values,)
+                    aliases.setdefault(str(key), []).extend(str(value) for value in vals)
+            else:
+                for alias in family_aliases:
+                    aliases.setdefault(str(alias), []).append(str(alias))
         for entity in semantics.entities:
             entity_operations, entity_aliases = self._compile_entity(entity, semantics.scene_kind, context)
             operations.extend(entity_operations)
@@ -120,9 +135,8 @@ class VisualSemanticsCompiler:
             operations.extend(relation_operations)
             aliases.setdefault(relation.id, []).extend(relation_aliases)
 
-        self._emit_declared_capability_evidence(
-            semantics, context, operations, aliases, resolved_topic
-        )
+        if not resolved_topic.startswith("ch04."):
+            self._emit_declared_capability_evidence(semantics, context, operations, aliases, resolved_topic)
 
         storyboard, stage_operations, stage_issues = self._compile_storyboard(semantics, context, aliases)
         if stage_issues:

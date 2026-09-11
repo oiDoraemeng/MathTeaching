@@ -30,13 +30,13 @@ _MAPPING = {
     "ch04.linear-map.compare": Chapter4Semantic("basis_change", "matrix", "batch_maps_to", ("transformed_grid",), "geometry.transformed_grid", ("linear_case", "translation", "square_map", "constant_shift"), ("nonlinear_diagnostics",)),
     "ch04.linear-map.matrix-columns": Chapter4Semantic("basis_change", "matrix", "batch_maps_to", ("transformed_grid",), "geometry.transformed_grid", ("standard_e1", "standard_e2", "column_1", "column_2"), ("Tej_equals_column_j",)),
     "ch04.kernel-image": Chapter4Semantic("subspace_region", "region", "spans", ("polygon_2d",), "geometry.polygon", ("domain", "kernel_direction", "zero", "image"), ("kernel_maps_zero", "image_reachable")),
-    "ch04.rank-nullity": Chapter4Semantic("subspace_region", "matrix", "batch_maps_to", ("transformed_grid",), "geometry.transformed_grid", ("domain", "rank", "nullity", "preserved", "collapsed"), ("rank_plus_nullity_equals_domain")),
+    "ch04.rank-nullity": Chapter4Semantic("subspace_region", "matrix", "batch_maps_to", ("transformed_grid",), "geometry.transformed_grid", ("domain", "rank", "nullity", "preserved", "collapsed"), ("rank_plus_nullity_equals_domain",)),
 }
 TOPIC_SEMANTICS: Mapping[str, Chapter4Semantic] = MappingProxyType(_MAPPING)
 def semantic_for(topic_id: str) -> Chapter4Semantic:
     try:
         item = TOPIC_SEMANTICS[topic_id]
-        roles = tuple(dict.fromkeys(("vector_a", "transformed_a", *item.roles)))
+        roles = tuple(dict.fromkeys(item.roles))
         return Chapter4Semantic(item.family, item.primitive, item.relation, item.capabilities, item.operation, roles, item.invariants)
     except KeyError as error: raise KeyError(f"unknown chapter 4 semantic mapping: {topic_id}") from error
 __all__ = ["Chapter4Semantic", "TOPIC_SEMANTICS", "semantic_for"]

@@ -75,11 +75,11 @@ def contract_for(topic_id: str) -> VisualContract:
             return VisualContract(
                 topic_id,
                 (f"claim.{topic_id}",),
-                semantic.roles[:2],
+                semantic.roles,
                 (semantic.relation,),
                 (semantic.primitive,),
                 1,
-                ("finite numeric result",),
+                ("finite numeric result", *semantic.invariants),
             )
         family = extended_family[topic_id]
         return VisualContract(topic_id, (f"claim.{topic_id}",), ("vector_a", "transformed_a"), ("maps_to",), (family,), 1, ("finite numeric result",))
@@ -126,7 +126,7 @@ def validate_contract_semantics(
         if relation not in relations:
             issues.append(ContractIssue("missing_relation", contract.topic_id, relation))
     for primitive in contract.required_primitives:
-        if primitive not in primitives and primitive != scene_family:
+        if primitive not in primitives:
             issues.append(ContractIssue("missing_primitive", contract.topic_id, primitive))
     if len(semantics.stages) < contract.minimum_stage_count:
         issues.append(ContractIssue("insufficient_stages", contract.topic_id, str(contract.minimum_stage_count)))

@@ -17,6 +17,7 @@ from .least_squares import LeastSquaresFamilyCompiler, LeastSquaresEvidence, lea
 from .spectral import SpectralFamilyCompiler, SpectralEvidence, SpectralRoot, spectral_evidence
 from .orthogonalization import OrthogonalizationFamilyCompiler, OrthogonalizationEvidence, gram_schmidt
 from .quadratic import QuadraticFamilyCompiler, QuadraticEvidence, classify_quadratic
+from .chapter_04 import compile_chapter_04
 
 
 @dataclass(frozen=True)
@@ -27,6 +28,11 @@ class SceneFamilyCompiler:
         # Shared family dispatch is intentionally small here: topic-specific
         # command emission remains owned by the typed semantic compiler, while
         # this boundary proves the registered family was actually invoked.
+        semantics = kwargs.get("semantics")
+        topic_id = kwargs.get("topic_id")
+        context = kwargs.get("context")
+        if isinstance(topic_id, str) and topic_id.startswith("ch04.") and semantics is not None:
+            return compile_chapter_04(topic_id, semantics, context)
         return {"family": self.primitive, "validated": True}
 
 

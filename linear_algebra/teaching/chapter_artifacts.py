@@ -88,7 +88,7 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         "id": claim_id, "statement": f"{topic.title} 的数学主张由显式对象、关系和不变量支持。",
         "formula": formula, "formula_symbols": list(semantic_roles[:2]), "source_refs": [span.id],
         "explanation_refs": ["definition", "formula", "derivation", "worked_examples", "geometric_meaning", "pitfalls", "connections"],
-        "entity_refs": list(entity_ids.values())[:2], "relation_refs": [relation_id], "stage_refs": [stage_id],
+        "entity_refs": list(entity_ids.values()), "relation_refs": [relation_id], "stage_refs": [stage_id],
     }
     payload = {
         "schema_version": 1, "topic_id": topic_id, "revision": 1, "status": status,
