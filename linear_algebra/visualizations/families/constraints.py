@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import math
 from typing import Any, Literal, Mapping
 from ..compiler import CompileIssue, VisualCompileError
+from ..limits import validate_budget
 
 ConstraintKind = Literal["unique", "none", "infinite"]
 
@@ -52,6 +53,9 @@ class ConstraintFamilyCompiler:
         if not isinstance(bounds, (list, tuple)) or len(bounds) != 2*dimension or any(not isinstance(v,(int,float)) or isinstance(v,bool) or not math.isfinite(float(v)) for v in bounds):
             raise VisualCompileError((CompileIssue("numeric_invalid", "$.bounds", "bounds must be finite and dimension matched"),))
         if any(bounds[i] >= bounds[i+1] for i in range(0,len(bounds),2)): raise VisualCompileError((CompileIssue("invalid_bounds", "$.bounds", "bounds must be ordered"),))
+        budget_errors = validate_budget("lecture-v1", scene="3d" if dimension == 3 else "2d", entity_count=1, stage_count=int(payload.get("stage_count", 1)), sample_count=int(payload.get("sample_count", len(payload.get("matrix", [])))), bounds=tuple(float(value) for value in bounds))
+        if budget_errors:
+            raise VisualCompileError(tuple(CompileIssue("render_budget", "$.constraints", error) for error in budget_errors))
         prefix = str(payload.get("alias_prefix", "constraint")); aliases = [f"{prefix}__intersection"]
         state_alias = f"{prefix}__{'empty' if classification.kind == 'none' else ('point' if classification.kind == 'unique' else ('line' if classification.dimension == 2 else 'plane'))}"
         aliases.append(state_alias)
