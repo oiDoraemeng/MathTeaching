@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from types import MappingProxyType
 from typing import ClassVar
 
 
@@ -38,7 +39,7 @@ class LoadSnapshot:
 
 
 class LoadTransaction:
-    _ALLOWED: ClassVar[dict[LoadPhase, frozenset[LoadPhase]]] = {
+    _ALLOWED: ClassVar[MappingProxyType] = MappingProxyType({
         LoadPhase.IDLE: frozenset({LoadPhase.RESOLVING}),
         LoadPhase.RESOLVING: frozenset({LoadPhase.SOURCE_CHECKED}),
         LoadPhase.SOURCE_CHECKED: frozenset({LoadPhase.ARTIFACT_CHECKED}),
@@ -49,7 +50,7 @@ class LoadTransaction:
         LoadPhase.STAGED: frozenset({LoadPhase.COMMITTED}),
         LoadPhase.COMMITTED: frozenset(),
         LoadPhase.REJECTED: frozenset(),
-    }
+    })
     _ERROR_CODES: ClassVar[frozenset[str]] = frozenset({
         "source_stale", "contract_missing_evidence", "unsupported_scene_family",
         "numeric_invalid", "layout_overflow", "plan_invalid", "renderer_unavailable",
@@ -79,9 +80,14 @@ class LoadTransaction:
     def reject(self, code: str, phase: LoadPhase, field: str, message: str = "") -> LoadDiagnostic:
         if self.phase is LoadPhase.COMMITTED:
             raise ValueError("cannot reject a committed transaction")
+        if self.phase is LoadPhase.REJECTED:
+            raise ValueError("cannot reject a rejected transaction")
+        phase = LoadPhase(phase)
+        if phase is not self.phase:
+            raise ValueError("rejection phase must match current transaction phase")
         if code not in self._ERROR_CODES:
             raise ValueError(f"unknown diagnostic code: {code}")
-        diagnostic = LoadDiagnostic(code, self.topic_id, LoadPhase(phase), field, message)
+        diagnostic = LoadDiagnostic(code, self.topic_id, phase, field, message)
         self.diagnostic = diagnostic
         self.phase = LoadPhase.REJECTED
         return diagnostic

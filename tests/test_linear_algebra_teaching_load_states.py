@@ -12,6 +12,8 @@ def test_commit_requires_staged_payload():
 
 def test_rejection_retains_previous_revision_metadata():
     transaction = LoadTransaction("ch08.principal-axis", previous_revision=3)
+    transaction.advance(LoadPhase.RESOLVING)
+    transaction.advance(LoadPhase.SOURCE_CHECKED)
     diagnostic = transaction.reject("source_stale", LoadPhase.SOURCE_CHECKED, "source_hash")
     assert diagnostic.code == "source_stale"
     assert transaction.previous_revision == 3
@@ -43,3 +45,19 @@ def test_commit_requires_staged_and_preserves_snapshot():
     assert snapshot.topic_id == "ch04.topic"
     with pytest.raises(ValueError, match="committed"):
         transaction.reject("plan_invalid", LoadPhase.COMMITTED, "plan")
+
+
+def test_reject_is_frozen_and_requires_current_phase():
+    transaction = LoadTransaction("ch04.topic")
+    diagnostic = transaction.reject("numeric_invalid", LoadPhase.IDLE, "value")
+    with pytest.raises(ValueError, match="rejected"):
+        transaction.reject("plan_invalid", LoadPhase.REJECTED, "plan")
+    assert transaction.diagnostic is diagnostic
+    other = LoadTransaction("ch04.other")
+    with pytest.raises(ValueError, match="match current"):
+        other.reject("numeric_invalid", LoadPhase.SOURCE_CHECKED, "value")
+
+
+def test_allowed_transition_map_is_immutable():
+    with pytest.raises(TypeError):
+        LoadTransaction._ALLOWED[LoadPhase.IDLE] = frozenset()
