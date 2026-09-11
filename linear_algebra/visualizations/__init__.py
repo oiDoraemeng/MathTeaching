@@ -3,6 +3,7 @@
 from .chapter_01 import RECIPES as CHAPTER_01_RECIPES
 from .chapter_02 import RECIPES as CHAPTER_02_RECIPES
 from .chapter_03 import RECIPES as CHAPTER_03_RECIPES
+from .chapter_04 import RECIPES as CHAPTER_04_RECIPES
 from .common import RenderContext, VisualizationRecipe
 from .compiler import (
     COMPILER_VERSION,
@@ -22,7 +23,7 @@ from .capability_map import (
     validate_payload_header,
 )
 
-_RECIPES: tuple[VisualizationRecipe, ...] = (*CHAPTER_01_RECIPES, *CHAPTER_02_RECIPES, *CHAPTER_03_RECIPES)
+_RECIPES: tuple[VisualizationRecipe, ...] = (*CHAPTER_01_RECIPES, *CHAPTER_02_RECIPES, *CHAPTER_03_RECIPES, *CHAPTER_04_RECIPES)
 _BY_ID = {recipe.id: recipe for recipe in _RECIPES}
 
 
