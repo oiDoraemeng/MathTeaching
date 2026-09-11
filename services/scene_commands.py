@@ -75,6 +75,29 @@ class CommandValidation:
     expanded_operations: tuple[dict[str, Any], ...] = ()
 
 
+class _ReplayRegistry:
+    """Deterministic operation adapters shared by offline replay and hosts."""
+
+    def __init__(self) -> None:
+        self._adapters: dict[str, object] = {}
+
+    def register(self, name: str, adapter: object) -> None:
+        self._adapters[name] = adapter
+
+    def has(self, name: str) -> bool:
+        return name in self._adapters
+
+    def dispatch(self, host: SceneCommandHost, operation: dict[str, Any]) -> None:
+        try:
+            adapter = self._adapters[operation["op"]]
+        except (KeyError, TypeError) as error:
+            raise CommandError(f"replay adapter missing: {operation.get('op')!r}") from error
+        adapter(host, operation)  # type: ignore[misc]
+
+
+replay_registry = _ReplayRegistry()
+
+
 class SceneCommandHost(Protocol):
     """GUI 宿主需要提供的最小命令适配接口。"""
 
@@ -332,6 +355,10 @@ class SceneCommandService:
         name = operation.get("op")
         if name not in _ALLOWED_OPERATIONS:
             raise CommandError(f"不支持的操作: {name!r}。")
+        known_keys = {"op", "alias", "coordinates", "name", "kind", "role", "color", "style", "start", "end", "bounds", "matrix", "rhs", "tolerance", "solution_state", "rank", "augmented_rank", "entity_count", "stage_count", "sample_count", "vectors", "stages", "aliases", "eigenvalues", "principal_axes", "signature", "classification", "contour_vertices", "contour_segments", "mesh_vertices", "mesh_faces", "basis_matrix", "standard_vector", "alternate_coordinates", "basis_alias", "standard_alias", "alternate_alias", "values", "coefficients", "fit", "projection", "residual", "data_alias", "fit_alias", "projection_alias", "residual_alias", "eigenspaces", "roots", "roots_alias", "complex_roots", "operation_label", "highlight_rows", "scene", "alias_prefix"}
+        extended_names = {"geometry.subspace_region", "geometry.subspace3d", "geometry.mapping_bundle", "geometry.affine_solution", "geometry.constraint", "geometry.matrix_tableau", "geometry.elimination_tableau", "geometry.basis_grid", "geometry.coordinate_readout", "geometry.least_squares", "geometry.spectrum", "geometry.projection3d", "geometry.orthogonalization", "geometry.quadratic_level_set"}
+        if name in extended_names and any(key not in known_keys for key in operation):
+            raise CommandError(f"操作包含未知字段: {next(key for key in operation if key not in known_keys)!r}")
         if name == "teach.vector_addition":
             return _expand_vector_addition(operation)
         if name == "linear_algebra.determinant_area":
@@ -789,8 +816,31 @@ class SceneCommandService:
 
 
 def replay_extended_plan(plan: CommandPlan, host: SceneCommandHost) -> CommandValidation:
-    """Execute an already-validated extended plan through the normal transaction path."""
-    return SceneCommandService(host).execute(plan)
+    """Replay a validated plan through deterministic registered adapters."""
+    service = SceneCommandService()
+    validation = service.validate(plan)
+    if not validation.valid:
+        raise CommandError("；".join(validation.messages))
+    for operation in validation.expanded_operations:
+        if operation.get("op") != "scene.set_mode" and not replay_registry.has(str(operation.get("op"))):
+            raise CommandError(f"replay adapter missing: {operation.get('op')!r}")
+    host.begin_scene_command_transaction()
+    try:
+        for operation in validation.expanded_operations:
+            replay_registry.dispatch(host, operation)
+        host.commit_scene_command_transaction()
+    except Exception:
+        host.rollback_scene_command_transaction()
+        raise
+    return validation
+
+
+def _replay_apply(host: SceneCommandHost, operation: dict[str, Any]) -> None:
+    host.apply_scene_command(operation)
+
+
+for _operation_name in _ALLOWED_OPERATIONS:
+    replay_registry.register(_operation_name, _replay_apply)
 
 
 def _expand_vector_addition(operation: dict[str, Any]) -> list[dict[str, Any]]:
