@@ -78,6 +78,7 @@ class SubspaceFamilyCompiler:
         if payload.get("is_linear", False) and any(abs(value) > 1e-12 for value in _numbers(payload.get("affine_offset", [0] * dimension), "affine_offset", dimension)):
             issues.append(CompileIssue("origin_required", "$.affine_offset", "origin_required: linear subspaces must pass through origin"))
         bounds = payload.get("bounds", [-2, 2, -2, 2, -2, 2] if dimension == 3 else [-2, 2, -2, 2])
+        validated_bounds: tuple[float, ...] = ()
         expected = 2 * dimension
         if not isinstance(bounds, (list, tuple)) or len(bounds) != expected:
             issues.append(CompileIssue("invalid_bounds", "$.bounds", f"invalid_bounds: expected {expected} finite values"))
@@ -92,6 +93,8 @@ class SubspaceFamilyCompiler:
                 issues.append(CompileIssue("invalid_bounds", "$.bounds", "invalid_bounds: lower bound must be less than upper bound"))
             elif any(abs(value) > 100.0 for value in numeric_bounds):
                 issues.append(CompileIssue("render_budget", "$.bounds", "render_budget: bounds exceed teaching extent"))
+            else:
+                validated_bounds = numeric_bounds
         if primitive == "geometry.mapping_bundle":
             domain_dimension = payload.get("domain_dimension", len(basis) if isinstance(basis, (list, tuple)) else 0)
             if isinstance(domain_dimension, bool) or not isinstance(domain_dimension, int) or domain_dimension < 1 or domain_dimension > 3:
@@ -110,7 +113,7 @@ class SubspaceFamilyCompiler:
             issues.append(CompileIssue("layout_overflow", "$.basis", "layout_overflow: basis exceeds render budget"))
         if isinstance(bounds, (list, tuple)) and len(bounds) == 2 * dimension:
             scene = "3d" if dimension == 3 else "2d"
-            for error in validate_budget("lecture-v1", scene=scene, entity_count=len(basis), stage_count=1, sample_count=len(basis), bounds=tuple(float(value) for value in bounds)):
+            for error in validate_budget("lecture-v1", scene=scene, entity_count=len(basis), stage_count=1, sample_count=len(basis), bounds=validated_bounds):
                 if "bounds" in error:
                     issues.append(CompileIssue("render_budget", "$.bounds", error))
         return tuple(issues)

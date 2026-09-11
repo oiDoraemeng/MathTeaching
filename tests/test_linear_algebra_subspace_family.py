@@ -35,12 +35,23 @@ def test_bounds_are_finite_dimension_matched_and_ordered(bounds):
 
 
 def test_mapping_bundle_emits_consumable_lane_payload():
-    result = SubspaceFamilyCompiler.compile({"primitive": "geometry.mapping_bundle", "dimension": 3, "basis": [[1, 0, 0]], "domain_basis": [[1, 0, 0]], "kernel_basis": [[0, 1, 0]], "image_basis": [[1, 0, 0]], "domain_dimension": 3, "input_dimension": 3})
+    domain_basis = [[1, 0, 0], [0, 1, 0]]
+    kernel_basis = [[0, 0, 1]]
+    image_basis = [[2, 0, 0], [0, 2, 0]]
+    result = SubspaceFamilyCompiler.compile({"primitive": "geometry.mapping_bundle", "dimension": 3, "basis": domain_basis, "domain_basis": domain_basis, "kernel_basis": kernel_basis, "image_basis": image_basis, "domain_dimension": 3, "input_dimension": 3})
     payload = result.operations[0]
     assert payload["domain_basis"] and payload["image_basis"]
     assert payload["rank"] + payload["nullity"] == 3
     assert set(payload["lanes"]) == {"domain", "kernel", "image"}
     assert all(payload["lanes"][lane]["alias"] in result.aliases for lane in payload["lanes"])
+    assert payload["lanes"]["domain"]["basis"] == domain_basis
+    assert payload["lanes"]["kernel"]["basis"] == kernel_basis
+    assert payload["lanes"]["image"]["basis"] == image_basis
+
+
+def test_string_bounds_are_numeric_invalid():
+    with pytest.raises(VisualCompileError, match="numeric_invalid"):
+        SubspaceFamilyCompiler.compile({"primitive": "geometry.subspace3d", "dimension": 3, "basis": [[1, 0, 0]], "bounds": ["bad", 1, -1, 1, -1, 1]})
 
 
 def test_over_budget_bounds_are_rejected_before_operation_emission():
