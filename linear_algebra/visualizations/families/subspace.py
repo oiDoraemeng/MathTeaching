@@ -7,6 +7,7 @@ import math
 from typing import Any, Mapping
 
 from ..compiler import CompileIssue, VisualCompileError
+from ..limits import limits_for
 
 
 @dataclass(frozen=True)
@@ -19,7 +20,10 @@ class SubspaceCompileResult:
 def _numbers(values: object, name: str, dimension: int) -> tuple[float, ...]:
     if not isinstance(values, (list, tuple)) or len(values) != dimension:
         raise VisualCompileError((CompileIssue("invalid_dimension", f"$.{name}", f"invalid_dimension: expected {dimension} values"),))
-    result = tuple(float(value) for value in values)
+    try:
+        result = tuple(float(value) for value in values)
+    except (TypeError, ValueError, OverflowError) as error:
+        raise VisualCompileError((CompileIssue("numeric_invalid", f"$.{name}", "numeric_invalid: values must be finite numbers"),)) from error
     if not all(math.isfinite(value) for value in result):
         raise VisualCompileError((CompileIssue("numeric_invalid", f"$.{name}", "numeric_invalid: values must be finite"),))
     return result
@@ -58,8 +62,8 @@ class SubspaceFamilyCompiler:
             issues.append(CompileIssue("invalid_dimension", "$.dimension", "dimension must be 2 or 3"))
             return tuple(issues)
         try:
-            _numbers(payload.get("origin", [0] * int(dimension)), "origin", int(dimension))
-            _numbers(payload.get("affine_offset", [0] * int(dimension)), "affine_offset", int(dimension))
+            _numbers(payload.get("origin", [0] * dimension), "origin", dimension)
+            _numbers(payload.get("affine_offset", [0] * dimension), "affine_offset", dimension)
         except VisualCompileError as error:
             issues.extend(error.issues)
         basis = payload.get("basis", [])
@@ -68,11 +72,35 @@ class SubspaceFamilyCompiler:
         else:
             for index, vector in enumerate(basis):
                 try:
-                    _numbers(vector, f"$.basis[{index}]", int(dimension))
+                    _numbers(vector, f"basis[{index}]", dimension)
                 except VisualCompileError as error:
                     issues.extend(error.issues)
-        if payload.get("is_linear", False) and any(abs(value) > 1e-12 for value in _numbers(payload.get("affine_offset", [0] * int(dimension)), "affine_offset", int(dimension))):
+        if payload.get("is_linear", False) and any(abs(value) > 1e-12 for value in _numbers(payload.get("affine_offset", [0] * dimension), "affine_offset", dimension)):
             issues.append(CompileIssue("origin_required", "$.affine_offset", "origin_required: linear subspaces must pass through origin"))
+        bounds = payload.get("bounds", [-2, 2, -2, 2, -2, 2] if dimension == 3 else [-2, 2, -2, 2])
+        expected = 2 * dimension
+        if not isinstance(bounds, (list, tuple)) or len(bounds) != expected:
+            issues.append(CompileIssue("invalid_bounds", "$.bounds", f"invalid_bounds: expected {expected} finite values"))
+        else:
+            try:
+                numeric_bounds = tuple(float(value) for value in bounds)
+            except (TypeError, ValueError, OverflowError):
+                numeric_bounds = ()
+            if len(numeric_bounds) != expected or not all(math.isfinite(value) for value in numeric_bounds):
+                issues.append(CompileIssue("numeric_invalid", "$.bounds", "numeric_invalid: bounds must be finite numbers"))
+            elif any(numeric_bounds[index] >= numeric_bounds[index + 1] for index in range(0, expected, 2)):
+                issues.append(CompileIssue("invalid_bounds", "$.bounds", "invalid_bounds: lower bound must be less than upper bound"))
+        if primitive == "geometry.mapping_bundle":
+            domain_dimension = payload.get("domain_dimension", len(basis) if isinstance(basis, (list, tuple)) else 0)
+            if isinstance(domain_dimension, bool) or not isinstance(domain_dimension, int) or domain_dimension < 1 or domain_dimension > 3:
+                issues.append(CompileIssue("invalid_dimension", "$.domain_dimension", "domain_dimension must be an integer from 1 to 3"))
+            elif isinstance(basis, (list, tuple)) and domain_dimension < _matrix_rank([list(map(float, vector)) for vector in basis]):
+                issues.append(CompileIssue("invalid_dimension", "$.domain_dimension", "domain_dimension must be at least rank"))
+            input_dimension = payload.get("input_dimension", domain_dimension)
+            if input_dimension != domain_dimension:
+                issues.append(CompileIssue("invalid_dimension", "$.input_dimension", "input_dimension must match domain_dimension"))
+        if isinstance(basis, (list, tuple)) and len(basis) > limits_for("lecture-v1").max_entities_3d:
+            issues.append(CompileIssue("layout_overflow", "$.basis", "layout_overflow: basis exceeds render budget"))
         return tuple(issues)
 
     @classmethod
@@ -88,8 +116,10 @@ class SubspaceFamilyCompiler:
         if len(basis) > 3:
             raise VisualCompileError((CompileIssue("layout_overflow", "$.basis", "at most three basis vectors are supported"),))
         rank = _matrix_rank(basis)
-        domain_dimension = int(payload.get("domain_dimension", len(basis)))
-        nullity = max(0, domain_dimension - rank)
+        domain_dimension = payload.get("domain_dimension", len(basis))
+        if isinstance(domain_dimension, bool) or not isinstance(domain_dimension, int):
+            raise VisualCompileError((CompileIssue("invalid_dimension", "$.domain_dimension", "domain_dimension must be an integer"),))
+        nullity = domain_dimension - rank
         prefix = str(payload.get("alias_prefix", "mapping" if primitive == "geometry.mapping_bundle" else "subspace"))
         op_name = primitive
         operation = {"op": op_name, "alias": prefix, "origin": origin, "basis": basis, "offset": offset,
@@ -97,7 +127,9 @@ class SubspaceFamilyCompiler:
         operations: list[dict[str, Any]] = [operation]
         aliases = [f"{prefix}__domain"]
         if primitive == "geometry.mapping_bundle":
-            operations[0] = {**operation, "domain_alias": f"{prefix}__domain", "kernel_alias": f"{prefix}__kernel", "image_alias": f"{prefix}__image"}
+            operations[0] = {**operation, "domain_alias": f"{prefix}__domain", "kernel_alias": f"{prefix}__kernel", "image_alias": f"{prefix}__image",
+                              "domain_basis": payload.get("domain_basis", basis), "kernel_basis": payload.get("kernel_basis", []),
+                              "image_basis": payload.get("image_basis", basis), "rank": rank, "nullity": nullity}
             aliases.extend((f"{prefix}__kernel", f"{prefix}__image"))
         return SubspaceCompileResult(tuple(operations), {"rank": rank, "nullity": nullity, "domain_dimension": domain_dimension}, tuple(aliases))
 

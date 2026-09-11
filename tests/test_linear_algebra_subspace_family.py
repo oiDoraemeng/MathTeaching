@@ -26,3 +26,16 @@ def test_affine_line_is_rejected_when_marked_as_linear_subspace():
 def test_nonfinite_basis_is_rejected_before_scene_mutation():
     with pytest.raises(VisualCompileError, match="numeric_invalid"):
         SubspaceFamilyCompiler.compile({"primitive": "geometry.subspace3d", "dimension": 3, "basis": [[float("nan"), 0, 0]]})
+
+
+@pytest.mark.parametrize("bounds", ([2, -2, -1, 1, -1, 1], [0, 1, 0, 1], [0, float("nan"), 0, 1, 0, 1]))
+def test_bounds_are_finite_dimension_matched_and_ordered(bounds):
+    with pytest.raises(VisualCompileError):
+        SubspaceFamilyCompiler.compile({"primitive": "geometry.subspace3d", "dimension": 3, "basis": [[1, 0, 0]], "bounds": bounds})
+
+
+def test_mapping_bundle_emits_consumable_lane_payload():
+    result = SubspaceFamilyCompiler.compile({"primitive": "geometry.mapping_bundle", "dimension": 3, "basis": [[1, 0, 0]], "domain_dimension": 3, "input_dimension": 3})
+    payload = result.operations[0]
+    assert payload["domain_basis"] and payload["image_basis"]
+    assert payload["rank"] + payload["nullity"] == 3
