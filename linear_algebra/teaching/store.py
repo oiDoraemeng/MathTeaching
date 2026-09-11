@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import tempfile
 from typing import Literal
+from collections.abc import Mapping
 
 from .model import ArtifactStatus, TeachingArtifact
 from .validation import (
@@ -112,6 +113,53 @@ class TeachingArtifactStore:
     def __init__(self, root: Path) -> None:
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
+
+    def index_payload(self) -> dict[str, object]:
+        """Read the chapter index, preserving the legacy empty-store shape."""
+        path = self.root / "index.json"
+        if not path.is_file():
+            return {"schema_version": 1, "topics": []}
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict) or not isinstance(payload.get("topics", []), list):
+            raise ValueError("index payload must contain a topics array")
+        return payload
+
+    def publish_chapter(self, chapter: int, revisions: Mapping[str, int]) -> dict[str, object]:
+        """Atomically replace index entries for one chapter after full validation."""
+        if isinstance(chapter, bool) or not isinstance(chapter, int) or chapter < 1:
+            raise ValueError("chapter must be a positive integer")
+        if not isinstance(revisions, Mapping):
+            raise TypeError("revisions must be a mapping")
+        entries: list[dict[str, object]] = []
+        for topic_id, revision in revisions.items():
+            self._validate_topic_id(topic_id)
+            if topic_id.split(".", 1)[0] != f"ch{chapter:02d}":
+                raise ValueError(f"topic {topic_id!r} does not belong to chapter {chapter}")
+            if isinstance(revision, bool) or not isinstance(revision, int) or revision < 1:
+                raise ValueError(f"invalid revision for {topic_id!r}")
+            try:
+                stored = self.get(topic_id, revision, "published")
+            except FileNotFoundError as error:
+                raise ValueError(str(error)) from error
+            artifact = stored.artifact
+            if artifact.status != "published" or artifact.revision != revision:
+                raise ValueError(f"published revision mismatch for {topic_id!r}")
+            entries.append({"topic_id": topic_id, "published_revision": revision, "source_hash": artifact.source.source_hash})
+        payload = self.index_payload()
+        old_topics = [item for item in payload.get("topics", []) if isinstance(item, dict)]
+        prefix = f"ch{chapter:02d}."
+        payload["topics"] = [item for item in old_topics if not str(item.get("topic_id", "")).startswith(prefix)] + entries
+        self._write_stable_json(self.root / "index.json", payload)
+        return payload
+
+    def unpublish_chapter(self, chapter: int) -> dict[str, object]:
+        if isinstance(chapter, bool) or not isinstance(chapter, int) or chapter < 1:
+            raise ValueError("chapter must be a positive integer")
+        payload = self.index_payload()
+        prefix = f"ch{chapter:02d}."
+        payload["topics"] = [item for item in payload.get("topics", []) if not (isinstance(item, dict) and str(item.get("topic_id", "")).startswith(prefix))]
+        self._write_stable_json(self.root / "index.json", payload)
+        return payload
 
     def save_draft(self, artifact: TeachingArtifact, *, raw_reply: str) -> ArtifactRevision:
         return self._save("draft", artifact, raw_reply=raw_reply)

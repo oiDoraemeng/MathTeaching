@@ -32,6 +32,8 @@ class CompiledSnapshot:
     required_entity_roles: tuple[str, ...]
     required_relations: tuple[str, ...]
     invariants: tuple[str, ...]
+    contract_digest: str = ""
+    scene_family: str = ""
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -46,6 +48,8 @@ class CompiledSnapshot:
             "required_entity_roles": list(self.required_entity_roles),
             "required_relations": list(self.required_relations),
             "invariants": list(self.invariants),
+            "contract_digest": self.contract_digest,
+            "scene_family": self.scene_family,
         }
 
     @classmethod
@@ -68,6 +72,8 @@ class CompiledSnapshot:
             required_entity_roles=strings("required_entity_roles"),
             required_relations=strings("required_relations"),
             invariants=strings("invariants"),
+            contract_digest=str(payload.get("contract_digest", "")),
+            scene_family=str(payload.get("scene_family", "")),
         )
 
 
@@ -85,6 +91,9 @@ def snapshot_from(
             }
         )
     )
+    import hashlib
+    import json
+    contract_digest = "sha256:" + hashlib.sha256(json.dumps(contract.__dict__, sort_keys=True, default=list).encode("utf-8")).hexdigest()
     return CompiledSnapshot(
         schema_version=1,
         topic_id=artifact.topic_id,
@@ -97,6 +106,8 @@ def snapshot_from(
         required_entity_roles=contract.required_entity_roles,
         required_relations=contract.required_relations,
         invariants=invariants,
+        contract_digest=contract_digest,
+        scene_family=artifact.visual_semantics.scene_family,
     )
 
 

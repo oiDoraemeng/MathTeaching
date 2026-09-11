@@ -68,3 +68,22 @@ def test_store_rejects_path_traversal_topic_ids(tmp_path: Path, topic_id: str) -
     store = TeachingArtifactStore(tmp_path)
     with pytest.raises(ValueError, match="unsafe topic id"):
         store.list_revisions(topic_id)
+
+
+def test_failed_chapter_publish_leaves_previous_index_unchanged(tmp_path: Path) -> None:
+    store = TeachingArtifactStore(tmp_path)
+    before = store.index_payload()
+    with pytest.raises(ValueError):
+        store.publish_chapter(4, {"ch04.unknown": 1})
+    assert store.index_payload() == before
+
+
+def test_unpublish_chapter_removes_only_requested_entries(tmp_path: Path) -> None:
+    store = TeachingArtifactStore(tmp_path)
+    store._write_stable_json(tmp_path / "index.json", {"schema_version": 1, "topics": [
+        {"topic_id": "ch01.keep", "published_revision": 1},
+        {"topic_id": "ch04.drop", "published_revision": 2},
+        {"topic_id": "ch05.keep", "published_revision": 3},
+    ]})
+    payload = store.unpublish_chapter(4)
+    assert [item["topic_id"] for item in payload["topics"]] == ["ch01.keep", "ch05.keep"]
