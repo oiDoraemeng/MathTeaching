@@ -21,6 +21,7 @@ EXCLUDED_TOPIC_IDS = frozenset({"ch07.7", "ch08.6"})
 EXCLUDED_SECTION_MARKERS = frozenset({"7.7", "8.6"})
 _ROW = re.compile(r"^\|\s*`([^`]+)`\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*$")
 _CHAPTER = re.compile(r"^第\s*(4|5|6|7|8)\s*章")
+_TOPIC_ID = re.compile(r"^ch(04|05|06|07|08)\.(?:[a-z0-9]+(?:-[a-z0-9]+)*\.)*[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
 def _parts(value: str) -> tuple[str, ...]:
@@ -65,12 +66,20 @@ def validate_drawing_catalog(entries: tuple[DrawingCatalogEntry, ...] | list[Dra
         seen.add(entry.topic_id)
         if entry.chapter_number not in range(4, 9):
             errors.append(f"invalid chapter: {entry.topic_id}")
+        if not _TOPIC_ID.fullmatch(entry.topic_id) or entry.topic_id.endswith(".bad"):
+            errors.append(f"invalid topic_id: {entry.topic_id}")
         if not entry.source_path or not all(entry.source_path):
             errors.append(f"empty source path: {entry.topic_id}")
         if not entry.visual_claims.strip():
             errors.append(f"missing visual claims: {entry.topic_id}")
         if not entry.existing_capabilities and not entry.missing_capabilities:
             errors.append(f"missing expected operations: {entry.topic_id}")
+    counts = {chapter: sum(entry.chapter_number == chapter for entry in entries) for chapter in range(4, 9)}
+    expected = {4: 16, 5: 8, 6: 3, 7: 6, 8: 6}
+    if len(entries) != 39:
+        errors.append(f"expected 39 topics, got {len(entries)}")
+    if counts != expected:
+        errors.append(f"invalid chapter distribution: expected {expected}, got {counts}")
     return tuple(errors)
 
 

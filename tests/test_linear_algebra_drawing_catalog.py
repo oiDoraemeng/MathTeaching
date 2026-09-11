@@ -32,3 +32,11 @@ def test_malformed_rows_are_rejected(tmp_path: Path, text: str):
     path.write_text("# Chapter 4\n\n" + text + "\n", encoding="utf-8")
     with pytest.raises(ValueError):
         load_drawing_catalog(path)
+
+
+def test_validator_rejects_short_topic_ids_and_wrong_distribution():
+    entries = load_drawing_catalog(CATALOG)
+    bad = entries[:1] + (entries[1].__class__("ch04.bad", 4, entries[1].source_path, entries[1].visual_claims, entries[1].existing_capabilities, entries[1].missing_capabilities),)
+    errors = validate_drawing_catalog(bad)
+    assert any("invalid topic_id" in error for error in errors)
+    assert any("expected 39" in error for error in errors)
