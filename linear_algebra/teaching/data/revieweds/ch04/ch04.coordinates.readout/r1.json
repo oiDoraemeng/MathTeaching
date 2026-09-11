@@ -52,11 +52,11 @@
   "claims": [
     {
       "id": "claim.ch04.coordinates.readout",
-      "statement": "4.3.3 坐标——向量的\"读数\" 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.3.3 坐标——向量的\"读数\" 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "4.3.3 坐标——向量的\"读数\": finite typed semantic evidence",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.3 坐标——向量的\"读数\"::1::sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50"
@@ -71,14 +71,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.coordinates.readout.v",
-        "entity.ch04.coordinates.readout.result"
+        "entity.ch04.coordinates.readout.vector_a",
+        "entity.ch04.coordinates.readout.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.coordinates.readout.maps"
+        "relation.ch04.coordinates.readout.batch_maps_to"
       ],
       "stage_refs": [
-        "stage.ch04.coordinates.readout.input"
+        "stage.ch04.coordinates.readout.evidence"
       ]
     }
   ],
@@ -95,7 +95,7 @@
   ],
   "explanation": {
     "title": "4.3.3 坐标——向量的\"读数\"",
-    "summary": "4.3.3 坐标——向量的\"读数\" 的确定性讲义 artifact。",
+    "summary": "4.3.3 坐标——向量的\"读数\" 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -155,11 +155,14 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "standard_basis": "standard_basis",
+      "oblique_basis": "oblique_basis",
+      "same_vector": "same_vector"
     },
     "definition": "4.3.3 坐标——向量的\"读数\" 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "4.3.3 坐标——向量的\"读数\": finite typed semantic evidence",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -167,7 +170,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.coordinates.readout",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -177,7 +180,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "4.3.3 坐标——向量的\"读数\": finite typed semantic evidence"
         ],
         "result": [
           2,
@@ -225,29 +228,71 @@
     "scene_family": "basis_change",
     "entities": [
       {
-        "id": "entity.ch04.coordinates.readout.v",
+        "id": "entity.ch04.coordinates.readout.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.coordinates.readout"
         ]
       },
       {
-        "id": "entity.ch04.coordinates.readout.result",
+        "id": "entity.ch04.coordinates.readout.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ]
+      },
+      {
+        "id": "entity.ch04.coordinates.readout.standard_basis",
+        "kind": "basis",
+        "dimension": 2,
+        "value": [
+          1.0,
+          0.0
+        ],
+        "role": "standard_basis",
+        "label": "standard_basis",
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ]
+      },
+      {
+        "id": "entity.ch04.coordinates.readout.oblique_basis",
+        "kind": "basis",
+        "dimension": 2,
+        "value": [
+          1.0,
+          1.0
+        ],
+        "role": "oblique_basis",
+        "label": "oblique_basis",
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ]
+      },
+      {
+        "id": "entity.ch04.coordinates.readout.same_vector",
+        "kind": "basis",
+        "dimension": 2,
+        "value": [
+          2.0,
+          1.0
+        ],
+        "role": "same_vector",
+        "label": "same_vector",
         "claim_refs": [
           "claim.ch04.coordinates.readout"
         ]
@@ -255,12 +300,29 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.coordinates.readout.maps",
-        "kind": "compare",
-        "source_ref": "entity.ch04.coordinates.readout.v",
-        "target_ref": "entity.ch04.coordinates.readout.result",
+        "id": "relation.ch04.coordinates.readout.batch_maps_to",
+        "kind": "batch_maps_to",
+        "source_ref": "entity.ch04.coordinates.readout.vector_a",
+        "target_ref": "entity.ch04.coordinates.readout.transformed_a",
         "parameters": {
-          "scalar": 2
+          "basis_matrix": [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "standard_coordinates": [
+            2,
+            1
+          ],
+          "oblique_coordinates": [
+            1,
+            1
+          ]
         },
         "claim_refs": [
           "claim.ch04.coordinates.readout"
@@ -269,21 +331,30 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.coordinates.readout.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.coordinates.readout.evidence",
+        "title": "主题证据",
+        "caption": "4.3.3 坐标——向量的\"读数\": finite typed semantic evidence",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.coordinates.readout.v"
+          "entity.ch04.coordinates.readout.vector_a",
+          "entity.ch04.coordinates.readout.transformed_a",
+          "entity.ch04.coordinates.readout.standard_basis",
+          "entity.ch04.coordinates.readout.oblique_basis",
+          "entity.ch04.coordinates.readout.same_vector"
         ],
         "output_entity_refs": [
-          "entity.ch04.coordinates.readout.result"
+          "entity.ch04.coordinates.readout.vector_a",
+          "entity.ch04.coordinates.readout.transformed_a",
+          "entity.ch04.coordinates.readout.standard_basis",
+          "entity.ch04.coordinates.readout.oblique_basis",
+          "entity.ch04.coordinates.readout.same_vector"
         ],
         "relation_refs": [
-          "relation.ch04.coordinates.readout.maps"
+          "relation.ch04.coordinates.readout.batch_maps_to"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "coordinate_reconstruction"
         ]
       }
     ]
@@ -294,7 +365,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50",
-    "raw_reply_digest": "sha256:40646e34b4f1d5ace486aa75774f18b4bbad5a901568bd209b1eb36f7d67a519",
-    "artifact_digest": "sha256:f576853161bc44ded0c0791c07126c2f5386c98552327be1d186a97a351f83e4"
+    "raw_reply_digest": "sha256:10cca440363a60a7d77e941e010c424bb0df5990ffd2a45f4529ffb1600238ed",
+    "artifact_digest": "sha256:d6bc36155f651646d3a9ca9da41f9f9e9be41b98d21fa9969c6a9666526171f7"
   }
 }

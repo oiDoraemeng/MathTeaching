@@ -52,11 +52,11 @@
   "claims": [
     {
       "id": "claim.ch04.rank-nullity",
-      "statement": "4.5.2 秩-零化度定理 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.5.2 秩-零化度定理 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "\\operatorname{rank}(T)+\\operatorname{nullity}(T)=\\dim V=3",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.5 核与像 / 4.5.2 秩-零化度定理::1::sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa"
@@ -71,14 +71,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.rank-nullity.v",
-        "entity.ch04.rank-nullity.result"
+        "entity.ch04.rank-nullity.vector_a",
+        "entity.ch04.rank-nullity.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.rank-nullity.maps"
+        "relation.ch04.rank-nullity.batch_maps_to"
       ],
       "stage_refs": [
-        "stage.ch04.rank-nullity.input"
+        "stage.ch04.rank-nullity.evidence"
       ]
     }
   ],
@@ -95,7 +95,7 @@
   ],
   "explanation": {
     "title": "4.5.2 秩-零化度定理",
-    "summary": "4.5.2 秩-零化度定理 的确定性讲义 artifact。",
+    "summary": "4.5.2 秩-零化度定理 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -155,11 +155,16 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "domain": "domain",
+      "rank": "rank",
+      "nullity": "nullity",
+      "preserved": "preserved",
+      "collapsed": "collapsed"
     },
     "definition": "4.5.2 秩-零化度定理 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "\\operatorname{rank}(T)+\\operatorname{nullity}(T)=\\dim V=3",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -167,7 +172,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.rank-nullity",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -177,7 +182,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "\\operatorname{rank}(T)+\\operatorname{nullity}(T)=\\dim V=3"
         ],
         "result": [
           2,
@@ -222,32 +227,132 @@
   },
   "visual_semantics": {
     "scene_kind": "2d",
-    "scene_family": "affine_solution",
+    "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.rank-nullity.v",
+        "id": "entity.ch04.rank-nullity.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.rank-nullity"
         ]
       },
       {
-        "id": "entity.ch04.rank-nullity.result",
+        "id": "entity.ch04.rank-nullity.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      },
+      {
+        "id": "entity.ch04.rank-nullity.domain",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "domain",
+        "label": "domain",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      },
+      {
+        "id": "entity.ch04.rank-nullity.rank",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "rank",
+        "label": "rank",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      },
+      {
+        "id": "entity.ch04.rank-nullity.nullity",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "nullity",
+        "label": "nullity",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      },
+      {
+        "id": "entity.ch04.rank-nullity.preserved",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "preserved",
+        "label": "preserved",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      },
+      {
+        "id": "entity.ch04.rank-nullity.collapsed",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "collapsed",
+        "label": "collapsed",
         "claim_refs": [
           "claim.ch04.rank-nullity"
         ]
@@ -255,12 +360,23 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.rank-nullity.maps",
-        "kind": "compare",
-        "source_ref": "entity.ch04.rank-nullity.v",
-        "target_ref": "entity.ch04.rank-nullity.result",
+        "id": "relation.ch04.rank-nullity.batch_maps_to",
+        "kind": "batch_maps_to",
+        "source_ref": "entity.ch04.rank-nullity.vector_a",
+        "target_ref": "entity.ch04.rank-nullity.transformed_a",
         "parameters": {
-          "scalar": 2
+          "matrix": [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "rank": 1,
+          "nullity": 1
         },
         "claim_refs": [
           "claim.ch04.rank-nullity"
@@ -269,21 +385,64 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.rank-nullity.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.rank-nullity.evidence",
+        "title": "主题证据",
+        "caption": "\\operatorname{rank}(T)+\\operatorname{nullity}(T)=\\dim V=3",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.rank-nullity.v"
+          "entity.ch04.rank-nullity.vector_a",
+          "entity.ch04.rank-nullity.transformed_a",
+          "entity.ch04.rank-nullity.domain",
+          "entity.ch04.rank-nullity.rank",
+          "entity.ch04.rank-nullity.nullity",
+          "entity.ch04.rank-nullity.preserved",
+          "entity.ch04.rank-nullity.collapsed"
         ],
         "output_entity_refs": [
-          "entity.ch04.rank-nullity.result"
+          "entity.ch04.rank-nullity.vector_a",
+          "entity.ch04.rank-nullity.transformed_a",
+          "entity.ch04.rank-nullity.domain",
+          "entity.ch04.rank-nullity.rank",
+          "entity.ch04.rank-nullity.nullity",
+          "entity.ch04.rank-nullity.preserved",
+          "entity.ch04.rank-nullity.collapsed"
         ],
         "relation_refs": [
-          "relation.ch04.rank-nullity.maps"
+          "relation.ch04.rank-nullity.batch_maps_to"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "r",
+          "a",
+          "n",
+          "k",
+          "_",
+          "p",
+          "l",
+          "u",
+          "s",
+          "_",
+          "n",
+          "u",
+          "l",
+          "l",
+          "i",
+          "t",
+          "y",
+          "_",
+          "e",
+          "q",
+          "u",
+          "a",
+          "l",
+          "s",
+          "_",
+          "d",
+          "o",
+          "m",
+          "a",
+          "i",
+          "n"
         ]
       }
     ]
@@ -294,7 +453,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa",
-    "raw_reply_digest": "sha256:d759b84c0af9a35ada374e4ab7e6322a3159cc9cbac330102e7763d8db7340dd",
-    "artifact_digest": "sha256:840a50ce51c5d7ce9b4b64eb3e4a816c8de898222243a059bb48718178aee9aa"
+    "raw_reply_digest": "sha256:7ba547c761995758fc6660fe6e113463f05e09f5ddf1b90a808fd9e8676dba7e",
+    "artifact_digest": "sha256:4494179bd7ecb7bd2e074d82a3b518f9eb4e236ad5e584252a21d9f509e33c0f"
   }
 }

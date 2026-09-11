@@ -75,7 +75,7 @@ def contract_for(topic_id: str) -> VisualContract:
             return VisualContract(
                 topic_id,
                 (f"claim.{topic_id}",),
-                ("vector_a", "transformed_a"),
+                semantic.roles[:2],
                 (semantic.relation,),
                 (semantic.primitive,),
                 1,

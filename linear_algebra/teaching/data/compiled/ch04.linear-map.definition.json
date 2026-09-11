@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:7d7e42faa9053a79f343d06dc7d06e343ff091625f39d2e9a40c51db09882732",
+  "artifact_digest": "sha256:b81f2d054ff8c866a7662a3e5cdf7196e5d663eab1305eb71b0771d1ad5a065a",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:db13111bd48d6fef840f8b6d8b72b0842fe4002f8a8dd37d6d029abb68b53500",
+  "contract_digest": "sha256:c4daed7d286eba6006d7f0b66c0ae77db077f386c334f786a946aa7575e2ca74",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.linear-map.definition.v__origin",
+        "alias": "sem__entity.ch04.linear-map.definition.vector_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.v__end",
+        "alias": "sem__entity.ch04.linear-map.definition.vector_a__end",
         "coordinates": [
           1.0,
-          2.0
+          0.0
         ],
-        "name": "v",
+        "name": "vector_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.v",
+        "alias": "sem__entity.ch04.linear-map.definition.vector_a",
         "color": "#2F6BFF",
-        "end": "sem__entity.ch04.linear-map.definition.v__end",
+        "end": "sem__entity.ch04.linear-map.definition.vector_a__end",
         "kind": "vector",
-        "label": "v",
+        "label": "vector_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.linear-map.definition.v__origin"
+        "start": "sem__entity.ch04.linear-map.definition.vector_a__origin"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.result__origin",
+        "alias": "sem__entity.ch04.linear-map.definition.transformed_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,41 +43,156 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.result__end",
+        "alias": "sem__entity.ch04.linear-map.definition.transformed_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          1.0,
+          0.0
         ],
-        "name": "result",
+        "name": "transformed_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.result",
+        "alias": "sem__entity.ch04.linear-map.definition.transformed_a",
         "color": "#7B61FF",
-        "end": "sem__entity.ch04.linear-map.definition.result__end",
+        "end": "sem__entity.ch04.linear-map.definition.transformed_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "transformed_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.linear-map.definition.result__origin"
+        "start": "sem__entity.ch04.linear-map.definition.transformed_a__origin"
       },
       {
-        "alias": "sem__relation.ch04.linear-map.definition.maps",
+        "alias": "sem__entity.ch04.linear-map.definition.map_T",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.definition.sum_test",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.definition.homogeneity_test",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.definition.origin",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__relation.ch04.linear-map.definition.maps_to",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "linear_algebra.matrix_transform"
+      },
+      {
+        "alias": "sem__mapping_grid__1",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__stage.ch04.linear-map.definition.evidence__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "maps_to: v → result"
-      },
-      {
-        "alias": "sem__stage.ch04.linear-map.definition.input__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "输入与结果"
+        "text": "主题证据"
       },
       {
         "op": "view.fit",
@@ -88,7 +203,7 @@
     "summary": "4.4.1 线性变换的定义",
     "version": 1
   },
-  "plan_digest": "sha256:672cb921b30aa298ce1aa318cd6fc1cd5bae03be27a67712ee579ffaa2efd5d0",
+  "plan_digest": "sha256:3bf0fcb098a24a6fcac316f109b22ba6a3aa6d320878d389bf3005f58c572c2b",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -103,25 +218,33 @@
         -2.65,
         2.65
       ],
-      "caption": "显示线性关系。",
-      "id": "stage.ch04.linear-map.definition.input",
+      "caption": "4.4.1 线性变换的定义: finite typed semantic evidence",
+      "id": "stage.ch04.linear-map.definition.evidence",
       "layout": "sequence",
-      "title": "输入与结果",
+      "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.linear-map.definition.v",
-        "sem__entity.ch04.linear-map.definition.v__end",
-        "sem__entity.ch04.linear-map.definition.v__origin",
-        "sem__entity.ch04.linear-map.definition.result",
-        "sem__entity.ch04.linear-map.definition.result__end",
-        "sem__entity.ch04.linear-map.definition.result__origin",
-        "sem__relation.ch04.linear-map.definition.maps",
-        "sem__stage.ch04.linear-map.definition.input__title",
+        "sem__entity.ch04.linear-map.definition.vector_a",
+        "sem__entity.ch04.linear-map.definition.vector_a__end",
+        "sem__entity.ch04.linear-map.definition.vector_a__origin",
+        "sem__entity.ch04.linear-map.definition.transformed_a",
+        "sem__entity.ch04.linear-map.definition.transformed_a__end",
+        "sem__entity.ch04.linear-map.definition.transformed_a__origin",
+        "sem__entity.ch04.linear-map.definition.map_T",
+        "sem__entity.ch04.linear-map.definition.sum_test",
+        "sem__entity.ch04.linear-map.definition.homogeneity_test",
+        "sem__entity.ch04.linear-map.definition.origin",
+        "sem__relation.ch04.linear-map.definition.maps_to",
+        "sem__stage.ch04.linear-map.definition.evidence__title",
         "sem__mapping_grid__1"
       ],
       "visible_refs": [
-        "entity.ch04.linear-map.definition.v",
-        "entity.ch04.linear-map.definition.result",
-        "relation.ch04.linear-map.definition.maps"
+        "entity.ch04.linear-map.definition.vector_a",
+        "entity.ch04.linear-map.definition.transformed_a",
+        "entity.ch04.linear-map.definition.map_T",
+        "entity.ch04.linear-map.definition.sum_test",
+        "entity.ch04.linear-map.definition.homogeneity_test",
+        "entity.ch04.linear-map.definition.origin",
+        "relation.ch04.linear-map.definition.maps_to"
       ]
     }
   ],

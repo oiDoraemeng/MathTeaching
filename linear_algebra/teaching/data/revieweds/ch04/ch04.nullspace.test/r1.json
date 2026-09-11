@@ -53,11 +53,11 @@
   "claims": [
     {
       "id": "claim.ch04.nullspace.test",
-      "statement": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "A(1,-1,0)^T=0,\\quad Ax=0",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.3 判定方法——拼矩阵解 $Ax=0$::1::sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d"
@@ -72,14 +72,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.nullspace.test.v",
-        "entity.ch04.nullspace.test.result"
+        "entity.ch04.nullspace.test.vector_a",
+        "entity.ch04.nullspace.test.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.nullspace.test.maps"
+        "relation.ch04.nullspace.test.batch_maps_to"
       ],
       "stage_refs": [
-        "stage.ch04.nullspace.test.input"
+        "stage.ch04.nullspace.test.evidence"
       ]
     }
   ],
@@ -96,7 +96,7 @@
   ],
   "explanation": {
     "title": "4.2.3 判定方法——拼矩阵解 $Ax=0$",
-    "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的确定性讲义 artifact。",
+    "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -156,11 +156,14 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "columns": "columns",
+      "null_vector": "null_vector",
+      "trivial_nullspace": "trivial_nullspace"
     },
     "definition": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "A(1,-1,0)^T=0,\\quad Ax=0",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -168,7 +171,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.nullspace.test",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -178,7 +181,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "A(1,-1,0)^T=0,\\quad Ax=0"
         ],
         "result": [
           2,
@@ -223,32 +226,92 @@
   },
   "visual_semantics": {
     "scene_kind": "2d",
-    "scene_family": "subspace_region",
+    "scene_family": "basis_change",
     "entities": [
       {
-        "id": "entity.ch04.nullspace.test.v",
+        "id": "entity.ch04.nullspace.test.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.nullspace.test"
         ]
       },
       {
-        "id": "entity.ch04.nullspace.test.result",
+        "id": "entity.ch04.nullspace.test.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ]
+      },
+      {
+        "id": "entity.ch04.nullspace.test.columns",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "columns",
+        "label": "columns",
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ]
+      },
+      {
+        "id": "entity.ch04.nullspace.test.null_vector",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "null_vector",
+        "label": "null_vector",
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ]
+      },
+      {
+        "id": "entity.ch04.nullspace.test.trivial_nullspace",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "trivial_nullspace",
+        "label": "trivial_nullspace",
         "claim_refs": [
           "claim.ch04.nullspace.test"
         ]
@@ -256,12 +319,23 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.nullspace.test.maps",
-        "kind": "collapses_to",
-        "source_ref": "entity.ch04.nullspace.test.v",
-        "target_ref": "entity.ch04.nullspace.test.result",
+        "id": "relation.ch04.nullspace.test.batch_maps_to",
+        "kind": "batch_maps_to",
+        "source_ref": "entity.ch04.nullspace.test.vector_a",
+        "target_ref": "entity.ch04.nullspace.test.transformed_a",
         "parameters": {
-          "scalar": 2
+          "matrix": [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "rank": 1,
+          "nullity": 1
         },
         "claim_refs": [
           "claim.ch04.nullspace.test"
@@ -270,21 +344,31 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.nullspace.test.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.nullspace.test.evidence",
+        "title": "主题证据",
+        "caption": "A(1,-1,0)^T=0,\\quad Ax=0",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.nullspace.test.v"
+          "entity.ch04.nullspace.test.vector_a",
+          "entity.ch04.nullspace.test.transformed_a",
+          "entity.ch04.nullspace.test.columns",
+          "entity.ch04.nullspace.test.null_vector",
+          "entity.ch04.nullspace.test.trivial_nullspace"
         ],
         "output_entity_refs": [
-          "entity.ch04.nullspace.test.result"
+          "entity.ch04.nullspace.test.vector_a",
+          "entity.ch04.nullspace.test.transformed_a",
+          "entity.ch04.nullspace.test.columns",
+          "entity.ch04.nullspace.test.null_vector",
+          "entity.ch04.nullspace.test.trivial_nullspace"
         ],
         "relation_refs": [
-          "relation.ch04.nullspace.test.maps"
+          "relation.ch04.nullspace.test.batch_maps_to"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "Ax_zero",
+          "nonzero_null_solution"
         ]
       }
     ]
@@ -295,7 +379,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d",
-    "raw_reply_digest": "sha256:ec896d2c5e0df363003d38f8ce6eb6558ad632aad5627cdfa4c38e42b83a196b",
-    "artifact_digest": "sha256:3d446808ce9446fe2ddf279d577e84ff9aa20b8617ff432a01a6c5c0a8804d32"
+    "raw_reply_digest": "sha256:c71843bac2f52879b3783474ac1116cdaabf76d6e139a670c08917c1e21f56eb",
+    "artifact_digest": "sha256:2afd5e0839b55f384086ea84bb4dc1e28df8cf7762e4ef96265693ce45dc05c1"
   }
 }

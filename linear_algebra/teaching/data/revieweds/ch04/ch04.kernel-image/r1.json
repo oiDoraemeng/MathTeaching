@@ -52,11 +52,11 @@
   "claims": [
     {
       "id": "claim.ch04.kernel-image",
-      "statement": "4.5.1 定义 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.5.1 定义 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "4.5.1 定义: finite typed semantic evidence",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.5 核与像 / 4.5.1 定义::1::sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb"
@@ -71,14 +71,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.kernel-image.v",
-        "entity.ch04.kernel-image.result"
+        "entity.ch04.kernel-image.vector_a",
+        "entity.ch04.kernel-image.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.kernel-image.maps"
+        "relation.ch04.kernel-image.spans"
       ],
       "stage_refs": [
-        "stage.ch04.kernel-image.input"
+        "stage.ch04.kernel-image.evidence"
       ]
     }
   ],
@@ -95,7 +95,7 @@
   ],
   "explanation": {
     "title": "4.5.1 定义",
-    "summary": "4.5.1 定义 的确定性讲义 artifact。",
+    "summary": "4.5.1 定义 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -155,11 +155,15 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "domain": "domain",
+      "kernel_direction": "kernel_direction",
+      "zero": "zero",
+      "image": "image"
     },
     "definition": "4.5.1 定义 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "4.5.1 定义: finite typed semantic evidence",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -167,7 +171,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.kernel-image",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -177,7 +181,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "4.5.1 定义: finite typed semantic evidence"
         ],
         "result": [
           2,
@@ -222,32 +226,88 @@
   },
   "visual_semantics": {
     "scene_kind": "2d",
-    "scene_family": "affine_solution",
+    "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.kernel-image.v",
+        "id": "entity.ch04.kernel-image.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.kernel-image"
         ]
       },
       {
-        "id": "entity.ch04.kernel-image.result",
+        "id": "entity.ch04.kernel-image.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ]
+      },
+      {
+        "id": "entity.ch04.kernel-image.domain",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          1.0,
+          0.0
+        ],
+        "role": "domain",
+        "label": "domain",
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ]
+      },
+      {
+        "id": "entity.ch04.kernel-image.kernel_direction",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          0.0,
+          1.0
+        ],
+        "role": "kernel_direction",
+        "label": "kernel_direction",
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ]
+      },
+      {
+        "id": "entity.ch04.kernel-image.zero",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          0.0,
+          0.0
+        ],
+        "role": "zero",
+        "label": "zero",
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ]
+      },
+      {
+        "id": "entity.ch04.kernel-image.image",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          1.0,
+          0.0
+        ],
+        "role": "image",
+        "label": "image",
         "claim_refs": [
           "claim.ch04.kernel-image"
         ]
@@ -255,26 +315,11 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.kernel-image.maps",
+        "id": "relation.ch04.kernel-image.spans",
         "kind": "spans",
-        "source_ref": "entity.ch04.kernel-image.v",
-        "target_ref": "entity.ch04.kernel-image.result",
-        "parameters": {
-          "vertices": [
-            [
-              0,
-              0
-            ],
-            [
-              1,
-              0
-            ],
-            [
-              1,
-              1
-            ]
-          ]
-        },
+        "source_ref": "entity.ch04.kernel-image.vector_a",
+        "target_ref": "entity.ch04.kernel-image.transformed_a",
+        "parameters": {},
         "claim_refs": [
           "claim.ch04.kernel-image"
         ]
@@ -282,21 +327,33 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.kernel-image.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.kernel-image.evidence",
+        "title": "主题证据",
+        "caption": "4.5.1 定义: finite typed semantic evidence",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.kernel-image.v"
+          "entity.ch04.kernel-image.vector_a",
+          "entity.ch04.kernel-image.transformed_a",
+          "entity.ch04.kernel-image.domain",
+          "entity.ch04.kernel-image.kernel_direction",
+          "entity.ch04.kernel-image.zero",
+          "entity.ch04.kernel-image.image"
         ],
         "output_entity_refs": [
-          "entity.ch04.kernel-image.result"
+          "entity.ch04.kernel-image.vector_a",
+          "entity.ch04.kernel-image.transformed_a",
+          "entity.ch04.kernel-image.domain",
+          "entity.ch04.kernel-image.kernel_direction",
+          "entity.ch04.kernel-image.zero",
+          "entity.ch04.kernel-image.image"
         ],
         "relation_refs": [
-          "relation.ch04.kernel-image.maps"
+          "relation.ch04.kernel-image.spans"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "kernel_maps_zero",
+          "image_reachable"
         ]
       }
     ]
@@ -307,7 +364,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb",
-    "raw_reply_digest": "sha256:db72dcdff474a1555e12891401c18e5661e08b42d1dd1e32de268d9401ddbcd9",
-    "artifact_digest": "sha256:dd32c2f6bab1ac189465ff16c67ad6b193f0c03da1a148bde02de22bddeb70c0"
+    "raw_reply_digest": "sha256:e302d9317688923a68350ca07f860765fbff2c4e7a025bf8791a824fcc7f61a0",
+    "artifact_digest": "sha256:33dc0f64b81752947a8872414702520d53f7f3b2cafcd3d0c7dae06f9ee45de0"
   }
 }

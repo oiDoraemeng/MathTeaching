@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:03c439dd6464e61c97fc109dd7dcabf4adc1d4cc29196844ab6955fcd992a965",
+  "artifact_digest": "sha256:44c52554a4b3c60f0babf4216d9675c2775f4809fe59339718b903104e7316a7",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:b6421762cab46103a399dfe46bf460d0733f14184465d354176a673edf25413b",
+  "contract_digest": "sha256:91b68b11c0b5b893991637125527dbe53d217841f050b89ac3e46cdccb953e04",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.span.dimension.v__origin",
+        "alias": "sem__entity.ch04.span.dimension.vector_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.span.dimension.v__end",
+        "alias": "sem__entity.ch04.span.dimension.vector_a__end",
         "coordinates": [
           1.0,
-          2.0
+          0.0
         ],
-        "name": "v",
+        "name": "vector_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.span.dimension.v",
+        "alias": "sem__entity.ch04.span.dimension.vector_a",
         "color": "#2F6BFF",
-        "end": "sem__entity.ch04.span.dimension.v__end",
+        "end": "sem__entity.ch04.span.dimension.vector_a__end",
         "kind": "vector",
-        "label": "v",
+        "label": "vector_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.span.dimension.v__origin"
+        "start": "sem__entity.ch04.span.dimension.vector_a__origin"
       },
       {
-        "alias": "sem__entity.ch04.span.dimension.result__origin",
+        "alias": "sem__entity.ch04.span.dimension.transformed_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,74 +43,150 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.span.dimension.result__end",
+        "alias": "sem__entity.ch04.span.dimension.transformed_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          1.0,
+          0.0
         ],
-        "name": "result",
+        "name": "transformed_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.span.dimension.result",
+        "alias": "sem__entity.ch04.span.dimension.transformed_a",
         "color": "#7B61FF",
-        "end": "sem__entity.ch04.span.dimension.result__end",
+        "end": "sem__entity.ch04.span.dimension.transformed_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "transformed_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.span.dimension.result__origin"
+        "start": "sem__entity.ch04.span.dimension.transformed_a__origin"
       },
       {
-        "alias": "sem__relation.ch04.span.dimension.maps",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ]
-        ]
+        "alias": "sem__entity.ch04.span.dimension.span_1d__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__span__1",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ]
-        ]
+        "alias": "sem__entity.ch04.span.dimension.span_1d__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "span_1d",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__stage.ch04.span.dimension.input__title",
+        "alias": "sem__entity.ch04.span.dimension.span_1d",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.span.dimension.span_1d__end",
+        "kind": "vector",
+        "label": "span_1d",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.span.dimension.span_1d__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.span.dimension.span_2d__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.span.dimension.span_2d__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "span_2d",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.span.dimension.span_2d",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.span.dimension.span_2d__end",
+        "kind": "vector",
+        "label": "span_2d",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.span.dimension.span_2d__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.span.dimension.span_3d__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.span.dimension.span_3d__end",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "span_3d",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.span.dimension.span_3d",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.span.dimension.span_3d__end",
+        "kind": "vector",
+        "label": "span_3d",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.span.dimension.span_3d__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.span.dimension.spans",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "输入与结果"
+        "text": "spans: vector_a → transformed_a"
+      },
+      {
+        "alias": "cap__polygon",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ],
+          [
+            -0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.ch04.span.dimension.evidence__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "主题证据"
       },
       {
         "op": "view.fit",
@@ -121,7 +197,7 @@
     "summary": "4.2.1 生成集 Span",
     "version": 1
   },
-  "plan_digest": "sha256:7ec05fe1f26faa57837951c73bd7f70f0e4f05698e9122c27bbef04f25c552c2",
+  "plan_digest": "sha256:709b7eda55751d57c5f204c74f822c1436be477f4bdb50eb1a66a59ff52b844e",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -136,25 +212,37 @@
         -2.65,
         2.65
       ],
-      "caption": "显示线性关系。",
-      "id": "stage.ch04.span.dimension.input",
+      "caption": "4.2.1 生成集 Span: finite typed semantic evidence",
+      "id": "stage.ch04.span.dimension.evidence",
       "layout": "sequence",
-      "title": "输入与结果",
+      "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.span.dimension.v",
-        "sem__entity.ch04.span.dimension.v__end",
-        "sem__entity.ch04.span.dimension.v__origin",
-        "sem__entity.ch04.span.dimension.result",
-        "sem__entity.ch04.span.dimension.result__end",
-        "sem__entity.ch04.span.dimension.result__origin",
-        "sem__relation.ch04.span.dimension.maps",
-        "sem__stage.ch04.span.dimension.input__title",
+        "sem__entity.ch04.span.dimension.vector_a",
+        "sem__entity.ch04.span.dimension.vector_a__end",
+        "sem__entity.ch04.span.dimension.vector_a__origin",
+        "sem__entity.ch04.span.dimension.transformed_a",
+        "sem__entity.ch04.span.dimension.transformed_a__end",
+        "sem__entity.ch04.span.dimension.transformed_a__origin",
+        "sem__entity.ch04.span.dimension.span_1d",
+        "sem__entity.ch04.span.dimension.span_1d__end",
+        "sem__entity.ch04.span.dimension.span_1d__origin",
+        "sem__entity.ch04.span.dimension.span_2d",
+        "sem__entity.ch04.span.dimension.span_2d__end",
+        "sem__entity.ch04.span.dimension.span_2d__origin",
+        "sem__entity.ch04.span.dimension.span_3d",
+        "sem__entity.ch04.span.dimension.span_3d__end",
+        "sem__entity.ch04.span.dimension.span_3d__origin",
+        "sem__relation.ch04.span.dimension.spans",
+        "sem__stage.ch04.span.dimension.evidence__title",
         "sem__span__1"
       ],
       "visible_refs": [
-        "entity.ch04.span.dimension.v",
-        "entity.ch04.span.dimension.result",
-        "relation.ch04.span.dimension.maps"
+        "entity.ch04.span.dimension.vector_a",
+        "entity.ch04.span.dimension.transformed_a",
+        "entity.ch04.span.dimension.span_1d",
+        "entity.ch04.span.dimension.span_2d",
+        "entity.ch04.span.dimension.span_3d",
+        "relation.ch04.span.dimension.spans"
       ]
     }
   ],

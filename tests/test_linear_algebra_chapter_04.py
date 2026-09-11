@@ -44,6 +44,9 @@ def test_chapter_four_compiled_bundles_and_index_are_linked():
     assert len(resources) == 16
     assert {resource.topic_id for resource in resources} == {topic.id for topic in TOPICS}
     index = json.loads((root / "index.json").read_text(encoding="utf-8"))
+    topic_ids = [row["topic_id"] for row in index["topics"]]
+    assert len(topic_ids) == len(set(topic_ids))
+    assert sum(topic_id.startswith("ch04.") for topic_id in topic_ids) == 16
     rows = {row["topic_id"]: row for row in index["topics"]}
     assert set(topic.id for topic in TOPICS) <= rows.keys()
     for resource in resources:

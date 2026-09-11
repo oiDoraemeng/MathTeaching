@@ -53,11 +53,11 @@
   "claims": [
     {
       "id": "claim.ch04.subspace.classification",
-      "statement": "4.1.2 子空间 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.1.2 子空间 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "4.1.2 子空间: finite typed semantic evidence",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"
@@ -72,14 +72,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.subspace.classification.v",
-        "entity.ch04.subspace.classification.result"
+        "entity.ch04.subspace.classification.vector_a",
+        "entity.ch04.subspace.classification.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.subspace.classification.maps"
+        "relation.ch04.subspace.classification.spans"
       ],
       "stage_refs": [
-        "stage.ch04.subspace.classification.input"
+        "stage.ch04.subspace.classification.evidence"
       ]
     }
   ],
@@ -96,7 +96,7 @@
   ],
   "explanation": {
     "title": "4.1.2 子空间",
-    "summary": "4.1.2 子空间 的确定性讲义 artifact。",
+    "summary": "4.1.2 子空间 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -156,11 +156,16 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "origin": "origin",
+      "line": "line",
+      "plane": "plane",
+      "whole_space": "whole_space",
+      "affine_counterexample": "affine_counterexample"
     },
     "definition": "4.1.2 子空间 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "4.1.2 子空间: finite typed semantic evidence",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -168,7 +173,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.subspace.classification",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -178,7 +183,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "4.1.2 子空间: finite typed semantic evidence"
         ],
         "result": [
           2,
@@ -226,29 +231,99 @@
     "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.subspace.classification.v",
+        "id": "entity.ch04.subspace.classification.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.subspace.classification"
         ]
       },
       {
-        "id": "entity.ch04.subspace.classification.result",
+        "id": "entity.ch04.subspace.classification.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ]
+      },
+      {
+        "id": "entity.ch04.subspace.classification.origin",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          0.0,
+          0.0
+        ],
+        "role": "origin",
+        "label": "origin",
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ]
+      },
+      {
+        "id": "entity.ch04.subspace.classification.line",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          1.0,
+          0.0
+        ],
+        "role": "line",
+        "label": "line",
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ]
+      },
+      {
+        "id": "entity.ch04.subspace.classification.plane",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          1.0,
+          1.0
+        ],
+        "role": "plane",
+        "label": "plane",
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ]
+      },
+      {
+        "id": "entity.ch04.subspace.classification.whole_space",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          0.0,
+          1.0
+        ],
+        "role": "whole_space",
+        "label": "whole_space",
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ]
+      },
+      {
+        "id": "entity.ch04.subspace.classification.affine_counterexample",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          0.0,
+          1.0
+        ],
+        "role": "affine_counterexample",
+        "label": "affine_counterexample",
         "claim_refs": [
           "claim.ch04.subspace.classification"
         ]
@@ -256,13 +331,11 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.subspace.classification.maps",
-        "kind": "compare",
-        "source_ref": "entity.ch04.subspace.classification.v",
-        "target_ref": "entity.ch04.subspace.classification.result",
-        "parameters": {
-          "scalar": 2
-        },
+        "id": "relation.ch04.subspace.classification.spans",
+        "kind": "spans",
+        "source_ref": "entity.ch04.subspace.classification.vector_a",
+        "target_ref": "entity.ch04.subspace.classification.transformed_a",
+        "parameters": {},
         "claim_refs": [
           "claim.ch04.subspace.classification"
         ]
@@ -270,21 +343,35 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.subspace.classification.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.subspace.classification.evidence",
+        "title": "主题证据",
+        "caption": "4.1.2 子空间: finite typed semantic evidence",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.subspace.classification.v"
+          "entity.ch04.subspace.classification.vector_a",
+          "entity.ch04.subspace.classification.transformed_a",
+          "entity.ch04.subspace.classification.origin",
+          "entity.ch04.subspace.classification.line",
+          "entity.ch04.subspace.classification.plane",
+          "entity.ch04.subspace.classification.whole_space",
+          "entity.ch04.subspace.classification.affine_counterexample"
         ],
         "output_entity_refs": [
-          "entity.ch04.subspace.classification.result"
+          "entity.ch04.subspace.classification.vector_a",
+          "entity.ch04.subspace.classification.transformed_a",
+          "entity.ch04.subspace.classification.origin",
+          "entity.ch04.subspace.classification.line",
+          "entity.ch04.subspace.classification.plane",
+          "entity.ch04.subspace.classification.whole_space",
+          "entity.ch04.subspace.classification.affine_counterexample"
         ],
         "relation_refs": [
-          "relation.ch04.subspace.classification.maps"
+          "relation.ch04.subspace.classification.spans"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "origin_contains",
+          "affine_not_subspace"
         ]
       }
     ]
@@ -295,7 +382,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
-    "raw_reply_digest": "sha256:8a8c50b811be52eabefae6e79edaa2a02e3bf9d115a412491b27522a0c4c0e0b",
-    "artifact_digest": "sha256:026b3ef0e721c96e0a11411b89923d8345e07da4356384d52a5a199f7035dac7"
+    "raw_reply_digest": "sha256:884860dce5cfaa948e4482221a7665f1fc62f67bb2ddce2213c4121c2febc9c9",
+    "artifact_digest": "sha256:df834633a77e63604c413ad130523a6e820808ac716f96997134a5ccb33300dc"
   }
 }

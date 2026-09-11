@@ -53,11 +53,11 @@
   "claims": [
     {
       "id": "claim.ch04.dependence.redundancy",
-      "statement": "4.2.2 线性相关与线性无关 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.2.2 线性相关与线性无关 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "2u-v=0\\quad (u=(1,1),\\ v=(2,2))",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.2 线性相关与线性无关::1::sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c"
@@ -72,14 +72,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.dependence.redundancy.v",
-        "entity.ch04.dependence.redundancy.result"
+        "entity.ch04.dependence.redundancy.vector_a",
+        "entity.ch04.dependence.redundancy.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.dependence.redundancy.maps"
+        "relation.ch04.dependence.redundancy.spans"
       ],
       "stage_refs": [
-        "stage.ch04.dependence.redundancy.input"
+        "stage.ch04.dependence.redundancy.evidence"
       ]
     }
   ],
@@ -96,7 +96,7 @@
   ],
   "explanation": {
     "title": "4.2.2 线性相关与线性无关",
-    "summary": "4.2.2 线性相关与线性无关 的确定性讲义 artifact。",
+    "summary": "4.2.2 线性相关与线性无关 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -156,11 +156,14 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "dependent_set": "dependent_set",
+      "independent_set": "independent_set",
+      "zero_combination": "zero_combination"
     },
     "definition": "4.2.2 线性相关与线性无关 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "2u-v=0\\quad (u=(1,1),\\ v=(2,2))",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -168,7 +171,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.dependence.redundancy",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -178,7 +181,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "2u-v=0\\quad (u=(1,1),\\ v=(2,2))"
         ],
         "result": [
           2,
@@ -223,32 +226,74 @@
   },
   "visual_semantics": {
     "scene_kind": "2d",
-    "scene_family": "subspace_region",
+    "scene_family": "basis_change",
     "entities": [
       {
-        "id": "entity.ch04.dependence.redundancy.v",
+        "id": "entity.ch04.dependence.redundancy.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.dependence.redundancy"
         ]
       },
       {
-        "id": "entity.ch04.dependence.redundancy.result",
+        "id": "entity.ch04.dependence.redundancy.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ]
+      },
+      {
+        "id": "entity.ch04.dependence.redundancy.dependent_set",
+        "kind": "vector",
+        "dimension": 2,
+        "value": [
+          2.0,
+          2.0
+        ],
+        "role": "dependent_set",
+        "label": "dependent_set",
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ]
+      },
+      {
+        "id": "entity.ch04.dependence.redundancy.independent_set",
+        "kind": "vector",
+        "dimension": 2,
+        "value": [
+          0.0,
+          1.0
+        ],
+        "role": "independent_set",
+        "label": "independent_set",
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ]
+      },
+      {
+        "id": "entity.ch04.dependence.redundancy.zero_combination",
+        "kind": "vector",
+        "dimension": 2,
+        "value": [
+          0.0,
+          0.0
+        ],
+        "role": "zero_combination",
+        "label": "zero_combination",
         "claim_refs": [
           "claim.ch04.dependence.redundancy"
         ]
@@ -256,13 +301,11 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.dependence.redundancy.maps",
-        "kind": "orientation",
-        "source_ref": "entity.ch04.dependence.redundancy.v",
-        "target_ref": "entity.ch04.dependence.redundancy.result",
-        "parameters": {
-          "scalar": 2
-        },
+        "id": "relation.ch04.dependence.redundancy.spans",
+        "kind": "spans",
+        "source_ref": "entity.ch04.dependence.redundancy.vector_a",
+        "target_ref": "entity.ch04.dependence.redundancy.transformed_a",
+        "parameters": {},
         "claim_refs": [
           "claim.ch04.dependence.redundancy"
         ]
@@ -270,21 +313,30 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.dependence.redundancy.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.dependence.redundancy.evidence",
+        "title": "主题证据",
+        "caption": "2u-v=0\\quad (u=(1,1),\\ v=(2,2))",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.dependence.redundancy.v"
+          "entity.ch04.dependence.redundancy.vector_a",
+          "entity.ch04.dependence.redundancy.transformed_a",
+          "entity.ch04.dependence.redundancy.dependent_set",
+          "entity.ch04.dependence.redundancy.independent_set",
+          "entity.ch04.dependence.redundancy.zero_combination"
         ],
         "output_entity_refs": [
-          "entity.ch04.dependence.redundancy.result"
+          "entity.ch04.dependence.redundancy.vector_a",
+          "entity.ch04.dependence.redundancy.transformed_a",
+          "entity.ch04.dependence.redundancy.dependent_set",
+          "entity.ch04.dependence.redundancy.independent_set",
+          "entity.ch04.dependence.redundancy.zero_combination"
         ],
         "relation_refs": [
-          "relation.ch04.dependence.redundancy.maps"
+          "relation.ch04.dependence.redundancy.spans"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "nonzero_coefficients_sum_zero"
         ]
       }
     ]
@@ -295,7 +347,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c",
-    "raw_reply_digest": "sha256:e63c32af6dfd74b3c031d7478c6d180ff99be20ef50075f6c57af5bb84b5b04c",
-    "artifact_digest": "sha256:51f97cafac16a3ce8ba9cd9a15a17ad1963d255cede348a1ae78c31f63314157"
+    "raw_reply_digest": "sha256:40d7742ea2aacb5a93e1baf7509cecb8dbc9d010ba6b5df78d88f36ded4a5db9",
+    "artifact_digest": "sha256:d4eb93c55b1a3df69db02567beaa437b94a6115c4fe23fd3229b0c1fee4380cc"
   }
 }

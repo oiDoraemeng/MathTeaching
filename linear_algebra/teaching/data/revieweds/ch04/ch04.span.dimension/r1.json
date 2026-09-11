@@ -52,11 +52,11 @@
   "claims": [
     {
       "id": "claim.ch04.span.dimension",
-      "statement": "4.2.1 生成集 Span 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.2.1 生成集 Span 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "4.2.1 生成集 Span: finite typed semantic evidence",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.1 生成集 Span::1::sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d"
@@ -71,14 +71,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.span.dimension.v",
-        "entity.ch04.span.dimension.result"
+        "entity.ch04.span.dimension.vector_a",
+        "entity.ch04.span.dimension.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.span.dimension.maps"
+        "relation.ch04.span.dimension.spans"
       ],
       "stage_refs": [
-        "stage.ch04.span.dimension.input"
+        "stage.ch04.span.dimension.evidence"
       ]
     }
   ],
@@ -95,7 +95,7 @@
   ],
   "explanation": {
     "title": "4.2.1 生成集 Span",
-    "summary": "4.2.1 生成集 Span 的确定性讲义 artifact。",
+    "summary": "4.2.1 生成集 Span 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -155,11 +155,14 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "span_1d": "span_1d",
+      "span_2d": "span_2d",
+      "span_3d": "span_3d"
     },
     "definition": "4.2.1 生成集 Span 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "4.2.1 生成集 Span: finite typed semantic evidence",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -167,7 +170,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.span.dimension",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -177,7 +180,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "4.2.1 生成集 Span: finite typed semantic evidence"
         ],
         "result": [
           2,
@@ -225,29 +228,71 @@
     "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.span.dimension.v",
+        "id": "entity.ch04.span.dimension.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.span.dimension"
         ]
       },
       {
-        "id": "entity.ch04.span.dimension.result",
+        "id": "entity.ch04.span.dimension.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ]
+      },
+      {
+        "id": "entity.ch04.span.dimension.span_1d",
+        "kind": "vector",
+        "dimension": 2,
+        "value": [
+          1.0,
+          0.0
+        ],
+        "role": "span_1d",
+        "label": "span_1d",
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ]
+      },
+      {
+        "id": "entity.ch04.span.dimension.span_2d",
+        "kind": "vector",
+        "dimension": 2,
+        "value": [
+          0.0,
+          1.0
+        ],
+        "role": "span_2d",
+        "label": "span_2d",
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ]
+      },
+      {
+        "id": "entity.ch04.span.dimension.span_3d",
+        "kind": "vector",
+        "dimension": 2,
+        "value": [
+          1.0,
+          1.0
+        ],
+        "role": "span_3d",
+        "label": "span_3d",
         "claim_refs": [
           "claim.ch04.span.dimension"
         ]
@@ -255,26 +300,11 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.span.dimension.maps",
+        "id": "relation.ch04.span.dimension.spans",
         "kind": "spans",
-        "source_ref": "entity.ch04.span.dimension.v",
-        "target_ref": "entity.ch04.span.dimension.result",
-        "parameters": {
-          "vertices": [
-            [
-              0,
-              0
-            ],
-            [
-              1,
-              0
-            ],
-            [
-              1,
-              1
-            ]
-          ]
-        },
+        "source_ref": "entity.ch04.span.dimension.vector_a",
+        "target_ref": "entity.ch04.span.dimension.transformed_a",
+        "parameters": {},
         "claim_refs": [
           "claim.ch04.span.dimension"
         ]
@@ -282,21 +312,30 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.span.dimension.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.span.dimension.evidence",
+        "title": "主题证据",
+        "caption": "4.2.1 生成集 Span: finite typed semantic evidence",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.span.dimension.v"
+          "entity.ch04.span.dimension.vector_a",
+          "entity.ch04.span.dimension.transformed_a",
+          "entity.ch04.span.dimension.span_1d",
+          "entity.ch04.span.dimension.span_2d",
+          "entity.ch04.span.dimension.span_3d"
         ],
         "output_entity_refs": [
-          "entity.ch04.span.dimension.result"
+          "entity.ch04.span.dimension.vector_a",
+          "entity.ch04.span.dimension.transformed_a",
+          "entity.ch04.span.dimension.span_1d",
+          "entity.ch04.span.dimension.span_2d",
+          "entity.ch04.span.dimension.span_3d"
         ],
         "relation_refs": [
-          "relation.ch04.span.dimension.maps"
+          "relation.ch04.span.dimension.spans"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "rank_equals_dimension"
         ]
       }
     ]
@@ -307,7 +346,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d",
-    "raw_reply_digest": "sha256:03c439dd6464e61c97fc109dd7dcabf4adc1d4cc29196844ab6955fcd992a965",
-    "artifact_digest": "sha256:8d3b521278f211a4b8e97433b0990fa05fff5fff6d1ac067700b2cb47f0e9f98"
+    "raw_reply_digest": "sha256:44c52554a4b3c60f0babf4216d9675c2775f4809fe59339718b903104e7316a7",
+    "artifact_digest": "sha256:949f1f0a28c25cbb88aee4e227e16f0bfed3e52c23ba714e1792afeb17709dba"
   }
 }

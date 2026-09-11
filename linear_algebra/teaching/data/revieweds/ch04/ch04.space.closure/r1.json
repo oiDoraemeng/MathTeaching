@@ -52,11 +52,11 @@
   "claims": [
     {
       "id": "claim.ch04.space.closure",
-      "statement": "4.1.1 线性空间 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.1.1 线性空间 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "u=(1,0),\\ v=(0,1),\\ u+v=(1,1),\\ 2u=(2,0)",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.1 线性空间::1::sha256:108e80c51b484ad533cd04b12f1404ac881c09591990b10d9f1c4b8863bed254"
@@ -71,14 +71,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.space.closure.v",
-        "entity.ch04.space.closure.result"
+        "entity.ch04.space.closure.vector_a",
+        "entity.ch04.space.closure.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.space.closure.maps"
+        "relation.ch04.space.closure.spans"
       ],
       "stage_refs": [
-        "stage.ch04.space.closure.input"
+        "stage.ch04.space.closure.evidence"
       ]
     }
   ],
@@ -95,7 +95,7 @@
   ],
   "explanation": {
     "title": "4.1.1 线性空间",
-    "summary": "4.1.1 线性空间 的确定性讲义 artifact。",
+    "summary": "4.1.1 线性空间 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -155,11 +155,14 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "vector_b": "vector_b",
+      "sum": "sum",
+      "scaled": "scaled"
     },
     "definition": "4.1.1 线性空间 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "u=(1,0),\\ v=(0,1),\\ u+v=(1,1),\\ 2u=(2,0)",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -167,7 +170,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.space.closure",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -177,7 +180,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "u=(1,0),\\ v=(0,1),\\ u+v=(1,1),\\ 2u=(2,0)"
         ],
         "result": [
           2,
@@ -225,29 +228,71 @@
     "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.space.closure.v",
+        "id": "entity.ch04.space.closure.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.space.closure"
         ]
       },
       {
-        "id": "entity.ch04.space.closure.result",
+        "id": "entity.ch04.space.closure.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.space.closure"
+        ]
+      },
+      {
+        "id": "entity.ch04.space.closure.vector_b",
+        "kind": "vector",
+        "dimension": 2,
+        "value": [
+          1.0,
+          0.0
+        ],
+        "role": "vector_b",
+        "label": "vector_b",
+        "claim_refs": [
+          "claim.ch04.space.closure"
+        ]
+      },
+      {
+        "id": "entity.ch04.space.closure.sum",
+        "kind": "vector",
+        "dimension": 2,
+        "value": [
+          1.0,
+          0.0
+        ],
+        "role": "sum",
+        "label": "sum",
+        "claim_refs": [
+          "claim.ch04.space.closure"
+        ]
+      },
+      {
+        "id": "entity.ch04.space.closure.scaled",
+        "kind": "vector",
+        "dimension": 2,
+        "value": [
+          1.0,
+          0.0
+        ],
+        "role": "scaled",
+        "label": "scaled",
         "claim_refs": [
           "claim.ch04.space.closure"
         ]
@@ -255,26 +300,11 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.space.closure.maps",
+        "id": "relation.ch04.space.closure.spans",
         "kind": "spans",
-        "source_ref": "entity.ch04.space.closure.v",
-        "target_ref": "entity.ch04.space.closure.result",
-        "parameters": {
-          "vertices": [
-            [
-              0,
-              0
-            ],
-            [
-              1,
-              0
-            ],
-            [
-              1,
-              1
-            ]
-          ]
-        },
+        "source_ref": "entity.ch04.space.closure.vector_a",
+        "target_ref": "entity.ch04.space.closure.transformed_a",
+        "parameters": {},
         "claim_refs": [
           "claim.ch04.space.closure"
         ]
@@ -282,21 +312,31 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.space.closure.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.space.closure.evidence",
+        "title": "主题证据",
+        "caption": "u=(1,0),\\ v=(0,1),\\ u+v=(1,1),\\ 2u=(2,0)",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.space.closure.v"
+          "entity.ch04.space.closure.vector_a",
+          "entity.ch04.space.closure.transformed_a",
+          "entity.ch04.space.closure.vector_b",
+          "entity.ch04.space.closure.sum",
+          "entity.ch04.space.closure.scaled"
         ],
         "output_entity_refs": [
-          "entity.ch04.space.closure.result"
+          "entity.ch04.space.closure.vector_a",
+          "entity.ch04.space.closure.transformed_a",
+          "entity.ch04.space.closure.vector_b",
+          "entity.ch04.space.closure.sum",
+          "entity.ch04.space.closure.scaled"
         ],
         "relation_refs": [
-          "relation.ch04.space.closure.maps"
+          "relation.ch04.space.closure.spans"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "additive_closure",
+          "scalar_closure"
         ]
       }
     ]
@@ -307,7 +347,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:108e80c51b484ad533cd04b12f1404ac881c09591990b10d9f1c4b8863bed254",
-    "raw_reply_digest": "sha256:da0119aa9c5864270a07e1310eae8da6e9678e88ca1a6ef06781171a650fa434",
-    "artifact_digest": "sha256:8f572fe4d8e670209cbbfc31ea399f6588d97b3691415f01b03b474c85efa88c"
+    "raw_reply_digest": "sha256:2eee82bb8ec2942dcc7352680d046ef385a14fa4aa1df3759dd4984033dea411",
+    "artifact_digest": "sha256:cd25695e5386f6d959c78f74135d5bcb735442b213c1230b0a1704b3c336d406"
   }
 }

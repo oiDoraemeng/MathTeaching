@@ -53,11 +53,11 @@
   "claims": [
     {
       "id": "claim.ch04.dimension.ladder",
-      "statement": "4.3.2 维数 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.3.2 维数 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "4.3.2 维数: finite typed semantic evidence",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.2 维数::1::sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab"
@@ -72,14 +72,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.dimension.ladder.v",
-        "entity.ch04.dimension.ladder.result"
+        "entity.ch04.dimension.ladder.vector_a",
+        "entity.ch04.dimension.ladder.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.dimension.ladder.maps"
+        "relation.ch04.dimension.ladder.spans"
       ],
       "stage_refs": [
-        "stage.ch04.dimension.ladder.input"
+        "stage.ch04.dimension.ladder.evidence"
       ]
     }
   ],
@@ -96,7 +96,7 @@
   ],
   "explanation": {
     "title": "4.3.2 维数",
-    "summary": "4.3.2 维数 的确定性讲义 artifact。",
+    "summary": "4.3.2 维数 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -156,11 +156,15 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "point": "point",
+      "line": "line",
+      "plane": "plane",
+      "volume": "volume"
     },
     "definition": "4.3.2 维数 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "4.3.2 维数: finite typed semantic evidence",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -168,7 +172,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.dimension.ladder",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -178,7 +182,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "4.3.2 维数: finite typed semantic evidence"
         ],
         "result": [
           2,
@@ -223,32 +227,88 @@
   },
   "visual_semantics": {
     "scene_kind": "2d",
-    "scene_family": "basis_change",
+    "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.dimension.ladder.v",
+        "id": "entity.ch04.dimension.ladder.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.dimension.ladder"
         ]
       },
       {
-        "id": "entity.ch04.dimension.ladder.result",
+        "id": "entity.ch04.dimension.ladder.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ]
+      },
+      {
+        "id": "entity.ch04.dimension.ladder.point",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          0.0,
+          0.0
+        ],
+        "role": "point",
+        "label": "point",
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ]
+      },
+      {
+        "id": "entity.ch04.dimension.ladder.line",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          1.0,
+          0.0
+        ],
+        "role": "line",
+        "label": "line",
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ]
+      },
+      {
+        "id": "entity.ch04.dimension.ladder.plane",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          1.0,
+          1.0
+        ],
+        "role": "plane",
+        "label": "plane",
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ]
+      },
+      {
+        "id": "entity.ch04.dimension.ladder.volume",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          1.0,
+          1.0
+        ],
+        "role": "volume",
+        "label": "volume",
         "claim_refs": [
           "claim.ch04.dimension.ladder"
         ]
@@ -256,22 +316,11 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.dimension.ladder.maps",
-        "kind": "composition_order",
-        "source_ref": "entity.ch04.dimension.ladder.v",
-        "target_ref": "entity.ch04.dimension.ladder.result",
-        "parameters": {
-          "matrix": [
-            [
-              1,
-              0
-            ],
-            [
-              0,
-              1
-            ]
-          ]
-        },
+        "id": "relation.ch04.dimension.ladder.spans",
+        "kind": "spans",
+        "source_ref": "entity.ch04.dimension.ladder.vector_a",
+        "target_ref": "entity.ch04.dimension.ladder.transformed_a",
+        "parameters": {},
         "claim_refs": [
           "claim.ch04.dimension.ladder"
         ]
@@ -279,21 +328,32 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.dimension.ladder.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.dimension.ladder.evidence",
+        "title": "主题证据",
+        "caption": "4.3.2 维数: finite typed semantic evidence",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.dimension.ladder.v"
+          "entity.ch04.dimension.ladder.vector_a",
+          "entity.ch04.dimension.ladder.transformed_a",
+          "entity.ch04.dimension.ladder.point",
+          "entity.ch04.dimension.ladder.line",
+          "entity.ch04.dimension.ladder.plane",
+          "entity.ch04.dimension.ladder.volume"
         ],
         "output_entity_refs": [
-          "entity.ch04.dimension.ladder.result"
+          "entity.ch04.dimension.ladder.vector_a",
+          "entity.ch04.dimension.ladder.transformed_a",
+          "entity.ch04.dimension.ladder.point",
+          "entity.ch04.dimension.ladder.line",
+          "entity.ch04.dimension.ladder.plane",
+          "entity.ch04.dimension.ladder.volume"
         ],
         "relation_refs": [
-          "relation.ch04.dimension.ladder.maps"
+          "relation.ch04.dimension.ladder.spans"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "nested_dimensions"
         ]
       }
     ]
@@ -304,7 +364,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab",
-    "raw_reply_digest": "sha256:58b4f3ffd26c3672f5615e6481e9684a0ba0630c87ddec6621f0ddbeca356c67",
-    "artifact_digest": "sha256:803e14f295b5dc86fa060664be85ec52caf60c36dafc485cab0f0e7659ed5c53"
+    "raw_reply_digest": "sha256:daf330169d731a0a4f66c97d038bb74b28b54f221ac61f39f4de238dc20ba661",
+    "artifact_digest": "sha256:8fdfd19ecf1e2f9294767156a26c5c743f3248a0215adbdd211f8d0626175172"
   }
 }

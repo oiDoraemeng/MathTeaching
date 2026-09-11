@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:da0119aa9c5864270a07e1310eae8da6e9678e88ca1a6ef06781171a650fa434",
+  "artifact_digest": "sha256:2eee82bb8ec2942dcc7352680d046ef385a14fa4aa1df3759dd4984033dea411",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:52b750561fe31dac0486ff0471fa73bb79aaa700a4325f236d2e313d48ffe528",
+  "contract_digest": "sha256:bc14b3103dd3f8cfd91ed3709bee05179d82c38a784456b2f4474207b5569ba1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.space.closure.v__origin",
+        "alias": "sem__entity.ch04.space.closure.vector_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.space.closure.v__end",
+        "alias": "sem__entity.ch04.space.closure.vector_a__end",
         "coordinates": [
           1.0,
-          2.0
+          0.0
         ],
-        "name": "v",
+        "name": "vector_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.space.closure.v",
+        "alias": "sem__entity.ch04.space.closure.vector_a",
         "color": "#2F6BFF",
-        "end": "sem__entity.ch04.space.closure.v__end",
+        "end": "sem__entity.ch04.space.closure.vector_a__end",
         "kind": "vector",
-        "label": "v",
+        "label": "vector_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.space.closure.v__origin"
+        "start": "sem__entity.ch04.space.closure.vector_a__origin"
       },
       {
-        "alias": "sem__entity.ch04.space.closure.result__origin",
+        "alias": "sem__entity.ch04.space.closure.transformed_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,54 +43,126 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.space.closure.result__end",
+        "alias": "sem__entity.ch04.space.closure.transformed_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          1.0,
+          0.0
         ],
-        "name": "result",
+        "name": "transformed_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.space.closure.result",
+        "alias": "sem__entity.ch04.space.closure.transformed_a",
         "color": "#7B61FF",
-        "end": "sem__entity.ch04.space.closure.result__end",
+        "end": "sem__entity.ch04.space.closure.transformed_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "transformed_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.space.closure.result__origin"
+        "start": "sem__entity.ch04.space.closure.transformed_a__origin"
       },
       {
-        "alias": "sem__relation.ch04.space.closure.maps",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ]
-        ]
+        "alias": "sem__entity.ch04.space.closure.vector_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.vector_b__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "vector_b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.vector_b",
+        "color": "#F08A24",
+        "end": "sem__entity.ch04.space.closure.vector_b__end",
+        "kind": "vector",
+        "label": "vector_b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.space.closure.vector_b__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.sum__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.sum__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "sum",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.sum",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.space.closure.sum__end",
+        "kind": "vector",
+        "label": "sum",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.space.closure.sum__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.scaled__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.scaled__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "scaled",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.scaled",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.space.closure.scaled__end",
+        "kind": "vector",
+        "label": "scaled",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.space.closure.scaled__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.space.closure.spans",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "spans: vector_a → transformed_a"
       },
       {
         "basis": [
           [
             1.0,
-            2.0
+            0.0
           ],
           [
-            2.0,
-            4.0
+            1.0,
+            0.0
           ]
         ],
         "bounds": [
@@ -104,34 +176,13 @@
         "opacity": 0.2
       },
       {
-        "alias": "sem__span__1",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__stage.ch04.space.closure.input__title",
+        "alias": "sem__stage.ch04.space.closure.evidence__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "输入与结果"
+        "text": "主题证据"
       },
       {
         "op": "view.fit",
@@ -142,7 +193,7 @@
     "summary": "4.1.1 线性空间",
     "version": 1
   },
-  "plan_digest": "sha256:dfb74e84fc085529236a081d590a394543a8c2705199b11490d75ce902e380a3",
+  "plan_digest": "sha256:6cf1149494e6712a2349bf9d23d941cba380f4e247e821bc9faaee63be12bdbd",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -157,25 +208,37 @@
         -2.65,
         2.65
       ],
-      "caption": "显示线性关系。",
-      "id": "stage.ch04.space.closure.input",
+      "caption": "u=(1,0),\\ v=(0,1),\\ u+v=(1,1),\\ 2u=(2,0)",
+      "id": "stage.ch04.space.closure.evidence",
       "layout": "sequence",
-      "title": "输入与结果",
+      "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.space.closure.v",
-        "sem__entity.ch04.space.closure.v__end",
-        "sem__entity.ch04.space.closure.v__origin",
-        "sem__entity.ch04.space.closure.result",
-        "sem__entity.ch04.space.closure.result__end",
-        "sem__entity.ch04.space.closure.result__origin",
-        "sem__relation.ch04.space.closure.maps",
-        "sem__stage.ch04.space.closure.input__title",
+        "sem__entity.ch04.space.closure.vector_a",
+        "sem__entity.ch04.space.closure.vector_a__end",
+        "sem__entity.ch04.space.closure.vector_a__origin",
+        "sem__entity.ch04.space.closure.transformed_a",
+        "sem__entity.ch04.space.closure.transformed_a__end",
+        "sem__entity.ch04.space.closure.transformed_a__origin",
+        "sem__entity.ch04.space.closure.vector_b",
+        "sem__entity.ch04.space.closure.vector_b__end",
+        "sem__entity.ch04.space.closure.vector_b__origin",
+        "sem__entity.ch04.space.closure.sum",
+        "sem__entity.ch04.space.closure.sum__end",
+        "sem__entity.ch04.space.closure.sum__origin",
+        "sem__entity.ch04.space.closure.scaled",
+        "sem__entity.ch04.space.closure.scaled__end",
+        "sem__entity.ch04.space.closure.scaled__origin",
+        "sem__relation.ch04.space.closure.spans",
+        "sem__stage.ch04.space.closure.evidence__title",
         "sem__span__1"
       ],
       "visible_refs": [
-        "entity.ch04.space.closure.v",
-        "entity.ch04.space.closure.result",
-        "relation.ch04.space.closure.maps"
+        "entity.ch04.space.closure.vector_a",
+        "entity.ch04.space.closure.transformed_a",
+        "entity.ch04.space.closure.vector_b",
+        "entity.ch04.space.closure.sum",
+        "entity.ch04.space.closure.scaled",
+        "relation.ch04.space.closure.spans"
       ]
     }
   ],

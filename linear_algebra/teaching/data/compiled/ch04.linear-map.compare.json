@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:dfa66fd150e12a9192c637df04c93076c1e6a40a196c5264695b8a659c685d8a",
+  "artifact_digest": "sha256:2fcc73cc09c2c7419862115b5f9aa83121fd80a059b9d07e1b8273c4628a488e",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:1b8ca1716ae25953bf90c72c73ff57818e3fe00fe3a5d79c301387d2194c1608",
+  "contract_digest": "sha256:a6f7cd014b6589b701eaa12bc96c4b417b6138178972078ce3168dac2599a4da",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.linear-map.compare.v__origin",
+        "alias": "sem__entity.ch04.linear-map.compare.vector_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.compare.v__end",
+        "alias": "sem__entity.ch04.linear-map.compare.vector_a__end",
         "coordinates": [
           1.0,
-          2.0
+          0.0
         ],
-        "name": "v",
+        "name": "vector_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.compare.v",
+        "alias": "sem__entity.ch04.linear-map.compare.vector_a",
         "color": "#2F6BFF",
-        "end": "sem__entity.ch04.linear-map.compare.v__end",
+        "end": "sem__entity.ch04.linear-map.compare.vector_a__end",
         "kind": "vector",
-        "label": "v",
+        "label": "vector_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.linear-map.compare.v__origin"
+        "start": "sem__entity.ch04.linear-map.compare.vector_a__origin"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.compare.result__origin",
+        "alias": "sem__entity.ch04.linear-map.compare.transformed_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,91 +43,129 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.compare.result__end",
+        "alias": "sem__entity.ch04.linear-map.compare.transformed_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          1.0,
+          0.0
         ],
-        "name": "result",
+        "name": "transformed_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.compare.result",
+        "alias": "sem__entity.ch04.linear-map.compare.transformed_a",
         "color": "#7B61FF",
-        "end": "sem__entity.ch04.linear-map.compare.result__end",
+        "end": "sem__entity.ch04.linear-map.compare.transformed_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "transformed_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.linear-map.compare.result__origin"
+        "start": "sem__entity.ch04.linear-map.compare.transformed_a__origin"
       },
       {
-        "aliases": [
-          "sem__relation.ch04.linear-map.compare.maps__source",
-          "sem__relation.ch04.linear-map.compare.maps__target"
+        "alias": "sem__entity.ch04.linear-map.compare.linear_case",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
-        "matrices": [
-          [
-            [
-              1,
-              0
-            ],
-            [
-              0,
-              1
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
+        "color": "#6B7280",
+        "matrix": [
           [
             1.0,
-            2.0
+            0.0
           ],
           [
-            2.0,
-            4.0
+            0.0,
+            1.0
           ]
-        ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
-        "alias": "sem__stage_order__1",
-        "aliases": [
-          "sem__stage_order__1__source",
-          "sem__stage_order__1__target"
+        "alias": "sem__entity.ch04.linear-map.compare.translation",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
-        "matrices": [
-          [
-            [
-              1,
-              0
-            ],
-            [
-              0,
-              1
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
+        "color": "#6B7280",
+        "matrix": [
           [
             1.0,
-            2.0
+            0.0
           ],
           [
-            2.0,
-            4.0
+            0.0,
+            1.0
           ]
-        ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
-        "alias": "sem__stage.ch04.linear-map.compare.input__title",
+        "alias": "sem__entity.ch04.linear-map.compare.square_map",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.compare.constant_shift",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__relation.ch04.linear-map.compare.batch_maps_to",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "输入与结果"
+        "text": "batch_maps_to: vector_a → transformed_a"
+      },
+      {
+        "alias": "sem__stage.ch04.linear-map.compare.evidence__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "主题证据"
       },
       {
         "op": "view.fit",
@@ -138,7 +176,7 @@
     "summary": "4.4.2 是 vs 不是线性变换",
     "version": 1
   },
-  "plan_digest": "sha256:855a1e1574892fcee6b5e047de512830b10ed46164a93a170fddcf3c9c22b5c3",
+  "plan_digest": "sha256:06fbc99af1a808f06f3777c705595035a197a9bf43ca017c7b24f50c8f82d722",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -153,25 +191,32 @@
         -2.65,
         2.65
       ],
-      "caption": "显示线性关系。",
-      "id": "stage.ch04.linear-map.compare.input",
+      "caption": "4.4.2 是 vs 不是线性变换: finite typed semantic evidence",
+      "id": "stage.ch04.linear-map.compare.evidence",
       "layout": "sequence",
-      "title": "输入与结果",
+      "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.linear-map.compare.v",
-        "sem__entity.ch04.linear-map.compare.v__end",
-        "sem__entity.ch04.linear-map.compare.v__origin",
-        "sem__entity.ch04.linear-map.compare.result",
-        "sem__entity.ch04.linear-map.compare.result__end",
-        "sem__entity.ch04.linear-map.compare.result__origin",
-        "sem__relation.ch04.linear-map.compare.maps",
-        "sem__stage.ch04.linear-map.compare.input__title",
-        "sem__stage_order__1"
+        "sem__entity.ch04.linear-map.compare.vector_a",
+        "sem__entity.ch04.linear-map.compare.vector_a__end",
+        "sem__entity.ch04.linear-map.compare.vector_a__origin",
+        "sem__entity.ch04.linear-map.compare.transformed_a",
+        "sem__entity.ch04.linear-map.compare.transformed_a__end",
+        "sem__entity.ch04.linear-map.compare.transformed_a__origin",
+        "sem__entity.ch04.linear-map.compare.linear_case",
+        "sem__entity.ch04.linear-map.compare.translation",
+        "sem__entity.ch04.linear-map.compare.square_map",
+        "sem__entity.ch04.linear-map.compare.constant_shift",
+        "sem__relation.ch04.linear-map.compare.batch_maps_to",
+        "sem__stage.ch04.linear-map.compare.evidence__title"
       ],
       "visible_refs": [
-        "entity.ch04.linear-map.compare.v",
-        "entity.ch04.linear-map.compare.result",
-        "relation.ch04.linear-map.compare.maps"
+        "entity.ch04.linear-map.compare.vector_a",
+        "entity.ch04.linear-map.compare.transformed_a",
+        "entity.ch04.linear-map.compare.linear_case",
+        "entity.ch04.linear-map.compare.translation",
+        "entity.ch04.linear-map.compare.square_map",
+        "entity.ch04.linear-map.compare.constant_shift",
+        "relation.ch04.linear-map.compare.batch_maps_to"
       ]
     }
   ],

@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:fc7dc04d0f2d2ea8380cc1f576209d3d29fe267dc3e0c93ed54f56ab3ad3099d",
+  "artifact_digest": "sha256:cb3b25ab2edd5f9d184bdb334fc6a9640fe9e12cd2848419a702767c7cc09c45",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:956da6c3c42d33cc8c694aa8af573238d4654767b68a7c6a1eb776760a82bdba",
+  "contract_digest": "sha256:15865e5e5edf6c35c56277f156e46d585ea4ad18f275add19392671612d8ff8d",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.linear-map.matrix-columns.v__origin",
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.vector_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.matrix-columns.v__end",
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.vector_a__end",
         "coordinates": [
           1.0,
-          2.0
+          0.0
         ],
-        "name": "v",
+        "name": "vector_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.matrix-columns.v",
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.vector_a",
         "color": "#2F6BFF",
-        "end": "sem__entity.ch04.linear-map.matrix-columns.v__end",
+        "end": "sem__entity.ch04.linear-map.matrix-columns.vector_a__end",
         "kind": "vector",
-        "label": "v",
+        "label": "vector_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.linear-map.matrix-columns.v__origin"
+        "start": "sem__entity.ch04.linear-map.matrix-columns.vector_a__origin"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.matrix-columns.result__origin",
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.transformed_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,33 +43,33 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.matrix-columns.result__end",
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.transformed_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          1.0,
+          0.0
         ],
-        "name": "result",
+        "name": "transformed_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.matrix-columns.result",
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.transformed_a",
         "color": "#7B61FF",
-        "end": "sem__entity.ch04.linear-map.matrix-columns.result__end",
+        "end": "sem__entity.ch04.linear-map.matrix-columns.transformed_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "transformed_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.linear-map.matrix-columns.result__origin"
+        "start": "sem__entity.ch04.linear-map.matrix-columns.transformed_a__origin"
       },
       {
-        "alias": "sem__relation.ch04.linear-map.matrix-columns.maps",
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.standard_e1",
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#7B61FF",
+        "color": "#6B7280",
         "matrix": [
           [
             1.0,
@@ -84,13 +84,88 @@
         "step": 1.0
       },
       {
-        "alias": "sem__stage.ch04.linear-map.matrix-columns.input__title",
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.standard_e2",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.column_1",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.column_2",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__relation.ch04.linear-map.matrix-columns.batch_maps_to",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "输入与结果"
+        "text": "batch_maps_to: vector_a → transformed_a"
+      },
+      {
+        "alias": "sem__stage.ch04.linear-map.matrix-columns.evidence__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "主题证据"
       },
       {
         "op": "view.fit",
@@ -101,7 +176,7 @@
     "summary": "4.4.3 线性变换的矩阵表示",
     "version": 1
   },
-  "plan_digest": "sha256:743fb74b1ccf3e02fef8b69f66d1756015fc542b23820d2a4be441023fc89d37",
+  "plan_digest": "sha256:0be69cfd093f6e83692cc6a7e2f3a8b94c50bffec97a2078e3b7c8e5feb8b541",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -116,24 +191,32 @@
         -2.65,
         2.65
       ],
-      "caption": "显示线性关系。",
-      "id": "stage.ch04.linear-map.matrix-columns.input",
+      "caption": "4.4.3 线性变换的矩阵表示: finite typed semantic evidence",
+      "id": "stage.ch04.linear-map.matrix-columns.evidence",
       "layout": "sequence",
-      "title": "输入与结果",
+      "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.linear-map.matrix-columns.v",
-        "sem__entity.ch04.linear-map.matrix-columns.v__end",
-        "sem__entity.ch04.linear-map.matrix-columns.v__origin",
-        "sem__entity.ch04.linear-map.matrix-columns.result",
-        "sem__entity.ch04.linear-map.matrix-columns.result__end",
-        "sem__entity.ch04.linear-map.matrix-columns.result__origin",
-        "sem__relation.ch04.linear-map.matrix-columns.maps",
-        "sem__stage.ch04.linear-map.matrix-columns.input__title"
+        "sem__entity.ch04.linear-map.matrix-columns.vector_a",
+        "sem__entity.ch04.linear-map.matrix-columns.vector_a__end",
+        "sem__entity.ch04.linear-map.matrix-columns.vector_a__origin",
+        "sem__entity.ch04.linear-map.matrix-columns.transformed_a",
+        "sem__entity.ch04.linear-map.matrix-columns.transformed_a__end",
+        "sem__entity.ch04.linear-map.matrix-columns.transformed_a__origin",
+        "sem__entity.ch04.linear-map.matrix-columns.standard_e1",
+        "sem__entity.ch04.linear-map.matrix-columns.standard_e2",
+        "sem__entity.ch04.linear-map.matrix-columns.column_1",
+        "sem__entity.ch04.linear-map.matrix-columns.column_2",
+        "sem__relation.ch04.linear-map.matrix-columns.batch_maps_to",
+        "sem__stage.ch04.linear-map.matrix-columns.evidence__title"
       ],
       "visible_refs": [
-        "entity.ch04.linear-map.matrix-columns.v",
-        "entity.ch04.linear-map.matrix-columns.result",
-        "relation.ch04.linear-map.matrix-columns.maps"
+        "entity.ch04.linear-map.matrix-columns.vector_a",
+        "entity.ch04.linear-map.matrix-columns.transformed_a",
+        "entity.ch04.linear-map.matrix-columns.standard_e1",
+        "entity.ch04.linear-map.matrix-columns.standard_e2",
+        "entity.ch04.linear-map.matrix-columns.column_1",
+        "entity.ch04.linear-map.matrix-columns.column_2",
+        "relation.ch04.linear-map.matrix-columns.batch_maps_to"
       ]
     }
   ],

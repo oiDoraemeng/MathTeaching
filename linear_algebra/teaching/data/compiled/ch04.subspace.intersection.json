@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:b97d068294fb4237b84956c072ad460accaf86cdc0ec6eb6f964505620fcc0db",
+  "artifact_digest": "sha256:e569cf818df4e3c69a8ab4d828065a04c4018fa9bd423a04d3474a11579deed8",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:f94aa85f1bed1e0d86d3938c3ae4cf5934ca30010ef1414cdcf16222091f7e68",
+  "contract_digest": "sha256:be408e4819b948d08d6f499acacc8c9f6522d7b5b22aea859f500338ea074a20",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.subspace.intersection.v__origin",
+        "alias": "sem__entity.ch04.subspace.intersection.vector_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.subspace.intersection.v__end",
+        "alias": "sem__entity.ch04.subspace.intersection.vector_a__end",
         "coordinates": [
           1.0,
-          2.0
+          0.0
         ],
-        "name": "v",
+        "name": "vector_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.subspace.intersection.v",
+        "alias": "sem__entity.ch04.subspace.intersection.vector_a",
         "color": "#2F6BFF",
-        "end": "sem__entity.ch04.subspace.intersection.v__end",
+        "end": "sem__entity.ch04.subspace.intersection.vector_a__end",
         "kind": "vector",
-        "label": "v",
+        "label": "vector_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.subspace.intersection.v__origin"
+        "start": "sem__entity.ch04.subspace.intersection.vector_a__origin"
       },
       {
-        "alias": "sem__entity.ch04.subspace.intersection.result__origin",
+        "alias": "sem__entity.ch04.subspace.intersection.transformed_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,64 +43,66 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.subspace.intersection.result__end",
+        "alias": "sem__entity.ch04.subspace.intersection.transformed_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          1.0,
+          0.0
         ],
-        "name": "result",
+        "name": "transformed_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.subspace.intersection.result",
+        "alias": "sem__entity.ch04.subspace.intersection.transformed_a",
         "color": "#7B61FF",
-        "end": "sem__entity.ch04.subspace.intersection.result__end",
+        "end": "sem__entity.ch04.subspace.intersection.transformed_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "transformed_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.subspace.intersection.result__origin"
+        "start": "sem__entity.ch04.subspace.intersection.transformed_a__origin"
       },
       {
-        "alias": "sem__relation.ch04.subspace.intersection.maps",
-        "color": "#2A9D8F",
-        "direction": [
-          2.0,
-          4.0
-        ],
-        "foot_alias": "sem__relation.ch04.subspace.intersection.maps__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__relation.ch04.subspace.intersection.maps__residual",
-        "result_alias": "sem__entity.ch04.subspace.intersection.result",
-        "vector": [
-          1.0,
-          2.0
-        ]
-      },
-      {
-        "alias": "sem__projection__1",
-        "color": "#2A9D8F",
-        "direction": [
-          2.0,
-          4.0
-        ],
-        "foot_alias": "sem__projection__1__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__1__residual",
-        "result_alias": "sem__projection__1",
-        "vector": [
-          1.0,
-          2.0
-        ]
-      },
-      {
-        "alias": "sem__stage.ch04.subspace.intersection.input__title",
+        "alias": "sem__relation.ch04.subspace.intersection.spans",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "输入与结果"
+        "text": "spans: vector_a → transformed_a"
+      },
+      {
+        "alias": "cap__polygon",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ],
+          [
+            -0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.ch04.subspace.intersection.evidence__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "主题证据"
       },
       {
         "op": "view.fit",
@@ -111,7 +113,7 @@
     "summary": "4.1.2 子空间",
     "version": 1
   },
-  "plan_digest": "sha256:53c0cd47a8feee92b9c775784c8bd1253bbd91f99d9b71d5548a01b8f95f4aed",
+  "plan_digest": "sha256:a107ef2ac960250c5168b3522f16ac1858b8730aeb5ee079ff6c989b4014c0a1",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -126,25 +128,29 @@
         -2.65,
         2.65
       ],
-      "caption": "显示线性关系。",
-      "id": "stage.ch04.subspace.intersection.input",
+      "caption": "4.1.2 子空间: finite typed semantic evidence",
+      "id": "stage.ch04.subspace.intersection.evidence",
       "layout": "sequence",
-      "title": "输入与结果",
+      "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.subspace.intersection.v",
-        "sem__entity.ch04.subspace.intersection.v__end",
-        "sem__entity.ch04.subspace.intersection.v__origin",
-        "sem__entity.ch04.subspace.intersection.result",
-        "sem__entity.ch04.subspace.intersection.result__end",
-        "sem__entity.ch04.subspace.intersection.result__origin",
-        "sem__relation.ch04.subspace.intersection.maps",
-        "sem__stage.ch04.subspace.intersection.input__title",
-        "sem__projection__1"
+        "sem__entity.ch04.subspace.intersection.vector_a",
+        "sem__entity.ch04.subspace.intersection.vector_a__end",
+        "sem__entity.ch04.subspace.intersection.vector_a__origin",
+        "sem__entity.ch04.subspace.intersection.transformed_a",
+        "sem__entity.ch04.subspace.intersection.transformed_a__end",
+        "sem__entity.ch04.subspace.intersection.transformed_a__origin",
+        "sem__relation.ch04.subspace.intersection.spans",
+        "sem__stage.ch04.subspace.intersection.evidence__title",
+        "sem__span__1"
       ],
       "visible_refs": [
-        "entity.ch04.subspace.intersection.v",
-        "entity.ch04.subspace.intersection.result",
-        "relation.ch04.subspace.intersection.maps"
+        "entity.ch04.subspace.intersection.vector_a",
+        "entity.ch04.subspace.intersection.transformed_a",
+        "entity.ch04.subspace.intersection.subspace_u",
+        "entity.ch04.subspace.intersection.subspace_v",
+        "entity.ch04.subspace.intersection.intersection",
+        "entity.ch04.subspace.intersection.union_counterexample",
+        "relation.ch04.subspace.intersection.spans"
       ]
     }
   ],

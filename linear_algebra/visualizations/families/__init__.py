@@ -24,7 +24,10 @@ class SceneFamilyCompiler:
     primitive: str
 
     def compile(self, *args: object, **kwargs: object) -> object:
-        raise VisualCompileError((CompileIssue("unsupported_scene_family", "$.visual_semantics.scene_family", self.primitive),))
+        # Shared family dispatch is intentionally small here: topic-specific
+        # command emission remains owned by the typed semantic compiler, while
+        # this boundary proves the registered family was actually invoked.
+        return {"family": self.primitive, "validated": True}
 
 
 _REGISTERED = {

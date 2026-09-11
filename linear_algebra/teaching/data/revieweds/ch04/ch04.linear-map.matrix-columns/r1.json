@@ -52,11 +52,11 @@
   "claims": [
     {
       "id": "claim.ch04.linear-map.matrix-columns",
-      "statement": "4.4.3 线性变换的矩阵表示 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.4.3 线性变换的矩阵表示 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "4.4.3 线性变换的矩阵表示: finite typed semantic evidence",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.3 线性变换的矩阵表示::1::sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a"
@@ -71,14 +71,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.linear-map.matrix-columns.v",
-        "entity.ch04.linear-map.matrix-columns.result"
+        "entity.ch04.linear-map.matrix-columns.vector_a",
+        "entity.ch04.linear-map.matrix-columns.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.linear-map.matrix-columns.maps"
+        "relation.ch04.linear-map.matrix-columns.batch_maps_to"
       ],
       "stage_refs": [
-        "stage.ch04.linear-map.matrix-columns.input"
+        "stage.ch04.linear-map.matrix-columns.evidence"
       ]
     }
   ],
@@ -95,7 +95,7 @@
   ],
   "explanation": {
     "title": "4.4.3 线性变换的矩阵表示",
-    "summary": "4.4.3 线性变换的矩阵表示 的确定性讲义 artifact。",
+    "summary": "4.4.3 线性变换的矩阵表示 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -155,11 +155,15 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "standard_e1": "standard_e1",
+      "standard_e2": "standard_e2",
+      "column_1": "column_1",
+      "column_2": "column_2"
     },
     "definition": "4.4.3 线性变换的矩阵表示 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "4.4.3 线性变换的矩阵表示: finite typed semantic evidence",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -167,7 +171,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.linear-map.matrix-columns",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -177,7 +181,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "4.4.3 线性变换的矩阵表示: finite typed semantic evidence"
         ],
         "result": [
           2,
@@ -225,29 +229,109 @@
     "scene_family": "basis_change",
     "entities": [
       {
-        "id": "entity.ch04.linear-map.matrix-columns.v",
+        "id": "entity.ch04.linear-map.matrix-columns.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.linear-map.matrix-columns"
         ]
       },
       {
-        "id": "entity.ch04.linear-map.matrix-columns.result",
+        "id": "entity.ch04.linear-map.matrix-columns.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ]
+      },
+      {
+        "id": "entity.ch04.linear-map.matrix-columns.standard_e1",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "standard_e1",
+        "label": "standard_e1",
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ]
+      },
+      {
+        "id": "entity.ch04.linear-map.matrix-columns.standard_e2",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "standard_e2",
+        "label": "standard_e2",
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ]
+      },
+      {
+        "id": "entity.ch04.linear-map.matrix-columns.column_1",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "column_1",
+        "label": "column_1",
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ]
+      },
+      {
+        "id": "entity.ch04.linear-map.matrix-columns.column_2",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "column_2",
+        "label": "column_2",
         "claim_refs": [
           "claim.ch04.linear-map.matrix-columns"
         ]
@@ -255,22 +339,11 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.linear-map.matrix-columns.maps",
+        "id": "relation.ch04.linear-map.matrix-columns.batch_maps_to",
         "kind": "batch_maps_to",
-        "source_ref": "entity.ch04.linear-map.matrix-columns.v",
-        "target_ref": "entity.ch04.linear-map.matrix-columns.result",
-        "parameters": {
-          "matrix": [
-            [
-              1,
-              0
-            ],
-            [
-              0,
-              1
-            ]
-          ]
-        },
+        "source_ref": "entity.ch04.linear-map.matrix-columns.vector_a",
+        "target_ref": "entity.ch04.linear-map.matrix-columns.transformed_a",
+        "parameters": {},
         "claim_refs": [
           "claim.ch04.linear-map.matrix-columns"
         ]
@@ -278,21 +351,32 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.linear-map.matrix-columns.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.linear-map.matrix-columns.evidence",
+        "title": "主题证据",
+        "caption": "4.4.3 线性变换的矩阵表示: finite typed semantic evidence",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.linear-map.matrix-columns.v"
+          "entity.ch04.linear-map.matrix-columns.vector_a",
+          "entity.ch04.linear-map.matrix-columns.transformed_a",
+          "entity.ch04.linear-map.matrix-columns.standard_e1",
+          "entity.ch04.linear-map.matrix-columns.standard_e2",
+          "entity.ch04.linear-map.matrix-columns.column_1",
+          "entity.ch04.linear-map.matrix-columns.column_2"
         ],
         "output_entity_refs": [
-          "entity.ch04.linear-map.matrix-columns.result"
+          "entity.ch04.linear-map.matrix-columns.vector_a",
+          "entity.ch04.linear-map.matrix-columns.transformed_a",
+          "entity.ch04.linear-map.matrix-columns.standard_e1",
+          "entity.ch04.linear-map.matrix-columns.standard_e2",
+          "entity.ch04.linear-map.matrix-columns.column_1",
+          "entity.ch04.linear-map.matrix-columns.column_2"
         ],
         "relation_refs": [
-          "relation.ch04.linear-map.matrix-columns.maps"
+          "relation.ch04.linear-map.matrix-columns.batch_maps_to"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "Tej_equals_column_j"
         ]
       }
     ]
@@ -303,7 +387,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
-    "raw_reply_digest": "sha256:fc7dc04d0f2d2ea8380cc1f576209d3d29fe267dc3e0c93ed54f56ab3ad3099d",
-    "artifact_digest": "sha256:818b0f9d6858d167c2b7ea2d2d4ad06ebaba9c6eeffac624166267e4d558d4fb"
+    "raw_reply_digest": "sha256:cb3b25ab2edd5f9d184bdb334fc6a9640fe9e12cd2848419a702767c7cc09c45",
+    "artifact_digest": "sha256:62be6fb178728b0f2f93ccd5f49bcdbca544c12f0216d8a58a71635eb58d82e6"
   }
 }

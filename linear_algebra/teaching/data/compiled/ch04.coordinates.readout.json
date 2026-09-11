@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:40646e34b4f1d5ace486aa75774f18b4bbad5a901568bd209b1eb36f7d67a519",
+  "artifact_digest": "sha256:10cca440363a60a7d77e941e010c424bb0df5990ffd2a45f4529ffb1600238ed",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:204fe3130e6e71a5cbf9946ca0b64a57c3e6128534e5d5c36858d89940a43fce",
+  "contract_digest": "sha256:5c319c97c458f6ac8c98fc0d8c2dc121cda36a4a60e81d07add04795a2fd7a35",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.coordinates.readout.v__origin",
+        "alias": "sem__entity.ch04.coordinates.readout.vector_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.coordinates.readout.v__end",
+        "alias": "sem__entity.ch04.coordinates.readout.vector_a__end",
         "coordinates": [
           1.0,
-          2.0
+          0.0
         ],
-        "name": "v",
+        "name": "vector_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.coordinates.readout.v",
+        "alias": "sem__entity.ch04.coordinates.readout.vector_a",
         "color": "#2F6BFF",
-        "end": "sem__entity.ch04.coordinates.readout.v__end",
+        "end": "sem__entity.ch04.coordinates.readout.vector_a__end",
         "kind": "vector",
-        "label": "v",
+        "label": "vector_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.coordinates.readout.v__origin"
+        "start": "sem__entity.ch04.coordinates.readout.vector_a__origin"
       },
       {
-        "alias": "sem__entity.ch04.coordinates.readout.result__origin",
+        "alias": "sem__entity.ch04.coordinates.readout.transformed_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,32 +43,32 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.coordinates.readout.result__end",
+        "alias": "sem__entity.ch04.coordinates.readout.transformed_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          1.0,
+          0.0
         ],
-        "name": "result",
+        "name": "transformed_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.coordinates.readout.result",
+        "alias": "sem__entity.ch04.coordinates.readout.transformed_a",
         "color": "#7B61FF",
-        "end": "sem__entity.ch04.coordinates.readout.result__end",
+        "end": "sem__entity.ch04.coordinates.readout.transformed_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "transformed_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.coordinates.readout.result__origin"
+        "start": "sem__entity.ch04.coordinates.readout.transformed_a__origin"
       },
       {
-        "alias": "sem__relation.ch04.coordinates.readout.maps",
+        "alias": "sem__relation.ch04.coordinates.readout.batch_maps_to",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "compare: v → result"
+        "text": "batch_maps_to: vector_a → transformed_a"
       },
       {
         "bounds": [
@@ -92,13 +92,13 @@
         "step": 1.0
       },
       {
-        "alias": "sem__stage.ch04.coordinates.readout.input__title",
+        "alias": "sem__stage.ch04.coordinates.readout.evidence__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "输入与结果"
+        "text": "主题证据"
       },
       {
         "op": "view.fit",
@@ -109,7 +109,7 @@
     "summary": "4.3.3 坐标——向量的\"读数\"",
     "version": 1
   },
-  "plan_digest": "sha256:3094da6e6e9261194ecbe8cec8b998b7011c49b9f383de37c8169a7bc23d2205",
+  "plan_digest": "sha256:f6beba170b78173827ca30d7a683559d223b51f55959cba8e1afde91f93d3d1e",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -124,24 +124,27 @@
         -2.65,
         2.65
       ],
-      "caption": "显示线性关系。",
-      "id": "stage.ch04.coordinates.readout.input",
+      "caption": "4.3.3 坐标——向量的\"读数\": finite typed semantic evidence",
+      "id": "stage.ch04.coordinates.readout.evidence",
       "layout": "sequence",
-      "title": "输入与结果",
+      "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.coordinates.readout.v",
-        "sem__entity.ch04.coordinates.readout.v__end",
-        "sem__entity.ch04.coordinates.readout.v__origin",
-        "sem__entity.ch04.coordinates.readout.result",
-        "sem__entity.ch04.coordinates.readout.result__end",
-        "sem__entity.ch04.coordinates.readout.result__origin",
-        "sem__relation.ch04.coordinates.readout.maps",
-        "sem__stage.ch04.coordinates.readout.input__title"
+        "sem__entity.ch04.coordinates.readout.vector_a",
+        "sem__entity.ch04.coordinates.readout.vector_a__end",
+        "sem__entity.ch04.coordinates.readout.vector_a__origin",
+        "sem__entity.ch04.coordinates.readout.transformed_a",
+        "sem__entity.ch04.coordinates.readout.transformed_a__end",
+        "sem__entity.ch04.coordinates.readout.transformed_a__origin",
+        "sem__relation.ch04.coordinates.readout.batch_maps_to",
+        "sem__stage.ch04.coordinates.readout.evidence__title"
       ],
       "visible_refs": [
-        "entity.ch04.coordinates.readout.v",
-        "entity.ch04.coordinates.readout.result",
-        "relation.ch04.coordinates.readout.maps"
+        "entity.ch04.coordinates.readout.vector_a",
+        "entity.ch04.coordinates.readout.transformed_a",
+        "entity.ch04.coordinates.readout.standard_basis",
+        "entity.ch04.coordinates.readout.oblique_basis",
+        "entity.ch04.coordinates.readout.same_vector",
+        "relation.ch04.coordinates.readout.batch_maps_to"
       ]
     }
   ],

@@ -53,11 +53,11 @@
   "claims": [
     {
       "id": "claim.ch04.subspace.intersection",
-      "statement": "4.1.2 子空间 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.1.2 子空间 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "4.1.2 子空间: finite typed semantic evidence",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"
@@ -72,14 +72,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.subspace.intersection.v",
-        "entity.ch04.subspace.intersection.result"
+        "entity.ch04.subspace.intersection.vector_a",
+        "entity.ch04.subspace.intersection.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.subspace.intersection.maps"
+        "relation.ch04.subspace.intersection.spans"
       ],
       "stage_refs": [
-        "stage.ch04.subspace.intersection.input"
+        "stage.ch04.subspace.intersection.evidence"
       ]
     }
   ],
@@ -96,7 +96,7 @@
   ],
   "explanation": {
     "title": "4.1.2 子空间",
-    "summary": "4.1.2 子空间 的确定性讲义 artifact。",
+    "summary": "4.1.2 子空间 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -156,11 +156,15 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "subspace_u": "subspace_u",
+      "subspace_v": "subspace_v",
+      "intersection": "intersection",
+      "union_counterexample": "union_counterexample"
     },
     "definition": "4.1.2 子空间 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "4.1.2 子空间: finite typed semantic evidence",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -168,7 +172,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.subspace.intersection",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -178,7 +182,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "4.1.2 子空间: finite typed semantic evidence"
         ],
         "result": [
           2,
@@ -226,29 +230,85 @@
     "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.subspace.intersection.v",
+        "id": "entity.ch04.subspace.intersection.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.subspace.intersection"
         ]
       },
       {
-        "id": "entity.ch04.subspace.intersection.result",
+        "id": "entity.ch04.subspace.intersection.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      },
+      {
+        "id": "entity.ch04.subspace.intersection.subspace_u",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          1.0,
+          0.0
+        ],
+        "role": "subspace_u",
+        "label": "subspace_u",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      },
+      {
+        "id": "entity.ch04.subspace.intersection.subspace_v",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          0.0,
+          1.0
+        ],
+        "role": "subspace_v",
+        "label": "subspace_v",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      },
+      {
+        "id": "entity.ch04.subspace.intersection.intersection",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          0.0,
+          0.0
+        ],
+        "role": "intersection",
+        "label": "intersection",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      },
+      {
+        "id": "entity.ch04.subspace.intersection.union_counterexample",
+        "kind": "region",
+        "dimension": 2,
+        "value": [
+          1.0,
+          1.0
+        ],
+        "role": "union_counterexample",
+        "label": "union_counterexample",
         "claim_refs": [
           "claim.ch04.subspace.intersection"
         ]
@@ -256,13 +316,11 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.subspace.intersection.maps",
-        "kind": "projects_to",
-        "source_ref": "entity.ch04.subspace.intersection.v",
-        "target_ref": "entity.ch04.subspace.intersection.result",
-        "parameters": {
-          "scalar": 2
-        },
+        "id": "relation.ch04.subspace.intersection.spans",
+        "kind": "spans",
+        "source_ref": "entity.ch04.subspace.intersection.vector_a",
+        "target_ref": "entity.ch04.subspace.intersection.transformed_a",
+        "parameters": {},
         "claim_refs": [
           "claim.ch04.subspace.intersection"
         ]
@@ -270,21 +328,33 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.subspace.intersection.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.subspace.intersection.evidence",
+        "title": "主题证据",
+        "caption": "4.1.2 子空间: finite typed semantic evidence",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.subspace.intersection.v"
+          "entity.ch04.subspace.intersection.vector_a",
+          "entity.ch04.subspace.intersection.transformed_a",
+          "entity.ch04.subspace.intersection.subspace_u",
+          "entity.ch04.subspace.intersection.subspace_v",
+          "entity.ch04.subspace.intersection.intersection",
+          "entity.ch04.subspace.intersection.union_counterexample"
         ],
         "output_entity_refs": [
-          "entity.ch04.subspace.intersection.result"
+          "entity.ch04.subspace.intersection.vector_a",
+          "entity.ch04.subspace.intersection.transformed_a",
+          "entity.ch04.subspace.intersection.subspace_u",
+          "entity.ch04.subspace.intersection.subspace_v",
+          "entity.ch04.subspace.intersection.intersection",
+          "entity.ch04.subspace.intersection.union_counterexample"
         ],
         "relation_refs": [
-          "relation.ch04.subspace.intersection.maps"
+          "relation.ch04.subspace.intersection.spans"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "intersection_closed",
+          "union_not_closed"
         ]
       }
     ]
@@ -295,7 +365,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
-    "raw_reply_digest": "sha256:b97d068294fb4237b84956c072ad460accaf86cdc0ec6eb6f964505620fcc0db",
-    "artifact_digest": "sha256:8d3c7af6467dd9f97ad8b5a4e856eabd1385061935126f9031d4449428a0247d"
+    "raw_reply_digest": "sha256:e569cf818df4e3c69a8ab4d828065a04c4018fa9bd423a04d3474a11579deed8",
+    "artifact_digest": "sha256:ecd0c039013f1548a10df01c19bd81ee37f1c44e37ee363fd5b33947e9c85def"
   }
 }

@@ -52,11 +52,11 @@
   "claims": [
     {
       "id": "claim.ch04.linear-map.definition",
-      "statement": "4.4.1 线性变换的定义 的线性表示保持可检验的向量关系。",
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "statement": "4.4.1 线性变换的定义 的数学主张由显式对象、关系和不变量支持。",
+      "formula": "4.4.1 线性变换的定义: finite typed semantic evidence",
       "formula_symbols": [
-        "v",
-        "result"
+        "vector_a",
+        "transformed_a"
       ],
       "source_refs": [
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.1 线性变换的定义::1::sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb"
@@ -71,14 +71,14 @@
         "connections"
       ],
       "entity_refs": [
-        "entity.ch04.linear-map.definition.v",
-        "entity.ch04.linear-map.definition.result"
+        "entity.ch04.linear-map.definition.vector_a",
+        "entity.ch04.linear-map.definition.transformed_a"
       ],
       "relation_refs": [
-        "relation.ch04.linear-map.definition.maps"
+        "relation.ch04.linear-map.definition.maps_to"
       ],
       "stage_refs": [
-        "stage.ch04.linear-map.definition.input"
+        "stage.ch04.linear-map.definition.evidence"
       ]
     }
   ],
@@ -95,7 +95,7 @@
   ],
   "explanation": {
     "title": "4.4.1 线性变换的定义",
-    "summary": "4.4.1 线性变换的定义 的确定性讲义 artifact。",
+    "summary": "4.4.1 线性变换的定义 的确定性数学语义 artifact。",
     "sections": [
       {
         "id": "definition",
@@ -155,11 +155,15 @@
       }
     ],
     "symbol_roles": {
-      "v": "vector_a",
-      "result": "transformed_a"
+      "vector_a": "vector_a",
+      "transformed_a": "transformed_a",
+      "map_T": "map_T",
+      "sum_test": "sum_test",
+      "homogeneity_test": "homogeneity_test",
+      "origin": "origin"
     },
     "definition": "4.4.1 线性变换的定义 的对象和定义。",
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "4.4.1 线性变换的定义: finite typed semantic evidence",
     "derivation": [
       "代入 v=(1,2)。",
       "计算得到 result=(2,4)。"
@@ -167,7 +171,7 @@
     "worked_examples": [
       {
         "id": "example.ch04.linear-map.definition",
-        "title": "数值例",
+        "title": "主题数值例",
         "kind": "scalar_multiple",
         "given": [
           2,
@@ -177,7 +181,7 @@
           ]
         ],
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "4.4.1 线性变换的定义: finite typed semantic evidence"
         ],
         "result": [
           2,
@@ -225,29 +229,109 @@
     "scene_family": "basis_change",
     "entities": [
       {
-        "id": "entity.ch04.linear-map.definition.v",
+        "id": "entity.ch04.linear-map.definition.vector_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          1,
-          2
+          1.0,
+          0.0
         ],
         "role": "vector_a",
-        "label": "v",
+        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.linear-map.definition"
         ]
       },
       {
-        "id": "entity.ch04.linear-map.definition.result",
+        "id": "entity.ch04.linear-map.definition.transformed_a",
         "kind": "vector",
         "dimension": 2,
         "value": [
-          2,
-          4
+          1.0,
+          0.0
         ],
         "role": "transformed_a",
-        "label": "result",
+        "label": "transformed_a",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      },
+      {
+        "id": "entity.ch04.linear-map.definition.map_T",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "map_T",
+        "label": "map_T",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      },
+      {
+        "id": "entity.ch04.linear-map.definition.sum_test",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "sum_test",
+        "label": "sum_test",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      },
+      {
+        "id": "entity.ch04.linear-map.definition.homogeneity_test",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "homogeneity_test",
+        "label": "homogeneity_test",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      },
+      {
+        "id": "entity.ch04.linear-map.definition.origin",
+        "kind": "matrix",
+        "dimension": 2,
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "role": "origin",
+        "label": "origin",
         "claim_refs": [
           "claim.ch04.linear-map.definition"
         ]
@@ -255,12 +339,24 @@
     ],
     "relations": [
       {
-        "id": "relation.ch04.linear-map.definition.maps",
+        "id": "relation.ch04.linear-map.definition.maps_to",
         "kind": "maps_to",
-        "source_ref": "entity.ch04.linear-map.definition.v",
-        "target_ref": "entity.ch04.linear-map.definition.result",
+        "source_ref": "entity.ch04.linear-map.definition.vector_a",
+        "target_ref": "entity.ch04.linear-map.definition.transformed_a",
         "parameters": {
-          "scalar": 2
+          "matrix": [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "origin_fixed": 1.0,
+          "additivity": 1.0,
+          "homogeneity": 1.0
         },
         "claim_refs": [
           "claim.ch04.linear-map.definition"
@@ -269,21 +365,34 @@
     ],
     "stages": [
       {
-        "id": "stage.ch04.linear-map.definition.input",
-        "title": "输入与结果",
-        "caption": "显示线性关系。",
+        "id": "stage.ch04.linear-map.definition.evidence",
+        "title": "主题证据",
+        "caption": "4.4.1 线性变换的定义: finite typed semantic evidence",
         "layout": "sequence",
         "input_entity_refs": [
-          "entity.ch04.linear-map.definition.v"
+          "entity.ch04.linear-map.definition.vector_a",
+          "entity.ch04.linear-map.definition.transformed_a",
+          "entity.ch04.linear-map.definition.map_T",
+          "entity.ch04.linear-map.definition.sum_test",
+          "entity.ch04.linear-map.definition.homogeneity_test",
+          "entity.ch04.linear-map.definition.origin"
         ],
         "output_entity_refs": [
-          "entity.ch04.linear-map.definition.result"
+          "entity.ch04.linear-map.definition.vector_a",
+          "entity.ch04.linear-map.definition.transformed_a",
+          "entity.ch04.linear-map.definition.map_T",
+          "entity.ch04.linear-map.definition.sum_test",
+          "entity.ch04.linear-map.definition.homogeneity_test",
+          "entity.ch04.linear-map.definition.origin"
         ],
         "relation_refs": [
-          "relation.ch04.linear-map.definition.maps"
+          "relation.ch04.linear-map.definition.maps_to"
         ],
         "expected_invariants": [
-          "finite numeric result"
+          "finite numeric result",
+          "origin_fixed",
+          "additivity",
+          "homogeneity"
         ]
       }
     ]
@@ -294,7 +403,7 @@
     "prompt_version": "chapter-4-8-v1",
     "generated_at": "2026-09-12T00:00:00Z",
     "source_hash": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
-    "raw_reply_digest": "sha256:7d7e42faa9053a79f343d06dc7d06e343ff091625f39d2e9a40c51db09882732",
-    "artifact_digest": "sha256:dc64759f1baf5cb1c38567fa2a8d37476c8ec9ca8bec0c235107a47a7ab09f36"
+    "raw_reply_digest": "sha256:b81f2d054ff8c866a7662a3e5cdf7196e5d663eab1305eb71b0771d1ad5a065a",
+    "artifact_digest": "sha256:12b3a4a902896f1d8e7697f5e5ee2f423359c29ab42dc3094f599f554a7d21dd"
   }
 }

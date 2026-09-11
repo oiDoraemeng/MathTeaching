@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:14b0d9e690f185896b545c9661ec6345900ad76c100a11394da3f1281814ecad",
+  "artifact_digest": "sha256:ab3dbcb9571185755ec0361d38bf7a11243e64481bab3b466814ce4c41f9123a",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:663d97a1ea31f2746905059f56c5a54b8b77c75a593389efa44772b334eaa873",
+  "contract_digest": "sha256:4813270ed88d3567752b109e843ddcd036ddabd930e0c7e9707aeb2d0ce9fc75",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.rank.collapse.v__origin",
+        "alias": "sem__entity.ch04.rank.collapse.vector_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.rank.collapse.v__end",
+        "alias": "sem__entity.ch04.rank.collapse.vector_a__end",
         "coordinates": [
           1.0,
-          2.0
+          0.0
         ],
-        "name": "v",
+        "name": "vector_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.rank.collapse.v",
+        "alias": "sem__entity.ch04.rank.collapse.vector_a",
         "color": "#2F6BFF",
-        "end": "sem__entity.ch04.rank.collapse.v__end",
+        "end": "sem__entity.ch04.rank.collapse.vector_a__end",
         "kind": "vector",
-        "label": "v",
+        "label": "vector_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.rank.collapse.v__origin"
+        "start": "sem__entity.ch04.rank.collapse.vector_a__origin"
       },
       {
-        "alias": "sem__entity.ch04.rank.collapse.result__origin",
+        "alias": "sem__entity.ch04.rank.collapse.transformed_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,33 +43,33 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.rank.collapse.result__end",
+        "alias": "sem__entity.ch04.rank.collapse.transformed_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          1.0,
+          0.0
         ],
-        "name": "result",
+        "name": "transformed_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.rank.collapse.result",
+        "alias": "sem__entity.ch04.rank.collapse.transformed_a",
         "color": "#7B61FF",
-        "end": "sem__entity.ch04.rank.collapse.result__end",
+        "end": "sem__entity.ch04.rank.collapse.transformed_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "transformed_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.rank.collapse.result__origin"
+        "start": "sem__entity.ch04.rank.collapse.transformed_a__origin"
       },
       {
-        "alias": "sem__relation.ch04.rank.collapse.maps",
+        "alias": "sem__entity.ch04.rank.collapse.rank_two",
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#7B61FF",
+        "color": "#6B7280",
         "matrix": [
           [
             1.0,
@@ -84,13 +84,79 @@
         "step": 1.0
       },
       {
-        "alias": "sem__stage.ch04.rank.collapse.input__title",
+        "alias": "sem__entity.ch04.rank.collapse.rank_one",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.rank.collapse.rank_zero",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__relation.ch04.rank.collapse.batch_maps_to",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__stage.ch04.rank.collapse.evidence__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "输入与结果"
+        "text": "主题证据"
       },
       {
         "op": "view.fit",
@@ -101,13 +167,13 @@
     "summary": "4.2.4 极大无关组与秩",
     "version": 1
   },
-  "plan_digest": "sha256:7c842edf36ec0e1631ae2bd559ea1f676cf10e7ec40e9a101603424e428bd0fe",
+  "plan_digest": "sha256:eded33f3fe6094264c6c463c606715d54fb8e2b7fd9f7063f9a78165b8f6644f",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "subspace_region",
+  "scene_family": "basis_change",
   "schema_version": 1,
   "source_hash": "sha256:19e5d74100e2416f18026e10fbc79d06541197cb81692c73189a33d1bddff536",
   "stages": [
@@ -116,24 +182,30 @@
         -2.65,
         2.65
       ],
-      "caption": "显示线性关系。",
-      "id": "stage.ch04.rank.collapse.input",
+      "caption": "4.2.4 极大无关组与秩: finite typed semantic evidence",
+      "id": "stage.ch04.rank.collapse.evidence",
       "layout": "sequence",
-      "title": "输入与结果",
+      "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.rank.collapse.v",
-        "sem__entity.ch04.rank.collapse.v__end",
-        "sem__entity.ch04.rank.collapse.v__origin",
-        "sem__entity.ch04.rank.collapse.result",
-        "sem__entity.ch04.rank.collapse.result__end",
-        "sem__entity.ch04.rank.collapse.result__origin",
-        "sem__relation.ch04.rank.collapse.maps",
-        "sem__stage.ch04.rank.collapse.input__title"
+        "sem__entity.ch04.rank.collapse.vector_a",
+        "sem__entity.ch04.rank.collapse.vector_a__end",
+        "sem__entity.ch04.rank.collapse.vector_a__origin",
+        "sem__entity.ch04.rank.collapse.transformed_a",
+        "sem__entity.ch04.rank.collapse.transformed_a__end",
+        "sem__entity.ch04.rank.collapse.transformed_a__origin",
+        "sem__entity.ch04.rank.collapse.rank_two",
+        "sem__entity.ch04.rank.collapse.rank_one",
+        "sem__entity.ch04.rank.collapse.rank_zero",
+        "sem__relation.ch04.rank.collapse.batch_maps_to",
+        "sem__stage.ch04.rank.collapse.evidence__title"
       ],
       "visible_refs": [
-        "entity.ch04.rank.collapse.v",
-        "entity.ch04.rank.collapse.result",
-        "relation.ch04.rank.collapse.maps"
+        "entity.ch04.rank.collapse.vector_a",
+        "entity.ch04.rank.collapse.transformed_a",
+        "entity.ch04.rank.collapse.rank_two",
+        "entity.ch04.rank.collapse.rank_one",
+        "entity.ch04.rank.collapse.rank_zero",
+        "relation.ch04.rank.collapse.batch_maps_to"
       ]
     }
   ],

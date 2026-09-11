@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:ec896d2c5e0df363003d38f8ce6eb6558ad632aad5627cdfa4c38e42b83a196b",
+  "artifact_digest": "sha256:c71843bac2f52879b3783474ac1116cdaabf76d6e139a670c08917c1e21f56eb",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:64f6be4b5e069d7ee11a0180094660640732f633d0c637f7d359ac7d867daccf",
+  "contract_digest": "sha256:1d4e9422e719ffbb5967acd668666929dccdb1bc73658cb8ccdd48df98380eca",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.nullspace.test.v__origin",
+        "alias": "sem__entity.ch04.nullspace.test.vector_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.nullspace.test.v__end",
+        "alias": "sem__entity.ch04.nullspace.test.vector_a__end",
         "coordinates": [
           1.0,
-          2.0
+          0.0
         ],
-        "name": "v",
+        "name": "vector_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.nullspace.test.v",
+        "alias": "sem__entity.ch04.nullspace.test.vector_a",
         "color": "#2F6BFF",
-        "end": "sem__entity.ch04.nullspace.test.v__end",
+        "end": "sem__entity.ch04.nullspace.test.vector_a__end",
         "kind": "vector",
-        "label": "v",
+        "label": "vector_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.nullspace.test.v__origin"
+        "start": "sem__entity.ch04.nullspace.test.vector_a__origin"
       },
       {
-        "alias": "sem__entity.ch04.nullspace.test.result__origin",
+        "alias": "sem__entity.ch04.nullspace.test.transformed_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,41 +43,33 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.nullspace.test.result__end",
+        "alias": "sem__entity.ch04.nullspace.test.transformed_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          1.0,
+          0.0
         ],
-        "name": "result",
+        "name": "transformed_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.nullspace.test.result",
+        "alias": "sem__entity.ch04.nullspace.test.transformed_a",
         "color": "#7B61FF",
-        "end": "sem__entity.ch04.nullspace.test.result__end",
+        "end": "sem__entity.ch04.nullspace.test.transformed_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "transformed_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.nullspace.test.result__origin"
+        "start": "sem__entity.ch04.nullspace.test.transformed_a__origin"
       },
       {
-        "alias": "sem__relation.ch04.nullspace.test.maps",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "collapses_to: v → result"
-      },
-      {
+        "alias": "sem__entity.ch04.nullspace.test.columns",
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#7B61FF",
+        "color": "#6B7280",
         "matrix": [
           [
             1.0,
@@ -92,13 +84,79 @@
         "step": 1.0
       },
       {
-        "alias": "sem__stage.ch04.nullspace.test.input__title",
+        "alias": "sem__entity.ch04.nullspace.test.null_vector",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.nullspace.test.trivial_nullspace",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__relation.ch04.nullspace.test.batch_maps_to",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__stage.ch04.nullspace.test.evidence__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "输入与结果"
+        "text": "主题证据"
       },
       {
         "op": "view.fit",
@@ -109,13 +167,13 @@
     "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$",
     "version": 1
   },
-  "plan_digest": "sha256:5e4fc774ab89d89747c8a39d95363a335b1c94c0dcc80440f07f5af0a4088d33",
+  "plan_digest": "sha256:1f2902d91e72f7a23ae945531188e20696b505c823a8aa834add0974c7e832ea",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "subspace_region",
+  "scene_family": "basis_change",
   "schema_version": 1,
   "source_hash": "sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d",
   "stages": [
@@ -124,24 +182,30 @@
         -2.65,
         2.65
       ],
-      "caption": "显示线性关系。",
-      "id": "stage.ch04.nullspace.test.input",
+      "caption": "A(1,-1,0)^T=0,\\quad Ax=0",
+      "id": "stage.ch04.nullspace.test.evidence",
       "layout": "sequence",
-      "title": "输入与结果",
+      "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.nullspace.test.v",
-        "sem__entity.ch04.nullspace.test.v__end",
-        "sem__entity.ch04.nullspace.test.v__origin",
-        "sem__entity.ch04.nullspace.test.result",
-        "sem__entity.ch04.nullspace.test.result__end",
-        "sem__entity.ch04.nullspace.test.result__origin",
-        "sem__relation.ch04.nullspace.test.maps",
-        "sem__stage.ch04.nullspace.test.input__title"
+        "sem__entity.ch04.nullspace.test.vector_a",
+        "sem__entity.ch04.nullspace.test.vector_a__end",
+        "sem__entity.ch04.nullspace.test.vector_a__origin",
+        "sem__entity.ch04.nullspace.test.transformed_a",
+        "sem__entity.ch04.nullspace.test.transformed_a__end",
+        "sem__entity.ch04.nullspace.test.transformed_a__origin",
+        "sem__entity.ch04.nullspace.test.columns",
+        "sem__entity.ch04.nullspace.test.null_vector",
+        "sem__entity.ch04.nullspace.test.trivial_nullspace",
+        "sem__relation.ch04.nullspace.test.batch_maps_to",
+        "sem__stage.ch04.nullspace.test.evidence__title"
       ],
       "visible_refs": [
-        "entity.ch04.nullspace.test.v",
-        "entity.ch04.nullspace.test.result",
-        "relation.ch04.nullspace.test.maps"
+        "entity.ch04.nullspace.test.vector_a",
+        "entity.ch04.nullspace.test.transformed_a",
+        "entity.ch04.nullspace.test.columns",
+        "entity.ch04.nullspace.test.null_vector",
+        "entity.ch04.nullspace.test.trivial_nullspace",
+        "relation.ch04.nullspace.test.batch_maps_to"
       ]
     }
   ],

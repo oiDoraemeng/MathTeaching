@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:0baf81756cb03be188c8a0fcd72ee5cfa3775bfc789914d6d0c442f5abd0449e",
+  "artifact_digest": "sha256:9dd8ae9f7250c26811f5720e67e2d5a560c103b1669ded7edbde0a978504e431",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:c4675998d7fe257c9475358ae298054be94a85ad5f4c266e1d36e398d3d5f0fa",
+  "contract_digest": "sha256:c4b308eec72ff0ca91396ffce97e58d3924a764d469d9b258541523ac4676b1a",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.basis.span.v__origin",
+        "alias": "sem__entity.ch04.basis.span.vector_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.basis.span.v__end",
+        "alias": "sem__entity.ch04.basis.span.vector_a__end",
         "coordinates": [
           1.0,
-          2.0
+          0.0
         ],
-        "name": "v",
+        "name": "vector_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.basis.span.v",
+        "alias": "sem__entity.ch04.basis.span.vector_a",
         "color": "#2F6BFF",
-        "end": "sem__entity.ch04.basis.span.v__end",
+        "end": "sem__entity.ch04.basis.span.vector_a__end",
         "kind": "vector",
-        "label": "v",
+        "label": "vector_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.basis.span.v__origin"
+        "start": "sem__entity.ch04.basis.span.vector_a__origin"
       },
       {
-        "alias": "sem__entity.ch04.basis.span.result__origin",
+        "alias": "sem__entity.ch04.basis.span.transformed_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,74 +43,66 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.basis.span.result__end",
+        "alias": "sem__entity.ch04.basis.span.transformed_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          1.0,
+          0.0
         ],
-        "name": "result",
+        "name": "transformed_a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.basis.span.result",
+        "alias": "sem__entity.ch04.basis.span.transformed_a",
         "color": "#7B61FF",
-        "end": "sem__entity.ch04.basis.span.result__end",
+        "end": "sem__entity.ch04.basis.span.transformed_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "transformed_a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.basis.span.result__origin"
+        "start": "sem__entity.ch04.basis.span.transformed_a__origin"
       },
       {
-        "alias": "sem__relation.ch04.basis.span.maps",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__span__1",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__stage.ch04.basis.span.input__title",
+        "alias": "sem__relation.ch04.basis.span.spans",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "输入与结果"
+        "text": "spans: vector_a → transformed_a"
+      },
+      {
+        "alias": "cap__polygon",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ],
+          [
+            -0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.ch04.basis.span.evidence__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "主题证据"
       },
       {
         "op": "view.fit",
@@ -121,13 +113,13 @@
     "summary": "4.3.1 基的定义",
     "version": 1
   },
-  "plan_digest": "sha256:cf1da0e91eeb6e103ceaf7c92d5b7247cde38727ddd90221bcc751529e58744a",
+  "plan_digest": "sha256:25116ed927ab2856157549c1c387c0236156928d846976a803118b284841968a",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "basis_change",
+  "scene_family": "subspace_region",
   "schema_version": 1,
   "source_hash": "sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026",
   "stages": [
@@ -136,25 +128,29 @@
         -2.65,
         2.65
       ],
-      "caption": "显示线性关系。",
-      "id": "stage.ch04.basis.span.input",
+      "caption": "4.3.1 基的定义: finite typed semantic evidence",
+      "id": "stage.ch04.basis.span.evidence",
       "layout": "sequence",
-      "title": "输入与结果",
+      "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.basis.span.v",
-        "sem__entity.ch04.basis.span.v__end",
-        "sem__entity.ch04.basis.span.v__origin",
-        "sem__entity.ch04.basis.span.result",
-        "sem__entity.ch04.basis.span.result__end",
-        "sem__entity.ch04.basis.span.result__origin",
-        "sem__relation.ch04.basis.span.maps",
-        "sem__stage.ch04.basis.span.input__title",
+        "sem__entity.ch04.basis.span.vector_a",
+        "sem__entity.ch04.basis.span.vector_a__end",
+        "sem__entity.ch04.basis.span.vector_a__origin",
+        "sem__entity.ch04.basis.span.transformed_a",
+        "sem__entity.ch04.basis.span.transformed_a__end",
+        "sem__entity.ch04.basis.span.transformed_a__origin",
+        "sem__relation.ch04.basis.span.spans",
+        "sem__stage.ch04.basis.span.evidence__title",
         "sem__span__1"
       ],
       "visible_refs": [
-        "entity.ch04.basis.span.v",
-        "entity.ch04.basis.span.result",
-        "relation.ch04.basis.span.maps"
+        "entity.ch04.basis.span.vector_a",
+        "entity.ch04.basis.span.transformed_a",
+        "entity.ch04.basis.span.independent_basis",
+        "entity.ch04.basis.span.spanning_set",
+        "entity.ch04.basis.span.too_few",
+        "entity.ch04.basis.span.too_many",
+        "relation.ch04.basis.span.spans"
       ]
     }
   ],
