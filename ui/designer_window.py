@@ -1931,6 +1931,23 @@ class MainWindow:
         if name in {"geometry.parallelogram3d", "geometry.parallelepiped", "geometry.oriented_volume"}:
             self._command_upsert_solid3d(operation)
             return
+        if name in {"geometry.projection3d", "geometry.orthogonalization", "geometry.spectrum"}:
+            controller = self._pane_scene().geometry3d_controller
+            if controller is None:
+                raise CommandError("该教学几何操作需要处于三维场景。")
+            alias = str(operation.get("alias", "spectrum"))
+            self._pane_scene()._agent_geometry3d[alias] = dict(operation)
+            if name == "geometry.projection3d":
+                controller.add_projection3d(alias, tuple(operation["vector"]), tuple(operation["foot"]), tuple(operation["residual"]))
+            elif name == "geometry.orthogonalization":
+                for stage in operation["stages"]:
+                    controller.add_orthogonalization_stage(str(stage["id"]), tuple(stage["residual"]), tuple(stage["normalized"]))
+            else:
+                for root, eigenspace in dict(operation.get("eigenspaces", {})).items():
+                    for index, vector in enumerate(eigenspace):
+                        if len(vector) == 3:
+                            controller.add_linear(f"{root}__direction_{index}", (0.0, 0.0, 0.0), tuple(vector))
+            return
         if name == "point.upsert":
             self._command_upsert_point(operation)
             return
