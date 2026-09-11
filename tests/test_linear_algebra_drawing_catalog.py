@@ -26,7 +26,7 @@ def test_excluded_metadata_is_not_indexed():
     assert not {item.topic_id for item in entries} & EXCLUDED_TOPIC_IDS
 
 
-@pytest.mark.parametrize("text", ["| `bad` |", "| `ch04.bad` | x | y | z | w |", "| ch04.bad | | claim | cap | gap |"])
+@pytest.mark.parametrize("text", ["| `bad` |", "| `ch04.bad_` | x | y | z | w |", "| ch04.bad | | claim | cap | gap |"])
 def test_malformed_rows_are_rejected(tmp_path: Path, text: str):
     path = tmp_path / "catalog.md"
     path.write_text("# Chapter 4\n\n" + text + "\n", encoding="utf-8")
@@ -36,7 +36,22 @@ def test_malformed_rows_are_rejected(tmp_path: Path, text: str):
 
 def test_validator_rejects_short_topic_ids_and_wrong_distribution():
     entries = load_drawing_catalog(CATALOG)
-    bad = entries[:1] + (entries[1].__class__("ch04.bad", 4, entries[1].source_path, entries[1].visual_claims, entries[1].existing_capabilities, entries[1].missing_capabilities),)
+    bad = entries[:1] + (entries[1].__class__("ch04.bad_", 4, entries[1].source_path, entries[1].visual_claims, entries[1].existing_capabilities, entries[1].missing_capabilities),)
     errors = validate_drawing_catalog(bad)
     assert any("invalid topic_id" in error for error in errors)
     assert any("expected 39" in error for error in errors)
+
+
+def test_validator_rejects_topic_id_chapter_mismatch():
+    entries = load_drawing_catalog(CATALOG)
+    entry = entries[0]
+    mismatched = entry.__class__(
+        "ch05." + entry.topic_id.split(".", 1)[1],
+        entry.chapter_number,
+        entry.source_path,
+        entry.visual_claims,
+        entry.existing_capabilities,
+        entry.missing_capabilities,
+    )
+    errors = validate_drawing_catalog((mismatched,))
+    assert f"invalid topic_id: {mismatched.topic_id}" in errors

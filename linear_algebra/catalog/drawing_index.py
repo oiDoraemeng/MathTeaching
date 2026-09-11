@@ -66,7 +66,8 @@ def validate_drawing_catalog(entries: tuple[DrawingCatalogEntry, ...] | list[Dra
         seen.add(entry.topic_id)
         if entry.chapter_number not in range(4, 9):
             errors.append(f"invalid chapter: {entry.topic_id}")
-        if not _TOPIC_ID.fullmatch(entry.topic_id) or entry.topic_id.endswith(".bad"):
+        topic_match = _TOPIC_ID.fullmatch(entry.topic_id)
+        if topic_match is None or int(topic_match.group(1)) != entry.chapter_number:
             errors.append(f"invalid topic_id: {entry.topic_id}")
         if not entry.source_path or not all(entry.source_path):
             errors.append(f"empty source path: {entry.topic_id}")
