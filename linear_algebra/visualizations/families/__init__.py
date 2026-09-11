@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..compiler import VisualCompileError, CompileIssue
+from .subspace import SubspaceFamilyCompiler, SubspaceCompileResult
 
 
 @dataclass(frozen=True)

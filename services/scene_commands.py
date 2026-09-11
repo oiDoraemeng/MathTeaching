@@ -123,6 +123,9 @@ _ALLOWED_OPERATIONS = frozenset(
         "geometry.projection",
         "geometry.transformed_grid",
         "geometry.subspace_region",
+        "geometry.subspace3d",
+        "geometry.affine_solution",
+        "geometry.mapping_bundle",
         "geometry.staged_transform",
         "geometry.oriented_area",
         "geometry.parallelogram3d",
@@ -166,6 +169,9 @@ _TWO_D_OPERATIONS = frozenset(
         "geometry.projection",
         "geometry.transformed_grid",
         "geometry.subspace_region",
+        "geometry.subspace3d",
+        "geometry.affine_solution",
+        "geometry.mapping_bundle",
         "geometry.staged_transform",
         "geometry.oriented_area",
     }
@@ -480,6 +486,18 @@ class SceneCommandService:
         elif name == "geometry.intersection":
             _require_text(operation, "first")
             _require_text(operation, "second")
+        elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
+            dimension = operation.get("dimension", 3)
+            if dimension not in (2, 3):
+                raise CommandError("subspace dimension 必须为 2 或 3。")
+            for field in ("origin", "offset"):
+                if field in operation:
+                    _require_coordinates(operation[field], dimensions=int(dimension))
+            basis = operation.get("basis")
+            if not isinstance(basis, (list, tuple)) or not basis or len(basis) > 3:
+                raise CommandError("subspace basis 必须包含 1 到 3 个向量。")
+            for vector in basis:
+                _require_coordinates(vector, dimensions=int(dimension))
         elif name in {"curve.delete", "point.delete", "linear.delete", "annotation.delete", "surface.delete"}:
             _require_text(operation, "alias")
         elif name == "scene.clear":
