@@ -135,6 +135,7 @@ _ALLOWED_OPERATIONS = frozenset(
         "plane3d.upsert",
         "geometry.intersection",
         "geometry.constraint",
+        "geometry.matrix_tableau",
     }
 )
 _SCENE_VALUES = frozenset({"2d", "3d"})
@@ -515,6 +516,47 @@ class SceneCommandService:
             budget_errors = validate_budget("lecture-v1", scene=str(operation.get("scene", "3d" if len(matrix) == 3 else "2d")), entity_count=entity_count, stage_count=stage_count, sample_count=sample_count, bounds=tuple(float(value) for value in bounds))
             if budget_errors:
                 raise CommandError("constraint render_budget: " + "; ".join(budget_errors))
+        elif name == "geometry.matrix_tableau":
+            matrix = operation.get("matrix")
+            rhs = operation.get("rhs")
+            if not isinstance(matrix, (list, tuple)) or len(matrix) not in (2, 3) or not isinstance(rhs, (list, tuple)) or len(rhs) != len(matrix):
+                raise CommandError("tableau matrix/rhs dimension mismatch")
+            width = len(matrix[0]) if matrix and isinstance(matrix[0], (list, tuple)) else 0
+            if width not in (2, 3) or any(not isinstance(row, (list, tuple)) or len(row) != width for row in matrix):
+                raise CommandError("tableau matrix must be a bounded rectangular matrix")
+            for row in matrix:
+                for value in row:
+                    _require_finite_number(value, "tableau matrix")
+            for value in rhs:
+                _require_finite_number(value, "tableau rhs")
+            state = operation.get("solution_state", "unknown")
+            if state not in {"unique", "none", "infinite", "unknown"}:
+                raise CommandError("tableau solution_state is invalid")
+            rank = operation.get("rank", 0)
+            augmented_rank = operation.get("augmented_rank", rank)
+            if any(isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in (rank, augmented_rank)) or augmented_rank < rank:
+                raise CommandError("tableau rank invariants are invalid")
+            stages = operation.get("stages")
+            if not isinstance(stages, (list, tuple)) or not stages:
+                raise CommandError("tableau stages must be non-empty")
+            for stage in stages:
+                if not isinstance(stage, dict):
+                    raise CommandError("tableau stage must be an object")
+                _require_text(stage, "alias")
+                stage_matrix = stage.get("matrix")
+                stage_rhs = stage.get("rhs")
+                if not isinstance(stage_matrix, (list, tuple)) or len(stage_matrix) != len(matrix) or any(not isinstance(row, (list, tuple)) or len(row) != width for row in stage_matrix):
+                    raise CommandError("tableau stage matrix dimension mismatch")
+                if not isinstance(stage_rhs, (list, tuple)) or len(stage_rhs) != len(matrix):
+                    raise CommandError("tableau stage rhs dimension mismatch")
+                for row in stage_matrix:
+                    for value in row:
+                        _require_finite_number(value, "tableau stage matrix")
+                for value in stage_rhs:
+                    _require_finite_number(value, "tableau stage rhs")
+                highlights = stage.get("highlight_rows", ())
+                if not isinstance(highlights, (list, tuple)) or any(isinstance(row, bool) or not isinstance(row, int) or not 0 <= row < len(matrix) for row in highlights):
+                    raise CommandError("tableau highlight_rows are invalid")
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):

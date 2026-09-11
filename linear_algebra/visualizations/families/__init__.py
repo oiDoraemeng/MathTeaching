@@ -11,6 +11,7 @@ from dataclasses import dataclass
 
 from ..compiler import VisualCompileError, CompileIssue
 from .subspace import SubspaceFamilyCompiler, SubspaceCompileResult
+from .tableau import MatrixTableauCompiler, TableauCompileResult, TableauStage, Swap, Scale, Eliminate, apply_row_operation
 
 
 @dataclass(frozen=True)
@@ -41,4 +42,4 @@ def registered_families() -> tuple[str, ...]:
     return tuple(sorted(_REGISTERED))
 
 
-__all__ = ["SceneFamilyCompiler", "family_compiler_for", "registered_families"]
+__all__ = ["SceneFamilyCompiler", "family_compiler_for", "registered_families", "MatrixTableauCompiler", "TableauCompileResult", "TableauStage", "Swap", "Scale", "Eliminate", "apply_row_operation"]

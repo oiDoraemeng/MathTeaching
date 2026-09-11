@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Mapping
+
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
@@ -34,6 +36,9 @@ class LinearAlgebraContentView(QWidget):
         self.connections_label = QLabel(self)
         self.analogy_boundary_label = QLabel(self)
         self.read_guide_label = QLabel(self)
+        self.tableau_title_label = QLabel(self)
+        self.tableau_caption_label = QLabel(self)
+        self.tableau_highlight_label = QLabel(self)
         self._structured_labels = (
             self.definition_label,
             self.derivation_label,
@@ -45,6 +50,9 @@ class LinearAlgebraContentView(QWidget):
             self.connections_label,
             self.analogy_boundary_label,
             self.read_guide_label,
+            self.tableau_title_label,
+            self.tableau_caption_label,
+            self.tableau_highlight_label,
         )
         for label in (
             self.summary_label,
@@ -53,6 +61,9 @@ class LinearAlgebraContentView(QWidget):
             self.meaning_label,
             self.conclusion_label,
             *self._structured_labels,
+            self.tableau_title_label,
+            self.tableau_caption_label,
+            self.tableau_highlight_label,
         ):
             label.setWordWrap(True)
             label.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
@@ -68,7 +79,27 @@ class LinearAlgebraContentView(QWidget):
             layout.addWidget(label)
         for label in self._structured_labels:
             label.hide()
+        for label in (self.tableau_title_label, self.tableau_caption_label, self.tableau_highlight_label):
+            label.hide()
         self.setVisible(False)
+
+    def set_tableau_stage(self, stage: Mapping[str, object] | object) -> None:
+        """Render storyboard metadata without interpreting matrix JSON."""
+        def value(name: str, default: object = "") -> object:
+            if isinstance(stage, Mapping):
+                return stage.get(name, default)
+            return getattr(stage, name, default)
+
+        title = str(value("title", ""))
+        caption = str(value("caption", ""))
+        rows = value("highlight_rows", ())
+        if not isinstance(rows, (list, tuple)):
+            rows = ()
+        self.tableau_title_label.setText(title)
+        self.tableau_caption_label.setText(caption)
+        self.tableau_highlight_label.setText("高亮行：" + ", ".join(str(int(row) + 1) for row in rows))
+        for label, text in ((self.tableau_title_label, title), (self.tableau_caption_label, caption), (self.tableau_highlight_label, rows)):
+            label.setVisible(bool(text))
 
     def set_content(self, content: ExplanationContent | ExplanationContentV2) -> None:
         self.title_label.setText(content.title)
