@@ -58,7 +58,11 @@ def test_main_window_3d_dispatcher_records_spectrum_projection_and_orthogonaliza
     window._apply_scene_command({"op": "geometry.projection3d", "alias": "projection", "vector": (1.0, 0.0, 0.0), "foot": (0.5, 0.0, 0.0), "residual": (0.5, 0.0, 0.0)})
     window._apply_scene_command({"op": "geometry.orthogonalization", "alias": "orthogonalization", "stages": ({"id": "orthogonalization__stage_0", "residual": (1.0, 0.0, 0.0), "normalized": (1.0, 0.0, 0.0)},), "vectors": ((1.0, 0.0, 0.0),)})
     assert ("direction", "spectrum__eigenspace_0__direction_0") in controller.calls
-    assert {kind for kind, _ in controller.calls} >= {"projection", "residual", "right-angle", "stage"}
+    projection_aliases = {alias for kind, alias in controller.calls if kind in {"projection", "residual", "right-angle"}}
+    assert projection_aliases == {"projection__projection", "projection__residual", "projection__right_angle"}
+    stage_aliases = {alias for kind, alias in controller.calls if kind == "stage"}
+    assert stage_aliases == {"orthogonalization__stage_0"}
+    assert len(stage_aliases) == 1
 
 
 def test_spectrum_rejects_nonfinite():
