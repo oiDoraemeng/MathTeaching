@@ -25,7 +25,7 @@ _COMMON_FIELDS = ("alias", "dimension", "claim_refs", "stage_id", "role", "data"
 _SPECS: tuple[SemanticPrimitiveSpec, ...] = (
     SemanticPrimitiveSpec("subspace_family", ("geometry.subspace_region", "geometry.subspace3d"), (2, 3), (*_COMMON_FIELDS, "origin", "basis", "translation")),
     SemanticPrimitiveSpec("domain_image_map", ("geometry.mapping_bundle",), (2, 3), (*_COMMON_FIELDS, "domain_basis", "kernel_basis", "image_basis", "input_vectors", "output_vectors", "relations")),
-    SemanticPrimitiveSpec("affine_solution_set", ("geometry.subspace_region", "geometry.subspace3d", "geometry.affine_solution"), (2, 3), (*_COMMON_FIELDS, "particular_solution", "nullspace_basis", "translation")),
+    SemanticPrimitiveSpec("affine_solution_set", ("geometry.affine_solution",), (2, 3), (*_COMMON_FIELDS, "particular_solution", "nullspace_basis", "translation")),
     SemanticPrimitiveSpec("constraint_intersection", ("geometry.constraint", "geometry.intersection"), (2, 3), (*_COMMON_FIELDS, "constraints", "intersection")),
     SemanticPrimitiveSpec("elimination_tableau", ("geometry.matrix_tableau",), (2, 3), (*_COMMON_FIELDS, "matrix", "rhs", "row_operation", "highlight_rows")),
     SemanticPrimitiveSpec("least_squares_bundle", ("geometry.least_squares",), (2, 3), (*_COMMON_FIELDS, "data_points", "fit_kind", "fit_parameters", "projection_points", "residuals", "orthogonality_pairs")),
@@ -37,7 +37,7 @@ _SPECS: tuple[SemanticPrimitiveSpec, ...] = (
 )
 _BY_NAME = {spec.name: spec for spec in _SPECS}
 _OPS = {op for spec in _SPECS for op in spec.command_ops}
-_ROLES = frozenset((*ROLE_COLORS, "primary", "result"))
+_ROLES = frozenset(ROLE_COLORS)
 
 
 def primitive_spec(name: str) -> SemanticPrimitiveSpec:

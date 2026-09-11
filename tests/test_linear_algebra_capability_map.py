@@ -19,6 +19,7 @@ def test_all_extended_primitives_have_command_mapping() -> None:
     }
     assert expected <= names
     assert primitive_spec("quadratic_level_set").command_ops == ("geometry.quadratic_level_set",)
+    assert primitive_spec("affine_solution_set").command_ops == ("geometry.affine_solution",)
 
 
 @pytest.mark.parametrize("payload, field", [
@@ -32,3 +33,8 @@ def test_all_extended_primitives_have_command_mapping() -> None:
 def test_payload_header_rejects_invalid_values(payload: dict[str, object], field: str) -> None:
     errors = validate_payload_header(payload)
     assert field in " ".join(errors)
+
+
+def test_payload_header_uses_only_controlled_palette_roles() -> None:
+    payload = {"op": "geometry.spectrum", "dimension": 2, "role": "primary", "claim_refs": ["c"]}
+    assert any("role" in error for error in validate_payload_header(payload))
