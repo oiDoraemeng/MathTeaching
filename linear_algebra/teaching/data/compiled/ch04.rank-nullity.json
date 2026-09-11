@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:c27a42ab5add4d80726ef1f795a5383931ed3f4fc4cc8ff0cbdbacf96e5fed02",
+  "artifact_digest": "sha256:d759b84c0af9a35ada374e4ab7e6322a3159cc9cbac330102e7763d8db7340dd",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:5dcab16ea32249c42c7f4ad3101492094d584d7794538c3ac40fa4cf7140c1d6",
+  "contract_digest": "sha256:d1b253c4d0626b6b7b073953dde30e7c474751b541bb69bafd42fd77cc4877da",
   "plan": {
     "operations": [
       {
@@ -68,28 +68,7 @@
           -2.65,
           2.65
         ],
-        "text": "maps_to: v → result"
-      },
-      {
-        "basis": [
-          [
-            1.0,
-            2.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "text": "compare: v → result"
       },
       {
         "alias": "sem__stage.ch04.rank-nullity.input__title",
@@ -109,13 +88,13 @@
     "summary": "4.5.2 秩-零化度定理",
     "version": 1
   },
-  "plan_digest": "sha256:feec93a5fa9f21a1ba1477c451adcd53cc2a93c1cd8228eb3952ea79dd22875c",
+  "plan_digest": "sha256:114d39eeda7b9b11c7ac8323e15aea5f0eee9e05db176dd8f6030f38e48959db",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "subspace_region",
+  "scene_family": "affine_solution",
   "schema_version": 1,
   "source_hash": "sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa",
   "stages": [
@@ -136,8 +115,7 @@
         "sem__entity.ch04.rank-nullity.result__end",
         "sem__entity.ch04.rank-nullity.result__origin",
         "sem__relation.ch04.rank-nullity.maps",
-        "sem__stage.ch04.rank-nullity.input__title",
-        "sem__mapping_grid__1"
+        "sem__stage.ch04.rank-nullity.input__title"
       ],
       "visible_refs": [
         "entity.ch04.rank-nullity.v",

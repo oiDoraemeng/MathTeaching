@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:9286d5223160dcc85cd0a6c6c9911ab2d2ee4ebdfaa11c2068a2b22e314532be",
+  "artifact_digest": "sha256:b97d068294fb4237b84956c072ad460accaf86cdc0ec6eb6f964505620fcc0db",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:5f718e9d1be4eb680634d2f576df4ae08b752f52b0bd83641fa23da610722ef3",
+  "contract_digest": "sha256:f94aa85f1bed1e0d86d3938c3ae4cf5934ca30010ef1414cdcf16222091f7e68",
   "plan": {
     "operations": [
       {
@@ -63,33 +63,35 @@
       },
       {
         "alias": "sem__relation.ch04.subspace.intersection.maps",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "color": "#2A9D8F",
+        "direction": [
+          2.0,
+          4.0
         ],
-        "text": "maps_to: v → result"
+        "foot_alias": "sem__relation.ch04.subspace.intersection.maps__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__relation.ch04.subspace.intersection.maps__residual",
+        "result_alias": "sem__entity.ch04.subspace.intersection.result",
+        "vector": [
+          1.0,
+          2.0
+        ]
       },
       {
-        "basis": [
-          [
-            1.0,
-            2.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
+        "alias": "sem__projection__1",
+        "color": "#2A9D8F",
+        "direction": [
+          2.0,
+          4.0
         ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "foot_alias": "sem__projection__1__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__projection__1__residual",
+        "result_alias": "sem__projection__1",
+        "vector": [
+          1.0,
+          2.0
+        ]
       },
       {
         "alias": "sem__stage.ch04.subspace.intersection.input__title",
@@ -109,7 +111,7 @@
     "summary": "4.1.2 子空间",
     "version": 1
   },
-  "plan_digest": "sha256:9fd2c3761b792642e3ba2df73387eb162de16656e8278379fbdb3805e9391570",
+  "plan_digest": "sha256:53c0cd47a8feee92b9c775784c8bd1253bbd91f99d9b71d5548a01b8f95f4aed",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -137,7 +139,7 @@
         "sem__entity.ch04.subspace.intersection.result__origin",
         "sem__relation.ch04.subspace.intersection.maps",
         "sem__stage.ch04.subspace.intersection.input__title",
-        "sem__mapping_grid__1"
+        "sem__projection__1"
       ],
       "visible_refs": [
         "entity.ch04.subspace.intersection.v",

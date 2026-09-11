@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:6e72ac381fbce1daf871e34efb8fc80dc2c6591060c44281cc64ec3eeb97e24d",
+  "artifact_digest": "sha256:8a8c50b811be52eabefae6e79edaa2a02e3bf9d115a412491b27522a0c4c0e0b",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:61bc64b2623b207f64f454c352749f20ae790790ad690e28634a7aa781cce60a",
+  "contract_digest": "sha256:d336cfef03a335c6fb16c2038b060bb65355dc67438f7d67c9e1f892347f6a11",
   "plan": {
     "operations": [
       {
@@ -68,28 +68,32 @@
           -2.65,
           2.65
         ],
-        "text": "maps_to: v → result"
+        "text": "compare: v → result"
       },
       {
-        "basis": [
+        "alias": "cap__polygon",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
           [
             1.0,
             2.0
           ],
           [
-            2.0,
-            4.0
+            -1.0,
+            3.0
+          ],
+          [
+            -2.0,
+            1.0
           ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        ]
       },
       {
         "alias": "sem__stage.ch04.subspace.classification.input__title",
@@ -109,7 +113,7 @@
     "summary": "4.1.2 子空间",
     "version": 1
   },
-  "plan_digest": "sha256:68c6e97cd779965a5a12f838490073ceab3e6e726ba795b2de9f972e8a7318f5",
+  "plan_digest": "sha256:39ec7eb980af593a54835f5a768cc42a7fa88a888a5a7d1f9b7db4892bca7e61",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -136,8 +140,7 @@
         "sem__entity.ch04.subspace.classification.result__end",
         "sem__entity.ch04.subspace.classification.result__origin",
         "sem__relation.ch04.subspace.classification.maps",
-        "sem__stage.ch04.subspace.classification.input__title",
-        "sem__mapping_grid__1"
+        "sem__stage.ch04.subspace.classification.input__title"
       ],
       "visible_refs": [
         "entity.ch04.subspace.classification.v",

@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:807ed01f85914ec4d61fe5082d548a8b6e82daefc4cc23422dad7dd75ec977a9",
+  "artifact_digest": "sha256:0baf81756cb03be188c8a0fcd72ee5cfa3775bfc789914d6d0c442f5abd0449e",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:bb8233bb9e5cd69013ce7f9894f0f290f09268045badc696de3992ba006d5270",
+  "contract_digest": "sha256:c4675998d7fe257c9475358ae298054be94a85ad5f4c266e1d36e398d3d5f0fa",
   "plan": {
     "operations": [
       {
@@ -63,33 +63,45 @@
       },
       {
         "alias": "sem__relation.ch04.basis.span.maps",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "maps_to: v → result"
-      },
-      {
-        "basis": [
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
           [
-            1.0,
-            2.0
+            0.0,
+            0.0
           ],
           [
-            2.0,
-            4.0
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
           ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
+        ]
+      },
+      {
+        "alias": "sem__span__1",
         "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
       },
       {
         "alias": "sem__stage.ch04.basis.span.input__title",
@@ -109,13 +121,13 @@
     "summary": "4.3.1 基的定义",
     "version": 1
   },
-  "plan_digest": "sha256:f0706c9aa0777ad17ab1023e31cc121d15ba94805ceb00ec7cdd4cfc269ada94",
+  "plan_digest": "sha256:cf1da0e91eeb6e103ceaf7c92d5b7247cde38727ddd90221bcc751529e58744a",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "subspace_region",
+  "scene_family": "basis_change",
   "schema_version": 1,
   "source_hash": "sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026",
   "stages": [
@@ -137,7 +149,7 @@
         "sem__entity.ch04.basis.span.result__origin",
         "sem__relation.ch04.basis.span.maps",
         "sem__stage.ch04.basis.span.input__title",
-        "sem__mapping_grid__1"
+        "sem__span__1"
       ],
       "visible_refs": [
         "entity.ch04.basis.span.v",

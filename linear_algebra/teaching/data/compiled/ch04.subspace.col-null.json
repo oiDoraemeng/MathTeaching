@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:cc6c3423542079a68a292e8995d3fe6cb151ac0aff7e1d437205a653ac7e2133",
+  "artifact_digest": "sha256:1c0925bf8b6922d12f202c71df5ae664d1d827dc741098a54001fb0337fdce37",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:add72d144b30cb15e965e1747138a07dbe7b3cb204cb47e6f8815d6d762efa3b",
+  "contract_digest": "sha256:e968eec858063b465e1c613afa11a46eca60bdb62ec973ac0836f4bab9632daf",
   "plan": {
     "operations": [
       {
@@ -68,28 +68,7 @@
           -2.65,
           2.65
         ],
-        "text": "maps_to: v → result"
-      },
-      {
-        "basis": [
-          [
-            1.0,
-            2.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "text": "collapses_to: v → result"
       },
       {
         "alias": "sem__stage.ch04.subspace.col-null.input__title",
@@ -109,7 +88,7 @@
     "summary": "4.1.3 两大核心子空间：列空间与零空间",
     "version": 1
   },
-  "plan_digest": "sha256:a117b2164be0620c699ef8fc5138c913751ed8b6f8dc6afda87a73c291504fc5",
+  "plan_digest": "sha256:0d10544cac8dfc62a307226b1440e023f8a62356a9af5239cf87bc1171c9763c",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -136,8 +115,7 @@
         "sem__entity.ch04.subspace.col-null.result__end",
         "sem__entity.ch04.subspace.col-null.result__origin",
         "sem__relation.ch04.subspace.col-null.maps",
-        "sem__stage.ch04.subspace.col-null.input__title",
-        "sem__mapping_grid__1"
+        "sem__stage.ch04.subspace.col-null.input__title"
       ],
       "visible_refs": [
         "entity.ch04.subspace.col-null.v",

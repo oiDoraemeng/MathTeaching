@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:8fe909904d857fd38af7e57fb793b0bd14a5498b1791a20810cb98cee6d394a7",
+  "artifact_digest": "sha256:da0119aa9c5864270a07e1310eae8da6e9678e88ca1a6ef06781171a650fa434",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:1df1d3d777048d50df2a1912dcdd88109caccdc41a9fbe02fccb21b385b59a5e",
+  "contract_digest": "sha256:52b750561fe31dac0486ff0471fa73bb79aaa700a4325f236d2e313d48ffe528",
   "plan": {
     "operations": [
       {
@@ -63,12 +63,24 @@
       },
       {
         "alias": "sem__relation.ch04.space.closure.maps",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "maps_to: v → result"
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
       },
       {
         "basis": [
@@ -92,6 +104,27 @@
         "opacity": 0.2
       },
       {
+        "alias": "sem__span__1",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
         "alias": "sem__stage.ch04.space.closure.input__title",
         "op": "annotation.upsert",
         "position": [
@@ -109,7 +142,7 @@
     "summary": "4.1.1 线性空间",
     "version": 1
   },
-  "plan_digest": "sha256:3d5b7d893f921a660cfc3f74af588bc00cdce10cb2116c1d2593d38c2717ae69",
+  "plan_digest": "sha256:dfb74e84fc085529236a081d590a394543a8c2705199b11490d75ce902e380a3",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -137,7 +170,7 @@
         "sem__entity.ch04.space.closure.result__origin",
         "sem__relation.ch04.space.closure.maps",
         "sem__stage.ch04.space.closure.input__title",
-        "sem__mapping_grid__1"
+        "sem__span__1"
       ],
       "visible_refs": [
         "entity.ch04.space.closure.v",

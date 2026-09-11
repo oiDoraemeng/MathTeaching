@@ -1,220 +1,41 @@
 {
-  "claims": [
-    {
-      "entity_refs": [
-        "entity.ch04.basis.span.v",
-        "entity.ch04.basis.span.result"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
-      "formula_symbols": [
-        "v",
-        "result"
-      ],
-      "id": "claim.ch04.basis.span",
-      "relation_refs": [
-        "relation.ch04.basis.span.maps"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.1 基的定义::1::sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026"
-      ],
-      "stage_refs": [
-        "stage.ch04.basis.span.input"
-      ],
-      "statement": "4.3.1 基的定义 的线性表示保持可检验的向量关系。"
-    }
-  ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch04.basis.span"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch04.basis.span.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.ad-bc"
-    }
-  ],
-  "explanation": {
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "definition": "4.3.1 基的定义 的对象和定义。",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "invariants": [
-      "finite numeric result"
-    ],
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.3.1 基的定义",
-      "线性空间",
-      "数值例"
-    ],
-    "sections": [
-      {
-        "claim_refs": [
-          "claim.ch04.basis.span"
-        ],
-        "id": "definition",
-        "text": "definition: 4.3.1 基的定义。",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.basis.span"
-        ],
-        "id": "formula",
-        "text": "formula: 4.3.1 基的定义。",
-        "title": "formula"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.basis.span"
-        ],
-        "id": "derivation",
-        "text": "derivation: 4.3.1 基的定义。",
-        "title": "derivation"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.basis.span"
-        ],
-        "id": "worked_examples",
-        "text": "worked_examples: 4.3.1 基的定义。",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.basis.span"
-        ],
-        "id": "geometric_meaning",
-        "text": "geometric_meaning: 4.3.1 基的定义。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.basis.span"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 4.3.1 基的定义。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.basis.span"
-        ],
-        "id": "connections",
-        "text": "connections: 4.3.1 基的定义。",
-        "title": "connections"
-      }
-    ],
-    "summary": "4.3.1 基的定义 的确定性讲义 artifact。",
-    "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
-    },
-    "title": "4.3.1 基的定义",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "worked_examples": [
-      {
-        "calculation": [
-          "2*(1,2)=(2,4)"
-        ],
-        "checks": [
-          {
-            "expected": [
-              2,
-              4
-            ],
-            "name": "result",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.basis.span"
-        ],
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "id": "example.ch04.basis.span",
-        "kind": "scalar_multiple",
-        "result": [
-          2,
-          4
-        ],
-        "title": "数值例"
-      }
-    ]
-  },
-  "generated": {
-    "artifact_digest": "sha256:abe8a72aab8f1f3defe968e0164a52b0592ccfef3ca641c291f44ee99349f3ee",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:807ed01f85914ec4d61fe5082d548a8b6e82daefc4cc23422dad7dd75ec977a9",
-    "source_hash": "sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026"
-  },
-  "revision": 1,
   "schema_version": 1,
+  "topic_id": "ch04.basis.span",
+  "revision": 1,
+  "status": "reviewed",
   "source": {
-    "excerpt": "#### 4.3.1 基的定义\n\n定义 4.10（基） V 的一组基满足两个条件：\n1. 线性无关 —— 没有冗余\n2. 生成整个空间 —— 任何向量都能写成基的线性组合\n基 $=$ \"最小的完整尺子组\"——少了量不全，多了有冗余。\n标准基 $e_{1},...,e_{n}$ 是 $R^{n}$ 最常见的一组基。",
-    "heading_level": 4,
-    "heading_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.3 基与维数",
-      "4.3.1 基的定义"
-    ],
-    "neighboring_titles": [
-      "4.3.2 维数"
-    ],
-    "occurrence": 1,
-    "source_hash": "sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026",
     "source_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.3 基与维数",
       "4.3.1 基的定义"
     ],
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.3 基与维数",
+      "4.3.1 基的定义"
+    ],
+    "heading_level": 4,
+    "occurrence": 1,
+    "excerpt": "#### 4.3.1 基的定义\n\n定义 4.10（基） V 的一组基满足两个条件：\n1. 线性无关 —— 没有冗余\n2. 生成整个空间 —— 任何向量都能写成基的线性组合\n基 $=$ \"最小的完整尺子组\"——少了量不全，多了有冗余。\n标准基 $e_{1},...,e_{n}$ 是 $R^{n}$ 最常见的一组基。",
+    "source_hash": "sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026",
     "spans": [
       {
-        "end_line": 1687,
-        "fingerprint": "sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026",
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.1 基的定义::1::sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.3 基与维数",
           "4.3.1 基的定义"
         ],
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.1 基的定义::1::sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026",
         "start_line": 1680,
+        "end_line": 1687,
+        "fingerprint": "sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026",
         "text": "#### 4.3.1 基的定义\n\n定义 4.10（基） V 的一组基满足两个条件：\n1. 线性无关 —— 没有冗余\n2. 生成整个空间 —— 任何向量都能写成基的线性组合\n基 $=$ \"最小的完整尺子组\"——少了量不全，多了有冗余。\n标准基 $e_{1},...,e_{n}$ 是 $R^{n}$ 最常见的一组基。"
       }
+    ],
+    "neighboring_titles": [
+      "4.3.2 维数"
     ]
   },
-  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -228,73 +49,265 @@
     ],
     "requires_analogy_boundary": false
   },
-  "topic_id": "ch04.basis.span",
-  "visual_semantics": {
-    "entities": [
+  "claims": [
+    {
+      "id": "claim.ch04.basis.span",
+      "statement": "4.3.1 基的定义 的线性表示保持可检验的向量关系。",
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.1 基的定义::1::sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "entity_refs": [
+        "entity.ch04.basis.span.v",
+        "entity.ch04.basis.span.result"
+      ],
+      "relation_refs": [
+        "relation.ch04.basis.span.maps"
+      ],
+      "stage_refs": [
+        "stage.ch04.basis.span.input"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "connection.ch04.basis.span.prior",
+      "target_topic_id": "ch03.det.ad-bc",
+      "relation": "prerequisite",
+      "description": "前置的线性表示与几何关系。",
+      "claim_refs": [
+        "claim.ch04.basis.span"
+      ]
+    }
+  ],
+  "explanation": {
+    "title": "4.3.1 基的定义",
+    "summary": "4.3.1 基的定义 的确定性讲义 artifact。",
+    "sections": [
       {
+        "id": "definition",
+        "title": "definition",
+        "text": "definition: 4.3.1 基的定义。",
         "claim_refs": [
           "claim.ch04.basis.span"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.basis.span.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
-        "value": [
-          1,
-          2
         ]
       },
       {
+        "id": "formula",
+        "title": "formula",
+        "text": "formula: 4.3.1 基的定义。",
         "claim_refs": [
           "claim.ch04.basis.span"
+        ]
+      },
+      {
+        "id": "derivation",
+        "title": "derivation",
+        "text": "derivation: 4.3.1 基的定义。",
+        "claim_refs": [
+          "claim.ch04.basis.span"
+        ]
+      },
+      {
+        "id": "worked_examples",
+        "title": "worked_examples",
+        "text": "worked_examples: 4.3.1 基的定义。",
+        "claim_refs": [
+          "claim.ch04.basis.span"
+        ]
+      },
+      {
+        "id": "geometric_meaning",
+        "title": "geometric_meaning",
+        "text": "geometric_meaning: 4.3.1 基的定义。",
+        "claim_refs": [
+          "claim.ch04.basis.span"
+        ]
+      },
+      {
+        "id": "pitfalls",
+        "title": "pitfalls",
+        "text": "pitfalls: 4.3.1 基的定义。",
+        "claim_refs": [
+          "claim.ch04.basis.span"
+        ]
+      },
+      {
+        "id": "connections",
+        "title": "connections",
+        "text": "connections: 4.3.1 基的定义。",
+        "claim_refs": [
+          "claim.ch04.basis.span"
+        ]
+      }
+    ],
+    "symbol_roles": {
+      "v": "vector_a",
+      "result": "transformed_a"
+    },
+    "definition": "4.3.1 基的定义 的对象和定义。",
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "worked_examples": [
+      {
+        "id": "example.ch04.basis.span",
+        "title": "数值例",
+        "kind": "scalar_multiple",
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
         ],
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "result": [
+          2,
+          4
+        ],
+        "checks": [
+          {
+            "name": "result",
+            "expected": [
+              2,
+              4
+            ],
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.basis.span"
+        ]
+      }
+    ],
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "invariants": [
+      "finite numeric result"
+    ],
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.3.1 基的定义",
+      "线性空间",
+      "数值例"
+    ]
+  },
+  "visual_semantics": {
+    "scene_kind": "2d",
+    "scene_family": "basis_change",
+    "entities": [
+      {
+        "id": "entity.ch04.basis.span.v",
+        "kind": "vector",
         "dimension": 2,
+        "value": [
+          1,
+          2
+        ],
+        "role": "vector_a",
+        "label": "v",
+        "claim_refs": [
+          "claim.ch04.basis.span"
+        ]
+      },
+      {
         "id": "entity.ch04.basis.span.result",
         "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "dimension": 2,
         "value": [
           2,
           4
+        ],
+        "role": "transformed_a",
+        "label": "result",
+        "claim_refs": [
+          "claim.ch04.basis.span"
         ]
       }
     ],
     "relations": [
       {
+        "id": "relation.ch04.basis.span.maps",
+        "kind": "spans",
+        "source_ref": "entity.ch04.basis.span.v",
+        "target_ref": "entity.ch04.basis.span.result",
+        "parameters": {
+          "vertices": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
         "claim_refs": [
           "claim.ch04.basis.span"
-        ],
-        "id": "relation.ch04.basis.span.maps",
-        "kind": "maps_to",
-        "parameters": {
-          "scalar": 2
-        },
-        "source_ref": "entity.ch04.basis.span.v",
-        "target_ref": "entity.ch04.basis.span.result"
+        ]
       }
     ],
-    "scene_family": "subspace_region",
-    "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
-        "expected_invariants": [
-          "finite numeric result"
-        ],
         "id": "stage.ch04.basis.span.input",
+        "title": "输入与结果",
+        "caption": "显示线性关系。",
+        "layout": "sequence",
         "input_entity_refs": [
           "entity.ch04.basis.span.v"
         ],
-        "layout": "sequence",
         "output_entity_refs": [
           "entity.ch04.basis.span.result"
         ],
         "relation_refs": [
           "relation.ch04.basis.span.maps"
         ],
-        "title": "输入与结果"
+        "expected_invariants": [
+          "finite numeric result"
+        ]
       }
     ]
+  },
+  "generated": {
+    "provider": "deterministic-fixture",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "source_hash": "sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026",
+    "raw_reply_digest": "sha256:0baf81756cb03be188c8a0fcd72ee5cfa3775bfc789914d6d0c442f5abd0449e",
+    "artifact_digest": "sha256:f12adf597eb5d513d8b1063445b7319c9f9eaf59dcb46b3a823b2a55dcecb593"
   }
 }

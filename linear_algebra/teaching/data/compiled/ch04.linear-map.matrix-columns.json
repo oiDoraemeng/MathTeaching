@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:9d7cb798337867b8d27e6dd18d0f2c272fea13095d475b9292f2ab0a7713cd2a",
+  "artifact_digest": "sha256:fc7dc04d0f2d2ea8380cc1f576209d3d29fe267dc3e0c93ed54f56ab3ad3099d",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:1a0907f947c0ec53254c8c5b1674e1899db5ed005910e9742ea7686847a69faf",
+  "contract_digest": "sha256:956da6c3c42d33cc8c694aa8af573238d4654767b68a7c6a1eb776760a82bdba",
   "plan": {
     "operations": [
       {
@@ -63,33 +63,25 @@
       },
       {
         "alias": "sem__relation.ch04.linear-map.matrix-columns.maps",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "maps_to: v → result"
-      },
-      {
-        "basis": [
-          [
-            1.0,
-            2.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
-        ],
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
         "alias": "sem__stage.ch04.linear-map.matrix-columns.input__title",
@@ -109,13 +101,13 @@
     "summary": "4.4.3 线性变换的矩阵表示",
     "version": 1
   },
-  "plan_digest": "sha256:2c49514c0f3b3db1510dc800851d7571327c46e1bd0adf7c677be818c2e313c0",
+  "plan_digest": "sha256:743fb74b1ccf3e02fef8b69f66d1756015fc542b23820d2a4be441023fc89d37",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "subspace_region",
+  "scene_family": "basis_change",
   "schema_version": 1,
   "source_hash": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
   "stages": [
@@ -136,8 +128,7 @@
         "sem__entity.ch04.linear-map.matrix-columns.result__end",
         "sem__entity.ch04.linear-map.matrix-columns.result__origin",
         "sem__relation.ch04.linear-map.matrix-columns.maps",
-        "sem__stage.ch04.linear-map.matrix-columns.input__title",
-        "sem__mapping_grid__1"
+        "sem__stage.ch04.linear-map.matrix-columns.input__title"
       ],
       "visible_refs": [
         "entity.ch04.linear-map.matrix-columns.v",

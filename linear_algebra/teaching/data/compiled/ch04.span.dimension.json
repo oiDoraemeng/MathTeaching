@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:525a6d9adadd63cd2dd6803e0a68228ceecba11faf0fa2829a1382906b05ebdb",
+  "artifact_digest": "sha256:03c439dd6464e61c97fc109dd7dcabf4adc1d4cc29196844ab6955fcd992a965",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:3035fe8b37eb03a59b67a167a1ca74935570dc9996587fbdb4a681c850292e6f",
+  "contract_digest": "sha256:b6421762cab46103a399dfe46bf460d0733f14184465d354176a673edf25413b",
   "plan": {
     "operations": [
       {
@@ -63,33 +63,45 @@
       },
       {
         "alias": "sem__relation.ch04.span.dimension.maps",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "maps_to: v → result"
-      },
-      {
-        "basis": [
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
           [
-            1.0,
-            2.0
+            0.0,
+            0.0
           ],
           [
-            2.0,
-            4.0
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
           ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
+        ]
+      },
+      {
+        "alias": "sem__span__1",
         "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
       },
       {
         "alias": "sem__stage.ch04.span.dimension.input__title",
@@ -109,7 +121,7 @@
     "summary": "4.2.1 生成集 Span",
     "version": 1
   },
-  "plan_digest": "sha256:cb39462f1bbca924fef2cef8108d9c11354ec1c3a5c909c04542e7118ddde7a6",
+  "plan_digest": "sha256:7ec05fe1f26faa57837951c73bd7f70f0e4f05698e9122c27bbef04f25c552c2",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -137,7 +149,7 @@
         "sem__entity.ch04.span.dimension.result__origin",
         "sem__relation.ch04.span.dimension.maps",
         "sem__stage.ch04.span.dimension.input__title",
-        "sem__mapping_grid__1"
+        "sem__span__1"
       ],
       "visible_refs": [
         "entity.ch04.span.dimension.v",

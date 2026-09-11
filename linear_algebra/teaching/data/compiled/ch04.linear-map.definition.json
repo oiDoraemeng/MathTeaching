@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:f2be81cad8b4ae17722a5d3096c989d6ae73e3133cc0ab67812b365c029ab4df",
+  "artifact_digest": "sha256:7d7e42faa9053a79f343d06dc7d06e343ff091625f39d2e9a40c51db09882732",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:8dbe969cc972175fd838e3e4eb867cdfc2c1ccc46387320651c4f3648a6b924c",
+  "contract_digest": "sha256:db13111bd48d6fef840f8b6d8b72b0842fe4002f8a8dd37d6d029abb68b53500",
   "plan": {
     "operations": [
       {
@@ -71,27 +71,6 @@
         "text": "maps_to: v → result"
       },
       {
-        "basis": [
-          [
-            1.0,
-            2.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
-      },
-      {
         "alias": "sem__stage.ch04.linear-map.definition.input__title",
         "op": "annotation.upsert",
         "position": [
@@ -109,13 +88,13 @@
     "summary": "4.4.1 线性变换的定义",
     "version": 1
   },
-  "plan_digest": "sha256:21397b5fd2a3556c8577960f395ba0390a02654a3b6561faea64727cebef4971",
+  "plan_digest": "sha256:672cb921b30aa298ce1aa318cd6fc1cd5bae03be27a67712ee579ffaa2efd5d0",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "subspace_region",
+  "scene_family": "basis_change",
   "schema_version": 1,
   "source_hash": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
   "stages": [

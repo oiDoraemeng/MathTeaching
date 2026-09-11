@@ -1,220 +1,41 @@
 {
-  "claims": [
-    {
-      "entity_refs": [
-        "entity.ch04.rank-nullity.v",
-        "entity.ch04.rank-nullity.result"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
-      "formula_symbols": [
-        "v",
-        "result"
-      ],
-      "id": "claim.ch04.rank-nullity",
-      "relation_refs": [
-        "relation.ch04.rank-nullity.maps"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.5 核与像 / 4.5.2 秩-零化度定理::1::sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa"
-      ],
-      "stage_refs": [
-        "stage.ch04.rank-nullity.input"
-      ],
-      "statement": "4.5.2 秩-零化度定理 的线性表示保持可检验的向量关系。"
-    }
-  ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch04.rank-nullity"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch04.rank-nullity.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.ad-bc"
-    }
-  ],
-  "explanation": {
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "definition": "4.5.2 秩-零化度定理 的对象和定义。",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "invariants": [
-      "finite numeric result"
-    ],
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.5.2 秩-零化度定理",
-      "线性空间",
-      "数值例"
-    ],
-    "sections": [
-      {
-        "claim_refs": [
-          "claim.ch04.rank-nullity"
-        ],
-        "id": "definition",
-        "text": "definition: 4.5.2 秩-零化度定理。",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.rank-nullity"
-        ],
-        "id": "formula",
-        "text": "formula: 4.5.2 秩-零化度定理。",
-        "title": "formula"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.rank-nullity"
-        ],
-        "id": "derivation",
-        "text": "derivation: 4.5.2 秩-零化度定理。",
-        "title": "derivation"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.rank-nullity"
-        ],
-        "id": "worked_examples",
-        "text": "worked_examples: 4.5.2 秩-零化度定理。",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.rank-nullity"
-        ],
-        "id": "geometric_meaning",
-        "text": "geometric_meaning: 4.5.2 秩-零化度定理。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.rank-nullity"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 4.5.2 秩-零化度定理。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.rank-nullity"
-        ],
-        "id": "connections",
-        "text": "connections: 4.5.2 秩-零化度定理。",
-        "title": "connections"
-      }
-    ],
-    "summary": "4.5.2 秩-零化度定理 的确定性讲义 artifact。",
-    "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
-    },
-    "title": "4.5.2 秩-零化度定理",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "worked_examples": [
-      {
-        "calculation": [
-          "2*(1,2)=(2,4)"
-        ],
-        "checks": [
-          {
-            "expected": [
-              2,
-              4
-            ],
-            "name": "result",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.rank-nullity"
-        ],
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "id": "example.ch04.rank-nullity",
-        "kind": "scalar_multiple",
-        "result": [
-          2,
-          4
-        ],
-        "title": "数值例"
-      }
-    ]
-  },
-  "generated": {
-    "artifact_digest": "sha256:a50231446d855a546ca5ad879706021ce2b60a65c11dea3b1300cfa90db9dc82",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:c27a42ab5add4d80726ef1f795a5383931ed3f4fc4cc8ff0cbdbacf96e5fed02",
-    "source_hash": "sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa"
-  },
-  "revision": 1,
   "schema_version": 1,
+  "topic_id": "ch04.rank-nullity",
+  "revision": 1,
+  "status": "reviewed",
   "source": {
-    "excerpt": "#### 4.5.2 秩-零化度定理\n\n定理 4.3 $\\dim(\\operatorname{Ker}) + \\dim(\\operatorname{Im}) = n$（输入空间维数）。\n\"被压扁的维数\"$+$\"保留的维数\" $=$ \"原来的维数\"——守恒律。\n\n##### 定理 4.3 的直观证明\n\n设 $\\operatorname{rank}(A) = r$，则 A 有 r 个线性无关的列向量（它们构成 Col(A) 的一组基）。\n通过列变换（本质上是选取适当的基），可将 $Ax=0$ 转化为：前 r 个变量由后 $n-r$ 个变量唯一确定。\n后 $n-r$ 个变量可自由取值 $\\rightarrow \\dim(\\operatorname{Ker}) = n - r$。\n因此 $\\dim(\\operatorname{Ker}) + \\dim(\\operatorname{Im}) = (n-r) + r = n$。\n完整的严格证明需要用到线性方程组的解结构理论（第5章），这里给出的是直观理解。\n\n##### 分层例题\n\n例1：$T(x,y)=(x,0)$（投影到x轴）。Ker? Im?\n$\\operatorname{Ker} = y$轴（$\\dim=1$）。$\\operatorname{Im} = x$轴（$\\dim=1$）。$1+1=2 ✓$。\n例2：$T(x,y)=(y,-x)$（旋转$90^\\circ$）。Ker? Im?\n$\\operatorname{Ker}=\\{0\\}$（$\\dim=0$）。$\\operatorname{Im}=R^{2}$（$\\dim=2$）。$0+2=2 ✓$。旋转不压扁任何方向。\n例3：$A=\\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, \\det=0$。Ker维数? Im维数?\n$\\operatorname{rank}=1 \\rightarrow \\dim(\\operatorname{Im})=1$。核维数$=2-1=1$。$\\operatorname{Null}(A)=\\{(-2t,t)\\mid t\\in R\\}$。",
-    "heading_level": 4,
-    "heading_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.5 核与像",
-      "4.5.2 秩-零化度定理"
-    ],
-    "neighboring_titles": [
-      "4.5.1 定义"
-    ],
-    "occurrence": 1,
-    "source_hash": "sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa",
     "source_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.5 核与像",
       "4.5.2 秩-零化度定理"
     ],
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.5 核与像",
+      "4.5.2 秩-零化度定理"
+    ],
+    "heading_level": 4,
+    "occurrence": 1,
+    "excerpt": "#### 4.5.2 秩-零化度定理\n\n定理 4.3 $\\dim(\\operatorname{Ker}) + \\dim(\\operatorname{Im}) = n$（输入空间维数）。\n\"被压扁的维数\"$+$\"保留的维数\" $=$ \"原来的维数\"——守恒律。\n\n##### 定理 4.3 的直观证明\n\n设 $\\operatorname{rank}(A) = r$，则 A 有 r 个线性无关的列向量（它们构成 Col(A) 的一组基）。\n通过列变换（本质上是选取适当的基），可将 $Ax=0$ 转化为：前 r 个变量由后 $n-r$ 个变量唯一确定。\n后 $n-r$ 个变量可自由取值 $\\rightarrow \\dim(\\operatorname{Ker}) = n - r$。\n因此 $\\dim(\\operatorname{Ker}) + \\dim(\\operatorname{Im}) = (n-r) + r = n$。\n完整的严格证明需要用到线性方程组的解结构理论（第5章），这里给出的是直观理解。\n\n##### 分层例题\n\n例1：$T(x,y)=(x,0)$（投影到x轴）。Ker? Im?\n$\\operatorname{Ker} = y$轴（$\\dim=1$）。$\\operatorname{Im} = x$轴（$\\dim=1$）。$1+1=2 ✓$。\n例2：$T(x,y)=(y,-x)$（旋转$90^\\circ$）。Ker? Im?\n$\\operatorname{Ker}=\\{0\\}$（$\\dim=0$）。$\\operatorname{Im}=R^{2}$（$\\dim=2$）。$0+2=2 ✓$。旋转不压扁任何方向。\n例3：$A=\\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, \\det=0$。Ker维数? Im维数?\n$\\operatorname{rank}=1 \\rightarrow \\dim(\\operatorname{Im})=1$。核维数$=2-1=1$。$\\operatorname{Null}(A)=\\{(-2t,t)\\mid t\\in R\\}$。",
+    "source_hash": "sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa",
     "spans": [
       {
-        "end_line": 1826,
-        "fingerprint": "sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa",
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.5 核与像 / 4.5.2 秩-零化度定理::1::sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.5 核与像",
           "4.5.2 秩-零化度定理"
         ],
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.5 核与像 / 4.5.2 秩-零化度定理::1::sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa",
         "start_line": 1799,
+        "end_line": 1826,
+        "fingerprint": "sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa",
         "text": "#### 4.5.2 秩-零化度定理\n\n定理 4.3 $\\dim(\\operatorname{Ker}) + \\dim(\\operatorname{Im}) = n$（输入空间维数）。\n\"被压扁的维数\"$+$\"保留的维数\" $=$ \"原来的维数\"——守恒律。\n\n##### 定理 4.3 的直观证明\n\n设 $\\operatorname{rank}(A) = r$，则 A 有 r 个线性无关的列向量（它们构成 Col(A) 的一组基）。\n通过列变换（本质上是选取适当的基），可将 $Ax=0$ 转化为：前 r 个变量由后 $n-r$ 个变量唯一确定。\n后 $n-r$ 个变量可自由取值 $\\rightarrow \\dim(\\operatorname{Ker}) = n - r$。\n因此 $\\dim(\\operatorname{Ker}) + \\dim(\\operatorname{Im}) = (n-r) + r = n$。\n完整的严格证明需要用到线性方程组的解结构理论（第5章），这里给出的是直观理解。\n\n##### 分层例题\n\n例1：$T(x,y)=(x,0)$（投影到x轴）。Ker? Im?\n$\\operatorname{Ker} = y$轴（$\\dim=1$）。$\\operatorname{Im} = x$轴（$\\dim=1$）。$1+1=2 ✓$。\n例2：$T(x,y)=(y,-x)$（旋转$90^\\circ$）。Ker? Im?\n$\\operatorname{Ker}=\\{0\\}$（$\\dim=0$）。$\\operatorname{Im}=R^{2}$（$\\dim=2$）。$0+2=2 ✓$。旋转不压扁任何方向。\n例3：$A=\\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, \\det=0$。Ker维数? Im维数?\n$\\operatorname{rank}=1 \\rightarrow \\dim(\\operatorname{Im})=1$。核维数$=2-1=1$。$\\operatorname{Null}(A)=\\{(-2t,t)\\mid t\\in R\\}$。"
       }
+    ],
+    "neighboring_titles": [
+      "4.5.1 定义"
     ]
   },
-  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -228,73 +49,252 @@
     ],
     "requires_analogy_boundary": false
   },
-  "topic_id": "ch04.rank-nullity",
-  "visual_semantics": {
-    "entities": [
+  "claims": [
+    {
+      "id": "claim.ch04.rank-nullity",
+      "statement": "4.5.2 秩-零化度定理 的线性表示保持可检验的向量关系。",
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.5 核与像 / 4.5.2 秩-零化度定理::1::sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "entity_refs": [
+        "entity.ch04.rank-nullity.v",
+        "entity.ch04.rank-nullity.result"
+      ],
+      "relation_refs": [
+        "relation.ch04.rank-nullity.maps"
+      ],
+      "stage_refs": [
+        "stage.ch04.rank-nullity.input"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "connection.ch04.rank-nullity.prior",
+      "target_topic_id": "ch03.det.ad-bc",
+      "relation": "prerequisite",
+      "description": "前置的线性表示与几何关系。",
+      "claim_refs": [
+        "claim.ch04.rank-nullity"
+      ]
+    }
+  ],
+  "explanation": {
+    "title": "4.5.2 秩-零化度定理",
+    "summary": "4.5.2 秩-零化度定理 的确定性讲义 artifact。",
+    "sections": [
       {
+        "id": "definition",
+        "title": "definition",
+        "text": "definition: 4.5.2 秩-零化度定理。",
         "claim_refs": [
           "claim.ch04.rank-nullity"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.rank-nullity.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
-        "value": [
-          1,
-          2
         ]
       },
       {
+        "id": "formula",
+        "title": "formula",
+        "text": "formula: 4.5.2 秩-零化度定理。",
         "claim_refs": [
           "claim.ch04.rank-nullity"
+        ]
+      },
+      {
+        "id": "derivation",
+        "title": "derivation",
+        "text": "derivation: 4.5.2 秩-零化度定理。",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      },
+      {
+        "id": "worked_examples",
+        "title": "worked_examples",
+        "text": "worked_examples: 4.5.2 秩-零化度定理。",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      },
+      {
+        "id": "geometric_meaning",
+        "title": "geometric_meaning",
+        "text": "geometric_meaning: 4.5.2 秩-零化度定理。",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      },
+      {
+        "id": "pitfalls",
+        "title": "pitfalls",
+        "text": "pitfalls: 4.5.2 秩-零化度定理。",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      },
+      {
+        "id": "connections",
+        "title": "connections",
+        "text": "connections: 4.5.2 秩-零化度定理。",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      }
+    ],
+    "symbol_roles": {
+      "v": "vector_a",
+      "result": "transformed_a"
+    },
+    "definition": "4.5.2 秩-零化度定理 的对象和定义。",
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "worked_examples": [
+      {
+        "id": "example.ch04.rank-nullity",
+        "title": "数值例",
+        "kind": "scalar_multiple",
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
         ],
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "result": [
+          2,
+          4
+        ],
+        "checks": [
+          {
+            "name": "result",
+            "expected": [
+              2,
+              4
+            ],
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      }
+    ],
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "invariants": [
+      "finite numeric result"
+    ],
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.5.2 秩-零化度定理",
+      "线性空间",
+      "数值例"
+    ]
+  },
+  "visual_semantics": {
+    "scene_kind": "2d",
+    "scene_family": "affine_solution",
+    "entities": [
+      {
+        "id": "entity.ch04.rank-nullity.v",
+        "kind": "vector",
         "dimension": 2,
+        "value": [
+          1,
+          2
+        ],
+        "role": "vector_a",
+        "label": "v",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
+      },
+      {
         "id": "entity.ch04.rank-nullity.result",
         "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "dimension": 2,
         "value": [
           2,
           4
+        ],
+        "role": "transformed_a",
+        "label": "result",
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
         ]
       }
     ],
     "relations": [
       {
-        "claim_refs": [
-          "claim.ch04.rank-nullity"
-        ],
         "id": "relation.ch04.rank-nullity.maps",
-        "kind": "maps_to",
+        "kind": "compare",
+        "source_ref": "entity.ch04.rank-nullity.v",
+        "target_ref": "entity.ch04.rank-nullity.result",
         "parameters": {
           "scalar": 2
         },
-        "source_ref": "entity.ch04.rank-nullity.v",
-        "target_ref": "entity.ch04.rank-nullity.result"
+        "claim_refs": [
+          "claim.ch04.rank-nullity"
+        ]
       }
     ],
-    "scene_family": "subspace_region",
-    "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
-        "expected_invariants": [
-          "finite numeric result"
-        ],
         "id": "stage.ch04.rank-nullity.input",
+        "title": "输入与结果",
+        "caption": "显示线性关系。",
+        "layout": "sequence",
         "input_entity_refs": [
           "entity.ch04.rank-nullity.v"
         ],
-        "layout": "sequence",
         "output_entity_refs": [
           "entity.ch04.rank-nullity.result"
         ],
         "relation_refs": [
           "relation.ch04.rank-nullity.maps"
         ],
-        "title": "输入与结果"
+        "expected_invariants": [
+          "finite numeric result"
+        ]
       }
     ]
+  },
+  "generated": {
+    "provider": "deterministic-fixture",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "source_hash": "sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa",
+    "raw_reply_digest": "sha256:d759b84c0af9a35ada374e4ab7e6322a3159cc9cbac330102e7763d8db7340dd",
+    "artifact_digest": "sha256:840a50ce51c5d7ce9b4b64eb3e4a816c8de898222243a059bb48718178aee9aa"
   }
 }

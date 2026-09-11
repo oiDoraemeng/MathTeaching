@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:80fef54e588e6d62ac29dbb0f67f984ea59337cd63312cac0b8ddb1fa3551a81",
+  "artifact_digest": "sha256:40646e34b4f1d5ace486aa75774f18b4bbad5a901568bd209b1eb36f7d67a519",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:9db2f8306bf21b2e151bb417e9036055f804df448cbd94144dd8ec548ff13a3c",
+  "contract_digest": "sha256:204fe3130e6e71a5cbf9946ca0b64a57c3e6128534e5d5c36858d89940a43fce",
   "plan": {
     "operations": [
       {
@@ -68,28 +68,28 @@
           -2.65,
           2.65
         ],
-        "text": "maps_to: v → result"
+        "text": "compare: v → result"
       },
       {
-        "basis": [
-          [
-            1.0,
-            2.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
-        ],
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
         "alias": "sem__stage.ch04.coordinates.readout.input__title",
@@ -109,13 +109,13 @@
     "summary": "4.3.3 坐标——向量的\"读数\"",
     "version": 1
   },
-  "plan_digest": "sha256:7e80bf43c1170f832b4961b9007b45c46d9bf3575287ef469cc13025b7d76770",
+  "plan_digest": "sha256:3094da6e6e9261194ecbe8cec8b998b7011c49b9f383de37c8169a7bc23d2205",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "subspace_region",
+  "scene_family": "basis_change",
   "schema_version": 1,
   "source_hash": "sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50",
   "stages": [
@@ -136,8 +136,7 @@
         "sem__entity.ch04.coordinates.readout.result__end",
         "sem__entity.ch04.coordinates.readout.result__origin",
         "sem__relation.ch04.coordinates.readout.maps",
-        "sem__stage.ch04.coordinates.readout.input__title",
-        "sem__mapping_grid__1"
+        "sem__stage.ch04.coordinates.readout.input__title"
       ],
       "visible_refs": [
         "entity.ch04.coordinates.readout.v",

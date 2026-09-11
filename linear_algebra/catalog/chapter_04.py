@@ -1,6 +1,7 @@
 from pathlib import Path
 import re
 from .model import LessonEntry, topic_entry
+from linear_algebra.chapter_04_semantics import semantic_for
 
 CHAPTER = "第4章 线性空间、线性无关与线性变换"
 _IDS = ("space.closure", "subspace.classification", "subspace.intersection", "subspace.col-null", "span.dimension", "dependence.redundancy", "nullspace.test", "rank.collapse", "basis.span", "dimension.ladder", "coordinates.readout", "linear-map.definition", "linear-map.compare", "linear-map.matrix-columns", "kernel-image", "rank-nullity")
@@ -19,6 +20,6 @@ def _make() -> tuple[LessonEntry, ...]:
     source = Path(__file__).parents[2] / ".agents" / "线性代数讲义.md"
     records = _records(source.read_text(encoding="utf-8"))
     chosen = [next(item for item in records if item[2].startswith(prefix)) for prefix in _PREFIXES]
-    return tuple(topic_entry(topic_id=f"ch04.{item}", chapter_number=4, section_id=f"ch04.s{index + 1}", title=record[2], source_path=(record[0][-3:] if len(record[0]) >= 3 else record[0] + (record[2],)), heading_path=record[0], heading_level=record[1], required_capabilities=("subspace_region",)) for index, (item, record) in enumerate(zip(_IDS, chosen)))
+    return tuple(topic_entry(topic_id=f"ch04.{item}", chapter_number=4, section_id=f"ch04.s{index + 1}", title=record[2], source_path=(record[0][-3:] if len(record[0]) >= 3 else record[0] + (record[2],)), heading_path=record[0], heading_level=record[1], required_capabilities=semantic_for(f"ch04.{item}").capabilities) for index, (item, record) in enumerate(zip(_IDS, chosen)))
 TOPICS = _make()
 def entries() -> tuple[LessonEntry, ...]: return TOPICS

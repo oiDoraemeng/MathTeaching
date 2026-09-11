@@ -1,220 +1,41 @@
 {
-  "claims": [
-    {
-      "entity_refs": [
-        "entity.ch04.linear-map.definition.v",
-        "entity.ch04.linear-map.definition.result"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
-      "formula_symbols": [
-        "v",
-        "result"
-      ],
-      "id": "claim.ch04.linear-map.definition",
-      "relation_refs": [
-        "relation.ch04.linear-map.definition.maps"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.1 线性变换的定义::1::sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb"
-      ],
-      "stage_refs": [
-        "stage.ch04.linear-map.definition.input"
-      ],
-      "statement": "4.4.1 线性变换的定义 的线性表示保持可检验的向量关系。"
-    }
-  ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch04.linear-map.definition"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch04.linear-map.definition.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.ad-bc"
-    }
-  ],
-  "explanation": {
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "definition": "4.4.1 线性变换的定义 的对象和定义。",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "invariants": [
-      "finite numeric result"
-    ],
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.4.1 线性变换的定义",
-      "线性空间",
-      "数值例"
-    ],
-    "sections": [
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "definition",
-        "text": "definition: 4.4.1 线性变换的定义。",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "formula",
-        "text": "formula: 4.4.1 线性变换的定义。",
-        "title": "formula"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "derivation",
-        "text": "derivation: 4.4.1 线性变换的定义。",
-        "title": "derivation"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "worked_examples",
-        "text": "worked_examples: 4.4.1 线性变换的定义。",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "geometric_meaning",
-        "text": "geometric_meaning: 4.4.1 线性变换的定义。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 4.4.1 线性变换的定义。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "connections",
-        "text": "connections: 4.4.1 线性变换的定义。",
-        "title": "connections"
-      }
-    ],
-    "summary": "4.4.1 线性变换的定义 的确定性讲义 artifact。",
-    "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
-    },
-    "title": "4.4.1 线性变换的定义",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "worked_examples": [
-      {
-        "calculation": [
-          "2*(1,2)=(2,4)"
-        ],
-        "checks": [
-          {
-            "expected": [
-              2,
-              4
-            ],
-            "name": "result",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "id": "example.ch04.linear-map.definition",
-        "kind": "scalar_multiple",
-        "result": [
-          2,
-          4
-        ],
-        "title": "数值例"
-      }
-    ]
-  },
-  "generated": {
-    "artifact_digest": "sha256:03aca1a6d89e674513621ca9b90071c0fffae230646841576a49234ff9ca1e10",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:f2be81cad8b4ae17722a5d3096c989d6ae73e3133cc0ab67812b365c029ab4df",
-    "source_hash": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb"
-  },
-  "revision": 1,
   "schema_version": 1,
+  "topic_id": "ch04.linear-map.definition",
+  "revision": 1,
+  "status": "reviewed",
   "source": {
-    "excerpt": "#### 4.4.1 线性变换的定义\n\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。",
-    "heading_level": 4,
-    "heading_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.4 线性变换",
-      "4.4.1 线性变换的定义"
-    ],
-    "neighboring_titles": [
-      "4.4.2 是 vs 不是线性变换"
-    ],
-    "occurrence": 1,
-    "source_hash": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
     "source_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.4 线性变换",
       "4.4.1 线性变换的定义"
     ],
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.4 线性变换",
+      "4.4.1 线性变换的定义"
+    ],
+    "heading_level": 4,
+    "occurrence": 1,
+    "excerpt": "#### 4.4.1 线性变换的定义\n\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。",
+    "source_hash": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
     "spans": [
       {
-        "end_line": 1737,
-        "fingerprint": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.1 线性变换的定义::1::sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.4 线性变换",
           "4.4.1 线性变换的定义"
         ],
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.1 线性变换的定义::1::sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
         "start_line": 1732,
+        "end_line": 1737,
+        "fingerprint": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
         "text": "#### 4.4.1 线性变换的定义\n\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。"
       }
+    ],
+    "neighboring_titles": [
+      "4.4.2 是 vs 不是线性变换"
     ]
   },
-  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -228,73 +49,252 @@
     ],
     "requires_analogy_boundary": false
   },
-  "topic_id": "ch04.linear-map.definition",
-  "visual_semantics": {
-    "entities": [
+  "claims": [
+    {
+      "id": "claim.ch04.linear-map.definition",
+      "statement": "4.4.1 线性变换的定义 的线性表示保持可检验的向量关系。",
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.1 线性变换的定义::1::sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "entity_refs": [
+        "entity.ch04.linear-map.definition.v",
+        "entity.ch04.linear-map.definition.result"
+      ],
+      "relation_refs": [
+        "relation.ch04.linear-map.definition.maps"
+      ],
+      "stage_refs": [
+        "stage.ch04.linear-map.definition.input"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "connection.ch04.linear-map.definition.prior",
+      "target_topic_id": "ch03.det.ad-bc",
+      "relation": "prerequisite",
+      "description": "前置的线性表示与几何关系。",
+      "claim_refs": [
+        "claim.ch04.linear-map.definition"
+      ]
+    }
+  ],
+  "explanation": {
+    "title": "4.4.1 线性变换的定义",
+    "summary": "4.4.1 线性变换的定义 的确定性讲义 artifact。",
+    "sections": [
       {
+        "id": "definition",
+        "title": "definition",
+        "text": "definition: 4.4.1 线性变换的定义。",
         "claim_refs": [
           "claim.ch04.linear-map.definition"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
-        "value": [
-          1,
-          2
         ]
       },
       {
+        "id": "formula",
+        "title": "formula",
+        "text": "formula: 4.4.1 线性变换的定义。",
         "claim_refs": [
           "claim.ch04.linear-map.definition"
+        ]
+      },
+      {
+        "id": "derivation",
+        "title": "derivation",
+        "text": "derivation: 4.4.1 线性变换的定义。",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      },
+      {
+        "id": "worked_examples",
+        "title": "worked_examples",
+        "text": "worked_examples: 4.4.1 线性变换的定义。",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      },
+      {
+        "id": "geometric_meaning",
+        "title": "geometric_meaning",
+        "text": "geometric_meaning: 4.4.1 线性变换的定义。",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      },
+      {
+        "id": "pitfalls",
+        "title": "pitfalls",
+        "text": "pitfalls: 4.4.1 线性变换的定义。",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      },
+      {
+        "id": "connections",
+        "title": "connections",
+        "text": "connections: 4.4.1 线性变换的定义。",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      }
+    ],
+    "symbol_roles": {
+      "v": "vector_a",
+      "result": "transformed_a"
+    },
+    "definition": "4.4.1 线性变换的定义 的对象和定义。",
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "worked_examples": [
+      {
+        "id": "example.ch04.linear-map.definition",
+        "title": "数值例",
+        "kind": "scalar_multiple",
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
         ],
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "result": [
+          2,
+          4
+        ],
+        "checks": [
+          {
+            "name": "result",
+            "expected": [
+              2,
+              4
+            ],
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      }
+    ],
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "invariants": [
+      "finite numeric result"
+    ],
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.4.1 线性变换的定义",
+      "线性空间",
+      "数值例"
+    ]
+  },
+  "visual_semantics": {
+    "scene_kind": "2d",
+    "scene_family": "basis_change",
+    "entities": [
+      {
+        "id": "entity.ch04.linear-map.definition.v",
+        "kind": "vector",
         "dimension": 2,
+        "value": [
+          1,
+          2
+        ],
+        "role": "vector_a",
+        "label": "v",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
+      },
+      {
         "id": "entity.ch04.linear-map.definition.result",
         "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "dimension": 2,
         "value": [
           2,
           4
+        ],
+        "role": "transformed_a",
+        "label": "result",
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
         ]
       }
     ],
     "relations": [
       {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
         "id": "relation.ch04.linear-map.definition.maps",
         "kind": "maps_to",
+        "source_ref": "entity.ch04.linear-map.definition.v",
+        "target_ref": "entity.ch04.linear-map.definition.result",
         "parameters": {
           "scalar": 2
         },
-        "source_ref": "entity.ch04.linear-map.definition.v",
-        "target_ref": "entity.ch04.linear-map.definition.result"
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ]
       }
     ],
-    "scene_family": "subspace_region",
-    "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
-        "expected_invariants": [
-          "finite numeric result"
-        ],
         "id": "stage.ch04.linear-map.definition.input",
+        "title": "输入与结果",
+        "caption": "显示线性关系。",
+        "layout": "sequence",
         "input_entity_refs": [
           "entity.ch04.linear-map.definition.v"
         ],
-        "layout": "sequence",
         "output_entity_refs": [
           "entity.ch04.linear-map.definition.result"
         ],
         "relation_refs": [
           "relation.ch04.linear-map.definition.maps"
         ],
-        "title": "输入与结果"
+        "expected_invariants": [
+          "finite numeric result"
+        ]
       }
     ]
+  },
+  "generated": {
+    "provider": "deterministic-fixture",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "source_hash": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
+    "raw_reply_digest": "sha256:7d7e42faa9053a79f343d06dc7d06e343ff091625f39d2e9a40c51db09882732",
+    "artifact_digest": "sha256:dc64759f1baf5cb1c38567fa2a8d37476c8ec9ca8bec0c235107a47a7ab09f36"
   }
 }

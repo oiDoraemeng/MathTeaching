@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:9e3ebb43b0458919f946e95bf94efb2d69c33ffe9345eabac9302ee8878630cc",
+  "artifact_digest": "sha256:14b0d9e690f185896b545c9661ec6345900ad76c100a11394da3f1281814ecad",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:da011abb17c3b4f8f531f53a73e04fde1085bb57fa0c16a5f96cd779a660af7a",
+  "contract_digest": "sha256:663d97a1ea31f2746905059f56c5a54b8b77c75a593389efa44772b334eaa873",
   "plan": {
     "operations": [
       {
@@ -63,33 +63,25 @@
       },
       {
         "alias": "sem__relation.ch04.rank.collapse.maps",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "maps_to: v → result"
-      },
-      {
-        "basis": [
-          [
-            1.0,
-            2.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
-        ],
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
         "alias": "sem__stage.ch04.rank.collapse.input__title",
@@ -109,7 +101,7 @@
     "summary": "4.2.4 极大无关组与秩",
     "version": 1
   },
-  "plan_digest": "sha256:9fcd9903de50654a97be85cfac742bf0fcfbac3cfac28135d4df6a5191708af8",
+  "plan_digest": "sha256:7c842edf36ec0e1631ae2bd559ea1f676cf10e7ec40e9a101603424e428bd0fe",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -136,8 +128,7 @@
         "sem__entity.ch04.rank.collapse.result__end",
         "sem__entity.ch04.rank.collapse.result__origin",
         "sem__relation.ch04.rank.collapse.maps",
-        "sem__stage.ch04.rank.collapse.input__title",
-        "sem__mapping_grid__1"
+        "sem__stage.ch04.rank.collapse.input__title"
       ],
       "visible_refs": [
         "entity.ch04.rank.collapse.v",

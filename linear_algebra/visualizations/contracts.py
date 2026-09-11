@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from linear_algebra.catalog.manifest import topic_entries
 from linear_algebra.teaching.model import TeachingArtifact, VisualSemantics
+from linear_algebra.chapter_04_semantics import semantic_for
 
 
 @dataclass(frozen=True)
@@ -69,6 +70,17 @@ def contract_for(topic_id: str) -> VisualContract:
         **{topic: "quadratic_level_set" for topic in ("ch08.quadratic.matrix-form", "ch08.quadratic.level-sets", "ch08.principal-axis", "ch08.definiteness", "ch08.completing-square", "ch08.congruence-inertia")},
     }
     if topic_id in extended_family:
+        if topic_id.startswith("ch04."):
+            semantic = semantic_for(topic_id)
+            return VisualContract(
+                topic_id,
+                (f"claim.{topic_id}",),
+                ("vector_a", "transformed_a"),
+                (semantic.relation,),
+                (semantic.primitive,),
+                1,
+                ("finite numeric result",),
+            )
         family = extended_family[topic_id]
         return VisualContract(topic_id, (f"claim.{topic_id}",), ("vector_a", "transformed_a"), ("maps_to",), (family,), 1, ("finite numeric result",))
     return overrides.get(topic_id, base)

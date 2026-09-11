@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:1d21f23b54af1c90ec692594bfbada9e177cc01f2b7bc84d6628e5689c1a1208",
+  "artifact_digest": "sha256:dfa66fd150e12a9192c637df04c93076c1e6a40a196c5264695b8a659c685d8a",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:051eaccd62b10653f2782bd6ebdd39b90b3a540b1c9ea083bef93d05214584df",
+  "contract_digest": "sha256:1b8ca1716ae25953bf90c72c73ff57818e3fe00fe3a5d79c301387d2194c1608",
   "plan": {
     "operations": [
       {
@@ -62,16 +62,24 @@
         "start": "sem__entity.ch04.linear-map.compare.result__origin"
       },
       {
-        "alias": "sem__relation.ch04.linear-map.compare.maps",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "aliases": [
+          "sem__relation.ch04.linear-map.compare.maps__source",
+          "sem__relation.ch04.linear-map.compare.maps__target"
         ],
-        "text": "maps_to: v → result"
-      },
-      {
-        "basis": [
+        "matrices": [
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
           [
             1.0,
             2.0
@@ -80,16 +88,37 @@
             2.0,
             4.0
           ]
+        ]
+      },
+      {
+        "alias": "sem__stage_order__1",
+        "aliases": [
+          "sem__stage_order__1__source",
+          "sem__stage_order__1__target"
         ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+        "matrices": [
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
         ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ]
       },
       {
         "alias": "sem__stage.ch04.linear-map.compare.input__title",
@@ -109,13 +138,13 @@
     "summary": "4.4.2 是 vs 不是线性变换",
     "version": 1
   },
-  "plan_digest": "sha256:3f408349abc62ef9dc353dde7a0e34953614931a2f09a973251253f40c2afae9",
+  "plan_digest": "sha256:855a1e1574892fcee6b5e047de512830b10ed46164a93a170fddcf3c9c22b5c3",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "subspace_region",
+  "scene_family": "basis_change",
   "schema_version": 1,
   "source_hash": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
   "stages": [
@@ -137,7 +166,7 @@
         "sem__entity.ch04.linear-map.compare.result__origin",
         "sem__relation.ch04.linear-map.compare.maps",
         "sem__stage.ch04.linear-map.compare.input__title",
-        "sem__mapping_grid__1"
+        "sem__stage_order__1"
       ],
       "visible_refs": [
         "entity.ch04.linear-map.compare.v",

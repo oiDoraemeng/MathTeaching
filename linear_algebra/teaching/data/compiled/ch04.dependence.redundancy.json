@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:d6ad7b57a09cc02d3beb538f4886c97bb6c7fbd8c02427e83f4db02d54594078",
+  "artifact_digest": "sha256:e63c32af6dfd74b3c031d7478c6d180ff99be20ef50075f6c57af5bb84b5b04c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:f03c347de83d06cbf8f88546a380fc9d802e8a9d6cf1bf8252d089e53177c2fe",
+  "contract_digest": "sha256:7c9bc328af275d282fc9ce8d1e54bd2c02e2082546bbcb5584e2c2c4a54eb040",
   "plan": {
     "operations": [
       {
@@ -63,33 +63,39 @@
       },
       {
         "alias": "sem__relation.ch04.dependence.redundancy.maps",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "color": "#2A9D8F",
+        "first": [
+          1.0,
+          2.0
         ],
-        "text": "maps_to: v → result"
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          2.0,
+          4.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
       },
       {
-        "basis": [
-          [
-            1.0,
-            2.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
+        "alias": "sem__orientation__1",
+        "color": "#2A9D8F",
+        "first": [
+          1.0,
+          2.0
         ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          2.0,
+          4.0
         ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "vertex": [
+          0.0,
+          0.0
+        ]
       },
       {
         "alias": "sem__stage.ch04.dependence.redundancy.input__title",
@@ -109,7 +115,7 @@
     "summary": "4.2.2 线性相关与线性无关",
     "version": 1
   },
-  "plan_digest": "sha256:488132777cc718e9e96a4c035c2fff452ba6910016f3deb1451df886618e2d66",
+  "plan_digest": "sha256:0f2074d7f2fcc2807c307ad999341f680490fa9d03ff08d0b42611dab78cdeb3",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -137,7 +143,7 @@
         "sem__entity.ch04.dependence.redundancy.result__origin",
         "sem__relation.ch04.dependence.redundancy.maps",
         "sem__stage.ch04.dependence.redundancy.input__title",
-        "sem__mapping_grid__1"
+        "sem__orientation__1"
       ],
       "visible_refs": [
         "entity.ch04.dependence.redundancy.v",

@@ -1,221 +1,42 @@
 {
-  "claims": [
-    {
-      "entity_refs": [
-        "entity.ch04.subspace.intersection.v",
-        "entity.ch04.subspace.intersection.result"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
-      "formula_symbols": [
-        "v",
-        "result"
-      ],
-      "id": "claim.ch04.subspace.intersection",
-      "relation_refs": [
-        "relation.ch04.subspace.intersection.maps"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"
-      ],
-      "stage_refs": [
-        "stage.ch04.subspace.intersection.input"
-      ],
-      "statement": "4.1.2 子空间 的线性表示保持可检验的向量关系。"
-    }
-  ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch04.subspace.intersection"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch04.subspace.intersection.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.ad-bc"
-    }
-  ],
-  "explanation": {
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "definition": "4.1.2 子空间 的对象和定义。",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "invariants": [
-      "finite numeric result"
-    ],
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.1.2 子空间",
-      "线性空间",
-      "数值例"
-    ],
-    "sections": [
-      {
-        "claim_refs": [
-          "claim.ch04.subspace.intersection"
-        ],
-        "id": "definition",
-        "text": "definition: 4.1.2 子空间。",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.subspace.intersection"
-        ],
-        "id": "formula",
-        "text": "formula: 4.1.2 子空间。",
-        "title": "formula"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.subspace.intersection"
-        ],
-        "id": "derivation",
-        "text": "derivation: 4.1.2 子空间。",
-        "title": "derivation"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.subspace.intersection"
-        ],
-        "id": "worked_examples",
-        "text": "worked_examples: 4.1.2 子空间。",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.subspace.intersection"
-        ],
-        "id": "geometric_meaning",
-        "text": "geometric_meaning: 4.1.2 子空间。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.subspace.intersection"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 4.1.2 子空间。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.subspace.intersection"
-        ],
-        "id": "connections",
-        "text": "connections: 4.1.2 子空间。",
-        "title": "connections"
-      }
-    ],
-    "summary": "4.1.2 子空间 的确定性讲义 artifact。",
-    "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
-    },
-    "title": "4.1.2 子空间",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "worked_examples": [
-      {
-        "calculation": [
-          "2*(1,2)=(2,4)"
-        ],
-        "checks": [
-          {
-            "expected": [
-              2,
-              4
-            ],
-            "name": "result",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.subspace.intersection"
-        ],
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "id": "example.ch04.subspace.intersection",
-        "kind": "scalar_multiple",
-        "result": [
-          2,
-          4
-        ],
-        "title": "数值例"
-      }
-    ]
-  },
-  "generated": {
-    "artifact_digest": "sha256:0f8e99b1698746ff3229db905171841da79f89afb7f1f6881c981db2a858885f",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:9286d5223160dcc85cd0a6c6c9911ab2d2ee4ebdfaa11c2068a2b22e314532be",
-    "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"
-  },
-  "revision": 1,
   "schema_version": 1,
+  "topic_id": "ch04.subspace.intersection",
+  "revision": 1,
+  "status": "reviewed",
   "source": {
-    "excerpt": "#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。",
-    "heading_level": 4,
-    "heading_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.1 线性空间与子空间",
-      "4.1.2 子空间"
-    ],
-    "neighboring_titles": [
-      "4.1.1 线性空间",
-      "4.1.3 两大核心子空间：列空间与零空间"
-    ],
-    "occurrence": 1,
-    "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
     "source_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.1 线性空间与子空间",
       "4.1.2 子空间"
     ],
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.1 线性空间与子空间",
+      "4.1.2 子空间"
+    ],
+    "heading_level": 4,
+    "occurrence": 1,
+    "excerpt": "#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。",
+    "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
     "spans": [
       {
-        "end_line": 1587,
-        "fingerprint": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.1 线性空间与子空间",
           "4.1.2 子空间"
         ],
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
         "start_line": 1548,
+        "end_line": 1587,
+        "fingerprint": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
         "text": "#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。"
       }
+    ],
+    "neighboring_titles": [
+      "4.1.1 线性空间",
+      "4.1.3 两大核心子空间：列空间与零空间"
     ]
   },
-  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -229,73 +50,252 @@
     ],
     "requires_analogy_boundary": false
   },
-  "topic_id": "ch04.subspace.intersection",
-  "visual_semantics": {
-    "entities": [
+  "claims": [
+    {
+      "id": "claim.ch04.subspace.intersection",
+      "statement": "4.1.2 子空间 的线性表示保持可检验的向量关系。",
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "entity_refs": [
+        "entity.ch04.subspace.intersection.v",
+        "entity.ch04.subspace.intersection.result"
+      ],
+      "relation_refs": [
+        "relation.ch04.subspace.intersection.maps"
+      ],
+      "stage_refs": [
+        "stage.ch04.subspace.intersection.input"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "connection.ch04.subspace.intersection.prior",
+      "target_topic_id": "ch03.det.ad-bc",
+      "relation": "prerequisite",
+      "description": "前置的线性表示与几何关系。",
+      "claim_refs": [
+        "claim.ch04.subspace.intersection"
+      ]
+    }
+  ],
+  "explanation": {
+    "title": "4.1.2 子空间",
+    "summary": "4.1.2 子空间 的确定性讲义 artifact。",
+    "sections": [
       {
+        "id": "definition",
+        "title": "definition",
+        "text": "definition: 4.1.2 子空间。",
         "claim_refs": [
           "claim.ch04.subspace.intersection"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.subspace.intersection.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
-        "value": [
-          1,
-          2
         ]
       },
       {
+        "id": "formula",
+        "title": "formula",
+        "text": "formula: 4.1.2 子空间。",
         "claim_refs": [
           "claim.ch04.subspace.intersection"
+        ]
+      },
+      {
+        "id": "derivation",
+        "title": "derivation",
+        "text": "derivation: 4.1.2 子空间。",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      },
+      {
+        "id": "worked_examples",
+        "title": "worked_examples",
+        "text": "worked_examples: 4.1.2 子空间。",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      },
+      {
+        "id": "geometric_meaning",
+        "title": "geometric_meaning",
+        "text": "geometric_meaning: 4.1.2 子空间。",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      },
+      {
+        "id": "pitfalls",
+        "title": "pitfalls",
+        "text": "pitfalls: 4.1.2 子空间。",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      },
+      {
+        "id": "connections",
+        "title": "connections",
+        "text": "connections: 4.1.2 子空间。",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      }
+    ],
+    "symbol_roles": {
+      "v": "vector_a",
+      "result": "transformed_a"
+    },
+    "definition": "4.1.2 子空间 的对象和定义。",
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "worked_examples": [
+      {
+        "id": "example.ch04.subspace.intersection",
+        "title": "数值例",
+        "kind": "scalar_multiple",
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
         ],
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "result": [
+          2,
+          4
+        ],
+        "checks": [
+          {
+            "name": "result",
+            "expected": [
+              2,
+              4
+            ],
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      }
+    ],
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "invariants": [
+      "finite numeric result"
+    ],
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.1.2 子空间",
+      "线性空间",
+      "数值例"
+    ]
+  },
+  "visual_semantics": {
+    "scene_kind": "2d",
+    "scene_family": "subspace_region",
+    "entities": [
+      {
+        "id": "entity.ch04.subspace.intersection.v",
+        "kind": "vector",
         "dimension": 2,
+        "value": [
+          1,
+          2
+        ],
+        "role": "vector_a",
+        "label": "v",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
+      },
+      {
         "id": "entity.ch04.subspace.intersection.result",
         "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "dimension": 2,
         "value": [
           2,
           4
+        ],
+        "role": "transformed_a",
+        "label": "result",
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
         ]
       }
     ],
     "relations": [
       {
-        "claim_refs": [
-          "claim.ch04.subspace.intersection"
-        ],
         "id": "relation.ch04.subspace.intersection.maps",
-        "kind": "maps_to",
+        "kind": "projects_to",
+        "source_ref": "entity.ch04.subspace.intersection.v",
+        "target_ref": "entity.ch04.subspace.intersection.result",
         "parameters": {
           "scalar": 2
         },
-        "source_ref": "entity.ch04.subspace.intersection.v",
-        "target_ref": "entity.ch04.subspace.intersection.result"
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ]
       }
     ],
-    "scene_family": "subspace_region",
-    "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
-        "expected_invariants": [
-          "finite numeric result"
-        ],
         "id": "stage.ch04.subspace.intersection.input",
+        "title": "输入与结果",
+        "caption": "显示线性关系。",
+        "layout": "sequence",
         "input_entity_refs": [
           "entity.ch04.subspace.intersection.v"
         ],
-        "layout": "sequence",
         "output_entity_refs": [
           "entity.ch04.subspace.intersection.result"
         ],
         "relation_refs": [
           "relation.ch04.subspace.intersection.maps"
         ],
-        "title": "输入与结果"
+        "expected_invariants": [
+          "finite numeric result"
+        ]
       }
     ]
+  },
+  "generated": {
+    "provider": "deterministic-fixture",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
+    "raw_reply_digest": "sha256:b97d068294fb4237b84956c072ad460accaf86cdc0ec6eb6f964505620fcc0db",
+    "artifact_digest": "sha256:8d3c7af6467dd9f97ad8b5a4e856eabd1385061935126f9031d4449428a0247d"
   }
 }

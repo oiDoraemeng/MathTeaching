@@ -10,6 +10,7 @@ from typing import Mapping
 from linear_algebra.catalog.manifest import topic_entries
 from linear_algebra.teaching.content_validation import lecture_source_repository
 from linear_algebra.teaching.profiles import profile_for
+from linear_algebra.chapter_04_semantics import semantic_for
 
 
 _TOPICS = {topic.id: topic for topic in topic_entries() if 4 <= topic.chapter_number <= 8}
@@ -32,6 +33,7 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         "end_line": span.end_line, "fingerprint": span.fingerprint, "text": span.text,
     }
     profile = profile_for(topic_id)
+    semantic = semantic_for(topic_id) if topic_id.startswith("ch04.") else None
     formula = r"v=(1,2),\quad 2v=(2,4)"
     claim = {
         "id": claim_id, "statement": f"{topic.title} 的线性表示保持可检验的向量关系。",
@@ -62,10 +64,12 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
             "connections": ["与前置线性表示相连。"], "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
             "transfer_note": "先识别对象，再核对公式和不变量。", "read_guide": ["先定义，再公式，最后读数值例。"],
             "searchable_text": [topic.title, "线性空间", "数值例"]},
-        "visual_semantics": {"scene_kind": "2d", "scene_family": "subspace_region",
+        "visual_semantics": {"scene_kind": "2d", "scene_family": semantic.family if semantic else "subspace_region",
             "entities": [{"id": entity_id, "kind": "vector", "dimension": 2, "value": [1, 2], "role": "vector_a", "label": "v", "claim_refs": [claim_id]},
                          {"id": result_id, "kind": "vector", "dimension": 2, "value": [2, 4], "role": "transformed_a", "label": "result", "claim_refs": [claim_id]}],
-            "relations": [{"id": relation_id, "kind": "maps_to", "source_ref": entity_id, "target_ref": result_id, "parameters": {"scalar": 2}, "claim_refs": [claim_id]}],
+            "relations": [{"id": relation_id, "kind": semantic.relation if semantic else "maps_to", "source_ref": entity_id, "target_ref": result_id,
+                           "parameters": ({"vertices": [[0, 0], [1, 0], [1, 1]]} if semantic and semantic.relation == "spans" else {"matrix": [[1, 0], [0, 1]]} if semantic and semantic.relation in {"batch_maps_to", "composition_order"} else {"scalar": 2}),
+                           "claim_refs": [claim_id]}],
             "stages": [{"id": stage_id, "title": "输入与结果", "caption": "显示线性关系。", "layout": "sequence",
                         "input_entity_refs": [entity_id], "output_entity_refs": [result_id], "relation_refs": [relation_id], "expected_invariants": ["finite numeric result"]}]},
         "generated": {"provider": "deterministic-fixture", "model": "fixture", "prompt_version": "chapter-4-8-v1",

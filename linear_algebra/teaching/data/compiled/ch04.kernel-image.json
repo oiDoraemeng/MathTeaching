@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:2ac752b432320de8143f64ae78ef539bc73c5427b2b2db1f40fb664df6aeb348",
+  "artifact_digest": "sha256:db72dcdff474a1555e12891401c18e5661e08b42d1dd1e32de268d9401ddbcd9",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:d4769762e3a99f7f767ae76964fea8cc142e67d91021ea6d185ab73158a82a25",
+  "contract_digest": "sha256:1a2fa00d7eceb7ab8980c269cd78b9a191f9e7cf9b31588ac79e3c9a81eb7847",
   "plan": {
     "operations": [
       {
@@ -63,12 +63,24 @@
       },
       {
         "alias": "sem__relation.ch04.kernel-image.maps",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "maps_to: v → result"
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
       },
       {
         "basis": [
@@ -92,6 +104,27 @@
         "opacity": 0.2
       },
       {
+        "alias": "sem__span__1",
+        "color": "#E09F3E",
+        "op": "geometry.polygon",
+        "opacity": 0.24,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
         "alias": "sem__stage.ch04.kernel-image.input__title",
         "op": "annotation.upsert",
         "position": [
@@ -109,13 +142,13 @@
     "summary": "4.5.1 定义",
     "version": 1
   },
-  "plan_digest": "sha256:39e3d7c6f6998ad24d632c60d8638bfec128369a9850e23016a4f59e4ab1b780",
+  "plan_digest": "sha256:cbadce1415695227b837677a785f64673bebbd289e1f0a3eedd5568369a5a4ab",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "subspace_region",
+  "scene_family": "affine_solution",
   "schema_version": 1,
   "source_hash": "sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb",
   "stages": [
@@ -137,7 +170,7 @@
         "sem__entity.ch04.kernel-image.result__origin",
         "sem__relation.ch04.kernel-image.maps",
         "sem__stage.ch04.kernel-image.input__title",
-        "sem__mapping_grid__1"
+        "sem__span__1"
       ],
       "visible_refs": [
         "entity.ch04.kernel-image.v",
