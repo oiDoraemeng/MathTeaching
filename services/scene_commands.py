@@ -133,6 +133,7 @@ _ALLOWED_OPERATIONS = frozenset(
         "geometry.oriented_volume",
         "plane3d.upsert",
         "geometry.intersection",
+        "geometry.constraint",
     }
 )
 _SCENE_VALUES = frozenset({"2d", "3d"})
@@ -143,7 +144,7 @@ _ROLE_VALUES = frozenset({"primary", "construction", "result"})
 _THREE_D_OPERATIONS = frozenset({
     "point3d.upsert", "point3d.delete", "linear3d.upsert", "plane3d.upsert",
     "geometry.parallelogram3d", "geometry.parallelepiped", "geometry.oriented_volume",
-    "surface.create", "surface.update", "surface.delete", "geometry.intersection",
+    "surface.create", "surface.update", "surface.delete", "geometry.intersection", "geometry.constraint",
 })
 _TWO_D_OPERATIONS = frozenset(
     {
@@ -486,6 +487,14 @@ class SceneCommandService:
         elif name == "geometry.intersection":
             _require_text(operation, "first")
             _require_text(operation, "second")
+        elif name == "geometry.constraint":
+            matrix = operation.get("matrix"); rhs = operation.get("rhs")
+            if not isinstance(matrix, (list, tuple)) or len(matrix) not in (2, 3) or not isinstance(rhs, (list, tuple)) or len(rhs) != len(matrix):
+                raise CommandError("constraint matrix/rhs dimension mismatch")
+            for row in matrix:
+                if not isinstance(row, (list, tuple)) or len(row) != len(matrix): raise CommandError("constraint matrix must be square")
+                _require_coordinates(row, dimensions=len(matrix))
+            _require_coordinates(rhs, dimensions=len(matrix))
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):

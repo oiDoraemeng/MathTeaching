@@ -1,0 +1,16 @@
+import pytest
+from linear_algebra.visualizations.families.constraints import ConstraintFamilyCompiler, classify_constraint_system
+from linear_algebra.visualizations.compiler import VisualCompileError
+
+@pytest.mark.parametrize("matrix,rhs,expected", [([[1,0],[0,1]],[1,2],"unique"), ([[1,0],[1,0]],[1,2],"none"), ([[1,0],[2,0]],[1,2],"infinite")])
+def test_constraint_solution_classification(matrix, rhs, expected):
+    assert classify_constraint_system(matrix, rhs).kind == expected
+
+def test_constraint_compile_preserves_state_and_intersection_alias():
+    result = ConstraintFamilyCompiler.compile({"matrix":[[1,0],[0,1]],"rhs":[1,2]})
+    assert result["evidence"].kind == "unique"
+    assert result["operations"][0]["intersection_alias"] in result["aliases"]
+
+@pytest.mark.parametrize("payload", [{"matrix":[[1,0],[0,1]],"rhs":[1,2],"bounds":[1,-1,-2,2]}, {"matrix":[[1,0],[0,1]],"rhs":[1,2],"tolerance":0}])
+def test_constraint_rejects_invalid_numeric_or_bounds(payload):
+    with pytest.raises(VisualCompileError): ConstraintFamilyCompiler.compile(payload)
