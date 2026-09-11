@@ -53,7 +53,12 @@ class SpectralFamilyCompiler:
             evidence = spectral_evidence(matrix, payload.get("tolerance", 1e-9))
             aliases = ("spectrum__matrix", "spectrum__roots")
             operation = {"op": "geometry.spectrum", "alias": aliases[0], "matrix": tuple(tuple(float(x) for x in row) for row in matrix), "roots": tuple(root.value for root in evidence.roots), "eigenspaces": evidence.eigenspaces, "complex_roots": evidence.complex_roots, "roots_alias": aliases[1], "bounds": bounds, "tolerance": float(payload.get("tolerance", 1e-9))}
-            return {"operations": (operation,), "aliases": aliases, "evidence": evidence}
+            operations = [operation]
+            for root in evidence.roots:
+                for index, direction in enumerate(evidence.eigenspaces.get(root.eigenspace_id, ())):
+                    if len(direction) == 3:
+                        operations.append({"op": "geometry.projection3d", "alias": f"{root.eigenspace_id}__projection_{index}", "vector": tuple(direction), "foot": tuple(direction), "residual": (0.0, 0.0, 0.0), "right_angle": {"vertex": tuple(direction), "first": tuple(direction), "second": (0.0, 0.0, 0.0)}, "bounds": bounds, "tolerance": float(payload.get("tolerance", 1e-9))})
+            return {"operations": tuple(operations), "aliases": aliases, "evidence": evidence}
         except (TypeError, ValueError, np.linalg.LinAlgError) as error:
             raise VisualCompileError((CompileIssue("invalid_spectrum", "$.spectrum", str(error)),)) from error
 

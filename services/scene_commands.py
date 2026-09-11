@@ -154,6 +154,7 @@ _THREE_D_OPERATIONS = frozenset({
     "point3d.upsert", "point3d.delete", "linear3d.upsert", "plane3d.upsert",
     "geometry.parallelogram3d", "geometry.parallelepiped", "geometry.oriented_volume",
     "surface.create", "surface.update", "surface.delete", "geometry.intersection", "geometry.constraint",
+    "geometry.projection3d", "geometry.orthogonalization",
 })
 _TWO_D_OPERATIONS = frozenset(
     {
@@ -692,9 +693,20 @@ class SceneCommandService:
             for value in eigenspaces.values():
                 if not isinstance(value, (list, tuple)): raise CommandError("spectrum eigenspace is invalid")
             _require_text(operation, "roots_alias")
+            bounds = operation.get("bounds")
+            if not isinstance(bounds, (list, tuple)) or len(bounds) != 2 * len(matrix) or any(not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) for value in bounds) or any(float(bounds[index]) >= float(bounds[index + 1]) for index in range(0, len(bounds), 2)) or any(abs(float(value)) > 100.0 for value in bounds):
+                raise CommandError("spectrum bounds are invalid")
+            tolerance = operation.get("tolerance", 1e-9)
+            if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not math.isfinite(float(tolerance)) or float(tolerance) <= 0:
+                raise CommandError("spectrum tolerance is invalid")
         elif name == "geometry.projection3d":
-            for field in ("vector", "direction", "foot", "residual"):
+            bounds = operation.get("bounds")
+            if not isinstance(bounds, (list, tuple)) or len(bounds) != 6 or any(not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) for value in bounds) or any(float(bounds[index]) >= float(bounds[index + 1]) for index in range(0, 6, 2)):
+                raise CommandError("projection3d bounds are invalid")
+            for field in ("vector", "foot", "residual"):
                 _require_coordinates(operation.get(field), dimensions=3)
+            if not isinstance(operation.get("tolerance", 1e-9), (int, float)) or float(operation.get("tolerance", 1e-9)) <= 0 or not math.isfinite(float(operation.get("tolerance", 1e-9))):
+                raise CommandError("projection3d tolerance is invalid")
             _require_text(operation, "alias")
         elif name == "geometry.orthogonalization":
             vectors = operation.get("vectors"); stages = operation.get("stages")
@@ -706,6 +718,12 @@ class SceneCommandService:
                 for field in ("input", "projection", "residual", "normalized"): _require_coordinates(stage.get(field), dimensions=len(stage[field]))
             aliases = operation.get("aliases")
             if not isinstance(aliases, (list, tuple)) or len(set(aliases)) != 4: raise CommandError("orthogonalization aliases are invalid")
+            bounds = operation.get("bounds")
+            if not isinstance(bounds, (list, tuple)) or len(bounds) != 2 * len(vectors[0]) or any(not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) for value in bounds) or any(float(bounds[index]) >= float(bounds[index + 1]) for index in range(0, len(bounds), 2)) or any(abs(float(value)) > 100.0 for value in bounds):
+                raise CommandError("orthogonalization bounds are invalid")
+            tolerance = operation.get("tolerance", 1e-9)
+            if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not math.isfinite(float(tolerance)) or float(tolerance) <= 0:
+                raise CommandError("orthogonalization tolerance is invalid")
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):

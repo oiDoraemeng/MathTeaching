@@ -20,3 +20,9 @@ def test_orthogonalization_compiler_emits_stages_and_command_gate():
     result = OrthogonalizationFamilyCompiler.compile({"vectors": [[1, 0, 0], [1, 1, 0]], "bounds": [-2, 2, -2, 2, -2, 2]})
     assert result["aliases"] == ("orthogonalization__input", "orthogonalization__projection", "orthogonalization__residual", "orthogonalization__normalized")
     assert SceneCommandService().validate(CommandPlan(scene="3d", operations=result["operations"])).valid
+
+
+def test_orthogonalization_service_rejects_nan_bounds_before_dispatch():
+    result = OrthogonalizationFamilyCompiler.compile({"vectors": [[1, 0, 0], [1, 1, 0]], "bounds": [-2, 2, -2, 2, -2, 2]})
+    operation = dict(result["operations"][0], bounds=(float("nan"), 2, -2, 2, -2, 2))
+    assert not SceneCommandService().validate(CommandPlan(scene="3d", operations=(operation,))).valid

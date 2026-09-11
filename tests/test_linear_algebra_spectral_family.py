@@ -19,9 +19,15 @@ def test_complex_only_roots_have_no_fake_real_direction():
 
 
 def test_spectrum_compiler_emits_stable_aliases_and_command_gate():
-    result = SpectralFamilyCompiler.compile({"matrix": [[2, 0], [0, 3]], "bounds": [-2, 2, -2, 2]})
+    result = SpectralFamilyCompiler.compile({"matrix": [[2, 0, 0], [0, 3, 0], [0, 0, 4]], "bounds": [-2, 2, -2, 2, -2, 2]})
     assert result["aliases"] == ("spectrum__matrix", "spectrum__roots")
-    assert SceneCommandService().validate(CommandPlan(scene="2d", operations=result["operations"])).valid
+    assert SceneCommandService().validate(CommandPlan(scene="3d", operations=result["operations"])).valid
+    assert {operation["op"] for operation in result["operations"]} >= {"geometry.spectrum", "geometry.projection3d"}
+
+
+def test_spectrum_service_rejects_unbounded_or_nonfinite_trust_boundary():
+    operation = {"op": "geometry.spectrum", "matrix": [[2, 0, 0], [0, 3, 0], [0, 0, 4]], "roots": [2], "eigenspaces": {}, "roots_alias": "roots", "bounds": [-1000, 1000, -2, 2, -2, 2], "tolerance": 1e-9}
+    assert not SceneCommandService().validate(CommandPlan(scene="3d", operations=(operation,))).valid
 
 
 def test_spectrum_rejects_nonfinite():
