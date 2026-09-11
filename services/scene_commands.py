@@ -788,6 +788,11 @@ class SceneCommandService:
         return [dict(operation)]
 
 
+def replay_extended_plan(plan: CommandPlan, host: SceneCommandHost) -> CommandValidation:
+    """Execute an already-validated extended plan through the normal transaction path."""
+    return SceneCommandService(host).execute(plan)
+
+
 def _expand_vector_addition(operation: dict[str, Any]) -> list[dict[str, Any]]:
     origin = _point(operation.get("origin", [0, 0]), "origin")
     a = _point(operation.get("a"), "a")
