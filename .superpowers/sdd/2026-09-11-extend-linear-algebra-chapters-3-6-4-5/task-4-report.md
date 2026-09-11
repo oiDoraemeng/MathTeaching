@@ -2,7 +2,7 @@
 
 Status: DONE
 
-Commits: `90f6c09e7380af17b4474f0359f6808b3a6250ef` — initial chapter 4 recipes; review fix commit recorded below.
+Commits: `90f6c09e7380af17b4474f0359f6808b3a6250ef` (initial recipes), `c6075f9` (review fix), `be866aa` (report).
 
 Implementation:
 
