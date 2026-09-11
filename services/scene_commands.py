@@ -136,6 +136,7 @@ _ALLOWED_OPERATIONS = frozenset(
         "geometry.intersection",
         "geometry.constraint",
         "geometry.matrix_tableau",
+        "geometry.elimination_tableau",
     }
 )
 _SCENE_VALUES = frozenset({"2d", "3d"})
@@ -189,6 +190,24 @@ def _validate_scene_scope(scene: str, operation: dict[str, Any]) -> None:
         raise CommandError(f"{name} 只能用于 scene=3d。")
     if scene == "3d" and name in _TWO_D_OPERATIONS:
         raise CommandError(f"{name} 只能用于 scene=2d。")
+
+
+def _matrix_rank_for_command(matrix: list[list[Any]]) -> int:
+    rows = [[float(value) for value in row] for row in matrix]
+    rank = 0
+    for column in range(len(rows[0]) if rows else 0):
+        pivot = next((index for index in range(rank, len(rows)) if abs(rows[index][column]) > 1e-9), None)
+        if pivot is None:
+            continue
+        rows[rank], rows[pivot] = rows[pivot], rows[rank]
+        scale = rows[rank][column]
+        rows[rank] = [value / scale for value in rows[rank]]
+        for index in range(len(rows)):
+            if index != rank:
+                factor = rows[index][column]
+                rows[index] = [left - factor * right for left, right in zip(rows[index], rows[rank])]
+        rank += 1
+    return rank
 
 
 class SceneCommandService:
@@ -516,7 +535,7 @@ class SceneCommandService:
             budget_errors = validate_budget("lecture-v1", scene=str(operation.get("scene", "3d" if len(matrix) == 3 else "2d")), entity_count=entity_count, stage_count=stage_count, sample_count=sample_count, bounds=tuple(float(value) for value in bounds))
             if budget_errors:
                 raise CommandError("constraint render_budget: " + "; ".join(budget_errors))
-        elif name == "geometry.matrix_tableau":
+        elif name in {"geometry.matrix_tableau", "geometry.elimination_tableau"}:
             matrix = operation.get("matrix")
             rhs = operation.get("rhs")
             if not isinstance(matrix, (list, tuple)) or len(matrix) not in (2, 3) or not isinstance(rhs, (list, tuple)) or len(rhs) != len(matrix):
@@ -539,10 +558,20 @@ class SceneCommandService:
             stages = operation.get("stages")
             if not isinstance(stages, (list, tuple)) or not stages:
                 raise CommandError("tableau stages must be non-empty")
+            aliases = []
+            prefix = None
             for stage in stages:
                 if not isinstance(stage, dict):
                     raise CommandError("tableau stage must be an object")
                 _require_text(stage, "alias")
+                alias = str(stage["alias"])
+                aliases.append(alias)
+                if "__stage_" not in alias or not alias.rsplit("__stage_", 1)[1].isdigit():
+                    raise CommandError("tableau stage alias is invalid")
+                current_prefix = alias.rsplit("__stage_", 1)[0]
+                if not current_prefix or (prefix is not None and current_prefix != prefix):
+                    raise CommandError("tableau stage aliases must share a prefix")
+                prefix = current_prefix
                 stage_matrix = stage.get("matrix")
                 stage_rhs = stage.get("rhs")
                 if not isinstance(stage_matrix, (list, tuple)) or len(stage_matrix) != len(matrix) or any(not isinstance(row, (list, tuple)) or len(row) != width for row in stage_matrix):
@@ -554,9 +583,18 @@ class SceneCommandService:
                         _require_finite_number(value, "tableau stage matrix")
                 for value in stage_rhs:
                     _require_finite_number(value, "tableau stage rhs")
+                expected_rank = _matrix_rank_for_command(stage_matrix)
+                expected_augmented_rank = _matrix_rank_for_command([list(row) + [value] for row, value in zip(stage_matrix, stage_rhs)])
+                if stage.get("rank", expected_rank) != expected_rank or stage.get("augmented_rank", expected_augmented_rank) != expected_augmented_rank:
+                    raise CommandError("tableau stage rank invariants are inconsistent")
+                expected_state = "none" if expected_augmented_rank > expected_rank else ("unique" if expected_rank == width else "infinite")
+                if stage.get("solution_state", expected_state) != expected_state or state not in {"unknown", expected_state}:
+                    raise CommandError("tableau stage solution_state is inconsistent")
                 highlights = stage.get("highlight_rows", ())
                 if not isinstance(highlights, (list, tuple)) or any(isinstance(row, bool) or not isinstance(row, int) or not 0 <= row < len(matrix) for row in highlights):
                     raise CommandError("tableau highlight_rows are invalid")
+            if len(set(aliases)) != len(aliases):
+                raise CommandError("tableau stage aliases must be unique")
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):

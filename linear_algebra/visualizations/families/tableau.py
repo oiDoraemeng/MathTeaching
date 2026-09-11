@@ -160,6 +160,9 @@ class MatrixTableauCompiler:
         try:
             matrix = _normal_matrix(payload.get("matrix"))
             rhs = _normal_rhs(payload.get("rhs"), len(matrix))
+            primitive = str(payload.get("op", "geometry.matrix_tableau"))
+            if primitive not in {"geometry.matrix_tableau", "geometry.elimination_tableau"}:
+                raise ValueError("tableau operation is invalid")
             state = payload.get("solution_state", "unknown")
             if state not in {"unique", "none", "infinite", "unknown"}:
                 raise ValueError("solution_state is invalid")
@@ -178,7 +181,12 @@ class MatrixTableauCompiler:
             current_matrix, current_rhs = matrix, rhs
 
             def add_stage(index: int, label: str, highlights: tuple[int, ...]) -> None:
-                stages.append(TableauStage(f"{prefix}__stage_{index}", tuple(tuple(row) for row in current_matrix), tuple(current_rhs), label, highlights, f"第 {index + 1} 阶段", label or "读取增广矩阵", str(state), int(rank), int(augmented_rank)))
+                stage_rank = _rank(current_matrix)
+                stage_augmented_rank = _rank([row + [value] for row, value in zip(current_matrix, current_rhs)])
+                computed_state = "none" if stage_augmented_rank > stage_rank else ("unique" if stage_rank == len(current_matrix[0]) else "infinite")
+                if state != "unknown" and computed_state != str(state):
+                    raise ValueError("solution_state does not match staged matrix")
+                stages.append(TableauStage(f"{prefix}__stage_{index}", tuple(tuple(row) for row in current_matrix), tuple(current_rhs), label, highlights, f"第 {index + 1} 阶段", label or "读取增广矩阵", computed_state, stage_rank, stage_augmented_rank))
 
             add_stage(0, "初始增广矩阵", ())
             for index, operation in enumerate(operations, start=1):
@@ -196,7 +204,7 @@ class MatrixTableauCompiler:
                     raise ValueError("row operation is invalid")
                 add_stage(index, label, highlights)
             stage_payloads = tuple({"alias": stage.alias, "matrix": stage.matrix, "rhs": stage.rhs, "operation_label": stage.operation_label, "highlight_rows": stage.highlight_rows, "title": stage.title, "caption": stage.caption, "solution_state": stage.solution_state, "rank": stage.rank, "augmented_rank": stage.augmented_rank} for stage in stages)
-            operation = {"op": "geometry.matrix_tableau", "matrix": tuple(tuple(row) for row in matrix), "rhs": tuple(rhs), "stages": stage_payloads, "solution_state": str(state), "rank": int(rank), "augmented_rank": int(augmented_rank), "aliases": tuple(stage.alias for stage in stages)}
+            operation = {"op": primitive, "matrix": tuple(tuple(row) for row in matrix), "rhs": tuple(rhs), "stages": stage_payloads, "solution_state": str(state), "rank": int(rank), "augmented_rank": int(augmented_rank), "aliases": tuple(stage.alias for stage in stages)}
             return TableauCompileResult(tuple(stages), (operation,), tuple(stage.alias for stage in stages), str(state), int(rank), int(augmented_rank))
         except (TypeError, ValueError) as error:
             raise VisualCompileError((CompileIssue("invalid_tableau", "$.tableau", str(error)),)) from error

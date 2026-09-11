@@ -44,9 +44,33 @@ def test_matrix_tableau_compiler_emits_immutable_stages_aliases_and_invariants()
 def test_matrix_tableau_command_is_validated_before_host_mutation():
     operation = {
         "op": "geometry.matrix_tableau", "matrix": [[1, 2], [3, 4]], "rhs": [5, 6],
-        "stages": [{"matrix": [[1, 2], [0, -2]], "rhs": [5, -9], "alias": "stage_1", "highlight_rows": [1]}],
+        "stages": [{"matrix": [[1, 2], [0, -2]], "rhs": [5, -9], "alias": "tableau__stage_1", "rank": 2, "augmented_rank": 2, "solution_state": "unique", "highlight_rows": [1]}],
         "solution_state": "unique", "rank": 2, "augmented_rank": 2,
     }
     result = SceneCommandService().validate(CommandPlan(scene="2d", operations=(operation,)))
     assert result.valid
     assert result.expanded_operations[1]["op"] == "geometry.matrix_tableau"
+
+
+def test_elimination_tableau_has_explicit_command_route_and_unique_stage_aliases():
+    result = MatrixTableauCompiler.compile({
+        "op": "geometry.elimination_tableau", "matrix": [[1, 2], [3, 4]], "rhs": [5, 6],
+        "operations": [Eliminate(target=1, source=0, factor=3)], "solution_state": "unique",
+        "rank": 2, "augmented_rank": 2, "alias_prefix": "elim",
+    })
+    assert result.operations[0]["op"] == "geometry.elimination_tableau"
+    assert result.aliases == ("elim__stage_0", "elim__stage_1")
+    assert len(set(result.aliases)) == len(result.aliases)
+    assert all(alias.startswith("elim__stage_") for alias in result.aliases)
+
+
+@pytest.mark.parametrize("bad_stage", [
+    {"alias": "elim__stage_1", "matrix": [[1, 2], [0, -2]], "rhs": [5, -9], "rank": 1, "augmented_rank": 1, "solution_state": "infinite", "highlight_rows": [1]},
+    {"alias": "other__stage_1", "matrix": [[1, 2], [0, -2]], "rhs": [5, -9], "rank": 2, "augmented_rank": 2, "solution_state": "unique", "highlight_rows": [1]},
+])
+def test_scene_command_rejects_inconsistent_tableau_stage_metadata(bad_stage):
+    operation = {"op": "geometry.elimination_tableau", "matrix": [[1, 2], [3, 4]], "rhs": [5, 6],
+        "stages": [{"alias": "elim__stage_0", "matrix": [[1, 2], [3, 4]], "rhs": [5, 6], "rank": 2, "augmented_rank": 2, "solution_state": "unique", "highlight_rows": []}, bad_stage],
+        "solution_state": "unique", "rank": 2, "augmented_rank": 2}
+    result = SceneCommandService().validate(CommandPlan(scene="2d", operations=(operation,)))
+    assert not result.valid
