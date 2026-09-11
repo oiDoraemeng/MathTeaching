@@ -7,7 +7,7 @@ import math
 from typing import Any, Mapping
 
 from ..compiler import CompileIssue, VisualCompileError
-from ..limits import limits_for
+from ..limits import limits_for, validate_budget
 
 
 @dataclass(frozen=True)
@@ -90,17 +90,29 @@ class SubspaceFamilyCompiler:
                 issues.append(CompileIssue("numeric_invalid", "$.bounds", "numeric_invalid: bounds must be finite numbers"))
             elif any(numeric_bounds[index] >= numeric_bounds[index + 1] for index in range(0, expected, 2)):
                 issues.append(CompileIssue("invalid_bounds", "$.bounds", "invalid_bounds: lower bound must be less than upper bound"))
+            elif any(abs(value) > 100.0 for value in numeric_bounds):
+                issues.append(CompileIssue("render_budget", "$.bounds", "render_budget: bounds exceed teaching extent"))
         if primitive == "geometry.mapping_bundle":
             domain_dimension = payload.get("domain_dimension", len(basis) if isinstance(basis, (list, tuple)) else 0)
             if isinstance(domain_dimension, bool) or not isinstance(domain_dimension, int) or domain_dimension < 1 or domain_dimension > 3:
                 issues.append(CompileIssue("invalid_dimension", "$.domain_dimension", "domain_dimension must be an integer from 1 to 3"))
-            elif isinstance(basis, (list, tuple)) and domain_dimension < _matrix_rank([list(map(float, vector)) for vector in basis]):
-                issues.append(CompileIssue("invalid_dimension", "$.domain_dimension", "domain_dimension must be at least rank"))
+            elif isinstance(basis, (list, tuple)):
+                try:
+                    checked_basis = [list(_numbers(vector, f"basis[{index}]", dimension)) for index, vector in enumerate(basis)]
+                    if domain_dimension < _matrix_rank(checked_basis):
+                        issues.append(CompileIssue("invalid_dimension", "$.domain_dimension", "domain_dimension must be at least rank"))
+                except VisualCompileError as error:
+                    issues.extend(error.issues)
             input_dimension = payload.get("input_dimension", domain_dimension)
             if input_dimension != domain_dimension:
                 issues.append(CompileIssue("invalid_dimension", "$.input_dimension", "input_dimension must match domain_dimension"))
         if isinstance(basis, (list, tuple)) and len(basis) > limits_for("lecture-v1").max_entities_3d:
             issues.append(CompileIssue("layout_overflow", "$.basis", "layout_overflow: basis exceeds render budget"))
+        if isinstance(bounds, (list, tuple)) and len(bounds) == 2 * dimension:
+            scene = "3d" if dimension == 3 else "2d"
+            for error in validate_budget("lecture-v1", scene=scene, entity_count=len(basis), stage_count=1, sample_count=len(basis), bounds=tuple(float(value) for value in bounds)):
+                if "bounds" in error:
+                    issues.append(CompileIssue("render_budget", "$.bounds", error))
         return tuple(issues)
 
     @classmethod
@@ -129,7 +141,11 @@ class SubspaceFamilyCompiler:
         if primitive == "geometry.mapping_bundle":
             operations[0] = {**operation, "domain_alias": f"{prefix}__domain", "kernel_alias": f"{prefix}__kernel", "image_alias": f"{prefix}__image",
                               "domain_basis": payload.get("domain_basis", basis), "kernel_basis": payload.get("kernel_basis", []),
-                              "image_basis": payload.get("image_basis", basis), "rank": rank, "nullity": nullity}
+                              "image_basis": payload.get("image_basis", basis), "lanes": {
+                                  "domain": {"alias": f"{prefix}__domain", "basis": payload.get("domain_basis", basis)},
+                                  "kernel": {"alias": f"{prefix}__kernel", "basis": payload.get("kernel_basis", [])},
+                                  "image": {"alias": f"{prefix}__image", "basis": payload.get("image_basis", basis)},
+                              }, "rank": rank, "nullity": nullity}
             aliases.extend((f"{prefix}__kernel", f"{prefix}__image"))
         return SubspaceCompileResult(tuple(operations), {"rank": rank, "nullity": nullity, "domain_dimension": domain_dimension}, tuple(aliases))
 

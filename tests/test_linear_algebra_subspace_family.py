@@ -35,7 +35,14 @@ def test_bounds_are_finite_dimension_matched_and_ordered(bounds):
 
 
 def test_mapping_bundle_emits_consumable_lane_payload():
-    result = SubspaceFamilyCompiler.compile({"primitive": "geometry.mapping_bundle", "dimension": 3, "basis": [[1, 0, 0]], "domain_dimension": 3, "input_dimension": 3})
+    result = SubspaceFamilyCompiler.compile({"primitive": "geometry.mapping_bundle", "dimension": 3, "basis": [[1, 0, 0]], "domain_basis": [[1, 0, 0]], "kernel_basis": [[0, 1, 0]], "image_basis": [[1, 0, 0]], "domain_dimension": 3, "input_dimension": 3})
     payload = result.operations[0]
     assert payload["domain_basis"] and payload["image_basis"]
     assert payload["rank"] + payload["nullity"] == 3
+    assert set(payload["lanes"]) == {"domain", "kernel", "image"}
+    assert all(payload["lanes"][lane]["alias"] in result.aliases for lane in payload["lanes"])
+
+
+def test_over_budget_bounds_are_rejected_before_operation_emission():
+    with pytest.raises(VisualCompileError, match="render_budget"):
+        SubspaceFamilyCompiler.compile({"primitive": "geometry.subspace3d", "dimension": 3, "basis": [[1, 0, 0]], "bounds": [-1e9, 1e9, -1, 1, -1, 1]})
