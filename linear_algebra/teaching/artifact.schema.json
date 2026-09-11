@@ -232,6 +232,7 @@
       "required": ["scene_kind", "entities", "relations", "stages"],
       "properties": {
         "scene_kind": {"enum": ["2d", "3d"]},
+        "scene_family": {"type": "string"},
         "entities": {"type": "array", "items": {"$ref": "#/$defs/visual_entity"}},
         "relations": {"type": "array", "items": {"$ref": "#/$defs/visual_relation"}},
         "stages": {"type": "array", "items": {"$ref": "#/$defs/visual_stage"}}

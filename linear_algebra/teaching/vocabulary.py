@@ -6,13 +6,13 @@ from dataclasses import dataclass
 import math
 
 
-ENTITY_KINDS = frozenset({"point", "vector", "basis", "matrix", "grid", "region", "area", "volume"})
+ENTITY_KINDS = frozenset({"point", "vector", "basis", "matrix", "grid", "region", "area", "volume", "subspace", "affine_set", "constraint", "eigenspace", "principal_axis", "quadratic_level_set"})
 RELATION_KINDS = frozenset(
     {
-        "sum", "difference", "scalar_multiple", "maps_to", "spans", "projects_to",
+        "sum", "difference", "scalar_multiple", "maps_to", "spans", "span", "projects_to",
         "orthogonal_to", "collapses_to", "composition_order", "compare", "orientation",
         "decomposes_into", "has_foot", "has_residual", "batch_maps_to", "endpoint_diff",
-        "same_measure", "invariant",
+        "same_measure", "invariant", "contains", "affine_translation", "constraint_state", "row_operation", "coordinate_equivalence", "eigen_binding", "principal_axis", "classification",
     }
 )
 LAYOUTS = frozenset({"overlay", "side_by_side", "sequence"})

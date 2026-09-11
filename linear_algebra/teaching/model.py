@@ -362,12 +362,14 @@ class VisualSemantics:
     entities: tuple[VisualEntity, ...]
     relations: tuple[VisualRelation, ...]
     stages: tuple[VisualStage, ...]
+    scene_family: str = ""
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "scene_kind", _constructor_choice(self.scene_kind, "scene_kind", ("2d", "3d")))
         object.__setattr__(self, "entities", _constructor_instance_tuple(self.entities, "entities", VisualEntity))
         object.__setattr__(self, "relations", _constructor_instance_tuple(self.relations, "relations", VisualRelation))
         object.__setattr__(self, "stages", _constructor_instance_tuple(self.stages, "stages", VisualStage))
+        object.__setattr__(self, "scene_family", _constructor_string(self.scene_family, "scene_family"))
 
     @classmethod
     def from_dict(cls, payload: Mapping[str, object]) -> "VisualSemantics":
@@ -666,6 +668,7 @@ def _decode_visual_semantics(payload: Mapping[str, object], path: str) -> Visual
             _decode_visual_stage(_mapping(item, f"{path}.stages[{index}]"), f"{path}.stages[{index}]")
             for index, item in enumerate(_array(record["stages"], f"{path}.stages"))
         ),
+        scene_family=_optional_string(record, "scene_family", path) or "",
     )
 
 
@@ -881,7 +884,7 @@ def _encode_worked_example_check(check: WorkedExampleCheck) -> dict[str, object]
 
 
 def _encode_visual_semantics(semantics: VisualSemantics) -> dict[str, object]:
-    return {
+    encoded = {
         "scene_kind": semantics.scene_kind,
         "entities": [
             {
@@ -920,6 +923,9 @@ def _encode_visual_semantics(semantics: VisualSemantics) -> dict[str, object]:
             for stage in semantics.stages
         ],
     }
+    if semantics.scene_family:
+        encoded["scene_family"] = semantics.scene_family
+    return encoded
 
 
 def _encode_generation_receipt(receipt: GenerationReceipt) -> dict[str, object]:
