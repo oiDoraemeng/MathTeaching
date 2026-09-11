@@ -30,6 +30,12 @@ def test_spectrum_service_rejects_unbounded_or_nonfinite_trust_boundary():
     assert not SceneCommandService().validate(CommandPlan(scene="3d", operations=(operation,))).valid
 
 
+def test_spectrum_service_rejects_valid_3d_over_budget_counts():
+    operation = {"op": "geometry.spectrum", "matrix": [[2, 0, 0], [0, 3, 0], [0, 0, 4]], "roots": [2, 3, 4], "eigenspaces": {}, "roots_alias": "roots", "bounds": [-2, 2, -2, 2, -2, 2], "entity_count": 33, "stage_count": 7, "sample_count": 1}
+    result = SceneCommandService().validate(CommandPlan(scene="3d", operations=(operation,)))
+    assert not result.valid and any("budget" in message for message in result.messages)
+
+
 def test_spectrum_rejects_nonfinite():
     with pytest.raises(VisualCompileError):
         SpectralFamilyCompiler.compile({"matrix": [[float("nan"), 0], [0, 1]]})

@@ -699,6 +699,8 @@ class SceneCommandService:
             tolerance = operation.get("tolerance", 1e-9)
             if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not math.isfinite(float(tolerance)) or float(tolerance) <= 0:
                 raise CommandError("spectrum tolerance is invalid")
+            budget_errors = validate_budget("lecture-v1", scene="3d" if len(matrix) == 3 else "2d", entity_count=operation.get("entity_count", len(matrix) + 2), stage_count=operation.get("stage_count", 1), sample_count=operation.get("sample_count", len(matrix) ** 2), bounds=tuple(float(value) for value in bounds))
+            if budget_errors: raise CommandError("spectrum render_budget: " + "; ".join(budget_errors))
         elif name == "geometry.projection3d":
             bounds = operation.get("bounds")
             if not isinstance(bounds, (list, tuple)) or len(bounds) != 6 or any(not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) for value in bounds) or any(float(bounds[index]) >= float(bounds[index + 1]) for index in range(0, 6, 2)):
@@ -708,6 +710,8 @@ class SceneCommandService:
             if not isinstance(operation.get("tolerance", 1e-9), (int, float)) or float(operation.get("tolerance", 1e-9)) <= 0 or not math.isfinite(float(operation.get("tolerance", 1e-9))):
                 raise CommandError("projection3d tolerance is invalid")
             _require_text(operation, "alias")
+            budget_errors = validate_budget("lecture-v1", scene="3d", entity_count=operation.get("entity_count", 4), stage_count=operation.get("stage_count", 1), sample_count=operation.get("sample_count", 1), bounds=tuple(float(value) for value in bounds))
+            if budget_errors: raise CommandError("projection3d render_budget: " + "; ".join(budget_errors))
         elif name == "geometry.orthogonalization":
             vectors = operation.get("vectors"); stages = operation.get("stages")
             if not isinstance(vectors, (list, tuple)) or not vectors or len(vectors) > 3 or not isinstance(stages, (list, tuple)) or len(stages) != len(vectors):
@@ -724,6 +728,8 @@ class SceneCommandService:
             tolerance = operation.get("tolerance", 1e-9)
             if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not math.isfinite(float(tolerance)) or float(tolerance) <= 0:
                 raise CommandError("orthogonalization tolerance is invalid")
+            budget_errors = validate_budget("lecture-v1", scene="3d" if len(vectors[0]) == 3 else "2d", entity_count=operation.get("entity_count", len(vectors) * 4), stage_count=operation.get("stage_count", len(vectors)), sample_count=operation.get("sample_count", len(vectors)), bounds=tuple(float(value) for value in bounds))
+            if budget_errors: raise CommandError("orthogonalization render_budget: " + "; ".join(budget_errors))
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):
