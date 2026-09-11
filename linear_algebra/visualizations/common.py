@@ -7,6 +7,7 @@ from typing import Callable, Literal
 
 from linear_algebra.catalog.model import LessonEntry
 from services.scene_commands import CommandPlan
+from .limits import RenderLimits, limits_for
 
 
 
@@ -16,6 +17,10 @@ class RenderContext:
     bounds: tuple[float, float, float, float] = (-3.0, 3.0, -3.0, 3.0)
     seed: int = 17
     render_profile: str = "lecture-v1"
+
+    @property
+    def limits(self) -> RenderLimits:
+        return limits_for(self.render_profile)
 
     @classmethod
     def default(cls, topic_id: str) -> "RenderContext":
