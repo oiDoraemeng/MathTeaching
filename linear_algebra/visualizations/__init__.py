@@ -15,6 +15,12 @@ from .compiler import (
 from .evidence import ClaimEvidence, EvidenceIssue, EvidenceLedger, build_evidence_ledger
 from .palette import ROLE_COLORS, known_role, role_color
 from .snapshots import CompiledSnapshot, CompiledSnapshotStore, snapshot_from
+from .capability_map import (
+    SemanticPrimitiveSpec,
+    all_primitive_specs,
+    primitive_spec,
+    validate_payload_header,
+)
 
 _RECIPES: tuple[VisualizationRecipe, ...] = (*CHAPTER_01_RECIPES, *CHAPTER_02_RECIPES, *CHAPTER_03_RECIPES)
 _BY_ID = {recipe.id: recipe for recipe in _RECIPES}
@@ -52,4 +58,8 @@ __all__ = (
     "CompiledSnapshot",
     "CompiledSnapshotStore",
     "snapshot_from",
+    "SemanticPrimitiveSpec",
+    "primitive_spec",
+    "all_primitive_specs",
+    "validate_payload_header",
 )
