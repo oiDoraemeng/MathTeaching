@@ -11,6 +11,8 @@ from linear_algebra.teaching.model import TeachingArtifact
 from linear_algebra.teaching.store import TeachingArtifactStore
 from tests.teaching_fixtures import composition_artifact_payload
 from tests.test_linear_algebra_teaching_publish import _reviewed_valid_artifact
+from linear_algebra.visualizations.contracts import contract_for
+from linear_algebra.visualizations.snapshots import contract_digest_for
 
 
 def test_store_writes_stable_utf8_json(tmp_path: Path) -> None:
@@ -153,3 +155,39 @@ def test_populated_index_preserves_chapter_1_to_3_entries_on_failed_gate(tmp_pat
     assert "ch01.vector.magnitude" in ids
     assert "ch02.matrix.composition" in ids
     assert "ch03.det.ad-bc" in ids
+
+
+@pytest.mark.parametrize("failure", ["stale", "empty", "mismatch"])
+def test_populated_index_release_gates_preserve_complete_payload(tmp_path: Path, failure: str) -> None:
+    bundled_index = Path(__file__).parents[1] / "linear_algebra" / "teaching" / "data" / "index.json"
+    payload = json.loads(bundled_index.read_text(encoding="utf-8"))
+    artifact = _reviewed_valid_artifact()
+    payload["topics"].append({
+        "topic_id": artifact.topic_id, "published_revision": 1,
+        "source_hash": artifact.source.source_hash, "artifact_digest": artifact.generated.artifact_digest,
+    })
+    store = TeachingArtifactStore(tmp_path)
+    store.save_published(artifact)
+    store._write_stable_json(tmp_path / "index.json", payload)
+    snapshot = {
+        "topic_id": artifact.topic_id, "artifact_revision": 1,
+        "source_hash": artifact.source.source_hash, "compiler_version": "v1",
+        "render_profile": "teaching", "plan_digest": "sha256:p", "stage_ids": [],
+        "required_entity_roles": [], "required_relations": [], "invariants": [],
+        "contract_digest": contract_digest_for(contract_for(artifact.topic_id)),
+    }
+    if failure == "stale":
+        snapshot["source_hash"] = "sha256:stale"
+    elif failure == "empty":
+        snapshot["contract_digest"] = ""
+    else:
+        snapshot["contract_digest"] = "sha256:mismatch"
+    snapshot_path = tmp_path / "snapshots" / "ch02" / artifact.topic_id / "r1.json"
+    snapshot_path.parent.mkdir(parents=True)
+    snapshot_path.write_text(json.dumps(snapshot), encoding="utf-8")
+    before = store.index_payload()
+    with pytest.raises(ValueError):
+        store.publish_chapter(2, {artifact.topic_id: 1})
+    assert store.index_payload() == before
+    retained = next(item for item in before["topics"] if item["topic_id"] == "ch01.vector.magnitude")
+    assert retained == next(item for item in store.index_payload()["topics"] if item["topic_id"] == retained["topic_id"])
