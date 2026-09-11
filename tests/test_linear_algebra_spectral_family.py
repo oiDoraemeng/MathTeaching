@@ -1,0 +1,29 @@
+import numpy as np
+import pytest
+
+from linear_algebra.visualizations.families.spectral import SpectralFamilyCompiler, spectral_evidence
+from linear_algebra.visualizations.compiler import VisualCompileError
+from services.scene_commands import CommandPlan, SceneCommandService
+
+
+def test_each_real_spectral_root_binds_to_an_eigenspace():
+    evidence = spectral_evidence([[2, 0], [0, 3]], 1e-9)
+    assert {root.value for root in evidence.roots} == {2, 3}
+    assert all(root.eigenspace_id in evidence.eigenspaces for root in evidence.roots)
+
+
+def test_complex_only_roots_have_no_fake_real_direction():
+    evidence = spectral_evidence([[0, -1], [1, 0]], 1e-9)
+    assert evidence.roots == ()
+    assert evidence.complex_roots
+
+
+def test_spectrum_compiler_emits_stable_aliases_and_command_gate():
+    result = SpectralFamilyCompiler.compile({"matrix": [[2, 0], [0, 3]], "bounds": [-2, 2, -2, 2]})
+    assert result["aliases"] == ("spectrum__matrix", "spectrum__roots")
+    assert SceneCommandService().validate(CommandPlan(scene="2d", operations=result["operations"])).valid
+
+
+def test_spectrum_rejects_nonfinite():
+    with pytest.raises(VisualCompileError):
+        SpectralFamilyCompiler.compile({"matrix": [[float("nan"), 0], [0, 1]]})

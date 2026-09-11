@@ -14,6 +14,15 @@ from models.geometry_3d import (
     Plane3D,
     Vector3,
 )
+from rendering.line_arrow_3d import line_arrow_mesh
+
+
+# Teaching vectors should read as directional arrows rather than thick rods.
+# The arrowhead geometry is kept modest, while the shaft itself is a VTK line
+# whose width is specified in screen pixels and therefore is zoom invariant.
+_VECTOR_TIP_LENGTH = 0.14
+_VECTOR_TIP_RADIUS = 0.045
+_VECTOR_LINE_WIDTH = 2.0
 
 
 class Geometry3DSceneController:
@@ -66,20 +75,41 @@ class Geometry3DSceneController:
         *,
         kind: str = "vector",
         color: str = "#2777b6",
-        line_width: float = 3.0,
+        line_width: float = _VECTOR_LINE_WIDTH,
         role: str = "primary",
     ) -> object:
         model = Linear3D(alias, _v3(start), _v3(end), kind=kind, color=color, line_width=line_width, role=role)  # type: ignore[arg-type]
         name = f"geometry3d:linear:{alias}"
         self._remove(name)
         if model.kind == "vector":
-            direction = np.subtract(model.end, model.start)
-            mesh = pv.Arrow(start=model.start, direction=direction, scale="auto")
+            mesh = line_arrow_mesh(
+                model.start,
+                model.end,
+                tip_length_ratio=_VECTOR_TIP_LENGTH,
+                tip_radius_ratio=_VECTOR_TIP_RADIUS,
+            )
         else:
             mesh = pv.Line(model.start, model.end)
-        actor = self._add(mesh, name=name, color=model.color, line_width=model.line_width)
+        actor = self._add(
+            mesh,
+            name=name,
+            color=model.color,
+            line_width=model.line_width,
+            lighting=False,
+            render_lines_as_tubes=False,
+        )
         self.linears[alias] = model
         return actor
+
+    def add_projection3d(self, alias: str, vector: Vector3, foot: Vector3, residual: Vector3, *, color: str = "#2777b6") -> None:
+        """Render bounded projection foot/residual geometry with stable aliases."""
+        self.add_linear(f"{alias}__projection", (0.0, 0.0, 0.0), _v3(foot), color=color, kind="segment")
+        self.add_linear(f"{alias}__residual", _v3(foot), _v3(vector), color="#d97845", kind="segment")
+
+    def add_orthogonalization_stage(self, alias: str, residual: Vector3, normalized: Vector3, *, color: str = "#4c9f70") -> None:
+        """Render one Gram–Schmidt residual and normalized direction."""
+        self.add_linear(f"{alias}__residual", (0.0, 0.0, 0.0), _v3(residual), color="#d97845", kind="segment")
+        self.add_linear(f"{alias}__normalized", (0.0, 0.0, 0.0), _v3(normalized), color=color, kind="vector")
 
     def add_plane(
         self,

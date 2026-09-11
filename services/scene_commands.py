@@ -140,6 +140,9 @@ _ALLOWED_OPERATIONS = frozenset(
         "geometry.basis_grid",
         "geometry.coordinate_readout",
         "geometry.least_squares",
+        "geometry.spectrum",
+        "geometry.projection3d",
+        "geometry.orthogonalization",
     }
 )
 _SCENE_VALUES = frozenset({"2d", "3d"})
@@ -676,6 +679,33 @@ class SceneCommandService:
             budget_errors = validate_budget("lecture-v1", scene="2d", entity_count=operation.get("entity_count", width + 4), stage_count=1, sample_count=operation.get("sample_count", len(matrix)), bounds=tuple(float(value) for value in bounds)) if isinstance(bounds, (list, tuple)) else ("bounds: invalid",)
             if budget_errors:
                 raise CommandError("least_squares render_budget: " + "; ".join(budget_errors))
+        elif name == "geometry.spectrum":
+            matrix = operation.get("matrix")
+            if not isinstance(matrix, (list, tuple)) or len(matrix) not in (2, 3) or any(not isinstance(row, (list, tuple)) or len(row) != len(matrix) for row in matrix):
+                raise CommandError("spectrum matrix must be square 2D/3D")
+            for row in matrix:
+                for value in row: _require_finite_number(value, "spectrum matrix")
+            roots = operation.get("roots", ())
+            eigenspaces = operation.get("eigenspaces", {})
+            if not isinstance(roots, (list, tuple)) or not isinstance(eigenspaces, dict): raise CommandError("spectrum evidence is invalid")
+            for root in roots: _require_finite_number(root, "spectrum root")
+            for value in eigenspaces.values():
+                if not isinstance(value, (list, tuple)): raise CommandError("spectrum eigenspace is invalid")
+            _require_text(operation, "roots_alias")
+        elif name == "geometry.projection3d":
+            for field in ("vector", "direction", "foot", "residual"):
+                _require_coordinates(operation.get(field), dimensions=3)
+            _require_text(operation, "alias")
+        elif name == "geometry.orthogonalization":
+            vectors = operation.get("vectors"); stages = operation.get("stages")
+            if not isinstance(vectors, (list, tuple)) or not vectors or len(vectors) > 3 or not isinstance(stages, (list, tuple)) or len(stages) != len(vectors):
+                raise CommandError("orthogonalization vectors/stages are invalid")
+            for vector in vectors: _require_coordinates(vector, dimensions=len(vector))
+            for stage in stages:
+                if not isinstance(stage, dict): raise CommandError("orthogonalization stage is invalid")
+                for field in ("input", "projection", "residual", "normalized"): _require_coordinates(stage.get(field), dimensions=len(stage[field]))
+            aliases = operation.get("aliases")
+            if not isinstance(aliases, (list, tuple)) or len(set(aliases)) != 4: raise CommandError("orthogonalization aliases are invalid")
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):

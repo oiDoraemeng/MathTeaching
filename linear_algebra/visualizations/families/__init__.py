@@ -14,6 +14,8 @@ from .subspace import SubspaceFamilyCompiler, SubspaceCompileResult
 from .tableau import MatrixTableauCompiler, TableauCompileResult, TableauStage, Swap, Scale, Eliminate, apply_row_operation
 from .coordinates import CoordinateFamilyCompiler, CoordinateEvidence, coordinate_evidence
 from .least_squares import LeastSquaresFamilyCompiler, LeastSquaresEvidence, least_squares_fit
+from .spectral import SpectralFamilyCompiler, SpectralEvidence, SpectralRoot, spectral_evidence
+from .orthogonalization import OrthogonalizationFamilyCompiler, OrthogonalizationEvidence, gram_schmidt
 
 
 @dataclass(frozen=True)
@@ -44,4 +46,4 @@ def registered_families() -> tuple[str, ...]:
     return tuple(sorted(_REGISTERED))
 
 
-__all__ = ["SceneFamilyCompiler", "family_compiler_for", "registered_families", "MatrixTableauCompiler", "TableauCompileResult", "TableauStage", "Swap", "Scale", "Eliminate", "apply_row_operation", "CoordinateFamilyCompiler", "CoordinateEvidence", "coordinate_evidence", "LeastSquaresFamilyCompiler", "LeastSquaresEvidence", "least_squares_fit"]
+__all__ = ["SceneFamilyCompiler", "family_compiler_for", "registered_families", "MatrixTableauCompiler", "TableauCompileResult", "TableauStage", "Swap", "Scale", "Eliminate", "apply_row_operation", "CoordinateFamilyCompiler", "CoordinateEvidence", "coordinate_evidence", "LeastSquaresFamilyCompiler", "LeastSquaresEvidence", "least_squares_fit", "SpectralFamilyCompiler", "SpectralEvidence", "SpectralRoot", "spectral_evidence", "OrthogonalizationFamilyCompiler", "OrthogonalizationEvidence", "gram_schmidt"]
