@@ -39,7 +39,7 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         "explanation_refs": ["definition", "formula", "derivation", "worked_examples", "geometric_meaning", "pitfalls", "connections"],
         "entity_refs": [entity_id, result_id], "relation_refs": [relation_id], "stage_refs": [stage_id],
     }
-    return {
+    payload = {
         "schema_version": 1, "topic_id": topic_id, "revision": 1, "status": status,
         "source": {"source_path": list(context.source_path), "heading_path": list(context.heading_path),
                     "heading_level": context.heading_level, "occurrence": context.occurrence,
@@ -70,8 +70,22 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
                         "input_entity_refs": [entity_id], "output_entity_refs": [result_id], "relation_refs": [relation_id], "expected_invariants": ["finite numeric result"]}]},
         "generated": {"provider": "deterministic-fixture", "model": "fixture", "prompt_version": "chapter-4-8-v1",
                       "generated_at": "2026-09-12T00:00:00Z", "source_hash": context.source_hash,
-                      "raw_reply_digest": "sha256:fixture", "artifact_digest": "sha256:fixture"},
+                      "raw_reply_digest": "", "artifact_digest": ""},
     }
+    _refresh_digests(payload)
+    return payload
+
+
+def _canonical(payload: Mapping[str, object]) -> str:
+    return json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def _refresh_digests(payload: dict[str, object]) -> None:
+    generated = payload["generated"]
+    assert isinstance(generated, dict)
+    generated["raw_reply_digest"] = "sha256:" + hashlib.sha256(_canonical(payload).encode("utf-8")).hexdigest()
+    generated["artifact_digest"] = ""
+    generated["artifact_digest"] = "sha256:" + hashlib.sha256(_canonical(payload).encode("utf-8")).hexdigest()
 
 
 def reviewed_artifact_payloads() -> Mapping[str, dict[str, object]]:
@@ -86,8 +100,19 @@ def load_reviewed_artifacts(root: str | Path | None = None) -> Mapping[str, dict
         if path.is_file():
             result[topic_id] = json.loads(path.read_text(encoding="utf-8"))
         else:
-            result[topic_id] = artifact_payload_for(topic_id)
+            raise FileNotFoundError(f"missing reviewed artifact resource: {path}")
     return result
 
 
-__all__ = ["artifact_payload_for", "load_reviewed_artifacts", "reviewed_artifact_payloads"]
+def load_draft_artifacts(root: str | Path | None = None) -> Mapping[str, dict[str, object]]:
+    base = Path(root) if root is not None else Path(__file__).with_name("data") / "drafts"
+    result: dict[str, dict[str, object]] = {}
+    for topic_id in sorted(_TOPICS):
+        path = base / topic_id.split(".", 1)[0] / topic_id / "r1.json"
+        if not path.is_file():
+            raise FileNotFoundError(f"missing draft artifact resource: {path}")
+        result[topic_id] = json.loads(path.read_text(encoding="utf-8"))
+    return result
+
+
+__all__ = ["artifact_payload_for", "load_draft_artifacts", "load_reviewed_artifacts", "reviewed_artifact_payloads"]

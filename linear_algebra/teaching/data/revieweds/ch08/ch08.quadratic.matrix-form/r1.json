@@ -1,0 +1,298 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch08.quadratic.matrix-form.v",
+        "entity.ch08.quadratic.matrix-form.result"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "id": "claim.ch08.quadratic.matrix-form",
+      "relation_refs": [
+        "relation.ch08.quadratic.matrix-form.maps"
+      ],
+      "source_refs": [
+        "第8章 二次型与主轴定理 / 8.1 二次型的定义与矩阵表示::1::sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7"
+      ],
+      "stage_refs": [
+        "stage.ch08.quadratic.matrix-form.input"
+      ],
+      "statement": "8.1 二次型的定义与矩阵表示 的线性表示保持可检验的向量关系。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch08.quadratic.matrix-form"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch08.quadratic.matrix-form.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "8.1 二次型的定义与矩阵表示 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "8.1 二次型的定义与矩阵表示",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "definition",
+        "text": "definition: 8.1 二次型的定义与矩阵表示。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "formula",
+        "text": "formula: 8.1 二次型的定义与矩阵表示。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "derivation",
+        "text": "derivation: 8.1 二次型的定义与矩阵表示。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 8.1 二次型的定义与矩阵表示。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 8.1 二次型的定义与矩阵表示。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 8.1 二次型的定义与矩阵表示。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "connections",
+        "text": "connections: 8.1 二次型的定义与矩阵表示。",
+        "title": "connections"
+      }
+    ],
+    "summary": "8.1 二次型的定义与矩阵表示 的确定性讲义 artifact。",
+    "symbol_roles": {
+      "result": "transformed_a",
+      "v": "vector_a"
+    },
+    "title": "8.1 二次型的定义与矩阵表示",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch08.quadratic.matrix-form",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:7c957cfabae95dbf2cfe2cec6f9a86416e607188e0888644b1fdbdec24b40a70",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:8b913f87ce38023dde9791c74780a8f57bee2c50944dc17dd2caab3922374f10",
+    "source_hash": "sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 8.1 二次型的定义与矩阵表示\n\n一句话动机：$x^{2} + y^{2} =$ 圆，$2x^{2}+3y^{2}+xy =$ ？怎么快速判断是什么形状？\n本节目标：能把二次函数写成矩阵形式 $x^{T}Ax$，并识别 A 的特征值与图形的关系。\n\n定义 8.1（二次型） n 个变量的二次型是所有项都为二次的齐次多项式：\n$$\nQ(x_{1}, ..., x_{n}) = \\sum_{ij} a_{ij} \\cdot x_{i} \\cdot x_{j}\n$$\n在 2D 中，通常写作：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2}\n$$\n定理 8.1（二次型的矩阵表示） 任何二次型都可以表示为：\n$$\nQ(x) = x^{T} A x\n$$\n其中 A 是对称矩阵（$A^{T} = A$）。具体地：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2} \\Leftrightarrow A = \\begin{pmatrix}a & b \\\\ b & c\\end{pmatrix}\n$$\n\n#### 例题\n\n| 二次型 | 对称矩阵 A |\n| --- | --- |\n| $x^{2} + y^{2}$ | $\\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix}$ |\n| $2x^{2} + 3y^{2}$ | $\\begin{pmatrix}2 & 0 \\\\ 0 & 3\\end{pmatrix}$ |\n| $x^{2} + 2xy + y^{2}$ | $\\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix}$ |\n| $x^{2} + 6xy + 9y^{2}$ | $\\begin{pmatrix}1 & 3 \\\\ 3 & 9\\end{pmatrix}$ |\n| $3x^{2} - 2xy + y^{2}$ | $\\begin{pmatrix}3 & -1 \\\\ -1 & 1\\end{pmatrix}$ |\n\n重点：交叉项系数 2b 在矩阵中拆成两个 b 放在非对角线位置。例如 $6xy \\rightarrow b=3 \\rightarrow$ 矩阵对角线上各放一个 3。",
+    "heading_level": 3,
+    "heading_path": [
+      "第8章 二次型与主轴定理",
+      "8.1 二次型的定义与矩阵表示"
+    ],
+    "neighboring_titles": [
+      "8.2 二次型的几何意义"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7",
+    "source_path": [
+      "第8章 二次型与主轴定理",
+      "8.1 二次型的定义与矩阵表示",
+      "8.1 二次型的定义与矩阵表示"
+    ],
+    "spans": [
+      {
+        "end_line": 2667,
+        "fingerprint": "sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7",
+        "heading_path": [
+          "第8章 二次型与主轴定理",
+          "8.1 二次型的定义与矩阵表示"
+        ],
+        "id": "第8章 二次型与主轴定理 / 8.1 二次型的定义与矩阵表示::1::sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7",
+        "start_line": 2629,
+        "text": "### 8.1 二次型的定义与矩阵表示\n\n一句话动机：$x^{2} + y^{2} =$ 圆，$2x^{2}+3y^{2}+xy =$ ？怎么快速判断是什么形状？\n本节目标：能把二次函数写成矩阵形式 $x^{T}Ax$，并识别 A 的特征值与图形的关系。\n\n定义 8.1（二次型） n 个变量的二次型是所有项都为二次的齐次多项式：\n$$\nQ(x_{1}, ..., x_{n}) = \\sum_{ij} a_{ij} \\cdot x_{i} \\cdot x_{j}\n$$\n在 2D 中，通常写作：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2}\n$$\n定理 8.1（二次型的矩阵表示） 任何二次型都可以表示为：\n$$\nQ(x) = x^{T} A x\n$$\n其中 A 是对称矩阵（$A^{T} = A$）。具体地：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2} \\Leftrightarrow A = \\begin{pmatrix}a & b \\\\ b & c\\end{pmatrix}\n$$\n\n#### 例题\n\n| 二次型 | 对称矩阵 A |\n| --- | --- |\n| $x^{2} + y^{2}$ | $\\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix}$ |\n| $2x^{2} + 3y^{2}$ | $\\begin{pmatrix}2 & 0 \\\\ 0 & 3\\end{pmatrix}$ |\n| $x^{2} + 2xy + y^{2}$ | $\\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix}$ |\n| $x^{2} + 6xy + 9y^{2}$ | $\\begin{pmatrix}1 & 3 \\\\ 3 & 9\\end{pmatrix}$ |\n| $3x^{2} - 2xy + y^{2}$ | $\\begin{pmatrix}3 & -1 \\\\ -1 & 1\\end{pmatrix}$ |\n\n重点：交叉项系数 2b 在矩阵中拆成两个 b 放在非对角线位置。例如 $6xy \\rightarrow b=3 \\rightarrow$ 矩阵对角线上各放一个 3。"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch08.quadratic.matrix-form",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.matrix-form.v",
+        "kind": "vector",
+        "label": "v",
+        "role": "vector_a",
+        "value": [
+          1,
+          2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.matrix-form.result",
+        "kind": "vector",
+        "label": "result",
+        "role": "transformed_a",
+        "value": [
+          2,
+          4
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "relation.ch08.quadratic.matrix-form.maps",
+        "kind": "maps_to",
+        "parameters": {
+          "scalar": 2
+        },
+        "source_ref": "entity.ch08.quadratic.matrix-form.v",
+        "target_ref": "entity.ch08.quadratic.matrix-form.result"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "显示线性关系。",
+        "expected_invariants": [
+          "finite numeric result"
+        ],
+        "id": "stage.ch08.quadratic.matrix-form.input",
+        "input_entity_refs": [
+          "entity.ch08.quadratic.matrix-form.v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.quadratic.matrix-form.result"
+        ],
+        "relation_refs": [
+          "relation.ch08.quadratic.matrix-form.maps"
+        ],
+        "title": "输入与结果"
+      }
+    ]
+  }
+}

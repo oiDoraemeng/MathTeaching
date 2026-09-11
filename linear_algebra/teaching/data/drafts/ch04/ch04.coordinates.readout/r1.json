@@ -1,0 +1,300 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.coordinates.readout.v",
+        "entity.ch04.coordinates.readout.result"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "id": "claim.ch04.coordinates.readout",
+      "relation_refs": [
+        "relation.ch04.coordinates.readout.maps"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.3 坐标——向量的\"读数\"::1::sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50"
+      ],
+      "stage_refs": [
+        "stage.ch04.coordinates.readout.input"
+      ],
+      "statement": "4.3.3 坐标——向量的\"读数\" 的线性表示保持可检验的向量关系。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.coordinates.readout"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.coordinates.readout.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "4.3.3 坐标——向量的\"读数\" 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.3.3 坐标——向量的\"读数\"",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "definition",
+        "text": "definition: 4.3.3 坐标——向量的\"读数\"。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "formula",
+        "text": "formula: 4.3.3 坐标——向量的\"读数\"。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.3.3 坐标——向量的\"读数\"。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.3.3 坐标——向量的\"读数\"。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.3.3 坐标——向量的\"读数\"。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.3.3 坐标——向量的\"读数\"。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "connections",
+        "text": "connections: 4.3.3 坐标——向量的\"读数\"。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.3.3 坐标——向量的\"读数\" 的确定性讲义 artifact。",
+    "symbol_roles": {
+      "result": "transformed_a",
+      "v": "vector_a"
+    },
+    "title": "4.3.3 坐标——向量的\"读数\"",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch04.coordinates.readout",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:07082eeaf3cf4b8b659a1e5eba51090ffc3dff578796b63200223cf45e2d80ef",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:80fef54e588e6d62ac29dbb0f67f984ea59337cd63312cac0b8ddb1fa3551a81",
+    "source_hash": "sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.3.3 坐标——向量的\"读数\"\n\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n\n##### 分层例题\n\n例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。",
+    "heading_level": 4,
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.3 基与维数",
+      "4.3.3 坐标——向量的\"读数\""
+    ],
+    "neighboring_titles": [
+      "4.3.2 维数"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.3 基与维数",
+      "4.3.3 坐标——向量的\"读数\""
+    ],
+    "spans": [
+      {
+        "end_line": 1729,
+        "fingerprint": "sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50",
+        "heading_path": [
+          "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+          "4.3 基与维数",
+          "4.3.3 坐标——向量的\"读数\""
+        ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.3 坐标——向量的\"读数\"::1::sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50",
+        "start_line": 1704,
+        "text": "#### 4.3.3 坐标——向量的\"读数\"\n\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n\n##### 分层例题\n\n例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。"
+      }
+    ]
+  },
+  "status": "draft",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch04.coordinates.readout",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.coordinates.readout.v",
+        "kind": "vector",
+        "label": "v",
+        "role": "vector_a",
+        "value": [
+          1,
+          2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.coordinates.readout.result",
+        "kind": "vector",
+        "label": "result",
+        "role": "transformed_a",
+        "value": [
+          2,
+          4
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "relation.ch04.coordinates.readout.maps",
+        "kind": "maps_to",
+        "parameters": {
+          "scalar": 2
+        },
+        "source_ref": "entity.ch04.coordinates.readout.v",
+        "target_ref": "entity.ch04.coordinates.readout.result"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "显示线性关系。",
+        "expected_invariants": [
+          "finite numeric result"
+        ],
+        "id": "stage.ch04.coordinates.readout.input",
+        "input_entity_refs": [
+          "entity.ch04.coordinates.readout.v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch04.coordinates.readout.result"
+        ],
+        "relation_refs": [
+          "relation.ch04.coordinates.readout.maps"
+        ],
+        "title": "输入与结果"
+      }
+    ]
+  }
+}

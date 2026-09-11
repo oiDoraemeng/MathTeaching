@@ -1,0 +1,301 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.dependence.redundancy.v",
+        "entity.ch04.dependence.redundancy.result"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "id": "claim.ch04.dependence.redundancy",
+      "relation_refs": [
+        "relation.ch04.dependence.redundancy.maps"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.2 线性相关与线性无关::1::sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c"
+      ],
+      "stage_refs": [
+        "stage.ch04.dependence.redundancy.input"
+      ],
+      "statement": "4.2.2 线性相关与线性无关 的线性表示保持可检验的向量关系。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.dependence.redundancy"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.dependence.redundancy.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "4.2.2 线性相关与线性无关 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.2.2 线性相关与线性无关",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "definition",
+        "text": "definition: 4.2.2 线性相关与线性无关。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "formula",
+        "text": "formula: 4.2.2 线性相关与线性无关。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.2.2 线性相关与线性无关。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.2.2 线性相关与线性无关。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.2.2 线性相关与线性无关。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.2.2 线性相关与线性无关。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "connections",
+        "text": "connections: 4.2.2 线性相关与线性无关。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.2.2 线性相关与线性无关 的确定性讲义 artifact。",
+    "symbol_roles": {
+      "result": "transformed_a",
+      "v": "vector_a"
+    },
+    "title": "4.2.2 线性相关与线性无关",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch04.dependence.redundancy",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:0c3ea618ed262c8cfce2b9066070a30cf4378c55f7cebd0158016cf411766350",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:d6ad7b57a09cc02d3beb538f4886c97bb6c7fbd8c02427e83f4db02d54594078",
+    "source_hash": "sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.2.2 线性相关与线性无关\n\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |",
+    "heading_level": 4,
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.2 线性组合、线性相关与线性无关",
+      "4.2.2 线性相关与线性无关"
+    ],
+    "neighboring_titles": [
+      "4.2.1 生成集 Span",
+      "4.2.3 判定方法——拼矩阵解 $Ax=0$"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.2 线性组合、线性相关与线性无关",
+      "4.2.2 线性相关与线性无关"
+    ],
+    "spans": [
+      {
+        "end_line": 1633,
+        "fingerprint": "sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c",
+        "heading_path": [
+          "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+          "4.2 线性组合、线性相关与线性无关",
+          "4.2.2 线性相关与线性无关"
+        ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.2 线性相关与线性无关::1::sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c",
+        "start_line": 1623,
+        "text": "#### 4.2.2 线性相关与线性无关\n\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch04.dependence.redundancy",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.dependence.redundancy.v",
+        "kind": "vector",
+        "label": "v",
+        "role": "vector_a",
+        "value": [
+          1,
+          2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.dependence.redundancy.result",
+        "kind": "vector",
+        "label": "result",
+        "role": "transformed_a",
+        "value": [
+          2,
+          4
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "relation.ch04.dependence.redundancy.maps",
+        "kind": "maps_to",
+        "parameters": {
+          "scalar": 2
+        },
+        "source_ref": "entity.ch04.dependence.redundancy.v",
+        "target_ref": "entity.ch04.dependence.redundancy.result"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "显示线性关系。",
+        "expected_invariants": [
+          "finite numeric result"
+        ],
+        "id": "stage.ch04.dependence.redundancy.input",
+        "input_entity_refs": [
+          "entity.ch04.dependence.redundancy.v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch04.dependence.redundancy.result"
+        ],
+        "relation_refs": [
+          "relation.ch04.dependence.redundancy.maps"
+        ],
+        "title": "输入与结果"
+      }
+    ]
+  }
+}

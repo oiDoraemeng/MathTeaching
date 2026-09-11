@@ -1,0 +1,298 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch05.homogeneous.solution-space.v",
+        "entity.ch05.homogeneous.solution-space.result"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "id": "claim.ch05.homogeneous.solution-space",
+      "relation_refs": [
+        "relation.ch05.homogeneous.solution-space.maps"
+      ],
+      "source_refs": [
+        "第5章 线性方程组 / 5.1 齐次方程组 $Ax = 0$::1::sha256:b2c73017de191471a696ddd7be388736d010940f52d47f01ea477b28ac16cf13"
+      ],
+      "stage_refs": [
+        "stage.ch05.homogeneous.solution-space.input"
+      ],
+      "statement": "5.1 齐次方程组 $Ax = 0$ 的线性表示保持可检验的向量关系。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch05.homogeneous.solution-space"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch05.homogeneous.solution-space.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "5.1 齐次方程组 $Ax = 0$ 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "5.1 齐次方程组 $Ax = 0$",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "id": "definition",
+        "text": "definition: 5.1 齐次方程组 $Ax = 0$。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "id": "formula",
+        "text": "formula: 5.1 齐次方程组 $Ax = 0$。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "id": "derivation",
+        "text": "derivation: 5.1 齐次方程组 $Ax = 0$。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 5.1 齐次方程组 $Ax = 0$。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 5.1 齐次方程组 $Ax = 0$。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 5.1 齐次方程组 $Ax = 0$。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "id": "connections",
+        "text": "connections: 5.1 齐次方程组 $Ax = 0$。",
+        "title": "connections"
+      }
+    ],
+    "summary": "5.1 齐次方程组 $Ax = 0$ 的确定性讲义 artifact。",
+    "symbol_roles": {
+      "result": "transformed_a",
+      "v": "vector_a"
+    },
+    "title": "5.1 齐次方程组 $Ax = 0$",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch05.homogeneous.solution-space",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:ff0984fd95b3ee213b210fd5f922b9f5e8eaff1cbaacfb774f3e830396737155",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:7b0131be212309a534a11ae6fc6bb84c045045cf087aec8af76a8a36920e4866",
+    "source_hash": "sha256:b2c73017de191471a696ddd7be388736d010940f52d47f01ea477b28ac16cf13"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 5.1 齐次方程组 $Ax = 0$\n\n一句话动机：要找哪些输入经过变换 A 之后\"消失\"了——这就是零空间。\n本节目标：理解解齐次方程组 $=$ 求 $\\operatorname{Null}(A) =$ 求 Ker(T)。\n\n定义 5.1（齐次线性方程组） $Ax = 0$ 称为齐次线性方程组。其所有解构成的集合就是矩阵 A 的零空间 Null(A)。\n定理 5.1（齐次方程组的解结构） Null(A) 是一个向量空间。它的维数 $= n - \\operatorname{rank}(A)$（由秩-零化度定理）。\n一句话动机：具体怎么算？——高斯消元是解线性方程组的「标准操作流程」，做行变换不改变解集。\n本节目标：掌握三种初等行变换，能独立完成$3 \\times 3$方程组的消元求解。\n这意味着解集不是一个孤立的点，而是一个向量子空间。如果有一组基 $\\{v_{1}, ..., v_{k}\\}$ 张成 Null(A)，那么所有解就是这些基向量的全部线性组合。\n几何理解：\n- $\\operatorname{rank}=n \\rightarrow \\operatorname{Null}(A)={0} \\rightarrow$ 只有零解\n- $\\operatorname{rank}=n-1 \\rightarrow \\operatorname{Null}(A)$ 是一条直线 $\\rightarrow$ 所有解都在一条线上\n- $\\operatorname{rank}=n-2 \\rightarrow \\operatorname{Null}(A)$ 是一个平面 $\\rightarrow$ 所有解在一个平面上\n\n#### 例题\n\n解方程组：$x_{1} + 2x_{2} = 0, 2x_{1} + 4x_{2} = 0$。\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, \\operatorname{rank}(A)=1\n$$\n这两个方程等价于 $x_{1} + 2x_{2} = 0 \\rightarrow x_{1} = -2x_{2}$。\n$\\operatorname{Null}(A) = \\{(-2t, t) \\mid t \\in R\\}$，是一条经过原点、方向为 $(-2,1)$ 的直线。\n\n##### 定理 5.1 的证明（解集构成子空间）\n\n设 $x_{1}, x_{2} \\in \\operatorname{Null}(A)$，即 $Ax_{1}=0, Ax_{2}=0$。\n加法封闭：$A(x_{1}+x_{2}) = Ax_{1}+Ax_{2} = 0+0 = 0 \\rightarrow x_{1}+x_{2} \\in \\operatorname{Null}(A)$。\n数乘封闭：$A(kx_{1}) = k \\cdot Ax_{1} = k \\cdot 0 = 0 \\rightarrow kx_{1} \\in \\operatorname{Null}(A)$。\n含零向量：$A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$。满足子空间三条件 $\\rightarrow \\operatorname{Null}(A)$ 是向量空间。■\n维数结论：由秩-零化度定理，$\\dim(\\operatorname{Null}(A)) = n - \\operatorname{rank}(A)$。\n\n##### 补充例题\n\n例3（$3 \\times 3$齐次方程组）: 求方程组 $x_{1} + 2x_{2} + x_{3} = 0, 2x_{1} - x_{2} + 3x_{3} = 0$ 的解空间的一组基。\n解: 矩阵为 $\\begin{pmatrix}1 & 2 & 1 \\\\ 2 & -1 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow \\begin{pmatrix}1 & 2 & 1 \\\\ 0 & -5 & 1\\end{pmatrix}$。\nRREF：$\\begin{pmatrix}1 & 0 & \\frac{7}{5} \\\\ 0 & 1 & -\\frac{1}{5}\\end{pmatrix}$。令 $x_{3}=5t \\rightarrow x_{1}=-7t, x_{2}=t$。\n解空间（零空间）$= \\operatorname{span}\\{(-7, 1, 5)\\}$，维数$=1$。\n验证：$\\operatorname{rank}(A)=2$，$n=3 \\rightarrow \\dim(\\operatorname{Null})=3-2=1 ✓$。",
+    "heading_level": 3,
+    "heading_path": [
+      "第5章 线性方程组",
+      "5.1 齐次方程组 $Ax = 0$"
+    ],
+    "neighboring_titles": [
+      "5.2 非齐次方程组 $Ax = b$"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:b2c73017de191471a696ddd7be388736d010940f52d47f01ea477b28ac16cf13",
+    "source_path": [
+      "第5章 线性方程组",
+      "5.1 齐次方程组 $Ax = 0$",
+      "5.1 齐次方程组 $Ax = 0$"
+    ],
+    "spans": [
+      {
+        "end_line": 1949,
+        "fingerprint": "sha256:b2c73017de191471a696ddd7be388736d010940f52d47f01ea477b28ac16cf13",
+        "heading_path": [
+          "第5章 线性方程组",
+          "5.1 齐次方程组 $Ax = 0$"
+        ],
+        "id": "第5章 线性方程组 / 5.1 齐次方程组 $Ax = 0$::1::sha256:b2c73017de191471a696ddd7be388736d010940f52d47f01ea477b28ac16cf13",
+        "start_line": 1905,
+        "text": "### 5.1 齐次方程组 $Ax = 0$\n\n一句话动机：要找哪些输入经过变换 A 之后\"消失\"了——这就是零空间。\n本节目标：理解解齐次方程组 $=$ 求 $\\operatorname{Null}(A) =$ 求 Ker(T)。\n\n定义 5.1（齐次线性方程组） $Ax = 0$ 称为齐次线性方程组。其所有解构成的集合就是矩阵 A 的零空间 Null(A)。\n定理 5.1（齐次方程组的解结构） Null(A) 是一个向量空间。它的维数 $= n - \\operatorname{rank}(A)$（由秩-零化度定理）。\n一句话动机：具体怎么算？——高斯消元是解线性方程组的「标准操作流程」，做行变换不改变解集。\n本节目标：掌握三种初等行变换，能独立完成$3 \\times 3$方程组的消元求解。\n这意味着解集不是一个孤立的点，而是一个向量子空间。如果有一组基 $\\{v_{1}, ..., v_{k}\\}$ 张成 Null(A)，那么所有解就是这些基向量的全部线性组合。\n几何理解：\n- $\\operatorname{rank}=n \\rightarrow \\operatorname{Null}(A)={0} \\rightarrow$ 只有零解\n- $\\operatorname{rank}=n-1 \\rightarrow \\operatorname{Null}(A)$ 是一条直线 $\\rightarrow$ 所有解都在一条线上\n- $\\operatorname{rank}=n-2 \\rightarrow \\operatorname{Null}(A)$ 是一个平面 $\\rightarrow$ 所有解在一个平面上\n\n#### 例题\n\n解方程组：$x_{1} + 2x_{2} = 0, 2x_{1} + 4x_{2} = 0$。\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, \\operatorname{rank}(A)=1\n$$\n这两个方程等价于 $x_{1} + 2x_{2} = 0 \\rightarrow x_{1} = -2x_{2}$。\n$\\operatorname{Null}(A) = \\{(-2t, t) \\mid t \\in R\\}$，是一条经过原点、方向为 $(-2,1)$ 的直线。\n\n##### 定理 5.1 的证明（解集构成子空间）\n\n设 $x_{1}, x_{2} \\in \\operatorname{Null}(A)$，即 $Ax_{1}=0, Ax_{2}=0$。\n加法封闭：$A(x_{1}+x_{2}) = Ax_{1}+Ax_{2} = 0+0 = 0 \\rightarrow x_{1}+x_{2} \\in \\operatorname{Null}(A)$。\n数乘封闭：$A(kx_{1}) = k \\cdot Ax_{1} = k \\cdot 0 = 0 \\rightarrow kx_{1} \\in \\operatorname{Null}(A)$。\n含零向量：$A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$。满足子空间三条件 $\\rightarrow \\operatorname{Null}(A)$ 是向量空间。■\n维数结论：由秩-零化度定理，$\\dim(\\operatorname{Null}(A)) = n - \\operatorname{rank}(A)$。\n\n##### 补充例题\n\n例3（$3 \\times 3$齐次方程组）: 求方程组 $x_{1} + 2x_{2} + x_{3} = 0, 2x_{1} - x_{2} + 3x_{3} = 0$ 的解空间的一组基。\n解: 矩阵为 $\\begin{pmatrix}1 & 2 & 1 \\\\ 2 & -1 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow \\begin{pmatrix}1 & 2 & 1 \\\\ 0 & -5 & 1\\end{pmatrix}$。\nRREF：$\\begin{pmatrix}1 & 0 & \\frac{7}{5} \\\\ 0 & 1 & -\\frac{1}{5}\\end{pmatrix}$。令 $x_{3}=5t \\rightarrow x_{1}=-7t, x_{2}=t$。\n解空间（零空间）$= \\operatorname{span}\\{(-7, 1, 5)\\}$，维数$=1$。\n验证：$\\operatorname{rank}(A)=2$，$n=3 \\rightarrow \\dim(\\operatorname{Null})=3-2=1 ✓$。"
+      }
+    ]
+  },
+  "status": "draft",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch05.homogeneous.solution-space",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.homogeneous.solution-space.v",
+        "kind": "vector",
+        "label": "v",
+        "role": "vector_a",
+        "value": [
+          1,
+          2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.homogeneous.solution-space.result",
+        "kind": "vector",
+        "label": "result",
+        "role": "transformed_a",
+        "value": [
+          2,
+          4
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "id": "relation.ch05.homogeneous.solution-space.maps",
+        "kind": "maps_to",
+        "parameters": {
+          "scalar": 2
+        },
+        "source_ref": "entity.ch05.homogeneous.solution-space.v",
+        "target_ref": "entity.ch05.homogeneous.solution-space.result"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "显示线性关系。",
+        "expected_invariants": [
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.homogeneous.solution-space.input",
+        "input_entity_refs": [
+          "entity.ch05.homogeneous.solution-space.v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.homogeneous.solution-space.result"
+        ],
+        "relation_refs": [
+          "relation.ch05.homogeneous.solution-space.maps"
+        ],
+        "title": "输入与结果"
+      }
+    ]
+  }
+}

@@ -1,0 +1,299 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch06.similarity-transform.v",
+        "entity.ch06.similarity-transform.result"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "id": "claim.ch06.similarity-transform",
+      "relation_refs": [
+        "relation.ch06.similarity-transform.maps"
+      ],
+      "source_refs": [
+        "第6章 基变换与相似变换 / 6.3 相似变换——同一个变换在不同基下的矩阵::1::sha256:c700a7e3f54691290562a7c582245d08d693033604df782a6dbc475be605d7a7"
+      ],
+      "stage_refs": [
+        "stage.ch06.similarity-transform.input"
+      ],
+      "statement": "6.3 相似变换——同一个变换在不同基下的矩阵 的线性表示保持可检验的向量关系。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch06.similarity-transform"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch06.similarity-transform.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "6.3 相似变换——同一个变换在不同基下的矩阵 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "6.3 相似变换——同一个变换在不同基下的矩阵",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "definition",
+        "text": "definition: 6.3 相似变换——同一个变换在不同基下的矩阵。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "formula",
+        "text": "formula: 6.3 相似变换——同一个变换在不同基下的矩阵。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "derivation",
+        "text": "derivation: 6.3 相似变换——同一个变换在不同基下的矩阵。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 6.3 相似变换——同一个变换在不同基下的矩阵。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 6.3 相似变换——同一个变换在不同基下的矩阵。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 6.3 相似变换——同一个变换在不同基下的矩阵。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "connections",
+        "text": "connections: 6.3 相似变换——同一个变换在不同基下的矩阵。",
+        "title": "connections"
+      }
+    ],
+    "summary": "6.3 相似变换——同一个变换在不同基下的矩阵 的确定性讲义 artifact。",
+    "symbol_roles": {
+      "result": "transformed_a",
+      "v": "vector_a"
+    },
+    "title": "6.3 相似变换——同一个变换在不同基下的矩阵",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch06.similarity-transform",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:2d8486f7f94c1c9f60da910dce7286a567e6afccd09ee74cb8f35007e94e8c2f",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:0766430eff14646d341641efc5c967b9ea15cf8a3cc243561c94f08f083f3bba",
+    "source_hash": "sha256:c700a7e3f54691290562a7c582245d08d693033604df782a6dbc475be605d7a7"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 6.3 相似变换——同一个变换在不同基下的矩阵\n\n定理 6.1（线性变换在不同基下的矩阵） 设线性变换 T 在标准基下的矩阵为 A。则在基 B（基变换矩阵为 P）下，T 的矩阵为：\n$$\nB = P^{-1} A P\n$$\n推导（三步走）：\n在 B 基下输入坐标 c\n$\\rightarrow$ 第1步：P 翻译成标准坐标 $\\rightarrow Pc$\n$\\rightarrow$ 第2步：A 执行标准基下的变换 $\\rightarrow A(Pc)$\n$\\rightarrow$ 第3步：$P^{-1}$ 翻译回 B 基坐标 $\\rightarrow P^{-1}A(Pc) = (P^{-1}AP)c$\n\n所以变换在 B 基下的矩阵 $= P^{-1}AP$\n这正是将要在第 7 章学习的对角化公式——那里的 P 恰好由特征向量组成。\n定义 6.2（相似） 如果存在可逆矩阵 P 使得 $B = P^{-1}AP$，则称 B 与 A 相似。\n相似 $=$ 同一个线性变换的不同\"面孔\"（在不同基下的矩阵）。它们描述的是完全相同的几何操作，只是从不同角度\"拍照\"。\n定理 6.2（相似不变量） 若 $B = P^{-1}AP$，则：\n- $\\det(B) = \\det(A)$ — 行列式不变\n- $\\operatorname{rank}(B) = \\operatorname{rank}(A)$ — 秩不变\n- 特征值不变 — 拉伸倍数不依赖于基的选取\n- 迹不变：$\\operatorname{tr}(B) = \\operatorname{tr}(A)$，其中 $\\operatorname{tr}(A) =$ 对角线元素之和\n- 特征多项式不变：$\\det(B-\\lambda I) = \\det(A-\\lambda I)$\n\n##### 定理 6.2 的证明\n\n1. 行列式不变: $\\det(P^{-1}AP) = \\det(P^{-1}) \\cdot \\det(A) \\cdot \\det(P) = \\det(A) \\cdot \\det(P^{-1}P) = \\det(A) \\cdot \\det(I) = \\det(A)$。■\n2. 秩不变: P 和 $P^{-1}$ 都是可逆矩阵，左乘/右乘可逆矩阵等价于对行/列做初等变换，而初等变换不改变秩。或者：$\\operatorname{rank}(P^{-1}AP) = \\operatorname{rank}(A)$（因为 $P^{-1}$ 和 P 都是满秩的）。■\n3. 迹不变: $\\operatorname{tr}(P^{-1}AP) = \\operatorname{tr}(A P P^{-1}) = \\operatorname{tr}(A I) = \\operatorname{tr}(A)$。（这里用了迹的循环性质：$\\operatorname{tr}(XY) = \\operatorname{tr}(YX)$）。■\n迹的循环性证明：$\\operatorname{tr}(XY) = \\sum_{i} (\\sum_{k} x_{ik} y_{ki}) = \\sum_{k} (\\sum_{i} y_{ki} x_{ik}) = \\operatorname{tr}(YX)$。\n4. 特征多项式不变: $\\det(P^{-1}AP - \\lambda I) = \\det(P^{-1}AP - \\lambda P^{-1}IP) = \\det(P^{-1}(A-\\lambda I)P) = \\det(P^{-1}) \\cdot \\det(A-\\lambda I) \\cdot \\det(P) = \\det(A-\\lambda I)$。\n特征多项式不变 $\\rightarrow$ 特征值也不变（因为特征值是特征多项式的根）。■\n\n##### 补充例题\n\n例7（验证迹不变）: $A = \\begin{pmatrix}2 & 3 \\\\ 1 & 4\\end{pmatrix}$，$P = \\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$。求 $B=P^{-1}AP$ 并验证 $\\operatorname{tr}(B)=\\operatorname{tr}(A)$。\n解: $P^{-1} = \\begin{pmatrix}1 & -1 \\\\ 0 & 1\\end{pmatrix}$。$B = \\begin{pmatrix}1 & -1 \\\\ 0 & 1\\end{pmatrix} \\cdot \\begin{pmatrix}2 & 3 \\\\ 1 & 4\\end{pmatrix} \\cdot \\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix} = \\begin{pmatrix}1 & 0 \\\\ 1 & 6\\end{pmatrix}$。\n$$\n\\operatorname{tr}(A)=2+4=6, \\operatorname{tr}(B)=1+6=6 ✓\n$$\n例8（验证特征多项式不变）: 对例7的A和B，分别计算$\\det(A-\\lambda I)$和$\\det(B-\\lambda I)$。\n解: $\\det(A-\\lambda I) = (2-\\lambda)(4-\\lambda)-3 = \\lambda^{2}-6\\lambda+5$。\n$$\n\\det(B-\\lambda I) = (1-\\lambda)(6-\\lambda)-0 = \\lambda^{2}-7\\lambda+6-(\\lambda-1) = \\lambda^{2}-6\\lambda+5 ✓\n$$\n行列式、秩、特征值、迹、特征多项式——这些是线性变换的\"DNA\"，不因换基而改变。相似矩阵描述的是\"同一个线性变换\"的不同面孔，所以\"不变特征\"必须保持一致。\n\n##### 分层例题\n\n例6：验证 $A=\\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$ 和 $B=\\begin{pmatrix}3 & 0 \\\\ 0 & 1\\end{pmatrix}$ 是否相似。（之前已算出 $B=P^{-1}AP$）\n验证：$\\operatorname{tr}(A)=2+2=4$，$\\operatorname{tr}(B)=3+1=4 ✓$。$\\det(A)=3$，$\\det(B)=3 ✓$。\n特征值：A 的 $\\lambda=3,1$，B 的对角线 $3,1 \\rightarrow$ 相同 ✓。\n\n例4 — $A = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$ 在标准基下。取新基 $v_{1}=(1,1), v_{2}=(-1,1)$，求新基下的矩阵。\n解：$P = \\begin{pmatrix}1 & -1 \\\\ 1 & 1\\end{pmatrix}$，$P^{-1} = (\\frac{1}{2})\\begin{pmatrix}1 & 1 \\\\ -1 & 1\\end{pmatrix}$。\n$$\nP^{-1}AP = (\\frac{1}{2})\\begin{pmatrix}1 & 1 \\\\ -1 & 1\\end{pmatrix} \\cdot \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix} \\cdot \\begin{pmatrix}1 & -1 \\\\ 1 & 1\\end{pmatrix}\n$$\n$$\n= \\begin{pmatrix}3 & 0 \\\\ 0 & 1\\end{pmatrix}\n$$\n关键：新基下 A 变成了对角矩阵！这是因为 $v_{1},v_{2}$ 恰好是 A 的特征向量——这就是第 7 章对角化的本质。\n例5 — 验证例 4 中行列式不变：$\\det(A) = 4-1=3$。$\\det(P^{-1}AP) = 3 \\times 1=3 ✓$。",
+    "heading_level": 3,
+    "heading_path": [
+      "第6章 基变换与相似变换",
+      "6.3 相似变换——同一个变换在不同基下的矩阵"
+    ],
+    "neighboring_titles": [
+      "6.2 基变换——同一个向量在不同基下的坐标",
+      "6.4 为什么这一章通向第 7 章"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:c700a7e3f54691290562a7c582245d08d693033604df782a6dbc475be605d7a7",
+    "source_path": [
+      "第6章 基变换与相似变换",
+      "6.3 相似变换——同一个变换在不同基下的矩阵",
+      "6.3 相似变换——同一个变换在不同基下的矩阵"
+    ],
+    "spans": [
+      {
+        "end_line": 2267,
+        "fingerprint": "sha256:c700a7e3f54691290562a7c582245d08d693033604df782a6dbc475be605d7a7",
+        "heading_path": [
+          "第6章 基变换与相似变换",
+          "6.3 相似变换——同一个变换在不同基下的矩阵"
+        ],
+        "id": "第6章 基变换与相似变换 / 6.3 相似变换——同一个变换在不同基下的矩阵::1::sha256:c700a7e3f54691290562a7c582245d08d693033604df782a6dbc475be605d7a7",
+        "start_line": 2205,
+        "text": "### 6.3 相似变换——同一个变换在不同基下的矩阵\n\n定理 6.1（线性变换在不同基下的矩阵） 设线性变换 T 在标准基下的矩阵为 A。则在基 B（基变换矩阵为 P）下，T 的矩阵为：\n$$\nB = P^{-1} A P\n$$\n推导（三步走）：\n在 B 基下输入坐标 c\n$\\rightarrow$ 第1步：P 翻译成标准坐标 $\\rightarrow Pc$\n$\\rightarrow$ 第2步：A 执行标准基下的变换 $\\rightarrow A(Pc)$\n$\\rightarrow$ 第3步：$P^{-1}$ 翻译回 B 基坐标 $\\rightarrow P^{-1}A(Pc) = (P^{-1}AP)c$\n\n所以变换在 B 基下的矩阵 $= P^{-1}AP$\n这正是将要在第 7 章学习的对角化公式——那里的 P 恰好由特征向量组成。\n定义 6.2（相似） 如果存在可逆矩阵 P 使得 $B = P^{-1}AP$，则称 B 与 A 相似。\n相似 $=$ 同一个线性变换的不同\"面孔\"（在不同基下的矩阵）。它们描述的是完全相同的几何操作，只是从不同角度\"拍照\"。\n定理 6.2（相似不变量） 若 $B = P^{-1}AP$，则：\n- $\\det(B) = \\det(A)$ — 行列式不变\n- $\\operatorname{rank}(B) = \\operatorname{rank}(A)$ — 秩不变\n- 特征值不变 — 拉伸倍数不依赖于基的选取\n- 迹不变：$\\operatorname{tr}(B) = \\operatorname{tr}(A)$，其中 $\\operatorname{tr}(A) =$ 对角线元素之和\n- 特征多项式不变：$\\det(B-\\lambda I) = \\det(A-\\lambda I)$\n\n##### 定理 6.2 的证明\n\n1. 行列式不变: $\\det(P^{-1}AP) = \\det(P^{-1}) \\cdot \\det(A) \\cdot \\det(P) = \\det(A) \\cdot \\det(P^{-1}P) = \\det(A) \\cdot \\det(I) = \\det(A)$。■\n2. 秩不变: P 和 $P^{-1}$ 都是可逆矩阵，左乘/右乘可逆矩阵等价于对行/列做初等变换，而初等变换不改变秩。或者：$\\operatorname{rank}(P^{-1}AP) = \\operatorname{rank}(A)$（因为 $P^{-1}$ 和 P 都是满秩的）。■\n3. 迹不变: $\\operatorname{tr}(P^{-1}AP) = \\operatorname{tr}(A P P^{-1}) = \\operatorname{tr}(A I) = \\operatorname{tr}(A)$。（这里用了迹的循环性质：$\\operatorname{tr}(XY) = \\operatorname{tr}(YX)$）。■\n迹的循环性证明：$\\operatorname{tr}(XY) = \\sum_{i} (\\sum_{k} x_{ik} y_{ki}) = \\sum_{k} (\\sum_{i} y_{ki} x_{ik}) = \\operatorname{tr}(YX)$。\n4. 特征多项式不变: $\\det(P^{-1}AP - \\lambda I) = \\det(P^{-1}AP - \\lambda P^{-1}IP) = \\det(P^{-1}(A-\\lambda I)P) = \\det(P^{-1}) \\cdot \\det(A-\\lambda I) \\cdot \\det(P) = \\det(A-\\lambda I)$。\n特征多项式不变 $\\rightarrow$ 特征值也不变（因为特征值是特征多项式的根）。■\n\n##### 补充例题\n\n例7（验证迹不变）: $A = \\begin{pmatrix}2 & 3 \\\\ 1 & 4\\end{pmatrix}$，$P = \\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$。求 $B=P^{-1}AP$ 并验证 $\\operatorname{tr}(B)=\\operatorname{tr}(A)$。\n解: $P^{-1} = \\begin{pmatrix}1 & -1 \\\\ 0 & 1\\end{pmatrix}$。$B = \\begin{pmatrix}1 & -1 \\\\ 0 & 1\\end{pmatrix} \\cdot \\begin{pmatrix}2 & 3 \\\\ 1 & 4\\end{pmatrix} \\cdot \\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix} = \\begin{pmatrix}1 & 0 \\\\ 1 & 6\\end{pmatrix}$。\n$$\n\\operatorname{tr}(A)=2+4=6, \\operatorname{tr}(B)=1+6=6 ✓\n$$\n例8（验证特征多项式不变）: 对例7的A和B，分别计算$\\det(A-\\lambda I)$和$\\det(B-\\lambda I)$。\n解: $\\det(A-\\lambda I) = (2-\\lambda)(4-\\lambda)-3 = \\lambda^{2}-6\\lambda+5$。\n$$\n\\det(B-\\lambda I) = (1-\\lambda)(6-\\lambda)-0 = \\lambda^{2}-7\\lambda+6-(\\lambda-1) = \\lambda^{2}-6\\lambda+5 ✓\n$$\n行列式、秩、特征值、迹、特征多项式——这些是线性变换的\"DNA\"，不因换基而改变。相似矩阵描述的是\"同一个线性变换\"的不同面孔，所以\"不变特征\"必须保持一致。\n\n##### 分层例题\n\n例6：验证 $A=\\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$ 和 $B=\\begin{pmatrix}3 & 0 \\\\ 0 & 1\\end{pmatrix}$ 是否相似。（之前已算出 $B=P^{-1}AP$）\n验证：$\\operatorname{tr}(A)=2+2=4$，$\\operatorname{tr}(B)=3+1=4 ✓$。$\\det(A)=3$，$\\det(B)=3 ✓$。\n特征值：A 的 $\\lambda=3,1$，B 的对角线 $3,1 \\rightarrow$ 相同 ✓。\n\n例4 — $A = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$ 在标准基下。取新基 $v_{1}=(1,1), v_{2}=(-1,1)$，求新基下的矩阵。\n解：$P = \\begin{pmatrix}1 & -1 \\\\ 1 & 1\\end{pmatrix}$，$P^{-1} = (\\frac{1}{2})\\begin{pmatrix}1 & 1 \\\\ -1 & 1\\end{pmatrix}$。\n$$\nP^{-1}AP = (\\frac{1}{2})\\begin{pmatrix}1 & 1 \\\\ -1 & 1\\end{pmatrix} \\cdot \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix} \\cdot \\begin{pmatrix}1 & -1 \\\\ 1 & 1\\end{pmatrix}\n$$\n$$\n= \\begin{pmatrix}3 & 0 \\\\ 0 & 1\\end{pmatrix}\n$$\n关键：新基下 A 变成了对角矩阵！这是因为 $v_{1},v_{2}$ 恰好是 A 的特征向量——这就是第 7 章对角化的本质。\n例5 — 验证例 4 中行列式不变：$\\det(A) = 4-1=3$。$\\det(P^{-1}AP) = 3 \\times 1=3 ✓$。"
+      }
+    ]
+  },
+  "status": "draft",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch06.similarity-transform",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.similarity-transform.v",
+        "kind": "vector",
+        "label": "v",
+        "role": "vector_a",
+        "value": [
+          1,
+          2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.similarity-transform.result",
+        "kind": "vector",
+        "label": "result",
+        "role": "transformed_a",
+        "value": [
+          2,
+          4
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "relation.ch06.similarity-transform.maps",
+        "kind": "maps_to",
+        "parameters": {
+          "scalar": 2
+        },
+        "source_ref": "entity.ch06.similarity-transform.v",
+        "target_ref": "entity.ch06.similarity-transform.result"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "显示线性关系。",
+        "expected_invariants": [
+          "finite numeric result"
+        ],
+        "id": "stage.ch06.similarity-transform.input",
+        "input_entity_refs": [
+          "entity.ch06.similarity-transform.v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch06.similarity-transform.result"
+        ],
+        "relation_refs": [
+          "relation.ch06.similarity-transform.maps"
+        ],
+        "title": "输入与结果"
+      }
+    ]
+  }
+}

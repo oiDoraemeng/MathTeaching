@@ -1,0 +1,299 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch06.basis-change.coordinates.v",
+        "entity.ch06.basis-change.coordinates.result"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "id": "claim.ch06.basis-change.coordinates",
+      "relation_refs": [
+        "relation.ch06.basis-change.coordinates.maps"
+      ],
+      "source_refs": [
+        "第6章 基变换与相似变换 / 6.2 基变换——同一个向量在不同基下的坐标::1::sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e"
+      ],
+      "stage_refs": [
+        "stage.ch06.basis-change.coordinates.input"
+      ],
+      "statement": "6.2 基变换——同一个向量在不同基下的坐标 的线性表示保持可检验的向量关系。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch06.basis-change.coordinates"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch06.basis-change.coordinates.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "6.2 基变换——同一个向量在不同基下的坐标 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "6.2 基变换——同一个向量在不同基下的坐标",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "id": "definition",
+        "text": "definition: 6.2 基变换——同一个向量在不同基下的坐标。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "id": "formula",
+        "text": "formula: 6.2 基变换——同一个向量在不同基下的坐标。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "id": "derivation",
+        "text": "derivation: 6.2 基变换——同一个向量在不同基下的坐标。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 6.2 基变换——同一个向量在不同基下的坐标。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 6.2 基变换——同一个向量在不同基下的坐标。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 6.2 基变换——同一个向量在不同基下的坐标。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "id": "connections",
+        "text": "connections: 6.2 基变换——同一个向量在不同基下的坐标。",
+        "title": "connections"
+      }
+    ],
+    "summary": "6.2 基变换——同一个向量在不同基下的坐标 的确定性讲义 artifact。",
+    "symbol_roles": {
+      "result": "transformed_a",
+      "v": "vector_a"
+    },
+    "title": "6.2 基变换——同一个向量在不同基下的坐标",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch06.basis-change.coordinates",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:e2ec677a2129c9aa26d935ef8f4b339ec9217b5f20a1ac2ea0e398cfee47c2e1",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:a664f89dc62d0c10ef7d4dc83caa553e8e5a41a382b8db339bfafc10a8a3588a",
+    "source_hash": "sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 6.2 基变换——同一个向量在不同基下的坐标\n\n定义 6.1（基变换矩阵） 设 $B = \\{v_{1}, v_{2}, ..., v_{n}\\}$ 是 $R^{n}$ 的一组基。将这些向量按列排成矩阵 $P = [v_{1} v_{2} ... v_{n}]$。则对任意向量 x：\nx(在标准基下的坐标$) = P \\cdot x($在 B 基下的坐标)\n即：P 把\"新基下的坐标\"翻译成\"标准基下的坐标\"。\n反过来：x(在 B 基下的坐标$) = P^{-1} \\cdot x($在标准基下的坐标)。$P^{-1}$ 把标准坐标翻译成新基坐标。\n几何理解：\n标准基 $e_{1},e_{2}$        新基 $v_{1},v_{2}$\n\n```\n↑                    ↑\n     │ 坐标 (x,y)          │ 坐标 (c₁,c₂)\n     │                    │\n     └── P: 新→旧 ──────→┘\n     ←── P⁻¹: 旧→新 ──────\n```\n\nP 的列就是新基向量在标准基下的坐标。用它乘上\"新坐标\"就得到\"老坐标\"。\n\n例1 — 新基 $v_{1} = (1,1), v_{2} = (-1,1)$。向量在新基下坐标为 $c = (2, 3)$。求标准坐标。\n解：$P = \\begin{pmatrix}1 & -1 \\\\ 1 & 1\\end{pmatrix}$。$x = Pc = 2 \\cdot (1,1) + 3 \\cdot (-1,1) = (2-3, 2+3) = (-1, 5)$。\n例2 — 同上新基。标准坐标 $x = (4, 2)$，求新基下的坐标。\n解：$P^{-1} = (\\frac{1}{2}) \\cdot \\begin{pmatrix}1 & 1 \\\\ -1 & 1\\end{pmatrix}$。$c = P^{-1}x = (\\frac{1}{2}) \\cdot (4+2, -4+2) = (3, -1)$。\n例3 — 标准基本身算不算一组基？它的基变换矩阵 P 是什么？\n答：是。$P = [e_{1} e_{2}] = \\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix} = I$。标准基到标准基，变换矩阵就是单位矩阵。",
+    "heading_level": 3,
+    "heading_path": [
+      "第6章 基变换与相似变换",
+      "6.2 基变换——同一个向量在不同基下的坐标"
+    ],
+    "neighboring_titles": [
+      "6.1 为什么要换基——动机",
+      "6.3 相似变换——同一个变换在不同基下的矩阵"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e",
+    "source_path": [
+      "第6章 基变换与相似变换",
+      "6.2 基变换——同一个向量在不同基下的坐标",
+      "6.2 基变换——同一个向量在不同基下的坐标"
+    ],
+    "spans": [
+      {
+        "end_line": 2204,
+        "fingerprint": "sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e",
+        "heading_path": [
+          "第6章 基变换与相似变换",
+          "6.2 基变换——同一个向量在不同基下的坐标"
+        ],
+        "id": "第6章 基变换与相似变换 / 6.2 基变换——同一个向量在不同基下的坐标::1::sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e",
+        "start_line": 2179,
+        "text": "### 6.2 基变换——同一个向量在不同基下的坐标\n\n定义 6.1（基变换矩阵） 设 $B = \\{v_{1}, v_{2}, ..., v_{n}\\}$ 是 $R^{n}$ 的一组基。将这些向量按列排成矩阵 $P = [v_{1} v_{2} ... v_{n}]$。则对任意向量 x：\nx(在标准基下的坐标$) = P \\cdot x($在 B 基下的坐标)\n即：P 把\"新基下的坐标\"翻译成\"标准基下的坐标\"。\n反过来：x(在 B 基下的坐标$) = P^{-1} \\cdot x($在标准基下的坐标)。$P^{-1}$ 把标准坐标翻译成新基坐标。\n几何理解：\n标准基 $e_{1},e_{2}$        新基 $v_{1},v_{2}$\n\n```\n↑                    ↑\n     │ 坐标 (x,y)          │ 坐标 (c₁,c₂)\n     │                    │\n     └── P: 新→旧 ──────→┘\n     ←── P⁻¹: 旧→新 ──────\n```\n\nP 的列就是新基向量在标准基下的坐标。用它乘上\"新坐标\"就得到\"老坐标\"。\n\n例1 — 新基 $v_{1} = (1,1), v_{2} = (-1,1)$。向量在新基下坐标为 $c = (2, 3)$。求标准坐标。\n解：$P = \\begin{pmatrix}1 & -1 \\\\ 1 & 1\\end{pmatrix}$。$x = Pc = 2 \\cdot (1,1) + 3 \\cdot (-1,1) = (2-3, 2+3) = (-1, 5)$。\n例2 — 同上新基。标准坐标 $x = (4, 2)$，求新基下的坐标。\n解：$P^{-1} = (\\frac{1}{2}) \\cdot \\begin{pmatrix}1 & 1 \\\\ -1 & 1\\end{pmatrix}$。$c = P^{-1}x = (\\frac{1}{2}) \\cdot (4+2, -4+2) = (3, -1)$。\n例3 — 标准基本身算不算一组基？它的基变换矩阵 P 是什么？\n答：是。$P = [e_{1} e_{2}] = \\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix} = I$。标准基到标准基，变换矩阵就是单位矩阵。"
+      }
+    ]
+  },
+  "status": "draft",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch06.basis-change.coordinates",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.coordinates.v",
+        "kind": "vector",
+        "label": "v",
+        "role": "vector_a",
+        "value": [
+          1,
+          2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.coordinates.result",
+        "kind": "vector",
+        "label": "result",
+        "role": "transformed_a",
+        "value": [
+          2,
+          4
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "id": "relation.ch06.basis-change.coordinates.maps",
+        "kind": "maps_to",
+        "parameters": {
+          "scalar": 2
+        },
+        "source_ref": "entity.ch06.basis-change.coordinates.v",
+        "target_ref": "entity.ch06.basis-change.coordinates.result"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "显示线性关系。",
+        "expected_invariants": [
+          "finite numeric result"
+        ],
+        "id": "stage.ch06.basis-change.coordinates.input",
+        "input_entity_refs": [
+          "entity.ch06.basis-change.coordinates.v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch06.basis-change.coordinates.result"
+        ],
+        "relation_refs": [
+          "relation.ch06.basis-change.coordinates.maps"
+        ],
+        "title": "输入与结果"
+      }
+    ]
+  }
+}

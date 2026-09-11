@@ -1,0 +1,298 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch05.least-squares-derivation.v",
+        "entity.ch05.least-squares-derivation.result"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "id": "claim.ch05.least-squares-derivation",
+      "relation_refs": [
+        "relation.ch05.least-squares-derivation.maps"
+      ],
+      "source_refs": [
+        "第5章 线性方程组 / 5.8 最小二乘法的完整推导::1::sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69"
+      ],
+      "stage_refs": [
+        "stage.ch05.least-squares-derivation.input"
+      ],
+      "statement": "5.8 最小二乘法的完整推导 的线性表示保持可检验的向量关系。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch05.least-squares-derivation"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch05.least-squares-derivation.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "5.8 最小二乘法的完整推导 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "5.8 最小二乘法的完整推导",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "definition",
+        "text": "definition: 5.8 最小二乘法的完整推导。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "formula",
+        "text": "formula: 5.8 最小二乘法的完整推导。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "derivation",
+        "text": "derivation: 5.8 最小二乘法的完整推导。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 5.8 最小二乘法的完整推导。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 5.8 最小二乘法的完整推导。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 5.8 最小二乘法的完整推导。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "connections",
+        "text": "connections: 5.8 最小二乘法的完整推导。",
+        "title": "connections"
+      }
+    ],
+    "summary": "5.8 最小二乘法的完整推导 的确定性讲义 artifact。",
+    "symbol_roles": {
+      "result": "transformed_a",
+      "v": "vector_a"
+    },
+    "title": "5.8 最小二乘法的完整推导",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch05.least-squares-derivation",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:501b146a3d85be84d5a8696969af4e1a80772a4bd0464061877c880f4440e3d1",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:8f5cdb70683fd074146f874ef76cd5684a1d619293585acde9a99304048bfd2a",
+    "source_hash": "sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "## 5.8 最小二乘法的完整推导\n\n问题：$Ax=b$无解（$b\\notin\\operatorname{Col}(A)$）。找 $\\hat{x}$ 使残差$\\|Ax-b\\|$最小。\n推导：$min f(x)=\\|Ax-b\\|^{2}=(Ax-b)^{T}(Ax-b)=x^{T}A^{T}Ax-2b^{T}Ax+b^{T}b$。\n对x求梯度（各项求导）并令为0：$\\nabla f=2A^{T}Ax-2A^{T}b=0 \\rightarrow A^{T}A\\hat{x}=A^{T}b$（正规方程）。\n几何意义：$A\\hat{x}$是b在Col(A)上的正交投影，残差$b-A\\hat{x}\\perp\\operatorname{Col}(A)$。",
+    "heading_level": 2,
+    "heading_path": [
+      "第5章 线性方程组",
+      "5.8 最小二乘法的完整推导"
+    ],
+    "neighboring_titles": [
+      "5.7 初等矩阵与消元法的矩阵表述"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69",
+    "source_path": [
+      "第5章 线性方程组",
+      "5.8 最小二乘法的完整推导",
+      "5.8 最小二乘法的完整推导"
+    ],
+    "spans": [
+      {
+        "end_line": 2168,
+        "fingerprint": "sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69",
+        "heading_path": [
+          "第5章 线性方程组",
+          "5.8 最小二乘法的完整推导"
+        ],
+        "id": "第5章 线性方程组 / 5.8 最小二乘法的完整推导::1::sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69",
+        "start_line": 2134,
+        "text": "## 5.8 最小二乘法的完整推导\n\n问题：$Ax=b$无解（$b\\notin\\operatorname{Col}(A)$）。找 $\\hat{x}$ 使残差$\\|Ax-b\\|$最小。\n推导：$min f(x)=\\|Ax-b\\|^{2}=(Ax-b)^{T}(Ax-b)=x^{T}A^{T}Ax-2b^{T}Ax+b^{T}b$。\n对x求梯度（各项求导）并令为0：$\\nabla f=2A^{T}Ax-2A^{T}b=0 \\rightarrow A^{T}A\\hat{x}=A^{T}b$（正规方程）。\n几何意义：$A\\hat{x}$是b在Col(A)上的正交投影，残差$b-A\\hat{x}\\perp\\operatorname{Col}(A)$。"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch05.least-squares-derivation",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.least-squares-derivation.v",
+        "kind": "vector",
+        "label": "v",
+        "role": "vector_a",
+        "value": [
+          1,
+          2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.least-squares-derivation.result",
+        "kind": "vector",
+        "label": "result",
+        "role": "transformed_a",
+        "value": [
+          2,
+          4
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "relation.ch05.least-squares-derivation.maps",
+        "kind": "maps_to",
+        "parameters": {
+          "scalar": 2
+        },
+        "source_ref": "entity.ch05.least-squares-derivation.v",
+        "target_ref": "entity.ch05.least-squares-derivation.result"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "显示线性关系。",
+        "expected_invariants": [
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.least-squares-derivation.input",
+        "input_entity_refs": [
+          "entity.ch05.least-squares-derivation.v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.least-squares-derivation.result"
+        ],
+        "relation_refs": [
+          "relation.ch05.least-squares-derivation.maps"
+        ],
+        "title": "输入与结果"
+      }
+    ]
+  }
+}

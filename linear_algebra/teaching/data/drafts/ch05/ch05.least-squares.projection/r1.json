@@ -1,0 +1,298 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch05.least-squares.projection.v",
+        "entity.ch05.least-squares.projection.result"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "id": "claim.ch05.least-squares.projection",
+      "relation_refs": [
+        "relation.ch05.least-squares.projection.maps"
+      ],
+      "source_refs": [
+        "第5章 线性方程组 / 5.5 最小二乘问题（选学阅读）::1::sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a"
+      ],
+      "stage_refs": [
+        "stage.ch05.least-squares.projection.input"
+      ],
+      "statement": "5.5 最小二乘问题（选学阅读） 的线性表示保持可检验的向量关系。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch05.least-squares.projection"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch05.least-squares.projection.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "5.5 最小二乘问题（选学阅读） 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "5.5 最小二乘问题（选学阅读）",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "id": "definition",
+        "text": "definition: 5.5 最小二乘问题（选学阅读）。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "id": "formula",
+        "text": "formula: 5.5 最小二乘问题（选学阅读）。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "id": "derivation",
+        "text": "derivation: 5.5 最小二乘问题（选学阅读）。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 5.5 最小二乘问题（选学阅读）。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 5.5 最小二乘问题（选学阅读）。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 5.5 最小二乘问题（选学阅读）。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "id": "connections",
+        "text": "connections: 5.5 最小二乘问题（选学阅读）。",
+        "title": "connections"
+      }
+    ],
+    "summary": "5.5 最小二乘问题（选学阅读） 的确定性讲义 artifact。",
+    "symbol_roles": {
+      "result": "transformed_a",
+      "v": "vector_a"
+    },
+    "title": "5.5 最小二乘问题（选学阅读）",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch05.least-squares.projection",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:35bc1dbab78c4535dbdb0545500a3b00a4d0fe4aa51e3ce9d18877ee0d2bb1a2",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:78fa44122b0ad02e28b962b4f4a8717e5d9b514e81bf81c0963b538ac55a3fa1",
+    "source_hash": "sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 5.5 最小二乘问题（选学阅读）\n\n📖 本节为选学内容，不作考试要求。\n当 $Ax = b$ 无解时（b 不在列空间内），我们能做的最接近的事就是找到使得 $|Ax-b|$ 最小的 x——这就是最小二乘解。\n定理 5.6（最小二乘解） $\\hat{x}$ 满足正规方程 $A^{T}A \\cdot \\hat{x} = A^{T}b$。几何上，$\\hat{x}$ 使得 $A\\hat{x}$ 是 b 在 Col(A) 上的正交投影。\n\n#### 本章小结",
+    "heading_level": 3,
+    "heading_path": [
+      "第5章 线性方程组",
+      "5.5 最小二乘问题（选学阅读）"
+    ],
+    "neighboring_titles": [
+      "5.4 高斯消元"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a",
+    "source_path": [
+      "第5章 线性方程组",
+      "5.5 最小二乘问题（选学阅读）",
+      "5.5 最小二乘问题（选学阅读）"
+    ],
+    "spans": [
+      {
+        "end_line": 2099,
+        "fingerprint": "sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a",
+        "heading_path": [
+          "第5章 线性方程组",
+          "5.5 最小二乘问题（选学阅读）"
+        ],
+        "id": "第5章 线性方程组 / 5.5 最小二乘问题（选学阅读）::1::sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a",
+        "start_line": 2092,
+        "text": "### 5.5 最小二乘问题（选学阅读）\n\n📖 本节为选学内容，不作考试要求。\n当 $Ax = b$ 无解时（b 不在列空间内），我们能做的最接近的事就是找到使得 $|Ax-b|$ 最小的 x——这就是最小二乘解。\n定理 5.6（最小二乘解） $\\hat{x}$ 满足正规方程 $A^{T}A \\cdot \\hat{x} = A^{T}b$。几何上，$\\hat{x}$ 使得 $A\\hat{x}$ 是 b 在 Col(A) 上的正交投影。\n\n#### 本章小结"
+      }
+    ]
+  },
+  "status": "draft",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch05.least-squares.projection",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.least-squares.projection.v",
+        "kind": "vector",
+        "label": "v",
+        "role": "vector_a",
+        "value": [
+          1,
+          2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.least-squares.projection.result",
+        "kind": "vector",
+        "label": "result",
+        "role": "transformed_a",
+        "value": [
+          2,
+          4
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares.projection"
+        ],
+        "id": "relation.ch05.least-squares.projection.maps",
+        "kind": "maps_to",
+        "parameters": {
+          "scalar": 2
+        },
+        "source_ref": "entity.ch05.least-squares.projection.v",
+        "target_ref": "entity.ch05.least-squares.projection.result"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "显示线性关系。",
+        "expected_invariants": [
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.least-squares.projection.input",
+        "input_entity_refs": [
+          "entity.ch05.least-squares.projection.v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.least-squares.projection.result"
+        ],
+        "relation_refs": [
+          "relation.ch05.least-squares.projection.maps"
+        ],
+        "title": "输入与结果"
+      }
+    ]
+  }
+}

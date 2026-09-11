@@ -1,0 +1,300 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.span.dimension.v",
+        "entity.ch04.span.dimension.result"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula_symbols": [
+        "v",
+        "result"
+      ],
+      "id": "claim.ch04.span.dimension",
+      "relation_refs": [
+        "relation.ch04.span.dimension.maps"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.1 生成集 Span::1::sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d"
+      ],
+      "stage_refs": [
+        "stage.ch04.span.dimension.input"
+      ],
+      "statement": "4.2.1 生成集 Span 的线性表示保持可检验的向量关系。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.span.dimension"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.span.dimension.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "4.2.1 生成集 Span 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.2.1 生成集 Span",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "definition",
+        "text": "definition: 4.2.1 生成集 Span。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "formula",
+        "text": "formula: 4.2.1 生成集 Span。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.2.1 生成集 Span。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.2.1 生成集 Span。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.2.1 生成集 Span。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.2.1 生成集 Span。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "connections",
+        "text": "connections: 4.2.1 生成集 Span。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.2.1 生成集 Span 的确定性讲义 artifact。",
+    "symbol_roles": {
+      "result": "transformed_a",
+      "v": "vector_a"
+    },
+    "title": "4.2.1 生成集 Span",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "2*(1,2)=(2,4)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch04.span.dimension",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:9ad73ced746945ae0dbf135f5fe33a1d94bf902917703300a30c303d5aadb860",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:525a6d9adadd63cd2dd6803e0a68228ceecba11faf0fa2829a1382906b05ebdb",
+    "source_hash": "sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.2.1 生成集 Span\n\n定义 4.5（生成集） $\\operatorname{Span}\\{v_{1},...,v_{k}\\} = \\{$ 这些向量的所有线性组合 $\\}$。\n几何：$\\operatorname{Span}\\{v\\} =$ 过原点的直线；$\\operatorname{Span}\\{u,v\\}$（不共线）$=$ 过原点的平面；$\\operatorname{Span}\\{u,v,w\\}$（不共面）$=$ 整个 $R^{3}$。",
+    "heading_level": 4,
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.2 线性组合、线性相关与线性无关",
+      "4.2.1 生成集 Span"
+    ],
+    "neighboring_titles": [
+      "4.2.2 线性相关与线性无关"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.2 线性组合、线性相关与线性无关",
+      "4.2.1 生成集 Span"
+    ],
+    "spans": [
+      {
+        "end_line": 1622,
+        "fingerprint": "sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d",
+        "heading_path": [
+          "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+          "4.2 线性组合、线性相关与线性无关",
+          "4.2.1 生成集 Span"
+        ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.1 生成集 Span::1::sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d",
+        "start_line": 1618,
+        "text": "#### 4.2.1 生成集 Span\n\n定义 4.5（生成集） $\\operatorname{Span}\\{v_{1},...,v_{k}\\} = \\{$ 这些向量的所有线性组合 $\\}$。\n几何：$\\operatorname{Span}\\{v\\} =$ 过原点的直线；$\\operatorname{Span}\\{u,v\\}$（不共线）$=$ 过原点的平面；$\\operatorname{Span}\\{u,v,w\\}$（不共面）$=$ 整个 $R^{3}$。"
+      }
+    ]
+  },
+  "status": "draft",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch04.span.dimension",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.span.dimension.v",
+        "kind": "vector",
+        "label": "v",
+        "role": "vector_a",
+        "value": [
+          1,
+          2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.span.dimension.result",
+        "kind": "vector",
+        "label": "result",
+        "role": "transformed_a",
+        "value": [
+          2,
+          4
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "relation.ch04.span.dimension.maps",
+        "kind": "maps_to",
+        "parameters": {
+          "scalar": 2
+        },
+        "source_ref": "entity.ch04.span.dimension.v",
+        "target_ref": "entity.ch04.span.dimension.result"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "显示线性关系。",
+        "expected_invariants": [
+          "finite numeric result"
+        ],
+        "id": "stage.ch04.span.dimension.input",
+        "input_entity_refs": [
+          "entity.ch04.span.dimension.v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch04.span.dimension.result"
+        ],
+        "relation_refs": [
+          "relation.ch04.span.dimension.maps"
+        ],
+        "title": "输入与结果"
+      }
+    ]
+  }
+}
