@@ -101,6 +101,7 @@ def validate_contract_semantics(
     roles = {entity.role for entity in semantics.entities}
     relations = {relation.kind for relation in semantics.relations}
     primitives = {entity.kind for entity in semantics.entities} | relations
+    scene_family = getattr(semantics, "scene_family", "")
     invariants = {
         invariant
         for stage in semantics.stages
@@ -113,7 +114,7 @@ def validate_contract_semantics(
         if relation not in relations:
             issues.append(ContractIssue("missing_relation", contract.topic_id, relation))
     for primitive in contract.required_primitives:
-        if primitive not in primitives:
+        if primitive not in primitives and primitive != scene_family:
             issues.append(ContractIssue("missing_primitive", contract.topic_id, primitive))
     if len(semantics.stages) < contract.minimum_stage_count:
         issues.append(ContractIssue("insufficient_stages", contract.topic_id, str(contract.minimum_stage_count)))
