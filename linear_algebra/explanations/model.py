@@ -13,4 +13,7 @@ class ExplanationContent:
     geometric_meaning: str
     conclusion: str
     searchable_text: tuple[str, ...]
-
+    numeric_example: str = ""
+    pitfalls: tuple[str, ...] = ()
+    read_guide: tuple[str, ...] = ()
+    analogy_boundary: str = ""
