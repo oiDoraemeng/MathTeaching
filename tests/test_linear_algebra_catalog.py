@@ -5,9 +5,9 @@ from linear_algebra.catalog.manifest import lecture_manifest, topic_entries
 
 def test_manifest_has_exact_chapter_counts_and_three_levels() -> None:
     topics = topic_entries()
-    assert len(topics) == 54
-    assert Counter(item.chapter_number for item in topics) == Counter({1: 24, 2: 15, 3: 15})
-    assert len({item.id for item in topics}) == 54
+    assert len(topics) == 93
+    assert Counter(item.chapter_number for item in topics) == Counter({1: 24, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6})
+    assert len({item.id for item in topics}) == 93
     assert all(len(item.source_path) == 3 for item in topics)
     nodes = lecture_manifest()
     assert {item.kind for item in nodes} == {"chapter", "section", "topic"}
@@ -27,3 +27,11 @@ def test_manifest_builds_three_chapters_with_children() -> None:
     assert [len(chapter.children) for chapter in chapters] == [6, 9, 7]
     for chapter in chapters:
         assert all(nodes[child].parent_id == chapter.id for child in chapter.children)
+
+
+def test_extended_chapters_have_stable_topic_ids_and_contract_links() -> None:
+    from linear_algebra.catalog.manifest import topic_entries
+    entries = topic_entries()
+    assert {entry.chapter_number for entry in entries} >= {4, 5, 6, 7, 8}
+    assert all(entry.explanation_id == f"explain.{entry.id}" for entry in entries if entry.chapter_number >= 4)
+    assert all(entry.visualization_id == f"draw.{entry.id}" for entry in entries if entry.chapter_number >= 4)

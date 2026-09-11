@@ -5,9 +5,14 @@ from collections import OrderedDict
 from .chapter_01 import CHAPTER as CHAPTER_1, TOPICS as CHAPTER_1_TOPICS
 from .chapter_02 import CHAPTER as CHAPTER_2, TOPICS as CHAPTER_2_TOPICS
 from .chapter_03 import CHAPTER as CHAPTER_3, TOPICS as CHAPTER_3_TOPICS
+from .chapter_04 import CHAPTER as CHAPTER_4, TOPICS as CHAPTER_4_TOPICS
+from .chapter_05 import CHAPTER as CHAPTER_5, TOPICS as CHAPTER_5_TOPICS
+from .chapter_06 import CHAPTER as CHAPTER_6, TOPICS as CHAPTER_6_TOPICS
+from .chapter_07 import CHAPTER as CHAPTER_7, TOPICS as CHAPTER_7_TOPICS
+from .chapter_08 import CHAPTER as CHAPTER_8, TOPICS as CHAPTER_8_TOPICS
 from .model import LessonEntry, LessonNode
 
-_ALL_TOPICS: tuple[LessonEntry, ...] = (*CHAPTER_1_TOPICS, *CHAPTER_2_TOPICS, *CHAPTER_3_TOPICS)
+_ALL_TOPICS: tuple[LessonEntry, ...] = (*CHAPTER_1_TOPICS, *CHAPTER_2_TOPICS, *CHAPTER_3_TOPICS, *CHAPTER_4_TOPICS, *CHAPTER_5_TOPICS, *CHAPTER_6_TOPICS, *CHAPTER_7_TOPICS, *CHAPTER_8_TOPICS)
 
 
 def topic_entries() -> tuple[LessonEntry, ...]:
@@ -16,7 +21,7 @@ def topic_entries() -> tuple[LessonEntry, ...]:
 
 def lecture_manifest() -> tuple[LessonNode, ...]:
     nodes: OrderedDict[str, LessonNode] = OrderedDict()
-    chapter_names = {1: CHAPTER_1, 2: CHAPTER_2, 3: CHAPTER_3}
+    chapter_names = {1: CHAPTER_1, 2: CHAPTER_2, 3: CHAPTER_3, 4: CHAPTER_4, 5: CHAPTER_5, 6: CHAPTER_6, 7: CHAPTER_7, 8: CHAPTER_8}
     chapter_ids = {number: f"ch{number:02d}" for number in chapter_names}
     section_children: dict[str, list[str]] = {}
     for index, entry in enumerate(_ALL_TOPICS):
