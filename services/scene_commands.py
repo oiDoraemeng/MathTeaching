@@ -137,6 +137,9 @@ _ALLOWED_OPERATIONS = frozenset(
         "geometry.constraint",
         "geometry.matrix_tableau",
         "geometry.elimination_tableau",
+        "geometry.basis_grid",
+        "geometry.coordinate_readout",
+        "geometry.least_squares",
     }
 )
 _SCENE_VALUES = frozenset({"2d", "3d"})
@@ -595,6 +598,38 @@ class SceneCommandService:
                     raise CommandError("tableau highlight_rows are invalid")
             if len(set(aliases)) != len(aliases):
                 raise CommandError("tableau stage aliases must be unique")
+        elif name in {"geometry.basis_grid", "geometry.coordinate_readout"}:
+            basis = operation.get("basis_matrix")
+            vector = operation.get("standard_vector")
+            alternate = operation.get("alternate_coordinates")
+            if not isinstance(basis, (list, tuple)) or len(basis) not in (2, 3) or any(not isinstance(row, (list, tuple)) or len(row) != len(basis) for row in basis):
+                raise CommandError("coordinate basis_matrix must be square 2x2 or 3x3")
+            if not isinstance(vector, (list, tuple)) or len(vector) != len(basis) or not isinstance(alternate, (list, tuple)) or len(alternate) != len(basis):
+                raise CommandError("coordinate vectors dimension mismatch")
+            for row in basis:
+                for value in row:
+                    _require_finite_number(value, "basis_matrix")
+            for values in (vector, alternate):
+                for value in values:
+                    _require_finite_number(value, "coordinate vector")
+            _require_text(operation, "basis_alias")
+            _require_text(operation, "standard_alias")
+            _require_text(operation, "alternate_alias")
+        elif name == "geometry.least_squares":
+            matrix = operation.get("matrix")
+            values = operation.get("values")
+            if not isinstance(matrix, (list, tuple)) or not matrix or len(matrix) > 128 or not isinstance(values, (list, tuple)) or len(values) != len(matrix):
+                raise CommandError("least_squares matrix/values dimensions are invalid")
+            width = len(matrix[0]) if isinstance(matrix[0], (list, tuple)) else 0
+            if width < 1 or width > 3 or any(not isinstance(row, (list, tuple)) or len(row) != width for row in matrix):
+                raise CommandError("least_squares matrix is invalid")
+            for row in matrix:
+                for value in row:
+                    _require_finite_number(value, "least_squares matrix")
+            for value in values:
+                _require_finite_number(value, "least_squares values")
+            for field in ("data_alias", "fit_alias", "projection_alias", "residual_alias"):
+                _require_text(operation, field)
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):
