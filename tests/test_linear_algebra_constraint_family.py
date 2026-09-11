@@ -10,6 +10,14 @@ def test_constraint_compile_preserves_state_and_intersection_alias():
     result = ConstraintFamilyCompiler.compile({"matrix":[[1,0],[0,1]],"rhs":[1,2]})
     assert result["evidence"].kind == "unique"
     assert result["operations"][0]["intersection_alias"] in result["aliases"]
+    assert result["operations"][0]["state_alias"] == "constraint__point"
+
+
+@pytest.mark.parametrize("matrix,rhs,state_alias", [([[1,0],[1,0]],[1,2], "constraint__empty"), ([[1,0],[2,0]],[1,2], "constraint__line")])
+def test_constraint_states_emit_dimension_specific_geometry(matrix, rhs, state_alias):
+    result = ConstraintFamilyCompiler.compile({"matrix": matrix, "rhs": rhs})
+    assert result["operations"][0]["state_alias"] == state_alias
+    assert result["operations"][0]["solution_geometry"]["op"] in {"annotation.upsert", "linear.upsert"}
 
 @pytest.mark.parametrize("payload", [{"matrix":[[1,0],[0,1]],"rhs":[1,2],"bounds":[1,-1,-2,2]}, {"matrix":[[1,0],[0,1]],"rhs":[1,2],"tolerance":0}])
 def test_constraint_rejects_invalid_numeric_or_bounds(payload):

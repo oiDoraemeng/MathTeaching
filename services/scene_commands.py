@@ -494,7 +494,18 @@ class SceneCommandService:
             for row in matrix:
                 if not isinstance(row, (list, tuple)) or len(row) != len(matrix): raise CommandError("constraint matrix must be square")
                 _require_coordinates(row, dimensions=len(matrix))
-            _require_coordinates(rhs, dimensions=len(matrix))
+                _require_coordinates(rhs, dimensions=len(matrix))
+            tolerance = operation.get("tolerance", 1e-9)
+            _require_finite_number(tolerance, "tolerance")
+            if float(tolerance) <= 0: raise CommandError("constraint tolerance must be positive")
+            state = operation.get("solution_state")
+            if state not in {"unique", "none", "infinite"}: raise CommandError("constraint solution_state is invalid")
+            rank = operation.get("rank"); augmented_rank = operation.get("augmented_rank")
+            if isinstance(rank, bool) or not isinstance(rank, int) or isinstance(augmented_rank, bool) or not isinstance(augmented_rank, int) or rank < 0 or augmented_rank < rank or augmented_rank > len(matrix):
+                raise CommandError("constraint rank evidence is invalid")
+            bounds = operation.get("bounds")
+            if not isinstance(bounds, (list, tuple)) or len(bounds) != 2 * len(matrix) or any(not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) for value in bounds) or any(float(bounds[index]) >= float(bounds[index + 1]) for index in range(0, len(bounds), 2)):
+                raise CommandError("constraint bounds are invalid")
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):

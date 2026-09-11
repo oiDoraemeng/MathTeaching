@@ -53,7 +53,10 @@ class ConstraintFamilyCompiler:
             raise VisualCompileError((CompileIssue("numeric_invalid", "$.bounds", "bounds must be finite and dimension matched"),))
         if any(bounds[i] >= bounds[i+1] for i in range(0,len(bounds),2)): raise VisualCompileError((CompileIssue("invalid_bounds", "$.bounds", "bounds must be ordered"),))
         prefix = str(payload.get("alias_prefix", "constraint")); aliases = [f"{prefix}__intersection"]
-        operation = {"op":"geometry.constraint", "alias":prefix, "matrix":payload["matrix"], "rhs":payload["rhs"], "dimension":dimension, "bounds":list(bounds), "solution_state":classification.kind, "intersection_alias":aliases[0], "rank":classification.rank, "augmented_rank":classification.augmented_rank}
+        state_alias = f"{prefix}__{'empty' if classification.kind == 'none' else ('point' if classification.kind == 'unique' else ('line' if classification.dimension == 2 else 'plane'))}"
+        aliases.append(state_alias)
+        geometry_op = {"op": "annotation.upsert", "alias": state_alias, "text": "无交集"} if classification.kind == "none" else {"op": "point3d.upsert" if dimension == 3 and classification.kind == "unique" else ("linear3d.upsert" if dimension == 3 else ("point.upsert" if classification.kind == "unique" else "linear.upsert")), "alias": state_alias, "state": classification.kind, "bounds": list(bounds)}
+        operation = {"op":"geometry.constraint", "alias":prefix, "matrix":payload["matrix"], "rhs":payload["rhs"], "dimension":dimension, "bounds":list(bounds), "solution_state":classification.kind, "intersection_alias":aliases[0], "state_alias": state_alias, "rank":classification.rank, "augmented_rank":classification.augmented_rank, "solution_geometry": geometry_op}
         return {"operations": (operation,), "aliases": tuple(aliases), "evidence": classification}
 
 __all__ = ["ConstraintClassification", "ConstraintFamilyCompiler", "classify_constraint_system"]
