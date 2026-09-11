@@ -34,7 +34,7 @@ def test_fixtures_are_finite_bounded_and_two_or_three_dimensional():
     assert len(fixtures) == 15
     for fixture in fixtures:
         assert fixture.payload["dimension"] in (2, 3)
-        numbers = _numeric_leaves(fixture.payload)
+        numbers = _numeric_leaves(fixture.payload) + _numeric_leaves(fixture.expected)
         assert all(math.isfinite(float(number)) for number in numbers)
         assert len(numbers) <= 256
 
@@ -42,14 +42,22 @@ def test_fixtures_are_finite_bounded_and_two_or_three_dimensional():
 def test_expected_classifications_cover_required_boundary_cases():
     fixtures = scene_family_fixtures()
     by_key = {(item.family, item.case): item for item in fixtures}
-    assert by_key[("subspace_structure", "normal")].expected["rank"] == "full"
-    assert by_key[("subspace_structure", "boundary")].expected["rank"] == "deficient"
-    assert by_key[("constraint_solution", "normal")].expected["classification"] == "unique"
-    assert by_key[("constraint_solution", "boundary")].expected["classification"] in {"none", "infinite"}
-    assert by_key[("basis_coordinate", "normal")].expected["classification"] == "invertible"
-    assert by_key[("basis_coordinate", "boundary")].expected["classification"] == "singular"
-    assert by_key[("spectral_orthogonal", "boundary")].expected["classification"] == "repeated_roots"
-    assert by_key[("spectral_orthogonal", "failure")].expected["classification"] == "complex_roots"
-    assert by_key[("quadratic_shape", "normal")].expected["classification"] == "positive_definite"
-    assert by_key[("quadratic_shape", "boundary")].expected["classification"] == "degenerate"
-    assert by_key[("quadratic_shape", "failure")].expected["classification"] == "indefinite"
+    expected = {
+        ("subspace_structure", "normal"): {"rank": "full"},
+        ("subspace_structure", "boundary"): {"rank": "deficient"},
+        ("subspace_structure", "failure"): {"classification": "invalid_dimension"},
+        ("constraint_solution", "normal"): {"classification": "unique"},
+        ("constraint_solution", "boundary"): {"classification": "infinite"},
+        ("constraint_solution", "failure"): {"classification": "none"},
+        ("basis_coordinate", "normal"): {"classification": "invertible"},
+        ("basis_coordinate", "boundary"): {"classification": "singular"},
+        ("basis_coordinate", "failure"): {"classification": "invalid_dimension"},
+        ("spectral_orthogonal", "normal"): {"classification": "distinct_real_roots"},
+        ("spectral_orthogonal", "boundary"): {"classification": "repeated_roots"},
+        ("spectral_orthogonal", "failure"): {"classification": "complex_roots"},
+        ("quadratic_shape", "normal"): {"classification": "positive_definite"},
+        ("quadratic_shape", "boundary"): {"classification": "degenerate"},
+        ("quadratic_shape", "failure"): {"classification": "indefinite"},
+    }
+    assert set(by_key) == set(expected)
+    assert {key: by_key[key].expected for key in expected} == expected
