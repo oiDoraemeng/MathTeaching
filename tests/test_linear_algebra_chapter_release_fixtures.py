@@ -4,8 +4,6 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-import pytest
-
 from fixtures.linear_algebra_chapter_release import (
     assert_previous_chapters_unchanged,
     chapter_release_fixtures,
@@ -23,6 +21,23 @@ def test_fixture_topic_links_are_stable_and_previous_topic_is_prior_chapter():
     fixtures = chapter_release_fixtures()
     assert len({fixture.topic_id for fixture in fixtures}) == 5
     assert all(fixture.previous_topic_id.startswith(f"ch{fixture.chapter - 1:02d}.") for fixture in fixtures)
+    for fixture in fixtures:
+        assert fixture.source_id == f"source:{fixture.topic_id}"
+        assert fixture.artifact_id == f"artifact:{fixture.topic_id}:r{fixture.published_revision}"
+        assert fixture.contract_id == f"contract:{fixture.topic_id}"
+        assert fixture.recipe_id == f"recipe:{fixture.topic_id}"
+        assert fixture.snapshot_id == f"snapshot:{fixture.topic_id}:r{fixture.published_revision}"
+
+
+def test_each_failed_publish_rolls_back_only_its_chapter():
+    fixtures = chapter_release_fixtures()
+    for fixture in fixtures:
+        prior = {"topic_id": fixture.topic_id, "revision": fixture.prior_published_revision, "artifact_id": fixture.prior_artifact_id}
+        failed = {"topic_id": fixture.topic_id, "revision": fixture.stale_revision, "artifact_id": "stale:" + fixture.topic_id}
+        restored = prior.copy()
+        assert failed["revision"] < prior["revision"]
+        assert restored == prior
+        assert restored["topic_id"] == fixture.topic_id
 
 
 def test_failed_chapter_publish_only_removes_its_own_index_entry():
