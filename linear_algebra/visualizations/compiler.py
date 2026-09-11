@@ -368,6 +368,12 @@ class VisualSemanticsCompiler:
         )
         if semantics.scene_kind not in {"2d", "3d"}:
             issues.append(CompileIssue("scene_scope", "$.visual_semantics.scene_kind", "scene must be 2d or 3d"))
+        if semantics.scene_family:
+            from .families import family_compiler_for
+            try:
+                family_compiler_for(semantics.scene_family)
+            except VisualCompileError as error:
+                issues.extend(error.issues)
         for error in validate_budget(
             context.render_profile,
             scene=semantics.scene_kind,

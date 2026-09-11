@@ -60,6 +60,17 @@ def contract_for(topic_id: str) -> VisualContract:
             topic_id, (), (), ("composition_order", "compare"), (), 3,
         ),
     }
+    extended_family = {
+        **{topic: "subspace_region" for topic in (
+            "ch04.space.closure", "ch04.subspace.classification", "ch04.subspace.intersection", "ch04.subspace.col-null", "ch04.span.dimension", "ch04.dependence.redundancy", "ch04.nullspace.test", "ch04.rank.collapse", "ch04.basis.span", "ch04.dimension.ladder", "ch04.coordinates.readout", "ch04.linear-map.definition", "ch04.linear-map.compare", "ch04.linear-map.matrix-columns", "ch04.kernel-image", "ch04.rank-nullity")},
+        **{topic: "affine_solution" for topic in ("ch05.homogeneous.solution-space", "ch05.affine.solution-set", "ch05.consistency.geometry", "ch05.gaussian-elimination", "ch05.least-squares.projection", "ch05.fundamental-solution-system", "ch05.elementary-matrix-elimination", "ch05.least-squares-derivation")},
+        **{topic: "basis_change" for topic in ("ch06.basis-change.motivation", "ch06.basis-change.coordinates", "ch06.similarity-transform")},
+        **{topic: "spectral_orthogonal" for topic in ("ch07.eigen.direction", "ch07.characteristic-polynomial", "ch07.eigenspace", "ch07.diagonalization", "ch07.gram-schmidt", "ch07.orthogonal-transform")},
+        **{topic: "quadratic_level_set" for topic in ("ch08.quadratic.matrix-form", "ch08.quadratic.level-sets", "ch08.principal-axis", "ch08.definiteness", "ch08.completing-square", "ch08.congruence-inertia")},
+    }
+    if topic_id in extended_family:
+        family = extended_family[topic_id]
+        return VisualContract(topic_id, (f"claim.{topic_id}",), ("vector_a", "transformed_a"), ("maps_to",), (family,), 1, ("finite numeric result",))
     return overrides.get(topic_id, base)
 
 
