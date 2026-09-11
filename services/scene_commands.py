@@ -143,6 +143,7 @@ _ALLOWED_OPERATIONS = frozenset(
         "geometry.spectrum",
         "geometry.projection3d",
         "geometry.orthogonalization",
+        "geometry.quadratic_level_set",
     }
 )
 _SCENE_VALUES = frozenset({"2d", "3d"})
@@ -730,6 +731,25 @@ class SceneCommandService:
                 raise CommandError("orthogonalization tolerance is invalid")
             budget_errors = validate_budget("lecture-v1", scene="3d" if len(vectors[0]) == 3 else "2d", entity_count=operation.get("entity_count", len(vectors) * 4), stage_count=operation.get("stage_count", len(vectors)), sample_count=operation.get("sample_count", len(vectors)), bounds=tuple(float(value) for value in bounds))
             if budget_errors: raise CommandError("orthogonalization render_budget: " + "; ".join(budget_errors))
+        elif name == "geometry.quadratic_level_set":
+            matrix = operation.get("matrix")
+            if not isinstance(matrix, (list, tuple)) or len(matrix) not in (2, 3) or any(not isinstance(row, (list, tuple)) or len(row) != len(matrix) for row in matrix):
+                raise CommandError("quadratic matrix must be square 2D/3D")
+            for row in matrix:
+                for value in row: _require_finite_number(value, "quadratic matrix")
+            if any(abs(float(matrix[i][j]) - float(matrix[j][i])) > float(operation.get("tolerance", 1e-9)) for i in range(len(matrix)) for j in range(len(matrix))):
+                raise CommandError("quadratic matrix must be symmetric")
+            bounds = operation.get("bounds")
+            if not isinstance(bounds, (list, tuple)) or len(bounds) != 2 * len(matrix) or any(not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) for value in bounds) or any(float(bounds[index]) >= float(bounds[index + 1]) for index in range(0, len(bounds), 2)):
+                raise CommandError("quadratic bounds are invalid")
+            tolerance = operation.get("tolerance", 1e-9)
+            if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not math.isfinite(float(tolerance)) or float(tolerance) <= 0:
+                raise CommandError("quadratic tolerance is invalid")
+            budget_errors = validate_budget("lecture-v1", scene="3d" if len(matrix) == 3 else "2d", entity_count=operation.get("entity_count", 3), stage_count=operation.get("stage_count", 3), sample_count=operation.get("sample_count", 128 * 128 if len(matrix) == 2 else 64 * 64 * 64), bounds=tuple(float(value) for value in bounds))
+            if budget_errors: raise CommandError("quadratic render_budget: " + "; ".join(budget_errors))
+            aliases = operation.get("aliases")
+            if not isinstance(aliases, (list, tuple)) or len(aliases) != 3 or any(not isinstance(alias, str) or not alias for alias in aliases) or len(set(aliases)) != 3:
+                raise CommandError("quadratic aliases are invalid")
         elif name in {"geometry.subspace3d", "geometry.affine_solution", "geometry.mapping_bundle"}:
             dimension = operation.get("dimension", 3)
             if dimension not in (2, 3):
