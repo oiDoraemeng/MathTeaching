@@ -55,6 +55,10 @@ _VECTOR_ADDITION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "formula", "worked_examples", "geometric_meaning"),
 )
+_VECTOR_FOUNDATION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "formula", "worked_examples", "geometric_meaning"),
+)
 _BRIDGE = TeachingProfile(
     TeachingLevel.TRANSFER,
     (*_CORE.required_sections, "connections"),
@@ -69,45 +73,52 @@ _ANALOGY = TeachingProfile(
 # This remains a literal topic-ID mapping so catalog title or source changes cannot
 # silently change the minimum teaching depth.
 _PROFILES: dict[str, TeachingProfile] = {
-    "ch01.vector.magnitude": _CORE,
-    "ch01.vector.point-distinction": _CORE,
-    "ch01.vector.coordinate-system": _CORE,
-    "ch01.vector.direction-examples": _CORE,
+    "ch01.vector.magnitude": _VECTOR_FOUNDATION,
+    # This introductory distinction is deliberately constrained to the
+    # lecture's definitions, standard-basis formula, and two geometric cases.
+    # It does not call for a synthetic derivation or a generic pitfalls block.
+    "ch01.vector.point-distinction": _VECTOR_FOUNDATION,
+    # Chapters 1--2 are presented as concise lecture notes: definition and
+    # formula, an actual derivation only where the lecture gives one, geometric
+    # meaning, and checked cases.  Do not force generic "intuition", pitfalls,
+    # or cross-topic transfer copy into every small subsection.
+    "ch01.vector.coordinate-system": _VECTOR_FOUNDATION,
+    "ch01.vector.direction-examples": _VECTOR_FOUNDATION,
     "ch01.ops.addition": _VECTOR_ADDITION,
-    "ch01.ops.subtraction": _CORE,
-    "ch01.ops.scalar": _CORE,
-    "ch01.ops.linear-combination": _BRIDGE,
-    "ch01.ops.velocity": _BRIDGE,
-    "ch01.ops.cross-product": _CORE,
-    "ch01.ops.scalar-triple": _BRIDGE,
-    "ch01.inner.equivalence": _CORE,
-    "ch01.inner.definitions": _CORE,
-    "ch01.inner.applications": _BRIDGE,
-    "ch01.inner.cauchy-schwarz": _CORE,
-    "ch01.inner.examples": _CORE,
-    "ch01.projection.definition": _CORE,
-    "ch01.projection.properties": _CORE,
-    "ch01.projection.force": _BRIDGE,
-    "ch01.proof.method": _BRIDGE,
-    "ch01.proof.midline": _CORE,
-    "ch01.proof.centroid": _CORE,
-    "ch01.proof.parallelogram-diagonals": _CORE,
-    "ch01.high-dimensional.analogy": _ANALOGY,
-    "ch02.batch.inner-products": _BRIDGE,
-    "ch02.batch.projection": _BRIDGE,
-    "ch02.matrix.additive-distributivity": _CORE,
-    "ch02.matrix.row-column": _CORE,
-    "ch02.matrix.transformed-grid": _CORE,
-    "ch02.matrix.stretch-rotate-scale": _CORE,
-    "ch02.matrix.composition": _BRIDGE,
-    "ch02.matrix.basis": _BRIDGE,
-    "ch02.matrix.powers": _CORE,
-    "ch02.subspace.independence": _CORE,
-    "ch02.subspace.rank": _BRIDGE,
-    "ch02.subspace.null": _BRIDGE,
-    "ch02.subspace.column": _BRIDGE,
-    "ch02.subspace.rank-nullity": _BRIDGE,
-    "ch02.high-dimensional.analogy": _ANALOGY,
+    "ch01.ops.subtraction": _VECTOR_FOUNDATION,
+    "ch01.ops.scalar": _VECTOR_FOUNDATION,
+    "ch01.ops.linear-combination": _VECTOR_FOUNDATION,
+    "ch01.ops.velocity": _VECTOR_FOUNDATION,
+    "ch01.ops.cross-product": _VECTOR_FOUNDATION,
+    "ch01.ops.scalar-triple": _VECTOR_FOUNDATION,
+    "ch01.inner.equivalence": _VECTOR_FOUNDATION,
+    "ch01.inner.definitions": _VECTOR_FOUNDATION,
+    "ch01.inner.applications": _VECTOR_FOUNDATION,
+    "ch01.inner.cauchy-schwarz": _VECTOR_FOUNDATION,
+    "ch01.inner.examples": _VECTOR_FOUNDATION,
+    "ch01.projection.definition": _VECTOR_FOUNDATION,
+    "ch01.projection.properties": _VECTOR_FOUNDATION,
+    "ch01.projection.force": _VECTOR_FOUNDATION,
+    "ch01.proof.method": _VECTOR_FOUNDATION,
+    "ch01.proof.midline": _VECTOR_FOUNDATION,
+    "ch01.proof.centroid": _VECTOR_FOUNDATION,
+    "ch01.proof.parallelogram-diagonals": _VECTOR_FOUNDATION,
+    "ch01.high-dimensional.analogy": _VECTOR_FOUNDATION,
+    "ch02.batch.inner-products": _VECTOR_FOUNDATION,
+    "ch02.batch.projection": _VECTOR_FOUNDATION,
+    "ch02.matrix.additive-distributivity": _VECTOR_FOUNDATION,
+    "ch02.matrix.row-column": _VECTOR_FOUNDATION,
+    "ch02.matrix.transformed-grid": _VECTOR_FOUNDATION,
+    "ch02.matrix.stretch-rotate-scale": _VECTOR_FOUNDATION,
+    "ch02.matrix.composition": _VECTOR_FOUNDATION,
+    "ch02.matrix.basis": _VECTOR_FOUNDATION,
+    "ch02.matrix.powers": _VECTOR_FOUNDATION,
+    "ch02.subspace.independence": _VECTOR_FOUNDATION,
+    "ch02.subspace.rank": _VECTOR_FOUNDATION,
+    "ch02.subspace.null": _VECTOR_FOUNDATION,
+    "ch02.subspace.column": _VECTOR_FOUNDATION,
+    "ch02.subspace.rank-nullity": _VECTOR_FOUNDATION,
+    "ch02.high-dimensional.analogy": _VECTOR_FOUNDATION,
     "ch03.det.oriented-area": _CORE,
     "ch03.det.ad-bc": _CORE,
     "ch03.det.sign-zero-one": _CORE,
@@ -124,6 +135,21 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch03.det.high-dimensional-volume": _ANALOGY,
     "ch03.inverse.reverse-order": _BRIDGE,
 }
+_PROFILES["ch02.matrix.composition"] = _BRIDGE
+_PROFILES["ch02.high-dimensional.analogy"] = _ANALOGY
+
+# Chapter 4–8 entries share the explicit core policy until chapter-specific
+# editorial profiles are authored; the mapping is still materialized per stable
+# topic ID so coverage cannot silently drift with the catalog.
+_CHAPTER_4_8_PROFILE = TeachingProfile(
+    TeachingLevel.EXPLAIN,
+    ("definition", "formula", "derivation", "worked_examples", "geometric_meaning", "pitfalls", "connections"),
+)
+_PROFILES.update({
+    topic.id: _CHAPTER_4_8_PROFILE
+    for topic in topic_entries()
+    if topic.chapter_number in {4, 5, 6, 7, 8}
+})
 
 
 def profile_for(topic_id: str) -> TeachingProfile:

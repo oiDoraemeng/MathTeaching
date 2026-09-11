@@ -646,7 +646,13 @@ def _optional_case_layout(record: Mapping[str, object], path: str) -> CaseLayout
 
 
 def _decode_visual_semantics(payload: Mapping[str, object], path: str) -> VisualSemantics:
-    record = _object(payload, path, _VISUAL_SEMANTICS_FIELDS)
+    record = _mapping(payload, path)
+    missing = [field for field in _VISUAL_SEMANTICS_REQUIRED_FIELDS if field not in record]
+    if missing:
+        raise ValueError(f"{path}.{missing[0]}: required field is missing")
+    unknown = [key for key in record if key not in _VISUAL_SEMANTICS_FIELDS]
+    if unknown:
+        raise ValueError(f"{path}.{unknown[0]}: unknown field")
     scene_kind = _string(record["scene_kind"], f"{path}.scene_kind")
     if scene_kind not in {"2d", "3d"}:
         raise ValueError(f"{path}.scene_kind: expected 2d or 3d")
@@ -1227,7 +1233,8 @@ _WORKED_EXAMPLE_CHECK_FIELDS = ("name", "expected", "tolerance")
 _CASE_LAYOUT_FIELDS = ("default_pane_count", "cases")
 _CASE_REQUIRED_FIELDS = ("id", "topic_id", "example_ref", "stage_refs", "purpose")
 _CASE_FIELDS = (*_CASE_REQUIRED_FIELDS, "claim_refs")
-_VISUAL_SEMANTICS_FIELDS = ("scene_kind", "entities", "relations", "stages")
+_VISUAL_SEMANTICS_REQUIRED_FIELDS = ("scene_kind", "entities", "relations", "stages")
+_VISUAL_SEMANTICS_FIELDS = (*_VISUAL_SEMANTICS_REQUIRED_FIELDS, "scene_family")
 _ENTITY_FIELDS = ("id", "kind", "dimension", "value", "role", "label", "claim_refs")
 _RELATION_FIELDS = ("id", "kind", "source_ref", "target_ref", "parameters", "claim_refs")
 _STAGE_FIELDS = (
