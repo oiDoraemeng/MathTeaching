@@ -31,7 +31,7 @@ from services.scene_commands import CommandPlan
 from services.scene_commands import SceneCommandService
 
 _HEADING = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
-_CHAPTER = re.compile(r"^第([1-3])章(?:\s|$)")
+_CHAPTER = re.compile(r"^第(\d+)章(?:\s|[^A-Za-z0-9]|$)")
 _SECTION = re.compile(r"^\d+\.\d+(?:\s|$)")
 _EXCLUDED = ("自检", "练习", "挑战")
 

@@ -12,7 +12,7 @@ from fixtures.lecture_chapters_4_8_source import SOURCE
 
 def test_repository_lecture_source_matches_all_topic_anchors() -> None:
     source = Path(__file__).parents[1] / ".agents" / "线性代数讲义.md"
-    errors = validate_lecture_source(source, tuple(topic for topic in topic_entries() if topic.chapter_number <= 3))
+    errors = validate_lecture_source(source, topic_entries())
     assert errors == ()
 
 

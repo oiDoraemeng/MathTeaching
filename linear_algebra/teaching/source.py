@@ -12,7 +12,7 @@ from linear_algebra.catalog.model import LessonEntry, SourceAnchor
 
 
 _HEADING = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
-_CHAPTER = re.compile(r"^第(\d+)章(?:\s|$)")
+_CHAPTER = re.compile(r"^第(\d+)章(?:\s|[^A-Za-z0-9]|$)")
 _SECTION = re.compile(r"^\d+\.\d+(?:\s|$)")
 _EXCLUDED = ("自检", "练习", "挑战", "课后练习", "练习题", "挑战题")
 
