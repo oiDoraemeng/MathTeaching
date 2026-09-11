@@ -1,12 +1,30 @@
 {
-  "artifact_digest": "sha256:e302d9317688923a68350ca07f860765fbff2c4e7a025bf8791a824fcc7f61a0",
+  "artifact_digest": "sha256:5be4586bc0b63abdb7c854631f9cec436ee3012b08010253bcf7feb73f34f4e5",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:d8f556f0bc67920284bb7f7de5848f1b5bd7b487706f64c5158c5ee083c5a3e2",
+  "contract_digest": "sha256:bb55fda73d4f3bd56aad9951192c5a23d370d752ddc5d6183d22ab8b23328164",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.kernel-image.vector_a__origin",
+        "alias": "ch04_subspace",
+        "basis": [
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#4c78a8",
+        "op": "geometry.subspace_region",
+        "opacity": 0.25
+      },
+      {
+        "alias": "sem__entity.ch04.kernel-image.domain__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +33,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.kernel-image.vector_a__end",
+        "alias": "sem__entity.ch04.kernel-image.domain__end",
         "coordinates": [
           1.0,
           0.0
         ],
-        "name": "vector_a",
+        "name": "domain",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.kernel-image.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.kernel-image.vector_a__end",
+        "alias": "sem__entity.ch04.kernel-image.domain",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.kernel-image.domain__end",
         "kind": "vector",
-        "label": "vector_a",
+        "label": "domain",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.kernel-image.vector_a__origin"
+        "start": "sem__entity.ch04.kernel-image.domain__origin"
       },
       {
-        "alias": "sem__entity.ch04.kernel-image.transformed_a__origin",
+        "alias": "sem__entity.ch04.kernel-image.kernel_direction__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,23 +61,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.kernel-image.transformed_a__end",
+        "alias": "sem__entity.ch04.kernel-image.kernel_direction__end",
         "coordinates": [
-          1.0,
-          0.0
+          0.0,
+          1.0
         ],
-        "name": "transformed_a",
+        "name": "kernel_direction",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.kernel-image.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.kernel-image.transformed_a__end",
+        "alias": "sem__entity.ch04.kernel-image.kernel_direction",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.kernel-image.kernel_direction__end",
         "kind": "vector",
-        "label": "transformed_a",
+        "label": "kernel_direction",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.kernel-image.transformed_a__origin"
+        "start": "sem__entity.ch04.kernel-image.kernel_direction__origin"
       },
       {
         "alias": "sem__relation.ch04.kernel-image.spans",
@@ -68,32 +86,7 @@
           -2.65,
           2.65
         ],
-        "text": "spans: vector_a → transformed_a"
-      },
-      {
-        "alias": "cap__polygon",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ],
-          [
-            -0.0,
-            1.0
-          ]
-        ]
+        "text": "spans: domain → kernel_direction"
       },
       {
         "alias": "sem__stage.ch04.kernel-image.evidence__title",
@@ -113,7 +106,7 @@
     "summary": "4.5.1 定义",
     "version": 1
   },
-  "plan_digest": "sha256:efbe7d5502a1614609c186fd227d061aabf4d7481e723d2bb2da759084d0c15c",
+  "plan_digest": "sha256:1fd561b3643ddb05c00a2f540b3240c6d362beb3ab4a296d8d13169c77548aca",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -133,19 +126,18 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.kernel-image.vector_a",
-        "sem__entity.ch04.kernel-image.vector_a__end",
-        "sem__entity.ch04.kernel-image.vector_a__origin",
-        "sem__entity.ch04.kernel-image.transformed_a",
-        "sem__entity.ch04.kernel-image.transformed_a__end",
-        "sem__entity.ch04.kernel-image.transformed_a__origin",
+        "ch04_subspace",
+        "sem__entity.ch04.kernel-image.domain",
+        "sem__entity.ch04.kernel-image.domain__end",
+        "sem__entity.ch04.kernel-image.domain__origin",
+        "sem__entity.ch04.kernel-image.kernel_direction",
+        "sem__entity.ch04.kernel-image.kernel_direction__end",
+        "sem__entity.ch04.kernel-image.kernel_direction__origin",
         "sem__relation.ch04.kernel-image.spans",
         "sem__stage.ch04.kernel-image.evidence__title",
         "sem__span__1"
       ],
       "visible_refs": [
-        "entity.ch04.kernel-image.vector_a",
-        "entity.ch04.kernel-image.transformed_a",
         "entity.ch04.kernel-image.domain",
         "entity.ch04.kernel-image.kernel_direction",
         "entity.ch04.kernel-image.zero",

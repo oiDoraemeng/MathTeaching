@@ -110,9 +110,11 @@ class VisualSemanticsCompiler:
         aliases: dict[str, list[str]] = {}
         # Family compilers are the semantic source of truth for chapter 4.
         from .families import family_compiler_for
-        family_result = family_compiler_for(semantics.scene_family).compile(
-            topic_id=resolved_topic, semantics=semantics, context=context
-        )
+        family_result = None
+        if resolved_topic.startswith("ch04."):
+            family_result = family_compiler_for(semantics.scene_family).compile(
+                topic_id=resolved_topic, semantics=semantics, context=context
+            )
         if isinstance(family_result, Mapping):
             operations.extend(list(family_result.get("operations", ())))
             family_aliases = family_result.get("aliases", ())

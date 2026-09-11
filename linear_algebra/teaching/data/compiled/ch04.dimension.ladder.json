@@ -1,12 +1,34 @@
 {
-  "artifact_digest": "sha256:daf330169d731a0a4f66c97d038bb74b28b54f221ac61f39f4de238dc20ba661",
+  "artifact_digest": "sha256:03bbafb597122304e34c3fce5f173e5295777ea2e36ebd655ddf5d395af24235",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:9e22a4e707b05f0ac70df262784d69d1139ce48f27f003db2075da2c9b9c8736",
+  "contract_digest": "sha256:d62ef3ac3f409080c7e88bc95d4987a91658665534c9969c2324ff1c15aef07f",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.dimension.ladder.vector_a__origin",
+        "alias": "ch04_subspace",
+        "basis": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#4c78a8",
+        "op": "geometry.subspace_region",
+        "opacity": 0.25
+      },
+      {
+        "alias": "sem__entity.ch04.dimension.ladder.point__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +37,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.dimension.ladder.vector_a__end",
+        "alias": "sem__entity.ch04.dimension.ladder.point__end",
         "coordinates": [
-          1.0,
+          0.0,
           0.0
         ],
-        "name": "vector_a",
+        "name": "point",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.dimension.ladder.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.dimension.ladder.vector_a__end",
+        "alias": "sem__entity.ch04.dimension.ladder.point",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.dimension.ladder.point__end",
         "kind": "vector",
-        "label": "vector_a",
+        "label": "point",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.dimension.ladder.vector_a__origin"
+        "start": "sem__entity.ch04.dimension.ladder.point__origin"
       },
       {
-        "alias": "sem__entity.ch04.dimension.ladder.transformed_a__origin",
+        "alias": "sem__entity.ch04.dimension.ladder.line__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,23 +65,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.dimension.ladder.transformed_a__end",
+        "alias": "sem__entity.ch04.dimension.ladder.line__end",
         "coordinates": [
           1.0,
           0.0
         ],
-        "name": "transformed_a",
+        "name": "line",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.dimension.ladder.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.dimension.ladder.transformed_a__end",
+        "alias": "sem__entity.ch04.dimension.ladder.line",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.dimension.ladder.line__end",
         "kind": "vector",
-        "label": "transformed_a",
+        "label": "line",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.dimension.ladder.transformed_a__origin"
+        "start": "sem__entity.ch04.dimension.ladder.line__origin"
       },
       {
         "alias": "sem__relation.ch04.dimension.ladder.spans",
@@ -68,32 +90,7 @@
           -2.65,
           2.65
         ],
-        "text": "spans: vector_a → transformed_a"
-      },
-      {
-        "alias": "cap__polygon",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ],
-          [
-            -0.0,
-            1.0
-          ]
-        ]
+        "text": "spans: point → line"
       },
       {
         "alias": "sem__stage.ch04.dimension.ladder.evidence__title",
@@ -113,7 +110,7 @@
     "summary": "4.3.2 维数",
     "version": 1
   },
-  "plan_digest": "sha256:06be708f4e79c3e918ee632995bba9fc41ab357e957799cfd7c657b278da239c",
+  "plan_digest": "sha256:341957d500ea56a10134cdbff906da24e782ccf92da1a3a5ae3036e17be8cfab",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -133,19 +130,18 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.dimension.ladder.vector_a",
-        "sem__entity.ch04.dimension.ladder.vector_a__end",
-        "sem__entity.ch04.dimension.ladder.vector_a__origin",
-        "sem__entity.ch04.dimension.ladder.transformed_a",
-        "sem__entity.ch04.dimension.ladder.transformed_a__end",
-        "sem__entity.ch04.dimension.ladder.transformed_a__origin",
+        "ch04_subspace",
+        "sem__entity.ch04.dimension.ladder.point",
+        "sem__entity.ch04.dimension.ladder.point__end",
+        "sem__entity.ch04.dimension.ladder.point__origin",
+        "sem__entity.ch04.dimension.ladder.line",
+        "sem__entity.ch04.dimension.ladder.line__end",
+        "sem__entity.ch04.dimension.ladder.line__origin",
         "sem__relation.ch04.dimension.ladder.spans",
         "sem__stage.ch04.dimension.ladder.evidence__title",
         "sem__span__1"
       ],
       "visible_refs": [
-        "entity.ch04.dimension.ladder.vector_a",
-        "entity.ch04.dimension.ladder.transformed_a",
         "entity.ch04.dimension.ladder.point",
         "entity.ch04.dimension.ladder.line",
         "entity.ch04.dimension.ladder.plane",

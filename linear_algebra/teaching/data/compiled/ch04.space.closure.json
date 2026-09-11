@@ -1,10 +1,40 @@
 {
-  "artifact_digest": "sha256:2eee82bb8ec2942dcc7352680d046ef385a14fa4aa1df3759dd4984033dea411",
+  "artifact_digest": "sha256:be0f41db361b8c25e58f403d3ffd8929fa0332eda4fb162573f1465e42ea070b",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:bc14b3103dd3f8cfd91ed3709bee05179d82c38a784456b2f4474207b5569ba1",
+  "contract_digest": "sha256:353c890ab69d9f057969a6fe85d07082ffc3609f406a7af7ba04241f3cb924c6",
   "plan": {
     "operations": [
+      {
+        "alias": "closure_vectors",
+        "aliases": [
+          "closure_u",
+          "closure_v"
+        ],
+        "matrices": [
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
       {
         "alias": "sem__entity.ch04.space.closure.vector_a__origin",
         "coordinates": [
@@ -32,34 +62,6 @@
         "op": "linear.upsert",
         "role": "primary",
         "start": "sem__entity.ch04.space.closure.vector_a__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.space.closure.transformed_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.space.closure.transformed_a__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "transformed_a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.space.closure.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.space.closure.transformed_a__end",
-        "kind": "vector",
-        "label": "transformed_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.space.closure.transformed_a__origin"
       },
       {
         "alias": "sem__entity.ch04.space.closure.vector_b__origin",
@@ -152,28 +154,7 @@
           -2.65,
           2.65
         ],
-        "text": "spans: vector_a → transformed_a"
-      },
-      {
-        "basis": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#E09F3E",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
+        "text": "spans: vector_a → vector_b"
       },
       {
         "alias": "sem__stage.ch04.space.closure.evidence__title",
@@ -193,7 +174,7 @@
     "summary": "4.1.1 线性空间",
     "version": 1
   },
-  "plan_digest": "sha256:6cf1149494e6712a2349bf9d23d941cba380f4e247e821bc9faaee63be12bdbd",
+  "plan_digest": "sha256:a275f931fe7e0d92d51fdadd73fba4d313f8e32e2860aa50f98863ed974aa688",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -213,12 +194,10 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
+        "closure_vectors",
         "sem__entity.ch04.space.closure.vector_a",
         "sem__entity.ch04.space.closure.vector_a__end",
         "sem__entity.ch04.space.closure.vector_a__origin",
-        "sem__entity.ch04.space.closure.transformed_a",
-        "sem__entity.ch04.space.closure.transformed_a__end",
-        "sem__entity.ch04.space.closure.transformed_a__origin",
         "sem__entity.ch04.space.closure.vector_b",
         "sem__entity.ch04.space.closure.vector_b__end",
         "sem__entity.ch04.space.closure.vector_b__origin",
@@ -234,7 +213,6 @@
       ],
       "visible_refs": [
         "entity.ch04.space.closure.vector_a",
-        "entity.ch04.space.closure.transformed_a",
         "entity.ch04.space.closure.vector_b",
         "entity.ch04.space.closure.sum",
         "entity.ch04.space.closure.scaled",

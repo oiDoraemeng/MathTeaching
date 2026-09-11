@@ -1,12 +1,30 @@
 {
-  "artifact_digest": "sha256:884860dce5cfaa948e4482221a7665f1fc62f67bb2ddce2213c4121c2febc9c9",
+  "artifact_digest": "sha256:88d7bcbeb50d5767b6a9d877c981ef13c3b39941fbccd5fdf100be4647ecd870",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:36770c40498f14bd1a7d58de99b8699eda81e4d6e3632b146f35cdcab44bdb20",
+  "contract_digest": "sha256:fb9f38de57aab530ae4fcd37ccb237a0e61e050f4d928eaf01762bf8672f2fa3",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.subspace.classification.vector_a__origin",
+        "alias": "ch04_subspace",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#4c78a8",
+        "op": "geometry.subspace_region",
+        "opacity": 0.25
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.classification.origin__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +33,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.subspace.classification.vector_a__end",
+        "alias": "sem__entity.ch04.subspace.classification.origin__end",
         "coordinates": [
-          1.0,
+          0.0,
           0.0
         ],
-        "name": "vector_a",
+        "name": "origin",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.subspace.classification.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.subspace.classification.vector_a__end",
+        "alias": "sem__entity.ch04.subspace.classification.origin",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.subspace.classification.origin__end",
         "kind": "vector",
-        "label": "vector_a",
+        "label": "origin",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.subspace.classification.vector_a__origin"
+        "start": "sem__entity.ch04.subspace.classification.origin__origin"
       },
       {
-        "alias": "sem__entity.ch04.subspace.classification.transformed_a__origin",
+        "alias": "sem__entity.ch04.subspace.classification.line__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,23 +61,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.subspace.classification.transformed_a__end",
+        "alias": "sem__entity.ch04.subspace.classification.line__end",
         "coordinates": [
           1.0,
           0.0
         ],
-        "name": "transformed_a",
+        "name": "line",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.subspace.classification.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.subspace.classification.transformed_a__end",
+        "alias": "sem__entity.ch04.subspace.classification.line",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.subspace.classification.line__end",
         "kind": "vector",
-        "label": "transformed_a",
+        "label": "line",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.subspace.classification.transformed_a__origin"
+        "start": "sem__entity.ch04.subspace.classification.line__origin"
       },
       {
         "alias": "sem__relation.ch04.subspace.classification.spans",
@@ -68,32 +86,7 @@
           -2.65,
           2.65
         ],
-        "text": "spans: vector_a → transformed_a"
-      },
-      {
-        "alias": "cap__polygon",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ],
-          [
-            -0.0,
-            1.0
-          ]
-        ]
+        "text": "spans: origin → line"
       },
       {
         "alias": "sem__stage.ch04.subspace.classification.evidence__title",
@@ -113,7 +106,7 @@
     "summary": "4.1.2 子空间",
     "version": 1
   },
-  "plan_digest": "sha256:b740b22dc523d89c5f2dc598426e094a543639466a304922c77ab11e8d3fe0cd",
+  "plan_digest": "sha256:c0503653e9d4cd7ed697f6b5eadeddfde449f2f7092597966c59f16e5c5b51f3",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -133,19 +126,18 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.subspace.classification.vector_a",
-        "sem__entity.ch04.subspace.classification.vector_a__end",
-        "sem__entity.ch04.subspace.classification.vector_a__origin",
-        "sem__entity.ch04.subspace.classification.transformed_a",
-        "sem__entity.ch04.subspace.classification.transformed_a__end",
-        "sem__entity.ch04.subspace.classification.transformed_a__origin",
+        "ch04_subspace",
+        "sem__entity.ch04.subspace.classification.origin",
+        "sem__entity.ch04.subspace.classification.origin__end",
+        "sem__entity.ch04.subspace.classification.origin__origin",
+        "sem__entity.ch04.subspace.classification.line",
+        "sem__entity.ch04.subspace.classification.line__end",
+        "sem__entity.ch04.subspace.classification.line__origin",
         "sem__relation.ch04.subspace.classification.spans",
         "sem__stage.ch04.subspace.classification.evidence__title",
         "sem__span__1"
       ],
       "visible_refs": [
-        "entity.ch04.subspace.classification.vector_a",
-        "entity.ch04.subspace.classification.transformed_a",
         "entity.ch04.subspace.classification.origin",
         "entity.ch04.subspace.classification.line",
         "entity.ch04.subspace.classification.plane",

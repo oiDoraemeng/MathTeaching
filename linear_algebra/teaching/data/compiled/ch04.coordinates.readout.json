@@ -1,12 +1,46 @@
 {
-  "artifact_digest": "sha256:10cca440363a60a7d77e941e010c424bb0df5990ffd2a45f4529ffb1600238ed",
+  "artifact_digest": "sha256:d94a24640bf920af3dd193314ad6d5b97418b6ec7b4e26a12451546ced462a7e",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:5c319c97c458f6ac8c98fc0d8c2dc121cda36a4a60e81d07add04795a2fd7a35",
+  "contract_digest": "sha256:63b1c7add5c9d4541d67d181a8d766db40304111d3f6de2b41d6f92dda19a0d5",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.coordinates.readout.vector_a__origin",
+        "alias": "ch04_coordinates",
+        "alternate_alias": "ch04_alternate",
+        "alternate_coordinates": [
+          1.0,
+          1.0
+        ],
+        "basis_alias": "ch04_coordinates",
+        "basis_matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "entity_count": 4,
+        "op": "geometry.coordinate_readout",
+        "sample_count": 4,
+        "standard_alias": "ch04_standard",
+        "standard_vector": [
+          2.0,
+          1.0
+        ],
+        "tolerance": 1e-09
+      },
+      {
+        "alias": "sem__entity.ch04.coordinates.readout.standard_basis__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +49,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.coordinates.readout.vector_a__end",
+        "alias": "sem__entity.ch04.coordinates.readout.standard_basis__end",
         "coordinates": [
           1.0,
           0.0
         ],
-        "name": "vector_a",
+        "name": "standard_basis",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.coordinates.readout.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.coordinates.readout.vector_a__end",
+        "alias": "sem__entity.ch04.coordinates.readout.standard_basis",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.coordinates.readout.standard_basis__end",
         "kind": "vector",
-        "label": "vector_a",
+        "label": "standard_basis",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.coordinates.readout.vector_a__origin"
+        "start": "sem__entity.ch04.coordinates.readout.standard_basis__origin"
       },
       {
-        "alias": "sem__entity.ch04.coordinates.readout.transformed_a__origin",
+        "alias": "sem__entity.ch04.coordinates.readout.oblique_basis__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,23 +77,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.coordinates.readout.transformed_a__end",
+        "alias": "sem__entity.ch04.coordinates.readout.oblique_basis__end",
         "coordinates": [
           1.0,
-          0.0
+          1.0
         ],
-        "name": "transformed_a",
+        "name": "oblique_basis",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.coordinates.readout.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.coordinates.readout.transformed_a__end",
+        "alias": "sem__entity.ch04.coordinates.readout.oblique_basis",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.coordinates.readout.oblique_basis__end",
         "kind": "vector",
-        "label": "transformed_a",
+        "label": "oblique_basis",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.coordinates.readout.transformed_a__origin"
+        "start": "sem__entity.ch04.coordinates.readout.oblique_basis__origin"
       },
       {
         "alias": "sem__relation.ch04.coordinates.readout.batch_maps_to",
@@ -68,28 +102,7 @@
           -2.65,
           2.65
         ],
-        "text": "batch_maps_to: vector_a → transformed_a"
-      },
-      {
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "text": "batch_maps_to: standard_basis → oblique_basis"
       },
       {
         "alias": "sem__stage.ch04.coordinates.readout.evidence__title",
@@ -109,7 +122,7 @@
     "summary": "4.3.3 坐标——向量的\"读数\"",
     "version": 1
   },
-  "plan_digest": "sha256:f6beba170b78173827ca30d7a683559d223b51f55959cba8e1afde91f93d3d1e",
+  "plan_digest": "sha256:e878030e7af5d36852147fe8200b79efbceb277d4fbf0c5a995686e423c342a3",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -129,18 +142,17 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.coordinates.readout.vector_a",
-        "sem__entity.ch04.coordinates.readout.vector_a__end",
-        "sem__entity.ch04.coordinates.readout.vector_a__origin",
-        "sem__entity.ch04.coordinates.readout.transformed_a",
-        "sem__entity.ch04.coordinates.readout.transformed_a__end",
-        "sem__entity.ch04.coordinates.readout.transformed_a__origin",
+        "ch04_coordinates",
+        "sem__entity.ch04.coordinates.readout.standard_basis",
+        "sem__entity.ch04.coordinates.readout.standard_basis__end",
+        "sem__entity.ch04.coordinates.readout.standard_basis__origin",
+        "sem__entity.ch04.coordinates.readout.oblique_basis",
+        "sem__entity.ch04.coordinates.readout.oblique_basis__end",
+        "sem__entity.ch04.coordinates.readout.oblique_basis__origin",
         "sem__relation.ch04.coordinates.readout.batch_maps_to",
         "sem__stage.ch04.coordinates.readout.evidence__title"
       ],
       "visible_refs": [
-        "entity.ch04.coordinates.readout.vector_a",
-        "entity.ch04.coordinates.readout.transformed_a",
         "entity.ch04.coordinates.readout.standard_basis",
         "entity.ch04.coordinates.readout.oblique_basis",
         "entity.ch04.coordinates.readout.same_vector",

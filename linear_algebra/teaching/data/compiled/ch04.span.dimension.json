@@ -1,65 +1,27 @@
 {
-  "artifact_digest": "sha256:44c52554a4b3c60f0babf4216d9675c2775f4809fe59339718b903104e7316a7",
+  "artifact_digest": "sha256:55c33abcd5a1d793c20ad6d8332e3a98cbe3bd28277647af17f715d0baa55518",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:91b68b11c0b5b893991637125527dbe53d217841f050b89ac3e46cdccb953e04",
+  "contract_digest": "sha256:a6dea3ef928f95f86f0682d938016e921e1fee6971204eafe45effae785edf36",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.span.dimension.vector_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
+        "alias": "ch04_subspace",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
         ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.vector_a__end",
-        "coordinates": [
-          1.0,
-          0.0
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
-        "name": "vector_a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.span.dimension.vector_a__end",
-        "kind": "vector",
-        "label": "vector_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.span.dimension.vector_a__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.transformed_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.transformed_a__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "transformed_a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.span.dimension.transformed_a__end",
-        "kind": "vector",
-        "label": "transformed_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.span.dimension.transformed_a__origin"
+        "color": "#4c78a8",
+        "op": "geometry.subspace_region",
+        "opacity": 0.25
       },
       {
         "alias": "sem__entity.ch04.span.dimension.span_1d__origin",
@@ -152,32 +114,7 @@
           -2.65,
           2.65
         ],
-        "text": "spans: vector_a → transformed_a"
-      },
-      {
-        "alias": "cap__polygon",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ],
-          [
-            -0.0,
-            1.0
-          ]
-        ]
+        "text": "spans: span_1d → span_2d"
       },
       {
         "alias": "sem__stage.ch04.span.dimension.evidence__title",
@@ -197,7 +134,7 @@
     "summary": "4.2.1 生成集 Span",
     "version": 1
   },
-  "plan_digest": "sha256:709b7eda55751d57c5f204c74f822c1436be477f4bdb50eb1a66a59ff52b844e",
+  "plan_digest": "sha256:0bdd9b9b7b6304035041ecbd3cd248bf4d6380c6760a07bef9a96f77e0e32fd3",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -217,12 +154,7 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.span.dimension.vector_a",
-        "sem__entity.ch04.span.dimension.vector_a__end",
-        "sem__entity.ch04.span.dimension.vector_a__origin",
-        "sem__entity.ch04.span.dimension.transformed_a",
-        "sem__entity.ch04.span.dimension.transformed_a__end",
-        "sem__entity.ch04.span.dimension.transformed_a__origin",
+        "ch04_subspace",
         "sem__entity.ch04.span.dimension.span_1d",
         "sem__entity.ch04.span.dimension.span_1d__end",
         "sem__entity.ch04.span.dimension.span_1d__origin",
@@ -237,8 +169,6 @@
         "sem__span__1"
       ],
       "visible_refs": [
-        "entity.ch04.span.dimension.vector_a",
-        "entity.ch04.span.dimension.transformed_a",
         "entity.ch04.span.dimension.span_1d",
         "entity.ch04.span.dimension.span_2d",
         "entity.ch04.span.dimension.span_3d",

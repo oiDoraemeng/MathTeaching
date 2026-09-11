@@ -1,12 +1,30 @@
 {
-  "artifact_digest": "sha256:9dd8ae9f7250c26811f5720e67e2d5a560c103b1669ded7edbde0a978504e431",
+  "artifact_digest": "sha256:a1c00b208f5f0d1510ffb328510aa277e22d7ff1546582fb2cfb27483e41b5d1",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:c4b308eec72ff0ca91396ffce97e58d3924a764d469d9b258541523ac4676b1a",
+  "contract_digest": "sha256:c7c97d3098a6c767224cd415612ca26a33f1d1bcb71ccacf39ac7b6689153b21",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.basis.span.vector_a__origin",
+        "alias": "ch04_subspace",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#4c78a8",
+        "op": "geometry.subspace_region",
+        "opacity": 0.25
+      },
+      {
+        "alias": "sem__entity.ch04.basis.span.independent_basis__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +33,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.basis.span.vector_a__end",
+        "alias": "sem__entity.ch04.basis.span.independent_basis__end",
         "coordinates": [
           1.0,
           0.0
         ],
-        "name": "vector_a",
+        "name": "independent_basis",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.basis.span.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.basis.span.vector_a__end",
+        "alias": "sem__entity.ch04.basis.span.independent_basis",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.basis.span.independent_basis__end",
         "kind": "vector",
-        "label": "vector_a",
+        "label": "independent_basis",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.basis.span.vector_a__origin"
+        "start": "sem__entity.ch04.basis.span.independent_basis__origin"
       },
       {
-        "alias": "sem__entity.ch04.basis.span.transformed_a__origin",
+        "alias": "sem__entity.ch04.basis.span.spanning_set__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,23 +61,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.basis.span.transformed_a__end",
+        "alias": "sem__entity.ch04.basis.span.spanning_set__end",
         "coordinates": [
-          1.0,
-          0.0
+          0.0,
+          1.0
         ],
-        "name": "transformed_a",
+        "name": "spanning_set",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.basis.span.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.basis.span.transformed_a__end",
+        "alias": "sem__entity.ch04.basis.span.spanning_set",
+        "color": "#6B7280",
+        "end": "sem__entity.ch04.basis.span.spanning_set__end",
         "kind": "vector",
-        "label": "transformed_a",
+        "label": "spanning_set",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.basis.span.transformed_a__origin"
+        "start": "sem__entity.ch04.basis.span.spanning_set__origin"
       },
       {
         "alias": "sem__relation.ch04.basis.span.spans",
@@ -68,32 +86,7 @@
           -2.65,
           2.65
         ],
-        "text": "spans: vector_a → transformed_a"
-      },
-      {
-        "alias": "cap__polygon",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ],
-          [
-            -0.0,
-            1.0
-          ]
-        ]
+        "text": "spans: independent_basis → spanning_set"
       },
       {
         "alias": "sem__stage.ch04.basis.span.evidence__title",
@@ -113,7 +106,7 @@
     "summary": "4.3.1 基的定义",
     "version": 1
   },
-  "plan_digest": "sha256:25116ed927ab2856157549c1c387c0236156928d846976a803118b284841968a",
+  "plan_digest": "sha256:76619d56d925fab9ed5f1e0489fba526c0272eee1f2b12bf2c3974f010d6a62e",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -133,19 +126,18 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.basis.span.vector_a",
-        "sem__entity.ch04.basis.span.vector_a__end",
-        "sem__entity.ch04.basis.span.vector_a__origin",
-        "sem__entity.ch04.basis.span.transformed_a",
-        "sem__entity.ch04.basis.span.transformed_a__end",
-        "sem__entity.ch04.basis.span.transformed_a__origin",
+        "ch04_subspace",
+        "sem__entity.ch04.basis.span.independent_basis",
+        "sem__entity.ch04.basis.span.independent_basis__end",
+        "sem__entity.ch04.basis.span.independent_basis__origin",
+        "sem__entity.ch04.basis.span.spanning_set",
+        "sem__entity.ch04.basis.span.spanning_set__end",
+        "sem__entity.ch04.basis.span.spanning_set__origin",
         "sem__relation.ch04.basis.span.spans",
         "sem__stage.ch04.basis.span.evidence__title",
         "sem__span__1"
       ],
       "visible_refs": [
-        "entity.ch04.basis.span.vector_a",
-        "entity.ch04.basis.span.transformed_a",
         "entity.ch04.basis.span.independent_basis",
         "entity.ch04.basis.span.spanning_set",
         "entity.ch04.basis.span.too_few",

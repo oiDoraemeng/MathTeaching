@@ -1,12 +1,34 @@
 {
-  "artifact_digest": "sha256:ab3dbcb9571185755ec0361d38bf7a11243e64481bab3b466814ce4c41f9123a",
+  "artifact_digest": "sha256:8b66ce7751e021900730fb68e788b40b9ba3b2cd71873abb2593395f7a88f7fd",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:4813270ed88d3567752b109e843ddcd036ddabd930e0c7e9707aeb2d0ce9fc75",
+  "contract_digest": "sha256:553857e08a5b1659be037486fee59b961c34d71101b2b3e5756f937a603f4cd5",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.rank.collapse.vector_a__origin",
+        "alias": "ch04_transform",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#4c78a8",
+        "matrix": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.rank.collapse.rank_two__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,95 +37,51 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.rank.collapse.vector_a__end",
+        "alias": "sem__entity.ch04.rank.collapse.rank_two__end",
         "coordinates": [
           1.0,
-          0.0
+          1.0
         ],
-        "name": "vector_a",
+        "name": "rank_two",
         "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.rank.collapse.vector_a__end",
-        "kind": "vector",
-        "label": "vector_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.rank.collapse.vector_a__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.transformed_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.transformed_a__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "transformed_a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.rank.collapse.transformed_a__end",
-        "kind": "vector",
-        "label": "transformed_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.rank.collapse.transformed_a__origin"
       },
       {
         "alias": "sem__entity.ch04.rank.collapse.rank_two",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
         "color": "#6B7280",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
+        "end": "sem__entity.ch04.rank.collapse.rank_two__end",
+        "kind": "vector",
+        "label": "rank_two",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.rank.collapse.rank_two__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.rank.collapse.rank_one__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.rank.collapse.rank_one__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "rank_one",
+        "op": "point.upsert"
       },
       {
         "alias": "sem__entity.ch04.rank.collapse.rank_one",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
         "color": "#6B7280",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "end": "sem__entity.ch04.rank.collapse.rank_one__end",
+        "kind": "vector",
+        "label": "rank_one",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.rank.collapse.rank_one__origin"
       },
       {
         "alias": "sem__entity.ch04.rank.collapse.rank_zero",
@@ -167,7 +145,7 @@
     "summary": "4.2.4 极大无关组与秩",
     "version": 1
   },
-  "plan_digest": "sha256:eded33f3fe6094264c6c463c606715d54fb8e2b7fd9f7063f9a78165b8f6644f",
+  "plan_digest": "sha256:3399f10f411ddd9572452ede1852f5b5d6126c55df0e3f1370afaf4a45a21882",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -187,21 +165,18 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.rank.collapse.vector_a",
-        "sem__entity.ch04.rank.collapse.vector_a__end",
-        "sem__entity.ch04.rank.collapse.vector_a__origin",
-        "sem__entity.ch04.rank.collapse.transformed_a",
-        "sem__entity.ch04.rank.collapse.transformed_a__end",
-        "sem__entity.ch04.rank.collapse.transformed_a__origin",
+        "ch04_transform",
         "sem__entity.ch04.rank.collapse.rank_two",
+        "sem__entity.ch04.rank.collapse.rank_two__end",
+        "sem__entity.ch04.rank.collapse.rank_two__origin",
         "sem__entity.ch04.rank.collapse.rank_one",
+        "sem__entity.ch04.rank.collapse.rank_one__end",
+        "sem__entity.ch04.rank.collapse.rank_one__origin",
         "sem__entity.ch04.rank.collapse.rank_zero",
         "sem__relation.ch04.rank.collapse.batch_maps_to",
         "sem__stage.ch04.rank.collapse.evidence__title"
       ],
       "visible_refs": [
-        "entity.ch04.rank.collapse.vector_a",
-        "entity.ch04.rank.collapse.transformed_a",
         "entity.ch04.rank.collapse.rank_two",
         "entity.ch04.rank.collapse.rank_one",
         "entity.ch04.rank.collapse.rank_zero",

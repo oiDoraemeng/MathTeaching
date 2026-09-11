@@ -1,12 +1,34 @@
 {
-  "artifact_digest": "sha256:c71843bac2f52879b3783474ac1116cdaabf76d6e139a670c08917c1e21f56eb",
+  "artifact_digest": "sha256:6bff31770c0993f9fdb8b5e50a7f07941c187b2a7f389c64f4686138a47008ff",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:1d4e9422e719ffbb5967acd668666929dccdb1bc73658cb8ccdd48df98380eca",
+  "contract_digest": "sha256:0d593cf8843dc76597b5e2425aac69381b9944d35c12816b42434cac78bf96b2",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.nullspace.test.vector_a__origin",
+        "alias": "ch04_transform",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#4c78a8",
+        "matrix": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.nullspace.test.columns__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,95 +37,51 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.nullspace.test.vector_a__end",
+        "alias": "sem__entity.ch04.nullspace.test.columns__end",
         "coordinates": [
           1.0,
           0.0
         ],
-        "name": "vector_a",
+        "name": "columns",
         "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.nullspace.test.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.nullspace.test.vector_a__end",
-        "kind": "vector",
-        "label": "vector_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.nullspace.test.vector_a__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.nullspace.test.transformed_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.nullspace.test.transformed_a__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "transformed_a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.nullspace.test.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.nullspace.test.transformed_a__end",
-        "kind": "vector",
-        "label": "transformed_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.nullspace.test.transformed_a__origin"
       },
       {
         "alias": "sem__entity.ch04.nullspace.test.columns",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
         "color": "#6B7280",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
+        "end": "sem__entity.ch04.nullspace.test.columns__end",
+        "kind": "vector",
+        "label": "columns",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.nullspace.test.columns__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.nullspace.test.null_vector__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.nullspace.test.null_vector__end",
+        "coordinates": [
+          1.0,
+          -1.0
+        ],
+        "name": "null_vector",
+        "op": "point.upsert"
       },
       {
         "alias": "sem__entity.ch04.nullspace.test.null_vector",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
         "color": "#6B7280",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "end": "sem__entity.ch04.nullspace.test.null_vector__end",
+        "kind": "vector",
+        "label": "null_vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.nullspace.test.null_vector__origin"
       },
       {
         "alias": "sem__entity.ch04.nullspace.test.trivial_nullspace",
@@ -167,7 +145,7 @@
     "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$",
     "version": 1
   },
-  "plan_digest": "sha256:1f2902d91e72f7a23ae945531188e20696b505c823a8aa834add0974c7e832ea",
+  "plan_digest": "sha256:5522f701aab013c165262254c5e8de97eea8bb3d3c76c99156fa15b6f2c25a91",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -187,21 +165,18 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.nullspace.test.vector_a",
-        "sem__entity.ch04.nullspace.test.vector_a__end",
-        "sem__entity.ch04.nullspace.test.vector_a__origin",
-        "sem__entity.ch04.nullspace.test.transformed_a",
-        "sem__entity.ch04.nullspace.test.transformed_a__end",
-        "sem__entity.ch04.nullspace.test.transformed_a__origin",
+        "ch04_transform",
         "sem__entity.ch04.nullspace.test.columns",
+        "sem__entity.ch04.nullspace.test.columns__end",
+        "sem__entity.ch04.nullspace.test.columns__origin",
         "sem__entity.ch04.nullspace.test.null_vector",
+        "sem__entity.ch04.nullspace.test.null_vector__end",
+        "sem__entity.ch04.nullspace.test.null_vector__origin",
         "sem__entity.ch04.nullspace.test.trivial_nullspace",
         "sem__relation.ch04.nullspace.test.batch_maps_to",
         "sem__stage.ch04.nullspace.test.evidence__title"
       ],
       "visible_refs": [
-        "entity.ch04.nullspace.test.vector_a",
-        "entity.ch04.nullspace.test.transformed_a",
         "entity.ch04.nullspace.test.columns",
         "entity.ch04.nullspace.test.null_vector",
         "entity.ch04.nullspace.test.trivial_nullspace",

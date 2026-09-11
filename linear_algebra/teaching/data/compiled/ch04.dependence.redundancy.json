@@ -1,65 +1,39 @@
 {
-  "artifact_digest": "sha256:40d7742ea2aacb5a93e1baf7509cecb8dbc9d010ba6b5df78d88f36ded4a5db9",
+  "artifact_digest": "sha256:c8581b6f9fda99f706a3823f099471ab714371decbf8438af09731c317ae678d",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:a26132db0bee04e75d520009c8b2e02a095c65087a36add76de7cbd3546fc81f",
+  "contract_digest": "sha256:0325f058a596deca0f758afcd3782fd2078dd118d9142cb8ea4030ee6b646331",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.dependence.redundancy.vector_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
+        "alias": "ch04_dependence",
+        "aliases": [
+          "dependent",
+          "zero"
         ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.dependence.redundancy.vector_a__end",
-        "coordinates": [
-          1.0,
-          0.0
+        "matrices": [
+          [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ]
         ],
-        "name": "vector_a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.dependence.redundancy.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.dependence.redundancy.vector_a__end",
-        "kind": "vector",
-        "label": "vector_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.dependence.redundancy.vector_a__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.dependence.redundancy.transformed_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.dependence.redundancy.transformed_a__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "transformed_a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.dependence.redundancy.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.dependence.redundancy.transformed_a__end",
-        "kind": "vector",
-        "label": "transformed_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.dependence.redundancy.transformed_a__origin"
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ]
       },
       {
         "alias": "sem__entity.ch04.dependence.redundancy.dependent_set__origin",
@@ -152,32 +126,7 @@
           -2.65,
           2.65
         ],
-        "text": "spans: vector_a → transformed_a"
-      },
-      {
-        "alias": "cap__polygon",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ],
-          [
-            -0.0,
-            1.0
-          ]
-        ]
+        "text": "spans: dependent_set → independent_set"
       },
       {
         "alias": "sem__stage.ch04.dependence.redundancy.evidence__title",
@@ -197,7 +146,7 @@
     "summary": "4.2.2 线性相关与线性无关",
     "version": 1
   },
-  "plan_digest": "sha256:4972417d19781cd8901d1058ab018f5dc1a10f18b36daebbb7b605a0c4e383bb",
+  "plan_digest": "sha256:afb59344aa24d6499b81018357ab53219e22b503de4af61111b7dd463f18312c",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -217,12 +166,7 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.dependence.redundancy.vector_a",
-        "sem__entity.ch04.dependence.redundancy.vector_a__end",
-        "sem__entity.ch04.dependence.redundancy.vector_a__origin",
-        "sem__entity.ch04.dependence.redundancy.transformed_a",
-        "sem__entity.ch04.dependence.redundancy.transformed_a__end",
-        "sem__entity.ch04.dependence.redundancy.transformed_a__origin",
+        "ch04_dependence",
         "sem__entity.ch04.dependence.redundancy.dependent_set",
         "sem__entity.ch04.dependence.redundancy.dependent_set__end",
         "sem__entity.ch04.dependence.redundancy.dependent_set__origin",
@@ -237,8 +181,6 @@
         "sem__span__1"
       ],
       "visible_refs": [
-        "entity.ch04.dependence.redundancy.vector_a",
-        "entity.ch04.dependence.redundancy.transformed_a",
         "entity.ch04.dependence.redundancy.dependent_set",
         "entity.ch04.dependence.redundancy.independent_set",
         "entity.ch04.dependence.redundancy.zero_combination",

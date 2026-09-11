@@ -1,12 +1,34 @@
 {
-  "artifact_digest": "sha256:18cb2252ed54536d3359715b00b11e9e1f3bcbbffb6cd3d70421723aff05f6f1",
+  "artifact_digest": "sha256:952e2a0af45c6ceabe5a84fe7ed0a55b8242a9c3e1db5a343feb52bc3a88e56c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:4dd786efdfb4e9b44f8797112b85bcaa1ea671195744a245c03ae720d0976d85",
+  "contract_digest": "sha256:490f5eb035de706e64c10898dd1892c9f7359ab3ecb016eaa95b0ac17c269a33",
   "plan": {
     "operations": [
       {
-        "alias": "sem__entity.ch04.subspace.col-null.vector_a__origin",
+        "alias": "ch04_transform",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#4c78a8",
+        "matrix": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.col-null.domain__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,95 +37,51 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.subspace.col-null.vector_a__end",
+        "alias": "sem__entity.ch04.subspace.col-null.domain__end",
         "coordinates": [
           1.0,
           0.0
         ],
-        "name": "vector_a",
+        "name": "domain",
         "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.subspace.col-null.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.subspace.col-null.vector_a__end",
-        "kind": "vector",
-        "label": "vector_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.subspace.col-null.vector_a__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.subspace.col-null.transformed_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.subspace.col-null.transformed_a__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "transformed_a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.subspace.col-null.transformed_a",
-        "color": "#7B61FF",
-        "end": "sem__entity.ch04.subspace.col-null.transformed_a__end",
-        "kind": "vector",
-        "label": "transformed_a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.subspace.col-null.transformed_a__origin"
       },
       {
         "alias": "sem__entity.ch04.subspace.col-null.domain",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
         "color": "#6B7280",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
+        "end": "sem__entity.ch04.subspace.col-null.domain__end",
+        "kind": "vector",
+        "label": "domain",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.subspace.col-null.domain__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.col-null.codomain__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.col-null.codomain__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "codomain",
+        "op": "point.upsert"
       },
       {
         "alias": "sem__entity.ch04.subspace.col-null.codomain",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
         "color": "#6B7280",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "end": "sem__entity.ch04.subspace.col-null.codomain__end",
+        "kind": "vector",
+        "label": "codomain",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.subspace.col-null.codomain__origin"
       },
       {
         "alias": "sem__entity.ch04.subspace.col-null.kernel",
@@ -189,7 +167,7 @@
     "summary": "4.1.3 两大核心子空间：列空间与零空间",
     "version": 1
   },
-  "plan_digest": "sha256:38cc7cc12d199746b6fa7773a5842c96e51609eebc24b6a916900ebc45798d27",
+  "plan_digest": "sha256:400e6381ad934b0ef350afc854b5788ed64a21f0b4ed9a3662d5c7be1030c2ab",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -209,22 +187,19 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "sem__entity.ch04.subspace.col-null.vector_a",
-        "sem__entity.ch04.subspace.col-null.vector_a__end",
-        "sem__entity.ch04.subspace.col-null.vector_a__origin",
-        "sem__entity.ch04.subspace.col-null.transformed_a",
-        "sem__entity.ch04.subspace.col-null.transformed_a__end",
-        "sem__entity.ch04.subspace.col-null.transformed_a__origin",
+        "ch04_transform",
         "sem__entity.ch04.subspace.col-null.domain",
+        "sem__entity.ch04.subspace.col-null.domain__end",
+        "sem__entity.ch04.subspace.col-null.domain__origin",
         "sem__entity.ch04.subspace.col-null.codomain",
+        "sem__entity.ch04.subspace.col-null.codomain__end",
+        "sem__entity.ch04.subspace.col-null.codomain__origin",
         "sem__entity.ch04.subspace.col-null.kernel",
         "sem__entity.ch04.subspace.col-null.column_space",
         "sem__relation.ch04.subspace.col-null.batch_maps_to",
         "sem__stage.ch04.subspace.col-null.evidence__title"
       ],
       "visible_refs": [
-        "entity.ch04.subspace.col-null.vector_a",
-        "entity.ch04.subspace.col-null.transformed_a",
         "entity.ch04.subspace.col-null.domain",
         "entity.ch04.subspace.col-null.codomain",
         "entity.ch04.subspace.col-null.kernel",
