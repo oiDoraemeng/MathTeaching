@@ -12,9 +12,61 @@ from linear_algebra.catalog.model import LessonEntry, SourceAnchor
 
 
 _HEADING = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
-_CHAPTER = re.compile(r"^第([1-3])章(?:\s|$)")
+_CHAPTER = re.compile(r"^第(\d+)章(?:\s|$)")
 _SECTION = re.compile(r"^\d+\.\d+(?:\s|$)")
-_EXCLUDED = ("自检", "练习", "挑战")
+_EXCLUDED = ("自检", "练习", "挑战", "课后练习", "练习题", "挑战题")
+
+
+@dataclass(frozen=True)
+class SourceOccurrence:
+    """A heading occurrence with bounded and adjacent source context."""
+
+    path: tuple[str, ...]
+    level: int
+    occurrence: int
+    title: str
+    start_line: int
+    end_line: int
+    text: str
+    adjacent_before: str
+    adjacent_after: str
+
+
+def is_excluded_heading(title: str) -> bool:
+    """Return whether a heading denotes exercises, checks, or challenges."""
+    return _contains_excluded(title.strip(), _EXCLUDED)
+
+
+def extract_heading_occurrences(
+    source: str, chapter_range: tuple[int, int] = (4, 8)
+) -> tuple[SourceOccurrence, ...]:
+    """Extract heading occurrences for a chapter range at any Markdown depth."""
+    if len(chapter_range) != 2 or chapter_range[0] > chapter_range[1]:
+        raise ValueError("chapter_range must be an increasing pair")
+    sections = parse_heading_sections(source)
+    selected = [
+        section for section in sections
+        if section.path and (match := _CHAPTER.match(section.path[0]))
+        and chapter_range[0] <= int(match.group(1)) <= chapter_range[1]
+        and not is_excluded_heading(section.title)
+    ]
+    lines = source.replace("\r\n", "\n").splitlines()
+    occurrences: list[SourceOccurrence] = []
+    for index, section in enumerate(selected):
+        previous = next((item for item in reversed(selected[:index]) if item.path[:-1] == section.path[:-1]), None)
+        following = next((item for item in selected[index + 1:] if item.path[:-1] == section.path[:-1]), None)
+        before = ""
+        if previous is not None and previous.path[:-1] == section.path[:-1]:
+            before = _adjacent_non_heading(previous.text)
+        after = ""
+        if following is not None and following.path[:-1] == section.path[:-1]:
+            after = _adjacent_non_heading(following.text)
+        occurrences.append(SourceOccurrence(section.path, section.level, section.occurrence, section.title, section.start_line, section.end_line, _without_excluded_blocks(section.text, _EXCLUDED), before, after))
+    return tuple(occurrences)
+
+
+def _adjacent_non_heading(text: str) -> str:
+    return next((line.strip() for line in text.splitlines() if line.strip() and _HEADING.match(line) is None), "")
 
 
 @dataclass(frozen=True)
