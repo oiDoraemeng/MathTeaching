@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:8fe909904d857fd38af7e57fb793b0bd14a5498b1791a20810cb98cee6d394a7",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:1df1d3d777048d50df2a1912dcdd88109caccdc41a9fbe02fccb21b385b59a5e",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.space.closure.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.space.closure.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.space.closure.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.space.closure.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.space.closure.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.space.closure.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.space.closure.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.space.closure.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.1.1 线性空间",
+    "version": 1
+  },
+  "plan_digest": "sha256:3d5b7d893f921a660cfc3f74af588bc00cdce10cb2116c1d2593d38c2717ae69",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:108e80c51b484ad533cd04b12f1404ac881c09591990b10d9f1c4b8863bed254",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.space.closure.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.space.closure.v",
+        "sem__entity.ch04.space.closure.v__end",
+        "sem__entity.ch04.space.closure.v__origin",
+        "sem__entity.ch04.space.closure.result",
+        "sem__entity.ch04.space.closure.result__end",
+        "sem__entity.ch04.space.closure.result__origin",
+        "sem__relation.ch04.space.closure.maps",
+        "sem__stage.ch04.space.closure.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.space.closure.v",
+        "entity.ch04.space.closure.result",
+        "relation.ch04.space.closure.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.space.closure"
+}

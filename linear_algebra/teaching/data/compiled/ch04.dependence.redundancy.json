@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:d6ad7b57a09cc02d3beb538f4886c97bb6c7fbd8c02427e83f4db02d54594078",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:f03c347de83d06cbf8f88546a380fc9d802e8a9d6cf1bf8252d089e53177c2fe",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.dependence.redundancy.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.dependence.redundancy.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.dependence.redundancy.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.dependence.redundancy.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.dependence.redundancy.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.dependence.redundancy.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.dependence.redundancy.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.dependence.redundancy.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.dependence.redundancy.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.dependence.redundancy.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.dependence.redundancy.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.dependence.redundancy.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.2.2 线性相关与线性无关",
+    "version": 1
+  },
+  "plan_digest": "sha256:488132777cc718e9e96a4c035c2fff452ba6910016f3deb1451df886618e2d66",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.dependence.redundancy.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.dependence.redundancy.v",
+        "sem__entity.ch04.dependence.redundancy.v__end",
+        "sem__entity.ch04.dependence.redundancy.v__origin",
+        "sem__entity.ch04.dependence.redundancy.result",
+        "sem__entity.ch04.dependence.redundancy.result__end",
+        "sem__entity.ch04.dependence.redundancy.result__origin",
+        "sem__relation.ch04.dependence.redundancy.maps",
+        "sem__stage.ch04.dependence.redundancy.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.dependence.redundancy.v",
+        "entity.ch04.dependence.redundancy.result",
+        "relation.ch04.dependence.redundancy.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.dependence.redundancy"
+}

@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:807ed01f85914ec4d61fe5082d548a8b6e82daefc4cc23422dad7dd75ec977a9",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:bb8233bb9e5cd69013ce7f9894f0f290f09268045badc696de3992ba006d5270",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.basis.span.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.basis.span.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.basis.span.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.basis.span.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.basis.span.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.basis.span.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.basis.span.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.basis.span.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.basis.span.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.basis.span.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.basis.span.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.basis.span.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.3.1 基的定义",
+    "version": 1
+  },
+  "plan_digest": "sha256:f0706c9aa0777ad17ab1023e31cc121d15ba94805ceb00ec7cdd4cfc269ada94",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:7f3ef3d59ff43b14164f34afe828b3f5c49b80949ba9217a7c52ebc7ea51b026",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.basis.span.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.basis.span.v",
+        "sem__entity.ch04.basis.span.v__end",
+        "sem__entity.ch04.basis.span.v__origin",
+        "sem__entity.ch04.basis.span.result",
+        "sem__entity.ch04.basis.span.result__end",
+        "sem__entity.ch04.basis.span.result__origin",
+        "sem__relation.ch04.basis.span.maps",
+        "sem__stage.ch04.basis.span.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.basis.span.v",
+        "entity.ch04.basis.span.result",
+        "relation.ch04.basis.span.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.basis.span"
+}

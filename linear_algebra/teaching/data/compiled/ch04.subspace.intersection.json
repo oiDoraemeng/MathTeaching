@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:9286d5223160dcc85cd0a6c6c9911ab2d2ee4ebdfaa11c2068a2b22e314532be",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:5f718e9d1be4eb680634d2f576df4ae08b752f52b0bd83641fa23da610722ef3",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.subspace.intersection.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.intersection.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.intersection.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.subspace.intersection.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.subspace.intersection.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.intersection.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.intersection.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.intersection.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.subspace.intersection.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.subspace.intersection.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.subspace.intersection.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.subspace.intersection.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.1.2 子空间",
+    "version": 1
+  },
+  "plan_digest": "sha256:9fd2c3761b792642e3ba2df73387eb162de16656e8278379fbdb3805e9391570",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.subspace.intersection.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.subspace.intersection.v",
+        "sem__entity.ch04.subspace.intersection.v__end",
+        "sem__entity.ch04.subspace.intersection.v__origin",
+        "sem__entity.ch04.subspace.intersection.result",
+        "sem__entity.ch04.subspace.intersection.result__end",
+        "sem__entity.ch04.subspace.intersection.result__origin",
+        "sem__relation.ch04.subspace.intersection.maps",
+        "sem__stage.ch04.subspace.intersection.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.subspace.intersection.v",
+        "entity.ch04.subspace.intersection.result",
+        "relation.ch04.subspace.intersection.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.subspace.intersection"
+}

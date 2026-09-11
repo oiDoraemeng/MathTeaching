@@ -11,10 +11,13 @@ from typing import Mapping
 from linear_algebra.catalog.manifest import topic_entries
 from linear_algebra.registry import catalog_registry
 from linear_algebra.teaching.store import TeachingArtifactStore, artifact_digest
+from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts
+from linear_algebra.teaching.model import TeachingArtifact
 from linear_algebra.visualizations.common import RenderContext
 from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
 from linear_algebra.visualizations.contracts import contract_for
 from linear_algebra.visualizations.snapshots import CompiledSnapshotStore, snapshot_from
+from linear_algebra.visualizations.snapshots import contract_digest_for
 
 
 @dataclass(frozen=True)
@@ -30,6 +33,8 @@ class CompiledResource:
     stages: tuple[Mapping[str, object], ...]
     read_guide: tuple[str, ...]
     claim_count: int
+    contract_digest: str = ""
+    scene_family: str = ""
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -45,6 +50,8 @@ class CompiledResource:
             "stages": [dict(stage) for stage in self.stages],
             "read_guide": list(self.read_guide),
             "claim_count": self.claim_count,
+            "contract_digest": self.contract_digest,
+            "scene_family": self.scene_family,
         }
 
 
@@ -97,6 +104,8 @@ class CompiledResourceStore:
             stages=tuple(stages),
             read_guide=tuple(read_guide),
             claim_count=int(payload.get("claim_count", 0)),
+            contract_digest=str(payload.get("contract_digest", "")),
+            scene_family=str(payload.get("scene_family", "")),
         )
 
 
@@ -115,9 +124,10 @@ def compile_published_topic(
     if stored is None:
         raise FileNotFoundError(f"missing published artifact {topic_id}")
     artifact = stored.artifact
+    contract = contract_for(topic_id)
     compiled = VisualSemanticsCompiler().compile(
         artifact,
-        contract_for(topic_id),
+        contract,
         RenderContext.default(topic_id),
     )
     stages = tuple(
@@ -144,7 +154,64 @@ def compile_published_topic(
         stages=stages,
         read_guide=artifact.explanation.read_guide,
         claim_count=len(artifact.claims),
+        contract_digest=contract_digest_for(contract),
+        scene_family=artifact.visual_semantics.scene_family,
     )
+
+
+def compile_reviewed_topic(topic_id: str) -> CompiledResource:
+    """Compile one reviewed artifact without publishing it.
+
+    This chapter-scoped path is used while a chapter is being released; the
+    normal registry/compiler path remains publication-gated for all chapters.
+    """
+    payload = load_reviewed_artifacts()[topic_id]
+    artifact = TeachingArtifact.from_dict(payload)
+    contract = contract_for(topic_id)
+    compiled = VisualSemanticsCompiler().compile(
+        artifact, contract, RenderContext.default(topic_id)
+    )
+    stages = tuple(
+        {
+            "id": stage.id,
+            "title": stage.title,
+            "caption": stage.caption,
+            "layout": stage.layout,
+            "visible_refs": list(stage.visible_refs),
+            "visible_aliases": list(stage.visible_aliases),
+            "anchor": list(stage.anchor),
+        }
+        for stage in compiled.storyboard
+    )
+    return CompiledResource(
+        topic_id=topic_id,
+        revision=artifact.revision,
+        artifact_digest=artifact_digest(artifact),
+        source_hash=artifact.source.source_hash,
+        compiler_version=compiled.compiler_version,
+        render_profile=compiled.render_profile,
+        plan_digest=compiled.plan_digest,
+        plan=compiled.plan.to_dict(),
+        stages=stages,
+        read_guide=artifact.explanation.read_guide,
+        claim_count=len(artifact.claims),
+        contract_digest=contract_digest_for(contract),
+        scene_family=artifact.visual_semantics.scene_family,
+    )
+
+
+def compile_chapter_04(*, output_root: str | Path | None = None) -> tuple[CompiledResource, ...]:
+    """Build all sixteen chapter-4 resources atomically after validation."""
+    topic_ids = tuple(sorted(topic_id for topic_id in load_reviewed_artifacts() if topic_id.startswith("ch04.")))
+    if len(topic_ids) != 16:
+        raise ValueError(f"chapter 4 requires 16 reviewed artifacts, found {len(topic_ids)}")
+    resources = tuple(compile_reviewed_topic(topic_id) for topic_id in topic_ids)
+    output = compiled_resource_store(output_root)
+    # Compile every topic before touching disk, then use each store save's
+    # replace semantics so no partial resource is produced by validation.
+    for resource in resources:
+        output.save(resource)
+    return resources
 
 
 def compile_all(*, artifact_root: str | Path | None = None, output_root: str | Path | None = None) -> tuple[CompiledResource, ...]:
@@ -171,6 +238,11 @@ def validate_compiled_resources(
     errors: list[str] = []
     count = 0
     for topic in topic_entries():
+        # Release validation is publication-scoped.  Reviewed chapter bundles
+        # (notably ch04 during its release gate) are validated by their
+        # chapter-scoped helper and must not make the published registry fail.
+        if artifact_store.published(topic.id) is None:
+            continue
         try:
             resource = resource_store.get(topic.id)
             rebuilt = compile_published_topic(topic.id, artifact_store=artifact_store)
@@ -228,6 +300,9 @@ def write_teaching_index(
                 "topic_id": topic.id,
                 "chapter": topic.chapter_number,
                 "revision": artifact.revision,
+                "draft_revision": artifact.revision,
+                "reviewed_revision": artifact.revision,
+                "published_revision": artifact.revision,
                 "source_hash": artifact.source.source_hash,
                 "artifact_digest": artifact.generated.artifact_digest,
             }
@@ -275,6 +350,8 @@ __all__ = [
     "CompiledResourceStore",
     "compile_all",
     "compile_published_topic",
+    "compile_reviewed_topic",
+    "compile_chapter_04",
     "compiled_resource_store",
     "write_teaching_index",
     "validate_compiled_resources",

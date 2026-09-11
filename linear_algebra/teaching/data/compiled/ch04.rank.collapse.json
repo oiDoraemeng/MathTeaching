@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:9e3ebb43b0458919f946e95bf94efb2d69c33ffe9345eabac9302ee8878630cc",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:da011abb17c3b4f8f531f53a73e04fde1085bb57fa0c16a5f96cd779a660af7a",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.rank.collapse.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.rank.collapse.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.rank.collapse.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.rank.collapse.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.rank.collapse.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.rank.collapse.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.rank.collapse.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.rank.collapse.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.rank.collapse.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.rank.collapse.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.rank.collapse.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.rank.collapse.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.2.4 极大无关组与秩",
+    "version": 1
+  },
+  "plan_digest": "sha256:9fcd9903de50654a97be85cfac742bf0fcfbac3cfac28135d4df6a5191708af8",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:19e5d74100e2416f18026e10fbc79d06541197cb81692c73189a33d1bddff536",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.rank.collapse.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.rank.collapse.v",
+        "sem__entity.ch04.rank.collapse.v__end",
+        "sem__entity.ch04.rank.collapse.v__origin",
+        "sem__entity.ch04.rank.collapse.result",
+        "sem__entity.ch04.rank.collapse.result__end",
+        "sem__entity.ch04.rank.collapse.result__origin",
+        "sem__relation.ch04.rank.collapse.maps",
+        "sem__stage.ch04.rank.collapse.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.rank.collapse.v",
+        "entity.ch04.rank.collapse.result",
+        "relation.ch04.rank.collapse.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.rank.collapse"
+}

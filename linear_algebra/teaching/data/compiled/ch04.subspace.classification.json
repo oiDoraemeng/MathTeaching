@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:6e72ac381fbce1daf871e34efb8fc80dc2c6591060c44281cc64ec3eeb97e24d",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:61bc64b2623b207f64f454c352749f20ae790790ad690e28634a7aa781cce60a",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.subspace.classification.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.classification.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.classification.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.subspace.classification.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.subspace.classification.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.classification.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.classification.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.subspace.classification.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.subspace.classification.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.subspace.classification.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.subspace.classification.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.subspace.classification.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.1.2 子空间",
+    "version": 1
+  },
+  "plan_digest": "sha256:68c6e97cd779965a5a12f838490073ceab3e6e726ba795b2de9f972e8a7318f5",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.subspace.classification.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.subspace.classification.v",
+        "sem__entity.ch04.subspace.classification.v__end",
+        "sem__entity.ch04.subspace.classification.v__origin",
+        "sem__entity.ch04.subspace.classification.result",
+        "sem__entity.ch04.subspace.classification.result__end",
+        "sem__entity.ch04.subspace.classification.result__origin",
+        "sem__relation.ch04.subspace.classification.maps",
+        "sem__stage.ch04.subspace.classification.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.subspace.classification.v",
+        "entity.ch04.subspace.classification.result",
+        "relation.ch04.subspace.classification.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.subspace.classification"
+}

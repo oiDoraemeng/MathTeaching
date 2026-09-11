@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:1d21f23b54af1c90ec692594bfbada9e177cc01f2b7bc84d6628e5689c1a1208",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:051eaccd62b10653f2782bd6ebdd39b90b3a540b1c9ea083bef93d05214584df",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.linear-map.compare.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.compare.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.compare.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.linear-map.compare.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.linear-map.compare.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.compare.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.compare.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.compare.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.linear-map.compare.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.linear-map.compare.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.linear-map.compare.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.linear-map.compare.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.4.2 是 vs 不是线性变换",
+    "version": 1
+  },
+  "plan_digest": "sha256:3f408349abc62ef9dc353dde7a0e34953614931a2f09a973251253f40c2afae9",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.linear-map.compare.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.linear-map.compare.v",
+        "sem__entity.ch04.linear-map.compare.v__end",
+        "sem__entity.ch04.linear-map.compare.v__origin",
+        "sem__entity.ch04.linear-map.compare.result",
+        "sem__entity.ch04.linear-map.compare.result__end",
+        "sem__entity.ch04.linear-map.compare.result__origin",
+        "sem__relation.ch04.linear-map.compare.maps",
+        "sem__stage.ch04.linear-map.compare.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.linear-map.compare.v",
+        "entity.ch04.linear-map.compare.result",
+        "relation.ch04.linear-map.compare.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.linear-map.compare"
+}

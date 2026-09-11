@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:3fd1d4e8c0e224bcc566dd7490dc96140c388b607825947528ad7c5e9af7e7f8",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:09f1b3455635b598147bb83cf28bfe949e28bfa42da333b5503e852b3c6719c1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.dimension.ladder.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.dimension.ladder.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.dimension.ladder.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.dimension.ladder.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.dimension.ladder.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.dimension.ladder.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.dimension.ladder.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.dimension.ladder.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.dimension.ladder.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.dimension.ladder.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.dimension.ladder.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.dimension.ladder.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.3.2 维数",
+    "version": 1
+  },
+  "plan_digest": "sha256:6fa4c8712a75bfefdf2f950cf827fe566dc993e33f9b6b5d2f9b521e59443e7b",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.dimension.ladder.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.dimension.ladder.v",
+        "sem__entity.ch04.dimension.ladder.v__end",
+        "sem__entity.ch04.dimension.ladder.v__origin",
+        "sem__entity.ch04.dimension.ladder.result",
+        "sem__entity.ch04.dimension.ladder.result__end",
+        "sem__entity.ch04.dimension.ladder.result__origin",
+        "sem__relation.ch04.dimension.ladder.maps",
+        "sem__stage.ch04.dimension.ladder.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.dimension.ladder.v",
+        "entity.ch04.dimension.ladder.result",
+        "relation.ch04.dimension.ladder.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.dimension.ladder"
+}

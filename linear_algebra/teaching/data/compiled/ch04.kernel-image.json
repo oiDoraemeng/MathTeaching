@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:2ac752b432320de8143f64ae78ef539bc73c5427b2b2db1f40fb664df6aeb348",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:d4769762e3a99f7f767ae76964fea8cc142e67d91021ea6d185ab73158a82a25",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.kernel-image.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.kernel-image.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.kernel-image.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.kernel-image.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.kernel-image.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.kernel-image.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.kernel-image.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.kernel-image.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.kernel-image.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.kernel-image.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.kernel-image.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.kernel-image.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.5.1 定义",
+    "version": 1
+  },
+  "plan_digest": "sha256:39e3d7c6f6998ad24d632c60d8638bfec128369a9850e23016a4f59e4ab1b780",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.kernel-image.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.kernel-image.v",
+        "sem__entity.ch04.kernel-image.v__end",
+        "sem__entity.ch04.kernel-image.v__origin",
+        "sem__entity.ch04.kernel-image.result",
+        "sem__entity.ch04.kernel-image.result__end",
+        "sem__entity.ch04.kernel-image.result__origin",
+        "sem__relation.ch04.kernel-image.maps",
+        "sem__stage.ch04.kernel-image.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.kernel-image.v",
+        "entity.ch04.kernel-image.result",
+        "relation.ch04.kernel-image.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.kernel-image"
+}

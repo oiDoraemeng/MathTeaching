@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:1ea7abf2df691cbec29ae7ea14eb446b4b270604b4eb260f854977e9ce681a83",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:b0d04f176674ad0edbd5bb9b968317403d2ee1cdd384d9cedfac3667ebe6d205",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.nullspace.test.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.nullspace.test.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.nullspace.test.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.nullspace.test.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.nullspace.test.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.nullspace.test.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.nullspace.test.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.nullspace.test.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.nullspace.test.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.nullspace.test.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.nullspace.test.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.nullspace.test.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$",
+    "version": 1
+  },
+  "plan_digest": "sha256:ceb63b15b5b880755ca7af9415c334cb0d616014485d57b07b5328d89667f458",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.nullspace.test.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.nullspace.test.v",
+        "sem__entity.ch04.nullspace.test.v__end",
+        "sem__entity.ch04.nullspace.test.v__origin",
+        "sem__entity.ch04.nullspace.test.result",
+        "sem__entity.ch04.nullspace.test.result__end",
+        "sem__entity.ch04.nullspace.test.result__origin",
+        "sem__relation.ch04.nullspace.test.maps",
+        "sem__stage.ch04.nullspace.test.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.nullspace.test.v",
+        "entity.ch04.nullspace.test.result",
+        "relation.ch04.nullspace.test.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.nullspace.test"
+}

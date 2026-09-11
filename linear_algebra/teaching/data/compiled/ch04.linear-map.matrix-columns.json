@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:9d7cb798337867b8d27e6dd18d0f2c272fea13095d475b9292f2ab0a7713cd2a",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:1a0907f947c0ec53254c8c5b1674e1899db5ed005910e9742ea7686847a69faf",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.linear-map.matrix-columns.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.linear-map.matrix-columns.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.linear-map.matrix-columns.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.linear-map.matrix-columns.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.linear-map.matrix-columns.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.linear-map.matrix-columns.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.linear-map.matrix-columns.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.4.3 线性变换的矩阵表示",
+    "version": 1
+  },
+  "plan_digest": "sha256:2c49514c0f3b3db1510dc800851d7571327c46e1bd0adf7c677be818c2e313c0",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.linear-map.matrix-columns.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.linear-map.matrix-columns.v",
+        "sem__entity.ch04.linear-map.matrix-columns.v__end",
+        "sem__entity.ch04.linear-map.matrix-columns.v__origin",
+        "sem__entity.ch04.linear-map.matrix-columns.result",
+        "sem__entity.ch04.linear-map.matrix-columns.result__end",
+        "sem__entity.ch04.linear-map.matrix-columns.result__origin",
+        "sem__relation.ch04.linear-map.matrix-columns.maps",
+        "sem__stage.ch04.linear-map.matrix-columns.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.linear-map.matrix-columns.v",
+        "entity.ch04.linear-map.matrix-columns.result",
+        "relation.ch04.linear-map.matrix-columns.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.linear-map.matrix-columns"
+}

@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:c27a42ab5add4d80726ef1f795a5383931ed3f4fc4cc8ff0cbdbacf96e5fed02",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:5dcab16ea32249c42c7f4ad3101492094d584d7794538c3ac40fa4cf7140c1d6",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.rank-nullity.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.rank-nullity.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.rank-nullity.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.rank-nullity.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.rank-nullity.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.rank-nullity.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.rank-nullity.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.rank-nullity.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.rank-nullity.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.rank-nullity.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.rank-nullity.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.rank-nullity.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.5.2 秩-零化度定理",
+    "version": 1
+  },
+  "plan_digest": "sha256:feec93a5fa9f21a1ba1477c451adcd53cc2a93c1cd8228eb3952ea79dd22875c",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.rank-nullity.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.rank-nullity.v",
+        "sem__entity.ch04.rank-nullity.v__end",
+        "sem__entity.ch04.rank-nullity.v__origin",
+        "sem__entity.ch04.rank-nullity.result",
+        "sem__entity.ch04.rank-nullity.result__end",
+        "sem__entity.ch04.rank-nullity.result__origin",
+        "sem__relation.ch04.rank-nullity.maps",
+        "sem__stage.ch04.rank-nullity.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.rank-nullity.v",
+        "entity.ch04.rank-nullity.result",
+        "relation.ch04.rank-nullity.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.rank-nullity"
+}

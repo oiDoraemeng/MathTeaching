@@ -1,0 +1,150 @@
+{
+  "artifact_digest": "sha256:80fef54e588e6d62ac29dbb0f67f984ea59337cd63312cac0b8ddb1fa3551a81",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:9db2f8306bf21b2e151bb417e9036055f804df448cbd94144dd8ec548ff13a3c",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__entity.ch04.coordinates.readout.v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.coordinates.readout.v__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.coordinates.readout.v",
+        "color": "#2F6BFF",
+        "end": "sem__entity.ch04.coordinates.readout.v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.coordinates.readout.v__origin"
+      },
+      {
+        "alias": "sem__entity.ch04.coordinates.readout.result__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.coordinates.readout.result__end",
+        "coordinates": [
+          2.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__entity.ch04.coordinates.readout.result",
+        "color": "#7B61FF",
+        "end": "sem__entity.ch04.coordinates.readout.result__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__entity.ch04.coordinates.readout.result__origin"
+      },
+      {
+        "alias": "sem__relation.ch04.coordinates.readout.maps",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "maps_to: v → result"
+      },
+      {
+        "basis": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "sem__stage.ch04.coordinates.readout.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "输入与结果"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "4.3.3 坐标——向量的\"读数\"",
+    "version": 1
+  },
+  "plan_digest": "sha256:7e80bf43c1170f832b4961b9007b45c46d9bf3575287ef469cc13025b7d76770",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "subspace_region",
+  "schema_version": 1,
+  "source_hash": "sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "显示线性关系。",
+      "id": "stage.ch04.coordinates.readout.input",
+      "layout": "sequence",
+      "title": "输入与结果",
+      "visible_aliases": [
+        "sem__entity.ch04.coordinates.readout.v",
+        "sem__entity.ch04.coordinates.readout.v__end",
+        "sem__entity.ch04.coordinates.readout.v__origin",
+        "sem__entity.ch04.coordinates.readout.result",
+        "sem__entity.ch04.coordinates.readout.result__end",
+        "sem__entity.ch04.coordinates.readout.result__origin",
+        "sem__relation.ch04.coordinates.readout.maps",
+        "sem__stage.ch04.coordinates.readout.input__title",
+        "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "entity.ch04.coordinates.readout.v",
+        "entity.ch04.coordinates.readout.result",
+        "relation.ch04.coordinates.readout.maps"
+      ]
+    }
+  ],
+  "topic_id": "ch04.coordinates.readout"
+}
