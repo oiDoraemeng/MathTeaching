@@ -2,7 +2,7 @@
 
 Status: DONE
 
-Commits: `90f6c09e7380af17b4474f0359f6808b3a6250ef` (initial recipes), `c6075f9` (publication gate), `be866aa`/`0ea69b2` (reports), plus the per-topic semantic mapping fix commit below.
+Commits: `90f6c09e7380af17b4474f0359f6808b3a6250ef` (initial recipes), `c6075f9` (publication gate), `be866aa`/`0ea69b2` (reports), `1609766` (per-topic semantic mapping fix).
 
 Implementation:
 
