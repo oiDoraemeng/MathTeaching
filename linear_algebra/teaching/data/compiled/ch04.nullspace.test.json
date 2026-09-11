@@ -28,6 +28,42 @@
         "step": 1.0
       },
       {
+        "alias": "ch04__entity__columns",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "columns"
+      },
+      {
+        "alias": "ch04__entity__null_vector",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "null_vector"
+      },
+      {
+        "alias": "ch04__entity__trivial_nullspace",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "trivial_nullspace"
+      },
+      {
+        "alias": "ch04__relation__batch_maps_to",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "batch_maps_to"
+      },
+      {
         "alias": "sem__entity.ch04.nullspace.test.columns__origin",
         "coordinates": [
           0.0,
@@ -145,7 +181,7 @@
     "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$",
     "version": 1
   },
-  "plan_digest": "sha256:5522f701aab013c165262254c5e8de97eea8bb3d3c76c99156fa15b6f2c25a91",
+  "plan_digest": "sha256:a8332af0f80568c3a1f6664e8e422d495d06757a6fac456f5452fb1b63d42102",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -165,14 +201,17 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_transform",
+        "ch04__entity__columns",
         "sem__entity.ch04.nullspace.test.columns",
         "sem__entity.ch04.nullspace.test.columns__end",
         "sem__entity.ch04.nullspace.test.columns__origin",
+        "ch04__entity__null_vector",
         "sem__entity.ch04.nullspace.test.null_vector",
         "sem__entity.ch04.nullspace.test.null_vector__end",
         "sem__entity.ch04.nullspace.test.null_vector__origin",
+        "ch04__entity__trivial_nullspace",
         "sem__entity.ch04.nullspace.test.trivial_nullspace",
+        "ch04__relation__batch_maps_to",
         "sem__relation.ch04.nullspace.test.batch_maps_to",
         "sem__stage.ch04.nullspace.test.evidence__title"
       ],

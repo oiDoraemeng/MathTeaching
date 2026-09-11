@@ -28,6 +28,51 @@
         "step": 1.0
       },
       {
+        "alias": "ch04__entity__domain",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "domain"
+      },
+      {
+        "alias": "ch04__entity__codomain",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "codomain"
+      },
+      {
+        "alias": "ch04__entity__kernel",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "kernel"
+      },
+      {
+        "alias": "ch04__entity__column_space",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "column_space"
+      },
+      {
+        "alias": "ch04__relation__batch_maps_to",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "batch_maps_to"
+      },
+      {
         "alias": "sem__entity.ch04.subspace.col-null.domain__origin",
         "coordinates": [
           0.0,
@@ -167,7 +212,7 @@
     "summary": "4.1.3 两大核心子空间：列空间与零空间",
     "version": 1
   },
-  "plan_digest": "sha256:400e6381ad934b0ef350afc854b5788ed64a21f0b4ed9a3662d5c7be1030c2ab",
+  "plan_digest": "sha256:9c871f38851bc3a7098d6394edfbdfc25ac66d9140dd458a421b54889a157963",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -187,15 +232,19 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_transform",
+        "ch04__entity__domain",
         "sem__entity.ch04.subspace.col-null.domain",
         "sem__entity.ch04.subspace.col-null.domain__end",
         "sem__entity.ch04.subspace.col-null.domain__origin",
+        "ch04__entity__codomain",
         "sem__entity.ch04.subspace.col-null.codomain",
         "sem__entity.ch04.subspace.col-null.codomain__end",
         "sem__entity.ch04.subspace.col-null.codomain__origin",
+        "ch04__entity__kernel",
         "sem__entity.ch04.subspace.col-null.kernel",
+        "ch04__entity__column_space",
         "sem__entity.ch04.subspace.col-null.column_space",
+        "ch04__relation__batch_maps_to",
         "sem__relation.ch04.subspace.col-null.batch_maps_to",
         "sem__stage.ch04.subspace.col-null.evidence__title"
       ],

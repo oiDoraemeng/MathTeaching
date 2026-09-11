@@ -28,6 +28,42 @@
         "step": 1.0
       },
       {
+        "alias": "ch04__entity__rank_two",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "rank_two"
+      },
+      {
+        "alias": "ch04__entity__rank_one",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "rank_one"
+      },
+      {
+        "alias": "ch04__entity__rank_zero",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "rank_zero"
+      },
+      {
+        "alias": "ch04__relation__batch_maps_to",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "batch_maps_to"
+      },
+      {
         "alias": "sem__entity.ch04.rank.collapse.rank_two__origin",
         "coordinates": [
           0.0,
@@ -145,7 +181,7 @@
     "summary": "4.2.4 极大无关组与秩",
     "version": 1
   },
-  "plan_digest": "sha256:3399f10f411ddd9572452ede1852f5b5d6126c55df0e3f1370afaf4a45a21882",
+  "plan_digest": "sha256:9bdb26742edbdada579049c1ffeb524d834c94af804c3dd34d271f5c138f6624",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -165,14 +201,17 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_transform",
+        "ch04__entity__rank_two",
         "sem__entity.ch04.rank.collapse.rank_two",
         "sem__entity.ch04.rank.collapse.rank_two__end",
         "sem__entity.ch04.rank.collapse.rank_two__origin",
+        "ch04__entity__rank_one",
         "sem__entity.ch04.rank.collapse.rank_one",
         "sem__entity.ch04.rank.collapse.rank_one__end",
         "sem__entity.ch04.rank.collapse.rank_one__origin",
+        "ch04__entity__rank_zero",
         "sem__entity.ch04.rank.collapse.rank_zero",
+        "ch04__relation__batch_maps_to",
         "sem__relation.ch04.rank.collapse.batch_maps_to",
         "sem__stage.ch04.rank.collapse.evidence__title"
       ],

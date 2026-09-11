@@ -36,6 +36,51 @@
         ]
       },
       {
+        "alias": "ch04__entity__map_T",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "map_T"
+      },
+      {
+        "alias": "ch04__entity__sum_test",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "sum_test"
+      },
+      {
+        "alias": "ch04__entity__homogeneity_test",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "homogeneity_test"
+      },
+      {
+        "alias": "ch04__entity__origin",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "origin"
+      },
+      {
+        "alias": "ch04__relation__maps_to",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "maps_to"
+      },
+      {
         "alias": "sem__entity.ch04.linear-map.definition.map_T__origin",
         "coordinates": [
           0.0,
@@ -189,7 +234,7 @@
     "summary": "4.4.1 线性变换的定义",
     "version": 1
   },
-  "plan_digest": "sha256:2cc8afb4b99c6de206623139b58a4d24da77df1cbdd92106ce226c1bfab10895",
+  "plan_digest": "sha256:98b6fd6c6eedd4abc80f8f6e32b556f3e162cecb979b2831ef72038ca33d717a",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -209,15 +254,19 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_linear_map",
+        "ch04__entity__map_T",
         "sem__entity.ch04.linear-map.definition.map_T",
         "sem__entity.ch04.linear-map.definition.map_T__end",
         "sem__entity.ch04.linear-map.definition.map_T__origin",
+        "ch04__entity__sum_test",
         "sem__entity.ch04.linear-map.definition.sum_test",
         "sem__entity.ch04.linear-map.definition.sum_test__end",
         "sem__entity.ch04.linear-map.definition.sum_test__origin",
+        "ch04__entity__homogeneity_test",
         "sem__entity.ch04.linear-map.definition.homogeneity_test",
+        "ch04__entity__origin",
         "sem__entity.ch04.linear-map.definition.origin",
+        "ch04__relation__maps_to",
         "sem__relation.ch04.linear-map.definition.maps_to",
         "sem__stage.ch04.linear-map.definition.evidence__title",
         "sem__mapping_grid__1"

@@ -24,6 +24,51 @@
         "opacity": 0.25
       },
       {
+        "alias": "ch04__entity__domain",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "domain"
+      },
+      {
+        "alias": "ch04__entity__kernel_direction",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "kernel_direction"
+      },
+      {
+        "alias": "ch04__entity__zero",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "zero"
+      },
+      {
+        "alias": "ch04__entity__image",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "image"
+      },
+      {
+        "alias": "ch04__relation__spans",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "spans"
+      },
+      {
         "alias": "sem__entity.ch04.kernel-image.domain__origin",
         "coordinates": [
           0.0,
@@ -106,7 +151,7 @@
     "summary": "4.5.1 定义",
     "version": 1
   },
-  "plan_digest": "sha256:1fd561b3643ddb05c00a2f540b3240c6d362beb3ab4a296d8d13169c77548aca",
+  "plan_digest": "sha256:0b898ebb723de3403e6e8fa0e6e66a423ea7ef330a7884cf47463ab9af1d2a42",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -126,13 +171,17 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_subspace",
+        "ch04__entity__domain",
         "sem__entity.ch04.kernel-image.domain",
         "sem__entity.ch04.kernel-image.domain__end",
         "sem__entity.ch04.kernel-image.domain__origin",
+        "ch04__entity__kernel_direction",
         "sem__entity.ch04.kernel-image.kernel_direction",
         "sem__entity.ch04.kernel-image.kernel_direction__end",
         "sem__entity.ch04.kernel-image.kernel_direction__origin",
+        "ch04__entity__zero",
+        "ch04__entity__image",
+        "ch04__relation__spans",
         "sem__relation.ch04.kernel-image.spans",
         "sem__stage.ch04.kernel-image.evidence__title",
         "sem__span__1"

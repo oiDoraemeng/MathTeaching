@@ -24,6 +24,60 @@
         "opacity": 0.25
       },
       {
+        "alias": "ch04__entity__origin",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "origin"
+      },
+      {
+        "alias": "ch04__entity__line",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "line"
+      },
+      {
+        "alias": "ch04__entity__plane",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "plane"
+      },
+      {
+        "alias": "ch04__entity__whole_space",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "whole_space"
+      },
+      {
+        "alias": "ch04__entity__affine_counterexample",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "affine_counterexample"
+      },
+      {
+        "alias": "ch04__relation__spans",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "spans"
+      },
+      {
         "alias": "sem__entity.ch04.subspace.classification.origin__origin",
         "coordinates": [
           0.0,
@@ -106,7 +160,7 @@
     "summary": "4.1.2 子空间",
     "version": 1
   },
-  "plan_digest": "sha256:c0503653e9d4cd7ed697f6b5eadeddfde449f2f7092597966c59f16e5c5b51f3",
+  "plan_digest": "sha256:8c60b69be97d9037e0f2d8f66ad9f43198264ddc1c22c4cf5c5081624d72d099",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -126,13 +180,18 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_subspace",
+        "ch04__entity__origin",
         "sem__entity.ch04.subspace.classification.origin",
         "sem__entity.ch04.subspace.classification.origin__end",
         "sem__entity.ch04.subspace.classification.origin__origin",
+        "ch04__entity__line",
         "sem__entity.ch04.subspace.classification.line",
         "sem__entity.ch04.subspace.classification.line__end",
         "sem__entity.ch04.subspace.classification.line__origin",
+        "ch04__entity__plane",
+        "ch04__entity__whole_space",
+        "ch04__entity__affine_counterexample",
+        "ch04__relation__spans",
         "sem__relation.ch04.subspace.classification.spans",
         "sem__stage.ch04.subspace.classification.evidence__title",
         "sem__span__1"

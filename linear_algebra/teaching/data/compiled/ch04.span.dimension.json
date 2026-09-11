@@ -24,6 +24,42 @@
         "opacity": 0.25
       },
       {
+        "alias": "ch04__entity__span_1d",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "span_1d"
+      },
+      {
+        "alias": "ch04__entity__span_2d",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "span_2d"
+      },
+      {
+        "alias": "ch04__entity__span_3d",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "span_3d"
+      },
+      {
+        "alias": "ch04__relation__spans",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "spans"
+      },
+      {
         "alias": "sem__entity.ch04.span.dimension.span_1d__origin",
         "coordinates": [
           0.0,
@@ -134,7 +170,7 @@
     "summary": "4.2.1 生成集 Span",
     "version": 1
   },
-  "plan_digest": "sha256:0bdd9b9b7b6304035041ecbd3cd248bf4d6380c6760a07bef9a96f77e0e32fd3",
+  "plan_digest": "sha256:7cae69b092864097db4f1cf06dcb5dd3ee37b1c0c0f82c8896dfd7dc475f2cea",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -154,16 +190,19 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_subspace",
+        "ch04__entity__span_1d",
         "sem__entity.ch04.span.dimension.span_1d",
         "sem__entity.ch04.span.dimension.span_1d__end",
         "sem__entity.ch04.span.dimension.span_1d__origin",
+        "ch04__entity__span_2d",
         "sem__entity.ch04.span.dimension.span_2d",
         "sem__entity.ch04.span.dimension.span_2d__end",
         "sem__entity.ch04.span.dimension.span_2d__origin",
+        "ch04__entity__span_3d",
         "sem__entity.ch04.span.dimension.span_3d",
         "sem__entity.ch04.span.dimension.span_3d__end",
         "sem__entity.ch04.span.dimension.span_3d__origin",
+        "ch04__relation__spans",
         "sem__relation.ch04.span.dimension.spans",
         "sem__stage.ch04.span.dimension.evidence__title",
         "sem__span__1"

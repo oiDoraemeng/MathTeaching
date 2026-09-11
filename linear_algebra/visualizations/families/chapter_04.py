@@ -36,10 +36,16 @@ def compile_chapter_04(topic_id: str, semantics: Any, context: Any) -> dict[str,
     else:
         ops.append({"op":"geometry.subspace_region","alias":"ch04_evidence","basis":[[1.0,0.0]],"bounds":list(context.bounds),"opacity":0.2,"color":"#4c78a8"})
     operation_aliases = [str(op["alias"]) for op in ops]
-    # Every reviewed claim reference must point at a concrete operation alias.
+    # Bind every reviewed object to its own emitted command alias.  This keeps
+    # the evidence ledger entity/relation specific even when a family uses a
+    # shared geometry primitive for a topic.
     aliases: dict[str, tuple[str, ...]] = {}
     for entity in semantics.entities:
-        aliases[entity.id] = tuple(operation_aliases)
+        alias = f"ch04__entity__{entity.role}"
+        ops.append({"op":"annotation.upsert","alias":alias,"text":entity.role,"position":[0.0,0.0]})
+        aliases[entity.id] = (alias,)
     for relation in semantics.relations:
-        aliases[relation.id] = tuple(operation_aliases)
+        alias = f"ch04__relation__{relation.kind}"
+        ops.append({"op":"annotation.upsert","alias":alias,"text":relation.kind,"position":[0.0,0.0]})
+        aliases[relation.id] = (alias,)
     return {"operations": tuple(ops), "aliases": aliases, "evidence": evidence}

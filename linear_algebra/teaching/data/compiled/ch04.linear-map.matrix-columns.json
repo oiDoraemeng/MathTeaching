@@ -28,6 +28,51 @@
         "step": 1.0
       },
       {
+        "alias": "ch04__entity__standard_e1",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "standard_e1"
+      },
+      {
+        "alias": "ch04__entity__standard_e2",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "standard_e2"
+      },
+      {
+        "alias": "ch04__entity__column_1",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "column_1"
+      },
+      {
+        "alias": "ch04__entity__column_2",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "column_2"
+      },
+      {
+        "alias": "ch04__relation__batch_maps_to",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "batch_maps_to"
+      },
+      {
         "alias": "sem__entity.ch04.linear-map.matrix-columns.standard_e1__origin",
         "coordinates": [
           0.0,
@@ -154,7 +199,7 @@
     "summary": "4.4.3 线性变换的矩阵表示",
     "version": 1
   },
-  "plan_digest": "sha256:43f1b12f3b2d53edad1c653211874b536ff5b53836d9a6e752556c1064356454",
+  "plan_digest": "sha256:cc8ee44beb581df8cb506835f73b9501d6041fee73a87550ae0c435cabdb12a8",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -174,15 +219,19 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_transform",
+        "ch04__entity__standard_e1",
         "sem__entity.ch04.linear-map.matrix-columns.standard_e1",
         "sem__entity.ch04.linear-map.matrix-columns.standard_e1__end",
         "sem__entity.ch04.linear-map.matrix-columns.standard_e1__origin",
+        "ch04__entity__standard_e2",
         "sem__entity.ch04.linear-map.matrix-columns.standard_e2",
         "sem__entity.ch04.linear-map.matrix-columns.standard_e2__end",
         "sem__entity.ch04.linear-map.matrix-columns.standard_e2__origin",
+        "ch04__entity__column_1",
         "sem__entity.ch04.linear-map.matrix-columns.column_1",
+        "ch04__entity__column_2",
         "sem__entity.ch04.linear-map.matrix-columns.column_2",
+        "ch04__relation__batch_maps_to",
         "sem__relation.ch04.linear-map.matrix-columns.batch_maps_to",
         "sem__stage.ch04.linear-map.matrix-columns.evidence__title"
       ],

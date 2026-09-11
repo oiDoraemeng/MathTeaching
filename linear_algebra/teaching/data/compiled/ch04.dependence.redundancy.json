@@ -36,6 +36,42 @@
         ]
       },
       {
+        "alias": "ch04__entity__dependent_set",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "dependent_set"
+      },
+      {
+        "alias": "ch04__entity__independent_set",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "independent_set"
+      },
+      {
+        "alias": "ch04__entity__zero_combination",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "zero_combination"
+      },
+      {
+        "alias": "ch04__relation__spans",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "spans"
+      },
+      {
         "alias": "sem__entity.ch04.dependence.redundancy.dependent_set__origin",
         "coordinates": [
           0.0,
@@ -146,7 +182,7 @@
     "summary": "4.2.2 线性相关与线性无关",
     "version": 1
   },
-  "plan_digest": "sha256:afb59344aa24d6499b81018357ab53219e22b503de4af61111b7dd463f18312c",
+  "plan_digest": "sha256:ab37349cea7e0054a4ba769c9fa841ed69b6757842b4f03696554d5360979a48",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -166,16 +202,19 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_dependence",
+        "ch04__entity__dependent_set",
         "sem__entity.ch04.dependence.redundancy.dependent_set",
         "sem__entity.ch04.dependence.redundancy.dependent_set__end",
         "sem__entity.ch04.dependence.redundancy.dependent_set__origin",
+        "ch04__entity__independent_set",
         "sem__entity.ch04.dependence.redundancy.independent_set",
         "sem__entity.ch04.dependence.redundancy.independent_set__end",
         "sem__entity.ch04.dependence.redundancy.independent_set__origin",
+        "ch04__entity__zero_combination",
         "sem__entity.ch04.dependence.redundancy.zero_combination",
         "sem__entity.ch04.dependence.redundancy.zero_combination__end",
         "sem__entity.ch04.dependence.redundancy.zero_combination__origin",
+        "ch04__relation__spans",
         "sem__relation.ch04.dependence.redundancy.spans",
         "sem__stage.ch04.dependence.redundancy.evidence__title",
         "sem__span__1"

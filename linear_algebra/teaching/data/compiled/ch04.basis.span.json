@@ -24,6 +24,51 @@
         "opacity": 0.25
       },
       {
+        "alias": "ch04__entity__independent_basis",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "independent_basis"
+      },
+      {
+        "alias": "ch04__entity__spanning_set",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "spanning_set"
+      },
+      {
+        "alias": "ch04__entity__too_few",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "too_few"
+      },
+      {
+        "alias": "ch04__entity__too_many",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "too_many"
+      },
+      {
+        "alias": "ch04__relation__spans",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "spans"
+      },
+      {
         "alias": "sem__entity.ch04.basis.span.independent_basis__origin",
         "coordinates": [
           0.0,
@@ -106,7 +151,7 @@
     "summary": "4.3.1 基的定义",
     "version": 1
   },
-  "plan_digest": "sha256:76619d56d925fab9ed5f1e0489fba526c0272eee1f2b12bf2c3974f010d6a62e",
+  "plan_digest": "sha256:26951095a421fb16cf81509541687843dee9c3f8579d3709f06379ce2983180e",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -126,13 +171,17 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_subspace",
+        "ch04__entity__independent_basis",
         "sem__entity.ch04.basis.span.independent_basis",
         "sem__entity.ch04.basis.span.independent_basis__end",
         "sem__entity.ch04.basis.span.independent_basis__origin",
+        "ch04__entity__spanning_set",
         "sem__entity.ch04.basis.span.spanning_set",
         "sem__entity.ch04.basis.span.spanning_set__end",
         "sem__entity.ch04.basis.span.spanning_set__origin",
+        "ch04__entity__too_few",
+        "ch04__entity__too_many",
+        "ch04__relation__spans",
         "sem__relation.ch04.basis.span.spans",
         "sem__stage.ch04.basis.span.evidence__title",
         "sem__span__1"

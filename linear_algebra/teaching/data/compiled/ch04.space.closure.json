@@ -36,6 +36,51 @@
         ]
       },
       {
+        "alias": "ch04__entity__vector_a",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "vector_a"
+      },
+      {
+        "alias": "ch04__entity__vector_b",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "vector_b"
+      },
+      {
+        "alias": "ch04__entity__sum",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "sum"
+      },
+      {
+        "alias": "ch04__entity__scaled",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "scaled"
+      },
+      {
+        "alias": "ch04__relation__spans",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "spans"
+      },
+      {
         "alias": "sem__entity.ch04.space.closure.vector_a__origin",
         "coordinates": [
           0.0,
@@ -174,7 +219,7 @@
     "summary": "4.1.1 线性空间",
     "version": 1
   },
-  "plan_digest": "sha256:a275f931fe7e0d92d51fdadd73fba4d313f8e32e2860aa50f98863ed974aa688",
+  "plan_digest": "sha256:82c5d0522d9cf6290d60b015a4c70047ebf2401c17bc27c397552d6129349baf",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -194,19 +239,23 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "closure_vectors",
+        "ch04__entity__vector_a",
         "sem__entity.ch04.space.closure.vector_a",
         "sem__entity.ch04.space.closure.vector_a__end",
         "sem__entity.ch04.space.closure.vector_a__origin",
+        "ch04__entity__vector_b",
         "sem__entity.ch04.space.closure.vector_b",
         "sem__entity.ch04.space.closure.vector_b__end",
         "sem__entity.ch04.space.closure.vector_b__origin",
+        "ch04__entity__sum",
         "sem__entity.ch04.space.closure.sum",
         "sem__entity.ch04.space.closure.sum__end",
         "sem__entity.ch04.space.closure.sum__origin",
+        "ch04__entity__scaled",
         "sem__entity.ch04.space.closure.scaled",
         "sem__entity.ch04.space.closure.scaled__end",
         "sem__entity.ch04.space.closure.scaled__origin",
+        "ch04__relation__spans",
         "sem__relation.ch04.space.closure.spans",
         "sem__stage.ch04.space.closure.evidence__title",
         "sem__span__1"

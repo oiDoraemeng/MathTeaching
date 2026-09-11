@@ -28,6 +28,60 @@
         "step": 1.0
       },
       {
+        "alias": "ch04__entity__domain",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "domain"
+      },
+      {
+        "alias": "ch04__entity__rank",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "rank"
+      },
+      {
+        "alias": "ch04__entity__nullity",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "nullity"
+      },
+      {
+        "alias": "ch04__entity__preserved",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "preserved"
+      },
+      {
+        "alias": "ch04__entity__collapsed",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "collapsed"
+      },
+      {
+        "alias": "ch04__relation__batch_maps_to",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "batch_maps_to"
+      },
+      {
         "alias": "sem__entity.ch04.rank-nullity.domain__origin",
         "coordinates": [
           0.0,
@@ -189,7 +243,7 @@
     "summary": "4.5.2 秩-零化度定理",
     "version": 1
   },
-  "plan_digest": "sha256:75ed4350a578919a6e82b109ffb106fa1034ad3375360c72309d99bce3df5d22",
+  "plan_digest": "sha256:1ac3f67136e89e3f0984d025e75e9113d4f4a261db0e13d460a021e8ca458785",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -209,16 +263,21 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_transform",
+        "ch04__entity__domain",
         "sem__entity.ch04.rank-nullity.domain",
         "sem__entity.ch04.rank-nullity.domain__end",
         "sem__entity.ch04.rank-nullity.domain__origin",
+        "ch04__entity__rank",
         "sem__entity.ch04.rank-nullity.rank",
         "sem__entity.ch04.rank-nullity.rank__end",
         "sem__entity.ch04.rank-nullity.rank__origin",
+        "ch04__entity__nullity",
         "sem__entity.ch04.rank-nullity.nullity",
+        "ch04__entity__preserved",
         "sem__entity.ch04.rank-nullity.preserved",
+        "ch04__entity__collapsed",
         "sem__entity.ch04.rank-nullity.collapsed",
+        "ch04__relation__batch_maps_to",
         "sem__relation.ch04.rank-nullity.batch_maps_to",
         "sem__stage.ch04.rank-nullity.evidence__title"
       ],

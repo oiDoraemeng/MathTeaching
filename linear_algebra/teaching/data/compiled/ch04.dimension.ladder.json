@@ -28,6 +28,51 @@
         "opacity": 0.25
       },
       {
+        "alias": "ch04__entity__point",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "point"
+      },
+      {
+        "alias": "ch04__entity__line",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "line"
+      },
+      {
+        "alias": "ch04__entity__plane",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "plane"
+      },
+      {
+        "alias": "ch04__entity__volume",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "volume"
+      },
+      {
+        "alias": "ch04__relation__spans",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "spans"
+      },
+      {
         "alias": "sem__entity.ch04.dimension.ladder.point__origin",
         "coordinates": [
           0.0,
@@ -110,7 +155,7 @@
     "summary": "4.3.2 维数",
     "version": 1
   },
-  "plan_digest": "sha256:341957d500ea56a10134cdbff906da24e782ccf92da1a3a5ae3036e17be8cfab",
+  "plan_digest": "sha256:9d8266f3ed6c274505d900304a68e4edaedd6a20e6092a8b3cf1005e9cb4914a",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -130,13 +175,17 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_subspace",
+        "ch04__entity__point",
         "sem__entity.ch04.dimension.ladder.point",
         "sem__entity.ch04.dimension.ladder.point__end",
         "sem__entity.ch04.dimension.ladder.point__origin",
+        "ch04__entity__line",
         "sem__entity.ch04.dimension.ladder.line",
         "sem__entity.ch04.dimension.ladder.line__end",
         "sem__entity.ch04.dimension.ladder.line__origin",
+        "ch04__entity__plane",
+        "ch04__entity__volume",
+        "ch04__relation__spans",
         "sem__relation.ch04.dimension.ladder.spans",
         "sem__stage.ch04.dimension.ladder.evidence__title",
         "sem__span__1"

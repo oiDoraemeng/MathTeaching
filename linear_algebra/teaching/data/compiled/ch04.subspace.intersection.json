@@ -24,6 +24,51 @@
         "opacity": 0.25
       },
       {
+        "alias": "ch04__entity__subspace_u",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "subspace_u"
+      },
+      {
+        "alias": "ch04__entity__subspace_v",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "subspace_v"
+      },
+      {
+        "alias": "ch04__entity__intersection",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "intersection"
+      },
+      {
+        "alias": "ch04__entity__union_counterexample",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "union_counterexample"
+      },
+      {
+        "alias": "ch04__relation__spans",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "spans"
+      },
+      {
         "alias": "sem__entity.ch04.subspace.intersection.subspace_u__origin",
         "coordinates": [
           0.0,
@@ -106,7 +151,7 @@
     "summary": "4.1.2 子空间",
     "version": 1
   },
-  "plan_digest": "sha256:5468ac989a5d89ec5411633ebb4bdc63bd7933810253681b6692a3a78c3294e6",
+  "plan_digest": "sha256:052b0f665943d89f7c38e3c73883560688a769f25208d483ee6604fea4e64282",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -126,13 +171,17 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_subspace",
+        "ch04__entity__subspace_u",
         "sem__entity.ch04.subspace.intersection.subspace_u",
         "sem__entity.ch04.subspace.intersection.subspace_u__end",
         "sem__entity.ch04.subspace.intersection.subspace_u__origin",
+        "ch04__entity__subspace_v",
         "sem__entity.ch04.subspace.intersection.subspace_v",
         "sem__entity.ch04.subspace.intersection.subspace_v__end",
         "sem__entity.ch04.subspace.intersection.subspace_v__origin",
+        "ch04__entity__intersection",
+        "ch04__entity__union_counterexample",
+        "ch04__relation__spans",
         "sem__relation.ch04.subspace.intersection.spans",
         "sem__stage.ch04.subspace.intersection.evidence__title",
         "sem__span__1"

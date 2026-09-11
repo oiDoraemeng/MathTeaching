@@ -40,6 +40,42 @@
         "tolerance": 1e-09
       },
       {
+        "alias": "ch04__entity__standard_basis",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "standard_basis"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "oblique_basis"
+      },
+      {
+        "alias": "ch04__entity__same_vector",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "same_vector"
+      },
+      {
+        "alias": "ch04__relation__batch_maps_to",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "batch_maps_to"
+      },
+      {
         "alias": "sem__entity.ch04.coordinates.readout.standard_basis__origin",
         "coordinates": [
           0.0,
@@ -122,7 +158,7 @@
     "summary": "4.3.3 坐标——向量的\"读数\"",
     "version": 1
   },
-  "plan_digest": "sha256:e878030e7af5d36852147fe8200b79efbceb277d4fbf0c5a995686e423c342a3",
+  "plan_digest": "sha256:929d9ac5f9fa66c9786934f7aadd611e5a019d50e0d4cbbd7d9f9e530bb30bdd",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -142,13 +178,16 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_coordinates",
+        "ch04__entity__standard_basis",
         "sem__entity.ch04.coordinates.readout.standard_basis",
         "sem__entity.ch04.coordinates.readout.standard_basis__end",
         "sem__entity.ch04.coordinates.readout.standard_basis__origin",
+        "ch04__entity__oblique_basis",
         "sem__entity.ch04.coordinates.readout.oblique_basis",
         "sem__entity.ch04.coordinates.readout.oblique_basis__end",
         "sem__entity.ch04.coordinates.readout.oblique_basis__origin",
+        "ch04__entity__same_vector",
+        "ch04__relation__batch_maps_to",
         "sem__relation.ch04.coordinates.readout.batch_maps_to",
         "sem__stage.ch04.coordinates.readout.evidence__title"
       ],

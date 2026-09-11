@@ -28,6 +28,51 @@
         "step": 1.0
       },
       {
+        "alias": "ch04__entity__linear_case",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "linear_case"
+      },
+      {
+        "alias": "ch04__entity__translation",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "translation"
+      },
+      {
+        "alias": "ch04__entity__square_map",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "square_map"
+      },
+      {
+        "alias": "ch04__entity__constant_shift",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "constant_shift"
+      },
+      {
+        "alias": "ch04__relation__batch_maps_to",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          0.0
+        ],
+        "text": "batch_maps_to"
+      },
+      {
         "alias": "sem__entity.ch04.linear-map.compare.linear_case__origin",
         "coordinates": [
           0.0,
@@ -154,7 +199,7 @@
     "summary": "4.4.2 是 vs 不是线性变换",
     "version": 1
   },
-  "plan_digest": "sha256:7bf771b4594c5b2a32591134fba3f39fc8163145e1a261b73b2110a8e87cb0fa",
+  "plan_digest": "sha256:d466a3b1da4782368a63b93fe4e859c3b0d71c16cc3f39a08cc50c2eaf80b094",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -174,15 +219,19 @@
       "layout": "sequence",
       "title": "主题证据",
       "visible_aliases": [
-        "ch04_transform",
+        "ch04__entity__linear_case",
         "sem__entity.ch04.linear-map.compare.linear_case",
         "sem__entity.ch04.linear-map.compare.linear_case__end",
         "sem__entity.ch04.linear-map.compare.linear_case__origin",
+        "ch04__entity__translation",
         "sem__entity.ch04.linear-map.compare.translation",
         "sem__entity.ch04.linear-map.compare.translation__end",
         "sem__entity.ch04.linear-map.compare.translation__origin",
+        "ch04__entity__square_map",
         "sem__entity.ch04.linear-map.compare.square_map",
+        "ch04__entity__constant_shift",
         "sem__entity.ch04.linear-map.compare.constant_shift",
+        "ch04__relation__batch_maps_to",
         "sem__relation.ch04.linear-map.compare.batch_maps_to",
         "sem__stage.ch04.linear-map.compare.evidence__title"
       ],
