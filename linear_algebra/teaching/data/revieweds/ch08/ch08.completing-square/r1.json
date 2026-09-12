@@ -2,8 +2,11 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch08.completing-square.v",
-        "entity.ch08.completing-square.result"
+        "entity.ch08.completing-square.matrix",
+        "entity.ch08.completing-square.substitution",
+        "entity.ch08.completing-square.standard",
+        "entity.ch08.completing-square.point",
+        "entity.ch08.completing-square.coordinates"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +17,28 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "2x^2+4xy+5y^2=2(x+y)^2+3y^2",
       "formula_symbols": [
-        "v",
-        "result"
+        "matrix",
+        "substitution",
+        "standard",
+        "point",
+        "coordinates"
       ],
       "id": "claim.ch08.completing-square",
       "relation_refs": [
-        "relation.ch08.completing-square.maps"
+        "relation.ch08.completing-square.complete_square",
+        "relation.ch08.completing-square.substitution"
       ],
       "source_refs": [
         "第8章 二次型与主轴定理 / 8.4 配方法化标准形（选学）::1::sha256:1383db4e9b5bb7c5f62c1fb32438b6f6421ed2c740b8f09cefdec731f9324b02"
       ],
       "stage_refs": [
-        "stage.ch08.completing-square.input"
+        "original",
+        "substitution",
+        "squares"
       ],
-      "statement": "8.4 配方法化标准形（选学） 的线性表示保持可检验的向量关系。"
+      "statement": "8.4 配方法化标准形（选学） 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +60,15 @@
     ],
     "definition": "8.4 配方法化标准形（选学） 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "原始交叉项: 2x^2+4xy+5y^2=2(x+y)^2+3y^2",
+      "可逆非正交替换: 2x^2+4xy+5y^2=2(x+y)^2+3y^2",
+      "两个完全平方: 2x^2+4xy+5y^2=2(x+y)^2+3y^2"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "2x^2+4xy+5y^2=2(x+y)^2+3y^2",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "completed_square",
+      "value_preserved"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,24 +139,24 @@
         "title": "connections"
       }
     ],
-    "summary": "8.4 配方法化标准形（选学） 的确定性讲义 artifact。",
+    "summary": "8.4 配方法化标准形（选学） 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "coordinates": "coordinates",
+      "matrix": "matrix",
+      "point": "point",
+      "standard": "standard",
+      "substitution": "substitution"
     },
     "title": "8.4 配方法化标准形（选学）",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "det(A)=a11*a22-a12*a21"
         ],
         "checks": [
           {
-            "expected": [
-              2,
-              4
-            ],
+            "expected": 6.0,
             "name": "result",
             "tolerance": 1e-09
           }
@@ -154,29 +165,58 @@
           "claim.ch08.completing-square"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            2.0,
+            2.0
+          ],
+          [
+            2.0,
+            5.0
           ]
         ],
-        "id": "example.ch08.completing-square",
-        "kind": "scalar_multiple",
-        "result": [
-          2,
-          4
+        "id": "example.ch08.completing-square.matrix",
+        "kind": "determinant",
+        "result": 6.0,
+        "title": "matrix"
+      },
+      {
+        "calculation": [
+          "det(A)=a11*a22-a12*a21"
         ],
-        "title": "数值例"
+        "checks": [
+          {
+            "expected": 6.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.completing-square"
+        ],
+        "given": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            3.0
+          ]
+        ],
+        "id": "example.ch08.completing-square.standard",
+        "kind": "determinant",
+        "result": 6.0,
+        "title": "standard"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:1ab74325accd034b87a3596156778c0c6669ec6634df68a1a69dbf7d266b087a",
+    "artifact_digest": "sha256:bdffc65ba54487bd62f092afc38d5f398de54d2be3b1079baa446eb5a3c30f47",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:a5c2d980b9355339bd515af523b6c0da6db85f374caf852a8eebcf9265c17885",
+    "raw_reply_digest": "sha256:1e1edfa0dd845b4f2df9aeace363d6298a7e0ae0b77b46e4077a6c09e7b45c61",
     "source_hash": "sha256:1383db4e9b5bb7c5f62c1fb32438b6f6421ed2c740b8f09cefdec731f9324b02"
   },
   "revision": 1,
@@ -234,13 +274,19 @@
           "claim.ch08.completing-square"
         ],
         "dimension": 2,
-        "id": "entity.ch08.completing-square.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch08.completing-square.matrix",
+        "kind": "matrix",
+        "label": "matrix",
+        "role": "matrix",
         "value": [
-          1,
-          2
+          [
+            2.0,
+            2.0
+          ],
+          [
+            2.0,
+            5.0
+          ]
         ]
       },
       {
@@ -248,13 +294,67 @@
           "claim.ch08.completing-square"
         ],
         "dimension": 2,
-        "id": "entity.ch08.completing-square.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch08.completing-square.substitution",
+        "kind": "matrix",
+        "label": "substitution",
+        "role": "substitution",
         "value": [
-          2,
-          4
+          [
+            1.0,
+            -1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.completing-square"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.completing-square.standard",
+        "kind": "matrix",
+        "label": "standard",
+        "role": "standard",
+        "value": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.completing-square"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.completing-square.point",
+        "kind": "vector",
+        "label": "point",
+        "role": "point",
+        "value": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.completing-square"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.completing-square.coordinates",
+        "kind": "vector",
+        "label": "coordinates",
+        "role": "coordinates",
+        "value": [
+          2.0,
+          1.0
         ]
       }
     ],
@@ -263,35 +363,138 @@
         "claim_refs": [
           "claim.ch08.completing-square"
         ],
-        "id": "relation.ch08.completing-square.maps",
+        "id": "relation.ch08.completing-square.complete_square",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "matrix": [
+            [
+              2.0,
+              2.0
+            ],
+            [
+              2.0,
+              5.0
+            ]
+          ],
+          "square_weights": [
+            2.0,
+            3.0
+          ],
+          "standard": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              3.0
+            ]
+          ],
+          "substitution": [
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
         },
-        "source_ref": "entity.ch08.completing-square.v",
-        "target_ref": "entity.ch08.completing-square.result"
+        "source_ref": "entity.ch08.completing-square.matrix",
+        "target_ref": "entity.ch08.completing-square.standard"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.completing-square"
+        ],
+        "id": "relation.ch08.completing-square.substitution",
+        "kind": "maps_to",
+        "parameters": {
+          "coordinates": [
+            2.0,
+            1.0
+          ],
+          "point": [
+            1.0,
+            1.0
+          ],
+          "substitution": [
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "value": 11.0
+        },
+        "source_ref": "entity.ch08.completing-square.coordinates",
+        "target_ref": "entity.ch08.completing-square.point"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "quadratic_level_set",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "2x^2+4xy+5y^2=2(x+y)^2+3y^2",
         "expected_invariants": [
-          "finite numeric result"
+          "completed_square"
         ],
-        "id": "stage.ch08.completing-square.input",
+        "id": "original",
         "input_entity_refs": [
-          "entity.ch08.completing-square.v"
+          "entity.ch08.completing-square.matrix",
+          "entity.ch08.completing-square.point"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch08.completing-square.result"
+          "entity.ch08.completing-square.matrix"
         ],
         "relation_refs": [
-          "relation.ch08.completing-square.maps"
+          "relation.ch08.completing-square.complete_square"
         ],
-        "title": "输入与结果"
+        "title": "原始交叉项"
+      },
+      {
+        "caption": "2x^2+4xy+5y^2=2(x+y)^2+3y^2",
+        "expected_invariants": [
+          "value_preserved"
+        ],
+        "id": "substitution",
+        "input_entity_refs": [
+          "entity.ch08.completing-square.matrix",
+          "entity.ch08.completing-square.substitution",
+          "entity.ch08.completing-square.coordinates"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.completing-square.point"
+        ],
+        "relation_refs": [
+          "relation.ch08.completing-square.substitution"
+        ],
+        "title": "可逆非正交替换"
+      },
+      {
+        "caption": "2x^2+4xy+5y^2=2(x+y)^2+3y^2",
+        "expected_invariants": [
+          "completed_square"
+        ],
+        "id": "squares",
+        "input_entity_refs": [
+          "entity.ch08.completing-square.matrix",
+          "entity.ch08.completing-square.substitution"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.completing-square.standard"
+        ],
+        "relation_refs": [
+          "relation.ch08.completing-square.complete_square"
+        ],
+        "title": "两个完全平方"
       }
     ]
   }

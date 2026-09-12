@@ -2,8 +2,11 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch08.congruence-inertia.v",
-        "entity.ch08.congruence-inertia.result"
+        "entity.ch08.congruence-inertia.matrix",
+        "entity.ch08.congruence-inertia.substitution",
+        "entity.ch08.congruence-inertia.congruent",
+        "entity.ch08.congruence-inertia.point",
+        "entity.ch08.congruence-inertia.coordinates"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +17,27 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "B=C^T A C; inertia(A)=inertia(B)",
       "formula_symbols": [
-        "v",
-        "result"
+        "matrix",
+        "substitution",
+        "congruent",
+        "point",
+        "coordinates"
       ],
       "id": "claim.ch08.congruence-inertia",
       "relation_refs": [
-        "relation.ch08.congruence-inertia.maps"
+        "relation.ch08.congruence-inertia.congruence",
+        "relation.ch08.congruence-inertia.substitution"
       ],
       "source_refs": [
         "第8章 二次型与主轴定理 / 8.5 合同变换与惯性定理::1::sha256:56c25237b5b5de76814bafedefc9cb0f45eb760f28607bef2d8020b428692009"
       ],
       "stage_refs": [
-        "stage.ch08.congruence-inertia.input"
+        "original",
+        "congruence"
       ],
-      "statement": "8.5 合同变换与惯性定理 的线性表示保持可检验的向量关系。"
+      "statement": "8.5 合同变换与惯性定理 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +59,14 @@
     ],
     "definition": "8.5 合同变换与惯性定理 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "原二次型惯性: B=C^T A C; inertia(A)=inertia(B)",
+      "非正交合同替换: B=C^T A C; inertia(A)=inertia(B)"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "B=C^T A C; inertia(A)=inertia(B)",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "inertia_preserved",
+      "value_preserved"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,24 +137,24 @@
         "title": "connections"
       }
     ],
-    "summary": "8.5 合同变换与惯性定理 的确定性讲义 artifact。",
+    "summary": "8.5 合同变换与惯性定理 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "congruent": "congruent",
+      "coordinates": "coordinates",
+      "matrix": "matrix",
+      "point": "point",
+      "substitution": "substitution"
     },
     "title": "8.5 合同变换与惯性定理",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "det(A)=a11*a22-a12*a21"
         ],
         "checks": [
           {
-            "expected": [
-              2,
-              4
-            ],
+            "expected": -1.0,
             "name": "result",
             "tolerance": 1e-09
           }
@@ -154,29 +163,58 @@
           "claim.ch08.congruence-inertia"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0
           ]
         ],
-        "id": "example.ch08.congruence-inertia",
-        "kind": "scalar_multiple",
-        "result": [
-          2,
-          4
+        "id": "example.ch08.congruence-inertia.matrix",
+        "kind": "determinant",
+        "result": -1.0,
+        "title": "matrix"
+      },
+      {
+        "calculation": [
+          "det(A)=a11*a22-a12*a21"
         ],
-        "title": "数值例"
+        "checks": [
+          {
+            "expected": -4.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.congruence-inertia"
+        ],
+        "given": [
+          [
+            4.0,
+            2.0
+          ],
+          [
+            2.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch08.congruence-inertia.congruent",
+        "kind": "determinant",
+        "result": -4.0,
+        "title": "congruent"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:068220f5731d909db811efcb6186c7b49ca9452d03ad984c1e42dfd08c91f7cc",
+    "artifact_digest": "sha256:bd1c2eda1db04df50d18d24d7aa368a182474fd393d67309b32b0b7a0f49e793",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:ff5c7eba8b5b3a3859cafec5ba62aa15dab43e4917652254d433faf54491a9fe",
+    "raw_reply_digest": "sha256:5750611078bf31d95061010f73db2e01e87a24c5e1593f00a0643be44403406d",
     "source_hash": "sha256:56c25237b5b5de76814bafedefc9cb0f45eb760f28607bef2d8020b428692009"
   },
   "revision": 1,
@@ -235,13 +273,19 @@
           "claim.ch08.congruence-inertia"
         ],
         "dimension": 2,
-        "id": "entity.ch08.congruence-inertia.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch08.congruence-inertia.matrix",
+        "kind": "matrix",
+        "label": "matrix",
+        "role": "matrix",
         "value": [
-          1,
-          2
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0
+          ]
         ]
       },
       {
@@ -249,13 +293,67 @@
           "claim.ch08.congruence-inertia"
         ],
         "dimension": 2,
-        "id": "entity.ch08.congruence-inertia.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch08.congruence-inertia.substitution",
+        "kind": "matrix",
+        "label": "substitution",
+        "role": "substitution",
         "value": [
-          2,
-          4
+          [
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.congruence-inertia"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.congruence-inertia.congruent",
+        "kind": "matrix",
+        "label": "congruent",
+        "role": "congruent",
+        "value": [
+          [
+            4.0,
+            2.0
+          ],
+          [
+            2.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.congruence-inertia"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.congruence-inertia.point",
+        "kind": "vector",
+        "label": "point",
+        "role": "point",
+        "value": [
+          4.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.congruence-inertia"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.congruence-inertia.coordinates",
+        "kind": "vector",
+        "label": "coordinates",
+        "role": "coordinates",
+        "value": [
+          1.0,
+          2.0
         ]
       }
     ],
@@ -264,35 +362,123 @@
         "claim_refs": [
           "claim.ch08.congruence-inertia"
         ],
-        "id": "relation.ch08.congruence-inertia.maps",
+        "id": "relation.ch08.congruence-inertia.congruence",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "congruent": [
+            [
+              4.0,
+              2.0
+            ],
+            [
+              2.0,
+              0.0
+            ]
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ],
+          "rank": 2,
+          "signature": [
+            1,
+            1,
+            0
+          ],
+          "substitution": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
         },
-        "source_ref": "entity.ch08.congruence-inertia.v",
-        "target_ref": "entity.ch08.congruence-inertia.result"
+        "source_ref": "entity.ch08.congruence-inertia.matrix",
+        "target_ref": "entity.ch08.congruence-inertia.congruent"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.congruence-inertia"
+        ],
+        "id": "relation.ch08.congruence-inertia.substitution",
+        "kind": "maps_to",
+        "parameters": {
+          "coordinates": [
+            1.0,
+            2.0
+          ],
+          "point": [
+            4.0,
+            2.0
+          ],
+          "substitution": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "value": 12.0
+        },
+        "source_ref": "entity.ch08.congruence-inertia.coordinates",
+        "target_ref": "entity.ch08.congruence-inertia.point"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "quadratic_level_set",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "B=C^T A C; inertia(A)=inertia(B)",
         "expected_invariants": [
-          "finite numeric result"
+          "inertia_preserved"
         ],
-        "id": "stage.ch08.congruence-inertia.input",
+        "id": "original",
         "input_entity_refs": [
-          "entity.ch08.congruence-inertia.v"
+          "entity.ch08.congruence-inertia.matrix"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch08.congruence-inertia.result"
+          "entity.ch08.congruence-inertia.matrix"
         ],
         "relation_refs": [
-          "relation.ch08.congruence-inertia.maps"
+          "relation.ch08.congruence-inertia.congruence"
         ],
-        "title": "输入与结果"
+        "title": "原二次型惯性"
+      },
+      {
+        "caption": "B=C^T A C; inertia(A)=inertia(B)",
+        "expected_invariants": [
+          "inertia_preserved",
+          "value_preserved"
+        ],
+        "id": "congruence",
+        "input_entity_refs": [
+          "entity.ch08.congruence-inertia.matrix",
+          "entity.ch08.congruence-inertia.substitution",
+          "entity.ch08.congruence-inertia.coordinates"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.congruence-inertia.congruent",
+          "entity.ch08.congruence-inertia.point"
+        ],
+        "relation_refs": [
+          "relation.ch08.congruence-inertia.congruence",
+          "relation.ch08.congruence-inertia.substitution"
+        ],
+        "title": "非正交合同替换"
       }
     ]
   }

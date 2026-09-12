@@ -117,7 +117,8 @@ class VisualSemanticsCompiler:
         chapter5_owned = resolved_topic.startswith("ch05.")
         chapter6_owned = resolved_topic.startswith("ch06.")
         chapter7_owned = resolved_topic.startswith("ch07.")
-        if chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned:
+        chapter8_owned = resolved_topic.startswith("ch08.")
+        if chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned or chapter8_owned:
             family_result = family_compiler_for(semantics.scene_family).compile(
                 topic_id=resolved_topic, semantics=semantics, context=context
             )
@@ -134,7 +135,7 @@ class VisualSemanticsCompiler:
             else:
                 for alias in family_aliases:
                     aliases.setdefault(str(alias), []).append(str(alias))
-        if chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned:
+        if chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned or chapter8_owned:
             operation_aliases = {
                 str(operation.get("alias")): str(operation.get("op", ""))
                 for operation in operations
@@ -144,7 +145,7 @@ class VisualSemanticsCompiler:
                 *(entity.id for entity in semantics.entities),
                 *(relation.id for relation in semantics.relations),
             }
-            if chapter5_owned or chapter6_owned or chapter7_owned:
+            if chapter5_owned or chapter6_owned or chapter7_owned or chapter8_owned:
                 required_semantic_ids.update(stage.id for stage in semantics.stages)
             alias_issues: list[CompileIssue] = []
             alias_owners: dict[str, str] = {}
@@ -154,7 +155,7 @@ class VisualSemanticsCompiler:
                     alias_issues.append(CompileIssue("missing_family_alias", f"$.aliases.{semantic_id}", "family emitted no evidence alias"))
                     continue
                 for alias in bound:
-                    if (chapter5_owned or chapter6_owned or chapter7_owned) and alias in alias_owners and alias_owners[alias] != semantic_id:
+                    if (chapter5_owned or chapter6_owned or chapter7_owned or chapter8_owned) and alias in alias_owners and alias_owners[alias] != semantic_id:
                         alias_issues.append(CompileIssue('shared_family_alias', f'$.aliases.{semantic_id}', alias))
                     alias_owners[alias] = semantic_id
                     operation_name = operation_aliases.get(alias, "")
@@ -165,7 +166,7 @@ class VisualSemanticsCompiler:
                 alias_issues.append(CompileIssue("missing_computed_invariant", "$.family_evidence.invariants", "family did not prove every required invariant"))
             if alias_issues:
                 raise VisualCompileError(tuple(alias_issues))
-        if not chapter4_owned and not chapter5_owned and not chapter6_owned and not chapter7_owned:
+        if not chapter4_owned and not chapter5_owned and not chapter6_owned and not chapter7_owned and not chapter8_owned:
             for entity in semantics.entities:
                 entity_operations, entity_aliases = self._compile_entity(entity, semantics.scene_kind, context)
                 operations.extend(entity_operations)
@@ -178,16 +179,16 @@ class VisualSemanticsCompiler:
                 operations.extend(relation_operations)
                 aliases.setdefault(relation.id, []).extend(relation_aliases)
 
-        if not resolved_topic.startswith(("ch04.", "ch05.", "ch06.", "ch07.")):
+        if not resolved_topic.startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08.")):
             self._emit_declared_capability_evidence(semantics, context, operations, aliases, resolved_topic)
 
         storyboard, stage_operations, stage_issues = self._compile_storyboard(
-            semantics, context, aliases, emit_generic_geometry=not (chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned)
+            semantics, context, aliases, emit_generic_geometry=not (chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned or chapter8_owned)
         )
         if stage_issues:
             raise VisualCompileError(tuple(stage_issues))
         operations.extend(stage_operations)
-        if chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned:
+        if chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned or chapter8_owned:
             operation_names = {str(operation.get("op")) for operation in operations}
             missing_operations = set(contract.expected_operations) - operation_names
             if missing_operations:

@@ -316,6 +316,16 @@ def compile_chapter_07(*, output_root=None, index_path=None, reviewed_payloads=N
     return resources
 
 
+def compile_chapter_08(*, output_root=None, index_path=None, reviewed_payloads=None, reviewed_root=None):
+    from linear_algebra.catalog.chapter_08 import TOPICS
+    payloads=dict(reviewed_payloads if reviewed_payloads is not None else load_reviewed_artifacts()); topics=tuple(t.id for t in TOPICS)
+    if set(topics)!={k for k in payloads if k.startswith('ch08.')}: raise ValueError('chapter 8 requires exactly 6 reviewed artifacts')
+    resources=tuple(_compile_reviewed_payload(t,payloads[t]) for t in topics)
+    out=Path(output_root or Path(__file__).with_name('data')/'compiled'); idx=Path(index_path) if index_path is not None else out.parent/'index.json'
+    writes={out/f'{r.topic_id}.json':r.to_dict() for r in resources}; writes[idx]=_merged_chapter_index_payload(resources,chapter=8,output_path=idx)
+    review=Path(reviewed_root) if reviewed_root is not None else Path(__file__).with_name('data')/'revieweds'/'ch08'
+    writes.update({review/t/'r1.json':payloads[t] for t in topics}); _transactional_write_json(writes); return resources
+
 def _transactional_write_json(payloads: Mapping[Path, Mapping[str, object]]) -> None:
     """Stage the whole bundle, then replace with byte-preserving rollback.
 
@@ -620,6 +630,7 @@ __all__ = [
     "compile_chapter_04",
     "compile_chapter_06",
     "compile_chapter_07",
+    "compile_chapter_08",
     "compiled_resource_store",
     "upsert_chapter_index",
     "write_teaching_index",

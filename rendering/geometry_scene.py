@@ -463,14 +463,6 @@ class GeometrySceneController:
             and abs(vectors[0][0] * vectors[1][1] - vectors[0][1] * vectors[1][0]) <= 1e-12
         )
 
-    def add_teaching_quadratic_contour(self, vertices: Iterable[tuple[float, float]], *, alias: str = "quadratic", color: str = "#4c9f70") -> None:
-        points = tuple((float(x), float(y)) for x, y in vertices)
-        if len(points) >= 2:
-            self._replace_teaching_actor(f"geometry:teaching:quadratic:{alias}:contour", _segments_mesh(list(zip(points, points[1:] + points[:1]))), color=color, line_width=2.5)
-
-    def add_teaching_quadratic_axes(self, axes: Iterable[tuple[tuple[float, float], tuple[float, float]]], *, alias: str = "quadratic") -> None:
-        for index, (start, end) in enumerate(axes):
-            self._replace_teaching_actor(f"geometry:teaching:quadratic:{alias}:axis:{index}", _segments_mesh([(start, end)]), color="#d97845", line_width=2.0)
         if is_line:
             vx, vy = next((vector for vector in vectors if hypot(*vector) > 1e-12), (0.0, 0.0))
             length = max(abs(bounds[1] - bounds[0]), abs(bounds[3] - bounds[2]))
@@ -495,6 +487,17 @@ class GeometrySceneController:
             )
         name = f"geometry:teaching:subspace:{alias}" if alias else "geometry:teaching:subspace"
         self._replace_teaching_actor(name, mesh, color=color, opacity=opacity, show_edges=True)
+
+    def add_teaching_quadratic_contour(self, vertices: Iterable[tuple[float, float]], *, segments=None, alias: str = "quadratic", color: str = "#4c9f70") -> None:
+        points = tuple((float(x), float(y)) for x, y in vertices)
+        if len(points) >= 2:
+            edges = list(zip(points, points[1:] + points[:1])) if segments is None else [(points[i],points[j]) for i,j in segments]
+            if edges:
+                self._replace_teaching_actor(f"geometry:teaching:quadratic:{alias}:contour", _segments_mesh(edges), color=color, line_width=2.5)
+
+    def add_teaching_quadratic_axes(self, axes: Iterable[tuple[tuple[float, float], tuple[float, float]]], *, alias: str = "quadratic") -> None:
+        for index, (start, end) in enumerate(axes):
+            self._replace_teaching_actor(f"geometry:teaching:quadratic:{alias}:axis:{index}", _segments_mesh([(start, end)]), color="#d97845", line_width=2.0)
 
     def add_teaching_staged_transform(
         self,

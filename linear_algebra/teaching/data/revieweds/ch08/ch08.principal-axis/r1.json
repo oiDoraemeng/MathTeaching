@@ -2,8 +2,11 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch08.principal-axis.v",
-        "entity.ch08.principal-axis.result"
+        "entity.ch08.principal-axis.matrix",
+        "entity.ch08.principal-axis.axes",
+        "entity.ch08.principal-axis.standard",
+        "entity.ch08.principal-axis.point",
+        "entity.ch08.principal-axis.coordinates"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +17,29 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "Q^T A Q=diag(8,2); x=Qy",
       "formula_symbols": [
-        "v",
-        "result"
+        "matrix",
+        "axes",
+        "standard",
+        "point",
+        "coordinates"
       ],
       "id": "claim.ch08.principal-axis",
       "relation_refs": [
-        "relation.ch08.principal-axis.maps"
+        "relation.ch08.principal-axis.orthogonal_axes",
+        "relation.ch08.principal-axis.rotation",
+        "relation.ch08.principal-axis.standard_form"
       ],
       "source_refs": [
         "第8章 二次型与主轴定理 / 8.3 主轴定理：把歪的图形\"转正\" / 8.3.1 主轴定理::1::sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435"
       ],
       "stage_refs": [
-        "stage.ch08.principal-axis.input"
+        "original",
+        "axes",
+        "standard"
       ],
-      "statement": "8.3.1 主轴定理 的线性表示保持可检验的向量关系。"
+      "statement": "8.3.1 主轴定理 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +61,16 @@
     ],
     "definition": "8.3.1 主轴定理 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "原始倾斜二次型: Q^T A Q=diag(8,2); x=Qy",
+      "正交主轴坐标: Q^T A Q=diag(8,2); x=Qy",
+      "无交叉项标准形: Q^T A Q=diag(8,2); x=Qy"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "Q^T A Q=diag(8,2); x=Qy",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "axes_are_eigenvectors",
+      "same_quadratic_value",
+      "cross_term_zero"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,24 +141,24 @@
         "title": "connections"
       }
     ],
-    "summary": "8.3.1 主轴定理 的确定性讲义 artifact。",
+    "summary": "8.3.1 主轴定理 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "axes": "axes",
+      "coordinates": "coordinates",
+      "matrix": "matrix",
+      "point": "point",
+      "standard": "standard"
     },
     "title": "8.3.1 主轴定理",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "det(A)=a11*a22-a12*a21"
         ],
         "checks": [
           {
-            "expected": [
-              2,
-              4
-            ],
+            "expected": 16.0,
             "name": "result",
             "tolerance": 1e-09
           }
@@ -154,29 +167,58 @@
           "claim.ch08.principal-axis"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            5.0,
+            -3.0
+          ],
+          [
+            -3.0,
+            5.0
           ]
         ],
-        "id": "example.ch08.principal-axis",
-        "kind": "scalar_multiple",
-        "result": [
-          2,
-          4
+        "id": "example.ch08.principal-axis.matrix",
+        "kind": "determinant",
+        "result": 16.0,
+        "title": "matrix"
+      },
+      {
+        "calculation": [
+          "det(A)=a11*a22-a12*a21"
         ],
-        "title": "数值例"
+        "checks": [
+          {
+            "expected": 16.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "given": [
+          [
+            8.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0
+          ]
+        ],
+        "id": "example.ch08.principal-axis.standard",
+        "kind": "determinant",
+        "result": 16.0,
+        "title": "standard"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:ae7c8303f1321776c78d91fbd67fe57a03f426dda1e596cffcca2921aea6c42c",
+    "artifact_digest": "sha256:79932d8d02aecec541661ce91f906f31aedebafcc98d4255a243d813885de21a",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:693216654cd4d67f659dd2beb8db30eeae99e8aecf69eff64df18b0be27455cc",
+    "raw_reply_digest": "sha256:16ec7a3aa8ec862c2b1ac77a917724aed053f585d9280b833d0cd5fc355f8991",
     "source_hash": "sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435"
   },
   "revision": 1,
@@ -236,13 +278,19 @@
           "claim.ch08.principal-axis"
         ],
         "dimension": 2,
-        "id": "entity.ch08.principal-axis.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch08.principal-axis.matrix",
+        "kind": "matrix",
+        "label": "matrix",
+        "role": "matrix",
         "value": [
-          1,
-          2
+          [
+            5.0,
+            -3.0
+          ],
+          [
+            -3.0,
+            5.0
+          ]
         ]
       },
       {
@@ -250,13 +298,67 @@
           "claim.ch08.principal-axis"
         ],
         "dimension": 2,
-        "id": "entity.ch08.principal-axis.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch08.principal-axis.axes",
+        "kind": "matrix",
+        "label": "axes",
+        "role": "axes",
         "value": [
-          2,
-          4
+          [
+            0.7071067811865475,
+            0.7071067811865475
+          ],
+          [
+            -0.7071067811865475,
+            0.7071067811865475
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.principal-axis.standard",
+        "kind": "matrix",
+        "label": "standard",
+        "role": "standard",
+        "value": [
+          [
+            8.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.principal-axis.point",
+        "kind": "vector",
+        "label": "point",
+        "role": "point",
+        "value": [
+          2.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.principal-axis.coordinates",
+        "kind": "vector",
+        "label": "coordinates",
+        "role": "coordinates",
+        "value": [
+          0.7071067811865475,
+          2.1213203435596424
         ]
       }
     ],
@@ -265,35 +367,178 @@
         "claim_refs": [
           "claim.ch08.principal-axis"
         ],
-        "id": "relation.ch08.principal-axis.maps",
+        "id": "relation.ch08.principal-axis.orthogonal_axes",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "axes": [
+            [
+              0.7071067811865475,
+              0.7071067811865475
+            ],
+            [
+              -0.7071067811865475,
+              0.7071067811865475
+            ]
+          ],
+          "eigenvalues": [
+            8.0,
+            2.0
+          ],
+          "matrix": [
+            [
+              5.0,
+              -3.0
+            ],
+            [
+              -3.0,
+              5.0
+            ]
+          ]
         },
-        "source_ref": "entity.ch08.principal-axis.v",
-        "target_ref": "entity.ch08.principal-axis.result"
+        "source_ref": "entity.ch08.principal-axis.matrix",
+        "target_ref": "entity.ch08.principal-axis.axes"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "relation.ch08.principal-axis.rotation",
+        "kind": "maps_to",
+        "parameters": {
+          "axes": [
+            [
+              0.7071067811865475,
+              0.7071067811865475
+            ],
+            [
+              -0.7071067811865475,
+              0.7071067811865475
+            ]
+          ],
+          "coordinates": [
+            0.7071067811865475,
+            2.1213203435596424
+          ],
+          "point": [
+            2.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch08.principal-axis.point",
+        "target_ref": "entity.ch08.principal-axis.coordinates"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "relation.ch08.principal-axis.standard_form",
+        "kind": "maps_to",
+        "parameters": {
+          "axes": [
+            [
+              0.7071067811865475,
+              0.7071067811865475
+            ],
+            [
+              -0.7071067811865475,
+              0.7071067811865475
+            ]
+          ],
+          "matrix": [
+            [
+              5.0,
+              -3.0
+            ],
+            [
+              -3.0,
+              5.0
+            ]
+          ],
+          "signature": [
+            2,
+            0,
+            0
+          ],
+          "standard": [
+            [
+              8.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch08.principal-axis.matrix",
+        "target_ref": "entity.ch08.principal-axis.standard"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "quadratic_level_set",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "Q^T A Q=diag(8,2); x=Qy",
         "expected_invariants": [
-          "finite numeric result"
+          "axes_are_eigenvectors"
         ],
-        "id": "stage.ch08.principal-axis.input",
+        "id": "original",
         "input_entity_refs": [
-          "entity.ch08.principal-axis.v"
+          "entity.ch08.principal-axis.matrix",
+          "entity.ch08.principal-axis.point"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch08.principal-axis.result"
+          "entity.ch08.principal-axis.matrix"
         ],
         "relation_refs": [
-          "relation.ch08.principal-axis.maps"
+          "relation.ch08.principal-axis.orthogonal_axes"
         ],
-        "title": "输入与结果"
+        "title": "原始倾斜二次型"
+      },
+      {
+        "caption": "Q^T A Q=diag(8,2); x=Qy",
+        "expected_invariants": [
+          "axes_are_eigenvectors",
+          "same_quadratic_value"
+        ],
+        "id": "axes",
+        "input_entity_refs": [
+          "entity.ch08.principal-axis.matrix",
+          "entity.ch08.principal-axis.axes",
+          "entity.ch08.principal-axis.point"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.principal-axis.axes",
+          "entity.ch08.principal-axis.coordinates"
+        ],
+        "relation_refs": [
+          "relation.ch08.principal-axis.orthogonal_axes",
+          "relation.ch08.principal-axis.rotation"
+        ],
+        "title": "正交主轴坐标"
+      },
+      {
+        "caption": "Q^T A Q=diag(8,2); x=Qy",
+        "expected_invariants": [
+          "cross_term_zero",
+          "same_quadratic_value"
+        ],
+        "id": "standard",
+        "input_entity_refs": [
+          "entity.ch08.principal-axis.matrix",
+          "entity.ch08.principal-axis.axes",
+          "entity.ch08.principal-axis.coordinates"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.principal-axis.standard"
+        ],
+        "relation_refs": [
+          "relation.ch08.principal-axis.standard_form"
+        ],
+        "title": "无交叉项标准形"
       }
     ]
   }

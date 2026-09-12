@@ -32,6 +32,7 @@ class ClaimEvidence:
 class EvidenceLedger:
     entries: tuple[ClaimEvidence, ...]
     endpoint_error: float | None = None
+    cross_term_after_rotation: float | None = None
 
     def for_claim(self, claim_id: str) -> ClaimEvidence | None:
         return next((entry for entry in self.entries if entry.claim_id == claim_id), None)
@@ -89,7 +90,8 @@ def build_evidence_ledger(
     from collections.abc import Mapping
     family_evidence = getattr(compiled, 'family_evidence', None)
     endpoint_error = family_evidence.get('endpoint_error') if isinstance(family_evidence, Mapping) else None
-    return EvidenceLedger(tuple(entries), endpoint_error), tuple(sorted(issues, key=lambda issue: (issue.claim_id, issue.code, issue.path, issue.message)))
+    cross_term = family_evidence.get('cross_term_after_rotation') if isinstance(family_evidence, Mapping) else None
+    return EvidenceLedger(tuple(entries), endpoint_error, cross_term), tuple(sorted(issues, key=lambda issue: (issue.claim_id, issue.code, issue.path, issue.message)))
 
 
 __all__ = ["ClaimEvidence", "EvidenceIssue", "EvidenceLedger", "build_evidence_ledger"]

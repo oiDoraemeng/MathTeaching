@@ -2,8 +2,9 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch08.quadratic.level-sets.v",
-        "entity.ch08.quadratic.level-sets.result"
+        "entity.ch08.quadratic.level-sets.aligned",
+        "entity.ch08.quadratic.level-sets.tilted",
+        "entity.ch08.quadratic.level-sets.rotation"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +15,24 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "x^T A x=1; B=R A R^T",
       "formula_symbols": [
-        "v",
-        "result"
+        "aligned",
+        "tilted",
+        "rotation"
       ],
       "id": "claim.ch08.quadratic.level-sets",
       "relation_refs": [
-        "relation.ch08.quadratic.level-sets.maps"
+        "relation.ch08.quadratic.level-sets.level_comparison"
       ],
       "source_refs": [
         "第8章 二次型与主轴定理 / 8.2 二次型的几何意义::1::sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b"
       ],
       "stage_refs": [
-        "stage.ch08.quadratic.level-sets.input"
+        "aligned",
+        "tilted"
       ],
-      "statement": "8.2 二次型的几何意义 的线性表示保持可检验的向量关系。"
+      "statement": "8.2 二次型的几何意义 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +54,13 @@
     ],
     "definition": "8.2 二次型的几何意义 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "无交叉项的椭圆: x^T A x=1; B=R A R^T",
+      "旋转后的倾斜椭圆: x^T A x=1; B=R A R^T"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "x^T A x=1; B=R A R^T",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "same_level_shape"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,24 +131,22 @@
         "title": "connections"
       }
     ],
-    "summary": "8.2 二次型的几何意义 的确定性讲义 artifact。",
+    "summary": "8.2 二次型的几何意义 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "aligned": "aligned",
+      "rotation": "rotation",
+      "tilted": "tilted"
     },
     "title": "8.2 二次型的几何意义",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "det(A)=a11*a22-a12*a21"
         ],
         "checks": [
           {
-            "expected": [
-              2,
-              4
-            ],
+            "expected": 4.0,
             "name": "result",
             "tolerance": 1e-09
           }
@@ -154,29 +155,58 @@
           "claim.ch08.quadratic.level-sets"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            4.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
           ]
         ],
-        "id": "example.ch08.quadratic.level-sets",
-        "kind": "scalar_multiple",
-        "result": [
-          2,
-          4
+        "id": "example.ch08.quadratic.level-sets.aligned",
+        "kind": "determinant",
+        "result": 4.0,
+        "title": "aligned"
+      },
+      {
+        "calculation": [
+          "det(A)=a11*a22-a12*a21"
         ],
-        "title": "数值例"
+        "checks": [
+          {
+            "expected": 4.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.quadratic.level-sets"
+        ],
+        "given": [
+          [
+            2.5,
+            1.5
+          ],
+          [
+            1.5,
+            2.5
+          ]
+        ],
+        "id": "example.ch08.quadratic.level-sets.tilted",
+        "kind": "determinant",
+        "result": 4.0,
+        "title": "tilted"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:51180a8662874c0f4516a6f165ec30d2ec09865e9eb97b1449cff950cda13463",
+    "artifact_digest": "sha256:7530143a662b8b3d562007871f9b30f0151a3a811b4365dd940c2723d7c6dfbd",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:0bd213e8354a8244a28e3c72eb4882a4f98b9e2d51870e630f0af38c3e158150",
+    "raw_reply_digest": "sha256:f472954be58d8e9aaac6285b9bd8810590c2a80877f2f225943bbbc8c816c67a",
     "source_hash": "sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b"
   },
   "revision": 1,
@@ -235,13 +265,19 @@
           "claim.ch08.quadratic.level-sets"
         ],
         "dimension": 2,
-        "id": "entity.ch08.quadratic.level-sets.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch08.quadratic.level-sets.aligned",
+        "kind": "matrix",
+        "label": "aligned",
+        "role": "aligned",
         "value": [
-          1,
-          2
+          [
+            4.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ]
       },
       {
@@ -249,13 +285,39 @@
           "claim.ch08.quadratic.level-sets"
         ],
         "dimension": 2,
-        "id": "entity.ch08.quadratic.level-sets.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch08.quadratic.level-sets.tilted",
+        "kind": "matrix",
+        "label": "tilted",
+        "role": "tilted",
         "value": [
-          2,
-          4
+          [
+            2.5,
+            1.5
+          ],
+          [
+            1.5,
+            2.5
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.level-sets"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.level-sets.rotation",
+        "kind": "matrix",
+        "label": "rotation",
+        "role": "rotation",
+        "value": [
+          [
+            0.7071067811865475,
+            -0.7071067811865475
+          ],
+          [
+            0.7071067811865475,
+            0.7071067811865475
+          ]
         ]
       }
     ],
@@ -264,35 +326,93 @@
         "claim_refs": [
           "claim.ch08.quadratic.level-sets"
         ],
-        "id": "relation.ch08.quadratic.level-sets.maps",
+        "id": "relation.ch08.quadratic.level-sets.level_comparison",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "aligned": [
+            [
+              4.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "eigenvalues": [
+            1.0,
+            4.0
+          ],
+          "level": 1.0,
+          "rotation": [
+            [
+              0.7071067811865475,
+              -0.7071067811865475
+            ],
+            [
+              0.7071067811865475,
+              0.7071067811865475
+            ]
+          ],
+          "signature": [
+            2,
+            0,
+            0
+          ],
+          "tilted": [
+            [
+              2.5,
+              1.5
+            ],
+            [
+              1.5,
+              2.5
+            ]
+          ]
         },
-        "source_ref": "entity.ch08.quadratic.level-sets.v",
-        "target_ref": "entity.ch08.quadratic.level-sets.result"
+        "source_ref": "entity.ch08.quadratic.level-sets.aligned",
+        "target_ref": "entity.ch08.quadratic.level-sets.tilted"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "quadratic_level_set",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "x^T A x=1; B=R A R^T",
         "expected_invariants": [
-          "finite numeric result"
+          "same_level_shape"
         ],
-        "id": "stage.ch08.quadratic.level-sets.input",
+        "id": "aligned",
         "input_entity_refs": [
-          "entity.ch08.quadratic.level-sets.v"
+          "entity.ch08.quadratic.level-sets.aligned"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch08.quadratic.level-sets.result"
+          "entity.ch08.quadratic.level-sets.aligned"
         ],
         "relation_refs": [
-          "relation.ch08.quadratic.level-sets.maps"
+          "relation.ch08.quadratic.level-sets.level_comparison"
         ],
-        "title": "输入与结果"
+        "title": "无交叉项的椭圆"
+      },
+      {
+        "caption": "x^T A x=1; B=R A R^T",
+        "expected_invariants": [
+          "same_level_shape"
+        ],
+        "id": "tilted",
+        "input_entity_refs": [
+          "entity.ch08.quadratic.level-sets.aligned",
+          "entity.ch08.quadratic.level-sets.rotation"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.quadratic.level-sets.tilted"
+        ],
+        "relation_refs": [
+          "relation.ch08.quadratic.level-sets.level_comparison"
+        ],
+        "title": "旋转后的倾斜椭圆"
       }
     ]
   }

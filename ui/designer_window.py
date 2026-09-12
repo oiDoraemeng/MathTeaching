@@ -2116,7 +2116,7 @@ class MainWindow:
             self._pane_scene().geometry_controller.add_teaching_oriented_area(vectors, alias=str(operation.get("alias", "oriented-area")), origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#d97845")), opacity=float(operation.get("opacity", 0.28)))  # type: ignore[arg-type]
         elif name == "geometry.quadratic_level_set":
             controller = self._pane_scene().geometry_controller
-            controller.add_teaching_quadratic_contour(operation.get("contour_vertices", ()), alias=str(operation.get("alias", "quadratic")))
+            controller.add_teaching_quadratic_contour(operation.get("contour_vertices", ()), segments=operation.get("contour_segments", ()), alias=str(operation.get("alias", "quadratic")))
             controller.add_teaching_quadratic_axes(operation.get("axis_segments", ()), alias=str(operation.get("alias", "quadratic")))
         else:
             raise CommandError(f"宿主不支持操作: {name}")

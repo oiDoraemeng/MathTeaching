@@ -2,8 +2,9 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch08.definiteness.v",
-        "entity.ch08.definiteness.result"
+        "entity.ch08.definiteness.positive",
+        "entity.ch08.definiteness.indefinite",
+        "entity.ch08.definiteness.semidefinite"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +15,27 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "signature=(positive,negative,zero)",
       "formula_symbols": [
-        "v",
-        "result"
+        "positive",
+        "indefinite",
+        "semidefinite"
       ],
       "id": "claim.ch08.definiteness",
       "relation_refs": [
-        "relation.ch08.definiteness.maps"
+        "relation.ch08.definiteness.positive",
+        "relation.ch08.definiteness.indefinite",
+        "relation.ch08.definiteness.semidefinite"
       ],
       "source_refs": [
         "第8章 二次型与主轴定理 / 8.4 定性：正定、负定、不定::1::sha256:d7d09283917c2a50e272f7ebbb15a47d552044c257a8306cf8e3259bb4e8a595"
       ],
       "stage_refs": [
-        "stage.ch08.definiteness.input"
+        "positive",
+        "indefinite",
+        "semidefinite"
       ],
-      "statement": "8.4 定性：正定、负定、不定 的线性表示保持可检验的向量关系。"
+      "statement": "8.4 定性：正定、负定、不定 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +57,16 @@
     ],
     "definition": "8.4 定性：正定、负定、不定 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "正定椭圆: signature=(positive,negative,zero)",
+      "不定双曲线: signature=(positive,negative,zero)",
+      "半正定平行直线: signature=(positive,negative,zero)"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "signature=(positive,negative,zero)",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "positive_classification",
+      "indefinite_classification",
+      "semidefinite_classification"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,24 +137,22 @@
         "title": "connections"
       }
     ],
-    "summary": "8.4 定性：正定、负定、不定 的确定性讲义 artifact。",
+    "summary": "8.4 定性：正定、负定、不定 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "indefinite": "indefinite",
+      "positive": "positive",
+      "semidefinite": "semidefinite"
     },
     "title": "8.4 定性：正定、负定、不定",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "det(A)=a11*a22-a12*a21"
         ],
         "checks": [
           {
-            "expected": [
-              2,
-              4
-            ],
+            "expected": 2.0,
             "name": "result",
             "tolerance": 1e-09
           }
@@ -154,29 +161,87 @@
           "claim.ch08.definiteness"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
           ]
         ],
-        "id": "example.ch08.definiteness",
-        "kind": "scalar_multiple",
-        "result": [
-          2,
-          4
+        "id": "example.ch08.definiteness.positive",
+        "kind": "determinant",
+        "result": 2.0,
+        "title": "positive"
+      },
+      {
+        "calculation": [
+          "det(A)=a11*a22-a12*a21"
         ],
-        "title": "数值例"
+        "checks": [
+          {
+            "expected": -1.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.definiteness"
+        ],
+        "given": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0
+          ]
+        ],
+        "id": "example.ch08.definiteness.indefinite",
+        "kind": "determinant",
+        "result": -1.0,
+        "title": "indefinite"
+      },
+      {
+        "calculation": [
+          "det(A)=a11*a22-a12*a21"
+        ],
+        "checks": [
+          {
+            "expected": 0.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.definiteness"
+        ],
+        "given": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch08.definiteness.semidefinite",
+        "kind": "determinant",
+        "result": 0.0,
+        "title": "semidefinite"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:b605f252901baece57bdf96ab4f550cf9c097527082c95b6b7e061c199c0f08d",
+    "artifact_digest": "sha256:c2911d12327907a5bf39ac8d036d4b9ea2009a9b1cf4ca3832932162a6cde2e4",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:d0025495374b52cac5fc17ebf3c5a93cfe9fbd78dfecef6ff888e3687f8fc7cc",
+    "raw_reply_digest": "sha256:e4d8996a8eca80eab65b8682ad32c4e52ec0cc1a80c3f58edc67db7be7245376",
     "source_hash": "sha256:d7d09283917c2a50e272f7ebbb15a47d552044c257a8306cf8e3259bb4e8a595"
   },
   "revision": 1,
@@ -234,13 +299,19 @@
           "claim.ch08.definiteness"
         ],
         "dimension": 2,
-        "id": "entity.ch08.definiteness.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch08.definiteness.positive",
+        "kind": "matrix",
+        "label": "positive",
+        "role": "positive",
         "value": [
-          1,
-          2
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ]
       },
       {
@@ -248,13 +319,39 @@
           "claim.ch08.definiteness"
         ],
         "dimension": 2,
-        "id": "entity.ch08.definiteness.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch08.definiteness.indefinite",
+        "kind": "matrix",
+        "label": "indefinite",
+        "role": "indefinite",
         "value": [
-          2,
-          4
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.definiteness"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.definiteness.semidefinite",
+        "kind": "matrix",
+        "label": "semidefinite",
+        "role": "semidefinite",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
         ]
       }
     ],
@@ -263,35 +360,149 @@
         "claim_refs": [
           "claim.ch08.definiteness"
         ],
-        "id": "relation.ch08.definiteness.maps",
+        "id": "relation.ch08.definiteness.positive",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "eigenvalues": [
+            1.0,
+            2.0
+          ],
+          "matrix": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "signature": [
+            2,
+            0,
+            0
+          ]
         },
-        "source_ref": "entity.ch08.definiteness.v",
-        "target_ref": "entity.ch08.definiteness.result"
+        "source_ref": "entity.ch08.definiteness.positive",
+        "target_ref": "entity.ch08.definiteness.positive"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.definiteness"
+        ],
+        "id": "relation.ch08.definiteness.indefinite",
+        "kind": "maps_to",
+        "parameters": {
+          "eigenvalues": [
+            -1.0,
+            1.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ],
+          "signature": [
+            1,
+            1,
+            0
+          ]
+        },
+        "source_ref": "entity.ch08.definiteness.indefinite",
+        "target_ref": "entity.ch08.definiteness.indefinite"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.definiteness"
+        ],
+        "id": "relation.ch08.definiteness.semidefinite",
+        "kind": "maps_to",
+        "parameters": {
+          "eigenvalues": [
+            0.0,
+            1.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          "signature": [
+            1,
+            0,
+            1
+          ]
+        },
+        "source_ref": "entity.ch08.definiteness.semidefinite",
+        "target_ref": "entity.ch08.definiteness.semidefinite"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "quadratic_level_set",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "signature=(positive,negative,zero)",
         "expected_invariants": [
-          "finite numeric result"
+          "positive_classification"
         ],
-        "id": "stage.ch08.definiteness.input",
+        "id": "positive",
         "input_entity_refs": [
-          "entity.ch08.definiteness.v"
+          "entity.ch08.definiteness.positive"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch08.definiteness.result"
+          "entity.ch08.definiteness.positive"
         ],
         "relation_refs": [
-          "relation.ch08.definiteness.maps"
+          "relation.ch08.definiteness.positive"
         ],
-        "title": "输入与结果"
+        "title": "正定椭圆"
+      },
+      {
+        "caption": "signature=(positive,negative,zero)",
+        "expected_invariants": [
+          "indefinite_classification"
+        ],
+        "id": "indefinite",
+        "input_entity_refs": [
+          "entity.ch08.definiteness.indefinite"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.definiteness.indefinite"
+        ],
+        "relation_refs": [
+          "relation.ch08.definiteness.indefinite"
+        ],
+        "title": "不定双曲线"
+      },
+      {
+        "caption": "signature=(positive,negative,zero)",
+        "expected_invariants": [
+          "semidefinite_classification"
+        ],
+        "id": "semidefinite",
+        "input_entity_refs": [
+          "entity.ch08.definiteness.semidefinite"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.definiteness.semidefinite"
+        ],
+        "relation_refs": [
+          "relation.ch08.definiteness.semidefinite"
+        ],
+        "title": "半正定平行直线"
       }
     ]
   }

@@ -185,6 +185,19 @@ def _artifact_payload_generic(topic_id: str, *, status: str = "reviewed") -> dic
 
 def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str, object]:
     payload = _artifact_payload_generic(topic_id, status=status)
+    if topic_id.startswith('ch08.'):
+        from linear_algebra.chapter_08_semantics import spec_for
+        spec=spec_for(topic_id); claim=payload['claims'][0]; ids={e.role:f'entity.{topic_id}.{e.role}' for e in spec.entities}
+        payload['visual_semantics']={'scene_kind':'2d','scene_family':'quadratic_level_set','entities':[{'id':ids[e.role],'kind':e.kind,'dimension':e.dimension,'value':_json_value(e.value),'role':e.role,'label':e.label,'claim_refs':[claim['id']]} for e in spec.entities], 'relations':[{'id':f'relation.{topic_id}.{r.name}','kind':r.kind,'source_ref':ids[r.source_role],'target_ref':ids[r.target_role],'parameters':_json_value(dict(r.parameters)),'claim_refs':[claim['id']]} for r in spec.relations], 'stages':[{'id':f'stage.{topic_id}.{s.name}','title':s.title,'caption':spec.formula,'layout':s.layout,'input_entity_refs':[ids[r] for r in s.input_roles],'output_entity_refs':[ids[r] for r in s.output_roles],'relation_refs':[f'relation.{topic_id}.{r}' for r in s.relation_names],'expected_invariants':list(s.invariants)} for s in spec.stages]}
+        for stage, descriptor in zip(payload['visual_semantics']['stages'],spec.stages): stage['id']=descriptor.name
+        payload['explanation']['derivation']=[s.title+': '+spec.formula for s in spec.stages]
+        examples=[]
+        for entity in spec.entities:
+            if entity.kind!='matrix' or entity.role in ('axes','rotation','substitution'): continue
+            a=entity.value; determinant=a[0][0]*a[1][1]-a[0][1]*a[1][0]
+            examples.append({'id':f'example.{topic_id}.{entity.role}','title':entity.role,'kind':'determinant','given':_json_value(a),'calculation':['det(A)=a11*a22-a12*a21'],'result':determinant,'checks':[{'name':'result','expected':determinant,'tolerance':1e-9}],'claim_refs':[claim['id']]})
+        payload['explanation']['worked_examples']=examples
+        claim['entity_refs']=list(ids.values()); claim['relation_refs']=[r['id'] for r in payload['visual_semantics']['relations']]; claim['stage_refs']=[s['id'] for s in payload['visual_semantics']['stages']]; claim['formula_symbols']=list(spec.roles); claim['formula']=spec.formula; payload['explanation']['formula']=spec.formula; payload['explanation']['invariants']=list(spec.invariants); payload['explanation']['symbol_roles']={r:r for r in spec.roles}; _refresh_digests(payload); return payload
     if topic_id.startswith("ch07."):
         from linear_algebra.chapter_07_semantics import spec_for
         spec = spec_for(topic_id); claim = payload["claims"][0]

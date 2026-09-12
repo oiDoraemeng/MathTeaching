@@ -46,14 +46,21 @@ class QuadraticFamilyCompiler:
             evidence = classify_quadratic(values, payload.get("tolerance", 1e-9)); aliases = ("quadratic__original", "quadratic__principal", "quadratic__standard")
             if dimension == 2:
                 angles = np.linspace(0.0, 2.0 * math.pi, min(128, max(16, int(math.sqrt(sample_count)))), endpoint=False)
-                contour = []
-                for angle in angles:
+                contour = []; source_indices = []
+                for source_index, angle in enumerate(angles):
                     direction = np.array([math.cos(float(angle)), math.sin(float(angle))])
                     denominator = float(direction @ values @ direction)
-                    radius = 1.0 / math.sqrt(abs(denominator)) if abs(denominator) > float(payload.get("tolerance", 1e-9)) else 0.0
+                    if denominator <= float(payload.get("tolerance", 1e-9)):
+                        continue
+                    radius = 1.0 / math.sqrt(denominator)
                     point = direction * radius
-                    if bounds[0] <= point[0] <= bounds[1] and bounds[2] <= point[1] <= bounds[3]: contour.append((float(point[0]), float(point[1])))
-                geometry = {"contour_vertices": tuple(contour), "contour_segments": tuple((index, (index + 1) % len(contour)) for index in range(len(contour))) if contour else ()}
+                    if bounds[0] <= point[0] <= bounds[1] and bounds[2] <= point[1] <= bounds[3]:
+                        contour.append((float(point[0]), float(point[1])))
+                        source_indices.append(source_index)
+                segments = [(i,i+1) for i in range(len(contour)-1) if source_indices[i+1] == source_indices[i]+1]
+                if len(contour)>1 and source_indices[0] == 0 and source_indices[-1] == len(angles)-1:
+                    segments.append((len(contour)-1,0))
+                geometry = {"contour_vertices": tuple(contour), "contour_segments": tuple(segments)}
             else:
                 grid = min(32, max(4, int(round(sample_count ** (1 / 3)))))
                 vertices = tuple((float(x), float(y), float(z)) for x in np.linspace(bounds[0], bounds[1], grid) for y in np.linspace(bounds[2], bounds[3], grid) for z in np.linspace(bounds[4], bounds[5], grid) if abs(float(np.array((x, y, z)) @ values @ np.array((x, y, z))) - 1.0) <= 0.15)

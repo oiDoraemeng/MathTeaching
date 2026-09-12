@@ -12,6 +12,7 @@ from .chapter_04 import Chapter4FamilyCompiler, Chapter4CompileResult, compile_c
 from .chapter_05 import compile_chapter_05
 from .chapter_06 import compile_chapter_06
 from .chapter_07 import compile_chapter_07
+from .chapter_08 import compile_chapter_08
 from .constraints import ConstraintFamilyCompiler
 
 
@@ -31,6 +32,8 @@ class SceneFamilyCompiler:
                 return compile_chapter_06(topic, semantics, kwargs.get('context'))
             if topic.startswith('ch07.'):
                 return compile_chapter_07(topic, semantics, kwargs.get('context'))
+            if topic.startswith('ch08.'):
+                return compile_chapter_08(topic, semantics, kwargs.get('context'))
         return {'family': self.primitive, 'validated': True}
 
 

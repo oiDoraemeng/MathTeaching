@@ -2,8 +2,11 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch08.quadratic.matrix-form.v",
-        "entity.ch08.quadratic.matrix-form.result"
+        "entity.ch08.quadratic.matrix-form.matrix",
+        "entity.ch08.quadratic.matrix-form.coefficients",
+        "entity.ch08.quadratic.matrix-form.point",
+        "entity.ch08.quadratic.matrix-form.image",
+        "entity.ch08.quadratic.matrix-form.value"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +17,27 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "2x^2+2xy+3y^2=x^T A x",
       "formula_symbols": [
-        "v",
-        "result"
+        "matrix",
+        "coefficients",
+        "point",
+        "image",
+        "value"
       ],
       "id": "claim.ch08.quadratic.matrix-form",
       "relation_refs": [
-        "relation.ch08.quadratic.matrix-form.maps"
+        "relation.ch08.quadratic.matrix-form.coefficient_map",
+        "relation.ch08.quadratic.matrix-form.evaluation"
       ],
       "source_refs": [
         "第8章 二次型与主轴定理 / 8.1 二次型的定义与矩阵表示::1::sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7"
       ],
       "stage_refs": [
-        "stage.ch08.quadratic.matrix-form.input"
+        "coefficients",
+        "evaluation"
       ],
-      "statement": "8.1 二次型的定义与矩阵表示 的线性表示保持可检验的向量关系。"
+      "statement": "8.1 二次型的定义与矩阵表示 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +59,14 @@
     ],
     "definition": "8.1 二次型的定义与矩阵表示 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "交叉项拆到两个非对角元: 2x^2+2xy+3y^2=x^T A x",
+      "二次型数值: 2x^2+2xy+3y^2=x^T A x"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "2x^2+2xy+3y^2=x^T A x",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "symmetric_coefficients",
+      "quadratic_evaluation"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,24 +137,24 @@
         "title": "connections"
       }
     ],
-    "summary": "8.1 二次型的定义与矩阵表示 的确定性讲义 artifact。",
+    "summary": "8.1 二次型的定义与矩阵表示 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "coefficients": "coefficients",
+      "image": "image",
+      "matrix": "matrix",
+      "point": "point",
+      "value": "value"
     },
     "title": "8.1 二次型的定义与矩阵表示",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "det(A)=a11*a22-a12*a21"
         ],
         "checks": [
           {
-            "expected": [
-              2,
-              4
-            ],
+            "expected": 5.0,
             "name": "result",
             "tolerance": 1e-09
           }
@@ -154,29 +163,29 @@
           "claim.ch08.quadratic.matrix-form"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            3.0
           ]
         ],
-        "id": "example.ch08.quadratic.matrix-form",
-        "kind": "scalar_multiple",
-        "result": [
-          2,
-          4
-        ],
-        "title": "数值例"
+        "id": "example.ch08.quadratic.matrix-form.matrix",
+        "kind": "determinant",
+        "result": 5.0,
+        "title": "matrix"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:7c957cfabae95dbf2cfe2cec6f9a86416e607188e0888644b1fdbdec24b40a70",
+    "artifact_digest": "sha256:07cd0674ae2eac92c258e1b290940f4d6926a0128e5aab96fee2f1c330d5ab16",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:8b913f87ce38023dde9791c74780a8f57bee2c50944dc17dd2caab3922374f10",
+    "raw_reply_digest": "sha256:6a51ee63a87e7c59d7fea9ffd0cdbaab2c4d911b454d88bd18a83925919099c6",
     "source_hash": "sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7"
   },
   "revision": 1,
@@ -234,13 +243,19 @@
           "claim.ch08.quadratic.matrix-form"
         ],
         "dimension": 2,
-        "id": "entity.ch08.quadratic.matrix-form.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch08.quadratic.matrix-form.matrix",
+        "kind": "matrix",
+        "label": "matrix",
+        "role": "matrix",
         "value": [
-          1,
-          2
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
         ]
       },
       {
@@ -248,13 +263,56 @@
           "claim.ch08.quadratic.matrix-form"
         ],
         "dimension": 2,
-        "id": "entity.ch08.quadratic.matrix-form.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch08.quadratic.matrix-form.coefficients",
+        "kind": "region",
+        "label": "coefficients",
+        "role": "coefficients",
         "value": [
-          2,
-          4
+          2.0,
+          2.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.matrix-form.point",
+        "kind": "vector",
+        "label": "point",
+        "role": "point",
+        "value": [
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.matrix-form.image",
+        "kind": "vector",
+        "label": "image",
+        "role": "image",
+        "value": [
+          4.0,
+          7.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.matrix-form.value",
+        "kind": "point",
+        "label": "value",
+        "role": "value",
+        "value": [
+          18.0,
+          0.0
         ]
       }
     ],
@@ -263,35 +321,99 @@
         "claim_refs": [
           "claim.ch08.quadratic.matrix-form"
         ],
-        "id": "relation.ch08.quadratic.matrix-form.maps",
+        "id": "relation.ch08.quadratic.matrix-form.coefficient_map",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "coefficients": [
+            2.0,
+            2.0,
+            3.0
+          ],
+          "matrix": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              3.0
+            ]
+          ]
         },
-        "source_ref": "entity.ch08.quadratic.matrix-form.v",
-        "target_ref": "entity.ch08.quadratic.matrix-form.result"
+        "source_ref": "entity.ch08.quadratic.matrix-form.coefficients",
+        "target_ref": "entity.ch08.quadratic.matrix-form.matrix"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "relation.ch08.quadratic.matrix-form.evaluation",
+        "kind": "maps_to",
+        "parameters": {
+          "image": [
+            4.0,
+            7.0
+          ],
+          "matrix": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              3.0
+            ]
+          ],
+          "point": [
+            1.0,
+            2.0
+          ],
+          "value": 18.0
+        },
+        "source_ref": "entity.ch08.quadratic.matrix-form.point",
+        "target_ref": "entity.ch08.quadratic.matrix-form.image"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "quadratic_level_set",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "2x^2+2xy+3y^2=x^T A x",
         "expected_invariants": [
-          "finite numeric result"
+          "symmetric_coefficients"
         ],
-        "id": "stage.ch08.quadratic.matrix-form.input",
+        "id": "coefficients",
         "input_entity_refs": [
-          "entity.ch08.quadratic.matrix-form.v"
+          "entity.ch08.quadratic.matrix-form.coefficients"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch08.quadratic.matrix-form.result"
+          "entity.ch08.quadratic.matrix-form.matrix"
         ],
         "relation_refs": [
-          "relation.ch08.quadratic.matrix-form.maps"
+          "relation.ch08.quadratic.matrix-form.coefficient_map"
         ],
-        "title": "输入与结果"
+        "title": "交叉项拆到两个非对角元"
+      },
+      {
+        "caption": "2x^2+2xy+3y^2=x^T A x",
+        "expected_invariants": [
+          "quadratic_evaluation"
+        ],
+        "id": "evaluation",
+        "input_entity_refs": [
+          "entity.ch08.quadratic.matrix-form.matrix",
+          "entity.ch08.quadratic.matrix-form.point"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.quadratic.matrix-form.image",
+          "entity.ch08.quadratic.matrix-form.value"
+        ],
+        "relation_refs": [
+          "relation.ch08.quadratic.matrix-form.evaluation"
+        ],
+        "title": "二次型数值"
       }
     ]
   }
