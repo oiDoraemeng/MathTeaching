@@ -20,7 +20,7 @@ def test_default_tree_has_three_open_chapters_and_closed_sections() -> None:
         chapter = dialog.tree.topLevelItem(index)
         assert chapter.isExpanded()
         assert chapter.childCount() > 0
-            assert all(chapter.child(i).isExpanded() for i in range(chapter.childCount()))
+        assert all(chapter.child(i).isExpanded() for i in range(chapter.childCount()))
 
 
 def test_branch_click_does_not_emit_but_topic_leaf_does() -> None:
