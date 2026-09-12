@@ -2,8 +2,15 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch06.similarity-transform.v",
-        "entity.ch06.similarity-transform.result"
+        "entity.ch06.similarity-transform.standard_basis",
+        "entity.ch06.similarity-transform.basis_matrix",
+        "entity.ch06.similarity-transform.inverse_basis",
+        "entity.ch06.similarity-transform.alternate_coordinates",
+        "entity.ch06.similarity-transform.standard_vector",
+        "entity.ch06.similarity-transform.operator",
+        "entity.ch06.similarity-transform.similar_operator",
+        "entity.ch06.similarity-transform.standard_output",
+        "entity.ch06.similarity-transform.alternate_output"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +21,34 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc",
       "formula_symbols": [
-        "v",
-        "result"
+        "standard_basis",
+        "basis_matrix",
+        "inverse_basis",
+        "alternate_coordinates",
+        "standard_vector",
+        "operator",
+        "similar_operator",
+        "standard_output",
+        "alternate_output"
       ],
       "id": "claim.ch06.similarity-transform",
       "relation_refs": [
-        "relation.ch06.similarity-transform.maps"
+        "relation.ch06.similarity-transform.change_basis",
+        "relation.ch06.similarity-transform.apply_operator",
+        "relation.ch06.similarity-transform.change_basis_back",
+        "relation.ch06.similarity-transform.similarity"
       ],
       "source_refs": [
         "第6章 基变换与相似变换 / 6.3 相似变换——同一个变换在不同基下的矩阵::1::sha256:c700a7e3f54691290562a7c582245d08d693033604df782a6dbc475be605d7a7"
       ],
       "stage_refs": [
-        "stage.ch06.similarity-transform.input"
+        "change_basis",
+        "apply_operator",
+        "change_basis_back"
       ],
-      "statement": "6.3 相似变换——同一个变换在不同基下的矩阵 的线性表示保持可检验的向量关系。"
+      "statement": "6.3 相似变换——同一个变换在不同基下的矩阵 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +70,19 @@
     ],
     "definition": "6.3 相似变换——同一个变换在不同基下的矩阵 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "P：翻译为标准坐标: B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc",
+      "A：执行线性变换: B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc",
+      "P⁻¹：翻译回新基: B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "P inverse P = I",
+      "P c = x",
+      "P inverse x = c",
+      "B = P inverse A P",
+      "P B c = A P c",
+      "similarity preserves determinant rank trace and spectrum"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,23 +153,30 @@
         "title": "connections"
       }
     ],
-    "summary": "6.3 相似变换——同一个变换在不同基下的矩阵 的确定性讲义 artifact。",
+    "summary": "6.3 相似变换——同一个变换在不同基下的矩阵 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "alternate_coordinates": "alternate_coordinates",
+      "alternate_output": "alternate_output",
+      "basis_matrix": "basis_matrix",
+      "inverse_basis": "inverse_basis",
+      "operator": "operator",
+      "similar_operator": "similar_operator",
+      "standard_basis": "standard_basis",
+      "standard_output": "standard_output",
+      "standard_vector": "standard_vector"
     },
     "title": "6.3 相似变换——同一个变换在不同基下的矩阵",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc"
         ],
         "checks": [
           {
             "expected": [
-              2,
-              4
+              -1.0,
+              3.0
             ],
             "name": "result",
             "tolerance": 1e-09
@@ -154,29 +186,120 @@
           "claim.ch06.similarity-transform"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              1.0,
+              1.0
+            ]
+          ],
+          [
+            1.0,
+            2.0
           ]
         ],
-        "id": "example.ch06.similarity-transform",
-        "kind": "scalar_multiple",
+        "id": "example.ch06.similarity-transform.change_basis",
+        "kind": "matrix_transform",
         "result": [
-          2,
-          4
+          -1.0,
+          3.0
         ],
-        "title": "数值例"
+        "title": "change_basis"
+      },
+      {
+        "calculation": [
+          "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc"
+        ],
+        "checks": [
+          {
+            "expected": [
+              1.0,
+              5.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "given": [
+          [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              2.0
+            ]
+          ],
+          [
+            -1.0,
+            3.0
+          ]
+        ],
+        "id": "example.ch06.similarity-transform.apply_operator",
+        "kind": "matrix_transform",
+        "result": [
+          1.0,
+          5.0
+        ],
+        "title": "apply_operator"
+      },
+      {
+        "calculation": [
+          "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc"
+        ],
+        "checks": [
+          {
+            "expected": [
+              3.0,
+              2.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "given": [
+          [
+            [
+              0.5,
+              0.5
+            ],
+            [
+              -0.5,
+              0.5
+            ]
+          ],
+          [
+            1.0,
+            5.0
+          ]
+        ],
+        "id": "example.ch06.similarity-transform.change_basis_back",
+        "kind": "matrix_transform",
+        "result": [
+          3.0,
+          2.0
+        ],
+        "title": "change_basis_back"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:2d8486f7f94c1c9f60da910dce7286a567e6afccd09ee74cb8f35007e94e8c2f",
+    "artifact_digest": "sha256:cd18cc3a3da38a585a1722e314be6c08e3bc556c304a779fc58deae7f12519d3",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:0766430eff14646d341641efc5c967b9ea15cf8a3cc243561c94f08f083f3bba",
+    "raw_reply_digest": "sha256:2baf8765ca07ddb25684a05881b12c932923d3417ca86214e9bfa05a8cb37ca9",
     "source_hash": "sha256:c700a7e3f54691290562a7c582245d08d693033604df782a6dbc475be605d7a7"
   },
   "revision": 1,
@@ -235,13 +358,19 @@
           "claim.ch06.similarity-transform"
         ],
         "dimension": 2,
-        "id": "entity.ch06.similarity-transform.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch06.similarity-transform.standard_basis",
+        "kind": "matrix",
+        "label": "standard_basis",
+        "role": "standard_basis",
         "value": [
-          1,
-          2
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ]
       },
       {
@@ -249,13 +378,135 @@
           "claim.ch06.similarity-transform"
         ],
         "dimension": 2,
-        "id": "entity.ch06.similarity-transform.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch06.similarity-transform.basis_matrix",
+        "kind": "matrix",
+        "label": "basis_matrix",
+        "role": "basis_matrix",
         "value": [
-          2,
-          4
+          [
+            1.0,
+            -1.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.similarity-transform.inverse_basis",
+        "kind": "matrix",
+        "label": "inverse_basis",
+        "role": "inverse_basis",
+        "value": [
+          [
+            0.5,
+            0.5
+          ],
+          [
+            -0.5,
+            0.5
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.similarity-transform.alternate_coordinates",
+        "kind": "vector",
+        "label": "alternate_coordinates",
+        "role": "alternate_coordinates",
+        "value": [
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.similarity-transform.standard_vector",
+        "kind": "vector",
+        "label": "standard_vector",
+        "role": "standard_vector",
+        "value": [
+          -1.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.similarity-transform.operator",
+        "kind": "matrix",
+        "label": "operator",
+        "role": "operator",
+        "value": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.similarity-transform.similar_operator",
+        "kind": "matrix",
+        "label": "similar_operator",
+        "role": "similar_operator",
+        "value": [
+          [
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.similarity-transform.standard_output",
+        "kind": "vector",
+        "label": "standard_output",
+        "role": "standard_output",
+        "value": [
+          1.0,
+          5.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.similarity-transform.alternate_output",
+        "kind": "vector",
+        "label": "alternate_output",
+        "role": "alternate_output",
+        "value": [
+          3.0,
+          2.0
         ]
       }
     ],
@@ -264,35 +515,217 @@
         "claim_refs": [
           "claim.ch06.similarity-transform"
         ],
-        "id": "relation.ch06.similarity-transform.maps",
+        "id": "relation.ch06.similarity-transform.change_basis",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "input": [
+            1.0,
+            2.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              1.0,
+              1.0
+            ]
+          ],
+          "output": [
+            -1.0,
+            3.0
+          ]
         },
-        "source_ref": "entity.ch06.similarity-transform.v",
-        "target_ref": "entity.ch06.similarity-transform.result"
+        "source_ref": "entity.ch06.similarity-transform.alternate_coordinates",
+        "target_ref": "entity.ch06.similarity-transform.standard_vector"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "relation.ch06.similarity-transform.apply_operator",
+        "kind": "maps_to",
+        "parameters": {
+          "input": [
+            -1.0,
+            3.0
+          ],
+          "matrix": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              2.0
+            ]
+          ],
+          "output": [
+            1.0,
+            5.0
+          ]
+        },
+        "source_ref": "entity.ch06.similarity-transform.standard_vector",
+        "target_ref": "entity.ch06.similarity-transform.standard_output"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "relation.ch06.similarity-transform.change_basis_back",
+        "kind": "maps_to",
+        "parameters": {
+          "input": [
+            1.0,
+            5.0
+          ],
+          "matrix": [
+            [
+              0.5,
+              0.5
+            ],
+            [
+              -0.5,
+              0.5
+            ]
+          ],
+          "output": [
+            3.0,
+            2.0
+          ]
+        },
+        "source_ref": "entity.ch06.similarity-transform.standard_output",
+        "target_ref": "entity.ch06.similarity-transform.alternate_output"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.similarity-transform"
+        ],
+        "id": "relation.ch06.similarity-transform.similarity",
+        "kind": "composition_order",
+        "parameters": {
+          "basis_matrix": [
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              1.0,
+              1.0
+            ]
+          ],
+          "inverse_basis": [
+            [
+              0.5,
+              0.5
+            ],
+            [
+              -0.5,
+              0.5
+            ]
+          ],
+          "operator": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              2.0
+            ]
+          ],
+          "similar_operator": [
+            [
+              3.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch06.similarity-transform.operator",
+        "target_ref": "entity.ch06.similarity-transform.similar_operator"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "basis_change",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc",
         "expected_invariants": [
-          "finite numeric result"
+          "P inverse P = I",
+          "P c = x",
+          "P inverse x = c",
+          "B = P inverse A P",
+          "P B c = A P c",
+          "similarity preserves determinant rank trace and spectrum"
         ],
-        "id": "stage.ch06.similarity-transform.input",
+        "id": "change_basis",
         "input_entity_refs": [
-          "entity.ch06.similarity-transform.v"
+          "entity.ch06.similarity-transform.alternate_coordinates",
+          "entity.ch06.similarity-transform.basis_matrix"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch06.similarity-transform.result"
+          "entity.ch06.similarity-transform.standard_vector"
         ],
         "relation_refs": [
-          "relation.ch06.similarity-transform.maps"
+          "relation.ch06.similarity-transform.change_basis"
         ],
-        "title": "输入与结果"
+        "title": "P：翻译为标准坐标"
+      },
+      {
+        "caption": "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc",
+        "expected_invariants": [
+          "P inverse P = I",
+          "P c = x",
+          "P inverse x = c",
+          "B = P inverse A P",
+          "P B c = A P c",
+          "similarity preserves determinant rank trace and spectrum"
+        ],
+        "id": "apply_operator",
+        "input_entity_refs": [
+          "entity.ch06.similarity-transform.standard_vector",
+          "entity.ch06.similarity-transform.operator"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch06.similarity-transform.standard_output"
+        ],
+        "relation_refs": [
+          "relation.ch06.similarity-transform.apply_operator"
+        ],
+        "title": "A：执行线性变换"
+      },
+      {
+        "caption": "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc",
+        "expected_invariants": [
+          "P inverse P = I",
+          "P c = x",
+          "P inverse x = c",
+          "B = P inverse A P",
+          "P B c = A P c",
+          "similarity preserves determinant rank trace and spectrum"
+        ],
+        "id": "change_basis_back",
+        "input_entity_refs": [
+          "entity.ch06.similarity-transform.standard_output",
+          "entity.ch06.similarity-transform.inverse_basis"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch06.similarity-transform.alternate_output",
+          "entity.ch06.similarity-transform.similar_operator"
+        ],
+        "relation_refs": [
+          "relation.ch06.similarity-transform.change_basis_back",
+          "relation.ch06.similarity-transform.similarity"
+        ],
+        "title": "P⁻¹：翻译回新基"
       }
     ]
   }

@@ -31,6 +31,7 @@ class ClaimEvidence:
 @dataclass(frozen=True)
 class EvidenceLedger:
     entries: tuple[ClaimEvidence, ...]
+    endpoint_error: float | None = None
 
     def for_claim(self, claim_id: str) -> ClaimEvidence | None:
         return next((entry for entry in self.entries if entry.claim_id == claim_id), None)
@@ -85,7 +86,10 @@ def build_evidence_ledger(
         for index, stage_id in enumerate(claim.stage_refs):
             if stage_id in stages and stage_id not in stage_ids:
                 issues.append(EvidenceIssue("stage_without_visible_evidence", claim.id, f"$.claims[{claim.id}].stage_refs[{index}]", stage_id))
-    return EvidenceLedger(tuple(entries)), tuple(sorted(issues, key=lambda issue: (issue.claim_id, issue.code, issue.path, issue.message)))
+    from collections.abc import Mapping
+    family_evidence = getattr(compiled, 'family_evidence', None)
+    endpoint_error = family_evidence.get('endpoint_error') if isinstance(family_evidence, Mapping) else None
+    return EvidenceLedger(tuple(entries), endpoint_error), tuple(sorted(issues, key=lambda issue: (issue.claim_id, issue.code, issue.path, issue.message)))
 
 
 __all__ = ["ClaimEvidence", "EvidenceIssue", "EvidenceLedger", "build_evidence_ledger"]

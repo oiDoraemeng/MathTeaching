@@ -114,6 +114,13 @@ def contract_for(topic_id: str) -> VisualContract:
                 required_relation_endpoints=((relation_name, relation_name, spec.roles[0], spec.roles[-1]),),
                 required_stage_names=spec.stages,
             )
+        if topic_id.startswith("ch06."):
+            from linear_algebra.chapter_06_semantics import spec_for
+            spec=spec_for(topic_id.removeprefix('ch06.'))
+            kinds=tuple(dict.fromkeys(r.kind for r in spec.relations)); names=tuple(r.name for r in spec.relations)
+            params=tuple((r.name,tuple(name for name,_ in r.parameters)) for r in spec.relations)
+            endpoints=tuple((r.name,r.kind,r.source_role,r.target_role) for r in spec.relations)
+            return VisualContract(topic_id,(f'claim.{topic_id}',),spec.roles,kinds,(spec.operations[0],),len(spec.stages),spec.invariants,required_relation_kinds=kinds,required_parameters=params,expected_operations=spec.operations,required_role_types=tuple((e.role,e.kind,e.dimension) for e in spec.entities),required_relation_endpoints=endpoints,required_stage_names=tuple(s.name for s in spec.stages))
         return VisualContract(topic_id, (f"claim.{topic_id}",), ("vector_a", "transformed_a"), ("maps_to",), (family,), 1, ("finite numeric result",))
     return overrides.get(topic_id, base)
 
@@ -165,7 +172,7 @@ def validate_contract_semantics(
     # Chapter 4's family gate checks the complete typed graph and operation
     # witness set.  Keep the legacy primitive check for other chapters while
     # avoiding a redundant generic error for an intentionally empty Ch4 graph.
-    if not contract.topic_id.startswith(("ch04.", "ch05.")):
+    if not contract.topic_id.startswith(("ch04.", "ch05.", "ch06.")):
         for primitive in contract.required_primitives:
             if primitive not in primitives:
                 issues.append(ContractIssue("missing_primitive", contract.topic_id, primitive))

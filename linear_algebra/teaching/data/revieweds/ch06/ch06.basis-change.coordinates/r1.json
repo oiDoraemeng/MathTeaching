@@ -2,8 +2,11 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch06.basis-change.coordinates.v",
-        "entity.ch06.basis-change.coordinates.result"
+        "entity.ch06.basis-change.coordinates.standard_basis",
+        "entity.ch06.basis-change.coordinates.basis_matrix",
+        "entity.ch06.basis-change.coordinates.inverse_basis",
+        "entity.ch06.basis-change.coordinates.alternate_coordinates",
+        "entity.ch06.basis-change.coordinates.standard_vector"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +17,27 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "x=Pc,\\quad c=P^{-1}x",
       "formula_symbols": [
-        "v",
-        "result"
+        "standard_basis",
+        "basis_matrix",
+        "inverse_basis",
+        "alternate_coordinates",
+        "standard_vector"
       ],
       "id": "claim.ch06.basis-change.coordinates",
       "relation_refs": [
-        "relation.ch06.basis-change.coordinates.maps"
+        "relation.ch06.basis-change.coordinates.forward",
+        "relation.ch06.basis-change.coordinates.backward"
       ],
       "source_refs": [
         "第6章 基变换与相似变换 / 6.2 基变换——同一个向量在不同基下的坐标::1::sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e"
       ],
       "stage_refs": [
-        "stage.ch06.basis-change.coordinates.input"
+        "forward",
+        "backward"
       ],
-      "statement": "6.2 基变换——同一个向量在不同基下的坐标 的线性表示保持可检验的向量关系。"
+      "statement": "6.2 基变换——同一个向量在不同基下的坐标 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +59,15 @@
     ],
     "definition": "6.2 基变换——同一个向量在不同基下的坐标 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x",
+      "标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "x=Pc,\\quad c=P^{-1}x",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "P inverse P = I",
+      "P c = x",
+      "P inverse x = c"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,23 +138,26 @@
         "title": "connections"
       }
     ],
-    "summary": "6.2 基变换——同一个向量在不同基下的坐标 的确定性讲义 artifact。",
+    "summary": "6.2 基变换——同一个向量在不同基下的坐标 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "alternate_coordinates": "alternate_coordinates",
+      "basis_matrix": "basis_matrix",
+      "inverse_basis": "inverse_basis",
+      "standard_basis": "standard_basis",
+      "standard_vector": "standard_vector"
     },
     "title": "6.2 基变换——同一个向量在不同基下的坐标",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "x=Pc,\\quad c=P^{-1}x"
         ],
         "checks": [
           {
             "expected": [
-              2,
-              4
+              4.0,
+              7.0
             ],
             "name": "result",
             "tolerance": 1e-09
@@ -154,29 +167,79 @@
           "claim.ch06.basis-change.coordinates"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              3.0
+            ]
+          ],
+          [
+            1.0,
+            2.0
           ]
         ],
-        "id": "example.ch06.basis-change.coordinates",
-        "kind": "scalar_multiple",
+        "id": "example.ch06.basis-change.coordinates.forward",
+        "kind": "matrix_transform",
         "result": [
-          2,
-          4
+          4.0,
+          7.0
         ],
-        "title": "数值例"
+        "title": "forward"
+      },
+      {
+        "calculation": [
+          "x=Pc,\\quad c=P^{-1}x"
+        ],
+        "checks": [
+          {
+            "expected": [
+              1.0,
+              2.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "given": [
+          [
+            [
+              0.6,
+              -0.2
+            ],
+            [
+              -0.2,
+              0.4
+            ]
+          ],
+          [
+            4.0,
+            7.0
+          ]
+        ],
+        "id": "example.ch06.basis-change.coordinates.backward",
+        "kind": "matrix_transform",
+        "result": [
+          1.0,
+          2.0
+        ],
+        "title": "backward"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:e2ec677a2129c9aa26d935ef8f4b339ec9217b5f20a1ac2ea0e398cfee47c2e1",
+    "artifact_digest": "sha256:6096d7ab81ec6dc4c22f3eb2568bddc054f89747fe69e52edf5911b7344f2b57",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:a664f89dc62d0c10ef7d4dc83caa553e8e5a41a382b8db339bfafc10a8a3588a",
+    "raw_reply_digest": "sha256:943edb6deded7ffb52dab8fdcf97c77a7cd5522a30638d8c0b7e41bb407859e2",
     "source_hash": "sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e"
   },
   "revision": 1,
@@ -235,13 +298,19 @@
           "claim.ch06.basis-change.coordinates"
         ],
         "dimension": 2,
-        "id": "entity.ch06.basis-change.coordinates.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch06.basis-change.coordinates.standard_basis",
+        "kind": "matrix",
+        "label": "standard_basis",
+        "role": "standard_basis",
         "value": [
-          1,
-          2
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ]
       },
       {
@@ -249,13 +318,67 @@
           "claim.ch06.basis-change.coordinates"
         ],
         "dimension": 2,
-        "id": "entity.ch06.basis-change.coordinates.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch06.basis-change.coordinates.basis_matrix",
+        "kind": "matrix",
+        "label": "basis_matrix",
+        "role": "basis_matrix",
         "value": [
-          2,
-          4
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.coordinates.inverse_basis",
+        "kind": "matrix",
+        "label": "inverse_basis",
+        "role": "inverse_basis",
+        "value": [
+          [
+            0.6,
+            -0.2
+          ],
+          [
+            -0.2,
+            0.4
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.coordinates.alternate_coordinates",
+        "kind": "vector",
+        "label": "alternate_coordinates",
+        "role": "alternate_coordinates",
+        "value": [
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.coordinates.standard_vector",
+        "kind": "vector",
+        "label": "standard_vector",
+        "role": "standard_vector",
+        "value": [
+          4.0,
+          7.0
         ]
       }
     ],
@@ -264,35 +387,105 @@
         "claim_refs": [
           "claim.ch06.basis-change.coordinates"
         ],
-        "id": "relation.ch06.basis-change.coordinates.maps",
+        "id": "relation.ch06.basis-change.coordinates.forward",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "input": [
+            1.0,
+            2.0
+          ],
+          "matrix": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              3.0
+            ]
+          ],
+          "output": [
+            4.0,
+            7.0
+          ]
         },
-        "source_ref": "entity.ch06.basis-change.coordinates.v",
-        "target_ref": "entity.ch06.basis-change.coordinates.result"
+        "source_ref": "entity.ch06.basis-change.coordinates.alternate_coordinates",
+        "target_ref": "entity.ch06.basis-change.coordinates.standard_vector"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "id": "relation.ch06.basis-change.coordinates.backward",
+        "kind": "maps_to",
+        "parameters": {
+          "input": [
+            4.0,
+            7.0
+          ],
+          "matrix": [
+            [
+              0.6,
+              -0.2
+            ],
+            [
+              -0.2,
+              0.4
+            ]
+          ],
+          "output": [
+            1.0,
+            2.0
+          ]
+        },
+        "source_ref": "entity.ch06.basis-change.coordinates.standard_vector",
+        "target_ref": "entity.ch06.basis-change.coordinates.alternate_coordinates"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "basis_change",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "x=Pc,\\quad c=P^{-1}x",
         "expected_invariants": [
-          "finite numeric result"
+          "P inverse P = I",
+          "P c = x",
+          "P inverse x = c"
         ],
-        "id": "stage.ch06.basis-change.coordinates.input",
+        "id": "forward",
         "input_entity_refs": [
-          "entity.ch06.basis-change.coordinates.v"
+          "entity.ch06.basis-change.coordinates.alternate_coordinates",
+          "entity.ch06.basis-change.coordinates.basis_matrix"
         ],
-        "layout": "sequence",
+        "layout": "side_by_side",
         "output_entity_refs": [
-          "entity.ch06.basis-change.coordinates.result"
+          "entity.ch06.basis-change.coordinates.standard_vector"
         ],
         "relation_refs": [
-          "relation.ch06.basis-change.coordinates.maps"
+          "relation.ch06.basis-change.coordinates.forward"
         ],
-        "title": "输入与结果"
+        "title": "新坐标 → 标准坐标"
+      },
+      {
+        "caption": "x=Pc,\\quad c=P^{-1}x",
+        "expected_invariants": [
+          "P inverse P = I",
+          "P c = x",
+          "P inverse x = c"
+        ],
+        "id": "backward",
+        "input_entity_refs": [
+          "entity.ch06.basis-change.coordinates.standard_vector",
+          "entity.ch06.basis-change.coordinates.inverse_basis"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch06.basis-change.coordinates.alternate_coordinates"
+        ],
+        "relation_refs": [
+          "relation.ch06.basis-change.coordinates.backward"
+        ],
+        "title": "标准坐标 → 新坐标"
       }
     ]
   }

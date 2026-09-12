@@ -1,0 +1,558 @@
+{
+  "artifact_digest": "sha256:ad286a293e813010c8f1dc259e474dda763af93b23d99f1aa95e507426b0619c",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:671c12602869a989f43a4235a938c6218d8b784c3c31f737ffbf3ee722d17b98",
+  "plan": {
+    "operations": [
+      {
+        "alias": "ch06.basis-change.coordinates__entity__standard_basis__basis_grid",
+        "alternate_alias": "ch06.basis-change.coordinates__entity__standard_basis__alternate",
+        "alternate_coordinates": [
+          4.0,
+          7.0
+        ],
+        "basis_alias": "ch06.basis-change.coordinates__entity__standard_basis__basis_grid",
+        "basis_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -8.0,
+          8.0,
+          -8.0,
+          8.0
+        ],
+        "entity_count": 4,
+        "op": "geometry.basis_grid",
+        "sample_count": 4,
+        "standard_alias": "ch06.basis-change.coordinates__entity__standard_basis__standard",
+        "standard_vector": [
+          4.0,
+          7.0
+        ],
+        "tolerance": 1e-09
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__standard_basis__lane",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "origin": [
+          -10.0,
+          0.0
+        ],
+        "step": 1.0
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__standard_basis__same_vector__origin",
+        "coordinates": [
+          -10.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__standard_basis__same_vector__end",
+        "coordinates": [
+          -6.0,
+          7.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__standard_basis__same_vector",
+        "end": "ch06.basis-change.coordinates__entity__standard_basis__same_vector__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch06.basis-change.coordinates__entity__standard_basis__same_vector__origin"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__basis_matrix__basis_grid",
+        "alternate_alias": "ch06.basis-change.coordinates__entity__basis_matrix__alternate",
+        "alternate_coordinates": [
+          1.0,
+          2.0
+        ],
+        "basis_alias": "ch06.basis-change.coordinates__entity__basis_matrix__basis_grid",
+        "basis_matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ],
+        "bounds": [
+          -8.0,
+          8.0,
+          -8.0,
+          8.0
+        ],
+        "entity_count": 4,
+        "op": "geometry.basis_grid",
+        "sample_count": 4,
+        "standard_alias": "ch06.basis-change.coordinates__entity__basis_matrix__standard",
+        "standard_vector": [
+          4.0,
+          7.0
+        ],
+        "tolerance": 1e-09
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__basis_matrix__lane",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "origin": [
+          10.0,
+          0.0
+        ],
+        "step": 1.0
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__basis_matrix__same_vector__origin",
+        "coordinates": [
+          10.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__basis_matrix__same_vector__end",
+        "coordinates": [
+          14.0,
+          7.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__basis_matrix__same_vector",
+        "end": "ch06.basis-change.coordinates__entity__basis_matrix__same_vector__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch06.basis-change.coordinates__entity__basis_matrix__same_vector__origin"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__inverse_basis",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            0.6,
+            -0.2
+          ],
+          [
+            -0.2,
+            0.4
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__alternate_coordinates__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__alternate_coordinates__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__alternate_coordinates",
+        "end": "ch06.basis-change.coordinates__entity__alternate_coordinates__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch06.basis-change.coordinates__entity__alternate_coordinates__origin"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__standard_vector__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__standard_vector__end",
+        "coordinates": [
+          4.0,
+          7.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__entity__standard_vector",
+        "end": "ch06.basis-change.coordinates__entity__standard_vector__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch06.basis-change.coordinates__entity__standard_vector__origin"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__relation__forward",
+        "aliases": [
+          "ch06.basis-change.coordinates__relation__forward__point"
+        ],
+        "matrices": [
+          [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              3.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__relation__forward__readout__basis_grid",
+        "alternate_alias": "ch06.basis-change.coordinates__relation__forward__readout__alternate",
+        "alternate_coordinates": [
+          1.0,
+          2.0
+        ],
+        "basis_alias": "ch06.basis-change.coordinates__relation__forward__readout__basis_grid",
+        "basis_matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ],
+        "bounds": [
+          -8.0,
+          8.0,
+          -8.0,
+          8.0
+        ],
+        "entity_count": 4,
+        "op": "geometry.coordinate_readout",
+        "sample_count": 4,
+        "standard_alias": "ch06.basis-change.coordinates__relation__forward__readout__standard",
+        "standard_vector": [
+          4.0,
+          7.0
+        ],
+        "tolerance": 1e-09
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__relation__backward",
+        "aliases": [
+          "ch06.basis-change.coordinates__relation__backward__point"
+        ],
+        "matrices": [
+          [
+            [
+              0.6,
+              -0.2
+            ],
+            [
+              -0.2,
+              0.4
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            4.0,
+            7.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__relation__backward__readout__basis_grid",
+        "alternate_alias": "ch06.basis-change.coordinates__relation__backward__readout__alternate",
+        "alternate_coordinates": [
+          1.0,
+          2.0
+        ],
+        "basis_alias": "ch06.basis-change.coordinates__relation__backward__readout__basis_grid",
+        "basis_matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ],
+        "bounds": [
+          -8.0,
+          8.0,
+          -8.0,
+          8.0
+        ],
+        "entity_count": 4,
+        "op": "geometry.coordinate_readout",
+        "sample_count": 4,
+        "standard_alias": "ch06.basis-change.coordinates__relation__backward__readout__standard",
+        "standard_vector": [
+          4.0,
+          7.0
+        ],
+        "tolerance": 1e-09
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__stage__forward",
+        "aliases": [
+          "ch06.basis-change.coordinates__stage__forward__point"
+        ],
+        "matrices": [
+          [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              3.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__stage__forward__output__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__stage__forward__output__end",
+        "coordinates": [
+          4.0,
+          7.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__stage__forward__output",
+        "end": "ch06.basis-change.coordinates__stage__forward__output__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch06.basis-change.coordinates__stage__forward__output__origin"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__stage__backward",
+        "aliases": [
+          "ch06.basis-change.coordinates__stage__backward__point"
+        ],
+        "matrices": [
+          [
+            [
+              0.6,
+              -0.2
+            ],
+            [
+              -0.2,
+              0.4
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            4.0,
+            7.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__stage__backward__output__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__stage__backward__output__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.basis-change.coordinates__stage__backward__output",
+        "end": "ch06.basis-change.coordinates__stage__backward__output__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch06.basis-change.coordinates__stage__backward__output__origin"
+      },
+      {
+        "alias": "sem__forward__title",
+        "op": "annotation.upsert",
+        "position": [
+          -1.5,
+          2.65
+        ],
+        "text": "新坐标 → 标准坐标"
+      },
+      {
+        "alias": "sem__backward__title",
+        "op": "annotation.upsert",
+        "position": [
+          1.5,
+          2.65
+        ],
+        "text": "标准坐标 → 新坐标"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "6.2 基变换——同一个向量在不同基下的坐标",
+    "version": 1
+  },
+  "plan_digest": "sha256:103ad35e318f30347a2af218964a55f5c3d0aad395ccf1ef4e1e7165fe5ebd05",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "basis_change",
+  "schema_version": 1,
+  "source_hash": "sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "x=Pc,\\quad c=P^{-1}x",
+      "id": "forward",
+      "layout": "side_by_side",
+      "title": "新坐标 → 标准坐标",
+      "visible_aliases": [
+        "ch06.basis-change.coordinates__stage__forward",
+        "ch06.basis-change.coordinates__stage__forward__output",
+        "ch06.basis-change.coordinates__entity__alternate_coordinates",
+        "ch06.basis-change.coordinates__entity__basis_matrix__basis_grid",
+        "ch06.basis-change.coordinates__entity__basis_matrix__lane",
+        "ch06.basis-change.coordinates__entity__basis_matrix__same_vector",
+        "ch06.basis-change.coordinates__entity__standard_vector",
+        "ch06.basis-change.coordinates__relation__forward",
+        "ch06.basis-change.coordinates__relation__forward__readout__basis_grid",
+        "sem__forward__title"
+      ],
+      "visible_refs": [
+        "entity.ch06.basis-change.coordinates.alternate_coordinates",
+        "entity.ch06.basis-change.coordinates.basis_matrix",
+        "entity.ch06.basis-change.coordinates.standard_vector",
+        "relation.ch06.basis-change.coordinates.forward"
+      ]
+    },
+    {
+      "anchor": [
+        1.5,
+        2.65
+      ],
+      "caption": "x=Pc,\\quad c=P^{-1}x",
+      "id": "backward",
+      "layout": "side_by_side",
+      "title": "标准坐标 → 新坐标",
+      "visible_aliases": [
+        "ch06.basis-change.coordinates__stage__backward",
+        "ch06.basis-change.coordinates__stage__backward__output",
+        "ch06.basis-change.coordinates__entity__standard_vector",
+        "ch06.basis-change.coordinates__entity__inverse_basis",
+        "ch06.basis-change.coordinates__entity__alternate_coordinates",
+        "ch06.basis-change.coordinates__relation__backward",
+        "ch06.basis-change.coordinates__relation__backward__readout__basis_grid",
+        "sem__backward__title"
+      ],
+      "visible_refs": [
+        "entity.ch06.basis-change.coordinates.standard_vector",
+        "entity.ch06.basis-change.coordinates.inverse_basis",
+        "entity.ch06.basis-change.coordinates.alternate_coordinates",
+        "relation.ch06.basis-change.coordinates.backward"
+      ]
+    }
+  ],
+  "topic_id": "ch06.basis-change.coordinates"
+}

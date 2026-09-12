@@ -185,6 +185,34 @@ def _artifact_payload_generic(topic_id: str, *, status: str = "reviewed") -> dic
 
 def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str, object]:
     payload = _artifact_payload_generic(topic_id, status=status)
+    if topic_id.startswith("ch06."):
+        from linear_algebra.chapter_06_semantics import spec_for
+        spec=spec_for(topic_id); claim=payload['claims'][0]
+        ids={r:f'entity.{topic_id}.{r}' for r in spec.roles}
+        entities=[{'id':ids[e.role],'kind':e.kind,'dimension':e.dimension,'value':_json_value(e.value),'role':e.role,'label':e.label,'claim_refs':[claim['id']]} for e in spec.entities]
+        relations=[]
+        for rel in spec.relations:
+            relations.append({'id':f'relation.{topic_id}.{rel.name}','kind':rel.kind,'source_ref':ids[rel.source_role],'target_ref':ids[rel.target_role],'parameters':_json_value(dict(rel.parameters)),'claim_refs':[claim['id']]})
+        stages=[{'id':s.name,'title':s.title,'caption':spec.formula,'layout':s.layout,'input_entity_refs':[ids[r] for r in s.input_roles],'output_entity_refs':[ids[r] for r in s.output_roles],'relation_refs':[f'relation.{topic_id}.{r}' for r in s.relation_names],'expected_invariants':list(s.invariants)} for s in spec.stages]
+        payload['visual_semantics']={'scene_kind':'2d','scene_family':'basis_change','entities':entities,'relations':relations,'stages':stages}
+        claim['entity_refs']=list(ids.values()); claim['relation_refs']=[r['id'] for r in relations]; claim['stage_refs']=[s['id'] for s in stages]; claim['formula_symbols']=list(spec.roles)
+        payload['explanation']['symbol_roles']={r:r for r in spec.roles}; payload['explanation']['invariants']=list(spec.invariants)
+        claim['formula'] = spec.formula
+        payload['explanation']['formula'] = spec.formula
+        payload['explanation']['derivation'] = [s.title + ': ' + spec.formula for s in spec.stages]
+        payload['explanation']['worked_examples'] = []
+        for relation in spec.relations:
+            parameters = dict(relation.parameters)
+            if 'input' not in parameters:
+                continue
+            payload['explanation']['worked_examples'].append({
+                'id': f'example.{topic_id}.{relation.name}', 'title': relation.name, 'kind': 'matrix_transform',
+                'given': [_json_value(parameters['matrix']), _json_value(parameters['input'])],
+                'calculation': [spec.formula], 'result': _json_value(parameters['output']),
+                'checks': [{'name': 'result', 'expected': _json_value(parameters['output']), 'tolerance': 1e-9}],
+                'claim_refs': [claim['id']]})
+        _refresh_digests(payload)
+        return payload
     if topic_id.startswith("ch05."):
         from linear_algebra.chapter_05_semantics import spec_for
         spec = spec_for(topic_id.removeprefix("ch05."))

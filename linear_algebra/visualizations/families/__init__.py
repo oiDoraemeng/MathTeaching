@@ -10,6 +10,7 @@ from .orthogonalization import OrthogonalizationFamilyCompiler, Orthogonalizatio
 from .quadratic import QuadraticFamilyCompiler, QuadraticEvidence, classify_quadratic
 from .chapter_04 import Chapter4FamilyCompiler, Chapter4CompileResult, compile_chapter_04
 from .chapter_05 import compile_chapter_05
+from .chapter_06 import compile_chapter_06
 from .constraints import ConstraintFamilyCompiler
 
 
@@ -25,6 +26,8 @@ class SceneFamilyCompiler:
                 return compile_chapter_04(topic, semantics, kwargs.get('context'))
             if topic.startswith('ch05.'):
                 return compile_chapter_05(topic, semantics)
+            if topic.startswith('ch06.'):
+                return compile_chapter_06(topic, semantics, kwargs.get('context'))
         return {'family': self.primitive, 'validated': True}
 
 

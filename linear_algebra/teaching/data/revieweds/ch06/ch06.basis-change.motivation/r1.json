@@ -2,8 +2,11 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch06.basis-change.motivation.v",
-        "entity.ch06.basis-change.motivation.result"
+        "entity.ch06.basis-change.motivation.standard_basis",
+        "entity.ch06.basis-change.motivation.basis_matrix",
+        "entity.ch06.basis-change.motivation.inverse_basis",
+        "entity.ch06.basis-change.motivation.alternate_coordinates",
+        "entity.ch06.basis-change.motivation.standard_vector"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +17,27 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "x=Pc,\\quad c=P^{-1}x",
       "formula_symbols": [
-        "v",
-        "result"
+        "standard_basis",
+        "basis_matrix",
+        "inverse_basis",
+        "alternate_coordinates",
+        "standard_vector"
       ],
       "id": "claim.ch06.basis-change.motivation",
       "relation_refs": [
-        "relation.ch06.basis-change.motivation.maps"
+        "relation.ch06.basis-change.motivation.forward",
+        "relation.ch06.basis-change.motivation.backward"
       ],
       "source_refs": [
         "第6章 基变换与相似变换 / 6.1 为什么要换基——动机::1::sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3"
       ],
       "stage_refs": [
-        "stage.ch06.basis-change.motivation.input"
+        "forward",
+        "backward"
       ],
-      "statement": "6.1 为什么要换基——动机 的线性表示保持可检验的向量关系。"
+      "statement": "6.1 为什么要换基——动机 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +59,15 @@
     ],
     "definition": "6.1 为什么要换基——动机 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x",
+      "标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "x=Pc,\\quad c=P^{-1}x",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "P inverse P = I",
+      "P c = x",
+      "P inverse x = c"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,23 +138,26 @@
         "title": "connections"
       }
     ],
-    "summary": "6.1 为什么要换基——动机 的确定性讲义 artifact。",
+    "summary": "6.1 为什么要换基——动机 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "alternate_coordinates": "alternate_coordinates",
+      "basis_matrix": "basis_matrix",
+      "inverse_basis": "inverse_basis",
+      "standard_basis": "standard_basis",
+      "standard_vector": "standard_vector"
     },
     "title": "6.1 为什么要换基——动机",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "x=Pc,\\quad c=P^{-1}x"
         ],
         "checks": [
           {
             "expected": [
-              2,
-              4
+              -1.0,
+              5.0
             ],
             "name": "result",
             "tolerance": 1e-09
@@ -154,29 +167,79 @@
           "claim.ch06.basis-change.motivation"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              1.0,
+              1.0
+            ]
+          ],
+          [
+            2.0,
+            3.0
           ]
         ],
-        "id": "example.ch06.basis-change.motivation",
-        "kind": "scalar_multiple",
+        "id": "example.ch06.basis-change.motivation.forward",
+        "kind": "matrix_transform",
         "result": [
-          2,
-          4
+          -1.0,
+          5.0
         ],
-        "title": "数值例"
+        "title": "forward"
+      },
+      {
+        "calculation": [
+          "x=Pc,\\quad c=P^{-1}x"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2.0,
+              3.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "given": [
+          [
+            [
+              0.5,
+              0.5
+            ],
+            [
+              -0.5,
+              0.5
+            ]
+          ],
+          [
+            -1.0,
+            5.0
+          ]
+        ],
+        "id": "example.ch06.basis-change.motivation.backward",
+        "kind": "matrix_transform",
+        "result": [
+          2.0,
+          3.0
+        ],
+        "title": "backward"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:59db1984f97d9d2bbfa4713eb507c89063961de38d6d93154b3f3acb73db936d",
+    "artifact_digest": "sha256:9325e698c8d1a379f8ff2f2cddd0fd07569b468f36a35a8c0859f0cca91fe264",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:29f438a82e39fddade172589fd4e8cbd25b6861d7025f1ffa9c0e6439eb663a1",
+    "raw_reply_digest": "sha256:7696ad47e4d2075954f91b035c95e3f1d437e5faae339780b16cf68dc70da29d",
     "source_hash": "sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3"
   },
   "revision": 1,
@@ -234,13 +297,19 @@
           "claim.ch06.basis-change.motivation"
         ],
         "dimension": 2,
-        "id": "entity.ch06.basis-change.motivation.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch06.basis-change.motivation.standard_basis",
+        "kind": "matrix",
+        "label": "standard_basis",
+        "role": "standard_basis",
         "value": [
-          1,
-          2
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ]
       },
       {
@@ -248,13 +317,67 @@
           "claim.ch06.basis-change.motivation"
         ],
         "dimension": 2,
-        "id": "entity.ch06.basis-change.motivation.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch06.basis-change.motivation.basis_matrix",
+        "kind": "matrix",
+        "label": "basis_matrix",
+        "role": "basis_matrix",
         "value": [
-          2,
-          4
+          [
+            1.0,
+            -1.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.motivation.inverse_basis",
+        "kind": "matrix",
+        "label": "inverse_basis",
+        "role": "inverse_basis",
+        "value": [
+          [
+            0.5,
+            0.5
+          ],
+          [
+            -0.5,
+            0.5
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.motivation.alternate_coordinates",
+        "kind": "vector",
+        "label": "alternate_coordinates",
+        "role": "alternate_coordinates",
+        "value": [
+          2.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.motivation.standard_vector",
+        "kind": "vector",
+        "label": "standard_vector",
+        "role": "standard_vector",
+        "value": [
+          -1.0,
+          5.0
         ]
       }
     ],
@@ -263,35 +386,105 @@
         "claim_refs": [
           "claim.ch06.basis-change.motivation"
         ],
-        "id": "relation.ch06.basis-change.motivation.maps",
+        "id": "relation.ch06.basis-change.motivation.forward",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "input": [
+            2.0,
+            3.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              1.0,
+              1.0
+            ]
+          ],
+          "output": [
+            -1.0,
+            5.0
+          ]
         },
-        "source_ref": "entity.ch06.basis-change.motivation.v",
-        "target_ref": "entity.ch06.basis-change.motivation.result"
+        "source_ref": "entity.ch06.basis-change.motivation.alternate_coordinates",
+        "target_ref": "entity.ch06.basis-change.motivation.standard_vector"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "id": "relation.ch06.basis-change.motivation.backward",
+        "kind": "maps_to",
+        "parameters": {
+          "input": [
+            -1.0,
+            5.0
+          ],
+          "matrix": [
+            [
+              0.5,
+              0.5
+            ],
+            [
+              -0.5,
+              0.5
+            ]
+          ],
+          "output": [
+            2.0,
+            3.0
+          ]
+        },
+        "source_ref": "entity.ch06.basis-change.motivation.standard_vector",
+        "target_ref": "entity.ch06.basis-change.motivation.alternate_coordinates"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "basis_change",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "x=Pc,\\quad c=P^{-1}x",
         "expected_invariants": [
-          "finite numeric result"
+          "P inverse P = I",
+          "P c = x",
+          "P inverse x = c"
         ],
-        "id": "stage.ch06.basis-change.motivation.input",
+        "id": "forward",
         "input_entity_refs": [
-          "entity.ch06.basis-change.motivation.v"
+          "entity.ch06.basis-change.motivation.alternate_coordinates",
+          "entity.ch06.basis-change.motivation.basis_matrix"
         ],
-        "layout": "sequence",
+        "layout": "side_by_side",
         "output_entity_refs": [
-          "entity.ch06.basis-change.motivation.result"
+          "entity.ch06.basis-change.motivation.standard_vector"
         ],
         "relation_refs": [
-          "relation.ch06.basis-change.motivation.maps"
+          "relation.ch06.basis-change.motivation.forward"
         ],
-        "title": "输入与结果"
+        "title": "新坐标 → 标准坐标"
+      },
+      {
+        "caption": "x=Pc,\\quad c=P^{-1}x",
+        "expected_invariants": [
+          "P inverse P = I",
+          "P c = x",
+          "P inverse x = c"
+        ],
+        "id": "backward",
+        "input_entity_refs": [
+          "entity.ch06.basis-change.motivation.standard_vector",
+          "entity.ch06.basis-change.motivation.inverse_basis"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch06.basis-change.motivation.alternate_coordinates"
+        ],
+        "relation_refs": [
+          "relation.ch06.basis-change.motivation.backward"
+        ],
+        "title": "标准坐标 → 新坐标"
       }
     ]
   }

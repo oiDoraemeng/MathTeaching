@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "topic_count": 78,
+  "topic_count": 81,
   "topics": [
     {
       "artifact_digest": "sha256:972a8e93a2a06248927e7990af7f2d913d06e0352ce8667433ecb5bc65e381f8",
@@ -787,6 +787,57 @@
       "source_hash": "sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a",
       "stage_count": 4,
       "topic_id": "ch05.least-squares.projection"
+    },
+    {
+      "artifact_digest": "sha256:ad286a293e813010c8f1dc259e474dda763af93b23d99f1aa95e507426b0619c",
+      "chapter": 6,
+      "claim_count": 1,
+      "compiler_version": "visual-compiler-v1",
+      "contract_digest": "sha256:671c12602869a989f43a4235a938c6218d8b784c3c31f737ffbf3ee722d17b98",
+      "draft_revision": 1,
+      "plan_digest": "sha256:103ad35e318f30347a2af218964a55f5c3d0aad395ccf1ef4e1e7165fe5ebd05",
+      "published_revision": 1,
+      "render_profile": "lecture-v1",
+      "reviewed_revision": 1,
+      "revision": 1,
+      "scene_family": "basis_change",
+      "source_hash": "sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e",
+      "stage_count": 2,
+      "topic_id": "ch06.basis-change.coordinates"
+    },
+    {
+      "artifact_digest": "sha256:64e8948bd8b53e61479c6bc48bc4856ef7464d00cf7e5fb5f0b045fffc87e7bc",
+      "chapter": 6,
+      "claim_count": 1,
+      "compiler_version": "visual-compiler-v1",
+      "contract_digest": "sha256:fd2ef7b1b22c6f866508ef3c2f0f9243bfec95fc8cf9a07ada677d3fdd889442",
+      "draft_revision": 1,
+      "plan_digest": "sha256:f0eb70cb3fb56aeaa628d54a4a15d27b1574d06853bf27faf48e5ca77e6baacd",
+      "published_revision": 1,
+      "render_profile": "lecture-v1",
+      "reviewed_revision": 1,
+      "revision": 1,
+      "scene_family": "basis_change",
+      "source_hash": "sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3",
+      "stage_count": 2,
+      "topic_id": "ch06.basis-change.motivation"
+    },
+    {
+      "artifact_digest": "sha256:58e5490dca28fc19ce9600dca9f65670f00aa37e8620c9d382621024cc02ae54",
+      "chapter": 6,
+      "claim_count": 1,
+      "compiler_version": "visual-compiler-v1",
+      "contract_digest": "sha256:ce7a212384742990bef3ad0c2a56e33ac180fb345af1904c3d096feb2c8f5ba4",
+      "draft_revision": 1,
+      "plan_digest": "sha256:8afb471a7eca866e08ffdc783e60641ee2fcef3c61854249c4f3cd11d0be613c",
+      "published_revision": 1,
+      "render_profile": "lecture-v1",
+      "reviewed_revision": 1,
+      "revision": 1,
+      "scene_family": "basis_change",
+      "source_hash": "sha256:c700a7e3f54691290562a7c582245d08d693033604df782a6dbc475be605d7a7",
+      "stage_count": 3,
+      "topic_id": "ch06.similarity-transform"
     }
   ]
 }
