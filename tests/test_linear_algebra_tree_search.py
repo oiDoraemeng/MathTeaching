@@ -8,6 +8,22 @@ from linear_algebra.teaching.store import TeachingArtifactStore
 from tests.teaching_fixtures import projection_artifact_payload
 from ui.linear_algebra_tree_model import LinearAlgebraTreeModel
 
+def test_principal_axis_search_keeps_only_exact_topic_ancestors() -> None:
+    app = QApplication.instance() or QApplication([])
+    tree = QTreeWidget(); model = LinearAlgebraTreeModel(tree, catalog_registry())
+    model.filter("主轴定理")
+    assert model.visible_topic_ids() == ("ch08.principal-axis",)
+    assert tree.topLevelItemCount() == 1 and tree.topLevelItem(0).childCount() == 1
+    assert tree.topLevelItem(0).isExpanded() and tree.topLevelItem(0).child(0).isExpanded()
+
+def test_gaussian_elimination_search_keeps_only_exact_topic_ancestors() -> None:
+    app = QApplication.instance() or QApplication([])
+    tree = QTreeWidget(); model = LinearAlgebraTreeModel(tree, catalog_registry())
+    model.filter("高斯消元")
+    assert model.visible_topic_ids() == ("ch05.gaussian-elimination",)
+    assert tree.topLevelItemCount() == 1 and tree.topLevelItem(0).childCount() == 1
+    assert tree.topLevelItem(0).isExpanded() and tree.topLevelItem(0).child(0).isExpanded()
+
 
 def test_tree_search_includes_terms_only_present_in_derivation(tmp_path, monkeypatch) -> None:
     app = QApplication.instance() or QApplication([])

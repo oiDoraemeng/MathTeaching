@@ -18,6 +18,7 @@ class LinearAlgebraTreeModel:
         self._topics = {topic.id: topic for topic in registry.topics}
         self._items: dict[str, QTreeWidgetItem] = {}
         self._searchable = self._build_search_index()
+        self._primary_searchable = self._build_primary_search_index()
         self._query = ""
         self._expanded_node_ids: set[str] | None = None
         self._rebuild(None)
@@ -36,6 +37,13 @@ class LinearAlgebraTreeModel:
                 for topic_id, searchable in self._searchable.items()
                 if self._query in searchable
             }
+            primary_matches = {
+                topic_id
+                for topic_id, searchable in self._primary_searchable.items()
+                if self._query in searchable
+            }
+            if primary_matches:
+                matches = primary_matches
         self._rebuild(matches)
 
     def visible_topic_ids(self) -> tuple[str, ...]:
@@ -186,6 +194,22 @@ class LinearAlgebraTreeModel:
                     ]
                 )
             index[topic.id] = _normalize(" ".join(values))
+        return index
+
+    def _build_primary_search_index(self) -> dict[str, str]:
+        """Index topic-local labels before shared chapter prose.
+
+        A chapter heading such as ``主轴定理`` is a valid full source-path
+        token, but it must not make every sibling leaf match.  Topic title,
+        leaf source heading, formula and summary are the deterministic,
+        specific tier; the broader index remains available when no specific
+        result exists.
+        """
+        index: dict[str, str] = {}
+        for topic in self.registry.topics:
+            explanation = self.registry.get_explanation(topic.explanation_id)
+            leaf = topic.source_path[-1] if topic.source_path else ""
+            index[topic.id] = _normalize(" ".join((topic.title, leaf, explanation.formula, explanation.summary)))
         return index
 
 

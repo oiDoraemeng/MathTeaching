@@ -13,10 +13,10 @@ def make_linear_algebra_dialog() -> LinearAlgebraDialog:
     return LinearAlgebraDialog()
 
 
-def test_default_tree_has_three_open_chapters_and_closed_sections() -> None:
+def test_default_tree_has_all_eight_open_chapters_and_sections() -> None:
     dialog = make_linear_algebra_dialog()
     assert dialog.tree.topLevelItemCount() == 8
-    for index in range(3):
+    for index in range(8):
         chapter = dialog.tree.topLevelItem(index)
         assert chapter.isExpanded()
         assert chapter.childCount() > 0

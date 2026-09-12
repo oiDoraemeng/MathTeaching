@@ -11,6 +11,8 @@ Implemented the lecture-tree expansion/search update.
 
 Verification:
 
-`pytest tests/test_linear_algebra_tree_model.py tests/test_linear_algebra_tree_search.py -q`
+`pytest tests/test_linear_algebra_tree_model.py tests/test_linear_algebra_tree_search.py tests/test_linear_algebra_dialog.py -q`
 
-Result: 2 passed, 1 legacy assertion failed because the existing test still expects the pre-task three-chapter tree; the new requirement is eight chapters. The failure is limited to that stale expectation.
+Result: `19 passed`.
+
+The search index now prefers topic-local title/leaf/formula/summary matches before falling back to the full source and structured-field index. This preserves broad searchable coverage without allowing shared chapter prose to select every sibling topic. Acceptance coverage includes exact `主轴定理` and `高斯消元` topic/ancestor results and all eight default chapter/section branches.
