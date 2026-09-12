@@ -1,4 +1,4 @@
-"""二维画布左侧统一工具栏。"""
+"""二维画布左上角统一工具栏。"""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ ToolKind = LinearKind | str
 
 
 class TwoDGeometryToolbar(QFrame):
-    """统一的二维/线性代数工具栏，垂直居中显示在画布左侧。"""
+    """统一的二维/线性代数工具栏，横向固定在画布左上角。"""
 
     tool_selected = Signal(object)
     snap_toggled = Signal(bool)
@@ -32,7 +32,7 @@ class TwoDGeometryToolbar(QFrame):
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         apply_drop_shadow(self, "overlay")
         apply_rounded_overlay(self, "md")
-        layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, self)
+        layout = QBoxLayout(QBoxLayout.Direction.LeftToRight, self)
         self._layout = layout
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
@@ -140,7 +140,7 @@ class TwoDGeometryToolbar(QFrame):
         # The shared geometry toolbar remains vertical in every scene mode.
         # `_enabled` is retained only for integrations that call the former
         # mode-specific API.
-        self._layout.setDirection(QBoxLayout.Direction.TopToBottom)
+        self._layout.setDirection(QBoxLayout.Direction.LeftToRight)
         self.vector_button.setVisible(self._linear_algebra_mode)
         for button in self._linear_algebra_buttons[1:]:
             button.setVisible(self._linear_algebra_mode)
@@ -176,9 +176,7 @@ class TwoDGeometryToolbar(QFrame):
         if parent is None:
             return
         self.adjustSize()
-        x = 12
-        y = max(8, (parent.height() - self.height()) // 2)
-        self.move(x, y)
+        self.move(12, 12)
         if self.line_flyout.isVisible():
             self._position_flyout()
 

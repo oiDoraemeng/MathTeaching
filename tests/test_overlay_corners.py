@@ -114,11 +114,9 @@ def test_viewport_toolbar_built_by_configure_viewport_is_masked(monkeypatch) -> 
     assert toolbar.layout().direction() == QBoxLayout.Direction.TopToBottom
     assert toolbar.x() == viewport_host.width() - toolbar.width() - 12
     assert toolbar.y() == (viewport_host.height() - toolbar.height()) // 2
-    assert window.two_d_geometry_toolbar.layout().direction() == QBoxLayout.Direction.TopToBottom
+    assert window.two_d_geometry_toolbar.layout().direction() == QBoxLayout.Direction.LeftToRight
     assert window.two_d_geometry_toolbar.x() == 12
-    assert window.two_d_geometry_toolbar.y() == (
-        max(8, (viewport_host.height() - window.two_d_geometry_toolbar.height()) // 2)
-    )
+    assert window.two_d_geometry_toolbar.y() == 12
     mask = toolbar.mask()
     # An empty region "contains" nothing, so the emptiness check must come first
     # or a missing mask would pass the corner assertion vacuously.
