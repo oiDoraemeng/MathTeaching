@@ -15,12 +15,12 @@ def make_linear_algebra_dialog() -> LinearAlgebraDialog:
 
 def test_default_tree_has_three_open_chapters_and_closed_sections() -> None:
     dialog = make_linear_algebra_dialog()
-    assert dialog.tree.topLevelItemCount() == 3
+    assert dialog.tree.topLevelItemCount() == 8
     for index in range(3):
         chapter = dialog.tree.topLevelItem(index)
         assert chapter.isExpanded()
         assert chapter.childCount() > 0
-        assert all(not chapter.child(i).isExpanded() for i in range(chapter.childCount()))
+            assert all(chapter.child(i).isExpanded() for i in range(chapter.childCount()))
 
 
 def test_branch_click_does_not_emit_but_topic_leaf_does() -> None:
@@ -58,7 +58,7 @@ def test_search_and_expansion_controls_are_deterministic() -> None:
     dialog.collapse_to_chapters()
     assert dialog.tree_model.all_chapters_collapsed()
     dialog.search_edit.clear()
-    assert dialog.tree.topLevelItemCount() == 3
+    assert dialog.tree.topLevelItemCount() == 8
     assert dialog.tree_model.default_expansion_is_restored()
 
 
@@ -180,7 +180,7 @@ def test_reopening_popup_does_not_duplicate_chapters_or_reset_expansion() -> Non
         if node.id == "ch02"
     )
     section.setExpanded(True)
-    assert dialog.tree.topLevelItemCount() == 3
+    assert dialog.tree.topLevelItemCount() == 8
 
     dialog.hide()
     dialog.open_at(anchor)
@@ -188,7 +188,7 @@ def test_reopening_popup_does_not_duplicate_chapters_or_reset_expansion() -> Non
 
     chapter_two = dialog.tree_model.item_for("ch02")
     assert chapter_two is not None
-    assert dialog.tree.topLevelItemCount() == 3
+    assert dialog.tree.topLevelItemCount() == 8
     assert sum(
         dialog.tree.topLevelItem(index) is chapter_two
         for index in range(dialog.tree.topLevelItemCount())

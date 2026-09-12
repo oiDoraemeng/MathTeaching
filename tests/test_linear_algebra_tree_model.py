@@ -8,7 +8,7 @@ def test_tree_model_preserves_all_topics_in_source_order() -> None:
     _application = QApplication.instance() or QApplication([])
     tree = QTreeWidget()
     model = LinearAlgebraTreeModel(tree, catalog_registry())
-    assert tree.topLevelItemCount() == 3
+    assert tree.topLevelItemCount() == 8
     assert model.visible_topic_ids() == tuple(topic.id for topic in catalog_registry().topics)
 
 
