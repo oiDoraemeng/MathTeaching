@@ -36,6 +36,8 @@ class LinearAlgebraContentView(QWidget):
         self.connections_label = QLabel(self)
         self.analogy_boundary_label = QLabel(self)
         self.read_guide_label = QLabel(self)
+        self.source_label = QLabel(self)
+        self.source_diagnostic_label = QLabel(self)
         self.tableau_title_label = QLabel(self)
         self.tableau_caption_label = QLabel(self)
         self.tableau_highlight_label = QLabel(self)
@@ -50,6 +52,8 @@ class LinearAlgebraContentView(QWidget):
             self.connections_label,
             self.analogy_boundary_label,
             self.read_guide_label,
+            self.source_label,
+            self.source_diagnostic_label,
             self.tableau_title_label,
             self.tableau_caption_label,
             self.tableau_highlight_label,
@@ -79,6 +83,8 @@ class LinearAlgebraContentView(QWidget):
             layout.addWidget(label)
         for label in self._structured_labels:
             label.hide()
+        self.source_label.hide()
+        self.source_diagnostic_label.hide()
         for label in (self.tableau_title_label, self.tableau_caption_label, self.tableau_highlight_label):
             label.hide()
         self.setVisible(False)
@@ -114,6 +120,42 @@ class LinearAlgebraContentView(QWidget):
             for label in self._structured_labels:
                 label.hide()
         self.setVisible(True)
+
+    def set_source_context(
+        self,
+        source: Mapping[str, object] | object | None = None,
+        diagnostic: Mapping[str, object] | tuple[object, ...] | None = None,
+    ) -> None:
+        """Show bounded lecture provenance and a concise stale-source notice."""
+
+        def value(name: str, default: object = "") -> object:
+            if isinstance(source, Mapping):
+                return source.get(name, default)
+            return getattr(source, name, default) if source is not None else default
+
+        source_path = value("source_path", ())
+        heading_path = value("heading_path", ())
+        paths = tuple(str(item) for item in (*tuple(source_path), *tuple(heading_path)) if item)
+        source_hash = value("source_hash", None)
+        self.source_label.setText("讲义来源：" + " / ".join(paths) + (f"（{source_hash}）" if source_hash else ""))
+        self.source_label.setVisible(bool(paths or source_hash))
+        if isinstance(diagnostic, Mapping):
+            code = diagnostic.get("code", "")
+            published = diagnostic.get("published_hash", "")
+            current = diagnostic.get("current_hash", "")
+        elif isinstance(diagnostic, (tuple, list)) and len(diagnostic) == 3:
+            code, published, current = diagnostic
+        else:
+            code = published = current = ""
+        text = f"讲义来源已变化：{code}（已发布 {published}，当前 {current}）" if code else ""
+        self.source_diagnostic_label.setText(text)
+        self.source_diagnostic_label.setVisible(bool(text))
+
+    def set_artifact(self, artifact: object, *, source_diagnostic: object = None) -> None:
+        """Render an artifact's explanation and its bounded provenance together."""
+
+        self.set_content(getattr(artifact, "explanation", artifact))
+        self.set_source_context(getattr(artifact, "source", None), source_diagnostic)
 
     def _set_structured_content(self, content: ExplanationContentV2) -> None:
         """Render the artifact's math layers without flattening them into prose."""

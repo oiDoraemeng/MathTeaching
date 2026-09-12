@@ -83,6 +83,34 @@ def _claim_payload(claim: Any) -> dict[str, object]:
     }
 
 
+def _source_diagnostic_payload(diagnostic: object) -> dict[str, object] | None:
+    """Expose the bounded source check without leaking loader internals."""
+
+    if not isinstance(diagnostic, (tuple, list)) or len(diagnostic) != 3:
+        return None
+    code, published_hash, current_hash = diagnostic
+    return {
+        "code": str(code)[:64],
+        "published_hash": str(published_hash)[:256],
+        "current_hash": str(current_hash)[:256],
+    }
+
+
+def _source_payload(case: Any, diagnostic: object = None) -> dict[str, object]:
+    source = getattr(case, "source", None)
+    source_path = tuple(getattr(source, "source_path", ()))
+    heading_path = tuple(getattr(source, "heading_path", ()))
+    source_hash = getattr(source, "source_hash", None)
+    return {
+        "source_path": [str(value)[:512] for value in source_path[:8]],
+        "heading_path": [str(value)[:512] for value in heading_path[:8]],
+        "heading_level": getattr(source, "heading_level", None),
+        "occurrence": getattr(source, "occurrence", None),
+        "source_hash": str(source_hash)[:256] if source_hash is not None else None,
+        "diagnostic": _source_diagnostic_payload(diagnostic),
+    }
+
+
 def _storyboard_payload(stage: Any) -> dict[str, object]:
     anchor = tuple(getattr(stage, "anchor", ()))
     return {
@@ -289,6 +317,13 @@ class AgentSidebarWeb(QWidget):
             }
         )
 
+    def showEvent(self, event) -> None:
+        """强制 WebEngine 在窗口显示时重绘，修复最小化后空白问题。"""
+        super().showEvent(event)
+        if hasattr(self, "view") and self.view is not None:
+            # 触发 WebEngine 重新渲染，不使用 Reload 避免丢失状态
+            self.view.update()
+
     def set_scene_mode(self, is_2d: bool) -> None:
         self.bridge.emit_event(
             {
@@ -308,6 +343,7 @@ class AgentSidebarWeb(QWidget):
         category: str | None = None,
         scene_mode: str | None = None,
         compiled: Any | None = None,
+        source_diagnostic: object = None,
     ) -> None:
         """Publish one bounded, JSON-only teaching case to the Web UI."""
         explanation = getattr(case, "explanation", case)
@@ -338,8 +374,26 @@ class AgentSidebarWeb(QWidget):
             "worked_examples": [_worked_example_payload(example) for example in tuple(getattr(explanation, "worked_examples", ()))[:8]],
             "case_layout": _case_layout_payload(getattr(explanation, "case_layout", None)),
         }
+        topic_id = str(case_id or getattr(case, "topic_id", getattr(case, "id", "")))[:128]
+        source = _source_payload(case, source_diagnostic)
+        # This public envelope is intentionally semantic-only. Compiled plans
+        # and renderer objects never cross the explanation boundary.
+        explanation_payload = {
+            "claims": [_claim_payload(claim) for claim in claims[:24]],
+            "formula": formula_text[:512],
+            "derivation": [str(step)[:1024] for step in derivation_values[:16]],
+            "numeric_example": structured["worked_examples"],
+            "symbol_roles": dict(getattr(explanation, "symbol_roles", {})),
+            "geometric_meaning": structured["geometric_meaning"],
+            "misconception": structured["pitfalls"],
+            "read_guide": structured["read_guide"],
+            "analogy_boundary": structured["analogy_boundary"],
+            "definition": structured["definition"],
+            "conclusion": conclusion_text[:1024],
+        }
         payload = {
-            "case_id": str(case_id or getattr(case, "topic_id", getattr(case, "id", "")))[:128],
+            "case_id": topic_id,
+            "topic_id": topic_id,
             "category": str(category or getattr(case, "category", ""))[:64],
             "name": str(getattr(explanation, "title", getattr(case, "name", "")))[:128],
             "formula": formula_text[:512] or str(getattr(case, "formula", ""))[:512],
@@ -353,7 +407,10 @@ class AgentSidebarWeb(QWidget):
             "source_excerpt": str(getattr(getattr(case, "source", None), "excerpt", ""))[:20000],
             "scene_mode": scene_mode if scene_mode in {"2d", "3d"} else "2d",
             "artifact_revision": getattr(case, "revision", None),
-            "source_hash": getattr(getattr(case, "source", None), "source_hash", None),
+            "revision": getattr(case, "revision", None),
+            "source_hash": source["source_hash"],
+            "source": source,
+            "source_diagnostic": source["diagnostic"],
             "claims": [_claim_payload(claim) for claim in claims[:24]],
             "palette": dict(ROLE_COLORS),
             "storyboard": [_storyboard_payload(stage) for stage in tuple(getattr(compiled, "storyboard", ()))[:24]],
@@ -361,6 +418,7 @@ class AgentSidebarWeb(QWidget):
             "compiler_version": getattr(compiled, "compiler_version", None),
         }
         payload.update(structured)
+        payload["explanation"] = explanation_payload
         if not self._document_loaded:
             self._pending_math_case = payload
             return

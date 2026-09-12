@@ -226,6 +226,27 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
     checks: Array.isArray(example.checks) ? example.checks.filter((value): value is { name: string; expected: unknown; tolerance?: number } => Boolean(value) && typeof value === "object" && typeof (value as Record<string, unknown>).name === "string").map((check) => ({ name: check.name, expected: check.expected, tolerance: typeof check.tolerance === "number" ? check.tolerance : undefined })) : [],
     claimRefs: Array.isArray(example.claim_refs) ? example.claim_refs.filter((value): value is string => typeof value === "string") : [],
   })) : undefined;
+  const rawSource = payload.source;
+  const source = rawSource && typeof rawSource === "object" && !Array.isArray(rawSource)
+    ? (() => {
+        const value = rawSource as Record<string, unknown>;
+        const diagnosticValue = value.diagnostic;
+        return {
+          sourcePath: Array.isArray(value.source_path) ? value.source_path.filter((item): item is string => typeof item === "string") : [],
+          headingPath: Array.isArray(value.heading_path) ? value.heading_path.filter((item): item is string => typeof item === "string") : [],
+          headingLevel: typeof value.heading_level === "number" ? value.heading_level : null,
+          occurrence: typeof value.occurrence === "number" ? value.occurrence : null,
+          sourceHash: typeof value.source_hash === "string" ? value.source_hash : null,
+          diagnostic: diagnosticValue && typeof diagnosticValue === "object" && !Array.isArray(diagnosticValue) ? diagnosticValue as Record<string, unknown> : null,
+        };
+      })()
+    : undefined;
+  const sourceDiagnosticValue = source?.diagnostic;
+  const sourceDiagnostic = sourceDiagnosticValue && typeof sourceDiagnosticValue.code === "string"
+    && typeof sourceDiagnosticValue.published_hash === "string"
+    && typeof sourceDiagnosticValue.current_hash === "string"
+    ? { code: sourceDiagnosticValue.code, publishedHash: sourceDiagnosticValue.published_hash, currentHash: sourceDiagnosticValue.current_hash }
+    : null;
   const rawLayout = payload.case_layout;
   const caseLayout = rawLayout && typeof rawLayout === "object" && !Array.isArray(rawLayout)
     ? (() => {
@@ -245,6 +266,7 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
     : undefined;
   return {
     id,
+    topicId: typeof payload.topic_id === "string" ? payload.topic_id : id,
     category: typeof payload.category === "string" ? payload.category : "向量",
     name,
     formula,
@@ -254,7 +276,10 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
     sourceExcerpt: typeof payload.source_excerpt === "string" ? payload.source_excerpt : "",
     sceneMode: payload.scene_mode === "3d" ? "3d" : "2d",
     artifactRevision: typeof payload.artifact_revision === "number" ? payload.artifact_revision : null,
+    revision: typeof payload.revision === "number" ? payload.revision : (typeof payload.artifact_revision === "number" ? payload.artifact_revision : null),
     sourceHash: typeof payload.source_hash === "string" ? payload.source_hash : null,
+    source: source ? { sourcePath: source.sourcePath, headingPath: source.headingPath, headingLevel: source.headingLevel, occurrence: source.occurrence, sourceHash: source.sourceHash } : undefined,
+    sourceDiagnostic,
     definition: typeof payload.definition === "string" ? payload.definition : "",
     derivation: list("derivation"),
     intuition: typeof payload.intuition === "string" ? payload.intuition : "",

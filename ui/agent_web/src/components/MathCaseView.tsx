@@ -22,6 +22,7 @@ export function MathCaseView({
   const [stageIndex, setStageIndex] = useState(0);
   const stage = stages[stageIndex];
   const isVectorAddition = caseData.id === "ch01.ops.addition";
+  const hasCaseLayout = paneCases.length > 0;
   const definitionAndFormula = isVectorAddition
     ? caseData.definition?.trim() ?? ""
     : [
@@ -78,11 +79,23 @@ export function MathCaseView({
   );
 
   return (
-    <article className={`math-case-view${isVectorAddition ? " math-case-view--vector-addition" : ""}`} aria-label={`${caseData.name}数学解释`}>
+    <article className={`math-case-view${isVectorAddition ? " math-case-view--vector-addition" : ""}${hasCaseLayout && !isVectorAddition ? " math-case-view--case-layout" : ""}`} aria-label={`${caseData.name}数学解释`}>
       <header className="math-case-header">
         <span>{caseData.category}</span>
         <h1>{caseData.name}</h1>
         {caseData.summary && <p>{caseData.summary}</p>}
+        {caseData.source && (caseData.source.headingPath.length > 0 || caseData.source.sourcePath.length > 0) && (
+          <section className="math-case-source" aria-label="讲义来源">
+            <span>讲义来源：</span>
+            <span>{[...caseData.source.sourcePath, ...caseData.source.headingPath].join(" / ")}</span>
+            {caseData.source.sourceHash && <small>（{caseData.source.sourceHash}）</small>}
+          </section>
+        )}
+        {caseData.sourceDiagnostic && (
+          <p className="math-case-source-diagnostic" role="status">
+            讲义来源已变化：{caseData.sourceDiagnostic.code}（已发布 {caseData.sourceDiagnostic.publishedHash}，当前 {caseData.sourceDiagnostic.currentHash}）
+          </p>
+        )}
       </header>
       {hasLecture ? (
         <section className="math-case-lecture" aria-label="讲义正文">
@@ -102,9 +115,14 @@ export function MathCaseView({
             </section>
           )}
           {section("直觉", caseData.intuition)}
-          {section(isVectorAddition ? "向量加法的基本性质" : "不变量", caseData.invariants?.join("\n\n"))}
+          {section(
+            isVectorAddition
+              ? "向量加法的基本性质"
+              : caseData.id === "ch01.inner.definitions" ? "内积的基本性质" : "不变量",
+            caseData.invariants?.join("\n\n"),
+          )}
           {section("几何意义", caseData.geometricMeaning)}
-          {workedExamples(caseData, isVectorAddition && paneCases.length > 0 ? (
+          {workedExamples(caseData, hasCaseLayout && paneCases.length > 1 ? (
             <div className="math-case-example-controls" role="list" aria-label="二维案例选择">
               {paneCases.map((pane) => (
                 <button
@@ -134,7 +152,7 @@ export function MathCaseView({
           {section("读图提示", caseData.readGuide?.join("\n"))}
         </section>
       )}
-      {stages.length > 0 && !isVectorAddition && (
+      {stages.length > 0 && !hasCaseLayout && (
         <section className="math-case-storyboard" aria-label="几何图形例子">
           {paneCases.length > 0 && (
             <div className="math-case-pane-cases" role="list" aria-label="案例窗格">
@@ -218,25 +236,25 @@ export function MathCaseView({
 
 function workedExamples(caseData: CaseProjection, controls?: ReactNode) {
   if (!(caseData.workedExamples?.length ?? 0)) return null;
-  const isVectorAddition = caseData.id === "ch01.ops.addition";
+  const hasCaseLayout = (caseData.caseLayout?.cases?.length ?? 0) > 0;
   return (
     <section className="math-case-section">
-      <h2>{isVectorAddition ? "案例" : "数字例题"}</h2>
+      <h2>{hasCaseLayout ? "案例" : "数字例题"}</h2>
       {caseData.workedExamples?.map((example, index) => (
         <article className="math-case-example" key={example.id || `${caseData.id}-example-${index}`}>
-          <h3>{example.title || example.kind || `例题 ${index + 1}`}</h3>
+          {!hasCaseLayout && <h3>{example.title || example.kind || `例题 ${index + 1}`}</h3>}
           {example.calculation?.map((line, lineIndex) => (
             <div
-              className={isVectorAddition && isFormulaOnly(line) ? "math-case-example-formula" : "math-case-example-prose"}
+              className={hasCaseLayout && isFormulaOnly(line) ? "math-case-example-formula" : "math-case-example-prose"}
               key={`${example.id}-${lineIndex}`}
             >
               <MarkdownContent>{line}</MarkdownContent>
             </div>
           ))}
-          {!isVectorAddition && <p>结果：{formatValue(example.result)}</p>}
-          {!isVectorAddition && example.checks?.map((check) => (
-            <small key={check.name}>校验 {check.name}: {formatValue(check.expected)}</small>
-          ))}
+          {/* Results and checker payloads are audit data.  The displayed
+              calculation already states the mathematical result, so showing
+              both produces the duplicated “结果/校验” lines the lecture view
+              must avoid. */}
         </article>
       ))}
       {controls}

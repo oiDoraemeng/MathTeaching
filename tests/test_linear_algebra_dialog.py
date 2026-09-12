@@ -152,6 +152,21 @@ def test_structured_teaching_artifact_shows_analogy_boundary_when_present() -> N
     dialog.close()
 
 
+def test_structured_teaching_artifact_shows_source_and_stale_diagnostic() -> None:
+    dialog = make_linear_algebra_dialog()
+    artifact = TeachingArtifact.from_dict(composition_artifact_payload())
+    dialog.content_view.set_artifact(
+        artifact,
+        source_diagnostic=("stale_source", artifact.source.source_hash, "sha256:changed"),
+    )
+
+    assert "讲义来源：" in dialog.content_view.source_label.text()
+    assert "stale_source" in dialog.content_view.source_diagnostic_label.text()
+    assert not dialog.content_view.source_label.isHidden()
+    assert not dialog.content_view.source_diagnostic_label.isHidden()
+    dialog.close()
+
+
 def test_external_click_closes_popup_but_reactivation_cancels_pending_close() -> None:
     host = QWidget()
     outside_button = QToolButton(host)

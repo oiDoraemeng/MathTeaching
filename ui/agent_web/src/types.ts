@@ -98,6 +98,7 @@ export interface SessionProjection {
 
 export interface CaseProjection {
   id: string;
+  topicId?: string;
   category: string;
   name: string;
   formula: string;
@@ -108,7 +109,10 @@ export interface CaseProjection {
   sourceExcerpt?: string;
   sceneMode?: "2d" | "3d";
   artifactRevision?: number | null;
+  revision?: number | null;
   sourceHash?: string | null;
+  source?: CaseSourceProjection;
+  sourceDiagnostic?: SourceDiagnosticProjection | null;
   definition?: string;
   derivation?: string[];
   intuition?: string;
@@ -129,6 +133,20 @@ export interface CaseProjection {
   compilerVersion?: string | null;
   caseLayout?: CaseLayoutProjection;
   activeCaseId?: string;
+}
+
+export interface CaseSourceProjection {
+  sourcePath: string[];
+  headingPath: string[];
+  headingLevel?: number | null;
+  occurrence?: number | null;
+  sourceHash?: string | null;
+}
+
+export interface SourceDiagnosticProjection {
+  code: string;
+  publishedHash: string;
+  currentHash: string;
 }
 
 export interface CaseLayoutProjection {

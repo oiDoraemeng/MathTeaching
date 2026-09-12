@@ -133,6 +133,54 @@ describe("MathCaseView structured artifact", () => {
     expect(onSetCasePaneCount).toHaveBeenCalledWith(2);
   });
 
+  it("uses declared cases for another subsection without duplicating storyboard controls", () => {
+    const onSelectStage = vi.fn();
+    const onSetCasePaneCount = vi.fn();
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id: "ch01.vector.magnitude",
+          category: "向量",
+          name: "向量的几何量：方向、长度与零向量",
+          formula: "\\lvert\\boldsymbol v\\rvert=\\sqrt{x^2+y^2}",
+          steps: [],
+          conclusion: "",
+          definition: "向量从原点出发。",
+          geometricMeaning: "箭头长度是模。",
+          workedExamples: [
+            { id: "example.nonzero", title: "案例一：非零向量的长度", calculation: ["$$\\boldsymbol v=(3,4)$$", "$$\\lvert\\boldsymbol v\\rvert=5$$"], result: 25, checks: [{ name: "result", expected: 25 }] },
+            { id: "example.zero", title: "案例二：零向量", calculation: ["$$\\boldsymbol 0=(0,0)$$", "$$\\lvert\\boldsymbol 0\\rvert=0$$"], result: 0, checks: [{ name: "result", expected: 0 }] },
+          ],
+          storyboard: [
+            { id: "stage.nonzero", title: "案例一", caption: "长度为 5。", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+            { id: "stage.zero", title: "案例二", caption: "长度为 0。", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 1] },
+          ],
+          caseLayout: {
+            defaultPaneCount: 1,
+            cases: [
+              { id: "case.nonzero", topicId: "ch01.vector.magnitude", exampleRef: "example.nonzero", claimRefs: [], stageRefs: ["stage.nonzero"], purpose: "案例一：非零向量的长度" },
+              { id: "case.zero", topicId: "ch01.vector.magnitude", exampleRef: "example.zero", claimRefs: [], stageRefs: ["stage.zero"], purpose: "案例二：零向量" },
+            ],
+          },
+        }}
+        onSelectStage={onSelectStage}
+        onSetCasePaneCount={onSetCasePaneCount}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "案例", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "案例一：非零向量的长度", level: 3 })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "案例二：零向量", level: 3 })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "几何图形例子" })).not.toBeInTheDocument();
+    expect(container.querySelector(".math-case-structured .katex-html .sqrt svg path")).toBeTruthy();
+    expect(screen.queryByText("结果：25")).not.toBeInTheDocument();
+    expect(screen.queryByText("校验 result: 25")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "案例二：零向量" }));
+    expect(onSelectStage).toHaveBeenCalledWith("stage.zero");
+    fireEvent.click(screen.getByRole("button", { name: "全部显示" }));
+    expect(onSetCasePaneCount).toHaveBeenCalledWith(2);
+  });
+
   it("uses the lecture excerpt as a continuous note instead of section cards", () => {
     render(
       <MathCaseView
@@ -153,5 +201,34 @@ describe("MathCaseView structured artifact", () => {
     expect(screen.getByRole("heading", { name: "定义与公式", level: 2 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "几何意义", level: 3 })).toBeInTheDocument();
     expect(screen.queryByText("旧版回退步骤")).not.toBeInTheDocument();
+  });
+
+  it("renders the shared source identity and stale-source diagnostic", () => {
+    render(
+      <MathCaseView
+        caseData={{
+          id: "ch08.principal-axis",
+          topicId: "ch08.principal-axis",
+          category: "二次型",
+          name: "主轴定理",
+          formula: "x^TAx",
+          steps: [],
+          conclusion: "结论",
+          source: {
+            sourcePath: ["线性代数讲义.md"],
+            headingPath: ["第8章 二次型与主轴定理", "8.3 主轴定理"],
+            sourceHash: "sha256:published",
+          },
+          sourceDiagnostic: {
+            code: "stale_source",
+            publishedHash: "sha256:published",
+            currentHash: "sha256:current",
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("region", { name: "讲义来源" })).toHaveTextContent("8.3 主轴定理");
+    expect(screen.getByRole("status")).toHaveTextContent("stale_source");
   });
 });

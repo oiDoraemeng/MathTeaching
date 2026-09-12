@@ -178,3 +178,32 @@ def test_web_math_case_keeps_structured_artifact_metadata_without_scene_ops() ->
     assert payload["storyboard"][0]["id"] == compiled.storyboard[0].id
     assert payload["source_excerpt"] == artifact.source.excerpt
     assert "operations" not in payload
+
+
+def test_web_math_case_exposes_bounded_source_and_explanation_contract() -> None:
+    from linear_algebra.teaching.model import TeachingArtifact
+    from tests.teaching_fixtures import projection_artifact_payload
+
+    app = QApplication.instance() or QApplication([])
+    host = AgentSidebarWeb(lambda _message: None)
+    emitted: list[dict[str, object]] = []
+    host.bridge.event_json.connect(lambda raw: emitted.append(json.loads(raw)))
+    host._document_loaded = True
+    artifact = TeachingArtifact.from_dict(projection_artifact_payload(with_residual=True))
+
+    host.show_math_case(
+        artifact,
+        case_id=artifact.topic_id,
+        source_diagnostic=("stale_source", artifact.source.source_hash, "sha256:current"),
+    )
+    payload = emitted[-1]["payload"]
+    assert payload["topic_id"] == artifact.topic_id
+    assert payload["revision"] == artifact.revision
+    assert payload["source"]["heading_path"] == list(artifact.source.heading_path)
+    assert payload["source_diagnostic"]["code"] == "stale_source"
+    assert payload["explanation"]["formula"] == artifact.explanation.formula
+    assert payload["explanation"]["symbol_roles"] == dict(artifact.explanation.symbol_roles)
+    encoded = json.dumps(payload, ensure_ascii=False)
+    assert "operations" not in encoded
+    assert "geometry." not in encoded
+    assert "renderer" not in encoded
