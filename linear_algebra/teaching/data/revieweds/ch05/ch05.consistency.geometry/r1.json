@@ -4,6 +4,10 @@
       "entity_refs": [
         "entity.ch05.consistency.geometry.matrix",
         "entity.ch05.consistency.geometry.rhs",
+        "entity.ch05.consistency.geometry.none_matrix",
+        "entity.ch05.consistency.geometry.none_rhs",
+        "entity.ch05.consistency.geometry.infinite_matrix",
+        "entity.ch05.consistency.geometry.infinite_rhs",
         "entity.ch05.consistency.geometry.solution_state"
       ],
       "explanation_refs": [
@@ -19,6 +23,10 @@
       "formula_symbols": [
         "matrix",
         "rhs",
+        "none_matrix",
+        "none_rhs",
+        "infinite_matrix",
+        "infinite_rhs",
         "solution_state"
       ],
       "id": "claim.ch05.consistency.geometry",
@@ -136,7 +144,11 @@
     ],
     "summary": "5.3 解的存在性与唯一性 的确定性数学语义 artifact。",
     "symbol_roles": {
+      "infinite_matrix": "infinite_matrix",
+      "infinite_rhs": "infinite_rhs",
       "matrix": "matrix",
+      "none_matrix": "none_matrix",
+      "none_rhs": "none_rhs",
       "rhs": "rhs",
       "solution_state": "solution_state"
     },
@@ -178,12 +190,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:62d52d2777e940850e9b771adf70623364d3ef6795d7c447668020a9649ba503",
+    "artifact_digest": "sha256:06c1d86d66596de7c6354dfe7935e0460df33e252f1625b6a6df57be14b67fc3",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:33658297e7369ff2946190d0837e814c94bf3962b3375c7778bcc28221662a10",
+    "raw_reply_digest": "sha256:4972c2bbdc1d3d6037900e2302960f847d4dbe698a12133e7883daa5e7ef5add",
     "source_hash": "sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e"
   },
   "revision": 1,
@@ -276,13 +288,82 @@
           "claim.ch05.consistency.geometry"
         ],
         "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.none_matrix",
+        "kind": "matrix",
+        "label": "none_matrix",
+        "role": "none_matrix",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.none_rhs",
+        "kind": "vector",
+        "label": "none_rhs",
+        "role": "none_rhs",
+        "value": [
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.infinite_matrix",
+        "kind": "matrix",
+        "label": "infinite_matrix",
+        "role": "infinite_matrix",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.infinite_rhs",
+        "kind": "vector",
+        "label": "infinite_rhs",
+        "role": "infinite_rhs",
+        "value": [
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
         "id": "entity.ch05.consistency.geometry.solution_state",
         "kind": "constraint",
         "label": "solution_state",
         "role": "solution_state",
         "value": [
           1.0,
-          0.0
+          0.0,
+          2.0
         ]
       }
     ],
@@ -295,21 +376,23 @@
         "kind": "constraint_state",
         "parameters": {
           "consistency_states": [
+            1.0,
+            0.0,
+            2.0
+          ],
+          "infinite_matrix": [
             [
               1.0,
-              0.0,
-              1.0
+              0.0
             ],
             [
-              1.0,
-              0.0,
-              2.0
-            ],
-            [
-              1.0,
-              1.0,
-              1.0
+              2.0,
+              0.0
             ]
+          ],
+          "infinite_rhs": [
+            1.0,
+            2.0
           ],
           "matrix": [
             [
@@ -320,6 +403,20 @@
               0.0,
               1.0
             ]
+          ],
+          "none_matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          "none_rhs": [
+            1.0,
+            2.0
           ],
           "rhs": [
             1.0,
@@ -344,12 +441,20 @@
         "input_entity_refs": [
           "entity.ch05.consistency.geometry.matrix",
           "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
           "entity.ch05.consistency.geometry.solution_state"
         ],
         "layout": "sequence",
         "output_entity_refs": [
           "entity.ch05.consistency.geometry.matrix",
           "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
           "entity.ch05.consistency.geometry.solution_state"
         ],
         "relation_refs": [
@@ -368,12 +473,20 @@
         "input_entity_refs": [
           "entity.ch05.consistency.geometry.matrix",
           "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
           "entity.ch05.consistency.geometry.solution_state"
         ],
         "layout": "sequence",
         "output_entity_refs": [
           "entity.ch05.consistency.geometry.matrix",
           "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
           "entity.ch05.consistency.geometry.solution_state"
         ],
         "relation_refs": [
@@ -392,12 +505,20 @@
         "input_entity_refs": [
           "entity.ch05.consistency.geometry.matrix",
           "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
           "entity.ch05.consistency.geometry.solution_state"
         ],
         "layout": "sequence",
         "output_entity_refs": [
           "entity.ch05.consistency.geometry.matrix",
           "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
           "entity.ch05.consistency.geometry.solution_state"
         ],
         "relation_refs": [

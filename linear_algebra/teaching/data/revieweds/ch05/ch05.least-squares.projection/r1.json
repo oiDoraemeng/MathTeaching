@@ -185,12 +185,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:c0b4e9419eaf17065e117402893ccbf33dfc97171580662221c2bfc185abdb78",
+    "artifact_digest": "sha256:e736e6a84884780b1304ccaa42c9eef1bf27c48be8212c5c55df4199436d9dec",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:a58f521c1e148650108345fb2e69a7205272044ca17a2946e2fa81f69c3ce880",
+    "raw_reply_digest": "sha256:3043ccec563a9e340bb861b590fba9b89f8ecff09518d898a6a046f642908020",
     "source_hash": "sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a"
   },
   "revision": 1,
@@ -271,7 +271,7 @@
         "claim_refs": [
           "claim.ch05.least-squares.projection"
         ],
-        "dimension": 2,
+        "dimension": 3,
         "id": "entity.ch05.least-squares.projection.values",
         "kind": "vector",
         "label": "values",
@@ -286,7 +286,7 @@
         "claim_refs": [
           "claim.ch05.least-squares.projection"
         ],
-        "dimension": 2,
+        "dimension": 3,
         "id": "entity.ch05.least-squares.projection.data",
         "kind": "vector",
         "label": "data",
@@ -301,30 +301,30 @@
         "claim_refs": [
           "claim.ch05.least-squares.projection"
         ],
-        "dimension": 2,
+        "dimension": 3,
         "id": "entity.ch05.least-squares.projection.fit",
         "kind": "vector",
         "label": "fit",
         "role": "fit",
         "value": [
-          1.1666666667,
-          1.6666666667,
-          2.1666666667
+          1.1666666666666667,
+          1.6666666666666667,
+          2.1666666666666665
         ]
       },
       {
         "claim_refs": [
           "claim.ch05.least-squares.projection"
         ],
-        "dimension": 2,
+        "dimension": 3,
         "id": "entity.ch05.least-squares.projection.residual",
         "kind": "vector",
         "label": "residual",
         "role": "residual",
         "value": [
-          -0.1666666667,
-          0.3333333333,
-          -0.1666666667
+          -0.16666666666666666,
+          0.3333333333333333,
+          -0.16666666666666666
         ]
       }
     ],
@@ -341,9 +341,9 @@
             0.5
           ],
           "fit": [
-            1.1666666667,
-            1.6666666667,
-            2.1666666667
+            1.1666666666666667,
+            1.6666666666666667,
+            2.1666666666666665
           ],
           "matrix": [
             [
@@ -360,9 +360,9 @@
             ]
           ],
           "residual": [
-            -0.1666666667,
-            0.3333333333,
-            -0.1666666667
+            -0.16666666666666666,
+            0.3333333333333333,
+            -0.16666666666666666
           ],
           "values": [
             1.0,

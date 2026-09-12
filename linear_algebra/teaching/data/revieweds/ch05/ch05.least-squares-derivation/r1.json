@@ -68,8 +68,9 @@
     "formula": "5.8 最小二乘法的完整推导: finite typed semantic evidence",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "normal equations A^T A c = A^T b",
       "residual orthogonal to column space",
+      "projection plus residual equals data",
+      "normal equations A^T A c = A^T b",
       "finite numeric result"
     ],
     "pitfalls": [
@@ -188,12 +189,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:7a5f2c1be0848af0febff92e657e3d5c5e180a7c7daf733c2bfd0b97a415747c",
+    "artifact_digest": "sha256:e9e7ce6073ac14b6da9ce935346df9ecf0cffe8c6965699c394738f21b2079a6",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:d61667effd3abe266cab225b9026a19c9fc3b60d24d22b286cc1cd99f93f43cb",
+    "raw_reply_digest": "sha256:6fbe407b31176db0b4cf11b0b708b274706252aa8ad4cf88942729a27c288837",
     "source_hash": "sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69"
   },
   "revision": 1,
@@ -274,7 +275,7 @@
         "claim_refs": [
           "claim.ch05.least-squares-derivation"
         ],
-        "dimension": 2,
+        "dimension": 3,
         "id": "entity.ch05.least-squares-derivation.values",
         "kind": "vector",
         "label": "values",
@@ -323,30 +324,30 @@
         "claim_refs": [
           "claim.ch05.least-squares-derivation"
         ],
-        "dimension": 2,
+        "dimension": 3,
         "id": "entity.ch05.least-squares-derivation.fit",
         "kind": "vector",
         "label": "fit",
         "role": "fit",
         "value": [
-          1.1666666667,
-          1.6666666667,
-          2.1666666667
+          1.1666666666666667,
+          1.6666666666666667,
+          2.1666666666666665
         ]
       },
       {
         "claim_refs": [
           "claim.ch05.least-squares-derivation"
         ],
-        "dimension": 2,
+        "dimension": 3,
         "id": "entity.ch05.least-squares-derivation.residual",
         "kind": "vector",
         "label": "residual",
         "role": "residual",
         "value": [
-          -0.1666666667,
-          0.3333333333,
-          -0.1666666667
+          -0.16666666666666666,
+          0.3333333333333333,
+          -0.16666666666666666
         ]
       }
     ],
@@ -363,9 +364,9 @@
             0.5
           ],
           "fit": [
-            1.1666666667,
-            1.6666666667,
-            2.1666666667
+            1.1666666666666667,
+            1.6666666666666667,
+            2.1666666666666665
           ],
           "matrix": [
             [
@@ -396,9 +397,9 @@
             11.0
           ],
           "residual": [
-            -0.1666666667,
-            0.3333333333,
-            -0.1666666667
+            -0.16666666666666666,
+            0.3333333333333333,
+            -0.16666666666666666
           ],
           "values": [
             1.0,
@@ -416,8 +417,9 @@
       {
         "caption": "data",
         "expected_invariants": [
-          "normal equations A^T A c = A^T b",
           "residual orthogonal to column space",
+          "projection plus residual equals data",
+          "normal equations A^T A c = A^T b",
           "finite numeric result"
         ],
         "id": "stage.ch05.least-squares-derivation.data",
@@ -446,8 +448,9 @@
       {
         "caption": "normal_equations",
         "expected_invariants": [
-          "normal equations A^T A c = A^T b",
           "residual orthogonal to column space",
+          "projection plus residual equals data",
+          "normal equations A^T A c = A^T b",
           "finite numeric result"
         ],
         "id": "stage.ch05.least-squares-derivation.normal_equations",
@@ -476,8 +479,9 @@
       {
         "caption": "projection",
         "expected_invariants": [
-          "normal equations A^T A c = A^T b",
           "residual orthogonal to column space",
+          "projection plus residual equals data",
+          "normal equations A^T A c = A^T b",
           "finite numeric result"
         ],
         "id": "stage.ch05.least-squares-derivation.projection",
@@ -506,8 +510,9 @@
       {
         "caption": "residual",
         "expected_invariants": [
-          "normal equations A^T A c = A^T b",
           "residual orthogonal to column space",
+          "projection plus residual equals data",
+          "normal equations A^T A c = A^T b",
           "finite numeric result"
         ],
         "id": "stage.ch05.least-squares-derivation.residual",

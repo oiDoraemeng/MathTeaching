@@ -1,12 +1,187 @@
 {
-  "artifact_digest": "sha256:ca279e4344b47fe14f1f60ef6044c96b880120cd6459862e7312de0f78e91df1",
+  "artifact_digest": "sha256:638a98992c511b5218e943ea0c49b7b489e7e932ce7b2f95bfb981ce60bf88bb",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:aff8c448a68bc63522487ed52ea5be4990ef537e57ed1841cbe807c55c317534",
+  "contract_digest": "sha256:d17f111ee1f93f7378c846a80b62a0415f2abce1a0c71a6fcdd062d22d51bb94",
   "plan": {
     "operations": [
       {
-        "alias": "ch05_fundamental-solution-system__solution",
+        "alias": "ch05.fundamental-solution-system__entity__matrix",
+        "aliases": [
+          "ch05.fundamental-solution-system__entity__matrix__stage_0"
+        ],
+        "augmented_rank": 1,
+        "matrix": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.matrix_tableau",
+        "rank": 1,
+        "rhs": [
+          0.0,
+          0.0
+        ],
+        "solution_state": "unknown",
+        "stages": [
+          {
+            "alias": "ch05.fundamental-solution-system__entity__matrix__stage_0",
+            "augmented_rank": 1,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                2.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 1,
+            "rhs": [
+              0.0,
+              0.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 1 阶段"
+          }
+        ]
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__rhs__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__rhs__point_1",
+        "coordinates": [
+          3.0,
+          6.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__rhs",
+        "end": "ch05.fundamental-solution-system__entity__rhs__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.fundamental-solution-system__entity__rhs__point_0"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__pivot_columns__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__pivot_columns__point_1",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__pivot_columns",
+        "end": "ch05.fundamental-solution-system__entity__pivot_columns__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.fundamental-solution-system__entity__pivot_columns__point_0"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__free_variables__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__free_variables__point_1",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__free_variables",
+        "end": "ch05.fundamental-solution-system__entity__free_variables__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.fundamental-solution-system__entity__free_variables__point_0"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__particular__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__particular__point_1",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__particular",
+        "end": "ch05.fundamental-solution-system__entity__particular__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.fundamental-solution-system__entity__particular__point_0"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__nullspace",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__entity__solution_set",
         "basis": [
           [
             -2.0,
@@ -31,7 +206,7 @@
         ]
       },
       {
-        "alias": "ch05_fundamental-solution-system__matrix",
+        "alias": "ch05.fundamental-solution-system__relation",
         "basis": [
           [
             -2.0,
@@ -56,7 +231,61 @@
         ]
       },
       {
-        "alias": "ch05_fundamental-solution-system__rhs",
+        "alias": "ch05.fundamental-solution-system__relation__domain",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__relation__image",
+        "basis": [
+          [
+            1.0,
+            2.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__relation__kernel",
         "basis": [
           [
             -2.0,
@@ -71,7 +300,7 @@
         ],
         "dimension": 2,
         "offset": [
-          3.0,
+          0.0,
           0.0
         ],
         "op": "geometry.affine_solution",
@@ -81,132 +310,107 @@
         ]
       },
       {
-        "alias": "ch05_fundamental-solution-system__pivot_columns",
-        "basis": [
+        "alias": "ch05.fundamental-solution-system__stage__echelon",
+        "aliases": [
+          "ch05.fundamental-solution-system__stage__echelon__stage_0"
+        ],
+        "augmented_rank": 1,
+        "matrix": [
           [
-            -2.0,
-            1.0
+            1.0,
+            2.0
+          ],
+          [
+            0.0,
+            0.0
           ]
         ],
-        "bounds": [
-          -2,
-          2,
-          -2,
-          2
-        ],
-        "dimension": 2,
-        "offset": [
+        "op": "geometry.matrix_tableau",
+        "rank": 1,
+        "rhs": [
           3.0,
           0.0
         ],
-        "op": "geometry.affine_solution",
-        "origin": [
-          0.0,
-          0.0
+        "solution_state": "unknown",
+        "stages": [
+          {
+            "alias": "ch05.fundamental-solution-system__stage__echelon__stage_0",
+            "augmented_rank": 1,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                2.0
+              ],
+              [
+                0.0,
+                0.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 1,
+            "rhs": [
+              3.0,
+              0.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 1 阶段"
+          }
         ]
       },
       {
-        "alias": "ch05_fundamental-solution-system__free_variables",
-        "basis": [
-          [
-            -2.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -2,
-          2,
-          -2,
-          2
-        ],
-        "dimension": 2,
-        "offset": [
-          3.0,
-          0.0
-        ],
-        "op": "geometry.affine_solution",
-        "origin": [
+        "alias": "ch05.fundamental-solution-system__stage__pivots__point_0",
+        "coordinates": [
           0.0,
           0.0
-        ]
+        ],
+        "name": "",
+        "op": "point.upsert"
       },
       {
-        "alias": "ch05_fundamental-solution-system__nullspace",
-        "basis": [
-          [
-            -2.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -2,
-          2,
-          -2,
-          2
-        ],
-        "dimension": 2,
-        "offset": [
-          3.0,
+        "alias": "ch05.fundamental-solution-system__stage__pivots__point_1",
+        "coordinates": [
+          1.0,
           0.0
         ],
-        "op": "geometry.affine_solution",
-        "origin": [
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__stage__pivots",
+        "end": "ch05.fundamental-solution-system__stage__pivots__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.fundamental-solution-system__stage__pivots__point_0"
+      },
+      {
+        "alias": "ch05.fundamental-solution-system__stage__free_variables__point_0",
+        "coordinates": [
           0.0,
           0.0
-        ]
+        ],
+        "name": "",
+        "op": "point.upsert"
       },
       {
-        "alias": "ch05_fundamental-solution-system__particular",
-        "basis": [
-          [
-            -2.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -2,
-          2,
-          -2,
-          2
-        ],
-        "dimension": 2,
-        "offset": [
-          3.0,
-          0.0
-        ],
-        "op": "geometry.affine_solution",
-        "origin": [
+        "alias": "ch05.fundamental-solution-system__stage__free_variables__point_1",
+        "coordinates": [
           0.0,
-          0.0
-        ]
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
       },
       {
-        "alias": "ch05_fundamental-solution-system__solution_set",
-        "basis": [
-          [
-            -2.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -2,
-          2,
-          -2,
-          2
-        ],
-        "dimension": 2,
-        "offset": [
-          3.0,
-          0.0
-        ],
-        "op": "geometry.affine_solution",
-        "origin": [
-          0.0,
-          0.0
-        ]
+        "alias": "ch05.fundamental-solution-system__stage__free_variables",
+        "end": "ch05.fundamental-solution-system__stage__free_variables__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.fundamental-solution-system__stage__free_variables__point_0"
       },
       {
-        "alias": "ch05_fundamental-solution-system__relation",
+        "alias": "ch05.fundamental-solution-system__stage__solution",
         "basis": [
           [
             -2.0,
@@ -275,7 +479,7 @@
     "summary": "5.6 基础解系——零空间的标准化描述",
     "version": 1
   },
-  "plan_digest": "sha256:454827054a93f48471b603d8cbd649a8579aa9c090f228bc96af3b6453af66b5",
+  "plan_digest": "sha256:2b60524f01896454e8c4028d667a6cf2adf5e9dcb605f0afc5be8fc68cc6e519",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -295,14 +499,18 @@
       "layout": "sequence",
       "title": "echelon",
       "visible_aliases": [
-        "ch05_fundamental-solution-system__matrix",
-        "ch05_fundamental-solution-system__rhs",
-        "ch05_fundamental-solution-system__pivot_columns",
-        "ch05_fundamental-solution-system__free_variables",
-        "ch05_fundamental-solution-system__nullspace",
-        "ch05_fundamental-solution-system__particular",
-        "ch05_fundamental-solution-system__solution_set",
-        "ch05_fundamental-solution-system__relation",
+        "ch05.fundamental-solution-system__stage__echelon",
+        "ch05.fundamental-solution-system__entity__matrix",
+        "ch05.fundamental-solution-system__entity__rhs",
+        "ch05.fundamental-solution-system__entity__pivot_columns",
+        "ch05.fundamental-solution-system__entity__free_variables",
+        "ch05.fundamental-solution-system__entity__particular",
+        "ch05.fundamental-solution-system__entity__nullspace",
+        "ch05.fundamental-solution-system__entity__solution_set",
+        "ch05.fundamental-solution-system__relation",
+        "ch05.fundamental-solution-system__relation__domain",
+        "ch05.fundamental-solution-system__relation__image",
+        "ch05.fundamental-solution-system__relation__kernel",
         "sem__stage.ch05.fundamental-solution-system.echelon__title"
       ],
       "visible_refs": [
@@ -310,10 +518,10 @@
         "entity.ch05.fundamental-solution-system.rhs",
         "entity.ch05.fundamental-solution-system.pivot_columns",
         "entity.ch05.fundamental-solution-system.free_variables",
-        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.particular",
+        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.solution_set",
-        "relation.ch05.fundamental-solution-system.null_solution"
+        "relation.ch05.fundamental-solution-system.affine_translation"
       ]
     },
     {
@@ -326,14 +534,18 @@
       "layout": "sequence",
       "title": "pivots",
       "visible_aliases": [
-        "ch05_fundamental-solution-system__matrix",
-        "ch05_fundamental-solution-system__rhs",
-        "ch05_fundamental-solution-system__pivot_columns",
-        "ch05_fundamental-solution-system__free_variables",
-        "ch05_fundamental-solution-system__nullspace",
-        "ch05_fundamental-solution-system__particular",
-        "ch05_fundamental-solution-system__solution_set",
-        "ch05_fundamental-solution-system__relation",
+        "ch05.fundamental-solution-system__stage__pivots",
+        "ch05.fundamental-solution-system__entity__matrix",
+        "ch05.fundamental-solution-system__entity__rhs",
+        "ch05.fundamental-solution-system__entity__pivot_columns",
+        "ch05.fundamental-solution-system__entity__free_variables",
+        "ch05.fundamental-solution-system__entity__particular",
+        "ch05.fundamental-solution-system__entity__nullspace",
+        "ch05.fundamental-solution-system__entity__solution_set",
+        "ch05.fundamental-solution-system__relation",
+        "ch05.fundamental-solution-system__relation__domain",
+        "ch05.fundamental-solution-system__relation__image",
+        "ch05.fundamental-solution-system__relation__kernel",
         "sem__stage.ch05.fundamental-solution-system.pivots__title"
       ],
       "visible_refs": [
@@ -341,10 +553,10 @@
         "entity.ch05.fundamental-solution-system.rhs",
         "entity.ch05.fundamental-solution-system.pivot_columns",
         "entity.ch05.fundamental-solution-system.free_variables",
-        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.particular",
+        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.solution_set",
-        "relation.ch05.fundamental-solution-system.null_solution"
+        "relation.ch05.fundamental-solution-system.affine_translation"
       ]
     },
     {
@@ -357,14 +569,18 @@
       "layout": "sequence",
       "title": "free_variables",
       "visible_aliases": [
-        "ch05_fundamental-solution-system__matrix",
-        "ch05_fundamental-solution-system__rhs",
-        "ch05_fundamental-solution-system__pivot_columns",
-        "ch05_fundamental-solution-system__free_variables",
-        "ch05_fundamental-solution-system__nullspace",
-        "ch05_fundamental-solution-system__particular",
-        "ch05_fundamental-solution-system__solution_set",
-        "ch05_fundamental-solution-system__relation",
+        "ch05.fundamental-solution-system__stage__free_variables",
+        "ch05.fundamental-solution-system__entity__matrix",
+        "ch05.fundamental-solution-system__entity__rhs",
+        "ch05.fundamental-solution-system__entity__pivot_columns",
+        "ch05.fundamental-solution-system__entity__free_variables",
+        "ch05.fundamental-solution-system__entity__particular",
+        "ch05.fundamental-solution-system__entity__nullspace",
+        "ch05.fundamental-solution-system__entity__solution_set",
+        "ch05.fundamental-solution-system__relation",
+        "ch05.fundamental-solution-system__relation__domain",
+        "ch05.fundamental-solution-system__relation__image",
+        "ch05.fundamental-solution-system__relation__kernel",
         "sem__stage.ch05.fundamental-solution-system.free_variables__title"
       ],
       "visible_refs": [
@@ -372,10 +588,10 @@
         "entity.ch05.fundamental-solution-system.rhs",
         "entity.ch05.fundamental-solution-system.pivot_columns",
         "entity.ch05.fundamental-solution-system.free_variables",
-        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.particular",
+        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.solution_set",
-        "relation.ch05.fundamental-solution-system.null_solution"
+        "relation.ch05.fundamental-solution-system.affine_translation"
       ]
     },
     {
@@ -388,14 +604,18 @@
       "layout": "sequence",
       "title": "solution",
       "visible_aliases": [
-        "ch05_fundamental-solution-system__matrix",
-        "ch05_fundamental-solution-system__rhs",
-        "ch05_fundamental-solution-system__pivot_columns",
-        "ch05_fundamental-solution-system__free_variables",
-        "ch05_fundamental-solution-system__nullspace",
-        "ch05_fundamental-solution-system__particular",
-        "ch05_fundamental-solution-system__solution_set",
-        "ch05_fundamental-solution-system__relation",
+        "ch05.fundamental-solution-system__stage__solution",
+        "ch05.fundamental-solution-system__entity__matrix",
+        "ch05.fundamental-solution-system__entity__rhs",
+        "ch05.fundamental-solution-system__entity__pivot_columns",
+        "ch05.fundamental-solution-system__entity__free_variables",
+        "ch05.fundamental-solution-system__entity__particular",
+        "ch05.fundamental-solution-system__entity__nullspace",
+        "ch05.fundamental-solution-system__entity__solution_set",
+        "ch05.fundamental-solution-system__relation",
+        "ch05.fundamental-solution-system__relation__domain",
+        "ch05.fundamental-solution-system__relation__image",
+        "ch05.fundamental-solution-system__relation__kernel",
         "sem__stage.ch05.fundamental-solution-system.solution__title"
       ],
       "visible_refs": [
@@ -403,10 +623,10 @@
         "entity.ch05.fundamental-solution-system.rhs",
         "entity.ch05.fundamental-solution-system.pivot_columns",
         "entity.ch05.fundamental-solution-system.free_variables",
-        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.particular",
+        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.solution_set",
-        "relation.ch05.fundamental-solution-system.null_solution"
+        "relation.ch05.fundamental-solution-system.affine_translation"
       ]
     }
   ],

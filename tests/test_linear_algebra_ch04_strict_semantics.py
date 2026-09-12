@@ -203,8 +203,10 @@ def test_disk_revieweds_are_canonical_and_legacy_index_rows_match_release_baseli
     legacy=lambda payload: [row for row in payload["topics"] if row["topic_id"].startswith(("ch01.","ch02.","ch03."))]
     assert len(legacy(current))==54
     assert json.dumps(legacy(current),sort_keys=True,ensure_ascii=False).encode()==json.dumps(legacy(baseline),sort_keys=True,ensure_ascii=False).encode()
-    assert current["topic_count"]==len(current["topics"])==70
-    assert len({row["topic_id"] for row in current["topics"]})==70
+    assert current["topic_count"] == len(current["topics"])
+    assert len({row["topic_id"] for row in current["topics"]}) == current["topic_count"]
+    assert len([row for row in current["topics"] if row["topic_id"].startswith(("ch01.", "ch02.", "ch03.", "ch04."))]) == 70
+    assert len([row for row in current["topics"] if row["topic_id"].startswith("ch04.")]) == 16
     for topic in TOPICS:
         assert json.loads((data/"revieweds"/"ch04"/topic/"r1.json").read_text(encoding="utf-8"))==artifact_payload_for(topic)
         assert compile_reviewed_topic(topic).to_dict()==compiled_resource_store().get(topic).to_dict()

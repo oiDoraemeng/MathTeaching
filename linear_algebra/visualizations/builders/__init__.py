@@ -22,10 +22,12 @@ from .chapter_01 import BUILDERS as CHAPTER_01_BUILDERS
 from .chapter_02 import BUILDERS as CHAPTER_02_BUILDERS
 from .chapter_03 import BUILDERS as CHAPTER_03_BUILDERS
 from .chapter_04 import BUILDERS as CHAPTER_04_BUILDERS
+from .chapter_05 import BUILDERS as CHAPTER_05_BUILDERS
 
 register_builders(CHAPTER_01_BUILDERS)
 register_builders(CHAPTER_02_BUILDERS)
 register_builders(CHAPTER_03_BUILDERS)
 register_builders(CHAPTER_04_BUILDERS)
+register_builders(CHAPTER_05_BUILDERS)
 
 __all__ = ["get_builder_for", "register_builders"]

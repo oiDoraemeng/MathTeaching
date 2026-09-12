@@ -192,11 +192,12 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         ids = {r: f"entity.{topic_id}.{r}" for r in spec.roles}
         def value_for(role: str) -> object:
             params = spec.params
+            if role in ('none_matrix', 'none_rhs', 'infinite_matrix', 'infinite_rhs'): return params[role]
             if role == "matrix": return params["matrix"]
             if role == "rhs" or role == "values": return params.get(role, [0.0, 0.0])
             if role == "nullspace": return params.get("nullspace_basis", [[0.0, 0.0]])
             if role == "particular": return params.get("particular", [0.0, 0.0])
-            if role == "solution_set": return params.get("particular", [0.0, 0.0])
+            if role == "solution_set": return params.get("solution_set", params.get("particular", [0.0, 0.0]))
             if role == "data": return params.get("values", [0.0, 0.0, 0.0])
             if role == "fit" or role == "residual": return params.get(role, [0.0, 0.0, 0.0])
             if role == "normal_matrix": return params.get("normal_matrix", [[1.0, 0.0], [0.0, 1.0]])
@@ -204,10 +205,10 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
             if role == "pivot_columns": return params.get("pivot_columns", [0.0])
             if role == "free_variables": return params.get("free_variables", [1.0])
             if role == "elementary_matrices": return params.get("elementary_matrices", [[[1.0, 0.0], [0.0, 1.0]]])[0]
-            if role == "tableau": return params.get("matrix", [[1.0, 0.0], [0.0, 1.0]])
-            if role == "solution_state": return [1.0, 0.0]
+            if role == "tableau": return params["tableau"]
+            if role == "solution_state": return params.get("consistency_states", [1.0, 0.0, 2.0])
             return [0.0, 0.0]
-        entities = [{"id": ids[r], "kind": spec.kind_for(r), "dimension": 2, "value": _json_value(value_for(r)), "role": r, "label": r, "claim_refs":[claim["id"]]} for r in spec.roles]
+        entities = [{"id": ids[r], "kind": spec.kind_for(r), "dimension": spec.dimension_for(r), "value": _json_value(value_for(r)), "role": r, "label": r, "claim_refs":[claim["id"]]} for r in spec.roles]
         relation = {"id":f"relation.{topic_id}.{spec.relation}","kind":spec.relation,"source_ref":ids[spec.roles[0]],"target_ref":ids[spec.roles[-1]],"parameters":_json_value(spec.params),"claim_refs":[claim["id"]]}
         stages=[{"id":f"stage.{topic_id}.{s}","title":s,"caption":s,"layout":"sequence","input_entity_refs":list(ids.values()),"output_entity_refs":list(ids.values()),"relation_refs":[relation["id"]],"expected_invariants":list(spec.invariants)} for s in spec.stages]
         payload["visual_semantics"]={"scene_kind":"2d","scene_family":"affine_solution","entities":entities,"relations":[relation],"stages":stages}

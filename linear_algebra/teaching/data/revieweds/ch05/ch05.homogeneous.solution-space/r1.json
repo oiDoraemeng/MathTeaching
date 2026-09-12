@@ -4,6 +4,7 @@
       "entity_refs": [
         "entity.ch05.homogeneous.solution-space.matrix",
         "entity.ch05.homogeneous.solution-space.rhs",
+        "entity.ch05.homogeneous.solution-space.particular",
         "entity.ch05.homogeneous.solution-space.nullspace",
         "entity.ch05.homogeneous.solution-space.solution_set"
       ],
@@ -20,6 +21,7 @@
       "formula_symbols": [
         "matrix",
         "rhs",
+        "particular",
         "nullspace",
         "solution_set"
       ],
@@ -64,7 +66,8 @@
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
       "domain/image/kernel evidence",
-      "homogeneous solutions satisfy A x = 0",
+      "A x_p = b and A N = 0",
+      "nullspace basis is complete",
       "finite numeric result"
     ],
     "pitfalls": [
@@ -140,6 +143,7 @@
     "symbol_roles": {
       "matrix": "matrix",
       "nullspace": "nullspace",
+      "particular": "particular",
       "rhs": "rhs",
       "solution_set": "solution_set"
     },
@@ -181,12 +185,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:ab1034f4ea688da9bd9b80babb72316ee7c6558a2fdfff6ea60efed65bea6eda",
+    "artifact_digest": "sha256:fc47ca7db9975ffcdb54488acccf76de5325a7aa4fb618a45823d2e63b4309d5",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:117d41e04fa3c81520e304592d835118dff1ecaec9b35ae28935df1afb7c6c01",
+    "raw_reply_digest": "sha256:3dedd013227b0b77c7fd5dac1b3dbd0d0b3c4f6df957bdbcacc468ec3683c64f",
     "source_hash": "sha256:b2c73017de191471a696ddd7be388736d010940f52d47f01ea477b28ac16cf13"
   },
   "revision": 1,
@@ -278,6 +282,20 @@
           "claim.ch05.homogeneous.solution-space"
         ],
         "dimension": 2,
+        "id": "entity.ch05.homogeneous.solution-space.particular",
+        "kind": "vector",
+        "label": "particular",
+        "role": "particular",
+        "value": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.homogeneous.solution-space"
+        ],
+        "dimension": 2,
         "id": "entity.ch05.homogeneous.solution-space.nullspace",
         "kind": "basis",
         "label": "nullspace",
@@ -349,13 +367,15 @@
         "caption": "domain",
         "expected_invariants": [
           "domain/image/kernel evidence",
-          "homogeneous solutions satisfy A x = 0",
+          "A x_p = b and A N = 0",
+          "nullspace basis is complete",
           "finite numeric result"
         ],
         "id": "stage.ch05.homogeneous.solution-space.domain",
         "input_entity_refs": [
           "entity.ch05.homogeneous.solution-space.matrix",
           "entity.ch05.homogeneous.solution-space.rhs",
+          "entity.ch05.homogeneous.solution-space.particular",
           "entity.ch05.homogeneous.solution-space.nullspace",
           "entity.ch05.homogeneous.solution-space.solution_set"
         ],
@@ -363,6 +383,7 @@
         "output_entity_refs": [
           "entity.ch05.homogeneous.solution-space.matrix",
           "entity.ch05.homogeneous.solution-space.rhs",
+          "entity.ch05.homogeneous.solution-space.particular",
           "entity.ch05.homogeneous.solution-space.nullspace",
           "entity.ch05.homogeneous.solution-space.solution_set"
         ],
@@ -375,13 +396,15 @@
         "caption": "kernel",
         "expected_invariants": [
           "domain/image/kernel evidence",
-          "homogeneous solutions satisfy A x = 0",
+          "A x_p = b and A N = 0",
+          "nullspace basis is complete",
           "finite numeric result"
         ],
         "id": "stage.ch05.homogeneous.solution-space.kernel",
         "input_entity_refs": [
           "entity.ch05.homogeneous.solution-space.matrix",
           "entity.ch05.homogeneous.solution-space.rhs",
+          "entity.ch05.homogeneous.solution-space.particular",
           "entity.ch05.homogeneous.solution-space.nullspace",
           "entity.ch05.homogeneous.solution-space.solution_set"
         ],
@@ -389,6 +412,7 @@
         "output_entity_refs": [
           "entity.ch05.homogeneous.solution-space.matrix",
           "entity.ch05.homogeneous.solution-space.rhs",
+          "entity.ch05.homogeneous.solution-space.particular",
           "entity.ch05.homogeneous.solution-space.nullspace",
           "entity.ch05.homogeneous.solution-space.solution_set"
         ],
@@ -401,13 +425,15 @@
         "caption": "solution",
         "expected_invariants": [
           "domain/image/kernel evidence",
-          "homogeneous solutions satisfy A x = 0",
+          "A x_p = b and A N = 0",
+          "nullspace basis is complete",
           "finite numeric result"
         ],
         "id": "stage.ch05.homogeneous.solution-space.solution",
         "input_entity_refs": [
           "entity.ch05.homogeneous.solution-space.matrix",
           "entity.ch05.homogeneous.solution-space.rhs",
+          "entity.ch05.homogeneous.solution-space.particular",
           "entity.ch05.homogeneous.solution-space.nullspace",
           "entity.ch05.homogeneous.solution-space.solution_set"
         ],
@@ -415,6 +441,7 @@
         "output_entity_refs": [
           "entity.ch05.homogeneous.solution-space.matrix",
           "entity.ch05.homogeneous.solution-space.rhs",
+          "entity.ch05.homogeneous.solution-space.particular",
           "entity.ch05.homogeneous.solution-space.nullspace",
           "entity.ch05.homogeneous.solution-space.solution_set"
         ],

@@ -6,8 +6,8 @@
         "entity.ch05.fundamental-solution-system.rhs",
         "entity.ch05.fundamental-solution-system.pivot_columns",
         "entity.ch05.fundamental-solution-system.free_variables",
-        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.particular",
+        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.solution_set"
       ],
       "explanation_refs": [
@@ -25,13 +25,13 @@
         "rhs",
         "pivot_columns",
         "free_variables",
-        "nullspace",
         "particular",
+        "nullspace",
         "solution_set"
       ],
       "id": "claim.ch05.fundamental-solution-system",
       "relation_refs": [
-        "relation.ch05.fundamental-solution-system.null_solution"
+        "relation.ch05.fundamental-solution-system.affine_translation"
       ],
       "source_refs": [
         "第5章 线性方程组 / 5.6 基础解系——零空间的标准化描述::1::sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5"
@@ -70,8 +70,10 @@
     "formula": "5.6 基础解系——零空间的标准化描述: finite typed semantic evidence",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
+      "domain/image/kernel evidence",
+      "A x_p = b and A N = 0",
+      "nullspace basis is complete",
       "pivot/free variables determine all solutions",
-      "particular plus nullspace basis",
       "finite numeric result"
     ],
     "pitfalls": [
@@ -191,12 +193,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:d5a11c9668c46d23798ebaba160e6c75aafb371739991bb3e7dfdc92f9af2ae2",
+    "artifact_digest": "sha256:4b432c4a9a2126c1ca0ab7f7061bd2a5f710c804e577be4e3b922e59cfaf0645",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:6aa6b4f72373091be0d399c710a8d3f88b757964012771a3792afe37be6019f3",
+    "raw_reply_digest": "sha256:1c3baf4b013373118a59abfe2de942a069950b447d207d3186ad65b3f5432a97",
     "source_hash": "sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5"
   },
   "revision": 1,
@@ -293,7 +295,7 @@
         "label": "pivot_columns",
         "role": "pivot_columns",
         "value": [
-          0.0,
+          1.0,
           0.0
         ]
       },
@@ -307,7 +309,21 @@
         "label": "free_variables",
         "role": "free_variables",
         "value": [
-          1.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.fundamental-solution-system.particular",
+        "kind": "vector",
+        "label": "particular",
+        "role": "particular",
+        "value": [
+          3.0,
           0.0
         ]
       },
@@ -332,20 +348,6 @@
           "claim.ch05.fundamental-solution-system"
         ],
         "dimension": 2,
-        "id": "entity.ch05.fundamental-solution-system.particular",
-        "kind": "vector",
-        "label": "particular",
-        "role": "particular",
-        "value": [
-          3.0,
-          0.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
-        ],
-        "dimension": 2,
         "id": "entity.ch05.fundamental-solution-system.solution_set",
         "kind": "affine_set",
         "label": "solution_set",
@@ -361,12 +363,12 @@
         "claim_refs": [
           "claim.ch05.fundamental-solution-system"
         ],
-        "id": "relation.ch05.fundamental-solution-system.null_solution",
-        "kind": "null_solution",
+        "id": "relation.ch05.fundamental-solution-system.affine_translation",
+        "kind": "affine_translation",
         "parameters": {
           "free_variables": [
-            1.0,
-            0.0
+            0.0,
+            1.0
           ],
           "matrix": [
             [
@@ -389,13 +391,14 @@
             0.0
           ],
           "pivot_columns": [
-            0.0,
+            1.0,
             0.0
           ],
           "rhs": [
             3.0,
             6.0
-          ]
+          ],
+          "solution_code": 1.0
         },
         "source_ref": "entity.ch05.fundamental-solution-system.matrix",
         "target_ref": "entity.ch05.fundamental-solution-system.solution_set"
@@ -407,8 +410,10 @@
       {
         "caption": "echelon",
         "expected_invariants": [
+          "domain/image/kernel evidence",
+          "A x_p = b and A N = 0",
+          "nullspace basis is complete",
           "pivot/free variables determine all solutions",
-          "particular plus nullspace basis",
           "finite numeric result"
         ],
         "id": "stage.ch05.fundamental-solution-system.echelon",
@@ -417,8 +422,8 @@
           "entity.ch05.fundamental-solution-system.rhs",
           "entity.ch05.fundamental-solution-system.pivot_columns",
           "entity.ch05.fundamental-solution-system.free_variables",
-          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "layout": "sequence",
@@ -427,20 +432,22 @@
           "entity.ch05.fundamental-solution-system.rhs",
           "entity.ch05.fundamental-solution-system.pivot_columns",
           "entity.ch05.fundamental-solution-system.free_variables",
-          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "relation_refs": [
-          "relation.ch05.fundamental-solution-system.null_solution"
+          "relation.ch05.fundamental-solution-system.affine_translation"
         ],
         "title": "echelon"
       },
       {
         "caption": "pivots",
         "expected_invariants": [
+          "domain/image/kernel evidence",
+          "A x_p = b and A N = 0",
+          "nullspace basis is complete",
           "pivot/free variables determine all solutions",
-          "particular plus nullspace basis",
           "finite numeric result"
         ],
         "id": "stage.ch05.fundamental-solution-system.pivots",
@@ -449,8 +456,8 @@
           "entity.ch05.fundamental-solution-system.rhs",
           "entity.ch05.fundamental-solution-system.pivot_columns",
           "entity.ch05.fundamental-solution-system.free_variables",
-          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "layout": "sequence",
@@ -459,20 +466,22 @@
           "entity.ch05.fundamental-solution-system.rhs",
           "entity.ch05.fundamental-solution-system.pivot_columns",
           "entity.ch05.fundamental-solution-system.free_variables",
-          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "relation_refs": [
-          "relation.ch05.fundamental-solution-system.null_solution"
+          "relation.ch05.fundamental-solution-system.affine_translation"
         ],
         "title": "pivots"
       },
       {
         "caption": "free_variables",
         "expected_invariants": [
+          "domain/image/kernel evidence",
+          "A x_p = b and A N = 0",
+          "nullspace basis is complete",
           "pivot/free variables determine all solutions",
-          "particular plus nullspace basis",
           "finite numeric result"
         ],
         "id": "stage.ch05.fundamental-solution-system.free_variables",
@@ -481,8 +490,8 @@
           "entity.ch05.fundamental-solution-system.rhs",
           "entity.ch05.fundamental-solution-system.pivot_columns",
           "entity.ch05.fundamental-solution-system.free_variables",
-          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "layout": "sequence",
@@ -491,20 +500,22 @@
           "entity.ch05.fundamental-solution-system.rhs",
           "entity.ch05.fundamental-solution-system.pivot_columns",
           "entity.ch05.fundamental-solution-system.free_variables",
-          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "relation_refs": [
-          "relation.ch05.fundamental-solution-system.null_solution"
+          "relation.ch05.fundamental-solution-system.affine_translation"
         ],
         "title": "free_variables"
       },
       {
         "caption": "solution",
         "expected_invariants": [
+          "domain/image/kernel evidence",
+          "A x_p = b and A N = 0",
+          "nullspace basis is complete",
           "pivot/free variables determine all solutions",
-          "particular plus nullspace basis",
           "finite numeric result"
         ],
         "id": "stage.ch05.fundamental-solution-system.solution",
@@ -513,8 +524,8 @@
           "entity.ch05.fundamental-solution-system.rhs",
           "entity.ch05.fundamental-solution-system.pivot_columns",
           "entity.ch05.fundamental-solution-system.free_variables",
-          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "layout": "sequence",
@@ -523,12 +534,12 @@
           "entity.ch05.fundamental-solution-system.rhs",
           "entity.ch05.fundamental-solution-system.pivot_columns",
           "entity.ch05.fundamental-solution-system.free_variables",
-          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "relation_refs": [
-          "relation.ch05.fundamental-solution-system.null_solution"
+          "relation.ch05.fundamental-solution-system.affine_translation"
         ],
         "title": "solution"
       }

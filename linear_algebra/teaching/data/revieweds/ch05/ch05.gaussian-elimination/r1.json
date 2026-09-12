@@ -179,12 +179,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:434d394f89d4bdab3693df74534e5a1a3fd9dccc533989e75055f91efe21a757",
+    "artifact_digest": "sha256:7b2918b7b81ac30c39341f531cf53c78305cabe36bbc729db65e52bf36d3e7eb",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:bd32ce8fb14c6a1b9c195f405763372d5bb57eebfa18a39cf97c85fa9605364d",
+    "raw_reply_digest": "sha256:25b3d1f52fdd656daff624351ee1b6d75baca5dd575a2927432c6f5cf698131e",
     "source_hash": "sha256:c7e4c2ba54c7f02253463ab88d7bac9940380fca5d95d757673c0591150f4473"
   },
   "revision": 1,
@@ -249,12 +249,12 @@
         "role": "matrix",
         "value": [
           [
-            1.0,
-            2.0
+            2.0,
+            1.0
           ],
           [
-            2.0,
-            4.0
+            4.0,
+            3.0
           ]
         ]
       },
@@ -268,8 +268,8 @@
         "label": "rhs",
         "role": "rhs",
         "value": [
-          3.0,
-          6.0
+          5.0,
+          11.0
         ]
       },
       {
@@ -284,11 +284,11 @@
         "value": [
           [
             1.0,
-            2.0
+            0.0
           ],
           [
-            2.0,
-            4.0
+            0.0,
+            1.0
           ]
         ]
       }
@@ -303,31 +303,46 @@
         "parameters": {
           "matrix": [
             [
-              1.0,
-              2.0
+              2.0,
+              1.0
             ],
             [
-              2.0,
-              4.0
+              4.0,
+              3.0
             ]
           ],
           "operations": [
             [
-              0.0,
               1.0,
-              -2.0
+              0.0,
+              2.0
             ],
             [
-              1.0,
               0.0,
-              1.0
+              -1.0,
+              0.5
+            ],
+            [
+              0.0,
+              1.0,
+              0.5
             ]
           ],
           "rhs": [
-            3.0,
-            6.0
+            5.0,
+            11.0
           ],
-          "solution_code": 2.0
+          "solution_code": 1.0,
+          "tableau": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
         },
         "source_ref": "entity.ch05.gaussian-elimination.matrix",
         "target_ref": "entity.ch05.gaussian-elimination.tableau"

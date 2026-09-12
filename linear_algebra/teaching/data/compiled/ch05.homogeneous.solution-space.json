@@ -1,12 +1,112 @@
 {
-  "artifact_digest": "sha256:c8f0048223220a2f30aab35abb75b909eab9565c24c050435d9e077e6eb84964",
+  "artifact_digest": "sha256:c58e35e9a5714e67a266cb5effe2ba2ad7f4d4dfa810ff88cfae2ea320cb6424",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:2f9d219fd52b887f07c597722961893c65bce97fb988225b421cfb74410bb447",
+  "contract_digest": "sha256:195da9bac0f45a9c8134c342f01299f2b001cf2a312d8933261d040376e3decc",
   "plan": {
     "operations": [
       {
-        "alias": "ch05_homogeneous_solution-space__solution",
+        "alias": "ch05.homogeneous.solution-space__entity__matrix",
+        "aliases": [
+          "ch05.homogeneous.solution-space__entity__matrix__stage_0"
+        ],
+        "augmented_rank": 1,
+        "matrix": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.matrix_tableau",
+        "rank": 1,
+        "rhs": [
+          0.0,
+          0.0
+        ],
+        "solution_state": "unknown",
+        "stages": [
+          {
+            "alias": "ch05.homogeneous.solution-space__entity__matrix__stage_0",
+            "augmented_rank": 1,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                2.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 1,
+            "rhs": [
+              0.0,
+              0.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 1 阶段"
+          }
+        ]
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__entity__rhs__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__entity__rhs__point_1",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__entity__rhs",
+        "end": "ch05.homogeneous.solution-space__entity__rhs__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.homogeneous.solution-space__entity__rhs__point_0"
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__entity__particular__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__entity__particular__point_1",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__entity__particular",
+        "end": "ch05.homogeneous.solution-space__entity__particular__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.homogeneous.solution-space__entity__particular__point_0"
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__entity__nullspace",
         "basis": [
           [
             -2.0,
@@ -31,7 +131,7 @@
         ]
       },
       {
-        "alias": "ch05_homogeneous_solution-space__matrix",
+        "alias": "ch05.homogeneous.solution-space__entity__solution_set",
         "basis": [
           [
             -2.0,
@@ -56,7 +156,7 @@
         ]
       },
       {
-        "alias": "ch05_homogeneous_solution-space__rhs",
+        "alias": "ch05.homogeneous.solution-space__relation",
         "basis": [
           [
             -2.0,
@@ -81,7 +181,61 @@
         ]
       },
       {
-        "alias": "ch05_homogeneous_solution-space__nullspace",
+        "alias": "ch05.homogeneous.solution-space__relation__domain",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__relation__image",
+        "basis": [
+          [
+            1.0,
+            2.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__relation__kernel",
         "basis": [
           [
             -2.0,
@@ -106,7 +260,36 @@
         ]
       },
       {
-        "alias": "ch05_homogeneous_solution-space__solution_set",
+        "alias": "ch05.homogeneous.solution-space__stage__domain",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__stage__kernel",
         "basis": [
           [
             -2.0,
@@ -131,7 +314,7 @@
         ]
       },
       {
-        "alias": "ch05_homogeneous_solution-space__relation",
+        "alias": "ch05.homogeneous.solution-space__stage__solution",
         "basis": [
           [
             -2.0,
@@ -191,7 +374,7 @@
     "summary": "5.1 齐次方程组 $Ax = 0$",
     "version": 1
   },
-  "plan_digest": "sha256:ca0e74861c99a8b7fcea508a75c1d4e69facc04e7786d4ba25a472ff7c69025e",
+  "plan_digest": "sha256:52cf4d33f5e4b42d6997f27ddf321ea1226724bd3e3f967273ad0ca1a999a354",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -211,16 +394,22 @@
       "layout": "sequence",
       "title": "domain",
       "visible_aliases": [
-        "ch05_homogeneous_solution-space__matrix",
-        "ch05_homogeneous_solution-space__rhs",
-        "ch05_homogeneous_solution-space__nullspace",
-        "ch05_homogeneous_solution-space__solution_set",
-        "ch05_homogeneous_solution-space__relation",
+        "ch05.homogeneous.solution-space__stage__domain",
+        "ch05.homogeneous.solution-space__entity__matrix",
+        "ch05.homogeneous.solution-space__entity__rhs",
+        "ch05.homogeneous.solution-space__entity__particular",
+        "ch05.homogeneous.solution-space__entity__nullspace",
+        "ch05.homogeneous.solution-space__entity__solution_set",
+        "ch05.homogeneous.solution-space__relation",
+        "ch05.homogeneous.solution-space__relation__domain",
+        "ch05.homogeneous.solution-space__relation__image",
+        "ch05.homogeneous.solution-space__relation__kernel",
         "sem__stage.ch05.homogeneous.solution-space.domain__title"
       ],
       "visible_refs": [
         "entity.ch05.homogeneous.solution-space.matrix",
         "entity.ch05.homogeneous.solution-space.rhs",
+        "entity.ch05.homogeneous.solution-space.particular",
         "entity.ch05.homogeneous.solution-space.nullspace",
         "entity.ch05.homogeneous.solution-space.solution_set",
         "relation.ch05.homogeneous.solution-space.null_solution"
@@ -236,16 +425,22 @@
       "layout": "sequence",
       "title": "kernel",
       "visible_aliases": [
-        "ch05_homogeneous_solution-space__matrix",
-        "ch05_homogeneous_solution-space__rhs",
-        "ch05_homogeneous_solution-space__nullspace",
-        "ch05_homogeneous_solution-space__solution_set",
-        "ch05_homogeneous_solution-space__relation",
+        "ch05.homogeneous.solution-space__stage__kernel",
+        "ch05.homogeneous.solution-space__entity__matrix",
+        "ch05.homogeneous.solution-space__entity__rhs",
+        "ch05.homogeneous.solution-space__entity__particular",
+        "ch05.homogeneous.solution-space__entity__nullspace",
+        "ch05.homogeneous.solution-space__entity__solution_set",
+        "ch05.homogeneous.solution-space__relation",
+        "ch05.homogeneous.solution-space__relation__domain",
+        "ch05.homogeneous.solution-space__relation__image",
+        "ch05.homogeneous.solution-space__relation__kernel",
         "sem__stage.ch05.homogeneous.solution-space.kernel__title"
       ],
       "visible_refs": [
         "entity.ch05.homogeneous.solution-space.matrix",
         "entity.ch05.homogeneous.solution-space.rhs",
+        "entity.ch05.homogeneous.solution-space.particular",
         "entity.ch05.homogeneous.solution-space.nullspace",
         "entity.ch05.homogeneous.solution-space.solution_set",
         "relation.ch05.homogeneous.solution-space.null_solution"
@@ -261,16 +456,22 @@
       "layout": "sequence",
       "title": "solution",
       "visible_aliases": [
-        "ch05_homogeneous_solution-space__matrix",
-        "ch05_homogeneous_solution-space__rhs",
-        "ch05_homogeneous_solution-space__nullspace",
-        "ch05_homogeneous_solution-space__solution_set",
-        "ch05_homogeneous_solution-space__relation",
+        "ch05.homogeneous.solution-space__stage__solution",
+        "ch05.homogeneous.solution-space__entity__matrix",
+        "ch05.homogeneous.solution-space__entity__rhs",
+        "ch05.homogeneous.solution-space__entity__particular",
+        "ch05.homogeneous.solution-space__entity__nullspace",
+        "ch05.homogeneous.solution-space__entity__solution_set",
+        "ch05.homogeneous.solution-space__relation",
+        "ch05.homogeneous.solution-space__relation__domain",
+        "ch05.homogeneous.solution-space__relation__image",
+        "ch05.homogeneous.solution-space__relation__kernel",
         "sem__stage.ch05.homogeneous.solution-space.solution__title"
       ],
       "visible_refs": [
         "entity.ch05.homogeneous.solution-space.matrix",
         "entity.ch05.homogeneous.solution-space.rhs",
+        "entity.ch05.homogeneous.solution-space.particular",
         "entity.ch05.homogeneous.solution-space.nullspace",
         "entity.ch05.homogeneous.solution-space.solution_set",
         "relation.ch05.homogeneous.solution-space.null_solution"

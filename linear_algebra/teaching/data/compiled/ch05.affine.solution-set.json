@@ -1,12 +1,137 @@
 {
-  "artifact_digest": "sha256:fddb455fdecfdc5a86d723084d4f42a053d428d4f522af54c5c27c227419ddd8",
+  "artifact_digest": "sha256:9b8cb4b0bd197caebd5466927ae125516bc5fb263df571178dd21a096c2192c0",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:4d59df0e8dcd09492b0b844d355a9e2f103c5a22a1ab8a83e6c7d5bb8bf2093e",
+  "contract_digest": "sha256:e6cafade8c2f4e23cf37e15177de3f369796ffd2e9b4b44ebfde833ed0097fa3",
   "plan": {
     "operations": [
       {
-        "alias": "ch05_affine_solution-set__solution",
+        "alias": "ch05.affine.solution-set__entity__matrix",
+        "aliases": [
+          "ch05.affine.solution-set__entity__matrix__stage_0"
+        ],
+        "augmented_rank": 1,
+        "matrix": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.matrix_tableau",
+        "rank": 1,
+        "rhs": [
+          0.0,
+          0.0
+        ],
+        "solution_state": "unknown",
+        "stages": [
+          {
+            "alias": "ch05.affine.solution-set__entity__matrix__stage_0",
+            "augmented_rank": 1,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                2.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 1,
+            "rhs": [
+              0.0,
+              0.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 1 阶段"
+          }
+        ]
+      },
+      {
+        "alias": "ch05.affine.solution-set__entity__rhs__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.affine.solution-set__entity__rhs__point_1",
+        "coordinates": [
+          3.0,
+          6.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.affine.solution-set__entity__rhs",
+        "end": "ch05.affine.solution-set__entity__rhs__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.affine.solution-set__entity__rhs__point_0"
+      },
+      {
+        "alias": "ch05.affine.solution-set__entity__particular__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.affine.solution-set__entity__particular__point_1",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.affine.solution-set__entity__particular",
+        "end": "ch05.affine.solution-set__entity__particular__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.affine.solution-set__entity__particular__point_0"
+      },
+      {
+        "alias": "ch05.affine.solution-set__entity__nullspace",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05.affine.solution-set__entity__solution_set",
         "basis": [
           [
             -2.0,
@@ -31,7 +156,7 @@
         ]
       },
       {
-        "alias": "ch05_affine_solution-set__matrix",
+        "alias": "ch05.affine.solution-set__relation",
         "basis": [
           [
             -2.0,
@@ -56,7 +181,61 @@
         ]
       },
       {
-        "alias": "ch05_affine_solution-set__rhs",
+        "alias": "ch05.affine.solution-set__relation__domain",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05.affine.solution-set__relation__image",
+        "basis": [
+          [
+            1.0,
+            2.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05.affine.solution-set__relation__kernel",
         "basis": [
           [
             -2.0,
@@ -71,7 +250,7 @@
         ],
         "dimension": 2,
         "offset": [
-          3.0,
+          0.0,
           0.0
         ],
         "op": "geometry.affine_solution",
@@ -81,7 +260,7 @@
         ]
       },
       {
-        "alias": "ch05_affine_solution-set__particular",
+        "alias": "ch05.affine.solution-set__stage__homogeneous",
         "basis": [
           [
             -2.0,
@@ -96,7 +275,7 @@
         ],
         "dimension": 2,
         "offset": [
-          3.0,
+          0.0,
           0.0
         ],
         "op": "geometry.affine_solution",
@@ -106,57 +285,32 @@
         ]
       },
       {
-        "alias": "ch05_affine_solution-set__nullspace",
-        "basis": [
-          [
-            -2.0,
-            1.0
-          ]
+        "alias": "ch05.affine.solution-set__stage__translation__point_0",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "bounds": [
-          -2,
-          2,
-          -2,
-          2
-        ],
-        "dimension": 2,
-        "offset": [
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.affine.solution-set__stage__translation__point_1",
+        "coordinates": [
           3.0,
           0.0
         ],
-        "op": "geometry.affine_solution",
-        "origin": [
-          0.0,
-          0.0
-        ]
+        "name": "",
+        "op": "point.upsert"
       },
       {
-        "alias": "ch05_affine_solution-set__solution_set",
-        "basis": [
-          [
-            -2.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -2,
-          2,
-          -2,
-          2
-        ],
-        "dimension": 2,
-        "offset": [
-          3.0,
-          0.0
-        ],
-        "op": "geometry.affine_solution",
-        "origin": [
-          0.0,
-          0.0
-        ]
+        "alias": "ch05.affine.solution-set__stage__translation",
+        "end": "ch05.affine.solution-set__stage__translation__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.affine.solution-set__stage__translation__point_0"
       },
       {
-        "alias": "ch05_affine_solution-set__relation",
+        "alias": "ch05.affine.solution-set__stage__solution",
         "basis": [
           [
             -2.0,
@@ -216,7 +370,7 @@
     "summary": "5.2 非齐次方程组 $Ax = b$",
     "version": 1
   },
-  "plan_digest": "sha256:63083b10e5c09fd67852a2469ada110b0517ca86f653fb776e1c7aa7ca932a99",
+  "plan_digest": "sha256:03ebe097116ea9a103ecc22dd3f14dbd45aec4f5e5b55abd2113e7244893aef8",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -236,12 +390,16 @@
       "layout": "sequence",
       "title": "homogeneous",
       "visible_aliases": [
-        "ch05_affine_solution-set__matrix",
-        "ch05_affine_solution-set__rhs",
-        "ch05_affine_solution-set__particular",
-        "ch05_affine_solution-set__nullspace",
-        "ch05_affine_solution-set__solution_set",
-        "ch05_affine_solution-set__relation",
+        "ch05.affine.solution-set__stage__homogeneous",
+        "ch05.affine.solution-set__entity__matrix",
+        "ch05.affine.solution-set__entity__rhs",
+        "ch05.affine.solution-set__entity__particular",
+        "ch05.affine.solution-set__entity__nullspace",
+        "ch05.affine.solution-set__entity__solution_set",
+        "ch05.affine.solution-set__relation",
+        "ch05.affine.solution-set__relation__domain",
+        "ch05.affine.solution-set__relation__image",
+        "ch05.affine.solution-set__relation__kernel",
         "sem__stage.ch05.affine.solution-set.homogeneous__title"
       ],
       "visible_refs": [
@@ -263,12 +421,16 @@
       "layout": "sequence",
       "title": "translation",
       "visible_aliases": [
-        "ch05_affine_solution-set__matrix",
-        "ch05_affine_solution-set__rhs",
-        "ch05_affine_solution-set__particular",
-        "ch05_affine_solution-set__nullspace",
-        "ch05_affine_solution-set__solution_set",
-        "ch05_affine_solution-set__relation",
+        "ch05.affine.solution-set__stage__translation",
+        "ch05.affine.solution-set__entity__matrix",
+        "ch05.affine.solution-set__entity__rhs",
+        "ch05.affine.solution-set__entity__particular",
+        "ch05.affine.solution-set__entity__nullspace",
+        "ch05.affine.solution-set__entity__solution_set",
+        "ch05.affine.solution-set__relation",
+        "ch05.affine.solution-set__relation__domain",
+        "ch05.affine.solution-set__relation__image",
+        "ch05.affine.solution-set__relation__kernel",
         "sem__stage.ch05.affine.solution-set.translation__title"
       ],
       "visible_refs": [
@@ -290,12 +452,16 @@
       "layout": "sequence",
       "title": "solution",
       "visible_aliases": [
-        "ch05_affine_solution-set__matrix",
-        "ch05_affine_solution-set__rhs",
-        "ch05_affine_solution-set__particular",
-        "ch05_affine_solution-set__nullspace",
-        "ch05_affine_solution-set__solution_set",
-        "ch05_affine_solution-set__relation",
+        "ch05.affine.solution-set__stage__solution",
+        "ch05.affine.solution-set__entity__matrix",
+        "ch05.affine.solution-set__entity__rhs",
+        "ch05.affine.solution-set__entity__particular",
+        "ch05.affine.solution-set__entity__nullspace",
+        "ch05.affine.solution-set__entity__solution_set",
+        "ch05.affine.solution-set__relation",
+        "ch05.affine.solution-set__relation__domain",
+        "ch05.affine.solution-set__relation__image",
+        "ch05.affine.solution-set__relation__kernel",
         "sem__stage.ch05.affine.solution-set.solution__title"
       ],
       "visible_refs": [

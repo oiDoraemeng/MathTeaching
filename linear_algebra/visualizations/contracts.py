@@ -110,7 +110,7 @@ def contract_for(topic_id: str) -> VisualContract:
                 required_relation_kinds=(relation_name,),
                 required_parameters=((relation_name, tuple(spec.params)),),
                 expected_operations=(spec.operation,),
-                required_role_types=tuple((role, spec.kind_for(role), 2) for role in spec.roles),
+                required_role_types=tuple((role, spec.kind_for(role), spec.dimension_for(role)) for role in spec.roles),
                 required_relation_endpoints=((relation_name, relation_name, spec.roles[0], spec.roles[-1]),),
                 required_stage_names=spec.stages,
             )

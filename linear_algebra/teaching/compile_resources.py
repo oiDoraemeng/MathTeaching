@@ -268,12 +268,15 @@ def compile_chapter_04(
     return resources
 
 def compile_chapter_05(*, output_root=None, index_path=None, reviewed_payloads=None, reviewed_root=None):
-    payloads = reviewed_payloads or {k:v for k,v in load_reviewed_artifacts().items() if k.startswith('ch05.')}
+    """Compile all eight topics before transacting reviewed/compiled/index files."""
+    from linear_algebra.catalog.chapter_05 import TOPICS
+    payloads = reviewed_payloads if reviewed_payloads is not None else load_reviewed_artifacts()
     topics = tuple(sorted(k for k in payloads if k.startswith('ch05.')))
-    if len(topics) != 8: raise ValueError(f"chapter 5 requires 8 reviewed artifacts, found {len(topics)}")
+    if set(topics) != {topic.id for topic in TOPICS}:
+        raise ValueError(f"chapter 5 requires exactly 8 catalog reviewed artifacts, found {len(topics)}")
     resources = tuple(_compile_reviewed_payload(t,payloads[t]) for t in topics)
     out = Path(output_root or Path(__file__).with_name('data')/'compiled')
-    idx = Path(index_path or Path(__file__).with_name('data')/'index.json')
+    idx = Path(index_path) if index_path is not None else out.parent / 'index.json'
     index_payload = _merged_chapter_index_payload(resources, chapter=5, output_path=idx)
     writes = {out/f'{r.topic_id}.json': r.to_dict() for r in resources}
     review_destination = Path(reviewed_root) if reviewed_root is not None else (Path(__file__).with_name('data')/'revieweds'/'ch05')

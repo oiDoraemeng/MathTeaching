@@ -98,6 +98,7 @@ def contract_digest_for(contract: VisualContract) -> str:
         "required_relation_kinds",
         "required_parameters",
         "expected_operations",
+        "required_stage_names",
     ):
         value = getattr(contract, name)
         if value:

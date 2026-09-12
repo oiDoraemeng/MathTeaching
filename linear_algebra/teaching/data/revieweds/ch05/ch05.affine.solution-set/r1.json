@@ -66,7 +66,8 @@
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
       "domain/image/kernel evidence",
-      "A x = b is x_p + ker(A)",
+      "A x_p = b and A N = 0",
+      "nullspace basis is complete",
       "finite numeric result"
     ],
     "pitfalls": [
@@ -184,12 +185,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:8f12c618bb85ca8ec2468955321adb9cff01f02a82dfaa51fe7ae01d66510eef",
+    "artifact_digest": "sha256:15c70d47ddcf547a92d5eec127a414ac509b97dbd8f16660d4dbb04ee30699dc",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:21c3769bdb95f6662d042067ca59e93c10ae38cc8f2879c7881cecf8b13b75ee",
+    "raw_reply_digest": "sha256:a68b6f12a44204d4893ddc3f04f3258dece5ccefb322d1153ba844909a45b3d0",
     "source_hash": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f"
   },
   "revision": 1,
@@ -367,7 +368,8 @@
         "caption": "homogeneous",
         "expected_invariants": [
           "domain/image/kernel evidence",
-          "A x = b is x_p + ker(A)",
+          "A x_p = b and A N = 0",
+          "nullspace basis is complete",
           "finite numeric result"
         ],
         "id": "stage.ch05.affine.solution-set.homogeneous",
@@ -395,7 +397,8 @@
         "caption": "translation",
         "expected_invariants": [
           "domain/image/kernel evidence",
-          "A x = b is x_p + ker(A)",
+          "A x_p = b and A N = 0",
+          "nullspace basis is complete",
           "finite numeric result"
         ],
         "id": "stage.ch05.affine.solution-set.translation",
@@ -423,7 +426,8 @@
         "caption": "solution",
         "expected_invariants": [
           "domain/image/kernel evidence",
-          "A x = b is x_p + ker(A)",
+          "A x_p = b and A N = 0",
+          "nullspace basis is complete",
           "finite numeric result"
         ],
         "id": "stage.ch05.affine.solution-set.solution",

@@ -142,13 +142,19 @@ class VisualSemanticsCompiler:
                 *(entity.id for entity in semantics.entities),
                 *(relation.id for relation in semantics.relations),
             }
+            if chapter5_owned:
+                required_semantic_ids.update(stage.id for stage in semantics.stages)
             alias_issues: list[CompileIssue] = []
+            alias_owners: dict[str, str] = {}
             for semantic_id in sorted(required_semantic_ids):
                 bound = aliases.get(semantic_id, ())
                 if not bound:
                     alias_issues.append(CompileIssue("missing_family_alias", f"$.aliases.{semantic_id}", "family emitted no evidence alias"))
                     continue
                 for alias in bound:
+                    if chapter5_owned and alias in alias_owners and alias_owners[alias] != semantic_id:
+                        alias_issues.append(CompileIssue('shared_family_alias', f'$.aliases.{semantic_id}', alias))
+                    alias_owners[alias] = semantic_id
                     operation_name = operation_aliases.get(alias, "")
                     if not operation_name or operation_name.startswith("annotation."):
                         alias_issues.append(CompileIssue("annotation_only_evidence", f"$.aliases.{semantic_id}", alias))
@@ -179,7 +185,7 @@ class VisualSemanticsCompiler:
         if stage_issues:
             raise VisualCompileError(tuple(stage_issues))
         operations.extend(stage_operations)
-        if chapter4_owned:
+        if chapter4_owned or chapter5_owned:
             operation_names = {str(operation.get("op")) for operation in operations}
             missing_operations = set(contract.expected_operations) - operation_names
             if missing_operations:
@@ -352,6 +358,9 @@ class VisualSemanticsCompiler:
                 continue
             visible_refs = tuple(dict.fromkeys((*stage.input_entity_refs, *stage.output_entity_refs, *stage.relation_refs)))
             visible_aliases_list = []
+            # Chapter-owned stages have executable frame-specific witnesses.
+            # Include them in visibility instead of losing their alias mapping.
+            visible_aliases_list.extend(aliases.get(stage.id, ()))
             for ref in visible_refs:
                 for alias in aliases.get(ref, ()):
                     visible_aliases_list.append(alias)

@@ -182,12 +182,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:91c7720e7d180f5115a18e82ce856cf5b414b39294f000cfdb802684af8e370b",
+    "artifact_digest": "sha256:59e83957a690cbe57c6b6ce7cfa180e83ff6f9a9e36538d3ae68bd8a60b5566d",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:8c3036cd9542ff7d03147b1b3b8416ea0b357a604e208c7ec956f604fa10acd1",
+    "raw_reply_digest": "sha256:f955bc986e9a8dafd0fca960af5743374d9e88164794b5d3d5df24079ec9d014",
     "source_hash": "sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b"
   },
   "revision": 1,
@@ -257,7 +257,7 @@
           ],
           [
             2.0,
-            4.0
+            5.0
           ]
         ]
       },
@@ -272,7 +272,7 @@
         "role": "rhs",
         "value": [
           3.0,
-          6.0
+          8.0
         ]
       },
       {
@@ -281,16 +281,16 @@
         ],
         "dimension": 2,
         "id": "entity.ch05.elementary-matrix-elimination.elementary_matrices",
-        "kind": "basis",
+        "kind": "matrix",
         "label": "elementary_matrices",
         "role": "elementary_matrices",
         "value": [
           [
-            1.0,
+            2.0,
             0.0
           ],
           [
-            -2.0,
+            0.0,
             1.0
           ]
         ]
@@ -306,12 +306,12 @@
         "role": "tableau",
         "value": [
           [
-            1.0,
-            2.0
+            2.0,
+            0.0
           ],
           [
-            2.0,
-            4.0
+            0.0,
+            1.0
           ]
         ]
       }
@@ -327,11 +327,11 @@
           "elementary_matrices": [
             [
               [
-                1.0,
+                2.0,
                 0.0
               ],
               [
-                -2.0,
+                0.0,
                 1.0
               ]
             ],
@@ -339,6 +339,16 @@
               [
                 1.0,
                 0.0
+              ],
+              [
+                -1.0,
+                1.0
+              ]
+            ],
+            [
+              [
+                1.0,
+                -4.0
               ],
               [
                 0.0,
@@ -353,26 +363,41 @@
             ],
             [
               2.0,
-              4.0
+              5.0
             ]
           ],
           "operations": [
             [
               0.0,
-              1.0,
-              -2.0
+              -1.0,
+              2.0
             ],
             [
               1.0,
               0.0,
               1.0
+            ],
+            [
+              0.0,
+              1.0,
+              4.0
             ]
           ],
           "rhs": [
             3.0,
-            6.0
+            8.0
           ],
-          "solution_code": 2.0
+          "solution_code": 1.0,
+          "tableau": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
         },
         "source_ref": "entity.ch05.elementary-matrix-elimination.matrix",
         "target_ref": "entity.ch05.elementary-matrix-elimination.tableau"
