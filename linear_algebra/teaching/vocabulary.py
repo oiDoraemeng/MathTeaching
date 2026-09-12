@@ -105,7 +105,7 @@ def _validate_semantic_value(value: object, path: str) -> None:
     # A staged composition carries a bounded sequence of matrices.  Keep this
     # exception explicit and path-scoped so arbitrary nested payloads remain
     # rejected by the normal semantic vocabulary.
-    if path.endswith(".matrices"):
+    if path.endswith(".matrices") or path.rsplit(".", 1)[-1].endswith("matrices"):
         _validate_matrix_sequence(value, path)
         return
     if isinstance(value, (int, float)) and not isinstance(value, bool):

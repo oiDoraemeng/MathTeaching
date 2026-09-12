@@ -1,40 +1,232 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch05.affine.solution-set",
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch05.affine.solution-set.matrix",
+        "entity.ch05.affine.solution-set.rhs",
+        "entity.ch05.affine.solution-set.particular",
+        "entity.ch05.affine.solution-set.nullspace",
+        "entity.ch05.affine.solution-set.solution_set"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence",
+      "formula_symbols": [
+        "matrix",
+        "rhs",
+        "particular",
+        "nullspace",
+        "solution_set"
+      ],
+      "id": "claim.ch05.affine.solution-set",
+      "relation_refs": [
+        "relation.ch05.affine.solution-set.affine_translation"
+      ],
+      "source_refs": [
+        "第5章 线性方程组 / 5.2 非齐次方程组 $Ax = b$::1::sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f"
+      ],
+      "stage_refs": [
+        "stage.ch05.affine.solution-set.homogeneous",
+        "stage.ch05.affine.solution-set.translation",
+        "stage.ch05.affine.solution-set.solution"
+      ],
+      "statement": "5.2 非齐次方程组 $Ax = b$ 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch05.affine.solution-set"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch05.affine.solution-set.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "5.2 非齐次方程组 $Ax = b$ 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "domain/image/kernel evidence",
+      "A x = b is x_p + ker(A)",
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "5.2 非齐次方程组 $Ax = b$",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch05.affine.solution-set"
+        ],
+        "id": "definition",
+        "text": "definition: 5.2 非齐次方程组 $Ax = b$。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.affine.solution-set"
+        ],
+        "id": "formula",
+        "text": "formula: 5.2 非齐次方程组 $Ax = b$。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.affine.solution-set"
+        ],
+        "id": "derivation",
+        "text": "derivation: 5.2 非齐次方程组 $Ax = b$。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.affine.solution-set"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 5.2 非齐次方程组 $Ax = b$。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.affine.solution-set"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 5.2 非齐次方程组 $Ax = b$。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.affine.solution-set"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 5.2 非齐次方程组 $Ax = b$。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.affine.solution-set"
+        ],
+        "id": "connections",
+        "text": "connections: 5.2 非齐次方程组 $Ax = b$。",
+        "title": "connections"
+      }
+    ],
+    "summary": "5.2 非齐次方程组 $Ax = b$ 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "matrix": "matrix",
+      "nullspace": "nullspace",
+      "particular": "particular",
+      "rhs": "rhs",
+      "solution_set": "solution_set"
+    },
+    "title": "5.2 非齐次方程组 $Ax = b$",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.affine.solution-set"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch05.affine.solution-set",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:8f12c618bb85ca8ec2468955321adb9cff01f02a82dfaa51fe7ae01d66510eef",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:21c3769bdb95f6662d042067ca59e93c10ae38cc8f2879c7881cecf8b13b75ee",
+    "source_hash": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f"
+  },
   "revision": 1,
-  "status": "reviewed",
+  "schema_version": 1,
   "source": {
+    "excerpt": "### 5.2 非齐次方程组 $Ax = b$\n\n一句话动机：b 不是零——那解是什么结构？\n本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+ \\operatorname{Null}(A)$ 的全部元素。\n\n定理 5.2（非齐次方程组的解结构） 设 $x_{p}$ 是 $Ax = b$ 的一个特解（任意一个解）。则 $Ax = b$ 的所有解为：\n$$\n{ x_{p} + z | z \\in \\operatorname{Null}(A) }\n$$\n即：通解 $=$ 特解 $+$ 零空间（一个平移后的线性子空间）。\n几何理解：\n- 齐次方程的解集是一条穿过原点的直线（或平面）——一个子空间\n- 非齐次方程的解集是那条直线（或平面）平移到特解 $x_{p}$ 的位置——一个仿射空间\n- 这和向量加减法完全一致：$b = A(x_{p}+z) = Ax_{p} + Az = Ax_{p} + 0$\n\n#### 例题\n\n解：$x_{1} + 2x_{2} = 3, 2x_{1} + 4x_{2} = 6$。\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, b = (3,6)\n$$\n注意 $b = 3 \\times (1,2)$，即 b 在 A 的列空间 Col(A) 中$\\rightarrow$有解。\n找特解：$x_{1} = 3 - 2x_{2}$，取 $x_{2}=0 \\rightarrow x_{p} = (3,0)$。\n$$\n\\operatorname{Null}(A) = \\{(-2t, t) \\mid t \\in R\\}\n$$\n通解：$(x_{1}, x_{2}) = (3,0) + t \\cdot (-2,1)$ ——一条不过原点的直线。\n\n##### 定理 5.2 的证明\n\n设 $x_{p}$ 是 $Ax=b$ 的一个特解，即 $Ax_{p} = b$。\n（1）任取 $z \\in \\operatorname{Null}(A)$，则 $A(x_{p}+z) = Ax_{p} + Az = b + 0 = b \\rightarrow x_{p}+z$ 也是解。\n（2）若 x 是 $Ax=b$ 的任意解，则 $A(x-x_{p}) = Ax - Ax_{p} = b - b = 0 \\rightarrow x-x_{p} \\in \\operatorname{Null}(A)$。\n令 $z = x-x_{p}$，则 $x = x_{p} + z$，$z \\in \\operatorname{Null}(A)$。\n综合（1）（2），$Ax=b$ 的解集恰好为 $\\{x_{p} + z \\mid z \\in \\operatorname{Null}(A)\\}$。■\n\n一句话动机：第4章定义了变换$T(x)=Ax$，A是在标准基下的矩阵。换一组基（换一套尺子），同一个变换的矩阵长什么样？——答案：$B=P^{-1}AP$。\n本节目标：理解基变换和相似变换的公式，知道行列式、秩、迹、特征多项式是相似不变量。\n\n##### 补充例题\n\n例4（$3 \\times 3$非齐次方程组的完整求解）: 解方程组：\n$$\nx_{1} + x_{2} + x_{3} = 6\n$$\n$$\nx_{1} - x_{2} + 2x_{3} = 5\n$$\n$$\n2x_{1} + 3x_{3} = 11\n$$\n解: 增广矩阵消元得 RREF：$x_{1} + (\\frac{3}{2})x_{3} = \\frac{11}{2}, x_{2} - (\\frac{1}{2})x_{3} = \\frac{1}{2}$。\n令 $x_{3} = t$（自由变量），则 $x_{1} = \\frac{11}{2} - (\\frac{3}{2})t, x_{2} = \\frac{1}{2} + (\\frac{1}{2})t$。\n取 $t=0$ 得特解 $x_{p} = (\\frac{11}{2}, \\frac{1}{2}, 0)$。\n对应齐次解（取 $t=2$ 得整数基）：$x_{h} = t \\cdot (-3, 1, 2)$。（或写作 $\\operatorname{span}\\{(3, -1, -2)\\}$）\n通解 $= (\\frac{11}{2}, \\frac{1}{2}, 0) + t \\cdot (-3, 1, 2)$。\n验证：Null(A)维数 $= 1$（一个自由变量），$\\operatorname{rank}(A)=2$，$n=3 \\rightarrow$ 秩-零化度：$2+1=3 ✓$。",
+    "heading_level": 3,
+    "heading_path": [
+      "第5章 线性方程组",
+      "5.2 非齐次方程组 $Ax = b$"
+    ],
+    "neighboring_titles": [
+      "5.1 齐次方程组 $Ax = 0$",
+      "5.3 解的存在性与唯一性"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f",
     "source_path": [
       "第5章 线性方程组",
       "5.2 非齐次方程组 $Ax = b$",
       "5.2 非齐次方程组 $Ax = b$"
     ],
-    "heading_path": [
-      "第5章 线性方程组",
-      "5.2 非齐次方程组 $Ax = b$"
-    ],
-    "heading_level": 3,
-    "occurrence": 1,
-    "excerpt": "### 5.2 非齐次方程组 $Ax = b$\n\n一句话动机：b 不是零——那解是什么结构？\n本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+ \\operatorname{Null}(A)$ 的全部元素。\n\n定理 5.2（非齐次方程组的解结构） 设 $x_{p}$ 是 $Ax = b$ 的一个特解（任意一个解）。则 $Ax = b$ 的所有解为：\n$$\n{ x_{p} + z | z \\in \\operatorname{Null}(A) }\n$$\n即：通解 $=$ 特解 $+$ 零空间（一个平移后的线性子空间）。\n几何理解：\n- 齐次方程的解集是一条穿过原点的直线（或平面）——一个子空间\n- 非齐次方程的解集是那条直线（或平面）平移到特解 $x_{p}$ 的位置——一个仿射空间\n- 这和向量加减法完全一致：$b = A(x_{p}+z) = Ax_{p} + Az = Ax_{p} + 0$\n\n#### 例题\n\n解：$x_{1} + 2x_{2} = 3, 2x_{1} + 4x_{2} = 6$。\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, b = (3,6)\n$$\n注意 $b = 3 \\times (1,2)$，即 b 在 A 的列空间 Col(A) 中$\\rightarrow$有解。\n找特解：$x_{1} = 3 - 2x_{2}$，取 $x_{2}=0 \\rightarrow x_{p} = (3,0)$。\n$$\n\\operatorname{Null}(A) = \\{(-2t, t) \\mid t \\in R\\}\n$$\n通解：$(x_{1}, x_{2}) = (3,0) + t \\cdot (-2,1)$ ——一条不过原点的直线。\n\n##### 定理 5.2 的证明\n\n设 $x_{p}$ 是 $Ax=b$ 的一个特解，即 $Ax_{p} = b$。\n（1）任取 $z \\in \\operatorname{Null}(A)$，则 $A(x_{p}+z) = Ax_{p} + Az = b + 0 = b \\rightarrow x_{p}+z$ 也是解。\n（2）若 x 是 $Ax=b$ 的任意解，则 $A(x-x_{p}) = Ax - Ax_{p} = b - b = 0 \\rightarrow x-x_{p} \\in \\operatorname{Null}(A)$。\n令 $z = x-x_{p}$，则 $x = x_{p} + z$，$z \\in \\operatorname{Null}(A)$。\n综合（1）（2），$Ax=b$ 的解集恰好为 $\\{x_{p} + z \\mid z \\in \\operatorname{Null}(A)\\}$。■\n\n一句话动机：第4章定义了变换$T(x)=Ax$，A是在标准基下的矩阵。换一组基（换一套尺子），同一个变换的矩阵长什么样？——答案：$B=P^{-1}AP$。\n本节目标：理解基变换和相似变换的公式，知道行列式、秩、迹、特征多项式是相似不变量。\n\n##### 补充例题\n\n例4（$3 \\times 3$非齐次方程组的完整求解）: 解方程组：\n$$\nx_{1} + x_{2} + x_{3} = 6\n$$\n$$\nx_{1} - x_{2} + 2x_{3} = 5\n$$\n$$\n2x_{1} + 3x_{3} = 11\n$$\n解: 增广矩阵消元得 RREF：$x_{1} + (\\frac{3}{2})x_{3} = \\frac{11}{2}, x_{2} - (\\frac{1}{2})x_{3} = \\frac{1}{2}$。\n令 $x_{3} = t$（自由变量），则 $x_{1} = \\frac{11}{2} - (\\frac{3}{2})t, x_{2} = \\frac{1}{2} + (\\frac{1}{2})t$。\n取 $t=0$ 得特解 $x_{p} = (\\frac{11}{2}, \\frac{1}{2}, 0)$。\n对应齐次解（取 $t=2$ 得整数基）：$x_{h} = t \\cdot (-3, 1, 2)$。（或写作 $\\operatorname{span}\\{(3, -1, -2)\\}$）\n通解 $= (\\frac{11}{2}, \\frac{1}{2}, 0) + t \\cdot (-3, 1, 2)$。\n验证：Null(A)维数 $= 1$（一个自由变量），$\\operatorname{rank}(A)=2$，$n=3 \\rightarrow$ 秩-零化度：$2+1=3 ✓$。",
-    "source_hash": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f",
     "spans": [
       {
-        "id": "第5章 线性方程组 / 5.2 非齐次方程组 $Ax = b$::1::sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f",
+        "end_line": 2012,
+        "fingerprint": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f",
         "heading_path": [
           "第5章 线性方程组",
           "5.2 非齐次方程组 $Ax = b$"
         ],
+        "id": "第5章 线性方程组 / 5.2 非齐次方程组 $Ax = b$::1::sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f",
         "start_line": 1950,
-        "end_line": 2012,
-        "fingerprint": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f",
         "text": "### 5.2 非齐次方程组 $Ax = b$\n\n一句话动机：b 不是零——那解是什么结构？\n本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+ \\operatorname{Null}(A)$ 的全部元素。\n\n定理 5.2（非齐次方程组的解结构） 设 $x_{p}$ 是 $Ax = b$ 的一个特解（任意一个解）。则 $Ax = b$ 的所有解为：\n$$\n{ x_{p} + z | z \\in \\operatorname{Null}(A) }\n$$\n即：通解 $=$ 特解 $+$ 零空间（一个平移后的线性子空间）。\n几何理解：\n- 齐次方程的解集是一条穿过原点的直线（或平面）——一个子空间\n- 非齐次方程的解集是那条直线（或平面）平移到特解 $x_{p}$ 的位置——一个仿射空间\n- 这和向量加减法完全一致：$b = A(x_{p}+z) = Ax_{p} + Az = Ax_{p} + 0$\n\n#### 例题\n\n解：$x_{1} + 2x_{2} = 3, 2x_{1} + 4x_{2} = 6$。\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, b = (3,6)\n$$\n注意 $b = 3 \\times (1,2)$，即 b 在 A 的列空间 Col(A) 中$\\rightarrow$有解。\n找特解：$x_{1} = 3 - 2x_{2}$，取 $x_{2}=0 \\rightarrow x_{p} = (3,0)$。\n$$\n\\operatorname{Null}(A) = \\{(-2t, t) \\mid t \\in R\\}\n$$\n通解：$(x_{1}, x_{2}) = (3,0) + t \\cdot (-2,1)$ ——一条不过原点的直线。\n\n##### 定理 5.2 的证明\n\n设 $x_{p}$ 是 $Ax=b$ 的一个特解，即 $Ax_{p} = b$。\n（1）任取 $z \\in \\operatorname{Null}(A)$，则 $A(x_{p}+z) = Ax_{p} + Az = b + 0 = b \\rightarrow x_{p}+z$ 也是解。\n（2）若 x 是 $Ax=b$ 的任意解，则 $A(x-x_{p}) = Ax - Ax_{p} = b - b = 0 \\rightarrow x-x_{p} \\in \\operatorname{Null}(A)$。\n令 $z = x-x_{p}$，则 $x = x_{p} + z$，$z \\in \\operatorname{Null}(A)$。\n综合（1）（2），$Ax=b$ 的解集恰好为 $\\{x_{p} + z \\mid z \\in \\operatorname{Null}(A)\\}$。■\n\n一句话动机：第4章定义了变换$T(x)=Ax$，A是在标准基下的矩阵。换一组基（换一套尺子），同一个变换的矩阵长什么样？——答案：$B=P^{-1}AP$。\n本节目标：理解基变换和相似变换的公式，知道行列式、秩、迹、特征多项式是相似不变量。\n\n##### 补充例题\n\n例4（$3 \\times 3$非齐次方程组的完整求解）: 解方程组：\n$$\nx_{1} + x_{2} + x_{3} = 6\n$$\n$$\nx_{1} - x_{2} + 2x_{3} = 5\n$$\n$$\n2x_{1} + 3x_{3} = 11\n$$\n解: 增广矩阵消元得 RREF：$x_{1} + (\\frac{3}{2})x_{3} = \\frac{11}{2}, x_{2} - (\\frac{1}{2})x_{3} = \\frac{1}{2}$。\n令 $x_{3} = t$（自由变量），则 $x_{1} = \\frac{11}{2} - (\\frac{3}{2})t, x_{2} = \\frac{1}{2} + (\\frac{1}{2})t$。\n取 $t=0$ 得特解 $x_{p} = (\\frac{11}{2}, \\frac{1}{2}, 0)$。\n对应齐次解（取 $t=2$ 得整数基）：$x_{h} = t \\cdot (-3, 1, 2)$。（或写作 $\\operatorname{span}\\{(3, -1, -2)\\}$）\n通解 $= (\\frac{11}{2}, \\frac{1}{2}, 0) + t \\cdot (-3, 1, 2)$。\n验证：Null(A)维数 $= 1$（一个自由变量），$\\operatorname{rank}(A)=2$，$n=3 \\rightarrow$ 秩-零化度：$2+1=3 ✓$。"
       }
-    ],
-    "neighboring_titles": [
-      "5.1 齐次方程组 $Ax = 0$",
-      "5.3 解的存在性与唯一性"
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -48,280 +240,95 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch05.affine.solution-set",
-      "statement": "5.2 非齐次方程组 $Ax = b$ 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第5章 线性方程组 / 5.2 非齐次方程组 $Ax = b$::1::sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch05.affine.solution-set.domain",
-        "entity.ch05.affine.solution-set.image",
-        "entity.ch05.affine.solution-set.kernel",
-        "entity.ch05.affine.solution-set.particular",
-        "entity.ch05.affine.solution-set.vector_a",
-        "entity.ch05.affine.solution-set.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch05.affine.solution-set.maps_to"
-      ],
-      "stage_refs": [
-        "stage.ch05.affine.solution-set.domain",
-        "stage.ch05.affine.solution-set.image",
-        "stage.ch05.affine.solution-set.kernel",
-        "stage.ch05.affine.solution-set.solution"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch05.affine.solution-set.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch05.affine.solution-set"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "5.2 非齐次方程组 $Ax = b$",
-    "summary": "5.2 非齐次方程组 $Ax = b$ 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 5.2 非齐次方程组 $Ax = b$。",
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 5.2 非齐次方程组 $Ax = b$。",
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 5.2 非齐次方程组 $Ax = b$。",
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 5.2 非齐次方程组 $Ax = b$。",
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 5.2 非齐次方程组 $Ax = b$。",
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 5.2 非齐次方程组 $Ax = b$。",
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 5.2 非齐次方程组 $Ax = b$。",
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a"
-    },
-    "definition": "5.2 非齐次方程组 $Ax = b$ 的对象和定义。",
-    "formula": "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch05.affine.solution-set",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "domain/image/kernel evidence",
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "5.2 非齐次方程组 $Ax = b$",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch05.affine.solution-set",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "affine_solution",
     "entities": [
       {
-        "id": "entity.ch05.affine.solution-set.domain",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "domain",
-        "label": "domain",
         "claim_refs": [
           "claim.ch05.affine.solution-set"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.affine.solution-set.matrix",
+        "kind": "matrix",
+        "label": "matrix",
+        "role": "matrix",
+        "value": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
         ]
       },
       {
-        "id": "entity.ch05.affine.solution-set.image",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "image",
-        "label": "image",
         "claim_refs": [
           "claim.ch05.affine.solution-set"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.affine.solution-set.rhs",
+        "kind": "vector",
+        "label": "rhs",
+        "role": "rhs",
+        "value": [
+          3.0,
+          6.0
         ]
       },
       {
-        "id": "entity.ch05.affine.solution-set.kernel",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "kernel",
-        "label": "kernel",
         "claim_refs": [
           "claim.ch05.affine.solution-set"
-        ]
-      },
-      {
+        ],
+        "dimension": 2,
         "id": "entity.ch05.affine.solution-set.particular",
         "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "particular",
         "label": "particular",
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
+        "role": "particular",
+        "value": [
+          3.0,
+          0.0
         ]
       },
       {
-        "id": "entity.ch05.affine.solution-set.vector_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
         "claim_refs": [
           "claim.ch05.affine.solution-set"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.affine.solution-set.nullspace",
+        "kind": "basis",
+        "label": "nullspace",
+        "role": "nullspace",
+        "value": [
+          [
+            -2.0,
+            1.0
+          ]
         ]
       },
       {
-        "id": "entity.ch05.affine.solution-set.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "transformed_a",
-        "label": "transformed_a",
         "claim_refs": [
           "claim.ch05.affine.solution-set"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.affine.solution-set.solution_set",
+        "kind": "affine_set",
+        "label": "solution_set",
+        "role": "solution_set",
+        "value": [
+          3.0,
+          0.0
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch05.affine.solution-set.maps_to",
-        "kind": "maps_to",
-        "source_ref": "entity.ch05.affine.solution-set.domain",
-        "target_ref": "entity.ch05.affine.solution-set.particular",
+        "claim_refs": [
+          "claim.ch05.affine.solution-set"
+        ],
+        "id": "relation.ch05.affine.solution-set.affine_translation",
+        "kind": "affine_translation",
         "parameters": {
           "matrix": [
             [
@@ -333,148 +340,113 @@
               4.0
             ]
           ],
-          "particular": [
-            1.0,
-            0.0
-          ],
           "nullspace_basis": [
             [
               -2.0,
               1.0
             ]
-          ]
+          ],
+          "particular": [
+            3.0,
+            0.0
+          ],
+          "rhs": [
+            3.0,
+            6.0
+          ],
+          "solution_code": 1.0
         },
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ]
+        "source_ref": "entity.ch05.affine.solution-set.matrix",
+        "target_ref": "entity.ch05.affine.solution-set.solution_set"
       }
     ],
+    "scene_family": "affine_solution",
+    "scene_kind": "2d",
     "stages": [
       {
-        "id": "stage.ch05.affine.solution-set.domain",
-        "title": "domain",
-        "caption": "domain",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.affine.solution-set.domain",
-          "entity.ch05.affine.solution-set.image",
-          "entity.ch05.affine.solution-set.kernel",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.vector_a",
-          "entity.ch05.affine.solution-set.transformed_a"
-        ],
-        "output_entity_refs": [
-          "entity.ch05.affine.solution-set.domain",
-          "entity.ch05.affine.solution-set.image",
-          "entity.ch05.affine.solution-set.kernel",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.vector_a",
-          "entity.ch05.affine.solution-set.transformed_a"
-        ],
-        "relation_refs": [
-          "relation.ch05.affine.solution-set.maps_to"
-        ],
+        "caption": "homogeneous",
         "expected_invariants": [
           "domain/image/kernel evidence",
+          "A x = b is x_p + ker(A)",
           "finite numeric result"
-        ]
-      },
-      {
-        "id": "stage.ch05.affine.solution-set.image",
-        "title": "image",
-        "caption": "image",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.affine.solution-set.domain",
-          "entity.ch05.affine.solution-set.image",
-          "entity.ch05.affine.solution-set.kernel",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.vector_a",
-          "entity.ch05.affine.solution-set.transformed_a"
         ],
-        "output_entity_refs": [
-          "entity.ch05.affine.solution-set.domain",
-          "entity.ch05.affine.solution-set.image",
-          "entity.ch05.affine.solution-set.kernel",
+        "id": "stage.ch05.affine.solution-set.homogeneous",
+        "input_entity_refs": [
+          "entity.ch05.affine.solution-set.matrix",
+          "entity.ch05.affine.solution-set.rhs",
           "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.vector_a",
-          "entity.ch05.affine.solution-set.transformed_a"
+          "entity.ch05.affine.solution-set.nullspace",
+          "entity.ch05.affine.solution-set.solution_set"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.affine.solution-set.matrix",
+          "entity.ch05.affine.solution-set.rhs",
+          "entity.ch05.affine.solution-set.particular",
+          "entity.ch05.affine.solution-set.nullspace",
+          "entity.ch05.affine.solution-set.solution_set"
         ],
         "relation_refs": [
-          "relation.ch05.affine.solution-set.maps_to"
+          "relation.ch05.affine.solution-set.affine_translation"
         ],
-        "expected_invariants": [
-          "domain/image/kernel evidence",
-          "finite numeric result"
-        ]
+        "title": "homogeneous"
       },
       {
-        "id": "stage.ch05.affine.solution-set.kernel",
-        "title": "kernel",
-        "caption": "kernel",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.affine.solution-set.domain",
-          "entity.ch05.affine.solution-set.image",
-          "entity.ch05.affine.solution-set.kernel",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.vector_a",
-          "entity.ch05.affine.solution-set.transformed_a"
+        "caption": "translation",
+        "expected_invariants": [
+          "domain/image/kernel evidence",
+          "A x = b is x_p + ker(A)",
+          "finite numeric result"
         ],
-        "output_entity_refs": [
-          "entity.ch05.affine.solution-set.domain",
-          "entity.ch05.affine.solution-set.image",
-          "entity.ch05.affine.solution-set.kernel",
+        "id": "stage.ch05.affine.solution-set.translation",
+        "input_entity_refs": [
+          "entity.ch05.affine.solution-set.matrix",
+          "entity.ch05.affine.solution-set.rhs",
           "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.vector_a",
-          "entity.ch05.affine.solution-set.transformed_a"
+          "entity.ch05.affine.solution-set.nullspace",
+          "entity.ch05.affine.solution-set.solution_set"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.affine.solution-set.matrix",
+          "entity.ch05.affine.solution-set.rhs",
+          "entity.ch05.affine.solution-set.particular",
+          "entity.ch05.affine.solution-set.nullspace",
+          "entity.ch05.affine.solution-set.solution_set"
         ],
         "relation_refs": [
-          "relation.ch05.affine.solution-set.maps_to"
+          "relation.ch05.affine.solution-set.affine_translation"
         ],
-        "expected_invariants": [
-          "domain/image/kernel evidence",
-          "finite numeric result"
-        ]
+        "title": "translation"
       },
       {
-        "id": "stage.ch05.affine.solution-set.solution",
-        "title": "solution",
         "caption": "solution",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.affine.solution-set.domain",
-          "entity.ch05.affine.solution-set.image",
-          "entity.ch05.affine.solution-set.kernel",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.vector_a",
-          "entity.ch05.affine.solution-set.transformed_a"
-        ],
-        "output_entity_refs": [
-          "entity.ch05.affine.solution-set.domain",
-          "entity.ch05.affine.solution-set.image",
-          "entity.ch05.affine.solution-set.kernel",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.vector_a",
-          "entity.ch05.affine.solution-set.transformed_a"
-        ],
-        "relation_refs": [
-          "relation.ch05.affine.solution-set.maps_to"
-        ],
         "expected_invariants": [
           "domain/image/kernel evidence",
+          "A x = b is x_p + ker(A)",
           "finite numeric result"
-        ]
+        ],
+        "id": "stage.ch05.affine.solution-set.solution",
+        "input_entity_refs": [
+          "entity.ch05.affine.solution-set.matrix",
+          "entity.ch05.affine.solution-set.rhs",
+          "entity.ch05.affine.solution-set.particular",
+          "entity.ch05.affine.solution-set.nullspace",
+          "entity.ch05.affine.solution-set.solution_set"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.affine.solution-set.matrix",
+          "entity.ch05.affine.solution-set.rhs",
+          "entity.ch05.affine.solution-set.particular",
+          "entity.ch05.affine.solution-set.nullspace",
+          "entity.ch05.affine.solution-set.solution_set"
+        ],
+        "relation_refs": [
+          "relation.ch05.affine.solution-set.affine_translation"
+        ],
+        "title": "solution"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f",
-    "raw_reply_digest": "sha256:e6a303640ece5d39e5e5fb20b5f1419801f236ed6c859a8bfd757eb3711f39c4",
-    "artifact_digest": "sha256:23e66a7241bc96751245f99f41d5f4eb4904246a4fff4779c9c7d6c07917c49d"
   }
 }

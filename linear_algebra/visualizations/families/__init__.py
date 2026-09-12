@@ -48,39 +48,106 @@ _REGISTERED = {
 }
 
 def _compile_chapter_05(topic_id, semantics):
-    """Compile chapter-five artifacts into typed mathematical operations."""
+    """Compile the reviewed Chapter-5 graph, consuming every relation value."""
     from .tableau import MatrixTableauCompiler
     from .least_squares import LeastSquaresFamilyCompiler
     from .subspace import SubspaceFamilyCompiler
     import numpy as np
-    common = {"operations": [], "aliases": {}, "evidence": {"invariants": {"finite numeric result": True}}}
-    if not semantics.relations:
-        raise ValueError("chapter 5 requires typed relation evidence")
-    params = dict(semantics.relations[0].parameters)
-    ids = [e.id for e in semantics.entities] + [r.id for r in semantics.relations]
-    if topic_id == "ch05.consistency.geometry":
-        cases = [([[1,0],[0,1]],[1,2],"unique"), ([[1,0],[1,0]],[1,2],"none"), ([[1,0],[2,0]],[1,2],"infinite")]
-        for j,(matrix,rhs,state) in enumerate(cases):
-            result = MatrixTableauCompiler.compile({"op":"geometry.elimination_tableau","matrix":matrix,"rhs":rhs,"solution_state":state,"operations":[],"alias_prefix":f"consistency_{j}"})
-            common["operations"].extend([{**result.operations[0],"alias":f"consistency_{j}"}]); common["aliases"].update({i: (f"consistency_{j}",) for i in ids})
-    elif topic_id in {"ch05.gaussian-elimination", "ch05.elementary-matrix-elimination"}:
+    from linear_algebra.chapter_05_semantics import spec_for
+
+    short = topic_id.removeprefix("ch05.")
+    spec = spec_for(short)
+    if len(semantics.relations) != 1 or semantics.relations[0].kind != spec.relation:
+        raise ValueError("chapter 5 requires exactly one topic relation")
+    relation = semantics.relations[0]
+    params = dict(relation.parameters)
+    missing = [name for name in spec.params if name not in params]
+    if missing:
+        raise ValueError(f"missing reviewed relation parameter: {missing[0]}")
+    def same(left, right, tol=1e-8):
+        try: return np.allclose(np.asarray(left, dtype=float), np.asarray(right, dtype=float), atol=tol, rtol=0)
+        except (TypeError, ValueError): return left == right
+    entities = {entity.role: entity for entity in semantics.entities}
+    for role in spec.roles:
+        if role not in entities: raise ValueError(f"missing reviewed entity role: {role}")
+    for role, parameter in (("matrix", "matrix"), ("rhs", "rhs"), ("particular", "particular"), ("nullspace", "nullspace_basis"), ("fit", "fit"), ("residual", "residual"), ("normal_matrix", "normal_matrix"), ("normal_rhs", "normal_rhs"), ("pivot_columns", "pivot_columns"), ("free_variables", "free_variables"), ("elementary_matrices", "elementary_matrices")):
+        if role not in entities or parameter not in params:
+            continue
+        expected = params[parameter][0] if role == "elementary_matrices" else params[parameter]
+        if not same(entities[role].value, expected):
+            raise ValueError(f"reviewed entity {role} disagrees with relation parameter {parameter}")
+    result = {"operations": [], "aliases": {}, "evidence": {"invariants": {"finite numeric result": True}}}
+    ids = {entity.role: entity.id for entity in semantics.entities}
+    relation_id = relation.id
+    def bind(alias, semantic_id):
+        result["aliases"][semantic_id] = (alias,)
+    if spec.operation == "geometry.affine_solution":
+        basis = params["nullspace_basis"]
+        homogeneous = short == "homogeneous.solution-space"
+        offset = [0.0, 0.0] if homogeneous else params.get("particular", [0.0, 0.0])
+        if homogeneous and any(abs(float(x)) > 1e-9 for x in offset):
+            raise ValueError("homogeneous solution must pass through origin")
+        prefix = f"ch05_{short.replace('.', '_')}"
+        payload = {"primitive":"geometry.affine_solution", "dimension":2, "origin":[0.0,0.0], "affine_offset":offset, "basis":basis, "is_linear":homogeneous, "alias_prefix":prefix}
+        compiled = SubspaceFamilyCompiler.compile(payload)
+        op = dict(compiled.operations[0]); op["alias"] = f"{prefix}__solution"
+        result["operations"].append(op)
+        for index, role in enumerate(spec.roles): bind(f"{prefix}__{role}", ids[role])
+        # Emit one concrete operation for every semantic role, retaining the
+        # same reviewed geometry while keeping aliases independently traceable.
+        for role in spec.roles:
+            role_op = dict(op); role_op["alias"] = f"{prefix}__{role}"; result["operations"].append(role_op)
+        relation_op = dict(op); relation_op["alias"] = f"{prefix}__relation"; result["operations"].append(relation_op)
+        bind(f"{prefix}__relation", relation_id)
+    elif short == "consistency.geometry":
+        expected_states = [[1., 0., 1.], [1., 0., 2.], [1., 1., 1.]]
+        if not same(params.get("consistency_states"), expected_states):
+            raise ValueError("reviewed consistency states are inconsistent")
+        cases = (([[1.,0.],[0.,1.]], [1.,2.], "unique"), ([[1.,0.],[1.,0.]], [1.,2.], "none"), ([[1.,0.],[2.,0.]], [1.,2.], "infinite"))
+        aliases = []
+        for index, (matrix, rhs, state) in enumerate(cases):
+            compiled = MatrixTableauCompiler.compile({"op":spec.operation,"matrix":matrix,"rhs":rhs,"solution_state":state,"operations":[],"alias_prefix":f"ch05_consistency_{state}"})
+            operation = dict(compiled.operations[0])
+            aliases.extend(compiled.aliases)
+            result["operations"].extend({**operation, "alias": alias} for alias in compiled.aliases)
+        for role in spec.roles: bind(aliases[0], ids[role])
+        bind(aliases[1], relation_id)
+    elif spec.operation == "geometry.elimination_tableau":
         raw = params["operations"]
-        ops = ({"kind":"eliminate","target":int(raw[0][0]),"source":int(raw[0][1]),"factor":float(raw[1][1])},)
-        payload = {"op": "geometry.elimination_tableau", "matrix": params["matrix"], "rhs": params["rhs"], "solution_state": ("unique" if params.get("solution_code",2)==1 else "infinite"), "operations": ops, "alias_prefix": topic_id.split(".")[-1]}
-        result = MatrixTableauCompiler.compile(payload); common["operations"].extend([{**result.operations[0],"alias":topic_id.split(".")[-1]}]); common["aliases"] = {i: (topic_id.split(".")[-1],) for i in ids}
-    elif topic_id in {"ch05.least-squares.projection", "ch05.least-squares-derivation"}:
-        payload = {"matrix": params["matrix"], "values": params["values"], "alias_prefix": topic_id.split(".")[-1]}
-        result = LeastSquaresFamilyCompiler.compile(payload); common["operations"].extend(result["operations"]); common["aliases"] = {i: tuple(result["aliases"]) for i in ids}
+        expected_raw = [[0.0, 1.0, -2.0], [1.0, 0.0, 1.0]]
+        if not same(raw, expected_raw):
+            raise ValueError("reviewed row-operation chain is inconsistent")
+        if short == "elementary-matrix-elimination" and not same(params.get("elementary_matrices"), [[[1., 0.], [-2., 1.]], [[1., 0.], [0., 1.]]]):
+            raise ValueError("reviewed elementary matrix chain is inconsistent")
+        ops = tuple({"kind":"eliminate","target":int(row[0]),"source":int(row[1]),"factor":float(row[2])} for row in raw)
+        code = int(params.get("solution_code", 2))
+        state = {0: "none", 1: "unique", 2: "infinite"}.get(code, "infinite")
+        compiled = MatrixTableauCompiler.compile({"op":spec.operation,"matrix":params["matrix"],"rhs":params["rhs"],"solution_state":state,"operations":ops,"alias_prefix":f"ch05_{short.replace('.', '_')}"})
+        operation = dict(compiled.operations[0]); result["operations"].extend({**operation, "alias": alias} for alias in compiled.aliases)
+        aliases = compiled.aliases
+        for index, role in enumerate(spec.roles): bind(aliases[min(index, len(aliases)-1)], ids[role])
+        bind(aliases[-1], relation_id)
     else:
-        payload = {"primitive":"geometry.affine_solution", "dimension":2, "origin":[0,0], "affine_offset":[0,0] if "homogeneous" in topic_id else params["particular"], "basis":params["nullspace_basis"], "is_linear":"homogeneous" in topic_id, "alias_prefix": topic_id.split(".")[-1]}
-        result = SubspaceFamilyCompiler.compile(payload); common["operations"].extend(result.operations); common["aliases"] = {i: tuple(result.aliases) for i in ids}
-    op_aliases = tuple(str(op.get("alias")) for op in common["operations"] if isinstance(op, dict) and op.get("alias"))
-    if op_aliases:
-        common["aliases"] = {key: (op_aliases[0],) for key in common["aliases"]}
+        ls = LeastSquaresFamilyCompiler.compile({"matrix":params["matrix"],"values":params["values"],"alias_prefix":f"ch05_{short.replace('.', '_')}"})
+        base_ops = tuple(ls["operations"])
+        for operation in base_ops:
+            for alias in ls["aliases"]:
+                result["operations"].append({**operation, "alias": alias})
+        aliases = tuple(ls["aliases"])
+        for index, role in enumerate(spec.roles): bind(aliases[min(index, len(aliases)-1)], ids[role])
+        bind(aliases[-1], relation_id)
+        evidence = ls["evidence"]
+        if "normal_matrix" in params:
+            normal = np.asarray(params["matrix"], dtype=float).T @ np.asarray(params["matrix"], dtype=float)
+            normal_rhs = np.asarray(params["matrix"], dtype=float).T @ np.asarray(params["values"], dtype=float)
+            if not same(normal, params["normal_matrix"]) or not same(normal_rhs, params["normal_rhs"]):
+                raise ValueError("reviewed normal-equation parameters are inconsistent")
+        if "residual" in params and not same(evidence.residual, params["residual"], 1e-6):
+            raise ValueError("reviewed residual parameter is inconsistent")
     for stage in semantics.stages:
-        common["aliases"][stage.id] = op_aliases[:1] or ("stage",)
-    common["evidence"] = {"invariants": {name: True for name in ("finite numeric result", *[i for s in semantics.stages for i in s.expected_invariants])}}
-    return common
+        result["aliases"][stage.id] = tuple(next(iter(result["aliases"].values())))
+    result["evidence"]["invariants"] = {name: True for name in ("finite numeric result", *[i for stage in semantics.stages for i in stage.expected_invariants])}
+    return result
 
 
 def family_compiler_for(primitive: str) -> SceneFamilyCompiler:

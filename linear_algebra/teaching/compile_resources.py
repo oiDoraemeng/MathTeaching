@@ -275,7 +275,11 @@ def compile_chapter_05(*, output_root=None, index_path=None, reviewed_payloads=N
     out = Path(output_root or Path(__file__).with_name('data')/'compiled')
     idx = Path(index_path or Path(__file__).with_name('data')/'index.json')
     index_payload = _merged_chapter_index_payload(resources, chapter=5, output_path=idx)
-    writes = {out/f'{r.topic_id}.json': r.to_dict() for r in resources}; writes[idx] = index_payload
+    writes = {out/f'{r.topic_id}.json': r.to_dict() for r in resources}
+    review_destination = Path(reviewed_root) if reviewed_root is not None else (Path(__file__).with_name('data')/'revieweds'/'ch05')
+    if reviewed_payloads is not None:
+        writes.update({review_destination / topic / 'r1.json': payloads[topic] for topic in topics})
+    writes[idx] = index_payload
     _transactional_write_json(writes)
     return resources
 

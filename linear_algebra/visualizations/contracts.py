@@ -33,6 +33,7 @@ class VisualContract:
     required_relation_kinds: tuple[str, ...] = ()
     required_parameters: tuple[tuple[str, tuple[str, ...]], ...] = ()
     expected_operations: tuple[str, ...] = ()
+    required_stage_names: tuple[str, ...] = ()
 
 
 def contract_for(topic_id: str) -> VisualContract:
@@ -102,8 +103,17 @@ def contract_for(topic_id: str) -> VisualContract:
         if topic_id.startswith("ch05."):
             from linear_algebra.chapter_05_semantics import spec_for
             spec = spec_for(topic_id.removeprefix("ch05."))
-            return VisualContract(topic_id, (f"claim.{topic_id}",), spec.roles, (spec.relation,), (spec.primitive,), len(spec.stages), spec.invariants,
-                required_relation_kinds=(spec.relation,), required_parameters=((spec.relation, tuple(spec.params)),), expected_operations=(spec.operation,))
+            relation_name = spec.relation
+            return VisualContract(
+                topic_id, (f"claim.{topic_id}",), spec.roles, (relation_name,), (spec.primitive,),
+                len(spec.stages), spec.invariants,
+                required_relation_kinds=(relation_name,),
+                required_parameters=((relation_name, tuple(spec.params)),),
+                expected_operations=(spec.operation,),
+                required_role_types=tuple((role, spec.kind_for(role), 2) for role in spec.roles),
+                required_relation_endpoints=((relation_name, relation_name, spec.roles[0], spec.roles[-1]),),
+                required_stage_names=spec.stages,
+            )
         return VisualContract(topic_id, (f"claim.{topic_id}",), ("vector_a", "transformed_a"), ("maps_to",), (family,), 1, ("finite numeric result",))
     return overrides.get(topic_id, base)
 
@@ -164,6 +174,12 @@ def validate_contract_semantics(
     for invariant in contract.required_invariants:
         if invariant not in invariants:
             issues.append(ContractIssue("missing_invariant", contract.topic_id, invariant))
+    if contract.required_stage_names:
+        stage_names = {stage.id.rsplit(".", 1)[-1] for stage in semantics.stages}
+        stage_titles = {stage.title for stage in semantics.stages}
+        for name in contract.required_stage_names:
+            if name not in stage_names and name not in stage_titles:
+                issues.append(ContractIssue("missing_stage", contract.topic_id, name))
     for group in contract.distinguishable_role_groups:
         present = [role for role in group if role in roles]
         if len(present) != len(group):

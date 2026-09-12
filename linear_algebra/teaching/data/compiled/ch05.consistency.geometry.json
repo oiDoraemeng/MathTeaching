@@ -1,13 +1,14 @@
 {
-  "artifact_digest": "sha256:cb72a717016ae0383dc92602dbacaa0cb96fb5b4e81cdeb504d4cf478e8a9eaa",
+  "artifact_digest": "sha256:d1e4f22656d138bd18e5e603361f141a347e4cf30cc47cad5175b8e9bf0dff22",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:c2a6998aeb7c8794223f2b41a3033b700e63de2627391a82766b1b702e0a2965",
+  "contract_digest": "sha256:210532d4322395cac64452b023a2f6d047809a94d4ee9e14bcfafd18fe700c3d",
   "plan": {
     "operations": [
       {
+        "alias": "ch05_consistency_unique__stage_0",
         "aliases": [
-          "consistency__stage_0"
+          "ch05_consistency_unique__stage_0"
         ],
         "augmented_rank": 2,
         "matrix": [
@@ -29,7 +30,7 @@
         "solution_state": "unique",
         "stages": [
           {
-            "alias": "consistency__stage_0",
+            "alias": "ch05_consistency_unique__stage_0",
             "augmented_rank": 2,
             "caption": "初始增广矩阵",
             "highlight_rows": [],
@@ -50,6 +51,106 @@
               2.0
             ],
             "solution_state": "unique",
+            "title": "第 1 阶段"
+          }
+        ]
+      },
+      {
+        "alias": "ch05_consistency_none__stage_0",
+        "aliases": [
+          "ch05_consistency_none__stage_0"
+        ],
+        "augmented_rank": 2,
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.elimination_tableau",
+        "rank": 1,
+        "rhs": [
+          1.0,
+          2.0
+        ],
+        "solution_state": "none",
+        "stages": [
+          {
+            "alias": "ch05_consistency_none__stage_0",
+            "augmented_rank": 2,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                0.0
+              ],
+              [
+                1.0,
+                0.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 1,
+            "rhs": [
+              1.0,
+              2.0
+            ],
+            "solution_state": "none",
+            "title": "第 1 阶段"
+          }
+        ]
+      },
+      {
+        "alias": "ch05_consistency_infinite__stage_0",
+        "aliases": [
+          "ch05_consistency_infinite__stage_0"
+        ],
+        "augmented_rank": 1,
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.elimination_tableau",
+        "rank": 1,
+        "rhs": [
+          1.0,
+          2.0
+        ],
+        "solution_state": "infinite",
+        "stages": [
+          {
+            "alias": "ch05_consistency_infinite__stage_0",
+            "augmented_rank": 1,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                0.0
+              ],
+              [
+                2.0,
+                0.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 1,
+            "rhs": [
+              1.0,
+              2.0
+            ],
+            "solution_state": "infinite",
             "title": "第 1 阶段"
           }
         ]
@@ -90,7 +191,7 @@
     "summary": "5.3 解的存在性与唯一性",
     "version": 1
   },
-  "plan_digest": "sha256:b3c5b1e32fdfec09f3e8be711c8ae98160a049a7f497ca1a6292cb974383f938",
+  "plan_digest": "sha256:ab80b4fe20e508eb2fc79251847ae9b55bbe68d2b4c7f79f224368d8150dbb8d",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -110,16 +211,15 @@
       "layout": "sequence",
       "title": "unique",
       "visible_aliases": [
-        "consistency__stage_0",
+        "ch05_consistency_unique__stage_0",
+        "ch05_consistency_none__stage_0",
         "sem__stage.ch05.consistency.geometry.unique__title"
       ],
       "visible_refs": [
         "entity.ch05.consistency.geometry.matrix",
         "entity.ch05.consistency.geometry.rhs",
-        "entity.ch05.consistency.geometry.state",
-        "entity.ch05.consistency.geometry.vector_a",
-        "entity.ch05.consistency.geometry.transformed_a",
-        "relation.ch05.consistency.geometry.maps_to"
+        "entity.ch05.consistency.geometry.solution_state",
+        "relation.ch05.consistency.geometry.constraint_state"
       ]
     },
     {
@@ -132,16 +232,15 @@
       "layout": "sequence",
       "title": "none",
       "visible_aliases": [
-        "consistency__stage_0",
+        "ch05_consistency_unique__stage_0",
+        "ch05_consistency_none__stage_0",
         "sem__stage.ch05.consistency.geometry.none__title"
       ],
       "visible_refs": [
         "entity.ch05.consistency.geometry.matrix",
         "entity.ch05.consistency.geometry.rhs",
-        "entity.ch05.consistency.geometry.state",
-        "entity.ch05.consistency.geometry.vector_a",
-        "entity.ch05.consistency.geometry.transformed_a",
-        "relation.ch05.consistency.geometry.maps_to"
+        "entity.ch05.consistency.geometry.solution_state",
+        "relation.ch05.consistency.geometry.constraint_state"
       ]
     },
     {
@@ -154,16 +253,15 @@
       "layout": "sequence",
       "title": "infinite",
       "visible_aliases": [
-        "consistency__stage_0",
+        "ch05_consistency_unique__stage_0",
+        "ch05_consistency_none__stage_0",
         "sem__stage.ch05.consistency.geometry.infinite__title"
       ],
       "visible_refs": [
         "entity.ch05.consistency.geometry.matrix",
         "entity.ch05.consistency.geometry.rhs",
-        "entity.ch05.consistency.geometry.state",
-        "entity.ch05.consistency.geometry.vector_a",
-        "entity.ch05.consistency.geometry.transformed_a",
-        "relation.ch05.consistency.geometry.maps_to"
+        "entity.ch05.consistency.geometry.solution_state",
+        "relation.ch05.consistency.geometry.constraint_state"
       ]
     }
   ],

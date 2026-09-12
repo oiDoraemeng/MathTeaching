@@ -1,14 +1,16 @@
 {
-  "artifact_digest": "sha256:8540497a79b7b5b83f0bc121292fe359699c18a9d5e900e2ba79f81f66da8dc9",
+  "artifact_digest": "sha256:be7b6783f73c9a869c4b3a2efd6beac731e77e76ff8b6055164222a8187afbc2",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:41d01ed25ec3f524b82f029fd2b39d79f30b00069a58c7eea9940fbd7234317d",
+  "contract_digest": "sha256:d4bec717480a7abf1e2ba4763a588d57352f9e8f485ffe233972711b5a06318b",
   "plan": {
     "operations": [
       {
+        "alias": "ch05_gaussian-elimination__stage_0",
         "aliases": [
-          "gaussian-elimination__stage_0",
-          "gaussian-elimination__stage_1"
+          "ch05_gaussian-elimination__stage_0",
+          "ch05_gaussian-elimination__stage_1",
+          "ch05_gaussian-elimination__stage_2"
         ],
         "augmented_rank": 1,
         "matrix": [
@@ -30,7 +32,7 @@
         "solution_state": "infinite",
         "stages": [
           {
-            "alias": "gaussian-elimination__stage_0",
+            "alias": "ch05_gaussian-elimination__stage_0",
             "augmented_rank": 1,
             "caption": "初始增广矩阵",
             "highlight_rows": [],
@@ -54,7 +56,34 @@
             "title": "第 1 阶段"
           },
           {
-            "alias": "gaussian-elimination__stage_1",
+            "alias": "ch05_gaussian-elimination__stage_1",
+            "augmented_rank": 1,
+            "caption": "消元",
+            "highlight_rows": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "消元",
+            "rank": 1,
+            "rhs": [
+              15.0,
+              6.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 2 阶段"
+          },
+          {
+            "alias": "ch05_gaussian-elimination__stage_2",
             "augmented_rank": 1,
             "caption": "消元",
             "highlight_rows": [
@@ -63,22 +92,234 @@
             ],
             "matrix": [
               [
-                1.0,
-                2.0
+                5.0,
+                10.0
               ],
               [
-                0.0,
-                0.0
+                -3.0,
+                -6.0
               ]
             ],
             "operation_label": "消元",
             "rank": 1,
             "rhs": [
+              15.0,
+              -9.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 3 阶段"
+          }
+        ]
+      },
+      {
+        "alias": "ch05_gaussian-elimination__stage_1",
+        "aliases": [
+          "ch05_gaussian-elimination__stage_0",
+          "ch05_gaussian-elimination__stage_1",
+          "ch05_gaussian-elimination__stage_2"
+        ],
+        "augmented_rank": 1,
+        "matrix": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.elimination_tableau",
+        "rank": 1,
+        "rhs": [
+          3.0,
+          6.0
+        ],
+        "solution_state": "infinite",
+        "stages": [
+          {
+            "alias": "ch05_gaussian-elimination__stage_0",
+            "augmented_rank": 1,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                2.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 1,
+            "rhs": [
               3.0,
-              0.0
+              6.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 1 阶段"
+          },
+          {
+            "alias": "ch05_gaussian-elimination__stage_1",
+            "augmented_rank": 1,
+            "caption": "消元",
+            "highlight_rows": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "消元",
+            "rank": 1,
+            "rhs": [
+              15.0,
+              6.0
             ],
             "solution_state": "infinite",
             "title": "第 2 阶段"
+          },
+          {
+            "alias": "ch05_gaussian-elimination__stage_2",
+            "augmented_rank": 1,
+            "caption": "消元",
+            "highlight_rows": [
+              1,
+              0
+            ],
+            "matrix": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                -3.0,
+                -6.0
+              ]
+            ],
+            "operation_label": "消元",
+            "rank": 1,
+            "rhs": [
+              15.0,
+              -9.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 3 阶段"
+          }
+        ]
+      },
+      {
+        "alias": "ch05_gaussian-elimination__stage_2",
+        "aliases": [
+          "ch05_gaussian-elimination__stage_0",
+          "ch05_gaussian-elimination__stage_1",
+          "ch05_gaussian-elimination__stage_2"
+        ],
+        "augmented_rank": 1,
+        "matrix": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.elimination_tableau",
+        "rank": 1,
+        "rhs": [
+          3.0,
+          6.0
+        ],
+        "solution_state": "infinite",
+        "stages": [
+          {
+            "alias": "ch05_gaussian-elimination__stage_0",
+            "augmented_rank": 1,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                2.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 1,
+            "rhs": [
+              3.0,
+              6.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 1 阶段"
+          },
+          {
+            "alias": "ch05_gaussian-elimination__stage_1",
+            "augmented_rank": 1,
+            "caption": "消元",
+            "highlight_rows": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "消元",
+            "rank": 1,
+            "rhs": [
+              15.0,
+              6.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 2 阶段"
+          },
+          {
+            "alias": "ch05_gaussian-elimination__stage_2",
+            "augmented_rank": 1,
+            "caption": "消元",
+            "highlight_rows": [
+              1,
+              0
+            ],
+            "matrix": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                -3.0,
+                -6.0
+              ]
+            ],
+            "operation_label": "消元",
+            "rank": 1,
+            "rhs": [
+              15.0,
+              -9.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 3 阶段"
           }
         ]
       },
@@ -92,13 +333,31 @@
         "text": "initial"
       },
       {
-        "alias": "sem__stage.ch05.gaussian-elimination.eliminated__title",
+        "alias": "sem__stage.ch05.gaussian-elimination.eliminate__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.17
         ],
-        "text": "eliminated"
+        "text": "eliminate"
+      },
+      {
+        "alias": "sem__stage.ch05.gaussian-elimination.normalize__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "normalize"
+      },
+      {
+        "alias": "sem__stage.ch05.gaussian-elimination.back_substitute__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.21
+        ],
+        "text": "back_substitute"
       },
       {
         "op": "view.fit",
@@ -109,7 +368,7 @@
     "summary": "5.4 高斯消元",
     "version": 1
   },
-  "plan_digest": "sha256:0e6280e23a5707e027833b83b469004e2887c436709fa8a6cce83d518cf8c9c8",
+  "plan_digest": "sha256:6bf93c8a2772c268ee5d4b39a3a891f05b105421bc2f05a45663456691618030",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -129,17 +388,16 @@
       "layout": "sequence",
       "title": "initial",
       "visible_aliases": [
-        "gaussian-elimination__stage_0",
-        "gaussian-elimination__stage_1",
+        "ch05_gaussian-elimination__stage_0",
+        "ch05_gaussian-elimination__stage_1",
+        "ch05_gaussian-elimination__stage_2",
         "sem__stage.ch05.gaussian-elimination.initial__title"
       ],
       "visible_refs": [
         "entity.ch05.gaussian-elimination.matrix",
         "entity.ch05.gaussian-elimination.rhs",
         "entity.ch05.gaussian-elimination.tableau",
-        "entity.ch05.gaussian-elimination.vector_a",
-        "entity.ch05.gaussian-elimination.transformed_a",
-        "relation.ch05.gaussian-elimination.maps_to"
+        "relation.ch05.gaussian-elimination.row_operation"
       ]
     },
     {
@@ -147,22 +405,65 @@
         -2.65,
         2.17
       ],
-      "caption": "eliminated",
-      "id": "stage.ch05.gaussian-elimination.eliminated",
+      "caption": "eliminate",
+      "id": "stage.ch05.gaussian-elimination.eliminate",
       "layout": "sequence",
-      "title": "eliminated",
+      "title": "eliminate",
       "visible_aliases": [
-        "gaussian-elimination__stage_0",
-        "gaussian-elimination__stage_1",
-        "sem__stage.ch05.gaussian-elimination.eliminated__title"
+        "ch05_gaussian-elimination__stage_0",
+        "ch05_gaussian-elimination__stage_1",
+        "ch05_gaussian-elimination__stage_2",
+        "sem__stage.ch05.gaussian-elimination.eliminate__title"
       ],
       "visible_refs": [
         "entity.ch05.gaussian-elimination.matrix",
         "entity.ch05.gaussian-elimination.rhs",
         "entity.ch05.gaussian-elimination.tableau",
-        "entity.ch05.gaussian-elimination.vector_a",
-        "entity.ch05.gaussian-elimination.transformed_a",
-        "relation.ch05.gaussian-elimination.maps_to"
+        "relation.ch05.gaussian-elimination.row_operation"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "normalize",
+      "id": "stage.ch05.gaussian-elimination.normalize",
+      "layout": "sequence",
+      "title": "normalize",
+      "visible_aliases": [
+        "ch05_gaussian-elimination__stage_0",
+        "ch05_gaussian-elimination__stage_1",
+        "ch05_gaussian-elimination__stage_2",
+        "sem__stage.ch05.gaussian-elimination.normalize__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.gaussian-elimination.matrix",
+        "entity.ch05.gaussian-elimination.rhs",
+        "entity.ch05.gaussian-elimination.tableau",
+        "relation.ch05.gaussian-elimination.row_operation"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.21
+      ],
+      "caption": "back_substitute",
+      "id": "stage.ch05.gaussian-elimination.back_substitute",
+      "layout": "sequence",
+      "title": "back_substitute",
+      "visible_aliases": [
+        "ch05_gaussian-elimination__stage_0",
+        "ch05_gaussian-elimination__stage_1",
+        "ch05_gaussian-elimination__stage_2",
+        "sem__stage.ch05.gaussian-elimination.back_substitute__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.gaussian-elimination.matrix",
+        "entity.ch05.gaussian-elimination.rhs",
+        "entity.ch05.gaussian-elimination.tableau",
+        "relation.ch05.gaussian-elimination.row_operation"
       ]
     }
   ],

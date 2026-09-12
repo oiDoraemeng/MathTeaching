@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:e11d26a7464f0f32abfe551feab7426c68a3cd3c5bd639898a2ba84408353a58",
+  "artifact_digest": "sha256:9474cb4b5d78853100ed505868a4b80b89ef1aa133e545e9db619a63edb2b4d0",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:94fe124ad17846317467d2a8746adc3ac4127c3c3d9b6f10b6cbc05a820023d2",
+  "contract_digest": "sha256:1a6bc2d20b2e0222d0d4f968ceea3102e3dfcce9121faad46560b2c701d81265",
   "plan": {
     "operations": [
       {
-        "alias": "projection__data",
+        "alias": "ch05_least-squares_projection__data",
         "bounds": [
           -2.0,
           2.0,
@@ -17,14 +17,14 @@
           0.666666666666666,
           0.5000000000000003
         ],
-        "data_alias": "projection__data",
+        "data_alias": "ch05_least-squares_projection__data",
         "entity_count": 6,
         "fit": [
           1.1666666666666663,
           1.6666666666666665,
           2.166666666666667
         ],
-        "fit_alias": "projection__fit",
+        "fit_alias": "ch05_least-squares_projection__fit",
         "matrix": [
           [
             1.0,
@@ -45,13 +45,178 @@
           1.6666666666666665,
           2.166666666666667
         ],
-        "projection_alias": "projection__projection",
+        "projection_alias": "ch05_least-squares_projection__projection",
         "residual": [
           -0.1666666666666663,
           0.3333333333333335,
           -0.16666666666666696
         ],
-        "residual_alias": "projection__residual",
+        "residual_alias": "ch05_least-squares_projection__residual",
+        "sample_count": 3,
+        "tolerance": 1e-09,
+        "values": [
+          1.0,
+          2.0,
+          2.0
+        ]
+      },
+      {
+        "alias": "ch05_least-squares_projection__fit",
+        "bounds": [
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
+        ],
+        "coefficients": [
+          0.666666666666666,
+          0.5000000000000003
+        ],
+        "data_alias": "ch05_least-squares_projection__data",
+        "entity_count": 6,
+        "fit": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "fit_alias": "ch05_least-squares_projection__fit",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ],
+        "op": "geometry.least_squares",
+        "projection": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "projection_alias": "ch05_least-squares_projection__projection",
+        "residual": [
+          -0.1666666666666663,
+          0.3333333333333335,
+          -0.16666666666666696
+        ],
+        "residual_alias": "ch05_least-squares_projection__residual",
+        "sample_count": 3,
+        "tolerance": 1e-09,
+        "values": [
+          1.0,
+          2.0,
+          2.0
+        ]
+      },
+      {
+        "alias": "ch05_least-squares_projection__projection",
+        "bounds": [
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
+        ],
+        "coefficients": [
+          0.666666666666666,
+          0.5000000000000003
+        ],
+        "data_alias": "ch05_least-squares_projection__data",
+        "entity_count": 6,
+        "fit": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "fit_alias": "ch05_least-squares_projection__fit",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ],
+        "op": "geometry.least_squares",
+        "projection": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "projection_alias": "ch05_least-squares_projection__projection",
+        "residual": [
+          -0.1666666666666663,
+          0.3333333333333335,
+          -0.16666666666666696
+        ],
+        "residual_alias": "ch05_least-squares_projection__residual",
+        "sample_count": 3,
+        "tolerance": 1e-09,
+        "values": [
+          1.0,
+          2.0,
+          2.0
+        ]
+      },
+      {
+        "alias": "ch05_least-squares_projection__residual",
+        "bounds": [
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
+        ],
+        "coefficients": [
+          0.666666666666666,
+          0.5000000000000003
+        ],
+        "data_alias": "ch05_least-squares_projection__data",
+        "entity_count": 6,
+        "fit": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "fit_alias": "ch05_least-squares_projection__fit",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ],
+        "op": "geometry.least_squares",
+        "projection": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "projection_alias": "ch05_least-squares_projection__projection",
+        "residual": [
+          -0.1666666666666663,
+          0.3333333333333335,
+          -0.16666666666666696
+        ],
+        "residual_alias": "ch05_least-squares_projection__residual",
         "sample_count": 3,
         "tolerance": 1e-09,
         "values": [
@@ -88,6 +253,15 @@
         "text": "residual"
       },
       {
+        "alias": "sem__stage.ch05.least-squares.projection.orthogonality__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.21
+        ],
+        "text": "orthogonality"
+      },
+      {
         "op": "view.fit",
         "padding": 1.15
       }
@@ -96,7 +270,7 @@
     "summary": "5.5 最小二乘问题（选学阅读）",
     "version": 1
   },
-  "plan_digest": "sha256:baa932c6d46bdc678283b040a14b02309c60079b1ee0cab9f91385ad94530da8",
+  "plan_digest": "sha256:97e07463fcba6371169acb6ca4916919270e64d9655e52abf6017323b6a37d0d",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -116,19 +290,19 @@
       "layout": "sequence",
       "title": "data",
       "visible_aliases": [
-        "projection__data",
-        "projection__fit",
-        "projection__projection",
-        "projection__residual",
+        "ch05_least-squares_projection__data",
+        "ch05_least-squares_projection__fit",
+        "ch05_least-squares_projection__projection",
+        "ch05_least-squares_projection__residual",
         "sem__stage.ch05.least-squares.projection.data__title"
       ],
       "visible_refs": [
+        "entity.ch05.least-squares.projection.matrix",
+        "entity.ch05.least-squares.projection.values",
         "entity.ch05.least-squares.projection.data",
         "entity.ch05.least-squares.projection.fit",
         "entity.ch05.least-squares.projection.residual",
-        "entity.ch05.least-squares.projection.vector_a",
-        "entity.ch05.least-squares.projection.transformed_a",
-        "relation.ch05.least-squares.projection.maps_to"
+        "relation.ch05.least-squares.projection.projects_to"
       ]
     },
     {
@@ -141,19 +315,19 @@
       "layout": "sequence",
       "title": "projection",
       "visible_aliases": [
-        "projection__data",
-        "projection__fit",
-        "projection__projection",
-        "projection__residual",
+        "ch05_least-squares_projection__data",
+        "ch05_least-squares_projection__fit",
+        "ch05_least-squares_projection__projection",
+        "ch05_least-squares_projection__residual",
         "sem__stage.ch05.least-squares.projection.projection__title"
       ],
       "visible_refs": [
+        "entity.ch05.least-squares.projection.matrix",
+        "entity.ch05.least-squares.projection.values",
         "entity.ch05.least-squares.projection.data",
         "entity.ch05.least-squares.projection.fit",
         "entity.ch05.least-squares.projection.residual",
-        "entity.ch05.least-squares.projection.vector_a",
-        "entity.ch05.least-squares.projection.transformed_a",
-        "relation.ch05.least-squares.projection.maps_to"
+        "relation.ch05.least-squares.projection.projects_to"
       ]
     },
     {
@@ -166,19 +340,44 @@
       "layout": "sequence",
       "title": "residual",
       "visible_aliases": [
-        "projection__data",
-        "projection__fit",
-        "projection__projection",
-        "projection__residual",
+        "ch05_least-squares_projection__data",
+        "ch05_least-squares_projection__fit",
+        "ch05_least-squares_projection__projection",
+        "ch05_least-squares_projection__residual",
         "sem__stage.ch05.least-squares.projection.residual__title"
       ],
       "visible_refs": [
+        "entity.ch05.least-squares.projection.matrix",
+        "entity.ch05.least-squares.projection.values",
         "entity.ch05.least-squares.projection.data",
         "entity.ch05.least-squares.projection.fit",
         "entity.ch05.least-squares.projection.residual",
-        "entity.ch05.least-squares.projection.vector_a",
-        "entity.ch05.least-squares.projection.transformed_a",
-        "relation.ch05.least-squares.projection.maps_to"
+        "relation.ch05.least-squares.projection.projects_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.21
+      ],
+      "caption": "orthogonality",
+      "id": "stage.ch05.least-squares.projection.orthogonality",
+      "layout": "sequence",
+      "title": "orthogonality",
+      "visible_aliases": [
+        "ch05_least-squares_projection__data",
+        "ch05_least-squares_projection__fit",
+        "ch05_least-squares_projection__projection",
+        "ch05_least-squares_projection__residual",
+        "sem__stage.ch05.least-squares.projection.orthogonality__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.least-squares.projection.matrix",
+        "entity.ch05.least-squares.projection.values",
+        "entity.ch05.least-squares.projection.data",
+        "entity.ch05.least-squares.projection.fit",
+        "entity.ch05.least-squares.projection.residual",
+        "relation.ch05.least-squares.projection.projects_to"
       ]
     }
   ],

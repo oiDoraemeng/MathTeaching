@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:7c76e33f71a2b762e8a0d2c79be71bbf8fbcf9eb37f0ee4f73cc96e1ae2de447",
+  "artifact_digest": "sha256:ca279e4344b47fe14f1f60ef6044c96b880120cd6459862e7312de0f78e91df1",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:03097b768ed0e12824cb794f59308c9abe4093effbfc9f701da4422f9c0eb530",
+  "contract_digest": "sha256:aff8c448a68bc63522487ed52ea5be4990ef537e57ed1841cbe807c55c317534",
   "plan": {
     "operations": [
       {
-        "alias": "fundamental-solution-system",
+        "alias": "ch05_fundamental-solution-system__solution",
         "basis": [
           [
             -2.0,
@@ -21,7 +21,7 @@
         ],
         "dimension": 2,
         "offset": [
-          1.0,
+          3.0,
           0.0
         ],
         "op": "geometry.affine_solution",
@@ -31,31 +31,231 @@
         ]
       },
       {
-        "alias": "sem__stage.ch05.fundamental-solution-system.domain__title",
+        "alias": "ch05_fundamental-solution-system__matrix",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          3.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05_fundamental-solution-system__rhs",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          3.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05_fundamental-solution-system__pivot_columns",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          3.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05_fundamental-solution-system__free_variables",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          3.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05_fundamental-solution-system__nullspace",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          3.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05_fundamental-solution-system__particular",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          3.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05_fundamental-solution-system__solution_set",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          3.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch05_fundamental-solution-system__relation",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          3.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__stage.ch05.fundamental-solution-system.echelon__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "domain"
+        "text": "echelon"
       },
       {
-        "alias": "sem__stage.ch05.fundamental-solution-system.image__title",
+        "alias": "sem__stage.ch05.fundamental-solution-system.pivots__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.17
         ],
-        "text": "image"
+        "text": "pivots"
       },
       {
-        "alias": "sem__stage.ch05.fundamental-solution-system.kernel__title",
+        "alias": "sem__stage.ch05.fundamental-solution-system.free_variables__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           1.69
         ],
-        "text": "kernel"
+        "text": "free_variables"
       },
       {
         "alias": "sem__stage.ch05.fundamental-solution-system.solution__title",
@@ -75,7 +275,7 @@
     "summary": "5.6 基础解系——零空间的标准化描述",
     "version": 1
   },
-  "plan_digest": "sha256:9ec8fe961754380a6a02f105c271166af4dfbf6a55187d57f839cd3b0fa4ed00",
+  "plan_digest": "sha256:454827054a93f48471b603d8cbd649a8579aa9c090f228bc96af3b6453af66b5",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -90,22 +290,30 @@
         -2.65,
         2.65
       ],
-      "caption": "domain",
-      "id": "stage.ch05.fundamental-solution-system.domain",
+      "caption": "echelon",
+      "id": "stage.ch05.fundamental-solution-system.echelon",
       "layout": "sequence",
-      "title": "domain",
+      "title": "echelon",
       "visible_aliases": [
-        "fundamental-solution-system__domain",
-        "sem__stage.ch05.fundamental-solution-system.domain__title"
+        "ch05_fundamental-solution-system__matrix",
+        "ch05_fundamental-solution-system__rhs",
+        "ch05_fundamental-solution-system__pivot_columns",
+        "ch05_fundamental-solution-system__free_variables",
+        "ch05_fundamental-solution-system__nullspace",
+        "ch05_fundamental-solution-system__particular",
+        "ch05_fundamental-solution-system__solution_set",
+        "ch05_fundamental-solution-system__relation",
+        "sem__stage.ch05.fundamental-solution-system.echelon__title"
       ],
       "visible_refs": [
-        "entity.ch05.fundamental-solution-system.domain",
-        "entity.ch05.fundamental-solution-system.image",
-        "entity.ch05.fundamental-solution-system.kernel",
+        "entity.ch05.fundamental-solution-system.matrix",
+        "entity.ch05.fundamental-solution-system.rhs",
+        "entity.ch05.fundamental-solution-system.pivot_columns",
+        "entity.ch05.fundamental-solution-system.free_variables",
+        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.particular",
-        "entity.ch05.fundamental-solution-system.vector_a",
-        "entity.ch05.fundamental-solution-system.transformed_a",
-        "relation.ch05.fundamental-solution-system.maps_to"
+        "entity.ch05.fundamental-solution-system.solution_set",
+        "relation.ch05.fundamental-solution-system.null_solution"
       ]
     },
     {
@@ -113,22 +321,30 @@
         -2.65,
         2.17
       ],
-      "caption": "image",
-      "id": "stage.ch05.fundamental-solution-system.image",
+      "caption": "pivots",
+      "id": "stage.ch05.fundamental-solution-system.pivots",
       "layout": "sequence",
-      "title": "image",
+      "title": "pivots",
       "visible_aliases": [
-        "fundamental-solution-system__domain",
-        "sem__stage.ch05.fundamental-solution-system.image__title"
+        "ch05_fundamental-solution-system__matrix",
+        "ch05_fundamental-solution-system__rhs",
+        "ch05_fundamental-solution-system__pivot_columns",
+        "ch05_fundamental-solution-system__free_variables",
+        "ch05_fundamental-solution-system__nullspace",
+        "ch05_fundamental-solution-system__particular",
+        "ch05_fundamental-solution-system__solution_set",
+        "ch05_fundamental-solution-system__relation",
+        "sem__stage.ch05.fundamental-solution-system.pivots__title"
       ],
       "visible_refs": [
-        "entity.ch05.fundamental-solution-system.domain",
-        "entity.ch05.fundamental-solution-system.image",
-        "entity.ch05.fundamental-solution-system.kernel",
+        "entity.ch05.fundamental-solution-system.matrix",
+        "entity.ch05.fundamental-solution-system.rhs",
+        "entity.ch05.fundamental-solution-system.pivot_columns",
+        "entity.ch05.fundamental-solution-system.free_variables",
+        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.particular",
-        "entity.ch05.fundamental-solution-system.vector_a",
-        "entity.ch05.fundamental-solution-system.transformed_a",
-        "relation.ch05.fundamental-solution-system.maps_to"
+        "entity.ch05.fundamental-solution-system.solution_set",
+        "relation.ch05.fundamental-solution-system.null_solution"
       ]
     },
     {
@@ -136,22 +352,30 @@
         -2.65,
         1.69
       ],
-      "caption": "kernel",
-      "id": "stage.ch05.fundamental-solution-system.kernel",
+      "caption": "free_variables",
+      "id": "stage.ch05.fundamental-solution-system.free_variables",
       "layout": "sequence",
-      "title": "kernel",
+      "title": "free_variables",
       "visible_aliases": [
-        "fundamental-solution-system__domain",
-        "sem__stage.ch05.fundamental-solution-system.kernel__title"
+        "ch05_fundamental-solution-system__matrix",
+        "ch05_fundamental-solution-system__rhs",
+        "ch05_fundamental-solution-system__pivot_columns",
+        "ch05_fundamental-solution-system__free_variables",
+        "ch05_fundamental-solution-system__nullspace",
+        "ch05_fundamental-solution-system__particular",
+        "ch05_fundamental-solution-system__solution_set",
+        "ch05_fundamental-solution-system__relation",
+        "sem__stage.ch05.fundamental-solution-system.free_variables__title"
       ],
       "visible_refs": [
-        "entity.ch05.fundamental-solution-system.domain",
-        "entity.ch05.fundamental-solution-system.image",
-        "entity.ch05.fundamental-solution-system.kernel",
+        "entity.ch05.fundamental-solution-system.matrix",
+        "entity.ch05.fundamental-solution-system.rhs",
+        "entity.ch05.fundamental-solution-system.pivot_columns",
+        "entity.ch05.fundamental-solution-system.free_variables",
+        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.particular",
-        "entity.ch05.fundamental-solution-system.vector_a",
-        "entity.ch05.fundamental-solution-system.transformed_a",
-        "relation.ch05.fundamental-solution-system.maps_to"
+        "entity.ch05.fundamental-solution-system.solution_set",
+        "relation.ch05.fundamental-solution-system.null_solution"
       ]
     },
     {
@@ -164,17 +388,25 @@
       "layout": "sequence",
       "title": "solution",
       "visible_aliases": [
-        "fundamental-solution-system__domain",
+        "ch05_fundamental-solution-system__matrix",
+        "ch05_fundamental-solution-system__rhs",
+        "ch05_fundamental-solution-system__pivot_columns",
+        "ch05_fundamental-solution-system__free_variables",
+        "ch05_fundamental-solution-system__nullspace",
+        "ch05_fundamental-solution-system__particular",
+        "ch05_fundamental-solution-system__solution_set",
+        "ch05_fundamental-solution-system__relation",
         "sem__stage.ch05.fundamental-solution-system.solution__title"
       ],
       "visible_refs": [
-        "entity.ch05.fundamental-solution-system.domain",
-        "entity.ch05.fundamental-solution-system.image",
-        "entity.ch05.fundamental-solution-system.kernel",
+        "entity.ch05.fundamental-solution-system.matrix",
+        "entity.ch05.fundamental-solution-system.rhs",
+        "entity.ch05.fundamental-solution-system.pivot_columns",
+        "entity.ch05.fundamental-solution-system.free_variables",
+        "entity.ch05.fundamental-solution-system.nullspace",
         "entity.ch05.fundamental-solution-system.particular",
-        "entity.ch05.fundamental-solution-system.vector_a",
-        "entity.ch05.fundamental-solution-system.transformed_a",
-        "relation.ch05.fundamental-solution-system.maps_to"
+        "entity.ch05.fundamental-solution-system.solution_set",
+        "relation.ch05.fundamental-solution-system.null_solution"
       ]
     }
   ],

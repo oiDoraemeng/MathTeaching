@@ -1,39 +1,235 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch05.least-squares-derivation",
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch05.least-squares-derivation.matrix",
+        "entity.ch05.least-squares-derivation.values",
+        "entity.ch05.least-squares-derivation.normal_matrix",
+        "entity.ch05.least-squares-derivation.normal_rhs",
+        "entity.ch05.least-squares-derivation.fit",
+        "entity.ch05.least-squares-derivation.residual"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "5.8 最小二乘法的完整推导: finite typed semantic evidence",
+      "formula_symbols": [
+        "matrix",
+        "values",
+        "normal_matrix",
+        "normal_rhs",
+        "fit",
+        "residual"
+      ],
+      "id": "claim.ch05.least-squares-derivation",
+      "relation_refs": [
+        "relation.ch05.least-squares-derivation.projects_to"
+      ],
+      "source_refs": [
+        "第5章 线性方程组 / 5.8 最小二乘法的完整推导::1::sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69"
+      ],
+      "stage_refs": [
+        "stage.ch05.least-squares-derivation.data",
+        "stage.ch05.least-squares-derivation.normal_equations",
+        "stage.ch05.least-squares-derivation.projection",
+        "stage.ch05.least-squares-derivation.residual"
+      ],
+      "statement": "5.8 最小二乘法的完整推导 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch05.least-squares-derivation"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch05.least-squares-derivation.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "5.8 最小二乘法的完整推导 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "5.8 最小二乘法的完整推导: finite typed semantic evidence",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "normal equations A^T A c = A^T b",
+      "residual orthogonal to column space",
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "5.8 最小二乘法的完整推导",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "definition",
+        "text": "definition: 5.8 最小二乘法的完整推导。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "formula",
+        "text": "formula: 5.8 最小二乘法的完整推导。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "derivation",
+        "text": "derivation: 5.8 最小二乘法的完整推导。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 5.8 最小二乘法的完整推导。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 5.8 最小二乘法的完整推导。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 5.8 最小二乘法的完整推导。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "connections",
+        "text": "connections: 5.8 最小二乘法的完整推导。",
+        "title": "connections"
+      }
+    ],
+    "summary": "5.8 最小二乘法的完整推导 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "fit": "fit",
+      "matrix": "matrix",
+      "normal_matrix": "normal_matrix",
+      "normal_rhs": "normal_rhs",
+      "residual": "residual",
+      "values": "values"
+    },
+    "title": "5.8 最小二乘法的完整推导",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "5.8 最小二乘法的完整推导: finite typed semantic evidence"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch05.least-squares-derivation",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:7a5f2c1be0848af0febff92e657e3d5c5e180a7c7daf733c2bfd0b97a415747c",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:d61667effd3abe266cab225b9026a19c9fc3b60d24d22b286cc1cd99f93f43cb",
+    "source_hash": "sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69"
+  },
   "revision": 1,
-  "status": "reviewed",
+  "schema_version": 1,
   "source": {
+    "excerpt": "## 5.8 最小二乘法的完整推导\n\n问题：$Ax=b$无解（$b\\notin\\operatorname{Col}(A)$）。找 $\\hat{x}$ 使残差$\\|Ax-b\\|$最小。\n推导：$min f(x)=\\|Ax-b\\|^{2}=(Ax-b)^{T}(Ax-b)=x^{T}A^{T}Ax-2b^{T}Ax+b^{T}b$。\n对x求梯度（各项求导）并令为0：$\\nabla f=2A^{T}Ax-2A^{T}b=0 \\rightarrow A^{T}A\\hat{x}=A^{T}b$（正规方程）。\n几何意义：$A\\hat{x}$是b在Col(A)上的正交投影，残差$b-A\\hat{x}\\perp\\operatorname{Col}(A)$。",
+    "heading_level": 2,
+    "heading_path": [
+      "第5章 线性方程组",
+      "5.8 最小二乘法的完整推导"
+    ],
+    "neighboring_titles": [
+      "5.7 初等矩阵与消元法的矩阵表述"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69",
     "source_path": [
       "第5章 线性方程组",
       "5.8 最小二乘法的完整推导",
       "5.8 最小二乘法的完整推导"
     ],
-    "heading_path": [
-      "第5章 线性方程组",
-      "5.8 最小二乘法的完整推导"
-    ],
-    "heading_level": 2,
-    "occurrence": 1,
-    "excerpt": "## 5.8 最小二乘法的完整推导\n\n问题：$Ax=b$无解（$b\\notin\\operatorname{Col}(A)$）。找 $\\hat{x}$ 使残差$\\|Ax-b\\|$最小。\n推导：$min f(x)=\\|Ax-b\\|^{2}=(Ax-b)^{T}(Ax-b)=x^{T}A^{T}Ax-2b^{T}Ax+b^{T}b$。\n对x求梯度（各项求导）并令为0：$\\nabla f=2A^{T}Ax-2A^{T}b=0 \\rightarrow A^{T}A\\hat{x}=A^{T}b$（正规方程）。\n几何意义：$A\\hat{x}$是b在Col(A)上的正交投影，残差$b-A\\hat{x}\\perp\\operatorname{Col}(A)$。",
-    "source_hash": "sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69",
     "spans": [
       {
-        "id": "第5章 线性方程组 / 5.8 最小二乘法的完整推导::1::sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69",
+        "end_line": 2168,
+        "fingerprint": "sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69",
         "heading_path": [
           "第5章 线性方程组",
           "5.8 最小二乘法的完整推导"
         ],
+        "id": "第5章 线性方程组 / 5.8 最小二乘法的完整推导::1::sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69",
         "start_line": 2134,
-        "end_line": 2168,
-        "fingerprint": "sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69",
         "text": "## 5.8 最小二乘法的完整推导\n\n问题：$Ax=b$无解（$b\\notin\\operatorname{Col}(A)$）。找 $\\hat{x}$ 使残差$\\|Ax-b\\|$最小。\n推导：$min f(x)=\\|Ax-b\\|^{2}=(Ax-b)^{T}(Ax-b)=x^{T}A^{T}Ax-2b^{T}Ax+b^{T}b$。\n对x求梯度（各项求导）并令为0：$\\nabla f=2A^{T}Ax-2A^{T}b=0 \\rightarrow A^{T}A\\hat{x}=A^{T}b$（正规方程）。\n几何意义：$A\\hat{x}$是b在Col(A)上的正交投影，残差$b-A\\hat{x}\\perp\\operatorname{Col}(A)$。"
       }
-    ],
-    "neighboring_titles": [
-      "5.7 初等矩阵与消元法的矩阵表述"
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -47,265 +243,130 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch05.least-squares-derivation",
-      "statement": "5.8 最小二乘法的完整推导 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "5.8 最小二乘法的完整推导: finite typed semantic evidence",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第5章 线性方程组 / 5.8 最小二乘法的完整推导::1::sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch05.least-squares-derivation.data",
-        "entity.ch05.least-squares-derivation.fit",
-        "entity.ch05.least-squares-derivation.residual",
-        "entity.ch05.least-squares-derivation.vector_a",
-        "entity.ch05.least-squares-derivation.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch05.least-squares-derivation.maps_to"
-      ],
-      "stage_refs": [
-        "stage.ch05.least-squares-derivation.data",
-        "stage.ch05.least-squares-derivation.projection",
-        "stage.ch05.least-squares-derivation.residual"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch05.least-squares-derivation.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch05.least-squares-derivation"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "5.8 最小二乘法的完整推导",
-    "summary": "5.8 最小二乘法的完整推导 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 5.8 最小二乘法的完整推导。",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 5.8 最小二乘法的完整推导。",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 5.8 最小二乘法的完整推导。",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 5.8 最小二乘法的完整推导。",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 5.8 最小二乘法的完整推导。",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 5.8 最小二乘法的完整推导。",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 5.8 最小二乘法的完整推导。",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a"
-    },
-    "definition": "5.8 最小二乘法的完整推导 的对象和定义。",
-    "formula": "5.8 最小二乘法的完整推导: finite typed semantic evidence",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch05.least-squares-derivation",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "5.8 最小二乘法的完整推导: finite typed semantic evidence"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "residual orthogonal to column space",
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "5.8 最小二乘法的完整推导",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch05.least-squares-derivation",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "affine_solution",
     "entities": [
       {
-        "id": "entity.ch05.least-squares-derivation.data",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "data",
-        "label": "data",
         "claim_refs": [
           "claim.ch05.least-squares-derivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.least-squares-derivation.matrix",
+        "kind": "matrix",
+        "label": "matrix",
+        "role": "matrix",
+        "value": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.least-squares-derivation.values",
+        "kind": "vector",
+        "label": "values",
+        "role": "values",
+        "value": [
+          1.0,
+          2.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.least-squares-derivation.normal_matrix",
+        "kind": "matrix",
+        "label": "normal_matrix",
+        "role": "normal_matrix",
+        "value": [
+          [
+            3.0,
+            6.0
+          ],
+          [
+            6.0,
+            14.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.least-squares-derivation.normal_rhs",
+        "kind": "vector",
+        "label": "normal_rhs",
+        "role": "normal_rhs",
+        "value": [
+          5.0,
+          11.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "dimension": 2,
         "id": "entity.ch05.least-squares-derivation.fit",
         "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "fit",
         "label": "fit",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
+        "role": "fit",
+        "value": [
+          1.1666666667,
+          1.6666666667,
+          2.1666666667
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "dimension": 2,
         "id": "entity.ch05.least-squares-derivation.residual",
         "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "residual",
         "label": "residual",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
-      },
-      {
-        "id": "entity.ch05.least-squares-derivation.vector_a",
-        "kind": "vector",
-        "dimension": 2,
+        "role": "residual",
         "value": [
-          0.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
-      },
-      {
-        "id": "entity.ch05.least-squares-derivation.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "transformed_a",
-        "label": "transformed_a",
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
+          -0.1666666667,
+          0.3333333333,
+          -0.1666666667
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch05.least-squares-derivation.maps_to",
-        "kind": "maps_to",
-        "source_ref": "entity.ch05.least-squares-derivation.data",
-        "target_ref": "entity.ch05.least-squares-derivation.residual",
+        "claim_refs": [
+          "claim.ch05.least-squares-derivation"
+        ],
+        "id": "relation.ch05.least-squares-derivation.projects_to",
+        "kind": "projects_to",
         "parameters": {
+          "coefficients": [
+            0.6666666666666666,
+            0.5
+          ],
+          "fit": [
+            1.1666666667,
+            1.6666666667,
+            2.1666666667
+          ],
           "matrix": [
             [
               1.0,
@@ -320,108 +381,158 @@
               3.0
             ]
           ],
+          "normal_matrix": [
+            [
+              3.0,
+              6.0
+            ],
+            [
+              6.0,
+              14.0
+            ]
+          ],
+          "normal_rhs": [
+            5.0,
+            11.0
+          ],
+          "residual": [
+            -0.1666666667,
+            0.3333333333,
+            -0.1666666667
+          ],
           "values": [
             1.0,
             2.0,
             2.0
           ]
         },
-        "claim_refs": [
-          "claim.ch05.least-squares-derivation"
-        ]
+        "source_ref": "entity.ch05.least-squares-derivation.matrix",
+        "target_ref": "entity.ch05.least-squares-derivation.residual"
       }
     ],
+    "scene_family": "affine_solution",
+    "scene_kind": "2d",
     "stages": [
       {
-        "id": "stage.ch05.least-squares-derivation.data",
-        "title": "data",
         "caption": "data",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.least-squares-derivation.data",
-          "entity.ch05.least-squares-derivation.fit",
-          "entity.ch05.least-squares-derivation.residual",
-          "entity.ch05.least-squares-derivation.vector_a",
-          "entity.ch05.least-squares-derivation.transformed_a"
-        ],
-        "output_entity_refs": [
-          "entity.ch05.least-squares-derivation.data",
-          "entity.ch05.least-squares-derivation.fit",
-          "entity.ch05.least-squares-derivation.residual",
-          "entity.ch05.least-squares-derivation.vector_a",
-          "entity.ch05.least-squares-derivation.transformed_a"
-        ],
-        "relation_refs": [
-          "relation.ch05.least-squares-derivation.maps_to"
-        ],
         "expected_invariants": [
+          "normal equations A^T A c = A^T b",
           "residual orthogonal to column space",
           "finite numeric result"
-        ]
+        ],
+        "id": "stage.ch05.least-squares-derivation.data",
+        "input_entity_refs": [
+          "entity.ch05.least-squares-derivation.matrix",
+          "entity.ch05.least-squares-derivation.values",
+          "entity.ch05.least-squares-derivation.normal_matrix",
+          "entity.ch05.least-squares-derivation.normal_rhs",
+          "entity.ch05.least-squares-derivation.fit",
+          "entity.ch05.least-squares-derivation.residual"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.least-squares-derivation.matrix",
+          "entity.ch05.least-squares-derivation.values",
+          "entity.ch05.least-squares-derivation.normal_matrix",
+          "entity.ch05.least-squares-derivation.normal_rhs",
+          "entity.ch05.least-squares-derivation.fit",
+          "entity.ch05.least-squares-derivation.residual"
+        ],
+        "relation_refs": [
+          "relation.ch05.least-squares-derivation.projects_to"
+        ],
+        "title": "data"
       },
       {
-        "id": "stage.ch05.least-squares-derivation.projection",
-        "title": "projection",
+        "caption": "normal_equations",
+        "expected_invariants": [
+          "normal equations A^T A c = A^T b",
+          "residual orthogonal to column space",
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.least-squares-derivation.normal_equations",
+        "input_entity_refs": [
+          "entity.ch05.least-squares-derivation.matrix",
+          "entity.ch05.least-squares-derivation.values",
+          "entity.ch05.least-squares-derivation.normal_matrix",
+          "entity.ch05.least-squares-derivation.normal_rhs",
+          "entity.ch05.least-squares-derivation.fit",
+          "entity.ch05.least-squares-derivation.residual"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.least-squares-derivation.matrix",
+          "entity.ch05.least-squares-derivation.values",
+          "entity.ch05.least-squares-derivation.normal_matrix",
+          "entity.ch05.least-squares-derivation.normal_rhs",
+          "entity.ch05.least-squares-derivation.fit",
+          "entity.ch05.least-squares-derivation.residual"
+        ],
+        "relation_refs": [
+          "relation.ch05.least-squares-derivation.projects_to"
+        ],
+        "title": "normal_equations"
+      },
+      {
         "caption": "projection",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.least-squares-derivation.data",
-          "entity.ch05.least-squares-derivation.fit",
-          "entity.ch05.least-squares-derivation.residual",
-          "entity.ch05.least-squares-derivation.vector_a",
-          "entity.ch05.least-squares-derivation.transformed_a"
-        ],
-        "output_entity_refs": [
-          "entity.ch05.least-squares-derivation.data",
-          "entity.ch05.least-squares-derivation.fit",
-          "entity.ch05.least-squares-derivation.residual",
-          "entity.ch05.least-squares-derivation.vector_a",
-          "entity.ch05.least-squares-derivation.transformed_a"
-        ],
-        "relation_refs": [
-          "relation.ch05.least-squares-derivation.maps_to"
-        ],
         "expected_invariants": [
+          "normal equations A^T A c = A^T b",
           "residual orthogonal to column space",
           "finite numeric result"
-        ]
+        ],
+        "id": "stage.ch05.least-squares-derivation.projection",
+        "input_entity_refs": [
+          "entity.ch05.least-squares-derivation.matrix",
+          "entity.ch05.least-squares-derivation.values",
+          "entity.ch05.least-squares-derivation.normal_matrix",
+          "entity.ch05.least-squares-derivation.normal_rhs",
+          "entity.ch05.least-squares-derivation.fit",
+          "entity.ch05.least-squares-derivation.residual"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.least-squares-derivation.matrix",
+          "entity.ch05.least-squares-derivation.values",
+          "entity.ch05.least-squares-derivation.normal_matrix",
+          "entity.ch05.least-squares-derivation.normal_rhs",
+          "entity.ch05.least-squares-derivation.fit",
+          "entity.ch05.least-squares-derivation.residual"
+        ],
+        "relation_refs": [
+          "relation.ch05.least-squares-derivation.projects_to"
+        ],
+        "title": "projection"
       },
       {
-        "id": "stage.ch05.least-squares-derivation.residual",
-        "title": "residual",
         "caption": "residual",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.least-squares-derivation.data",
-          "entity.ch05.least-squares-derivation.fit",
-          "entity.ch05.least-squares-derivation.residual",
-          "entity.ch05.least-squares-derivation.vector_a",
-          "entity.ch05.least-squares-derivation.transformed_a"
-        ],
-        "output_entity_refs": [
-          "entity.ch05.least-squares-derivation.data",
-          "entity.ch05.least-squares-derivation.fit",
-          "entity.ch05.least-squares-derivation.residual",
-          "entity.ch05.least-squares-derivation.vector_a",
-          "entity.ch05.least-squares-derivation.transformed_a"
-        ],
-        "relation_refs": [
-          "relation.ch05.least-squares-derivation.maps_to"
-        ],
         "expected_invariants": [
+          "normal equations A^T A c = A^T b",
           "residual orthogonal to column space",
           "finite numeric result"
-        ]
+        ],
+        "id": "stage.ch05.least-squares-derivation.residual",
+        "input_entity_refs": [
+          "entity.ch05.least-squares-derivation.matrix",
+          "entity.ch05.least-squares-derivation.values",
+          "entity.ch05.least-squares-derivation.normal_matrix",
+          "entity.ch05.least-squares-derivation.normal_rhs",
+          "entity.ch05.least-squares-derivation.fit",
+          "entity.ch05.least-squares-derivation.residual"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.least-squares-derivation.matrix",
+          "entity.ch05.least-squares-derivation.values",
+          "entity.ch05.least-squares-derivation.normal_matrix",
+          "entity.ch05.least-squares-derivation.normal_rhs",
+          "entity.ch05.least-squares-derivation.fit",
+          "entity.ch05.least-squares-derivation.residual"
+        ],
+        "relation_refs": [
+          "relation.ch05.least-squares-derivation.projects_to"
+        ],
+        "title": "residual"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:bdd4f9b6a5adccbe966ad7a7b719110d61ea8b9ee3fc98121669bdcfd9b8df69",
-    "raw_reply_digest": "sha256:5db6ab976b7f490bfe07584d8faa42b49dadc1c18017a17082053143ef526c46",
-    "artifact_digest": "sha256:f43f27da9f1d235ce95a67138020892cf90a62ca870352081880327c3725fb90"
   }
 }

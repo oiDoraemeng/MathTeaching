@@ -1,14 +1,16 @@
 {
-  "artifact_digest": "sha256:de8860e18f6f0ca1bfd0e21f2ef3cff6dee26ff25b76bbf7eb120463542954bc",
+  "artifact_digest": "sha256:7f92793a7a31d09db09ec274faf3b6c53ce71974103f586f8cd014fb77bb9b9c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:52021c6a66d65597ded3c7992c24bc6e287a2c983a483f399d83558036d367fb",
+  "contract_digest": "sha256:5367d8aec832ae6b1267abf0b3458d7abe10f4cb12212c8f1e8088d2c7bf64c0",
   "plan": {
     "operations": [
       {
+        "alias": "ch05_elementary-matrix-elimination__stage_0",
         "aliases": [
-          "elementary-matrix-elimination__stage_0",
-          "elementary-matrix-elimination__stage_1"
+          "ch05_elementary-matrix-elimination__stage_0",
+          "ch05_elementary-matrix-elimination__stage_1",
+          "ch05_elementary-matrix-elimination__stage_2"
         ],
         "augmented_rank": 1,
         "matrix": [
@@ -30,7 +32,7 @@
         "solution_state": "infinite",
         "stages": [
           {
-            "alias": "elementary-matrix-elimination__stage_0",
+            "alias": "ch05_elementary-matrix-elimination__stage_0",
             "augmented_rank": 1,
             "caption": "初始增广矩阵",
             "highlight_rows": [],
@@ -54,7 +56,34 @@
             "title": "第 1 阶段"
           },
           {
-            "alias": "elementary-matrix-elimination__stage_1",
+            "alias": "ch05_elementary-matrix-elimination__stage_1",
+            "augmented_rank": 1,
+            "caption": "消元",
+            "highlight_rows": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "消元",
+            "rank": 1,
+            "rhs": [
+              15.0,
+              6.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 2 阶段"
+          },
+          {
+            "alias": "ch05_elementary-matrix-elimination__stage_2",
             "augmented_rank": 1,
             "caption": "消元",
             "highlight_rows": [
@@ -63,22 +92,234 @@
             ],
             "matrix": [
               [
-                1.0,
-                2.0
+                5.0,
+                10.0
               ],
               [
-                0.0,
-                0.0
+                -3.0,
+                -6.0
               ]
             ],
             "operation_label": "消元",
             "rank": 1,
             "rhs": [
+              15.0,
+              -9.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 3 阶段"
+          }
+        ]
+      },
+      {
+        "alias": "ch05_elementary-matrix-elimination__stage_1",
+        "aliases": [
+          "ch05_elementary-matrix-elimination__stage_0",
+          "ch05_elementary-matrix-elimination__stage_1",
+          "ch05_elementary-matrix-elimination__stage_2"
+        ],
+        "augmented_rank": 1,
+        "matrix": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.elimination_tableau",
+        "rank": 1,
+        "rhs": [
+          3.0,
+          6.0
+        ],
+        "solution_state": "infinite",
+        "stages": [
+          {
+            "alias": "ch05_elementary-matrix-elimination__stage_0",
+            "augmented_rank": 1,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                2.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 1,
+            "rhs": [
               3.0,
-              0.0
+              6.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 1 阶段"
+          },
+          {
+            "alias": "ch05_elementary-matrix-elimination__stage_1",
+            "augmented_rank": 1,
+            "caption": "消元",
+            "highlight_rows": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "消元",
+            "rank": 1,
+            "rhs": [
+              15.0,
+              6.0
             ],
             "solution_state": "infinite",
             "title": "第 2 阶段"
+          },
+          {
+            "alias": "ch05_elementary-matrix-elimination__stage_2",
+            "augmented_rank": 1,
+            "caption": "消元",
+            "highlight_rows": [
+              1,
+              0
+            ],
+            "matrix": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                -3.0,
+                -6.0
+              ]
+            ],
+            "operation_label": "消元",
+            "rank": 1,
+            "rhs": [
+              15.0,
+              -9.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 3 阶段"
+          }
+        ]
+      },
+      {
+        "alias": "ch05_elementary-matrix-elimination__stage_2",
+        "aliases": [
+          "ch05_elementary-matrix-elimination__stage_0",
+          "ch05_elementary-matrix-elimination__stage_1",
+          "ch05_elementary-matrix-elimination__stage_2"
+        ],
+        "augmented_rank": 1,
+        "matrix": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
+        ],
+        "op": "geometry.elimination_tableau",
+        "rank": 1,
+        "rhs": [
+          3.0,
+          6.0
+        ],
+        "solution_state": "infinite",
+        "stages": [
+          {
+            "alias": "ch05_elementary-matrix-elimination__stage_0",
+            "augmented_rank": 1,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                2.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 1,
+            "rhs": [
+              3.0,
+              6.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 1 阶段"
+          },
+          {
+            "alias": "ch05_elementary-matrix-elimination__stage_1",
+            "augmented_rank": 1,
+            "caption": "消元",
+            "highlight_rows": [
+              0,
+              1
+            ],
+            "matrix": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                2.0,
+                4.0
+              ]
+            ],
+            "operation_label": "消元",
+            "rank": 1,
+            "rhs": [
+              15.0,
+              6.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 2 阶段"
+          },
+          {
+            "alias": "ch05_elementary-matrix-elimination__stage_2",
+            "augmented_rank": 1,
+            "caption": "消元",
+            "highlight_rows": [
+              1,
+              0
+            ],
+            "matrix": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                -3.0,
+                -6.0
+              ]
+            ],
+            "operation_label": "消元",
+            "rank": 1,
+            "rhs": [
+              15.0,
+              -9.0
+            ],
+            "solution_state": "infinite",
+            "title": "第 3 阶段"
           }
         ]
       },
@@ -92,13 +333,31 @@
         "text": "initial"
       },
       {
-        "alias": "sem__stage.ch05.elementary-matrix-elimination.eliminated__title",
+        "alias": "sem__stage.ch05.elementary-matrix-elimination.elementary_1__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.17
         ],
-        "text": "eliminated"
+        "text": "elementary_1"
+      },
+      {
+        "alias": "sem__stage.ch05.elementary-matrix-elimination.elementary_2__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "elementary_2"
+      },
+      {
+        "alias": "sem__stage.ch05.elementary-matrix-elimination.final__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.21
+        ],
+        "text": "final"
       },
       {
         "op": "view.fit",
@@ -109,7 +368,7 @@
     "summary": "5.7 初等矩阵与消元法的矩阵表述",
     "version": 1
   },
-  "plan_digest": "sha256:0afbfd51ce5c2fa88693e1c412f4371209f411c9c7b74c9beae78283c945f06a",
+  "plan_digest": "sha256:9efb787ee8379e9a4bf409660b99e4bce3cf06eca22d24b27dc0fbc26ae39e75",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -129,17 +388,17 @@
       "layout": "sequence",
       "title": "initial",
       "visible_aliases": [
-        "elementary-matrix-elimination__stage_0",
-        "elementary-matrix-elimination__stage_1",
+        "ch05_elementary-matrix-elimination__stage_0",
+        "ch05_elementary-matrix-elimination__stage_1",
+        "ch05_elementary-matrix-elimination__stage_2",
         "sem__stage.ch05.elementary-matrix-elimination.initial__title"
       ],
       "visible_refs": [
         "entity.ch05.elementary-matrix-elimination.matrix",
         "entity.ch05.elementary-matrix-elimination.rhs",
+        "entity.ch05.elementary-matrix-elimination.elementary_matrices",
         "entity.ch05.elementary-matrix-elimination.tableau",
-        "entity.ch05.elementary-matrix-elimination.vector_a",
-        "entity.ch05.elementary-matrix-elimination.transformed_a",
-        "relation.ch05.elementary-matrix-elimination.maps_to"
+        "relation.ch05.elementary-matrix-elimination.row_operation"
       ]
     },
     {
@@ -147,22 +406,68 @@
         -2.65,
         2.17
       ],
-      "caption": "eliminated",
-      "id": "stage.ch05.elementary-matrix-elimination.eliminated",
+      "caption": "elementary_1",
+      "id": "stage.ch05.elementary-matrix-elimination.elementary_1",
       "layout": "sequence",
-      "title": "eliminated",
+      "title": "elementary_1",
       "visible_aliases": [
-        "elementary-matrix-elimination__stage_0",
-        "elementary-matrix-elimination__stage_1",
-        "sem__stage.ch05.elementary-matrix-elimination.eliminated__title"
+        "ch05_elementary-matrix-elimination__stage_0",
+        "ch05_elementary-matrix-elimination__stage_1",
+        "ch05_elementary-matrix-elimination__stage_2",
+        "sem__stage.ch05.elementary-matrix-elimination.elementary_1__title"
       ],
       "visible_refs": [
         "entity.ch05.elementary-matrix-elimination.matrix",
         "entity.ch05.elementary-matrix-elimination.rhs",
+        "entity.ch05.elementary-matrix-elimination.elementary_matrices",
         "entity.ch05.elementary-matrix-elimination.tableau",
-        "entity.ch05.elementary-matrix-elimination.vector_a",
-        "entity.ch05.elementary-matrix-elimination.transformed_a",
-        "relation.ch05.elementary-matrix-elimination.maps_to"
+        "relation.ch05.elementary-matrix-elimination.row_operation"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "elementary_2",
+      "id": "stage.ch05.elementary-matrix-elimination.elementary_2",
+      "layout": "sequence",
+      "title": "elementary_2",
+      "visible_aliases": [
+        "ch05_elementary-matrix-elimination__stage_0",
+        "ch05_elementary-matrix-elimination__stage_1",
+        "ch05_elementary-matrix-elimination__stage_2",
+        "sem__stage.ch05.elementary-matrix-elimination.elementary_2__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.elementary-matrix-elimination.matrix",
+        "entity.ch05.elementary-matrix-elimination.rhs",
+        "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+        "entity.ch05.elementary-matrix-elimination.tableau",
+        "relation.ch05.elementary-matrix-elimination.row_operation"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.21
+      ],
+      "caption": "final",
+      "id": "stage.ch05.elementary-matrix-elimination.final",
+      "layout": "sequence",
+      "title": "final",
+      "visible_aliases": [
+        "ch05_elementary-matrix-elimination__stage_0",
+        "ch05_elementary-matrix-elimination__stage_1",
+        "ch05_elementary-matrix-elimination__stage_2",
+        "sem__stage.ch05.elementary-matrix-elimination.final__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.elementary-matrix-elimination.matrix",
+        "entity.ch05.elementary-matrix-elimination.rhs",
+        "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+        "entity.ch05.elementary-matrix-elimination.tableau",
+        "relation.ch05.elementary-matrix-elimination.row_operation"
       ]
     }
   ],

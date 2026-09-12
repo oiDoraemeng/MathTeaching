@@ -1,39 +1,238 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch05.fundamental-solution-system",
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch05.fundamental-solution-system.matrix",
+        "entity.ch05.fundamental-solution-system.rhs",
+        "entity.ch05.fundamental-solution-system.pivot_columns",
+        "entity.ch05.fundamental-solution-system.free_variables",
+        "entity.ch05.fundamental-solution-system.nullspace",
+        "entity.ch05.fundamental-solution-system.particular",
+        "entity.ch05.fundamental-solution-system.solution_set"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "5.6 基础解系——零空间的标准化描述: finite typed semantic evidence",
+      "formula_symbols": [
+        "matrix",
+        "rhs",
+        "pivot_columns",
+        "free_variables",
+        "nullspace",
+        "particular",
+        "solution_set"
+      ],
+      "id": "claim.ch05.fundamental-solution-system",
+      "relation_refs": [
+        "relation.ch05.fundamental-solution-system.null_solution"
+      ],
+      "source_refs": [
+        "第5章 线性方程组 / 5.6 基础解系——零空间的标准化描述::1::sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5"
+      ],
+      "stage_refs": [
+        "stage.ch05.fundamental-solution-system.echelon",
+        "stage.ch05.fundamental-solution-system.pivots",
+        "stage.ch05.fundamental-solution-system.free_variables",
+        "stage.ch05.fundamental-solution-system.solution"
+      ],
+      "statement": "5.6 基础解系——零空间的标准化描述 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch05.fundamental-solution-system"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch05.fundamental-solution-system.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "5.6 基础解系——零空间的标准化描述 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "5.6 基础解系——零空间的标准化描述: finite typed semantic evidence",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "pivot/free variables determine all solutions",
+      "particular plus nullspace basis",
+      "finite numeric result"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "5.6 基础解系——零空间的标准化描述",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "id": "definition",
+        "text": "definition: 5.6 基础解系——零空间的标准化描述。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "id": "formula",
+        "text": "formula: 5.6 基础解系——零空间的标准化描述。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "id": "derivation",
+        "text": "derivation: 5.6 基础解系——零空间的标准化描述。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 5.6 基础解系——零空间的标准化描述。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 5.6 基础解系——零空间的标准化描述。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 5.6 基础解系——零空间的标准化描述。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "id": "connections",
+        "text": "connections: 5.6 基础解系——零空间的标准化描述。",
+        "title": "connections"
+      }
+    ],
+    "summary": "5.6 基础解系——零空间的标准化描述 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "free_variables": "free_variables",
+      "matrix": "matrix",
+      "nullspace": "nullspace",
+      "particular": "particular",
+      "pivot_columns": "pivot_columns",
+      "rhs": "rhs",
+      "solution_set": "solution_set"
+    },
+    "title": "5.6 基础解系——零空间的标准化描述",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "5.6 基础解系——零空间的标准化描述: finite typed semantic evidence"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch05.fundamental-solution-system",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:d5a11c9668c46d23798ebaba160e6c75aafb371739991bb3e7dfdc92f9af2ae2",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:6aa6b4f72373091be0d399c710a8d3f88b757964012771a3792afe37be6019f3",
+    "source_hash": "sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5"
+  },
   "revision": 1,
-  "status": "reviewed",
+  "schema_version": 1,
   "source": {
+    "excerpt": "## 5.6 基础解系——零空间的标准化描述\n\n一句话动机：$Ax=0$的解不是散点，而是由一组基向量张成的子空间。给这组基一个名字，方便表述和计算。\n定义 5.3（基础解系）: 齐次方程组$Ax=0$的解空间Null(A)的一组基，称为该方程组的一个基础解系。\n基础解系中向量个数 $= n - \\operatorname{rank}(A)$（每个向量对应一个自由变量）。\n\n规范化求法（4步）：\n1. 将A化为行最简形(RREF)；\n2. 确定主变量和自由变量；\n3. 依次令一个自由变量$=1$、其余自由变量$=0$，解出主变量的值；\n4. 得到的每个解向量就是基础解系的一员。\n\n##### 完整例题\n\n求 $Ax=0$ 的基础解系，$A=\\begin{pmatrix}1 & 1 & 2 & -1 \\\\ 2 & 3 & -1 & 1 \\\\ 3 & 4 & 1 & 0\\end{pmatrix}$。\n解：消元得$\\mathrm{RREF} \\rightarrow \\begin{pmatrix}1 & 0 & 7 & -4 \\\\ 0 & 1 & -5 & 3 \\\\ 0 & 0 & 0 & 0\\end{pmatrix}$。自由变量$x_{3},x_{4}$。\n取$x_{3}=1,x_{4}=0 \\rightarrow x_{1}=-7,x_{2}=5 \\rightarrow v_{1}=(-7,5,1,0)$。\n取$x_{3}=0,x_{4}=1 \\rightarrow x_{1}=4,x_{2}=-3 \\rightarrow v_{2}=(4,-3,0,1)$。\n基础解系$={v_{1},v_{2}}$，个数$=2=4-\\operatorname{rank}(A)=4-2$。✓",
+    "heading_level": 2,
+    "heading_path": [
+      "第5章 线性方程组",
+      "5.6 基础解系——零空间的标准化描述"
+    ],
+    "neighboring_titles": [
+      "5.7 初等矩阵与消元法的矩阵表述"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5",
     "source_path": [
       "第5章 线性方程组",
       "5.6 基础解系——零空间的标准化描述",
       "5.6 基础解系——零空间的标准化描述"
     ],
-    "heading_path": [
-      "第5章 线性方程组",
-      "5.6 基础解系——零空间的标准化描述"
-    ],
-    "heading_level": 2,
-    "occurrence": 1,
-    "excerpt": "## 5.6 基础解系——零空间的标准化描述\n\n一句话动机：$Ax=0$的解不是散点，而是由一组基向量张成的子空间。给这组基一个名字，方便表述和计算。\n定义 5.3（基础解系）: 齐次方程组$Ax=0$的解空间Null(A)的一组基，称为该方程组的一个基础解系。\n基础解系中向量个数 $= n - \\operatorname{rank}(A)$（每个向量对应一个自由变量）。\n\n规范化求法（4步）：\n1. 将A化为行最简形(RREF)；\n2. 确定主变量和自由变量；\n3. 依次令一个自由变量$=1$、其余自由变量$=0$，解出主变量的值；\n4. 得到的每个解向量就是基础解系的一员。\n\n##### 完整例题\n\n求 $Ax=0$ 的基础解系，$A=\\begin{pmatrix}1 & 1 & 2 & -1 \\\\ 2 & 3 & -1 & 1 \\\\ 3 & 4 & 1 & 0\\end{pmatrix}$。\n解：消元得$\\mathrm{RREF} \\rightarrow \\begin{pmatrix}1 & 0 & 7 & -4 \\\\ 0 & 1 & -5 & 3 \\\\ 0 & 0 & 0 & 0\\end{pmatrix}$。自由变量$x_{3},x_{4}$。\n取$x_{3}=1,x_{4}=0 \\rightarrow x_{1}=-7,x_{2}=5 \\rightarrow v_{1}=(-7,5,1,0)$。\n取$x_{3}=0,x_{4}=1 \\rightarrow x_{1}=4,x_{2}=-3 \\rightarrow v_{2}=(4,-3,0,1)$。\n基础解系$={v_{1},v_{2}}$，个数$=2=4-\\operatorname{rank}(A)=4-2$。✓",
-    "source_hash": "sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5",
     "spans": [
       {
-        "id": "第5章 线性方程组 / 5.6 基础解系——零空间的标准化描述::1::sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5",
+        "end_line": 2119,
+        "fingerprint": "sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5",
         "heading_path": [
           "第5章 线性方程组",
           "5.6 基础解系——零空间的标准化描述"
         ],
+        "id": "第5章 线性方程组 / 5.6 基础解系——零空间的标准化描述::1::sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5",
         "start_line": 2100,
-        "end_line": 2119,
-        "fingerprint": "sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5",
         "text": "## 5.6 基础解系——零空间的标准化描述\n\n一句话动机：$Ax=0$的解不是散点，而是由一组基向量张成的子空间。给这组基一个名字，方便表述和计算。\n定义 5.3（基础解系）: 齐次方程组$Ax=0$的解空间Null(A)的一组基，称为该方程组的一个基础解系。\n基础解系中向量个数 $= n - \\operatorname{rank}(A)$（每个向量对应一个自由变量）。\n\n规范化求法（4步）：\n1. 将A化为行最简形(RREF)；\n2. 确定主变量和自由变量；\n3. 依次令一个自由变量$=1$、其余自由变量$=0$，解出主变量的值；\n4. 得到的每个解向量就是基础解系的一员。\n\n##### 完整例题\n\n求 $Ax=0$ 的基础解系，$A=\\begin{pmatrix}1 & 1 & 2 & -1 \\\\ 2 & 3 & -1 & 1 \\\\ 3 & 4 & 1 & 0\\end{pmatrix}$。\n解：消元得$\\mathrm{RREF} \\rightarrow \\begin{pmatrix}1 & 0 & 7 & -4 \\\\ 0 & 1 & -5 & 3 \\\\ 0 & 0 & 0 & 0\\end{pmatrix}$。自由变量$x_{3},x_{4}$。\n取$x_{3}=1,x_{4}=0 \\rightarrow x_{1}=-7,x_{2}=5 \\rightarrow v_{1}=(-7,5,1,0)$。\n取$x_{3}=0,x_{4}=1 \\rightarrow x_{1}=4,x_{2}=-3 \\rightarrow v_{2}=(4,-3,0,1)$。\n基础解系$={v_{1},v_{2}}$，个数$=2=4-\\operatorname{rank}(A)=4-2$。✓"
       }
-    ],
-    "neighboring_titles": [
-      "5.7 初等矩阵与消元法的矩阵表述"
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -47,281 +246,128 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch05.fundamental-solution-system",
-      "statement": "5.6 基础解系——零空间的标准化描述 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "5.6 基础解系——零空间的标准化描述: finite typed semantic evidence",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第5章 线性方程组 / 5.6 基础解系——零空间的标准化描述::1::sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch05.fundamental-solution-system.domain",
-        "entity.ch05.fundamental-solution-system.image",
-        "entity.ch05.fundamental-solution-system.kernel",
-        "entity.ch05.fundamental-solution-system.particular",
-        "entity.ch05.fundamental-solution-system.vector_a",
-        "entity.ch05.fundamental-solution-system.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch05.fundamental-solution-system.maps_to"
-      ],
-      "stage_refs": [
-        "stage.ch05.fundamental-solution-system.domain",
-        "stage.ch05.fundamental-solution-system.image",
-        "stage.ch05.fundamental-solution-system.kernel",
-        "stage.ch05.fundamental-solution-system.solution"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch05.fundamental-solution-system.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch05.fundamental-solution-system"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "5.6 基础解系——零空间的标准化描述",
-    "summary": "5.6 基础解系——零空间的标准化描述 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 5.6 基础解系——零空间的标准化描述。",
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 5.6 基础解系——零空间的标准化描述。",
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 5.6 基础解系——零空间的标准化描述。",
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 5.6 基础解系——零空间的标准化描述。",
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 5.6 基础解系——零空间的标准化描述。",
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 5.6 基础解系——零空间的标准化描述。",
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 5.6 基础解系——零空间的标准化描述。",
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a"
-    },
-    "definition": "5.6 基础解系——零空间的标准化描述 的对象和定义。",
-    "formula": "5.6 基础解系——零空间的标准化描述: finite typed semantic evidence",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch05.fundamental-solution-system",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "5.6 基础解系——零空间的标准化描述: finite typed semantic evidence"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "domain/image/kernel evidence",
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "5.6 基础解系——零空间的标准化描述",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch05.fundamental-solution-system",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "affine_solution",
     "entities": [
       {
-        "id": "entity.ch05.fundamental-solution-system.domain",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "domain",
-        "label": "domain",
         "claim_refs": [
           "claim.ch05.fundamental-solution-system"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.fundamental-solution-system.matrix",
+        "kind": "matrix",
+        "label": "matrix",
+        "role": "matrix",
+        "value": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            4.0
+          ]
         ]
       },
       {
-        "id": "entity.ch05.fundamental-solution-system.image",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "image",
-        "label": "image",
         "claim_refs": [
           "claim.ch05.fundamental-solution-system"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.fundamental-solution-system.rhs",
+        "kind": "vector",
+        "label": "rhs",
+        "role": "rhs",
+        "value": [
+          3.0,
+          6.0
         ]
       },
       {
-        "id": "entity.ch05.fundamental-solution-system.kernel",
-        "kind": "vector",
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
         "dimension": 2,
+        "id": "entity.ch05.fundamental-solution-system.pivot_columns",
+        "kind": "vector",
+        "label": "pivot_columns",
+        "role": "pivot_columns",
         "value": [
           0.0,
           0.0
-        ],
-        "role": "kernel",
-        "label": "kernel",
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.fundamental-solution-system.free_variables",
+        "kind": "vector",
+        "label": "free_variables",
+        "role": "free_variables",
+        "value": [
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.fundamental-solution-system.nullspace",
+        "kind": "basis",
+        "label": "nullspace",
+        "role": "nullspace",
+        "value": [
+          [
+            -2.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "dimension": 2,
         "id": "entity.ch05.fundamental-solution-system.particular",
         "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "particular",
         "label": "particular",
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
+        "role": "particular",
+        "value": [
+          3.0,
+          0.0
         ]
       },
       {
-        "id": "entity.ch05.fundamental-solution-system.vector_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
         "claim_refs": [
           "claim.ch05.fundamental-solution-system"
-        ]
-      },
-      {
-        "id": "entity.ch05.fundamental-solution-system.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
         ],
-        "role": "transformed_a",
-        "label": "transformed_a",
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
+        "dimension": 2,
+        "id": "entity.ch05.fundamental-solution-system.solution_set",
+        "kind": "affine_set",
+        "label": "solution_set",
+        "role": "solution_set",
+        "value": [
+          3.0,
+          0.0
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch05.fundamental-solution-system.maps_to",
-        "kind": "maps_to",
-        "source_ref": "entity.ch05.fundamental-solution-system.domain",
-        "target_ref": "entity.ch05.fundamental-solution-system.particular",
+        "claim_refs": [
+          "claim.ch05.fundamental-solution-system"
+        ],
+        "id": "relation.ch05.fundamental-solution-system.null_solution",
+        "kind": "null_solution",
         "parameters": {
+          "free_variables": [
+            1.0,
+            0.0
+          ],
           "matrix": [
             [
               1.0,
@@ -332,148 +378,160 @@
               4.0
             ]
           ],
-          "particular": [
-            1.0,
-            0.0
-          ],
           "nullspace_basis": [
             [
               -2.0,
               1.0
             ]
+          ],
+          "particular": [
+            3.0,
+            0.0
+          ],
+          "pivot_columns": [
+            0.0,
+            0.0
+          ],
+          "rhs": [
+            3.0,
+            6.0
           ]
         },
-        "claim_refs": [
-          "claim.ch05.fundamental-solution-system"
-        ]
+        "source_ref": "entity.ch05.fundamental-solution-system.matrix",
+        "target_ref": "entity.ch05.fundamental-solution-system.solution_set"
       }
     ],
+    "scene_family": "affine_solution",
+    "scene_kind": "2d",
     "stages": [
       {
-        "id": "stage.ch05.fundamental-solution-system.domain",
-        "title": "domain",
-        "caption": "domain",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.fundamental-solution-system.domain",
-          "entity.ch05.fundamental-solution-system.image",
-          "entity.ch05.fundamental-solution-system.kernel",
-          "entity.ch05.fundamental-solution-system.particular",
-          "entity.ch05.fundamental-solution-system.vector_a",
-          "entity.ch05.fundamental-solution-system.transformed_a"
+        "caption": "echelon",
+        "expected_invariants": [
+          "pivot/free variables determine all solutions",
+          "particular plus nullspace basis",
+          "finite numeric result"
         ],
-        "output_entity_refs": [
-          "entity.ch05.fundamental-solution-system.domain",
-          "entity.ch05.fundamental-solution-system.image",
-          "entity.ch05.fundamental-solution-system.kernel",
+        "id": "stage.ch05.fundamental-solution-system.echelon",
+        "input_entity_refs": [
+          "entity.ch05.fundamental-solution-system.matrix",
+          "entity.ch05.fundamental-solution-system.rhs",
+          "entity.ch05.fundamental-solution-system.pivot_columns",
+          "entity.ch05.fundamental-solution-system.free_variables",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
-          "entity.ch05.fundamental-solution-system.vector_a",
-          "entity.ch05.fundamental-solution-system.transformed_a"
+          "entity.ch05.fundamental-solution-system.solution_set"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.fundamental-solution-system.matrix",
+          "entity.ch05.fundamental-solution-system.rhs",
+          "entity.ch05.fundamental-solution-system.pivot_columns",
+          "entity.ch05.fundamental-solution-system.free_variables",
+          "entity.ch05.fundamental-solution-system.nullspace",
+          "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "relation_refs": [
-          "relation.ch05.fundamental-solution-system.maps_to"
+          "relation.ch05.fundamental-solution-system.null_solution"
         ],
-        "expected_invariants": [
-          "domain/image/kernel evidence",
-          "finite numeric result"
-        ]
+        "title": "echelon"
       },
       {
-        "id": "stage.ch05.fundamental-solution-system.image",
-        "title": "image",
-        "caption": "image",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.fundamental-solution-system.domain",
-          "entity.ch05.fundamental-solution-system.image",
-          "entity.ch05.fundamental-solution-system.kernel",
-          "entity.ch05.fundamental-solution-system.particular",
-          "entity.ch05.fundamental-solution-system.vector_a",
-          "entity.ch05.fundamental-solution-system.transformed_a"
+        "caption": "pivots",
+        "expected_invariants": [
+          "pivot/free variables determine all solutions",
+          "particular plus nullspace basis",
+          "finite numeric result"
         ],
-        "output_entity_refs": [
-          "entity.ch05.fundamental-solution-system.domain",
-          "entity.ch05.fundamental-solution-system.image",
-          "entity.ch05.fundamental-solution-system.kernel",
+        "id": "stage.ch05.fundamental-solution-system.pivots",
+        "input_entity_refs": [
+          "entity.ch05.fundamental-solution-system.matrix",
+          "entity.ch05.fundamental-solution-system.rhs",
+          "entity.ch05.fundamental-solution-system.pivot_columns",
+          "entity.ch05.fundamental-solution-system.free_variables",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
-          "entity.ch05.fundamental-solution-system.vector_a",
-          "entity.ch05.fundamental-solution-system.transformed_a"
+          "entity.ch05.fundamental-solution-system.solution_set"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.fundamental-solution-system.matrix",
+          "entity.ch05.fundamental-solution-system.rhs",
+          "entity.ch05.fundamental-solution-system.pivot_columns",
+          "entity.ch05.fundamental-solution-system.free_variables",
+          "entity.ch05.fundamental-solution-system.nullspace",
+          "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "relation_refs": [
-          "relation.ch05.fundamental-solution-system.maps_to"
+          "relation.ch05.fundamental-solution-system.null_solution"
         ],
-        "expected_invariants": [
-          "domain/image/kernel evidence",
-          "finite numeric result"
-        ]
+        "title": "pivots"
       },
       {
-        "id": "stage.ch05.fundamental-solution-system.kernel",
-        "title": "kernel",
-        "caption": "kernel",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.fundamental-solution-system.domain",
-          "entity.ch05.fundamental-solution-system.image",
-          "entity.ch05.fundamental-solution-system.kernel",
-          "entity.ch05.fundamental-solution-system.particular",
-          "entity.ch05.fundamental-solution-system.vector_a",
-          "entity.ch05.fundamental-solution-system.transformed_a"
+        "caption": "free_variables",
+        "expected_invariants": [
+          "pivot/free variables determine all solutions",
+          "particular plus nullspace basis",
+          "finite numeric result"
         ],
-        "output_entity_refs": [
-          "entity.ch05.fundamental-solution-system.domain",
-          "entity.ch05.fundamental-solution-system.image",
-          "entity.ch05.fundamental-solution-system.kernel",
+        "id": "stage.ch05.fundamental-solution-system.free_variables",
+        "input_entity_refs": [
+          "entity.ch05.fundamental-solution-system.matrix",
+          "entity.ch05.fundamental-solution-system.rhs",
+          "entity.ch05.fundamental-solution-system.pivot_columns",
+          "entity.ch05.fundamental-solution-system.free_variables",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
-          "entity.ch05.fundamental-solution-system.vector_a",
-          "entity.ch05.fundamental-solution-system.transformed_a"
+          "entity.ch05.fundamental-solution-system.solution_set"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.fundamental-solution-system.matrix",
+          "entity.ch05.fundamental-solution-system.rhs",
+          "entity.ch05.fundamental-solution-system.pivot_columns",
+          "entity.ch05.fundamental-solution-system.free_variables",
+          "entity.ch05.fundamental-solution-system.nullspace",
+          "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "relation_refs": [
-          "relation.ch05.fundamental-solution-system.maps_to"
+          "relation.ch05.fundamental-solution-system.null_solution"
         ],
-        "expected_invariants": [
-          "domain/image/kernel evidence",
-          "finite numeric result"
-        ]
+        "title": "free_variables"
       },
       {
-        "id": "stage.ch05.fundamental-solution-system.solution",
-        "title": "solution",
         "caption": "solution",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch05.fundamental-solution-system.domain",
-          "entity.ch05.fundamental-solution-system.image",
-          "entity.ch05.fundamental-solution-system.kernel",
-          "entity.ch05.fundamental-solution-system.particular",
-          "entity.ch05.fundamental-solution-system.vector_a",
-          "entity.ch05.fundamental-solution-system.transformed_a"
+        "expected_invariants": [
+          "pivot/free variables determine all solutions",
+          "particular plus nullspace basis",
+          "finite numeric result"
         ],
-        "output_entity_refs": [
-          "entity.ch05.fundamental-solution-system.domain",
-          "entity.ch05.fundamental-solution-system.image",
-          "entity.ch05.fundamental-solution-system.kernel",
+        "id": "stage.ch05.fundamental-solution-system.solution",
+        "input_entity_refs": [
+          "entity.ch05.fundamental-solution-system.matrix",
+          "entity.ch05.fundamental-solution-system.rhs",
+          "entity.ch05.fundamental-solution-system.pivot_columns",
+          "entity.ch05.fundamental-solution-system.free_variables",
+          "entity.ch05.fundamental-solution-system.nullspace",
           "entity.ch05.fundamental-solution-system.particular",
-          "entity.ch05.fundamental-solution-system.vector_a",
-          "entity.ch05.fundamental-solution-system.transformed_a"
+          "entity.ch05.fundamental-solution-system.solution_set"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.fundamental-solution-system.matrix",
+          "entity.ch05.fundamental-solution-system.rhs",
+          "entity.ch05.fundamental-solution-system.pivot_columns",
+          "entity.ch05.fundamental-solution-system.free_variables",
+          "entity.ch05.fundamental-solution-system.nullspace",
+          "entity.ch05.fundamental-solution-system.particular",
+          "entity.ch05.fundamental-solution-system.solution_set"
         ],
         "relation_refs": [
-          "relation.ch05.fundamental-solution-system.maps_to"
+          "relation.ch05.fundamental-solution-system.null_solution"
         ],
-        "expected_invariants": [
-          "domain/image/kernel evidence",
-          "finite numeric result"
-        ]
+        "title": "solution"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5",
-    "raw_reply_digest": "sha256:13d42c5f9d81f8d96237766a60be88f0893323a9796e8937329bbd5eaf50c592",
-    "artifact_digest": "sha256:50ffbe89d37bb1693563ca4290cc04adf7b73c25e5c809338240e626bf79d1dd"
   }
 }

@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:079ac36cbb420d4f9a408f83d16bf244b848d24e80037e561da7915392afc59f",
+  "artifact_digest": "sha256:5bd692acf87fcf25b0ab4585af880e3c6afb11dd51dd1831d6124bbc86f56720",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:806659bc79292ab17ecde5de4565fe9b52b4c942e1a6db89506fa04f2f754717",
+  "contract_digest": "sha256:c4aa3269b29a1e4bda29b1ebe0b452e8a0aa051a2b6d83f2abe89714ca203ce1",
   "plan": {
     "operations": [
       {
-        "alias": "least-squares-derivation__data",
+        "alias": "ch05_least-squares-derivation__data",
         "bounds": [
           -2.0,
           2.0,
@@ -17,14 +17,14 @@
           0.666666666666666,
           0.5000000000000003
         ],
-        "data_alias": "least-squares-derivation__data",
+        "data_alias": "ch05_least-squares-derivation__data",
         "entity_count": 6,
         "fit": [
           1.1666666666666663,
           1.6666666666666665,
           2.166666666666667
         ],
-        "fit_alias": "least-squares-derivation__fit",
+        "fit_alias": "ch05_least-squares-derivation__fit",
         "matrix": [
           [
             1.0,
@@ -45,13 +45,178 @@
           1.6666666666666665,
           2.166666666666667
         ],
-        "projection_alias": "least-squares-derivation__projection",
+        "projection_alias": "ch05_least-squares-derivation__projection",
         "residual": [
           -0.1666666666666663,
           0.3333333333333335,
           -0.16666666666666696
         ],
-        "residual_alias": "least-squares-derivation__residual",
+        "residual_alias": "ch05_least-squares-derivation__residual",
+        "sample_count": 3,
+        "tolerance": 1e-09,
+        "values": [
+          1.0,
+          2.0,
+          2.0
+        ]
+      },
+      {
+        "alias": "ch05_least-squares-derivation__fit",
+        "bounds": [
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
+        ],
+        "coefficients": [
+          0.666666666666666,
+          0.5000000000000003
+        ],
+        "data_alias": "ch05_least-squares-derivation__data",
+        "entity_count": 6,
+        "fit": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "fit_alias": "ch05_least-squares-derivation__fit",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ],
+        "op": "geometry.least_squares",
+        "projection": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "projection_alias": "ch05_least-squares-derivation__projection",
+        "residual": [
+          -0.1666666666666663,
+          0.3333333333333335,
+          -0.16666666666666696
+        ],
+        "residual_alias": "ch05_least-squares-derivation__residual",
+        "sample_count": 3,
+        "tolerance": 1e-09,
+        "values": [
+          1.0,
+          2.0,
+          2.0
+        ]
+      },
+      {
+        "alias": "ch05_least-squares-derivation__projection",
+        "bounds": [
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
+        ],
+        "coefficients": [
+          0.666666666666666,
+          0.5000000000000003
+        ],
+        "data_alias": "ch05_least-squares-derivation__data",
+        "entity_count": 6,
+        "fit": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "fit_alias": "ch05_least-squares-derivation__fit",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ],
+        "op": "geometry.least_squares",
+        "projection": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "projection_alias": "ch05_least-squares-derivation__projection",
+        "residual": [
+          -0.1666666666666663,
+          0.3333333333333335,
+          -0.16666666666666696
+        ],
+        "residual_alias": "ch05_least-squares-derivation__residual",
+        "sample_count": 3,
+        "tolerance": 1e-09,
+        "values": [
+          1.0,
+          2.0,
+          2.0
+        ]
+      },
+      {
+        "alias": "ch05_least-squares-derivation__residual",
+        "bounds": [
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
+        ],
+        "coefficients": [
+          0.666666666666666,
+          0.5000000000000003
+        ],
+        "data_alias": "ch05_least-squares-derivation__data",
+        "entity_count": 6,
+        "fit": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "fit_alias": "ch05_least-squares-derivation__fit",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
+        ],
+        "op": "geometry.least_squares",
+        "projection": [
+          1.1666666666666663,
+          1.6666666666666665,
+          2.166666666666667
+        ],
+        "projection_alias": "ch05_least-squares-derivation__projection",
+        "residual": [
+          -0.1666666666666663,
+          0.3333333333333335,
+          -0.16666666666666696
+        ],
+        "residual_alias": "ch05_least-squares-derivation__residual",
         "sample_count": 3,
         "tolerance": 1e-09,
         "values": [
@@ -70,11 +235,20 @@
         "text": "data"
       },
       {
-        "alias": "sem__stage.ch05.least-squares-derivation.projection__title",
+        "alias": "sem__stage.ch05.least-squares-derivation.normal_equations__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.17
+        ],
+        "text": "normal_equations"
+      },
+      {
+        "alias": "sem__stage.ch05.least-squares-derivation.projection__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
         ],
         "text": "projection"
       },
@@ -83,7 +257,7 @@
         "op": "annotation.upsert",
         "position": [
           -2.65,
-          1.69
+          1.21
         ],
         "text": "residual"
       },
@@ -96,7 +270,7 @@
     "summary": "5.8 最小二乘法的完整推导",
     "version": 1
   },
-  "plan_digest": "sha256:955882564ca89042681910c85dc87c20d691eb7c08c6b6eca2c70007adf237f5",
+  "plan_digest": "sha256:5b6f57cc6faed01393896164429f02aa4389c0424e0f496a422a5ce12073f296",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -116,19 +290,20 @@
       "layout": "sequence",
       "title": "data",
       "visible_aliases": [
-        "least-squares-derivation__data",
-        "least-squares-derivation__fit",
-        "least-squares-derivation__projection",
-        "least-squares-derivation__residual",
+        "ch05_least-squares-derivation__data",
+        "ch05_least-squares-derivation__fit",
+        "ch05_least-squares-derivation__projection",
+        "ch05_least-squares-derivation__residual",
         "sem__stage.ch05.least-squares-derivation.data__title"
       ],
       "visible_refs": [
-        "entity.ch05.least-squares-derivation.data",
+        "entity.ch05.least-squares-derivation.matrix",
+        "entity.ch05.least-squares-derivation.values",
+        "entity.ch05.least-squares-derivation.normal_matrix",
+        "entity.ch05.least-squares-derivation.normal_rhs",
         "entity.ch05.least-squares-derivation.fit",
         "entity.ch05.least-squares-derivation.residual",
-        "entity.ch05.least-squares-derivation.vector_a",
-        "entity.ch05.least-squares-derivation.transformed_a",
-        "relation.ch05.least-squares-derivation.maps_to"
+        "relation.ch05.least-squares-derivation.projects_to"
       ]
     },
     {
@@ -136,24 +311,25 @@
         -2.65,
         2.17
       ],
-      "caption": "projection",
-      "id": "stage.ch05.least-squares-derivation.projection",
+      "caption": "normal_equations",
+      "id": "stage.ch05.least-squares-derivation.normal_equations",
       "layout": "sequence",
-      "title": "projection",
+      "title": "normal_equations",
       "visible_aliases": [
-        "least-squares-derivation__data",
-        "least-squares-derivation__fit",
-        "least-squares-derivation__projection",
-        "least-squares-derivation__residual",
-        "sem__stage.ch05.least-squares-derivation.projection__title"
+        "ch05_least-squares-derivation__data",
+        "ch05_least-squares-derivation__fit",
+        "ch05_least-squares-derivation__projection",
+        "ch05_least-squares-derivation__residual",
+        "sem__stage.ch05.least-squares-derivation.normal_equations__title"
       ],
       "visible_refs": [
-        "entity.ch05.least-squares-derivation.data",
+        "entity.ch05.least-squares-derivation.matrix",
+        "entity.ch05.least-squares-derivation.values",
+        "entity.ch05.least-squares-derivation.normal_matrix",
+        "entity.ch05.least-squares-derivation.normal_rhs",
         "entity.ch05.least-squares-derivation.fit",
         "entity.ch05.least-squares-derivation.residual",
-        "entity.ch05.least-squares-derivation.vector_a",
-        "entity.ch05.least-squares-derivation.transformed_a",
-        "relation.ch05.least-squares-derivation.maps_to"
+        "relation.ch05.least-squares-derivation.projects_to"
       ]
     },
     {
@@ -161,24 +337,51 @@
         -2.65,
         1.69
       ],
+      "caption": "projection",
+      "id": "stage.ch05.least-squares-derivation.projection",
+      "layout": "sequence",
+      "title": "projection",
+      "visible_aliases": [
+        "ch05_least-squares-derivation__data",
+        "ch05_least-squares-derivation__fit",
+        "ch05_least-squares-derivation__projection",
+        "ch05_least-squares-derivation__residual",
+        "sem__stage.ch05.least-squares-derivation.projection__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.least-squares-derivation.matrix",
+        "entity.ch05.least-squares-derivation.values",
+        "entity.ch05.least-squares-derivation.normal_matrix",
+        "entity.ch05.least-squares-derivation.normal_rhs",
+        "entity.ch05.least-squares-derivation.fit",
+        "entity.ch05.least-squares-derivation.residual",
+        "relation.ch05.least-squares-derivation.projects_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.21
+      ],
       "caption": "residual",
       "id": "stage.ch05.least-squares-derivation.residual",
       "layout": "sequence",
       "title": "residual",
       "visible_aliases": [
-        "least-squares-derivation__data",
-        "least-squares-derivation__fit",
-        "least-squares-derivation__projection",
-        "least-squares-derivation__residual",
+        "ch05_least-squares-derivation__data",
+        "ch05_least-squares-derivation__fit",
+        "ch05_least-squares-derivation__projection",
+        "ch05_least-squares-derivation__residual",
         "sem__stage.ch05.least-squares-derivation.residual__title"
       ],
       "visible_refs": [
-        "entity.ch05.least-squares-derivation.data",
+        "entity.ch05.least-squares-derivation.matrix",
+        "entity.ch05.least-squares-derivation.values",
+        "entity.ch05.least-squares-derivation.normal_matrix",
+        "entity.ch05.least-squares-derivation.normal_rhs",
         "entity.ch05.least-squares-derivation.fit",
         "entity.ch05.least-squares-derivation.residual",
-        "entity.ch05.least-squares-derivation.vector_a",
-        "entity.ch05.least-squares-derivation.transformed_a",
-        "relation.ch05.least-squares-derivation.maps_to"
+        "relation.ch05.least-squares-derivation.projects_to"
       ]
     }
   ],
