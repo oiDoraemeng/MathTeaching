@@ -99,6 +99,11 @@ def contract_for(topic_id: str) -> VisualContract:
                 expected_operations=semantic.expected_operations,
             )
         family = extended_family[topic_id]
+        if topic_id.startswith("ch05."):
+            from linear_algebra.chapter_05_semantics import spec_for
+            spec = spec_for(topic_id.removeprefix("ch05."))
+            return VisualContract(topic_id, (f"claim.{topic_id}",), spec.roles, (spec.relation,), (spec.primitive,), len(spec.stages), spec.invariants,
+                required_relation_kinds=(spec.relation,), required_parameters=((spec.relation, tuple(spec.params)),), expected_operations=(spec.operation,))
         return VisualContract(topic_id, (f"claim.{topic_id}",), ("vector_a", "transformed_a"), ("maps_to",), (family,), 1, ("finite numeric result",))
     return overrides.get(topic_id, base)
 
@@ -150,7 +155,7 @@ def validate_contract_semantics(
     # Chapter 4's family gate checks the complete typed graph and operation
     # witness set.  Keep the legacy primitive check for other chapters while
     # avoiding a redundant generic error for an intentionally empty Ch4 graph.
-    if not contract.topic_id.startswith("ch04."):
+    if not contract.topic_id.startswith(("ch04.", "ch05.")):
         for primitive in contract.required_primitives:
             if primitive not in primitives:
                 issues.append(ContractIssue("missing_primitive", contract.topic_id, primitive))

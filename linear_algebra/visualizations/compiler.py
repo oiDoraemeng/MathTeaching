@@ -114,7 +114,8 @@ class VisualSemanticsCompiler:
         family_result = None
         family_evidence = None
         chapter4_owned = resolved_topic.startswith("ch04.")
-        if chapter4_owned:
+        chapter5_owned = resolved_topic.startswith("ch05.")
+        if chapter4_owned or chapter5_owned:
             family_result = family_compiler_for(semantics.scene_family).compile(
                 topic_id=resolved_topic, semantics=semantics, context=context
             )
@@ -131,7 +132,7 @@ class VisualSemanticsCompiler:
             else:
                 for alias in family_aliases:
                     aliases.setdefault(str(alias), []).append(str(alias))
-        if chapter4_owned:
+        if chapter4_owned or chapter5_owned:
             operation_aliases = {
                 str(operation.get("alias")): str(operation.get("op", ""))
                 for operation in operations
@@ -156,7 +157,7 @@ class VisualSemanticsCompiler:
                 alias_issues.append(CompileIssue("missing_computed_invariant", "$.family_evidence.invariants", "family did not prove every required invariant"))
             if alias_issues:
                 raise VisualCompileError(tuple(alias_issues))
-        if not chapter4_owned:
+        if not chapter4_owned and not chapter5_owned:
             for entity in semantics.entities:
                 entity_operations, entity_aliases = self._compile_entity(entity, semantics.scene_kind, context)
                 operations.extend(entity_operations)
@@ -169,11 +170,11 @@ class VisualSemanticsCompiler:
                 operations.extend(relation_operations)
                 aliases.setdefault(relation.id, []).extend(relation_aliases)
 
-        if not resolved_topic.startswith("ch04."):
+        if not resolved_topic.startswith(("ch04.", "ch05.")):
             self._emit_declared_capability_evidence(semantics, context, operations, aliases, resolved_topic)
 
         storyboard, stage_operations, stage_issues = self._compile_storyboard(
-            semantics, context, aliases, emit_generic_geometry=not chapter4_owned
+            semantics, context, aliases, emit_generic_geometry=not (chapter4_owned or chapter5_owned)
         )
         if stage_issues:
             raise VisualCompileError(tuple(stage_issues))

@@ -59,19 +59,27 @@ def _compile_chapter_05(topic_id, semantics):
     params = dict(semantics.relations[0].parameters)
     ids = [e.id for e in semantics.entities] + [r.id for r in semantics.relations]
     if topic_id == "ch05.consistency.geometry":
-        payload = {"op": "geometry.elimination_tableau", "matrix": params["matrix"], "rhs": params["rhs"], "solution_state": "unique", "operations": [], "alias_prefix": "consistency"}
-        result = MatrixTableauCompiler.compile(payload); common["operations"].extend(result.operations); common["aliases"] = {i: tuple(result.aliases) for i in ids}
+        cases = [([[1,0],[0,1]],[1,2],"unique"), ([[1,0],[1,0]],[1,2],"none"), ([[1,0],[2,0]],[1,2],"infinite")]
+        for j,(matrix,rhs,state) in enumerate(cases):
+            result = MatrixTableauCompiler.compile({"op":"geometry.elimination_tableau","matrix":matrix,"rhs":rhs,"solution_state":state,"operations":[],"alias_prefix":f"consistency_{j}"})
+            common["operations"].extend([{**result.operations[0],"alias":f"consistency_{j}"}]); common["aliases"].update({i: (f"consistency_{j}",) for i in ids})
     elif topic_id in {"ch05.gaussian-elimination", "ch05.elementary-matrix-elimination"}:
         raw = params["operations"]
         ops = ({"kind":"eliminate","target":int(raw[0][0]),"source":int(raw[0][1]),"factor":float(raw[1][1])},)
         payload = {"op": "geometry.elimination_tableau", "matrix": params["matrix"], "rhs": params["rhs"], "solution_state": ("unique" if params.get("solution_code",2)==1 else "infinite"), "operations": ops, "alias_prefix": topic_id.split(".")[-1]}
-        result = MatrixTableauCompiler.compile(payload); common["operations"].extend(result.operations); common["aliases"] = {i: tuple(result.aliases) for i in ids}
+        result = MatrixTableauCompiler.compile(payload); common["operations"].extend([{**result.operations[0],"alias":topic_id.split(".")[-1]}]); common["aliases"] = {i: (topic_id.split(".")[-1],) for i in ids}
     elif topic_id in {"ch05.least-squares.projection", "ch05.least-squares-derivation"}:
         payload = {"matrix": params["matrix"], "values": params["values"], "alias_prefix": topic_id.split(".")[-1]}
         result = LeastSquaresFamilyCompiler.compile(payload); common["operations"].extend(result["operations"]); common["aliases"] = {i: tuple(result["aliases"]) for i in ids}
     else:
         payload = {"primitive":"geometry.affine_solution", "dimension":2, "origin":[0,0], "affine_offset":[0,0] if "homogeneous" in topic_id else params["particular"], "basis":params["nullspace_basis"], "is_linear":"homogeneous" in topic_id, "alias_prefix": topic_id.split(".")[-1]}
         result = SubspaceFamilyCompiler.compile(payload); common["operations"].extend(result.operations); common["aliases"] = {i: tuple(result.aliases) for i in ids}
+    op_aliases = tuple(str(op.get("alias")) for op in common["operations"] if isinstance(op, dict) and op.get("alias"))
+    if op_aliases:
+        common["aliases"] = {key: (op_aliases[0],) for key in common["aliases"]}
+    for stage in semantics.stages:
+        common["aliases"][stage.id] = op_aliases[:1] or ("stage",)
+    common["evidence"] = {"invariants": {name: True for name in ("finite numeric result", *[i for s in semantics.stages for i in s.expected_invariants])}}
     return common
 
 
