@@ -6,6 +6,9 @@ from dataclasses import dataclass
 import argparse
 import json
 import subprocess
+import os
+import shutil
+import tempfile
 from pathlib import Path
 from typing import Mapping
 
@@ -245,11 +248,58 @@ def compile_chapter_04(
     else:
         destination = None
         index_payload = None
-    for resource in resources:
-        output.save(resource)
+    writes = {output.path_for(resource.topic_id): resource.to_dict() for resource in resources}
     if destination is not None and index_payload is not None:
-        _atomic_write_json(destination, index_payload)
+        writes[destination] = index_payload
+    _transactional_write_json(writes)
     return resources
+
+
+def _transactional_write_json(payloads: Mapping[Path, Mapping[str, object]]) -> None:
+    """Stage the whole bundle, then replace with byte-preserving rollback.
+
+    Staging directories reside on each destination filesystem. Backups are
+    retained for manual recovery if the filesystem also refuses rollback.
+    This provides exception recovery, not crash/power-loss atomicity.
+    """
+    staging: dict[Path, Path] = {}
+    entries: list[tuple[Path, Path, Path | None]] = []
+    replaced: list[tuple[Path, Path | None]] = []
+    cleanup = True
+    try:
+        for index, (destination, payload) in enumerate(payloads.items()):
+            destination = destination.resolve()
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            if destination.parent not in staging:
+                staging[destination.parent] = Path(tempfile.mkdtemp(prefix=".ch04-release-",dir=destination.parent))
+            folder = staging[destination.parent]
+            staged = folder / f"{index}.new"
+            backup = folder / f"{index}.previous" if destination.exists() else None
+            if backup is not None:
+                backup.write_bytes(destination.read_bytes())
+            staged.write_bytes((json.dumps(payload,ensure_ascii=False,indent=2,sort_keys=True)+"\n").encode("utf-8"))
+            entries.append((destination, staged, backup))
+        for destination, staged, backup in entries:
+            os.replace(staged,destination)
+            replaced.append((destination,backup))
+    except BaseException as failure:
+        rollback_errors = []
+        for destination, backup in reversed(replaced):
+            try:
+                if backup is None:
+                    destination.unlink()
+                else:
+                    os.replace(backup,destination)
+            except OSError as error:
+                rollback_errors.append(error)
+        if rollback_errors:
+            cleanup = False
+            raise RuntimeError(f"release rollback failed; backups retained in {list(staging.values())}") from failure
+        raise
+    finally:
+        if cleanup:
+            for folder in staging.values():
+                shutil.rmtree(folder)
 
 
 def compile_all(*, artifact_root: str | Path | None = None, output_root: str | Path | None = None) -> tuple[CompiledResource, ...]:

@@ -478,6 +478,8 @@ class SceneCommandService:
         elif name == "geometry.transformed_grid":
             _validate_matrix_2(operation.get("matrix"), field_name="matrix")
             _validate_bounds(operation.get("bounds"))
+            if "origin" in operation:
+                _require_coordinates(operation["origin"], dimensions=2)
             step = _require_finite_number(operation.get("step", 1.0), "step")
             if step <= 0:
                 raise CommandError("step 必须为正数。")

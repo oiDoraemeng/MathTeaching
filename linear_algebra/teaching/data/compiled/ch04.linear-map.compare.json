@@ -1,17 +1,17 @@
 {
-  "artifact_digest": "sha256:114f176dcefa8e60210daf43333c5f064c68ea7432b1a4b6612907ac88a67e7c",
+  "artifact_digest": "sha256:6d826423909f9cd41738577b463e99a1c28cdc62dbae0328bd26efaf2c76485c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:394f30888a7665e2e2cb1d14450e2ac368795983ef44b5db80c4613e5cd9dff6",
+  "contract_digest": "sha256:1969785347457be40258cee91b32b8696e19a7ea3de9a0fdb16448b96bb9f65f",
   "plan": {
     "operations": [
       {
         "alias": "ch04__entity__rotation",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -1.25,
+          1.25,
+          -1.25,
+          1.25
         ],
         "matrix": [
           [
@@ -24,15 +24,19 @@
           ]
         ],
         "op": "geometry.transformed_grid",
+        "origin": [
+          -8.0,
+          4.0
+        ],
         "step": 1.0
       },
       {
         "alias": "ch04__entity__stretch",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -1.25,
+          1.25,
+          -1.25,
+          1.25
         ],
         "matrix": [
           [
@@ -45,15 +49,19 @@
           ]
         ],
         "op": "geometry.transformed_grid",
+        "origin": [
+          0.0,
+          4.0
+        ],
         "step": 1.0
       },
       {
         "alias": "ch04__entity__projection",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -1.25,
+          1.25,
+          -1.25,
+          1.25
         ],
         "matrix": [
           [
@@ -66,6 +74,10 @@
           ]
         ],
         "op": "geometry.transformed_grid",
+        "origin": [
+          8.0,
+          4.0
+        ],
         "step": 1.0
       },
       {
@@ -81,21 +93,21 @@
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -1.25,
+          1.25,
+          -1.25,
+          1.25
         ],
         "op": "geometry.subspace_region",
         "opacity": 0.16,
         "origin": [
-          1.0,
-          1.0
+          -7.0,
+          -3.0
         ]
       },
       {
         "alias": "ch04__entity__square_map",
-        "expression": "y=x^2",
+        "expression": "y=(x-(0))^2+(-4)",
         "kind": "explicit",
         "op": "curve.create"
       },
@@ -112,16 +124,16 @@
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -1.25,
+          1.25,
+          -1.25,
+          1.25
         ],
         "op": "geometry.subspace_region",
         "opacity": 0.16,
         "origin": [
-          0.0,
-          2.0
+          8.0,
+          -2.0
         ]
       },
       {
@@ -136,10 +148,10 @@
       {
         "alias": "ch04__relation__rotation_linear",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -1.25,
+          1.25,
+          -1.25,
+          1.25
         ],
         "matrix": [
           [
@@ -152,15 +164,19 @@
           ]
         ],
         "op": "geometry.transformed_grid",
+        "origin": [
+          -8.0,
+          4.0
+        ],
         "step": 1.0
       },
       {
         "alias": "ch04__relation__stretch_linear",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -1.25,
+          1.25,
+          -1.25,
+          1.25
         ],
         "matrix": [
           [
@@ -173,15 +189,19 @@
           ]
         ],
         "op": "geometry.transformed_grid",
+        "origin": [
+          0.0,
+          4.0
+        ],
         "step": 1.0
       },
       {
         "alias": "ch04__relation__projection_linear",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -1.25,
+          1.25,
+          -1.25,
+          1.25
         ],
         "matrix": [
           [
@@ -194,13 +214,17 @@
           ]
         ],
         "op": "geometry.transformed_grid",
+        "origin": [
+          8.0,
+          4.0
+        ],
         "step": 1.0
       },
       {
         "alias": "ch04__relation__translation_failure__origin",
         "coordinates": [
-          0.0,
-          0.0
+          -8.0,
+          -4.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -208,8 +232,8 @@
       {
         "alias": "ch04__relation__translation_failure__end",
         "coordinates": [
-          1.0,
-          1.0
+          -7.0,
+          -3.0
         ],
         "name": "result",
         "op": "point.upsert"
@@ -224,15 +248,15 @@
       },
       {
         "alias": "ch04__relation__square_failure",
-        "expression": "y=x^2",
+        "expression": "y=(x-(0))^2+(-4)",
         "kind": "explicit",
         "op": "curve.create"
       },
       {
         "alias": "ch04__relation__constant_failure__origin",
         "coordinates": [
-          0.0,
-          0.0
+          8.0,
+          -4.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -240,8 +264,8 @@
       {
         "alias": "ch04__relation__constant_failure__end",
         "coordinates": [
-          0.0,
-          2.0
+          8.0,
+          -2.0
         ],
         "name": "result",
         "op": "point.upsert"
@@ -281,7 +305,7 @@
     "summary": "4.4.2 是 vs 不是线性变换",
     "version": 1
   },
-  "plan_digest": "sha256:3ee6578db1fbdef4964f91ee75d61c7976725a7f56e5deb19208466e95d75800",
+  "plan_digest": "sha256:889bda8c2b7998a9a1c7c598df634bf36739dcf3664b1753b36e4d218aa6fc7a",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],

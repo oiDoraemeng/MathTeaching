@@ -113,26 +113,62 @@
         ]
       },
       {
-        "alias": "ch04__relation__dependent_combination",
-        "op": "geometry.parallelogram3d",
-        "opacity": 0.16,
-        "origin": [
+        "alias": "ch04__relation__dependent_combination__term_1",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "result",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__dependent_combination__term_2",
+        "end": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "result",
+        "start": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__dependent_combination__term_3",
+        "end": [
           0.0,
           0.0,
           0.0
         ],
-        "vectors": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ]
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "result",
+        "start": [
+          1.0,
+          1.0,
+          0.0
         ]
+      },
+      {
+        "alias": "ch04__relation__dependent_combination",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "zero combination",
+        "op": "point3d.upsert"
       },
       {
         "alias": "ch04__relation__independent_rank",
@@ -192,7 +228,7 @@
     "summary": "4.2.2 线性相关与线性无关",
     "version": 1
   },
-  "plan_digest": "sha256:2372bc52fbc3cf2f473a4fb68f853ff3e6eecfed3d94ae6dca9afc28edb8acf5",
+  "plan_digest": "sha256:98daabca3707b0e2e70eaf3daa2d358fcd6439533e30faf8840aecaf82dc3b18",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -216,6 +252,9 @@
         "ch04__entity__coefficients",
         "ch04__entity__zero_combination",
         "ch04__entity__redundant_vector",
+        "ch04__relation__dependent_combination__term_1",
+        "ch04__relation__dependent_combination__term_2",
+        "ch04__relation__dependent_combination__term_3",
         "ch04__relation__dependent_combination",
         "ch04__relation__redundancy",
         "sem__stage.ch04.dependence.redundancy.dependent__title"

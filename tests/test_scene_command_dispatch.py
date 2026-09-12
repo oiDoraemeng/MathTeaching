@@ -153,6 +153,18 @@ def _drawing_plan() -> CommandPlan:
     ))
 
 
+def test_transformed_grid_origin_reaches_real_host_mesh():
+    import numpy as np
+    window=_pane_window()
+    target=window.pane_manager.visible_pane_ids()[0]
+    renderer=window._pane_renderer(target)
+    service=SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    service.execute(CommandPlan(scene="2d",operations=({"op":"geometry.transformed_grid","alias":"lane","matrix":[[2,0],[0,1]],"bounds":[-1,1,-1,1],"origin":[8,4]},)),pane_id=target)
+    meshes={call.kwargs.get("name"):call.args[0] for call in renderer.add_mesh.call_args_list}
+    assert np.allclose(meshes["geometry:teaching:grid:lane:original"].center,[8,4,0])
+    assert np.allclose(meshes["geometry:teaching:grid:lane:transformed"].center,[8,4,0])
+
+
 @pytest.mark.parametrize("explicit", [False, True])
 def test_scene_commands_mutate_only_the_resolved_pane(explicit: bool) -> None:
     window = _pane_window()

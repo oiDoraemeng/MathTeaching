@@ -396,9 +396,13 @@ class GeometrySceneController:
         step: float = 1.0,
         alias: str | None = None,
         color: str = "#5b8def",
+        origin: tuple[float, float] = (0.0, 0.0),
     ) -> None:
         original = _grid_mesh(bounds, step)
         transformed = _grid_mesh(bounds, step, matrix=matrix)
+        if origin != (0.0, 0.0):
+            original.translate((origin[0],origin[1],0.0),inplace=True)
+            transformed.translate((origin[0],origin[1],0.0),inplace=True)
         suffix = f":{alias}" if alias else ""
         self._replace_teaching_actor(f"geometry:teaching:grid{suffix}:original", original, color="#a6afbd", line_width=1.0)
         self._replace_teaching_actor(f"geometry:teaching:grid{suffix}:transformed", transformed, color=color, line_width=2.0)

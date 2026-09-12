@@ -197,12 +197,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:3ce11c2b65ed643568a2f709f26d07540f6267ac9589611ae59abb4168516ff7",
+    "artifact_digest": "sha256:4b65312eb027c2e4280512850890622c913637d88a57024fddedac971f961f52",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:114f176dcefa8e60210daf43333c5f064c68ea7432b1a4b6612907ac88a67e7c",
+    "raw_reply_digest": "sha256:6d826423909f9cd41738577b463e99a1c28cdc62dbae0328bd26efaf2c76485c",
     "source_hash": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47"
   },
   "revision": 1,
@@ -393,10 +393,35 @@
         "id": "relation.ch04.linear-map.compare.rotation_linear",
         "kind": "classification",
         "parameters": {
+          "image_u": [
+            -2.0,
+            1.0
+          ],
+          "image_v": [
+            -1.0,
+            -1.0
+          ],
           "is_linear": 1.0,
           "origin_image": [
             0.0,
             0.0
+          ],
+          "scalar": 3.0,
+          "scaled_image": [
+            -6.0,
+            3.0
+          ],
+          "sum_image": [
+            -3.0,
+            0.0
+          ],
+          "u": [
+            1.0,
+            2.0
+          ],
+          "v": [
+            -1.0,
+            1.0
           ]
         },
         "source_ref": "entity.ch04.linear-map.compare.rotation",
@@ -409,10 +434,35 @@
         "id": "relation.ch04.linear-map.compare.stretch_linear",
         "kind": "classification",
         "parameters": {
+          "image_u": [
+            2.0,
+            1.0
+          ],
+          "image_v": [
+            -2.0,
+            0.5
+          ],
           "is_linear": 1.0,
           "origin_image": [
             0.0,
             0.0
+          ],
+          "scalar": 3.0,
+          "scaled_image": [
+            6.0,
+            3.0
+          ],
+          "sum_image": [
+            0.0,
+            1.5
+          ],
+          "u": [
+            1.0,
+            2.0
+          ],
+          "v": [
+            -1.0,
+            1.0
           ]
         },
         "source_ref": "entity.ch04.linear-map.compare.stretch",
@@ -425,10 +475,35 @@
         "id": "relation.ch04.linear-map.compare.projection_linear",
         "kind": "classification",
         "parameters": {
+          "image_u": [
+            1.0,
+            0.0
+          ],
+          "image_v": [
+            -1.0,
+            0.0
+          ],
           "is_linear": 1.0,
           "origin_image": [
             0.0,
             0.0
+          ],
+          "scalar": 3.0,
+          "scaled_image": [
+            3.0,
+            0.0
+          ],
+          "sum_image": [
+            0.0,
+            0.0
+          ],
+          "u": [
+            1.0,
+            2.0
+          ],
+          "v": [
+            -1.0,
+            1.0
           ]
         },
         "source_ref": "entity.ch04.linear-map.compare.projection",
