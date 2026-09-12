@@ -1,0 +1,182 @@
+{
+  "artifact_digest": "sha256:31796651190b3d109e047963149d61a2b5879ecff47281e8408198a501275483",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:64b10029b7f519f678c82d77fc352a79e5be2f126601593b460a9caf36e0ce83",
+  "plan": {
+    "operations": [
+      {
+        "alias": "solution-space",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__stage.ch05.homogeneous.solution-space.domain__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "domain"
+      },
+      {
+        "alias": "sem__stage.ch05.homogeneous.solution-space.image__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "image"
+      },
+      {
+        "alias": "sem__stage.ch05.homogeneous.solution-space.kernel__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "kernel"
+      },
+      {
+        "alias": "sem__stage.ch05.homogeneous.solution-space.solution__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.21
+        ],
+        "text": "solution"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "5.1 齐次方程组 $Ax = 0$",
+    "version": 1
+  },
+  "plan_digest": "sha256:3d7681c51df9918c6e3f6cfab9694a7209b687a06dcfcc9a18b1f48ce911abb8",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "affine_solution",
+  "schema_version": 1,
+  "source_hash": "sha256:b2c73017de191471a696ddd7be388736d010940f52d47f01ea477b28ac16cf13",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "domain",
+      "id": "stage.ch05.homogeneous.solution-space.domain",
+      "layout": "sequence",
+      "title": "domain",
+      "visible_aliases": [
+        "solution-space__domain",
+        "sem__stage.ch05.homogeneous.solution-space.domain__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.homogeneous.solution-space.domain",
+        "entity.ch05.homogeneous.solution-space.image",
+        "entity.ch05.homogeneous.solution-space.kernel",
+        "entity.ch05.homogeneous.solution-space.particular",
+        "entity.ch05.homogeneous.solution-space.vector_a",
+        "entity.ch05.homogeneous.solution-space.transformed_a",
+        "relation.ch05.homogeneous.solution-space.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "image",
+      "id": "stage.ch05.homogeneous.solution-space.image",
+      "layout": "sequence",
+      "title": "image",
+      "visible_aliases": [
+        "solution-space__domain",
+        "sem__stage.ch05.homogeneous.solution-space.image__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.homogeneous.solution-space.domain",
+        "entity.ch05.homogeneous.solution-space.image",
+        "entity.ch05.homogeneous.solution-space.kernel",
+        "entity.ch05.homogeneous.solution-space.particular",
+        "entity.ch05.homogeneous.solution-space.vector_a",
+        "entity.ch05.homogeneous.solution-space.transformed_a",
+        "relation.ch05.homogeneous.solution-space.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "kernel",
+      "id": "stage.ch05.homogeneous.solution-space.kernel",
+      "layout": "sequence",
+      "title": "kernel",
+      "visible_aliases": [
+        "solution-space__domain",
+        "sem__stage.ch05.homogeneous.solution-space.kernel__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.homogeneous.solution-space.domain",
+        "entity.ch05.homogeneous.solution-space.image",
+        "entity.ch05.homogeneous.solution-space.kernel",
+        "entity.ch05.homogeneous.solution-space.particular",
+        "entity.ch05.homogeneous.solution-space.vector_a",
+        "entity.ch05.homogeneous.solution-space.transformed_a",
+        "relation.ch05.homogeneous.solution-space.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.21
+      ],
+      "caption": "solution",
+      "id": "stage.ch05.homogeneous.solution-space.solution",
+      "layout": "sequence",
+      "title": "solution",
+      "visible_aliases": [
+        "solution-space__domain",
+        "sem__stage.ch05.homogeneous.solution-space.solution__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.homogeneous.solution-space.domain",
+        "entity.ch05.homogeneous.solution-space.image",
+        "entity.ch05.homogeneous.solution-space.kernel",
+        "entity.ch05.homogeneous.solution-space.particular",
+        "entity.ch05.homogeneous.solution-space.vector_a",
+        "entity.ch05.homogeneous.solution-space.transformed_a",
+        "relation.ch05.homogeneous.solution-space.maps_to"
+      ]
+    }
+  ],
+  "topic_id": "ch05.homogeneous.solution-space"
+}

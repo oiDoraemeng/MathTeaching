@@ -1,0 +1,182 @@
+{
+  "artifact_digest": "sha256:ce966e1d5fd021320d06f86b12bcc403c310e6b40ccac08012166f281fd339d6",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:11a298572c4fbd044cc263cb6af72bdb8f27478e40eb1a584bbacb3bcaae1ad4",
+  "plan": {
+    "operations": [
+      {
+        "alias": "solution-set",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          1.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__stage.ch05.affine.solution-set.domain__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "domain"
+      },
+      {
+        "alias": "sem__stage.ch05.affine.solution-set.image__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "image"
+      },
+      {
+        "alias": "sem__stage.ch05.affine.solution-set.kernel__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "kernel"
+      },
+      {
+        "alias": "sem__stage.ch05.affine.solution-set.solution__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.21
+        ],
+        "text": "solution"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "5.2 非齐次方程组 $Ax = b$",
+    "version": 1
+  },
+  "plan_digest": "sha256:af4d7a077c6f8bd63078a8d5bf4883cf9f1ff50341639181ef5f018e06ef033d",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "affine_solution",
+  "schema_version": 1,
+  "source_hash": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "domain",
+      "id": "stage.ch05.affine.solution-set.domain",
+      "layout": "sequence",
+      "title": "domain",
+      "visible_aliases": [
+        "solution-set__domain",
+        "sem__stage.ch05.affine.solution-set.domain__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.affine.solution-set.domain",
+        "entity.ch05.affine.solution-set.image",
+        "entity.ch05.affine.solution-set.kernel",
+        "entity.ch05.affine.solution-set.particular",
+        "entity.ch05.affine.solution-set.vector_a",
+        "entity.ch05.affine.solution-set.transformed_a",
+        "relation.ch05.affine.solution-set.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "image",
+      "id": "stage.ch05.affine.solution-set.image",
+      "layout": "sequence",
+      "title": "image",
+      "visible_aliases": [
+        "solution-set__domain",
+        "sem__stage.ch05.affine.solution-set.image__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.affine.solution-set.domain",
+        "entity.ch05.affine.solution-set.image",
+        "entity.ch05.affine.solution-set.kernel",
+        "entity.ch05.affine.solution-set.particular",
+        "entity.ch05.affine.solution-set.vector_a",
+        "entity.ch05.affine.solution-set.transformed_a",
+        "relation.ch05.affine.solution-set.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "kernel",
+      "id": "stage.ch05.affine.solution-set.kernel",
+      "layout": "sequence",
+      "title": "kernel",
+      "visible_aliases": [
+        "solution-set__domain",
+        "sem__stage.ch05.affine.solution-set.kernel__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.affine.solution-set.domain",
+        "entity.ch05.affine.solution-set.image",
+        "entity.ch05.affine.solution-set.kernel",
+        "entity.ch05.affine.solution-set.particular",
+        "entity.ch05.affine.solution-set.vector_a",
+        "entity.ch05.affine.solution-set.transformed_a",
+        "relation.ch05.affine.solution-set.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.21
+      ],
+      "caption": "solution",
+      "id": "stage.ch05.affine.solution-set.solution",
+      "layout": "sequence",
+      "title": "solution",
+      "visible_aliases": [
+        "solution-set__domain",
+        "sem__stage.ch05.affine.solution-set.solution__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.affine.solution-set.domain",
+        "entity.ch05.affine.solution-set.image",
+        "entity.ch05.affine.solution-set.kernel",
+        "entity.ch05.affine.solution-set.particular",
+        "entity.ch05.affine.solution-set.vector_a",
+        "entity.ch05.affine.solution-set.transformed_a",
+        "relation.ch05.affine.solution-set.maps_to"
+      ]
+    }
+  ],
+  "topic_id": "ch05.affine.solution-set"
+}

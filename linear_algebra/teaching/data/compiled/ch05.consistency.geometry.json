@@ -1,0 +1,171 @@
+{
+  "artifact_digest": "sha256:cb72a717016ae0383dc92602dbacaa0cb96fb5b4e81cdeb504d4cf478e8a9eaa",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:c2a6998aeb7c8794223f2b41a3033b700e63de2627391a82766b1b702e0a2965",
+  "plan": {
+    "operations": [
+      {
+        "aliases": [
+          "consistency__stage_0"
+        ],
+        "augmented_rank": 2,
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.elimination_tableau",
+        "rank": 2,
+        "rhs": [
+          1.0,
+          2.0
+        ],
+        "solution_state": "unique",
+        "stages": [
+          {
+            "alias": "consistency__stage_0",
+            "augmented_rank": 2,
+            "caption": "初始增广矩阵",
+            "highlight_rows": [],
+            "matrix": [
+              [
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0
+              ]
+            ],
+            "operation_label": "初始增广矩阵",
+            "rank": 2,
+            "rhs": [
+              1.0,
+              2.0
+            ],
+            "solution_state": "unique",
+            "title": "第 1 阶段"
+          }
+        ]
+      },
+      {
+        "alias": "sem__stage.ch05.consistency.geometry.unique__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "unique"
+      },
+      {
+        "alias": "sem__stage.ch05.consistency.geometry.none__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "none"
+      },
+      {
+        "alias": "sem__stage.ch05.consistency.geometry.infinite__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "infinite"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "5.3 解的存在性与唯一性",
+    "version": 1
+  },
+  "plan_digest": "sha256:b3c5b1e32fdfec09f3e8be711c8ae98160a049a7f497ca1a6292cb974383f938",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "affine_solution",
+  "schema_version": 1,
+  "source_hash": "sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "unique",
+      "id": "stage.ch05.consistency.geometry.unique",
+      "layout": "sequence",
+      "title": "unique",
+      "visible_aliases": [
+        "consistency__stage_0",
+        "sem__stage.ch05.consistency.geometry.unique__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.consistency.geometry.matrix",
+        "entity.ch05.consistency.geometry.rhs",
+        "entity.ch05.consistency.geometry.state",
+        "entity.ch05.consistency.geometry.vector_a",
+        "entity.ch05.consistency.geometry.transformed_a",
+        "relation.ch05.consistency.geometry.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "none",
+      "id": "stage.ch05.consistency.geometry.none",
+      "layout": "sequence",
+      "title": "none",
+      "visible_aliases": [
+        "consistency__stage_0",
+        "sem__stage.ch05.consistency.geometry.none__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.consistency.geometry.matrix",
+        "entity.ch05.consistency.geometry.rhs",
+        "entity.ch05.consistency.geometry.state",
+        "entity.ch05.consistency.geometry.vector_a",
+        "entity.ch05.consistency.geometry.transformed_a",
+        "relation.ch05.consistency.geometry.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "infinite",
+      "id": "stage.ch05.consistency.geometry.infinite",
+      "layout": "sequence",
+      "title": "infinite",
+      "visible_aliases": [
+        "consistency__stage_0",
+        "sem__stage.ch05.consistency.geometry.infinite__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.consistency.geometry.matrix",
+        "entity.ch05.consistency.geometry.rhs",
+        "entity.ch05.consistency.geometry.state",
+        "entity.ch05.consistency.geometry.vector_a",
+        "entity.ch05.consistency.geometry.transformed_a",
+        "relation.ch05.consistency.geometry.maps_to"
+      ]
+    }
+  ],
+  "topic_id": "ch05.consistency.geometry"
+}

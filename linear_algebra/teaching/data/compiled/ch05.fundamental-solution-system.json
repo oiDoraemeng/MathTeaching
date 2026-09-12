@@ -1,0 +1,182 @@
+{
+  "artifact_digest": "sha256:7c76e33f71a2b762e8a0d2c79be71bbf8fbcf9eb37f0ee4f73cc96e1ae2de447",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:03097b768ed0e12824cb794f59308c9abe4093effbfc9f701da4422f9c0eb530",
+  "plan": {
+    "operations": [
+      {
+        "alias": "fundamental-solution-system",
+        "basis": [
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -2,
+          2,
+          -2,
+          2
+        ],
+        "dimension": 2,
+        "offset": [
+          1.0,
+          0.0
+        ],
+        "op": "geometry.affine_solution",
+        "origin": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__stage.ch05.fundamental-solution-system.domain__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "domain"
+      },
+      {
+        "alias": "sem__stage.ch05.fundamental-solution-system.image__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "image"
+      },
+      {
+        "alias": "sem__stage.ch05.fundamental-solution-system.kernel__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "kernel"
+      },
+      {
+        "alias": "sem__stage.ch05.fundamental-solution-system.solution__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.21
+        ],
+        "text": "solution"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "5.6 基础解系——零空间的标准化描述",
+    "version": 1
+  },
+  "plan_digest": "sha256:9ec8fe961754380a6a02f105c271166af4dfbf6a55187d57f839cd3b0fa4ed00",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "affine_solution",
+  "schema_version": 1,
+  "source_hash": "sha256:78125e0b5bac075baf04bb27a03edc39477ea15af04a7a43104624d086787ab5",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "domain",
+      "id": "stage.ch05.fundamental-solution-system.domain",
+      "layout": "sequence",
+      "title": "domain",
+      "visible_aliases": [
+        "fundamental-solution-system__domain",
+        "sem__stage.ch05.fundamental-solution-system.domain__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.fundamental-solution-system.domain",
+        "entity.ch05.fundamental-solution-system.image",
+        "entity.ch05.fundamental-solution-system.kernel",
+        "entity.ch05.fundamental-solution-system.particular",
+        "entity.ch05.fundamental-solution-system.vector_a",
+        "entity.ch05.fundamental-solution-system.transformed_a",
+        "relation.ch05.fundamental-solution-system.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "image",
+      "id": "stage.ch05.fundamental-solution-system.image",
+      "layout": "sequence",
+      "title": "image",
+      "visible_aliases": [
+        "fundamental-solution-system__domain",
+        "sem__stage.ch05.fundamental-solution-system.image__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.fundamental-solution-system.domain",
+        "entity.ch05.fundamental-solution-system.image",
+        "entity.ch05.fundamental-solution-system.kernel",
+        "entity.ch05.fundamental-solution-system.particular",
+        "entity.ch05.fundamental-solution-system.vector_a",
+        "entity.ch05.fundamental-solution-system.transformed_a",
+        "relation.ch05.fundamental-solution-system.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "kernel",
+      "id": "stage.ch05.fundamental-solution-system.kernel",
+      "layout": "sequence",
+      "title": "kernel",
+      "visible_aliases": [
+        "fundamental-solution-system__domain",
+        "sem__stage.ch05.fundamental-solution-system.kernel__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.fundamental-solution-system.domain",
+        "entity.ch05.fundamental-solution-system.image",
+        "entity.ch05.fundamental-solution-system.kernel",
+        "entity.ch05.fundamental-solution-system.particular",
+        "entity.ch05.fundamental-solution-system.vector_a",
+        "entity.ch05.fundamental-solution-system.transformed_a",
+        "relation.ch05.fundamental-solution-system.maps_to"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.21
+      ],
+      "caption": "solution",
+      "id": "stage.ch05.fundamental-solution-system.solution",
+      "layout": "sequence",
+      "title": "solution",
+      "visible_aliases": [
+        "fundamental-solution-system__domain",
+        "sem__stage.ch05.fundamental-solution-system.solution__title"
+      ],
+      "visible_refs": [
+        "entity.ch05.fundamental-solution-system.domain",
+        "entity.ch05.fundamental-solution-system.image",
+        "entity.ch05.fundamental-solution-system.kernel",
+        "entity.ch05.fundamental-solution-system.particular",
+        "entity.ch05.fundamental-solution-system.vector_a",
+        "entity.ch05.fundamental-solution-system.transformed_a",
+        "relation.ch05.fundamental-solution-system.maps_to"
+      ]
+    }
+  ],
+  "topic_id": "ch05.fundamental-solution-system"
+}
