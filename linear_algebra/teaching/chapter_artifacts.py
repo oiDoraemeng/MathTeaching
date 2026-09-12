@@ -16,6 +16,12 @@ from linear_algebra.chapter_04_semantics import semantic_for
 _TOPICS = {topic.id: topic for topic in topic_entries() if 4 <= topic.chapter_number <= 8}
 
 
+def _json_value(value: object) -> object:
+    if isinstance(value, tuple):
+        return [_json_value(item) for item in value]
+    return value
+
+
 def _topic_entities(topic_id: str, roles: tuple[str, ...], ids: Mapping[str, str], claim_id: str) -> list[dict[str, object]]:
     semantic = semantic_for(topic_id) if topic_id.startswith("ch04.") else None
     values = {
@@ -55,6 +61,45 @@ def _topic_relation(topic_id: str, semantic: object, ids: Mapping[str, str], rel
     return {"id": relation_id, "kind": relation, "source_ref": ids[roles[0]], "target_ref": ids[roles[1] if len(roles) > 1 else roles[0]], "parameters": params, "claim_refs": [claim_id]}
 
 
+def _chapter4_visual_payload(topic_id: str, claim_id: str) -> tuple[dict[str, object], list[str], list[str], list[str]]:
+    """Materialize the closed chapter-4 descriptor without role-name guesses."""
+    semantic = semantic_for(topic_id)
+    entity_ids = {item.role: f"entity.{topic_id}.{item.role}" for item in semantic.entities}
+    relation_ids = {item.name: f"relation.{topic_id}.{item.name}" for item in semantic.relations}
+    stage_ids = {item.name: f"stage.{topic_id}.{item.name}" for item in semantic.stages}
+    entities = [
+        {
+            "id": entity_ids[item.role], "kind": item.kind, "dimension": item.dimension,
+            "value": _json_value(item.value), "role": item.role, "label": item.label, "claim_refs": [claim_id],
+        }
+        for item in semantic.entities
+    ]
+    relations = [
+        {
+            "id": relation_ids[item.name], "kind": item.kind,
+            "source_ref": entity_ids[item.source_role], "target_ref": entity_ids[item.target_role],
+            "parameters": {name: _json_value(value) for name, value in item.parameters}, "claim_refs": [claim_id],
+        }
+        for item in semantic.relations
+    ]
+    stages = [
+        {
+            "id": stage_ids[item.name], "title": item.title, "caption": semantic.formula,
+            "layout": item.layout,
+            "input_entity_refs": [entity_ids[role] for role in item.input_roles],
+            "output_entity_refs": [entity_ids[role] for role in item.output_roles],
+            "relation_refs": [relation_ids[name] for name in item.relation_names],
+            "expected_invariants": list(item.invariants),
+        }
+        for item in semantic.stages
+    ]
+    visual = {
+        "scene_kind": semantic.scene_kind, "scene_family": semantic.family,
+        "entities": entities, "relations": relations, "stages": stages,
+    }
+    return visual, list(entity_ids.values()), list(relation_ids.values()), list(stage_ids.values())
+
+
 def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str, object]:
     """Return one deterministic, closed artifact payload without publishing it."""
     topic = _TOPICS.get(topic_id)
@@ -66,10 +111,15 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
     semantic = semantic_for(topic_id) if topic_id.startswith("ch04.") else None
     semantic_roles = semantic.roles if semantic else ("vector_a", "transformed_a")
     entity_ids = {role: f"entity.{topic_id}.{role}" for role in semantic_roles}
-    entity_id = next(iter(entity_ids.values()))
-    result_id = next(iter(entity_ids.values()))
     relation_id = f"relation.{topic_id}.{semantic.relation if semantic else 'maps_to'}"
     stage_id = f"stage.{topic_id}.evidence"
+    if semantic is not None:
+        chapter4_visual, claim_entity_refs, claim_relation_refs, claim_stage_refs = _chapter4_visual_payload(topic_id, claim_id)
+    else:
+        chapter4_visual = None
+        claim_entity_refs = list(entity_ids.values())
+        claim_relation_refs = [relation_id]
+        claim_stage_refs = [stage_id]
     source_span = {
         "id": span.id, "heading_path": list(span.heading_path), "start_line": span.start_line,
         "end_line": span.end_line, "fingerprint": span.fingerprint, "text": span.text,
@@ -83,12 +133,12 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         "ch04.nullspace.test": r"A(1,-1,0)^T=0,\quad Ax=0",
         "ch04.rank-nullity": r"\operatorname{rank}(T)+\operatorname{nullity}(T)=\dim V=3",
     }
-    formula = formula_by_topic.get(topic_id, f"{topic.title}: finite typed semantic evidence")
+    formula = semantic.formula if semantic is not None else formula_by_topic.get(topic_id, f"{topic.title}: finite typed semantic evidence")
     claim = {
         "id": claim_id, "statement": f"{topic.title} 的数学主张由显式对象、关系和不变量支持。",
         "formula": formula, "formula_symbols": list(semantic_roles[:2]), "source_refs": [span.id],
         "explanation_refs": ["definition", "formula", "derivation", "worked_examples", "geometric_meaning", "pitfalls", "connections"],
-        "entity_refs": list(entity_ids.values()), "relation_refs": [relation_id], "stage_refs": [stage_id],
+        "entity_refs": claim_entity_refs, "relation_refs": claim_relation_refs, "stage_refs": claim_stage_refs,
     }
     payload = {
         "schema_version": 1, "topic_id": topic_id, "revision": 1, "status": status,
@@ -105,15 +155,19 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
                         for section in profile.required_sections],
             "symbol_roles": {role: role for role in semantic_roles}, "definition": f"{topic.title} 的对象和定义。",
             "formula": formula, "derivation": ["代入 v=(1,2)。", "计算得到 result=(2,4)。"],
-            "worked_examples": [{"id": f"example.{topic_id}", "title": "主题数值例", "kind": "scalar_multiple",
-                "given": [2, [1, 2]], "calculation": [formula], "result": [2, 4],
-                "checks": [{"name": "result", "expected": [2, 4], "tolerance": 1e-9}], "claim_refs": [claim_id]}],
+            "worked_examples": [{"id": f"example.{topic_id}", "title": "主题数值例",
+                "kind": semantic.example_kind if semantic is not None else "scalar_multiple",
+                "given": _json_value(semantic.example_given) if semantic is not None else [2, [1, 2]],
+                "calculation": [formula],
+                "result": _json_value(semantic.example_result) if semantic is not None else [2, 4],
+                "checks": [{"name": "result", "expected": _json_value(semantic.example_result) if semantic is not None else [2, 4], "tolerance": 1e-9}], "claim_refs": [claim_id]}],
             "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。", "conclusion": "数值关系与讲义定义一致。",
-            "pitfalls": ["不要混淆对象和坐标。"], "invariants": ["finite numeric result"],
+            "pitfalls": ["不要混淆对象和坐标。"],
+            "invariants": list(semantic.invariants) if semantic is not None else ["finite numeric result"],
             "connections": ["与前置线性表示相连。"], "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
             "transfer_note": "先识别对象，再核对公式和不变量。", "read_guide": ["先定义，再公式，最后读数值例。"],
             "searchable_text": [topic.title, "线性空间", "数值例"]},
-        "visual_semantics": {"scene_kind": "2d", "scene_family": semantic.family if semantic else "subspace_region",
+        "visual_semantics": chapter4_visual if chapter4_visual is not None else {"scene_kind": "2d", "scene_family": "subspace_region",
             "entities": _topic_entities(topic_id, semantic_roles, entity_ids, claim_id),
             "relations": [_topic_relation(topic_id, semantic, entity_ids, relation_id, claim_id)],
             "stages": [{"id": stage_id, "title": "主题证据", "caption": formula, "layout": "sequence",
@@ -146,6 +200,13 @@ def load_reviewed_artifacts(root: str | Path | None = None) -> Mapping[str, dict
     base = Path(root) if root is not None else Path(__file__).with_name("data") / "revieweds"
     result: dict[str, dict[str, object]] = {}
     for topic_id in sorted(_TOPICS):
+        # Chapter-4 review payloads are generated from the closed semantic
+        # descriptor.  Keeping this in-memory path avoids silently compiling
+        # stale pre-family JSON while the publication bundle is regenerated by
+        # the release task; chapters 5--8 retain their materialized resources.
+        if root is None and topic_id.startswith("ch04."):
+            result[topic_id] = artifact_payload_for(topic_id)
+            continue
         path = base / topic_id.split(".", 1)[0] / topic_id / "r1.json"
         if path.is_file():
             result[topic_id] = json.loads(path.read_text(encoding="utf-8"))

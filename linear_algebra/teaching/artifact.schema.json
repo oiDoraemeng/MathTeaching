@@ -190,7 +190,7 @@
       "required": ["id", "kind", "dimension", "value", "role", "label", "claim_refs"],
       "properties": {
         "id": {"type": "string"},
-        "kind": {"enum": ["point", "vector", "basis", "matrix", "grid", "region", "area", "volume"]},
+        "kind": {"enum": ["point", "vector", "basis", "matrix", "grid", "region", "area", "volume", "subspace", "affine_set", "constraint", "eigenspace", "principal_axis", "quadratic_level_set"]},
         "dimension": {"enum": [2, 3]},
         "value": {"$ref": "#/$defs/semantic_value"},
         "role": {"type": "string"},
@@ -204,7 +204,7 @@
       "required": ["id", "kind", "source_ref", "target_ref", "parameters", "claim_refs"],
       "properties": {
         "id": {"type": "string"},
-        "kind": {"enum": ["sum", "difference", "scalar_multiple", "maps_to", "spans", "projects_to", "orthogonal_to", "collapses_to", "composition_order", "compare", "orientation", "decomposes_into", "has_foot", "has_residual", "batch_maps_to", "endpoint_diff", "same_measure", "invariant"]},
+        "kind": {"enum": ["sum", "difference", "scalar_multiple", "maps_to", "spans", "span", "projects_to", "orthogonal_to", "collapses_to", "composition_order", "compare", "orientation", "decomposes_into", "has_foot", "has_residual", "batch_maps_to", "endpoint_diff", "same_measure", "invariant", "contains", "affine_translation", "constraint_state", "row_operation", "coordinate_equivalence", "eigen_binding", "principal_axis", "classification", "intersects_in", "union_counterexample", "kernel_of", "image_of", "dimension_of", "linear_combination", "null_solution", "rank_of", "nullity_of", "basis_of", "linear_dependence", "additivity", "homogeneity", "not_linear", "column_image", "rank_nullity"]},
         "source_ref": {"type": "string"},
         "target_ref": {"type": "string"},
         "parameters": {"type": "object", "additionalProperties": {"$ref": "#/$defs/semantic_value"}},

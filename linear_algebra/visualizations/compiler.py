@@ -58,6 +58,7 @@ class CompiledVisualization:
     plan_digest: str
     aliases: tuple[tuple[str, tuple[str, ...]], ...] = ()
     evidence: object | None = None
+    family_evidence: object | None = None
     storyboard: tuple["CompiledStoryboardStage", ...] = ()
 
     def aliases_for(self, semantic_id: str) -> tuple[str, ...]:
@@ -111,12 +112,17 @@ class VisualSemanticsCompiler:
         # Family compilers are the semantic source of truth for chapter 4.
         from .families import family_compiler_for
         family_result = None
-        if resolved_topic.startswith("ch04."):
+        family_evidence = None
+        chapter4_owned = resolved_topic.startswith("ch04.")
+        if chapter4_owned:
             family_result = family_compiler_for(semantics.scene_family).compile(
                 topic_id=resolved_topic, semantics=semantics, context=context
             )
+            if not isinstance(family_result, Mapping):
+                raise VisualCompileError((CompileIssue("invalid_family_result", "$.visual_semantics.scene_family", "chapter 4 family compiler must return operations, aliases, and evidence"),))
         if isinstance(family_result, Mapping):
             operations.extend(list(family_result.get("operations", ())))
+            family_evidence = family_result.get("evidence")
             family_aliases = family_result.get("aliases", ())
             if isinstance(family_aliases, Mapping):
                 for key, values in family_aliases.items():
@@ -125,25 +131,58 @@ class VisualSemanticsCompiler:
             else:
                 for alias in family_aliases:
                     aliases.setdefault(str(alias), []).append(str(alias))
-        for entity in semantics.entities:
-            entity_operations, entity_aliases = self._compile_entity(entity, semantics.scene_kind, context)
-            operations.extend(entity_operations)
-            aliases.setdefault(entity.id, []).extend(entity_aliases)
+        if chapter4_owned:
+            operation_aliases = {
+                str(operation.get("alias")): str(operation.get("op", ""))
+                for operation in operations
+                if isinstance(operation, Mapping) and isinstance(operation.get("alias"), str)
+            }
+            required_semantic_ids = {
+                *(entity.id for entity in semantics.entities),
+                *(relation.id for relation in semantics.relations),
+            }
+            alias_issues: list[CompileIssue] = []
+            for semantic_id in sorted(required_semantic_ids):
+                bound = aliases.get(semantic_id, ())
+                if not bound:
+                    alias_issues.append(CompileIssue("missing_family_alias", f"$.aliases.{semantic_id}", "family emitted no evidence alias"))
+                    continue
+                for alias in bound:
+                    operation_name = operation_aliases.get(alias, "")
+                    if not operation_name or operation_name.startswith("annotation."):
+                        alias_issues.append(CompileIssue("annotation_only_evidence", f"$.aliases.{semantic_id}", alias))
+            invariant_evidence = family_evidence.get("invariants") if isinstance(family_evidence, Mapping) else None
+            if not isinstance(invariant_evidence, Mapping) or any(invariant_evidence.get(name) is not True for name in contract.required_invariants):
+                alias_issues.append(CompileIssue("missing_computed_invariant", "$.family_evidence.invariants", "family did not prove every required invariant"))
+            if alias_issues:
+                raise VisualCompileError(tuple(alias_issues))
+        if not chapter4_owned:
+            for entity in semantics.entities:
+                entity_operations, entity_aliases = self._compile_entity(entity, semantics.scene_kind, context)
+                operations.extend(entity_operations)
+                aliases.setdefault(entity.id, []).extend(entity_aliases)
 
-        for relation in semantics.relations:
-            relation_operations, relation_aliases = self._compile_relation(
-                relation, semantics, context, aliases
-            )
-            operations.extend(relation_operations)
-            aliases.setdefault(relation.id, []).extend(relation_aliases)
+            for relation in semantics.relations:
+                relation_operations, relation_aliases = self._compile_relation(
+                    relation, semantics, context, aliases
+                )
+                operations.extend(relation_operations)
+                aliases.setdefault(relation.id, []).extend(relation_aliases)
 
         if not resolved_topic.startswith("ch04."):
             self._emit_declared_capability_evidence(semantics, context, operations, aliases, resolved_topic)
 
-        storyboard, stage_operations, stage_issues = self._compile_storyboard(semantics, context, aliases)
+        storyboard, stage_operations, stage_issues = self._compile_storyboard(
+            semantics, context, aliases, emit_generic_geometry=not chapter4_owned
+        )
         if stage_issues:
             raise VisualCompileError(tuple(stage_issues))
         operations.extend(stage_operations)
+        if chapter4_owned:
+            operation_names = {str(operation.get("op")) for operation in operations}
+            missing_operations = set(contract.expected_operations) - operation_names
+            if missing_operations:
+                raise VisualCompileError(tuple(CompileIssue("missing_expected_operation", "$.operations", name) for name in sorted(missing_operations)))
 
         # Formula annotations are a declared catalog capability rather than
         # executable model output.  Emit them only for topics that explicitly
@@ -187,6 +226,7 @@ class VisualSemanticsCompiler:
             plan=plan,
             plan_digest=plan_digest,
             aliases=tuple((key, tuple(values)) for key, values in sorted(aliases.items())),
+            family_evidence=family_evidence,
             storyboard=storyboard,
         )
         if artifact is not None:
@@ -208,6 +248,7 @@ class VisualSemanticsCompiler:
                 plan_digest=compiled.plan_digest,
                 aliases=compiled.aliases,
                 evidence=ledger,
+                family_evidence=compiled.family_evidence,
                 storyboard=compiled.storyboard,
             )
         return compiled
@@ -296,6 +337,8 @@ class VisualSemanticsCompiler:
         semantics: VisualSemantics,
         context: RenderContext,
         aliases: Mapping[str, list[str]],
+        *,
+        emit_generic_geometry: bool = True,
     ) -> tuple[tuple[CompiledStoryboardStage, ...], list[dict[str, Any]], list[CompileIssue]]:
         stages = semantics.stages
         compiled: list[CompiledStoryboardStage] = []
@@ -330,8 +373,9 @@ class VisualSemanticsCompiler:
             )
             if show_case_stage_title:
                 visible_aliases_list.append(title_alias)
-            operations.extend(_stage_geometry_operations(semantics, stage, index, aliases, context))
-            visible_aliases_list.extend(_stage_specific_aliases(semantics, index))
+            if emit_generic_geometry:
+                operations.extend(_stage_geometry_operations(semantics, stage, index, aliases, context))
+                visible_aliases_list.extend(_stage_specific_aliases(semantics, index))
             visible_aliases = tuple(dict.fromkeys(visible_aliases_list))
             compiled.append(
                 CompiledStoryboardStage(

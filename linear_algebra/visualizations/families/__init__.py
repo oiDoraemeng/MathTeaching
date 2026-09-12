@@ -17,7 +17,7 @@ from .least_squares import LeastSquaresFamilyCompiler, LeastSquaresEvidence, lea
 from .spectral import SpectralFamilyCompiler, SpectralEvidence, SpectralRoot, spectral_evidence
 from .orthogonalization import OrthogonalizationFamilyCompiler, OrthogonalizationEvidence, gram_schmidt
 from .quadratic import QuadraticFamilyCompiler, QuadraticEvidence, classify_quadratic
-from .chapter_04 import compile_chapter_04
+from .chapter_04 import Chapter4FamilyCompiler, Chapter4CompileResult, compile_chapter_04
 
 
 @dataclass(frozen=True)
@@ -56,4 +56,4 @@ def registered_families() -> tuple[str, ...]:
     return tuple(sorted(_REGISTERED))
 
 
-__all__ = ["SceneFamilyCompiler", "family_compiler_for", "registered_families", "MatrixTableauCompiler", "TableauCompileResult", "TableauStage", "Swap", "Scale", "Eliminate", "apply_row_operation", "CoordinateFamilyCompiler", "CoordinateEvidence", "coordinate_evidence", "LeastSquaresFamilyCompiler", "LeastSquaresEvidence", "least_squares_fit", "SpectralFamilyCompiler", "SpectralEvidence", "SpectralRoot", "spectral_evidence", "OrthogonalizationFamilyCompiler", "OrthogonalizationEvidence", "gram_schmidt", "QuadraticFamilyCompiler", "QuadraticEvidence", "classify_quadratic"]
+__all__ = ["SceneFamilyCompiler", "family_compiler_for", "registered_families", "Chapter4FamilyCompiler", "Chapter4CompileResult", "MatrixTableauCompiler", "TableauCompileResult", "TableauStage", "Swap", "Scale", "Eliminate", "apply_row_operation", "CoordinateFamilyCompiler", "CoordinateEvidence", "coordinate_evidence", "LeastSquaresFamilyCompiler", "LeastSquaresEvidence", "least_squares_fit", "SpectralFamilyCompiler", "SpectralEvidence", "SpectralRoot", "spectral_evidence", "OrthogonalizationFamilyCompiler", "OrthogonalizationEvidence", "gram_schmidt", "QuadraticFamilyCompiler", "QuadraticEvidence", "classify_quadratic"]

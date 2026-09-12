@@ -13,6 +13,13 @@ RELATION_KINDS = frozenset(
         "orthogonal_to", "collapses_to", "composition_order", "compare", "orientation",
         "decomposes_into", "has_foot", "has_residual", "batch_maps_to", "endpoint_diff",
         "same_measure", "invariant", "contains", "affine_translation", "constraint_state", "row_operation", "coordinate_equivalence", "eigen_binding", "principal_axis", "classification",
+        # Chapter-4 mathematical bindings.  These names distinguish a true
+        # intersection, kernel/image/rank fact, and linearity test from a
+        # generic arrow or display annotation.
+        "intersects_in", "union_counterexample", "kernel_of", "image_of",
+        "dimension_of", "linear_combination", "null_solution", "rank_of",
+        "nullity_of", "basis_of", "linear_dependence", "additivity",
+        "homogeneity", "not_linear", "column_image", "rank_nullity",
     }
 )
 LAYOUTS = frozenset({"overlay", "side_by_side", "sequence"})

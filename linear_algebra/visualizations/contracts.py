@@ -26,6 +26,10 @@ class VisualContract:
     minimum_stage_count: int
     required_invariants: tuple[str, ...] = ()
     distinguishable_role_groups: tuple[tuple[str, ...], ...] = ()
+    required_role_types: tuple[tuple[str, str, int], ...] = ()
+    required_relation_endpoints: tuple[tuple[str, str, str, str], ...] = ()
+    required_parameters: tuple[tuple[str, tuple[str, ...]], ...] = ()
+    expected_operations: tuple[str, ...] = ()
 
 
 def contract_for(topic_id: str) -> VisualContract:
@@ -78,8 +82,17 @@ def contract_for(topic_id: str) -> VisualContract:
                 semantic.roles,
                 (semantic.relation,),
                 (semantic.primitive,),
-                1,
-                ("finite numeric result", *semantic.invariants),
+                len(semantic.stages),
+                semantic.invariants,
+                required_role_types=tuple((item.role, item.kind, item.dimension) for item in semantic.entities),
+                required_relation_endpoints=tuple(
+                    (item.name, item.kind, item.source_role, item.target_role)
+                    for item in semantic.relations
+                ),
+                required_parameters=tuple(
+                    (item.name, item.parameter_names) for item in semantic.relations
+                ),
+                expected_operations=semantic.expected_operations,
             )
         family = extended_family[topic_id]
         return VisualContract(topic_id, (f"claim.{topic_id}",), ("vector_a", "transformed_a"), ("maps_to",), (family,), 1, ("finite numeric result",))
@@ -111,6 +124,8 @@ def validate_contract_semantics(
     if topic_id is not None and topic_id != contract.topic_id:
         issues.append(ContractIssue("topic_mismatch", contract.topic_id, topic_id))
     roles = {entity.role for entity in semantics.entities}
+    entities_by_role = {entity.role: entity for entity in semantics.entities}
+    entities_by_id = {entity.id: entity for entity in semantics.entities}
     relations = {relation.kind for relation in semantics.relations}
     primitives = {entity.kind for entity in semantics.entities} | relations
     scene_family = getattr(semantics, "scene_family", "")
@@ -125,9 +140,13 @@ def validate_contract_semantics(
     for relation in contract.required_relations:
         if relation not in relations:
             issues.append(ContractIssue("missing_relation", contract.topic_id, relation))
-    for primitive in contract.required_primitives:
-        if primitive not in primitives:
-            issues.append(ContractIssue("missing_primitive", contract.topic_id, primitive))
+    # Chapter 4's family gate checks the complete typed graph and operation
+    # witness set.  Keep the legacy primitive check for other chapters while
+    # avoiding a redundant generic error for an intentionally empty Ch4 graph.
+    if not contract.topic_id.startswith("ch04."):
+        for primitive in contract.required_primitives:
+            if primitive not in primitives:
+                issues.append(ContractIssue("missing_primitive", contract.topic_id, primitive))
     if len(semantics.stages) < contract.minimum_stage_count:
         issues.append(ContractIssue("insufficient_stages", contract.topic_id, str(contract.minimum_stage_count)))
     for invariant in contract.required_invariants:
@@ -137,6 +156,30 @@ def validate_contract_semantics(
         present = [role for role in group if role in roles]
         if len(present) != len(group):
             issues.append(ContractIssue("roles_not_distinguishable", contract.topic_id, ",".join(group)))
+    for role, kind, dimension in contract.required_role_types:
+        entity = entities_by_role.get(role)
+        if entity is not None and (entity.kind != kind or entity.dimension != dimension):
+            issues.append(ContractIssue("entity_type_mismatch", contract.topic_id, f"{role}:{kind}:{dimension}"))
+    relations_by_name = {
+        relation.id.rsplit(".", 1)[-1]: relation for relation in semantics.relations
+    }
+    if semantics.relations:
+        for name, kind, source_role, target_role in contract.required_relation_endpoints:
+            relation = relations_by_name.get(name)
+            if relation is None:
+                issues.append(ContractIssue("missing_relation_spec", contract.topic_id, name))
+                continue
+            source = entities_by_id.get(relation.source_ref)
+            target = entities_by_id.get(relation.target_ref)
+            if relation.kind != kind or source is None or target is None or source.role != source_role or target.role != target_role:
+                issues.append(ContractIssue("relation_endpoint_mismatch", contract.topic_id, name))
+    for name, parameter_names in contract.required_parameters:
+        relation = relations_by_name.get(name)
+        if relation is None:
+            continue
+        for parameter in parameter_names:
+            if parameter not in relation.parameters:
+                issues.append(ContractIssue("missing_relation_parameter", contract.topic_id, f"{name}.{parameter}"))
     return tuple(sorted(issues, key=lambda issue: (issue.code, issue.detail)))
 
 

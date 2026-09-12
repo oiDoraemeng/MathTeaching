@@ -177,6 +177,7 @@ _ROLE_VALUES = frozenset({"primary", "construction", "result"})
 _THREE_D_OPERATIONS = frozenset({
     "point3d.upsert", "point3d.delete", "linear3d.upsert", "plane3d.upsert",
     "geometry.parallelogram3d", "geometry.parallelepiped", "geometry.oriented_volume",
+    "geometry.subspace3d",
     "surface.create", "surface.update", "surface.delete", "geometry.intersection", "geometry.constraint",
     "geometry.projection3d", "geometry.orthogonalization",
 })
@@ -204,7 +205,6 @@ _TWO_D_OPERATIONS = frozenset(
         "geometry.projection",
         "geometry.transformed_grid",
         "geometry.subspace_region",
-        "geometry.subspace3d",
         "geometry.affine_solution",
         "geometry.mapping_bundle",
         "geometry.staged_transform",
@@ -355,7 +355,7 @@ class SceneCommandService:
         name = operation.get("op")
         if name not in _ALLOWED_OPERATIONS:
             raise CommandError(f"不支持的操作: {name!r}。")
-        known_keys = {"op", "alias", "coordinates", "name", "kind", "role", "color", "style", "start", "end", "bounds", "matrix", "rhs", "tolerance", "solution_state", "rank", "augmented_rank", "entity_count", "stage_count", "sample_count", "vectors", "stages", "aliases", "eigenvalues", "principal_axes", "signature", "classification", "contour_vertices", "contour_segments", "mesh_vertices", "mesh_faces", "axis_segments", "basis_matrix", "standard_vector", "alternate_coordinates", "basis_alias", "standard_alias", "alternate_alias", "values", "coefficients", "fit", "projection", "residual", "data_alias", "fit_alias", "projection_alias", "residual_alias", "eigenspaces", "roots", "roots_alias", "complex_roots", "operation_label", "highlight_rows", "scene", "alias_prefix", "basis", "origin", "offset", "opacity", "vertices", "outline", "step", "direction", "foot", "intersection_alias", "state_alias", "domain_basis", "kernel_basis", "image_basis", "lanes", "input_vectors", "output_vectors", "relations", "particular_solution", "nullspace_basis", "translation", "constraints", "intersection", "row_operation", "claim_refs", "stage_id", "data"}
+        known_keys = {"op", "alias", "coordinates", "name", "kind", "role", "color", "style", "start", "end", "bounds", "matrix", "rhs", "tolerance", "solution_state", "rank", "augmented_rank", "entity_count", "stage_count", "sample_count", "vectors", "stages", "aliases", "eigenvalues", "principal_axes", "signature", "classification", "contour_vertices", "contour_segments", "mesh_vertices", "mesh_faces", "axis_segments", "basis_matrix", "standard_vector", "alternate_coordinates", "basis_alias", "standard_alias", "alternate_alias", "values", "coefficients", "fit", "projection", "residual", "data_alias", "fit_alias", "projection_alias", "residual_alias", "eigenspaces", "roots", "roots_alias", "complex_roots", "operation_label", "highlight_rows", "scene", "alias_prefix", "basis", "origin", "offset", "opacity", "vertices", "outline", "step", "direction", "foot", "intersection_alias", "state_alias", "domain_basis", "kernel_basis", "image_basis", "lanes", "input_vectors", "output_vectors", "relations", "particular_solution", "nullspace_basis", "translation", "constraints", "intersection", "row_operation", "claim_refs", "stage_id", "data", "dimension"}
         extended_names = {"geometry.subspace_region", "geometry.subspace3d", "geometry.mapping_bundle", "geometry.affine_solution", "geometry.constraint", "geometry.matrix_tableau", "geometry.elimination_tableau", "geometry.basis_grid", "geometry.coordinate_readout", "geometry.least_squares", "geometry.spectrum", "geometry.projection3d", "geometry.orthogonalization", "geometry.quadratic_level_set"}
         if name in extended_names and any(key not in known_keys for key in operation):
             raise CommandError(f"操作包含未知字段: {next(key for key in operation if key not in known_keys)!r}")
