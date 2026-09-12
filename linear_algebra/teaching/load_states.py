@@ -148,6 +148,7 @@ class LoadTransaction:
         execute: Callable[..., Any],
         *,
         expected_scene_fingerprint: str | None = None,
+        finalize: bool = True,
     ) -> Any | None:
         """Execute the already-staged scene through one host transaction.
 
@@ -173,7 +174,8 @@ class LoadTransaction:
             messages = tuple(getattr(result, "messages", ()))
             self.reject("host_failure", LoadPhase.STAGED, "scene", "；".join(str(item) for item in messages))
             return result
-        self.advance(LoadPhase.COMMITTED)
+        if finalize:
+            self.advance(LoadPhase.COMMITTED)
         return result
 
     def snapshot(self) -> LoadSnapshot:

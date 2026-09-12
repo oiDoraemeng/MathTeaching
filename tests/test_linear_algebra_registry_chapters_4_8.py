@@ -4,6 +4,7 @@ from dataclasses import replace
 
 from linear_algebra.registry import bundled_teaching_store, catalog_registry
 from linear_algebra.teaching.load_states import LoadPhase
+from linear_algebra.visualizations.snapshots import CompiledSnapshotStore
 
 
 def test_extended_topic_bundle_is_one_to_one() -> None:
@@ -62,3 +63,32 @@ def test_host_failure_rejects_one_staged_transaction_without_partial_explanation
     else:  # pragma: no cover - defensive assertion
         raise AssertionError("host failure must propagate after transaction rollback")
 
+
+def test_host_success_commits_exactly_once_after_staging() -> None:
+    registry = catalog_registry()
+    bundle = registry.resolve_bundle("ch08.principal-axis", artifact_store=bundled_teaching_store())
+    calls = []
+
+    class RecordingService:
+        def execute(self, plan, **kwargs):
+            calls.append((plan, kwargs))
+            return type("Result", (), {"valid": True})()
+
+    transaction = registry.commit_curriculum_bundle(bundle, scene_service=RecordingService(), pane_id="pane-1")
+    assert transaction.phase is LoadPhase.COMMITTED
+    assert len(calls) == 1
+    assert calls[0][1]["pane_id"] == "pane-1"
+
+
+def test_missing_published_snapshot_is_a_diagnostic_not_an_in_memory_replacement(tmp_path) -> None:
+    registry = catalog_registry()
+    bundle = registry.resolve_bundle(
+        "ch08.principal-axis",
+        artifact_store=bundled_teaching_store(),
+        snapshot_store=CompiledSnapshotStore(tmp_path / "snapshots"),
+    )
+    transaction = registry.commit_curriculum_bundle(bundle)
+    assert transaction.phase is LoadPhase.REJECTED
+    assert transaction.diagnostic is not None
+    assert transaction.diagnostic.code == "missing_snapshot"
+    assert transaction.diagnostic.field == "snapshot"

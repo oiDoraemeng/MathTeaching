@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import os
 from pathlib import Path
-from dataclasses import replace
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Mapping
 
@@ -60,6 +59,7 @@ class CurriculumBundle:
     snapshot: CompiledSnapshot | None
     source_context: SourceContext | None = None
     source_diagnostic: tuple[str, str, str] | None = None
+    bundle_diagnostic: tuple[str, str, str] | None = None
 
     @property
     def is_extended(self) -> bool:
@@ -120,6 +120,7 @@ class CurriculumRegistry:
         recipe = self.get_recipe(topic.visualization_id)
         source_context: SourceContext | None = None
         source_diagnostic: tuple[str, str, str] | None = None
+        bundle_diagnostic: tuple[str, str, str] | None = None
         if artifact_store is None:
             configured_root = os.environ.get("MATH3D_TEACHING_ARTIFACT_ROOT", "").strip()
             if configured_root:
@@ -127,15 +128,21 @@ class CurriculumRegistry:
         artifact: TeachingArtifact | None = None
         if artifact_store is not None:
             if source_repository is not None:
-                source_context = source_repository.context_for(topic)
-                loaded = artifact_store.load_published(topic_id, current_context=source_context)
-                if loaded is not None:
-                    artifact = loaded.artifact
-                    source_diagnostic = loaded.diagnostic
+                try:
+                    source_context = source_repository.context_for(topic)
+                    loaded = artifact_store.load_published(topic_id, current_context=source_context)
+                    if loaded is not None:
+                        artifact = loaded.artifact
+                        source_diagnostic = loaded.diagnostic
+                except (ValueError, OSError, KeyError) as error:
+                    bundle_diagnostic = ("source_invalid", "source", str(error))
             else:
-                stored = artifact_store.published(topic_id)
-                if stored is not None:
-                    artifact = stored.artifact
+                try:
+                    stored = artifact_store.published(topic_id)
+                    if stored is not None:
+                        artifact = stored.artifact
+                except (ValueError, OSError, KeyError) as error:
+                    bundle_diagnostic = ("artifact_invalid", "artifact", str(error))
         # Chapter 4–8 release scripts keep their reviewed payload and the
         # compiled resource/index as the checked-in release unit.  Materialise
         # that immutable payload as the runtime's published view when a
@@ -152,31 +159,68 @@ class CurriculumRegistry:
                         source_context = source_repository.context_for(topic)
                         if artifact.source.source_hash != source_context.source_hash:
                             source_diagnostic = ("stale_source", artifact.source.source_hash, source_context.source_hash)
-            except (FileNotFoundError, ValueError, OSError):
+            except (FileNotFoundError, ValueError, OSError) as error:
                 artifact = None
+                bundle_diagnostic = ("artifact_invalid", "artifact", str(error))
         compiled: CompiledVisualization | None = None
         snapshot: CompiledSnapshot | None = None
         if artifact is not None:
             render_context = context or RenderContext.default(topic_id)
-            compiled = VisualSemanticsCompiler().compile(artifact, contract, render_context)
-            expected_snapshot = snapshot_from(artifact, contract, compiled)
-            snapshot = (
-                snapshot_store.load(topic_id, artifact.revision)
-                if snapshot_store is not None
-                else expected_snapshot
-            )
-            if snapshot is None or snapshot != expected_snapshot:
-                snapshot = expected_snapshot
+            try:
+                compiled = VisualSemanticsCompiler().compile(artifact, contract, render_context)
+                expected_snapshot = snapshot_from(artifact, contract, compiled)
+                if snapshot_store is not None:
+                    try:
+                        snapshot = snapshot_store.load(topic_id, artifact.revision)
+                    except (ValueError, OSError, KeyError) as error:
+                        snapshot = None
+                        bundle_diagnostic = ("snapshot_invalid", "snapshot", str(error))
+                    if snapshot is None:
+                        bundle_diagnostic = bundle_diagnostic or ("missing_snapshot", "snapshot", "published snapshot is missing")
+                    elif snapshot != expected_snapshot:
+                        bundle_diagnostic = ("snapshot_mismatch", "snapshot", "published snapshot differs from compiled output")
+                else:
+                    snapshot = expected_snapshot
+                # The checked-in compiled resource is the release witness for
+                # chapter 4–8 when no separate snapshot store is configured.
+                if topic.chapter_number >= 4 and artifact_store is not None:
+                    from linear_algebra.teaching.compile_resources import compiled_resource_store
+                    try:
+                        resource = compiled_resource_store(Path(artifact_store.root) / "compiled").get(topic_id)
+                        if resource.topic_id != topic_id or resource.revision != artifact.revision:
+                            bundle_diagnostic = ("compiled_mismatch", "compiled", "published resource identity differs")
+                        elif resource.source_hash != artifact.source.source_hash or resource.plan_digest != compiled.plan_digest:
+                            bundle_diagnostic = ("compiled_mismatch", "compiled", "published resource digest differs")
+                    except (FileNotFoundError, ValueError, OSError) as error:
+                        bundle_diagnostic = ("missing_compiled", "compiled", str(error))
+            except Exception as error:
+                compiled = None
+                snapshot = None
+                bundle_diagnostic = ("compiled_invalid", "compiled", str(error))
         if artifact is not None:
             if artifact.topic_id != topic.id:
-                raise ValueError(f"bundle topic mismatch: artifact.topic_id={artifact.topic_id!r}")
+                bundle_diagnostic = bundle_diagnostic or (
+                    "artifact_invalid", "artifact.topic_id",
+                    f"expected {topic.id!r}, got {artifact.topic_id!r}",
+                )
             if recipe.id != topic.visualization_id:
-                raise ValueError(f"bundle recipe mismatch: {recipe.id!r} != {topic.visualization_id!r}")
+                bundle_diagnostic = bundle_diagnostic or (
+                    "artifact_invalid", "recipe.id",
+                    f"expected {topic.visualization_id!r}, got {recipe.id!r}",
+                )
             if compiled is not None and compiled.topic_id != topic.id:
-                raise ValueError(f"bundle compiled topic mismatch: {compiled.topic_id!r}")
+                bundle_diagnostic = bundle_diagnostic or (
+                    "compiled_invalid", "compiled.topic_id",
+                    f"expected {topic.id!r}, got {compiled.topic_id!r}",
+                )
             if snapshot is not None and snapshot.topic_id != topic.id:
-                raise ValueError(f"bundle snapshot topic mismatch: {snapshot.topic_id!r}")
-        return CurriculumBundle(topic, artifact, contract, recipe, compiled, snapshot, source_context, source_diagnostic)
+                bundle_diagnostic = bundle_diagnostic or (
+                    "snapshot_invalid", "snapshot.topic_id",
+                    f"expected {topic.id!r}, got {snapshot.topic_id!r}",
+                )
+        # Preserve a diagnostic-bearing bundle so the loader can reject it
+        # without mutating a host or throwing an unstructured exception.
+        return CurriculumBundle(topic, artifact, contract, recipe, compiled, snapshot, source_context, source_diagnostic, bundle_diagnostic)
 
     def commit_curriculum_bundle(
         self,
@@ -209,6 +253,19 @@ class CurriculumRegistry:
             return transaction
 
         transaction.advance(LoadPhase.SOURCE_CHECKED)
+        if bundle.bundle_diagnostic is not None:
+            code, field, message = bundle.bundle_diagnostic
+            code_map = {
+                "source_invalid": "source_stale",
+                "artifact_invalid": "missing_artifact",
+                "compiled_invalid": "numeric_invalid",
+                "compiled_mismatch": "bundle_mismatch",
+                "snapshot_invalid": "bundle_mismatch",
+                "snapshot_mismatch": "bundle_mismatch",
+                "missing_snapshot": "missing_snapshot",
+                "missing_compiled": "missing_compiled",
+            }
+            return reject(code_map.get(code, "bundle_mismatch"), field, message)
         if bundle.source_diagnostic is not None:
             return reject("source_stale", "source_hash", "published source hash no longer matches the lecture")
 

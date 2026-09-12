@@ -480,6 +480,7 @@ class MainWindow:
         self.latex_parser = LatexParser()
         self._active_linear_algebra_topic_id: str | None = None
         self._active_linear_algebra_compiled: CompiledVisualization | None = None
+        self._active_linear_algebra_explanation_case: object | None = None
         self._active_linear_algebra_stage_id: str | None = None
         self._hidden_linear_algebra_aliases: set[str] = set()
         self._teaching_case_pane_grid: TeachingCasePaneGrid | None = None
@@ -2434,6 +2435,25 @@ class MainWindow:
             self.pane_manager.set_layout(count)
         self._sync_layout_buttons()
 
+    def _clear_pending_curriculum_plans(self) -> None:
+        """Remove staged lecture plans after the single host transaction.
+
+        ``ScenePaneWidget.sync_layout`` may recreate more than one renderer.  A
+        pending plan is only a hand-off token for the first renderer; leaving it
+        on another pane would make a later interactor callback execute the same
+        curriculum transaction a second time.
+        """
+
+        manager = getattr(self, "pane_manager", None)
+        if manager is None:
+            return
+        for pane_id in tuple(getattr(self, "_teaching_case_pane_ids", ())):
+            if pane_id not in manager.panes:
+                continue
+            pane = manager.pane(pane_id)
+            data = pane.scene_2d if pane.scene_mode == "2d" else pane.scene_3d
+            data.pop("pending_plan", None)
+
     def _on_pane_interactor_created(self, pane_id: str, renderer: object) -> None:
         """Rebind runtime controllers and redraw retained state after recreation."""
         interactor = getattr(renderer, "interactor", None)
@@ -2458,6 +2478,44 @@ class MainWindow:
                 pending = data.pop("pending_plan", None)
                 if pending is not None:
                     try:
+                        transaction = getattr(self, "_pending_curriculum_transaction", None)
+                        if transaction is not None and transaction.plan is not None:
+                            if str(transaction.topic_id).startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08.")):
+                                transaction.pane_id = pane_id
+                                transaction.commit_host(
+                                    self.scene_command_service.execute,
+                                    expected_scene_fingerprint=None,
+                                    finalize=False,
+                                )
+                                if transaction.phase is LoadPhase.REJECTED:
+                                    raise CommandError(transaction.diagnostic.message if transaction.diagnostic else "host transaction failed")
+                                self._pending_curriculum_host_executed = True
+                                bundle = getattr(self, "_pending_curriculum_bundle", None)
+                                explanation = getattr(self, "_pending_curriculum_explanation", None)
+                                plan = getattr(self, "_pending_curriculum_plan", None) or transaction.plan
+                                if bundle is None or explanation is None:
+                                    raise CommandError("curriculum transaction lost its staged explanation")
+                                try:
+                                    self._finalize_linear_algebra_topic_load(
+                                        bundle.topic, bundle, explanation, plan,
+                                    )
+                                    transaction.advance(LoadPhase.COMMITTED)
+                                except Exception as error:
+                                    if transaction.phase is LoadPhase.STAGED:
+                                        transaction.reject(
+                                            "explanation_publish_failed", LoadPhase.STAGED,
+                                            "explanation", str(error),
+                                        )
+                                    raise
+                                self._pending_curriculum_finalized = True
+                                self._clear_pending_curriculum_plans()
+                                self._pending_curriculum_transaction = None
+                                return
+                        # The transaction may have completed synchronously while
+                        # this renderer was being created.  Its hand-off token is
+                        # intentionally ignored rather than replayed.
+                        if getattr(self, "_pending_curriculum_host_executed", False):
+                            return
                         result = self.scene_command_service.execute(
                             CommandPlan.from_dict(pending), pane_id=pane_id, activate_pane=False,
                         )
@@ -3176,7 +3234,13 @@ class MainWindow:
             "hidden": set(getattr(self, "_hidden_linear_algebra_aliases", set())),
             "pane_ids": list(getattr(self, "_teaching_case_pane_ids", ())),
             "stage_refs": dict(getattr(self, "_teaching_case_stage_refs", {})),
+            "explanation_case": getattr(self, "_active_linear_algebra_explanation_case", None),
         }
+        previous_scene_snapshot = None
+        try:
+            previous_scene_snapshot = self._scene_snapshot_from_current_state()
+        except Exception:
+            previous_scene_snapshot = None
         try:
             bundle = registry.resolve_bundle(
                 topic_id,
@@ -3205,45 +3269,133 @@ class MainWindow:
             if compiled is None:
                 from types import SimpleNamespace
                 compiled = SimpleNamespace(topic_id=topic.id, plan=lesson_plan, storyboard=())
+            extended = getattr(bundle.topic, "chapter_number", 0) >= 4
+            if extended:
+                self._pending_curriculum_transaction = transaction
+                self._pending_curriculum_bundle = bundle
+                self._pending_curriculum_explanation = explanation_case
+                self._pending_curriculum_plan = lesson_plan
+                self._pending_curriculum_previous_scene = previous_scene_snapshot
+                self._pending_curriculum_host_executed = False
+                self._pending_curriculum_finalized = False
             self._open_teaching_case_panes(explanation_case, compiled)
-            if lesson_plan.scene == "2d":
-                self._set_2d_geometry_tool("select")
-                if hasattr(self, "two_d_geometry_toolbar"):
-                    self.two_d_geometry_toolbar.set_active_tool("select", emit_signal=False)
-            self._sync_scene_controls()
-            if hasattr(self, "agent_panel"):
-                if hasattr(self, "agent_sidebar"):
-                    self._open_agent_panel()
-                self.agent_panel.show_math_case(
-                    explanation_case,
-                    case_id=topic.id,
-                    category=topic.source_path[1],
-                    scene_mode=lesson_plan.scene,
-                    compiled=bundle.compiled,
-                )
-            # Publish identity only after both surfaces have been prepared.
-            self._active_linear_algebra_topic_id = topic.id
-            self._active_linear_algebra_compiled = bundle.compiled
-            self._active_linear_algebra_stage_id = None
-            self._hidden_linear_algebra_aliases = set()
-            transaction.advance(LoadPhase.COMMITTED)
+            if extended:
+                target_pane = next(iter(getattr(self, "_teaching_case_pane_ids", ())), None)
+                if target_pane is None:
+                    raise CommandError("renderer_unavailable: no teaching pane was staged")
+                transaction.pane_id = target_pane
+                if transaction.phase is LoadPhase.STAGED and not getattr(self, "_pending_curriculum_host_executed", False):
+                    transaction.commit_host(
+                        self.scene_command_service.execute,
+                        expected_scene_fingerprint=None,
+                        finalize=False,
+                    )
+                    self._pending_curriculum_host_executed = True
+                if transaction.phase is LoadPhase.STAGED and not getattr(self, "_pending_curriculum_finalized", False):
+                    self._finalize_linear_algebra_topic_load(topic, bundle, explanation_case, lesson_plan)
+                    transaction.advance(LoadPhase.COMMITTED)
+                    self._pending_curriculum_finalized = True
+                if transaction.phase is LoadPhase.COMMITTED:
+                    self._clear_pending_curriculum_plans()
+                self._pending_curriculum_transaction = None
+                if transaction.phase is not LoadPhase.COMMITTED:
+                    diagnostic = transaction.diagnostic
+                    raise CommandError(diagnostic.message if diagnostic else "host transaction failed")
+            else:
+                self._finalize_linear_algebra_topic_load(topic, bundle, explanation_case, lesson_plan)
         except Exception as error:
+            # Detach the hand-off token before rebuilding/closing panes.  Qt may
+            # synchronously emit another interactor-created callback while the
+            # old layout is being torn down; a rejected transaction must never
+            # be retried from that callback.
+            host_executed = bool(getattr(self, "_pending_curriculum_host_executed", False))
+            self._pending_curriculum_transaction = None
             self._close_teaching_case_panes()
+            if previous_scene_snapshot is not None:
+                try:
+                    self._restore_agent_scene_snapshot(previous_scene_snapshot)
+                except Exception:
+                    pass
             self._active_linear_algebra_topic_id = previous["topic_id"]
             self._active_linear_algebra_compiled = previous["compiled"]
+            self._active_linear_algebra_explanation_case = previous["explanation_case"]
             self._active_linear_algebra_stage_id = previous["stage_id"]
             self._hidden_linear_algebra_aliases = previous["hidden"]
             self._teaching_case_pane_ids = previous["pane_ids"]
             self._teaching_case_stage_refs = previous["stage_refs"]
             if transaction.phase is LoadPhase.STAGED:
-                transaction.reject("host_failure", LoadPhase.STAGED, "teaching_case", str(error))
-            self.algebra_panel.set_status(f"案例面板显示失败: {error}", is_error=True)
+                code = "explanation_publish_failed" if host_executed else "host_failure"
+                transaction.reject(code, LoadPhase.STAGED, "explanation" if code == "explanation_publish_failed" else "teaching_case", str(error))
+            old_case = previous.get("explanation_case")
+            if old_case is not None and hasattr(self, "agent_panel"):
+                try:
+                    old_compiled = previous.get("compiled")
+                    self.agent_panel.show_math_case(
+                        old_case,
+                        case_id=previous.get("topic_id"),
+                        scene_mode=getattr(getattr(old_compiled, "plan", None), "scene", "2d"),
+                        compiled=old_compiled,
+                    )
+                except Exception:
+                    pass
+            self._pending_curriculum_transaction = None
+            self._pending_curriculum_bundle = None
+            self._pending_curriculum_explanation = None
+            self._pending_curriculum_plan = None
+            self._pending_curriculum_previous_scene = None
+            self._pending_curriculum_host_executed = False
+            self._pending_curriculum_finalized = False
+            diagnostic = transaction.diagnostic
+            if diagnostic is not None:
+                detail = f"{diagnostic.code} [{diagnostic.phase.value}/{diagnostic.field}]: {diagnostic.message}"
+            else:
+                detail = str(error)
+            self.algebra_panel.set_status(f"案例面板显示失败: {detail}", is_error=True)
             return
         if bundle.source_diagnostic is not None:
             _, old_hash, current_hash = bundle.source_diagnostic
             self.algebra_panel.set_status(f"已加载主题: {topic.title}（stale_source: {old_hash} → {current_hash}）")
         else:
             self.algebra_panel.set_status(f"已加载主题: {topic.title}")
+        self._pending_curriculum_bundle = None
+        self._pending_curriculum_explanation = None
+        self._pending_curriculum_plan = None
+        self._pending_curriculum_previous_scene = None
+        self._pending_curriculum_host_executed = False
+        self._pending_curriculum_finalized = False
+
+    def _finalize_linear_algebra_topic_load(self, topic: object, bundle: object, explanation_case: object, lesson_plan: object) -> None:
+        """Publish explanation and identity only after the scene transaction commits."""
+
+        if getattr(lesson_plan, "scene", None) == "2d":
+            self._set_2d_geometry_tool("select")
+            if hasattr(self, "two_d_geometry_toolbar"):
+                self.two_d_geometry_toolbar.set_active_tool("select", emit_signal=False)
+        self._sync_scene_controls()
+        if hasattr(self, "agent_panel"):
+            if hasattr(self, "agent_sidebar"):
+                self._open_agent_panel()
+            self.agent_panel.show_math_case(
+                explanation_case,
+                case_id=topic.id,
+                category=topic.source_path[1],
+                scene_mode=lesson_plan.scene,
+                compiled=bundle.compiled,
+                source_diagnostic=bundle.source_diagnostic,
+            )
+        self._active_linear_algebra_topic_id = topic.id
+        self._active_linear_algebra_compiled = bundle.compiled
+        self._active_linear_algebra_explanation_case = explanation_case
+        extended = str(topic.id).startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08."))
+        if extended and bundle.compiled is not None and bundle.compiled.storyboard:
+            initial_stage = bundle.compiled.storyboard[0].id
+            all_aliases, visible_aliases = storyboard_visibility(bundle.compiled, initial_stage)
+            self._active_linear_algebra_stage_id = initial_stage
+            self._hidden_linear_algebra_aliases = set(all_aliases) - set(visible_aliases)
+        else:
+            self._active_linear_algebra_stage_id = None
+            self._hidden_linear_algebra_aliases = set()
+        self._apply_linear_algebra_storyboard_visibility()
 
     def teaching_fingerprints(self) -> tuple[str, str]:
         """Return scene and explanation fingerprints for atomic-load tests/UI diagnostics."""
@@ -3263,11 +3415,19 @@ class MainWindow:
         else:
             explanation_value = getattr(panel, "_pending_math_case", None)
             if explanation_value is None:
-                explanation_value = {
-                    "topic_id": getattr(self, "_active_linear_algebra_topic_id", None),
-                    "pane_ids": tuple(getattr(self, "_teaching_case_pane_ids", ())),
-                    "stage_refs": getattr(self, "_teaching_case_stage_refs", {}),
-                }
+                active_case = getattr(self, "_active_linear_algebra_explanation_case", None)
+                if active_case is not None:
+                    case_value = active_case.to_dict() if hasattr(active_case, "to_dict") else active_case
+                    explanation_value = {
+                        "topic_id": getattr(self, "_active_linear_algebra_topic_id", None),
+                        "case": case_value,
+                    }
+                else:
+                    explanation_value = {
+                        "topic_id": getattr(self, "_active_linear_algebra_topic_id", None),
+                        "pane_ids": tuple(getattr(self, "_teaching_case_pane_ids", ())),
+                        "stage_refs": getattr(self, "_teaching_case_stage_refs", {}),
+                    }
         return fingerprint(scene_value), fingerprint(explanation_value)
 
     def _enter_linear_algebra_workspace(self) -> None:
