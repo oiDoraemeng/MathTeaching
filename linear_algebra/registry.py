@@ -5,8 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 import os
 from pathlib import Path
+from dataclasses import replace
 from types import MappingProxyType
-from typing import Mapping
+from typing import TYPE_CHECKING, Mapping
 
 from linear_algebra.catalog.manifest import lecture_manifest, topic_entries
 from linear_algebra.catalog.model import LessonEntry, LessonNode
@@ -21,6 +22,10 @@ from linear_algebra.visualizations.common import RenderContext, VisualizationRec
 from linear_algebra.visualizations.compiler import CompiledVisualization, VisualSemanticsCompiler
 from linear_algebra.visualizations.contracts import VisualContract, contract_for
 from linear_algebra.visualizations.snapshots import CompiledSnapshot, CompiledSnapshotStore, snapshot_from
+from linear_algebra.teaching.load_states import LoadPhase, LoadTransaction
+
+if TYPE_CHECKING:
+    from services.scene_commands import SceneCommandService
 
 
 CAPABILITIES: Mapping[str, str] = MappingProxyType({
@@ -39,6 +44,7 @@ CAPABILITIES: Mapping[str, str] = MappingProxyType({
     "staged_transform": "geometry.staged_transform",
     "subspace_region": "geometry.subspace_region",
     "oriented_area_2d": "geometry.oriented_area",
+    "quadratic_level_set": "geometry.quadratic_level_set",
 })
 
 
@@ -54,6 +60,18 @@ class CurriculumBundle:
     snapshot: CompiledSnapshot | None
     source_context: SourceContext | None = None
     source_diagnostic: tuple[str, str, str] | None = None
+
+    @property
+    def is_extended(self) -> bool:
+        """Whether this bundle belongs to the published chapter 4–8 surface."""
+
+        return self.topic.chapter_number >= 4
+
+    @property
+    def explanation(self) -> object:
+        """Return the structured explanation used by the UI transaction."""
+
+        return self.artifact.explanation if self.artifact is not None else None
 
 
 @dataclass(frozen=True)
@@ -118,6 +136,24 @@ class CurriculumRegistry:
                 stored = artifact_store.published(topic_id)
                 if stored is not None:
                     artifact = stored.artifact
+        # Chapter 4–8 release scripts keep their reviewed payload and the
+        # compiled resource/index as the checked-in release unit.  Materialise
+        # that immutable payload as the runtime's published view when a
+        # filesystem ``published`` directory is absent; this keeps runtime
+        # lookup one-to-one without making the UI understand release layout.
+        if artifact is None and topic.chapter_number >= 4:
+            try:
+                from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts
+
+                reviewed = load_reviewed_artifacts().get(topic_id)
+                if reviewed is not None:
+                    artifact = replace(TeachingArtifact.from_dict(reviewed), status="published")
+                    if source_repository is not None:
+                        source_context = source_repository.context_for(topic)
+                        if artifact.source.source_hash != source_context.source_hash:
+                            source_diagnostic = ("stale_source", artifact.source.source_hash, source_context.source_hash)
+            except (FileNotFoundError, ValueError, OSError):
+                artifact = None
         compiled: CompiledVisualization | None = None
         snapshot: CompiledSnapshot | None = None
         if artifact is not None:
@@ -131,7 +167,111 @@ class CurriculumRegistry:
             )
             if snapshot is None or snapshot != expected_snapshot:
                 snapshot = expected_snapshot
+        if artifact is not None:
+            if artifact.topic_id != topic.id:
+                raise ValueError(f"bundle topic mismatch: artifact.topic_id={artifact.topic_id!r}")
+            if recipe.id != topic.visualization_id:
+                raise ValueError(f"bundle recipe mismatch: {recipe.id!r} != {topic.visualization_id!r}")
+            if compiled is not None and compiled.topic_id != topic.id:
+                raise ValueError(f"bundle compiled topic mismatch: {compiled.topic_id!r}")
+            if snapshot is not None and snapshot.topic_id != topic.id:
+                raise ValueError(f"bundle snapshot topic mismatch: {snapshot.topic_id!r}")
         return CurriculumBundle(topic, artifact, contract, recipe, compiled, snapshot, source_context, source_diagnostic)
+
+    def commit_curriculum_bundle(
+        self,
+        bundle: CurriculumBundle,
+        *,
+        pane_id: str | None = None,
+        scene_service: "SceneCommandService | None" = None,
+        expected_scene_fingerprint: str | None = None,
+        previous_scene_fingerprint: str | None = None,
+        previous_explanation_fingerprint: str | None = None,
+    ) -> LoadTransaction:
+        """Validate and stage a complete topic before one optional host commit.
+
+        Resolution is intentionally side-effect free.  This method performs
+        the state-machine checks and attaches the explanation and scene plan to
+        one ``LoadTransaction``.  When ``scene_service`` is supplied its
+        ``execute`` method is called only after ``STAGED``; the service owns
+        the host transaction and rollback.
+        """
+
+        topic = bundle.topic
+        previous_revision = bundle.artifact.revision if bundle.artifact is not None else None
+        transaction = LoadTransaction(topic.id, previous_revision=previous_revision)
+        transaction.previous_scene_fingerprint = previous_scene_fingerprint
+        transaction.previous_explanation_fingerprint = previous_explanation_fingerprint
+        transaction.advance(LoadPhase.RESOLVING)
+
+        def reject(code: str, field: str, message: str) -> LoadTransaction:
+            transaction.reject(code, transaction.phase, field, message)
+            return transaction
+
+        transaction.advance(LoadPhase.SOURCE_CHECKED)
+        if bundle.source_diagnostic is not None:
+            return reject("source_stale", "source_hash", "published source hash no longer matches the lecture")
+
+        artifact = bundle.artifact
+        if topic.chapter_number >= 4 and artifact is None:
+            return reject("missing_artifact", "artifact", "extended topics require a published TeachingArtifact")
+        if artifact is not None:
+            if artifact.status != "published":
+                return reject("missing_artifact", "artifact.status", "artifact is not published")
+            if artifact.topic_id != topic.id:
+                return reject("bundle_mismatch", "artifact.topic_id", f"expected {topic.id!r}")
+            if artifact.source.source_path != topic.source_path:
+                return reject("bundle_mismatch", "artifact.source.source_path", "source path does not match topic")
+        transaction.advance(LoadPhase.ARTIFACT_CHECKED)
+
+        if bundle.contract.topic_id != topic.id:
+            return reject("bundle_mismatch", "contract.topic_id", f"expected {topic.id!r}")
+        if bundle.recipe.id != topic.visualization_id:
+            return reject("bundle_mismatch", "recipe.id", f"expected {topic.visualization_id!r}")
+        if artifact is not None and artifact.visual_semantics.scene_kind != bundle.recipe.scene:
+            return reject("unsupported_scene_family", "visual_semantics.scene_kind", "recipe and artifact scene differ")
+        transaction.advance(LoadPhase.CONTRACT_CHECKED)
+
+        compiled = bundle.compiled
+        if compiled is None:
+            if topic.chapter_number >= 4:
+                return reject("missing_compiled", "compiled", "extended topics require a compiled visualization")
+            plan = bundle.recipe.builder(RenderContext.default(topic.id))
+        else:
+            if compiled.topic_id != topic.id:
+                return reject("bundle_mismatch", "compiled.topic_id", f"expected {topic.id!r}")
+            plan = compiled.plan
+        transaction.advance(LoadPhase.COMPILED)
+
+        from services.scene_commands import SceneCommandService
+
+        validation = SceneCommandService().validate(plan)
+        if not validation.valid:
+            return reject("plan_invalid", "compiled.plan", "；".join(validation.messages))
+        if topic.chapter_number >= 4 and bundle.snapshot is None:
+            return reject("missing_snapshot", "snapshot", "extended topics require a compiled snapshot")
+        if bundle.snapshot is not None:
+            if bundle.snapshot.topic_id != topic.id:
+                return reject("bundle_mismatch", "snapshot.topic_id", f"expected {topic.id!r}")
+            if compiled is not None and bundle.snapshot.plan_digest != compiled.plan_digest:
+                return reject("bundle_mismatch", "snapshot.plan_digest", "snapshot and compiled plan differ")
+        transaction.advance(LoadPhase.PLAN_VALIDATED)
+
+        explanation = artifact.explanation if artifact is not None else self.get_explanation(topic.explanation_id)
+        transaction.stage(
+            bundle=bundle,
+            plan=plan,
+            explanation=explanation,
+            pane_id=pane_id,
+            previous_scene_fingerprint=previous_scene_fingerprint,
+            previous_explanation_fingerprint=previous_explanation_fingerprint,
+        )
+        if scene_service is not None:
+            transaction.commit_host(
+                scene_service.execute,
+                expected_scene_fingerprint=expected_scene_fingerprint,
+            )
+        return transaction
 
 
 _REGISTRY: CurriculumRegistry | None = None
@@ -166,4 +306,25 @@ def catalog_registry() -> CurriculumRegistry:
     return _REGISTRY
 
 
-__all__ = ("CAPABILITIES", "CurriculumBundle", "CurriculumRegistry", "bundled_teaching_store", "runtime_teaching_store", "catalog_registry")
+def commit_curriculum_bundle(
+    bundle: CurriculumBundle,
+    *,
+    pane_id: str | None = None,
+    scene_service: "SceneCommandService | None" = None,
+    expected_scene_fingerprint: str | None = None,
+    previous_scene_fingerprint: str | None = None,
+    previous_explanation_fingerprint: str | None = None,
+) -> LoadTransaction:
+    """Convenience wrapper for callers that already hold a resolved bundle."""
+
+    return catalog_registry().commit_curriculum_bundle(
+        bundle,
+        pane_id=pane_id,
+        scene_service=scene_service,
+        expected_scene_fingerprint=expected_scene_fingerprint,
+        previous_scene_fingerprint=previous_scene_fingerprint,
+        previous_explanation_fingerprint=previous_explanation_fingerprint,
+    )
+
+
+__all__ = ("CAPABILITIES", "CurriculumBundle", "CurriculumRegistry", "bundled_teaching_store", "runtime_teaching_store", "catalog_registry", "commit_curriculum_bundle")

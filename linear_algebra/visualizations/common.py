@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, Literal
+from typing import TYPE_CHECKING, Callable, Literal
 
 from linear_algebra.catalog.model import LessonEntry
-from services.scene_commands import CommandPlan
 from .limits import RenderLimits, limits_for
+
+if TYPE_CHECKING:
+    from services.scene_commands import CommandPlan
 
 
 

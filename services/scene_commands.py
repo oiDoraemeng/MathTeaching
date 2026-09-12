@@ -14,7 +14,19 @@ import re
 from typing import Any, Protocol
 
 from .agent_provider import AgentProvider
-from linear_algebra.visualizations.limits import validate_budget
+
+
+def _validate_budget(*args: object, **kwargs: object) -> tuple[str, ...]:
+    """Load visual budget validation lazily to keep the command protocol acyclic.
+
+    Visualization recipe builders depend on ``CommandPlan``.  Importing their
+    package while this module is still defining that class creates a cycle;
+    budget validation is only needed when an operation is actually validated.
+    """
+
+    from linear_algebra.visualizations.limits import validate_budget
+
+    return validate_budget(*args, **kwargs)
 
 
 class CommandError(ValueError):
@@ -580,7 +592,7 @@ class SceneCommandService:
             sample_count = operation.get("sample_count", len(matrix))
             if any(isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in (entity_count, stage_count, sample_count)):
                 raise CommandError("constraint budget counts must be non-negative integers")
-            budget_errors = validate_budget("lecture-v1", scene=str(operation.get("scene", "3d" if len(matrix) == 3 else "2d")), entity_count=entity_count, stage_count=stage_count, sample_count=sample_count, bounds=tuple(float(value) for value in bounds))
+            budget_errors = _validate_budget("lecture-v1", scene=str(operation.get("scene", "3d" if len(matrix) == 3 else "2d")), entity_count=entity_count, stage_count=stage_count, sample_count=sample_count, bounds=tuple(float(value) for value in bounds))
             if budget_errors:
                 raise CommandError("constraint render_budget: " + "; ".join(budget_errors))
         elif name in {"geometry.matrix_tableau", "geometry.elimination_tableau"}:
@@ -668,7 +680,7 @@ class SceneCommandService:
             bounds = operation.get("bounds")
             if not isinstance(bounds, (list, tuple)) or len(bounds) not in (4, 6) or any(not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)) for value in bounds) or any(float(bounds[index]) >= float(bounds[index + 1]) for index in range(0, len(bounds), 2)):
                 raise CommandError("coordinate bounds are invalid")
-            budget_errors = validate_budget("lecture-v1", scene="3d" if len(basis) == 3 else "2d", entity_count=operation.get("entity_count", len(basis) + 2), stage_count=1, sample_count=operation.get("sample_count", len(basis) ** 2), bounds=tuple(float(value) for value in bounds))
+            budget_errors = _validate_budget("lecture-v1", scene="3d" if len(basis) == 3 else "2d", entity_count=operation.get("entity_count", len(basis) + 2), stage_count=1, sample_count=operation.get("sample_count", len(basis) ** 2), bounds=tuple(float(value) for value in bounds))
             if budget_errors:
                 raise CommandError("coordinate render_budget: " + "; ".join(budget_errors))
             _require_text(operation, "basis_alias")
@@ -707,7 +719,7 @@ class SceneCommandService:
             for field in ("data_alias", "fit_alias", "projection_alias", "residual_alias"):
                 _require_text(operation, field)
             bounds = operation.get("bounds", (-2, 2, -2, 2))
-            budget_errors = validate_budget("lecture-v1", scene="2d", entity_count=operation.get("entity_count", width + 4), stage_count=1, sample_count=operation.get("sample_count", len(matrix)), bounds=tuple(float(value) for value in bounds)) if isinstance(bounds, (list, tuple)) else ("bounds: invalid",)
+            budget_errors = _validate_budget("lecture-v1", scene="2d", entity_count=operation.get("entity_count", width + 4), stage_count=1, sample_count=operation.get("sample_count", len(matrix)), bounds=tuple(float(value) for value in bounds)) if isinstance(bounds, (list, tuple)) else ("bounds: invalid",)
             if budget_errors:
                 raise CommandError("least_squares render_budget: " + "; ".join(budget_errors))
         elif name == "geometry.spectrum":
@@ -729,7 +741,7 @@ class SceneCommandService:
             tolerance = operation.get("tolerance", 1e-9)
             if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not math.isfinite(float(tolerance)) or float(tolerance) <= 0:
                 raise CommandError("spectrum tolerance is invalid")
-            budget_errors = validate_budget("lecture-v1", scene="3d" if len(matrix) == 3 else "2d", entity_count=operation.get("entity_count", len(matrix) + 2), stage_count=operation.get("stage_count", 1), sample_count=operation.get("sample_count", len(matrix) ** 2), bounds=tuple(float(value) for value in bounds))
+            budget_errors = _validate_budget("lecture-v1", scene="3d" if len(matrix) == 3 else "2d", entity_count=operation.get("entity_count", len(matrix) + 2), stage_count=operation.get("stage_count", 1), sample_count=operation.get("sample_count", len(matrix) ** 2), bounds=tuple(float(value) for value in bounds))
             if budget_errors: raise CommandError("spectrum render_budget: " + "; ".join(budget_errors))
         elif name == "geometry.projection3d":
             bounds = operation.get("bounds")
@@ -740,7 +752,7 @@ class SceneCommandService:
             if not isinstance(operation.get("tolerance", 1e-9), (int, float)) or float(operation.get("tolerance", 1e-9)) <= 0 or not math.isfinite(float(operation.get("tolerance", 1e-9))):
                 raise CommandError("projection3d tolerance is invalid")
             _require_text(operation, "alias")
-            budget_errors = validate_budget("lecture-v1", scene="3d", entity_count=operation.get("entity_count", 4), stage_count=operation.get("stage_count", 1), sample_count=operation.get("sample_count", 1), bounds=tuple(float(value) for value in bounds))
+            budget_errors = _validate_budget("lecture-v1", scene="3d", entity_count=operation.get("entity_count", 4), stage_count=operation.get("stage_count", 1), sample_count=operation.get("sample_count", 1), bounds=tuple(float(value) for value in bounds))
             if budget_errors: raise CommandError("projection3d render_budget: " + "; ".join(budget_errors))
         elif name == "geometry.orthogonalization":
             vectors = operation.get("vectors"); stages = operation.get("stages")
@@ -758,7 +770,7 @@ class SceneCommandService:
             tolerance = operation.get("tolerance", 1e-9)
             if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not math.isfinite(float(tolerance)) or float(tolerance) <= 0:
                 raise CommandError("orthogonalization tolerance is invalid")
-            budget_errors = validate_budget("lecture-v1", scene="3d" if len(vectors[0]) == 3 else "2d", entity_count=operation.get("entity_count", len(vectors) * 4), stage_count=operation.get("stage_count", len(vectors)), sample_count=operation.get("sample_count", len(vectors)), bounds=tuple(float(value) for value in bounds))
+            budget_errors = _validate_budget("lecture-v1", scene="3d" if len(vectors[0]) == 3 else "2d", entity_count=operation.get("entity_count", len(vectors) * 4), stage_count=operation.get("stage_count", len(vectors)), sample_count=operation.get("sample_count", len(vectors)), bounds=tuple(float(value) for value in bounds))
             if budget_errors: raise CommandError("orthogonalization render_budget: " + "; ".join(budget_errors))
         elif name == "geometry.quadratic_level_set":
             matrix = operation.get("matrix")
@@ -774,7 +786,7 @@ class SceneCommandService:
             tolerance = operation.get("tolerance", 1e-9)
             if not isinstance(tolerance, (int, float)) or isinstance(tolerance, bool) or not math.isfinite(float(tolerance)) or float(tolerance) <= 0:
                 raise CommandError("quadratic tolerance is invalid")
-            budget_errors = validate_budget("lecture-v1", scene="3d" if len(matrix) == 3 else "2d", entity_count=operation.get("entity_count", 3), stage_count=operation.get("stage_count", 3), sample_count=operation.get("sample_count", 128 * 128 if len(matrix) == 2 else 64 * 64 * 64), bounds=tuple(float(value) for value in bounds))
+            budget_errors = _validate_budget("lecture-v1", scene="3d" if len(matrix) == 3 else "2d", entity_count=operation.get("entity_count", 3), stage_count=operation.get("stage_count", 3), sample_count=operation.get("sample_count", 128 * 128 if len(matrix) == 2 else 64 * 64 * 64), bounds=tuple(float(value) for value in bounds))
             if budget_errors: raise CommandError("quadratic render_budget: " + "; ".join(budget_errors))
             aliases = operation.get("aliases")
             if not isinstance(aliases, (list, tuple)) or len(aliases) != 3 or any(not isinstance(alias, str) or not alias for alias in aliases) or len(set(aliases)) != 3:

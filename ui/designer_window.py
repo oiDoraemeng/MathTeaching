@@ -36,6 +36,7 @@ from models.geometry_2d import (
 )
 from models.function_catalog import catalog_entries, catalog_entry
 from linear_algebra.registry import catalog_registry, runtime_teaching_store
+from linear_algebra.teaching.load_states import LoadPhase, fingerprint
 from linear_algebra.teaching.source import LectureSourceRepository
 from linear_algebra.visualizations.common import RenderContext
 from linear_algebra.visualizations.compiler import CompiledVisualization, storyboard_visibility
@@ -3168,6 +3169,14 @@ class MainWindow:
 
     def _load_linear_algebra_topic(self, topic_id: str) -> None:
         registry = catalog_registry()
+        previous = {
+            "topic_id": getattr(self, "_active_linear_algebra_topic_id", None),
+            "compiled": getattr(self, "_active_linear_algebra_compiled", None),
+            "stage_id": getattr(self, "_active_linear_algebra_stage_id", None),
+            "hidden": set(getattr(self, "_hidden_linear_algebra_aliases", set())),
+            "pane_ids": list(getattr(self, "_teaching_case_pane_ids", ())),
+            "stage_refs": dict(getattr(self, "_teaching_case_stage_refs", {})),
+        }
         try:
             bundle = registry.resolve_bundle(
                 topic_id,
@@ -3175,18 +3184,22 @@ class MainWindow:
                 source_repository=self._linear_algebra_source_repository(),
             )
             topic = bundle.topic
-            explanation_case = bundle.artifact or registry.get_explanation(topic.explanation_id)
-            lesson_plan = bundle.compiled.plan if bundle.compiled is not None else bundle.recipe.builder(RenderContext.default(topic.id))
-            validation = SceneCommandService().validate(lesson_plan)
-            if not validation.valid:
-                raise CommandError("；".join(validation.messages))
+            before_scene, before_explanation = self.teaching_fingerprints()
+            transaction = registry.commit_curriculum_bundle(
+                bundle,
+                pane_id=getattr(getattr(self, "pane_manager", None), "active_pane_id", None),
+                previous_scene_fingerprint=before_scene,
+                previous_explanation_fingerprint=before_explanation,
+            )
+            if transaction.phase is not LoadPhase.STAGED:
+                diagnostic = transaction.diagnostic
+                detail = diagnostic.message if diagnostic is not None else "主题资源不完整"
+                raise CommandError(f"{diagnostic.code if diagnostic else 'bundle_invalid'}: {detail}")
+            explanation_case = transaction.explanation
+            lesson_plan = transaction.plan
         except (KeyError, CommandError, ValueError) as error:
             self.algebra_panel.set_status(f"未知或无效的线性代数主题 {topic_id}: {error}", is_error=True)
             return
-        self._active_linear_algebra_topic_id = topic.id
-        self._active_linear_algebra_compiled = bundle.compiled
-        self._active_linear_algebra_stage_id = None
-        self._hidden_linear_algebra_aliases = set()
         try:
             compiled = bundle.compiled
             if compiled is None:
@@ -3208,8 +3221,22 @@ class MainWindow:
                     scene_mode=lesson_plan.scene,
                     compiled=bundle.compiled,
                 )
+            # Publish identity only after both surfaces have been prepared.
+            self._active_linear_algebra_topic_id = topic.id
+            self._active_linear_algebra_compiled = bundle.compiled
+            self._active_linear_algebra_stage_id = None
+            self._hidden_linear_algebra_aliases = set()
+            transaction.advance(LoadPhase.COMMITTED)
         except Exception as error:
             self._close_teaching_case_panes()
+            self._active_linear_algebra_topic_id = previous["topic_id"]
+            self._active_linear_algebra_compiled = previous["compiled"]
+            self._active_linear_algebra_stage_id = previous["stage_id"]
+            self._hidden_linear_algebra_aliases = previous["hidden"]
+            self._teaching_case_pane_ids = previous["pane_ids"]
+            self._teaching_case_stage_refs = previous["stage_refs"]
+            if transaction.phase is LoadPhase.STAGED:
+                transaction.reject("host_failure", LoadPhase.STAGED, "teaching_case", str(error))
             self.algebra_panel.set_status(f"案例面板显示失败: {error}", is_error=True)
             return
         if bundle.source_diagnostic is not None:
@@ -3217,6 +3244,31 @@ class MainWindow:
             self.algebra_panel.set_status(f"已加载主题: {topic.title}（stale_source: {old_hash} → {current_hash}）")
         else:
             self.algebra_panel.set_status(f"已加载主题: {topic.title}")
+
+    def teaching_fingerprints(self) -> tuple[str, str]:
+        """Return scene and explanation fingerprints for atomic-load tests/UI diagnostics."""
+
+        try:
+            scene = self._scene_snapshot_from_current_state()
+            scene_value = scene.to_dict() if hasattr(scene, "to_dict") else scene
+        except Exception:
+            scene_value = repr(getattr(self, "pane_manager", None))
+        panel = getattr(self, "agent_panel", None)
+        capture = getattr(panel, "capture_math_case", None)
+        if callable(capture):
+            try:
+                explanation_value = capture()
+            except Exception:
+                explanation_value = None
+        else:
+            explanation_value = getattr(panel, "_pending_math_case", None)
+            if explanation_value is None:
+                explanation_value = {
+                    "topic_id": getattr(self, "_active_linear_algebra_topic_id", None),
+                    "pane_ids": tuple(getattr(self, "_teaching_case_pane_ids", ())),
+                    "stage_refs": getattr(self, "_teaching_case_stage_refs", {}),
+                }
+        return fingerprint(scene_value), fingerprint(explanation_value)
 
     def _enter_linear_algebra_workspace(self) -> None:
         """Open the lecture catalog without changing the current scene."""

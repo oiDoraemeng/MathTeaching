@@ -307,8 +307,9 @@ def validate_registry(registry: CurriculumRegistry) -> tuple[str, ...]:
     topic_ids = [topic.id for topic in registry.topics]
     if len(topic_ids) != len(set(topic_ids)):
         errors.append("catalog: duplicate topic IDs")
-    if Counter(topic.chapter_number for topic in registry.topics) != Counter({1: 24, 2: 15, 3: 15}):
-        errors.append("catalog: expected chapter topic counts 24/15/15")
+    expected_counts = Counter({1: 24, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6})
+    if Counter(topic.chapter_number for topic in registry.topics) != expected_counts:
+        errors.append("catalog: expected chapter topic counts 24/15/15/16/8/3/6/6")
     node_ids = [node.id for node in registry.nodes]
     if len(node_ids) != len(set(node_ids)):
         errors.append("catalog: duplicate node IDs")
