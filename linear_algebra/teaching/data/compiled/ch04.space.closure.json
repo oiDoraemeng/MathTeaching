@@ -199,7 +199,7 @@
           3.0
         ],
         "op": "geometry.subspace_region",
-        "opacity": 0.16
+        "opacity": 0.2
       },
       {
         "alias": "ch04__relation__scaled_membership",
@@ -220,7 +220,7 @@
           3.0
         ],
         "op": "geometry.subspace_region",
-        "opacity": 0.16
+        "opacity": 0.2
       },
       {
         "alias": "sem__stage.ch04.space.closure.addition__title",
@@ -249,7 +249,7 @@
     "summary": "4.1.1 线性空间",
     "version": 1
   },
-  "plan_digest": "sha256:36ff975037a0a5e9dcd1a7c3d4ffa18b1415589baaadee9dae1b68a07e589702",
+  "plan_digest": "sha256:6c380540efcd28ff02831f9d0d34b4daf6e8b3daff43d00c626e7520494665a5",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],

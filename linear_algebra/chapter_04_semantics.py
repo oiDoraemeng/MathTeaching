@@ -121,7 +121,7 @@ _MAPPING: dict[str, Chapter4Semantic] = {
 "ch04.subspace.col-null": Chapter4Semantic(
  "2d", "subspace_region", ("transformed_grid","subspace_region","vector_2d"),
  (E("map_A","matrix",2,A10,"A"), E("domain","basis",2,I2,"R² domain"), E("codomain","basis",2,I2,"R² codomain"), E("kernel","subspace",2,M(V(0,1)),"Null(A)"), E("column_space","subspace",2,M(V(1,0)),"Col(A)"), E("kernel_vector","vector",2,V(0,1),"k"), E("zero","point",2,V(0,0),"0"), E("image_vector","vector",2,V(2,0),"A(2,3)")),
- (R("kernel_map","maps_to","kernel_vector","zero",matrix=A10,expected_result=V(0,0)), R("kernel_binding","kernel_of","kernel","map_A",expected_nullity=1.0), R("column_binding","image_of","map_A","column_space",expected_rank=1.0), R("domain_image","maps_to","domain","column_space",matrix=A10,expected_result=V(2,0))),
+ (R("kernel_map","maps_to","kernel_vector","zero",matrix=A10,expected_result=V(0,0)), R("kernel_binding","kernel_of","kernel","map_A",expected_nullity=1.0), R("column_binding","image_of","map_A","column_space",expected_rank=1.0), R("domain_image","maps_to","domain","column_space",matrix=A10,input_vector=V(2,3),expected_result=V(2,0))),
  (S("domain","核方向",("domain","kernel","kernel_vector"),("zero",),("kernel_map","kernel_binding"),("kernel_to_zero",),"side_by_side"), S("codomain","列空间",("map_A","codomain"),("column_space","image_vector"),("column_binding","domain_image"),("image_x_axis","diag_1_0"),"side_by_side")),
  ("diag_1_0","kernel_to_zero","image_x_axis"), ("geometry.transformed_grid","geometry.subspace_region","linear.upsert"), r"A=\operatorname{diag}(1,0),\ Null(A)=\operatorname{span}(e_2),\ Col(A)=\operatorname{span}(e_1)", "matrix_transform", (A10,V(2,3)), V(2,0), "kernel_vector"),
 "ch04.span.dimension": Chapter4Semantic(

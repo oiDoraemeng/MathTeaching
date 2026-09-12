@@ -27,6 +27,58 @@
         "opacity": 0.2
       },
       {
+        "alias": "ch04__entity__standard_basis__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_1",
+        "end": "ch04__entity__standard_basis__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__standard_basis__generator_1__origin"
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_2",
+        "end": "ch04__entity__standard_basis__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__standard_basis__generator_2__origin"
+      },
+      {
         "alias": "ch04__entity__oblique_basis",
         "basis": [
           [
@@ -46,6 +98,58 @@
         ],
         "op": "geometry.subspace_region",
         "opacity": 0.2
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_1__end",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_1",
+        "end": "ch04__entity__oblique_basis__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__oblique_basis__generator_1__origin"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_2",
+        "end": "ch04__entity__oblique_basis__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__oblique_basis__generator_2__origin"
       },
       {
         "alias": "ch04__entity__same_vector__origin",
@@ -254,7 +358,7 @@
     "summary": "4.3.3 坐标——向量的\"读数\"",
     "version": 1
   },
-  "plan_digest": "sha256:081973c5b3da1acaaa7f83476046596db86ebfb55a39bd4680371ce7172e1e85",
+  "plan_digest": "sha256:8c53fd5e5415b036de8c47dbf95c7b9b1ae87c223c3cf8325ce538dd2d1aeba4",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],

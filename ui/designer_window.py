@@ -1964,6 +1964,21 @@ class MainWindow:
         if name == "annotation.formula":
             self._command_formula_annotation(operation)
             return
+        if name == "geometry.intersection":
+            self._command_intersection(operation)
+            return
+        if name == "geometry.mapping_bundle":
+            if self._pane_scene().scene_mode is not SceneMode.TWO_D or self._pane_scene().geometry_controller is None:
+                raise CommandError("mapping bundle requires a 2D scene.")
+            bounds = tuple(float(v) for v in operation.get("bounds", (-2,2,-2,2)))
+            controller = self._pane_scene().geometry_controller
+            for lane_name, lane in dict(operation.get("lanes", {})).items():
+                basis = lane.get("basis", ()) if isinstance(lane, dict) else ()
+                if basis:
+                    alias = f"{operation.get('alias','mapping')}__{lane_name}"
+                    lane_operation={"op":"geometry.subspace_region","alias":alias,"basis":basis,"origin":lane.get("origin",[0.0,0.0]),"bounds":list(bounds),"opacity":0.18}
+                    self._command_teaching_geometry(lane_operation)
+            return
         if name.startswith("geometry."):
             self._command_teaching_geometry(operation)
             return
@@ -1991,9 +2006,6 @@ class MainWindow:
         if name == "scene.export_png":
             filename = str(operation.get("filename", ""))
             self._pane_renderer().screenshot(str(self._managed_export_path(filename)))
-            return
-        if name == "geometry.intersection":
-            self._command_intersection(operation)
             return
         if name.startswith("linear_algebra.") or name.startswith("calculus."):
             raise CommandError(f"宿主收到未展开的教学命令: {name}")
@@ -2559,6 +2571,22 @@ class MainWindow:
     def _command_intersection(self, operation: dict[str, object]) -> None:
         first = str(operation["first"])
         second = str(operation["second"])
+        if self._pane_scene().scene_mode is SceneMode.THREE_D:
+            geometry = self._pane_scene()._agent_geometry3d
+            first_plane = geometry.get(first, {})
+            second_plane = geometry.get(second, {})
+            if first_plane.get("op") == second_plane.get("op") == "plane3d.upsert":
+                import numpy as np
+                normals=np.asarray([first_plane["normal"],second_plane["normal"]],dtype=float)
+                direction=np.cross(normals[0],normals[1])
+                length=float(np.linalg.norm(direction))
+                if length <= 1e-9:
+                    raise CommandError("Parallel or coincident planes do not have a unique intersection line.")
+                rhs=np.asarray([np.dot(normals[0],first_plane["origin"]),np.dot(normals[1],second_plane["origin"])])
+                point=np.linalg.lstsq(normals,rhs,rcond=None)[0]
+                direction=direction/length*3.0
+                self._command_upsert_linear3d({"op":"linear3d.upsert","alias":str(operation.get("alias","intersection")),"start":(point-direction).tolist(),"end":(point+direction).tolist(),"kind":"segment","role":"result","color":"#d64545"})
+                return
         if self._pane_scene().scene_mode is SceneMode.THREE_D and self._pane_scene().layer_controller is not None:
             first_layer = next((item for item in self._pane_scene().layers if item.agent_alias == first or item.id == first), None)
             second_layer = next((item for item in self._pane_scene().layers if item.agent_alias == second or item.id == second), None)

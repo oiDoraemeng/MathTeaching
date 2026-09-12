@@ -27,6 +27,58 @@
         "opacity": 0.2
       },
       {
+        "alias": "ch04__entity__independent_basis__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__independent_basis__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__independent_basis__generator_1",
+        "end": "ch04__entity__independent_basis__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__independent_basis__generator_1__origin"
+      },
+      {
+        "alias": "ch04__entity__independent_basis__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__independent_basis__generator_2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__independent_basis__generator_2",
+        "end": "ch04__entity__independent_basis__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__independent_basis__generator_2__origin"
+      },
+      {
         "alias": "ch04__entity__spanning_set",
         "basis": [
           [
@@ -65,6 +117,32 @@
         "opacity": 0.2
       },
       {
+        "alias": "ch04__entity__too_few__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__too_few__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__too_few__generator_1",
+        "end": "ch04__entity__too_few__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__too_few__generator_1__origin"
+      },
+      {
         "alias": "ch04__entity__too_many",
         "basis": [
           [
@@ -86,6 +164,84 @@
         "opacity": 0.2
       },
       {
+        "alias": "ch04__entity__too_many__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__too_many__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__too_many__generator_1",
+        "end": "ch04__entity__too_many__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__too_many__generator_1__origin"
+      },
+      {
+        "alias": "ch04__entity__too_many__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__too_many__generator_2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__too_many__generator_2",
+        "end": "ch04__entity__too_many__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__too_many__generator_2__origin"
+      },
+      {
+        "alias": "ch04__entity__too_many__generator_3__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__too_many__generator_3__end",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__too_many__generator_3",
+        "end": "ch04__entity__too_many__generator_3__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__too_many__generator_3__origin"
+      },
+      {
         "alias": "ch04__relation__basis_binding",
         "basis": [
           [
@@ -104,7 +260,59 @@
           3.0
         ],
         "op": "geometry.subspace_region",
-        "opacity": 0.16
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__relation__basis_binding__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__basis_binding__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__basis_binding__generator_1",
+        "end": "ch04__relation__basis_binding__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__basis_binding__generator_1__origin"
+      },
+      {
+        "alias": "ch04__relation__basis_binding__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__basis_binding__generator_2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__basis_binding__generator_2",
+        "end": "ch04__relation__basis_binding__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__basis_binding__generator_2__origin"
       },
       {
         "alias": "ch04__relation__too_few_span",
@@ -121,7 +329,33 @@
           3.0
         ],
         "op": "geometry.subspace_region",
-        "opacity": 0.16
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__relation__too_few_span__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__too_few_span__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__too_few_span__generator_1",
+        "end": "ch04__relation__too_few_span__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__too_few_span__generator_1__origin"
       },
       {
         "alias": "ch04__relation__too_many_dependence",
@@ -142,7 +376,85 @@
           3.0
         ],
         "op": "geometry.subspace_region",
-        "opacity": 0.16
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__relation__too_many_dependence__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__too_many_dependence__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__too_many_dependence__generator_1",
+        "end": "ch04__relation__too_many_dependence__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__too_many_dependence__generator_1__origin"
+      },
+      {
+        "alias": "ch04__relation__too_many_dependence__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__too_many_dependence__generator_2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__too_many_dependence__generator_2",
+        "end": "ch04__relation__too_many_dependence__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__too_many_dependence__generator_2__origin"
+      },
+      {
+        "alias": "ch04__relation__too_many_dependence__generator_3__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__too_many_dependence__generator_3__end",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__too_many_dependence__generator_3",
+        "end": "ch04__relation__too_many_dependence__generator_3__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__too_many_dependence__generator_3__origin"
       },
       {
         "alias": "sem__stage.ch04.basis.span.complete__title",
@@ -171,7 +483,7 @@
     "summary": "4.3.1 基的定义",
     "version": 1
   },
-  "plan_digest": "sha256:51ef0496980a93914284f58eeed53da2ea7075d8d87f6241585a69451542a527",
+  "plan_digest": "sha256:d199875ab0e6ff8d164c17429a5ca05d840a549d5cc931020fc15822356978fc",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -194,6 +506,12 @@
         "ch04__entity__independent_basis",
         "ch04__entity__spanning_set",
         "ch04__relation__basis_binding",
+        "ch04__relation__basis_binding__generator_1__origin",
+        "ch04__relation__basis_binding__generator_1__end",
+        "ch04__relation__basis_binding__generator_1",
+        "ch04__relation__basis_binding__generator_2__origin",
+        "ch04__relation__basis_binding__generator_2__end",
+        "ch04__relation__basis_binding__generator_2",
         "sem__stage.ch04.basis.span.complete__title"
       ],
       "visible_refs": [
@@ -216,7 +534,19 @@
         "ch04__entity__too_many",
         "ch04__entity__spanning_set",
         "ch04__relation__too_few_span",
+        "ch04__relation__too_few_span__generator_1__origin",
+        "ch04__relation__too_few_span__generator_1__end",
+        "ch04__relation__too_few_span__generator_1",
         "ch04__relation__too_many_dependence",
+        "ch04__relation__too_many_dependence__generator_1__origin",
+        "ch04__relation__too_many_dependence__generator_1__end",
+        "ch04__relation__too_many_dependence__generator_1",
+        "ch04__relation__too_many_dependence__generator_2__origin",
+        "ch04__relation__too_many_dependence__generator_2__end",
+        "ch04__relation__too_many_dependence__generator_2",
+        "ch04__relation__too_many_dependence__generator_3__origin",
+        "ch04__relation__too_many_dependence__generator_3__end",
+        "ch04__relation__too_many_dependence__generator_3",
         "sem__stage.ch04.basis.span.comparisons__title"
       ],
       "visible_refs": [

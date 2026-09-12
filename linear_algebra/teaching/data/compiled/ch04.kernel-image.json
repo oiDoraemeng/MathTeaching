@@ -48,6 +48,58 @@
         "opacity": 0.2
       },
       {
+        "alias": "ch04__entity__domain__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__domain__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__domain__generator_1",
+        "end": "ch04__entity__domain__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__domain__generator_1__origin"
+      },
+      {
+        "alias": "ch04__entity__domain__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__domain__generator_2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__domain__generator_2",
+        "end": "ch04__entity__domain__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__domain__generator_2__origin"
+      },
+      {
         "alias": "ch04__entity__kernel_direction__origin",
         "coordinates": [
           0.0,
@@ -193,9 +245,46 @@
           ]
         ],
         "lanes": {
-          "domain": 1.0,
-          "image": 1.0,
-          "kernel": 1.0
+          "domain": {
+            "basis": [
+              [
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0
+              ]
+            ],
+            "origin": [
+              -3.0,
+              0.0
+            ]
+          },
+          "image": {
+            "basis": [
+              [
+                1.0,
+                0.0
+              ]
+            ],
+            "origin": [
+              3.0,
+              0.0
+            ]
+          },
+          "kernel": {
+            "basis": [
+              [
+                0.0,
+                1.0
+              ]
+            ],
+            "origin": [
+              -3.0,
+              0.0
+            ]
+          }
         },
         "offset": [
           0.0,
@@ -319,7 +408,7 @@
     "summary": "4.5.1 定义",
     "version": 1
   },
-  "plan_digest": "sha256:574583147f6129f524dbb0770745eb43190d35c1e6b0d92e7f0e236487839dca",
+  "plan_digest": "sha256:79165c125729757ab0ee8b689e7c53db559ddf3ea9fe1eb7838a767a745842d4",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],

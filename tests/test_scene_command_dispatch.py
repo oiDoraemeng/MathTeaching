@@ -15,6 +15,8 @@ from models.curve_layer import Plot2DDomain
 from rendering.curve_scene import CurveSceneController
 from rendering.geometry_scene import GeometrySceneController
 from rendering.ticks import ViewportBounds
+from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
+from linear_algebra.chapter_04_semantics import TOPIC_SEMANTICS
 from services.scene_commands import CommandError, CommandPlan, SceneCommandService
 from ui.designer_window import MainWindow
 from ui.scene_pane_manager import ScenePaneManager
@@ -290,6 +292,37 @@ def test_deleted_transaction_pane_does_not_block_surviving_pane_commands() -> No
     service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
     service.execute(_drawing_plan(), pane_id=second)
     assert len(window._pane_scene(second).geometry_points) == 2
+
+
+@pytest.mark.parametrize("topic", sorted(TOPIC_SEMANTICS))
+def test_chapter_four_real_host_executes_geometry_and_rolls_back(topic):
+    from linear_algebra.teaching.chapter_artifacts import artifact_payload_for
+    from linear_algebra.teaching.model import TeachingArtifact
+    from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
+    from rendering.geometry_3d_scene import Geometry3DSceneController
+    from models.scene_mode import SceneMode
+    window=_pane_window()
+    target,untouched=window.pane_manager.visible_pane_ids()
+    plan=VisualSemanticsCompiler().compile(TeachingArtifact.from_dict(artifact_payload_for(topic))).plan
+    scene=window._pane_scene(target)
+    if plan.scene=="3d":
+        scene.scene_mode=SceneMode.THREE_D
+        scene.geometry3d_controller=Geometry3DSceneController(window._pane_renderer(target))
+    service=SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    service.execute(plan,pane_id=target)
+    if topic=="ch04.kernel-image":
+        assert {f"ch04__kernel_image__bundle__{lane}" for lane in ("domain","kernel","image")} <= set(scene._agent_teaching_2d)
+    elif topic=="ch04.subspace.intersection":
+        assert any(alias.startswith("ch04__relation__") and value.get("op")=="linear3d.upsert" for alias,value in scene._agent_geometry3d.items())
+    assert window._pane_scene(untouched).geometry_points==[]
+    with window._using_pane(target):
+        before=window._capture_scene_command_state()
+    failure={"op":"geometry.intersection","alias":"invalid","first":"missing","second":"also_missing"} if plan.scene=="3d" else {"op":"linear.upsert","alias":"invalid","start":"missing","end":"also_missing","kind":"segment"}
+    with pytest.raises(CommandError):
+        service.execute(CommandPlan(scene=plan.scene,operations=(*plan.operations,failure)),pane_id=target)
+    with window._using_pane(target):
+        after=window._capture_scene_command_state()
+    assert before==after
 
 
 def test_service_cleans_up_when_pane_is_deleted_during_execution() -> None:

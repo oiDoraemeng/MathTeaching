@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:392f9f59e18d1b9e1e2fd7d991a0f5a657d2c0d920a06159508c6f370e47c2f1",
+  "artifact_digest": "sha256:36aa9a1bda6ab3159f11c5d46e7d4b226b32579e862d654255d59283452127f1",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:30cb0d3a2b4783d13bc5c9a40a688900000f020c4602dc4d49f39ae8e2f4e774",
+  "contract_digest": "sha256:936c79388ce767a8e211e26126827bd1a3dfb11e3cc8d4dfa33f620e947bc42d",
   "plan": {
     "operations": [
       {
@@ -48,6 +48,58 @@
         "opacity": 0.2
       },
       {
+        "alias": "ch04__entity__domain__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__domain__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__domain__generator_1",
+        "end": "ch04__entity__domain__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__domain__generator_1__origin"
+      },
+      {
+        "alias": "ch04__entity__domain__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__domain__generator_2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__domain__generator_2",
+        "end": "ch04__entity__domain__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__domain__generator_2__origin"
+      },
+      {
         "alias": "ch04__entity__codomain",
         "basis": [
           [
@@ -67,6 +119,58 @@
         ],
         "op": "geometry.subspace_region",
         "opacity": 0.2
+      },
+      {
+        "alias": "ch04__entity__codomain__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__codomain__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__codomain__generator_1",
+        "end": "ch04__entity__codomain__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__codomain__generator_1__origin"
+      },
+      {
+        "alias": "ch04__entity__codomain__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__codomain__generator_2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__codomain__generator_2",
+        "end": "ch04__entity__codomain__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__codomain__generator_2__origin"
       },
       {
         "alias": "ch04__entity__kernel",
@@ -274,7 +378,7 @@
     "summary": "4.1.3 两大核心子空间：列空间与零空间",
     "version": 1
   },
-  "plan_digest": "sha256:071e94a01455999bedb5f983e1797cf1019b0eaafa768f698a740325fc14e314",
+  "plan_digest": "sha256:3dabe18a4f2d612fdf57f26ed6d220f6ca498ab2178e886c380f778243f1dbfe",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],

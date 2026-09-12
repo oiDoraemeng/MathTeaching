@@ -142,3 +142,69 @@ def test_non_identity_topics_do_not_use_identity_or_first_vector_fallbacks():
         matrices=[op["matrix"] for op in _compile(topic).plan.operations if op["op"]=="geometry.transformed_grid"]
         assert matrix in matrices
         assert matrices != [[[1.0,0.0],[0.0,1.0]]]
+
+
+def test_too_many_draws_all_three_generators_in_entity_and_relation():
+    operations=_compile("ch04.basis.span").plan.operations
+    for prefix in ("ch04__entity__too_many", "ch04__relation__too_many_dependence"):
+        endpoints=[op["coordinates"] for op in operations if op.get("alias", "").startswith(prefix+"__generator_") and op.get("alias", "").endswith("__end")]
+        assert endpoints==[[1,0],[0,1],[1,1]]
+
+
+def test_nullspace_chain_uses_weighted_columns_and_ends_at_computed_zero():
+    topic="ch04.nullspace.test"
+    artifact=_artifact(topic)
+    result=Chapter4FamilyCompiler.compile(topic_id=topic,semantics=artifact.visual_semantics,context=RenderContext.default(topic))
+    terms=[op for op in result.operations if "nontrivial_solution__term_" in op.get("alias", "")]
+    assert [op["start"] for op in terms]==[[0,0,0],[1,0,0],[1,1,0]]
+    assert [op["end"] for op in terms]==[[1,0,0],[1,1,0],[0,0,0]]
+    assert result.evidence["columns"]==[[1,0,0],[0,1,0],[1,1,0]]
+    assert result.evidence["combination_residual"]==[0,0,0]
+
+
+@pytest.mark.parametrize("topic,role,value", [
+    ("ch04.subspace.classification","origin",[1,0,0]),
+    # A nonzero offset lying in the plane still contains the origin.
+    ("ch04.subspace.classification","affine_counterexample",[[1,0,0],[0,1,0],[1,0,0]]),
+    ("ch04.subspace.col-null","column_space",[[0,1]]),
+    ("ch04.subspace.col-null","image_vector",[3,0]),
+])
+def test_final_review_corruption_fails_actual_math_not_only_fixture_equality(topic,role,value):
+    from linear_algebra.visualizations.families.chapter_04 import _mathematical_evidence
+    payload=artifact_payload_for(topic)
+    next(e for e in payload["visual_semantics"]["entities"] if e["role"]==role)["value"]=value
+    semantics=_artifact(topic,payload).visual_semantics
+    with pytest.raises(VisualCompileError):
+        _mathematical_evidence(topic,{e.role:e for e in semantics.entities},semantics.relations)
+
+
+def test_square_failure_is_computed_from_relation_inputs():
+    from dataclasses import replace
+    from linear_algebra.visualizations.families.chapter_04 import _mathematical_evidence
+    topic="ch04.linear-map.compare"; semantics=_artifact(topic).visual_semantics
+    relations=tuple(replace(r,parameters={"inputs":[2,3],"separate_sum":13.0,"sum_image":25.0}) if r.id.endswith("square_failure") else r for r in semantics.relations)
+    evidence=_mathematical_evidence(topic,{e.role:e for e in semantics.entities},relations)
+    assert evidence["square_sum_image"]==25
+    assert evidence["square_separate_sum"]==13
+    relations=tuple(replace(r,parameters={"inputs":[0,3],"separate_sum":9.0,"sum_image":9.0}) if r.id.endswith("square_failure") else r for r in relations)
+    with pytest.raises(VisualCompileError):
+        _mathematical_evidence(topic,{e.role:e for e in semantics.entities},relations)
+
+
+def test_disk_revieweds_are_canonical_and_legacy_index_rows_match_release_baseline():
+    import json
+    import subprocess
+    from pathlib import Path
+    from linear_algebra.teaching.compile_resources import compile_reviewed_topic, compiled_resource_store
+    root=Path(__file__).resolve().parents[1]
+    data=root/"linear_algebra"/"teaching"/"data"
+    baseline=json.loads(subprocess.check_output(["git","show","90f6c09^:linear_algebra/teaching/data/index.json"],cwd=root).decode("utf-8"))
+    current=json.loads((data/"index.json").read_text(encoding="utf-8"))
+    legacy=lambda payload: [row for row in payload["topics"] if row["topic_id"].startswith(("ch01.","ch02.","ch03."))]
+    assert len(legacy(current))==54
+    assert json.dumps(legacy(current),sort_keys=True,ensure_ascii=False).encode()==json.dumps(legacy(baseline),sort_keys=True,ensure_ascii=False).encode()
+    assert current["topic_count"]==len(current["topics"])==70
+    assert len({row["topic_id"] for row in current["topics"]})==70
+    for topic in TOPICS:
+        assert json.loads((data/"revieweds"/"ch04"/topic/"r1.json").read_text(encoding="utf-8"))==artifact_payload_for(topic)
+        assert compile_reviewed_topic(topic).to_dict()==compiled_resource_store().get(topic).to_dict()

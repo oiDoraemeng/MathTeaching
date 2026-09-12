@@ -140,14 +140,72 @@
           [
             1.0,
             0.0,
-            1.0
+            0.0
           ],
           [
             0.0,
             1.0,
-            1.0
+            0.0
           ]
         ]
+      },
+      {
+        "alias": "ch04__relation__nontrivial_solution__term_1",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "result",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__nontrivial_solution__term_2",
+        "end": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "result",
+        "start": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__nontrivial_solution__term_3",
+        "end": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "result",
+        "start": [
+          1.0,
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__nontrivial_solution__residual",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "Ax",
+        "op": "point3d.upsert"
       },
       {
         "alias": "ch04__relation__zero_result",
@@ -178,7 +236,7 @@
     "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$",
     "version": 1
   },
-  "plan_digest": "sha256:21e1a927d1d14537fd1818a45b82129847e8f931121178b1586bf2281a56c9e1",
+  "plan_digest": "sha256:88401f1af6e733574b18535915de08f897822d1fa0db2535d4905c5d5f7ac289",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -202,6 +260,10 @@
         "ch04__entity__null_vector",
         "ch04__entity__zero",
         "ch04__relation__nontrivial_solution",
+        "ch04__relation__nontrivial_solution__term_1",
+        "ch04__relation__nontrivial_solution__term_2",
+        "ch04__relation__nontrivial_solution__term_3",
+        "ch04__relation__nontrivial_solution__residual",
         "ch04__relation__zero_result",
         "sem__stage.ch04.nullspace.test.nontrivial__title"
       ],

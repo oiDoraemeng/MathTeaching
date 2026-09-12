@@ -136,8 +136,13 @@ def _entity_operations(entity: VisualEntity, alias: str, scene: str, context: An
         elif entity.kind == "matrix":
             ops.append({"op":"geometry.transformed_grid","alias":alias,"matrix":_matrix(entity.value),"bounds":_bounds(context,2),"step":1.0})
         elif entity.kind in {"basis","subspace","region"}:
-            basis=_matrix(entity.value); basis=basis[:2]
-            ops.append({"op":"geometry.subspace_region","alias":alias,"basis":basis,"bounds":_bounds(context,2),"opacity":0.2})
+            basis=_matrix(entity.value)
+            ops.append({"op":"geometry.subspace_region","alias":alias,"basis":basis[:2],"bounds":_bounds(context,2),"opacity":0.2})
+            # The region protocol accepts two directions; render every member
+            # separately so a redundant third generator is never discarded.
+            if entity.kind == "basis":
+                for index, vector in enumerate(basis, 1):
+                    ops.extend(_vector_relation(f"{alias}__generator_{index}",vector))
         elif entity.kind == "affine_set":
             ops.append({"op":"geometry.subspace_region","alias":alias,"basis":[[1.0,0.0],[0.0,1.0]],"origin":_vector(entity.value,2),"bounds":_bounds(context,2),"opacity":0.16})
         elif entity.kind == "constraint":
@@ -237,8 +242,7 @@ def _relation_operations(topic_id: str, relation: VisualRelation, entities: Mapp
             if source.kind == "constraint": return [{"op":"curve.create","alias":alias,"kind":"explicit","expression":"y=x^2"}]
             return _vector_relation(alias,p["origin_image"])
         if relation.kind == "basis_of" or (relation.kind in {"dimension_of","linear_dependence","contains"} and source.kind in {"basis","subspace"}):
-            basis=_matrix(source.value)[:2]
-            return [{"op":"geometry.subspace_region","alias":alias,"basis":basis,"bounds":_bounds(context,2),"opacity":0.16}]
+            return _entity_operations(source,alias,"2d",context)[0]
         # A target redrawn with a relation-specific alias is a geometric
         # witness of the typed relation, never a text-only bookkeeping edge.
         return _entity_operations(target,alias,"2d",context)[0]
@@ -252,34 +256,51 @@ def _relation_operations(topic_id: str, relation: VisualRelation, entities: Mapp
             vectors=_matrix(source.value)[:2] if source.kind in {"basis","matrix"} else [_vector(source.value,3),_vector(p.get("other_vector"),3)]
         return [{"op":"geometry.parallelogram3d","alias":alias,"origin":[0.0,0.0,0.0],"vectors":vectors,"opacity":0.16}]
     if relation.kind == "null_solution" and relation.id.endswith("nontrivial_solution"):
-        vectors=_matrix(source.value)[:2]
-        return [{"op":"geometry.parallelogram3d","alias":alias,"origin":[0.0,0.0,0.0],"vectors":vectors,"opacity":0.16}]
+        columns=[list(column) for column in zip(*_matrix(source.value))]
+        coefficients=_vector(target.value,len(columns))
+        vectors=[_scale(column,coefficient) for column,coefficient in zip(columns,coefficients)]
+        operations=[{"op":"geometry.parallelogram3d","alias":alias,"origin":[0.0,0.0,0.0],"vectors":vectors[:2],"opacity":0.16}]
+        endpoint=[0.0,0.0,0.0]
+        for index,vector in enumerate(vectors,1):
+            next_endpoint=_add(endpoint,vector)
+            operations.append({"op":"linear3d.upsert","alias":f"{alias}__term_{index}","start":endpoint,"end":next_endpoint,"kind":"vector","role":"result"})
+            endpoint=next_endpoint
+        operations.append({"op":"point3d.upsert","alias":f"{alias}__residual","coordinates":endpoint,"name":"Ax"})
+        return operations
     if relation.kind == "affine_translation":
         basis=_matrix(source.value)
         return [{"op":"plane3d.upsert","alias":alias,"origin":_vector(p["offset"],3),"normal":_normal(basis),"size":2.5,"opacity":0.16}]
     return _entity_operations(target,alias,"3d",context)[0]
 
 
-def _mathematical_evidence(topic_id: str, by_role: Mapping[str, VisualEntity]) -> dict[str, object]:
+def _mathematical_evidence(topic_id: str, by_role: Mapping[str, VisualEntity], relations: tuple[VisualRelation, ...] = ()) -> dict[str, object]:
     """Recompute the advertised theorem from entity values, not labels."""
     value=lambda role: by_role[role].value
     checks: dict[str,bool] = {}
     numbers: dict[str,object] = {}
+    parameters={relation.id.rsplit(".",1)[-1]:relation.parameters for relation in relations}
     if topic_id == "ch04.space.closure":
         checks["additive_closure"]=_close(_add(value("vector_a"),value("vector_b")),value("sum")) and _in_span(value("space"),value("sum"))
         checks["scalar_closure"]=_close(_scale(value("vector_a"),2),value("scaled")) and _in_span(value("space"),value("scaled"))
     elif topic_id == "ch04.subspace.classification":
         dimensions=[0,_rank(value("line")),_rank(value("plane")),_rank(value("whole_space"))]
         offset=_matrix(value("affine_counterexample"))[-1]
-        checks.update(classification_dimensions=dimensions==[0,1,2,3],origin_contains=True,affine_not_subspace=any(abs(x)>TOL for x in offset)); numbers.update(dimensions=dimensions,affine_offset=offset)
+        origin=_vector(value("origin"),3)
+        checks.update(classification_dimensions=dimensions==[0,1,2,3],origin_contains=_close(origin,[0,0,0]) and all(_in_span(value(role),origin) for role in ("line","plane","whole_space")),affine_not_subspace=not _in_span(_matrix(value("affine_counterexample"))[:2],_scale(offset,-1))); numbers.update(dimensions=dimensions,affine_offset=offset)
     elif topic_id == "ch04.subspace.intersection":
         u=value("subspace_u"); v=value("subspace_v"); inter=value("intersection"); total=value("union_sum")
         checks["intersection_closed"]=_rank(inter)==1 and all(_in_span(u,x) and _in_span(v,x) for x in _matrix(inter))
         checks["union_not_closed"]=_close(_add(value("union_u"),value("union_v")),total) and not _in_span(u,total) and not _in_span(v,total)
     elif topic_id == "ch04.subspace.col-null":
-        matrix=value("map_A"); checks["diag_1_0"]=_rank(matrix)==1
+        matrix=value("map_A"); checks["diag_1_0"]=_close(matrix,[[1,0],[0,0]])
         checks["kernel_to_zero"]=_close(_matvec(matrix,value("kernel_vector")),[0,0]) and _in_span(value("kernel"),value("kernel_vector"))
-        checks["image_x_axis"]=_rank(value("column_space"))==1 and _in_span(value("column_space"),value("image_vector"))
+        columns=[list(column) for column in zip(*_matrix(matrix))]
+        image_basis=_matrix(value("column_space"))
+        image_parameters=parameters["domain_image"]
+        sample=image_parameters["input_vector"]
+        image=_matvec(matrix,sample)
+        checks["image_x_axis"]=_rank(image_basis)==_rank(columns)==1 and all(_in_span(image_basis,column) for column in columns) and all(_in_span(columns,v) for v in image_basis) and _close(image,value("image_vector")) and _in_span(image_basis,image)
+        numbers.update(columns=columns,image=image,image_rank=_rank(columns))
     elif topic_id == "ch04.span.dimension":
         ranks=[_rank(value(f"span_{i}d")) for i in (1,2,3)]; numbers["ranks"]=ranks
         checks.update(span_rank_1=ranks[0]==1,span_rank_2=ranks[1]==2,span_rank_3=ranks[2]==3,rank_equals_dimension=ranks==[1,2,3])
@@ -289,6 +310,9 @@ def _mathematical_evidence(topic_id: str, by_role: Mapping[str, VisualEntity]) -
         checks["independent_full_rank"]=_rank(value("independent_set"))==3
     elif topic_id == "ch04.nullspace.test":
         result=_matvec(value("columns"),value("null_vector")); numbers["Ax"]=result
+        columns=[list(column) for column in zip(*_matrix(value("columns")))]
+        terms=[_scale(column,coefficient) for column,coefficient in zip(columns,_vector(value("null_vector")))]
+        numbers.update(columns=columns,combination_terms=terms,combination_residual=_combination(columns,value("null_vector")))
         checks["Ax_zero"]=_close(result,[0,0,0]); checks["nonzero_null_solution"]=any(abs(x)>TOL for x in _vector(value("null_vector"))) and checks["Ax_zero"]
         checks["trivial_nullspace_only"]=_rank(value("independent_columns"))==3
     elif topic_id == "ch04.rank.collapse":
@@ -309,7 +333,11 @@ def _mathematical_evidence(topic_id: str, by_role: Mapping[str, VisualEntity]) -
     elif topic_id == "ch04.linear-map.compare":
         matrices=(value("rotation"),value("stretch"),value("projection")); checks["linear_examples_pass_axioms"]=all(_close(_matvec(m,[0,0]),[0,0]) for m in matrices)
         translation=_vector(value("translation")); shift=_vector(value("constant_shift")); samples=_matrix(value("square_map"))
-        square_failure=all(math.isclose(y,x*x,rel_tol=TOL,abs_tol=TOL) for x,y in samples) and 9.0 != 5.0
+        square_parameters=parameters["square_failure"]
+        inputs=_vector(square_parameters["inputs"],2)
+        sum_image=sum(inputs)**2; separate_sum=sum(x*x for x in inputs)
+        square_failure=all(math.isclose(y,x*x,rel_tol=TOL,abs_tol=TOL) for x,y in samples) and not math.isclose(sum_image,separate_sum,rel_tol=TOL,abs_tol=TOL) and _close(sum_image,square_parameters.get("sum_image")) and _close(separate_sum,square_parameters.get("separate_sum"))
+        numbers.update(square_inputs=inputs,square_sum_image=sum_image,square_separate_sum=separate_sum)
         checks["nonlinear_diagnostics"]=any(abs(x)>TOL for x in translation) and any(abs(x)>TOL for x in shift) and square_failure
     elif topic_id == "ch04.linear-map.matrix-columns":
         matrix=value("map_T"); c1=_matvec(matrix,value("standard_e1")); c2=_matvec(matrix,value("standard_e2")); numbers.update(column_1=c1,column_2=c2)
@@ -401,11 +429,11 @@ class Chapter4FamilyCompiler:
         # are structural; this calculation independently proves the theorem.
         if not (set(expected_roles)-set(actual_roles)):
             try:
-                evidence=_mathematical_evidence(topic_id,actual_roles)
+                evidence=_mathematical_evidence(topic_id,actual_roles,semantics.relations)
                 computed=set(evidence.get("invariants",{}))
                 if computed != set(spec.invariants):
                     issues.append(_fail("invariant_coverage","$.visual_semantics","computed invariants do not exactly cover the topic"))
-            except (ValueError,VisualCompileError) as error:
+            except (KeyError,ValueError,VisualCompileError) as error:
                 if isinstance(error,VisualCompileError): issues.extend(error.issues)
                 else: issues.append(_fail("mathematical_invariant","$.visual_semantics",str(error)))
         return tuple(issues)
@@ -451,7 +479,8 @@ class Chapter4FamilyCompiler:
             )
         if topic_id == "ch04.kernel-image":
             bundle_alias="ch04__kernel_image__bundle"
-            operations.append({"op":"geometry.mapping_bundle","alias":bundle_alias,"dimension":2,"origin":[0.0,0.0],"offset":[0.0,0.0],"basis":[[1.0,0.0],[0.0,1.0]],"bounds":_bounds(context,2),"domain_basis":[[1.0,0.0],[0.0,1.0]],"kernel_basis":[[0.0,1.0]],"image_basis":[[1.0,0.0]],"rank":1,"lanes":{"domain":1.0,"kernel":1.0,"image":1.0}})
+            domain=_matrix(by_role["domain"].value); kernel=[_vector(by_role["kernel_direction"].value,2)]; image=_matrix(by_role["image"].value)
+            operations.append({"op":"geometry.mapping_bundle","alias":bundle_alias,"dimension":2,"origin":[0.0,0.0],"offset":[0.0,0.0],"basis":domain,"bounds":_bounds(context,2),"domain_basis":domain,"kernel_basis":kernel,"image_basis":image,"rank":_rank(by_role["map_T"].value),"lanes":{"domain":{"basis":domain,"origin":[-3.0,0.0]},"kernel":{"basis":kernel,"origin":[-3.0,0.0]},"image":{"basis":image,"origin":[3.0,0.0]}}})
         for relation in semantics.relations:
             relation_ops=_relation_operations(topic_id,relation,entities_by_id,context)
             operations.extend(relation_ops)
@@ -467,7 +496,7 @@ class Chapter4FamilyCompiler:
         for semantic_id,bound_aliases in aliases.items():
             if not bound_aliases or any(alias not in operation_aliases or operation_aliases[alias].startswith("annotation.") for alias in bound_aliases):
                 raise VisualCompileError((_fail("annotation_only_evidence",f"$.aliases.{semantic_id}","semantic evidence must bind a real operation"),))
-        evidence=_mathematical_evidence(topic_id,by_role)
+        evidence=_mathematical_evidence(topic_id,by_role,semantics.relations)
         return Chapter4CompileResult(tuple(operations),MappingProxyType(aliases),MappingProxyType(evidence))
 
 

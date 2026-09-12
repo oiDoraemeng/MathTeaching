@@ -198,12 +198,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:b8110a9ff5f99a9d8d7100ca81c8c4bd4c7be1a0a7bdad365fb4a68bba171d6c",
+    "artifact_digest": "sha256:0a02b71a950ab6dedc1f9a1a421bdafad553ed43be02f6510a8927f5043ccb93",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:392f9f59e18d1b9e1e2fd7d991a0f5a657d2c0d920a06159508c6f370e47c2f1",
+    "raw_reply_digest": "sha256:36aa9a1bda6ab3159f11c5d46e7d4b226b32579e862d654255d59283452127f1",
     "source_hash": "sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0"
   },
   "revision": 1,
@@ -453,6 +453,10 @@
           "expected_result": [
             2.0,
             0.0
+          ],
+          "input_vector": [
+            2.0,
+            3.0
           ],
           "matrix": [
             [
