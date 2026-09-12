@@ -19,3 +19,5 @@ TDD 前置红测：初次运行因缺少 `chapter_06` recipe 模块收集失败�
 ## Independent review fix
 
 复审指出阶段标题/说明未被 descriptor 约束。现 `_validate` 逐阶段严格比较 `title == descriptor.title`、`caption == spec.formula`，新增三主题各阶段 title/caption 单字段 mutation 负例。重新执行 `python -m scripts.release_chapter06`；资源内容保持 canonical parity。复审修复验证：`pytest tests/test_linear_algebra_chapter_06.py -q` — 30 passed, 2 existing warnings。
+
+第二轮复审补充了逐成员覆盖：每个主题、每个 stage 的每一项 input/output/relation/invariant 分别执行 delete 与 mutate，并以 `_Scene` 哨兵证明均在计划生成前失败。验证命令同上，现为 54 passed（2 existing Paramiko warnings）。本轮仅修改测试与报告，未改变实现语义或发布资源。

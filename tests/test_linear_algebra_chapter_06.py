@@ -96,10 +96,37 @@ def test_all_numeric_witnesses_and_required_graph_parts_reject_mutation(topic):
                             compile_topic(topic, payload)
             else:
                 for key in ('input_entity_refs', 'output_entity_refs', 'relation_refs', 'expected_invariants'):
-                    payload = copy.deepcopy(original)
-                    payload['visual_semantics'][category][index][key].pop()
-                    with pytest.raises(ValueError):
-                        compile_topic(topic, payload)
+                    members = record[key]
+                    assert members, f'{topic} stage {record["id"]} must expose {key}'
+                    for member_index in range(len(members)):
+                        payload = copy.deepcopy(original)
+                        del payload['visual_semantics'][category][index][key][member_index]
+                        with pytest.raises(ValueError):
+                            compile_topic(topic, payload)
+
+
+@pytest.mark.parametrize('topic', TOPICS)
+@pytest.mark.parametrize('field', ('input_entity_refs', 'output_entity_refs', 'relation_refs', 'expected_invariants'))
+@pytest.mark.parametrize('action', ('delete', 'mutate'))
+def test_every_stage_member_is_checked_before_scene_generation(topic, field, action, monkeypatch):
+    from linear_algebra.visualizations.families import chapter_06
+
+    def forbidden_scene(*args, **kwargs):
+        pytest.fail('invalid stage reached scene operation generation')
+
+    monkeypatch.setattr(chapter_06, '_Scene', forbidden_scene)
+    original = artifact_payload_for(topic)
+    for stage_index, stage in enumerate(original['visual_semantics']['stages']):
+        assert stage[field], f'{stage["id"]} requires {field}'
+        for member_index in range(len(stage[field])):
+            payload = copy.deepcopy(original)
+            members = payload['visual_semantics']['stages'][stage_index][field]
+            if action == 'delete':
+                del members[member_index]
+            else:
+                members[member_index] += '__tampered'
+            with pytest.raises(ValueError):
+                compile_topic(topic, payload)
 
 
 @pytest.mark.parametrize('topic', TOPICS)
