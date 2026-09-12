@@ -8,6 +8,7 @@ Commits:
 - Strict typed semantic family and negative tests: `1046b43`, `aa370c5`.
 - Chapter-scoped publication/upsert, refreshed 16 reviewed/compiled resources, index, and release tests: `a357bfa`.
 - Final mathematical witnesses, disk-backed reviewed loading/release script, desktop host dispatch and rollback, baseline preservation, and regression tests: `430edbd`.
+- Final linearity/invariant recomputation, coordinate/dependence witnesses, lane layout, and reviewed+compiled+index all-file transaction: `00ba5a6`, `86e0bbf`.
 
 Implementation:
 
@@ -46,7 +47,18 @@ Final commands:
 - `pytest tests/test_linear_algebra_builders.py tests/test_linear_algebra_visual_compiler.py -q` — **20 passed in 0.26s**.
 - `pytest tests/test_linear_algebra_ch04_strict_semantics.py tests/test_linear_algebra_chapter_04.py tests/test_linear_algebra_compiled_resources.py tests/test_linear_algebra_chapters_4_8_artifacts.py tests/test_linear_algebra_builders.py tests/test_linear_algebra_visual_compiler.py tests/test_linear_algebra_teaching_store.py tests/test_scene_command_dispatch.py -q` — **154 passed in 8.25s**, 2 paramiko deprecation warnings.
 - `pytest tests/test_linear_algebra_ch04_strict_semantics.py tests/test_linear_algebra_subspace_family.py tests/test_linear_algebra_extended_plan_replay.py tests/test_scene_commands.py tests/test_geometry_3d_scene.py -q` — **99 passed in 3.13s**, 2 paramiko deprecation warnings.
+- `pytest tests/test_chapter04_final_review.py -q` — **50 passed**, including injected failures across reviewed, compiled, and index files with byte-for-byte restoration.
+- Final aggregate rerun: **205 passed** for the chapter 4 release/host suite; **99 passed** for family/replay/3D suite; **16 passed** for all real-host Chapter 4 topics.
 - `pytest tests/test_scene_command_dispatch.py -k chapter_four_real -q` — **16 passed in 3.11s**.
 - `pytest tests/test_linear_algebra_registry.py -q` — **1 failed in 0.22s**, exactly `KeyError: Unknown visualization recipe: draw.ch05.homogeneous.solution-space`. No registry check was weakened.
 
 Remaining concern: the full registry suite still reports the pre-existing missing Chapter 5 recipe; Chapter 4 resources and host replay are independent of that downstream gap.
+
+Final residual-review closure:
+
+- Each rotation/stretch/projection relation now declares u, v, scalar and expected images. Family evidence computes both sides of additivity and homogeneity plus the origin, and checks every displayed output. Fifteen corruption cases fail the mathematical invariant independently of exact-fixture matching.
+- Dimension containment, rank-collapse image spans, rank/nullity kernel and image bases, the collapsed direction, and displayed T(u)/T(v) now participate in numeric checks. Seven new altered-entity tests require `mathematical_invariant` failure.
+- Coordinate basis arrows use matrix columns. Executable `geometry.basis_grid` draws the oblique grid; component arrows join to the same standard vector. Dependence now draws every coefficient-weighted term, including the third term, as a closed zero-sum chain.
+- Col/null domain and codomain witnesses occupy separate origins. Linear/nonlinear comparisons use six spatial lanes. Transformed-grid origin support is validated and applied to real host meshes; a mesh-center regression verifies the renderer receives the translation.
+- `compile_chapter_04` stages all serialized files and byte backups before replacing any target. `scripts.release_chapter04` submits all 16 reviewed files, 16 compiled files, and index in the same transaction. Twelve compile-only and twelve whole-script injected write/replace failures include middle-file and final-index failures, existing byte-distinct files and new destinations. All recover their previous bytes and remove new files. This is exception-safe rollback, not an OS-wide atomic snapshot or power-loss guarantee; if rollback itself is refused by the filesystem, backups are retained and a recovery error is raised.
+- Exact final aggregate command: `pytest tests/test_linear_algebra_ch04_strict_semantics.py tests/test_linear_algebra_chapter_04.py tests/test_linear_algebra_compiled_resources.py tests/test_linear_algebra_chapters_4_8_artifacts.py tests/test_linear_algebra_builders.py tests/test_linear_algebra_visual_compiler.py tests/test_linear_algebra_teaching_store.py tests/test_scene_command_dispatch.py tests/test_chapter04_final_review.py -q` — **205 passed in 19.27s**. Supplementary family/replay/3D command above — **99 passed in 3.79s**. Real-host command above — **16 passed in 3.40s**. Only the two existing paramiko deprecation warnings remain.
