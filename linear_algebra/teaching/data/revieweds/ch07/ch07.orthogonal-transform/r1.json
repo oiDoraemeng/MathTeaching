@@ -2,8 +2,11 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch07.orthogonal-transform.v",
-        "entity.ch07.orthogonal-transform.result"
+        "entity.ch07.orthogonal-transform.orthogonal_matrix",
+        "entity.ch07.orthogonal-transform.vector_a",
+        "entity.ch07.orthogonal-transform.vector_b",
+        "entity.ch07.orthogonal-transform.transformed_a",
+        "entity.ch07.orthogonal-transform.transformed_b"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +17,25 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "Q^TQ=I; <Qx,Qy>=<x,y>",
       "formula_symbols": [
-        "v",
-        "result"
+        "orthogonal_matrix",
+        "vector_a",
+        "vector_b",
+        "transformed_a",
+        "transformed_b"
       ],
       "id": "claim.ch07.orthogonal-transform",
       "relation_refs": [
-        "relation.ch07.orthogonal-transform.maps"
+        "relation.ch07.orthogonal-transform.isometry"
       ],
       "source_refs": [
         "第7章 特征值与特征向量 / 7.6 正交矩阵与正交变换::1::sha256:ce0da30bf4e8413502a0a7d908fad98deeb7a4b1af1d85f967ec3956b3634b50"
       ],
       "stage_refs": [
-        "stage.ch07.orthogonal-transform.input"
+        "stage.ch07.orthogonal-transform.isometry"
       ],
-      "statement": "7.6 正交矩阵与正交变换 的线性表示保持可检验的向量关系。"
+      "statement": "7.6 正交矩阵与正交变换 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +57,15 @@
     ],
     "definition": "7.6 正交矩阵与正交变换 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "正交变换保持长度夹角面积: Q^TQ=I; <Qx,Qy>=<x,y>"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "Q^TQ=I; <Qx,Qy>=<x,y>",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "orthogonal_matrix",
+      "length_preserved",
+      "angle_preserved",
+      "area_abs_preserved"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,23 +136,26 @@
         "title": "connections"
       }
     ],
-    "summary": "7.6 正交矩阵与正交变换 的确定性讲义 artifact。",
+    "summary": "7.6 正交矩阵与正交变换 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "orthogonal_matrix": "orthogonal_matrix",
+      "transformed_a": "transformed_a",
+      "transformed_b": "transformed_b",
+      "vector_a": "vector_a",
+      "vector_b": "vector_b"
     },
     "title": "7.6 正交矩阵与正交变换",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "Q^TQ=I; <Qx,Qy>=<x,y>"
         ],
         "checks": [
           {
             "expected": [
-              2,
-              4
+              0.4,
+              2.2
             ],
             "name": "result",
             "tolerance": 1e-09
@@ -154,29 +165,79 @@
           "claim.ch07.orthogonal-transform"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            [
+              0.6,
+              -0.8
+            ],
+            [
+              0.8,
+              0.6
+            ]
+          ],
+          [
+            2.0,
+            1.0
           ]
         ],
-        "id": "example.ch07.orthogonal-transform",
-        "kind": "scalar_multiple",
+        "id": "example.ch07.orthogonal-transform.isometry.0",
+        "kind": "matrix_transform",
         "result": [
-          2,
-          4
+          0.4,
+          2.2
         ],
-        "title": "数值例"
+        "title": "isometry"
+      },
+      {
+        "calculation": [
+          "Q^TQ=I; <Qx,Qy>=<x,y>"
+        ],
+        "checks": [
+          {
+            "expected": [
+              -3.0,
+              1.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.orthogonal-transform"
+        ],
+        "given": [
+          [
+            [
+              0.6,
+              -0.8
+            ],
+            [
+              0.8,
+              0.6
+            ]
+          ],
+          [
+            -1.0,
+            3.0
+          ]
+        ],
+        "id": "example.ch07.orthogonal-transform.isometry.1",
+        "kind": "matrix_transform",
+        "result": [
+          -3.0,
+          1.0
+        ],
+        "title": "isometry"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:94976331cdc49e2f26ba7a1700f0eef4e9a62ff9b2c97f53542436b958b8688c",
+    "artifact_digest": "sha256:36adf89287de668fab0c98d9e39e134fb486818dbe8074d5df753d9768abce88",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:c52049729cd81edb6318fde61160f137410781766cacea980b08e0c7066ac190",
+    "raw_reply_digest": "sha256:ebf77299d8ee48b0b4c6587beda7f5ec7996712ec074fb6e7ae70c84fd8bf122",
     "source_hash": "sha256:ce0da30bf4e8413502a0a7d908fad98deeb7a4b1af1d85f967ec3956b3634b50"
   },
   "revision": 1,
@@ -235,13 +296,19 @@
           "claim.ch07.orthogonal-transform"
         ],
         "dimension": 2,
-        "id": "entity.ch07.orthogonal-transform.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch07.orthogonal-transform.orthogonal_matrix",
+        "kind": "matrix",
+        "label": "orthogonal_matrix",
+        "role": "orthogonal_matrix",
         "value": [
-          1,
-          2
+          [
+            0.6,
+            -0.8
+          ],
+          [
+            0.8,
+            0.6
+          ]
         ]
       },
       {
@@ -249,13 +316,55 @@
           "claim.ch07.orthogonal-transform"
         ],
         "dimension": 2,
-        "id": "entity.ch07.orthogonal-transform.result",
+        "id": "entity.ch07.orthogonal-transform.vector_a",
         "kind": "vector",
-        "label": "result",
+        "label": "vector_a",
+        "role": "vector_a",
+        "value": [
+          2.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.orthogonal-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.orthogonal-transform.vector_b",
+        "kind": "vector",
+        "label": "vector_b",
+        "role": "vector_b",
+        "value": [
+          -1.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.orthogonal-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.orthogonal-transform.transformed_a",
+        "kind": "vector",
+        "label": "transformed_a",
         "role": "transformed_a",
         "value": [
-          2,
-          4
+          0.4,
+          2.2
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.orthogonal-transform"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.orthogonal-transform.transformed_b",
+        "kind": "vector",
+        "label": "transformed_b",
+        "role": "transformed_b",
+        "value": [
+          -3.0,
+          1.0
         ]
       }
     ],
@@ -264,35 +373,82 @@
         "claim_refs": [
           "claim.ch07.orthogonal-transform"
         ],
-        "id": "relation.ch07.orthogonal-transform.maps",
+        "id": "relation.ch07.orthogonal-transform.isometry",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "area": 7.0,
+          "dot": 1.0,
+          "gram": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "matrix": [
+            [
+              0.6,
+              -0.8
+            ],
+            [
+              0.8,
+              0.6
+            ]
+          ],
+          "squared_lengths": [
+            5.0,
+            10.0
+          ],
+          "transformed_a": [
+            0.4,
+            2.2
+          ],
+          "transformed_b": [
+            -3.0,
+            1.0
+          ],
+          "vector_a": [
+            2.0,
+            1.0
+          ],
+          "vector_b": [
+            -1.0,
+            3.0
+          ]
         },
-        "source_ref": "entity.ch07.orthogonal-transform.v",
-        "target_ref": "entity.ch07.orthogonal-transform.result"
+        "source_ref": "entity.ch07.orthogonal-transform.vector_a",
+        "target_ref": "entity.ch07.orthogonal-transform.transformed_a"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "spectral_orthogonal",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "Q^TQ=I; <Qx,Qy>=<x,y>",
         "expected_invariants": [
-          "finite numeric result"
+          "orthogonal_matrix",
+          "length_preserved",
+          "angle_preserved",
+          "area_abs_preserved"
         ],
-        "id": "stage.ch07.orthogonal-transform.input",
+        "id": "stage.ch07.orthogonal-transform.isometry",
         "input_entity_refs": [
-          "entity.ch07.orthogonal-transform.v"
+          "entity.ch07.orthogonal-transform.orthogonal_matrix",
+          "entity.ch07.orthogonal-transform.vector_a",
+          "entity.ch07.orthogonal-transform.vector_b"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch07.orthogonal-transform.result"
+          "entity.ch07.orthogonal-transform.transformed_a",
+          "entity.ch07.orthogonal-transform.transformed_b"
         ],
         "relation_refs": [
-          "relation.ch07.orthogonal-transform.maps"
+          "relation.ch07.orthogonal-transform.isometry"
         ],
-        "title": "输入与结果"
+        "title": "正交变换保持长度夹角面积"
       }
     ]
   }

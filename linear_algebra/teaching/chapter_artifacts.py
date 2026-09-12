@@ -185,6 +185,39 @@ def _artifact_payload_generic(topic_id: str, *, status: str = "reviewed") -> dic
 
 def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str, object]:
     payload = _artifact_payload_generic(topic_id, status=status)
+    if topic_id.startswith("ch07."):
+        from linear_algebra.chapter_07_semantics import spec_for
+        spec = spec_for(topic_id); claim = payload["claims"][0]
+        ids = {e.role: f"entity.{topic_id}.{e.role}" for e in spec.entities}
+        entities = [{"id": ids[e.role], "kind": e.kind, "dimension": e.dimension, "value": _json_value(e.value), "role": e.role, "label": e.label, "claim_refs": [claim["id"]]} for e in spec.entities]
+        relations = [{"id": f"relation.{topic_id}.{r.name}", "kind": r.kind, "source_ref": ids[r.source_role], "target_ref": ids[r.target_role], "parameters": _json_value(dict(r.parameters)), "claim_refs": [claim["id"]]} for r in spec.relations]
+        stages = [{"id": f"stage.{topic_id}.{s.name}", "title": s.title, "caption": spec.formula, "layout": s.layout, "input_entity_refs": [ids[r] for r in s.input_roles], "output_entity_refs": [ids[r] for r in s.output_roles], "relation_refs": [f"relation.{topic_id}.{r}" for r in s.relation_names], "expected_invariants": list(s.invariants)} for s in spec.stages]
+        payload["visual_semantics"] = {"scene_kind": "3d" if topic_id in {"ch07.gram-schmidt"} else "2d", "scene_family": "spectral_orthogonal", "entities": entities, "relations": relations, "stages": stages}
+        claim["entity_refs"] = list(ids.values()); claim["relation_refs"] = [r["id"] for r in relations]; claim["stage_refs"] = [s["id"] for s in stages]; claim["formula_symbols"] = list(spec.roles); claim["formula"] = spec.formula
+        payload["explanation"]["formula"] = spec.formula; payload["explanation"]["invariants"] = list(spec.invariants); payload["explanation"]["symbol_roles"] = {role: role for role in spec.roles}
+        payload['explanation']['derivation'] = [s.title + ': ' + spec.formula for s in spec.stages]
+        examples = []
+        for relation in spec.relations:
+            params = dict(relation.parameters)
+            samples = []
+            if 'input' in params:
+                samples.append(('matrix_transform', (params['matrix'], params['input']), params['output']))
+            elif 'vector' in params:
+                samples.append(('matrix_transform', (params['matrix'], params['vector']), params['output']))
+            elif 'shifted' in params:
+                samples.extend(('matrix_transform', (params['shifted'], vector), (0.,0.)) for vector in params['basis'])
+            elif 'normalized' in params:
+                basis = params['normalized']
+                samples.extend(('inner_product', (a,b), 1. if i == j else 0.) for i,a in enumerate(basis) for j,b in enumerate(basis))
+            elif 'vector_a' in params:
+                samples.extend(('matrix_transform', (params['matrix'], params['vector_'+name]), params['transformed_'+name]) for name in ('a','b'))
+            for index, (kind, given, expected) in enumerate(samples):
+                examples.append({'id': f'example.{topic_id}.{relation.name}.{index}', 'title': relation.name, 'kind': kind,
+                    'given': _json_value(given), 'calculation': [spec.formula], 'result': _json_value(expected),
+                    'checks': [{'name': 'result', 'expected': _json_value(expected), 'tolerance': 1e-9}], 'claim_refs': [claim['id']]})
+        payload['explanation']['worked_examples'] = examples
+        _refresh_digests(payload)
+        return payload
     if topic_id.startswith("ch06."):
         from linear_algebra.chapter_06_semantics import spec_for
         spec=spec_for(topic_id); claim=payload['claims'][0]
@@ -288,3 +321,5 @@ def load_draft_artifacts(root: str | Path | None = None) -> Mapping[str, dict[st
 
 
 __all__ = ["artifact_payload_for", "load_draft_artifacts", "load_reviewed_artifacts", "reviewed_artifact_payloads"]
+
+

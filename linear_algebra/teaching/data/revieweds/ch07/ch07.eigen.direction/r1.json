@@ -2,8 +2,18 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch07.eigen.direction.v",
-        "entity.ch07.eigen.direction.result"
+        "entity.ch07.eigen.direction.stretch_operator",
+        "entity.ch07.eigen.direction.stretch_vector",
+        "entity.ch07.eigen.direction.stretch_output",
+        "entity.ch07.eigen.direction.stretch_eigenvalue",
+        "entity.ch07.eigen.direction.reverse_operator",
+        "entity.ch07.eigen.direction.reverse_vector",
+        "entity.ch07.eigen.direction.reverse_output",
+        "entity.ch07.eigen.direction.reverse_eigenvalue",
+        "entity.ch07.eigen.direction.collapse_operator",
+        "entity.ch07.eigen.direction.collapse_vector",
+        "entity.ch07.eigen.direction.collapse_output",
+        "entity.ch07.eigen.direction.collapse_eigenvalue"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +24,36 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "Av=lambda v",
       "formula_symbols": [
-        "v",
-        "result"
+        "stretch_operator",
+        "stretch_vector",
+        "stretch_output",
+        "stretch_eigenvalue",
+        "reverse_operator",
+        "reverse_vector",
+        "reverse_output",
+        "reverse_eigenvalue",
+        "collapse_operator",
+        "collapse_vector",
+        "collapse_output",
+        "collapse_eigenvalue"
       ],
       "id": "claim.ch07.eigen.direction",
       "relation_refs": [
-        "relation.ch07.eigen.direction.maps"
+        "relation.ch07.eigen.direction.stretch",
+        "relation.ch07.eigen.direction.reverse",
+        "relation.ch07.eigen.direction.collapse"
       ],
       "source_refs": [
         "第7章 特征值与特征向量 / 7.1 定义与几何意义 / 7.1.1 定义::1::sha256:30af9dcc59b5a2344ed089db3091ca7de1a2e225b1576719d7ebae897dc9dc22"
       ],
       "stage_refs": [
-        "stage.ch07.eigen.direction.input"
+        "stage.ch07.eigen.direction.stretch",
+        "stage.ch07.eigen.direction.reverse",
+        "stage.ch07.eigen.direction.collapse"
       ],
-      "statement": "7.1.1 定义 的线性表示保持可检验的向量关系。"
+      "statement": "7.1.1 定义 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +75,14 @@
     ],
     "definition": "7.1.1 定义 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "正特征值拉伸: Av=lambda v",
+      "负特征值反向: Av=lambda v",
+      "零特征值消失: Av=lambda v"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "Av=lambda v",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "Av_equals_lambda_v"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,23 +153,33 @@
         "title": "connections"
       }
     ],
-    "summary": "7.1.1 定义 的确定性讲义 artifact。",
+    "summary": "7.1.1 定义 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "collapse_eigenvalue": "collapse_eigenvalue",
+      "collapse_operator": "collapse_operator",
+      "collapse_output": "collapse_output",
+      "collapse_vector": "collapse_vector",
+      "reverse_eigenvalue": "reverse_eigenvalue",
+      "reverse_operator": "reverse_operator",
+      "reverse_output": "reverse_output",
+      "reverse_vector": "reverse_vector",
+      "stretch_eigenvalue": "stretch_eigenvalue",
+      "stretch_operator": "stretch_operator",
+      "stretch_output": "stretch_output",
+      "stretch_vector": "stretch_vector"
     },
     "title": "7.1.1 定义",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "Av=lambda v"
         ],
         "checks": [
           {
             "expected": [
-              2,
-              4
+              2.0,
+              0.0
             ],
             "name": "result",
             "tolerance": 1e-09
@@ -154,29 +189,120 @@
           "claim.ch07.eigen.direction"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ],
+          [
+            1.0,
+            0.0
           ]
         ],
-        "id": "example.ch07.eigen.direction",
-        "kind": "scalar_multiple",
+        "id": "example.ch07.eigen.direction.stretch.0",
+        "kind": "matrix_transform",
         "result": [
-          2,
-          4
+          2.0,
+          0.0
         ],
-        "title": "数值例"
+        "title": "stretch"
+      },
+      {
+        "calculation": [
+          "Av=lambda v"
+        ],
+        "checks": [
+          {
+            "expected": [
+              -0.0,
+              -1.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "given": [
+          [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch07.eigen.direction.reverse.0",
+        "kind": "matrix_transform",
+        "result": [
+          -0.0,
+          -1.0
+        ],
+        "title": "reverse"
+      },
+      {
+        "calculation": [
+          "Av=lambda v"
+        ],
+        "checks": [
+          {
+            "expected": [
+              0.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "given": [
+          [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch07.eigen.direction.collapse.0",
+        "kind": "matrix_transform",
+        "result": [
+          0.0,
+          0.0
+        ],
+        "title": "collapse"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:adadc5cb60881a9c991d3e0a2fcc247036e982a98062bc54d63fd146431bdf03",
+    "artifact_digest": "sha256:ab737f7acfd15d3c5f46d5351501dd30eaccd8378931712bd77371c2e22d7235",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:f83c4fe1748a3887ea4b14108eafafb59448309feec0251acc9fed1e51311118",
+    "raw_reply_digest": "sha256:61aa8beb8c878a5ec81ebc8700c50b85e7bb081f32cecc93f13e898e2911211b",
     "source_hash": "sha256:30af9dcc59b5a2344ed089db3091ca7de1a2e225b1576719d7ebae897dc9dc22"
   },
   "revision": 1,
@@ -236,13 +362,19 @@
           "claim.ch07.eigen.direction"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigen.direction.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch07.eigen.direction.stretch_operator",
+        "kind": "matrix",
+        "label": "stretch_operator",
+        "role": "stretch_operator",
         "value": [
-          1,
-          2
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0
+          ]
         ]
       },
       {
@@ -250,13 +382,165 @@
           "claim.ch07.eigen.direction"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigen.direction.result",
+        "id": "entity.ch07.eigen.direction.stretch_vector",
         "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "label": "stretch_vector",
+        "role": "stretch_vector",
         "value": [
-          2,
-          4
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.stretch_output",
+        "kind": "vector",
+        "label": "stretch_output",
+        "role": "stretch_output",
+        "value": [
+          2.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.stretch_eigenvalue",
+        "kind": "point",
+        "label": "stretch_eigenvalue",
+        "role": "stretch_eigenvalue",
+        "value": [
+          2.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.reverse_operator",
+        "kind": "matrix",
+        "label": "reverse_operator",
+        "role": "reverse_operator",
+        "value": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.reverse_vector",
+        "kind": "vector",
+        "label": "reverse_vector",
+        "role": "reverse_vector",
+        "value": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.reverse_output",
+        "kind": "vector",
+        "label": "reverse_output",
+        "role": "reverse_output",
+        "value": [
+          -0.0,
+          -1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.reverse_eigenvalue",
+        "kind": "point",
+        "label": "reverse_eigenvalue",
+        "role": "reverse_eigenvalue",
+        "value": [
+          -1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.collapse_operator",
+        "kind": "matrix",
+        "label": "collapse_operator",
+        "role": "collapse_operator",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.collapse_vector",
+        "kind": "vector",
+        "label": "collapse_vector",
+        "role": "collapse_vector",
+        "value": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.collapse_output",
+        "kind": "vector",
+        "label": "collapse_output",
+        "role": "collapse_output",
+        "value": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.collapse_eigenvalue",
+        "kind": "point",
+        "label": "collapse_eigenvalue",
+        "role": "collapse_eigenvalue",
+        "value": [
+          0.0,
+          0.0
         ]
       }
     ],
@@ -265,35 +549,155 @@
         "claim_refs": [
           "claim.ch07.eigen.direction"
         ],
-        "id": "relation.ch07.eigen.direction.maps",
+        "id": "relation.ch07.eigen.direction.stretch",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "eigenvalue": 2.0,
+          "matrix": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ],
+          "output": [
+            2.0,
+            0.0
+          ],
+          "vector": [
+            1.0,
+            0.0
+          ]
         },
-        "source_ref": "entity.ch07.eigen.direction.v",
-        "target_ref": "entity.ch07.eigen.direction.result"
+        "source_ref": "entity.ch07.eigen.direction.stretch_vector",
+        "target_ref": "entity.ch07.eigen.direction.stretch_output"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "id": "relation.ch07.eigen.direction.reverse",
+        "kind": "maps_to",
+        "parameters": {
+          "eigenvalue": -1.0,
+          "matrix": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ],
+          "output": [
+            -0.0,
+            -1.0
+          ],
+          "vector": [
+            0.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch07.eigen.direction.reverse_vector",
+        "target_ref": "entity.ch07.eigen.direction.reverse_output"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "id": "relation.ch07.eigen.direction.collapse",
+        "kind": "maps_to",
+        "parameters": {
+          "eigenvalue": 0.0,
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          "output": [
+            0.0,
+            0.0
+          ],
+          "vector": [
+            0.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch07.eigen.direction.collapse_vector",
+        "target_ref": "entity.ch07.eigen.direction.collapse_output"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "spectral_orthogonal",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "Av=lambda v",
         "expected_invariants": [
-          "finite numeric result"
+          "Av_equals_lambda_v"
         ],
-        "id": "stage.ch07.eigen.direction.input",
+        "id": "stage.ch07.eigen.direction.stretch",
         "input_entity_refs": [
-          "entity.ch07.eigen.direction.v"
+          "entity.ch07.eigen.direction.stretch_operator",
+          "entity.ch07.eigen.direction.stretch_vector",
+          "entity.ch07.eigen.direction.stretch_eigenvalue"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch07.eigen.direction.result"
+          "entity.ch07.eigen.direction.stretch_output"
         ],
         "relation_refs": [
-          "relation.ch07.eigen.direction.maps"
+          "relation.ch07.eigen.direction.stretch"
         ],
-        "title": "输入与结果"
+        "title": "正特征值拉伸"
+      },
+      {
+        "caption": "Av=lambda v",
+        "expected_invariants": [
+          "Av_equals_lambda_v"
+        ],
+        "id": "stage.ch07.eigen.direction.reverse",
+        "input_entity_refs": [
+          "entity.ch07.eigen.direction.reverse_operator",
+          "entity.ch07.eigen.direction.reverse_vector",
+          "entity.ch07.eigen.direction.reverse_eigenvalue"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch07.eigen.direction.reverse_output"
+        ],
+        "relation_refs": [
+          "relation.ch07.eigen.direction.reverse"
+        ],
+        "title": "负特征值反向"
+      },
+      {
+        "caption": "Av=lambda v",
+        "expected_invariants": [
+          "Av_equals_lambda_v"
+        ],
+        "id": "stage.ch07.eigen.direction.collapse",
+        "input_entity_refs": [
+          "entity.ch07.eigen.direction.collapse_operator",
+          "entity.ch07.eigen.direction.collapse_vector",
+          "entity.ch07.eigen.direction.collapse_eigenvalue"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch07.eigen.direction.collapse_output"
+        ],
+        "relation_refs": [
+          "relation.ch07.eigen.direction.collapse"
+        ],
+        "title": "零特征值消失"
       }
     ]
   }

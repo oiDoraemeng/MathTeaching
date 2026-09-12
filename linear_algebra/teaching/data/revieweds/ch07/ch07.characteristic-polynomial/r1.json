@@ -2,8 +2,15 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch07.characteristic-polynomial.v",
-        "entity.ch07.characteristic-polynomial.result"
+        "entity.ch07.characteristic-polynomial.operator",
+        "entity.ch07.characteristic-polynomial.root_2",
+        "entity.ch07.characteristic-polynomial.root_3",
+        "entity.ch07.characteristic-polynomial.space_2",
+        "entity.ch07.characteristic-polynomial.space_3",
+        "entity.ch07.characteristic-polynomial.polynomial",
+        "entity.ch07.characteristic-polynomial.complex_operator",
+        "entity.ch07.characteristic-polynomial.complex_polynomial",
+        "entity.ch07.characteristic-polynomial.complex_roots"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +21,34 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
       "formula_symbols": [
-        "v",
-        "result"
+        "operator",
+        "root_2",
+        "root_3",
+        "space_2",
+        "space_3",
+        "polynomial",
+        "complex_operator",
+        "complex_polynomial",
+        "complex_roots"
       ],
       "id": "claim.ch07.characteristic-polynomial",
       "relation_refs": [
-        "relation.ch07.characteristic-polynomial.maps"
+        "relation.ch07.characteristic-polynomial.root_2",
+        "relation.ch07.characteristic-polynomial.root_3",
+        "relation.ch07.characteristic-polynomial.polynomial",
+        "relation.ch07.characteristic-polynomial.complex_spectrum"
       ],
       "source_refs": [
         "第7章 特征值与特征向量 / 7.2 特征多项式 / 7.2.1 推导::1::sha256:356d96b201ead5a92c88b632594a578d731d8591960d24920c656c2f6657eae2"
       ],
       "stage_refs": [
-        "stage.ch07.characteristic-polynomial.input"
+        "stage.ch07.characteristic-polynomial.nullspace",
+        "stage.ch07.characteristic-polynomial.polynomial",
+        "stage.ch07.characteristic-polynomial.complex"
       ],
-      "statement": "7.2.1 推导 的线性表示保持可检验的向量关系。"
+      "statement": "7.2.1 推导 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +70,16 @@
     ],
     "definition": "7.2.1 推导 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "特征根对应零空间: E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
+      "特征多项式实根: E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
+      "复根不生成实特征方向: E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "roots_bind_nullspaces",
+      "polynomial_roots",
+      "complex_has_no_real_directions"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,23 +150,30 @@
         "title": "connections"
       }
     ],
-    "summary": "7.2.1 推导 的确定性讲义 artifact。",
+    "summary": "7.2.1 推导 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "complex_operator": "complex_operator",
+      "complex_polynomial": "complex_polynomial",
+      "complex_roots": "complex_roots",
+      "operator": "operator",
+      "polynomial": "polynomial",
+      "root_2": "root_2",
+      "root_3": "root_3",
+      "space_2": "space_2",
+      "space_3": "space_3"
     },
     "title": "7.2.1 推导",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)"
         ],
         "checks": [
           {
             "expected": [
-              2,
-              4
+              0.0,
+              0.0
             ],
             "name": "result",
             "tolerance": 1e-09
@@ -154,29 +183,79 @@
           "claim.ch07.characteristic-polynomial"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            [
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            -1.0,
+            1.0
           ]
         ],
-        "id": "example.ch07.characteristic-polynomial",
-        "kind": "scalar_multiple",
+        "id": "example.ch07.characteristic-polynomial.root_2.0",
+        "kind": "matrix_transform",
         "result": [
-          2,
-          4
+          0.0,
+          0.0
         ],
-        "title": "数值例"
+        "title": "root_2"
+      },
+      {
+        "calculation": [
+          "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              0.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "given": [
+          [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch07.characteristic-polynomial.root_3.0",
+        "kind": "matrix_transform",
+        "result": [
+          0.0,
+          0.0
+        ],
+        "title": "root_3"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:a12dd05d4b993c0e749ec56e05e4adab92c7710d6b6885432d2f38bd8eb5c894",
+    "artifact_digest": "sha256:1f3a6f7deaf05549da981c489b15820f80ee6d0beefeedbb4880822c8394e003",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:d1ccc86ae7117e3a9aee2dafdaee24bc07915e62584254c84e94febe11cb80a6",
+    "raw_reply_digest": "sha256:4ae09ff1781d9f13445ff2d1bd30ef1b725dc2a701df99d8e4667a914b43f3f5",
     "source_hash": "sha256:356d96b201ead5a92c88b632594a578d731d8591960d24920c656c2f6657eae2"
   },
   "revision": 1,
@@ -236,13 +315,19 @@
           "claim.ch07.characteristic-polynomial"
         ],
         "dimension": 2,
-        "id": "entity.ch07.characteristic-polynomial.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch07.characteristic-polynomial.operator",
+        "kind": "matrix",
+        "label": "operator",
+        "role": "operator",
         "value": [
-          1,
-          2
+          [
+            3.0,
+            1.0
+          ],
+          [
+            0.0,
+            2.0
+          ]
         ]
       },
       {
@@ -250,13 +335,129 @@
           "claim.ch07.characteristic-polynomial"
         ],
         "dimension": 2,
-        "id": "entity.ch07.characteristic-polynomial.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch07.characteristic-polynomial.root_2",
+        "kind": "point",
+        "label": "root_2",
+        "role": "root_2",
         "value": [
-          2,
-          4
+          2.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.characteristic-polynomial.root_3",
+        "kind": "point",
+        "label": "root_3",
+        "role": "root_3",
+        "value": [
+          3.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.characteristic-polynomial.space_2",
+        "kind": "subspace",
+        "label": "space_2",
+        "role": "space_2",
+        "value": [
+          [
+            -1.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.characteristic-polynomial.space_3",
+        "kind": "subspace",
+        "label": "space_3",
+        "role": "space_3",
+        "value": [
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.characteristic-polynomial.polynomial",
+        "kind": "region",
+        "label": "polynomial",
+        "role": "polynomial",
+        "value": [
+          1.0,
+          -5.0,
+          6.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.characteristic-polynomial.complex_operator",
+        "kind": "matrix",
+        "label": "complex_operator",
+        "role": "complex_operator",
+        "value": [
+          [
+            0.0,
+            -1.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.characteristic-polynomial.complex_polynomial",
+        "kind": "region",
+        "label": "complex_polynomial",
+        "role": "complex_polynomial",
+        "value": [
+          1.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.characteristic-polynomial.complex_roots",
+        "kind": "region",
+        "label": "complex_roots",
+        "role": "complex_roots",
+        "value": [
+          [
+            0.0,
+            -1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ]
       }
     ],
@@ -265,35 +466,216 @@
         "claim_refs": [
           "claim.ch07.characteristic-polynomial"
         ],
-        "id": "relation.ch07.characteristic-polynomial.maps",
+        "id": "relation.ch07.characteristic-polynomial.root_2",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "basis": [
+            [
+              -1.0,
+              1.0
+            ]
+          ],
+          "eigenvalue": 2.0,
+          "matrix": [
+            [
+              3.0,
+              1.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ],
+          "shifted": [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
         },
-        "source_ref": "entity.ch07.characteristic-polynomial.v",
-        "target_ref": "entity.ch07.characteristic-polynomial.result"
+        "source_ref": "entity.ch07.characteristic-polynomial.root_2",
+        "target_ref": "entity.ch07.characteristic-polynomial.space_2"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "id": "relation.ch07.characteristic-polynomial.root_3",
+        "kind": "maps_to",
+        "parameters": {
+          "basis": [
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          "eigenvalue": 3.0,
+          "matrix": [
+            [
+              3.0,
+              1.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ],
+          "shifted": [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch07.characteristic-polynomial.root_3",
+        "target_ref": "entity.ch07.characteristic-polynomial.space_3"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "id": "relation.ch07.characteristic-polynomial.polynomial",
+        "kind": "maps_to",
+        "parameters": {
+          "coefficients": [
+            1.0,
+            -5.0,
+            6.0
+          ],
+          "matrix": [
+            [
+              3.0,
+              1.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ],
+          "roots": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              3.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch07.characteristic-polynomial.operator",
+        "target_ref": "entity.ch07.characteristic-polynomial.polynomial"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "id": "relation.ch07.characteristic-polynomial.complex_spectrum",
+        "kind": "maps_to",
+        "parameters": {
+          "coefficients": [
+            1.0,
+            0.0,
+            1.0
+          ],
+          "matrix": [
+            [
+              0.0,
+              -1.0
+            ],
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          "roots": [
+            [
+              0.0,
+              -1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch07.characteristic-polynomial.complex_operator",
+        "target_ref": "entity.ch07.characteristic-polynomial.complex_roots"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "spectral_orthogonal",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
         "expected_invariants": [
-          "finite numeric result"
+          "roots_bind_nullspaces"
         ],
-        "id": "stage.ch07.characteristic-polynomial.input",
+        "id": "stage.ch07.characteristic-polynomial.nullspace",
         "input_entity_refs": [
-          "entity.ch07.characteristic-polynomial.v"
+          "entity.ch07.characteristic-polynomial.operator",
+          "entity.ch07.characteristic-polynomial.root_2",
+          "entity.ch07.characteristic-polynomial.root_3"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch07.characteristic-polynomial.result"
+          "entity.ch07.characteristic-polynomial.space_2",
+          "entity.ch07.characteristic-polynomial.space_3"
         ],
         "relation_refs": [
-          "relation.ch07.characteristic-polynomial.maps"
+          "relation.ch07.characteristic-polynomial.root_2",
+          "relation.ch07.characteristic-polynomial.root_3"
         ],
-        "title": "输入与结果"
+        "title": "特征根对应零空间"
+      },
+      {
+        "caption": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
+        "expected_invariants": [
+          "polynomial_roots"
+        ],
+        "id": "stage.ch07.characteristic-polynomial.polynomial",
+        "input_entity_refs": [
+          "entity.ch07.characteristic-polynomial.operator",
+          "entity.ch07.characteristic-polynomial.polynomial"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch07.characteristic-polynomial.root_2",
+          "entity.ch07.characteristic-polynomial.root_3"
+        ],
+        "relation_refs": [
+          "relation.ch07.characteristic-polynomial.polynomial",
+          "relation.ch07.characteristic-polynomial.root_2",
+          "relation.ch07.characteristic-polynomial.root_3"
+        ],
+        "title": "特征多项式实根"
+      },
+      {
+        "caption": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
+        "expected_invariants": [
+          "complex_has_no_real_directions"
+        ],
+        "id": "stage.ch07.characteristic-polynomial.complex",
+        "input_entity_refs": [
+          "entity.ch07.characteristic-polynomial.complex_operator",
+          "entity.ch07.characteristic-polynomial.complex_polynomial"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch07.characteristic-polynomial.complex_roots"
+        ],
+        "relation_refs": [
+          "relation.ch07.characteristic-polynomial.complex_spectrum"
+        ],
+        "title": "复根不生成实特征方向"
       }
     ]
   }

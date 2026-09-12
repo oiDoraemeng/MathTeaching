@@ -1,0 +1,349 @@
+{
+  "artifact_digest": "sha256:b2c15d504d54ac93af487ebab4243cd51415ddcf318e9e11d2af5e0a9fe17e41",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:21c3edfdd3b966f96dc3c6997e05ced53c303b5f4dff5652724c35b6ddac04b5",
+  "plan": {
+    "operations": [
+      {
+        "alias": "entity_ch07_orthogonal-transform_orthogonal_matrix",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            0.6,
+            -0.8
+          ],
+          [
+            0.8,
+            0.6
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_vector_a__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_vector_a__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_vector_a",
+        "end": "entity_ch07_orthogonal-transform_vector_a__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_orthogonal-transform_vector_a__start"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_vector_b__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_vector_b__end",
+        "coordinates": [
+          -1.0,
+          3.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_vector_b",
+        "end": "entity_ch07_orthogonal-transform_vector_b__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_orthogonal-transform_vector_b__start"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_transformed_a__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_transformed_a__end",
+        "coordinates": [
+          0.4,
+          2.2
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_transformed_a",
+        "end": "entity_ch07_orthogonal-transform_transformed_a__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_orthogonal-transform_transformed_a__start"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_transformed_b__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_transformed_b__end",
+        "coordinates": [
+          -3.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_orthogonal-transform_transformed_b",
+        "end": "entity_ch07_orthogonal-transform_transformed_b__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_orthogonal-transform_transformed_b__start"
+      },
+      {
+        "alias": "ch07.orthogonal-transform__relation__isometry__a",
+        "aliases": [
+          "ch07.orthogonal-transform__relation__isometry__a__point"
+        ],
+        "matrices": [
+          [
+            [
+              0.6,
+              -0.8
+            ],
+            [
+              0.8,
+              0.6
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            2.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.orthogonal-transform__relation__isometry__b",
+        "aliases": [
+          "ch07.orthogonal-transform__relation__isometry__b__point"
+        ],
+        "matrices": [
+          [
+            [
+              0.6,
+              -0.8
+            ],
+            [
+              0.8,
+              0.6
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            -1.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.orthogonal-transform__relation__isometry__before",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            -1.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.orthogonal-transform__relation__isometry__after",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            0.4,
+            2.2
+          ],
+          [
+            -3.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.orthogonal-transform__stage__isometry__isometry__a",
+        "aliases": [
+          "ch07.orthogonal-transform__stage__isometry__isometry__a__point"
+        ],
+        "matrices": [
+          [
+            [
+              0.6,
+              -0.8
+            ],
+            [
+              0.8,
+              0.6
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            2.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.orthogonal-transform__stage__isometry__isometry__b",
+        "aliases": [
+          "ch07.orthogonal-transform__stage__isometry__isometry__b__point"
+        ],
+        "matrices": [
+          [
+            [
+              0.6,
+              -0.8
+            ],
+            [
+              0.8,
+              0.6
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            -1.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.orthogonal-transform__stage__isometry__isometry__before",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            -1.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.orthogonal-transform__stage__isometry__isometry__after",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            0.4,
+            2.2
+          ],
+          [
+            -3.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.ch07.orthogonal-transform.isometry__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "正交变换保持长度夹角面积"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "7.6 正交矩阵与正交变换",
+    "version": 1
+  },
+  "plan_digest": "sha256:4ac3098b4a32b8f72ea51069b8d2444b39f31ecda1366cba4cfafc684bb22955",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "spectral_orthogonal",
+  "schema_version": 1,
+  "source_hash": "sha256:ce0da30bf4e8413502a0a7d908fad98deeb7a4b1af1d85f967ec3956b3634b50",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "Q^TQ=I; <Qx,Qy>=<x,y>",
+      "id": "stage.ch07.orthogonal-transform.isometry",
+      "layout": "sequence",
+      "title": "正交变换保持长度夹角面积",
+      "visible_aliases": [
+        "ch07.orthogonal-transform__stage__isometry__isometry__a",
+        "ch07.orthogonal-transform__stage__isometry__isometry__b",
+        "ch07.orthogonal-transform__stage__isometry__isometry__before",
+        "ch07.orthogonal-transform__stage__isometry__isometry__after",
+        "entity_ch07_orthogonal-transform_orthogonal_matrix",
+        "entity_ch07_orthogonal-transform_vector_a",
+        "entity_ch07_orthogonal-transform_vector_b",
+        "entity_ch07_orthogonal-transform_transformed_a",
+        "entity_ch07_orthogonal-transform_transformed_b",
+        "ch07.orthogonal-transform__relation__isometry__a",
+        "ch07.orthogonal-transform__relation__isometry__b",
+        "ch07.orthogonal-transform__relation__isometry__before",
+        "ch07.orthogonal-transform__relation__isometry__after",
+        "sem__stage.ch07.orthogonal-transform.isometry__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.orthogonal-transform.orthogonal_matrix",
+        "entity.ch07.orthogonal-transform.vector_a",
+        "entity.ch07.orthogonal-transform.vector_b",
+        "entity.ch07.orthogonal-transform.transformed_a",
+        "entity.ch07.orthogonal-transform.transformed_b",
+        "relation.ch07.orthogonal-transform.isometry"
+      ]
+    }
+  ],
+  "topic_id": "ch07.orthogonal-transform"
+}

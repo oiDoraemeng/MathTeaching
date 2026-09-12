@@ -1,0 +1,508 @@
+{
+  "artifact_digest": "sha256:5532f54f344f8d8c0edf147a980c1687b679e155e1368c3caee94ea398ff4521",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:cffa4c528f500567876d7ade84209fc8337b6a2374759d8c034385ea030e00c7",
+  "plan": {
+    "operations": [
+      {
+        "alias": "entity_ch07_eigen_direction_stretch_operator",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_stretch_vector__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_stretch_vector__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_stretch_vector",
+        "end": "entity_ch07_eigen_direction_stretch_vector__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_eigen_direction_stretch_vector__start"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_stretch_output__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_stretch_output__end",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_stretch_output",
+        "end": "entity_ch07_eigen_direction_stretch_output__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_eigen_direction_stretch_output__start"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_stretch_eigenvalue__root_0",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_reverse_operator",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_reverse_vector__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_reverse_vector__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_reverse_vector",
+        "end": "entity_ch07_eigen_direction_reverse_vector__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_eigen_direction_reverse_vector__start"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_reverse_output__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_reverse_output__end",
+        "coordinates": [
+          -0.0,
+          -1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_reverse_output",
+        "end": "entity_ch07_eigen_direction_reverse_output__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_eigen_direction_reverse_output__start"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_reverse_eigenvalue__root_0",
+        "coordinates": [
+          -1.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_collapse_operator",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_collapse_vector__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_collapse_vector__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_collapse_vector",
+        "end": "entity_ch07_eigen_direction_collapse_vector__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_eigen_direction_collapse_vector__start"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_collapse_output",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "0",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigen_direction_collapse_eigenvalue__root_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigen.direction__relation__stretch",
+        "aliases": [
+          "ch07.eigen.direction__relation__stretch__point"
+        ],
+        "matrices": [
+          [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.eigen.direction__relation__reverse",
+        "aliases": [
+          "ch07.eigen.direction__relation__reverse__point"
+        ],
+        "matrices": [
+          [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.eigen.direction__relation__collapse",
+        "aliases": [
+          "ch07.eigen.direction__relation__collapse__point"
+        ],
+        "matrices": [
+          [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.eigen.direction__stage__stretch__stretch",
+        "aliases": [
+          "ch07.eigen.direction__stage__stretch__stretch__point"
+        ],
+        "matrices": [
+          [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.eigen.direction__stage__reverse__reverse",
+        "aliases": [
+          "ch07.eigen.direction__stage__reverse__reverse__point"
+        ],
+        "matrices": [
+          [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.eigen.direction__stage__collapse__collapse",
+        "aliases": [
+          "ch07.eigen.direction__stage__collapse__collapse__point"
+        ],
+        "matrices": [
+          [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.ch07.eigen.direction.stretch__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "正特征值拉伸"
+      },
+      {
+        "alias": "sem__stage.ch07.eigen.direction.reverse__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "负特征值反向"
+      },
+      {
+        "alias": "sem__stage.ch07.eigen.direction.collapse__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "零特征值消失"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "7.1.1 定义",
+    "version": 1
+  },
+  "plan_digest": "sha256:f6544ea3429e87a60f7f68c9669af93e1a151864fd4cd7e0a5c8a820da3365b2",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "spectral_orthogonal",
+  "schema_version": 1,
+  "source_hash": "sha256:30af9dcc59b5a2344ed089db3091ca7de1a2e225b1576719d7ebae897dc9dc22",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "Av=lambda v",
+      "id": "stage.ch07.eigen.direction.stretch",
+      "layout": "sequence",
+      "title": "正特征值拉伸",
+      "visible_aliases": [
+        "ch07.eigen.direction__stage__stretch__stretch",
+        "entity_ch07_eigen_direction_stretch_operator",
+        "entity_ch07_eigen_direction_stretch_vector",
+        "entity_ch07_eigen_direction_stretch_eigenvalue__root_0",
+        "entity_ch07_eigen_direction_stretch_output",
+        "ch07.eigen.direction__relation__stretch",
+        "sem__stage.ch07.eigen.direction.stretch__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.eigen.direction.stretch_operator",
+        "entity.ch07.eigen.direction.stretch_vector",
+        "entity.ch07.eigen.direction.stretch_eigenvalue",
+        "entity.ch07.eigen.direction.stretch_output",
+        "relation.ch07.eigen.direction.stretch"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "Av=lambda v",
+      "id": "stage.ch07.eigen.direction.reverse",
+      "layout": "sequence",
+      "title": "负特征值反向",
+      "visible_aliases": [
+        "ch07.eigen.direction__stage__reverse__reverse",
+        "entity_ch07_eigen_direction_reverse_operator",
+        "entity_ch07_eigen_direction_reverse_vector",
+        "entity_ch07_eigen_direction_reverse_eigenvalue__root_0",
+        "entity_ch07_eigen_direction_reverse_output",
+        "ch07.eigen.direction__relation__reverse",
+        "sem__stage.ch07.eigen.direction.reverse__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.eigen.direction.reverse_operator",
+        "entity.ch07.eigen.direction.reverse_vector",
+        "entity.ch07.eigen.direction.reverse_eigenvalue",
+        "entity.ch07.eigen.direction.reverse_output",
+        "relation.ch07.eigen.direction.reverse"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "Av=lambda v",
+      "id": "stage.ch07.eigen.direction.collapse",
+      "layout": "sequence",
+      "title": "零特征值消失",
+      "visible_aliases": [
+        "ch07.eigen.direction__stage__collapse__collapse",
+        "entity_ch07_eigen_direction_collapse_operator",
+        "entity_ch07_eigen_direction_collapse_vector",
+        "entity_ch07_eigen_direction_collapse_eigenvalue__root_0",
+        "entity_ch07_eigen_direction_collapse_output",
+        "ch07.eigen.direction__relation__collapse",
+        "sem__stage.ch07.eigen.direction.collapse__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.eigen.direction.collapse_operator",
+        "entity.ch07.eigen.direction.collapse_vector",
+        "entity.ch07.eigen.direction.collapse_eigenvalue",
+        "entity.ch07.eigen.direction.collapse_output",
+        "relation.ch07.eigen.direction.collapse"
+      ]
+    }
+  ],
+  "topic_id": "ch07.eigen.direction"
+}

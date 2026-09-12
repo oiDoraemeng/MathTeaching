@@ -2,8 +2,11 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch07.eigenspace.v",
-        "entity.ch07.eigenspace.result"
+        "entity.ch07.eigenspace.operator",
+        "entity.ch07.eigenspace.root_2",
+        "entity.ch07.eigenspace.root_3",
+        "entity.ch07.eigenspace.space_2",
+        "entity.ch07.eigenspace.space_3"
       ],
       "explanation_refs": [
         "definition",
@@ -14,22 +17,26 @@
         "pitfalls",
         "connections"
       ],
-      "formula": "v=(1,2),\\quad 2v=(2,4)",
+      "formula": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
       "formula_symbols": [
-        "v",
-        "result"
+        "operator",
+        "root_2",
+        "root_3",
+        "space_2",
+        "space_3"
       ],
       "id": "claim.ch07.eigenspace",
       "relation_refs": [
-        "relation.ch07.eigenspace.maps"
+        "relation.ch07.eigenspace.root_2",
+        "relation.ch07.eigenspace.root_3"
       ],
       "source_refs": [
         "第7章 特征值与特征向量 / 7.3 求特征向量::1::sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724"
       ],
       "stage_refs": [
-        "stage.ch07.eigenspace.input"
+        "stage.ch07.eigenspace.nullspace"
       ],
-      "statement": "7.3 求特征向量 的线性表示保持可检验的向量关系。"
+      "statement": "7.3 求特征向量 的数学主张由显式对象、关系和不变量支持。"
     }
   ],
   "connections": [
@@ -51,13 +58,12 @@
     ],
     "definition": "7.3 求特征向量 的对象和定义。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "特征根对应零空间: E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)"
     ],
-    "formula": "v=(1,2),\\quad 2v=(2,4)",
+    "formula": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
     "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
     "invariants": [
-      "finite numeric result"
+      "roots_bind_nullspaces"
     ],
     "pitfalls": [
       "不要混淆对象和坐标。"
@@ -128,23 +134,26 @@
         "title": "connections"
       }
     ],
-    "summary": "7.3 求特征向量 的确定性讲义 artifact。",
+    "summary": "7.3 求特征向量 的确定性数学语义 artifact。",
     "symbol_roles": {
-      "result": "transformed_a",
-      "v": "vector_a"
+      "operator": "operator",
+      "root_2": "root_2",
+      "root_3": "root_3",
+      "space_2": "space_2",
+      "space_3": "space_3"
     },
     "title": "7.3 求特征向量",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "2*(1,2)=(2,4)"
+          "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)"
         ],
         "checks": [
           {
             "expected": [
-              2,
-              4
+              0.0,
+              0.0
             ],
             "name": "result",
             "tolerance": 1e-09
@@ -154,29 +163,79 @@
           "claim.ch07.eigenspace"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            [
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            -1.0,
+            1.0
           ]
         ],
-        "id": "example.ch07.eigenspace",
-        "kind": "scalar_multiple",
+        "id": "example.ch07.eigenspace.root_2.0",
+        "kind": "matrix_transform",
         "result": [
-          2,
-          4
+          0.0,
+          0.0
         ],
-        "title": "数值例"
+        "title": "root_2"
+      },
+      {
+        "calculation": [
+          "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              0.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "given": [
+          [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch07.eigenspace.root_3.0",
+        "kind": "matrix_transform",
+        "result": [
+          0.0,
+          0.0
+        ],
+        "title": "root_3"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:7e2c7747fe26104747628fee6b8f650c78d15572da5f4b07e18208ab267f0ca3",
+    "artifact_digest": "sha256:1294bce8967d9de4c73a94ab232f9fa0b687daf2a0452cb6df660e7f741d2ad3",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:bca3cf92f3445d2283cabff3b0dbd4668e50bb606ee7120d71c56eb823b1a4cc",
+    "raw_reply_digest": "sha256:13253b05c5212e779a2a320a1357eae4acbbd4a7c98c30bae156a7654d7053d4",
     "source_hash": "sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724"
   },
   "revision": 1,
@@ -235,13 +294,19 @@
           "claim.ch07.eigenspace"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigenspace.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "vector_a",
+        "id": "entity.ch07.eigenspace.operator",
+        "kind": "matrix",
+        "label": "operator",
+        "role": "operator",
         "value": [
-          1,
-          2
+          [
+            3.0,
+            1.0
+          ],
+          [
+            0.0,
+            2.0
+          ]
         ]
       },
       {
@@ -249,13 +314,59 @@
           "claim.ch07.eigenspace"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigenspace.result",
-        "kind": "vector",
-        "label": "result",
-        "role": "transformed_a",
+        "id": "entity.ch07.eigenspace.root_2",
+        "kind": "point",
+        "label": "root_2",
+        "role": "root_2",
         "value": [
-          2,
-          4
+          2.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigenspace.root_3",
+        "kind": "point",
+        "label": "root_3",
+        "role": "root_3",
+        "value": [
+          3.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigenspace.space_2",
+        "kind": "subspace",
+        "label": "space_2",
+        "role": "space_2",
+        "value": [
+          [
+            -1.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigenspace.space_3",
+        "kind": "subspace",
+        "label": "space_3",
+        "role": "space_3",
+        "value": [
+          [
+            1.0,
+            0.0
+          ]
         ]
       }
     ],
@@ -264,35 +375,103 @@
         "claim_refs": [
           "claim.ch07.eigenspace"
         ],
-        "id": "relation.ch07.eigenspace.maps",
+        "id": "relation.ch07.eigenspace.root_2",
         "kind": "maps_to",
         "parameters": {
-          "scalar": 2
+          "basis": [
+            [
+              -1.0,
+              1.0
+            ]
+          ],
+          "eigenvalue": 2.0,
+          "matrix": [
+            [
+              3.0,
+              1.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ],
+          "shifted": [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
         },
-        "source_ref": "entity.ch07.eigenspace.v",
-        "target_ref": "entity.ch07.eigenspace.result"
+        "source_ref": "entity.ch07.eigenspace.root_2",
+        "target_ref": "entity.ch07.eigenspace.space_2"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "id": "relation.ch07.eigenspace.root_3",
+        "kind": "maps_to",
+        "parameters": {
+          "basis": [
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          "eigenvalue": 3.0,
+          "matrix": [
+            [
+              3.0,
+              1.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ],
+          "shifted": [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              -1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch07.eigenspace.root_3",
+        "target_ref": "entity.ch07.eigenspace.space_3"
       }
     ],
-    "scene_family": "subspace_region",
+    "scene_family": "spectral_orthogonal",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "显示线性关系。",
+        "caption": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
         "expected_invariants": [
-          "finite numeric result"
+          "roots_bind_nullspaces"
         ],
-        "id": "stage.ch07.eigenspace.input",
+        "id": "stage.ch07.eigenspace.nullspace",
         "input_entity_refs": [
-          "entity.ch07.eigenspace.v"
+          "entity.ch07.eigenspace.operator",
+          "entity.ch07.eigenspace.root_2",
+          "entity.ch07.eigenspace.root_3"
         ],
         "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch07.eigenspace.result"
+          "entity.ch07.eigenspace.space_2",
+          "entity.ch07.eigenspace.space_3"
         ],
         "relation_refs": [
-          "relation.ch07.eigenspace.maps"
+          "relation.ch07.eigenspace.root_2",
+          "relation.ch07.eigenspace.root_3"
         ],
-        "title": "输入与结果"
+        "title": "特征根对应零空间"
       }
     ]
   }

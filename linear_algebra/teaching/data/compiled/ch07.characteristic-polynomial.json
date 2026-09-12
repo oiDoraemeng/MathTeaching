@@ -1,0 +1,466 @@
+{
+  "artifact_digest": "sha256:d26d68972a3e4ad0e004b2556a4e5620f820f11ef4c787793d4c5f4d0c4cca7c",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:f95373deca84f1e6f10606210e1cb757fe4be9c9531044332fe392e720e839b1",
+  "plan": {
+    "operations": [
+      {
+        "alias": "entity_ch07_characteristic-polynomial_operator",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            3.0,
+            1.0
+          ],
+          [
+            0.0,
+            2.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_characteristic-polynomial_root_2__root_0",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_characteristic-polynomial_root_3__root_0",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_characteristic-polynomial_space_2",
+        "basis": [
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "entity_ch07_characteristic-polynomial_space_3",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "entity_ch07_characteristic-polynomial_polynomial",
+        "expression": "(1.0)*x**2+(-5.0)*x**1+(6.0)*x**0",
+        "kind": "explicit",
+        "op": "curve.create"
+      },
+      {
+        "alias": "entity_ch07_characteristic-polynomial_complex_operator",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            0.0,
+            -1.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_characteristic-polynomial_complex_polynomial",
+        "expression": "(1.0)*x**2+(0.0)*x**1+(1.0)*x**0",
+        "kind": "explicit",
+        "op": "curve.create"
+      },
+      {
+        "alias": "entity_ch07_characteristic-polynomial_complex_roots__root_0",
+        "coordinates": [
+          0.0,
+          -1.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_characteristic-polynomial_complex_roots__root_1",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__relation__root_2",
+        "basis": [
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__relation__root_3",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__relation__polynomial__polynomial",
+        "expression": "(1.0)*x**2+(-5.0)*x**1+(6.0)*x**0",
+        "kind": "explicit",
+        "op": "curve.create"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__relation__polynomial__root_0",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__relation__polynomial__root_1",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__relation__complex_spectrum__polynomial",
+        "expression": "(1.0)*x**2+(0.0)*x**1+(1.0)*x**0",
+        "kind": "explicit",
+        "op": "curve.create"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__relation__complex_spectrum__root_0",
+        "coordinates": [
+          0.0,
+          -1.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__relation__complex_spectrum__root_1",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__stage__nullspace__root_2",
+        "basis": [
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__stage__nullspace__root_3",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__stage__polynomial__polynomial__polynomial",
+        "expression": "(1.0)*x**2+(-5.0)*x**1+(6.0)*x**0",
+        "kind": "explicit",
+        "op": "curve.create"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__stage__polynomial__polynomial__root_0",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__stage__polynomial__polynomial__root_1",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__stage__polynomial__root_2",
+        "basis": [
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__stage__polynomial__root_3",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__stage__complex__complex_spectrum__polynomial",
+        "expression": "(1.0)*x**2+(0.0)*x**1+(1.0)*x**0",
+        "kind": "explicit",
+        "op": "curve.create"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__stage__complex__complex_spectrum__root_0",
+        "coordinates": [
+          0.0,
+          -1.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.characteristic-polynomial__stage__complex__complex_spectrum__root_1",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__stage.ch07.characteristic-polynomial.nullspace__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "特征根对应零空间"
+      },
+      {
+        "alias": "sem__stage.ch07.characteristic-polynomial.polynomial__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "特征多项式实根"
+      },
+      {
+        "alias": "sem__stage.ch07.characteristic-polynomial.complex__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "复根不生成实特征方向"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "7.2.1 推导",
+    "version": 1
+  },
+  "plan_digest": "sha256:7370808fe8fa5ad72c3d795f9a6c2e72f44f0b6823c8098f3f14e18e441c2ed8",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "spectral_orthogonal",
+  "schema_version": 1,
+  "source_hash": "sha256:356d96b201ead5a92c88b632594a578d731d8591960d24920c656c2f6657eae2",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
+      "id": "stage.ch07.characteristic-polynomial.nullspace",
+      "layout": "sequence",
+      "title": "特征根对应零空间",
+      "visible_aliases": [
+        "ch07.characteristic-polynomial__stage__nullspace__root_2",
+        "ch07.characteristic-polynomial__stage__nullspace__root_3",
+        "entity_ch07_characteristic-polynomial_operator",
+        "entity_ch07_characteristic-polynomial_root_2__root_0",
+        "entity_ch07_characteristic-polynomial_root_3__root_0",
+        "entity_ch07_characteristic-polynomial_space_2",
+        "entity_ch07_characteristic-polynomial_space_3",
+        "ch07.characteristic-polynomial__relation__root_2",
+        "ch07.characteristic-polynomial__relation__root_3",
+        "sem__stage.ch07.characteristic-polynomial.nullspace__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.characteristic-polynomial.operator",
+        "entity.ch07.characteristic-polynomial.root_2",
+        "entity.ch07.characteristic-polynomial.root_3",
+        "entity.ch07.characteristic-polynomial.space_2",
+        "entity.ch07.characteristic-polynomial.space_3",
+        "relation.ch07.characteristic-polynomial.root_2",
+        "relation.ch07.characteristic-polynomial.root_3"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
+      "id": "stage.ch07.characteristic-polynomial.polynomial",
+      "layout": "sequence",
+      "title": "特征多项式实根",
+      "visible_aliases": [
+        "ch07.characteristic-polynomial__stage__polynomial__polynomial__polynomial",
+        "ch07.characteristic-polynomial__stage__polynomial__polynomial__root_0",
+        "ch07.characteristic-polynomial__stage__polynomial__polynomial__root_1",
+        "ch07.characteristic-polynomial__stage__polynomial__root_2",
+        "ch07.characteristic-polynomial__stage__polynomial__root_3",
+        "entity_ch07_characteristic-polynomial_operator",
+        "entity_ch07_characteristic-polynomial_polynomial",
+        "entity_ch07_characteristic-polynomial_root_2__root_0",
+        "entity_ch07_characteristic-polynomial_root_3__root_0",
+        "ch07.characteristic-polynomial__relation__polynomial__polynomial",
+        "ch07.characteristic-polynomial__relation__polynomial__root_0",
+        "ch07.characteristic-polynomial__relation__polynomial__root_1",
+        "ch07.characteristic-polynomial__relation__root_2",
+        "ch07.characteristic-polynomial__relation__root_3",
+        "sem__stage.ch07.characteristic-polynomial.polynomial__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.characteristic-polynomial.operator",
+        "entity.ch07.characteristic-polynomial.polynomial",
+        "entity.ch07.characteristic-polynomial.root_2",
+        "entity.ch07.characteristic-polynomial.root_3",
+        "relation.ch07.characteristic-polynomial.polynomial",
+        "relation.ch07.characteristic-polynomial.root_2",
+        "relation.ch07.characteristic-polynomial.root_3"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
+      "id": "stage.ch07.characteristic-polynomial.complex",
+      "layout": "sequence",
+      "title": "复根不生成实特征方向",
+      "visible_aliases": [
+        "ch07.characteristic-polynomial__stage__complex__complex_spectrum__polynomial",
+        "ch07.characteristic-polynomial__stage__complex__complex_spectrum__root_0",
+        "ch07.characteristic-polynomial__stage__complex__complex_spectrum__root_1",
+        "entity_ch07_characteristic-polynomial_complex_operator",
+        "entity_ch07_characteristic-polynomial_complex_polynomial",
+        "entity_ch07_characteristic-polynomial_complex_roots__root_0",
+        "entity_ch07_characteristic-polynomial_complex_roots__root_1",
+        "ch07.characteristic-polynomial__relation__complex_spectrum__polynomial",
+        "ch07.characteristic-polynomial__relation__complex_spectrum__root_0",
+        "ch07.characteristic-polynomial__relation__complex_spectrum__root_1",
+        "sem__stage.ch07.characteristic-polynomial.complex__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.characteristic-polynomial.complex_operator",
+        "entity.ch07.characteristic-polynomial.complex_polynomial",
+        "entity.ch07.characteristic-polynomial.complex_roots",
+        "relation.ch07.characteristic-polynomial.complex_spectrum"
+      ]
+    }
+  ],
+  "topic_id": "ch07.characteristic-polynomial"
+}

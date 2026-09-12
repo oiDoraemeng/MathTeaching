@@ -121,6 +121,14 @@ def contract_for(topic_id: str) -> VisualContract:
             params=tuple((r.name,tuple(name for name,_ in r.parameters)) for r in spec.relations)
             endpoints=tuple((r.name,r.kind,r.source_role,r.target_role) for r in spec.relations)
             return VisualContract(topic_id,(f'claim.{topic_id}',),spec.roles,kinds,(spec.operations[0],),len(spec.stages),spec.invariants,required_relation_kinds=kinds,required_parameters=params,expected_operations=spec.operations,required_role_types=tuple((e.role,e.kind,e.dimension) for e in spec.entities),required_relation_endpoints=endpoints,required_stage_names=tuple(s.name for s in spec.stages))
+        if topic_id.startswith("ch07."):
+            from linear_algebra.chapter_07_semantics import spec_for
+            spec = spec_for(topic_id)
+            kinds = tuple(dict.fromkeys(r.kind for r in spec.relations))
+            names = tuple(r.name for r in spec.relations)
+            endpoints = tuple((r.name, r.kind, r.source_role, r.target_role) for r in spec.relations)
+            params = tuple((r.name, tuple(name for name, _ in r.parameters)) for r in spec.relations)
+            return VisualContract(topic_id, (f"claim.{topic_id}",), spec.roles, kinds, (), len(spec.stages), spec.invariants, required_relation_kinds=kinds, required_parameters=params, expected_operations=spec.operations, required_role_types=tuple((e.role,e.kind,e.dimension) for e in spec.entities), required_relation_endpoints=endpoints, required_stage_names=tuple(s.name for s in spec.stages))
         return VisualContract(topic_id, (f"claim.{topic_id}",), ("vector_a", "transformed_a"), ("maps_to",), (family,), 1, ("finite numeric result",))
     return overrides.get(topic_id, base)
 

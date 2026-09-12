@@ -1,0 +1,1147 @@
+{
+  "artifact_digest": "sha256:f21ec87f926bff749e711081d09b9094261d3c57e3a5a8b071944ec7dd4e3b25",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:1da2675a07c12922c39eb30365128364770b3e87eb044e897e6b16719a74153e",
+  "plan": {
+    "operations": [
+      {
+        "alias": "entity_ch07_gram-schmidt_input_vectors__0__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_input_vectors__0__end",
+        "coordinates": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_input_vectors__0",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_input_vectors__1__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_input_vectors__1__end",
+        "coordinates": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_input_vectors__1",
+        "end": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_input_vectors__2__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_input_vectors__2__end",
+        "coordinates": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_input_vectors__2",
+        "end": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_projection__0",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "0",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_projection__1__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_projection__1__end",
+        "coordinates": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_projection__1",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_projection__2__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_projection__2__end",
+        "coordinates": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_projection__2",
+        "end": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_residual__0__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_residual__0__end",
+        "coordinates": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_residual__0",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_residual__1__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_residual__1__end",
+        "coordinates": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_residual__1",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_residual__2__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_residual__2__end",
+        "coordinates": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_residual__2",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_normalized__0__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_normalized__0__end",
+        "coordinates": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_normalized__0",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_normalized__1__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_normalized__1__end",
+        "coordinates": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_normalized__1",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_normalized__2__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_normalized__2__end",
+        "coordinates": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "entity_ch07_gram-schmidt_normalized__2",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__relation__orthogonalize",
+        "aliases": [
+          "ch07.gram-schmidt__relation__orthogonalize__input",
+          "ch07.gram-schmidt__relation__orthogonalize__projection",
+          "ch07.gram-schmidt__relation__orthogonalize__residual",
+          "ch07.gram-schmidt__relation__orthogonalize__normalized"
+        ],
+        "bounds": [
+          -2.0,
+          2.0,
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
+        ],
+        "op": "geometry.orthogonalization",
+        "stages": [
+          {
+            "highlight_rows": [
+              0
+            ],
+            "id": "ch07.gram-schmidt__relation__orthogonalize__step_0",
+            "input": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "normalized": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "projection": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "residual": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "highlight_rows": [
+              1
+            ],
+            "id": "ch07.gram-schmidt__relation__orthogonalize__step_1",
+            "input": [
+              1.0,
+              1.0,
+              0.0
+            ],
+            "normalized": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "projection": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "residual": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          },
+          {
+            "highlight_rows": [
+              2
+            ],
+            "id": "ch07.gram-schmidt__relation__orthogonalize__step_2",
+            "input": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "normalized": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "projection": [
+              1.0,
+              1.0,
+              0.0
+            ],
+            "residual": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          }
+        ],
+        "tolerance": 1e-09,
+        "vectors": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__relation__orthogonalize__projection_0",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "foot": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "op": "geometry.projection3d",
+        "residual": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "tolerance": 1e-09,
+        "vector": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__relation__orthogonalize__projection_1",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "foot": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "op": "geometry.projection3d",
+        "residual": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "tolerance": 1e-09,
+        "vector": [
+          1.0,
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__relation__orthogonalize__projection_2",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "foot": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "op": "geometry.projection3d",
+        "residual": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "tolerance": 1e-09,
+        "vector": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__input__0__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__input__0__end",
+        "coordinates": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__input__0",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__input__1__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__input__1__end",
+        "coordinates": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__input__1",
+        "end": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__input__2__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__input__2__end",
+        "coordinates": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__input__2",
+        "end": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__projection__0",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "0",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__projection__1__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__projection__1__end",
+        "coordinates": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__projection__1",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__projection__2__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__projection__2__end",
+        "coordinates": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__projection__2",
+        "end": [
+          1.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__residual__0__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__residual__0__end",
+        "coordinates": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__residual__0",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__residual__1__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__residual__1__end",
+        "coordinates": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__residual__1",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__residual__2__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__residual__2__end",
+        "coordinates": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__residual__2",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__normalized__0__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__normalized__0__end",
+        "coordinates": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__normalized__0",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__normalized__1__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__normalized__1__end",
+        "coordinates": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__normalized__1",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__normalized__2__start",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__normalized__2__end",
+        "coordinates": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch07.gram-schmidt__stage__normalized__2",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "3d",
+    "summary": "7.5 施密特正交化——构造标准正交基",
+    "version": 1
+  },
+  "plan_digest": "sha256:7473a7d89e4338fc1ded7e2cb5599fbd6e70c0ebebe48de69ad25cbbaffc1b4d",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "spectral_orthogonal",
+  "schema_version": 1,
+  "source_hash": "sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "id": "stage.ch07.gram-schmidt.input",
+      "layout": "sequence",
+      "title": "原始三维向量",
+      "visible_aliases": [
+        "ch07.gram-schmidt__stage__input__0",
+        "ch07.gram-schmidt__stage__input__1",
+        "ch07.gram-schmidt__stage__input__2",
+        "entity_ch07_gram-schmidt_input_vectors__0",
+        "entity_ch07_gram-schmidt_input_vectors__1",
+        "entity_ch07_gram-schmidt_input_vectors__2",
+        "ch07.gram-schmidt__relation__orthogonalize",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_0",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_1",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_2",
+        "sem__stage.ch07.gram-schmidt.input__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.gram-schmidt.input_vectors",
+        "relation.ch07.gram-schmidt.orthogonalize"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "id": "stage.ch07.gram-schmidt.projection",
+      "layout": "sequence",
+      "title": "投影分量",
+      "visible_aliases": [
+        "ch07.gram-schmidt__stage__projection__0",
+        "ch07.gram-schmidt__stage__projection__1",
+        "ch07.gram-schmidt__stage__projection__2",
+        "entity_ch07_gram-schmidt_input_vectors__0",
+        "entity_ch07_gram-schmidt_input_vectors__1",
+        "entity_ch07_gram-schmidt_input_vectors__2",
+        "entity_ch07_gram-schmidt_normalized__0",
+        "entity_ch07_gram-schmidt_normalized__1",
+        "entity_ch07_gram-schmidt_normalized__2",
+        "entity_ch07_gram-schmidt_projection__0",
+        "entity_ch07_gram-schmidt_projection__1",
+        "entity_ch07_gram-schmidt_projection__2",
+        "ch07.gram-schmidt__relation__orthogonalize",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_0",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_1",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_2",
+        "sem__stage.ch07.gram-schmidt.projection__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.gram-schmidt.input_vectors",
+        "entity.ch07.gram-schmidt.normalized",
+        "entity.ch07.gram-schmidt.projection",
+        "relation.ch07.gram-schmidt.orthogonalize"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "id": "stage.ch07.gram-schmidt.residual",
+      "layout": "sequence",
+      "title": "正交残差",
+      "visible_aliases": [
+        "ch07.gram-schmidt__stage__residual__0",
+        "ch07.gram-schmidt__stage__residual__1",
+        "ch07.gram-schmidt__stage__residual__2",
+        "entity_ch07_gram-schmidt_input_vectors__0",
+        "entity_ch07_gram-schmidt_input_vectors__1",
+        "entity_ch07_gram-schmidt_input_vectors__2",
+        "entity_ch07_gram-schmidt_projection__0",
+        "entity_ch07_gram-schmidt_projection__1",
+        "entity_ch07_gram-schmidt_projection__2",
+        "entity_ch07_gram-schmidt_residual__0",
+        "entity_ch07_gram-schmidt_residual__1",
+        "entity_ch07_gram-schmidt_residual__2",
+        "ch07.gram-schmidt__relation__orthogonalize",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_0",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_1",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_2",
+        "sem__stage.ch07.gram-schmidt.residual__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.gram-schmidt.input_vectors",
+        "entity.ch07.gram-schmidt.projection",
+        "entity.ch07.gram-schmidt.residual",
+        "relation.ch07.gram-schmidt.orthogonalize"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.21
+      ],
+      "caption": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "id": "stage.ch07.gram-schmidt.normalized",
+      "layout": "sequence",
+      "title": "归一化",
+      "visible_aliases": [
+        "ch07.gram-schmidt__stage__normalized__0",
+        "ch07.gram-schmidt__stage__normalized__1",
+        "ch07.gram-schmidt__stage__normalized__2",
+        "entity_ch07_gram-schmidt_residual__0",
+        "entity_ch07_gram-schmidt_residual__1",
+        "entity_ch07_gram-schmidt_residual__2",
+        "entity_ch07_gram-schmidt_normalized__0",
+        "entity_ch07_gram-schmidt_normalized__1",
+        "entity_ch07_gram-schmidt_normalized__2",
+        "ch07.gram-schmidt__relation__orthogonalize",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_0",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_1",
+        "ch07.gram-schmidt__relation__orthogonalize__projection_2",
+        "sem__stage.ch07.gram-schmidt.normalized__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.gram-schmidt.residual",
+        "entity.ch07.gram-schmidt.normalized",
+        "relation.ch07.gram-schmidt.orthogonalize"
+      ]
+    }
+  ],
+  "topic_id": "ch07.gram-schmidt"
+}

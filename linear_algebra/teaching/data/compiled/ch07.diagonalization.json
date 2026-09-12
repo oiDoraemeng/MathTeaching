@@ -1,0 +1,519 @@
+{
+  "artifact_digest": "sha256:b6ac7cf079ee92449e451571087f3dd5459333c2cfb25b65a2c5f1d01599f2fa",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:d0a73d8fb579aeaca0fed6812d0ed3a2fd9f6ff8d3b7cadf707c8e5b9630353f",
+  "plan": {
+    "operations": [
+      {
+        "alias": "entity_ch07_diagonalization_operator",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            3.0,
+            1.0
+          ],
+          [
+            0.0,
+            2.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_diagonalization_basis",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            -1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_diagonalization_inverse_basis",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_diagonalization_diagonal",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_diagonalization_standard__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_standard__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_standard",
+        "end": "entity_ch07_diagonalization_standard__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_diagonalization_standard__start"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_coordinates__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_coordinates__end",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_coordinates",
+        "end": "entity_ch07_diagonalization_coordinates__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_diagonalization_coordinates__start"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_scaled__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_scaled__end",
+        "coordinates": [
+          3.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_scaled",
+        "end": "entity_ch07_diagonalization_scaled__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_diagonalization_scaled__start"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_endpoint__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_endpoint__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_diagonalization_endpoint",
+        "end": "entity_ch07_diagonalization_endpoint__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "entity_ch07_diagonalization_endpoint__start"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__change_basis",
+        "aliases": [
+          "ch07.diagonalization__relation__change_basis__point"
+        ],
+        "matrices": [
+          [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.diagonalization__relation__diagonal_scale",
+        "aliases": [
+          "ch07.diagonalization__relation__diagonal_scale__point"
+        ],
+        "matrices": [
+          [
+            [
+              3.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.diagonalization__relation__change_basis_back",
+        "aliases": [
+          "ch07.diagonalization__relation__change_basis_back__point"
+        ],
+        "matrices": [
+          [
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            3.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.diagonalization__relation__direct_endpoint",
+        "aliases": [
+          "ch07.diagonalization__relation__direct_endpoint__point"
+        ],
+        "matrices": [
+          [
+            [
+              3.0,
+              1.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_basis__change_basis",
+        "aliases": [
+          "ch07.diagonalization__stage__change_basis__change_basis__point"
+        ],
+        "matrices": [
+          [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal_scale__diagonal_scale",
+        "aliases": [
+          "ch07.diagonalization__stage__diagonal_scale__diagonal_scale__point"
+        ],
+        "matrices": [
+          [
+            [
+              3.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_basis_back__change_basis_back",
+        "aliases": [
+          "ch07.diagonalization__stage__change_basis_back__change_basis_back__point"
+        ],
+        "matrices": [
+          [
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            3.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_basis_back__direct_endpoint",
+        "aliases": [
+          "ch07.diagonalization__stage__change_basis_back__direct_endpoint__point"
+        ],
+        "matrices": [
+          [
+            [
+              3.0,
+              1.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__stage.ch07.diagonalization.change_basis__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "换到特征基"
+      },
+      {
+        "alias": "sem__stage.ch07.diagonalization.diagonal_scale__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "特征值独立缩放"
+      },
+      {
+        "alias": "sem__stage.ch07.diagonalization.change_basis_back__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "换回标准坐标"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "7.4 对角化的几何意义",
+    "version": 1
+  },
+  "plan_digest": "sha256:94da29aea5ddff7f426686dee8e8f989e31c8bbb32fc6c7dc8b6d45be87c77b2",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "spectral_orthogonal",
+  "schema_version": 1,
+  "source_hash": "sha256:c370dc89d6decc1af953b64023d41ad23f8858ec9f3cdcac971a15bc36e8ff5a",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "A=PDP^{-1}",
+      "id": "stage.ch07.diagonalization.change_basis",
+      "layout": "sequence",
+      "title": "换到特征基",
+      "visible_aliases": [
+        "ch07.diagonalization__stage__change_basis__change_basis",
+        "entity_ch07_diagonalization_standard",
+        "entity_ch07_diagonalization_basis",
+        "entity_ch07_diagonalization_inverse_basis",
+        "entity_ch07_diagonalization_coordinates",
+        "ch07.diagonalization__relation__change_basis",
+        "sem__stage.ch07.diagonalization.change_basis__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.diagonalization.standard",
+        "entity.ch07.diagonalization.basis",
+        "entity.ch07.diagonalization.inverse_basis",
+        "entity.ch07.diagonalization.coordinates",
+        "relation.ch07.diagonalization.change_basis"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "A=PDP^{-1}",
+      "id": "stage.ch07.diagonalization.diagonal_scale",
+      "layout": "sequence",
+      "title": "特征值独立缩放",
+      "visible_aliases": [
+        "ch07.diagonalization__stage__diagonal_scale__diagonal_scale",
+        "entity_ch07_diagonalization_coordinates",
+        "entity_ch07_diagonalization_diagonal",
+        "entity_ch07_diagonalization_operator",
+        "entity_ch07_diagonalization_scaled",
+        "ch07.diagonalization__relation__diagonal_scale",
+        "sem__stage.ch07.diagonalization.diagonal_scale__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.diagonalization.coordinates",
+        "entity.ch07.diagonalization.diagonal",
+        "entity.ch07.diagonalization.operator",
+        "entity.ch07.diagonalization.scaled",
+        "relation.ch07.diagonalization.diagonal_scale"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "A=PDP^{-1}",
+      "id": "stage.ch07.diagonalization.change_basis_back",
+      "layout": "sequence",
+      "title": "换回标准坐标",
+      "visible_aliases": [
+        "ch07.diagonalization__stage__change_basis_back__change_basis_back",
+        "ch07.diagonalization__stage__change_basis_back__direct_endpoint",
+        "entity_ch07_diagonalization_scaled",
+        "entity_ch07_diagonalization_basis",
+        "entity_ch07_diagonalization_endpoint",
+        "ch07.diagonalization__relation__change_basis_back",
+        "ch07.diagonalization__relation__direct_endpoint",
+        "sem__stage.ch07.diagonalization.change_basis_back__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.diagonalization.scaled",
+        "entity.ch07.diagonalization.basis",
+        "entity.ch07.diagonalization.endpoint",
+        "relation.ch07.diagonalization.change_basis_back",
+        "relation.ch07.diagonalization.direct_endpoint"
+      ]
+    }
+  ],
+  "topic_id": "ch07.diagonalization"
+}

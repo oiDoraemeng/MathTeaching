@@ -1,0 +1,204 @@
+{
+  "artifact_digest": "sha256:856e2a124ef06cca25f186d1f6788aa05f6b7298c7e48fdf4b5e2b0b40d2e5b2",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:752f0be1933d7acfbab7b588fe9f915ceda536f50e2a5ff6264e384cf99255b7",
+  "plan": {
+    "operations": [
+      {
+        "alias": "entity_ch07_eigenspace_operator",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            3.0,
+            1.0
+          ],
+          [
+            0.0,
+            2.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "entity_ch07_eigenspace_root_2__root_0",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigenspace_root_3__root_0",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "lambda",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "entity_ch07_eigenspace_space_2",
+        "basis": [
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "entity_ch07_eigenspace_space_3",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.eigenspace__relation__root_2",
+        "basis": [
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.eigenspace__relation__root_3",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.eigenspace__stage__nullspace__root_2",
+        "basis": [
+          [
+            -1.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.eigenspace__stage__nullspace__root_3",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "sem__stage.ch07.eigenspace.nullspace__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.65
+        ],
+        "text": "特征根对应零空间"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "7.3 求特征向量",
+    "version": 1
+  },
+  "plan_digest": "sha256:27864a82cd1331ae08533db89b80889f4430bdb292549fdc96bd3c4f34f426ac",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "spectral_orthogonal",
+  "schema_version": 1,
+  "source_hash": "sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724",
+  "stages": [
+    {
+      "anchor": [
+        -2.65,
+        2.65
+      ],
+      "caption": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
+      "id": "stage.ch07.eigenspace.nullspace",
+      "layout": "sequence",
+      "title": "特征根对应零空间",
+      "visible_aliases": [
+        "ch07.eigenspace__stage__nullspace__root_2",
+        "ch07.eigenspace__stage__nullspace__root_3",
+        "entity_ch07_eigenspace_operator",
+        "entity_ch07_eigenspace_root_2__root_0",
+        "entity_ch07_eigenspace_root_3__root_0",
+        "entity_ch07_eigenspace_space_2",
+        "entity_ch07_eigenspace_space_3",
+        "ch07.eigenspace__relation__root_2",
+        "ch07.eigenspace__relation__root_3",
+        "sem__stage.ch07.eigenspace.nullspace__title"
+      ],
+      "visible_refs": [
+        "entity.ch07.eigenspace.operator",
+        "entity.ch07.eigenspace.root_2",
+        "entity.ch07.eigenspace.root_3",
+        "entity.ch07.eigenspace.space_2",
+        "entity.ch07.eigenspace.space_3",
+        "relation.ch07.eigenspace.root_2",
+        "relation.ch07.eigenspace.root_3"
+      ]
+    }
+  ],
+  "topic_id": "ch07.eigenspace"
+}
