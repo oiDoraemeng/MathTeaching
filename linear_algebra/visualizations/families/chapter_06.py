@@ -39,6 +39,8 @@ def _validate(topic, semantics):
     if tuple(s.id for s in semantics.stages) != tuple(s.name for s in spec.stages):
         raise ValueError('exact ordered Chapter 6 stage IDs required')
     for descriptor, stage in zip(spec.stages, semantics.stages):
+        if stage.title != descriptor.title or stage.caption != spec.formula:
+            raise ValueError(f'{stage.id}: stage title/caption mismatch')
         if (stage.layout, stage.input_entity_refs, stage.output_entity_refs, stage.relation_refs, stage.expected_invariants) != (
             descriptor.layout, tuple(entities[r].id for r in descriptor.input_roles), tuple(entities[r].id for r in descriptor.output_roles),
             tuple(relations[r].id for r in descriptor.relation_names), descriptor.invariants):

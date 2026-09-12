@@ -247,6 +247,17 @@ def test_every_relation_numeric_leaf_is_a_checked_witness(topic):
 
 
 @pytest.mark.parametrize('topic', TOPICS)
+def test_stage_title_and_caption_are_descriptor_bound(topic):
+    original = artifact_payload_for(topic)
+    for index in range(len(original['visual_semantics']['stages'])):
+        for field, value in (('title', 'tampered title'), ('caption', 'tampered caption')):
+            payload = copy.deepcopy(original)
+            payload['visual_semantics']['stages'][index][field] = value
+            with pytest.raises(ValueError, match='title/caption'):
+                compile_topic(topic, payload)
+
+
+@pytest.mark.parametrize('topic', TOPICS)
 def test_worked_examples_show_the_reviewed_coordinate_calculations(topic):
     from linear_algebra.teaching.examples import verify_worked_example
     artifact = TeachingArtifact.from_dict(artifact_payload_for(topic))

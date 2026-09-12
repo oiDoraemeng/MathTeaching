@@ -15,3 +15,7 @@ TDD 前置红测：初次运行因缺少 `chapter_06` recipe 模块收集失败�
 实现过程追加的红测还揭示 worked example 输入 schema、旧 alias-only evidence 测试兼容性和矩阵对象 host dispatch 问题，均已修复。矩阵对象使用宿主支持的真实 transformed_grid，关系和阶段使用真实 staged_transform；未增加 matrix_tableau UI 功能。全部三个 reviewed 和 compiled 均重新生成，不使用旧第6章 fixture。
 
 范围说明：本任务未修改 ch01–5 用户脏文件，不提交计划/OpenSpec勾选。独立复审待主代理安排。
+
+## Independent review fix
+
+复审指出阶段标题/说明未被 descriptor 约束。现 `_validate` 逐阶段严格比较 `title == descriptor.title`、`caption == spec.formula`，新增三主题各阶段 title/caption 单字段 mutation 负例。重新执行 `python -m scripts.release_chapter06`；资源内容保持 canonical parity。复审修复验证：`pytest tests/test_linear_algebra_chapter_06.py -q` — 30 passed, 2 existing warnings。
