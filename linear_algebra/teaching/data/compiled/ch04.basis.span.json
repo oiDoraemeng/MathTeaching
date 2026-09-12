@@ -1,12 +1,54 @@
 {
-  "artifact_digest": "sha256:a1c00b208f5f0d1510ffb328510aa277e22d7ff1546582fb2cfb27483e41b5d1",
+  "artifact_digest": "sha256:c762182de7bae9ae6a7351d2597969d829edb71736a5b4a8f7eabf1d4fec3a17",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:c7c97d3098a6c767224cd415612ca26a33f1d1bcb71ccacf39ac7b6689153b21",
+  "contract_digest": "sha256:5ce8e5a9bff9ba2f02e9f2b85789f5eb54e1ec9086f24bfc01f3f4b6b2042b56",
   "plan": {
     "operations": [
       {
-        "alias": "ch04_subspace",
+        "alias": "ch04__entity__independent_basis",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__entity__spanning_set",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__entity__too_few",
         "basis": [
           [
             1.0,
@@ -19,128 +61,106 @@
           -3.0,
           3.0
         ],
-        "color": "#4c78a8",
         "op": "geometry.subspace_region",
-        "opacity": 0.25
-      },
-      {
-        "alias": "ch04__entity__independent_basis",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "independent_basis"
-      },
-      {
-        "alias": "ch04__entity__spanning_set",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "spanning_set"
-      },
-      {
-        "alias": "ch04__entity__too_few",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "too_few"
+        "opacity": 0.2
       },
       {
         "alias": "ch04__entity__too_many",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ],
-        "text": "too_many"
-      },
-      {
-        "alias": "ch04__relation__spans",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
-        "text": "spans"
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
       },
       {
-        "alias": "sem__entity.ch04.basis.span.independent_basis__origin",
-        "coordinates": [
-          0.0,
-          0.0
+        "alias": "ch04__relation__basis_binding",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.basis.span.independent_basis__end",
-        "coordinates": [
-          1.0,
-          0.0
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
-        "name": "independent_basis",
-        "op": "point.upsert"
+        "op": "geometry.subspace_region",
+        "opacity": 0.16
       },
       {
-        "alias": "sem__entity.ch04.basis.span.independent_basis",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.basis.span.independent_basis__end",
-        "kind": "vector",
-        "label": "independent_basis",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.basis.span.independent_basis__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.basis.span.spanning_set__origin",
-        "coordinates": [
-          0.0,
-          0.0
+        "alias": "ch04__relation__too_few_span",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
         ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.basis.span.spanning_set__end",
-        "coordinates": [
-          0.0,
-          1.0
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
-        "name": "spanning_set",
-        "op": "point.upsert"
+        "op": "geometry.subspace_region",
+        "opacity": 0.16
       },
       {
-        "alias": "sem__entity.ch04.basis.span.spanning_set",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.basis.span.spanning_set__end",
-        "kind": "vector",
-        "label": "spanning_set",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.basis.span.spanning_set__origin"
-      },
-      {
-        "alias": "sem__relation.ch04.basis.span.spans",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "ch04__relation__too_many_dependence",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ],
-        "text": "spans: independent_basis → spanning_set"
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region",
+        "opacity": 0.16
       },
       {
-        "alias": "sem__stage.ch04.basis.span.evidence__title",
+        "alias": "sem__stage.ch04.basis.span.complete__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "主题证据"
+        "text": "独立且生成"
+      },
+      {
+        "alias": "sem__stage.ch04.basis.span.comparisons__title",
+        "op": "annotation.upsert",
+        "position": [
+          1.5,
+          2.65
+        ],
+        "text": "过少与冗余"
       },
       {
         "op": "view.fit",
@@ -151,7 +171,7 @@
     "summary": "4.3.1 基的定义",
     "version": 1
   },
-  "plan_digest": "sha256:26951095a421fb16cf81509541687843dee9c3f8579d3709f06379ce2983180e",
+  "plan_digest": "sha256:51ef0496980a93914284f58eeed53da2ea7075d8d87f6241585a69451542a527",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -166,32 +186,45 @@
         -2.65,
         2.65
       ],
-      "caption": "4.3.1 基的定义: finite typed semantic evidence",
-      "id": "stage.ch04.basis.span.evidence",
+      "caption": "rank(e_1,e_2)=2;\\ rank(e_1)=1;\\ rank(e_1,e_2,e_1+e_2)=2<3",
+      "id": "stage.ch04.basis.span.complete",
       "layout": "sequence",
-      "title": "主题证据",
+      "title": "独立且生成",
       "visible_aliases": [
         "ch04__entity__independent_basis",
-        "sem__entity.ch04.basis.span.independent_basis",
-        "sem__entity.ch04.basis.span.independent_basis__end",
-        "sem__entity.ch04.basis.span.independent_basis__origin",
         "ch04__entity__spanning_set",
-        "sem__entity.ch04.basis.span.spanning_set",
-        "sem__entity.ch04.basis.span.spanning_set__end",
-        "sem__entity.ch04.basis.span.spanning_set__origin",
-        "ch04__entity__too_few",
-        "ch04__entity__too_many",
-        "ch04__relation__spans",
-        "sem__relation.ch04.basis.span.spans",
-        "sem__stage.ch04.basis.span.evidence__title",
-        "sem__span__1"
+        "ch04__relation__basis_binding",
+        "sem__stage.ch04.basis.span.complete__title"
       ],
       "visible_refs": [
         "entity.ch04.basis.span.independent_basis",
         "entity.ch04.basis.span.spanning_set",
+        "relation.ch04.basis.span.basis_binding"
+      ]
+    },
+    {
+      "anchor": [
+        1.5,
+        2.65
+      ],
+      "caption": "rank(e_1,e_2)=2;\\ rank(e_1)=1;\\ rank(e_1,e_2,e_1+e_2)=2<3",
+      "id": "stage.ch04.basis.span.comparisons",
+      "layout": "side_by_side",
+      "title": "过少与冗余",
+      "visible_aliases": [
+        "ch04__entity__too_few",
+        "ch04__entity__too_many",
+        "ch04__entity__spanning_set",
+        "ch04__relation__too_few_span",
+        "ch04__relation__too_many_dependence",
+        "sem__stage.ch04.basis.span.comparisons__title"
+      ],
+      "visible_refs": [
         "entity.ch04.basis.span.too_few",
         "entity.ch04.basis.span.too_many",
-        "relation.ch04.basis.span.spans"
+        "entity.ch04.basis.span.spanning_set",
+        "relation.ch04.basis.span.too_few_span",
+        "relation.ch04.basis.span.too_many_dependence"
       ]
     }
   ],

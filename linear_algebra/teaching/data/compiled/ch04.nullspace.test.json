@@ -1,187 +1,184 @@
 {
-  "artifact_digest": "sha256:6bff31770c0993f9fdb8b5e50a7f07941c187b2a7f389c64f4686138a47008ff",
+  "artifact_digest": "sha256:7586189a21349684169dedb54aaef730f7653609a50332f429a1b965f3ae2533",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:0d593cf8843dc76597b5e2425aac69381b9944d35c12816b42434cac78bf96b2",
+  "contract_digest": "sha256:38d3b705d01e42ca1efb8e45535c12d94399fd15ff4f712cde37141113a45248",
   "plan": {
     "operations": [
       {
-        "alias": "ch04_transform",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#4c78a8",
-        "matrix": [
-          [
-            1,
-            0
-          ],
-          [
-            0,
-            0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
         "alias": "ch04__entity__columns",
-        "op": "annotation.upsert",
-        "position": [
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
           0.0,
           0.0
         ],
-        "text": "columns"
+        "size": 2.5
       },
       {
         "alias": "ch04__entity__null_vector",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "null_vector"
-      },
-      {
-        "alias": "ch04__entity__trivial_nullspace",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "trivial_nullspace"
-      },
-      {
-        "alias": "ch04__relation__batch_maps_to",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "batch_maps_to"
-      },
-      {
-        "alias": "sem__entity.ch04.nullspace.test.columns__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.nullspace.test.columns__end",
-        "coordinates": [
+        "end": [
           1.0,
-          0.0
-        ],
-        "name": "columns",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.nullspace.test.columns",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.nullspace.test.columns__end",
-        "kind": "vector",
-        "label": "columns",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.nullspace.test.columns__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.nullspace.test.null_vector__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.nullspace.test.null_vector__end",
-        "coordinates": [
           1.0,
           -1.0
         ],
-        "name": "null_vector",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.nullspace.test.null_vector",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.nullspace.test.null_vector__end",
         "kind": "vector",
-        "label": "null_vector",
-        "op": "linear.upsert",
+        "op": "linear3d.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.nullspace.test.null_vector__origin"
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
-        "alias": "sem__entity.ch04.nullspace.test.trivial_nullspace",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+        "alias": "ch04__entity__zero",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
         ],
-        "color": "#6B7280",
-        "matrix": [
+        "name": "Ax=0",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch04__entity__independent_columns__axis_1",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__independent_columns__axis_2",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__independent_columns__axis_3",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__trivial_nullspace",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "仅零解",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch04__scene__parallelogram",
+        "op": "geometry.parallelogram3d",
+        "opacity": 0.16,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vectors": [
           [
             1.0,
+            0.0,
             0.0
           ],
           [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch04__relation__nontrivial_solution",
+        "op": "geometry.parallelogram3d",
+        "opacity": 0.16,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vectors": [
+          [
+            1.0,
             0.0,
             1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
-        "alias": "sem__relation.ch04.nullspace.test.batch_maps_to",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            1.0,
-            0.0
           ],
           [
             0.0,
-            0.0
+            1.0,
+            1.0
           ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        ]
       },
       {
-        "alias": "sem__stage.ch04.nullspace.test.evidence__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "ch04__relation__zero_result",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
         ],
-        "text": "主题证据"
+        "name": "Ax=0",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch04__relation__trivial_solution",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "仅零解",
+        "op": "point3d.upsert"
       },
       {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
-    "scene": "2d",
+    "scene": "3d",
     "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$",
     "version": 1
   },
-  "plan_digest": "sha256:a8332af0f80568c3a1f6664e8e422d495d06757a6fac456f5452fb1b63d42102",
+  "plan_digest": "sha256:21e1a927d1d14537fd1818a45b82129847e8f931121178b1586bf2281a56c9e1",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -196,30 +193,47 @@
         -2.65,
         2.65
       ],
-      "caption": "A(1,-1,0)^T=0,\\quad Ax=0",
-      "id": "stage.ch04.nullspace.test.evidence",
+      "caption": "A(1,1,-1)^T=0,\\ Ix=0\\Rightarrow x=0",
+      "id": "stage.ch04.nullspace.test.nontrivial",
       "layout": "sequence",
-      "title": "主题证据",
+      "title": "非零零空间解",
       "visible_aliases": [
         "ch04__entity__columns",
-        "sem__entity.ch04.nullspace.test.columns",
-        "sem__entity.ch04.nullspace.test.columns__end",
-        "sem__entity.ch04.nullspace.test.columns__origin",
         "ch04__entity__null_vector",
-        "sem__entity.ch04.nullspace.test.null_vector",
-        "sem__entity.ch04.nullspace.test.null_vector__end",
-        "sem__entity.ch04.nullspace.test.null_vector__origin",
-        "ch04__entity__trivial_nullspace",
-        "sem__entity.ch04.nullspace.test.trivial_nullspace",
-        "ch04__relation__batch_maps_to",
-        "sem__relation.ch04.nullspace.test.batch_maps_to",
-        "sem__stage.ch04.nullspace.test.evidence__title"
+        "ch04__entity__zero",
+        "ch04__relation__nontrivial_solution",
+        "ch04__relation__zero_result",
+        "sem__stage.ch04.nullspace.test.nontrivial__title"
       ],
       "visible_refs": [
         "entity.ch04.nullspace.test.columns",
         "entity.ch04.nullspace.test.null_vector",
+        "entity.ch04.nullspace.test.zero",
+        "relation.ch04.nullspace.test.nontrivial_solution",
+        "relation.ch04.nullspace.test.zero_result"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "A(1,1,-1)^T=0,\\ Ix=0\\Rightarrow x=0",
+      "id": "stage.ch04.nullspace.test.trivial",
+      "layout": "sequence",
+      "title": "无关列只有零解",
+      "visible_aliases": [
+        "ch04__entity__independent_columns__axis_1",
+        "ch04__entity__independent_columns__axis_2",
+        "ch04__entity__independent_columns__axis_3",
+        "ch04__entity__trivial_nullspace",
+        "ch04__relation__trivial_solution",
+        "sem__stage.ch04.nullspace.test.trivial__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.nullspace.test.independent_columns",
         "entity.ch04.nullspace.test.trivial_nullspace",
-        "relation.ch04.nullspace.test.batch_maps_to"
+        "relation.ch04.nullspace.test.trivial_solution"
       ]
     }
   ],

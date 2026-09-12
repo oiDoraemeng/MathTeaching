@@ -1,41 +1,239 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch04.linear-map.matrix-columns",
-  "revision": 1,
-  "status": "reviewed",
-  "source": {
-    "source_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.4 线性变换",
-      "4.4.3 线性变换的矩阵表示"
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.linear-map.matrix-columns.map_T",
+        "entity.ch04.linear-map.matrix-columns.standard_e1",
+        "entity.ch04.linear-map.matrix-columns.standard_e2",
+        "entity.ch04.linear-map.matrix-columns.column_1",
+        "entity.ch04.linear-map.matrix-columns.column_2"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "T(e_1)=(2,1)=a_1,\\ T(e_2)=(-1,3)=a_2",
+      "formula_symbols": [
+        "map_T",
+        "standard_e1"
+      ],
+      "id": "claim.ch04.linear-map.matrix-columns",
+      "relation_refs": [
+        "relation.ch04.linear-map.matrix-columns.first_column",
+        "relation.ch04.linear-map.matrix-columns.second_column",
+        "relation.ch04.linear-map.matrix-columns.grid_binding"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.3 线性变换的矩阵表示::1::sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a"
+      ],
+      "stage_refs": [
+        "stage.ch04.linear-map.matrix-columns.columns",
+        "stage.ch04.linear-map.matrix-columns.grid"
+      ],
+      "statement": "4.4.3 线性变换的矩阵表示 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.linear-map.matrix-columns"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.linear-map.matrix-columns.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
     ],
+    "definition": "4.4.3 线性变换的矩阵表示 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "T(e_1)=(2,1)=a_1,\\ T(e_2)=(-1,3)=a_2",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "Tej_equals_column_j",
+      "columns_determine_grid"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.4.3 线性变换的矩阵表示",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "id": "definition",
+        "text": "definition: 4.4.3 线性变换的矩阵表示。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "id": "formula",
+        "text": "formula: 4.4.3 线性变换的矩阵表示。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.4.3 线性变换的矩阵表示。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.4.3 线性变换的矩阵表示。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.4.3 线性变换的矩阵表示。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.4.3 线性变换的矩阵表示。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "id": "connections",
+        "text": "connections: 4.4.3 线性变换的矩阵表示。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.4.3 线性变换的矩阵表示 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "column_1": "column_1",
+      "column_2": "column_2",
+      "map_T": "map_T",
+      "standard_e1": "standard_e1",
+      "standard_e2": "standard_e2"
+    },
+    "title": "4.4.3 线性变换的矩阵表示",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "T(e_1)=(2,1)=a_1,\\ T(e_2)=(-1,3)=a_2"
+        ],
+        "checks": [
+          {
+            "expected": [
+              -1.0,
+              3.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "given": [
+          [
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              1.0,
+              3.0
+            ]
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch04.linear-map.matrix-columns",
+        "kind": "matrix_transform",
+        "result": [
+          -1.0,
+          3.0
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:89339f598b8a7a1a21322a2a07f5fedc750abc13f6644e33d36248fde360c457",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:dfc3043424a2cc7ea6e24099283b1b4eed2b3833638158ef376b96c45e38e257",
+    "source_hash": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.4.3 线性变换的矩阵表示\n\n定理 4.2 每个线性变换 T 对应唯一矩阵 A，使得 $T(x)=Ax$。A 的第 j 列 $= T(e_{j})$。\n矩阵 A 的列 $=$ 标准基向量被送到的新位置。整个坐标网格的变形由 A 的两列完全决定。\n线性变换的基本性质：\n1. $T(0) = 0$（任何线性变换必把零向量送到零向量——取 $k=0$ 即证）\n2. $T(-v) = -T(v)$\n3. T 是单射（不同输入$\\rightarrow$不同输出）$\\Leftrightarrow \\operatorname{Ker}(T) = \\{0\\} \\Leftrightarrow \\det(A) \\neq 0$\n4. T 是满射（能到达全部输出空间）$\\Leftrightarrow \\operatorname{Im}(T) = R^{m} \\Leftrightarrow \\operatorname{rank} = m$\n性质 3-4 揭示了线性变换的核心结构：核控制\"能否区分输入\"，像控制\"能否到达输出\"。\n\n##### 性质 1-2 的证明\n\n性质 1（$T(0)=0$）: $T(0) = T(0 \\cdot v) = 0 \\cdot T(v) = 0$。（取 $k=0$，利用齐次性）。■\n性质 2（$T(-v)=-T(v)$）: $T(-v) = T((-1) \\cdot v) = (-1) \\cdot T(v) = -T(v)$。■\n\n性质 3 证明: T 是单射 $\\Leftrightarrow$ 若 $T(u)=T(v)$，则 $u=v \\Leftrightarrow$ 若 $T(u-v)=0$，则 $u-v=0 \\Leftrightarrow \\operatorname{Ker}(T)=\\{0\\}$。\n若 T 是单射且 A 是方阵，则 $Ax=0$ 只有零解 $\\rightarrow \\det(A)\\neq 0$。■\n性质 4 证明: $\\operatorname{Im}(T) = \\{T(v) \\mid v\\in R^{n}\\}$。T 是满射 $\\Leftrightarrow \\operatorname{Im}(T) = R^{m} \\Leftrightarrow \\dim(\\operatorname{Im}) = m \\Leftrightarrow \\operatorname{rank} = m$。■\n\n##### 补充例题\n\n例4（非矩阵形式的线性变换）: 判断 T: $P_{2} \\rightarrow P_{2}$（次数$\\leq2$的多项式空间）定义为 $T(p(x)) = p'(x)$（求导）是否是线性变换。\n解: （1）$T(p+q) = (p+q)' = p'+q' = T(p)+T(q) ✓$。\n（2）$T(kp) = (kp)' = kp' = k \\cdot T(p) ✓$。$\\rightarrow$ 求导是线性变换。\n其核 $\\operatorname{Ker}(T)$ = {常数多项式}（维数 $=1$），像 $\\operatorname{Im}(T)$ = {一次多项式}（维数 $=2$）。验证：$\\dim(\\operatorname{Ker})+\\dim(\\operatorname{Im})=1+2=3=\\dim(P_{2}) ✓$。\n\n##### 分层例题\n\n例1：$T(x,y) = (2x+y, x-y)$。求矩阵 A。\n$$\nT(e_{1})=T(1,0)=(2,1), T(e_{2})=T(0,1)=(1,-1) \\rightarrow A=\\begin{pmatrix}2 & 1 \\\\ 1 & -1\\end{pmatrix}\n$$\n例2：$A=\\begin{pmatrix}0 & 1 \\\\ 1 & 0\\end{pmatrix}$。描述 T 的几何效果。\n$e_{1} \\rightarrow (0,1), e_{2} \\rightarrow (1,0) \\rightarrow$ 关于 $y=x$ 的反射。\n例3：$T(x,y)=(x^{2}, y)$。线性变换吗？\n$T((1,0)+(2,0))=T(3,0)=(9,0)$。$T(1,0)+T(2,0)=(1,0)+(4,0)=(5,0)$。$9\\neq5 \\rightarrow$ 不是。",
+    "heading_level": 4,
     "heading_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.4 线性变换",
       "4.4.3 线性变换的矩阵表示"
     ],
-    "heading_level": 4,
+    "neighboring_titles": [
+      "4.4.2 是 vs 不是线性变换"
+    ],
     "occurrence": 1,
-    "excerpt": "#### 4.4.3 线性变换的矩阵表示\n\n定理 4.2 每个线性变换 T 对应唯一矩阵 A，使得 $T(x)=Ax$。A 的第 j 列 $= T(e_{j})$。\n矩阵 A 的列 $=$ 标准基向量被送到的新位置。整个坐标网格的变形由 A 的两列完全决定。\n线性变换的基本性质：\n1. $T(0) = 0$（任何线性变换必把零向量送到零向量——取 $k=0$ 即证）\n2. $T(-v) = -T(v)$\n3. T 是单射（不同输入$\\rightarrow$不同输出）$\\Leftrightarrow \\operatorname{Ker}(T) = \\{0\\} \\Leftrightarrow \\det(A) \\neq 0$\n4. T 是满射（能到达全部输出空间）$\\Leftrightarrow \\operatorname{Im}(T) = R^{m} \\Leftrightarrow \\operatorname{rank} = m$\n性质 3-4 揭示了线性变换的核心结构：核控制\"能否区分输入\"，像控制\"能否到达输出\"。\n\n##### 性质 1-2 的证明\n\n性质 1（$T(0)=0$）: $T(0) = T(0 \\cdot v) = 0 \\cdot T(v) = 0$。（取 $k=0$，利用齐次性）。■\n性质 2（$T(-v)=-T(v)$）: $T(-v) = T((-1) \\cdot v) = (-1) \\cdot T(v) = -T(v)$。■\n\n性质 3 证明: T 是单射 $\\Leftrightarrow$ 若 $T(u)=T(v)$，则 $u=v \\Leftrightarrow$ 若 $T(u-v)=0$，则 $u-v=0 \\Leftrightarrow \\operatorname{Ker}(T)=\\{0\\}$。\n若 T 是单射且 A 是方阵，则 $Ax=0$ 只有零解 $\\rightarrow \\det(A)\\neq 0$。■\n性质 4 证明: $\\operatorname{Im}(T) = \\{T(v) \\mid v\\in R^{n}\\}$。T 是满射 $\\Leftrightarrow \\operatorname{Im}(T) = R^{m} \\Leftrightarrow \\dim(\\operatorname{Im}) = m \\Leftrightarrow \\operatorname{rank} = m$。■\n\n##### 补充例题\n\n例4（非矩阵形式的线性变换）: 判断 T: $P_{2} \\rightarrow P_{2}$（次数$\\leq2$的多项式空间）定义为 $T(p(x)) = p'(x)$（求导）是否是线性变换。\n解: （1）$T(p+q) = (p+q)' = p'+q' = T(p)+T(q) ✓$。\n（2）$T(kp) = (kp)' = kp' = k \\cdot T(p) ✓$。$\\rightarrow$ 求导是线性变换。\n其核 $\\operatorname{Ker}(T)$ = {常数多项式}（维数 $=1$），像 $\\operatorname{Im}(T)$ = {一次多项式}（维数 $=2$）。验证：$\\dim(\\operatorname{Ker})+\\dim(\\operatorname{Im})=1+2=3=\\dim(P_{2}) ✓$。\n\n##### 分层例题\n\n例1：$T(x,y) = (2x+y, x-y)$。求矩阵 A。\n$$\nT(e_{1})=T(1,0)=(2,1), T(e_{2})=T(0,1)=(1,-1) \\rightarrow A=\\begin{pmatrix}2 & 1 \\\\ 1 & -1\\end{pmatrix}\n$$\n例2：$A=\\begin{pmatrix}0 & 1 \\\\ 1 & 0\\end{pmatrix}$。描述 T 的几何效果。\n$e_{1} \\rightarrow (0,1), e_{2} \\rightarrow (1,0) \\rightarrow$ 关于 $y=x$ 的反射。\n例3：$T(x,y)=(x^{2}, y)$。线性变换吗？\n$T((1,0)+(2,0))=T(3,0)=(9,0)$。$T(1,0)+T(2,0)=(1,0)+(4,0)=(5,0)$。$9\\neq5 \\rightarrow$ 不是。",
     "source_hash": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.4 线性变换",
+      "4.4.3 线性变换的矩阵表示"
+    ],
     "spans": [
       {
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.3 线性变换的矩阵表示::1::sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
+        "end_line": 1791,
+        "fingerprint": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.4 线性变换",
           "4.4.3 线性变换的矩阵表示"
         ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.3 线性变换的矩阵表示::1::sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
         "start_line": 1748,
-        "end_line": 1791,
-        "fingerprint": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
         "text": "#### 4.4.3 线性变换的矩阵表示\n\n定理 4.2 每个线性变换 T 对应唯一矩阵 A，使得 $T(x)=Ax$。A 的第 j 列 $= T(e_{j})$。\n矩阵 A 的列 $=$ 标准基向量被送到的新位置。整个坐标网格的变形由 A 的两列完全决定。\n线性变换的基本性质：\n1. $T(0) = 0$（任何线性变换必把零向量送到零向量——取 $k=0$ 即证）\n2. $T(-v) = -T(v)$\n3. T 是单射（不同输入$\\rightarrow$不同输出）$\\Leftrightarrow \\operatorname{Ker}(T) = \\{0\\} \\Leftrightarrow \\det(A) \\neq 0$\n4. T 是满射（能到达全部输出空间）$\\Leftrightarrow \\operatorname{Im}(T) = R^{m} \\Leftrightarrow \\operatorname{rank} = m$\n性质 3-4 揭示了线性变换的核心结构：核控制\"能否区分输入\"，像控制\"能否到达输出\"。\n\n##### 性质 1-2 的证明\n\n性质 1（$T(0)=0$）: $T(0) = T(0 \\cdot v) = 0 \\cdot T(v) = 0$。（取 $k=0$，利用齐次性）。■\n性质 2（$T(-v)=-T(v)$）: $T(-v) = T((-1) \\cdot v) = (-1) \\cdot T(v) = -T(v)$。■\n\n性质 3 证明: T 是单射 $\\Leftrightarrow$ 若 $T(u)=T(v)$，则 $u=v \\Leftrightarrow$ 若 $T(u-v)=0$，则 $u-v=0 \\Leftrightarrow \\operatorname{Ker}(T)=\\{0\\}$。\n若 T 是单射且 A 是方阵，则 $Ax=0$ 只有零解 $\\rightarrow \\det(A)\\neq 0$。■\n性质 4 证明: $\\operatorname{Im}(T) = \\{T(v) \\mid v\\in R^{n}\\}$。T 是满射 $\\Leftrightarrow \\operatorname{Im}(T) = R^{m} \\Leftrightarrow \\dim(\\operatorname{Im}) = m \\Leftrightarrow \\operatorname{rank} = m$。■\n\n##### 补充例题\n\n例4（非矩阵形式的线性变换）: 判断 T: $P_{2} \\rightarrow P_{2}$（次数$\\leq2$的多项式空间）定义为 $T(p(x)) = p'(x)$（求导）是否是线性变换。\n解: （1）$T(p+q) = (p+q)' = p'+q' = T(p)+T(q) ✓$。\n（2）$T(kp) = (kp)' = kp' = k \\cdot T(p) ✓$。$\\rightarrow$ 求导是线性变换。\n其核 $\\operatorname{Ker}(T)$ = {常数多项式}（维数 $=1$），像 $\\operatorname{Im}(T)$ = {一次多项式}（维数 $=2$）。验证：$\\dim(\\operatorname{Ker})+\\dim(\\operatorname{Im})=1+2=3=\\dim(P_{2}) ✓$。\n\n##### 分层例题\n\n例1：$T(x,y) = (2x+y, x-y)$。求矩阵 A。\n$$\nT(e_{1})=T(1,0)=(2,1), T(e_{2})=T(0,1)=(1,-1) \\rightarrow A=\\begin{pmatrix}2 & 1 \\\\ 1 & -1\\end{pmatrix}\n$$\n例2：$A=\\begin{pmatrix}0 & 1 \\\\ 1 & 0\\end{pmatrix}$。描述 T 的几何效果。\n$e_{1} \\rightarrow (0,1), e_{2} \\rightarrow (1,0) \\rightarrow$ 关于 $y=x$ 的反射。\n例3：$T(x,y)=(x^{2}, y)$。线性变换吗？\n$T((1,0)+(2,0))=T(3,0)=(9,0)$。$T(1,0)+T(2,0)=(1,0)+(4,0)=(5,0)$。$9\\neq5 \\rightarrow$ 不是。"
       }
-    ],
-    "neighboring_titles": [
-      "4.4.2 是 vs 不是线性变换"
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -49,345 +247,205 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch04.linear-map.matrix-columns",
-      "statement": "4.4.3 线性变换的矩阵表示 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "4.4.3 线性变换的矩阵表示: finite typed semantic evidence",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.3 线性变换的矩阵表示::1::sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch04.linear-map.matrix-columns.vector_a",
-        "entity.ch04.linear-map.matrix-columns.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch04.linear-map.matrix-columns.batch_maps_to"
-      ],
-      "stage_refs": [
-        "stage.ch04.linear-map.matrix-columns.evidence"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch04.linear-map.matrix-columns.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch04.linear-map.matrix-columns"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "4.4.3 线性变换的矩阵表示",
-    "summary": "4.4.3 线性变换的矩阵表示 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 4.4.3 线性变换的矩阵表示。",
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 4.4.3 线性变换的矩阵表示。",
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 4.4.3 线性变换的矩阵表示。",
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 4.4.3 线性变换的矩阵表示。",
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 4.4.3 线性变换的矩阵表示。",
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 4.4.3 线性变换的矩阵表示。",
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 4.4.3 线性变换的矩阵表示。",
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a",
-      "standard_e1": "standard_e1",
-      "standard_e2": "standard_e2",
-      "column_1": "column_1",
-      "column_2": "column_2"
-    },
-    "definition": "4.4.3 线性变换的矩阵表示 的对象和定义。",
-    "formula": "4.4.3 线性变换的矩阵表示: finite typed semantic evidence",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch04.linear-map.matrix-columns",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "4.4.3 线性变换的矩阵表示: finite typed semantic evidence"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.4.3 线性变换的矩阵表示",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch04.linear-map.matrix-columns",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "basis_change",
     "entities": [
       {
-        "id": "entity.ch04.linear-map.matrix-columns.vector_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.linear-map.matrix-columns"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.linear-map.matrix-columns.map_T",
+        "kind": "matrix",
+        "label": "map_T",
+        "role": "map_T",
+        "value": [
+          [
+            2.0,
+            -1.0
+          ],
+          [
+            1.0,
+            3.0
+          ]
         ]
       },
       {
-        "id": "entity.ch04.linear-map.matrix-columns.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "transformed_a",
-        "label": "transformed_a",
         "claim_refs": [
           "claim.ch04.linear-map.matrix-columns"
-        ]
-      },
-      {
+        ],
+        "dimension": 2,
         "id": "entity.ch04.linear-map.matrix-columns.standard_e1",
-        "kind": "matrix",
-        "dimension": 2,
-        "value": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "role": "standard_e1",
+        "kind": "vector",
         "label": "standard_e1",
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
+        "role": "standard_e1",
+        "value": [
+          1.0,
+          0.0
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "dimension": 2,
         "id": "entity.ch04.linear-map.matrix-columns.standard_e2",
-        "kind": "matrix",
-        "dimension": 2,
-        "value": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "role": "standard_e2",
+        "kind": "vector",
         "label": "standard_e2",
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
+        "role": "standard_e2",
+        "value": [
+          0.0,
+          1.0
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "dimension": 2,
         "id": "entity.ch04.linear-map.matrix-columns.column_1",
-        "kind": "matrix",
-        "dimension": 2,
-        "value": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "role": "column_1",
+        "kind": "vector",
         "label": "column_1",
-        "claim_refs": [
-          "claim.ch04.linear-map.matrix-columns"
+        "role": "column_1",
+        "value": [
+          2.0,
+          1.0
         ]
       },
       {
-        "id": "entity.ch04.linear-map.matrix-columns.column_2",
-        "kind": "matrix",
-        "dimension": 2,
-        "value": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "role": "column_2",
-        "label": "column_2",
         "claim_refs": [
           "claim.ch04.linear-map.matrix-columns"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.linear-map.matrix-columns.column_2",
+        "kind": "vector",
+        "label": "column_2",
+        "role": "column_2",
+        "value": [
+          -1.0,
+          3.0
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch04.linear-map.matrix-columns.batch_maps_to",
-        "kind": "batch_maps_to",
-        "source_ref": "entity.ch04.linear-map.matrix-columns.vector_a",
-        "target_ref": "entity.ch04.linear-map.matrix-columns.transformed_a",
-        "parameters": {},
         "claim_refs": [
           "claim.ch04.linear-map.matrix-columns"
-        ]
+        ],
+        "id": "relation.ch04.linear-map.matrix-columns.first_column",
+        "kind": "column_image",
+        "parameters": {
+          "column_index": 1.0,
+          "expected_result": [
+            2.0,
+            1.0
+          ],
+          "matrix": [
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              1.0,
+              3.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.linear-map.matrix-columns.standard_e1",
+        "target_ref": "entity.ch04.linear-map.matrix-columns.column_1"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "id": "relation.ch04.linear-map.matrix-columns.second_column",
+        "kind": "column_image",
+        "parameters": {
+          "column_index": 2.0,
+          "expected_result": [
+            -1.0,
+            3.0
+          ],
+          "matrix": [
+            [
+              2.0,
+              -1.0
+            ],
+            [
+              1.0,
+              3.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.linear-map.matrix-columns.standard_e2",
+        "target_ref": "entity.ch04.linear-map.matrix-columns.column_2"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.matrix-columns"
+        ],
+        "id": "relation.ch04.linear-map.matrix-columns.grid_binding",
+        "kind": "image_of",
+        "parameters": {
+          "expected_basis": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              -1.0,
+              3.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.linear-map.matrix-columns.map_T",
+        "target_ref": "entity.ch04.linear-map.matrix-columns.column_1"
       }
     ],
+    "scene_family": "basis_change",
+    "scene_kind": "2d",
     "stages": [
       {
-        "id": "stage.ch04.linear-map.matrix-columns.evidence",
-        "title": "主题证据",
-        "caption": "4.4.3 线性变换的矩阵表示: finite typed semantic evidence",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch04.linear-map.matrix-columns.vector_a",
-          "entity.ch04.linear-map.matrix-columns.transformed_a",
-          "entity.ch04.linear-map.matrix-columns.standard_e1",
-          "entity.ch04.linear-map.matrix-columns.standard_e2",
-          "entity.ch04.linear-map.matrix-columns.column_1",
-          "entity.ch04.linear-map.matrix-columns.column_2"
+        "caption": "T(e_1)=(2,1)=a_1,\\ T(e_2)=(-1,3)=a_2",
+        "expected_invariants": [
+          "Tej_equals_column_j"
         ],
-        "output_entity_refs": [
-          "entity.ch04.linear-map.matrix-columns.vector_a",
-          "entity.ch04.linear-map.matrix-columns.transformed_a",
+        "id": "stage.ch04.linear-map.matrix-columns.columns",
+        "input_entity_refs": [
+          "entity.ch04.linear-map.matrix-columns.map_T",
           "entity.ch04.linear-map.matrix-columns.standard_e1",
-          "entity.ch04.linear-map.matrix-columns.standard_e2",
+          "entity.ch04.linear-map.matrix-columns.standard_e2"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
           "entity.ch04.linear-map.matrix-columns.column_1",
           "entity.ch04.linear-map.matrix-columns.column_2"
         ],
         "relation_refs": [
-          "relation.ch04.linear-map.matrix-columns.batch_maps_to"
+          "relation.ch04.linear-map.matrix-columns.first_column",
+          "relation.ch04.linear-map.matrix-columns.second_column"
         ],
+        "title": "基向量映到矩阵列"
+      },
+      {
+        "caption": "T(e_1)=(2,1)=a_1,\\ T(e_2)=(-1,3)=a_2",
         "expected_invariants": [
-          "finite numeric result",
-          "Tej_equals_column_j"
-        ]
+          "columns_determine_grid"
+        ],
+        "id": "stage.ch04.linear-map.matrix-columns.grid",
+        "input_entity_refs": [
+          "entity.ch04.linear-map.matrix-columns.column_1",
+          "entity.ch04.linear-map.matrix-columns.column_2"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch04.linear-map.matrix-columns.map_T"
+        ],
+        "relation_refs": [
+          "relation.ch04.linear-map.matrix-columns.grid_binding"
+        ],
+        "title": "矩阵列决定网格"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
-    "raw_reply_digest": "sha256:cb3b25ab2edd5f9d184bdb334fc6a9640fe9e12cd2848419a702767c7cc09c45",
-    "artifact_digest": "sha256:62be6fb178728b0f2f93ccd5f49bcdbca544c12f0216d8a58a71635eb58d82e6"
   }
 }

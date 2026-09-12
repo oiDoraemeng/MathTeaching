@@ -200,17 +200,41 @@ def compile_reviewed_topic(topic_id: str) -> CompiledResource:
     )
 
 
-def compile_chapter_04(*, output_root: str | Path | None = None) -> tuple[CompiledResource, ...]:
-    """Build all sixteen chapter-4 resources atomically after validation."""
+def compile_chapter_04(
+    *,
+    output_root: str | Path | None = None,
+    sync_index: bool = True,
+    index_path: str | Path | None = None,
+) -> tuple[CompiledResource, ...]:
+    """Build all sixteen chapter-4 resources and upsert their index rows.
+
+    Compilation of every topic completes before a resource or index is
+    touched.  The index update is chapter-scoped: every existing Chapter 4 row
+    is replaced by the validated resource set, while rows for all other
+    chapters are preserved verbatim.
+    """
     topic_ids = tuple(sorted(topic_id for topic_id in load_reviewed_artifacts() if topic_id.startswith("ch04.")))
     if len(topic_ids) != 16:
         raise ValueError(f"chapter 4 requires 16 reviewed artifacts, found {len(topic_ids)}")
     resources = tuple(compile_reviewed_topic(topic_id) for topic_id in topic_ids)
     output = compiled_resource_store(output_root)
-    # Compile every topic before touching disk, then use each store save's
-    # replace semantics so no partial resource is produced by validation.
+    if sync_index:
+        destination = (
+            Path(index_path)
+            if index_path is not None
+            else (Path(output_root).parent / "index.json" if output_root is not None else Path(__file__).with_name("data") / "index.json")
+        )
+        # Validate the complete chapter replacement before writing resources or
+        # the aggregate index.  A malformed baseline therefore leaves files
+        # untouched rather than producing a partial release.
+        index_payload = _merged_chapter_index_payload(resources, chapter=4, output_path=destination)
+    else:
+        destination = None
+        index_payload = None
     for resource in resources:
         output.save(resource)
+    if destination is not None and index_payload is not None:
+        _atomic_write_json(destination, index_payload)
     return resources
 
 
@@ -277,6 +301,123 @@ def _digest_rows(resources: tuple[CompiledResource, ...]) -> tuple[dict[str, obj
         }
         for resource in sorted(resources, key=lambda item: item.topic_id)
     )
+
+
+def _chapter_index_rows(
+    resources: tuple[CompiledResource, ...], *, chapter: int
+) -> tuple[dict[str, object], ...]:
+    if isinstance(chapter, bool) or not isinstance(chapter, int) or chapter < 1:
+        raise ValueError("chapter must be a positive integer")
+    prefix = f"ch{chapter:02d}."
+    expected_ids = {
+        topic.id for topic in topic_entries() if topic.chapter_number == chapter
+    }
+    actual_ids = [resource.topic_id for resource in resources]
+    if len(actual_ids) != len(set(actual_ids)):
+        raise ValueError(f"chapter {chapter} resources contain duplicate topic IDs")
+    if any(not topic_id.startswith(prefix) for topic_id in actual_ids):
+        raise ValueError(f"chapter {chapter} resources contain an out-of-scope topic")
+    if set(actual_ids) != expected_ids:
+        missing = sorted(expected_ids - set(actual_ids))
+        extra = sorted(set(actual_ids) - expected_ids)
+        raise ValueError(
+            f"chapter {chapter} resource coverage mismatch: missing={missing}, extra={extra}"
+        )
+    rows: list[dict[str, object]] = []
+    for resource in resources:
+        linked_strings = {
+            "source_hash": resource.source_hash,
+            "artifact_digest": resource.artifact_digest,
+            "compiler_version": resource.compiler_version,
+            "render_profile": resource.render_profile,
+            "contract_digest": resource.contract_digest,
+            "scene_family": resource.scene_family,
+            "plan_digest": resource.plan_digest,
+        }
+        empty = [name for name, value in linked_strings.items() if not value.strip()]
+        if empty:
+            raise ValueError(
+                f"{resource.topic_id}: empty index linkage fields {sorted(empty)}"
+            )
+        rows.append(
+            {
+                "topic_id": resource.topic_id,
+                "chapter": chapter,
+                "revision": resource.revision,
+                "draft_revision": resource.revision,
+                "reviewed_revision": resource.revision,
+                "published_revision": resource.revision,
+                **linked_strings,
+                "stage_count": len(resource.stages),
+                "claim_count": resource.claim_count,
+            }
+        )
+    return tuple(sorted(rows, key=lambda item: str(item["topic_id"])))
+
+
+def upsert_chapter_index(
+    resources: tuple[CompiledResource, ...],
+    *,
+    chapter: int,
+    output_path: str | Path | None = None,
+) -> Path:
+    """Atomically replace exactly one chapter in the aggregate teaching index."""
+
+    destination = Path(output_path) if output_path is not None else Path(__file__).with_name("data") / "index.json"
+    payload = _merged_chapter_index_payload(resources, chapter=chapter, output_path=destination)
+    _atomic_write_json(destination, payload)
+    return destination
+
+
+def _merged_chapter_index_payload(
+    resources: tuple[CompiledResource, ...], *, chapter: int, output_path: str | Path
+) -> dict[str, object]:
+    replacement_rows = _chapter_index_rows(resources, chapter=chapter)
+    destination = Path(output_path)
+    if destination.is_file():
+        payload = json.loads(destination.read_text(encoding="utf-8"))
+    else:
+        payload = {"schema_version": 1, "topics": []}
+    if not isinstance(payload, dict) or payload.get("schema_version") != 1:
+        raise ValueError("index payload must be a schema-version-1 object")
+    current_rows = payload.get("topics")
+    if not isinstance(current_rows, list) or not all(isinstance(row, dict) for row in current_rows):
+        raise ValueError("index payload must contain object topic rows")
+    prefix = f"ch{chapter:02d}."
+    retained_rows = [
+        dict(row)
+        for row in current_rows
+        if not str(row.get("topic_id", "")).startswith(prefix)
+    ]
+    retained_ids = [str(row.get("topic_id", "")) for row in retained_rows]
+    if any(not topic_id for topic_id in retained_ids) or len(retained_ids) != len(set(retained_ids)):
+        raise ValueError("retained index rows must have unique non-empty topic IDs")
+    replacement_ids = {str(row["topic_id"]) for row in replacement_rows}
+    if replacement_ids & set(retained_ids):
+        raise ValueError("chapter replacement collides with retained index rows")
+    updated = dict(payload)
+    updated_rows = sorted(
+        [*retained_rows, *(dict(row) for row in replacement_rows)],
+        key=lambda item: str(item["topic_id"]),
+    )
+    updated["topics"] = updated_rows
+    updated["topic_count"] = len(updated_rows)
+    return updated
+
+
+def _atomic_write_json(destination: Path, payload: Mapping[str, object]) -> None:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary = destination.with_suffix(destination.suffix + ".tmp")
+    try:
+        temporary.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        temporary.replace(destination)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
 
 
 def write_teaching_index(
@@ -353,6 +494,7 @@ __all__ = [
     "compile_reviewed_topic",
     "compile_chapter_04",
     "compiled_resource_store",
+    "upsert_chapter_index",
     "write_teaching_index",
     "validate_compiled_resources",
 ]

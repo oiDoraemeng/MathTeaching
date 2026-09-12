@@ -1,188 +1,198 @@
 {
-  "artifact_digest": "sha256:c8581b6f9fda99f706a3823f099471ab714371decbf8438af09731c317ae678d",
+  "artifact_digest": "sha256:b4cc80f44df151bcf6b47811124280c9adbe8c67cdfba67e1961337da6b5ba3c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:0325f058a596deca0f758afcd3782fd2078dd118d9142cb8ea4030ee6b646331",
+  "contract_digest": "sha256:0a87e03907341ed194900be329391f0a40e2a6e047aa549cbb172174f3b9fdde",
   "plan": {
     "operations": [
       {
-        "alias": "ch04_dependence",
-        "aliases": [
-          "dependent",
-          "zero"
+        "alias": "ch04__entity__dependent_set",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
         ],
-        "matrices": [
-          [
-            [
-              1,
-              0
-            ],
-            [
-              0,
-              1
-            ]
-          ]
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
         ],
-        "op": "geometry.staged_transform",
-        "points": [
+        "size": 2.5
+      },
+      {
+        "alias": "ch04__entity__independent_set",
+        "op": "geometry.parallelepiped",
+        "opacity": 0.16,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vectors": [
           [
-            1,
-            1
+            1.0,
+            0.0,
+            0.0
           ],
           [
-            2,
-            2
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
           ]
         ]
       },
       {
-        "alias": "ch04__entity__dependent_set",
-        "op": "annotation.upsert",
-        "position": [
+        "alias": "ch04__entity__coefficients",
+        "end": [
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
           0.0,
           0.0
-        ],
-        "text": "dependent_set"
-      },
-      {
-        "alias": "ch04__entity__independent_set",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "independent_set"
+        ]
       },
       {
         "alias": "ch04__entity__zero_combination",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "zero_combination"
-      },
-      {
-        "alias": "ch04__relation__spans",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "spans"
-      },
-      {
-        "alias": "sem__entity.ch04.dependence.redundancy.dependent_set__origin",
         "coordinates": [
           0.0,
+          0.0,
           0.0
         ],
-        "name": "O",
-        "op": "point.upsert"
+        "name": "0",
+        "op": "point3d.upsert"
       },
       {
-        "alias": "sem__entity.ch04.dependence.redundancy.dependent_set__end",
-        "coordinates": [
-          2.0,
-          2.0
+        "alias": "ch04__entity__redundant_vector",
+        "end": [
+          1.0,
+          1.0,
+          0.0
         ],
-        "name": "dependent_set",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.dependence.redundancy.dependent_set",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.dependence.redundancy.dependent_set__end",
         "kind": "vector",
-        "label": "dependent_set",
-        "op": "linear.upsert",
+        "op": "linear3d.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.dependence.redundancy.dependent_set__origin"
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
-        "alias": "sem__entity.ch04.dependence.redundancy.independent_set__origin",
-        "coordinates": [
+        "alias": "ch04__scene__parallelogram",
+        "op": "geometry.parallelogram3d",
+        "opacity": 0.16,
+        "origin": [
+          0.0,
           0.0,
           0.0
         ],
-        "name": "O",
-        "op": "point.upsert"
+        "vectors": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
       },
       {
-        "alias": "sem__entity.ch04.dependence.redundancy.independent_set__end",
-        "coordinates": [
+        "alias": "ch04__relation__dependent_combination",
+        "op": "geometry.parallelogram3d",
+        "opacity": 0.16,
+        "origin": [
           0.0,
-          1.0
-        ],
-        "name": "independent_set",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.dependence.redundancy.independent_set",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.dependence.redundancy.independent_set__end",
-        "kind": "vector",
-        "label": "independent_set",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.dependence.redundancy.independent_set__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.dependence.redundancy.zero_combination__origin",
-        "coordinates": [
           0.0,
           0.0
         ],
-        "name": "O",
-        "op": "point.upsert"
+        "vectors": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
       },
       {
-        "alias": "sem__entity.ch04.dependence.redundancy.zero_combination__end",
-        "coordinates": [
+        "alias": "ch04__relation__independent_rank",
+        "op": "geometry.parallelepiped",
+        "opacity": 0.16,
+        "origin": [
+          0.0,
           0.0,
           0.0
         ],
-        "name": "zero_combination",
-        "op": "point.upsert"
+        "vectors": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
       },
       {
-        "alias": "sem__entity.ch04.dependence.redundancy.zero_combination",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.dependence.redundancy.zero_combination__end",
-        "kind": "vector",
-        "label": "zero_combination",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.dependence.redundancy.zero_combination__origin"
-      },
-      {
-        "alias": "sem__relation.ch04.dependence.redundancy.spans",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "ch04__relation__redundancy",
+        "op": "geometry.parallelogram3d",
+        "opacity": 0.16,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
         ],
-        "text": "spans: dependent_set → independent_set"
-      },
-      {
-        "alias": "sem__stage.ch04.dependence.redundancy.evidence__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "主题证据"
+        "vectors": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
       },
       {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
-    "scene": "2d",
+    "scene": "3d",
     "summary": "4.2.2 线性相关与线性无关",
     "version": 1
   },
-  "plan_digest": "sha256:ab37349cea7e0054a4ba769c9fa841ed69b6757842b4f03696554d5360979a48",
+  "plan_digest": "sha256:2372bc52fbc3cf2f473a4fb68f853ff3e6eecfed3d94ae6dca9afc28edb8acf5",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -197,33 +207,45 @@
         -2.65,
         2.65
       ],
-      "caption": "2u-v=0\\quad (u=(1,1),\\ v=(2,2))",
-      "id": "stage.ch04.dependence.redundancy.evidence",
+      "caption": "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
+      "id": "stage.ch04.dependence.redundancy.dependent",
       "layout": "sequence",
-      "title": "主题证据",
+      "title": "非零系数组合为零",
       "visible_aliases": [
         "ch04__entity__dependent_set",
-        "sem__entity.ch04.dependence.redundancy.dependent_set",
-        "sem__entity.ch04.dependence.redundancy.dependent_set__end",
-        "sem__entity.ch04.dependence.redundancy.dependent_set__origin",
-        "ch04__entity__independent_set",
-        "sem__entity.ch04.dependence.redundancy.independent_set",
-        "sem__entity.ch04.dependence.redundancy.independent_set__end",
-        "sem__entity.ch04.dependence.redundancy.independent_set__origin",
+        "ch04__entity__coefficients",
         "ch04__entity__zero_combination",
-        "sem__entity.ch04.dependence.redundancy.zero_combination",
-        "sem__entity.ch04.dependence.redundancy.zero_combination__end",
-        "sem__entity.ch04.dependence.redundancy.zero_combination__origin",
-        "ch04__relation__spans",
-        "sem__relation.ch04.dependence.redundancy.spans",
-        "sem__stage.ch04.dependence.redundancy.evidence__title",
-        "sem__span__1"
+        "ch04__entity__redundant_vector",
+        "ch04__relation__dependent_combination",
+        "ch04__relation__redundancy",
+        "sem__stage.ch04.dependence.redundancy.dependent__title"
       ],
       "visible_refs": [
         "entity.ch04.dependence.redundancy.dependent_set",
-        "entity.ch04.dependence.redundancy.independent_set",
+        "entity.ch04.dependence.redundancy.coefficients",
         "entity.ch04.dependence.redundancy.zero_combination",
-        "relation.ch04.dependence.redundancy.spans"
+        "entity.ch04.dependence.redundancy.redundant_vector",
+        "relation.ch04.dependence.redundancy.dependent_combination",
+        "relation.ch04.dependence.redundancy.redundancy"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
+      "id": "stage.ch04.dependence.redundancy.independent",
+      "layout": "sequence",
+      "title": "满秩无关组",
+      "visible_aliases": [
+        "ch04__entity__independent_set",
+        "ch04__relation__independent_rank",
+        "sem__stage.ch04.dependence.redundancy.independent__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.dependence.redundancy.independent_set",
+        "relation.ch04.dependence.redundancy.independent_rank"
       ]
     }
   ],

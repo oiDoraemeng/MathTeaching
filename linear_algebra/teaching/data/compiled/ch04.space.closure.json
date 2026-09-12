@@ -1,87 +1,161 @@
 {
-  "artifact_digest": "sha256:be0f41db361b8c25e58f403d3ffd8929fa0332eda4fb162573f1465e42ea070b",
+  "artifact_digest": "sha256:8faee8762b0400076e9d0a5a2cd7cbb46b1749a501e76301e3672d25a02a736b",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:353c890ab69d9f057969a6fe85d07082ffc3609f406a7af7ba04241f3cb924c6",
+  "contract_digest": "sha256:c83c8cf4a97b85a48eb7fd6f5090961c54f9e0cf8f7d38f8c14d161f717071d8",
   "plan": {
     "operations": [
       {
-        "alias": "closure_vectors",
-        "aliases": [
-          "closure_u",
-          "closure_v"
-        ],
-        "matrices": [
+        "alias": "ch04__entity__space",
+        "basis": [
           [
-            [
-              1,
-              0
-            ],
-            [
-              0,
-              1
-            ]
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
           ]
         ],
-        "op": "geometry.staged_transform",
-        "points": [
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__entity__vector_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__vector_a__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "u",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__vector_a",
+        "end": "ch04__entity__vector_a__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__vector_a__origin"
+      },
+      {
+        "alias": "ch04__entity__vector_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__vector_b__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__vector_b",
+        "end": "ch04__entity__vector_b__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__vector_b__origin"
+      },
+      {
+        "alias": "ch04__entity__sum__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__sum__end",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "u+v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__sum",
+        "end": "ch04__entity__sum__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__sum__origin"
+      },
+      {
+        "alias": "ch04__entity__scaled__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__scaled__end",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "2u",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__scaled",
+        "end": "ch04__entity__scaled__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__scaled__origin"
+      },
+      {
+        "alias": "ch04__relation__addition",
+        "op": "geometry.polygon",
+        "opacity": 0.16,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
+            0.0
+          ],
           [
             1.0,
             0.0
           ],
           [
             1.0,
-            0.0
+            1.0
+          ],
+          [
+            0.0,
+            1.0
           ]
         ]
       },
       {
-        "alias": "ch04__entity__vector_a",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "vector_a"
-      },
-      {
-        "alias": "ch04__entity__vector_b",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "vector_b"
-      },
-      {
-        "alias": "ch04__entity__sum",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "sum"
-      },
-      {
-        "alias": "ch04__entity__scaled",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "scaled"
-      },
-      {
-        "alias": "ch04__relation__spans",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "spans"
-      },
-      {
-        "alias": "sem__entity.ch04.space.closure.vector_a__origin",
+        "alias": "ch04__relation__scaling__origin",
         "coordinates": [
           0.0,
           0.0
@@ -90,125 +164,81 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.space.closure.vector_a__end",
+        "alias": "ch04__relation__scaling__end",
         "coordinates": [
-          1.0,
+          2.0,
           0.0
         ],
-        "name": "vector_a",
+        "name": "result",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.space.closure.vector_a",
-        "color": "#2F6BFF",
-        "end": "sem__entity.ch04.space.closure.vector_a__end",
+        "alias": "ch04__relation__scaling",
+        "end": "ch04__relation__scaling__end",
         "kind": "vector",
-        "label": "vector_a",
         "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.space.closure.vector_a__origin"
+        "role": "result",
+        "start": "ch04__relation__scaling__origin"
       },
       {
-        "alias": "sem__entity.ch04.space.closure.vector_b__origin",
-        "coordinates": [
-          0.0,
-          0.0
+        "alias": "ch04__relation__sum_membership",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.space.closure.vector_b__end",
-        "coordinates": [
-          1.0,
-          0.0
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
-        "name": "vector_b",
-        "op": "point.upsert"
+        "op": "geometry.subspace_region",
+        "opacity": 0.16
       },
       {
-        "alias": "sem__entity.ch04.space.closure.vector_b",
-        "color": "#F08A24",
-        "end": "sem__entity.ch04.space.closure.vector_b__end",
-        "kind": "vector",
-        "label": "vector_b",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.space.closure.vector_b__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.space.closure.sum__origin",
-        "coordinates": [
-          0.0,
-          0.0
+        "alias": "ch04__relation__scaled_membership",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.space.closure.sum__end",
-        "coordinates": [
-          1.0,
-          0.0
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
-        "name": "sum",
-        "op": "point.upsert"
+        "op": "geometry.subspace_region",
+        "opacity": 0.16
       },
       {
-        "alias": "sem__entity.ch04.space.closure.sum",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.space.closure.sum__end",
-        "kind": "vector",
-        "label": "sum",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.space.closure.sum__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.space.closure.scaled__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.space.closure.scaled__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "scaled",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.space.closure.scaled",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.space.closure.scaled__end",
-        "kind": "vector",
-        "label": "scaled",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.space.closure.scaled__origin"
-      },
-      {
-        "alias": "sem__relation.ch04.space.closure.spans",
+        "alias": "sem__stage.ch04.space.closure.addition__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "spans: vector_a → vector_b"
+        "text": "加法封闭"
       },
       {
-        "alias": "sem__stage.ch04.space.closure.evidence__title",
+        "alias": "sem__stage.ch04.space.closure.scaling__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
-          2.65
+          2.17
         ],
-        "text": "主题证据"
+        "text": "数乘封闭"
       },
       {
         "op": "view.fit",
@@ -219,7 +249,7 @@
     "summary": "4.1.1 线性空间",
     "version": 1
   },
-  "plan_digest": "sha256:82c5d0522d9cf6290d60b015a4c70047ebf2401c17bc27c397552d6129349baf",
+  "plan_digest": "sha256:36ff975037a0a5e9dcd1a7c3d4ffa18b1415589baaadee9dae1b68a07e589702",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -234,38 +264,53 @@
         -2.65,
         2.65
       ],
-      "caption": "u=(1,0),\\ v=(0,1),\\ u+v=(1,1),\\ 2u=(2,0)",
-      "id": "stage.ch04.space.closure.evidence",
+      "caption": "u+v=(1,1)\\in R^2,\\ 2u=(2,0)\\in R^2",
+      "id": "stage.ch04.space.closure.addition",
       "layout": "sequence",
-      "title": "主题证据",
+      "title": "加法封闭",
       "visible_aliases": [
+        "ch04__entity__space",
         "ch04__entity__vector_a",
-        "sem__entity.ch04.space.closure.vector_a",
-        "sem__entity.ch04.space.closure.vector_a__end",
-        "sem__entity.ch04.space.closure.vector_a__origin",
         "ch04__entity__vector_b",
-        "sem__entity.ch04.space.closure.vector_b",
-        "sem__entity.ch04.space.closure.vector_b__end",
-        "sem__entity.ch04.space.closure.vector_b__origin",
         "ch04__entity__sum",
-        "sem__entity.ch04.space.closure.sum",
-        "sem__entity.ch04.space.closure.sum__end",
-        "sem__entity.ch04.space.closure.sum__origin",
-        "ch04__entity__scaled",
-        "sem__entity.ch04.space.closure.scaled",
-        "sem__entity.ch04.space.closure.scaled__end",
-        "sem__entity.ch04.space.closure.scaled__origin",
-        "ch04__relation__spans",
-        "sem__relation.ch04.space.closure.spans",
-        "sem__stage.ch04.space.closure.evidence__title",
-        "sem__span__1"
+        "ch04__relation__addition",
+        "ch04__relation__sum_membership",
+        "sem__stage.ch04.space.closure.addition__title"
       ],
       "visible_refs": [
+        "entity.ch04.space.closure.space",
         "entity.ch04.space.closure.vector_a",
         "entity.ch04.space.closure.vector_b",
         "entity.ch04.space.closure.sum",
+        "relation.ch04.space.closure.addition",
+        "relation.ch04.space.closure.sum_membership"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "u+v=(1,1)\\in R^2,\\ 2u=(2,0)\\in R^2",
+      "id": "stage.ch04.space.closure.scaling",
+      "layout": "sequence",
+      "title": "数乘封闭",
+      "visible_aliases": [
+        "ch04__entity__space",
+        "ch04__entity__vector_a",
+        "ch04__entity__scaled",
+        "ch04__relation__scaling__origin",
+        "ch04__relation__scaling__end",
+        "ch04__relation__scaling",
+        "ch04__relation__scaled_membership",
+        "sem__stage.ch04.space.closure.scaling__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.space.closure.space",
+        "entity.ch04.space.closure.vector_a",
         "entity.ch04.space.closure.scaled",
-        "relation.ch04.space.closure.spans"
+        "relation.ch04.space.closure.scaling",
+        "relation.ch04.space.closure.scaled_membership"
       ]
     }
   ],

@@ -1,42 +1,251 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch04.nullspace.test",
-  "revision": 1,
-  "status": "reviewed",
-  "source": {
-    "source_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.2 线性组合、线性相关与线性无关",
-      "4.2.3 判定方法——拼矩阵解 $Ax=0$"
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.nullspace.test.columns",
+        "entity.ch04.nullspace.test.null_vector",
+        "entity.ch04.nullspace.test.zero",
+        "entity.ch04.nullspace.test.independent_columns",
+        "entity.ch04.nullspace.test.trivial_nullspace"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "A(1,1,-1)^T=0,\\ Ix=0\\Rightarrow x=0",
+      "formula_symbols": [
+        "columns",
+        "null_vector"
+      ],
+      "id": "claim.ch04.nullspace.test",
+      "relation_refs": [
+        "relation.ch04.nullspace.test.nontrivial_solution",
+        "relation.ch04.nullspace.test.zero_result",
+        "relation.ch04.nullspace.test.trivial_solution"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.3 判定方法——拼矩阵解 $Ax=0$::1::sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d"
+      ],
+      "stage_refs": [
+        "stage.ch04.nullspace.test.nontrivial",
+        "stage.ch04.nullspace.test.trivial"
+      ],
+      "statement": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.nullspace.test"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.nullspace.test.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
     ],
+    "definition": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "A(1,1,-1)^T=0,\\ Ix=0\\Rightarrow x=0",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "Ax_zero",
+      "nonzero_null_solution",
+      "trivial_nullspace_only"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.2.3 判定方法——拼矩阵解 $Ax=0$",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "id": "definition",
+        "text": "definition: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "id": "formula",
+        "text": "formula: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "id": "connections",
+        "text": "connections: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "columns": "columns",
+      "independent_columns": "independent_columns",
+      "null_vector": "null_vector",
+      "trivial_nullspace": "trivial_nullspace",
+      "zero": "zero"
+    },
+    "title": "4.2.3 判定方法——拼矩阵解 $Ax=0$",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "A(1,1,-1)^T=0,\\ Ix=0\\Rightarrow x=0"
+        ],
+        "checks": [
+          {
+            "expected": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "given": [
+          [
+            [
+              1.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            1.0,
+            1.0,
+            -1.0
+          ]
+        ],
+        "id": "example.ch04.nullspace.test",
+        "kind": "matrix_transform",
+        "result": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:e741768e8090df98f3dae76914273a3adc9b1a35500c819702e84fa1d76afe4a",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:7586189a21349684169dedb54aaef730f7653609a50332f429a1b965f3ae2533",
+    "source_hash": "sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.2.3 判定方法——拼矩阵解 $Ax=0$\n\n判定一组向量是否线性无关的通用方法：把它们按列排成矩阵 A，解 $Ax=0$。\n- 只有零解 $\\rightarrow$ 线性无关\n- 有非零解 $\\rightarrow$ 线性相关（且解出的系数给出了\"怎么拼出零向量\"）\n联动行列式（方阵时）：$\\det(A)\\neq0 \\Leftrightarrow Ax=0$ 只有零解 $\\Leftrightarrow$ 列向量线性无关。\n重要定理：$R^{n}$ 中任意 $n+1$ 个向量必然线性相关（向量个数超过空间维数$\\rightarrow$必有冗余）。推广：任何向量组，若个数 $>$ 维数，必相关。\n\n##### 线性无关的重要性质\n\n性质 2.1（子集性质）: 线性无关组的任意子集仍线性无关。\n性质 2.2（扩张性质）: 线性相关组的任意扩张（添加更多向量）仍线性相关。\n性质 2.3（$R^{n}$中的「维数上限」）: $R^{n}$ 中任意 $n+1$ 个或更多的向量必然线性相关。\n性质 2.4（等价条件）: $v_{1}, \\dots ,v_{k}$ 线性无关 $\\Leftrightarrow$ 任何一个向量都不能被其余向量线性表出。\n（等价于「没有冗余的向量」——这正是「线性无关」命名的由来。）",
+    "heading_level": 4,
     "heading_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.2 线性组合、线性相关与线性无关",
       "4.2.3 判定方法——拼矩阵解 $Ax=0$"
     ],
-    "heading_level": 4,
+    "neighboring_titles": [
+      "4.2.2 线性相关与线性无关",
+      "4.2.4 极大无关组与秩"
+    ],
     "occurrence": 1,
-    "excerpt": "#### 4.2.3 判定方法——拼矩阵解 $Ax=0$\n\n判定一组向量是否线性无关的通用方法：把它们按列排成矩阵 A，解 $Ax=0$。\n- 只有零解 $\\rightarrow$ 线性无关\n- 有非零解 $\\rightarrow$ 线性相关（且解出的系数给出了\"怎么拼出零向量\"）\n联动行列式（方阵时）：$\\det(A)\\neq0 \\Leftrightarrow Ax=0$ 只有零解 $\\Leftrightarrow$ 列向量线性无关。\n重要定理：$R^{n}$ 中任意 $n+1$ 个向量必然线性相关（向量个数超过空间维数$\\rightarrow$必有冗余）。推广：任何向量组，若个数 $>$ 维数，必相关。\n\n##### 线性无关的重要性质\n\n性质 2.1（子集性质）: 线性无关组的任意子集仍线性无关。\n性质 2.2（扩张性质）: 线性相关组的任意扩张（添加更多向量）仍线性相关。\n性质 2.3（$R^{n}$中的「维数上限」）: $R^{n}$ 中任意 $n+1$ 个或更多的向量必然线性相关。\n性质 2.4（等价条件）: $v_{1}, \\dots ,v_{k}$ 线性无关 $\\Leftrightarrow$ 任何一个向量都不能被其余向量线性表出。\n（等价于「没有冗余的向量」——这正是「线性无关」命名的由来。）",
     "source_hash": "sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.2 线性组合、线性相关与线性无关",
+      "4.2.3 判定方法——拼矩阵解 $Ax=0$"
+    ],
     "spans": [
       {
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.3 判定方法——拼矩阵解 $Ax=0$::1::sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d",
+        "end_line": 1649,
+        "fingerprint": "sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.2 线性组合、线性相关与线性无关",
           "4.2.3 判定方法——拼矩阵解 $Ax=0$"
         ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.3 判定方法——拼矩阵解 $Ax=0$::1::sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d",
         "start_line": 1634,
-        "end_line": 1649,
-        "fingerprint": "sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d",
         "text": "#### 4.2.3 判定方法——拼矩阵解 $Ax=0$\n\n判定一组向量是否线性无关的通用方法：把它们按列排成矩阵 A，解 $Ax=0$。\n- 只有零解 $\\rightarrow$ 线性无关\n- 有非零解 $\\rightarrow$ 线性相关（且解出的系数给出了\"怎么拼出零向量\"）\n联动行列式（方阵时）：$\\det(A)\\neq0 \\Leftrightarrow Ax=0$ 只有零解 $\\Leftrightarrow$ 列向量线性无关。\n重要定理：$R^{n}$ 中任意 $n+1$ 个向量必然线性相关（向量个数超过空间维数$\\rightarrow$必有冗余）。推广：任何向量组，若个数 $>$ 维数，必相关。\n\n##### 线性无关的重要性质\n\n性质 2.1（子集性质）: 线性无关组的任意子集仍线性无关。\n性质 2.2（扩张性质）: 线性相关组的任意扩张（添加更多向量）仍线性相关。\n性质 2.3（$R^{n}$中的「维数上限」）: $R^{n}$ 中任意 $n+1$ 个或更多的向量必然线性相关。\n性质 2.4（等价条件）: $v_{1}, \\dots ,v_{k}$ 线性无关 $\\Leftrightarrow$ 任何一个向量都不能被其余向量线性表出。\n（等价于「没有冗余的向量」——这正是「线性无关」命名的由来。）"
       }
-    ],
-    "neighboring_titles": [
-      "4.2.2 线性相关与线性无关",
-      "4.2.4 极大无关组与秩"
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -50,336 +259,248 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch04.nullspace.test",
-      "statement": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "A(1,-1,0)^T=0,\\quad Ax=0",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.3 判定方法——拼矩阵解 $Ax=0$::1::sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch04.nullspace.test.vector_a",
-        "entity.ch04.nullspace.test.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch04.nullspace.test.batch_maps_to"
-      ],
-      "stage_refs": [
-        "stage.ch04.nullspace.test.evidence"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch04.nullspace.test.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch04.nullspace.test"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "4.2.3 判定方法——拼矩阵解 $Ax=0$",
-    "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 4.2.3 判定方法——拼矩阵解 $Ax=0$。",
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a",
-      "columns": "columns",
-      "null_vector": "null_vector",
-      "trivial_nullspace": "trivial_nullspace"
-    },
-    "definition": "4.2.3 判定方法——拼矩阵解 $Ax=0$ 的对象和定义。",
-    "formula": "A(1,-1,0)^T=0,\\quad Ax=0",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch04.nullspace.test",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "A(1,-1,0)^T=0,\\quad Ax=0"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.2.3 判定方法——拼矩阵解 $Ax=0$",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch04.nullspace.test",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "basis_change",
     "entities": [
       {
-        "id": "entity.ch04.nullspace.test.vector_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.nullspace.test"
-        ]
-      },
-      {
-        "id": "entity.ch04.nullspace.test.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
         ],
-        "role": "transformed_a",
-        "label": "transformed_a",
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
-        ]
-      },
-      {
+        "dimension": 3,
         "id": "entity.ch04.nullspace.test.columns",
         "kind": "matrix",
-        "dimension": 2,
-        "value": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
+        "label": "A",
         "role": "columns",
-        "label": "columns",
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
+        "value": [
+          [
+            1.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0
+          ]
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "dimension": 3,
         "id": "entity.ch04.nullspace.test.null_vector",
-        "kind": "matrix",
-        "dimension": 2,
-        "value": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
+        "kind": "vector",
+        "label": "x≠0",
         "role": "null_vector",
-        "label": "null_vector",
-        "claim_refs": [
-          "claim.ch04.nullspace.test"
+        "value": [
+          1.0,
+          1.0,
+          -1.0
         ]
       },
       {
-        "id": "entity.ch04.nullspace.test.trivial_nullspace",
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.nullspace.test.zero",
+        "kind": "point",
+        "label": "Ax=0",
+        "role": "zero",
+        "value": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.nullspace.test.independent_columns",
         "kind": "matrix",
-        "dimension": 2,
+        "label": "I",
+        "role": "independent_columns",
         "value": [
           [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
             1.0,
             0.0
           ],
           [
             0.0,
+            0.0,
             1.0
           ]
-        ],
-        "role": "trivial_nullspace",
-        "label": "trivial_nullspace",
+        ]
+      },
+      {
         "claim_refs": [
           "claim.ch04.nullspace.test"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.nullspace.test.trivial_nullspace",
+        "kind": "point",
+        "label": "仅零解",
+        "role": "trivial_nullspace",
+        "value": [
+          0.0,
+          0.0,
+          0.0
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch04.nullspace.test.batch_maps_to",
-        "kind": "batch_maps_to",
-        "source_ref": "entity.ch04.nullspace.test.vector_a",
-        "target_ref": "entity.ch04.nullspace.test.transformed_a",
-        "parameters": {
-          "matrix": [
-            [
-              1,
-              0
-            ],
-            [
-              0,
-              0
-            ]
-          ],
-          "rank": 1,
-          "nullity": 1
-        },
         "claim_refs": [
           "claim.ch04.nullspace.test"
-        ]
+        ],
+        "id": "relation.ch04.nullspace.test.nontrivial_solution",
+        "kind": "null_solution",
+        "parameters": {
+          "expected_result": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.nullspace.test.columns",
+        "target_ref": "entity.ch04.nullspace.test.null_vector"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "id": "relation.ch04.nullspace.test.zero_result",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.nullspace.test.null_vector",
+        "target_ref": "entity.ch04.nullspace.test.zero"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.nullspace.test"
+        ],
+        "id": "relation.ch04.nullspace.test.trivial_solution",
+        "kind": "null_solution",
+        "parameters": {
+          "expected_nullity": 0.0,
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.nullspace.test.independent_columns",
+        "target_ref": "entity.ch04.nullspace.test.trivial_nullspace"
       }
     ],
+    "scene_family": "basis_change",
+    "scene_kind": "3d",
     "stages": [
       {
-        "id": "stage.ch04.nullspace.test.evidence",
-        "title": "主题证据",
-        "caption": "A(1,-1,0)^T=0,\\quad Ax=0",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch04.nullspace.test.vector_a",
-          "entity.ch04.nullspace.test.transformed_a",
-          "entity.ch04.nullspace.test.columns",
-          "entity.ch04.nullspace.test.null_vector",
-          "entity.ch04.nullspace.test.trivial_nullspace"
+        "caption": "A(1,1,-1)^T=0,\\ Ix=0\\Rightarrow x=0",
+        "expected_invariants": [
+          "Ax_zero",
+          "nonzero_null_solution"
         ],
-        "output_entity_refs": [
-          "entity.ch04.nullspace.test.vector_a",
-          "entity.ch04.nullspace.test.transformed_a",
+        "id": "stage.ch04.nullspace.test.nontrivial",
+        "input_entity_refs": [
           "entity.ch04.nullspace.test.columns",
-          "entity.ch04.nullspace.test.null_vector",
+          "entity.ch04.nullspace.test.null_vector"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch04.nullspace.test.zero"
+        ],
+        "relation_refs": [
+          "relation.ch04.nullspace.test.nontrivial_solution",
+          "relation.ch04.nullspace.test.zero_result"
+        ],
+        "title": "非零零空间解"
+      },
+      {
+        "caption": "A(1,1,-1)^T=0,\\ Ix=0\\Rightarrow x=0",
+        "expected_invariants": [
+          "trivial_nullspace_only"
+        ],
+        "id": "stage.ch04.nullspace.test.trivial",
+        "input_entity_refs": [
+          "entity.ch04.nullspace.test.independent_columns"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
           "entity.ch04.nullspace.test.trivial_nullspace"
         ],
         "relation_refs": [
-          "relation.ch04.nullspace.test.batch_maps_to"
+          "relation.ch04.nullspace.test.trivial_solution"
         ],
-        "expected_invariants": [
-          "finite numeric result",
-          "Ax_zero",
-          "nonzero_null_solution"
-        ]
+        "title": "无关列只有零解"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:2901ac7936cc2f2f3bdb6bcad5b07650436592b21c755e10cbbdb6611cb6103d",
-    "raw_reply_digest": "sha256:c71843bac2f52879b3783474ac1116cdaabf76d6e139a670c08917c1e21f56eb",
-    "artifact_digest": "sha256:2afd5e0839b55f384086ea84bb4dc1e28df8cf7762e4ef96265693ce45dc05c1"
   }
 }

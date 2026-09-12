@@ -1,42 +1,247 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch04.linear-map.compare",
-  "revision": 1,
-  "status": "reviewed",
-  "source": {
-    "source_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.4 线性变换",
-      "4.4.2 是 vs 不是线性变换"
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.linear-map.compare.rotation",
+        "entity.ch04.linear-map.compare.stretch",
+        "entity.ch04.linear-map.compare.projection",
+        "entity.ch04.linear-map.compare.translation",
+        "entity.ch04.linear-map.compare.square_map",
+        "entity.ch04.linear-map.compare.constant_shift",
+        "entity.ch04.linear-map.compare.origin"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "R,S,P\\text{线性};\\ \\tau(0)\\ne0,\\ f(1+2)=9\\ne5,\\ (Ax+c)(0)\\ne0",
+      "formula_symbols": [
+        "rotation",
+        "stretch"
+      ],
+      "id": "claim.ch04.linear-map.compare",
+      "relation_refs": [
+        "relation.ch04.linear-map.compare.rotation_linear",
+        "relation.ch04.linear-map.compare.stretch_linear",
+        "relation.ch04.linear-map.compare.projection_linear",
+        "relation.ch04.linear-map.compare.translation_failure",
+        "relation.ch04.linear-map.compare.square_failure",
+        "relation.ch04.linear-map.compare.constant_failure"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.2 是 vs 不是线性变换::1::sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47"
+      ],
+      "stage_refs": [
+        "stage.ch04.linear-map.compare.linear",
+        "stage.ch04.linear-map.compare.nonlinear"
+      ],
+      "statement": "4.4.2 是 vs 不是线性变换 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.linear-map.compare"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.linear-map.compare.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
     ],
+    "definition": "4.4.2 是 vs 不是线性变换 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "R,S,P\\text{线性};\\ \\tau(0)\\ne0,\\ f(1+2)=9\\ne5,\\ (Ax+c)(0)\\ne0",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "linear_examples_pass_axioms",
+      "nonlinear_diagnostics"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.4.2 是 vs 不是线性变换",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "definition",
+        "text": "definition: 4.4.2 是 vs 不是线性变换。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "formula",
+        "text": "formula: 4.4.2 是 vs 不是线性变换。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.4.2 是 vs 不是线性变换。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.4.2 是 vs 不是线性变换。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.4.2 是 vs 不是线性变换。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.4.2 是 vs 不是线性变换。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "connections",
+        "text": "connections: 4.4.2 是 vs 不是线性变换。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.4.2 是 vs 不是线性变换 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "constant_shift": "constant_shift",
+      "origin": "origin",
+      "projection": "projection",
+      "rotation": "rotation",
+      "square_map": "square_map",
+      "stretch": "stretch",
+      "translation": "translation"
+    },
+    "title": "4.4.2 是 vs 不是线性变换",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "R,S,P\\text{线性};\\ \\tau(0)\\ne0,\\ f(1+2)=9\\ne5,\\ (Ax+c)(0)\\ne0"
+        ],
+        "checks": [
+          {
+            "expected": [
+              0.0,
+              1.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "given": [
+          [
+            [
+              0.0,
+              -1.0
+            ],
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch04.linear-map.compare",
+        "kind": "matrix_transform",
+        "result": [
+          0.0,
+          1.0
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:3ce11c2b65ed643568a2f709f26d07540f6267ac9589611ae59abb4168516ff7",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:114f176dcefa8e60210daf43333c5f064c68ea7432b1a4b6612907ac88a67e7c",
+    "source_hash": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.4.2 是 vs 不是线性变换\n\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 旋转 | $T(x,y)=(xcos\\theta-ysin\\theta, xsin\\theta+ycos\\theta)$ | 平移 | $T(x,y)=(x+1, y)$ |\n| 拉伸 | $T(x,y)=(ax, by)$ | 平方 | $T(x)=x^{2}$ |\n| 投影 | $T(v)=\\operatorname{Proj}(v)$ | 加常数 | $T(v)=v+b (b\\neq0)$ |\n\n判断平移：$T(v_{1}+v_{2})=(v_{11}+v_{21}+1, v_{12}+v_{22})$，但 $T(v_{1})+T(v_{2})=(v_{11}+1+v_{21}+1, ... ) \\rightarrow$ 加性不成立。",
+    "heading_level": 4,
     "heading_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.4 线性变换",
       "4.4.2 是 vs 不是线性变换"
     ],
-    "heading_level": 4,
+    "neighboring_titles": [
+      "4.4.1 线性变换的定义",
+      "4.4.3 线性变换的矩阵表示"
+    ],
     "occurrence": 1,
-    "excerpt": "#### 4.4.2 是 vs 不是线性变换\n\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 旋转 | $T(x,y)=(xcos\\theta-ysin\\theta, xsin\\theta+ycos\\theta)$ | 平移 | $T(x,y)=(x+1, y)$ |\n| 拉伸 | $T(x,y)=(ax, by)$ | 平方 | $T(x)=x^{2}$ |\n| 投影 | $T(v)=\\operatorname{Proj}(v)$ | 加常数 | $T(v)=v+b (b\\neq0)$ |\n\n判断平移：$T(v_{1}+v_{2})=(v_{11}+v_{21}+1, v_{12}+v_{22})$，但 $T(v_{1})+T(v_{2})=(v_{11}+1+v_{21}+1, ... ) \\rightarrow$ 加性不成立。",
     "source_hash": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.4 线性变换",
+      "4.4.2 是 vs 不是线性变换"
+    ],
     "spans": [
       {
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.2 是 vs 不是线性变换::1::sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
+        "end_line": 1747,
+        "fingerprint": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.4 线性变换",
           "4.4.2 是 vs 不是线性变换"
         ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.2 是 vs 不是线性变换::1::sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
         "start_line": 1738,
-        "end_line": 1747,
-        "fingerprint": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
         "text": "#### 4.4.2 是 vs 不是线性变换\n\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 旋转 | $T(x,y)=(xcos\\theta-ysin\\theta, xsin\\theta+ycos\\theta)$ | 平移 | $T(x,y)=(x+1, y)$ |\n| 拉伸 | $T(x,y)=(ax, by)$ | 平方 | $T(x)=x^{2}$ |\n| 投影 | $T(v)=\\operatorname{Proj}(v)$ | 加常数 | $T(v)=v+b (b\\neq0)$ |\n\n判断平移：$T(v_{1}+v_{2})=(v_{11}+v_{21}+1, v_{12}+v_{22})$，但 $T(v_{1})+T(v_{2})=(v_{11}+1+v_{21}+1, ... ) \\rightarrow$ 加性不成立。"
       }
-    ],
-    "neighboring_titles": [
-      "4.4.1 线性变换的定义",
-      "4.4.3 线性变换的矩阵表示"
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -50,217 +255,58 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch04.linear-map.compare",
-      "statement": "4.4.2 是 vs 不是线性变换 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "4.4.2 是 vs 不是线性变换: finite typed semantic evidence",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.2 是 vs 不是线性变换::1::sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch04.linear-map.compare.vector_a",
-        "entity.ch04.linear-map.compare.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch04.linear-map.compare.batch_maps_to"
-      ],
-      "stage_refs": [
-        "stage.ch04.linear-map.compare.evidence"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch04.linear-map.compare.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch04.linear-map.compare"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "4.4.2 是 vs 不是线性变换",
-    "summary": "4.4.2 是 vs 不是线性变换 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 4.4.2 是 vs 不是线性变换。",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 4.4.2 是 vs 不是线性变换。",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 4.4.2 是 vs 不是线性变换。",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 4.4.2 是 vs 不是线性变换。",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 4.4.2 是 vs 不是线性变换。",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 4.4.2 是 vs 不是线性变换。",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 4.4.2 是 vs 不是线性变换。",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a",
-      "linear_case": "linear_case",
-      "translation": "translation",
-      "square_map": "square_map",
-      "constant_shift": "constant_shift"
-    },
-    "definition": "4.4.2 是 vs 不是线性变换 的对象和定义。",
-    "formula": "4.4.2 是 vs 不是线性变换: finite typed semantic evidence",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch04.linear-map.compare",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "4.4.2 是 vs 不是线性变换: finite typed semantic evidence"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.4.2 是 vs 不是线性变换",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch04.linear-map.compare",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "basis_change",
     "entities": [
       {
-        "id": "entity.ch04.linear-map.compare.vector_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.linear-map.compare"
-        ]
-      },
-      {
-        "id": "entity.ch04.linear-map.compare.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
         ],
-        "role": "transformed_a",
-        "label": "transformed_a",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
-        ]
-      },
-      {
-        "id": "entity.ch04.linear-map.compare.linear_case",
+        "dimension": 2,
+        "id": "entity.ch04.linear-map.compare.rotation",
         "kind": "matrix",
+        "label": "rotation",
+        "role": "rotation",
+        "value": [
+          [
+            0.0,
+            -1.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
         "dimension": 2,
+        "id": "entity.ch04.linear-map.compare.stretch",
+        "kind": "matrix",
+        "label": "stretch",
+        "role": "stretch",
+        "value": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.5
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.linear-map.compare.projection",
+        "kind": "matrix",
+        "label": "projection",
+        "role": "projection",
         "value": [
           [
             1.0,
@@ -268,127 +314,229 @@
           ],
           [
             0.0,
-            1.0
+            0.0
           ]
-        ],
-        "role": "linear_case",
-        "label": "linear_case",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "dimension": 2,
         "id": "entity.ch04.linear-map.compare.translation",
-        "kind": "matrix",
-        "dimension": 2,
-        "value": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "role": "translation",
+        "kind": "affine_set",
         "label": "translation",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
+        "role": "translation",
+        "value": [
+          1.0,
+          1.0
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "dimension": 2,
         "id": "entity.ch04.linear-map.compare.square_map",
-        "kind": "matrix",
-        "dimension": 2,
+        "kind": "constraint",
+        "label": "square_map",
+        "role": "square_map",
         "value": [
           [
-            1.0,
-            0.0
+            -1.0,
+            1.0
           ],
           [
             0.0,
-            1.0
+            0.0
+          ],
+          [
+            2.0,
+            4.0
           ]
-        ],
-        "role": "square_map",
-        "label": "square_map",
-        "claim_refs": [
-          "claim.ch04.linear-map.compare"
         ]
       },
       {
-        "id": "entity.ch04.linear-map.compare.constant_shift",
-        "kind": "matrix",
-        "dimension": 2,
-        "value": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "role": "constant_shift",
-        "label": "constant_shift",
         "claim_refs": [
           "claim.ch04.linear-map.compare"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.linear-map.compare.constant_shift",
+        "kind": "affine_set",
+        "label": "constant_shift",
+        "role": "constant_shift",
+        "value": [
+          0.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.linear-map.compare.origin",
+        "kind": "point",
+        "label": "origin",
+        "role": "origin",
+        "value": [
+          0.0,
+          0.0
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch04.linear-map.compare.batch_maps_to",
-        "kind": "batch_maps_to",
-        "source_ref": "entity.ch04.linear-map.compare.vector_a",
-        "target_ref": "entity.ch04.linear-map.compare.transformed_a",
-        "parameters": {},
         "claim_refs": [
           "claim.ch04.linear-map.compare"
-        ]
+        ],
+        "id": "relation.ch04.linear-map.compare.rotation_linear",
+        "kind": "classification",
+        "parameters": {
+          "is_linear": 1.0,
+          "origin_image": [
+            0.0,
+            0.0
+          ]
+        },
+        "source_ref": "entity.ch04.linear-map.compare.rotation",
+        "target_ref": "entity.ch04.linear-map.compare.origin"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "relation.ch04.linear-map.compare.stretch_linear",
+        "kind": "classification",
+        "parameters": {
+          "is_linear": 1.0,
+          "origin_image": [
+            0.0,
+            0.0
+          ]
+        },
+        "source_ref": "entity.ch04.linear-map.compare.stretch",
+        "target_ref": "entity.ch04.linear-map.compare.origin"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "relation.ch04.linear-map.compare.projection_linear",
+        "kind": "classification",
+        "parameters": {
+          "is_linear": 1.0,
+          "origin_image": [
+            0.0,
+            0.0
+          ]
+        },
+        "source_ref": "entity.ch04.linear-map.compare.projection",
+        "target_ref": "entity.ch04.linear-map.compare.origin"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "relation.ch04.linear-map.compare.translation_failure",
+        "kind": "not_linear",
+        "parameters": {
+          "expected_origin": [
+            0.0,
+            0.0
+          ],
+          "origin_image": [
+            1.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch04.linear-map.compare.translation",
+        "target_ref": "entity.ch04.linear-map.compare.origin"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "relation.ch04.linear-map.compare.square_failure",
+        "kind": "not_linear",
+        "parameters": {
+          "inputs": [
+            1.0,
+            2.0
+          ],
+          "separate_sum": 5.0,
+          "sum_image": 9.0
+        },
+        "source_ref": "entity.ch04.linear-map.compare.square_map",
+        "target_ref": "entity.ch04.linear-map.compare.origin"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.compare"
+        ],
+        "id": "relation.ch04.linear-map.compare.constant_failure",
+        "kind": "not_linear",
+        "parameters": {
+          "expected_origin": [
+            0.0,
+            0.0
+          ],
+          "origin_image": [
+            0.0,
+            2.0
+          ]
+        },
+        "source_ref": "entity.ch04.linear-map.compare.constant_shift",
+        "target_ref": "entity.ch04.linear-map.compare.origin"
       }
     ],
+    "scene_family": "basis_change",
+    "scene_kind": "2d",
     "stages": [
       {
-        "id": "stage.ch04.linear-map.compare.evidence",
-        "title": "主题证据",
-        "caption": "4.4.2 是 vs 不是线性变换: finite typed semantic evidence",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch04.linear-map.compare.vector_a",
-          "entity.ch04.linear-map.compare.transformed_a",
-          "entity.ch04.linear-map.compare.linear_case",
-          "entity.ch04.linear-map.compare.translation",
-          "entity.ch04.linear-map.compare.square_map",
-          "entity.ch04.linear-map.compare.constant_shift"
+        "caption": "R,S,P\\text{线性};\\ \\tau(0)\\ne0,\\ f(1+2)=9\\ne5,\\ (Ax+c)(0)\\ne0",
+        "expected_invariants": [
+          "linear_examples_pass_axioms"
         ],
+        "id": "stage.ch04.linear-map.compare.linear",
+        "input_entity_refs": [
+          "entity.ch04.linear-map.compare.origin"
+        ],
+        "layout": "side_by_side",
         "output_entity_refs": [
-          "entity.ch04.linear-map.compare.vector_a",
-          "entity.ch04.linear-map.compare.transformed_a",
-          "entity.ch04.linear-map.compare.linear_case",
+          "entity.ch04.linear-map.compare.rotation",
+          "entity.ch04.linear-map.compare.stretch",
+          "entity.ch04.linear-map.compare.projection"
+        ],
+        "relation_refs": [
+          "relation.ch04.linear-map.compare.rotation_linear",
+          "relation.ch04.linear-map.compare.stretch_linear",
+          "relation.ch04.linear-map.compare.projection_linear"
+        ],
+        "title": "三个线性例"
+      },
+      {
+        "caption": "R,S,P\\text{线性};\\ \\tau(0)\\ne0,\\ f(1+2)=9\\ne5,\\ (Ax+c)(0)\\ne0",
+        "expected_invariants": [
+          "nonlinear_diagnostics"
+        ],
+        "id": "stage.ch04.linear-map.compare.nonlinear",
+        "input_entity_refs": [
+          "entity.ch04.linear-map.compare.origin"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
           "entity.ch04.linear-map.compare.translation",
           "entity.ch04.linear-map.compare.square_map",
           "entity.ch04.linear-map.compare.constant_shift"
         ],
         "relation_refs": [
-          "relation.ch04.linear-map.compare.batch_maps_to"
+          "relation.ch04.linear-map.compare.translation_failure",
+          "relation.ch04.linear-map.compare.square_failure",
+          "relation.ch04.linear-map.compare.constant_failure"
         ],
-        "expected_invariants": [
-          "finite numeric result",
-          "nonlinear_diagnostics"
-        ]
+        "title": "三个失败诊断"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
-    "raw_reply_digest": "sha256:2fcc73cc09c2c7419862115b5f9aa83121fd80a059b9d07e1b8273c4628a488e",
-    "artifact_digest": "sha256:157099569d1bbf4327ca4e76eaf4c3fca56e1b2b4b3ea5516d174a2c4a5c466a"
   }
 }

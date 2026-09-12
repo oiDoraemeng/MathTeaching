@@ -1,176 +1,202 @@
 {
-  "artifact_digest": "sha256:55c33abcd5a1d793c20ad6d8332e3a98cbe3bd28277647af17f715d0baa55518",
+  "artifact_digest": "sha256:58cce6a6fe6517400e98a19e4ecb38b878d6bf6bafe0a930c7c9d4134f7df89c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:a6dea3ef928f95f86f0682d938016e921e1fee6971204eafe45effae785edf36",
+  "contract_digest": "sha256:2f497db520f8ff3c9a08848f7ccee79385d76f32c0cfb76eb3d0cadc5cfce800",
   "plan": {
     "operations": [
       {
-        "alias": "ch04_subspace",
-        "basis": [
-          [
-            1.0,
-            0.0
-          ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#4c78a8",
-        "op": "geometry.subspace_region",
-        "opacity": 0.25
-      },
-      {
         "alias": "ch04__entity__span_1d",
-        "op": "annotation.upsert",
-        "position": [
+        "end": [
+          2.0,
           0.0,
           0.0
         ],
-        "text": "span_1d"
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          -2.0,
+          -0.0,
+          -0.0
+        ]
       },
       {
         "alias": "ch04__entity__span_2d",
-        "op": "annotation.upsert",
-        "position": [
+        "normal": [
           0.0,
-          0.0
-        ],
-        "text": "span_2d"
-      },
-      {
-        "alias": "ch04__entity__span_3d",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "span_3d"
-      },
-      {
-        "alias": "ch04__relation__spans",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "spans"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.span_1d__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.span_1d__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "span_1d",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.span_1d",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.span.dimension.span_1d__end",
-        "kind": "vector",
-        "label": "span_1d",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.span.dimension.span_1d__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.span_2d__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.span_2d__end",
-        "coordinates": [
           0.0,
           1.0
         ],
-        "name": "span_2d",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.span_2d",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.span.dimension.span_2d__end",
-        "kind": "vector",
-        "label": "span_2d",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.span.dimension.span_2d__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.span_3d__origin",
-        "coordinates": [
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
           0.0,
           0.0
         ],
-        "name": "O",
-        "op": "point.upsert"
+        "size": 2.5
       },
       {
-        "alias": "sem__entity.ch04.span.dimension.span_3d__end",
-        "coordinates": [
+        "alias": "ch04__entity__span_3d__axis_1",
+        "end": [
           1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__span_3d__axis_2",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__span_3d__axis_3",
+        "end": [
+          0.0,
+          0.0,
           1.0
         ],
-        "name": "span_3d",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.span.dimension.span_3d",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.span.dimension.span_3d__end",
         "kind": "vector",
-        "label": "span_3d",
-        "op": "linear.upsert",
+        "op": "linear3d.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.span.dimension.span_3d__origin"
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
-        "alias": "sem__relation.ch04.span.dimension.spans",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "ch04__scene__parallelogram",
+        "op": "geometry.parallelogram3d",
+        "opacity": 0.16,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
         ],
-        "text": "spans: span_1d → span_2d"
+        "vectors": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ]
       },
       {
-        "alias": "sem__stage.ch04.span.dimension.evidence__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "ch04__relation__one_dimensional",
+        "end": [
+          2.0,
+          0.0,
+          0.0
         ],
-        "text": "主题证据"
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          -2.0,
+          -0.0,
+          -0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__two_dimensional",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": 2.5
+      },
+      {
+        "alias": "ch04__relation__three_dimensional__axis_1",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__three_dimensional__axis_2",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__three_dimensional__axis_3",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
-    "scene": "2d",
+    "scene": "3d",
     "summary": "4.2.1 生成集 Span",
     "version": 1
   },
-  "plan_digest": "sha256:7cae69b092864097db4f1cf06dcb5dd3ee37b1c0c0f82c8896dfd7dc475f2cea",
+  "plan_digest": "sha256:0a32acfeeff411f17d13c03be74161292c32687d67901cfdb89faac96fa4377c",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -185,33 +211,60 @@
         -2.65,
         2.65
       ],
-      "caption": "4.2.1 生成集 Span: finite typed semantic evidence",
-      "id": "stage.ch04.span.dimension.evidence",
+      "caption": "\\dim span(e_1)=1,\\dim span(e_1,e_2)=2,\\dim span(e_1,e_2,e_3)=3",
+      "id": "stage.ch04.span.dimension.line",
       "layout": "sequence",
-      "title": "主题证据",
+      "title": "一向量张成直线",
       "visible_aliases": [
         "ch04__entity__span_1d",
-        "sem__entity.ch04.span.dimension.span_1d",
-        "sem__entity.ch04.span.dimension.span_1d__end",
-        "sem__entity.ch04.span.dimension.span_1d__origin",
-        "ch04__entity__span_2d",
-        "sem__entity.ch04.span.dimension.span_2d",
-        "sem__entity.ch04.span.dimension.span_2d__end",
-        "sem__entity.ch04.span.dimension.span_2d__origin",
-        "ch04__entity__span_3d",
-        "sem__entity.ch04.span.dimension.span_3d",
-        "sem__entity.ch04.span.dimension.span_3d__end",
-        "sem__entity.ch04.span.dimension.span_3d__origin",
-        "ch04__relation__spans",
-        "sem__relation.ch04.span.dimension.spans",
-        "sem__stage.ch04.span.dimension.evidence__title",
-        "sem__span__1"
+        "ch04__relation__one_dimensional",
+        "sem__stage.ch04.span.dimension.line__title"
       ],
       "visible_refs": [
         "entity.ch04.span.dimension.span_1d",
+        "relation.ch04.span.dimension.one_dimensional"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "\\dim span(e_1)=1,\\dim span(e_1,e_2)=2,\\dim span(e_1,e_2,e_3)=3",
+      "id": "stage.ch04.span.dimension.plane",
+      "layout": "sequence",
+      "title": "两向量张成平面",
+      "visible_aliases": [
+        "ch04__entity__span_2d",
+        "ch04__relation__two_dimensional",
+        "sem__stage.ch04.span.dimension.plane__title"
+      ],
+      "visible_refs": [
         "entity.ch04.span.dimension.span_2d",
+        "relation.ch04.span.dimension.two_dimensional"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "\\dim span(e_1)=1,\\dim span(e_1,e_2)=2,\\dim span(e_1,e_2,e_3)=3",
+      "id": "stage.ch04.span.dimension.space",
+      "layout": "sequence",
+      "title": "三向量张成空间",
+      "visible_aliases": [
+        "ch04__entity__span_3d__axis_1",
+        "ch04__entity__span_3d__axis_2",
+        "ch04__entity__span_3d__axis_3",
+        "ch04__relation__three_dimensional__axis_1",
+        "ch04__relation__three_dimensional__axis_2",
+        "ch04__relation__three_dimensional__axis_3",
+        "sem__stage.ch04.span.dimension.space__title"
+      ],
+      "visible_refs": [
         "entity.ch04.span.dimension.span_3d",
-        "relation.ch04.span.dimension.spans"
+        "relation.ch04.span.dimension.three_dimensional"
       ]
     }
   ],

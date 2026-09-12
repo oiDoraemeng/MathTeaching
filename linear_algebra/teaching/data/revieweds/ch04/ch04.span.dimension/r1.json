@@ -1,41 +1,233 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch04.span.dimension",
-  "revision": 1,
-  "status": "reviewed",
-  "source": {
-    "source_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.2 线性组合、线性相关与线性无关",
-      "4.2.1 生成集 Span"
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.span.dimension.span_1d",
+        "entity.ch04.span.dimension.span_2d",
+        "entity.ch04.span.dimension.span_3d"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "\\dim span(e_1)=1,\\dim span(e_1,e_2)=2,\\dim span(e_1,e_2,e_3)=3",
+      "formula_symbols": [
+        "span_1d",
+        "span_2d"
+      ],
+      "id": "claim.ch04.span.dimension",
+      "relation_refs": [
+        "relation.ch04.span.dimension.one_dimensional",
+        "relation.ch04.span.dimension.two_dimensional",
+        "relation.ch04.span.dimension.three_dimensional"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.1 生成集 Span::1::sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d"
+      ],
+      "stage_refs": [
+        "stage.ch04.span.dimension.line",
+        "stage.ch04.span.dimension.plane",
+        "stage.ch04.span.dimension.space"
+      ],
+      "statement": "4.2.1 生成集 Span 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.span.dimension"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.span.dimension.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
     ],
+    "definition": "4.2.1 生成集 Span 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "\\dim span(e_1)=1,\\dim span(e_1,e_2)=2,\\dim span(e_1,e_2,e_3)=3",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "span_rank_1",
+      "span_rank_2",
+      "span_rank_3",
+      "rank_equals_dimension"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.2.1 生成集 Span",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "definition",
+        "text": "definition: 4.2.1 生成集 Span。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "formula",
+        "text": "formula: 4.2.1 生成集 Span。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.2.1 生成集 Span。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.2.1 生成集 Span。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.2.1 生成集 Span。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.2.1 生成集 Span。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "connections",
+        "text": "connections: 4.2.1 生成集 Span。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.2.1 生成集 Span 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "span_1d": "span_1d",
+      "span_2d": "span_2d",
+      "span_3d": "span_3d"
+    },
+    "title": "4.2.1 生成集 Span",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "\\dim span(e_1)=1,\\dim span(e_1,e_2)=2,\\dim span(e_1,e_2,e_3)=3"
+        ],
+        "checks": [
+          {
+            "expected": 1.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "given": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch04.span.dimension",
+        "kind": "oriented_volume",
+        "result": 1.0,
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:47501406015a358f3a748809fcf5e7ee71894b80fc99d74d9ac60fc08bd1a8bd",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:58cce6a6fe6517400e98a19e4ecb38b878d6bf6bafe0a930c7c9d4134f7df89c",
+    "source_hash": "sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.2.1 生成集 Span\n\n定义 4.5（生成集） $\\operatorname{Span}\\{v_{1},...,v_{k}\\} = \\{$ 这些向量的所有线性组合 $\\}$。\n几何：$\\operatorname{Span}\\{v\\} =$ 过原点的直线；$\\operatorname{Span}\\{u,v\\}$（不共线）$=$ 过原点的平面；$\\operatorname{Span}\\{u,v,w\\}$（不共面）$=$ 整个 $R^{3}$。",
+    "heading_level": 4,
     "heading_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.2 线性组合、线性相关与线性无关",
       "4.2.1 生成集 Span"
     ],
-    "heading_level": 4,
+    "neighboring_titles": [
+      "4.2.2 线性相关与线性无关"
+    ],
     "occurrence": 1,
-    "excerpt": "#### 4.2.1 生成集 Span\n\n定义 4.5（生成集） $\\operatorname{Span}\\{v_{1},...,v_{k}\\} = \\{$ 这些向量的所有线性组合 $\\}$。\n几何：$\\operatorname{Span}\\{v\\} =$ 过原点的直线；$\\operatorname{Span}\\{u,v\\}$（不共线）$=$ 过原点的平面；$\\operatorname{Span}\\{u,v,w\\}$（不共面）$=$ 整个 $R^{3}$。",
     "source_hash": "sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.2 线性组合、线性相关与线性无关",
+      "4.2.1 生成集 Span"
+    ],
     "spans": [
       {
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.1 生成集 Span::1::sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d",
+        "end_line": 1622,
+        "fingerprint": "sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.2 线性组合、线性相关与线性无关",
           "4.2.1 生成集 Span"
         ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.1 生成集 Span::1::sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d",
         "start_line": 1618,
-        "end_line": 1622,
-        "fingerprint": "sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d",
         "text": "#### 4.2.1 生成集 Span\n\n定义 4.5（生成集） $\\operatorname{Span}\\{v_{1},...,v_{k}\\} = \\{$ 这些向量的所有线性组合 $\\}$。\n几何：$\\operatorname{Span}\\{v\\} =$ 过原点的直线；$\\operatorname{Span}\\{u,v\\}$（不共线）$=$ 过原点的平面；$\\operatorname{Span}\\{u,v,w\\}$（不共面）$=$ 整个 $R^{3}$。"
       }
-    ],
-    "neighboring_titles": [
-      "4.2.2 线性相关与线性无关"
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -49,304 +241,172 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch04.span.dimension",
-      "statement": "4.2.1 生成集 Span 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "4.2.1 生成集 Span: finite typed semantic evidence",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.1 生成集 Span::1::sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch04.span.dimension.vector_a",
-        "entity.ch04.span.dimension.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch04.span.dimension.spans"
-      ],
-      "stage_refs": [
-        "stage.ch04.span.dimension.evidence"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch04.span.dimension.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch04.span.dimension"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "4.2.1 生成集 Span",
-    "summary": "4.2.1 生成集 Span 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 4.2.1 生成集 Span。",
-        "claim_refs": [
-          "claim.ch04.span.dimension"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 4.2.1 生成集 Span。",
-        "claim_refs": [
-          "claim.ch04.span.dimension"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 4.2.1 生成集 Span。",
-        "claim_refs": [
-          "claim.ch04.span.dimension"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 4.2.1 生成集 Span。",
-        "claim_refs": [
-          "claim.ch04.span.dimension"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 4.2.1 生成集 Span。",
-        "claim_refs": [
-          "claim.ch04.span.dimension"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 4.2.1 生成集 Span。",
-        "claim_refs": [
-          "claim.ch04.span.dimension"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 4.2.1 生成集 Span。",
-        "claim_refs": [
-          "claim.ch04.span.dimension"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a",
-      "span_1d": "span_1d",
-      "span_2d": "span_2d",
-      "span_3d": "span_3d"
-    },
-    "definition": "4.2.1 生成集 Span 的对象和定义。",
-    "formula": "4.2.1 生成集 Span: finite typed semantic evidence",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch04.span.dimension",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "4.2.1 生成集 Span: finite typed semantic evidence"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.span.dimension"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.2.1 生成集 Span",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch04.span.dimension",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.span.dimension.vector_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.span.dimension"
-        ]
-      },
-      {
-        "id": "entity.ch04.span.dimension.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
         ],
-        "role": "transformed_a",
-        "label": "transformed_a",
-        "claim_refs": [
-          "claim.ch04.span.dimension"
-        ]
-      },
-      {
+        "dimension": 3,
         "id": "entity.ch04.span.dimension.span_1d",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "span_1d",
+        "kind": "basis",
         "label": "span_1d",
-        "claim_refs": [
-          "claim.ch04.span.dimension"
+        "role": "span_1d",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "dimension": 3,
         "id": "entity.ch04.span.dimension.span_2d",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          0.0,
-          1.0
-        ],
-        "role": "span_2d",
+        "kind": "basis",
         "label": "span_2d",
-        "claim_refs": [
-          "claim.ch04.span.dimension"
+        "role": "span_2d",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
         ]
       },
       {
-        "id": "entity.ch04.span.dimension.span_3d",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          1.0
-        ],
-        "role": "span_3d",
-        "label": "span_3d",
         "claim_refs": [
           "claim.ch04.span.dimension"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.span.dimension.span_3d",
+        "kind": "basis",
+        "label": "span_3d",
+        "role": "span_3d",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch04.span.dimension.spans",
-        "kind": "spans",
-        "source_ref": "entity.ch04.span.dimension.vector_a",
-        "target_ref": "entity.ch04.span.dimension.transformed_a",
-        "parameters": {},
         "claim_refs": [
           "claim.ch04.span.dimension"
-        ]
+        ],
+        "id": "relation.ch04.span.dimension.one_dimensional",
+        "kind": "dimension_of",
+        "parameters": {
+          "expected_dimension": 1.0
+        },
+        "source_ref": "entity.ch04.span.dimension.span_1d",
+        "target_ref": "entity.ch04.span.dimension.span_1d"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "relation.ch04.span.dimension.two_dimensional",
+        "kind": "dimension_of",
+        "parameters": {
+          "expected_dimension": 2.0
+        },
+        "source_ref": "entity.ch04.span.dimension.span_2d",
+        "target_ref": "entity.ch04.span.dimension.span_2d"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.span.dimension"
+        ],
+        "id": "relation.ch04.span.dimension.three_dimensional",
+        "kind": "dimension_of",
+        "parameters": {
+          "expected_dimension": 3.0
+        },
+        "source_ref": "entity.ch04.span.dimension.span_3d",
+        "target_ref": "entity.ch04.span.dimension.span_3d"
       }
     ],
+    "scene_family": "subspace_region",
+    "scene_kind": "3d",
     "stages": [
       {
-        "id": "stage.ch04.span.dimension.evidence",
-        "title": "主题证据",
-        "caption": "4.2.1 生成集 Span: finite typed semantic evidence",
-        "layout": "sequence",
+        "caption": "\\dim span(e_1)=1,\\dim span(e_1,e_2)=2,\\dim span(e_1,e_2,e_3)=3",
+        "expected_invariants": [
+          "span_rank_1"
+        ],
+        "id": "stage.ch04.span.dimension.line",
         "input_entity_refs": [
-          "entity.ch04.span.dimension.vector_a",
-          "entity.ch04.span.dimension.transformed_a",
-          "entity.ch04.span.dimension.span_1d",
-          "entity.ch04.span.dimension.span_2d",
+          "entity.ch04.span.dimension.span_1d"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch04.span.dimension.span_1d"
+        ],
+        "relation_refs": [
+          "relation.ch04.span.dimension.one_dimensional"
+        ],
+        "title": "一向量张成直线"
+      },
+      {
+        "caption": "\\dim span(e_1)=1,\\dim span(e_1,e_2)=2,\\dim span(e_1,e_2,e_3)=3",
+        "expected_invariants": [
+          "span_rank_2"
+        ],
+        "id": "stage.ch04.span.dimension.plane",
+        "input_entity_refs": [
+          "entity.ch04.span.dimension.span_2d"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch04.span.dimension.span_2d"
+        ],
+        "relation_refs": [
+          "relation.ch04.span.dimension.two_dimensional"
+        ],
+        "title": "两向量张成平面"
+      },
+      {
+        "caption": "\\dim span(e_1)=1,\\dim span(e_1,e_2)=2,\\dim span(e_1,e_2,e_3)=3",
+        "expected_invariants": [
+          "span_rank_3",
+          "rank_equals_dimension"
+        ],
+        "id": "stage.ch04.span.dimension.space",
+        "input_entity_refs": [
           "entity.ch04.span.dimension.span_3d"
         ],
+        "layout": "sequence",
         "output_entity_refs": [
-          "entity.ch04.span.dimension.vector_a",
-          "entity.ch04.span.dimension.transformed_a",
-          "entity.ch04.span.dimension.span_1d",
-          "entity.ch04.span.dimension.span_2d",
           "entity.ch04.span.dimension.span_3d"
         ],
         "relation_refs": [
-          "relation.ch04.span.dimension.spans"
+          "relation.ch04.span.dimension.three_dimensional"
         ],
-        "expected_invariants": [
-          "finite numeric result",
-          "rank_equals_dimension"
-        ]
+        "title": "三向量张成空间"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:fcb9a4d34372aed3558320a2c4470e37c0fd2a06125c9db7d78a7014b05dd51d",
-    "raw_reply_digest": "sha256:44c52554a4b3c60f0babf4216d9675c2775f4809fe59339718b903104e7316a7",
-    "artifact_digest": "sha256:949f1f0a28c25cbb88aee4e227e16f0bfed3e52c23ba714e1792afeb17709dba"
   }
 }

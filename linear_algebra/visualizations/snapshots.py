@@ -79,7 +79,7 @@ class CompiledSnapshot:
 
 
 def contract_digest_for(contract: VisualContract) -> str:
-    payload = {
+    payload: dict[str, object] = {
         "topic_id": contract.topic_id,
         "required_claims": contract.required_claims,
         "required_entity_roles": contract.required_entity_roles,
@@ -89,6 +89,19 @@ def contract_digest_for(contract: VisualContract) -> str:
         "required_invariants": contract.required_invariants,
         "distinguishable_role_groups": contract.distinguishable_role_groups,
     }
+    # Extended typed contract fields are included only when populated so the
+    # established Chapter 1--3 digests remain stable while Chapter 4's digest
+    # covers its exact roles, endpoints, parameters, and operation witnesses.
+    for name in (
+        "required_role_types",
+        "required_relation_endpoints",
+        "required_relation_kinds",
+        "required_parameters",
+        "expected_operations",
+    ):
+        value = getattr(contract, name)
+        if value:
+            payload[name] = value
     return "sha256:" + hashlib.sha256(json.dumps(payload, sort_keys=True, default=list).encode("utf-8")).hexdigest()
 
 

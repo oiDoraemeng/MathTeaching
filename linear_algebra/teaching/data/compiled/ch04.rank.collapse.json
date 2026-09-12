@@ -1,133 +1,18 @@
 {
-  "artifact_digest": "sha256:8b66ce7751e021900730fb68e788b40b9ba3b2cd71873abb2593395f7a88f7fd",
+  "artifact_digest": "sha256:c8442e0fa11f57b04b298f248479fea46a4083f5efa2cacc83a625da3a7a44b8",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:553857e08a5b1659be037486fee59b961c34d71101b2b3e5756f937a603f4cd5",
+  "contract_digest": "sha256:52b181d4b9908851901ad870e179c235ff1094edbda6f794ddab405db49e3954",
   "plan": {
     "operations": [
       {
-        "alias": "ch04_transform",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#4c78a8",
-        "matrix": [
-          [
-            1,
-            0
-          ],
-          [
-            0,
-            0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
         "alias": "ch04__entity__rank_two",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "rank_two"
-      },
-      {
-        "alias": "ch04__entity__rank_one",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "rank_one"
-      },
-      {
-        "alias": "ch04__entity__rank_zero",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "rank_zero"
-      },
-      {
-        "alias": "ch04__relation__batch_maps_to",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "batch_maps_to"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.rank_two__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.rank_two__end",
-        "coordinates": [
-          1.0,
-          1.0
-        ],
-        "name": "rank_two",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.rank_two",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.rank.collapse.rank_two__end",
-        "kind": "vector",
-        "label": "rank_two",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.rank.collapse.rank_two__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.rank_one__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.rank_one__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "rank_one",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.rank_one",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.rank.collapse.rank_one__end",
-        "kind": "vector",
-        "label": "rank_one",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.rank.collapse.rank_one__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.rank.collapse.rank_zero",
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#6B7280",
         "matrix": [
           [
             1.0,
@@ -142,14 +27,13 @@
         "step": 1.0
       },
       {
-        "alias": "sem__relation.ch04.rank.collapse.batch_maps_to",
+        "alias": "ch04__entity__rank_one",
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#7B61FF",
         "matrix": [
           [
             1.0,
@@ -164,13 +48,162 @@
         "step": 1.0
       },
       {
-        "alias": "sem__stage.ch04.rank.collapse.evidence__title",
+        "alias": "ch04__entity__rank_zero",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch04__entity__plane_image",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__entity__line_image",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__entity__point_image",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "point_image",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__rank_two_result",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch04__relation__rank_one_result",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch04__relation__rank_zero_result",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__stage.ch04.rank.collapse.rank_two__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "主题证据"
+        "text": "rank 2 平面"
+      },
+      {
+        "alias": "sem__stage.ch04.rank.collapse.rank_one__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          2.17
+        ],
+        "text": "rank 1 直线"
+      },
+      {
+        "alias": "sem__stage.ch04.rank.collapse.rank_zero__title",
+        "op": "annotation.upsert",
+        "position": [
+          -2.65,
+          1.69
+        ],
+        "text": "rank 0 原点"
       },
       {
         "op": "view.fit",
@@ -181,7 +214,7 @@
     "summary": "4.2.4 极大无关组与秩",
     "version": 1
   },
-  "plan_digest": "sha256:9bdb26742edbdada579049c1ffeb524d834c94af804c3dd34d271f5c138f6624",
+  "plan_digest": "sha256:843baea39c089d6c9f7b8540120dbd9f2b3187b94bebc39bc975cce71c410479",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -196,30 +229,62 @@
         -2.65,
         2.65
       ],
-      "caption": "4.2.4 极大无关组与秩: finite typed semantic evidence",
-      "id": "stage.ch04.rank.collapse.evidence",
+      "caption": "rank(I)=2,\\ rank(diag(1,0))=1,\\ rank(0)=0",
+      "id": "stage.ch04.rank.collapse.rank_two",
       "layout": "sequence",
-      "title": "主题证据",
+      "title": "rank 2 平面",
       "visible_aliases": [
         "ch04__entity__rank_two",
-        "sem__entity.ch04.rank.collapse.rank_two",
-        "sem__entity.ch04.rank.collapse.rank_two__end",
-        "sem__entity.ch04.rank.collapse.rank_two__origin",
-        "ch04__entity__rank_one",
-        "sem__entity.ch04.rank.collapse.rank_one",
-        "sem__entity.ch04.rank.collapse.rank_one__end",
-        "sem__entity.ch04.rank.collapse.rank_one__origin",
-        "ch04__entity__rank_zero",
-        "sem__entity.ch04.rank.collapse.rank_zero",
-        "ch04__relation__batch_maps_to",
-        "sem__relation.ch04.rank.collapse.batch_maps_to",
-        "sem__stage.ch04.rank.collapse.evidence__title"
+        "ch04__entity__plane_image",
+        "ch04__relation__rank_two_result",
+        "sem__stage.ch04.rank.collapse.rank_two__title"
       ],
       "visible_refs": [
         "entity.ch04.rank.collapse.rank_two",
+        "entity.ch04.rank.collapse.plane_image",
+        "relation.ch04.rank.collapse.rank_two_result"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        2.17
+      ],
+      "caption": "rank(I)=2,\\ rank(diag(1,0))=1,\\ rank(0)=0",
+      "id": "stage.ch04.rank.collapse.rank_one",
+      "layout": "sequence",
+      "title": "rank 1 直线",
+      "visible_aliases": [
+        "ch04__entity__rank_one",
+        "ch04__entity__line_image",
+        "ch04__relation__rank_one_result",
+        "sem__stage.ch04.rank.collapse.rank_one__title"
+      ],
+      "visible_refs": [
         "entity.ch04.rank.collapse.rank_one",
+        "entity.ch04.rank.collapse.line_image",
+        "relation.ch04.rank.collapse.rank_one_result"
+      ]
+    },
+    {
+      "anchor": [
+        -2.65,
+        1.69
+      ],
+      "caption": "rank(I)=2,\\ rank(diag(1,0))=1,\\ rank(0)=0",
+      "id": "stage.ch04.rank.collapse.rank_zero",
+      "layout": "sequence",
+      "title": "rank 0 原点",
+      "visible_aliases": [
+        "ch04__entity__rank_zero",
+        "ch04__entity__point_image",
+        "ch04__relation__rank_zero_result",
+        "sem__stage.ch04.rank.collapse.rank_zero__title"
+      ],
+      "visible_refs": [
         "entity.ch04.rank.collapse.rank_zero",
-        "relation.ch04.rank.collapse.batch_maps_to"
+        "entity.ch04.rank.collapse.point_image",
+        "relation.ch04.rank.collapse.rank_zero_result"
       ]
     }
   ],

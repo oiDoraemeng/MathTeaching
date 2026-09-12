@@ -1,41 +1,244 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch04.kernel-image",
-  "revision": 1,
-  "status": "reviewed",
-  "source": {
-    "source_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.5 核与像",
-      "4.5.1 定义"
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.kernel-image.map_T",
+        "entity.ch04.kernel-image.domain",
+        "entity.ch04.kernel-image.kernel_direction",
+        "entity.ch04.kernel-image.zero",
+        "entity.ch04.kernel-image.image",
+        "entity.ch04.kernel-image.sample_input",
+        "entity.ch04.kernel-image.sample_output"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "ker(T)=span(e_2),\\ T(e_2)=0;\\ im(T)=span(e_1)",
+      "formula_symbols": [
+        "map_T",
+        "domain"
+      ],
+      "id": "claim.ch04.kernel-image",
+      "relation_refs": [
+        "relation.ch04.kernel-image.kernel_map",
+        "relation.ch04.kernel-image.kernel_binding",
+        "relation.ch04.kernel-image.sample_map",
+        "relation.ch04.kernel-image.image_binding"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.5 核与像 / 4.5.1 定义::1::sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb"
+      ],
+      "stage_refs": [
+        "stage.ch04.kernel-image.kernel",
+        "stage.ch04.kernel-image.image"
+      ],
+      "statement": "4.5.1 定义 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.kernel-image"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.kernel-image.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
     ],
+    "definition": "4.5.1 定义 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "ker(T)=span(e_2),\\ T(e_2)=0;\\ im(T)=span(e_1)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "kernel_maps_zero",
+      "image_reachable"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.5.1 定义",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "id": "definition",
+        "text": "definition: 4.5.1 定义。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "id": "formula",
+        "text": "formula: 4.5.1 定义。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.5.1 定义。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.5.1 定义。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.5.1 定义。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.5.1 定义。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "id": "connections",
+        "text": "connections: 4.5.1 定义。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.5.1 定义 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "domain": "domain",
+      "image": "image",
+      "kernel_direction": "kernel_direction",
+      "map_T": "map_T",
+      "sample_input": "sample_input",
+      "sample_output": "sample_output",
+      "zero": "zero"
+    },
+    "title": "4.5.1 定义",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "ker(T)=span(e_2),\\ T(e_2)=0;\\ im(T)=span(e_1)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "given": [
+          [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            2.0,
+            3.0
+          ]
+        ],
+        "id": "example.ch04.kernel-image",
+        "kind": "matrix_transform",
+        "result": [
+          2.0,
+          0.0
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:67cbf918827fb715ba0957fd6223aa00514f4daf3384f2f4f16443fbbd8e925e",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:7e0b6153395b52c94c618503d6e3b0163cf422bc6def45cf3bdfbea89011612f",
+    "source_hash": "sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.5.1 定义\n\n定义 4.12（核） $\\operatorname{Ker}(T) = \\{v \\mid T(v)=0\\} = \\operatorname{Null}(A)$。（子空间）\n定义 4.13（像） $\\operatorname{Im}(T) = \\{T(v) \\mid v\\in R^{n}\\} = \\operatorname{Col}(A)$。（子空间）",
+    "heading_level": 4,
     "heading_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.5 核与像",
       "4.5.1 定义"
     ],
-    "heading_level": 4,
+    "neighboring_titles": [
+      "4.5.2 秩-零化度定理"
+    ],
     "occurrence": 1,
-    "excerpt": "#### 4.5.1 定义\n\n定义 4.12（核） $\\operatorname{Ker}(T) = \\{v \\mid T(v)=0\\} = \\operatorname{Null}(A)$。（子空间）\n定义 4.13（像） $\\operatorname{Im}(T) = \\{T(v) \\mid v\\in R^{n}\\} = \\operatorname{Col}(A)$。（子空间）",
     "source_hash": "sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.5 核与像",
+      "4.5.1 定义"
+    ],
     "spans": [
       {
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.5 核与像 / 4.5.1 定义::1::sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb",
+        "end_line": 1798,
+        "fingerprint": "sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.5 核与像",
           "4.5.1 定义"
         ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.5 核与像 / 4.5.1 定义::1::sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb",
         "start_line": 1794,
-        "end_line": 1798,
-        "fingerprint": "sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb",
         "text": "#### 4.5.1 定义\n\n定义 4.12（核） $\\operatorname{Ker}(T) = \\{v \\mid T(v)=0\\} = \\operatorname{Null}(A)$。（子空间）\n定义 4.13（像） $\\operatorname{Im}(T) = \\{T(v) \\mid v\\in R^{n}\\} = \\operatorname{Col}(A)$。（子空间）"
       }
-    ],
-    "neighboring_titles": [
-      "4.5.2 秩-零化度定理"
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -49,322 +252,243 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch04.kernel-image",
-      "statement": "4.5.1 定义 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "4.5.1 定义: finite typed semantic evidence",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.5 核与像 / 4.5.1 定义::1::sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch04.kernel-image.vector_a",
-        "entity.ch04.kernel-image.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch04.kernel-image.spans"
-      ],
-      "stage_refs": [
-        "stage.ch04.kernel-image.evidence"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch04.kernel-image.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch04.kernel-image"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "4.5.1 定义",
-    "summary": "4.5.1 定义 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 4.5.1 定义。",
-        "claim_refs": [
-          "claim.ch04.kernel-image"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 4.5.1 定义。",
-        "claim_refs": [
-          "claim.ch04.kernel-image"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 4.5.1 定义。",
-        "claim_refs": [
-          "claim.ch04.kernel-image"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 4.5.1 定义。",
-        "claim_refs": [
-          "claim.ch04.kernel-image"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 4.5.1 定义。",
-        "claim_refs": [
-          "claim.ch04.kernel-image"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 4.5.1 定义。",
-        "claim_refs": [
-          "claim.ch04.kernel-image"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 4.5.1 定义。",
-        "claim_refs": [
-          "claim.ch04.kernel-image"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a",
-      "domain": "domain",
-      "kernel_direction": "kernel_direction",
-      "zero": "zero",
-      "image": "image"
-    },
-    "definition": "4.5.1 定义 的对象和定义。",
-    "formula": "4.5.1 定义: finite typed semantic evidence",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch04.kernel-image",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "4.5.1 定义: finite typed semantic evidence"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.kernel-image"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.5.1 定义",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch04.kernel-image",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.kernel-image.vector_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.kernel-image"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.kernel-image.map_T",
+        "kind": "matrix",
+        "label": "map_T",
+        "role": "map_T",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
         ]
       },
       {
-        "id": "entity.ch04.kernel-image.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "transformed_a",
-        "label": "transformed_a",
         "claim_refs": [
           "claim.ch04.kernel-image"
-        ]
-      },
-      {
+        ],
+        "dimension": 2,
         "id": "entity.ch04.kernel-image.domain",
-        "kind": "region",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "domain",
+        "kind": "basis",
         "label": "domain",
-        "claim_refs": [
-          "claim.ch04.kernel-image"
+        "role": "domain",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ]
       },
       {
-        "id": "entity.ch04.kernel-image.kernel_direction",
-        "kind": "region",
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
         "dimension": 2,
+        "id": "entity.ch04.kernel-image.kernel_direction",
+        "kind": "vector",
+        "label": "kernel_direction",
+        "role": "kernel_direction",
         "value": [
           0.0,
           1.0
-        ],
-        "role": "kernel_direction",
-        "label": "kernel_direction",
-        "claim_refs": [
-          "claim.ch04.kernel-image"
         ]
       },
       {
-        "id": "entity.ch04.kernel-image.zero",
-        "kind": "region",
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
         "dimension": 2,
+        "id": "entity.ch04.kernel-image.zero",
+        "kind": "point",
+        "label": "zero",
+        "role": "zero",
         "value": [
           0.0,
           0.0
-        ],
-        "role": "zero",
-        "label": "zero",
-        "claim_refs": [
-          "claim.ch04.kernel-image"
         ]
       },
       {
-        "id": "entity.ch04.kernel-image.image",
-        "kind": "region",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "image",
-        "label": "image",
         "claim_refs": [
           "claim.ch04.kernel-image"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.kernel-image.image",
+        "kind": "subspace",
+        "label": "image",
+        "role": "image",
+        "value": [
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.kernel-image.sample_input",
+        "kind": "vector",
+        "label": "sample_input",
+        "role": "sample_input",
+        "value": [
+          2.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.kernel-image.sample_output",
+        "kind": "vector",
+        "label": "sample_output",
+        "role": "sample_output",
+        "value": [
+          2.0,
+          0.0
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch04.kernel-image.spans",
-        "kind": "spans",
-        "source_ref": "entity.ch04.kernel-image.vector_a",
-        "target_ref": "entity.ch04.kernel-image.transformed_a",
-        "parameters": {},
         "claim_refs": [
           "claim.ch04.kernel-image"
-        ]
+        ],
+        "id": "relation.ch04.kernel-image.kernel_map",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            0.0,
+            0.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.kernel-image.kernel_direction",
+        "target_ref": "entity.ch04.kernel-image.zero"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "id": "relation.ch04.kernel-image.kernel_binding",
+        "kind": "kernel_of",
+        "parameters": {
+          "expected_nullity": 1.0
+        },
+        "source_ref": "entity.ch04.kernel-image.kernel_direction",
+        "target_ref": "entity.ch04.kernel-image.map_T"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "id": "relation.ch04.kernel-image.sample_map",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            2.0,
+            0.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.kernel-image.sample_input",
+        "target_ref": "entity.ch04.kernel-image.sample_output"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.kernel-image"
+        ],
+        "id": "relation.ch04.kernel-image.image_binding",
+        "kind": "image_of",
+        "parameters": {
+          "expected_rank": 1.0
+        },
+        "source_ref": "entity.ch04.kernel-image.map_T",
+        "target_ref": "entity.ch04.kernel-image.image"
       }
     ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
     "stages": [
       {
-        "id": "stage.ch04.kernel-image.evidence",
-        "title": "主题证据",
-        "caption": "4.5.1 定义: finite typed semantic evidence",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch04.kernel-image.vector_a",
-          "entity.ch04.kernel-image.transformed_a",
-          "entity.ch04.kernel-image.domain",
-          "entity.ch04.kernel-image.kernel_direction",
-          "entity.ch04.kernel-image.zero",
-          "entity.ch04.kernel-image.image"
+        "caption": "ker(T)=span(e_2),\\ T(e_2)=0;\\ im(T)=span(e_1)",
+        "expected_invariants": [
+          "kernel_maps_zero"
         ],
-        "output_entity_refs": [
-          "entity.ch04.kernel-image.vector_a",
-          "entity.ch04.kernel-image.transformed_a",
+        "id": "stage.ch04.kernel-image.kernel",
+        "input_entity_refs": [
           "entity.ch04.kernel-image.domain",
           "entity.ch04.kernel-image.kernel_direction",
-          "entity.ch04.kernel-image.zero",
+          "entity.ch04.kernel-image.map_T"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.kernel-image.zero"
+        ],
+        "relation_refs": [
+          "relation.ch04.kernel-image.kernel_map",
+          "relation.ch04.kernel-image.kernel_binding"
+        ],
+        "title": "核到零"
+      },
+      {
+        "caption": "ker(T)=span(e_2),\\ T(e_2)=0;\\ im(T)=span(e_1)",
+        "expected_invariants": [
+          "image_reachable"
+        ],
+        "id": "stage.ch04.kernel-image.image",
+        "input_entity_refs": [
+          "entity.ch04.kernel-image.sample_input",
+          "entity.ch04.kernel-image.map_T"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.kernel-image.sample_output",
           "entity.ch04.kernel-image.image"
         ],
         "relation_refs": [
-          "relation.ch04.kernel-image.spans"
+          "relation.ch04.kernel-image.sample_map",
+          "relation.ch04.kernel-image.image_binding"
         ],
-        "expected_invariants": [
-          "finite numeric result",
-          "kernel_maps_zero",
-          "image_reachable"
-        ]
+        "title": "像是可达子空间"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb",
-    "raw_reply_digest": "sha256:e302d9317688923a68350ca07f860765fbff2c4e7a025bf8791a824fcc7f61a0",
-    "artifact_digest": "sha256:33dc0f64b81752947a8872414702520d53f7f3b2cafcd3d0c7dae06f9ee45de0"
   }
 }

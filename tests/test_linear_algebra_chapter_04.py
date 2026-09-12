@@ -1,9 +1,12 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from linear_algebra.catalog.chapter_04 import TOPICS
 from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts
 from linear_algebra.teaching.compile_resources import compiled_resource_store
+from linear_algebra.teaching.compile_resources import compile_chapter_04
 from linear_algebra.teaching.model import TeachingArtifact
 from linear_algebra.visualizations.contracts import contract_for
 from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
@@ -75,3 +78,32 @@ def test_chapter_four_topics_have_explicit_distinct_semantic_mappings():
     assert len(set(plans.values())) >= 8
     assert plans["ch04.space.closure"] != plans["ch04.coordinates.readout"]
     assert plans["ch04.dependence.redundancy"] != plans["ch04.linear-map.compare"]
+
+
+def test_chapter_four_index_upsert_preserves_legacy_rows_and_is_idempotent(tmp_path):
+    bundled = Path(__file__).parents[1] / "linear_algebra" / "teaching" / "data" / "index.json"
+    baseline = json.loads(bundled.read_text(encoding="utf-8"))
+    legacy_rows = [row for row in baseline["topics"] if not row["topic_id"].startswith("ch04.")]
+    index_path = tmp_path / "index.json"
+    index_path.write_text(json.dumps({"schema_version": 1, "topic_count": len(legacy_rows), "topics": legacy_rows}, sort_keys=True), encoding="utf-8")
+
+    compile_chapter_04(output_root=tmp_path / "compiled", index_path=index_path)
+    payload = json.loads(index_path.read_text(encoding="utf-8"))
+    assert payload["topic_count"] == len(payload["topics"]) == 70
+    assert len({row["topic_id"] for row in payload["topics"]}) == 70
+    assert sum(row["topic_id"].startswith("ch04.") for row in payload["topics"]) == 16
+    retained = {row["topic_id"]: row for row in payload["topics"] if not row["topic_id"].startswith("ch04.")}
+    assert list(retained.values()) == legacy_rows
+    first_bytes = index_path.read_bytes()
+    compile_chapter_04(output_root=tmp_path / "compiled", index_path=index_path)
+    assert index_path.read_bytes() == first_bytes
+
+
+def test_chapter_four_index_upsert_validates_before_writing_resources(tmp_path):
+    index_path = tmp_path / "index.json"
+    before = {"schema_version": 999, "topic_count": 0, "topics": []}
+    index_path.write_text(json.dumps(before), encoding="utf-8")
+    with pytest.raises(ValueError, match="schema-version-1"):
+        compile_chapter_04(output_root=tmp_path / "compiled", index_path=index_path)
+    assert json.loads(index_path.read_text(encoding="utf-8")) == before
+    assert not (tmp_path / "compiled").exists()

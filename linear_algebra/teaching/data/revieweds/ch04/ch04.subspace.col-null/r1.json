@@ -1,41 +1,247 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch04.subspace.col-null",
-  "revision": 1,
-  "status": "reviewed",
-  "source": {
-    "source_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.1 线性空间与子空间",
-      "4.1.3 两大核心子空间：列空间与零空间"
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.subspace.col-null.map_A",
+        "entity.ch04.subspace.col-null.domain",
+        "entity.ch04.subspace.col-null.codomain",
+        "entity.ch04.subspace.col-null.kernel",
+        "entity.ch04.subspace.col-null.column_space",
+        "entity.ch04.subspace.col-null.kernel_vector",
+        "entity.ch04.subspace.col-null.zero",
+        "entity.ch04.subspace.col-null.image_vector"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)",
+      "formula_symbols": [
+        "map_A",
+        "domain"
+      ],
+      "id": "claim.ch04.subspace.col-null",
+      "relation_refs": [
+        "relation.ch04.subspace.col-null.kernel_map",
+        "relation.ch04.subspace.col-null.kernel_binding",
+        "relation.ch04.subspace.col-null.column_binding",
+        "relation.ch04.subspace.col-null.domain_image"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.3 两大核心子空间：列空间与零空间::1::sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0"
+      ],
+      "stage_refs": [
+        "stage.ch04.subspace.col-null.domain",
+        "stage.ch04.subspace.col-null.codomain"
+      ],
+      "statement": "4.1.3 两大核心子空间：列空间与零空间 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.subspace.col-null"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.subspace.col-null.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
     ],
+    "definition": "4.1.3 两大核心子空间：列空间与零空间 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "diag_1_0",
+      "kernel_to_zero",
+      "image_x_axis"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.1.3 两大核心子空间：列空间与零空间",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "definition",
+        "text": "definition: 4.1.3 两大核心子空间：列空间与零空间。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "formula",
+        "text": "formula: 4.1.3 两大核心子空间：列空间与零空间。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.1.3 两大核心子空间：列空间与零空间。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.1.3 两大核心子空间：列空间与零空间。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.1.3 两大核心子空间：列空间与零空间。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.1.3 两大核心子空间：列空间与零空间。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "connections",
+        "text": "connections: 4.1.3 两大核心子空间：列空间与零空间。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.1.3 两大核心子空间：列空间与零空间 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "codomain": "codomain",
+      "column_space": "column_space",
+      "domain": "domain",
+      "image_vector": "image_vector",
+      "kernel": "kernel",
+      "kernel_vector": "kernel_vector",
+      "map_A": "map_A",
+      "zero": "zero"
+    },
+    "title": "4.1.3 两大核心子空间：列空间与零空间",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "given": [
+          [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          [
+            2.0,
+            3.0
+          ]
+        ],
+        "id": "example.ch04.subspace.col-null",
+        "kind": "matrix_transform",
+        "result": [
+          2.0,
+          0.0
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:b8110a9ff5f99a9d8d7100ca81c8c4bd4c7be1a0a7bdad365fb4a68bba171d6c",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:392f9f59e18d1b9e1e2fd7d991a0f5a657d2c0d920a06159508c6f370e47c2f1",
+    "source_hash": "sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。",
+    "heading_level": 4,
     "heading_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.1 线性空间与子空间",
       "4.1.3 两大核心子空间：列空间与零空间"
     ],
-    "heading_level": 4,
+    "neighboring_titles": [
+      "4.1.2 子空间"
+    ],
     "occurrence": 1,
-    "excerpt": "#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。",
     "source_hash": "sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.1 线性空间与子空间",
+      "4.1.3 两大核心子空间：列空间与零空间"
+    ],
     "spans": [
       {
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.3 两大核心子空间：列空间与零空间::1::sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0",
+        "end_line": 1615,
+        "fingerprint": "sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.1 线性空间与子空间",
           "4.1.3 两大核心子空间：列空间与零空间"
         ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.3 两大核心子空间：列空间与零空间::1::sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0",
         "start_line": 1588,
-        "end_line": 1615,
-        "fingerprint": "sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0",
         "text": "#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。"
       }
-    ],
-    "neighboring_titles": [
-      "4.1.2 子空间"
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -49,360 +255,266 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch04.subspace.col-null",
-      "statement": "4.1.3 两大核心子空间：列空间与零空间 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "A=\\operatorname{diag}(1,0),\\ A(1,0)=(1,0),\\ A(0,1)=0",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.3 两大核心子空间：列空间与零空间::1::sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch04.subspace.col-null.vector_a",
-        "entity.ch04.subspace.col-null.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch04.subspace.col-null.batch_maps_to"
-      ],
-      "stage_refs": [
-        "stage.ch04.subspace.col-null.evidence"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch04.subspace.col-null.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch04.subspace.col-null"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "4.1.3 两大核心子空间：列空间与零空间",
-    "summary": "4.1.3 两大核心子空间：列空间与零空间 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 4.1.3 两大核心子空间：列空间与零空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 4.1.3 两大核心子空间：列空间与零空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 4.1.3 两大核心子空间：列空间与零空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 4.1.3 两大核心子空间：列空间与零空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 4.1.3 两大核心子空间：列空间与零空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 4.1.3 两大核心子空间：列空间与零空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 4.1.3 两大核心子空间：列空间与零空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a",
-      "domain": "domain",
-      "codomain": "codomain",
-      "kernel": "kernel",
-      "column_space": "column_space"
-    },
-    "definition": "4.1.3 两大核心子空间：列空间与零空间 的对象和定义。",
-    "formula": "A=\\operatorname{diag}(1,0),\\ A(1,0)=(1,0),\\ A(0,1)=0",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch04.subspace.col-null",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "A=\\operatorname{diag}(1,0),\\ A(1,0)=(1,0),\\ A(0,1)=0"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.1.3 两大核心子空间：列空间与零空间",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch04.subspace.col-null",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.subspace.col-null.vector_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.subspace.col-null.map_A",
+        "kind": "matrix",
+        "label": "A",
+        "role": "map_A",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
         ]
       },
       {
-        "id": "entity.ch04.subspace.col-null.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "transformed_a",
-        "label": "transformed_a",
         "claim_refs": [
           "claim.ch04.subspace.col-null"
-        ]
-      },
-      {
+        ],
+        "dimension": 2,
         "id": "entity.ch04.subspace.col-null.domain",
-        "kind": "matrix",
-        "dimension": 2,
-        "value": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
+        "kind": "basis",
+        "label": "R² domain",
         "role": "domain",
-        "label": "domain",
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 2,
         "id": "entity.ch04.subspace.col-null.codomain",
-        "kind": "matrix",
-        "dimension": 2,
-        "value": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
+        "kind": "basis",
+        "label": "R² codomain",
         "role": "codomain",
-        "label": "codomain",
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 2,
         "id": "entity.ch04.subspace.col-null.kernel",
-        "kind": "matrix",
-        "dimension": 2,
+        "kind": "subspace",
+        "label": "Null(A)",
+        "role": "kernel",
         "value": [
-          [
-            1.0,
-            0.0
-          ],
           [
             0.0,
             1.0
           ]
-        ],
-        "role": "kernel",
-        "label": "kernel",
-        "claim_refs": [
-          "claim.ch04.subspace.col-null"
         ]
       },
       {
-        "id": "entity.ch04.subspace.col-null.column_space",
-        "kind": "matrix",
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
         "dimension": 2,
+        "id": "entity.ch04.subspace.col-null.column_space",
+        "kind": "subspace",
+        "label": "Col(A)",
+        "role": "column_space",
         "value": [
           [
             1.0,
             0.0
-          ],
-          [
-            0.0,
-            1.0
           ]
-        ],
-        "role": "column_space",
-        "label": "column_space",
+        ]
+      },
+      {
         "claim_refs": [
           "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.subspace.col-null.kernel_vector",
+        "kind": "vector",
+        "label": "k",
+        "role": "kernel_vector",
+        "value": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.subspace.col-null.zero",
+        "kind": "point",
+        "label": "0",
+        "role": "zero",
+        "value": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.subspace.col-null.image_vector",
+        "kind": "vector",
+        "label": "A(2,3)",
+        "role": "image_vector",
+        "value": [
+          2.0,
+          0.0
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch04.subspace.col-null.batch_maps_to",
-        "kind": "batch_maps_to",
-        "source_ref": "entity.ch04.subspace.col-null.vector_a",
-        "target_ref": "entity.ch04.subspace.col-null.transformed_a",
-        "parameters": {
-          "matrix": [
-            [
-              1,
-              0
-            ],
-            [
-              0,
-              0
-            ]
-          ],
-          "domain_dimension": 2,
-          "codomain_dimension": 2
-        },
         "claim_refs": [
           "claim.ch04.subspace.col-null"
-        ]
+        ],
+        "id": "relation.ch04.subspace.col-null.kernel_map",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            0.0,
+            0.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.col-null.kernel_vector",
+        "target_ref": "entity.ch04.subspace.col-null.zero"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.kernel_binding",
+        "kind": "kernel_of",
+        "parameters": {
+          "expected_nullity": 1.0
+        },
+        "source_ref": "entity.ch04.subspace.col-null.kernel",
+        "target_ref": "entity.ch04.subspace.col-null.map_A"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.column_binding",
+        "kind": "image_of",
+        "parameters": {
+          "expected_rank": 1.0
+        },
+        "source_ref": "entity.ch04.subspace.col-null.map_A",
+        "target_ref": "entity.ch04.subspace.col-null.column_space"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.domain_image",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            2.0,
+            0.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.col-null.domain",
+        "target_ref": "entity.ch04.subspace.col-null.column_space"
       }
     ],
+    "scene_family": "subspace_region",
+    "scene_kind": "2d",
     "stages": [
       {
-        "id": "stage.ch04.subspace.col-null.evidence",
-        "title": "主题证据",
-        "caption": "A=\\operatorname{diag}(1,0),\\ A(1,0)=(1,0),\\ A(0,1)=0",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch04.subspace.col-null.vector_a",
-          "entity.ch04.subspace.col-null.transformed_a",
-          "entity.ch04.subspace.col-null.domain",
-          "entity.ch04.subspace.col-null.codomain",
-          "entity.ch04.subspace.col-null.kernel",
-          "entity.ch04.subspace.col-null.column_space"
+        "caption": "A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)",
+        "expected_invariants": [
+          "kernel_to_zero"
         ],
-        "output_entity_refs": [
-          "entity.ch04.subspace.col-null.vector_a",
-          "entity.ch04.subspace.col-null.transformed_a",
+        "id": "stage.ch04.subspace.col-null.domain",
+        "input_entity_refs": [
           "entity.ch04.subspace.col-null.domain",
-          "entity.ch04.subspace.col-null.codomain",
           "entity.ch04.subspace.col-null.kernel",
-          "entity.ch04.subspace.col-null.column_space"
+          "entity.ch04.subspace.col-null.kernel_vector"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.subspace.col-null.zero"
         ],
         "relation_refs": [
-          "relation.ch04.subspace.col-null.batch_maps_to"
+          "relation.ch04.subspace.col-null.kernel_map",
+          "relation.ch04.subspace.col-null.kernel_binding"
         ],
+        "title": "核方向"
+      },
+      {
+        "caption": "A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)",
         "expected_invariants": [
-          "finite numeric result",
-          "diag_1_0",
-          "kernel_to_zero",
-          "image_x_axis"
-        ]
+          "image_x_axis",
+          "diag_1_0"
+        ],
+        "id": "stage.ch04.subspace.col-null.codomain",
+        "input_entity_refs": [
+          "entity.ch04.subspace.col-null.map_A",
+          "entity.ch04.subspace.col-null.codomain"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.subspace.col-null.column_space",
+          "entity.ch04.subspace.col-null.image_vector"
+        ],
+        "relation_refs": [
+          "relation.ch04.subspace.col-null.column_binding",
+          "relation.ch04.subspace.col-null.domain_image"
+        ],
+        "title": "列空间"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0",
-    "raw_reply_digest": "sha256:18cb2252ed54536d3359715b00b11e9e1f3bcbbffb6cd3d70421723aff05f6f1",
-    "artifact_digest": "sha256:ac1e90571ba6c3a19e416036de20caa23e6e9036482f9d1711a51a487b3bac53"
   }
 }

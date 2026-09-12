@@ -1,42 +1,233 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch04.dimension.ladder",
-  "revision": 1,
-  "status": "reviewed",
-  "source": {
-    "source_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.3 基与维数",
-      "4.3.2 维数"
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.dimension.ladder.point",
+        "entity.ch04.dimension.ladder.line",
+        "entity.ch04.dimension.ladder.plane",
+        "entity.ch04.dimension.ladder.volume"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "\\{0\\}\\subset span(e_1)\\subset span(e_1,e_2)\\subset R^3",
+      "formula_symbols": [
+        "point",
+        "line"
+      ],
+      "id": "claim.ch04.dimension.ladder",
+      "relation_refs": [
+        "relation.ch04.dimension.ladder.point_in_line",
+        "relation.ch04.dimension.ladder.line_in_plane",
+        "relation.ch04.dimension.ladder.plane_in_volume"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.2 维数::1::sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab"
+      ],
+      "stage_refs": [
+        "stage.ch04.dimension.ladder.ladder_low",
+        "stage.ch04.dimension.ladder.ladder_full"
+      ],
+      "statement": "4.3.2 维数 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.dimension.ladder"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.dimension.ladder.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
     ],
+    "definition": "4.3.2 维数 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "\\{0\\}\\subset span(e_1)\\subset span(e_1,e_2)\\subset R^3",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "nested_0_1_2",
+      "nested_dimensions"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.3.2 维数",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "id": "definition",
+        "text": "definition: 4.3.2 维数。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "id": "formula",
+        "text": "formula: 4.3.2 维数。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.3.2 维数。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.3.2 维数。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.3.2 维数。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.3.2 维数。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "id": "connections",
+        "text": "connections: 4.3.2 维数。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.3.2 维数 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "line": "line",
+      "plane": "plane",
+      "point": "point",
+      "volume": "volume"
+    },
+    "title": "4.3.2 维数",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "\\{0\\}\\subset span(e_1)\\subset span(e_1,e_2)\\subset R^3"
+        ],
+        "checks": [
+          {
+            "expected": 1.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "given": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch04.dimension.ladder",
+        "kind": "oriented_volume",
+        "result": 1.0,
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:89da1811fbf908f29b55c95d53e53dcc388c6f045348144df3c9f9df7e94d056",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:be13093011904d6e91412a9d45db3fcc39cd2f7c442b330f4fb637a3339c0ee2",
+    "source_hash": "sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.3.2 维数\n\n定理 4.1（维数唯一性） 同一空间任何基的向量个数相等。这个个数 $=$ 空间的维数 $\\dim(V)$。\n$R^{2}$ 的维数 $= 2$，$R^{3}$ 的维数 $= 3$。\n维数的关键性质：\n1. 若 H 是 V 的子空间，则 $\\dim(H) \\leq \\dim(V)$\n2. $\\dim(R^{n}) = n$\n3. 一组基恰好含有 $\\dim(V)$ 个向量——不能多（多了必相关），不能少（少了张不满整个空间）\n4. 若一组线性无关向量个数 $= \\dim(V)$，则它自动构成一组基（不需要再验证\"生成\"条件）\n\n##### 性质 4 的证明（基中向量个数$=\\dim(V)$时自动成基）\n\n设 $\\{v_{1}, \\dots ,v_{n}\\}$ 是 $\\dim(V)=n$ 的空间中 n 个线性无关的向量。\n若它们不生成 V，则存在 $w \\in V$ 无法表示为它们的线性组合 $\\rightarrow {v_{1}, \\dots ,v_{n},w}$ 中有 $n+1$ 个向量线性无关 $\\rightarrow$ 与 $\\dim(V)=n$ 矛盾。\n因此 n 个线性无关向量必然生成整个空间，自动构成一组基。■",
+    "heading_level": 4,
     "heading_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.3 基与维数",
       "4.3.2 维数"
     ],
-    "heading_level": 4,
+    "neighboring_titles": [
+      "4.3.1 基的定义",
+      "4.3.3 坐标——向量的\"读数\""
+    ],
     "occurrence": 1,
-    "excerpt": "#### 4.3.2 维数\n\n定理 4.1（维数唯一性） 同一空间任何基的向量个数相等。这个个数 $=$ 空间的维数 $\\dim(V)$。\n$R^{2}$ 的维数 $= 2$，$R^{3}$ 的维数 $= 3$。\n维数的关键性质：\n1. 若 H 是 V 的子空间，则 $\\dim(H) \\leq \\dim(V)$\n2. $\\dim(R^{n}) = n$\n3. 一组基恰好含有 $\\dim(V)$ 个向量——不能多（多了必相关），不能少（少了张不满整个空间）\n4. 若一组线性无关向量个数 $= \\dim(V)$，则它自动构成一组基（不需要再验证\"生成\"条件）\n\n##### 性质 4 的证明（基中向量个数$=\\dim(V)$时自动成基）\n\n设 $\\{v_{1}, \\dots ,v_{n}\\}$ 是 $\\dim(V)=n$ 的空间中 n 个线性无关的向量。\n若它们不生成 V，则存在 $w \\in V$ 无法表示为它们的线性组合 $\\rightarrow {v_{1}, \\dots ,v_{n},w}$ 中有 $n+1$ 个向量线性无关 $\\rightarrow$ 与 $\\dim(V)=n$ 矛盾。\n因此 n 个线性无关向量必然生成整个空间，自动构成一组基。■",
     "source_hash": "sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.3 基与维数",
+      "4.3.2 维数"
+    ],
     "spans": [
       {
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.2 维数::1::sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab",
+        "end_line": 1703,
+        "fingerprint": "sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.3 基与维数",
           "4.3.2 维数"
         ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.2 维数::1::sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab",
         "start_line": 1688,
-        "end_line": 1703,
-        "fingerprint": "sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab",
         "text": "#### 4.3.2 维数\n\n定理 4.1（维数唯一性） 同一空间任何基的向量个数相等。这个个数 $=$ 空间的维数 $\\dim(V)$。\n$R^{2}$ 的维数 $= 2$，$R^{3}$ 的维数 $= 3$。\n维数的关键性质：\n1. 若 H 是 V 的子空间，则 $\\dim(H) \\leq \\dim(V)$\n2. $\\dim(R^{n}) = n$\n3. 一组基恰好含有 $\\dim(V)$ 个向量——不能多（多了必相关），不能少（少了张不满整个空间）\n4. 若一组线性无关向量个数 $= \\dim(V)$，则它自动构成一组基（不需要再验证\"生成\"条件）\n\n##### 性质 4 的证明（基中向量个数$=\\dim(V)$时自动成基）\n\n设 $\\{v_{1}, \\dots ,v_{n}\\}$ 是 $\\dim(V)=n$ 的空间中 n 个线性无关的向量。\n若它们不生成 V，则存在 $w \\in V$ 无法表示为它们的线性组合 $\\rightarrow {v_{1}, \\dots ,v_{n},w}$ 中有 $n+1$ 个向量线性无关 $\\rightarrow$ 与 $\\dim(V)=n$ 矛盾。\n因此 n 个线性无关向量必然生成整个空间，自动构成一组基。■"
       }
-    ],
-    "neighboring_titles": [
-      "4.3.1 基的定义",
-      "4.3.3 坐标——向量的\"读数\""
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -50,321 +241,173 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch04.dimension.ladder",
-      "statement": "4.3.2 维数 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "4.3.2 维数: finite typed semantic evidence",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.2 维数::1::sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch04.dimension.ladder.vector_a",
-        "entity.ch04.dimension.ladder.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch04.dimension.ladder.spans"
-      ],
-      "stage_refs": [
-        "stage.ch04.dimension.ladder.evidence"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch04.dimension.ladder.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch04.dimension.ladder"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "4.3.2 维数",
-    "summary": "4.3.2 维数 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 4.3.2 维数。",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 4.3.2 维数。",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 4.3.2 维数。",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 4.3.2 维数。",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 4.3.2 维数。",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 4.3.2 维数。",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 4.3.2 维数。",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a",
-      "point": "point",
-      "line": "line",
-      "plane": "plane",
-      "volume": "volume"
-    },
-    "definition": "4.3.2 维数 的对象和定义。",
-    "formula": "4.3.2 维数: finite typed semantic evidence",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch04.dimension.ladder",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "4.3.2 维数: finite typed semantic evidence"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.3.2 维数",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch04.dimension.ladder",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.dimension.ladder.vector_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.dimension.ladder"
-        ]
-      },
-      {
-        "id": "entity.ch04.dimension.ladder.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
         ],
-        "role": "transformed_a",
-        "label": "transformed_a",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
-        ]
-      },
-      {
+        "dimension": 3,
         "id": "entity.ch04.dimension.ladder.point",
-        "kind": "region",
-        "dimension": 2,
+        "kind": "point",
+        "label": "point",
+        "role": "point",
         "value": [
           0.0,
+          0.0,
           0.0
-        ],
-        "role": "point",
-        "label": "point",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "dimension": 3,
         "id": "entity.ch04.dimension.ladder.line",
-        "kind": "region",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "line",
+        "kind": "subspace",
         "label": "line",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
+        "role": "line",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "dimension": 3,
         "id": "entity.ch04.dimension.ladder.plane",
-        "kind": "region",
-        "dimension": 2,
-        "value": [
-          1.0,
-          1.0
-        ],
-        "role": "plane",
+        "kind": "subspace",
         "label": "plane",
-        "claim_refs": [
-          "claim.ch04.dimension.ladder"
+        "role": "plane",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
         ]
       },
       {
-        "id": "entity.ch04.dimension.ladder.volume",
-        "kind": "region",
-        "dimension": 2,
-        "value": [
-          1.0,
-          1.0
-        ],
-        "role": "volume",
-        "label": "volume",
         "claim_refs": [
           "claim.ch04.dimension.ladder"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.dimension.ladder.volume",
+        "kind": "subspace",
+        "label": "volume",
+        "role": "volume",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch04.dimension.ladder.spans",
-        "kind": "spans",
-        "source_ref": "entity.ch04.dimension.ladder.vector_a",
-        "target_ref": "entity.ch04.dimension.ladder.transformed_a",
-        "parameters": {},
         "claim_refs": [
           "claim.ch04.dimension.ladder"
-        ]
+        ],
+        "id": "relation.ch04.dimension.ladder.point_in_line",
+        "kind": "contains",
+        "parameters": {
+          "container_dimension": 1.0,
+          "member_dimension": 0.0
+        },
+        "source_ref": "entity.ch04.dimension.ladder.line",
+        "target_ref": "entity.ch04.dimension.ladder.point"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "id": "relation.ch04.dimension.ladder.line_in_plane",
+        "kind": "contains",
+        "parameters": {
+          "container_dimension": 2.0,
+          "member_dimension": 1.0
+        },
+        "source_ref": "entity.ch04.dimension.ladder.plane",
+        "target_ref": "entity.ch04.dimension.ladder.line"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dimension.ladder"
+        ],
+        "id": "relation.ch04.dimension.ladder.plane_in_volume",
+        "kind": "contains",
+        "parameters": {
+          "container_dimension": 3.0,
+          "member_dimension": 2.0
+        },
+        "source_ref": "entity.ch04.dimension.ladder.volume",
+        "target_ref": "entity.ch04.dimension.ladder.plane"
       }
     ],
+    "scene_family": "subspace_region",
+    "scene_kind": "3d",
     "stages": [
       {
-        "id": "stage.ch04.dimension.ladder.evidence",
-        "title": "主题证据",
-        "caption": "4.3.2 维数: finite typed semantic evidence",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch04.dimension.ladder.vector_a",
-          "entity.ch04.dimension.ladder.transformed_a",
-          "entity.ch04.dimension.ladder.point",
-          "entity.ch04.dimension.ladder.line",
-          "entity.ch04.dimension.ladder.plane",
-          "entity.ch04.dimension.ladder.volume"
+        "caption": "\\{0\\}\\subset span(e_1)\\subset span(e_1,e_2)\\subset R^3",
+        "expected_invariants": [
+          "nested_0_1_2"
         ],
-        "output_entity_refs": [
-          "entity.ch04.dimension.ladder.vector_a",
-          "entity.ch04.dimension.ladder.transformed_a",
+        "id": "stage.ch04.dimension.ladder.ladder_low",
+        "input_entity_refs": [
           "entity.ch04.dimension.ladder.point",
-          "entity.ch04.dimension.ladder.line",
-          "entity.ch04.dimension.ladder.plane",
+          "entity.ch04.dimension.ladder.line"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch04.dimension.ladder.plane"
+        ],
+        "relation_refs": [
+          "relation.ch04.dimension.ladder.point_in_line",
+          "relation.ch04.dimension.ladder.line_in_plane"
+        ],
+        "title": "点线面"
+      },
+      {
+        "caption": "\\{0\\}\\subset span(e_1)\\subset span(e_1,e_2)\\subset R^3",
+        "expected_invariants": [
+          "nested_dimensions"
+        ],
+        "id": "stage.ch04.dimension.ladder.ladder_full",
+        "input_entity_refs": [
+          "entity.ch04.dimension.ladder.plane"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
           "entity.ch04.dimension.ladder.volume"
         ],
         "relation_refs": [
-          "relation.ch04.dimension.ladder.spans"
+          "relation.ch04.dimension.ladder.plane_in_volume"
         ],
-        "expected_invariants": [
-          "finite numeric result",
-          "nested_dimensions"
-        ]
+        "title": "面与体"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:05e398c786408d8e5b01e0073a18a6f7bfa3d18e39e048e21bce27c5c79964ab",
-    "raw_reply_digest": "sha256:daf330169d731a0a4f66c97d038bb74b28b54f221ac61f39f4de238dc20ba661",
-    "artifact_digest": "sha256:8fdfd19ecf1e2f9294767156a26c5c743f3248a0215adbdd211f8d0626175172"
   }
 }

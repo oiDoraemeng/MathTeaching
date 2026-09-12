@@ -1,13 +1,38 @@
 {
-  "artifact_digest": "sha256:5be4586bc0b63abdb7c854631f9cec436ee3012b08010253bcf7feb73f34f4e5",
+  "artifact_digest": "sha256:7e0b6153395b52c94c618503d6e3b0163cf422bc6def45cf3bdfbea89011612f",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:bb55fda73d4f3bd56aad9951192c5a23d370d752ddc5d6183d22ab8b23328164",
+  "contract_digest": "sha256:f80528300b10802cf91e6c81396210a043dc74cc646daf1214b2369fa2f06168",
   "plan": {
     "operations": [
       {
-        "alias": "ch04_subspace",
+        "alias": "ch04__entity__map_T",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch04__entity__domain",
         "basis": [
+          [
+            1.0,
+            0.0
+          ],
           [
             0.0,
             1.0
@@ -19,57 +44,11 @@
           -3.0,
           3.0
         ],
-        "color": "#4c78a8",
         "op": "geometry.subspace_region",
-        "opacity": 0.25
+        "opacity": 0.2
       },
       {
-        "alias": "ch04__entity__domain",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "domain"
-      },
-      {
-        "alias": "ch04__entity__kernel_direction",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "kernel_direction"
-      },
-      {
-        "alias": "ch04__entity__zero",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "zero"
-      },
-      {
-        "alias": "ch04__entity__image",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "image"
-      },
-      {
-        "alias": "ch04__relation__spans",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "spans"
-      },
-      {
-        "alias": "sem__entity.ch04.kernel-image.domain__origin",
+        "alias": "ch04__entity__kernel_direction__origin",
         "coordinates": [
           0.0,
           0.0
@@ -78,35 +57,7 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.kernel-image.domain__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "domain",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.kernel-image.domain",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.kernel-image.domain__end",
-        "kind": "vector",
-        "label": "domain",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.kernel-image.domain__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.kernel-image.kernel_direction__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.kernel-image.kernel_direction__end",
+        "alias": "ch04__entity__kernel_direction__end",
         "coordinates": [
           0.0,
           1.0
@@ -115,32 +66,249 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.kernel-image.kernel_direction",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.kernel-image.kernel_direction__end",
+        "alias": "ch04__entity__kernel_direction",
+        "end": "ch04__entity__kernel_direction__end",
         "kind": "vector",
-        "label": "kernel_direction",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.kernel-image.kernel_direction__origin"
+        "start": "ch04__entity__kernel_direction__origin"
       },
       {
-        "alias": "sem__relation.ch04.kernel-image.spans",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "ch04__entity__zero",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "spans: domain → kernel_direction"
+        "name": "zero",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__stage.ch04.kernel-image.evidence__title",
+        "alias": "ch04__entity__image",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__entity__sample_input__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__sample_input__end",
+        "coordinates": [
+          2.0,
+          3.0
+        ],
+        "name": "sample_input",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__sample_input",
+        "end": "ch04__entity__sample_input__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__sample_input__origin"
+      },
+      {
+        "alias": "ch04__entity__sample_output__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__sample_output__end",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "sample_output",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__sample_output",
+        "end": "ch04__entity__sample_output__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__sample_output__origin"
+      },
+      {
+        "alias": "ch04__kernel_image__bundle",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "dimension": 2,
+        "domain_basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "image_basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "kernel_basis": [
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "lanes": {
+          "domain": 1.0,
+          "image": 1.0,
+          "kernel": 1.0
+        },
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.mapping_bundle",
+        "origin": [
+          0.0,
+          0.0
+        ],
+        "rank": 1
+      },
+      {
+        "alias": "ch04__relation__kernel_map",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch04__relation__kernel_binding",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch04__relation__sample_map",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch04__relation__image_binding",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__stage.ch04.kernel-image.kernel__title",
         "op": "annotation.upsert",
         "position": [
-          -2.65,
+          -1.5,
           2.65
         ],
-        "text": "主题证据"
+        "text": "核到零"
+      },
+      {
+        "alias": "sem__stage.ch04.kernel-image.image__title",
+        "op": "annotation.upsert",
+        "position": [
+          1.5,
+          2.65
+        ],
+        "text": "像是可达子空间"
       },
       {
         "op": "view.fit",
@@ -151,7 +319,7 @@
     "summary": "4.5.1 定义",
     "version": 1
   },
-  "plan_digest": "sha256:0b898ebb723de3403e6e8fa0e6e66a423ea7ef330a7884cf47463ab9af1d2a42",
+  "plan_digest": "sha256:574583147f6129f524dbb0770745eb43190d35c1e6b0d92e7f0e236487839dca",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -163,35 +331,56 @@
   "stages": [
     {
       "anchor": [
-        -2.65,
+        -1.5,
         2.65
       ],
-      "caption": "4.5.1 定义: finite typed semantic evidence",
-      "id": "stage.ch04.kernel-image.evidence",
-      "layout": "sequence",
-      "title": "主题证据",
+      "caption": "ker(T)=span(e_2),\\ T(e_2)=0;\\ im(T)=span(e_1)",
+      "id": "stage.ch04.kernel-image.kernel",
+      "layout": "side_by_side",
+      "title": "核到零",
       "visible_aliases": [
         "ch04__entity__domain",
-        "sem__entity.ch04.kernel-image.domain",
-        "sem__entity.ch04.kernel-image.domain__end",
-        "sem__entity.ch04.kernel-image.domain__origin",
         "ch04__entity__kernel_direction",
-        "sem__entity.ch04.kernel-image.kernel_direction",
-        "sem__entity.ch04.kernel-image.kernel_direction__end",
-        "sem__entity.ch04.kernel-image.kernel_direction__origin",
+        "ch04__entity__map_T",
         "ch04__entity__zero",
-        "ch04__entity__image",
-        "ch04__relation__spans",
-        "sem__relation.ch04.kernel-image.spans",
-        "sem__stage.ch04.kernel-image.evidence__title",
-        "sem__span__1"
+        "ch04__relation__kernel_map",
+        "ch04__relation__kernel_binding",
+        "sem__stage.ch04.kernel-image.kernel__title"
       ],
       "visible_refs": [
         "entity.ch04.kernel-image.domain",
         "entity.ch04.kernel-image.kernel_direction",
+        "entity.ch04.kernel-image.map_T",
         "entity.ch04.kernel-image.zero",
+        "relation.ch04.kernel-image.kernel_map",
+        "relation.ch04.kernel-image.kernel_binding"
+      ]
+    },
+    {
+      "anchor": [
+        1.5,
+        2.65
+      ],
+      "caption": "ker(T)=span(e_2),\\ T(e_2)=0;\\ im(T)=span(e_1)",
+      "id": "stage.ch04.kernel-image.image",
+      "layout": "side_by_side",
+      "title": "像是可达子空间",
+      "visible_aliases": [
+        "ch04__entity__sample_input",
+        "ch04__entity__map_T",
+        "ch04__entity__sample_output",
+        "ch04__entity__image",
+        "ch04__relation__sample_map",
+        "ch04__relation__image_binding",
+        "sem__stage.ch04.kernel-image.image__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.kernel-image.sample_input",
+        "entity.ch04.kernel-image.map_T",
+        "entity.ch04.kernel-image.sample_output",
         "entity.ch04.kernel-image.image",
-        "relation.ch04.kernel-image.spans"
+        "relation.ch04.kernel-image.sample_map",
+        "relation.ch04.kernel-image.image_binding"
       ]
     }
   ],

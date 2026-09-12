@@ -1,42 +1,238 @@
 {
-  "schema_version": 1,
-  "topic_id": "ch04.subspace.classification",
-  "revision": 1,
-  "status": "reviewed",
-  "source": {
-    "source_path": [
-      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
-      "4.1 线性空间与子空间",
-      "4.1.2 子空间"
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.subspace.classification.origin",
+        "entity.ch04.subspace.classification.line",
+        "entity.ch04.subspace.classification.plane",
+        "entity.ch04.subspace.classification.whole_space",
+        "entity.ch04.subspace.classification.affine_counterexample"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "\\dim\\{0\\}=0,\\dim L=1,\\dim P=2,\\dim R^3=3;\\ (0,0,1)+P\\not\\ni0",
+      "formula_symbols": [
+        "origin",
+        "line"
+      ],
+      "id": "claim.ch04.subspace.classification",
+      "relation_refs": [
+        "relation.ch04.subspace.classification.zero_case",
+        "relation.ch04.subspace.classification.line_case",
+        "relation.ch04.subspace.classification.plane_case",
+        "relation.ch04.subspace.classification.space_case",
+        "relation.ch04.subspace.classification.affine_failure"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"
+      ],
+      "stage_refs": [
+        "stage.ch04.subspace.classification.linear_cases",
+        "stage.ch04.subspace.classification.affine_case"
+      ],
+      "statement": "4.1.2 子空间 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.subspace.classification"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.subspace.classification.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.ad-bc"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
     ],
+    "definition": "4.1.2 子空间 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "\\dim\\{0\\}=0,\\dim L=1,\\dim P=2,\\dim R^3=3;\\ (0,0,1)+P\\not\\ni0",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "classification_dimensions",
+      "origin_contains",
+      "affine_not_subspace"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "4.1.2 子空间",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "definition",
+        "text": "definition: 4.1.2 子空间。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "formula",
+        "text": "formula: 4.1.2 子空间。",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.1.2 子空间。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 4.1.2 子空间。",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.1.2 子空间。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.1.2 子空间。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "connections",
+        "text": "connections: 4.1.2 子空间。",
+        "title": "connections"
+      }
+    ],
+    "summary": "4.1.2 子空间 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "affine_counterexample": "affine_counterexample",
+      "line": "line",
+      "origin": "origin",
+      "plane": "plane",
+      "whole_space": "whole_space"
+    },
+    "title": "4.1.2 子空间",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "\\dim\\{0\\}=0,\\dim L=1,\\dim P=2,\\dim R^3=3;\\ (0,0,1)+P\\not\\ni0"
+        ],
+        "checks": [
+          {
+            "expected": 1.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "given": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch04.subspace.classification",
+        "kind": "oriented_volume",
+        "result": 1.0,
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:7df7a1e51c400194241e79afadf2e04fe7800ac8fd9665141e79cd6ae5d7236a",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:05900165209f62884ff82c43e34ce757eaa60cf4c24deb92b3927a48c2228e6a",
+    "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。",
+    "heading_level": 4,
     "heading_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.1 线性空间与子空间",
       "4.1.2 子空间"
     ],
-    "heading_level": 4,
+    "neighboring_titles": [
+      "4.1.1 线性空间",
+      "4.1.3 两大核心子空间：列空间与零空间"
+    ],
     "occurrence": 1,
-    "excerpt": "#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。",
     "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.1 线性空间与子空间",
+      "4.1.2 子空间"
+    ],
     "spans": [
       {
-        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
+        "end_line": 1587,
+        "fingerprint": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
           "4.1 线性空间与子空间",
           "4.1.2 子空间"
         ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
         "start_line": 1548,
-        "end_line": 1587,
-        "fingerprint": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
         "text": "#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。"
       }
-    ],
-    "neighboring_titles": [
-      "4.1.1 线性空间",
-      "4.1.3 两大核心子空间：列空间与零空间"
     ]
   },
+  "status": "reviewed",
   "teaching_profile": {
     "minimum_level": 3,
     "required_sections": [
@@ -50,339 +246,234 @@
     ],
     "requires_analogy_boundary": false
   },
-  "claims": [
-    {
-      "id": "claim.ch04.subspace.classification",
-      "statement": "4.1.2 子空间 的数学主张由显式对象、关系和不变量支持。",
-      "formula": "4.1.2 子空间: finite typed semantic evidence",
-      "formula_symbols": [
-        "vector_a",
-        "transformed_a"
-      ],
-      "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"
-      ],
-      "explanation_refs": [
-        "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
-      ],
-      "entity_refs": [
-        "entity.ch04.subspace.classification.vector_a",
-        "entity.ch04.subspace.classification.transformed_a"
-      ],
-      "relation_refs": [
-        "relation.ch04.subspace.classification.spans"
-      ],
-      "stage_refs": [
-        "stage.ch04.subspace.classification.evidence"
-      ]
-    }
-  ],
-  "connections": [
-    {
-      "id": "connection.ch04.subspace.classification.prior",
-      "target_topic_id": "ch03.det.ad-bc",
-      "relation": "prerequisite",
-      "description": "前置的线性表示与几何关系。",
-      "claim_refs": [
-        "claim.ch04.subspace.classification"
-      ]
-    }
-  ],
-  "explanation": {
-    "title": "4.1.2 子空间",
-    "summary": "4.1.2 子空间 的确定性数学语义 artifact。",
-    "sections": [
-      {
-        "id": "definition",
-        "title": "definition",
-        "text": "definition: 4.1.2 子空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
-        ]
-      },
-      {
-        "id": "formula",
-        "title": "formula",
-        "text": "formula: 4.1.2 子空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
-        ]
-      },
-      {
-        "id": "derivation",
-        "title": "derivation",
-        "text": "derivation: 4.1.2 子空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
-        ]
-      },
-      {
-        "id": "worked_examples",
-        "title": "worked_examples",
-        "text": "worked_examples: 4.1.2 子空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
-        ]
-      },
-      {
-        "id": "geometric_meaning",
-        "title": "geometric_meaning",
-        "text": "geometric_meaning: 4.1.2 子空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
-        ]
-      },
-      {
-        "id": "pitfalls",
-        "title": "pitfalls",
-        "text": "pitfalls: 4.1.2 子空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
-        ]
-      },
-      {
-        "id": "connections",
-        "title": "connections",
-        "text": "connections: 4.1.2 子空间。",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
-        ]
-      }
-    ],
-    "symbol_roles": {
-      "vector_a": "vector_a",
-      "transformed_a": "transformed_a",
-      "origin": "origin",
-      "line": "line",
-      "plane": "plane",
-      "whole_space": "whole_space",
-      "affine_counterexample": "affine_counterexample"
-    },
-    "definition": "4.1.2 子空间 的对象和定义。",
-    "formula": "4.1.2 子空间: finite typed semantic evidence",
-    "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
-    ],
-    "worked_examples": [
-      {
-        "id": "example.ch04.subspace.classification",
-        "title": "主题数值例",
-        "kind": "scalar_multiple",
-        "given": [
-          2,
-          [
-            1,
-            2
-          ]
-        ],
-        "calculation": [
-          "4.1.2 子空间: finite typed semantic evidence"
-        ],
-        "result": [
-          2,
-          4
-        ],
-        "checks": [
-          {
-            "name": "result",
-            "expected": [
-              2,
-              4
-            ],
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
-        ]
-      }
-    ],
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
-    "conclusion": "数值关系与讲义定义一致。",
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "invariants": [
-      "finite numeric result"
-    ],
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
-    "searchable_text": [
-      "4.1.2 子空间",
-      "线性空间",
-      "数值例"
-    ]
-  },
+  "topic_id": "ch04.subspace.classification",
   "visual_semantics": {
-    "scene_kind": "2d",
-    "scene_family": "subspace_region",
     "entities": [
       {
-        "id": "entity.ch04.subspace.classification.vector_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
-        ],
-        "role": "vector_a",
-        "label": "vector_a",
         "claim_refs": [
           "claim.ch04.subspace.classification"
-        ]
-      },
-      {
-        "id": "entity.ch04.subspace.classification.transformed_a",
-        "kind": "vector",
-        "dimension": 2,
-        "value": [
-          1.0,
-          0.0
         ],
-        "role": "transformed_a",
-        "label": "transformed_a",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
-        ]
-      },
-      {
+        "dimension": 3,
         "id": "entity.ch04.subspace.classification.origin",
-        "kind": "region",
-        "dimension": 2,
-        "value": [
-          0.0,
-          0.0
-        ],
+        "kind": "point",
+        "label": "{0}",
         "role": "origin",
-        "label": "origin",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
-        ]
-      },
-      {
-        "id": "entity.ch04.subspace.classification.line",
-        "kind": "region",
-        "dimension": 2,
         "value": [
-          1.0,
+          0.0,
+          0.0,
           0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
         ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.classification.line",
+        "kind": "subspace",
+        "label": "直线",
         "role": "line",
-        "label": "line",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "dimension": 3,
         "id": "entity.ch04.subspace.classification.plane",
-        "kind": "region",
-        "dimension": 2,
-        "value": [
-          1.0,
-          1.0
-        ],
+        "kind": "subspace",
+        "label": "平面",
         "role": "plane",
-        "label": "plane",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
         ]
       },
       {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "dimension": 3,
         "id": "entity.ch04.subspace.classification.whole_space",
-        "kind": "region",
-        "dimension": 2,
-        "value": [
-          0.0,
-          1.0
-        ],
+        "kind": "subspace",
+        "label": "R³",
         "role": "whole_space",
-        "label": "whole_space",
-        "claim_refs": [
-          "claim.ch04.subspace.classification"
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
         ]
       },
       {
-        "id": "entity.ch04.subspace.classification.affine_counterexample",
-        "kind": "region",
-        "dimension": 2,
-        "value": [
-          0.0,
-          1.0
-        ],
-        "role": "affine_counterexample",
-        "label": "affine_counterexample",
         "claim_refs": [
           "claim.ch04.subspace.classification"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.classification.affine_counterexample",
+        "kind": "affine_set",
+        "label": "z=1",
+        "role": "affine_counterexample",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
         ]
       }
     ],
     "relations": [
       {
-        "id": "relation.ch04.subspace.classification.spans",
-        "kind": "spans",
-        "source_ref": "entity.ch04.subspace.classification.vector_a",
-        "target_ref": "entity.ch04.subspace.classification.transformed_a",
-        "parameters": {},
         "claim_refs": [
           "claim.ch04.subspace.classification"
-        ]
+        ],
+        "id": "relation.ch04.subspace.classification.zero_case",
+        "kind": "classification",
+        "parameters": {
+          "contains_origin": 1.0,
+          "expected_dimension": 0.0
+        },
+        "source_ref": "entity.ch04.subspace.classification.origin",
+        "target_ref": "entity.ch04.subspace.classification.origin"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "relation.ch04.subspace.classification.line_case",
+        "kind": "classification",
+        "parameters": {
+          "contains_origin": 1.0,
+          "expected_dimension": 1.0
+        },
+        "source_ref": "entity.ch04.subspace.classification.origin",
+        "target_ref": "entity.ch04.subspace.classification.line"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "relation.ch04.subspace.classification.plane_case",
+        "kind": "classification",
+        "parameters": {
+          "contains_origin": 1.0,
+          "expected_dimension": 2.0
+        },
+        "source_ref": "entity.ch04.subspace.classification.origin",
+        "target_ref": "entity.ch04.subspace.classification.plane"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "relation.ch04.subspace.classification.space_case",
+        "kind": "classification",
+        "parameters": {
+          "contains_origin": 1.0,
+          "expected_dimension": 3.0
+        },
+        "source_ref": "entity.ch04.subspace.classification.origin",
+        "target_ref": "entity.ch04.subspace.classification.whole_space"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.classification"
+        ],
+        "id": "relation.ch04.subspace.classification.affine_failure",
+        "kind": "affine_translation",
+        "parameters": {
+          "contains_origin": 0.0,
+          "offset": [
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.classification.plane",
+        "target_ref": "entity.ch04.subspace.classification.affine_counterexample"
       }
     ],
+    "scene_family": "subspace_region",
+    "scene_kind": "3d",
     "stages": [
       {
-        "id": "stage.ch04.subspace.classification.evidence",
-        "title": "主题证据",
-        "caption": "4.1.2 子空间: finite typed semantic evidence",
-        "layout": "sequence",
-        "input_entity_refs": [
-          "entity.ch04.subspace.classification.vector_a",
-          "entity.ch04.subspace.classification.transformed_a",
-          "entity.ch04.subspace.classification.origin",
-          "entity.ch04.subspace.classification.line",
-          "entity.ch04.subspace.classification.plane",
-          "entity.ch04.subspace.classification.whole_space",
-          "entity.ch04.subspace.classification.affine_counterexample"
+        "caption": "\\dim\\{0\\}=0,\\dim L=1,\\dim P=2,\\dim R^3=3;\\ (0,0,1)+P\\not\\ni0",
+        "expected_invariants": [
+          "classification_dimensions",
+          "origin_contains"
         ],
+        "id": "stage.ch04.subspace.classification.linear_cases",
+        "input_entity_refs": [
+          "entity.ch04.subspace.classification.origin"
+        ],
+        "layout": "overlay",
         "output_entity_refs": [
-          "entity.ch04.subspace.classification.vector_a",
-          "entity.ch04.subspace.classification.transformed_a",
-          "entity.ch04.subspace.classification.origin",
           "entity.ch04.subspace.classification.line",
           "entity.ch04.subspace.classification.plane",
-          "entity.ch04.subspace.classification.whole_space",
+          "entity.ch04.subspace.classification.whole_space"
+        ],
+        "relation_refs": [
+          "relation.ch04.subspace.classification.zero_case",
+          "relation.ch04.subspace.classification.line_case",
+          "relation.ch04.subspace.classification.plane_case",
+          "relation.ch04.subspace.classification.space_case"
+        ],
+        "title": "四类子空间"
+      },
+      {
+        "caption": "\\dim\\{0\\}=0,\\dim L=1,\\dim P=2,\\dim R^3=3;\\ (0,0,1)+P\\not\\ni0",
+        "expected_invariants": [
+          "affine_not_subspace"
+        ],
+        "id": "stage.ch04.subspace.classification.affine_case",
+        "input_entity_refs": [
+          "entity.ch04.subspace.classification.plane"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
           "entity.ch04.subspace.classification.affine_counterexample"
         ],
         "relation_refs": [
-          "relation.ch04.subspace.classification.spans"
+          "relation.ch04.subspace.classification.affine_failure"
         ],
-        "expected_invariants": [
-          "finite numeric result",
-          "origin_contains",
-          "affine_not_subspace"
-        ]
+        "title": "仿射反例"
       }
     ]
-  },
-  "generated": {
-    "provider": "deterministic-fixture",
-    "model": "fixture",
-    "prompt_version": "chapter-4-8-v1",
-    "generated_at": "2026-09-12T00:00:00Z",
-    "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
-    "raw_reply_digest": "sha256:884860dce5cfaa948e4482221a7665f1fc62f67bb2ddce2213c4121c2febc9c9",
-    "artifact_digest": "sha256:df834633a77e63604c413ad130523a6e820808ac716f96997134a5ccb33300dc"
   }
 }

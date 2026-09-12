@@ -1,249 +1,238 @@
 {
-  "artifact_digest": "sha256:f4f15d5e70f65ba18a4bbb14e7295c0b9ee974dd1a943682d0a33ab2f47d159e",
+  "artifact_digest": "sha256:82eb7dd57910b4a9627552740ece4e822b5c7f0908c3bfafabbb75b5fdb087c0",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:bffbc48782ee2d7b380ac1ea3691c799894bf5a06e7c52508b47bda95be208ae",
+  "contract_digest": "sha256:55ed11ef6609635720b8832d28238fc29ffe6d07d0eeca212fa06018b974d79e",
   "plan": {
     "operations": [
       {
-        "alias": "ch04_transform",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+        "alias": "ch04__entity__map_T",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
         ],
-        "color": "#4c78a8",
-        "matrix": [
-          [
-            1,
-            0
-          ],
-          [
-            0,
-            0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
-        "alias": "ch04__entity__domain",
-        "op": "annotation.upsert",
-        "position": [
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
           0.0,
           0.0
         ],
-        "text": "domain"
+        "size": 2.5
       },
       {
-        "alias": "ch04__entity__rank",
-        "op": "annotation.upsert",
-        "position": [
+        "alias": "ch04__entity__domain__axis_1",
+        "end": [
+          1.0,
           0.0,
           0.0
         ],
-        "text": "rank"
-      },
-      {
-        "alias": "ch04__entity__nullity",
-        "op": "annotation.upsert",
-        "position": [
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
           0.0,
           0.0
-        ],
-        "text": "nullity"
+        ]
       },
       {
-        "alias": "ch04__entity__preserved",
-        "op": "annotation.upsert",
-        "position": [
+        "alias": "ch04__entity__domain__axis_2",
+        "end": [
           0.0,
-          0.0
-        ],
-        "text": "preserved"
-      },
-      {
-        "alias": "ch04__entity__collapsed",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "collapsed"
-      },
-      {
-        "alias": "ch04__relation__batch_maps_to",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "batch_maps_to"
-      },
-      {
-        "alias": "sem__entity.ch04.rank-nullity.domain__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.rank-nullity.domain__end",
-        "coordinates": [
           1.0,
           0.0
         ],
-        "name": "domain",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.rank-nullity.domain",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.rank-nullity.domain__end",
         "kind": "vector",
-        "label": "domain",
-        "op": "linear.upsert",
+        "op": "linear3d.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.rank-nullity.domain__origin"
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
-        "alias": "sem__entity.ch04.rank-nullity.rank__origin",
-        "coordinates": [
+        "alias": "ch04__entity__domain__axis_3",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__rank",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
           0.0,
           0.0
         ],
-        "name": "O",
-        "op": "point.upsert"
+        "size": 2.5
       },
       {
-        "alias": "sem__entity.ch04.rank-nullity.rank__end",
-        "coordinates": [
-          2.0,
+        "alias": "ch04__entity__nullity",
+        "end": [
+          0.0,
+          0.0,
+          2.0
+        ],
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          -0.0,
+          -0.0,
+          -2.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__preserved",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
+          0.0,
           0.0
         ],
-        "name": "rank",
-        "op": "point.upsert"
+        "size": 2.5
       },
       {
-        "alias": "sem__entity.ch04.rank-nullity.rank",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.rank-nullity.rank__end",
+        "alias": "ch04__entity__collapsed",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
         "kind": "vector",
-        "label": "rank",
-        "op": "linear.upsert",
+        "op": "linear3d.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.rank-nullity.rank__origin"
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
-        "alias": "sem__entity.ch04.rank-nullity.nullity",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+        "alias": "ch04__entity__zero",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
         ],
-        "color": "#6B7280",
-        "matrix": [
+        "name": "zero",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch04__scene__parallelogram",
+        "op": "geometry.parallelogram3d",
+        "opacity": 0.16,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vectors": [
           [
             1.0,
+            0.0,
             0.0
           ],
           [
             0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
-        "alias": "sem__entity.ch04.rank-nullity.preserved",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#6B7280",
-        "matrix": [
-          [
             1.0,
             0.0
-          ],
-          [
-            0.0,
-            1.0
           ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        ]
       },
       {
-        "alias": "sem__entity.ch04.rank-nullity.collapsed",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+        "alias": "ch04__relation__rank_evidence",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
         ],
-        "color": "#6B7280",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
         ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "size": 2.5
       },
       {
-        "alias": "sem__relation.ch04.rank-nullity.batch_maps_to",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+        "alias": "ch04__relation__nullity_evidence",
+        "end": [
+          0.0,
+          0.0,
+          2.0
         ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          -0.0,
+          -0.0,
+          -2.0
+        ]
       },
       {
-        "alias": "sem__stage.ch04.rank-nullity.evidence__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "ch04__relation__collapse",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
         ],
-        "text": "主题证据"
+        "name": "zero",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch04__relation__conservation",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": 2.5
       },
       {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
-    "scene": "2d",
+    "scene": "3d",
     "summary": "4.5.2 秩-零化度定理",
     "version": 1
   },
-  "plan_digest": "sha256:1ac3f67136e89e3f0984d025e75e9113d4f4a261db0e13d460a021e8ca458785",
+  "plan_digest": "sha256:f656b2f2ebb8116cea76936a75f235f3cb1352495d0c9e89b5c3668fb62395fe",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -255,39 +244,60 @@
   "stages": [
     {
       "anchor": [
-        -2.65,
+        0.0,
         2.65
       ],
-      "caption": "\\operatorname{rank}(T)+\\operatorname{nullity}(T)=\\dim V=3",
-      "id": "stage.ch04.rank-nullity.evidence",
-      "layout": "sequence",
-      "title": "主题证据",
+      "caption": "rank(T)=2,\\ nullity(T)=1,\\ 2+1=dim(R^3)",
+      "id": "stage.ch04.rank-nullity.split",
+      "layout": "overlay",
+      "title": "保留与压扁",
       "visible_aliases": [
-        "ch04__entity__domain",
-        "sem__entity.ch04.rank-nullity.domain",
-        "sem__entity.ch04.rank-nullity.domain__end",
-        "sem__entity.ch04.rank-nullity.domain__origin",
-        "ch04__entity__rank",
-        "sem__entity.ch04.rank-nullity.rank",
-        "sem__entity.ch04.rank-nullity.rank__end",
-        "sem__entity.ch04.rank-nullity.rank__origin",
-        "ch04__entity__nullity",
-        "sem__entity.ch04.rank-nullity.nullity",
+        "ch04__entity__domain__axis_1",
+        "ch04__entity__domain__axis_2",
+        "ch04__entity__domain__axis_3",
+        "ch04__entity__map_T",
         "ch04__entity__preserved",
-        "sem__entity.ch04.rank-nullity.preserved",
         "ch04__entity__collapsed",
-        "sem__entity.ch04.rank-nullity.collapsed",
-        "ch04__relation__batch_maps_to",
-        "sem__relation.ch04.rank-nullity.batch_maps_to",
-        "sem__stage.ch04.rank-nullity.evidence__title"
+        "ch04__entity__zero",
+        "ch04__relation__collapse",
+        "sem__stage.ch04.rank-nullity.split__title"
       ],
       "visible_refs": [
         "entity.ch04.rank-nullity.domain",
-        "entity.ch04.rank-nullity.rank",
-        "entity.ch04.rank-nullity.nullity",
+        "entity.ch04.rank-nullity.map_T",
         "entity.ch04.rank-nullity.preserved",
         "entity.ch04.rank-nullity.collapsed",
-        "relation.ch04.rank-nullity.batch_maps_to"
+        "entity.ch04.rank-nullity.zero",
+        "relation.ch04.rank-nullity.collapse"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "rank(T)=2,\\ nullity(T)=1,\\ 2+1=dim(R^3)",
+      "id": "stage.ch04.rank-nullity.conservation",
+      "layout": "overlay",
+      "title": "秩零化度守恒",
+      "visible_aliases": [
+        "ch04__entity__rank",
+        "ch04__entity__nullity",
+        "ch04__entity__domain__axis_1",
+        "ch04__entity__domain__axis_2",
+        "ch04__entity__domain__axis_3",
+        "ch04__relation__rank_evidence",
+        "ch04__relation__nullity_evidence",
+        "ch04__relation__conservation",
+        "sem__stage.ch04.rank-nullity.conservation__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.rank-nullity.rank",
+        "entity.ch04.rank-nullity.nullity",
+        "entity.ch04.rank-nullity.domain",
+        "relation.ch04.rank-nullity.rank_evidence",
+        "relation.ch04.rank-nullity.nullity_evidence",
+        "relation.ch04.rank-nullity.conservation"
       ]
     }
   ],

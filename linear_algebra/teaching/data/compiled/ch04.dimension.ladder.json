@@ -1,161 +1,174 @@
 {
-  "artifact_digest": "sha256:03bbafb597122304e34c3fce5f173e5295777ea2e36ebd655ddf5d395af24235",
+  "artifact_digest": "sha256:be13093011904d6e91412a9d45db3fcc39cd2f7c442b330f4fb637a3339c0ee2",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:d62ef3ac3f409080c7e88bc95d4987a91658665534c9969c2324ff1c15aef07f",
+  "contract_digest": "sha256:62f218a500dbe5198d92ca16de635a01688645df485a37db733efe696684c57e",
   "plan": {
     "operations": [
       {
-        "alias": "ch04_subspace",
-        "basis": [
+        "alias": "ch04__entity__point",
+        "coordinates": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "name": "point",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch04__entity__line",
+        "end": [
+          2.0,
+          0.0,
+          0.0
+        ],
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          -2.0,
+          -0.0,
+          -0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__plane",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": 2.5
+      },
+      {
+        "alias": "ch04__entity__volume__axis_1",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__volume__axis_2",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__volume__axis_3",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__scene__parallelogram",
+        "op": "geometry.parallelogram3d",
+        "opacity": 0.16,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vectors": [
           [
+            1.0,
             0.0,
             0.0
           ],
           [
             1.0,
+            0.0,
             0.0
           ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#4c78a8",
-        "op": "geometry.subspace_region",
-        "opacity": 0.25
+        ]
       },
       {
-        "alias": "ch04__entity__point",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "point"
-      },
-      {
-        "alias": "ch04__entity__line",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "line"
-      },
-      {
-        "alias": "ch04__entity__plane",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "plane"
-      },
-      {
-        "alias": "ch04__entity__volume",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "volume"
-      },
-      {
-        "alias": "ch04__relation__spans",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "spans"
-      },
-      {
-        "alias": "sem__entity.ch04.dimension.ladder.point__origin",
+        "alias": "ch04__relation__point_in_line",
         "coordinates": [
           0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.dimension.ladder.point__end",
-        "coordinates": [
           0.0,
           0.0
         ],
         "name": "point",
-        "op": "point.upsert"
+        "op": "point3d.upsert"
       },
       {
-        "alias": "sem__entity.ch04.dimension.ladder.point",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.dimension.ladder.point__end",
-        "kind": "vector",
-        "label": "point",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.dimension.ladder.point__origin"
-      },
-      {
-        "alias": "sem__entity.ch04.dimension.ladder.line__origin",
-        "coordinates": [
+        "alias": "ch04__relation__line_in_plane",
+        "end": [
+          2.0,
           0.0,
           0.0
         ],
-        "name": "O",
-        "op": "point.upsert"
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          -2.0,
+          -0.0,
+          -0.0
+        ]
       },
       {
-        "alias": "sem__entity.ch04.dimension.ladder.line__end",
-        "coordinates": [
-          1.0,
+        "alias": "ch04__relation__plane_in_volume",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
+          0.0,
           0.0
         ],
-        "name": "line",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__entity.ch04.dimension.ladder.line",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.dimension.ladder.line__end",
-        "kind": "vector",
-        "label": "line",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__entity.ch04.dimension.ladder.line__origin"
-      },
-      {
-        "alias": "sem__relation.ch04.dimension.ladder.spans",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "spans: point → line"
-      },
-      {
-        "alias": "sem__stage.ch04.dimension.ladder.evidence__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "主题证据"
+        "size": 2.5
       },
       {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
-    "scene": "2d",
+    "scene": "3d",
     "summary": "4.3.2 维数",
     "version": 1
   },
-  "plan_digest": "sha256:9d8266f3ed6c274505d900304a68e4edaedd6a20e6092a8b3cf1005e9cb4914a",
+  "plan_digest": "sha256:b2104816479cef4964591c2ceda6239c94984ae32576e5f4876e75ecc3dc627e",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -167,35 +180,50 @@
   "stages": [
     {
       "anchor": [
-        -2.65,
+        0.0,
         2.65
       ],
-      "caption": "4.3.2 维数: finite typed semantic evidence",
-      "id": "stage.ch04.dimension.ladder.evidence",
-      "layout": "sequence",
-      "title": "主题证据",
+      "caption": "\\{0\\}\\subset span(e_1)\\subset span(e_1,e_2)\\subset R^3",
+      "id": "stage.ch04.dimension.ladder.ladder_low",
+      "layout": "overlay",
+      "title": "点线面",
       "visible_aliases": [
         "ch04__entity__point",
-        "sem__entity.ch04.dimension.ladder.point",
-        "sem__entity.ch04.dimension.ladder.point__end",
-        "sem__entity.ch04.dimension.ladder.point__origin",
         "ch04__entity__line",
-        "sem__entity.ch04.dimension.ladder.line",
-        "sem__entity.ch04.dimension.ladder.line__end",
-        "sem__entity.ch04.dimension.ladder.line__origin",
         "ch04__entity__plane",
-        "ch04__entity__volume",
-        "ch04__relation__spans",
-        "sem__relation.ch04.dimension.ladder.spans",
-        "sem__stage.ch04.dimension.ladder.evidence__title",
-        "sem__span__1"
+        "ch04__relation__point_in_line",
+        "ch04__relation__line_in_plane",
+        "sem__stage.ch04.dimension.ladder.ladder_low__title"
       ],
       "visible_refs": [
         "entity.ch04.dimension.ladder.point",
         "entity.ch04.dimension.ladder.line",
         "entity.ch04.dimension.ladder.plane",
+        "relation.ch04.dimension.ladder.point_in_line",
+        "relation.ch04.dimension.ladder.line_in_plane"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "\\{0\\}\\subset span(e_1)\\subset span(e_1,e_2)\\subset R^3",
+      "id": "stage.ch04.dimension.ladder.ladder_full",
+      "layout": "overlay",
+      "title": "面与体",
+      "visible_aliases": [
+        "ch04__entity__plane",
+        "ch04__entity__volume__axis_1",
+        "ch04__entity__volume__axis_2",
+        "ch04__entity__volume__axis_3",
+        "ch04__relation__plane_in_volume",
+        "sem__stage.ch04.dimension.ladder.ladder_full__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.dimension.ladder.plane",
         "entity.ch04.dimension.ladder.volume",
-        "relation.ch04.dimension.ladder.spans"
+        "relation.ch04.dimension.ladder.plane_in_volume"
       ]
     }
   ],

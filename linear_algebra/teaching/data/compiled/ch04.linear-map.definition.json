@@ -1,87 +1,33 @@
 {
-  "artifact_digest": "sha256:6d798d0c27835ab939a1ce2357089d9637390c824f3d8623c837c06c0c669791",
+  "artifact_digest": "sha256:1d67f8df3fc22814c54cf7eb6b04171fa42b39da36b4b03dd50c594c27e7cb21",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:7bc5f938f8b6022b6f6830aaeddb431f1449afed98309a7bc49310b04d737472",
+  "contract_digest": "sha256:eba5c8a6abcbe842e47e86f8ba2aee22ffc21ce689f7759909eef448d077d050",
   "plan": {
     "operations": [
       {
-        "alias": "ch04_linear_map",
-        "aliases": [
-          "source",
-          "target"
+        "alias": "ch04__entity__map_T",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
-        "matrices": [
+        "matrix": [
           [
-            [
-              1,
-              1
-            ],
-            [
-              0,
-              1
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            1,
-            0
+            2.0,
+            1.0
           ],
           [
-            0,
-            1
+            0.0,
+            1.0
           ]
-        ]
-      },
-      {
-        "alias": "ch04__entity__map_T",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
         ],
-        "text": "map_T"
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
-        "alias": "ch04__entity__sum_test",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "sum_test"
-      },
-      {
-        "alias": "ch04__entity__homogeneity_test",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "homogeneity_test"
-      },
-      {
-        "alias": "ch04__entity__origin",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "origin"
-      },
-      {
-        "alias": "ch04__relation__maps_to",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          0.0
-        ],
-        "text": "maps_to"
-      },
-      {
-        "alias": "sem__entity.ch04.linear-map.definition.map_T__origin",
+        "alias": "ch04__entity__u__origin",
         "coordinates": [
           0.0,
           0.0
@@ -90,26 +36,24 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.map_T__end",
+        "alias": "ch04__entity__u__end",
         "coordinates": [
           1.0,
           2.0
         ],
-        "name": "map_T",
+        "name": "u",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.map_T",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.linear-map.definition.map_T__end",
+        "alias": "ch04__entity__u",
+        "end": "ch04__entity__u__end",
         "kind": "vector",
-        "label": "map_T",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.linear-map.definition.map_T__origin"
+        "start": "ch04__entity__u__origin"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.sum_test__origin",
+        "alias": "ch04__entity__v__origin",
         "coordinates": [
           0.0,
           0.0
@@ -118,94 +62,340 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.sum_test__end",
+        "alias": "ch04__entity__v__end",
         "coordinates": [
-          1.0,
+          -1.0,
           1.0
         ],
-        "name": "sum_test",
+        "name": "v",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.sum_test",
-        "color": "#6B7280",
-        "end": "sem__entity.ch04.linear-map.definition.sum_test__end",
+        "alias": "ch04__entity__v",
+        "end": "ch04__entity__v__end",
         "kind": "vector",
-        "label": "sum_test",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__entity.ch04.linear-map.definition.sum_test__origin"
+        "start": "ch04__entity__v__origin"
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.homogeneity_test",
+        "alias": "ch04__entity__sum_test__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__sum_test__end",
+        "coordinates": [
+          0.0,
+          3.0
+        ],
+        "name": "u+v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__sum_test",
+        "end": "ch04__entity__sum_test__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__sum_test__origin"
+      },
+      {
+        "alias": "ch04__entity__T_u__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__T_u__end",
+        "coordinates": [
+          4.0,
+          2.0
+        ],
+        "name": "T_u",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__T_u",
+        "end": "ch04__entity__T_u__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__T_u__origin"
+      },
+      {
+        "alias": "ch04__entity__T_v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__T_v__end",
+        "coordinates": [
+          -1.0,
+          1.0
+        ],
+        "name": "T_v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__T_v",
+        "end": "ch04__entity__T_v__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__T_v__origin"
+      },
+      {
+        "alias": "ch04__entity__T_sum__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__T_sum__end",
+        "coordinates": [
+          3.0,
+          3.0
+        ],
+        "name": "T_sum",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__T_sum",
+        "end": "ch04__entity__T_sum__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__T_sum__origin"
+      },
+      {
+        "alias": "ch04__entity__homogeneity_test__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__homogeneity_test__end",
+        "coordinates": [
+          3.0,
+          6.0
+        ],
+        "name": "3u",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__homogeneity_test",
+        "end": "ch04__entity__homogeneity_test__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__homogeneity_test__origin"
+      },
+      {
+        "alias": "ch04__entity__T_scaled__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__T_scaled__end",
+        "coordinates": [
+          12.0,
+          6.0
+        ],
+        "name": "T_scaled",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__T_scaled",
+        "end": "ch04__entity__T_scaled__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__T_scaled__origin"
+      },
+      {
+        "alias": "ch04__entity__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "origin",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__map_u",
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#6B7280",
         "matrix": [
           [
-            1.0,
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch04__relation__map_v",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch04__relation__input_sum",
+        "op": "geometry.polygon",
+        "opacity": 0.16,
+        "outline": true,
+        "vertices": [
+          [
+            0.0,
             0.0
           ],
           [
+            1.0,
+            2.0
+          ],
+          [
             0.0,
+            3.0
+          ],
+          [
+            -1.0,
             1.0
           ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        ]
       },
       {
-        "alias": "sem__entity.ch04.linear-map.definition.origin",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#6B7280",
-        "matrix": [
+        "alias": "ch04__relation__additivity_test",
+        "op": "geometry.polygon",
+        "opacity": 0.16,
+        "outline": true,
+        "vertices": [
           [
-            1.0,
+            0.0,
             0.0
           ],
           [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
-        "alias": "sem__relation.ch04.linear-map.definition.maps_to",
-        "matrix": [
-          [
-            1.0,
-            1.0
+            4.0,
+            2.0
           ],
           [
-            0.0,
+            3.0,
+            3.0
+          ],
+          [
+            -1.0,
             1.0
           ]
-        ],
-        "op": "linear_algebra.matrix_transform"
+        ]
       },
       {
-        "alias": "sem__mapping_grid__1",
+        "alias": "ch04__relation__input_scaling__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__input_scaling__end",
+        "coordinates": [
+          3.0,
+          6.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__input_scaling",
+        "end": "ch04__relation__input_scaling__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__input_scaling__origin"
+      },
+      {
+        "alias": "ch04__relation__homogeneity_test__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__homogeneity_test__end",
+        "coordinates": [
+          12.0,
+          6.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__homogeneity_test",
+        "end": "ch04__relation__homogeneity_test__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__homogeneity_test__origin"
+      },
+      {
+        "alias": "ch04__relation__origin_test",
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#7B61FF",
         "matrix": [
           [
-            1.0,
+            2.0,
             1.0
           ],
           [
@@ -217,13 +407,31 @@
         "step": 1.0
       },
       {
-        "alias": "sem__stage.ch04.linear-map.definition.evidence__title",
+        "alias": "sem__stage.ch04.linear-map.definition.origin__title",
         "op": "annotation.upsert",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "主题证据"
+        "text": "原点固定"
+      },
+      {
+        "alias": "sem__stage.ch04.linear-map.definition.additivity__title",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          2.65
+        ],
+        "text": "可加性"
+      },
+      {
+        "alias": "sem__stage.ch04.linear-map.definition.homogeneity__title",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          2.65
+        ],
+        "text": "齐次性"
       },
       {
         "op": "view.fit",
@@ -234,7 +442,7 @@
     "summary": "4.4.1 线性变换的定义",
     "version": 1
   },
-  "plan_digest": "sha256:98b6fd6c6eedd4abc80f8f6e32b556f3e162cecb979b2831ef72038ca33d717a",
+  "plan_digest": "sha256:7b07b1b6365b0dbd2855f71be720f67cb4313df51438c76d5a561163ae35a4fe",
   "read_guide": [
     "先定义，再公式，最后读数值例。"
   ],
@@ -249,34 +457,86 @@
         -2.65,
         2.65
       ],
-      "caption": "4.4.1 线性变换的定义: finite typed semantic evidence",
-      "id": "stage.ch04.linear-map.definition.evidence",
+      "caption": "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
+      "id": "stage.ch04.linear-map.definition.origin",
       "layout": "sequence",
-      "title": "主题证据",
+      "title": "原点固定",
       "visible_aliases": [
         "ch04__entity__map_T",
-        "sem__entity.ch04.linear-map.definition.map_T",
-        "sem__entity.ch04.linear-map.definition.map_T__end",
-        "sem__entity.ch04.linear-map.definition.map_T__origin",
-        "ch04__entity__sum_test",
-        "sem__entity.ch04.linear-map.definition.sum_test",
-        "sem__entity.ch04.linear-map.definition.sum_test__end",
-        "sem__entity.ch04.linear-map.definition.sum_test__origin",
-        "ch04__entity__homogeneity_test",
-        "sem__entity.ch04.linear-map.definition.homogeneity_test",
         "ch04__entity__origin",
-        "sem__entity.ch04.linear-map.definition.origin",
-        "ch04__relation__maps_to",
-        "sem__relation.ch04.linear-map.definition.maps_to",
-        "sem__stage.ch04.linear-map.definition.evidence__title",
-        "sem__mapping_grid__1"
+        "ch04__relation__origin_test",
+        "sem__stage.ch04.linear-map.definition.origin__title"
       ],
       "visible_refs": [
         "entity.ch04.linear-map.definition.map_T",
-        "entity.ch04.linear-map.definition.sum_test",
-        "entity.ch04.linear-map.definition.homogeneity_test",
         "entity.ch04.linear-map.definition.origin",
-        "relation.ch04.linear-map.definition.maps_to"
+        "relation.ch04.linear-map.definition.origin_test"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
+      "id": "stage.ch04.linear-map.definition.additivity",
+      "layout": "overlay",
+      "title": "可加性",
+      "visible_aliases": [
+        "ch04__entity__u",
+        "ch04__entity__v",
+        "ch04__entity__sum_test",
+        "ch04__entity__T_u",
+        "ch04__entity__T_v",
+        "ch04__entity__T_sum",
+        "ch04__relation__map_u",
+        "ch04__relation__map_v",
+        "ch04__relation__input_sum",
+        "ch04__relation__additivity_test",
+        "sem__stage.ch04.linear-map.definition.additivity__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.linear-map.definition.u",
+        "entity.ch04.linear-map.definition.v",
+        "entity.ch04.linear-map.definition.sum_test",
+        "entity.ch04.linear-map.definition.T_u",
+        "entity.ch04.linear-map.definition.T_v",
+        "entity.ch04.linear-map.definition.T_sum",
+        "relation.ch04.linear-map.definition.map_u",
+        "relation.ch04.linear-map.definition.map_v",
+        "relation.ch04.linear-map.definition.input_sum",
+        "relation.ch04.linear-map.definition.additivity_test"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
+      "id": "stage.ch04.linear-map.definition.homogeneity",
+      "layout": "overlay",
+      "title": "齐次性",
+      "visible_aliases": [
+        "ch04__entity__u",
+        "ch04__entity__homogeneity_test",
+        "ch04__entity__T_u",
+        "ch04__entity__T_scaled",
+        "ch04__relation__input_scaling__origin",
+        "ch04__relation__input_scaling__end",
+        "ch04__relation__input_scaling",
+        "ch04__relation__homogeneity_test__origin",
+        "ch04__relation__homogeneity_test__end",
+        "ch04__relation__homogeneity_test",
+        "sem__stage.ch04.linear-map.definition.homogeneity__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.linear-map.definition.u",
+        "entity.ch04.linear-map.definition.homogeneity_test",
+        "entity.ch04.linear-map.definition.T_u",
+        "entity.ch04.linear-map.definition.T_scaled",
+        "relation.ch04.linear-map.definition.input_scaling",
+        "relation.ch04.linear-map.definition.homogeneity_test"
       ]
     }
   ],

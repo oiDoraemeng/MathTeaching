@@ -1,28 +1,30 @@
 # Task 4 report
 
-Status: DONE
+Status: DONE — strict semantic implementation and Chapter 4 release bundle complete.
 
-Commits: `90f6c09e7380af17b4474f0359f6808b3a6250ef`, `c6075f9`, `be866aa`, `0ea69b2`, `1609766`, `2cdd5f6`.
+Commits:
+
+- Earlier family/resource groundwork: `90f6c09e7380af17b4474f0359f6808b3a6250ef`, `c6075f9`, `be866aa`, `0ea69b2`, `1609766`, `2cdd5f6`, `3cb69dc`, `59d842d`, `f2761d8`.
+- Strict typed semantic family and negative tests: `1046b43`, `aa370c5`.
+- Chapter-scoped publication/upsert, refreshed 16 reviewed/compiled resources, index, and release tests: `PENDING_RELEASE_COMMIT`.
 
 Implementation:
 
-- Added chapter 4's 16 explicit recipe/builders and registered them in the visualization registry.
-- Builders now resolve the reviewed semantic graph, explicit visual contract, source context, and shared compiler before returning a plan; no fixed identity/fallback plan remains.
-- Added an immutable explicit mapping for all 16 chapter-4 topics. Reviewed artifacts now carry the mapped scene family and relation graph, while contracts require the mapped family/relation. The resulting plans cover polygon, projection, angle, transformed-grid, staged-transform, subspace, and affine evidence instead of one generic sequence.
-- Replaced the remaining generic chapter-4 payload with typed per-topic roles, formulas, matrices, rank/nullity/coordinate parameters, and named invariants. Added duplicate-free index replacement and a unique-ID regression assertion.
-- Family dispatch now executes the registered shared family compiler boundary before compilation.
-- Added chapter-scoped reviewed compilation and materialized all 16 `data/compiled/ch04.*.json` resources with artifact/source/contract/scene/plan linkage.
-- Atomically added the 16 chapter 4 rows to `data/index.json`; the pre-existing chapter 1–3 rows remain byte-for-byte unchanged.
+- All 16 topics now use immutable declarative typed descriptors: exact entity role/kind/dimension/value, explicit relation endpoints and parameters, multi-stage layouts, mathematical invariants, and expected protocol operations.
+- `Chapter4FamilyCompiler` validates the exact graph and independently recomputes closure, classification, intersection/union counterexample, kernel/image, spans/ranks, dependence, nullspace, rank collapse, coordinates, linearity, matrix columns, and rank–nullity evidence. It emits true geometry operations; annotations are supplementary only.
+- The main compiler invokes and consumes the Chapter 4 family result, skips generic entity/relation/capability fallbacks for Ch4, gates aliases against real operations, and carries computed family evidence into the final compiled record.
+- The artifact builder and claim ledger cover every entity, relation, and stage for each topic. Contracts require typed roles, relation kinds/endpoints/parameters, invariants, minimum stages, and expected operations.
+- `compile_chapter_04` now validates all 16 topics before writing, refreshes `data/compiled/ch04.*.json`, and performs a chapter-scoped atomic index upsert. Existing Chapter 1–3 index rows are retained verbatim; repeated upserts replace rather than append. Invalid index baselines fail before resource/index writes.
+- `data/revieweds/ch04/*/r1.json`, `data/compiled/ch04.*.json`, and `data/index.json` contain the released 16-topic bundle. Ch05–08 remain unpublished and untouched.
 
 Tests:
 
-- `pytest tests/test_linear_algebra_chapter_04.py tests/test_linear_algebra_quadratic_family.py tests/test_linear_algebra_extended_plan_replay.py -q` — `13 passed` (existing focused suite).
-- `pytest tests/test_linear_algebra_compiled_resources.py tests/test_linear_algebra_chapter_04.py tests/test_linear_algebra_chapters_4_8_artifacts.py -q` — `8 passed`.
-- `pytest tests/test_linear_algebra_compiled_resources.py tests/test_linear_algebra_chapter_04.py tests/test_linear_algebra_chapters_4_8_artifacts.py -q` — `9 passed` after per-topic mapping.
-- `pytest tests/test_linear_algebra_builders.py tests/test_linear_algebra_visual_compiler.py -q` — `20 passed`.
-- `pytest tests/test_linear_algebra_builders.py tests/test_linear_algebra_visual_compiler.py tests/test_linear_algebra_registry.py -q` — `20 passed, 1 failed` (registry remains blocked by pre-existing missing ch05 recipes).
+- Strict semantics and destructive negative coverage: `67 passed` initially, `71 passed` after the 3D protocol witness fix.
+- Focused implementation/resource suite: `pytest tests/test_linear_algebra_ch04_strict_semantics.py tests/test_linear_algebra_chapter_04.py tests/test_linear_algebra_compiled_resources.py tests/test_linear_algebra_chapters_4_8_artifacts.py tests/test_linear_algebra_builders.py tests/test_linear_algebra_visual_compiler.py tests/test_linear_algebra_teaching_store.py -q` — `115 passed`.
+- Release index tests cover 70 unique rows, exactly 16 Ch4 rows, preservation of all non-Ch4 rows, idempotent replacement, and atomic failure/no-write behavior.
+- `python -m py_compile` passed for semantic specs, artifact/resource compiler, contracts, visual compiler, and Chapter 4 family.
+- Every released Ch4 plan validates and executes transactionally through `SceneCommandService` with no rollback.
 
-Concerns:
+Known downstream scope:
 
-- Ch05–08 remain unpublished and are intentionally excluded from the published-registry verifier; ch04 uses the explicit reviewed chapter-scoped resolver required by this release gate.
-- Full production registry validation still cannot run because `draw.ch05.homogeneous.solution-space` has no recipe; this is the documented downstream dependency and no ch05 files were changed.
+- Ch05–08 remain unpublished by design. Full production registry validation still depends on the pre-existing missing `draw.ch05.homogeneous.solution-space` recipe; no Ch05–08 resource was changed in this release.
