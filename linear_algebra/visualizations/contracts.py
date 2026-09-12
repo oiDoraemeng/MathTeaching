@@ -28,6 +28,9 @@ class VisualContract:
     distinguishable_role_groups: tuple[tuple[str, ...], ...] = ()
     required_role_types: tuple[tuple[str, str, int], ...] = ()
     required_relation_endpoints: tuple[tuple[str, str, str, str], ...] = ()
+    # Compatibility keeps ``required_relations`` as the historical first
+    # relation kind; this complete set is the strict Chapter-4 gate.
+    required_relation_kinds: tuple[str, ...] = ()
     required_parameters: tuple[tuple[str, tuple[str, ...]], ...] = ()
     expected_operations: tuple[str, ...] = ()
 
@@ -89,6 +92,7 @@ def contract_for(topic_id: str) -> VisualContract:
                     (item.name, item.kind, item.source_role, item.target_role)
                     for item in semantic.relations
                 ),
+                required_relation_kinds=tuple(dict.fromkeys(item.kind for item in semantic.relations)),
                 required_parameters=tuple(
                     (item.name, item.parameter_names) for item in semantic.relations
                 ),
@@ -138,6 +142,9 @@ def validate_contract_semantics(
         if role not in roles:
             issues.append(ContractIssue("missing_entity_role", contract.topic_id, role))
     for relation in contract.required_relations:
+        if relation not in relations:
+            issues.append(ContractIssue("missing_relation", contract.topic_id, relation))
+    for relation in contract.required_relation_kinds:
         if relation not in relations:
             issues.append(ContractIssue("missing_relation", contract.topic_id, relation))
     # Chapter 4's family gate checks the complete typed graph and operation
