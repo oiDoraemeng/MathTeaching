@@ -6,7 +6,7 @@ Commits:
 
 - Earlier family/resource groundwork: `90f6c09e7380af17b4474f0359f6808b3a6250ef`, `c6075f9`, `be866aa`, `0ea69b2`, `1609766`, `2cdd5f6`, `3cb69dc`, `59d842d`, `f2761d8`.
 - Strict typed semantic family and negative tests: `1046b43`, `aa370c5`.
-- Chapter-scoped publication/upsert, refreshed 16 reviewed/compiled resources, index, and release tests: `PENDING_RELEASE_COMMIT`.
+- Chapter-scoped publication/upsert, refreshed 16 reviewed/compiled resources, index, and release tests: `a357bfa`.
 
 Implementation:
 
