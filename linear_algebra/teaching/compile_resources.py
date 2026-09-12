@@ -267,6 +267,19 @@ def compile_chapter_04(
     _transactional_write_json(writes)
     return resources
 
+def compile_chapter_05(*, output_root=None, index_path=None, reviewed_payloads=None, reviewed_root=None):
+    payloads = reviewed_payloads or {k:v for k,v in load_reviewed_artifacts().items() if k.startswith('ch05.')}
+    topics = tuple(sorted(k for k in payloads if k.startswith('ch05.')))
+    if len(topics) != 8: raise ValueError(f"chapter 5 requires 8 reviewed artifacts, found {len(topics)}")
+    resources = tuple(_compile_reviewed_payload(t,payloads[t]) for t in topics)
+    out = Path(output_root or Path(__file__).with_name('data')/'compiled'); out.mkdir(parents=True,exist_ok=True)
+    for r in resources: (out/f'{r.topic_id}.json').write_text(json.dumps(r.to_dict(),ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+    idx = Path(index_path or Path(__file__).with_name('data')/'index.json'); data=json.loads(idx.read_text(encoding='utf8')) if idx.exists() else {'topics':[]}
+    data['topics']=[x for x in data.get('topics',[]) if not str(x.get('topic_id','')).startswith('ch05.')]
+    data['topics'] += [{'topic_id':r.topic_id,'published_revision':r.revision,'source_hash':r.source_hash,'artifact_digest':r.artifact_digest,'contract_digest':r.contract_digest,'plan_digest':r.plan_digest,'scene_family':r.scene_family} for r in resources]
+    data['topics']=sorted(data['topics'],key=lambda x:x['topic_id']); data['topic_count']=len(data['topics']); idx.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+    return resources
+
 
 def _transactional_write_json(payloads: Mapping[Path, Mapping[str, object]]) -> None:
     """Stage the whole bundle, then replace with byte-preserving rollback.

@@ -100,7 +100,7 @@ def _chapter4_visual_payload(topic_id: str, claim_id: str) -> tuple[dict[str, ob
     return visual, list(entity_ids.values()), list(relation_ids.values()), list(stage_ids.values())
 
 
-def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str, object]:
+def _artifact_payload_generic(topic_id: str, *, status: str = "reviewed") -> dict[str, object]:
     """Return one deterministic, closed artifact payload without publishing it."""
     topic = _TOPICS.get(topic_id)
     if topic is None:
@@ -177,6 +177,22 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
                       "raw_reply_digest": "", "artifact_digest": ""},
     }
     _refresh_digests(payload)
+    return payload
+
+def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str, object]:
+    payload = _artifact_payload_generic(topic_id, status=status)
+    if topic_id.startswith("ch05."):
+        from linear_algebra.chapter_05_semantics import spec_for
+        spec = spec_for(topic_id.removeprefix("ch05."))
+        claim = payload["claims"][0]
+        ids = {r: f"entity.{topic_id}.{r}" for r in (*spec.roles, "vector_a", "transformed_a")}
+        entities = [{"id": ids[r], "kind": "vector", "dimension": 2, "value": [0.0,0.0], "role": r, "label": r, "claim_refs":[claim["id"]]} for r in ids]
+        relation = {"id":f"relation.{topic_id}.{spec.relation}","kind":spec.relation,"source_ref":ids[spec.roles[0]],"target_ref":ids[spec.roles[-1]],"parameters":spec.params,"claim_refs":[claim["id"]]}
+        stages=[{"id":f"stage.{topic_id}.{s}","title":s,"caption":s,"layout":"sequence","input_entity_refs":list(ids.values()),"output_entity_refs":list(ids.values()),"relation_refs":[relation["id"]],"expected_invariants":list(spec.invariants)} for s in spec.stages]
+        payload["visual_semantics"]={"scene_kind":"2d","scene_family":"affine_solution","entities":entities,"relations":[relation],"stages":stages}
+        claim["entity_refs"]=list(ids.values()); claim["relation_refs"]=[relation["id"]]; claim["stage_refs"]=[s["id"] for s in stages]
+        payload["explanation"]["invariants"]=list(spec.invariants)
+        _refresh_digests(payload)
     return payload
 
 
