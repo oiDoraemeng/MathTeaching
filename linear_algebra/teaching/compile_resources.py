@@ -170,7 +170,13 @@ def compile_reviewed_topic(topic_id: str) -> CompiledResource:
     normal registry/compiler path remains publication-gated for all chapters.
     """
     payload = load_reviewed_artifacts()[topic_id]
+    return _compile_reviewed_payload(topic_id,payload)
+
+
+def _compile_reviewed_payload(topic_id: str, payload: Mapping[str, object]) -> CompiledResource:
     artifact = TeachingArtifact.from_dict(payload)
+    if artifact.topic_id != topic_id or artifact.status != "reviewed":
+        raise ValueError("release requires a reviewed artifact with matching topic ID")
     contract = contract_for(topic_id)
     compiled = VisualSemanticsCompiler().compile(
         artifact, contract, RenderContext.default(topic_id)
@@ -209,6 +215,8 @@ def compile_chapter_04(
     output_root: str | Path | None = None,
     sync_index: bool = True,
     index_path: str | Path | None = None,
+    reviewed_payloads: Mapping[str, Mapping[str, object]] | None = None,
+    reviewed_root: str | Path | None = None,
 ) -> tuple[CompiledResource, ...]:
     """Build all sixteen chapter-4 resources and upsert their index rows.
 
@@ -217,10 +225,11 @@ def compile_chapter_04(
     is replaced by the validated resource set, while rows for all other
     chapters are preserved verbatim.
     """
-    topic_ids = tuple(sorted(topic_id for topic_id in load_reviewed_artifacts() if topic_id.startswith("ch04.")))
+    payloads=reviewed_payloads if reviewed_payloads is not None else load_reviewed_artifacts()
+    topic_ids = tuple(sorted(topic_id for topic_id in payloads if topic_id.startswith("ch04.")))
     if len(topic_ids) != 16:
         raise ValueError(f"chapter 4 requires 16 reviewed artifacts, found {len(topic_ids)}")
-    resources = tuple(compile_reviewed_topic(topic_id) for topic_id in topic_ids)
+    resources = tuple(_compile_reviewed_payload(topic_id,payloads[topic_id]) for topic_id in topic_ids)
     output = compiled_resource_store(output_root)
     if sync_index:
         destination = (
@@ -248,7 +257,11 @@ def compile_chapter_04(
     else:
         destination = None
         index_payload = None
-    writes = {output.path_for(resource.topic_id): resource.to_dict() for resource in resources}
+    writes = {}
+    if reviewed_payloads is not None:
+        review_destination=Path(reviewed_root) if reviewed_root is not None else Path(__file__).with_name("data")/"revieweds"/"ch04"
+        writes.update({review_destination/topic_id/"r1.json":payloads[topic_id] for topic_id in topic_ids})
+    writes.update({output.path_for(resource.topic_id): resource.to_dict() for resource in resources})
     if destination is not None and index_payload is not None:
         writes[destination] = index_payload
     _transactional_write_json(writes)

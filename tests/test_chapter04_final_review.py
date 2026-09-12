@@ -87,6 +87,10 @@ def test_failed_release_restores_every_file_byte_for_byte(tmp_path,monkeypatch,k
     output=tmp_path/"compiled"; index=tmp_path/"index.json"
     if existing:
         release.compile_chapter_04(output_root=output,index_path=index)
+        # Valid but byte-distinct prior files ensure a partial new release is
+        # observable even though its mathematical fixture is unchanged.
+        for path in tmp_path.rglob("*.json"):
+            path.write_bytes(path.read_bytes()+b" \n")
     before={str(p.relative_to(tmp_path)):p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
     calls=0
     target=Path if kind=="write" else release.os
@@ -105,4 +109,31 @@ def test_failed_release_restores_every_file_byte_for_byte(tmp_path,monkeypatch,k
         release.compile_chapter_04(output_root=output,index_path=index)
     after={str(p.relative_to(tmp_path)):p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
     assert after==before
+    assert not list(tmp_path.rglob(".ch04-release-*"))
+
+
+@pytest.mark.parametrize("kind,nth", [("write",1),("write",32),("write",66),("replace",1),("replace",20),("replace",33)])
+@pytest.mark.parametrize("existing", [True,False])
+def test_entire_script_rolls_back_reviewed_compiled_and_index(tmp_path,monkeypatch,kind,nth,existing):
+    from scripts.release_chapter04 import main
+    if existing:
+        main(data_root=tmp_path)
+        for path in tmp_path.rglob("*.json"):
+            path.write_bytes(path.read_bytes()+b" \n")
+    before={str(p.relative_to(tmp_path)):p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    target=Path if kind=="write" else release.os
+    name="write_bytes" if kind=="write" else "replace"
+    original=getattr(target,name)
+    calls=0
+    failure_at=min(nth,33) if kind=="write" and not existing else nth
+    def fail_once(*args,**kwargs):
+        nonlocal calls
+        calls+=1
+        if calls==failure_at:
+            raise OSError("full release failure")
+        return original(*args,**kwargs)
+    monkeypatch.setattr(target,name,fail_once)
+    with pytest.raises(OSError,match="full release failure"):
+        main(data_root=tmp_path)
+    assert {str(p.relative_to(tmp_path)):p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}==before
     assert not list(tmp_path.rglob(".ch04-release-*"))
