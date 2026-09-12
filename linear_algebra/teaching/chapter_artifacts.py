@@ -187,7 +187,7 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         claim = payload["claims"][0]
         ids = {r: f"entity.{topic_id}.{r}" for r in (*spec.roles, "vector_a", "transformed_a")}
         entities = [{"id": ids[r], "kind": "vector", "dimension": 2, "value": [0.0,0.0], "role": r, "label": r, "claim_refs":[claim["id"]]} for r in ids]
-        relation = {"id":f"relation.{topic_id}.{spec.relation}","kind":spec.relation,"source_ref":ids[spec.roles[0]],"target_ref":ids[spec.roles[-1]],"parameters":spec.params,"claim_refs":[claim["id"]]}
+        relation = {"id":f"relation.{topic_id}.{spec.relation}","kind":spec.relation,"source_ref":ids[spec.roles[0]],"target_ref":ids[spec.roles[-1]],"parameters":_json_value(spec.params),"claim_refs":[claim["id"]]}
         stages=[{"id":f"stage.{topic_id}.{s}","title":s,"caption":s,"layout":"sequence","input_entity_refs":list(ids.values()),"output_entity_refs":list(ids.values()),"relation_refs":[relation["id"]],"expected_invariants":list(spec.invariants)} for s in spec.stages]
         payload["visual_semantics"]={"scene_kind":"2d","scene_family":"affine_solution","entities":entities,"relations":[relation],"stages":stages}
         claim["entity_refs"]=list(ids.values()); claim["relation_refs"]=[relation["id"]]; claim["stage_refs"]=[s["id"] for s in stages]
