@@ -15,7 +15,7 @@ def test_chapter_reports_keep_expected_coverage_when_resources_are_missing(tmp_p
     assert report.expected_topic_count == 24
     assert len(report.errors) == 24
     assert report.errors[0].endswith("missing published artifact")
-    assert report.minimum_level_counts == (("L2", 1), ("L3", 17), ("L4", 6))
+    assert report.minimum_level_counts == (("L2", 24),)
 
 
 def test_all_chapter_reports_preserve_24_15_15_shape(tmp_path: Path) -> None:

@@ -66,7 +66,7 @@ def test_semantics_reject_unknown_vocabulary_and_parameter_expressions() -> None
 
 
 def test_vocabulary_is_closed_and_valid_fixture_round_trips() -> None:
-    assert ENTITY_KINDS == {"point", "vector", "basis", "matrix", "grid", "region", "area", "volume"}
+    assert ENTITY_KINDS == {"point", "vector", "basis", "matrix", "grid", "region", "area", "volume", "subspace", "affine_set", "constraint", "eigenspace", "principal_axis", "quadratic_level_set"}
     assert LAYOUTS == {"overlay", "side_by_side", "sequence"}
     assert "maps_to" in RELATION_KINDS
 

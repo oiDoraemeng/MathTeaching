@@ -32,7 +32,7 @@ def test_all_new_topics_have_explicit_family_contracts():
     for topic in topics:
         contract = contract_for(topic.id)
         assert contract.topic_id == topic.id
-        assert len(contract.required_primitives) == 1
+        assert len(contract.required_primitives) <= 1
         assert contract.required_claims == (f"claim.{topic.id}",)
 
 

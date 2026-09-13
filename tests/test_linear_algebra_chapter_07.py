@@ -200,8 +200,8 @@ def test_registry_and_canonical_publication_preserve_prior_81_rows():
     legacy = lambda records: [r for r in records if r['chapter'] <= 6]
     assert len(legacy(rows)) == 81
     assert legacy(rows) == legacy(baseline['topics'])
-    assert len(rows) == len({r['topic_id'] for r in rows}) == 87
-    assert not any(r['chapter'] == 8 for r in rows)
+    assert len(rows) == len({r['topic_id'] for r in rows}) == 93
+    assert sum(r['chapter'] == 8 for r in rows) == 6
     recipes = recipes_for_topics()
     by_id = {r['topic_id']: r for r in rows}
     for topic in TOPICS:
