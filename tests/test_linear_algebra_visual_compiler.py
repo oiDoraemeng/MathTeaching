@@ -67,6 +67,64 @@ def test_addition_storyboard_contains_distinct_geometry_examples() -> None:
     assert any("parallelogram" in alias for alias in second.visible_aliases)
 
 
+def test_magnitude_case_uses_clean_2d_labels_without_internal_annotations() -> None:
+    semantics = VisualSemantics.from_dict({
+        "scene_kind": "2d",
+        "entities": [
+            {"id": "nonzero_v", "kind": "vector", "dimension": 2, "value": [3, 4], "role": "vector_a", "label": "v", "claim_refs": []},
+            {"id": "nonzero_length", "kind": "point", "dimension": 2, "value": [3, 4], "role": "result", "label": "", "claim_refs": []},
+        ],
+        "relations": [{"id": "rel.magnitude.nonzero", "kind": "invariant", "source_ref": "nonzero_v", "target_ref": "nonzero_length", "parameters": {}, "claim_refs": []}],
+        "stages": [{"id": "stage.magnitude.nonzero", "title": "案例一：非零向量的长度", "caption": "", "layout": "overlay", "input_entity_refs": ["nonzero_v"], "output_entity_refs": ["nonzero_length"], "relation_refs": ["rel.magnitude.nonzero"], "expected_invariants": []}],
+    })
+    compiled = VisualSemanticsCompiler().compile(semantics, _permissive_contract("ch01.vector.magnitude"), RenderContext.default("ch01.vector.magnitude"), topic_id="ch01.vector.magnitude")
+    operations = compiled.plan.operations
+    endpoint = next(item for item in operations if item.get("op") == "point.upsert" and item.get("alias") == "sem__nonzero_v__end")
+    assert endpoint["name"] == ""
+    assert next(item for item in operations if item.get("op") == "linear.upsert")["label"] == "v"
+    assert not any(item.get("op") == "annotation.upsert" and "invariant:" in str(item.get("text")) for item in operations)
+    assert not any(item.get("op") == "annotation.upsert" and "案例一" in str(item.get("text")) for item in operations)
+
+
+def test_point_vector_distinction_shows_a_native_standard_basis_annotation() -> None:
+    semantics = VisualSemantics.from_dict({
+        "scene_kind": "2d",
+        "entities": [
+            {"id": "point_P", "kind": "point", "dimension": 2, "value": [3, 4], "role": "vector_a", "label": "P", "claim_refs": []},
+            {"id": "vector_v", "kind": "vector", "dimension": 2, "value": [3, 4], "role": "vector_a", "label": "v", "claim_refs": []},
+        ],
+        "relations": [
+            {"id": "rel.point-distinction.location", "kind": "invariant", "source_ref": "point_P", "target_ref": "point_P", "parameters": {}, "claim_refs": []},
+            {"id": "rel.point-distinction.basis", "kind": "invariant", "source_ref": "vector_v", "target_ref": "vector_v", "parameters": {}, "claim_refs": []},
+        ],
+        "stages": [
+            {"id": "stage.point-distinction.location", "title": "案例一：位置点", "caption": "", "layout": "overlay", "input_entity_refs": ["point_P"], "output_entity_refs": [], "relation_refs": ["rel.point-distinction.location"], "expected_invariants": []},
+            {"id": "stage.point-distinction.vector", "title": "案例二：原点向量", "caption": "", "layout": "overlay", "input_entity_refs": ["vector_v"], "output_entity_refs": [], "relation_refs": ["rel.point-distinction.basis"], "expected_invariants": []},
+        ],
+    })
+
+    compiled = VisualSemanticsCompiler().compile(
+        semantics,
+        _permissive_contract("ch01.vector.point-distinction"),
+        RenderContext.default("ch01.vector.point-distinction"),
+        topic_id="ch01.vector.point-distinction",
+    )
+    operations = compiled.plan.operations
+    annotations = [item for item in operations if item.get("op") == "annotation.upsert"]
+    assert annotations == [
+        {
+            "op": "annotation.upsert",
+            "alias": "sem__rel.point-distinction.basis",
+            "text": "v = 3e₁ + 4e₂",
+            "position": [-2.65, -2.45],
+        }
+    ]
+    assert next(item for item in operations if item.get("alias") == "sem__point_P")["name"] == "P"
+    assert next(item for item in operations if item.get("alias") == "sem__vector_v")["label"] == "v"
+    assert next(item for item in operations if item.get("alias") == "sem__vector_v__origin")["name"] == "O"
+    assert next(item for item in operations if item.get("alias") == "sem__vector_v__end")["name"] == ""
+
+
 def test_compiler_rejects_contract_gap_before_renderer() -> None:
     artifact = TeachingArtifact.from_dict(projection_artifact_payload(with_residual=False))
     contract = VisualContract(

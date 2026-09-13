@@ -19,6 +19,8 @@ from .model import JsonValue, WorkedExample, WorkedExampleCheck
 SUPPORTED_KINDS = frozenset(
     {
         "vector_addition",
+        "scalar_multiple",
+        "cross_product",
         "inner_product",
         "projection",
         "matrix_transform",
@@ -95,6 +97,32 @@ def _calculate(kind: str, given: JsonValue) -> _Calculation:
         b = _vector(right, dimension=len(a))
         value = tuple(x + y for x, y in zip(a, b))
         return _named(value, result=value, sum=value, output=value)
+
+    if kind == "scalar_multiple":
+        if isinstance(given, Mapping):
+            if "scalar" not in given or "vector" not in given:
+                raise ValueError("given mapping is missing scalar/vector operands")
+            scalar_value, vector_value = given["scalar"], given["vector"]
+        else:
+            operands = _sequence(given)
+            if len(operands) != 2:
+                raise ValueError("expected scalar and vector operands")
+            scalar_value, vector_value = operands
+        scalar = _number(scalar_value)
+        vector = _vector(vector_value)
+        value = tuple(scalar * item for item in vector)
+        return _named(value, result=value, scalar_multiple=value, output=value)
+
+    if kind == "cross_product":
+        left, right = _pair(given, "a", "b")
+        a = _vector(left, dimension=3)
+        b = _vector(right, dimension=3)
+        value = (
+            a[1] * b[2] - a[2] * b[1],
+            a[2] * b[0] - a[0] * b[2],
+            a[0] * b[1] - a[1] * b[0],
+        )
+        return _named(value, result=value, cross_product=value, output=value)
 
     if kind == "inner_product":
         left, right = _pair(given, "a", "b")

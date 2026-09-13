@@ -28,6 +28,9 @@ from linear_algebra.teaching.validation import (
     validate_teaching_depth,
     validate_worked_examples,
 )
+from linear_algebra.visualizations.common import RenderContext
+from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
+from linear_algebra.visualizations.contracts import contract_for, validate_contract
 
 import generate_chapter1_local as chapter1
 
@@ -87,8 +90,8 @@ _SPEC = {
     "ch02.matrix.stretch-rotate-scale": {
         "formula": "A(1,2)^T=(5,11)^T",
         "kind": "matrix_transform",
-        "given": {"matrix": [[1, 2], [3, 4]], "vector": [1, 2]},
-        "result": [5.0, 11.0],
+        "given": {"matrix": [[2, 0], [0, 1]], "vector": [1, 2]},
+        "result": [2.0, 2.0],
         "check": "transformed",
         "statement": "对角矩阵沿坐标轴拉伸，旋转矩阵改变方向；一般矩阵可把这些几何效应组合为线性变换。",
         "relation": "maps_to",
@@ -226,6 +229,16 @@ def _add_contract_semantics(payload: dict, topic_id: str) -> None:
         claim["stage_refs"].extend(["stage.grid_input", "stage.grid_output"])
 
     elif topic_id == "ch02.matrix.composition":
+        # The concise quality refinement already supplies both ordered paths,
+        # their distinct endpoints, and the five contract stages.  Do not add
+        # a second copy of the same entities when this local batch generator
+        # performs its contract pass.
+        if {
+            "z",
+        } <= {str(entity.get("id", "")) for entity in entities} and {
+            "composition_order", "endpoint_diff", "composition_compare",
+        } <= {str(relation.get("id", "")) for relation in relations}:
+            return
         entities.append({"id": "z", "kind": "vector", "dimension": 2, "value": [1.0, 2.0], "role": "transformed_b", "label": "BAx", "claim_refs": [claim_id]})
         relations.extend([
             {"id": "composition_order", "kind": "composition_order", "source_ref": "x", "target_ref": "y", "parameters": {}, "claim_refs": [claim_id]},
@@ -265,22 +278,28 @@ def main() -> int:
         context = repo.context_for(topic)
         request = GenerationRequest(context, topic, profile_for(topic.id))
         draft = generate_draft(agent, request)
-        artifact = draft.artifact
+        draft_revision = store.save_draft(draft.artifact, raw_reply=draft.raw_reply)
+        reviewed_revision = store.review_draft(topic.id, draft_revision.revision, "local-math-review")
+        artifact = store.get(topic.id, reviewed_revision.revision, "reviewed").artifact
         issues = (
             *validate_source_evidence(artifact, context, topic),
             *validate_closed_references(artifact),
             *validate_claim_bindings(artifact),
             *validate_teaching_depth(artifact),
             *validate_worked_examples(artifact),
+            *validate_contract(artifact, contract_for(topic.id)),
         )
         if issues:
             raise ValueError(f"{topic.id}: " + "; ".join(f"{i.code}:{i.path}" for i in issues))
-        revision = store.save_draft(artifact, raw_reply=draft.raw_reply)
-        summaries.append({"topic_id": topic.id, "revision": revision.revision, "source_hash": context.source_hash})
-    index = root / "drafts" / "ch02" / "index.json"
+        VisualSemanticsCompiler().compile(artifact, contract_for(topic.id), RenderContext.default(topic.id))
+        published = store.publish(artifact, source_context=context, topic=topic, raw_reply=draft.raw_reply)
+        if not published.ok or published.revision is None:
+            raise ValueError(f"{topic.id}: " + "; ".join(issue.code for issue in published.issues))
+        summaries.append({"topic_id": topic.id, "revision": published.revision.revision, "source_hash": context.source_hash})
+    index = root / "index-ch02.json"
     index.parent.mkdir(parents=True, exist_ok=True)
     index.write_text(json.dumps({"schema_version": 1, "chapter": 2, "topics": summaries}, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps({"chapter": 2, "drafts": len(summaries), "index": str(index)}, ensure_ascii=False, sort_keys=True))
+    print(json.dumps({"chapter": 2, "published": len(summaries), "index": str(index)}, ensure_ascii=False, sort_keys=True))
     return 0
 
 

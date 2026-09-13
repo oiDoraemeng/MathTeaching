@@ -26,8 +26,8 @@ CONTENT = {
 "ch01.ops.velocity": _content("ch01.ops.velocity", "速度合成的几何表示", "相对速度和载体速度可以首尾相接。", r"v_total=v_relative+v_carrier", "速度向量的合成与位移向量遵循同一平行四边形法则。", "物理中的速度合成是向量加法的直接应用。", "画出载体速度。", "叠加相对速度并显示总速度。"),
 "ch01.ops.cross-product": _content("ch01.ops.cross-product", "叉积的三维旋转方向", "叉积方向由右手规则确定。", r"a x b = |a||b| sin(theta) n", "a 与 b 张成的平面有一个垂直法向量，手性决定正负方向。", "叉积同时编码面积大小和三维旋转方向。", "显示两个三维向量。", "绘制法向量并标出右手旋转。"),
 "ch01.ops.scalar-triple": _content("ch01.ops.scalar-triple", "混合积与平行六面体体积", "三个向量张成有向平行六面体。", r"a . (b x c) = det(a,b,c)", "底面积乘以有向高得到体积，交换方向会改变符号。", "混合积的绝对值是体积，符号记录空间方向。", "显示三条棱向量。", "填充平行六面体并标注体积。"),
-"ch01.inner.equivalence": _content("ch01.inner.equivalence", "内积两种定义的几何等价", "分量公式与夹角公式由余弦定理连接。", r"a.b=|a||b|cos(theta)", "由三角形第三边的平方展开，可把分量乘积整理成夹角表达。", "代数内积和几何投影描述的是同一个量。", "画出由 a、b 构成的三角形。", "用边长平方展开说明余弦项。"),
-"ch01.inner.definitions": _content("ch01.inner.definitions", "内积、夹角与投影", "内积把长度和方向关系压缩成一个数。", r"a.b=|a||b|cos(theta)", "投影长度乘以被投影向量的长度等于内积。", "内积正负分别对应锐角、直角和钝角。", "从同一点画出 a、b。", "显示夹角弧线和投影垂足。"),
+"ch01.inner.equivalence": _content("ch01.inner.equivalence", "两种定义等价性的证明", "分量公式与夹角公式由余弦定理连接。", r"a.b=|a||b|cos(theta)", "由三角形第三边的平方展开，可把分量乘积整理成夹角表达。", "代数内积和几何投影描述的是同一个量。", "画出由 a、b 构成的三角形。", "用边长平方展开说明余弦项。"),
+"ch01.inner.definitions": _content("ch01.inner.definitions", "1.3.1 内积的两种定义", "内积把长度和方向关系压缩成一个数。", r"a.b=|a||b|cos(theta)", "投影长度乘以被投影向量的长度等于内积。", "内积正负分别对应锐角、直角和钝角。", "从同一点画出 a、b。", "显示夹角弧线和投影垂足。"),
 "ch01.inner.applications": _content("ch01.inner.applications", "内积的长度、正交与夹角应用", "内积可判断长度、正交和夹角。", r"a.a=|a|^2, a.b=0 => a perpendicular b", "把向量与自身或另一个向量做内积，就能得到长度平方或正交关系。", "内积是长度测量和正交判断的统一工具。", "展示向量与自身的内积。", "展示一对正交向量和直角标记。"),
 "ch01.inner.cauchy-schwarz": _content("ch01.inner.cauchy-schwarz", "柯西-施瓦茨不等式的投影界", "投影长度不超过原向量长度。", r"|a.b| <= |a||b|", "投影是直角三角形的一条直角边，因此不会超过斜边。", "不等式是投影几何界的代数表达。", "显示向量 a 和 b。", "比较投影长度与 |a|。"),
 "ch01.inner.examples": _content("ch01.inner.examples", "内积几何分层例题", "通过锐角、直角和钝角比较内积符号。", r"sign(a.b)=sign(cos(theta))", "改变夹角会让投影从正值经过零变为负值。", "内积符号直接揭示相对方向。", "分别展示三种夹角。", "标注内积符号的变化。"),
@@ -40,4 +40,3 @@ CONTENT = {
 "ch01.proof.parallelogram-diagonals": _content("ch01.proof.parallelogram-diagonals", "平行四边形对角线互相平分", "两条对角线拥有同一个中点。", r"(A+C)/2=(B+D)/2", "用顶点向量相加可以证明两个对角线中点相同。", "对角线平分是平行四边形的向量特征。", "显示四个顶点和两条对角线。", "标出相同的中点。"),
 "ch01.high-dimensional.analogy": _content("ch01.high-dimensional.analogy", "从二维、三维到 n 维的向量类比", "高维向量遵循相同的加法、数乘和内积规则。", r"v=(v_1,...,v_n)", "用二维和三维箭头承载高维坐标规则，而不假装绘制 n 维空间。", "低维类比帮助理解高维代数结构。", "并列显示二维、三维和坐标列表。", "标注保持不变的代数规则。"),
 }
-

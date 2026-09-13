@@ -3,6 +3,9 @@ from linear_algebra.teaching.content_validation import (
     lecture_source_repository,
     validate_chapter_artifacts,
 )
+from linear_algebra.visualizations.common import RenderContext
+from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
+from linear_algebra.visualizations.contracts import contract_for
 
 
 def test_chapter_01_has_24_published_grounded_artifacts() -> None:
@@ -10,6 +13,22 @@ def test_chapter_01_has_24_published_grounded_artifacts() -> None:
     assert report.topic_count == 24
     assert report.errors == ()
     levels = dict(report.minimum_level_counts)
-    # Vector addition is deliberately an L2 calculation lesson; the remaining
-    # chapter topics retain their L3/L4 explanatory or transfer requirements.
-    assert levels == {"L2": 1, "L3": 17, "L4": 6}
+    # Chapter one now uses the concise lecture-note workflow throughout.
+    assert levels == {"L2": 24}
+
+
+def test_point_vector_distinction_uses_a_native_standard_basis_label_in_2d() -> None:
+    artifact = bundled_store().published("ch01.vector.point-distinction").artifact
+    compiled = VisualSemanticsCompiler().compile(
+        artifact,
+        contract_for(artifact.topic_id),
+        RenderContext.default(artifact.topic_id),
+    )
+
+    assert not any(operation["op"] == "annotation.formula" for operation in compiled.plan.operations)
+    annotation = next(
+        operation
+        for operation in compiled.plan.operations
+        if operation.get("alias") == "sem__rel.point-distinction.basis"
+    )
+    assert annotation["text"] == "v = 3e₁ + 4e₂"

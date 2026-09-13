@@ -30,6 +30,7 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
             if isinstance(claim, dict):
                 claim["explanation_refs"] = section_ids
                 claim["formula"] = r"\boldsymbol a+\boldsymbol b=(x_1+x_2,\,y_1+y_2)"
+                claim["formula_symbols"] = ["a", "b"]
                 claim["entity_refs"] = [
                     "components_a", "components_b", "components_sum",
                     "geometry_a", "geometry_b", "geometry_sum",
@@ -41,10 +42,143 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
                     "rel.addition.velocity",
                 ]
                 claim["stage_refs"] = stage_ids
+    elif topic_id == "ch01.vector.magnitude":
+        _refine_vector_magnitude(explanation, visual, example)
+        result["connections"] = []
+        section_ids = [str(section.get("id")) for section in explanation.get("sections", []) if isinstance(section, Mapping) and section.get("id")]
+        stage_ids = [str(stage.get("id")) for stage in visual.get("stages", []) if isinstance(stage, Mapping) and stage.get("id")]
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = section_ids
+                claim["formula"] = r"\lvert\boldsymbol v\rvert=\sqrt{x^2+y^2}"
+                claim["formula_symbols"] = ["v"]
+                claim["entity_refs"] = ["nonzero_v", "nonzero_length", "zero_v"]
+                claim["relation_refs"] = ["rel.magnitude.nonzero", "rel.magnitude.zero"]
+                claim["stage_refs"] = stage_ids
+    elif topic_id == "ch01.vector.point-distinction":
+        _refine_vector_point_distinction(explanation, visual)
+        result["connections"] = []
+        section_ids = [str(section.get("id")) for section in explanation.get("sections", []) if isinstance(section, Mapping) and section.get("id")]
+        stage_ids = [str(stage.get("id")) for stage in visual.get("stages", []) if isinstance(stage, Mapping) and stage.get("id")]
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = section_ids
+                claim["formula"] = r"\boldsymbol v=x\boldsymbol e_1+y\boldsymbol e_2"
+                claim["formula_symbols"] = ["P", "v", "e_1", "e_2"]
+                claim["entity_refs"] = ["point_P", "vector_v", "e1", "e2"]
+                claim["relation_refs"] = ["rel.point-distinction.location", "rel.point-distinction.basis"]
+                claim["stage_refs"] = stage_ids
+    elif topic_id == "ch01.vector.coordinate-system":
+        _refine_coordinate_system(explanation, visual, example)
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = [
+                    "definition", "formula", "worked_examples", "geometric_meaning"
+                ]
+                claim["formula"] = (
+                    r"\boldsymbol e_1=(1,0),\quad \boldsymbol e_2=(0,1),\quad "
+                    r"\boldsymbol e_1\cdot\boldsymbol e_2=0"
+                )
+                claim["formula_symbols"] = ["e_1", "e_2"]
+    elif topic_id == "ch01.vector.direction-examples":
+        _refine_direction_examples(explanation, visual)
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = [
+                    "definition", "formula", "worked_examples", "geometric_meaning"
+                ]
+                claim["formula"] = r"\boldsymbol v=(x,y),\qquad \lvert\boldsymbol v\rvert=\sqrt{x^2+y^2}"
+                claim["formula_symbols"] = ["v"]
+    elif topic_id == "ch01.ops.subtraction":
+        _refine_vector_subtraction(explanation, visual)
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = [
+                    "definition", "formula", "worked_examples", "geometric_meaning"
+                ]
+                claim["formula"] = r"\boldsymbol a-\boldsymbol b=\boldsymbol a+(-\boldsymbol b)"
+                claim["formula_symbols"] = ["a", "b"]
+    elif topic_id == "ch01.ops.scalar":
+        _refine_vector_scalar(explanation, visual)
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = [
+                    "definition", "formula", "worked_examples", "geometric_meaning"
+                ]
+                claim["formula"] = r"k\boldsymbol a=(kx,\,ky)"
+                claim["formula_symbols"] = ["k", "a"]
+    elif topic_id == "ch01.ops.linear-combination":
+        _refine_linear_combination(explanation, visual)
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = ["definition", "formula", "worked_examples", "geometric_meaning"]
+                claim["formula"] = r"\alpha_1\boldsymbol v_1+\cdots+\alpha_n\boldsymbol v_n"
+                claim["formula_symbols"] = ["v_1", "v_2", "alpha_1", "alpha_2"]
+    elif topic_id == "ch01.ops.velocity":
+        _refine_velocity_examples(explanation, visual)
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = ["definition", "formula", "worked_examples", "geometric_meaning"]
+                claim["formula"] = r"\boldsymbol v_{\mathrm{绝对}}=\boldsymbol v_{\mathrm{相对}}+\boldsymbol v_{\mathrm{参考系}}"
+                claim["formula_symbols"] = ["v_1", "v_2"]
+    elif topic_id == "ch01.ops.cross-product":
+        _refine_cross_product(explanation, visual)
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = ["definition", "formula", "worked_examples", "geometric_meaning"]
+                claim["formula"] = r"\boldsymbol a\times\boldsymbol b=(a_2b_3-a_3b_2,\,a_3b_1-a_1b_3,\,a_1b_2-a_2b_1)"
+                claim["formula_symbols"] = ["a", "b"]
+    elif topic_id == "ch01.ops.scalar-triple":
+        _refine_scalar_triple(explanation, visual)
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = ["definition", "formula", "worked_examples", "geometric_meaning"]
+                claim["formula"] = r"[\boldsymbol a\,\boldsymbol b\,\boldsymbol c]=\boldsymbol a\cdot(\boldsymbol b\times\boldsymbol c)"
+                claim["formula_symbols"] = ["a", "b", "c"]
+    elif topic_id.startswith("ch01.inner.") or topic_id.startswith("ch01.projection.") or topic_id.startswith("ch01.proof.") or topic_id == "ch01.high-dimensional.analogy":
+        _refine_remaining_chapter_one(topic_id, explanation, visual)
+        result["connections"] = []
+        symbols_by_topic = {
+            "ch01.inner.equivalence": ["a", "b"],
+            "ch01.inner.definitions": ["a", "b"],
+            "ch01.inner.applications": ["a", "b"],
+            "ch01.inner.cauchy-schwarz": ["a", "b"],
+            "ch01.inner.examples": ["a", "b"],
+            "ch01.projection.definition": ["v", "u", "p", "r"],
+            "ch01.projection.properties": ["v", "u"],
+            "ch01.projection.force": ["v", "u", "p", "r"],
+            "ch01.proof.method": ["a", "b"],
+            "ch01.proof.midline": ["a", "b"],
+            "ch01.proof.centroid": ["a", "b"],
+            "ch01.proof.parallelogram-diagonals": ["a", "b"],
+            "ch01.high-dimensional.analogy": ["a", "b"],
+        }
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["explanation_refs"] = ["definition", "formula", *( ["derivation"] if explanation.get("derivation") else []), "worked_examples", "geometric_meaning"]
+                claim["formula"] = str(explanation.get("formula", ""))
+                claim["formula_symbols"] = symbols_by_topic.get(topic_id, ["a", "b"])
     elif topic_id == "ch02.matrix.composition":
         _refine_matrix_composition(result, explanation, visual, example)
     else:
         _refine_generic(topic_id, explanation, visual, example)
+
+    # Refined case layouts may replace the template graph.  Keep the single
+    # source-grounded claim bound to the exact entities, relations and stages
+    # that are now published, rather than leaving stale template references.
+    for claim in result.get("claims", []):
+        if isinstance(claim, dict):
+            claim["entity_refs"] = [str(item["id"]) for item in visual.get("entities", []) if isinstance(item, Mapping) and item.get("id")]
+            claim["relation_refs"] = [str(item["id"]) for item in visual.get("relations", []) if isinstance(item, Mapping) and item.get("id")]
+            claim["stage_refs"] = [str(item["id"]) for item in visual.get("stages", []) if isinstance(item, Mapping) and item.get("id")]
 
     _sync_sections(explanation)
     _sync_searchable_text(explanation)
@@ -231,6 +365,974 @@ def _refine_vector_addition(explanation: dict[str, Any], visual: dict[str, Any],
     }
 
 
+def _refine_vector_magnitude(
+    explanation: dict[str, Any], visual: dict[str, Any], example: dict[str, Any] | None
+) -> None:
+    """Shape the first lecture subsection without borrowing later subsections."""
+
+    claim_refs = ["claim.ch01.vector.magnitude"]
+    explanation.update(
+        {
+            "title": "向量的几何量：方向、长度与零向量",
+            "summary": r"向量由从原点出发的有向线段表示；非零向量具有方向和长度。",
+            "definition": (
+                r"在平面直角坐标系中，向量是起点为原点 $O(0,0)$ 的有向线段，"
+                r"其终点坐标记为 $\boldsymbol v=(x,y)$。"
+                "\n\n"
+                r"长度为零的向量称为零向量："
+                "\n\n"
+                r"$$\boldsymbol 0=(0,0).$$"
+            ),
+            "formula": r"\lvert\boldsymbol v\rvert=\sqrt{x^2+y^2}",
+            "geometric_meaning": (
+                r"向量箭头的方向由从原点指向终点的射线确定，箭头长度就是模 $\lvert\boldsymbol v\rvert$。"
+                "\n\n"
+                r"零向量 $\boldsymbol 0$ 的起点和终点重合，因此长度为 $0$，没有方向。"
+            ),
+            "worked_examples": [],
+            "symbol_roles": {"v": "vector_a", "zero": "result"},
+        }
+    )
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "derivation", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+
+    first = {
+        "id": "example.magnitude.nonzero",
+        "title": "案例一：非零向量的长度",
+        "kind": "inner_product",
+        "given": [[3, 4], [3, 4]],
+        "calculation": [
+            r"$$\boldsymbol v=(3,4)$$",
+            r"$$\lvert\boldsymbol v\rvert=\sqrt{3^2+4^2}=5$$",
+        ],
+        "result": 25,
+        "checks": [{"name": "result", "expected": 25, "tolerance": 1e-9}],
+        "claim_refs": claim_refs,
+    }
+    second = {
+        "id": "example.magnitude.zero",
+        "title": "案例二：零向量",
+        "kind": "inner_product",
+        "given": [[0, 0], [0, 0]],
+        "calculation": [
+            r"$$\boldsymbol 0=(0,0)$$",
+            r"$$\lvert\boldsymbol 0\rvert=\sqrt{0^2+0^2}=0$$",
+        ],
+        "result": 0,
+        "checks": [{"name": "result", "expected": 0, "tolerance": 1e-9}],
+        "claim_refs": claim_refs,
+    }
+    explanation["worked_examples"] = [first, second]
+    visual["scene_kind"] = "2d"
+    visual["entities"] = [
+        {"id": "nonzero_v", "kind": "vector", "dimension": 2, "value": [3, 4], "role": "vector_a", "label": "v", "claim_refs": claim_refs},
+        {"id": "nonzero_length", "kind": "point", "dimension": 2, "value": [3, 4], "role": "result", "label": "", "claim_refs": claim_refs},
+        {"id": "zero_v", "kind": "vector", "dimension": 2, "value": [0, 0], "role": "vector_a", "label": "0", "claim_refs": claim_refs},
+    ]
+    visual["relations"] = [
+        {"id": "rel.magnitude.nonzero", "kind": "invariant", "source_ref": "nonzero_v", "target_ref": "nonzero_length", "parameters": {}, "claim_refs": claim_refs},
+        {"id": "rel.magnitude.zero", "kind": "invariant", "source_ref": "zero_v", "target_ref": "zero_v", "parameters": {}, "claim_refs": claim_refs},
+    ]
+    visual["stages"] = [
+        {
+            "id": "stage.magnitude.nonzero",
+            "title": "案例一：非零向量的长度",
+            "caption": r"$\boldsymbol v=(3,4)$ 的箭头长度为 $5$。",
+            "layout": "overlay",
+            "input_entity_refs": ["nonzero_v"],
+            "output_entity_refs": ["nonzero_length"],
+            "relation_refs": ["rel.magnitude.nonzero"],
+            "expected_invariants": ["nonzero vector length is 5"],
+        },
+        {
+            "id": "stage.magnitude.zero",
+            "title": "案例二：零向量",
+            "caption": r"$\boldsymbol 0=(0,0)$ 的起点和终点重合，长度为 $0$。",
+            "layout": "overlay",
+            "input_entity_refs": ["zero_v"],
+            "output_entity_refs": [],
+            "relation_refs": ["rel.magnitude.zero"],
+            "expected_invariants": ["zero vector length is 0"],
+        },
+    ]
+    explanation["sections"] = [
+        {"id": section_id, "title": section_id, "text": "", "claim_refs": claim_refs}
+        for section_id in ("definition", "formula", "worked_examples", "geometric_meaning")
+    ]
+    explanation["case_layout"] = {
+        "default_pane_count": 1,
+        "cases": [
+            {
+                "id": "case.magnitude.nonzero",
+                "topic_id": "ch01.vector.magnitude",
+                "example_ref": "example.magnitude.nonzero",
+                "claim_refs": claim_refs,
+                "stage_refs": ["stage.magnitude.nonzero"],
+                "purpose": "案例一：非零向量的长度",
+            },
+            {
+                "id": "case.magnitude.zero",
+                "topic_id": "ch01.vector.magnitude",
+                "example_ref": "example.magnitude.zero",
+                "claim_refs": claim_refs,
+                "stage_refs": ["stage.magnitude.zero"],
+                "purpose": "案例二：零向量",
+            },
+        ],
+    }
+
+
+def _refine_vector_point_distinction(
+    explanation: dict[str, Any], visual: dict[str, Any]
+) -> None:
+    """Keep the point/vector distinction faithful to subsection 1.1.2.
+
+    The prior generic artifact turned this topic into a difference-vector and
+    inner-product calculation.  The lecture instead distinguishes a position
+    from an origin-anchored vector and introduces the standard basis.
+    """
+
+    claim_refs = ["claim.ch01.vector.point-distinction"]
+    explanation.update(
+        {
+            "title": "点与向量的本质区别",
+            "summary": r"点表示位置；向量表示从原点出发的方向和长度。",
+            "definition": (
+                r"在平面直角坐标系中，点 $P=(x,y)$ 表示一个位置；其坐标回答“在哪里”。"
+                "\n\n"
+                r"向量 $\boldsymbol v=(x,y)$ 表示方向和长度。将它画成从原点 $O(0,0)$ "
+                r"指向终点 $(x,y)$ 的有向线段；其坐标回答“沿哪个方向、多远”。"
+            ),
+            "formula": (
+                r"\begin{gathered}"
+                r"\boldsymbol e_1=(1,0),\qquad \boldsymbol e_2=(0,1),\\"
+                r"\boldsymbol v=x\boldsymbol e_1+y\boldsymbol e_2="
+                r"x(1,0)+y(0,1)."
+                r"\end{gathered}"
+            ),
+            "geometric_meaning": (
+                r"案例一中的点 $P=(3,4)$ 只标记平面中的一个位置。"
+                "\n\n"
+                r"案例二中的 $\boldsymbol v=(3,4)$ 是从原点出发的箭头；"
+                r"其坐标分量对应 $\boldsymbol v=3\boldsymbol e_1+4\boldsymbol e_2$。"
+            ),
+            "worked_examples": [
+                {
+                    "id": "example.point-distinction.location",
+                    "title": "案例一：位置点",
+                    "kind": "vector_addition",
+                    "given": [[3, 4], [0, 0]],
+                    "calculation": [
+                        r"$$P=(3,4)$$",
+                        r"点 $P$ 标记平面中的位置 $(3,4)$。",
+                    ],
+                    "result": [3, 4],
+                    "checks": [{"name": "position", "expected": [3, 4], "tolerance": 1e-9}],
+                    "claim_refs": claim_refs,
+                },
+                {
+                    "id": "example.point-distinction.vector",
+                    "title": "案例二：原点向量与标准基",
+                    "kind": "vector_addition",
+                    "given": [[3, 4], [0, 0]],
+                    "calculation": [
+                        r"$$\boldsymbol v=(3,4)$$",
+                        r"$$\boldsymbol v=3\boldsymbol e_1+4\boldsymbol e_2$$",
+                        r"箭头从原点出发，终点为 $(3,4)$。",
+                    ],
+                    "result": [3, 4],
+                    "checks": [{"name": "components", "expected": [3, 4], "tolerance": 1e-9}],
+                    "claim_refs": claim_refs,
+                },
+            ],
+            "symbol_roles": {
+                "P": "vector_a",
+                "v": "vector_a",
+                "e_1": "basis_e1",
+                "e_2": "basis_e2",
+            },
+        }
+    )
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "derivation", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+
+    visual["scene_kind"] = "2d"
+    visual["entities"] = [
+        {
+            "id": "point_P", "kind": "point", "dimension": 2, "value": [3, 4],
+            "role": "vector_a", "label": "P", "claim_refs": claim_refs,
+        },
+        {
+            "id": "vector_v", "kind": "vector", "dimension": 2, "value": [3, 4],
+            "role": "vector_a", "label": "v", "claim_refs": claim_refs,
+        },
+        {
+            "id": "e1", "kind": "vector", "dimension": 2, "value": [1, 0],
+            "role": "basis_e1", "label": "e₁", "claim_refs": claim_refs,
+        },
+        {
+            "id": "e2", "kind": "vector", "dimension": 2, "value": [0, 1],
+            "role": "basis_e2", "label": "e₂", "claim_refs": claim_refs,
+        },
+    ]
+    visual["relations"] = [
+        {
+            "id": "rel.point-distinction.location", "kind": "invariant",
+            "source_ref": "point_P", "target_ref": "point_P", "parameters": {},
+            "claim_refs": claim_refs,
+        },
+        {
+            "id": "rel.point-distinction.basis", "kind": "invariant",
+            "source_ref": "vector_v", "target_ref": "vector_v", "parameters": {},
+            "claim_refs": claim_refs,
+        },
+    ]
+    visual["stages"] = [
+        {
+            "id": "stage.point-distinction.location", "title": "案例一：位置点",
+            "caption": r"$P=(3,4)$ 表示平面中的一个位置。", "layout": "overlay",
+            "input_entity_refs": ["point_P"], "output_entity_refs": [],
+            "relation_refs": ["rel.point-distinction.location"],
+            "expected_invariants": ["point marks the position (3,4)"],
+        },
+        {
+            "id": "stage.point-distinction.vector", "title": "案例二：原点向量与标准基",
+            "caption": r"$\boldsymbol v=(3,4)$ 从原点指向终点 $(3,4)$。", "layout": "overlay",
+            "input_entity_refs": ["vector_v", "e1", "e2"], "output_entity_refs": [],
+            "relation_refs": ["rel.point-distinction.basis"],
+            "expected_invariants": ["vector starts at the origin and ends at (3,4)"],
+        },
+    ]
+    explanation["sections"] = [
+        {"id": section_id, "title": section_id, "text": "", "claim_refs": claim_refs}
+        for section_id in ("definition", "formula", "worked_examples", "geometric_meaning")
+    ]
+    explanation["case_layout"] = {
+        "default_pane_count": 1,
+        "cases": [
+            {
+                "id": "case.point-distinction.location",
+                "topic_id": "ch01.vector.point-distinction",
+                "example_ref": "example.point-distinction.location",
+                "claim_refs": claim_refs,
+                "stage_refs": ["stage.point-distinction.location"],
+                "purpose": "案例一：位置点",
+            },
+            {
+                "id": "case.point-distinction.vector",
+                "topic_id": "ch01.vector.point-distinction",
+                "example_ref": "example.point-distinction.vector",
+                "claim_refs": claim_refs,
+                "stage_refs": ["stage.point-distinction.vector"],
+                "purpose": "案例二：原点向量与标准基",
+            },
+        ],
+    }
+
+
+def _refine_coordinate_system(
+    explanation: dict[str, Any], visual: dict[str, Any], example: dict[str, Any] | None
+) -> None:
+    """Present subsection 1.1.3 as the lecture's coordinate conventions only."""
+
+    claim_refs = ["claim.ch01.vector.coordinate-system"]
+    explanation.update({
+        "title": "坐标系与右手约定",
+        "summary": "本书在二维图中使用单位长度相等的直角坐标系，并以标准基确定正方向。",
+        "definition": (
+            r"本书使用直角坐标系：$x$ 轴向右为正，$y$ 轴向上为正，且两条坐标轴的单位长度相等。"
+            "\n\n"
+            r"标准基为 $\boldsymbol e_1=(1,0)$、$\boldsymbol e_2=(0,1)$；二者的长度均为 $1$，并且互相垂直。"
+            "\n\n"
+            r"三维坐标系继续采用右手约定，$z$ 轴指向观察者。"
+        ),
+        "formula": (
+            r"\boldsymbol e_1=(1,0),\qquad \boldsymbol e_2=(0,1),\qquad "
+            r"\lvert\boldsymbol e_1\rvert=\lvert\boldsymbol e_2\rvert=1,\qquad "
+            r"\boldsymbol e_1\cdot\boldsymbol e_2=0"
+        ),
+        "derivation": [],
+        "geometric_meaning": (
+            r"二维窗格中的两条箭头分别给出 $x$ 轴和 $y$ 轴的正方向；它们从同一原点出发、长度相等且垂直。"
+            r"后续二维向量的坐标都以这两条标准基为参照。"
+        ),
+        "worked_examples": [],
+        "symbol_roles": {"e_1": "basis_e1", "e_2": "basis_e2"},
+    })
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+
+    coordinate_case = example if example is not None else {}
+    coordinate_case.update({
+        "id": "example.coordinate-system.standard-basis",
+        "title": "案例一：标准基与坐标轴",
+        "kind": "inner_product",
+        "given": [[1, 0], [0, 1]],
+        "calculation": [
+            r"$$\boldsymbol e_1=(1,0),\qquad \boldsymbol e_2=(0,1)$$",
+            r"$$\lvert\boldsymbol e_1\rvert=\lvert\boldsymbol e_2\rvert=1,\qquad \boldsymbol e_1\cdot\boldsymbol e_2=0$$",
+        ],
+        "result": 0,
+        "checks": [{"name": "dot", "expected": 0, "tolerance": 1e-9}],
+        "claim_refs": claim_refs,
+    })
+    explanation["worked_examples"] = [coordinate_case]
+    visual.update({
+        "scene_kind": "2d",
+        "entities": [
+            {"id": "e1", "kind": "vector", "dimension": 2, "value": [1, 0], "role": "basis_e1", "label": "e₁", "claim_refs": claim_refs},
+            {"id": "e2", "kind": "vector", "dimension": 2, "value": [0, 1], "role": "basis_e2", "label": "e₂", "claim_refs": claim_refs},
+        ],
+        "relations": [
+            {"id": "rel.coordinate-system.orthogonal", "kind": "orthogonal_to", "source_ref": "e1", "target_ref": "e2", "parameters": {}, "claim_refs": claim_refs},
+        ],
+        "stages": [
+            {
+                "id": "stage.coordinate-system.standard-basis", "title": "案例一：标准基与坐标轴", "caption": "", "layout": "overlay",
+                "input_entity_refs": ["e1", "e2"], "output_entity_refs": [],
+                "relation_refs": ["rel.coordinate-system.orthogonal"],
+                "expected_invariants": ["unit orthogonal standard basis"],
+            },
+        ],
+    })
+    explanation["sections"] = [
+        {"id": section_id, "title": section_id, "text": "", "claim_refs": claim_refs}
+        for section_id in ("definition", "formula", "worked_examples", "geometric_meaning")
+    ]
+    explanation["case_layout"] = {
+        "default_pane_count": 1,
+        "cases": [
+            {
+                "id": "case.coordinate-system.standard-basis", "topic_id": "ch01.vector.coordinate-system",
+                "example_ref": "example.coordinate-system.standard-basis", "claim_refs": claim_refs,
+                "stage_refs": ["stage.coordinate-system.standard-basis"],
+                "purpose": "案例一：标准基与坐标轴",
+            },
+        ],
+    }
+
+
+def _refine_direction_examples(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    """Use the four independent examples in lecture subsection 1.1.4."""
+
+    claim_refs = ["claim.ch01.vector.direction-examples"]
+    explanation.update({
+        "title": "方向、象限与分层例题",
+        "summary": "从方向和长度确定坐标，再由坐标符号判断象限。",
+        "definition": (
+            r"二维非零向量 $\boldsymbol v=(x,y)$ 的方向由从原点指向终点的射线确定。"
+            "\n\n"
+            r"若方向与 $x$ 轴正向的夹角为 $\theta$、长度为 $\lvert\boldsymbol v\rvert$，则坐标分量满足"
+        ),
+        "formula": r"\boldsymbol v=(x,y),\qquad \lvert\boldsymbol v\rvert=\sqrt{x^2+y^2}",
+        "derivation": [],
+        "geometric_meaning": (
+            r"向量终点的横、纵坐标分别给出两个坐标轴方向的分量；$x,y$ 的符号决定终点所在象限。"
+            r"下面四个案例分别对应由方向和长度求坐标、由坐标判断象限，以及东北方向的分量表示。"
+        ),
+        "worked_examples": [],
+        "symbol_roles": {"v": "vector_a", "a": "vector_a", "b": "vector_b"},
+    })
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+
+    examples = [
+        {
+            "id": "example.direction.right-up", "title": "案例一：右上方且成 45°",
+            "kind": "inner_product", "given": [[2, 2], [2, 2]], "result": 8.0,
+            "calculation": [
+                r"$$\lvert\boldsymbol v\rvert\approx2.83,\qquad \theta=45^\circ\Longrightarrow x=y=a$$",
+                r"$$\sqrt{a^2+a^2}=a\sqrt2\approx2.83\Longrightarrow a\approx2$$",
+                r"$$\boldsymbol v=(2,2)$$",
+            ],
+            "checks": [{"name": "dot", "expected": 8.0, "tolerance": 1e-9}],
+            "vectors": [[2, 2], [2, 2]], "relation": "compare",
+        },
+        {
+            "id": "example.direction.vertical", "title": "案例二：竖直向上",
+            "kind": "inner_product", "given": [[0, 3], [0, 3]], "result": 9.0,
+            "calculation": [
+                r"$$\theta=90^\circ,\qquad x=0,\qquad \lvert\boldsymbol v\rvert=3$$",
+                r"$$\boldsymbol v=(0,3)$$",
+            ],
+            "checks": [{"name": "dot", "expected": 9.0, "tolerance": 1e-9}],
+            "vectors": [[0, 3], [0, 3]], "relation": "compare",
+        },
+        {
+            "id": "example.direction.quadrants", "title": "案例三：由坐标判断象限",
+            "kind": "inner_product", "given": [[2, 3], [-1, 4]], "result": 10.0,
+            "calculation": [
+                r"$$\boldsymbol a=(2,3),\qquad \boldsymbol b=(-1,4)$$",
+                r"$$a_x>0,\ a_y>0\Longrightarrow\boldsymbol a\text{ 的终点在第一象限}$$",
+                r"$$b_x<0,\ b_y>0\Longrightarrow\boldsymbol b\text{ 的终点在第二象限}$$",
+            ],
+            "checks": [{"name": "dot", "expected": 10.0, "tolerance": 1e-9}],
+            "vectors": [[2, 3], [-1, 4]], "relation": "compare",
+        },
+        {
+            "id": "example.direction.northeast", "title": "案例四：东北方向的航行",
+            "kind": "vector_addition", "given": [[7.07, 7.07], [0, 0]], "result": [7.07, 7.07],
+            "calculation": [
+                r"$$\lvert\boldsymbol v\rvert=10,\qquad \text{东北方向}\Longrightarrow x=y=a$$",
+                r"$$a\sqrt2=10\Longrightarrow a=\frac{10}{\sqrt2}\approx7.07$$",
+                r"$$\boldsymbol v\approx(7.07,7.07)$$",
+            ],
+            "checks": [{"name": "sum", "expected": [7.07, 7.07], "tolerance": 1e-9}],
+            # This relation records that the displayed vector is compared with
+            # the zero vector.  It is intentionally not ``sum``: the latter
+            # asks the generic visual compiler to construct an addition
+            # polygon, which is not part of this direction example.
+            "vectors": [[7.07, 7.07], [0, 0]], "relation": "compare",
+        },
+    ]
+    entities: list[dict[str, Any]] = []
+    relations: list[dict[str, Any]] = []
+    stages: list[dict[str, Any]] = []
+    cases: list[dict[str, Any]] = []
+    for index, item in enumerate(examples, start=1):
+        first_id, second_id = f"direction_{index}_a", f"direction_{index}_b"
+        entities.extend([
+            {"id": first_id, "kind": "vector", "dimension": 2, "value": item["vectors"][0], "role": "vector_a", "label": "a" if index == 3 else "v", "claim_refs": claim_refs},
+            {"id": second_id, "kind": "vector", "dimension": 2, "value": item["vectors"][1], "role": "vector_b", "label": "b", "claim_refs": claim_refs},
+        ])
+        relation_id = f"rel.direction-examples.{index}"
+        relations.append({"id": relation_id, "kind": item["relation"], "source_ref": first_id, "target_ref": second_id, "parameters": {}, "claim_refs": claim_refs})
+        stage_id = f"stage.direction-examples.{index}"
+        stages.append({
+            "id": stage_id, "title": item["title"], "caption": "", "layout": "overlay",
+            # The first, second and fourth cases each explain one vector.
+            # Keep the comparison target in the semantic graph but out of the
+            # pane, so a vector is never drawn twice on top of itself.
+            "input_entity_refs": [first_id, second_id] if index == 3 else [first_id], "output_entity_refs": [],
+            "relation_refs": [relation_id], "expected_invariants": [f"direction example {index}"],
+        })
+        examples[index - 1]["claim_refs"] = claim_refs
+        # ``vectors`` and ``relation`` are local construction hints only; the
+        # artifact schema exposes typed operands through ``given``.
+        examples[index - 1].pop("vectors", None)
+        examples[index - 1].pop("relation", None)
+        cases.append({
+            "id": f"case.direction-examples.{index}", "topic_id": "ch01.vector.direction-examples",
+            "example_ref": item["id"], "claim_refs": claim_refs, "stage_refs": [stage_id],
+            "purpose": item["title"],
+        })
+    explanation["worked_examples"] = examples
+    visual.update({"scene_kind": "2d", "entities": entities, "relations": relations, "stages": stages})
+    explanation["sections"] = [
+        {"id": section_id, "title": section_id, "text": "", "claim_refs": claim_refs}
+        for section_id in ("definition", "formula", "worked_examples", "geometric_meaning")
+    ]
+    explanation["case_layout"] = {"default_pane_count": 1, "cases": cases}
+
+
+def _refine_vector_subtraction(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    """Present subsection 1.2.2 using its definition and one checked case."""
+
+    claim_refs = ["claim.ch01.ops.subtraction"]
+    explanation.update({
+        "title": "向量减法",
+        "summary": "向量减法定义为加上减向量的相反向量，坐标按对应分量相减。",
+        "definition": (
+            r"设二维向量 $\boldsymbol a=(x_1,y_1)$、$\boldsymbol b=(x_2,y_2)$。"
+            "\n\n"
+            r"向量减法定义为把 $\boldsymbol b$ 的相反向量加到 $\boldsymbol a$ 上："
+            "\n\n"
+            r"$$\boldsymbol a-\boldsymbol b=\boldsymbol a+(-\boldsymbol b).$$"
+        ),
+        "formula": r"\boldsymbol a-\boldsymbol b=(x_1-x_2,\,y_1-y_2)",
+        "derivation": [],
+        "geometric_meaning": (
+            r"将 $\boldsymbol a$、$\boldsymbol b$ 的起点放在同一点，"
+            r"$\boldsymbol a-\boldsymbol b$ 的箭头从 $\boldsymbol b$ 的终点指向 $\boldsymbol a$ 的终点。"
+            "\n\n"
+            r"案例一用 $\boldsymbol a=(3,1)$、$\boldsymbol b=(1,2)$ 核验这一终点关系。"
+        ),
+        "worked_examples": [{
+            "id": "example.subtraction.endpoints",
+            "title": "案例一：终点间的位移",
+            "kind": "vector_addition",
+            # The checked operation is a + (-b); the displayed calculation
+            # names -b explicitly so the operands and result remain exact.
+            "given": [[3, 1], [-1, -2]],
+            "calculation": [
+                r"$$\boldsymbol a=(3,1),\qquad \boldsymbol b=(1,2),\qquad -\boldsymbol b=(-1,-2)$$",
+                r"$$\boldsymbol a-\boldsymbol b=\boldsymbol a+(-\boldsymbol b)=(3,1)+(-1,-2)=(2,-1)$$",
+                r"$$\boldsymbol b+(\boldsymbol a-\boldsymbol b)=(1,2)+(2,-1)=(3,1)=\boldsymbol a$$",
+            ],
+            "result": [2.0, -1.0],
+            "checks": [{"name": "sum", "expected": [2.0, -1.0], "tolerance": 1e-9}],
+            "claim_refs": claim_refs,
+        }],
+        "symbol_roles": {"a": "vector_a", "b": "vector_b", "r": "result"},
+    })
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+
+    visual.update({
+        "scene_kind": "2d",
+        "entities": [
+            {"id": "a", "kind": "vector", "dimension": 2, "value": [3, 1], "role": "vector_a", "label": "a", "claim_refs": claim_refs},
+            {"id": "b", "kind": "vector", "dimension": 2, "value": [1, 2], "role": "vector_b", "label": "b", "claim_refs": claim_refs},
+            {"id": "r", "kind": "vector", "dimension": 2, "value": [2, -1], "role": "result", "label": "a-b", "claim_refs": claim_refs},
+        ],
+        # The relation endpoints are deliberately b then a: the compiler
+        # draws the difference arrow from b's endpoint to a's endpoint.
+        "relations": [{
+            "id": "rel.subtraction.endpoints", "kind": "difference",
+            "source_ref": "b", "target_ref": "a", "parameters": {}, "claim_refs": claim_refs,
+        }],
+        "stages": [{
+            "id": "stage.subtraction.endpoints", "title": "案例一：终点间的位移", "caption": "",
+            "layout": "overlay", "input_entity_refs": ["a", "b"], "output_entity_refs": [],
+            "relation_refs": ["rel.subtraction.endpoints"], "expected_invariants": ["b plus difference equals a"],
+        }],
+    })
+    explanation["sections"] = [
+        {"id": section_id, "title": section_id, "text": "", "claim_refs": claim_refs}
+        for section_id in ("definition", "formula", "worked_examples", "geometric_meaning")
+    ]
+    explanation["case_layout"] = {
+        "default_pane_count": 1,
+        "cases": [{
+            "id": "case.subtraction.endpoints", "topic_id": "ch01.ops.subtraction",
+            "example_ref": "example.subtraction.endpoints", "claim_refs": claim_refs,
+            "stage_refs": ["stage.subtraction.endpoints"], "purpose": "案例一：终点间的位移",
+        }],
+    }
+
+
+def _refine_vector_scalar(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    """Present subsection 1.2.3 with the four scalar effects listed in lecture."""
+
+    claim_refs = ["claim.ch01.ops.scalar"]
+    explanation.update({
+        "title": "向量数乘与共线",
+        "summary": "数乘按对应分量缩放向量；非零数乘结果与原向量共线。",
+        "definition": (
+            r"设 $k$ 是实数，$\boldsymbol a=(x,y)$ 是二维向量。数乘定义为"
+            "\n\n"
+            r"$$k\boldsymbol a=(kx,ky).$$"
+            "\n\n"
+            r"若存在实数 $k$ 使 $\boldsymbol b=k\boldsymbol a$，则称 $\boldsymbol a$ 与 $\boldsymbol b$ 共线。"
+        ),
+        "formula": r"\lvert k\boldsymbol a\rvert=\lvert k\rvert\,\lvert\boldsymbol a\rvert",
+        "derivation": [],
+        "geometric_meaning": (
+            r"数乘后向量的长度变为原来的 $\lvert k\rvert$ 倍；当 $k>0$ 时方向不变，"
+            r"当 $k<0$ 时方向反向。由于 $k\boldsymbol a$ 是 $\boldsymbol a$ 的实数倍，"
+            r"两者的箭头始终落在同一直线上。下面四个案例分别对应讲义列出的四种 $k$ 值情形。"
+        ),
+        "worked_examples": [],
+        "symbol_roles": {"k": "scalar", "a": "vector_a", "ka": "result"},
+    })
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+
+    examples = [
+        {
+            "id": "example.scalar.stretch", "title": "案例一：k 大于 1 时拉伸",
+            "kind": "scalar_multiple", "given": [2, [1, 2]], "result": [2, 4],
+            "calculation": [r"$$\boldsymbol a=(1,2),\qquad k=2$$", r"$$2\boldsymbol a=(2,4)$$"],
+        },
+        {
+            "id": "example.scalar.compress", "title": "案例二：k 在 0 与 1 之间时压缩",
+            "kind": "scalar_multiple", "given": [0.5, [2, 4]], "result": [1, 2],
+            "calculation": [r"$$\boldsymbol a=(2,4),\qquad k=\frac12$$", r"$$\frac12\boldsymbol a=(1,2)$$"],
+        },
+        {
+            "id": "example.scalar.reverse", "title": "案例三：k 等于 −1 时反向",
+            "kind": "scalar_multiple", "given": [-1, [1, 2]], "result": [-1, -2],
+            "calculation": [r"$$\boldsymbol a=(1,2),\qquad k=-1$$", r"$$-\boldsymbol a=(-1,-2)$$"],
+        },
+        {
+            "id": "example.scalar.reverse-stretch", "title": "案例四：k 小于 0 时反向并缩放",
+            "kind": "scalar_multiple", "given": [-2, [1, -1]], "result": [-2, 2],
+            "calculation": [r"$$\boldsymbol a=(1,-1),\qquad k=-2$$", r"$$-2\boldsymbol a=(-2,2)$$"],
+        },
+    ]
+    entities: list[dict[str, Any]] = []
+    relations: list[dict[str, Any]] = []
+    stages: list[dict[str, Any]] = []
+    cases: list[dict[str, Any]] = []
+    for index, example in enumerate(examples, start=1):
+        scalar = float(example["given"][0])
+        vector = list(example["given"][1])
+        result = list(example["result"])
+        source_id, result_id = f"scalar_{index}_a", f"scalar_{index}_ka"
+        entities.extend([
+            {"id": source_id, "kind": "vector", "dimension": 2, "value": vector, "role": "vector_a", "label": "a", "claim_refs": claim_refs},
+            {"id": result_id, "kind": "vector", "dimension": 2, "value": result, "role": "result", "label": f"{scalar:g}a", "claim_refs": claim_refs},
+        ])
+        relation_id = f"rel.scalar.{index}"
+        relations.append({"id": relation_id, "kind": "scalar_multiple", "source_ref": source_id, "target_ref": result_id, "parameters": {"scalar": scalar}, "claim_refs": claim_refs})
+        stage_id = f"stage.scalar.{index}"
+        stages.append({
+            "id": stage_id, "title": str(example["title"]), "caption": "", "layout": "overlay",
+            "input_entity_refs": [source_id, result_id], "output_entity_refs": [], "relation_refs": [relation_id],
+            "expected_invariants": [f"scalar effect {index}"],
+        })
+        example["checks"] = [{"name": "scalar_multiple", "expected": result, "tolerance": 1e-9}]
+        example["claim_refs"] = claim_refs
+        cases.append({
+            "id": f"case.scalar.{index}", "topic_id": "ch01.ops.scalar", "example_ref": str(example["id"]),
+            "claim_refs": claim_refs, "stage_refs": [stage_id], "purpose": str(example["title"]),
+        })
+    explanation["worked_examples"] = examples
+    visual.update({"scene_kind": "2d", "entities": entities, "relations": relations, "stages": stages})
+    explanation["sections"] = [
+        {"id": section_id, "title": section_id, "text": "", "claim_refs": claim_refs}
+        for section_id in ("definition", "formula", "worked_examples", "geometric_meaning")
+    ]
+    explanation["case_layout"] = {"default_pane_count": 1, "cases": cases}
+
+
+def _set_case_explanation(explanation: dict[str, Any], *, title: str, summary: str, definition: str,
+                          formula: str, geometry: str, examples: list[dict[str, Any]],
+                          claim_refs: list[str], section_ids: tuple[str, ...] = ("definition", "formula", "worked_examples", "geometric_meaning")) -> None:
+    explanation.update({"title": title, "summary": summary, "definition": definition, "formula": formula,
+                        "derivation": [], "geometric_meaning": geometry, "worked_examples": examples})
+    for key in ("intuition", "connections", "transfer_note", "conclusion", "read_guide", "analogy_boundary", "invariants", "pitfalls"):
+        explanation.pop(key, None)
+    explanation["sections"] = [{"id": item, "title": item, "text": "", "claim_refs": claim_refs} for item in section_ids]
+
+
+def _refine_linear_combination(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    claim_refs = ["claim.ch01.ops.linear-combination"]
+    examples = [{
+        "id": "example.linear-combination.standard-basis", "title": "案例一：标准基组合", "kind": "vector_addition",
+        "given": [[2, 0], [0, 3]], "result": [2, 3],
+        "calculation": [r"$$\boldsymbol e_1=(1,0),\qquad \boldsymbol e_2=(0,1),\qquad \alpha_1=2,\ \alpha_2=3$$",
+                        r"$$2\boldsymbol e_1+3\boldsymbol e_2=2(1,0)+3(0,1)=(2,3)$$"],
+        "checks": [{"name": "sum", "expected": [2, 3], "tolerance": 1e-9}], "claim_refs": claim_refs,
+    }]
+    _set_case_explanation(
+        explanation, title="线性组合", summary="线性组合把向量的数乘与加法合并为一个表达式。",
+        definition=r"给定向量 $\boldsymbol v_1,\ldots,\boldsymbol v_n$ 和标量 $\alpha_1,\ldots,\alpha_n$，表达式 $\alpha_1\boldsymbol v_1+\cdots+\alpha_n\boldsymbol v_n$ 称为这些向量的一个线性组合；$\alpha_i$ 称为系数。",
+        formula=r"\alpha_1\boldsymbol v_1+\alpha_2\boldsymbol v_2+\cdots+\alpha_n\boldsymbol v_n",
+        geometry=r"在二维标准基 $\boldsymbol e_1,\boldsymbol e_2$ 下，系数分别给出沿两个坐标轴方向的分量；案例一中系数 $2,3$ 确定终点 $(2,3)$。",
+        examples=examples, claim_refs=claim_refs)
+    explanation["symbol_roles"] = {"v_1": "vector_a", "v_2": "vector_b", "alpha_1": "scalar", "alpha_2": "scalar"}
+    visual.update({"scene_kind": "2d", "entities": [
+        {"id": "e1_scaled", "kind": "vector", "dimension": 2, "value": [2, 0], "role": "vector_a", "label": "2e₁", "claim_refs": claim_refs},
+        {"id": "e2_scaled", "kind": "vector", "dimension": 2, "value": [0, 3], "role": "vector_b", "label": "3e₂", "claim_refs": claim_refs},
+        {"id": "combination", "kind": "vector", "dimension": 2, "value": [2, 3], "role": "result", "label": "2e₁+3e₂", "claim_refs": claim_refs},
+    ], "relations": [{"id": "rel.linear-combination.result", "kind": "invariant", "source_ref": "e1_scaled", "target_ref": "combination", "parameters": {}, "claim_refs": claim_refs}],
+    "stages": [{"id": "stage.linear-combination.standard-basis", "title": "案例一：标准基组合", "caption": "", "layout": "overlay", "input_entity_refs": ["e1_scaled", "e2_scaled"], "output_entity_refs": ["combination"], "relation_refs": ["rel.linear-combination.result"], "expected_invariants": ["coefficient components"]}]})
+    explanation["case_layout"] = {"default_pane_count": 1, "cases": [{"id": "case.linear-combination.standard-basis", "topic_id": "ch01.ops.linear-combination", "example_ref": examples[0]["id"], "claim_refs": claim_refs, "stage_refs": ["stage.linear-combination.standard-basis"], "purpose": "案例一：标准基组合"}]}
+
+
+def _refine_velocity_examples(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    claim_refs = ["claim.ch01.ops.velocity"]
+    examples = [
+        {"id": "example.velocity.understanding", "title": "案例一：理解层的数乘", "kind": "scalar_multiple", "given": [2, [1, 0]], "result": [2, 0], "calculation": [r"$$\boldsymbol a=(1,0),\qquad 2\boldsymbol a=(2,0)$$"], "checks": [{"name": "scalar_multiple", "expected": [2, 0], "tolerance": 1e-9}], "claim_refs": claim_refs},
+        {"id": "example.velocity.calculation", "title": "案例二：计算层的加减", "kind": "vector_addition", "given": [[3, 1], [1, 2]], "result": [4, 3], "calculation": [r"$$\boldsymbol a=(3,1),\qquad \boldsymbol b=(1,2)$$", r"$$\boldsymbol a+\boldsymbol b=(4,3)$$"], "checks": [{"name": "sum", "expected": [4, 3], "tolerance": 1e-9}], "claim_refs": claim_refs},
+        {"id": "example.velocity.application", "title": "案例三：船与水流的速度合成", "kind": "vector_addition", "given": [[10, 0], [0, 5]], "result": [10, 5], "calculation": [r"$$\boldsymbol v_1=(10,0),\qquad \boldsymbol v_2=(0,5)$$", r"$$\boldsymbol v=\boldsymbol v_1+\boldsymbol v_2=(10,5)$$", r"$$\lvert\boldsymbol v\rvert=\sqrt{10^2+5^2}=\sqrt{125}\approx11.18$$", r"$$\tan\theta=\frac{5}{10},\qquad \theta\approx26.6^\circ$$"], "checks": [{"name": "sum", "expected": [10, 5], "tolerance": 1e-9}], "claim_refs": claim_refs},
+    ]
+    _set_case_explanation(explanation, title="速度合成的几何表示", summary="分层例题依次展示数乘、向量加法和速度合成。", definition=r"速度是向量；相对速度与参考系速度的合成按向量加法进行。", formula=r"\boldsymbol v_{\mathrm{绝对}}=\boldsymbol v_{\mathrm{相对}}+\boldsymbol v_{\mathrm{参考系}}", geometry=r"速度向量首尾相接时，从第一个起点指向第二个终点的箭头表示合成速度；案例三给出船速与水流速度的二维合成。", examples=examples, claim_refs=claim_refs)
+    explanation["symbol_roles"] = {"v_1": "vector_a", "v_2": "vector_b"}
+    visual.update({"scene_kind": "2d", "entities": [
+        {"id": "vel1_a", "kind": "vector", "dimension": 2, "value": [1, 0], "role": "vector_a", "label": "a", "claim_refs": claim_refs}, {"id": "vel1_r", "kind": "vector", "dimension": 2, "value": [2, 0], "role": "result", "label": "2a", "claim_refs": claim_refs},
+        {"id": "vel2_a", "kind": "vector", "dimension": 2, "value": [3, 1], "role": "vector_a", "label": "a", "claim_refs": claim_refs}, {"id": "vel2_b", "kind": "vector", "dimension": 2, "value": [1, 2], "role": "vector_b", "label": "b", "claim_refs": claim_refs}, {"id": "vel2_r", "kind": "vector", "dimension": 2, "value": [4, 3], "role": "result", "label": "a+b", "claim_refs": claim_refs},
+        {"id": "vel3_a", "kind": "vector", "dimension": 2, "value": [10, 0], "role": "vector_a", "label": "v₁", "claim_refs": claim_refs}, {"id": "vel3_b", "kind": "vector", "dimension": 2, "value": [0, 5], "role": "vector_b", "label": "v₂", "claim_refs": claim_refs}, {"id": "vel3_r", "kind": "vector", "dimension": 2, "value": [10, 5], "role": "result", "label": "v", "claim_refs": claim_refs},
+    ], "relations": [{"id": f"rel.velocity.{i}", "kind": "invariant", "source_ref": src, "target_ref": dst, "parameters": {}, "claim_refs": claim_refs} for i, (src, dst) in enumerate((("vel1_a", "vel1_r"), ("vel2_a", "vel2_r"), ("vel3_a", "vel3_r")), 1)], "stages": [
+        {"id": "stage.velocity.1", "title": examples[0]["title"], "caption": "", "layout": "overlay", "input_entity_refs": ["vel1_a", "vel1_r"], "output_entity_refs": [], "relation_refs": ["rel.velocity.1"], "expected_invariants": ["scalar case"]},
+        {"id": "stage.velocity.2", "title": examples[1]["title"], "caption": "", "layout": "overlay", "input_entity_refs": ["vel2_a", "vel2_b", "vel2_r"], "output_entity_refs": [], "relation_refs": ["rel.velocity.2"], "expected_invariants": ["addition case"]},
+        {"id": "stage.velocity.3", "title": examples[2]["title"], "caption": "", "layout": "overlay", "input_entity_refs": ["vel3_a", "vel3_b", "vel3_r"], "output_entity_refs": [], "relation_refs": ["rel.velocity.3"], "expected_invariants": ["velocity composition"]},
+    ]})
+    explanation["case_layout"] = {"default_pane_count": 1, "cases": [{"id": f"case.velocity.{i}", "topic_id": "ch01.ops.velocity", "example_ref": examples[i-1]["id"], "claim_refs": claim_refs, "stage_refs": [f"stage.velocity.{i}"], "purpose": examples[i-1]["title"]} for i in range(1, 4)]}
+
+
+def _refine_cross_product(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    claim_refs = ["claim.ch01.ops.cross-product"]
+    examples = [
+        {"id": "example.cross-product.compute", "title": "案例一：代数计算", "kind": "cross_product", "given": [[1, 2, 3], [4, 5, 6]], "result": [-3, 6, -3], "calculation": [r"$$\boldsymbol a=(1,2,3),\qquad \boldsymbol b=(4,5,6)$$", r"$$\boldsymbol a\times\boldsymbol b=(-3,6,-3)$$"], "checks": [{"name": "cross_product", "expected": [-3, 6, -3], "tolerance": 1e-9}], "claim_refs": claim_refs},
+        {"id": "example.cross-product.orthogonal", "title": "案例二：正交验证", "kind": "inner_product", "given": [[1, 2, 3], [-3, 6, -3]], "result": 0.0, "calculation": [r"$$\boldsymbol a\cdot(\boldsymbol a\times\boldsymbol b)=-3+12-9=0$$"], "checks": [{"name": "dot", "expected": 0.0, "tolerance": 1e-9}], "claim_refs": claim_refs},
+        {"id": "example.cross-product.basis", "title": "案例三：标准基方向", "kind": "cross_product", "given": [[1, 0, 0], [0, 1, 0]], "result": [0, 0, 1], "calculation": [r"$$\boldsymbol e_1\times\boldsymbol e_2=\boldsymbol e_3$$", r"$$\lvert\boldsymbol e_1\times\boldsymbol e_2\rvert=1$$"], "checks": [{"name": "cross_product", "expected": [0, 0, 1], "tolerance": 1e-9}], "claim_refs": claim_refs},
+    ]
+    _set_case_explanation(explanation, title="叉积的三维旋转方向", summary="叉积同时给出平行四边形面积和垂直方向。", definition=r"设 $\boldsymbol a,\boldsymbol b\in\mathbb R^3$，叉积 $\boldsymbol a\times\boldsymbol b$ 垂直于两向量所在平面，方向由右手定则确定。", formula=r"\boldsymbol a\times\boldsymbol b=(a_2b_3-a_3b_2,\,a_3b_1-a_1b_3,\,a_1b_2-a_2b_1)", geometry=r"$\lvert\boldsymbol a\times\boldsymbol b\rvert$ 等于以 $\boldsymbol a,\boldsymbol b$ 为邻边的平行四边形面积；结果方向垂直于它们所在平面。", examples=examples, claim_refs=claim_refs)
+    explanation["symbol_roles"] = {"a": "vector_a", "b": "vector_b"}
+    entities: list[dict[str, Any]] = []; relations: list[dict[str, Any]] = []; stages: list[dict[str, Any]] = []; cases: list[dict[str, Any]] = []
+    vectors = [([[1,2,3],[4,5,6]], [-3,6,-3]), ([[1,2,3],[-3,6,-3]], [-3,6,-3]), ([[1,0,0],[0,1,0]], [0,0,1])]
+    for i, (pair, result) in enumerate(vectors, 1):
+        ids = [f"cross_{i}_a", f"cross_{i}_b", f"cross_{i}_r"]
+        entities.extend([{"id": ids[0], "kind": "vector", "dimension": 3, "value": pair[0], "role": "vector_a", "label": "a", "claim_refs": claim_refs}, {"id": ids[1], "kind": "vector", "dimension": 3, "value": pair[1], "role": "vector_b", "label": "b", "claim_refs": claim_refs}, {"id": ids[2], "kind": "vector", "dimension": 3, "value": result, "role": "result", "label": "a×b", "claim_refs": claim_refs}])
+        rid = f"rel.cross-product.{i}"
+        relations.append({"id": rid, "kind": "orientation", "source_ref": ids[0], "target_ref": ids[1], "parameters": {}, "claim_refs": claim_refs})
+        orth_id = f"{rid}.orthogonal"
+        relations.append({"id": orth_id, "kind": "orthogonal_to", "source_ref": ids[2], "target_ref": ids[0], "parameters": {}, "claim_refs": claim_refs})
+        sid = f"stage.cross-product.{i}"
+        stages.append({"id": sid, "title": examples[i-1]["title"], "caption": "", "layout": "overlay", "input_entity_refs": ids, "output_entity_refs": [], "relation_refs": [rid, orth_id], "expected_invariants": [f"cross case {i}"]})
+        cases.append({"id": f"case.cross-product.{i}", "topic_id": "ch01.ops.cross-product", "example_ref": examples[i-1]["id"], "claim_refs": claim_refs, "stage_refs": [sid], "purpose": examples[i-1]["title"]})
+    visual.update({"scene_kind": "3d", "entities": entities, "relations": relations, "stages": stages}); explanation["case_layout"] = {"default_pane_count": 1, "cases": cases}
+
+
+def _refine_scalar_triple(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    claim_refs = ["claim.ch01.ops.scalar-triple"]
+    examples = [
+        {"id": "example.scalar-triple.unit", "title": "案例一：单位正交棱", "kind": "oriented_volume", "given": [[1,0,0],[0,1,0],[0,0,1]], "result": 1.0, "calculation": [r"$$[\boldsymbol e_1\,\boldsymbol e_2\,\boldsymbol e_3]=\boldsymbol e_1\cdot(\boldsymbol e_2\times\boldsymbol e_3)=1$$"], "checks": [{"name": "volume", "expected": 1.0, "tolerance": 1e-9}], "claim_refs": claim_refs},
+        {"id": "example.scalar-triple.box", "title": "案例二：长方体体积", "kind": "oriented_volume", "given": [[1,0,0],[0,2,0],[0,0,3]], "result": 6.0, "calculation": [r"$$[\boldsymbol a\,\boldsymbol b\,\boldsymbol c]=1\times2\times3=6$$"], "checks": [{"name": "volume", "expected": 6.0, "tolerance": 1e-9}], "claim_refs": claim_refs},
+        {"id": "example.scalar-triple.coplanar", "title": "案例三：共面退化", "kind": "oriented_volume", "given": [[1,0,0],[0,1,0],[1,1,0]], "result": 0.0, "calculation": [r"$$[\boldsymbol a\,\boldsymbol b\,\boldsymbol c]=0$$", r"$$\boldsymbol a,\boldsymbol b,\boldsymbol c\text{ 共面}$$"], "checks": [{"name": "volume", "expected": 0.0, "tolerance": 1e-9}], "claim_refs": claim_refs},
+    ]
+    _set_case_explanation(explanation, title="混合积与平行六面体体积", summary="混合积用一个内积记录三维平行六面体的有向体积。", definition=r"三个三维向量的混合积定义为 $[\boldsymbol a\,\boldsymbol b\,\boldsymbol c]=\boldsymbol a\cdot(\boldsymbol b\times\boldsymbol c)$。", formula=r"[\boldsymbol a\,\boldsymbol b\,\boldsymbol c]=\det\begin{pmatrix}a_1&b_1&c_1\\a_2&b_2&c_2\\a_3&b_3&c_3\end{pmatrix}", geometry=r"混合积绝对值等于三条向量为棱的平行六面体体积；正负记录定向，等于零表示三向量共面。", examples=examples, claim_refs=claim_refs)
+    explanation["symbol_roles"] = {"a": "vector_a", "b": "vector_b", "c": "vector_b"}
+    entities: list[dict[str, Any]] = []; relations: list[dict[str, Any]] = []; stages: list[dict[str, Any]] = []; cases: list[dict[str, Any]] = []
+    triples = [([[1,0,0],[0,1,0],[0,0,1]], 1), ([[1,0,0],[0,2,0],[0,0,3]], 6), ([[1,0,0],[0,1,0],[1,1,0]], 0)]
+    for i, (triple, result) in enumerate(triples, 1):
+        ids = [f"triple_{i}_{letter}" for letter in "abc"]
+        for ent_id, value, label, role in zip(ids, triple, ("a", "b", "c"), ("vector_a", "vector_b", "vector_c")):
+            entities.append({"id": ent_id, "kind": "vector", "dimension": 3, "value": value, "role": role, "label": label, "claim_refs": claim_refs})
+        rid = f"rel.scalar-triple.{i}"; relations.append({"id": rid, "kind": "invariant", "source_ref": ids[0], "target_ref": ids[1], "parameters": {}, "claim_refs": claim_refs}); sid = f"stage.scalar-triple.{i}"; stages.append({"id": sid, "title": examples[i-1]["title"], "caption": "", "layout": "overlay", "input_entity_refs": ids, "output_entity_refs": [], "relation_refs": [rid], "expected_invariants": [f"volume {result}"]}); cases.append({"id": f"case.scalar-triple.{i}", "topic_id": "ch01.ops.scalar-triple", "example_ref": examples[i-1]["id"], "claim_refs": claim_refs, "stage_refs": [sid], "purpose": examples[i-1]["title"]})
+    visual.update({"scene_kind": "3d", "entities": entities, "relations": relations, "stages": stages}); explanation["case_layout"] = {"default_pane_count": 1, "cases": cases}
+
+
+def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    """Apply lecture-specific, compact structures to the remaining Chapter 1 topics."""
+
+    claim_refs = [f"claim.{topic_id}"]
+    definitions: dict[str, tuple[str, str, str, str]] = {
+        "ch01.inner.equivalence": (
+            "内积两种定义的几何等价", "坐标计算与长度、夹角公式表示同一个内积。",
+            r"设 $\boldsymbol a=(a_1,a_2)$、$\boldsymbol b=(b_1,b_2)$，两者夹角为 $\theta$。",
+            r"\boldsymbol a\cdot\boldsymbol b=a_1b_1+a_2b_2=\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert\cos\theta",
+        ),
+        "ch01.inner.definitions": (
+            "1.3.1 内积的两种定义", "内积既可由夹角定义，也可按坐标分量计算。",
+            r"设 $\boldsymbol a,\boldsymbol b$ 为非零向量，夹角为 $\theta$；在二维坐标中写作 $\boldsymbol a=(a_1,a_2)$、$\boldsymbol b=(b_1,b_2)$。",
+            r"\boldsymbol a\cdot\boldsymbol b=\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert\cos\theta=a_1b_1+a_2b_2",
+        ),
+        "ch01.inner.applications": (
+            "内积的长度、正交与夹角应用", "内积可计算长度、判定正交并求两个非零向量的夹角。",
+            r"对向量 $\boldsymbol a,\boldsymbol b$，长度由自身内积确定；当内积为零时两向量正交。",
+            r"\lvert\boldsymbol a\rvert=\sqrt{\boldsymbol a\cdot\boldsymbol a},\qquad \boldsymbol a\cdot\boldsymbol b=0\Longleftrightarrow\boldsymbol a\perp\boldsymbol b,\qquad \cos\theta=\frac{\boldsymbol a\cdot\boldsymbol b}{\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert}",
+        ),
+        "ch01.inner.cauchy-schwarz": (
+            "柯西—施瓦茨不等式", "内积的绝对值不超过两个向量长度的乘积。",
+            r"对任意向量 $\boldsymbol a,\boldsymbol b$，内积的绝对值有一个由长度给出的上界。",
+            r"\lvert\boldsymbol a\cdot\boldsymbol b\rvert\leq\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert",
+        ),
+        "ch01.inner.examples": (
+            "内积几何分层例题", "由内积的符号和数值判断夹角关系，并计算长度与功。",
+            r"内积按对应分量相乘后求和；非零向量的夹角由内积与长度确定。",
+            r"\boldsymbol a\cdot\boldsymbol b=a_1b_1+a_2b_2,\qquad \cos\theta=\frac{\boldsymbol a\cdot\boldsymbol b}{\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert}",
+        ),
+        "ch01.projection.definition": (
+            "投影、垂足与残差", "正交投影沿目标方向，残差与目标方向正交。",
+            r"设 $\boldsymbol u\neq\boldsymbol0$。$\boldsymbol v$ 在 $\boldsymbol u$ 所在直线上的投影记为 $\operatorname{proj}_{\boldsymbol u}\boldsymbol v$，并满足 $\boldsymbol v-\operatorname{proj}_{\boldsymbol u}\boldsymbol v\perp\boldsymbol u$。",
+            r"\operatorname{proj}_{\boldsymbol u}\boldsymbol v=\frac{\boldsymbol v\cdot\boldsymbol u}{\boldsymbol u\cdot\boldsymbol u}\boldsymbol u,\qquad \boldsymbol v=\boldsymbol p+\boldsymbol r",
+        ),
+        "ch01.projection.properties": (
+            "投影的可加性与齐次性", "固定目标方向的正交投影满足加性和齐次性。",
+            r"固定非零方向 $\boldsymbol u$，对向量和数乘分别考察同一投影算子。",
+            r"\operatorname{proj}_{\boldsymbol u}(\boldsymbol v_1+\boldsymbol v_2)=\operatorname{proj}_{\boldsymbol u}\boldsymbol v_1+\operatorname{proj}_{\boldsymbol u}\boldsymbol v_2,\qquad \operatorname{proj}_{\boldsymbol u}(k\boldsymbol v)=k\operatorname{proj}_{\boldsymbol u}\boldsymbol v",
+        ),
+        "ch01.projection.force": (
+            "坐标轴与斜面上的力分解", "力沿指定方向的有效分量由正交投影给出。",
+            r"设力向量为 $\boldsymbol F$，目标方向为非零向量 $\boldsymbol u$；沿方向分量为投影，垂直分量为残差。",
+            r"\boldsymbol F=\boldsymbol F_{\parallel}+\boldsymbol F_{\perp},\qquad \boldsymbol F_{\parallel}=\operatorname{proj}_{\boldsymbol u}\boldsymbol F",
+        ),
+        "ch01.proof.method": (
+            "几何问题转向量的四步方法", "向量证明依次完成对象表示、方程建立、代数运算和几何回译。",
+            r"选定原点后，用位置向量表示点，再把几何条件写成向量方程。",
+            r"\text{几何关系}\longrightarrow\text{向量方程}\longrightarrow\text{代数整理}\longrightarrow\text{几何结论}",
+        ),
+        "ch01.proof.midline": (
+            "三角形中位线定理", "两边中点连线平行于第三边，长度为第三边的一半。",
+            r"取 $A$ 为原点，设 $\overrightarrow{AB}=\boldsymbol a$、$\overrightarrow{AC}=\boldsymbol b$；$D,E$ 分别为 $AB,AC$ 的中点。",
+            r"\overrightarrow{DE}=\frac12(\boldsymbol b-\boldsymbol a)=\frac12\overrightarrow{BC}",
+        ),
+        "ch01.proof.centroid": (
+            "三角形重心定理", "三条中线交于一点，重心位置向量是三个顶点位置向量的平均。",
+            r"取 $A$ 为原点，设 $\overrightarrow{AB}=\boldsymbol a$、$\overrightarrow{AC}=\boldsymbol b$。",
+            r"\overrightarrow{AG}=\frac13(\boldsymbol a+\boldsymbol b)",
+        ),
+        "ch01.proof.parallelogram-diagonals": (
+            "平行四边形对角线互相平分", "两条对角线的中点位置向量相同。",
+            r"取 $A$ 为原点，设 $\overrightarrow{AB}=\boldsymbol a$、$\overrightarrow{AD}=\boldsymbol b$，则 $\overrightarrow{AC}=\boldsymbol a+\boldsymbol b$。",
+            r"\frac{\boldsymbol a+\boldsymbol b}{2}=\frac{\boldsymbol a+(\boldsymbol a+\boldsymbol b-\boldsymbol a)}{2}",
+        ),
+        "ch01.high-dimensional.analogy": (
+            "从二维、三维到 n 维的向量表示", "分量运算和长度公式可由二维、三维推广到 $\mathbb R^n$。",
+            r"$\mathbb R^n$ 中的向量是 $n$ 个有序实数组成的元素。",
+            r"\boldsymbol x=(x_1,\ldots,x_n),\qquad \lvert\boldsymbol x\rvert=\sqrt{x_1^2+\cdots+x_n^2},\qquad \boldsymbol a\cdot\boldsymbol b=\sum_{i=1}^n a_i b_i",
+        ),
+    }
+    title, summary, definition, formula = definitions[topic_id]
+    if topic_id == "ch01.inner.definitions":
+        definition = (
+            r"定义 1.10（内积 / 点积 — 几何定义） 设 $\boldsymbol a,\boldsymbol b$ 为两个向量，"
+            r"其夹角为 $\theta$（$0\leq\theta\leq\pi$），则："
+            "\n\n"
+            r"$$\boldsymbol a\cdot\boldsymbol b=\lvert\boldsymbol a\rvert\cdot\lvert\boldsymbol b\rvert\cdot\cos(\theta)$$"
+            "\n\n"
+            r"定义 1.11（内积 — 代数计算） 在 $\mathbb R^2$ 中，设 "
+            r"$\boldsymbol a=(a_1,a_2)$，$\boldsymbol b=(b_1,b_2)$，则："
+            "\n\n"
+            r"$$\boldsymbol a\cdot\boldsymbol b=a_1\cdot b_1+a_2\cdot b_2$$"
+            "\n\n"
+            r"两个定义是等价的（由余弦定理可证）。"
+        )
+        formula = r"\boldsymbol a\cdot\boldsymbol b=\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert\cos\theta=a_1b_1+a_2b_2"
+    derivations: dict[str, list[str]] = {
+        "ch01.inner.equivalence": [r"由余弦定理，$\lvert\boldsymbol a-\boldsymbol b\rvert^2=\lvert\boldsymbol a\rvert^2+\lvert\boldsymbol b\rvert^2-2\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert\cos\theta$。", r"按坐标展开同一左端，得 $\lvert\boldsymbol a-\boldsymbol b\rvert^2=\lvert\boldsymbol a\rvert^2+\lvert\boldsymbol b\rvert^2-2(a_1b_1+a_2b_2)$，比较两式即得公式。"],
+        "ch01.projection.definition": [r"设 $\boldsymbol p=\alpha\boldsymbol u$。由残差正交，$(\boldsymbol v-\alpha\boldsymbol u)\cdot\boldsymbol u=0$。", r"解得 $\alpha=\dfrac{\boldsymbol v\cdot\boldsymbol u}{\boldsymbol u\cdot\boldsymbol u}$，代回即得投影公式。"],
+        "ch01.inner.cauchy-schwarz": [r"对任意实数 $t$，有 $\lvert\boldsymbol a-t\boldsymbol b\rvert^2\geq0$。", r"展开为 $\lvert\boldsymbol b\rvert^2t^2-2(\boldsymbol a\cdot\boldsymbol b)t+\lvert\boldsymbol a\rvert^2$，其判别式不大于零，故 $(\boldsymbol a\cdot\boldsymbol b)^2\leq\lvert\boldsymbol a\rvert^2\lvert\boldsymbol b\rvert^2$。"],
+        "ch01.proof.midline": [r"$\overrightarrow{AD}=\frac12\boldsymbol a$、$\overrightarrow{AE}=\frac12\boldsymbol b$，所以 $\overrightarrow{DE}=\overrightarrow{AE}-\overrightarrow{AD}$。"],
+        "ch01.proof.centroid": [r"边 $BC$ 的中点位置向量为 $\frac12(\boldsymbol a+\boldsymbol b)$；取中线上的二比一分点，得到 $\overrightarrow{AG}=\frac13(\boldsymbol a+\boldsymbol b)$。"],
+        "ch01.proof.parallelogram-diagonals": [r"对角线 $AC$ 的中点为 $\frac12(\boldsymbol a+\boldsymbol b)$；对角线 $BD$ 的中点也化为同一向量。"],
+    }
+    examples_map: dict[str, list[dict[str, Any]]] = {
+        "ch01.inner.equivalence": [{"id": "example.inner.equivalence", "title": "案例一：两种定义给出同一数", "kind": "inner_product", "given": [[1, 2], [3, 4]], "result": 11.0, "calculation": [r"$$\boldsymbol a=(1,2),\qquad \boldsymbol b=(3,4)$$", r"$$\boldsymbol a\cdot\boldsymbol b=1\times3+2\times4=11$$"], "checks": [{"name": "dot", "expected": 11.0, "tolerance": 1e-9}]}],
+        "ch01.inner.definitions": [{"id": "example.inner.definition", "title": "案例一：坐标内积与夹角", "kind": "inner_product", "given": [[2, 0], [1, 1]], "result": 2.0, "calculation": [r"$$\boldsymbol a=(2,0),\qquad \boldsymbol b=(1,1)$$", r"$$\boldsymbol a\cdot\boldsymbol b=2$$"], "checks": [{"name": "dot", "expected": 2.0, "tolerance": 1e-9}]}],
+        "ch01.inner.applications": [{"id": "example.inner.length", "title": "案例一：由内积求长度", "kind": "inner_product", "given": [[3, 4], [3, 4]], "result": 25.0, "calculation": [r"$$\lvert\boldsymbol a\rvert=\sqrt{\boldsymbol a\cdot\boldsymbol a}=\sqrt{25}=5$$"], "checks": [{"name": "dot", "expected": 25.0, "tolerance": 1e-9}]}, {"id": "example.inner.orthogonal", "title": "案例二：正交判定", "kind": "inner_product", "given": [[2, 0], [0, 3]], "result": 0.0, "calculation": [r"$$\boldsymbol a\cdot\boldsymbol b=0\Longrightarrow\boldsymbol a\perp\boldsymbol b$$"], "checks": [{"name": "dot", "expected": 0.0, "tolerance": 1e-9}]}, {"id": "example.inner.angle", "title": "案例三：由内积求夹角", "kind": "inner_product", "given": [[1, 0], [1, 1]], "result": 1.0, "calculation": [r"$$\boldsymbol a\cdot\boldsymbol b=1,\qquad \cos\theta=\frac1{\sqrt2},\qquad \theta=45^\circ$$"], "checks": [{"name": "dot", "expected": 1.0, "tolerance": 1e-9}]}],
+        "ch01.inner.cauchy-schwarz": [{"id": "example.cauchy.bound", "title": "案例一：投影界", "kind": "inner_product", "given": [[3, 4], [1, 0]], "result": 3.0, "calculation": [r"$$\lvert\boldsymbol a\cdot\boldsymbol b\rvert=3\leq5=\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert$$"], "checks": [{"name": "dot", "expected": 3.0, "tolerance": 1e-9}]}],
+        "ch01.inner.examples": [{"id": "example.inner.ex1", "title": "案例一：正交", "kind": "inner_product", "given": [[1, 0], [0, 1]], "result": 0.0, "calculation": [r"$$\boldsymbol a\cdot\boldsymbol b=0$$"], "checks": [{"name": "dot", "expected": 0.0, "tolerance": 1e-9}]}, {"id": "example.inner.ex2", "title": "案例二：向量长度", "kind": "inner_product", "given": [[3, 4], [3, 4]], "result": 25.0, "calculation": [r"$$\lvert\boldsymbol a\rvert=5$$"], "checks": [{"name": "dot", "expected": 25.0, "tolerance": 1e-9}]}, {"id": "example.inner.ex3", "title": "案例三：夹角", "kind": "inner_product", "given": [[1, 2], [3, 4]], "result": 11.0, "calculation": [r"$$\boldsymbol a\cdot\boldsymbol b=11$$"], "checks": [{"name": "dot", "expected": 11.0, "tolerance": 1e-9}]}, {"id": "example.inner.ex4", "title": "案例四：力做功", "kind": "inner_product", "given": [[3, 4], [6, 0]], "result": 18.0, "calculation": [r"$$W=\boldsymbol F\cdot\boldsymbol d=3\times6+4\times0=18\ \mathrm J$$"], "checks": [{"name": "dot", "expected": 18.0, "tolerance": 1e-9}]}],
+        "ch01.projection.definition": [{"id": "example.projection.definition", "title": "案例一：x 轴投影", "kind": "projection", "given": [[3, 4], [1, 0]], "result": [3.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(1,0)}(3,4)=(3,0),\qquad \boldsymbol r=(0,4)$$"], "checks": [{"name": "projection", "expected": [3.0, 0.0], "tolerance": 1e-9}]}],
+        "ch01.projection.properties": [{"id": "example.projection.add", "title": "案例一：投影的可加性", "kind": "projection", "given": [[3, 4], [1, 0]], "result": [3.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(1,0)}(3,4)=(3,0)$$"], "checks": [{"name": "projection", "expected": [3.0, 0.0], "tolerance": 1e-9}]}, {"id": "example.projection.homogeneous", "title": "案例二：投影的齐次性", "kind": "projection", "given": [[6, 8], [1, 0]], "result": [6.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(1,0)}(6,8)=(6,0)=2(3,0)$$"], "checks": [{"name": "projection", "expected": [6.0, 0.0], "tolerance": 1e-9}]}],
+        "ch01.projection.force": [{"id": "example.force.axis", "title": "案例一：坐标轴分解", "kind": "projection", "given": [[5, 0], [1, 0]], "result": [5.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(1,0)}(5,0)=(5,0)$$"], "checks": [{"name": "projection", "expected": [5.0, 0.0], "tolerance": 1e-9}]}, {"id": "example.force.zero", "title": "案例二：垂直方向分量", "kind": "projection", "given": [[5, 0], [0, 1]], "result": [0.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(0,1)}(5,0)=(0,0)$$"], "checks": [{"name": "projection", "expected": [0.0, 0.0], "tolerance": 1e-9}]}, {"id": "example.force.calc", "title": "案例三：计算层投影", "kind": "projection", "given": [[3, 4], [1, 0]], "result": [3.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(1,0)}(3,4)=(3,0)$$"], "checks": [{"name": "projection", "expected": [3.0, 0.0], "tolerance": 1e-9}]}, {"id": "example.force.slope", "title": "案例四：斜面方向有效分力", "kind": "projection", "given": [[10, 20], [3, 1]], "result": [15.0, 5.0], "calculation": [r"$$\operatorname{proj}_{(3,1)}(10,20)=(15,5)$$"], "checks": [{"name": "projection", "expected": [15.0, 5.0], "tolerance": 1e-9}]}],
+        "ch01.proof.method": [{"id": "example.proof.method", "title": "案例一：四步向量证明流程", "kind": "vector_addition", "given": [[2, 1], [1, 3]], "result": [3.0, 4.0], "calculation": [r"$$\boldsymbol a=(2,1),\qquad \boldsymbol b=(1,3),\qquad \boldsymbol a+\boldsymbol b=(3,4)$$"], "checks": [{"name": "sum", "expected": [3.0, 4.0], "tolerance": 1e-9}]}],
+        "ch01.proof.midline": [{"id": "example.proof.midline", "title": "案例一：中位线", "kind": "vector_addition", "given": [[2, 0], [0, 2]], "result": [2.0, 2.0], "calculation": [r"$$\overrightarrow{DE}=\frac12(\boldsymbol b-\boldsymbol a)=\frac12\overrightarrow{BC}$$"], "checks": [{"name": "sum", "expected": [2.0, 2.0], "tolerance": 1e-9}]}],
+        "ch01.proof.centroid": [{"id": "example.proof.centroid", "title": "案例一：三角形重心", "kind": "vector_addition", "given": [[1, 0], [0, 1]], "result": [1.0, 1.0], "calculation": [r"$$\overrightarrow{AG}=\frac13(\boldsymbol a+\boldsymbol b)$$"], "checks": [{"name": "sum", "expected": [1.0, 1.0], "tolerance": 1e-9}]}],
+        "ch01.proof.parallelogram-diagonals": [{"id": "example.proof.parallelogram", "title": "案例一：对角线中点", "kind": "vector_addition", "given": [[2, 1], [1, 3]], "result": [3.0, 4.0], "calculation": [r"$$M_{AC}=M_{BD}=\frac12(\boldsymbol a+\boldsymbol b)$$"], "checks": [{"name": "sum", "expected": [3.0, 4.0], "tolerance": 1e-9}]}],
+        "ch01.high-dimensional.analogy": [{"id": "example.high-dimensional.components", "title": "案例一：三维分量公式", "kind": "inner_product", "given": [[1, 2, 2], [1, 2, 2]], "result": 9.0, "calculation": [r"$$\boldsymbol v=(1,2,2),\qquad \lvert\boldsymbol v\rvert^2=1^2+2^2+2^2=9$$"], "checks": [{"name": "dot", "expected": 9.0, "tolerance": 1e-9}] }],
+    }
+    examples = examples_map[topic_id]
+    for example in examples:
+        example["claim_refs"] = claim_refs
+    geometry_map = {
+        "ch01.inner.equivalence": r"同一对向量的夹角、长度和坐标分量共同确定一个内积值；案例一中两种公式都得到 $11$。",
+        "ch01.inner.definitions": (
+            r"直观理解：内积本质上是“$\boldsymbol a$ 的长度 $\times$ $\boldsymbol b$ 在 $\boldsymbol a$ 方向上的投影长度”。"
+            "\n\n"
+            r"当两向量同向时，$\cos\theta=1$，内积取最大值 $=\lvert\boldsymbol a\rvert\cdot\lvert\boldsymbol b\rvert$；"
+            r"垂直时，$\cos\theta=0$，内积为 $0$；反向时，$\cos\theta=-1$，内积取最小值。"
+        ),
+        "ch01.inner.applications": r"内积的三个结果分别对应向量长度、垂直关系和夹角；案例一、二、三按此顺序展示。",
+        "ch01.inner.cauchy-schwarz": r"内积的绝对值不超过长度乘积，几何上表示带符号投影的绝对值不超过被投影向量的长度；案例一给出严格不等式。",
+        "ch01.inner.examples": r"内积为零表示直角，内积的数值可用于长度和夹角计算，力与位移的内积给出功；四个案例分别对应这些几何量。",
+        "ch01.projection.definition": r"投影向量沿目标方向，残差从原向量终点垂直落到目标直线；案例一中投影为 $(3,0)$、残差为 $(0,4)$。",
+        "ch01.projection.properties": r"固定方向的投影保持向量加法和数乘，因此投影后的分量可按相同线性规则组合；两个案例分别核验加性和齐次性。",
+        "ch01.projection.force": r"力向量分解为沿坐标轴或斜面方向的有效分量与正交分量；四个案例展示目标方向改变时投影的变化。",
+        "ch01.proof.method": r"几何对象先被表示为位置向量，再由向量方程表达关系；案例一把这四步落实到一个向量计算中。",
+        "ch01.proof.midline": r"中位线向量是第三边向量的一半，因此与第三边平行且长度减半；案例一对应 $\overrightarrow{DE}=\frac12\overrightarrow{BC}$。",
+        "ch01.proof.centroid": r"重心位于从顶点到对边中点的中线上，位置向量由三个顶点的平均关系确定；案例一给出该平均式。",
+        "ch01.proof.parallelogram-diagonals": r"两条对角线的中点具有相同的位置向量，因而对角线互相平分；案例一写出这两个中点的共同表达式。",
+        "ch01.high-dimensional.analogy": r"二维、三维中的分量、长度和内积公式保留同一代数形式；当维数为 $n$ 时，案例一用三维向量核验平方和公式。",
+    }
+    _set_case_explanation(explanation, title=title, summary=summary, definition=definition, formula=formula,
+                          geometry=geometry_map[topic_id],
+                          examples=examples, claim_refs=claim_refs)
+    if topic_id == "ch01.inner.definitions":
+        explanation["invariants"] = [
+            (
+                r"性质 1.1（交换律 / 对称性）: $\boldsymbol a\cdot\boldsymbol b=\boldsymbol b\cdot\boldsymbol a$。"
+                "\n\n"
+                r"证明: $\boldsymbol a\cdot\boldsymbol b=a_1b_1+a_2b_2=b_1a_1+b_2a_2=\boldsymbol b\cdot\boldsymbol a$。■"
+            ),
+            (
+                r"性质 1.2（分配律 / 双线性1）: $\boldsymbol a\cdot(\boldsymbol b+\boldsymbol c)=\boldsymbol a\cdot\boldsymbol b+\boldsymbol a\cdot\boldsymbol c$。"
+                "\n\n"
+                r"证明: $\boldsymbol a\cdot(\boldsymbol b+\boldsymbol c)=a_1(b_1+c_1)+a_2(b_2+c_2)=(a_1b_1+a_2b_2)+(a_1c_1+a_2c_2)=\boldsymbol a\cdot\boldsymbol b+\boldsymbol a\cdot\boldsymbol c$。■"
+            ),
+            (
+                r"性质 1.3（数乘结合律 / 双线性2）: $(k\cdot\boldsymbol a)\cdot\boldsymbol b=k\cdot(\boldsymbol a\cdot\boldsymbol b)=\boldsymbol a\cdot(k\cdot\boldsymbol b)$。"
+                "\n\n"
+                r"证明: $(k\boldsymbol a)\cdot\boldsymbol b=(ka_1)b_1+(ka_2)b_2=k(a_1b_1+a_2b_2)=k\cdot(\boldsymbol a\cdot\boldsymbol b)$。■"
+            ),
+            (
+                r"性质 1.4（正定性）: $\boldsymbol a\cdot\boldsymbol a\geq0$，且 $\boldsymbol a\cdot\boldsymbol a=0\Longleftrightarrow\boldsymbol a=\boldsymbol0$。"
+                "\n\n"
+                r"以上四条性质合称「内积是正定对称双线性型」。它们是所有内积空间（不限于 $\mathbb R^2$）的公理基础。"
+            ),
+            (
+                "角度与内积的对应关系：\n\n"
+                "| $\\theta$ | $\\cos\\theta$ | 内积值 | 几何关系 |\n"
+                "| --- | --- | --- | --- |\n"
+                "| $0^\\circ$ | $1$ | $\\boldsymbol a\\cdot\\boldsymbol b$ | 完全同向——“最像” |\n"
+                "| $90^\\circ$ | $0$ | $0$ | 正交——“完全不像” |\n"
+                "| $180^\\circ$ | $-1$ | $\\boldsymbol a\\cdot\\boldsymbol b$ | 完全反向 |"
+            ),
+        ]
+        explanation["sections"].append({"id": "invariants", "title": "invariants", "text": "", "claim_refs": claim_refs})
+    explanation["derivation"] = derivations.get(topic_id, [])
+    if explanation["derivation"]:
+        explanation["sections"].insert(2, {"id": "derivation", "title": "derivation", "text": "", "claim_refs": claim_refs})
+    explanation["symbol_roles"] = {"a": "vector_a", "b": "vector_b", "c": "vector_b", "v": "vector_a", "u": "direction", "p": "projection", "r": "residual", "k": "scalar"}
+    if topic_id == "ch01.high-dimensional.analogy":
+        explanation["symbol_roles"] = {"x": "vector_a", "a": "vector_a", "b": "vector_b"}
+
+    visual["scene_kind"] = "3d" if topic_id in {"ch01.high-dimensional.analogy"} else "2d"
+    entities: list[dict[str, Any]] = []
+    relations: list[dict[str, Any]] = []
+    stages: list[dict[str, Any]] = []
+    cases: list[dict[str, Any]] = []
+    for index, example in enumerate(examples, start=1):
+        suffix = str(index)
+        given = example["given"]
+        kind = str(example["kind"])
+        stage_id = f"stage.case.{topic_id}.{suffix}"
+        case_id = f"case.{topic_id}.{suffix}"
+        if kind == "projection":
+            vector, direction, result = list(given[0]), list(given[1]), list(example["result"])
+            ids = [f"case{suffix}_v", f"case{suffix}_u", f"case{suffix}_p", f"case{suffix}_H", f"case{suffix}_r"]
+            entities.extend([
+                {"id": ids[0], "kind": "vector", "dimension": 2, "value": vector, "role": "vector_a", "label": "v", "claim_refs": claim_refs},
+                {"id": ids[1], "kind": "vector", "dimension": 2, "value": direction, "role": "direction", "label": "u", "claim_refs": claim_refs},
+                {"id": ids[2], "kind": "vector", "dimension": 2, "value": result, "role": "projection", "label": "p", "claim_refs": claim_refs},
+                {"id": ids[3], "kind": "point", "dimension": 2, "value": result, "role": "foot", "label": "H", "claim_refs": claim_refs},
+                {"id": ids[4], "kind": "vector", "dimension": 2, "value": [vector[0]-result[0], vector[1]-result[1]], "role": "residual", "label": "r", "claim_refs": claim_refs},
+            ])
+            rid = f"rel.case.{topic_id}.{suffix}"
+            relations.extend([{"id": rid, "kind": "projects_to", "source_ref": ids[0], "target_ref": ids[1], "parameters": {}, "claim_refs": claim_refs}, {"id": f"{rid}.decompose", "kind": "decomposes_into", "source_ref": ids[0], "target_ref": ids[2], "parameters": {}, "claim_refs": claim_refs}, {"id": f"{rid}.orthogonal", "kind": "orthogonal_to", "source_ref": ids[4], "target_ref": ids[1], "parameters": {}, "claim_refs": claim_refs}])
+            stage_refs = [item["id"] for item in relations if str(item["id"]).startswith(rid)]
+            input_refs, output_refs = ids[:2] + [ids[2], ids[4]], [ids[3]]
+        else:
+            dimension = len(given[0]) if isinstance(given[0], list) else 2
+            vals = list(given) if isinstance(given, list) and all(isinstance(x, list) for x in given) else [[1, 0], [0, 1]]
+            ids = [f"case{suffix}_{letter}" for letter in "ab"]
+            for ent_id, value, label, role in zip(ids, vals[:2], ("a", "b"), ("vector_a", "vector_b")):
+                entities.append({"id": ent_id, "kind": "vector", "dimension": dimension, "value": value, "role": role, "label": label, "claim_refs": claim_refs})
+            result_value = example["result"] if isinstance(example["result"], list) else vals[0]
+            result_id = f"case{suffix}_r"
+            entities.append({"id": result_id, "kind": "vector", "dimension": len(result_value), "value": result_value, "role": "result", "label": "result", "claim_refs": claim_refs})
+            rid = f"rel.case.{topic_id}.{suffix}"
+            relation_kind = "orientation" if topic_id.startswith("ch01.inner") else "invariant"
+            relations.append({"id": rid, "kind": relation_kind, "source_ref": ids[0], "target_ref": ids[1], "parameters": {}, "claim_refs": claim_refs})
+            stage_refs = [rid]
+            input_refs, output_refs = ids, [result_id]
+        stages.append({"id": stage_id, "title": str(example["title"]), "caption": "", "layout": "overlay", "input_entity_refs": input_refs, "output_entity_refs": output_refs, "relation_refs": stage_refs, "expected_invariants": [f"lecture case {suffix}"]})
+        cases.append({"id": case_id, "topic_id": topic_id, "example_ref": str(example["id"]), "claim_refs": claim_refs, "stage_refs": [stage_id], "purpose": str(example["title"])})
+    visual.update({"entities": entities, "relations": relations, "stages": stages})
+    if topic_id == "ch01.projection.definition":
+        # The projection contract requires the three lecture steps: observe
+        # the input/direction, expose the projected component, then expose
+        # the orthogonal residual.
+        base = stages[0]
+        stages.extend([
+            {**base, "id": f"{base['id']}.projection", "title": "投影分量", "expected_invariants": ["projection lies on direction"]},
+            {**base, "id": f"{base['id']}.residual", "title": "正交残差", "expected_invariants": ["orthogonality"]},
+        ])
+        cases[0]["stage_refs"] = [stage["id"] for stage in stages]
+    explanation["case_layout"] = {"default_pane_count": 1, "cases": cases}
+
+
 def _refine_matrix_composition(result: dict[str, Any], explanation: dict[str, Any], visual: dict[str, Any], example: dict[str, Any]) -> None:
     explanation.update({
         "title": "复合变换与 AB≠BA",
@@ -241,7 +1343,6 @@ def _refine_matrix_composition(result: dict[str, Any], explanation: dict[str, An
             r"矩阵乘积的第 (i,j) 个元素为 (AB)_{ij}=\sum_k A_{ik}B_{kj}，所以 AB 代表复合变换。",
             r"先计算 Bx，再把 A 作用于 Bx；若交换顺序，则计算 Ax 后再作用 B。",
         ],
-        "intuition": "矩阵乘法不是把两个矩阵的数字逐项相乘，而是把两个空间变换按时间顺序串起来。",
         "geometric_meaning": (
             r"取 A=\begin{pmatrix}2&0\\0&1\end{pmatrix}（水平拉伸 2 倍），"
             r"B=\begin{pmatrix}0&-1\\1&0\end{pmatrix}（逆时针旋转 90^\circ），x=(1,1)^T。\n\n"
@@ -249,17 +1350,26 @@ def _refine_matrix_composition(result: dict[str, Any], explanation: dict[str, An
             r" 先拉伸再旋转：Ax=(2,1)^T，BAx=(-1,2)^T。"
             r" 两个终点不同，所以 AB\ne BA。"
         ),
-        "conclusion": r"同一输入经过相同的两个变换，但顺序不同会到达不同终点；顺序是复合变换的一部分。",
-        "pitfalls": [
-            "AB 不是先做 A 再做 B；按作用在向量上的顺序，右侧 B 先作用。",
-            "只有在特殊条件下才有 AB=BA，不能把交换律套到矩阵乘法。",
-        ],
-        "invariants": [r"两条路径都使用同一输入 x、同一对变换 A 和 B，唯一改变的是先后顺序。"],
-        "read_guide": ["先固定输入向量，再分别沿 AB、BA 两条路径读中间结果和最终终点。"],
+        "worked_examples": [],
     })
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+    if example is None:
+        example = {
+            "id": "example.ch02.matrix.composition",
+            "kind": "matrix_transform",
+            "given": [[[0, -2], [1, 0]], [1, 1]],
+            "calculation": [], "result": [-2, 1],
+            "checks": [{"name": "transformed", "expected": [-2, 1], "tolerance": 1e-9}],
+            "claim_refs": [],
+        }
+        explanation["worked_examples"] = [example]
     if example:
         example.update({
-            "title": "旋转与水平拉伸的顺序比较",
+            "title": "案例一：复合顺序比较",
             "given": [[[0, -2], [1, 0]], [1, 1]],
             "calculation": [
                 r"A=\begin{pmatrix}2&0\\0&1\end{pmatrix},\quad B=\begin{pmatrix}0&-1\\1&0\end{pmatrix},\quad x=(1,1)^T。",
@@ -269,6 +1379,7 @@ def _refine_matrix_composition(result: dict[str, Any], explanation: dict[str, An
             "result": [-2, 1],
             "checks": [{"name": "transformed", "expected": [-2, 1], "tolerance": 1e-9}],
         })
+        explanation["worked_examples"] = [example]
     entities = visual.setdefault("entities", [])
     _upsert_entity(entities, "A", "matrix", [[2, 0], [0, 1]], "matrix_a", "A")
     _upsert_entity(entities, "B", "matrix", [[0, -1], [1, 0]], "matrix_b", "B")
@@ -293,27 +1404,470 @@ def _refine_matrix_composition(result: dict[str, Any], explanation: dict[str, An
     ]
     claim["stage_refs"] = [stage["id"] for stage in visual["stages"]]
     explanation["symbol_roles"] = {"A": "matrix_a", "B": "matrix_b", "x": "vector_a", "ABx": "transformed_a", "BAx": "transformed_b"}
+    explanation["sections"] = [
+        {"id": section_id, "title": section_id, "text": "", "claim_refs": [claim["id"]]}
+        for section_id in ("definition", "formula", "derivation", "worked_examples", "geometric_meaning")
+    ]
+    explanation["case_layout"] = {
+        "default_pane_count": 1,
+        "cases": [
+            {
+                "id": "case.composition.ab", "topic_id": "ch02.matrix.composition",
+                "example_ref": str(example["id"]), "claim_refs": [claim["id"]],
+                "stage_refs": ["stage.composition.ab"], "purpose": "案例一：先 B 后 A",
+            },
+            {
+                "id": "case.composition.ba", "topic_id": "ch02.matrix.composition",
+                "example_ref": str(example["id"]), "claim_refs": [claim["id"]],
+                "stage_refs": ["stage.composition.ba"], "purpose": "案例二：先 A 后 B",
+            },
+            {
+                "id": "case.composition.compare", "topic_id": "ch02.matrix.composition",
+                "example_ref": str(example["id"]), "claim_refs": [claim["id"]],
+                "stage_refs": ["stage.composition.compare"], "purpose": "案例三：终点比较",
+            },
+        ],
+    }
+
+
+_BATCH_LESSONS: dict[str, dict[str, Any]] = {
+    "ch01.vector.coordinate-system": {
+        "definition": r"在三维直角坐标系中，用三个有序分量表示从原点出发的向量：$\boldsymbol v=(x,y,z)$。坐标轴的正向按右手系约定。",
+        "formula": r"\boldsymbol v=x\boldsymbol e_1+y\boldsymbol e_2+z\boldsymbol e_3",
+        "geometry": r"$\boldsymbol e_1,\boldsymbol e_2,\boldsymbol e_3$ 分别给出三个坐标轴的正方向。向量的终点坐标就是沿这三个基向量的分量。",
+        "case": ("案例一：三维分量", [r"$$\boldsymbol v=(1,2,2),\qquad \lvert\boldsymbol v\rvert=\sqrt{1^2+2^2+2^2}=3$$"]),
+    },
+    "ch01.vector.direction-examples": {
+        "definition": r"非零向量的方向由它所在的射线确定。二维向量 $(x,y)$ 所在象限由 $x,y$ 的符号确定。",
+        "formula": r"\boldsymbol a\cdot\boldsymbol b=\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert\cos\theta",
+        "geometry": r"两个向量的夹角 $\theta$ 取从同一起点出发的较小夹角；内积为正、零、负分别对应锐角、直角、钝角。",
+        "case": ("案例一：夹角与象限", [r"$$\boldsymbol a=(1,1),\quad \boldsymbol b=(-1,2),\quad \boldsymbol a\cdot\boldsymbol b=1>0$$", r"$$\therefore\ 0<\theta<90^\circ,\qquad \boldsymbol b\text{ 位于第二象限}$$"]),
+    },
+    "ch01.ops.subtraction": {
+        "definition": r"向量减法定义为加上减向量的相反向量：$\boldsymbol a-\boldsymbol b=\boldsymbol a+(-\boldsymbol b)$。",
+        "formula": r"\boldsymbol a-\boldsymbol b=(a_1-b_1,\,a_2-b_2)",
+        "geometry": r"将 $\boldsymbol a$、$\boldsymbol b$ 的起点放在同一点，$\boldsymbol a-\boldsymbol b$ 是从 $\boldsymbol b$ 的终点指向 $\boldsymbol a$ 的终点的向量。",
+        "case": ("案例一：终点间的位移", [r"$$\boldsymbol a=(4,3),\quad \boldsymbol b=(1,2),\quad -\boldsymbol b=(-1,-2)$$", r"$$\boldsymbol a-\boldsymbol b=\boldsymbol a+(-\boldsymbol b)=(3,1)$$"]),
+    },
+    "ch01.ops.scalar": {
+        "definition": r"标量 $\lambda$ 与向量 $\boldsymbol v$ 的数乘逐分量进行。",
+        "formula": r"\lambda\boldsymbol v=(\lambda v_1,\,\lambda v_2)",
+        "geometry": r"当 $\lambda>0$ 时，$\lambda\boldsymbol v$ 与 $\boldsymbol v$ 同向；当 $\lambda<0$ 时反向；长度满足 $\lvert\lambda\boldsymbol v\rvert=\lvert\lambda\rvert\lvert\boldsymbol v\rvert$。它们始终共线。",
+        "case": ("案例一：数乘与共线", [r"$$\boldsymbol v=(1,2),\qquad 2\boldsymbol v=(2,4)$$", r"$$-\boldsymbol v=(-1,-2)$$"]),
+    },
+    "ch01.ops.linear-combination": {
+        "definition": r"给定向量 $\boldsymbol v_1,\ldots,\boldsymbol v_k$，它们的线性组合是各向量乘以标量后相加的结果。",
+        "formula": r"c_1\boldsymbol v_1+\cdots+c_k\boldsymbol v_k",
+        "geometry": r"二维标准基 $\boldsymbol e_1,\boldsymbol e_2$ 的线性组合给出平面中的位置；系数分别指定沿两条基方向的位移。",
+        "case": ("案例一：标准基组合", [r"$$2\boldsymbol e_1+3\boldsymbol e_2=2(1,0)+3(0,1)=(2,3)$$"]),
+    },
+    "ch01.ops.velocity": {
+        "definition": r"相对速度、参考系速度和绝对速度均是向量，速度合成按向量加法进行。",
+        "formula": r"\boldsymbol v_{\mathrm{绝对}}=\boldsymbol v_{\mathrm{相对}}+\boldsymbol v_{\mathrm{参考系}}",
+        "geometry": r"两个速度向量首尾相接时，从第一个起点到第二个终点的箭头就是绝对速度；三维情形按三个分量分别相加。",
+        "case": ("案例一：三维速度合成", [r"$$\boldsymbol v_{\mathrm{相对}}=(3,0,0),\quad \boldsymbol v_{\mathrm{参考系}}=(1,2,0)$$", r"$$\boldsymbol v_{\mathrm{绝对}}=(4,2,0)$$"]),
+    },
+    "ch01.ops.cross-product": {
+        "definition": r"三维向量的叉积 $\boldsymbol a\times\boldsymbol b$ 是同时垂直于 $\boldsymbol a,\boldsymbol b$ 的向量，其方向由右手定则确定。",
+        "formula": r"\lvert\boldsymbol a\times\boldsymbol b\rvert=\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert\sin\theta",
+        "geometry": r"叉积的模是以 $\boldsymbol a,\boldsymbol b$ 为邻边的平行四边形面积；由 $\boldsymbol a$ 转向 $\boldsymbol b$ 时，右手四指弯曲的方向确定法向量。",
+        "case": ("案例一：标准正交基", [r"$$\boldsymbol e_1\times\boldsymbol e_2=\boldsymbol e_3,\qquad \lvert\boldsymbol e_1\times\boldsymbol e_2\rvert=1$$"]),
+    },
+    "ch01.ops.scalar-triple": {
+        "definition": r"三个三维向量的混合积定义为一个向量与另外两个向量叉积的内积。",
+        "formula": r"[\boldsymbol a,\boldsymbol b,\boldsymbol c]=\boldsymbol a\cdot(\boldsymbol b\times\boldsymbol c)",
+        "geometry": r"混合积的绝对值等于三条向量张成的平行六面体体积；其正负记录三向量的定向。",
+        "case": ("案例一：长方体体积", [r"$$\boldsymbol a=(1,0,0),\quad \boldsymbol b=(0,2,0),\quad \boldsymbol c=(0,0,3)$$", r"$$[\boldsymbol a,\boldsymbol b,\boldsymbol c]=6$$"]),
+    },
+    "ch01.inner.equivalence": {
+        "definition": r"内积既可按坐标分量定义，也可按向量长度和夹角定义；这两个定义给出相同的数。",
+        "formula": r"\boldsymbol a\cdot\boldsymbol b=a_1b_1+a_2b_2=\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert\cos\theta",
+        "derivation": [r"将 $\boldsymbol a$ 投影到 $\boldsymbol b$ 的方向，投影长度为 $\lvert\boldsymbol a\rvert\cos\theta$。", r"投影长度再乘 $\lvert\boldsymbol b\rvert$，得到 $\boldsymbol a\cdot\boldsymbol b=\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert\cos\theta$；将坐标轴取为正交基时，同一量为 $a_1b_1+a_2b_2$。"],
+        "geometry": r"内积测量一个向量在另一个向量方向上的带符号分量；夹角改变时，该投影随之改变。",
+        "case": ("案例一：正交向量", [r"$$\boldsymbol e_1\cdot\boldsymbol e_2=0=\lvert\boldsymbol e_1\rvert\lvert\boldsymbol e_2\rvert\cos90^\circ$$"]),
+    },
+    "ch01.inner.definitions": {
+        "definition": r"两非零向量的内积由其中一个向量在另一个方向上的带符号投影确定。",
+        "formula": r"\boldsymbol a\cdot\boldsymbol b=\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert\cos\theta",
+        "geometry": r"当 $\theta$ 为锐角、直角、钝角时，投影分别为正、零、负，因此内积的符号编码夹角关系。",
+        "case": ("案例一：投影长度", [r"$$\boldsymbol a=(2,0),\quad \boldsymbol b=(1,1),\quad \boldsymbol a\cdot\boldsymbol b=2$$"]),
+    },
+    "ch01.inner.applications": {
+        "definition": r"内积可用于计算长度、判定正交和计算夹角。",
+        "formula": r"\lvert\boldsymbol a\rvert=\sqrt{\boldsymbol a\cdot\boldsymbol a},\qquad \cos\theta=\frac{\boldsymbol a\cdot\boldsymbol b}{\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert}",
+        "geometry": r"$\boldsymbol a\cdot\boldsymbol b=0$ 当且仅当非零向量 $\boldsymbol a,\boldsymbol b$ 垂直；夹角由同起点的两条射线确定。",
+        "case": ("案例一：正交判定", [r"$$\boldsymbol a=(2,0),\quad \boldsymbol b=(0,3),\quad \boldsymbol a\cdot\boldsymbol b=0$$", r"$$\therefore\ \boldsymbol a\perp\boldsymbol b$$"]),
+    },
+    "ch01.inner.cauchy-schwarz": {
+        "definition": r"柯西—施瓦茨不等式给出两个向量内积绝对值的上界。",
+        "formula": r"\lvert\boldsymbol a\cdot\boldsymbol b\rvert\leq\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert",
+        "derivation": [r"$\boldsymbol a$ 在 $\boldsymbol b$ 方向上的投影长度不超过 $\lvert\boldsymbol a\rvert$。", r"投影长度为 $\dfrac{\lvert\boldsymbol a\cdot\boldsymbol b\rvert}{\lvert\boldsymbol b\rvert}$，两边乘 $\lvert\boldsymbol b\rvert$ 即得不等式。"],
+        "geometry": r"等号在两个非零向量共线时成立；不等式比较的是向量长度和沿另一方向的投影长度。",
+        "case": ("案例一：投影界", [r"$$\boldsymbol a=(3,4),\quad \boldsymbol b=(1,0),\quad \lvert\boldsymbol a\cdot\boldsymbol b\rvert=3\leq5=\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert$$"]),
+    },
+    "ch01.inner.examples": {
+        "definition": r"使用内积公式可以在坐标中计算夹角，并据此判断向量的方向关系。",
+        "formula": r"\cos\theta=\frac{\boldsymbol a\cdot\boldsymbol b}{\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert}",
+        "geometry": r"夹角只与向量方向有关；内积为零时两箭头垂直，内积为正或负时夹角分别为锐角或钝角。",
+        "case": ("案例一：计算夹角", [r"$$\boldsymbol a=(1,0),\quad \boldsymbol b=(1,1),\quad \boldsymbol a\cdot\boldsymbol b=1$$", r"$$\cos\theta=\frac{1}{\sqrt2},\qquad \theta=45^\circ$$"]),
+    },
+    "ch01.projection.definition": {
+        "definition": r"设 $\boldsymbol u\ne\boldsymbol0$。$\boldsymbol v$ 在 $\boldsymbol u$ 方向上的正交投影是与 $\boldsymbol u$ 共线的向量 $\boldsymbol p$。",
+        "formula": r"\operatorname{proj}_{\boldsymbol u}\boldsymbol v=\frac{\boldsymbol v\cdot\boldsymbol u}{\boldsymbol u\cdot\boldsymbol u}\boldsymbol u,\qquad \boldsymbol v=\boldsymbol p+\boldsymbol r",
+        "geometry": r"从 $\boldsymbol v$ 的终点向 $\boldsymbol u$ 所在直线作垂线，垂足给出 $\boldsymbol p$ 的终点；残差 $\boldsymbol r=\boldsymbol v-\boldsymbol p$ 与 $\boldsymbol u$ 垂直。",
+        "case": ("案例一：x 轴投影", [r"$$\boldsymbol v=(3,4),\quad \boldsymbol u=(1,0),\quad \boldsymbol p=(3,0)$$", r"$$\boldsymbol r=(0,4),\qquad \boldsymbol v=\boldsymbol p+\boldsymbol r$$"]),
+    },
+    "ch01.projection.properties": {
+        "definition": r"固定目标方向后的正交投影是线性变换。",
+        "formula": r"P(\boldsymbol v+\boldsymbol w)=P\boldsymbol v+P\boldsymbol w,\qquad P(\lambda\boldsymbol v)=\lambda P\boldsymbol v",
+        "geometry": r"先相加再投影，或分别投影后相加，终点落在同一目标直线上；数乘只沿该直线改变投影长度和方向。",
+        "case": ("案例一：x 轴投影", [r"$$P(3,4)=(3,0),\qquad P(1,2)=(1,0)$$", r"$$P\bigl((3,4)+(1,2)\bigr)=(4,0)=(3,0)+(1,0)$$"]),
+    },
+    "ch01.projection.force": {
+        "definition": r"力的分解把力向量表示为沿选定方向的分量与垂直于该方向的分量之和。",
+        "formula": r"\boldsymbol F=\boldsymbol F_{\parallel}+\boldsymbol F_{\perp}",
+        "geometry": r"以斜面方向为投影方向时，$\boldsymbol F_{\parallel}$ 沿斜面，$\boldsymbol F_{\perp}$ 沿法线；两分量构成直角三角形。",
+        "case": ("案例一：斜向分量", [r"$$\boldsymbol F=(3,4),\quad \boldsymbol u=(1,1),\quad \operatorname{proj}_{\boldsymbol u}\boldsymbol F=\left(\frac72,\frac72\right)$$"]),
+    },
+    "ch01.proof.method": {
+        "definition": r"向量法把几何点替换为位置向量，把线段、平行、中点等关系替换为向量等式。",
+        "formula": r"\overrightarrow{AB}=\boldsymbol b-\boldsymbol a",
+        "geometry": r"两点的位置向量之差给出从 $A$ 指向 $B$ 的有向线段；平行、共线和中点条件都可在同一坐标图中读为向量关系。",
+        "case": ("案例一：两点确定的向量", [r"$$A=(1,3),\quad B=(4,7),\quad \overrightarrow{AB}=B-A=(3,4)$$"]),
+    },
+    "ch01.proof.midline": {
+        "definition": r"三角形两边中点的连线称为中位线。",
+        "formula": r"\overrightarrow{MN}=\frac12\overrightarrow{BC}",
+        "derivation": [r"设 $M=\dfrac{A+B}{2},\ N=\dfrac{A+C}{2}$。", r"则 $\overrightarrow{MN}=N-M=\dfrac{C-B}{2}=\dfrac12\overrightarrow{BC}$。"],
+        "geometry": r"$MN$ 与 $BC$ 同向且长度为 $BC$ 的一半，因此中位线平行于第三边。",
+        "case": ("案例一：中点连线", [r"$$A=(0,0),\quad B=(4,0),\quad C=(0,6)$$", r"$$M=(2,0),\quad N=(0,3),\quad \overrightarrow{MN}=(-2,3)=\frac12\overrightarrow{BC}$$"]),
+    },
+    "ch01.proof.centroid": {
+        "definition": r"三角形重心是三个顶点位置向量的平均。",
+        "formula": r"\boldsymbol g=\frac{\boldsymbol a+\boldsymbol b+\boldsymbol c}{3}",
+        "derivation": [r"边 $BC$ 的中点为 $\boldsymbol m=\dfrac{\boldsymbol b+\boldsymbol c}{2}$。", r"从 $A$ 到重心的向量为 $\boldsymbol g-\boldsymbol a=\dfrac23(\boldsymbol m-\boldsymbol a)$，所以重心按 $2:1$ 分中线。"],
+        "geometry": r"三条中线相交于同一点；重心靠近顶点的一段是整条中线的 $\dfrac23$。",
+        "case": ("案例一：重心坐标", [r"$$A=(0,0),\quad B=(6,0),\quad C=(0,3)$$", r"$$G=\frac{A+B+C}{3}=(2,1)$$"]),
+    },
+    "ch01.proof.parallelogram-diagonals": {
+        "definition": r"平行四边形的两条对角线连接相对顶点。",
+        "formula": r"\frac{\boldsymbol a+\boldsymbol c}{2}=\frac{\boldsymbol b+\boldsymbol d}{2}",
+        "derivation": [r"若 $ABCD$ 是平行四边形，则 $\boldsymbol a+\boldsymbol c=\boldsymbol b+\boldsymbol d$。", r"两边除以 $2$，两条对角线的中点位置向量相同。"],
+        "geometry": r"两条对角线在同一个中点相交，因此彼此平分。",
+        "case": ("案例一：共同中点", [r"$$A=(0,0),\quad B=(4,0),\quad C=(5,2),\quad D=(1,2)$$", r"$$\frac{A+C}{2}=\frac{B+D}{2}=\left(\frac52,1\right)$$"]),
+    },
+    "ch01.high-dimensional.analogy": {
+        "definition": r"$n$ 维向量是有序实数列，向量加法和数乘逐分量定义。",
+        "formula": r"\boldsymbol x=(x_1,\ldots,x_n),\qquad T(\boldsymbol x)=A\boldsymbol x",
+        "geometry": r"二维、三维图形只用于展示低维情形；在 $n$ 维中用分量、内积、长度和线性关系描述向量，而不把低维图像当作高维图像。",
+        "case": ("案例一：三维代表", [r"$$\boldsymbol x=(1,2,3),\quad \operatorname{diag}(1,2,3)\boldsymbol x=(1,4,9)$$"]),
+    },
+    "ch02.batch.inner-products": {
+        "definition": r"将多个向量组成列矩阵时，矩阵乘积可一次给出一批向量之间的内积。",
+        "formula": r"(U^{\mathsf T}V)_{ij}=\boldsymbol u_i\cdot\boldsymbol v_j",
+        "geometry": r"矩阵的每个元素对应一对向量的夹角信息；零元素表示对应方向正交。",
+        "case": ("案例一：两组方向", [r"$$\boldsymbol u_1=(1,0),\quad \boldsymbol u_2=(0,1),\quad \boldsymbol v=(2,3)$$", r"$$\begin{pmatrix}\boldsymbol u_1\cdot\boldsymbol v\\\boldsymbol u_2\cdot\boldsymbol v\end{pmatrix}=\begin{pmatrix}2\\3\end{pmatrix}$$"]),
+    },
+    "ch02.batch.projection": {
+        "definition": r"单位向量 $\boldsymbol u$ 所在直线上的正交投影可写成矩阵 $P$。",
+        "formula": r"P=\boldsymbol u\boldsymbol u^{\mathsf T},\qquad P\boldsymbol v=(\boldsymbol u\cdot\boldsymbol v)\boldsymbol u",
+        "geometry": r"同一个投影矩阵把每一个输入终点沿垂线压到 $\boldsymbol u$ 所在直线；不同输入共享同一目标方向。",
+        "case": ("案例一：投影矩阵", [r"$$\boldsymbol u=(1,0),\quad P=\begin{pmatrix}1&0\\0&0\end{pmatrix},\quad \boldsymbol v=(3,4)$$", r"$$P\boldsymbol v=(3,0)$$"]),
+    },
+    "ch02.matrix.additive-distributivity": {
+        "definition": r"同型矩阵可以逐元素相加和数乘；矩阵表示的线性变换满足分配律。",
+        "formula": r"(A+B)\boldsymbol x=A\boldsymbol x+B\boldsymbol x,\qquad (\lambda A)\boldsymbol x=\lambda(A\boldsymbol x)",
+        "geometry": r"先将两个变换的输出相加，与先将矩阵相加后作用于同一向量，得到相同终点。",
+        "case": ("案例一：分配律", [r"$$A+B=\begin{pmatrix}6&8\\10&12\end{pmatrix},\quad \boldsymbol x=(1,1)^{\mathsf T}$$", r"$$(A+B)\boldsymbol x=(14,22)^{\mathsf T}$$"]),
+    },
+    "ch02.matrix.row-column": {
+        "definition": r"矩阵乘向量既可逐行与向量作内积，也可把矩阵列向量按输入分量作线性组合。",
+        "formula": r"(A\boldsymbol x)_i=\operatorname{row}_i(A)\cdot\boldsymbol x=\sum_jx_jA_{:j}",
+        "derivation": [r"逐行计算给出第 $i$ 个输出分量：$(A\boldsymbol x)_i=\sum_jA_{ij}x_j$。", r"按列收集同一系数，得到 $A\boldsymbol x=x_1A_{:1}+\cdots+x_nA_{:n}$。"],
+        "geometry": r"列视角说明输入的每个坐标如何加权基向量的像；行视角说明每个输出坐标怎样从输入读出。两种计算定位同一个输出点。",
+        "case": ("案例一：行列两种计算", [r"$$A=\begin{pmatrix}1&2\\3&4\end{pmatrix},\quad \boldsymbol x=(1,2)^{\mathsf T}$$", r"$$A\boldsymbol x=(5,11)^{\mathsf T}=1\begin{pmatrix}1\\3\end{pmatrix}+2\begin{pmatrix}2\\4\end{pmatrix}$$"]),
+    },
+    "ch02.matrix.transformed-grid": {
+        "definition": r"线性变换 $A$ 完全由标准基向量的像 $A\boldsymbol e_1,A\boldsymbol e_2$ 确定。",
+        "formula": r"A\boldsymbol x=x_1A\boldsymbol e_1+x_2A\boldsymbol e_2",
+        "geometry": r"单位方格的边由 $\boldsymbol e_1,\boldsymbol e_2$ 变为 $A\boldsymbol e_1,A\boldsymbol e_2$；因此整张坐标网格随之拉伸、旋转或剪切。",
+        "case": ("案例一：两列决定像", [r"$$A=\begin{pmatrix}2&1\\0&1\end{pmatrix},\quad A\boldsymbol e_1=(2,0),\quad A\boldsymbol e_2=(1,1)$$", r"$$A(1,2)^{\mathsf T}=(4,2)^{\mathsf T}$$"]),
+    },
+    "ch02.matrix.stretch-rotate-scale": {
+        "definition": r"对角矩阵沿坐标轴缩放，旋转矩阵改变方向；一般矩阵可以组合这些线性效应。",
+        "formula": r"\begin{pmatrix}s_1&0\\0&s_2\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}s_1x\\s_2y\end{pmatrix}",
+        "geometry": r"矩阵使整个平面同步变形：平行线仍平行，原点保持不动；基向量的像决定拉伸和旋转后的网格方向。",
+        "case": ("案例一：非均匀拉伸", [r"$$A=\begin{pmatrix}2&0\\0&1\end{pmatrix},\quad \boldsymbol x=(1,2)^{\mathsf T},\quad A\boldsymbol x=(2,2)^{\mathsf T}$$"]),
+    },
+    "ch02.matrix.basis": {
+        "definition": r"同一线性变换在不同基底下有不同的坐标矩阵；换基矩阵将一种坐标描述转换为另一种。",
+        "formula": r"[T]_{\mathcal B}=S^{-1}AS",
+        "geometry": r"变换本身不变，改变的是描述向量的坐标尺。新基向量在原坐标中的像构成换基矩阵的列。",
+        "case": ("案例一：剪切变换", [r"$$A=\begin{pmatrix}1&1\\0&1\end{pmatrix},\quad \boldsymbol x=(2,3)^{\mathsf T},\quad A\boldsymbol x=(5,3)^{\mathsf T}$$"]),
+    },
+    "ch02.matrix.powers": {
+        "definition": r"方阵的幂表示同一线性变换重复作用；$A^0$ 定义为单位矩阵。",
+        "formula": r"A^k=\underbrace{A\cdots A}_{k\text{ 个}},\qquad A^0=I",
+        "geometry": r"每乘一次 $A$ 就在上一步的输出上再作用一次同一变换；因此矩阵幂记录变换的迭代轨迹。",
+        "case": ("案例一：重复拉伸", [r"$$A=\begin{pmatrix}2&0\\0&1\end{pmatrix},\quad \boldsymbol x=(1,1)^{\mathsf T},\quad A\boldsymbol x=(2,1)^{\mathsf T}$$", r"$$A(A\boldsymbol x)=A^2\boldsymbol x=(4,1)^{\mathsf T}$$"]),
+    },
+    "ch02.subspace.independence": {
+        "definition": r"一组向量线性无关，当且仅当其线性组合等于零向量时所有系数都为零。",
+        "formula": r"c_1\boldsymbol v_1+\cdots+c_k\boldsymbol v_k=\boldsymbol0\ \Longrightarrow\ c_1=\cdots=c_k=0",
+        "geometry": r"在平面中两条不共线向量线性无关；若两条向量共线，其中一条可以由另一条数乘得到，方向信息重复。",
+        "case": ("案例一：标准基独立", [r"$$c_1(1,0)+c_2(0,1)=(0,0)\Longrightarrow c_1=c_2=0$$"]),
+    },
+    "ch02.subspace.rank": {
+        "definition": r"矩阵的秩是其列空间的维数，即独立输出方向的个数。",
+        "formula": r"\operatorname{rank}(A)=\dim\operatorname{Col}(A)",
+        "geometry": r"若矩阵列向量共线，二维输入平面会被映到一条输出直线；秩为 $1$，表示只保留一个独立方向。",
+        "case": ("案例一：秩为一", [r"$$A=\begin{pmatrix}1&2\\2&4\end{pmatrix},\quad A_{:2}=2A_{:1},\quad \operatorname{rank}(A)=1$$"]),
+    },
+    "ch02.subspace.null": {
+        "definition": r"零空间由所有被矩阵映到零向量的输入组成。",
+        "formula": r"\operatorname{Null}(A)=\{\boldsymbol x\mid A\boldsymbol x=\boldsymbol0\}",
+        "geometry": r"落在零空间中的整个方向在变换后收缩到原点；它是变换丢失的输入自由度。",
+        "case": ("案例一：y 轴零空间", [r"$$A=\begin{pmatrix}1&0\\0&0\end{pmatrix},\quad \boldsymbol x=(0,2)^{\mathsf T},\quad A\boldsymbol x=(0,0)^{\mathsf T}$$"]),
+    },
+    "ch02.subspace.column": {
+        "definition": r"矩阵的列空间是所有可写成 $A\boldsymbol x$ 的输出向量的集合。",
+        "formula": r"\operatorname{Col}(A)=\{A\boldsymbol x\mid \boldsymbol x\in\mathbb R^n\}",
+        "geometry": r"列空间描述输出端可到达的区域；若所有输出都落在 x 轴，该列空间就是 x 轴这条直线。",
+        "case": ("案例一：x 轴列空间", [r"$$A=\begin{pmatrix}1&0\\0&0\end{pmatrix},\quad A(2,3)^{\mathsf T}=(2,0)^{\mathsf T}$$"]),
+    },
+    "ch02.subspace.rank-nullity": {
+        "definition": r"对 $A:\mathbb R^n\to\mathbb R^m$，输入维数分为保留下来的独立输出方向与被压到零向量的自由方向。",
+        "formula": r"\operatorname{rank}(A)+\operatorname{nullity}(A)=n",
+        "geometry": r"秩数出输出空间的维数，零化度数出被压缩的输入方向数；二者恰好分完输入空间的维数。",
+        "case": ("案例一：二维输入的投影", [r"$$A=\begin{pmatrix}1&0\\0&0\end{pmatrix},\quad \operatorname{rank}(A)=1,\quad \operatorname{nullity}(A)=1$$", r"$$1+1=2$$"]),
+    },
+    "ch02.high-dimensional.analogy": {
+        "definition": r"$m\times n$ 矩阵表示从 $\mathbb R^n$ 到 $\mathbb R^m$ 的线性映射。",
+        "formula": r"T(\boldsymbol x)=A\boldsymbol x,\qquad \operatorname{rank}(A)\leq\min(m,n)",
+        "geometry": r"二维网格变形是低维代表；在高维中用列空间、零空间和秩描述可到达方向与被压缩方向，而不把二维图形直接当作高维图像。",
+        "case": ("案例一：三维对角变换", [r"$$A=\operatorname{diag}(1,2,3),\quad \boldsymbol x=(1,2,3),\quad A\boldsymbol x=(1,4,9)$$"]),
+    },
+}
+
+# Numeric operands are kept separately from prose so every displayed formula
+# is backed by the same value that the bounded verifier recomputes.  The
+# schema stores the operands as arrays (not executable expressions).
+_BATCH_NUMERIC: dict[str, tuple[Any, Any]] = {
+    "ch01.vector.coordinate-system": ([[1, 2, 2], [1, 2, 2]], 9.0),
+    "ch01.vector.direction-examples": ([[1, 1], [-1, 2]], 1.0),
+    "ch01.ops.subtraction": ([[4, 3], [-1, -2]], [3.0, 1.0]),
+    "ch01.ops.scalar": ([[1, 2], [1, 2]], [2.0, 4.0]),
+    "ch01.ops.linear-combination": ([[[1, 0], [0, 1]], [2, 3]], [2.0, 3.0]),
+    "ch01.ops.velocity": ([[3, 0, 0], [1, 2, 0]], [4.0, 2.0, 0.0]),
+    "ch01.ops.cross-product": ([[1, 0, 0], [0, 1, 0], [0, 0, 1]], 1.0),
+    "ch01.ops.scalar-triple": ([[1, 0, 0], [0, 2, 0], [0, 0, 3]], 6.0),
+    "ch01.inner.equivalence": ([[1, 0], [0, 1]], 0.0),
+    "ch01.inner.definitions": ([[2, 0], [1, 1]], 2.0),
+    "ch01.inner.applications": ([[2, 0], [0, 3]], 0.0),
+    "ch01.inner.cauchy-schwarz": ([[3, 4], [1, 0]], 3.0),
+    "ch01.inner.examples": ([[1, 0], [1, 1]], 1.0),
+    "ch01.projection.definition": ([[3, 4], [1, 0]], [3.0, 0.0]),
+    "ch01.projection.properties": ([[3, 4], [1, 0]], [3.0, 0.0]),
+    "ch01.projection.force": ([[3, 4], [1, 1]], [3.5, 3.5]),
+    "ch01.proof.method": ([[2, 1], [1, 3]], [3.0, 4.0]),
+    "ch01.proof.midline": ([[2, 1], [1, 3]], [3.0, 4.0]),
+    "ch01.proof.centroid": ([[1, 0], [0, 1]], [1.0, 1.0]),
+    "ch01.proof.parallelogram-diagonals": ([[2, 1], [1, 3]], [3.0, 4.0]),
+    "ch01.high-dimensional.analogy": ([[[1, 0, 0], [0, 2, 0], [0, 0, 3]], [1, 2, 3]], [1.0, 4.0, 9.0]),
+    "ch02.batch.inner-products": ([[[1, 0], [0, 1]], [2, 3]], [2.0, 3.0]),
+    "ch02.batch.projection": ([[3, 4], [1, 0]], [3.0, 0.0]),
+    "ch02.matrix.additive-distributivity": ([[[6, 8], [10, 12]], [1, 1]], [14.0, 22.0]),
+    "ch02.matrix.row-column": ([[[1, 2], [3, 4]], [1, 2]], [5.0, 11.0]),
+    "ch02.matrix.transformed-grid": ([[[2, 1], [0, 1]], [1, 2]], [4.0, 2.0]),
+    "ch02.matrix.stretch-rotate-scale": ([[[2, 0], [0, 1]], [1, 2]], [2.0, 2.0]),
+    "ch02.matrix.basis": ([[[1, 1], [0, 1]], [2, 3]], [5.0, 3.0]),
+    "ch02.matrix.powers": ([[[2, 0], [0, 1]], [1, 1]], [2.0, 1.0]),
+    "ch02.subspace.independence": ([[[1, 0], [0, 1]], [1, 1]], [1.0, 1.0]),
+    "ch02.subspace.rank": ([[[1, 2], [2, 4]], [1, 1]], [3.0, 6.0]),
+    "ch02.subspace.null": ([[[1, 0], [0, 0]], [0, 2]], [0.0, 0.0]),
+    "ch02.subspace.column": ([[[1, 0], [0, 0]], [2, 3]], [2.0, 0.0]),
+    "ch02.subspace.rank-nullity": ([[[1, 0], [0, 0]], [0, 2]], [0.0, 0.0]),
+    "ch02.high-dimensional.analogy": ([[[1, 0, 0], [0, 2, 0], [0, 0, 3]], [1, 2, 3]], [1.0, 4.0, 9.0]),
+}
+
+# These lecture subsections explicitly contain contrasting examples.  They are
+# deliberately not forced onto every topic: each entry below corresponds to a
+# distinct case in the source lecture and therefore earns its own 2D pane.
+_MULTI_CASES: dict[str, tuple[dict[str, Any], ...]] = {
+    "ch01.vector.direction-examples": (
+        {"title": "案例一：第一象限方向", "kind": "inner_product", "given": [[1, 1], [1, 1]], "result": 2.0, "check": "dot", "vectors": [[1, 1], [1, 0]], "lines": [r"$$\boldsymbol v=(1,1),\qquad \theta=45^\circ$$"]},
+        {"title": "案例二：第二象限方向", "kind": "inner_product", "given": [[-1, 2], [-1, 2]], "result": 5.0, "check": "dot", "vectors": [[-1, 2], [0, 1]], "lines": [r"$$\boldsymbol v=(-1,2),\qquad x<0,\ y>0$$", r"$$\therefore\ \boldsymbol v\text{ 位于第二象限}$$"]},
+        {"title": "案例三：锐角判定", "kind": "inner_product", "given": [[1, 1], [-1, 2]], "result": 1.0, "check": "dot", "vectors": [[1, 1], [-1, 2]], "lines": [r"$$\boldsymbol a=(1,1),\quad \boldsymbol b=(-1,2),\quad \boldsymbol a\cdot\boldsymbol b=1>0$$", r"$$\therefore\ 0<\theta<90^\circ$$"]},
+    ),
+    "ch01.inner.applications": (
+        {"title": "案例一：由内积求长度", "kind": "inner_product", "given": [[3, 4], [3, 4]], "result": 25.0, "check": "dot", "vectors": [[3, 4], [3, 0]], "lines": [r"$$\boldsymbol a=(3,4),\qquad \lvert\boldsymbol a\rvert=\sqrt{\boldsymbol a\cdot\boldsymbol a}=5$$"]},
+        {"title": "案例二：正交判定", "kind": "inner_product", "given": [[2, 0], [0, 3]], "result": 0.0, "check": "dot", "vectors": [[2, 0], [0, 3]], "lines": [r"$$\boldsymbol a=(2,0),\quad \boldsymbol b=(0,3),\quad \boldsymbol a\cdot\boldsymbol b=0$$", r"$$\therefore\ \boldsymbol a\perp\boldsymbol b$$"]},
+        {"title": "案例三：由内积求夹角", "kind": "inner_product", "given": [[1, 0], [1, 1]], "result": 1.0, "check": "dot", "vectors": [[1, 0], [1, 1]], "lines": [r"$$\boldsymbol a=(1,0),\quad \boldsymbol b=(1,1),\quad \cos\theta=\frac1{\sqrt2}$$", r"$$\theta=45^\circ$$"]},
+    ),
+    "ch01.inner.examples": (
+        {"title": "案例一：锐角", "kind": "inner_product", "given": [[1, 0], [1, 1]], "result": 1.0, "check": "dot", "vectors": [[1, 0], [1, 1]], "lines": [r"$$\boldsymbol a\cdot\boldsymbol b=1>0\quad\Longrightarrow\quad\theta\text{ 为锐角}$$"]},
+        {"title": "案例二：钝角", "kind": "inner_product", "given": [[1, 0], [-1, 1]], "result": -1.0, "check": "dot", "vectors": [[1, 0], [-1, 1]], "lines": [r"$$\boldsymbol a\cdot\boldsymbol b=-1<0\quad\Longrightarrow\quad\theta\text{ 为钝角}$$"]},
+        {"title": "案例三：直角", "kind": "inner_product", "given": [[1, 0], [0, 1]], "result": 0.0, "check": "dot", "vectors": [[1, 0], [0, 1]], "lines": [r"$$\boldsymbol a\cdot\boldsymbol b=0\quad\Longrightarrow\quad\boldsymbol a\perp\boldsymbol b$$"]},
+    ),
+    "ch01.projection.force": (
+        {"title": "案例一：坐标轴分解", "kind": "projection", "given": [[3, 4], [1, 0]], "result": [3.0, 0.0], "check": "projection", "vectors": [[3, 4], [1, 0]], "lines": [r"$$\boldsymbol F=(3,4),\quad \operatorname{proj}_{(1,0)}\boldsymbol F=(3,0)$$", r"$$\boldsymbol F_{\perp}=(0,4)$$"]},
+        {"title": "案例二：斜面方向分解", "kind": "projection", "given": [[3, 4], [1, 1]], "result": [3.5, 3.5], "check": "projection", "vectors": [[3, 4], [1, 1]], "lines": [r"$$\boldsymbol F=(3,4),\quad \boldsymbol u=(1,1)$$", r"$$\operatorname{proj}_{\boldsymbol u}\boldsymbol F=\left(\frac72,\frac72\right)$$"]},
+    ),
+    "ch02.matrix.stretch-rotate-scale": (
+        {"title": "案例一：横向拉伸", "kind": "matrix_transform", "given": [[[2, 0], [0, 1]], [1, 0]], "result": [2.0, 0.0], "check": "transformed", "matrix": [[2, 0], [0, 1]], "lines": [r"$$A=\begin{pmatrix}2&0\\0&1\end{pmatrix},\quad A\boldsymbol e_1=(2,0),\quad A\boldsymbol e_2=(0,1)$$"]},
+        {"title": "案例二：逆时针旋转", "kind": "matrix_transform", "given": [[[0, -1], [1, 0]], [1, 0]], "result": [0.0, 1.0], "check": "transformed", "matrix": [[0, -1], [1, 0]], "lines": [r"$$R=\begin{pmatrix}0&-1\\1&0\end{pmatrix},\quad R\boldsymbol e_1=(0,1)$$"]},
+        {"title": "案例三：列视角计算", "kind": "matrix_transform", "given": [[[1, 2], [3, 4]], [1, 2]], "result": [5.0, 11.0], "check": "transformed", "matrix": [[1, 2], [3, 4]], "lines": [r"$$A=\begin{pmatrix}1&2\\3&4\end{pmatrix},\quad \boldsymbol x=(1,2)^{\mathsf T}$$", r"$$A\boldsymbol x=\begin{pmatrix}5\\11\end{pmatrix}$$"]},
+        {"title": "案例四：等比缩放", "kind": "matrix_transform", "given": [[[0.5, 0], [0, 0.5]], [100, 200]], "result": [50.0, 100.0], "check": "transformed", "matrix": [[0.5, 0], [0, 0.5]], "lines": [r"$$A=\begin{pmatrix}0.5&0\\0&0.5\end{pmatrix},\quad A(100,200)^{\mathsf T}=(50,100)^{\mathsf T}$$"]},
+    ),
+}
 
 
 def _refine_generic(topic_id: str, explanation: dict[str, Any], visual: dict[str, Any], example: dict[str, Any]) -> None:
-    relations = visual.get("relations") or []
-    kinds = {str(item.get("kind", "")) for item in relations if isinstance(item, Mapping)}
-    relation = next((item for item in relations if isinstance(item, Mapping)), {})
-    source_label, target_label = _entity_labels(visual, relation)
-    calculation = _calculation(example)
-    meaning = _meaning_for(kinds, source_label, target_label)
-    explanation["derivation"] = [
-        "从讲义中的定义和公式确定输入对象，再逐步代入本主题的数值例。",
-        calculation[-1] if calculation else "核对公式结果与图中输出对象一致。",
+    """Apply the confirmed concise lecture-note structure to batch topics."""
+
+    lesson = _BATCH_LESSONS.get(topic_id)
+    if lesson is None:
+        return
+    case_title, case_lines = lesson["case"]
+    explanation.update({
+        "summary": str(lesson["definition"]),
+        "definition": str(lesson["definition"]),
+        "formula": str(lesson["formula"]),
+        "derivation": list(lesson.get("derivation", ())),
+        "geometric_meaning": str(lesson["geometry"]),
+        "worked_examples": [],
+    })
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+    if example:
+        numeric = _BATCH_NUMERIC.get(topic_id)
+        if numeric is not None:
+            example["given"], example["result"] = deepcopy(numeric[0]), deepcopy(numeric[1])
+            if example.get("checks"):
+                example["checks"][0]["expected"] = deepcopy(numeric[1])
+        example.update({"title": case_title, "calculation": list(case_lines)})
+        explanation["worked_examples"] = [example]
+    if topic_id == "ch01.ops.subtraction":
+        for entity in visual.get("entities", []):
+            if entity.get("id") == "b":
+                entity["label"] = "-b"
+            elif entity.get("id") == "r":
+                entity["label"] = "a-b"
+    if topic_id in _MULTI_CASES:
+        _apply_multi_case_layout(topic_id, explanation, visual)
+
+
+def _apply_multi_case_layout(topic_id: str, explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    """Build one bounded, independently visible stage per lecture case."""
+
+    claim_id = f"claim.{topic_id}"
+    cases = _MULTI_CASES[topic_id]
+    examples: list[dict[str, Any]] = []
+    entities: list[dict[str, Any]] = []
+    relations: list[dict[str, Any]] = []
+    stages: list[dict[str, Any]] = []
+    layout_cases: list[dict[str, Any]] = []
+    for index, case in enumerate(cases, start=1):
+        suffix = str(index)
+        example_id = f"example.{topic_id}.case-{suffix}"
+        entity_ids: list[str]
+        relation_id = f"rel.case.{topic_id}.{suffix}"
+        matrix = case.get("matrix")
+        if isinstance(matrix, list):
+            a_id, x_id, y_id = f"case{suffix}_A", f"case{suffix}_x", f"case{suffix}_y"
+            given = case["given"]
+            entities.extend([
+                {"id": a_id, "kind": "matrix", "dimension": 2, "value": matrix, "role": "matrix_a", "label": "A", "claim_refs": [claim_id]},
+                {"id": x_id, "kind": "vector", "dimension": 2, "value": given[1], "role": "vector_a", "label": "x", "claim_refs": [claim_id]},
+                {"id": y_id, "kind": "vector", "dimension": 2, "value": case["result"], "role": "transformed_a", "label": "Ax", "claim_refs": [claim_id]},
+            ])
+            relations.append({"id": relation_id, "kind": "maps_to", "source_ref": x_id, "target_ref": y_id, "parameters": {"matrix": matrix}, "claim_refs": [claim_id]})
+            entity_ids = [a_id, x_id, y_id]
+        elif case["kind"] == "projection":
+            given = case["given"]
+            vector, direction, projection = given[0], given[1], case["result"]
+            v_id, u_id, p_id, h_id, r_id = (
+                f"case{suffix}_v", f"case{suffix}_u", f"case{suffix}_p",
+                f"case{suffix}_H", f"case{suffix}_r",
+            )
+            residual = [vector[0] - projection[0], vector[1] - projection[1]]
+            entities.extend([
+                {"id": v_id, "kind": "vector", "dimension": 2, "value": vector, "role": "vector_a", "label": "F", "claim_refs": [claim_id]},
+                {"id": u_id, "kind": "vector", "dimension": 2, "value": direction, "role": "direction", "label": "u", "claim_refs": [claim_id]},
+                {"id": p_id, "kind": "vector", "dimension": 2, "value": projection, "role": "projection", "label": "F∥", "claim_refs": [claim_id]},
+                {"id": h_id, "kind": "point", "dimension": 2, "value": projection, "role": "foot", "label": "H", "claim_refs": [claim_id]},
+                {"id": r_id, "kind": "vector", "dimension": 2, "value": residual, "role": "residual", "label": "F⊥", "claim_refs": [claim_id]},
+            ])
+            relations.extend([
+                {"id": relation_id, "kind": "projects_to", "source_ref": v_id, "target_ref": u_id, "parameters": {}, "claim_refs": [claim_id]},
+                {"id": f"{relation_id}.decompose", "kind": "decomposes_into", "source_ref": v_id, "target_ref": p_id, "parameters": {}, "claim_refs": [claim_id]},
+                {"id": f"{relation_id}.orthogonal", "kind": "orthogonal_to", "source_ref": r_id, "target_ref": u_id, "parameters": {}, "claim_refs": [claim_id]},
+            ])
+            entity_ids = [v_id, u_id, p_id, h_id, r_id]
+        else:
+            vectors = case["vectors"]
+            a_id, b_id, r_id = f"case{suffix}_a", f"case{suffix}_b", f"case{suffix}_r"
+            entities.extend([
+                {"id": a_id, "kind": "vector", "dimension": 2, "value": vectors[0], "role": "vector_a", "label": "a", "claim_refs": [claim_id]},
+                {"id": b_id, "kind": "vector", "dimension": 2, "value": vectors[1], "role": "vector_b", "label": "b", "claim_refs": [claim_id]},
+                {"id": r_id, "kind": "vector", "dimension": 2, "value": case["result"] if isinstance(case["result"], list) else vectors[0], "role": "result", "label": "p" if case["kind"] == "projection" else "", "claim_refs": [claim_id]},
+            ])
+            relation_kind = "projects_to" if case["kind"] == "projection" else "compare"
+            relations.append({"id": relation_id, "kind": relation_kind, "source_ref": a_id, "target_ref": b_id, "parameters": {}, "claim_refs": [claim_id]})
+            entity_ids = [a_id, b_id, r_id]
+        stage_id = f"stage.case.{topic_id}.{suffix}"
+        stages.append({
+            "id": stage_id, "title": str(case["title"]), "caption": "", "layout": "overlay",
+            "input_entity_refs": entity_ids[:-1], "output_entity_refs": [entity_ids[-1]],
+            "relation_refs": [item["id"] for item in relations if str(item["id"]).startswith(relation_id)], "expected_invariants": [f"lecture case {suffix}"],
+        })
+        examples.append({
+            "id": example_id, "title": str(case["title"]), "kind": str(case["kind"]),
+            "given": deepcopy(case["given"]), "calculation": list(case["lines"]),
+            "result": deepcopy(case["result"]),
+            "checks": [{"name": str(case["check"]), "expected": deepcopy(case["result"]), "tolerance": 1e-9}],
+            "claim_refs": [claim_id],
+        })
+        layout_cases.append({
+            "id": f"case.{topic_id}.{suffix}", "topic_id": topic_id,
+            "example_ref": example_id, "claim_refs": [claim_id], "stage_refs": [stage_id],
+            "purpose": str(case["title"]),
+        })
+    explanation["worked_examples"] = examples
+    explanation["case_layout"] = {"default_pane_count": 1, "cases": layout_cases}
+    visual.update({"scene_kind": "2d", "entities": entities, "relations": relations, "stages": stages})
+
+    claim_refs = [str(item.get("id")) for item in explanation.get("sections", []) if isinstance(item, Mapping) and str(item.get("id"))]
+    claim_refs = [f"claim.{topic_id}"]
+    section_ids = ["definition", "formula"]
+    if explanation["derivation"]:
+        section_ids.append("derivation")
+    section_ids.extend(("worked_examples", "geometric_meaning"))
+    explanation["sections"] = [
+        {"id": section_id, "title": section_id, "text": "", "claim_refs": claim_refs}
+        for section_id in section_ids
     ]
-    explanation["geometric_meaning"] = meaning
-    explanation["intuition"] = meaning.split("。", 1)[0] + "。"
-    explanation["invariants"] = _invariants_for(kinds, example)
-    explanation["pitfalls"] = _pitfalls_for(kinds)
-    explanation["read_guide"] = ["先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"]
-    if calculation and example:
-        example["calculation"] = calculation
-        example.setdefault("title", "讲义数值例")
+    # A single, independently renderable example keeps the familiar vector-
+    # addition layout without turning proof steps into fake extra cases.  The
+    # established multi-case lessons retain their own hand-authored layouts.
+    stages = visual.get("stages", [])
+    if visual.get("scene_kind") == "2d" and len(stages) == 1 and example:
+        stage = stages[0]
+        stage["title"] = case_title
+        stage["caption"] = ""
+        explanation["case_layout"] = {
+            "default_pane_count": 1,
+            "cases": [{
+                "id": f"case.{topic_id}", "topic_id": topic_id,
+                "example_ref": str(example["id"]), "claim_refs": claim_refs,
+                "stage_refs": [str(stage["id"])], "purpose": case_title,
+            }],
+        }
+    else:
+        explanation.pop("case_layout", None)
 
 
 def _meaning_for(kinds: set[str], source: str, target: str) -> str:
