@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
+from dataclasses import dataclass
 from typing import Any
 
 from PySide6.QtCore import QEvent, Qt, Signal
@@ -65,6 +66,95 @@ def _operation_visible(operation: Mapping[str, Any], controlled: set[str], visib
         # 能力覆盖图形不是某个案例的证据，避免它在多个窗格中重复出现。
         return False
     return alias not in controlled or alias in visible
+
+
+@dataclass(frozen=True)
+class StoryboardVisibility:
+    """The immutable result of selecting one compiled storyboard stage.
+
+    The selector deliberately keeps the stage metadata next to the aliases
+    that it controls.  Qt hosts can therefore update captions/highlights after
+    applying the visibility mask without re-reading (or interpreting) a
+    command plan.
+    """
+
+    stage_id: str
+    title: str
+    caption: str
+    layout: str
+    controlled_aliases: tuple[str, ...]
+    visible_aliases: tuple[str, ...]
+    hidden_aliases: tuple[str, ...]
+    visible_refs: tuple[str, ...]
+    anchor: tuple[float, float]
+
+
+class StoryboardVisibilityController:
+    """Shared, topic-agnostic controller for compiled storyboard stages.
+
+    ``select`` is intentionally pure: resolving an unknown ID raises before
+    any host object is touched.  ``apply`` only toggles actors already owned by
+    the pane's runtime controllers; it never executes a command or creates a
+    pane.  Matrix tableaux, mapping bundles, and quadratic visuals all use
+    this same path.
+    """
+
+    def __init__(self, compiled: Any) -> None:
+        self.compiled = compiled
+
+    def select(self, stage_id: str) -> StoryboardVisibility:
+        from linear_algebra.visualizations.compiler import storyboard_visibility
+
+        # Resolve the immutable compiled stage first.  This is the atomic
+        # rejection boundary used by both headless tests and the Qt host.
+        stage = next((item for item in tuple(getattr(self.compiled, "storyboard", ()))
+                      if str(getattr(item, "id", "")) == str(stage_id)), None)
+        if stage is None:
+            # Keep the canonical diagnostic from the compiler API.
+            storyboard_visibility(self.compiled, str(stage_id))
+            raise ValueError(f"unknown storyboard stage: {stage_id}")
+        controlled, visible = storyboard_visibility(self.compiled, str(stage_id))
+        visible_set = set(visible)
+        return StoryboardVisibility(
+            stage_id=str(stage.id),
+            title=str(getattr(stage, "title", "")),
+            caption=str(getattr(stage, "caption", "")),
+            layout=str(getattr(stage, "layout", "")),
+            controlled_aliases=tuple(controlled),
+            visible_aliases=tuple(visible),
+            hidden_aliases=tuple(alias for alias in controlled if alias not in visible_set),
+            visible_refs=tuple(str(value) for value in getattr(stage, "visible_refs", ())),
+            anchor=tuple(float(value) for value in getattr(stage, "anchor", ())),
+        )
+
+    def apply(self, runtime: Any, stage_id: str, *, render: bool = True) -> StoryboardVisibility:
+        """Apply a validated mask to actors in an already materialized pane."""
+
+        selection = self.select(stage_id)
+        visible = set(selection.visible_aliases)
+        geometry = getattr(runtime, "geometry_controller", None)
+        geometry3d = getattr(runtime, "geometry3d_controller", None)
+        # All calls happen only after ``select`` succeeds, preserving current
+        # visibility when callers pass an unknown stage ID.
+        for alias in selection.controlled_aliases:
+            is_visible = alias in visible
+            if geometry is not None:
+                setter = getattr(geometry, "set_agent_alias_visible", None)
+                if callable(setter):
+                    setter(alias, is_visible)
+                setter = getattr(geometry, "set_teaching_visible", None)
+                if callable(setter):
+                    setter(alias, is_visible)
+            if geometry3d is not None:
+                setter = getattr(geometry3d, "set_visible", None)
+                if callable(setter):
+                    setter(alias, is_visible)
+        if render:
+            renderer = getattr(runtime, "renderer", None)
+            render_fn = getattr(renderer, "render", None)
+            if callable(render_fn):
+                render_fn()
+        return selection
 
 
 def case_plan(compiled: Any, stage_id: str) -> CommandPlan:
@@ -361,4 +451,14 @@ class TeachingCasePaneGrid(QFrame):
         super().close()
 
 
-__all__ = ["PANE_COUNTS", "PANE_LAYOUTS", "TeachingCasePane", "TeachingCasePaneGrid", "case_pane_layout", "case_pane_placement", "case_plan"]
+__all__ = [
+    "PANE_COUNTS",
+    "PANE_LAYOUTS",
+    "StoryboardVisibility",
+    "StoryboardVisibilityController",
+    "TeachingCasePane",
+    "TeachingCasePaneGrid",
+    "case_pane_layout",
+    "case_pane_placement",
+    "case_plan",
+]

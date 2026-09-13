@@ -107,6 +107,32 @@ class LinearAlgebraContentView(QWidget):
         for label, text in ((self.tableau_title_label, title), (self.tableau_caption_label, caption), (self.tableau_highlight_label, rows)):
             label.setVisible(bool(text))
 
+    def set_storyboard_stage(self, stage: Mapping[str, object] | object) -> None:
+        """Render compiled storyboard metadata without touching scene data.
+
+        The same presentation hook is used for tableau, mapping, and
+        quadratic stages.  ``visible_refs`` are semantic references supplied
+        by the compiler; command aliases are intentionally not displayed.
+        """
+
+        def value(name: str, default: object = "") -> object:
+            if isinstance(stage, Mapping):
+                return stage.get(name, default)
+            return getattr(stage, name, default)
+
+        title = str(value("title", ""))
+        caption = str(value("caption", ""))
+        refs = value("visible_refs", ())
+        if not isinstance(refs, (list, tuple)):
+            refs = ()
+        highlight = "高亮关系：" + "、".join(str(item) for item in refs)
+        self.tableau_title_label.setText(title)
+        self.tableau_caption_label.setText(caption)
+        self.tableau_highlight_label.setText(highlight if refs else "")
+        self.tableau_title_label.setVisible(bool(title))
+        self.tableau_caption_label.setVisible(bool(caption))
+        self.tableau_highlight_label.setVisible(bool(refs))
+
     def set_content(self, content: ExplanationContent | ExplanationContentV2) -> None:
         self.title_label.setText(content.title)
         self.summary_label.setText(content.summary)

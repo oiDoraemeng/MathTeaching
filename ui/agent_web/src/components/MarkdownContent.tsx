@@ -44,7 +44,10 @@ function renderMath(source: string): string {
 
 export const MarkdownContent = memo(function MarkdownContent({ children }: { children: string }) {
   const html = DOMPurify.sanitize(renderMath(children), {
-    USE_PROFILES: { html: true, mathMl: true },
+    // KaTeX draws radicals in the visible HTML layer with a small inline SVG.
+    // Keep the ordinary SVG profile, but not SVG filters, so a sanitizer pass
+    // cannot turn `\sqrt{}` into just its radicand in the Qt WebEngine view.
+    USE_PROFILES: { html: true, mathMl: true, svg: true, svgFilters: false },
     ADD_TAGS: [
       "math", "semantics", "mrow", "mi", "mn", "mo", "msup", "msub", "msubsup",
       "mfrac", "msqrt", "mroot", "mtable", "mtr", "mtd", "menclose", "mpadded",
