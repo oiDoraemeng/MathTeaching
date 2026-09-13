@@ -14,7 +14,10 @@ from typing import Iterable
 from linear_algebra.catalog.model import LessonEntry
 from linear_algebra.registry import CurriculumRegistry, catalog_registry
 from linear_algebra.teaching.source import LectureSourceRepository
-from linear_algebra.teaching.store import TeachingArtifactStore
+from linear_algebra.teaching.store import TeachingArtifactStore, artifact_digest
+from linear_algebra.teaching.model import TeachingArtifact
+from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts
+from linear_algebra.teaching.compile_resources import compiled_resource_store
 from linear_algebra.teaching.validation import (
     validate_claim_bindings,
     validate_closed_references,
@@ -25,7 +28,7 @@ from linear_algebra.teaching.validation import (
 from linear_algebra.visualizations.common import RenderContext
 from linear_algebra.visualizations.contracts import contract_for, validate_contract
 from linear_algebra.visualizations.palette import ROLE_COLORS
-from linear_algebra.visualizations.snapshots import CompiledSnapshotStore, snapshot_from
+from linear_algebra.visualizations.snapshots import CompiledSnapshotStore, snapshot_from, contract_digest_for
 from linear_algebra.visualizations.compiler import VisualCompileError, VisualSemanticsCompiler
 from services.scene_commands import CommandPlan
 from services.scene_commands import SceneCommandService
@@ -77,10 +80,63 @@ class ValidationReport:
     content_errors: tuple[str, ...] = ()
     semantic_errors: tuple[str, ...] = ()
     execution_errors: tuple[str, ...] = ()
+    topic_records: tuple["TopicValidationRecord", ...] = ()
+    issues: tuple["TopicValidationIssue", ...] = ()
+
+    @property
+    def chapter_counts(self) -> dict[int, int]:
+        """Return the stable chapter distribution used by release gates."""
+
+        return dict(sorted(self.topic_count_by_chapter.items()))
+
+    @property
+    def topic_count(self) -> int:
+        return sum(self.topic_count_by_chapter.values())
+
+    @property
+    def plan_digests(self) -> dict[str, str]:
+        return {
+            record.topic_id: record.plan_digest
+            for record in self.topic_records
+            if record.plan_digest
+        }
 
     @property
     def errors(self) -> tuple[str, ...]:
-        return (*self.source_errors, *self.content_errors, *self.semantic_errors, *self.execution_errors)
+        layered = (*self.source_errors, *self.content_errors, *self.semantic_errors, *self.execution_errors)
+        return (*layered, *(str(issue) for issue in self.issues))
+
+
+@dataclass(frozen=True)
+class TopicValidationIssue:
+    """A deterministic, machine-readable issue for one curriculum topic."""
+
+    chapter: int
+    topic_id: str
+    category: str
+    path: str
+    code: str
+    message: str
+
+    def __str__(self) -> str:
+        return f"chapter:{self.chapter} topic:{self.topic_id} {self.category}:{self.code} {self.path}: {self.message}"
+
+
+@dataclass(frozen=True)
+class TopicValidationRecord:
+    """Release evidence captured for one validated topic."""
+
+    topic_id: str
+    chapter: int
+    source_hash: str = ""
+    artifact_revision: int | None = None
+    artifact_status: str = ""
+    published_revision: int | None = None
+    contract_digest: str = ""
+    compiler_version: str = ""
+    plan_digest: str = ""
+    stage_ids: tuple[str, ...] = ()
+    operation_names: tuple[str, ...] = ()
 
 
 def validate_curriculum(
@@ -151,6 +207,212 @@ def validate_curriculum(
         content_errors=tuple(content_errors),
         semantic_errors=tuple(semantic_errors),
         execution_errors=tuple(execution_errors),
+    )
+
+
+def _course_paths(root: Path) -> tuple[Path, Path]:
+    """Resolve a project root and lecture path from either form of input."""
+
+    root = root.resolve()
+    if root.is_file():
+        return root.parents[1] if root.parent.name == ".agents" else root.parent, root
+    source = root / ".agents" / "线性代数讲义.md"
+    if source.is_file():
+        return root, source
+    # Accept ``linear_algebra/teaching/data`` as a convenient fixture root.
+    if root.name == "data" and root.parent.name == "teaching":
+        project = root.parents[2]
+        return project, project / ".agents" / "线性代数讲义.md"
+    return root, source
+
+
+def _issue(
+    issues: list[TopicValidationIssue],
+    topic: LessonEntry,
+    category: str,
+    path: str,
+    code: str,
+    message: str,
+) -> None:
+    issues.append(TopicValidationIssue(topic.chapter_number, topic.id, category, path, code, message))
+
+
+def validate_all_topics(
+    repository_root: Path,
+    *,
+    registry: CurriculumRegistry | None = None,
+    artifact_root: Path | None = None,
+    snapshot_root: Path | None = None,
+) -> ValidationReport:
+    """Validate the complete 93-topic release surface deterministically.
+
+    Chapter 1--3 artifacts are read from the published store.  Chapters 4--8
+    are currently represented by reviewed fixtures plus their checked-in
+    compiled resources; the chapter index is the publication witness for both
+    forms.  No files are modified by this function.
+    """
+
+    project_root, source_path = _course_paths(Path(repository_root))
+    registry = registry or catalog_registry()
+    data_root = Path(artifact_root).resolve() if artifact_root is not None else project_root / "linear_algebra" / "teaching" / "data"
+    store = TeachingArtifactStore(data_root)
+    compiler_store = compiled_resource_store(data_root / "compiled")
+    snapshot_store = CompiledSnapshotStore(snapshot_root) if snapshot_root is not None else None
+    issues: list[TopicValidationIssue] = []
+    records: list[TopicValidationRecord] = []
+    expected_counts = {1: 24, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6}
+    counts = Counter(topic.chapter_number for topic in registry.topics)
+    if counts != Counter(expected_counts):
+        # Keep the issue topic-neutral so consumers can still render all rows.
+        issues.append(TopicValidationIssue(0, "", "catalog", "chapter_counts", "chapter_count_mismatch", f"expected {expected_counts}, got {dict(sorted(counts.items()))}"))
+    ids = [topic.id for topic in registry.topics]
+    for duplicate in sorted({topic_id for topic_id in ids if ids.count(topic_id) > 1}):
+        issues.append(TopicValidationIssue(0, duplicate, "catalog", "topic_id", "duplicate_topic_id", "topic ID is not unique"))
+
+    index_rows: dict[str, dict[str, object]] = {}
+    index_path = data_root / "index.json"
+    try:
+        payload = json.loads(index_path.read_text(encoding="utf-8"))
+        rows = payload.get("topics", []) if isinstance(payload, dict) else []
+        if not isinstance(rows, list):
+            raise ValueError("topics must be an array")
+        for row in rows:
+            if not isinstance(row, dict) or not isinstance(row.get("topic_id"), str):
+                issues.append(TopicValidationIssue(0, "", "published", "index.json", "invalid_index_row", "topic index row must contain topic_id"))
+                continue
+            topic_id = str(row["topic_id"])
+            if topic_id in index_rows:
+                issues.append(TopicValidationIssue(0, topic_id, "published", "index.json", "duplicate_index_topic", "topic appears more than once"))
+            index_rows[topic_id] = row
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        issues.append(TopicValidationIssue(0, "", "published", "index.json", "invalid_index", str(error)))
+
+    try:
+        reviewed_payloads = load_reviewed_artifacts(data_root / "revieweds")
+    except (FileNotFoundError, OSError, ValueError):
+        reviewed_payloads = {}
+    repository = LectureSourceRepository(source_path)
+    compiler = VisualSemanticsCompiler()
+    command_validator = SceneCommandService()
+    for topic in registry.topics:
+        row = index_rows.get(topic.id)
+        published_revision: int | None = None
+        if row is None:
+            _issue(issues, topic, "published", "index.json", "missing_index_entry", "topic is absent from the published index")
+        else:
+            # Legacy rows use ``revision`` while chapter 4--8 release rows
+            # expose the explicit ``published_revision`` witness.
+            revision_field = "published_revision" if "published_revision" in row else "revision"
+            value = row.get(revision_field)
+            if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+                _issue(issues, topic, "published", revision_field, "invalid_published_revision", "published revision must be a positive integer")
+            else:
+                published_revision = value
+
+        artifact = None
+        try:
+            stored = store.published(topic.id)
+            artifact = stored.artifact if stored is not None else None
+        except (FileNotFoundError, OSError, ValueError, KeyError) as error:
+            _issue(issues, topic, "artifact", "published", "invalid_artifact", str(error))
+        if artifact is None and topic.chapter_number >= 4:
+            raw = reviewed_payloads.get(topic.id)
+            if raw is not None:
+                try:
+                    artifact = TeachingArtifact.from_dict(raw)
+                except (TypeError, ValueError, KeyError) as error:
+                    _issue(issues, topic, "artifact", "reviewed", "invalid_artifact", str(error))
+            else:
+                _issue(issues, topic, "artifact", "reviewed", "missing_artifact", "no published or reviewed artifact resource")
+        if artifact is None:
+            if topic.chapter_number < 4:
+                _issue(issues, topic, "artifact", "published", "missing_artifact", "no published artifact resource")
+            records.append(TopicValidationRecord(topic.id, topic.chapter_number, published_revision=published_revision))
+            continue
+
+        if artifact.topic_id != topic.id:
+            _issue(issues, topic, "artifact", "topic_id", "topic_id_mismatch", f"expected {topic.id!r}, got {artifact.topic_id!r}")
+        if artifact.status not in {"published", "reviewed"}:
+            _issue(issues, topic, "artifact", "status", "invalid_status", f"unsupported artifact status {artifact.status!r}")
+        # The legacy index is intentionally frozen at its original revision;
+        # only an explicit extended ``published_revision`` is authoritative.
+        if published_revision is not None and artifact.revision != published_revision and row is not None and "published_revision" in row:
+            _issue(issues, topic, "published", "published_revision", "revision_mismatch", f"index={published_revision}, artifact={artifact.revision}")
+        if row is not None and row.get("source_hash") not in (None, artifact.source.source_hash):
+            _issue(issues, topic, "published", "source_hash", "index_source_mismatch", "index source hash differs from artifact")
+
+        try:
+            context = repository.context_for(topic)
+            if artifact.source.source_hash != context.source_hash:
+                _issue(issues, topic, "source", "source_hash", "stale_source", "artifact source hash differs from lecture source")
+            for source_issue in validate_source_evidence(artifact, context, topic):
+                _issue(issues, topic, "source", source_issue.path, source_issue.code, source_issue.message)
+        except (OSError, ValueError, KeyError) as error:
+            _issue(issues, topic, "source", "context", "source_context_invalid", str(error))
+
+        contract = contract_for(topic.id)
+        contract_digest = contract_digest_for(contract)
+        for contract_issue in validate_contract(artifact, contract):
+            _issue(issues, topic, "contract", contract_issue.detail, contract_issue.code, contract_issue.detail)
+        compiled = None
+        try:
+            compiled = compiler.compile(artifact, contract, RenderContext.default(topic.id))
+        except Exception as error:
+            _issue(issues, topic, "compiled", "compiler", "compile_failed", str(error))
+        if compiled is None:
+            records.append(TopicValidationRecord(topic.id, topic.chapter_number, artifact.source.source_hash, artifact.revision, artifact.status, published_revision, contract_digest))
+            continue
+        validation = command_validator.validate(compiled.plan)
+        if not validation.valid:
+            _issue(issues, topic, "plan", "operations", "invalid_plan", "; ".join(validation.messages))
+        operation_names = tuple(sorted({str(operation.get("op")) for operation in validation.expanded_operations}))
+        for expected_operation in contract.expected_operations:
+            if expected_operation not in operation_names:
+                _issue(issues, topic, "plan", "operations", "missing_expected_operation", f"expected operation {expected_operation!r} is absent")
+
+        resource = None
+        try:
+            resource = compiler_store.get(topic.id)
+        except (FileNotFoundError, OSError, ValueError, KeyError) as error:
+            _issue(issues, topic, "compiled", "resource", "missing_compiled_resource", str(error))
+        if resource is not None:
+            comparisons = (
+                ("topic_id", resource.topic_id, topic.id),
+                ("revision", resource.revision, artifact.revision),
+                ("source_hash", resource.source_hash, artifact.source.source_hash),
+                ("artifact_digest", resource.artifact_digest, artifact_digest(artifact)),
+                ("plan_digest", resource.plan_digest, compiled.plan_digest),
+                ("contract_digest", resource.contract_digest, contract_digest),
+            )
+            for field, actual, expected in comparisons:
+                if field == "contract_digest" and not contract.expected_operations and not resource.contract_digest:
+                    continue
+                if actual != expected:
+                    _issue(issues, topic, "compiled", field, "compiled_resource_mismatch", f"expected {expected!r}, got {actual!r}")
+            expected_stages = tuple(stage.id for stage in compiled.storyboard)
+            resource_stages = tuple(str(stage.get("id")) for stage in resource.stages)
+            if resource_stages != expected_stages:
+                _issue(issues, topic, "compiled", "stages", "compiled_stage_mismatch", "compiled stage IDs differ from compiler output")
+        if snapshot_store is not None:
+            snapshot = snapshot_store.load(topic.id, artifact.revision)
+            if snapshot is None:
+                _issue(issues, topic, "compiled", "snapshot", "missing_snapshot", "published snapshot is missing")
+            else:
+                expected_snapshot = snapshot_from(artifact, contract, compiled)
+                if snapshot != expected_snapshot:
+                    _issue(issues, topic, "compiled", "snapshot", "snapshot_mismatch", "snapshot differs from compiled output")
+
+        records.append(TopicValidationRecord(
+            topic.id, topic.chapter_number, artifact.source.source_hash, artifact.revision,
+            artifact.status, published_revision, contract_digest, compiled.compiler_version,
+            compiled.plan_digest, tuple(stage.id for stage in compiled.storyboard), operation_names,
+        ))
+
+    issues.sort(key=lambda item: (item.chapter, item.topic_id, item.category, item.path, item.code, item.message))
+    return ValidationReport(
+        topic_count_by_chapter=dict(sorted(counts.items())),
+        issues=tuple(issues),
+        topic_records=tuple(records),
     )
 
 
@@ -426,6 +688,14 @@ def main(argv: list[str] | None = None) -> int:
     if artifact_root is None:
         configured_root = os.environ.get("MATH3D_TEACHING_ARTIFACT_ROOT", "").strip()
         artifact_root = Path(configured_root) if configured_root else None
+    if artifact_root is None and args.snapshot_root is None:
+        report = validate_all_topics(args.source)
+        if report.errors:
+            for error in report.errors:
+                print(error)
+            return 1
+        print(f"{report.topic_count} topics validated")
+        return 0
     if artifact_root is not None:
         snapshot_store = CompiledSnapshotStore(args.snapshot_root) if args.snapshot_root is not None else None
         summary = audit_published_artifacts(
