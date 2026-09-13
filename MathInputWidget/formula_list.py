@@ -93,7 +93,11 @@ class FormulaListWidget(QWidget):
         self._bridge.settings_requested.connect(self._on_settings_requested)
 
     def showEvent(self, event: QShowEvent) -> None:
+        """窗口显示时触发数据同步并强制 WebEngine 重绘，修复最小化后空白问题。"""
         super().showEvent(event)
+        # 触发 WebEngine 重新渲染
+        if hasattr(self, "web_view") and self.web_view is not None:
+            self.web_view.update()
         self._send_layers()
 
     def set_layers(self, layers: list[Layer]) -> None:
