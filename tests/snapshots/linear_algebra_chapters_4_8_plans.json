@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "topic_count": 39,
+  "chapters": {
+    "4": 16,
+    "5": 8,
+    "6": 3,
+    "7": 6,
+    "8": 6
+  },
+  "source": "linear_algebra/teaching/data/compiled/*.json",
+  "fields": ["topic_id", "scene", "stages", "plan_digest"]
+}
