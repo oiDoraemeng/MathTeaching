@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:b78e94b4f4c1d9c701f32a092fa9daf27f2b2a639d74ab04173f1362ef3b9dc3",
+  "artifact_digest": "sha256:2e5525a72d0534d0c4ca1ab83f104b6923b82063cfc317aa49a53bc42db75469",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__v1__origin",
+        "alias": "sem__case1_v__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,82 +14,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v1__end",
-        "coordinates": [
-          1.0,
-          2.0
-        ],
-        "name": "v₁",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__v1",
-        "color": "#2F6BFF",
-        "end": "sem__v1__end",
-        "kind": "vector",
-        "label": "v₁",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__v1__origin"
-      },
-      {
-        "alias": "sem__v2__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__v2__end",
-        "coordinates": [
-          2.0,
-          2.0
-        ],
-        "name": "v₂",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__v2",
-        "color": "#F08A24",
-        "end": "sem__v2__end",
-        "kind": "vector",
-        "label": "v₂",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__v2__origin"
-      },
-      {
-        "alias": "sem__sum__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__sum__end",
+        "alias": "sem__case1_v__end",
         "coordinates": [
           3.0,
           4.0
         ],
-        "name": "v₁+v₂",
+        "name": "v",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__sum",
-        "color": "#7B61FF",
-        "end": "sem__sum__end",
+        "alias": "sem__case1_v",
+        "color": "#2F6BFF",
+        "end": "sem__case1_v__end",
         "kind": "vector",
-        "label": "v₁+v₂",
+        "label": "v",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__sum__origin"
+        "start": "sem__case1_v__origin"
       },
       {
-        "alias": "sem__u__origin",
+        "alias": "sem__case1_u__origin",
         "coordinates": [
           0.0,
           0.0
@@ -98,7 +42,7 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__u__end",
+        "alias": "sem__case1_u__end",
         "coordinates": [
           1.0,
           0.0
@@ -107,29 +51,231 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__u",
+        "alias": "sem__case1_u",
         "color": "#2A9D8F",
-        "end": "sem__u__end",
+        "end": "sem__case1_u__end",
         "kind": "vector",
         "label": "u",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__u__origin"
+        "start": "sem__case1_u__origin"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.projection.properties",
+        "alias": "sem__case1_p__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_p__end",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "p",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_p",
+        "color": "#2A9D8F",
+        "end": "sem__case1_p__end",
+        "kind": "vector",
+        "label": "p",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case1_p__origin"
+      },
+      {
+        "alias": "sem__case1_H",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "H",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_r__end",
+        "coordinates": [
+          0.0,
+          4.0
+        ],
+        "name": "r",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_r",
+        "color": "#E76F51",
+        "end": "sem__case1_r__end",
+        "kind": "vector",
+        "label": "r",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case1_r__origin"
+      },
+      {
+        "alias": "sem__case2_v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_v__end",
+        "coordinates": [
+          6.0,
+          8.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_v",
+        "color": "#2F6BFF",
+        "end": "sem__case2_v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_v__origin"
+      },
+      {
+        "alias": "sem__case2_u__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_u__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "u",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_u",
+        "color": "#2A9D8F",
+        "end": "sem__case2_u__end",
+        "kind": "vector",
+        "label": "u",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_u__origin"
+      },
+      {
+        "alias": "sem__case2_p__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_p__end",
+        "coordinates": [
+          6.0,
+          0.0
+        ],
+        "name": "p",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_p",
+        "color": "#2A9D8F",
+        "end": "sem__case2_p__end",
+        "kind": "vector",
+        "label": "p",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_p__origin"
+      },
+      {
+        "alias": "sem__case2_H",
+        "coordinates": [
+          6.0,
+          0.0
+        ],
+        "name": "H",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_r__end",
+        "coordinates": [
+          0.0,
+          8.0
+        ],
+        "name": "r",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_r",
+        "color": "#E76F51",
+        "end": "sem__case2_r__end",
+        "kind": "vector",
+        "label": "r",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_r__origin"
+      },
+      {
+        "alias": "sem__rel.case.ch01.projection.properties.1",
         "color": "#2A9D8F",
         "direction": [
           1.0,
           0.0
         ],
-        "foot_alias": "sem__rel.0.claim.ch01.projection.properties__foot",
+        "foot_alias": "sem__case1_H",
         "op": "geometry.projection",
-        "residual_alias": "sem__rel.0.claim.ch01.projection.properties__residual",
-        "result_alias": "sem__u",
+        "residual_alias": "sem__case1_r",
+        "result_alias": "sem__case1_u",
         "vector": [
           3.0,
           4.0
+        ]
+      },
+      {
+        "alias": "sem__rel.case.ch01.projection.properties.2",
+        "color": "#2A9D8F",
+        "direction": [
+          1.0,
+          0.0
+        ],
+        "foot_alias": "sem__case1_H",
+        "op": "geometry.projection",
+        "residual_alias": "sem__case1_r",
+        "result_alias": "sem__case2_u",
+        "vector": [
+          6.0,
+          8.0
         ]
       },
       {
@@ -149,15 +295,6 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.projection.properties.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "投影分量"
-      },
-      {
         "alias": "sem__projection__2",
         "color": "#2A9D8F",
         "direction": [
@@ -174,15 +311,6 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.projection.properties.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "残差分量"
-      },
-      {
         "op": "view.fit",
         "padding": 1.15
       }
@@ -191,81 +319,89 @@
     "summary": "投影的可加性与齐次性",
     "version": 1
   },
-  "plan_digest": "sha256:b8a83daadab9463afd2e51682697d5f4782e27c32f7babfad9e24b821c29ae0b",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:2e23a78474f635acb6bf8698e762352e22c80d02c2902f4f4239b9e332643c61",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 14,
   "schema_version": 1,
   "source_hash": "sha256:8aca69b44713fdac8bf4cb3885c96563418db00aaa21ad288a0a0c79c25162c9",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
       "caption": "沿着方向线读出投影分量。",
-      "id": "stage.claim.ch01.projection.properties.observe",
-      "layout": "side_by_side",
-      "title": "投影分量",
+      "id": "stage.case.ch01.projection.properties.1",
+      "layout": "overlay",
+      "title": "案例一：投影的可加性",
       "visible_aliases": [
-        "sem__v1",
-        "sem__v1__end",
-        "sem__v1__origin",
-        "sem__v2",
-        "sem__v2__end",
-        "sem__v2__origin",
-        "sem__sum",
-        "sem__sum__end",
-        "sem__sum__origin",
-        "sem__u",
-        "sem__u__end",
-        "sem__u__origin",
-        "sem__rel.0.claim.ch01.projection.properties",
-        "sem__stage.claim.ch01.projection.properties.observe__title",
+        "sem__case1_v",
+        "sem__case1_v__end",
+        "sem__case1_v__origin",
+        "sem__case1_u",
+        "sem__case1_u__end",
+        "sem__case1_u__origin",
+        "sem__case1_p",
+        "sem__case1_p__end",
+        "sem__case1_p__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__case1_H",
+        "sem__rel.case.ch01.projection.properties.1",
+        "sem__rel.case.ch01.projection.properties.1.decompose",
+        "sem__rel.case.ch01.projection.properties.1.orthogonal",
         "sem__projection__1"
       ],
       "visible_refs": [
-        "v1",
-        "v2",
-        "sum",
-        "u",
-        "rel.0.claim.ch01.projection.properties"
+        "case1_v",
+        "case1_u",
+        "case1_p",
+        "case1_r",
+        "case1_H",
+        "rel.case.ch01.projection.properties.1",
+        "rel.case.ch01.projection.properties.1.decompose",
+        "rel.case.ch01.projection.properties.1.orthogonal"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
       "caption": "看垂直方向上剩下的残差。",
-      "id": "stage.claim.ch01.projection.properties.derive",
-      "layout": "sequence",
-      "title": "残差分量",
+      "id": "stage.case.ch01.projection.properties.2",
+      "layout": "overlay",
+      "title": "案例二：投影的齐次性",
       "visible_aliases": [
-        "sem__v1",
-        "sem__v1__end",
-        "sem__v1__origin",
-        "sem__v2",
-        "sem__v2__end",
-        "sem__v2__origin",
-        "sem__sum",
-        "sem__sum__end",
-        "sem__sum__origin",
-        "sem__u",
-        "sem__u__end",
-        "sem__u__origin",
-        "sem__rel.0.claim.ch01.projection.properties",
-        "sem__stage.claim.ch01.projection.properties.derive__title",
+        "sem__case2_v",
+        "sem__case2_v__end",
+        "sem__case2_v__origin",
+        "sem__case2_u",
+        "sem__case2_u__end",
+        "sem__case2_u__origin",
+        "sem__case2_p",
+        "sem__case2_p__end",
+        "sem__case2_p__origin",
+        "sem__case2_r",
+        "sem__case2_r__end",
+        "sem__case2_r__origin",
+        "sem__case2_H",
+        "sem__rel.case.ch01.projection.properties.2",
+        "sem__rel.case.ch01.projection.properties.2.decompose",
+        "sem__rel.case.ch01.projection.properties.2.orthogonal",
         "sem__projection__2"
       ],
       "visible_refs": [
-        "v1",
-        "v2",
-        "sum",
-        "u",
-        "rel.0.claim.ch01.projection.properties"
+        "case2_v",
+        "case2_u",
+        "case2_p",
+        "case2_r",
+        "case2_H",
+        "rel.case.ch01.projection.properties.2",
+        "rel.case.ch01.projection.properties.2.decompose",
+        "rel.case.ch01.projection.properties.2.orthogonal"
       ]
     }
   ],

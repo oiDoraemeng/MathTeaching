@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:639178ed18ed03e0c98455df0beb6d4053df2f558ab7d06f40206d7ed1ed512e",
+  "artifact_digest": "sha256:3e7a7dcfb11cb01b6ed0d4da2afc853d972e37d2572aba4f5426e29569bb93fe",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__v1__origin",
+        "alias": "sem__e1_scaled__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +14,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v1__end",
+        "alias": "sem__e1_scaled__end",
         "coordinates": [
-          1.0,
+          2.0,
           0.0
         ],
-        "name": "v₁",
+        "name": "2e₁",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v1",
+        "alias": "sem__e1_scaled",
         "color": "#2F6BFF",
-        "end": "sem__v1__end",
+        "end": "sem__e1_scaled__end",
         "kind": "vector",
-        "label": "v₁",
+        "label": "2e₁",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__v1__origin"
+        "start": "sem__e1_scaled__origin"
       },
       {
-        "alias": "sem__v2__origin",
+        "alias": "sem__e2_scaled__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,26 +42,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v2__end",
+        "alias": "sem__e2_scaled__end",
         "coordinates": [
           0.0,
-          1.0
+          3.0
         ],
-        "name": "v₂",
+        "name": "3e₂",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v2",
+        "alias": "sem__e2_scaled",
         "color": "#F08A24",
-        "end": "sem__v2__end",
+        "end": "sem__e2_scaled__end",
         "kind": "vector",
-        "label": "v₂",
+        "label": "3e₂",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__v2__origin"
+        "start": "sem__e2_scaled__origin"
       },
       {
-        "alias": "sem__result__origin",
+        "alias": "sem__combination__origin",
         "coordinates": [
           0.0,
           0.0
@@ -70,32 +70,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__result__end",
+        "alias": "sem__combination__end",
         "coordinates": [
           2.0,
           3.0
         ],
-        "name": "2v₁+3v₂",
+        "name": "2e₁+3e₂",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__result",
-        "color": "#7B61FF",
-        "end": "sem__result__end",
+        "alias": "sem__combination",
+        "color": "#6B7280",
+        "end": "sem__combination__end",
         "kind": "vector",
-        "label": "2v₁+3v₂",
+        "label": "2e₁+3e₂",
         "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__result__origin"
-      },
-      {
-        "alias": "sem__rel.0.claim.ch01.ops.linear-combination",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "sum: v₁ → v₂"
+        "role": "result",
+        "start": "sem__combination__origin"
       },
       {
         "alias": "cap__polygon",
@@ -109,82 +100,18 @@
             0.0
           ],
           [
-            1.0,
+            2.0,
             0.0
           ],
           [
-            1.0,
-            1.0
+            2.0,
+            3.0
           ],
           [
             0.0,
-            1.0
+            3.0
           ]
         ]
-      },
-      {
-        "alias": "sem__addition_triangle",
-        "color": "#6B7280",
-        "op": "geometry.polygon",
-        "opacity": 0.14,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__stage.claim.ch01.ops.linear-combination.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "三角形法则"
-      },
-      {
-        "alias": "sem__addition_parallelogram",
-        "color": "#6B7280",
-        "op": "geometry.polygon",
-        "opacity": 0.14,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            0.0
-          ],
-          [
-            1.0,
-            1.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__stage.claim.ch01.ops.linear-combination.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "平行四边形法则"
       },
       {
         "op": "view.fit",
@@ -195,73 +122,39 @@
     "summary": "线性组合",
     "version": 1
   },
-  "plan_digest": "sha256:0e3cd9004cadab4f80a100ef131b266ac44807475f45a166f9d61389b2014248",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:8f9bd6a3a4d96905a4f3533aa1353ec2ad29fbc3ff7bb97935b4c5ebb1e6cac8",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 14,
   "schema_version": 1,
   "source_hash": "sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "把第二个向量平移到第一个向量的终点，和向量是三角形的第三边。",
-      "id": "stage.claim.ch01.ops.linear-combination.observe",
-      "layout": "side_by_side",
-      "title": "三角形法则",
+      "caption": "",
+      "id": "stage.linear-combination.standard-basis",
+      "layout": "overlay",
+      "title": "案例一：标准基组合",
       "visible_aliases": [
-        "sem__v1",
-        "sem__v1__end",
-        "sem__v1__origin",
-        "sem__v2",
-        "sem__v2__end",
-        "sem__v2__origin",
-        "sem__result",
-        "sem__result__end",
-        "sem__result__origin",
-        "sem__rel.0.claim.ch01.ops.linear-combination",
-        "sem__stage.claim.ch01.ops.linear-combination.observe__title",
-        "sem__addition_triangle"
+        "sem__e1_scaled",
+        "sem__e1_scaled__end",
+        "sem__e1_scaled__origin",
+        "sem__e2_scaled",
+        "sem__e2_scaled__end",
+        "sem__e2_scaled__origin",
+        "sem__combination",
+        "sem__combination__end",
+        "sem__combination__origin",
+        "sem__rel.linear-combination.result"
       ],
       "visible_refs": [
-        "v1",
-        "v2",
-        "result",
-        "rel.0.claim.ch01.ops.linear-combination"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "以两个向量为邻边作平行四边形，对角线就是和向量。",
-      "id": "stage.claim.ch01.ops.linear-combination.derive",
-      "layout": "sequence",
-      "title": "平行四边形法则",
-      "visible_aliases": [
-        "sem__v1",
-        "sem__v1__end",
-        "sem__v1__origin",
-        "sem__v2",
-        "sem__v2__end",
-        "sem__v2__origin",
-        "sem__result",
-        "sem__result__end",
-        "sem__result__origin",
-        "sem__rel.0.claim.ch01.ops.linear-combination",
-        "sem__stage.claim.ch01.ops.linear-combination.derive__title",
-        "sem__addition_parallelogram"
-      ],
-      "visible_refs": [
-        "v1",
-        "v2",
-        "result",
-        "rel.0.claim.ch01.ops.linear-combination"
+        "e1_scaled",
+        "e2_scaled",
+        "combination",
+        "rel.linear-combination.result"
       ]
     }
   ],

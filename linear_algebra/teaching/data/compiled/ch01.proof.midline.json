@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:f597d7391fc20527a30aa0a4c842d2d2ffe8cb5070696b908f58be3fca2862af",
+  "artifact_digest": "sha256:34a3417ef32a19372c95e6ff1313b4812fc2f6ed0d6090d4d1cc8500f33b43a4",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__a__origin",
+        "alias": "sem__case1_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +14,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a__end",
+        "alias": "sem__case1_a__end",
         "coordinates": [
-          1.0,
+          2.0,
           0.0
         ],
-        "name": "AB",
+        "name": "a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a",
+        "alias": "sem__case1_a",
         "color": "#2F6BFF",
-        "end": "sem__a__end",
+        "end": "sem__case1_a__end",
         "kind": "vector",
-        "label": "AB",
+        "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__a__origin"
+        "start": "sem__case1_a__origin"
       },
       {
-        "alias": "sem__b__origin",
+        "alias": "sem__case1_b__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,26 +42,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b__end",
+        "alias": "sem__case1_b__end",
         "coordinates": [
           0.0,
-          1.0
+          2.0
         ],
-        "name": "AC",
+        "name": "b",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b",
+        "alias": "sem__case1_b",
         "color": "#F08A24",
-        "end": "sem__b__end",
+        "end": "sem__case1_b__end",
         "kind": "vector",
-        "label": "AC",
+        "label": "b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__b__origin"
+        "start": "sem__case1_b__origin"
       },
       {
-        "alias": "sem__DE__origin",
+        "alias": "sem__case1_r__origin",
         "coordinates": [
           0.0,
           0.0
@@ -70,60 +70,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__DE__end",
+        "alias": "sem__case1_r__end",
         "coordinates": [
-          -0.5,
-          0.5
+          2.0,
+          2.0
         ],
-        "name": "DE",
+        "name": "result",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__DE",
-        "color": "#7B61FF",
-        "end": "sem__DE__end",
+        "alias": "sem__case1_r",
+        "color": "#6B7280",
+        "end": "sem__case1_r__end",
         "kind": "vector",
-        "label": "DE",
+        "label": "result",
         "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__DE__origin"
-      },
-      {
-        "alias": "sem__BC__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__BC__end",
-        "coordinates": [
-          -1.0,
-          1.0
-        ],
-        "name": "BC",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__BC",
-        "color": "#D64550",
-        "end": "sem__BC__end",
-        "kind": "vector",
-        "label": "BC",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__BC__origin"
-      },
-      {
-        "alias": "sem__rel.0.claim.ch01.proof.midline",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "scalar_multiple: DE → BC"
+        "role": "result",
+        "start": "sem__case1_r__origin"
       },
       {
         "alias": "cap__polygon",
@@ -137,36 +100,18 @@
             0.0
           ],
           [
-            1.0,
+            2.0,
             0.0
           ],
           [
-            1.0,
-            1.0
+            2.0,
+            2.0
           ],
           [
             0.0,
-            1.0
+            2.0
           ]
         ]
-      },
-      {
-        "alias": "sem__stage.claim.ch01.proof.midline.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "几何意义 1"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.proof.midline.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "几何意义 2"
       },
       {
         "op": "view.fit",
@@ -177,79 +122,39 @@
     "summary": "三角形中位线定理",
     "version": 1
   },
-  "plan_digest": "sha256:6f5b1a319b1fb076005536e5a10b0ff7f787bfaeea77e136871e5b9d4ce71bac",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:51d83de76f0e1b347d8c8d63f116ea119a52b39e6f81a458bec2d485fb0817f4",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 13,
   "schema_version": 1,
   "source_hash": "sha256:71150484c6087cdee298ce32f28634cfc4c618d29a90e0e5c1dd0c6890d9e57a",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.proof.midline.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "",
+      "id": "stage.case.ch01.proof.midline.1",
+      "layout": "overlay",
+      "title": "案例一：中位线",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__DE",
-        "sem__DE__end",
-        "sem__DE__origin",
-        "sem__BC",
-        "sem__BC__end",
-        "sem__BC__origin",
-        "sem__rel.0.claim.ch01.proof.midline",
-        "sem__stage.claim.ch01.proof.midline.observe__title"
+        "sem__case1_a",
+        "sem__case1_a__end",
+        "sem__case1_a__origin",
+        "sem__case1_b",
+        "sem__case1_b__end",
+        "sem__case1_b__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__rel.case.ch01.proof.midline.1"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "DE",
-        "BC",
-        "rel.0.claim.ch01.proof.midline"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.proof.midline.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
-      "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__DE",
-        "sem__DE__end",
-        "sem__DE__origin",
-        "sem__BC",
-        "sem__BC__end",
-        "sem__BC__origin",
-        "sem__rel.0.claim.ch01.proof.midline",
-        "sem__stage.claim.ch01.proof.midline.derive__title"
-      ],
-      "visible_refs": [
-        "a",
-        "b",
-        "DE",
-        "BC",
-        "rel.0.claim.ch01.proof.midline"
+        "case1_a",
+        "case1_b",
+        "case1_r",
+        "rel.case.ch01.proof.midline.1"
       ]
     }
   ],

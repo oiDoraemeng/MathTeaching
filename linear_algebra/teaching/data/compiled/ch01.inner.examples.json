@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:401c753e4c46befb8d78ad6fd2f509de0f97b0df430a09a265411d203f017332",
+  "artifact_digest": "sha256:19cd0ce0642505a7359b2a51777eb497ec2fe4293f5befe9bea282aa1b5cb38f",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__F__origin",
+        "alias": "sem__case1_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +14,110 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__F__end",
+        "alias": "sem__case1_a__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_a",
+        "color": "#2F6BFF",
+        "end": "sem__case1_a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case1_a__origin"
+      },
+      {
+        "alias": "sem__case1_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_b__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_b",
+        "color": "#F08A24",
+        "end": "sem__case1_b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case1_b__origin"
+      },
+      {
+        "alias": "sem__case1_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_r__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_r",
+        "color": "#6B7280",
+        "end": "sem__case1_r__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__case1_r__origin"
+      },
+      {
+        "alias": "sem__case2_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_a__end",
         "coordinates": [
           3.0,
           4.0
         ],
-        "name": "F",
+        "name": "a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__F",
+        "alias": "sem__case2_a",
         "color": "#2F6BFF",
-        "end": "sem__F__end",
+        "end": "sem__case2_a__end",
         "kind": "vector",
-        "label": "F",
+        "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__F__origin"
+        "start": "sem__case2_a__origin"
       },
       {
-        "alias": "sem__d__origin",
+        "alias": "sem__case2_b__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,60 +126,247 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__d__end",
+        "alias": "sem__case2_b__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_b",
+        "color": "#F08A24",
+        "end": "sem__case2_b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_b__origin"
+      },
+      {
+        "alias": "sem__case2_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_r__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_r",
+        "color": "#6B7280",
+        "end": "sem__case2_r__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__case2_r__origin"
+      },
+      {
+        "alias": "sem__case3_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_a__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_a",
+        "color": "#2F6BFF",
+        "end": "sem__case3_a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case3_a__origin"
+      },
+      {
+        "alias": "sem__case3_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_b__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_b",
+        "color": "#F08A24",
+        "end": "sem__case3_b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case3_b__origin"
+      },
+      {
+        "alias": "sem__case3_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_r__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_r",
+        "color": "#6B7280",
+        "end": "sem__case3_r__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__case3_r__origin"
+      },
+      {
+        "alias": "sem__case4_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case4_a__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case4_a",
+        "color": "#2F6BFF",
+        "end": "sem__case4_a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case4_a__origin"
+      },
+      {
+        "alias": "sem__case4_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case4_b__end",
         "coordinates": [
           6.0,
           0.0
         ],
-        "name": "d",
+        "name": "b",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__d",
+        "alias": "sem__case4_b",
         "color": "#F08A24",
-        "end": "sem__d__end",
+        "end": "sem__case4_b__end",
         "kind": "vector",
-        "label": "d",
+        "label": "b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__d__origin"
+        "start": "sem__case4_b__origin"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.inner.examples",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "sem__case4_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "compare: F → d"
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case4_r__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case4_r",
+        "color": "#6B7280",
+        "end": "sem__case4_r__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__case4_r__origin"
       },
       {
         "color": "#2A9D8F",
         "direction": [
-          6.0,
-          0.0
+          0.0,
+          1.0
         ],
         "foot_alias": "cap__foot",
         "op": "geometry.projection",
         "residual_alias": "cap__residual",
         "result_alias": "cap__projection",
         "vector": [
-          3.0,
-          4.0
+          1.0,
+          0.0
         ]
       },
       {
         "alias": "cap__angle",
         "color": "#2A9D8F",
         "first": [
-          3.0,
-          4.0
+          1.0,
+          0.0
         ],
         "op": "geometry.angle_arc",
         "radius": 0.45,
         "second": [
-          6.0,
-          0.0
+          0.0,
+          1.0
         ],
         "vertex": [
           0.0,
@@ -103,22 +374,76 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.inner.examples.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
+        "alias": "sem__orientation__1",
+        "color": "#2A9D8F",
+        "first": [
+          1.0,
+          0.0
         ],
-        "text": "几何意义 1"
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          0.0,
+          1.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
       },
       {
-        "alias": "sem__stage.claim.ch01.inner.examples.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
+        "alias": "sem__orientation__2",
+        "color": "#2A9D8F",
+        "first": [
+          1.0,
+          0.0
         ],
-        "text": "几何意义 2"
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          0.0,
+          1.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__orientation__3",
+        "color": "#2A9D8F",
+        "first": [
+          1.0,
+          0.0
+        ],
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          0.0,
+          1.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__orientation__4",
+        "color": "#2A9D8F",
+        "first": [
+          1.0,
+          0.0
+        ],
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          0.0,
+          1.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
       },
       {
         "op": "view.fit",
@@ -129,63 +454,127 @@
     "summary": "内积几何分层例题",
     "version": 1
   },
-  "plan_digest": "sha256:f7082422a680017a18838b111f35e9c07e6cc76613609edc95d3b2291d7f1c9a",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:54589cae8aa925f6530d01bccb1c344aa1db0999da378223090a0e4645bbb418",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 14,
   "schema_version": 1,
   "source_hash": "sha256:76f421df33e08871c34eb5bea7755ac7eaf5b7ca4a8d68ebeb44f783cb773035",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.inner.examples.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "",
+      "id": "stage.case.ch01.inner.examples.1",
+      "layout": "overlay",
+      "title": "案例一：正交",
       "visible_aliases": [
-        "sem__F",
-        "sem__F__end",
-        "sem__F__origin",
-        "sem__d",
-        "sem__d__end",
-        "sem__d__origin",
-        "sem__rel.0.claim.ch01.inner.examples",
-        "sem__stage.claim.ch01.inner.examples.observe__title"
+        "sem__case1_a",
+        "sem__case1_a__end",
+        "sem__case1_a__origin",
+        "sem__case1_b",
+        "sem__case1_b__end",
+        "sem__case1_b__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__rel.case.ch01.inner.examples.1",
+        "sem__orientation__1"
       ],
       "visible_refs": [
-        "F",
-        "d",
-        "rel.0.claim.ch01.inner.examples"
+        "case1_a",
+        "case1_b",
+        "case1_r",
+        "rel.case.ch01.inner.examples.1"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.inner.examples.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
+      "caption": "",
+      "id": "stage.case.ch01.inner.examples.2",
+      "layout": "overlay",
+      "title": "案例二：向量长度",
       "visible_aliases": [
-        "sem__F",
-        "sem__F__end",
-        "sem__F__origin",
-        "sem__d",
-        "sem__d__end",
-        "sem__d__origin",
-        "sem__rel.0.claim.ch01.inner.examples",
-        "sem__stage.claim.ch01.inner.examples.derive__title"
+        "sem__case2_a",
+        "sem__case2_a__end",
+        "sem__case2_a__origin",
+        "sem__case2_b",
+        "sem__case2_b__end",
+        "sem__case2_b__origin",
+        "sem__case2_r",
+        "sem__case2_r__end",
+        "sem__case2_r__origin",
+        "sem__rel.case.ch01.inner.examples.2",
+        "sem__orientation__2"
       ],
       "visible_refs": [
-        "F",
-        "d",
-        "rel.0.claim.ch01.inner.examples"
+        "case2_a",
+        "case2_b",
+        "case2_r",
+        "rel.case.ch01.inner.examples.2"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.ch01.inner.examples.3",
+      "layout": "overlay",
+      "title": "案例三：夹角",
+      "visible_aliases": [
+        "sem__case3_a",
+        "sem__case3_a__end",
+        "sem__case3_a__origin",
+        "sem__case3_b",
+        "sem__case3_b__end",
+        "sem__case3_b__origin",
+        "sem__case3_r",
+        "sem__case3_r__end",
+        "sem__case3_r__origin",
+        "sem__rel.case.ch01.inner.examples.3",
+        "sem__orientation__3"
+      ],
+      "visible_refs": [
+        "case3_a",
+        "case3_b",
+        "case3_r",
+        "rel.case.ch01.inner.examples.3"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.ch01.inner.examples.4",
+      "layout": "overlay",
+      "title": "案例四：力做功",
+      "visible_aliases": [
+        "sem__case4_a",
+        "sem__case4_a__end",
+        "sem__case4_a__origin",
+        "sem__case4_b",
+        "sem__case4_b__end",
+        "sem__case4_b__origin",
+        "sem__case4_r",
+        "sem__case4_r__end",
+        "sem__case4_r__origin",
+        "sem__rel.case.ch01.inner.examples.4",
+        "sem__orientation__4"
+      ],
+      "visible_refs": [
+        "case4_a",
+        "case4_b",
+        "case4_r",
+        "rel.case.ch01.inner.examples.4"
       ]
     }
   ],

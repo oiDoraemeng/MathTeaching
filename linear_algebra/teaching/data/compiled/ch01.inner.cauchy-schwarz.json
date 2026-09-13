@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:cb1d3564281ea1d212d867e8ff1f37ffa1098ea01047c40608eab5db13867d45",
+  "artifact_digest": "sha256:d9171c575dc56a34c8cb08911bee0258979cd00b8d83afb3071e1c96ab3cdc55",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__a__origin",
+        "alias": "sem__case1_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +14,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a__end",
+        "alias": "sem__case1_a__end",
         "coordinates": [
-          1.0,
-          2.0
+          3.0,
+          4.0
         ],
         "name": "a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a",
+        "alias": "sem__case1_a",
         "color": "#2F6BFF",
-        "end": "sem__a__end",
+        "end": "sem__case1_a__end",
         "kind": "vector",
         "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__a__origin"
+        "start": "sem__case1_a__origin"
       },
       {
-        "alias": "sem__b__origin",
+        "alias": "sem__case1_b__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,32 +42,51 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b__end",
+        "alias": "sem__case1_b__end",
         "coordinates": [
-          2.0,
-          1.0
+          1.0,
+          0.0
         ],
         "name": "b",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b",
+        "alias": "sem__case1_b",
         "color": "#F08A24",
-        "end": "sem__b__end",
+        "end": "sem__case1_b__end",
         "kind": "vector",
         "label": "b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__b__origin"
+        "start": "sem__case1_b__origin"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.inner.cauchy-schwarz",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "sem__case1_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "scalar_multiple: a → b"
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_r__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_r",
+        "color": "#6B7280",
+        "end": "sem__case1_r__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__case1_r__origin"
       },
       {
         "alias": "cap__polygon",
@@ -81,51 +100,51 @@
             0.0
           ],
           [
-            1.0,
-            2.0
-          ],
-          [
             3.0,
-            3.0
+            4.0
           ],
           [
-            2.0,
-            1.0
+            4.0,
+            4.0
+          ],
+          [
+            1.0,
+            0.0
           ]
         ]
       },
       {
         "color": "#2A9D8F",
         "direction": [
-          2.0,
-          1.0
+          1.0,
+          0.0
         ],
         "foot_alias": "cap__foot",
         "op": "geometry.projection",
         "residual_alias": "cap__residual",
         "result_alias": "cap__projection",
         "vector": [
-          1.0,
-          2.0
+          3.0,
+          4.0
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.inner.cauchy-schwarz.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
+        "alias": "sem__orientation__1",
+        "color": "#2A9D8F",
+        "first": [
+          3.0,
+          4.0
         ],
-        "text": "几何意义 1"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.inner.cauchy-schwarz.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          1.0,
+          0.0
         ],
-        "text": "几何意义 2"
+        "vertex": [
+          0.0,
+          0.0
+        ]
       },
       {
         "op": "view.fit",
@@ -133,66 +152,43 @@
       }
     ],
     "scene": "2d",
-    "summary": "柯西-施瓦茨不等式的投影界",
+    "summary": "柯西—施瓦茨不等式",
     "version": 1
   },
-  "plan_digest": "sha256:0f636fe30d601056cbbbc48e73ed26d18135676c62137c874250d5a3a3fc5894",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:8a0cec89864e05d10ec3b2bf7e9a437339b9a431d16aa9b24104d4a25488ca2e",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 14,
   "schema_version": 1,
   "source_hash": "sha256:acb3755ccad90340b78463bcebf6fa74e07877c6addc4a61067e5e05d4ec5de0",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.inner.cauchy-schwarz.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "",
+      "id": "stage.case.ch01.inner.cauchy-schwarz.1",
+      "layout": "overlay",
+      "title": "案例一：投影界",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__rel.0.claim.ch01.inner.cauchy-schwarz",
-        "sem__stage.claim.ch01.inner.cauchy-schwarz.observe__title"
+        "sem__case1_a",
+        "sem__case1_a__end",
+        "sem__case1_a__origin",
+        "sem__case1_b",
+        "sem__case1_b__end",
+        "sem__case1_b__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__rel.case.ch01.inner.cauchy-schwarz.1",
+        "sem__orientation__1"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "rel.0.claim.ch01.inner.cauchy-schwarz"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.inner.cauchy-schwarz.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
-      "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__rel.0.claim.ch01.inner.cauchy-schwarz",
-        "sem__stage.claim.ch01.inner.cauchy-schwarz.derive__title"
-      ],
-      "visible_refs": [
-        "a",
-        "b",
-        "rel.0.claim.ch01.inner.cauchy-schwarz"
+        "case1_a",
+        "case1_b",
+        "case1_r",
+        "rel.case.ch01.inner.cauchy-schwarz.1"
       ]
     }
   ],

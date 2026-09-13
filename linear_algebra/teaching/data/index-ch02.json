@@ -1,0 +1,81 @@
+{
+  "chapter": 2,
+  "schema_version": 1,
+  "topics": [
+    {
+      "revision": 12,
+      "source_hash": "sha256:8d0f7df5e4e32f439e01001cb86315c36061b1ef23c0d23756f5bff315aaa2a2",
+      "topic_id": "ch02.batch.inner-products"
+    },
+    {
+      "revision": 12,
+      "source_hash": "sha256:18e7642a880b874828bfee6824477b44b80aaac5b2c703abc508923f1d009780",
+      "topic_id": "ch02.batch.projection"
+    },
+    {
+      "revision": 12,
+      "source_hash": "sha256:84ab593cf1329589b1006d9590fdd31bdc599ba1394f2fd24fbb65989d42c35b",
+      "topic_id": "ch02.matrix.additive-distributivity"
+    },
+    {
+      "revision": 12,
+      "source_hash": "sha256:07fbb794fc533cc2655cad99b8e37a59ec70268f4cec18e7c0b6e10d0f91348c",
+      "topic_id": "ch02.matrix.row-column"
+    },
+    {
+      "revision": 12,
+      "source_hash": "sha256:0cde074da638ed97935945c66fb4ae0ef0677d4ad90d6300ca1a3e429c3f2b12",
+      "topic_id": "ch02.matrix.transformed-grid"
+    },
+    {
+      "revision": 12,
+      "source_hash": "sha256:e75201702eb0c61f55827cf094c28b02e0564fdb0fbc76f72d4fe150317b852c",
+      "topic_id": "ch02.matrix.stretch-rotate-scale"
+    },
+    {
+      "revision": 10,
+      "source_hash": "sha256:249f825ba9ab6a2d3d042a39fa709e8e6e22611b121cfdf2759e82f232484499",
+      "topic_id": "ch02.matrix.composition"
+    },
+    {
+      "revision": 9,
+      "source_hash": "sha256:ef6de7167277e0291b976d335c4a9c431c26d6aa51cb06e8d39f993d7806e088",
+      "topic_id": "ch02.matrix.basis"
+    },
+    {
+      "revision": 9,
+      "source_hash": "sha256:69c514d44197850d620d63c0d7f1df0b68e69d1dfdbe1446a5396a9d8aecbd49",
+      "topic_id": "ch02.matrix.powers"
+    },
+    {
+      "revision": 9,
+      "source_hash": "sha256:7f30d55c4caabb696d2580af0a348294585bb9d7485a413ae46873e7287124c9",
+      "topic_id": "ch02.subspace.independence"
+    },
+    {
+      "revision": 9,
+      "source_hash": "sha256:504217b49a51096d84540949f881c4ae9ecd6f676c74f04a2843446a6c85697c",
+      "topic_id": "ch02.subspace.rank"
+    },
+    {
+      "revision": 9,
+      "source_hash": "sha256:d00c8934450a55c3e2cbbab779f31ce99c00bc1d63eb73446d94a01711428fcf",
+      "topic_id": "ch02.subspace.null"
+    },
+    {
+      "revision": 9,
+      "source_hash": "sha256:3c3cbf1bf7340f9aac6047bf8f3e00c3818f5371f302700b7cda3f50d368b3e4",
+      "topic_id": "ch02.subspace.column"
+    },
+    {
+      "revision": 9,
+      "source_hash": "sha256:076aa1d68e0591a5dde42584d6df6188c128a1bf2d5f18300cfdfe06a29fd13f",
+      "topic_id": "ch02.subspace.rank-nullity"
+    },
+    {
+      "revision": 9,
+      "source_hash": "sha256:aec0866b91b7031cc30af32b39f6dd7728fe7a7490b88d28680b456e83f83fe6",
+      "topic_id": "ch02.high-dimensional.analogy"
+    }
+  ]
+}

@@ -1,85 +1,62 @@
 {
-  "artifact_digest": "sha256:3f98cf99e0938320c7fd63b8aebd30c601bb42252d5f9941b2d713957fcbe8c7",
+  "artifact_digest": "sha256:b660fca6e1ef5eb2bebb9d9a5bdd9f8bd7b25f8b1bc602bb174c8b925f7223cc",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__x__origin",
-        "coordinates": [
+        "alias": "sem__case1_a",
+        "color": "#2F6BFF",
+        "end": [
+          1.0,
+          2.0,
+          2.0
+        ],
+        "kind": "vector",
+        "label": "a",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
           0.0,
           0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
+        ]
       },
       {
-        "alias": "sem__x__end",
-        "coordinates": [
-          3.0,
-          5.0
+        "alias": "sem__case1_b",
+        "color": "#F08A24",
+        "end": [
+          1.0,
+          2.0,
+          2.0
         ],
-        "name": "x",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__x",
-        "color": "#2F6BFF",
-        "end": "sem__x__end",
         "kind": "vector",
-        "label": "x",
-        "op": "linear.upsert",
+        "label": "b",
+        "op": "linear3d.upsert",
         "role": "primary",
-        "start": "sem__x__origin"
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
-        "alias": "sem__e1",
-        "basis": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
+        "alias": "sem__case1_r",
+        "color": "#6B7280",
+        "end": [
+          1.0,
+          2.0,
+          2.0
         ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#2F6BFF",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
-      },
-      {
-        "alias": "sem__rel.0.claim.ch01.high-dimensional.analogy",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "compare: x → e₁,e₂"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.high-dimensional.analogy.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "几何意义 1"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.high-dimensional.analogy.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "几何意义 2"
+        "kind": "vector",
+        "label": "result",
+        "op": "linear3d.upsert",
+        "role": "result",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
         "alias": "sem__ch01.high-dimensional.analogy__formula",
@@ -88,70 +65,50 @@
           -2.65,
           2.65
         ],
-        "text": "|x|=\\sqrt{\\sum_i x_i^2},\\quad x_i=x\\cdot e_i"
+        "text": "\\boldsymbol x=(x_1,\\ldots,x_n),\\qquad \\lvert\\boldsymbol x\\rvert=\\sqrt{x_1^2+\\cdots+x_n^2},\\qquad \\boldsymbol a\\cdot\\boldsymbol b=\\sum_{i=1}^n a_i b_i"
       },
       {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
-    "scene": "2d",
-    "summary": "从二维、三维到 n 维的向量类比",
+    "scene": "3d",
+    "summary": "从二维、三维到 n 维的向量表示",
     "version": 1
   },
-  "plan_digest": "sha256:19180ef416e9fc2bc99e2de6f5d28ddd70e9dd304c5076496a80f230fd43c110",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:219911982690061d76bf69125b0de9e829b54d037f96ad8c123c0a6002429d17",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 13,
   "schema_version": 1,
   "source_hash": "sha256:4b015b6cb5bb0c4b69ee907c70f6e2cab0903c68a52e4d750245354ae93bc756",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.high-dimensional.analogy.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "",
+      "id": "stage.case.ch01.high-dimensional.analogy.1",
+      "layout": "overlay",
+      "title": "案例一：三维分量公式",
       "visible_aliases": [
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__e1",
-        "sem__rel.0.claim.ch01.high-dimensional.analogy",
-        "sem__stage.claim.ch01.high-dimensional.analogy.observe__title"
+        "sem__case1_a",
+        "sem__case1_a__end",
+        "sem__case1_a__origin",
+        "sem__case1_b",
+        "sem__case1_b__end",
+        "sem__case1_b__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__rel.case.ch01.high-dimensional.analogy.1"
       ],
       "visible_refs": [
-        "x",
-        "e1",
-        "rel.0.claim.ch01.high-dimensional.analogy"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.high-dimensional.analogy.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
-      "visible_aliases": [
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__e1",
-        "sem__rel.0.claim.ch01.high-dimensional.analogy",
-        "sem__stage.claim.ch01.high-dimensional.analogy.derive__title"
-      ],
-      "visible_refs": [
-        "x",
-        "e1",
-        "rel.0.claim.ch01.high-dimensional.analogy"
+        "case1_a",
+        "case1_b",
+        "case1_r",
+        "rel.case.ch01.high-dimensional.analogy.1"
       ]
     }
   ],

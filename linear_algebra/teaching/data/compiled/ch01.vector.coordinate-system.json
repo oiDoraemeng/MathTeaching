@@ -1,33 +1,11 @@
 {
-  "artifact_digest": "sha256:1646b84074aecbcd4f6fd6c38232a765589bb75a54d2f58e7bd73405d559554c",
+  "artifact_digest": "sha256:57be8aac018b0fa5e95654b3e3bfd8c4f69323eaa02daf33144a9d8bfbc267af",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__e1",
-        "basis": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#2F6BFF",
-        "op": "geometry.subspace_region",
-        "opacity": 0.2
-      },
-      {
-        "alias": "sem__x__origin",
+        "alias": "sem__e1__origin",
         "coordinates": [
           0.0,
           0.0
@@ -36,50 +14,87 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x__end",
+        "alias": "sem__e1__end",
         "coordinates": [
-          3.0,
-          5.0
+          1.0,
+          0.0
         ],
-        "name": "x",
+        "name": "e₁",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x",
+        "alias": "sem__e1",
         "color": "#2F6BFF",
-        "end": "sem__x__end",
+        "end": "sem__e1__end",
         "kind": "vector",
-        "label": "x",
+        "label": "e₁",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__x__origin"
+        "start": "sem__e1__origin"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.vector.coordinate-system",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "sem__e2__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "compare: 标准基 → x"
+        "name": "O",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__stage.claim.ch01.vector.coordinate-system.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
+        "alias": "sem__e2__end",
+        "coordinates": [
+          0.0,
+          1.0
         ],
-        "text": "几何意义 1"
+        "name": "e₂",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__stage.claim.ch01.vector.coordinate-system.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
+        "alias": "sem__e2",
+        "color": "#F08A24",
+        "end": "sem__e2__end",
+        "kind": "vector",
+        "label": "e₂",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__e2__origin"
+      },
+      {
+        "alias": "sem__rel.coordinate-system.orthogonal",
+        "color": "#6B7280",
+        "first": [
+          1.0,
+          0.0
         ],
-        "text": "几何意义 2"
+        "op": "geometry.right_angle_marker",
+        "second": [
+          0.0,
+          1.0
+        ],
+        "size": 0.3,
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__orthogonal__1",
+        "color": "#6B7280",
+        "first": [
+          1.0,
+          0.0
+        ],
+        "op": "geometry.right_angle_marker",
+        "second": [
+          0.0,
+          1.0
+        ],
+        "size": 0.3,
+        "vertex": [
+          0.0,
+          0.0
+        ]
       },
       {
         "op": "view.fit",
@@ -90,59 +105,36 @@
     "summary": "坐标系与右手约定",
     "version": 1
   },
-  "plan_digest": "sha256:220c22fc2c00aae480d167d67dc29e0e73da8e6e432b8889423128f70cf4a43a",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:1331ddb2299591d9cdb1c01c2f9ae24e5130950d066b19930c1fe57889984476",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 16,
   "schema_version": 1,
   "source_hash": "sha256:b13413aa33f880b2787622ef7285b5b593f383f2d6d91670ffe9a262b360da30",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.vector.coordinate-system.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "",
+      "id": "stage.coordinate-system.standard-basis",
+      "layout": "overlay",
+      "title": "案例一：标准基与坐标轴",
       "visible_aliases": [
         "sem__e1",
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__rel.0.claim.ch01.vector.coordinate-system",
-        "sem__stage.claim.ch01.vector.coordinate-system.observe__title"
+        "sem__e1__end",
+        "sem__e1__origin",
+        "sem__e2",
+        "sem__e2__end",
+        "sem__e2__origin",
+        "sem__rel.coordinate-system.orthogonal",
+        "sem__orthogonal__1"
       ],
       "visible_refs": [
         "e1",
-        "x",
-        "rel.0.claim.ch01.vector.coordinate-system"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.vector.coordinate-system.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
-      "visible_aliases": [
-        "sem__e1",
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__rel.0.claim.ch01.vector.coordinate-system",
-        "sem__stage.claim.ch01.vector.coordinate-system.derive__title"
-      ],
-      "visible_refs": [
-        "e1",
-        "x",
-        "rel.0.claim.ch01.vector.coordinate-system"
+        "e2",
+        "rel.coordinate-system.orthogonal"
       ]
     }
   ],

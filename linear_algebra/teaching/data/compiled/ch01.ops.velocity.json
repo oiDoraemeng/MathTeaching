@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:ded9c9942b553749c1eb44630759f3fd305d4e30ce1a0002c6cce7ad6a49dfe8",
+  "artifact_digest": "sha256:8c1467bcabeadd9864a7c9031de706e6482870440320afd2715736396f485c9a",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__v1__origin",
+        "alias": "sem__vel1_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +14,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v1__end",
+        "alias": "sem__vel1_a__end",
         "coordinates": [
-          10.0,
+          1.0,
           0.0
         ],
-        "name": "船速",
+        "name": "a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v1",
+        "alias": "sem__vel1_a",
         "color": "#2F6BFF",
-        "end": "sem__v1__end",
+        "end": "sem__vel1_a__end",
         "kind": "vector",
-        "label": "船速",
+        "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__v1__origin"
+        "start": "sem__vel1_a__origin"
       },
       {
-        "alias": "sem__v2__origin",
+        "alias": "sem__vel1_r__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,26 +42,166 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v2__end",
+        "alias": "sem__vel1_r__end",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "2a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__vel1_r",
+        "color": "#6B7280",
+        "end": "sem__vel1_r__end",
+        "kind": "vector",
+        "label": "2a",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__vel1_r__origin"
+      },
+      {
+        "alias": "sem__vel2_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__vel2_a__end",
+        "coordinates": [
+          3.0,
+          1.0
+        ],
+        "name": "a",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__vel2_a",
+        "color": "#2F6BFF",
+        "end": "sem__vel2_a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__vel2_a__origin"
+      },
+      {
+        "alias": "sem__vel2_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__vel2_b__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__vel2_b",
+        "color": "#F08A24",
+        "end": "sem__vel2_b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__vel2_b__origin"
+      },
+      {
+        "alias": "sem__vel2_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__vel2_r__end",
+        "coordinates": [
+          4.0,
+          3.0
+        ],
+        "name": "a+b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__vel2_r",
+        "color": "#6B7280",
+        "end": "sem__vel2_r__end",
+        "kind": "vector",
+        "label": "a+b",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__vel2_r__origin"
+      },
+      {
+        "alias": "sem__vel3_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__vel3_a__end",
+        "coordinates": [
+          10.0,
+          0.0
+        ],
+        "name": "v₁",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__vel3_a",
+        "color": "#2F6BFF",
+        "end": "sem__vel3_a__end",
+        "kind": "vector",
+        "label": "v₁",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__vel3_a__origin"
+      },
+      {
+        "alias": "sem__vel3_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__vel3_b__end",
         "coordinates": [
           0.0,
           5.0
         ],
-        "name": "水流",
+        "name": "v₂",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v2",
+        "alias": "sem__vel3_b",
         "color": "#F08A24",
-        "end": "sem__v2__end",
+        "end": "sem__vel3_b__end",
         "kind": "vector",
-        "label": "水流",
+        "label": "v₂",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__v2__origin"
+        "start": "sem__vel3_b__origin"
       },
       {
-        "alias": "sem__actual__origin",
+        "alias": "sem__vel3_r__origin",
         "coordinates": [
           0.0,
           0.0
@@ -70,50 +210,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__actual__end",
+        "alias": "sem__vel3_r__end",
         "coordinates": [
           10.0,
           5.0
         ],
-        "name": "实际速度",
+        "name": "v",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__actual",
-        "color": "#7B61FF",
-        "end": "sem__actual__end",
+        "alias": "sem__vel3_r",
+        "color": "#6B7280",
+        "end": "sem__vel3_r__end",
         "kind": "vector",
-        "label": "实际速度",
+        "label": "v",
         "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__actual__origin"
-      },
-      {
-        "alias": "sem__rel.0.claim.ch01.ops.velocity",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "sum: 船速 → 水流"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.ops.velocity.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "三角形法则"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.ops.velocity.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "平行四边形法则"
+        "role": "result",
+        "start": "sem__vel3_r__origin"
       },
       {
         "op": "view.fit",
@@ -124,71 +237,91 @@
     "summary": "速度合成的几何表示",
     "version": 1
   },
-  "plan_digest": "sha256:dedfc2069cf8cb40c4bed85c44ab89be99799242e0fc75bcd161d70c8237ee9b",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:e1db799cba0ba5c536b8e98f22c6c7abccc700367a122a485fef9b96d6e2564d",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 14,
   "schema_version": 1,
   "source_hash": "sha256:36b093c8ac050829f151499dd884e2c8a917f483b3fbe03bfb2688a856278b79",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "把第二个向量平移到第一个向量的终点，和向量是三角形的第三边。",
-      "id": "stage.claim.ch01.ops.velocity.observe",
-      "layout": "side_by_side",
-      "title": "三角形法则",
+      "caption": "",
+      "id": "stage.velocity.1",
+      "layout": "overlay",
+      "title": "案例一：理解层的数乘",
       "visible_aliases": [
-        "sem__v1",
-        "sem__v1__end",
-        "sem__v1__origin",
-        "sem__v2",
-        "sem__v2__end",
-        "sem__v2__origin",
-        "sem__actual",
-        "sem__actual__end",
-        "sem__actual__origin",
-        "sem__rel.0.claim.ch01.ops.velocity",
-        "sem__stage.claim.ch01.ops.velocity.observe__title"
+        "sem__vel1_a",
+        "sem__vel1_a__end",
+        "sem__vel1_a__origin",
+        "sem__vel1_r",
+        "sem__vel1_r__end",
+        "sem__vel1_r__origin",
+        "sem__rel.velocity.1"
       ],
       "visible_refs": [
-        "v1",
-        "v2",
-        "actual",
-        "rel.0.claim.ch01.ops.velocity"
+        "vel1_a",
+        "vel1_r",
+        "rel.velocity.1"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
-      "caption": "以两个向量为邻边作平行四边形，对角线就是和向量。",
-      "id": "stage.claim.ch01.ops.velocity.derive",
-      "layout": "sequence",
-      "title": "平行四边形法则",
+      "caption": "",
+      "id": "stage.velocity.2",
+      "layout": "overlay",
+      "title": "案例二：计算层的加减",
       "visible_aliases": [
-        "sem__v1",
-        "sem__v1__end",
-        "sem__v1__origin",
-        "sem__v2",
-        "sem__v2__end",
-        "sem__v2__origin",
-        "sem__actual",
-        "sem__actual__end",
-        "sem__actual__origin",
-        "sem__rel.0.claim.ch01.ops.velocity",
-        "sem__stage.claim.ch01.ops.velocity.derive__title"
+        "sem__vel2_a",
+        "sem__vel2_a__end",
+        "sem__vel2_a__origin",
+        "sem__vel2_b",
+        "sem__vel2_b__end",
+        "sem__vel2_b__origin",
+        "sem__vel2_r",
+        "sem__vel2_r__end",
+        "sem__vel2_r__origin",
+        "sem__rel.velocity.2"
       ],
       "visible_refs": [
-        "v1",
-        "v2",
-        "actual",
-        "rel.0.claim.ch01.ops.velocity"
+        "vel2_a",
+        "vel2_b",
+        "vel2_r",
+        "rel.velocity.2"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.velocity.3",
+      "layout": "overlay",
+      "title": "案例三：船与水流的速度合成",
+      "visible_aliases": [
+        "sem__vel3_a",
+        "sem__vel3_a__end",
+        "sem__vel3_a__origin",
+        "sem__vel3_b",
+        "sem__vel3_b__end",
+        "sem__vel3_b__origin",
+        "sem__vel3_r",
+        "sem__vel3_r__end",
+        "sem__vel3_r__origin",
+        "sem__rel.velocity.3"
+      ],
+      "visible_refs": [
+        "vel3_a",
+        "vel3_b",
+        "vel3_r",
+        "rel.velocity.3"
       ]
     }
   ],

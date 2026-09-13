@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:b11f67f8b279ea41d3fb8a7bd7b0f44aa9055b260cb54155284667276d204530",
+  "artifact_digest": "sha256:b55ff80860c1f21d962e29df132d561c5d8e68f7c20754f104b774f0e3edf7d1",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__v__origin",
+        "alias": "sem__nonzero_v__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,68 +14,60 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v__end",
+        "alias": "sem__nonzero_v__end",
         "coordinates": [
           3.0,
           4.0
         ],
-        "name": "v",
+        "name": "",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v",
+        "alias": "sem__nonzero_v",
         "color": "#2F6BFF",
-        "end": "sem__v__end",
+        "end": "sem__nonzero_v__end",
         "kind": "vector",
         "label": "v",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__v__origin"
+        "start": "sem__nonzero_v__origin"
       },
       {
-        "alias": "sem__x",
+        "alias": "sem__nonzero_length",
         "coordinates": [
           3.0,
-          0.0
-        ],
-        "name": "x 分量",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__y",
-        "coordinates": [
-          0.0,
           4.0
         ],
-        "name": "y 分量",
+        "name": "",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.vector.magnitude",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "sem__zero_v__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "invariant: v → v"
+        "name": "",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__stage.claim.ch01.vector.magnitude.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
+        "alias": "sem__zero_v__end",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "几何意义 1"
+        "name": "0",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__stage.claim.ch01.vector.magnitude.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "几何意义 2"
+        "alias": "sem__zero_v",
+        "color": "#2F6BFF",
+        "end": "sem__zero_v__end",
+        "kind": "vector",
+        "label": "",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__zero_v__origin"
       },
       {
         "op": "view.fit",
@@ -86,63 +78,53 @@
     "summary": "向量的几何量：方向、长度与零向量",
     "version": 1
   },
-  "plan_digest": "sha256:e5dff5ba931db9868a1e5751571324d24266a0e5b64417292be6661dd8810ded",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:bb4f4238604ac4e65e25de180491d6357e6f99e1b2e50e8278889baea172d9e6",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 19,
   "schema_version": 1,
   "source_hash": "sha256:2b53dbe40acf6537f3db65a7393acc792022be98e32f278f8f056dfd8013baca",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.vector.magnitude.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "$\\boldsymbol v=(3,4)$ 的箭头长度为 $5$。",
+      "id": "stage.magnitude.nonzero",
+      "layout": "overlay",
+      "title": "案例一：非零向量的长度",
       "visible_aliases": [
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__x",
-        "sem__y",
-        "sem__rel.0.claim.ch01.vector.magnitude",
-        "sem__stage.claim.ch01.vector.magnitude.observe__title"
+        "sem__nonzero_v",
+        "sem__nonzero_v__end",
+        "sem__nonzero_v__origin",
+        "sem__nonzero_length",
+        "sem__rel.magnitude.nonzero"
       ],
       "visible_refs": [
-        "v",
-        "x",
-        "y",
-        "rel.0.claim.ch01.vector.magnitude"
+        "nonzero_v",
+        "nonzero_length",
+        "rel.magnitude.nonzero"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.vector.magnitude.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
+      "caption": "$\\boldsymbol 0=(0,0)$ 的起点和终点重合，长度为 $0$。",
+      "id": "stage.magnitude.zero",
+      "layout": "overlay",
+      "title": "案例二：零向量",
       "visible_aliases": [
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__x",
-        "sem__y",
-        "sem__rel.0.claim.ch01.vector.magnitude",
-        "sem__stage.claim.ch01.vector.magnitude.derive__title"
+        "sem__zero_v",
+        "sem__zero_v__end",
+        "sem__zero_v__origin",
+        "sem__rel.magnitude.zero"
       ],
       "visible_refs": [
-        "v",
-        "x",
-        "y",
-        "rel.0.claim.ch01.vector.magnitude"
+        "zero_v",
+        "rel.magnitude.zero"
       ]
     }
   ],

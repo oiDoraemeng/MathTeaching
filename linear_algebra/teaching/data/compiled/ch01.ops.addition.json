@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:67f7cccb27f77d02094e975d49d38c32813cbc811bd1a2180a5acaf69c381ad6",
+  "artifact_digest": "sha256:7ea78a952ceca1878905060212104c54191eea60f40993f624bafdc2ce9d4024",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -282,15 +282,6 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.ops.addition.components__title",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          2.65
-        ],
-        "text": "案例一：分量计算"
-      },
-      {
         "alias": "sem__addition_geometry__translated_b",
         "color": "#F08A24",
         "end": "sem__geometry_sum__end",
@@ -347,24 +338,6 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.ops.addition.geometry__title",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          2.65
-        ],
-        "text": "案例二：三角形法则与平行四边形法则"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.ops.addition.velocity__title",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          2.65
-        ],
-        "text": "案例三：速度向量相加"
-      },
-      {
         "op": "view.fit",
         "padding": 1.15
       }
@@ -373,10 +346,10 @@
     "summary": "向量加法",
     "version": 1
   },
-  "plan_digest": "sha256:d93737e51039cd25858631918e4f3e796e0851b0ad6fd3fc721ed4d9ceacec6b",
+  "plan_digest": "sha256:9c33ec3a773efac7847c10c1b8111de9bc6128356d8c5310213d1172663b7f50",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 18,
+  "revision": 23,
   "schema_version": 1,
   "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
   "stages": [
@@ -399,8 +372,7 @@
         "sem__components_sum",
         "sem__components_sum__end",
         "sem__components_sum__origin",
-        "sem__rel.addition.components",
-        "sem__stage.claim.ch01.ops.addition.components__title"
+        "sem__rel.addition.components"
       ],
       "visible_refs": [
         "components_a",
@@ -429,7 +401,6 @@
         "sem__geometry_sum__end",
         "sem__geometry_sum__origin",
         "sem__rel.addition.geometry",
-        "sem__stage.claim.ch01.ops.addition.geometry__title",
         "sem__addition_geometry__translated_b",
         "sem__addition_geometry__triangle",
         "sem__addition_geometry__parallelogram"
@@ -460,8 +431,7 @@
         "sem__velocity_sum",
         "sem__velocity_sum__end",
         "sem__velocity_sum__origin",
-        "sem__rel.addition.velocity",
-        "sem__stage.claim.ch01.ops.addition.velocity__title"
+        "sem__rel.addition.velocity"
       ],
       "visible_refs": [
         "velocity_1",

@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:907f169b437c519428dd2fd5daf450edbecca280eee679ee7a03770a4330dfd5",
+  "artifact_digest": "sha256:679b525fd7b87663c2371a8f5b29b8910998eef36074dd38225e33feeb86d5ca",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -83,6 +83,28 @@
         "start": "sem__y__origin"
       },
       {
+        "alias": "sem__B",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            0.0,
+            -1.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__z__origin",
         "coordinates": [
           0.0,
@@ -109,28 +131,6 @@
         "op": "linear.upsert",
         "role": "primary",
         "start": "sem__z__origin"
-      },
-      {
-        "alias": "sem__B",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#6B7280",
-        "matrix": [
-          [
-            0.0,
-            -1.0
-          ],
-          [
-            1.0,
-            0.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
       },
       {
         "alias": "sem__A_maps_x_to_y",
@@ -406,12 +406,10 @@
     "summary": "复合变换与 AB≠BA",
     "version": 1
   },
-  "plan_digest": "sha256:efa1dd269ebe968fdc49db7cf500597b29f8b721d476250857f6192f7c620c41",
-  "read_guide": [
-    "先固定输入向量，再分别沿 AB、BA 两条路径读中间结果和最终终点。"
-  ],
+  "plan_digest": "sha256:b48ff6452845342c9ad5f6286d0d31ab27e2a1175dc667ff8800a2381eb6ece8",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 7,
+  "revision": 10,
   "schema_version": 1,
   "source_hash": "sha256:249f825ba9ab6a2d3d042a39fa709e8e6e22611b121cfdf2759e82f232484499",
   "stages": [

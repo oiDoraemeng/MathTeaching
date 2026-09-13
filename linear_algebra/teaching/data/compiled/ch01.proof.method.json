@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:1017c582d33557b40e92a2a41a55ca3a8686e34688db06ec41904a86ede999a3",
+  "artifact_digest": "sha256:6d9a1b71ff388b44528cce8bc28dab5913ebbcc985898033d80ee8ac402dfe11",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__a__origin",
+        "alias": "sem__case1_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +14,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a__end",
+        "alias": "sem__case1_a__end",
         "coordinates": [
-          1.0,
-          2.0
+          2.0,
+          1.0
         ],
         "name": "a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a",
+        "alias": "sem__case1_a",
         "color": "#2F6BFF",
-        "end": "sem__a__end",
+        "end": "sem__case1_a__end",
         "kind": "vector",
         "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__a__origin"
+        "start": "sem__case1_a__origin"
       },
       {
-        "alias": "sem__b__origin",
+        "alias": "sem__case1_b__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,26 +42,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b__end",
+        "alias": "sem__case1_b__end",
         "coordinates": [
-          2.0,
-          1.0
+          1.0,
+          3.0
         ],
         "name": "b",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b",
+        "alias": "sem__case1_b",
         "color": "#F08A24",
-        "end": "sem__b__end",
+        "end": "sem__case1_b__end",
         "kind": "vector",
         "label": "b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__b__origin"
+        "start": "sem__case1_b__origin"
       },
       {
-        "alias": "sem__sum__origin",
+        "alias": "sem__case1_r__origin",
         "coordinates": [
           0.0,
           0.0
@@ -70,50 +70,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__sum__end",
+        "alias": "sem__case1_r__end",
         "coordinates": [
           3.0,
-          3.0
+          4.0
         ],
-        "name": "a+b",
+        "name": "result",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__sum",
-        "color": "#7B61FF",
-        "end": "sem__sum__end",
+        "alias": "sem__case1_r",
+        "color": "#6B7280",
+        "end": "sem__case1_r__end",
         "kind": "vector",
-        "label": "a+b",
+        "label": "result",
         "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__sum__origin"
-      },
-      {
-        "alias": "sem__rel.0.claim.ch01.proof.method",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "invariant: a → b"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.proof.method.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "几何意义 1"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.proof.method.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "几何意义 2"
+        "role": "result",
+        "start": "sem__case1_r__origin"
       },
       {
         "alias": "sem__ch01.proof.method__formula",
@@ -122,7 +95,7 @@
           -2.65,
           2.65
         ],
-        "text": "\\text{几何}\\to\\text{位置向量}\\to\\text{方程}\\to\\text{代数}\\to\\text{几何}"
+        "text": "\\text{几何关系}\\longrightarrow\\text{向量方程}\\longrightarrow\\text{代数整理}\\longrightarrow\\text{几何结论}"
       },
       {
         "op": "view.fit",
@@ -133,71 +106,39 @@
     "summary": "几何问题转向量的四步方法",
     "version": 1
   },
-  "plan_digest": "sha256:4cde605075aeb6d5ec454c9cb93d9249225da6e0e9c6121a16b9ff330059b9a3",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:aa3da7ae3bde932981f63e070d15c7201a74301116bf4229d7837e6414808a07",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 13,
   "schema_version": 1,
   "source_hash": "sha256:ea74cbc672edc3f084c07253b34cf704c8aee2835e88b473795a22a715bf75b4",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.proof.method.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "",
+      "id": "stage.case.ch01.proof.method.1",
+      "layout": "overlay",
+      "title": "案例一：四步向量证明流程",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__sum",
-        "sem__sum__end",
-        "sem__sum__origin",
-        "sem__rel.0.claim.ch01.proof.method",
-        "sem__stage.claim.ch01.proof.method.observe__title"
+        "sem__case1_a",
+        "sem__case1_a__end",
+        "sem__case1_a__origin",
+        "sem__case1_b",
+        "sem__case1_b__end",
+        "sem__case1_b__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__rel.case.ch01.proof.method.1"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "sum",
-        "rel.0.claim.ch01.proof.method"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.proof.method.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
-      "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__sum",
-        "sem__sum__end",
-        "sem__sum__origin",
-        "sem__rel.0.claim.ch01.proof.method",
-        "sem__stage.claim.ch01.proof.method.derive__title"
-      ],
-      "visible_refs": [
-        "a",
-        "b",
-        "sum",
-        "rel.0.claim.ch01.proof.method"
+        "case1_a",
+        "case1_b",
+        "case1_r",
+        "rel.case.ch01.proof.method.1"
       ]
     }
   ],

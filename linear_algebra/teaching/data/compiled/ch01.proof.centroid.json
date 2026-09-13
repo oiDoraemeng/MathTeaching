@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:2f514ab840394d1c8c4b9e5e9058b099c0817cb467728b6c3cbaab82d0f71682",
+  "artifact_digest": "sha256:6ad420a21d2ffe463ce5804ba499c51187f30737c8013d21bff0f1dc23d744ee",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__a__origin",
+        "alias": "sem__case1_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +14,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a__end",
+        "alias": "sem__case1_a__end",
         "coordinates": [
           1.0,
           0.0
         ],
-        "name": "AB",
+        "name": "a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a",
+        "alias": "sem__case1_a",
         "color": "#2F6BFF",
-        "end": "sem__a__end",
+        "end": "sem__case1_a__end",
         "kind": "vector",
-        "label": "AB",
+        "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__a__origin"
+        "start": "sem__case1_a__origin"
       },
       {
-        "alias": "sem__b__origin",
+        "alias": "sem__case1_b__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,41 +42,51 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b__end",
+        "alias": "sem__case1_b__end",
         "coordinates": [
           0.0,
           1.0
         ],
-        "name": "AC",
+        "name": "b",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b",
+        "alias": "sem__case1_b",
         "color": "#F08A24",
-        "end": "sem__b__end",
+        "end": "sem__case1_b__end",
         "kind": "vector",
-        "label": "AC",
+        "label": "b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__b__origin"
+        "start": "sem__case1_b__origin"
       },
       {
-        "alias": "sem__G",
+        "alias": "sem__case1_r__origin",
         "coordinates": [
-          0.3333333333,
-          0.3333333333
+          0.0,
+          0.0
         ],
-        "name": "G",
+        "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.proof.centroid",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "sem__case1_r__end",
+        "coordinates": [
+          1.0,
+          1.0
         ],
-        "text": "scalar_multiple: G → AB"
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_r",
+        "color": "#6B7280",
+        "end": "sem__case1_r__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__case1_r__origin"
       },
       {
         "alias": "cap__polygon",
@@ -104,31 +114,13 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.proof.centroid.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "几何意义 1"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.proof.centroid.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "几何意义 2"
-      },
-      {
         "alias": "sem__ch01.proof.centroid__formula",
         "op": "annotation.formula",
         "position": [
           -2.65,
           2.65
         ],
-        "text": "AG=\\frac{a+b}{3},\\quad AG:GD=2:1"
+        "text": "\\overrightarrow{AG}=\\frac13(\\boldsymbol a+\\boldsymbol b)"
       },
       {
         "op": "view.fit",
@@ -139,67 +131,39 @@
     "summary": "三角形重心定理",
     "version": 1
   },
-  "plan_digest": "sha256:00253b4f8614388c5aa05921076b1a45a7fcc45d7225716231c338efd93fbd44",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:c6fe05aaf1597648817d256ddf31f2b416e64fe0e2b7df5521e0240d5d8eb880",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 13,
   "schema_version": 1,
   "source_hash": "sha256:3b0b668a61fcc041c6bf6b27cc98a127cf2743ab2ec11b5546419b8dc4316c06",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.proof.centroid.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "",
+      "id": "stage.case.ch01.proof.centroid.1",
+      "layout": "overlay",
+      "title": "案例一：三角形重心",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__G",
-        "sem__rel.0.claim.ch01.proof.centroid",
-        "sem__stage.claim.ch01.proof.centroid.observe__title"
+        "sem__case1_a",
+        "sem__case1_a__end",
+        "sem__case1_a__origin",
+        "sem__case1_b",
+        "sem__case1_b__end",
+        "sem__case1_b__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__rel.case.ch01.proof.centroid.1"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "G",
-        "rel.0.claim.ch01.proof.centroid"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.proof.centroid.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
-      "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__G",
-        "sem__rel.0.claim.ch01.proof.centroid",
-        "sem__stage.claim.ch01.proof.centroid.derive__title"
-      ],
-      "visible_refs": [
-        "a",
-        "b",
-        "G",
-        "rel.0.claim.ch01.proof.centroid"
+        "case1_a",
+        "case1_b",
+        "case1_r",
+        "rel.case.ch01.proof.centroid.1"
       ]
     }
   ],

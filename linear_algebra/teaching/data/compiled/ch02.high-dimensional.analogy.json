@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:b5a538c38693face0d120bace43fc0dab533ccb0bfdf1a9d6b5c32cf2e1ee3d8",
+  "artifact_digest": "sha256:c6cebd2aff5ebec86310625101da2f91688b8f52e2f70fe05fb42c3b180bc10f",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -47,7 +47,7 @@
           -2.65,
           2.65
         ],
-        "text": "T(x)=Ax,\\quad \\operatorname{rank}(A)\\leq\\min(m,n)"
+        "text": "T(\\boldsymbol x)=A\\boldsymbol x,\\qquad \\operatorname{rank}(A)\\leq\\min(m,n)"
       },
       {
         "op": "view.fit",
@@ -58,12 +58,10 @@
     "summary": "n 维矩阵运算的低维类比",
     "version": 1
   },
-  "plan_digest": "sha256:c30f98ebf5f2d6aadf71f9138918b32d46117874069661f4bace8e96cdca3e9d",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:14f2c694bfc046c4c8675e78ada5e5cea656a17675d8cd4cf93449176f9093bb",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 6,
+  "revision": 9,
   "schema_version": 1,
   "source_hash": "sha256:aec0866b91b7031cc30af32b39f6dd7728fe7a7490b88d28680b456e83f83fe6",
   "stages": [

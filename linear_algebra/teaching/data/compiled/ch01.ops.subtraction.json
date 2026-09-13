@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:44016a1f9f9605c9656f413af5f131a150f8116bc345090cf81600b1b87b7173",
+  "artifact_digest": "sha256:73685f1026776e4af7e2b790b4e0ea00bb7265bbb834a5aa778c4f94dfd4f72e",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -17,7 +17,7 @@
         "alias": "sem__a__end",
         "coordinates": [
           3.0,
-          4.0
+          1.0
         ],
         "name": "a",
         "op": "point.upsert"
@@ -61,7 +61,7 @@
         "start": "sem__b__origin"
       },
       {
-        "alias": "sem__difference__origin",
+        "alias": "sem__r__origin",
         "coordinates": [
           0.0,
           0.0
@@ -70,32 +70,33 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__difference__end",
+        "alias": "sem__r__end",
         "coordinates": [
           2.0,
-          2.0
+          -1.0
         ],
         "name": "a-b",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__difference",
-        "color": "#7B61FF",
-        "end": "sem__difference__end",
+        "alias": "sem__r",
+        "color": "#6B7280",
+        "end": "sem__r__end",
         "kind": "vector",
         "label": "a-b",
         "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__difference__origin"
+        "role": "result",
+        "start": "sem__r__origin"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.ops.subtraction",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "difference: a → b"
+        "alias": "sem__rel.subtraction.endpoints",
+        "color": "#6B7280",
+        "end": "sem__a__end",
+        "kind": "vector",
+        "label": "a-b",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__b__end"
       },
       {
         "color": "#2A9D8F",
@@ -109,26 +110,8 @@
         "result_alias": "cap__projection",
         "vector": [
           3.0,
-          4.0
+          1.0
         ]
-      },
-      {
-        "alias": "sem__stage.claim.ch01.ops.subtraction.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "几何意义 1"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.ops.subtraction.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "几何意义 2"
       },
       {
         "op": "view.fit",
@@ -139,24 +122,22 @@
     "summary": "向量减法",
     "version": 1
   },
-  "plan_digest": "sha256:b4c00af18782609f50a443a7ec33ca3d582a6a2d337ab46ebb261e5d73ec6682",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:62238fe208ef52738a47f4da271a78606a156cda753434d71263942db4ea191c",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 15,
   "schema_version": 1,
   "source_hash": "sha256:13b887d608b560325e74c97308bcf60f892ddea2f61914445bef1fb98e6390fd",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.ops.subtraction.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "",
+      "id": "stage.subtraction.endpoints",
+      "layout": "overlay",
+      "title": "案例一：终点间的位移",
       "visible_aliases": [
         "sem__a",
         "sem__a__end",
@@ -164,46 +145,12 @@
         "sem__b",
         "sem__b__end",
         "sem__b__origin",
-        "sem__difference",
-        "sem__difference__end",
-        "sem__difference__origin",
-        "sem__rel.0.claim.ch01.ops.subtraction",
-        "sem__stage.claim.ch01.ops.subtraction.observe__title"
+        "sem__rel.subtraction.endpoints"
       ],
       "visible_refs": [
         "a",
         "b",
-        "difference",
-        "rel.0.claim.ch01.ops.subtraction"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.ops.subtraction.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
-      "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__difference",
-        "sem__difference__end",
-        "sem__difference__origin",
-        "sem__rel.0.claim.ch01.ops.subtraction",
-        "sem__stage.claim.ch01.ops.subtraction.derive__title"
-      ],
-      "visible_refs": [
-        "a",
-        "b",
-        "difference",
-        "rel.0.claim.ch01.ops.subtraction"
+        "rel.subtraction.endpoints"
       ]
     }
   ],

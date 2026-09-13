@@ -1,29 +1,20 @@
 {
-  "artifact_digest": "sha256:e4007215e61282c9061555211f6e578b140fddff3bd03871984ff9ce8302e1f6",
+  "artifact_digest": "sha256:5df12f1c6b5f931fd2f01e26ca0b6937874c05a5be1681bc00ada13ed9978e8d",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__P",
+        "alias": "sem__point_P",
         "coordinates": [
-          1.0,
-          2.0
+          3.0,
+          4.0
         ],
         "name": "P",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__Q",
-        "coordinates": [
-          3.0,
-          5.0
-        ],
-        "name": "Q",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__v__origin",
+        "alias": "sem__vector_v__origin",
         "coordinates": [
           0.0,
           0.0
@@ -32,59 +23,88 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v__end",
+        "alias": "sem__vector_v__end",
         "coordinates": [
-          2.0,
-          3.0
+          3.0,
+          4.0
         ],
-        "name": "Q-P",
+        "name": "",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v",
-        "color": "#7B61FF",
-        "end": "sem__v__end",
+        "alias": "sem__vector_v",
+        "color": "#2F6BFF",
+        "end": "sem__vector_v__end",
         "kind": "vector",
-        "label": "Q-P",
+        "label": "v",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__v__origin"
+        "start": "sem__vector_v__origin"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.vector.point-distinction",
+        "alias": "sem__e1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__e1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__e1",
+        "color": "#2F6BFF",
+        "end": "sem__e1__end",
+        "kind": "vector",
+        "label": "e₁",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__e1__origin"
+      },
+      {
+        "alias": "sem__e2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__e2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__e2",
+        "color": "#F08A24",
+        "end": "sem__e2__end",
+        "kind": "vector",
+        "label": "e₂",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__e2__origin"
+      },
+      {
+        "alias": "sem__rel.point-distinction.basis",
         "op": "annotation.upsert",
         "position": [
           -2.65,
-          2.65
+          -2.45
         ],
-        "text": "difference: Q → P"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.vector.point-distinction.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "几何意义 1"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.vector.point-distinction.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "几何意义 2"
-      },
-      {
-        "alias": "sem__ch01.vector.point-distinction__formula",
-        "op": "annotation.formula",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "v=Q-P"
+        "text": "v = 3e₁ + 4e₂"
       },
       {
         "op": "view.fit",
@@ -95,63 +115,57 @@
     "summary": "点与向量的本质区别",
     "version": 1
   },
-  "plan_digest": "sha256:d13cd742be6d70c684cda4773ff90bc1f53c29102ebed42bc3f9a269354af3f4",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:77b53ff6306c6c10b9e0bbd563090f7b8f99409755813392b4b9d926d25876d3",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 16,
   "schema_version": 1,
   "source_hash": "sha256:c4289ae2a15aadd08eb83ba876a62fd6e8ad71f3038ecef645edbf134bdc93ee",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.vector.point-distinction.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "$P=(3,4)$ 表示平面中的一个位置。",
+      "id": "stage.point-distinction.location",
+      "layout": "overlay",
+      "title": "案例一：位置点",
       "visible_aliases": [
-        "sem__P",
-        "sem__Q",
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__rel.0.claim.ch01.vector.point-distinction",
-        "sem__stage.claim.ch01.vector.point-distinction.observe__title"
+        "sem__point_P",
+        "sem__rel.point-distinction.location"
       ],
       "visible_refs": [
-        "P",
-        "Q",
-        "v",
-        "rel.0.claim.ch01.vector.point-distinction"
+        "point_P",
+        "rel.point-distinction.location"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.vector.point-distinction.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
+      "caption": "$\\boldsymbol v=(3,4)$ 从原点指向终点 $(3,4)$。",
+      "id": "stage.point-distinction.vector",
+      "layout": "overlay",
+      "title": "案例二：原点向量与标准基",
       "visible_aliases": [
-        "sem__P",
-        "sem__Q",
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__rel.0.claim.ch01.vector.point-distinction",
-        "sem__stage.claim.ch01.vector.point-distinction.derive__title"
+        "sem__vector_v",
+        "sem__vector_v__end",
+        "sem__vector_v__origin",
+        "sem__e1",
+        "sem__e1__end",
+        "sem__e1__origin",
+        "sem__e2",
+        "sem__e2__end",
+        "sem__e2__origin",
+        "sem__rel.point-distinction.basis"
       ],
       "visible_refs": [
-        "P",
-        "Q",
-        "v",
-        "rel.0.claim.ch01.vector.point-distinction"
+        "vector_v",
+        "e1",
+        "e2",
+        "rel.point-distinction.basis"
       ]
     }
   ],

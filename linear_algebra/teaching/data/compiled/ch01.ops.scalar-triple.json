@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:852621caa2b0161dbf635c9376d3b98b1db98280b96fd841c79b5ff2385cd46c",
+  "artifact_digest": "sha256:451eb4f983192cea758b900a3c1ebdf3e27703e52ddc75f4da144f567ed63d29",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__a",
+        "alias": "sem__triple_1_a",
         "color": "#2F6BFF",
         "end": [
           1.0,
@@ -23,7 +23,61 @@
         ]
       },
       {
-        "alias": "sem__b",
+        "alias": "sem__triple_1_b",
+        "color": "#F08A24",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "label": "b",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__triple_1_c",
+        "color": "#6B7280",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "vector",
+        "label": "c",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__triple_2_a",
+        "color": "#2F6BFF",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "label": "a",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__triple_2_b",
         "color": "#F08A24",
         "end": [
           0.0,
@@ -41,8 +95,8 @@
         ]
       },
       {
-        "alias": "sem__c",
-        "color": "#7B61FF",
+        "alias": "sem__triple_2_c",
+        "color": "#6B7280",
         "end": [
           0.0,
           0.0,
@@ -59,58 +113,57 @@
         ]
       },
       {
-        "alias": "sem__volume",
-        "color": "#2A9D8F",
-        "op": "geometry.oriented_volume",
-        "origin": [
-          0.0,
+        "alias": "sem__triple_3_a",
+        "color": "#2F6BFF",
+        "end": [
+          1.0,
           0.0,
           0.0
         ],
-        "vectors": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            2.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            3.0
-          ]
+        "kind": "vector",
+        "label": "a",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
         ]
       },
       {
-        "alias": "sem__volume",
-        "color": "#2A9D8F",
-        "op": "geometry.parallelepiped",
-        "opacity": 0.24,
-        "origin": [
+        "alias": "sem__triple_3_b",
+        "color": "#F08A24",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "label": "b",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
           0.0,
           0.0,
           0.0
+        ]
+      },
+      {
+        "alias": "sem__triple_3_c",
+        "color": "#6B7280",
+        "end": [
+          1.0,
+          1.0,
+          0.0
         ],
-        "vectors": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            2.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            3.0
-          ]
+        "kind": "vector",
+        "label": "c",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
         ]
       },
       {
@@ -122,79 +175,95 @@
     "summary": "混合积与平行六面体体积",
     "version": 1
   },
-  "plan_digest": "sha256:bb76bde8dde1e95fef4abba8db37e52848971a5863586ab960f6a19c16958a53",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:c0414dd0b839079b99a9f71ca5a2f3fe28ed47a643e84ea4b69f3dfb127049bc",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 14,
   "schema_version": 1,
   "source_hash": "sha256:4e497dc05627bf09c03cba04c8fa9c93828cd0daace46a310f30768c1f541417",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.ops.scalar-triple.observe",
-      "layout": "side_by_side",
-      "title": "第一个向量",
+      "caption": "",
+      "id": "stage.scalar-triple.1",
+      "layout": "overlay",
+      "title": "案例一：单位正交棱",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__c",
-        "sem__c__end",
-        "sem__c__origin",
-        "sem__volume",
-        "sem__rel.0.claim.ch01.ops.scalar-triple",
-        "sem__stage.claim.ch01.ops.scalar-triple.observe__title",
-        "sem__orientation__1"
+        "sem__triple_1_a",
+        "sem__triple_1_a__end",
+        "sem__triple_1_a__origin",
+        "sem__triple_1_b",
+        "sem__triple_1_b__end",
+        "sem__triple_1_b__origin",
+        "sem__triple_1_c",
+        "sem__triple_1_c__end",
+        "sem__triple_1_c__origin",
+        "sem__rel.scalar-triple.1"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "c",
-        "volume",
-        "rel.0.claim.ch01.ops.scalar-triple"
+        "triple_1_a",
+        "triple_1_b",
+        "triple_1_c",
+        "rel.scalar-triple.1"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.ops.scalar-triple.derive",
-      "layout": "sequence",
-      "title": "第二个向量",
+      "caption": "",
+      "id": "stage.scalar-triple.2",
+      "layout": "overlay",
+      "title": "案例二：长方体体积",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__c",
-        "sem__c__end",
-        "sem__c__origin",
-        "sem__volume",
-        "sem__rel.0.claim.ch01.ops.scalar-triple",
-        "sem__rel.1.claim.ch01.ops.scalar-triple",
-        "sem__stage.claim.ch01.ops.scalar-triple.derive__title",
-        "sem__orientation__2"
+        "sem__triple_2_a",
+        "sem__triple_2_a__end",
+        "sem__triple_2_a__origin",
+        "sem__triple_2_b",
+        "sem__triple_2_b__end",
+        "sem__triple_2_b__origin",
+        "sem__triple_2_c",
+        "sem__triple_2_c__end",
+        "sem__triple_2_c__origin",
+        "sem__rel.scalar-triple.2"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "c",
-        "volume",
-        "rel.0.claim.ch01.ops.scalar-triple",
-        "rel.1.claim.ch01.ops.scalar-triple"
+        "triple_2_a",
+        "triple_2_b",
+        "triple_2_c",
+        "rel.scalar-triple.2"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.scalar-triple.3",
+      "layout": "overlay",
+      "title": "案例三：共面退化",
+      "visible_aliases": [
+        "sem__triple_3_a",
+        "sem__triple_3_a__end",
+        "sem__triple_3_a__origin",
+        "sem__triple_3_b",
+        "sem__triple_3_b__end",
+        "sem__triple_3_b__origin",
+        "sem__triple_3_c",
+        "sem__triple_3_c__end",
+        "sem__triple_3_c__origin",
+        "sem__rel.scalar-triple.3"
+      ],
+      "visible_refs": [
+        "triple_3_a",
+        "triple_3_b",
+        "triple_3_c",
+        "rel.scalar-triple.3"
       ]
     }
   ],

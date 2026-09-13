@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:df398fb56393db595a2c4afeed26aa135f0bbe51debba088e249533325fcf953",
+  "artifact_digest": "sha256:956ab03bc3dbcab5d747efa635c9673368c9f1d0ad75f767ee0608391ab04d9c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__a__origin",
+        "alias": "sem__case1_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,7 +14,7 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a__end",
+        "alias": "sem__case1_a__end",
         "coordinates": [
           1.0,
           2.0
@@ -23,17 +23,17 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a",
+        "alias": "sem__case1_a",
         "color": "#2F6BFF",
-        "end": "sem__a__end",
+        "end": "sem__case1_a__end",
         "kind": "vector",
         "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__a__origin"
+        "start": "sem__case1_a__origin"
       },
       {
-        "alias": "sem__b__origin",
+        "alias": "sem__case1_b__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,7 +42,7 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b__end",
+        "alias": "sem__case1_b__end",
         "coordinates": [
           3.0,
           4.0
@@ -51,17 +51,17 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__b",
+        "alias": "sem__case1_b",
         "color": "#F08A24",
-        "end": "sem__b__end",
+        "end": "sem__case1_b__end",
         "kind": "vector",
         "label": "b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__b__origin"
+        "start": "sem__case1_b__origin"
       },
       {
-        "alias": "sem__difference__origin",
+        "alias": "sem__case1_r__origin",
         "coordinates": [
           0.0,
           0.0
@@ -70,32 +70,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__difference__end",
+        "alias": "sem__case1_r__end",
         "coordinates": [
-          -2.0,
-          -2.0
+          1.0,
+          2.0
         ],
-        "name": "a-b",
+        "name": "result",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__difference",
-        "color": "#7B61FF",
-        "end": "sem__difference__end",
+        "alias": "sem__case1_r",
+        "color": "#6B7280",
+        "end": "sem__case1_r__end",
         "kind": "vector",
-        "label": "a-b",
+        "label": "result",
         "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__difference__origin"
-      },
-      {
-        "alias": "sem__rel.0.claim.ch01.inner.equivalence",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "compare: a → b"
+        "role": "result",
+        "start": "sem__case1_r__origin"
       },
       {
         "alias": "cap__polygon",
@@ -141,22 +132,22 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.inner.equivalence.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
+        "alias": "sem__orientation__1",
+        "color": "#2A9D8F",
+        "first": [
+          1.0,
+          2.0
         ],
-        "text": "几何意义 1"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.inner.equivalence.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          3.0,
+          4.0
         ],
-        "text": "几何意义 2"
+        "vertex": [
+          0.0,
+          0.0
+        ]
       },
       {
         "op": "view.fit",
@@ -167,71 +158,40 @@
     "summary": "内积两种定义的几何等价",
     "version": 1
   },
-  "plan_digest": "sha256:4b7bc0378de17837adbc1ec013110300d66274d6f978f044148305ef0539321b",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:ced43992407a03d281cc418cb1d636accb71cd23d118aa9a526893c01651fc95",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 14,
   "schema_version": 1,
   "source_hash": "sha256:18371503c870b3e41027bcfb2cc9b77e7f4595fa93f1041b11f68921e280b4f6",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.inner.equivalence.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "",
+      "id": "stage.case.ch01.inner.equivalence.1",
+      "layout": "overlay",
+      "title": "案例一：两种定义给出同一数",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__difference",
-        "sem__difference__end",
-        "sem__difference__origin",
-        "sem__rel.0.claim.ch01.inner.equivalence",
-        "sem__stage.claim.ch01.inner.equivalence.observe__title"
+        "sem__case1_a",
+        "sem__case1_a__end",
+        "sem__case1_a__origin",
+        "sem__case1_b",
+        "sem__case1_b__end",
+        "sem__case1_b__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__rel.case.ch01.inner.equivalence.1",
+        "sem__orientation__1"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "difference",
-        "rel.0.claim.ch01.inner.equivalence"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.inner.equivalence.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
-      "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__difference",
-        "sem__difference__end",
-        "sem__difference__origin",
-        "sem__rel.0.claim.ch01.inner.equivalence",
-        "sem__stage.claim.ch01.inner.equivalence.derive__title"
-      ],
-      "visible_refs": [
-        "a",
-        "b",
-        "difference",
-        "rel.0.claim.ch01.inner.equivalence"
+        "case1_a",
+        "case1_b",
+        "case1_r",
+        "rel.case.ch01.inner.equivalence.1"
       ]
     }
   ],

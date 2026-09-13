@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:65452c78f250a26565f0ca656aa443d863a5ebc0d20c970a96eddb820c201a96",
+  "artifact_digest": "sha256:4305bc5ef17e95ebc68467b4899110ac8605ee3ea42b888eba11531114e3dfe9",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
@@ -134,7 +134,7 @@
           -2.65,
           2.65
         ],
-        "text": "(Ax)_i=\\operatorname{row}_i(A)\\cdot x=\\sum_j x_j A_{:j}"
+        "text": "(A\\boldsymbol x)_i=\\operatorname{row}_i(A)\\cdot\\boldsymbol x=\\sum_jx_jA_{:j}"
       },
       {
         "op": "view.fit",
@@ -145,12 +145,10 @@
     "summary": "矩阵乘向量的行视角与列视角",
     "version": 1
   },
-  "plan_digest": "sha256:3f06b149b8af7fcc19244e70c74aa9c8781aec0d80ca3dc10a812d5ce0ac31fc",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:a3c2ee35e5eba7a2fe3510c8b9226325d6efbea1fe305ce20b9295689637f584",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 12,
   "schema_version": 1,
   "source_hash": "sha256:07fbb794fc533cc2655cad99b8e37a59ec70268f4cec18e7c0b6e10d0f91348c",
   "stages": [

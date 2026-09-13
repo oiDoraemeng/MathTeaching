@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:3c788fb4e13c5f3f4238d5e46fd203a01d4ebcb6a58e8cb07d092bf605d19dc1",
+  "artifact_digest": "sha256:d60d06e579cedb3f84a19e254b56c9dc4cf2a37c5a3acd7a22763c642c3aecef",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__v__origin",
+        "alias": "sem__case1_v__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,7 +14,7 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v__end",
+        "alias": "sem__case1_v__end",
         "coordinates": [
           3.0,
           4.0
@@ -23,17 +23,17 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v",
+        "alias": "sem__case1_v",
         "color": "#2F6BFF",
-        "end": "sem__v__end",
+        "end": "sem__case1_v__end",
         "kind": "vector",
         "label": "v",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__v__origin"
+        "start": "sem__case1_v__origin"
       },
       {
-        "alias": "sem__u__origin",
+        "alias": "sem__case1_u__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,7 +42,7 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__u__end",
+        "alias": "sem__case1_u__end",
         "coordinates": [
           1.0,
           0.0
@@ -51,17 +51,17 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__u",
+        "alias": "sem__case1_u",
         "color": "#2A9D8F",
-        "end": "sem__u__end",
+        "end": "sem__case1_u__end",
         "kind": "vector",
         "label": "u",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__u__origin"
+        "start": "sem__case1_u__origin"
       },
       {
-        "alias": "sem__projection__origin",
+        "alias": "sem__case1_p__origin",
         "coordinates": [
           0.0,
           0.0
@@ -70,35 +70,35 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__projection__end",
+        "alias": "sem__case1_p__end",
         "coordinates": [
           3.0,
           0.0
         ],
-        "name": "Proj_u(v)",
+        "name": "p",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__projection",
+        "alias": "sem__case1_p",
         "color": "#2A9D8F",
-        "end": "sem__projection__end",
+        "end": "sem__case1_p__end",
         "kind": "vector",
-        "label": "Proj_u(v)",
+        "label": "p",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__projection__origin"
+        "start": "sem__case1_p__origin"
       },
       {
-        "alias": "sem__foot",
+        "alias": "sem__case1_H",
         "coordinates": [
           3.0,
           0.0
         ],
-        "name": "垂足",
+        "name": "H",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__residual__origin",
+        "alias": "sem__case1_r__origin",
         "coordinates": [
           0.0,
           0.0
@@ -107,54 +107,45 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__residual__end",
+        "alias": "sem__case1_r__end",
         "coordinates": [
           0.0,
           4.0
         ],
-        "name": "残差",
+        "name": "r",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__residual",
+        "alias": "sem__case1_r",
         "color": "#E76F51",
-        "end": "sem__residual__end",
+        "end": "sem__case1_r__end",
         "kind": "vector",
-        "label": "残差",
+        "label": "r",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__residual__origin"
+        "start": "sem__case1_r__origin"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.projection.definition",
+        "alias": "sem__rel.case.ch01.projection.definition.1",
         "color": "#2A9D8F",
         "direction": [
-          3.0,
+          1.0,
           0.0
         ],
-        "foot_alias": "sem__foot",
+        "foot_alias": "sem__case1_H",
         "op": "geometry.projection",
-        "residual_alias": "sem__residual",
-        "result_alias": "sem__projection",
+        "residual_alias": "sem__case1_r",
+        "result_alias": "sem__case1_u",
         "vector": [
           3.0,
           4.0
         ]
       },
       {
-        "alias": "sem__rel.1.claim.ch01.projection.definition",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "decomposes_into: v → Proj_u(v)"
-      },
-      {
-        "alias": "sem__rel.2.claim.ch01.projection.definition",
+        "alias": "cap__right_angle",
         "color": "#6B7280",
         "first": [
-          0.0,
+          3.0,
           4.0
         ],
         "op": "geometry.right_angle_marker",
@@ -172,7 +163,7 @@
         "alias": "sem__projection__1",
         "color": "#2A9D8F",
         "direction": [
-          3.0,
+          1.0,
           0.0
         ],
         "foot_alias": "sem__projection__1__foot",
@@ -185,19 +176,10 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.projection.definition.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.0,
-          2.65
-        ],
-        "text": "投影分量"
-      },
-      {
         "alias": "sem__projection__2",
         "color": "#2A9D8F",
         "direction": [
-          3.0,
+          1.0,
           0.0
         ],
         "foot_alias": "sem__projection__2__foot",
@@ -210,19 +192,10 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.projection.definition.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "残差分量"
-      },
-      {
         "alias": "sem__projection__3",
         "color": "#2A9D8F",
         "direction": [
-          3.0,
+          1.0,
           0.0
         ],
         "foot_alias": "sem__projection__3__foot",
@@ -235,15 +208,6 @@
         ]
       },
       {
-        "alias": "sem__stage.claim.ch01.projection.definition.decompose__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          1.69
-        ],
-        "text": "投影分解"
-      },
-      {
         "op": "view.fit",
         "padding": 1.15
       }
@@ -252,125 +216,128 @@
     "summary": "投影、垂足与残差",
     "version": 1
   },
-  "plan_digest": "sha256:1b1c8107669fa562ad8f8a8669026936a46eaaf929cabb5cb1284b0cc87b7ff3",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:5af33367c30bbfcc669acc1b9735b55849c7a5862de39610f239c2177387e295",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 14,
   "schema_version": 1,
   "source_hash": "sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789",
   "stages": [
     {
       "anchor": [
-        -2.0,
+        0.0,
         2.65
       ],
       "caption": "沿着方向线读出投影分量。",
-      "id": "stage.claim.ch01.projection.definition.observe",
-      "layout": "side_by_side",
-      "title": "投影分量",
+      "id": "stage.case.ch01.projection.definition.1",
+      "layout": "overlay",
+      "title": "案例一：x 轴投影",
       "visible_aliases": [
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__u",
-        "sem__u__end",
-        "sem__u__origin",
-        "sem__projection",
-        "sem__projection__end",
-        "sem__projection__origin",
-        "sem__foot",
-        "sem__residual",
-        "sem__residual__end",
-        "sem__residual__origin",
-        "sem__rel.0.claim.ch01.projection.definition",
-        "sem__stage.claim.ch01.projection.definition.observe__title",
+        "sem__case1_v",
+        "sem__case1_v__end",
+        "sem__case1_v__origin",
+        "sem__case1_u",
+        "sem__case1_u__end",
+        "sem__case1_u__origin",
+        "sem__case1_p",
+        "sem__case1_p__end",
+        "sem__case1_p__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__case1_H",
+        "sem__rel.case.ch01.projection.definition.1",
+        "sem__rel.case.ch01.projection.definition.1.decompose",
+        "sem__rel.case.ch01.projection.definition.1.orthogonal",
         "sem__projection__1"
       ],
       "visible_refs": [
-        "v",
-        "u",
-        "projection",
-        "foot",
-        "residual",
-        "rel.0.claim.ch01.projection.definition"
+        "case1_v",
+        "case1_u",
+        "case1_p",
+        "case1_r",
+        "case1_H",
+        "rel.case.ch01.projection.definition.1",
+        "rel.case.ch01.projection.definition.1.decompose",
+        "rel.case.ch01.projection.definition.1.orthogonal"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
       "caption": "看垂直方向上剩下的残差。",
-      "id": "stage.claim.ch01.projection.definition.derive",
-      "layout": "sequence",
-      "title": "残差分量",
+      "id": "stage.case.ch01.projection.definition.1.projection",
+      "layout": "overlay",
+      "title": "投影分量",
       "visible_aliases": [
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__u",
-        "sem__u__end",
-        "sem__u__origin",
-        "sem__projection",
-        "sem__projection__end",
-        "sem__projection__origin",
-        "sem__foot",
-        "sem__residual",
-        "sem__residual__end",
-        "sem__residual__origin",
-        "sem__rel.0.claim.ch01.projection.definition",
-        "sem__rel.1.claim.ch01.projection.definition",
-        "sem__rel.2.claim.ch01.projection.definition",
-        "sem__stage.claim.ch01.projection.definition.derive__title",
+        "sem__case1_v",
+        "sem__case1_v__end",
+        "sem__case1_v__origin",
+        "sem__case1_u",
+        "sem__case1_u__end",
+        "sem__case1_u__origin",
+        "sem__case1_p",
+        "sem__case1_p__end",
+        "sem__case1_p__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__case1_H",
+        "sem__rel.case.ch01.projection.definition.1",
+        "sem__rel.case.ch01.projection.definition.1.decompose",
+        "sem__rel.case.ch01.projection.definition.1.orthogonal",
         "sem__projection__2"
       ],
       "visible_refs": [
-        "v",
-        "u",
-        "projection",
-        "foot",
-        "residual",
-        "rel.0.claim.ch01.projection.definition",
-        "rel.1.claim.ch01.projection.definition",
-        "rel.2.claim.ch01.projection.definition"
+        "case1_v",
+        "case1_u",
+        "case1_p",
+        "case1_r",
+        "case1_H",
+        "rel.case.ch01.projection.definition.1",
+        "rel.case.ch01.projection.definition.1.decompose",
+        "rel.case.ch01.projection.definition.1.orthogonal"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        1.69
+        0.0,
+        2.65
       ],
-      "caption": "观察投影、垂足和正交残差。",
-      "id": "stage.claim.ch01.projection.definition.decompose",
-      "layout": "sequence",
-      "title": "投影分解",
+      "caption": "看垂直方向上剩下的残差。",
+      "id": "stage.case.ch01.projection.definition.1.residual",
+      "layout": "overlay",
+      "title": "正交残差",
       "visible_aliases": [
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__projection",
-        "sem__projection__end",
-        "sem__projection__origin",
-        "sem__foot",
-        "sem__residual",
-        "sem__residual__end",
-        "sem__residual__origin",
-        "sem__rel.0.claim.ch01.projection.definition",
-        "sem__rel.1.claim.ch01.projection.definition",
-        "sem__rel.2.claim.ch01.projection.definition",
-        "sem__stage.claim.ch01.projection.definition.decompose__title",
+        "sem__case1_v",
+        "sem__case1_v__end",
+        "sem__case1_v__origin",
+        "sem__case1_u",
+        "sem__case1_u__end",
+        "sem__case1_u__origin",
+        "sem__case1_p",
+        "sem__case1_p__end",
+        "sem__case1_p__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__case1_H",
+        "sem__rel.case.ch01.projection.definition.1",
+        "sem__rel.case.ch01.projection.definition.1.decompose",
+        "sem__rel.case.ch01.projection.definition.1.orthogonal",
         "sem__projection__3"
       ],
       "visible_refs": [
-        "v",
-        "projection",
-        "foot",
-        "residual",
-        "rel.0.claim.ch01.projection.definition",
-        "rel.1.claim.ch01.projection.definition",
-        "rel.2.claim.ch01.projection.definition"
+        "case1_v",
+        "case1_u",
+        "case1_p",
+        "case1_r",
+        "case1_H",
+        "rel.case.ch01.projection.definition.1",
+        "rel.case.ch01.projection.definition.1.decompose",
+        "rel.case.ch01.projection.definition.1.orthogonal"
       ]
     }
   ],

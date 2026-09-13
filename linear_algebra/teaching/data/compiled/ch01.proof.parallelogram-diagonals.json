@@ -1,11 +1,11 @@
 {
-  "artifact_digest": "sha256:fcb1ffcd2f4ae47a63e60f0982e5d31d397be7609a2068a1ae96433374758b04",
+  "artifact_digest": "sha256:97adf0849e9fbd3a078db0a1369e006a6d06019b43fadcdcfdb18d180adfdee4",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "plan": {
     "operations": [
       {
-        "alias": "sem__a__origin",
+        "alias": "sem__case1_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,78 +14,79 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__a__end",
+        "alias": "sem__case1_a__end",
         "coordinates": [
           2.0,
-          0.0
-        ],
-        "name": "AB",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__a",
-        "color": "#2F6BFF",
-        "end": "sem__a__end",
-        "kind": "vector",
-        "label": "AB",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__a__origin"
-      },
-      {
-        "alias": "sem__b__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__b__end",
-        "coordinates": [
-          0.0,
-          2.0
-        ],
-        "name": "AD",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__b",
-        "color": "#F08A24",
-        "end": "sem__b__end",
-        "kind": "vector",
-        "label": "AD",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__b__origin"
-      },
-      {
-        "alias": "sem__C",
-        "coordinates": [
-          2.0,
-          2.0
-        ],
-        "name": "C=a+b",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__M",
-        "coordinates": [
-          1.0,
           1.0
         ],
-        "name": "对角线中点",
+        "name": "a",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__rel.0.claim.ch01.proof.parallelogram-diagonals",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "sem__case1_a",
+        "color": "#2F6BFF",
+        "end": "sem__case1_a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case1_a__origin"
+      },
+      {
+        "alias": "sem__case1_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "same_measure: 对角线中点 → C=a+b"
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_b__end",
+        "coordinates": [
+          1.0,
+          3.0
+        ],
+        "name": "b",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_b",
+        "color": "#F08A24",
+        "end": "sem__case1_b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case1_b__origin"
+      },
+      {
+        "alias": "sem__case1_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_r__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_r",
+        "color": "#6B7280",
+        "end": "sem__case1_r__end",
+        "kind": "vector",
+        "label": "result",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__case1_r__origin"
       },
       {
         "alias": "cap__polygon",
@@ -100,35 +101,17 @@
           ],
           [
             2.0,
-            0.0
+            1.0
           ],
           [
-            2.0,
-            2.0
+            3.0,
+            4.0
           ],
           [
-            0.0,
-            2.0
+            1.0,
+            3.0
           ]
         ]
-      },
-      {
-        "alias": "sem__stage.claim.ch01.proof.parallelogram-diagonals.observe__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "几何意义 1"
-      },
-      {
-        "alias": "sem__stage.claim.ch01.proof.parallelogram-diagonals.derive__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "几何意义 2"
       },
       {
         "op": "view.fit",
@@ -139,71 +122,39 @@
     "summary": "平行四边形对角线互相平分",
     "version": 1
   },
-  "plan_digest": "sha256:73c53475a06c37c877b92e54408d415ca20cf92fe1824cc3979c490b1525c21c",
-  "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
-  ],
+  "plan_digest": "sha256:cfa43995db0483591b37e57dc49283fed019bd6adb3a325e08c36daa131eff95",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 13,
   "schema_version": 1,
   "source_hash": "sha256:ca9691ba96b556f0ecf214baf60ec08e9b71e904972b13e04c52404984c0730d",
   "stages": [
     {
       "anchor": [
-        -1.5,
+        0.0,
         2.65
       ],
-      "caption": "先读对象、角色和输入输出。",
-      "id": "stage.claim.ch01.proof.parallelogram-diagonals.observe",
-      "layout": "side_by_side",
-      "title": "几何意义 1",
+      "caption": "",
+      "id": "stage.case.ch01.proof.parallelogram-diagonals.1",
+      "layout": "overlay",
+      "title": "案例一：对角线中点",
       "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__C",
-        "sem__M",
-        "sem__rel.0.claim.ch01.proof.parallelogram-diagonals",
-        "sem__stage.claim.ch01.proof.parallelogram-diagonals.observe__title"
+        "sem__case1_a",
+        "sem__case1_a__end",
+        "sem__case1_a__origin",
+        "sem__case1_b",
+        "sem__case1_b__end",
+        "sem__case1_b__origin",
+        "sem__case1_r",
+        "sem__case1_r__end",
+        "sem__case1_r__origin",
+        "sem__rel.case.ch01.proof.parallelogram-diagonals.1"
       ],
       "visible_refs": [
-        "a",
-        "b",
-        "C",
-        "M",
-        "rel.0.claim.ch01.proof.parallelogram-diagonals"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "按公式计算并检查几何关系。",
-      "id": "stage.claim.ch01.proof.parallelogram-diagonals.derive",
-      "layout": "sequence",
-      "title": "几何意义 2",
-      "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__C",
-        "sem__M",
-        "sem__rel.0.claim.ch01.proof.parallelogram-diagonals",
-        "sem__stage.claim.ch01.proof.parallelogram-diagonals.derive__title"
-      ],
-      "visible_refs": [
-        "a",
-        "b",
-        "C",
-        "M",
-        "rel.0.claim.ch01.proof.parallelogram-diagonals"
+        "case1_a",
+        "case1_b",
+        "case1_r",
+        "rel.case.ch01.proof.parallelogram-diagonals.1"
       ]
     }
   ],
