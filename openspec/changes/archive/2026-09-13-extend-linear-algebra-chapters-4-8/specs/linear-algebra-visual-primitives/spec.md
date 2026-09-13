@@ -1,37 +1,4 @@
-# linear-algebra-visual-primitives Specification
-
-## Purpose
-TBD - created by archiving change enrich-linear-algebra-teaching-depth. Update Purpose after archive.
-
-## Requirements
-
-### Requirement: Visual semantics are the drawing boundary
-
-`VisualSemanticsCompiler` SHALL be the only component that converts a `TeachingArtifact.visual_semantics` value into a `CommandPlan`。子智能体、解释存储和树模型 SHALL NOT emit or execute scene operations directly。
-
-视觉语义 SHALL 只包含受控的数学实体、关系、阶段和不变量。实体关系必须引用已定义的实体 ID，并且每个关系可以引用支撑它的 claim ID。
-
-#### Scenario: Semantic output compiles to a plan
-
-- **WHEN** artifact 描述一个输入向量投影到方向向量
-- **THEN** 编译器生成包含输入向量、投影向量、垂足和残差的合法 `CommandPlan`
-- **AND** 编译过程不执行模型返回的代码或字符串命令
-
-#### Scenario: Unsupported semantics fail loudly
-
-- **WHEN** artifact 使用尚未支持的视觉关系
-- **THEN** 编译器返回带关系名称和主题 ID 的能力缺口错误
-- **AND** 不生成只画几根无关向量的降级计划
-
-### Requirement: Claim evidence is visually complete
-
-每个 visual claim SHALL 声明必须可见的实体、关系和阶段。编译器 SHALL 保证这些证据在最终 plan 中可定位；若某个 claim 只有文字而无可见证据，编译 SHALL 失败。
-
-#### Scenario: AB and BA claim has two paths
-
-- **WHEN** 主题声明 `(AB)x=A(Bx)` 且 `AB != BA`
-- **THEN** 计划包含相同输入、两条有顺序的阶段链、两个终点和终点比较
-- **AND** 只有一条链或只有三根未关联向量时校验失败
+## MODIFIED Requirements
 
 ### Requirement: High-level primitives express core claims
 
@@ -90,6 +57,16 @@ TBD - created by archiving change enrich-linear-algebra-teaching-depth. Update P
 - **THEN** artifact 的视觉语义、VisualContract 和最终 plan 都包含对应网格/阶段表达
 - **AND** 任一层缺失都会指出主题 ID、claim、语义关系和预期原语
 
+### Requirement: Deterministic layout and visual roles
+
+第 4 至第 8 章的新增语义 SHALL 使用稳定 seed、命名空间、章节级角色颜色和可校验边界。双空间、并排比较、矩阵 tableau 和二次曲面布局发生重叠、溢出或角色未知时，编译 SHALL 返回明确诊断，不得静默裁剪或改画成无关图形。
+
+#### Scenario: Same artifact has stable layout
+
+- **WHEN** 同一个第 8 章 artifact 在相同渲染 profile 下编译两次
+- **THEN** 两次计划的别名、阶段顺序、坐标和角色颜色一致
+- **AND** 布局越界时两次都返回同一类布局错误而不提交场景
+
 ### Requirement: Static storyboard stages
 
 视觉语义 SHALL 支持静态 storyboard。每个阶段可以声明标题、说明、可见实体、强调关系、不变量和布局槽位；阶段可以按顺序快照、并排车道或叠加图展示，不要求连续动画。第 4 至第 8 章的消元、换基、特征基和主轴变换 SHALL 复用该机制。
@@ -105,16 +82,6 @@ TBD - created by archiving change enrich-linear-algebra-teaching-depth. Update P
 - **WHEN** 用户阅读投影公式的 storyboard
 - **THEN** 可以依次看到输入、投影、垂足、残差和正交关系
 - **AND** 切换阶段只改变展示状态，不重新生成数学内容或绕过场景校验
-
-### Requirement: Deterministic layout and visual roles
-
-第 4 至第 8 章的新增语义 SHALL 使用稳定 seed、命名空间、章节级角色颜色和可校验边界。双空间、并排比较、矩阵 tableau 和二次曲面布局发生重叠、溢出或角色未知时，编译 SHALL 返回明确诊断，不得静默裁剪或改画成无关图形。
-
-#### Scenario: Same artifact has stable layout
-
-- **WHEN** 同一个第 8 章 artifact 在相同渲染 profile 下编译两次
-- **THEN** 两次计划的别名、阶段顺序、坐标和角色颜色一致
-- **AND** 布局越界时两次都返回同一类布局错误而不提交场景
 
 ### Requirement: Single rendering path
 

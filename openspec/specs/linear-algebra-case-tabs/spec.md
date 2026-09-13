@@ -45,21 +45,22 @@ TBD - created by archiving change linear-algebra-case-tabs. Update Purpose after
 
 ### Requirement: Linear algebra lecture entry
 
-左侧代数面板 SHALL 在“函数”按钮之后显示名称为“线性代数”的按钮。点击按钮 SHALL 打开以讲义前三章为来源的树形目录；目录 SHALL 只包含需要几何表示的章、节与主题，不显示练习、自检、挑战或纯符号推导条目。
+左侧代数面板 SHALL 在“函数”按钮之后显示名称为“线性代数”的按钮。点击按钮 SHALL 打开以讲义前八章为来源的树形目录；目录 SHALL 只包含需要几何表示的章、节与主题，不显示练习、自检、挑战或纯符号推导条目。
 
 #### Scenario: Open lecture tree
 - **WHEN** 用户点击“线性代数”按钮
-- **THEN** 弹窗显示“第1章 向量与几何测量”“第2章 矩阵的诞生——向量的批处理”“第3章 行列式”三个章节点
-- **AND** 三个章节点默认展开并显示第二级节目录
+- **THEN** 弹窗显示“第1章 向量与几何测量”至“第8章 二次型与主轴定理”八个章节点
+- **AND** 八个章节点默认展开并显示第二级节目录
 - **AND** 节节点下的主题叶子默认折叠
 
 #### Scenario: Open lecture topic list
 - **WHEN** 用户点击“线性代数”按钮
-- **THEN** 树形目录中包含讲义前三章的 54 个主题叶子，第一章 24 个、第二章 15 个、第三章 15 个
+- **THEN** 树形目录保留前三章 54 个主题并新增第 4–8 章 39 个绘图主题
+- **AND** 新增主题按章节计数为第 4 章 16 个、第 5 章 8 个、第 6 章 3 个、第 7 章 6 个、第 8 章 6 个
 
 ### Requirement: Lecture topic loading
 
-每个主题 SHALL 通过稳定的 `topic_id` 关联讲义来源、已发布 `TeachingArtifact` 和 `VisualizationRecipe`。前三章 SHALL 继续覆盖 54 个需要几何表示的主题（24/15/15），不收录练习、自检、挑战或纯符号推导条目。
+每个主题 SHALL 通过稳定的 `topic_id` 关联讲义来源、已发布 `TeachingArtifact` 和 `VisualizationRecipe`。前八章 SHALL 覆盖前三章既有的 54 个主题和第 4–8 章绘图目录的 39 个主题，不收录练习、自检、挑战或纯符号推导条目。
 
 用户选择叶子主题时，系统 SHALL 使用同一个 `topic_id` 解析数学解释、数字算例、视觉语义和绘图配方；不得通过显示标题、公式或自然语言相似度选择绘图主题。
 
@@ -67,9 +68,9 @@ TBD - created by archiving change linear-algebra-case-tabs. Update Purpose after
 
 #### Scenario: Load a lecture topic
 
-- **WHEN** 用户选择“3.3 克拉默法则”下的“面积比解方程组”主题
+- **WHEN** 用户选择“8.3 主轴定理”主题
 - **THEN** 系统使用该叶子的 `topic_id` 读取讲义来源、结构化数学解释和视觉语义
-- **AND** 视觉语义编译出的计划显示系数列向量、目标向量和面积比构造
+- **AND** 视觉语义编译出的计划显示原始二次型、特征向量主轴和标准形等值线
 - **AND** 解释页显示公式、推导步骤、数字算例、几何意义和结论
 
 #### Scenario: Reject mismatched explanation and drawing
@@ -87,7 +88,7 @@ TBD - created by archiving change linear-algebra-case-tabs. Update Purpose after
 - **WHEN** 用户触发展开全部
 - **THEN** 所有可见节节点及主题叶子均可见
 - **WHEN** 用户随后触发折叠
-- **THEN** 目录仅显示三个章节点
+- **THEN** 目录仅显示八个章节点
 
 ### Requirement: Lecture tree search
 
@@ -96,6 +97,11 @@ TBD - created by archiving change linear-algebra-case-tabs. Update Purpose after
 #### Scenario: Search for Cramer topic
 - **WHEN** 用户在搜索框输入“克拉默”
 - **THEN** 目录显示第3章、3.3 克拉默法则和匹配主题叶子
+- **AND** 其他不匹配的章、节与主题均隐藏
+
+#### Scenario: Search for chapter-eight topic
+- **WHEN** 用户在搜索框输入“主轴定理”
+- **THEN** 目录显示第8章、8.3 主轴定理和匹配主题叶子
 - **AND** 其他不匹配的章、节与主题均隐藏
 
 ### Requirement: Leaf selection behavior
