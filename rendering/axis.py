@@ -1,8 +1,7 @@
 """三维工作区的持久化笛卡尔坐标轴。
 
-坐标轴和刻度只创建一次。相机缩放或旋转后，仅通过 ``copy_from`` 或
-``mapper.dataset`` 替换几何数据，保留演员及 VTK 映射器，从而避免每帧
-重建渲染管线造成闪烁。
+坐标轴和刻度演员只创建一次。相机缩放后更新几何数据的范围，保留演员及
+VTK 映射器，从而避免每次交互重建渲染管线造成闪烁。
 """
 
 from __future__ import annotations
@@ -10,13 +9,18 @@ from __future__ import annotations
 import numpy as np
 import pyvista as pv
 
-from rendering.materials import AXIS_COLOR, AXIS_LABEL_COLOR, AXIS_MATERIAL
+from rendering.line_arrow_3d import line_arrow_mesh
+from rendering.materials import AXIS_COLOR, AXIS_LABEL_COLOR
 from rendering.ticks import format_tick, tick_spacing, tick_values
 
 
 _AXIS_LABELS = ("X", "Y", "Z")
 _AXIS_COLORS = {"X": "#d64545", "Y": "#2f9e5b", "Z": "#3478c7"}
 _DIRECTIONS = np.eye(3)
+_AXIS_LINE_WIDTH = 1.6
+_TICK_LINE_WIDTH = 1.2
+_AXIS_TIP_LENGTH_RATIO = 0.06
+_AXIS_TIP_RADIUS_RATIO = 0.015
 
 
 class ThreeDAxes:
@@ -42,18 +46,19 @@ class ThreeDAxes:
         previous_spacing: float | None = None,
     ) -> float:
         """按给定范围更新坐标轴几何，并返回最终采用的刻度间距。"""
-        extent = max(0.5, float(extent))
+        # Do not impose a visible-world lower bound here.  The pane renderer
+        # may shrink the compensated extent below 0.5 during deep zoom; a
+        # large clamp would make the axes grow on screen again.
+        extent = max(1e-6, float(extent))
         default_color = contrast_color or AXIS_COLOR
         label_color = contrast_color or AXIS_LABEL_COLOR
 
         for direction, label in zip(_DIRECTIONS, _AXIS_LABELS):
-            arrow = pv.Arrow(
-                start=-extent * direction,
-                direction=direction,
-                scale=2.0 * extent,
-                tip_length=0.06,
-                tip_radius=0.0016,
-                shaft_radius=0.0005,
+            arrow = line_arrow_mesh(
+                -extent * direction,
+                extent * direction,
+                tip_length_ratio=_AXIS_TIP_LENGTH_RATIO,
+                tip_radius_ratio=_AXIS_TIP_RADIUS_RATIO,
             )
             color = _AXIS_COLORS[label] if axis_color_mode == "color" else default_color
             self._set_arrow(f"axis_{label}", arrow, color)
@@ -102,7 +107,14 @@ class ThreeDAxes:
         actor = self._arrow_actors.get(key)
         if actor is None:
             stored = mesh.copy()
-            actor = self.plotter.add_mesh(stored, color=color, name=key, **AXIS_MATERIAL)
+            actor = self.plotter.add_mesh(
+                stored,
+                color=color,
+                name=key,
+                line_width=_AXIS_LINE_WIDTH,
+                lighting=False,
+                render_lines_as_tubes=False,
+            )
             self._arrow_meshes[key] = stored
             self._arrow_actors[key] = actor
         else:
@@ -119,6 +131,8 @@ class ThreeDAxes:
             prop = getattr(actor, "prop", None)
             if prop is not None:
                 prop.color = color
+                if hasattr(prop, "line_width"):
+                    prop.line_width = _AXIS_LINE_WIDTH
 
     def _set_label(
         self,
@@ -182,7 +196,12 @@ class ThreeDAxes:
         if self._tick_actor is None:
             stored = mesh.copy()
             self._tick_actor = self.plotter.add_mesh(
-                stored, name="tick3d_marks", color=color, line_width=1.2, lighting=False,
+                stored,
+                name="tick3d_marks",
+                color=color,
+                line_width=_TICK_LINE_WIDTH,
+                lighting=False,
+                render_lines_as_tubes=False,
             )
             self._tick_mesh = stored
         else:
@@ -191,6 +210,8 @@ class ThreeDAxes:
             prop = getattr(self._tick_actor, "prop", None)
             if prop is not None:
                 prop.color = color
+                if hasattr(prop, "line_width"):
+                    prop.line_width = _TICK_LINE_WIDTH
         self._tick_actor.visibility = mesh.n_points > 0
 
         if "tick3d_labels" in self._has_labels:

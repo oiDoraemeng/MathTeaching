@@ -132,6 +132,7 @@ class ScenePaneWidget(QWidget):
                         saved["parallel_scale"] = float(camera.parallel_scale)
                         state.camera_2d = saved
                     else:
+                        saved["view_angle"] = float(getattr(camera, "view_angle", 30.0))
                         state.camera_3d = saved
                     if state.runtime is not None:
                         if state.scene_mode == "2d":

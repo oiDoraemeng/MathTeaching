@@ -3,7 +3,6 @@
 build_scene() 是界面修改参数和导出截图时调用的统一入口。
 """
 
-import numpy as np
 import pyvista as pv
 from dataclasses import replace
 
@@ -16,7 +15,15 @@ from rendering.helper import add_teaching_helpers
 from rendering.lighting import LightSettings, setup_three_point_lighting
 from rendering.materials import material_preset
 
-_CAMERA_POSITION = [(6.4, -7.2, 5.7), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
+# Keep the initial view far enough away to leave comfortable room around the
+# origin.  The blank 3-D workspace has no geometry for ``reset_camera()`` to
+# fit, so its camera must be positioned explicitly.
+_CAMERA_POSITION = [(12.8, -14.4, 11.4), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
+
+# Coordinate axes use this as their reference world-space extent.  The pane
+# renderer compensates the extent against perspective zoom so their on-screen
+# size remains stable while the camera moves.
+DEFAULT_3D_AXIS_EXTENT = 4.5
 
 
 def configure_3d_camera_interaction(plotter: pv.Plotter) -> None:
@@ -98,7 +105,7 @@ def build_scene(
         if show_axes:
             add_cartesian_axes(
                 plotter,
-                4.5,
+                DEFAULT_3D_AXIS_EXTENT,
                 axis_color_mode=axis_color_mode,
                 contrast_color=resolved_contrast_color,
                 show_ticks=show_ticks,
@@ -113,7 +120,14 @@ def build_scene(
         plotter.enable_anti_aliasing("ssaa" if high_quality else "msaa")
         if camera_position is None:
             plotter.camera_position = _CAMERA_POSITION
-            plotter.reset_camera()
+            # ``show_axes=False`` is used by the pane renderer, which adds its
+            # persistent axes immediately afterwards.  Resetting an empty
+            # plotter here collapses the camera onto the origin and makes the
+            # initial view appear too close.
+            if show_axes:
+                plotter.reset_camera()
+            else:
+                plotter.reset_camera_clipping_range()
         else:
             plotter.camera_position = camera_position
             plotter.reset_camera_clipping_range()
@@ -156,11 +170,10 @@ def build_scene(
     plotter.add_mesh(surface, name="hyperboloid", **material)
     plotter.add_mesh(inner_surface, name="hyperboloid_inner", **inner_material)
 
-    extent = max(parameters.a, parameters.b, parameters.c * np.cosh(parameters.u_max)) * 1.45
     if show_axes:
         add_cartesian_axes(
             plotter,
-            extent,
+            DEFAULT_3D_AXIS_EXTENT,
             axis_color_mode=axis_color_mode,
             contrast_color=resolved_contrast_color,
             show_ticks=show_ticks,
