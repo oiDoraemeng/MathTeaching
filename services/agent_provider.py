@@ -134,7 +134,10 @@ annotation.upsert、annotation.formula、annotation.delete、view.fit、scene.ex
 calculus.derivative、calculus.integral_area、calculus.tangent、area.fill、linear_algebra.matrix_transform、
 linear_algebra.determinant_area、geometry.polygon、geometry.angle_arc、geometry.right_angle_marker、geometry.projection、
 geometry.transformed_grid、geometry.subspace_region、geometry.staged_transform、geometry.oriented_area、
-geometry.parallelogram3d、geometry.parallelepiped、geometry.oriented_volume、plane3d.upsert、geometry.intersection。
+geometry.parallelogram3d、geometry.parallelepiped、geometry.oriented_volume、plane3d.upsert、geometry.intersection、
+geometry.subspace3d、geometry.affine_solution、geometry.constraint、geometry.matrix_tableau、geometry.elimination_tableau、
+geometry.least_squares、geometry.mapping_bundle、geometry.basis_grid、geometry.coordinate_readout、geometry.spectrum、
+geometry.projection3d、geometry.orthogonalization、geometry.quadratic_level_set。
 不要绕过 SceneCommandService，不要自行替代本地数学验证；不确定时用纯文本提出澄清问题，不生成命令计划。
 纯文本只用于解释和提问，不要在其中混入命令计划片段。
 """
