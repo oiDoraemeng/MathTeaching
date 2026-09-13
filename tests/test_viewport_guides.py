@@ -20,10 +20,14 @@ class FakeActor:
 class FakePlotter:
     def __init__(self) -> None:
         self.actors: dict[str, FakeActor] = {}
+        self.meshes: dict[str, object] = {}
+        self.mesh_kwargs: dict[str, dict[str, object]] = {}
 
-    def add_mesh(self, mesh, *, name: str, **_kwargs) -> FakeActor:
+    def add_mesh(self, mesh, *, name: str, **kwargs) -> FakeActor:
         actor = FakeActor()
         self.actors[name] = actor
+        self.meshes[name] = mesh
+        self.mesh_kwargs[name] = kwargs
         return actor
 
     def add_point_labels(self, _points, _labels, *, name: str, **_kwargs) -> FakeActor:
@@ -71,6 +75,19 @@ class ViewportGuideTests(unittest.TestCase):
         self.assertIn("axis_X", plotter.actors)
         self.assertFalse(any(name.startswith("tick3d_") for name in plotter.actors))
 
+    def test_3d_axes_use_screen_width_shafts_and_cone_heads(self) -> None:
+        plotter = FakePlotter()
+
+        add_cartesian_axes(plotter, 5.0, show_ticks=False)
+
+        for name in ("axis_X", "axis_Y", "axis_Z"):
+            mesh = plotter.meshes[name]
+            kwargs = plotter.mesh_kwargs[name]
+            self.assertEqual(mesh.n_lines, 1)
+            self.assertGreater(mesh.n_faces, 0)
+            self.assertEqual(kwargs["line_width"], 1.6)
+            self.assertIs(kwargs["render_lines_as_tubes"], False)
+
     def test_2d_tick_marks_extend_only_away_from_their_number_labels(self) -> None:
         bounds = ViewportBounds((-5, 5), (-5, 5))
         spacing = 1.0
@@ -105,6 +122,10 @@ class ViewportGuideTests(unittest.TestCase):
         self.assertTrue(all(start[1] == 0 and end[1] > 0 for start, end in x_segments))
         self.assertTrue(all(start[0] == 0 and end[0] < 0 for start, end in y_segments))
         self.assertTrue(all(start[0] == 0 and end[0] < 0 for start, end in z_segments))
+        self.assertEqual(plotter.mesh_kwargs["tick3d_marks"]["line_width"], 1.2)
+        self.assertIs(
+            plotter.mesh_kwargs["tick3d_marks"]["render_lines_as_tubes"], False
+        )
 
 
 if __name__ == "__main__":

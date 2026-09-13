@@ -15,6 +15,7 @@ from ui.algebra_panel import AlgebraPanel
 from ui.scene_pane_manager import ScenePaneManager
 from ui.designer_window import MainWindow
 from geometry.standard_surfaces import BUILTIN_SURFACES
+from models.scene_mode import SceneMode
 
 
 class MainWindowLayoutTests(unittest.TestCase):
@@ -52,6 +53,15 @@ class MainWindowLayoutTests(unittest.TestCase):
         MainWindow._bind_algebra_panel(window)
 
         self.assertEqual(len(window.algebra_panel.builtin_menu.actions()), len(BUILTIN_SURFACES))
+
+    def test_initial_3d_scene_contains_only_the_coordinate_system(self) -> None:
+        window = object.__new__(MainWindow)
+        window.pane_manager = ScenePaneManager()
+
+        MainWindow._initialize_default_scene(window)
+
+        self.assertIs(window._pane_scene().scene_mode, SceneMode.THREE_D)
+        self.assertEqual(window._pane_scene().layers, [])
 
     def test_mathlive_formula_is_normalized_before_the_existing_cas_parser(self) -> None:
         window = object.__new__(MainWindow)
