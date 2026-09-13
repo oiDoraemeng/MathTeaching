@@ -9,7 +9,7 @@
 | `openspec validate extend-linear-algebra-chapters-4-8 --strict` | 通过 |
 | `python -m linear_algebra.validation` | `93 topics validated` |
 | `python scripts/validate_linear_algebra_drawing_catalog.py` | `39 topics; 16/8/3/6/6; 0 duplicates` |
-| 第 4–8 章验证/证据/集成/Qt/运行时矩阵 | 97 passed |
+| 第 4–8 章验证/证据/集成/Qt/运行时矩阵 | 131 passed |
 | Web 全量 Vitest | 19 files, 62 tests passed |
 | Web production build | Vite build passed |
 | 关键原子加载与面板回归 | 29 passed |
@@ -18,7 +18,7 @@
 
 ## 全量套件记录
 
-本工作区的 `pytest -q` 在一次完整运行中得到 **1651 passed, 11 failed, 1 skipped**。失败项来自既有增量发布测试对 70/81/87 主题、旧词汇集合、旧合同形状和旧讲义深度的断言，以及一个 snapshot 重建旧行为断言；本变更不通过放宽新校验来掩盖这些不一致。章节专项矩阵和本次新增测试均通过。
+本工作区当前 `pytest -q` 得到 **1661 passed, 1 failed, 1 skipped**。唯一失败是既有 `tests/test_linear_algebra_chapter_02_artifacts.py::test_chapter_02_has_15_published_artifacts`：第 2 章两个历史资源缺少 `connections`、`invariants`、`pitfalls`、`transfer_note`、`analogy_boundary` 等解释字段。本变更不通过放宽新校验或改动旧案例来掩盖该问题；第 4–8 章专项矩阵和本次新增测试均通过。
 
 `openspec validate --all --strict` 的唯一失败是既有 `spec/multi-pane-workspace`；本变更自身严格校验通过。
 
