@@ -1,9 +1,12 @@
 """Atomic registry joins and load transactions for the extended chapters."""
 
 from dataclasses import replace
+import json
+from pathlib import Path
 
 from linear_algebra.registry import bundled_teaching_store, catalog_registry
 from linear_algebra.teaching.load_states import LoadPhase
+from linear_algebra.teaching.store import TeachingArtifactStore
 from linear_algebra.visualizations.snapshots import CompiledSnapshotStore
 
 
@@ -92,3 +95,22 @@ def test_missing_published_snapshot_is_a_diagnostic_not_an_in_memory_replacement
     assert transaction.diagnostic is not None
     assert transaction.diagnostic.code == "missing_snapshot"
     assert transaction.diagnostic.field == "snapshot"
+
+
+def test_compiled_resource_digest_mismatch_is_rejected(tmp_path: Path) -> None:
+    source = Path(__file__).parents[1] / "linear_algebra" / "teaching" / "data" / "compiled" / "ch08.principal-axis.json"
+    target = tmp_path / "compiled" / source.name
+    target.parent.mkdir(parents=True)
+    payload = json.loads(source.read_text(encoding="utf-8"))
+    payload["artifact_digest"] = "sha256:tampered"
+    target.write_text(json.dumps(payload), encoding="utf-8")
+
+    bundle = catalog_registry().resolve_bundle(
+        "ch08.principal-axis",
+        artifact_store=TeachingArtifactStore(tmp_path),
+    )
+    transaction = catalog_registry().commit_curriculum_bundle(bundle)
+
+    assert transaction.phase is LoadPhase.REJECTED
+    assert transaction.diagnostic is not None
+    assert transaction.diagnostic.code == "bundle_mismatch"

@@ -71,7 +71,13 @@ from ui.linear_algebra_tools import (
     build_vector_tool_plan,
     parse_matrix,
 )
-from ui.teaching_case_panes import PANE_COUNTS, TeachingCasePaneGrid, case_plan
+from ui.teaching_case_panes import (
+    PANE_COUNTS,
+    StoryboardVisibility,
+    StoryboardVisibilityController,
+    TeachingCasePaneGrid,
+    case_plan,
+)
 from services.agent_worker import RuntimeTurnWorker
 from services.agent_provider import (
     AgentSettings,
@@ -481,7 +487,17 @@ class MainWindow:
         self._active_linear_algebra_topic_id: str | None = None
         self._active_linear_algebra_compiled: CompiledVisualization | None = None
         self._active_linear_algebra_explanation_case: object | None = None
+        self._active_linear_algebra_category: str | None = None
+        self._active_linear_algebra_source_diagnostic: object | None = None
         self._active_linear_algebra_stage_id: str | None = None
+        self._active_linear_algebra_stage_metadata: StoryboardVisibility | None = None
+        self._pending_curriculum_transaction = None
+        self._pending_curriculum_bundle = None
+        self._pending_curriculum_explanation = None
+        self._pending_curriculum_plan = None
+        self._pending_curriculum_previous_scene = None
+        self._pending_curriculum_host_executed = False
+        self._pending_curriculum_finalized = False
         self._hidden_linear_algebra_aliases: set[str] = set()
         self._teaching_case_pane_grid: TeachingCasePaneGrid | None = None
         self._scene_settings_closing = False
@@ -2374,15 +2390,29 @@ class MainWindow:
         if compiled is None or compiled.topic_id != case_id:
             return
         try:
-            all_aliases, visible_aliases = storyboard_visibility(compiled, stage_id)
+            selection = StoryboardVisibilityController(compiled).select(stage_id)
         except ValueError:
             return
         self._active_linear_algebra_stage_id = stage_id
-        visible = set(visible_aliases)
-        self._hidden_linear_algebra_aliases = {alias for alias in all_aliases if alias not in visible}
-        for pane_id, refs in getattr(self, "_teaching_case_stage_refs", {}).items():
-            if stage_id in refs and pane_id in self.pane_manager.panes:
-                self._reveal_algebra_pane(pane_id, 0)
+        self._hidden_linear_algebra_aliases = set(selection.hidden_aliases)
+        self._apply_linear_algebra_storyboard_visibility(selection=selection)
+        self._publish_linear_algebra_stage_metadata(selection)
+
+    def _publish_linear_algebra_stage_metadata(self, selection: StoryboardVisibility) -> None:
+        """Update presentation metadata without regenerating a teaching case."""
+
+        self._active_linear_algebra_stage_metadata = selection
+        # The Qt lecture dialog is presentation-only and may not be materialized
+        # in headless hosts.  Dynamic dispatch keeps this hook compatible with
+        # both the structured content view and older dialogs.
+        candidates = [getattr(self, "linear_algebra_content_view", None)]
+        panel = getattr(self, "algebra_panel", None)
+        popup = getattr(panel, "linear_algebra_popup", None)
+        candidates.extend((getattr(popup, "content_view", None), getattr(panel, "content_view", None)))
+        for target in candidates:
+            setter = getattr(target, "set_storyboard_stage", None)
+            if callable(setter):
+                setter(selection)
                 break
 
     def _on_teaching_case_focus(self, pane_id: str, stage_id: str) -> None:
@@ -2479,7 +2509,8 @@ class MainWindow:
                 if pending is not None:
                     try:
                         transaction = getattr(self, "_pending_curriculum_transaction", None)
-                        if transaction is not None and transaction.plan is not None:
+                        if (transaction is not None and transaction.plan is not None
+                                and not getattr(self, "_pending_curriculum_host_executed", False)):
                             if str(transaction.topic_id).startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08.")):
                                 transaction.pane_id = pane_id
                                 transaction.commit_host(
@@ -2543,6 +2574,9 @@ class MainWindow:
         return True
 
     def _open_teaching_case_panes(self, explanation_case: object, compiled: object | None) -> None:
+        return self._open_teaching_case_panes_impl(explanation_case, compiled, defer_render=False)
+
+    def _open_teaching_case_panes_impl(self, explanation_case: object, compiled: object | None, *, defer_render: bool = False) -> None:
         self._close_teaching_case_panes()
         if compiled is None or getattr(compiled, "plan", None) is None:
             return
@@ -2558,7 +2592,8 @@ class MainWindow:
             pane_id = self.pane_manager.register_case(case_id, name=name)
             pane = self.pane_manager.pane(pane_id)
             if pane.runtime is None and not pane.scene_2d and not pane.scene_3d:
-                plan = case_plan(compiled, refs[0]) if refs else compiled.plan
+                extended = str(getattr(compiled, "topic_id", "")).startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08."))
+                plan = compiled.plan if extended and getattr(compiled, "storyboard", ()) else (case_plan(compiled, refs[0]) if refs else compiled.plan)
                 pane.scene_mode = plan.scene
                 data = pane.scene_2d if plan.scene == "2d" else pane.scene_3d
                 data["pending_plan"] = plan.to_dict()
@@ -2569,7 +2604,7 @@ class MainWindow:
         if panel is not None and hasattr(panel, "sync_pane_tabs"):
             panel.sync_pane_tabs()
         container = getattr(self, "scene_pane_widget", None)
-        if container is not None:
+        if container is not None and not defer_render:
             container.sync_layout()
         self._sync_layout_buttons()
 
@@ -2589,11 +2624,44 @@ class MainWindow:
             else:
                 self._close_teaching_case_panes()
 
-    def _apply_linear_algebra_storyboard_visibility(self) -> None:
-        # Case plans are filtered once when their own pane is initialized.
-        # Applying the lecture's global stage mask here would change user
-        # objects and hide sibling cases on ordinary redraw/focus events.
-        return
+    def _apply_linear_algebra_storyboard_visibility(
+        self,
+        *,
+        selection: StoryboardVisibility | None = None,
+    ) -> None:
+        """Apply one compiled stage mask to already materialized case panes.
+
+        This is deliberately a visibility-only operation.  It does not call
+        the command service, materialize a renderer, alter pane layout, or
+        touch Agent/session/artifact data.  Ordinary user panes are excluded
+        by the explicit lecture-pane ID list.
+        """
+
+        compiled = getattr(self, "_active_linear_algebra_compiled", None)
+        if compiled is None:
+            return
+        stage_id = getattr(self, "_active_linear_algebra_stage_id", None)
+        if not isinstance(stage_id, str) or not stage_id:
+            return
+        controller = StoryboardVisibilityController(compiled)
+        # Resolve before touching any runtime.  Restore/redraw paths can carry
+        # an old stage ID; rejecting it here leaves every current actor alone.
+        selected = selection or controller.select(stage_id)
+        pane_manager = getattr(self, "pane_manager", None)
+        if pane_manager is None:
+            return
+        for pane_id in tuple(getattr(self, "_teaching_case_pane_ids", ())):
+            if pane_id not in pane_manager.panes:
+                continue
+            pane = pane_manager.pane(pane_id)
+            runtime = getattr(pane, "runtime", None)
+            if runtime is None:
+                continue
+            controller.apply(runtime, selected.stage_id, render=False)
+            renderer = pane.renderer_2d if pane.scene_mode == "2d" else pane.renderer_3d
+            render = getattr(renderer, "render", None)
+            if callable(render):
+                render()
 
     def _command_upsert_point3d(self, operation: dict[str, object]) -> None:
         """在 3D 视口中用一个受控球体表示点。
@@ -3235,12 +3303,19 @@ class MainWindow:
             "pane_ids": list(getattr(self, "_teaching_case_pane_ids", ())),
             "stage_refs": dict(getattr(self, "_teaching_case_stage_refs", {})),
             "explanation_case": getattr(self, "_active_linear_algebra_explanation_case", None),
+            "category": getattr(self, "_active_linear_algebra_category", None),
+            "source_diagnostic": getattr(self, "_active_linear_algebra_source_diagnostic", None),
         }
         previous_scene_snapshot = None
         try:
             previous_scene_snapshot = self._scene_snapshot_from_current_state()
-        except Exception:
-            previous_scene_snapshot = None
+        except Exception as error:
+            # A missing pre-load snapshot makes rollback impossible.  Refuse
+            # the load before closing panes or publishing a new explanation.
+            self.algebra_panel.set_status(
+                f"无法建立线性代数场景回滚快照: {error}", is_error=True,
+            )
+            return
         try:
             bundle = registry.resolve_bundle(
                 topic_id,
@@ -3333,8 +3408,10 @@ class MainWindow:
                     self.agent_panel.show_math_case(
                         old_case,
                         case_id=previous.get("topic_id"),
+                        category=previous.get("category"),
                         scene_mode=getattr(getattr(old_compiled, "plan", None), "scene", "2d"),
                         compiled=old_compiled,
+                        source_diagnostic=previous.get("source_diagnostic"),
                     )
                 except Exception:
                     pass
@@ -3386,6 +3463,8 @@ class MainWindow:
         self._active_linear_algebra_topic_id = topic.id
         self._active_linear_algebra_compiled = bundle.compiled
         self._active_linear_algebra_explanation_case = explanation_case
+        self._active_linear_algebra_category = topic.source_path[1]
+        self._active_linear_algebra_source_diagnostic = bundle.source_diagnostic
         extended = str(topic.id).startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08."))
         if extended and bundle.compiled is not None and bundle.compiled.storyboard:
             initial_stage = bundle.compiled.storyboard[0].id

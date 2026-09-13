@@ -15,12 +15,12 @@ from linear_algebra.explanations.model import ExplanationContent
 from linear_algebra.teaching.legacy import LegacyTeachingArtifact, adapt_legacy_explanation
 from linear_algebra.teaching.source import LectureSourceRepository, SourceContext
 from linear_algebra.teaching.model import TeachingArtifact
-from linear_algebra.teaching.store import TeachingArtifactStore
+from linear_algebra.teaching.store import TeachingArtifactStore, artifact_digest
 from linear_algebra.visualizations import recipe_for
 from linear_algebra.visualizations.common import RenderContext, VisualizationRecipe
 from linear_algebra.visualizations.compiler import CompiledVisualization, VisualSemanticsCompiler
 from linear_algebra.visualizations.contracts import VisualContract, contract_for
-from linear_algebra.visualizations.snapshots import CompiledSnapshot, CompiledSnapshotStore, snapshot_from
+from linear_algebra.visualizations.snapshots import CompiledSnapshot, CompiledSnapshotStore, snapshot_from, contract_digest_for
 from linear_algebra.teaching.load_states import LoadPhase, LoadTransaction
 
 if TYPE_CHECKING:
@@ -126,6 +126,7 @@ class CurriculumRegistry:
             if configured_root:
                 artifact_store = TeachingArtifactStore(configured_root)
         artifact: TeachingArtifact | None = None
+        artifact_from_reviewed_fallback = False
         if artifact_store is not None:
             if source_repository is not None:
                 try:
@@ -155,6 +156,7 @@ class CurriculumRegistry:
                 reviewed = load_reviewed_artifacts().get(topic_id)
                 if reviewed is not None:
                     artifact = replace(TeachingArtifact.from_dict(reviewed), status="published")
+                    artifact_from_reviewed_fallback = True
                     if source_repository is not None:
                         source_context = source_repository.context_for(topic)
                         if artifact.source.source_hash != source_context.source_hash:
@@ -187,10 +189,38 @@ class CurriculumRegistry:
                     from linear_algebra.teaching.compile_resources import compiled_resource_store
                     try:
                         resource = compiled_resource_store(Path(artifact_store.root) / "compiled").get(topic_id)
-                        if resource.topic_id != topic_id or resource.revision != artifact.revision:
+                        # Release resources are compiled from the reviewed
+                        # payload.  The runtime fallback exposes that same
+                        # payload as a published view, so calculate its
+                        # witness digest before changing the status field.
+                        witness_artifact = (
+                            replace(artifact, status="reviewed")
+                            if artifact_from_reviewed_fallback else artifact
+                        )
+                        expected_resource = {
+                            "topic_id": topic_id,
+                            "revision": artifact.revision,
+                            "artifact_digest": artifact_digest(witness_artifact),
+                            "source_hash": artifact.source.source_hash,
+                            "compiler_version": compiled.compiler_version,
+                            "render_profile": compiled.render_profile,
+                            "plan_digest": compiled.plan_digest,
+                            "contract_digest": contract_digest_for(contract),
+                            "scene_family": artifact.visual_semantics.scene_family,
+                        }
+                        actual_resource = {
+                            "topic_id": resource.topic_id,
+                            "revision": resource.revision,
+                            "artifact_digest": resource.artifact_digest,
+                            "source_hash": resource.source_hash,
+                            "compiler_version": resource.compiler_version,
+                            "render_profile": resource.render_profile,
+                            "plan_digest": resource.plan_digest,
+                            "contract_digest": resource.contract_digest,
+                            "scene_family": resource.scene_family,
+                        }
+                        if actual_resource != expected_resource:
                             bundle_diagnostic = ("compiled_mismatch", "compiled", "published resource identity differs")
-                        elif resource.source_hash != artifact.source.source_hash or resource.plan_digest != compiled.plan_digest:
-                            bundle_diagnostic = ("compiled_mismatch", "compiled", "published resource digest differs")
                     except (FileNotFoundError, ValueError, OSError) as error:
                         bundle_diagnostic = ("missing_compiled", "compiled", str(error))
             except Exception as error:
@@ -253,6 +283,11 @@ class CurriculumRegistry:
             return transaction
 
         transaction.advance(LoadPhase.SOURCE_CHECKED)
+        # A stale lecture source is the primary diagnostic.  Do not mask it
+        # with a downstream compiled/snapshot mismatch caused by the same
+        # source drift.
+        if bundle.source_diagnostic is not None:
+            return reject("source_stale", "source_hash", "published source hash no longer matches the lecture")
         if bundle.bundle_diagnostic is not None:
             code, field, message = bundle.bundle_diagnostic
             code_map = {
@@ -266,8 +301,6 @@ class CurriculumRegistry:
                 "missing_compiled": "missing_compiled",
             }
             return reject(code_map.get(code, "bundle_mismatch"), field, message)
-        if bundle.source_diagnostic is not None:
-            return reject("source_stale", "source_hash", "published source hash no longer matches the lecture")
 
         artifact = bundle.artifact
         if topic.chapter_number >= 4 and artifact is None:
