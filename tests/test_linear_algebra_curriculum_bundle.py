@@ -78,7 +78,7 @@ def test_bundle_reports_source_diagnostic_for_stale_artifacts(tmp_path: Path) ->
     assert bundle.source_diagnostic == ("stale_source", artifact.source.source_hash, "sha256:changed")
 
 
-def test_bundle_rebuilds_snapshot_when_loaded_snapshot_differs(tmp_path: Path) -> None:
+def test_bundle_rejects_when_loaded_snapshot_differs(tmp_path: Path) -> None:
     artifact = TeachingArtifact.from_dict(projection_artifact_payload(with_residual=True))
     artifact_store = TeachingArtifactStore(tmp_path / "artifacts")
     artifact_store.save_published(artifact)
@@ -97,4 +97,6 @@ def test_bundle_rebuilds_snapshot_when_loaded_snapshot_differs(tmp_path: Path) -
         snapshot_store=snapshot_store,
     )
 
-    assert loaded.snapshot == expected
+    assert loaded.snapshot is not None
+    assert loaded.snapshot.compiler_version == "outdated-compiler"
+    assert loaded.bundle_diagnostic == ("snapshot_mismatch", "snapshot", "published snapshot differs from compiled output")
