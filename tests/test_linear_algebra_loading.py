@@ -39,7 +39,7 @@ def test_linear_algebra_toolbar_context_tracks_loaded_topic() -> None:
     window._active_linear_algebra_topic_id = "ch01.ops.addition"
     assert window._is_linear_algebra_context() is True
 
-    window._active_linear_algebra_topic_id = "ch01.ops.cross-product"
+    window._active_linear_algebra_topic_id = "ch01.vector.coordinate-system"
     assert window._is_linear_algebra_context() is False
 
     window._active_linear_algebra_topic_id = None
@@ -50,11 +50,18 @@ def test_opening_linear_algebra_enters_2d_workspace_and_reveals_tools() -> None:
     window = MainWindow.__new__(MainWindow)
     window.pane_manager = ScenePaneManager()
     window._pane_scene().scene_mode = SceneMode.THREE_D
-    window._active_linear_algebra_topic_id = "ch01.ops.cross-product"
-    window.algebra_panel = MagicMock()
+    window._active_linear_algebra_topic_id = "ch01.vector.coordinate-system"
+    window.algebra_panel = SimpleNamespace(
+        set_status=MagicMock(),
+    )
+    window._save_current_view_state = MagicMock()
+    window._close_scene_settings = MagicMock()
+    window._render_scene = MagicMock()
 
     window._enter_linear_algebra_workspace()
 
+    assert window._pane_scene().scene_mode is SceneMode.TWO_D
+    window._render_scene.assert_called_once_with()
     window.algebra_panel.set_status.assert_called_once_with("已打开线性代数讲义目录")
 
 
@@ -78,7 +85,7 @@ def test_loading_a_2d_topic_activates_the_visible_select_tool() -> None:
     )
 
 
-def test_opening_lecture_retains_user_content_and_registers_only_one_visible_case():
+def test_opening_lecture_retains_user_content_and_shows_the_whole_case_flow():
     window = MainWindow.__new__(MainWindow)
     window.pane_manager = ScenePaneManager()
     user_ids = window.pane_manager.set_layout(4)
@@ -97,12 +104,13 @@ def test_opening_lecture_retains_user_content_and_registers_only_one_visible_cas
     assert user.scene_2d == {"objects": [{"id": "user-point", "x": 7}]}
     assert runtime._active_2d_tool == "vector"
     assert executed == []  # hidden case plans are initialized only when materialized
-    assert len(window.pane_manager.panes) == 7
+    assert len(window.pane_manager.panes) == 6
     visible = window.pane_manager.visible_pane_ids()
-    assert len(visible) == 1
-    assert window.pane_manager.pane(visible[0]).source == "case"
-    window._set_teaching_case_pane_count(3)
-    assert len(window.pane_manager.visible_pane_ids()) == 3
+    # 数学案例流程的 default_pane_count 为 2：首屏即“全部显示”。
+    assert len(visible) == 2
+    assert all(window.pane_manager.pane(pane_id).source == "case" for pane_id in visible)
+    window._set_teaching_case_pane_count(1)
+    assert len(window.pane_manager.visible_pane_ids()) == 1
     assert not set(user_ids).intersection(window.pane_manager.visible_pane_ids())
 
 
@@ -144,3 +152,142 @@ def test_selecting_a_geometric_example_does_not_filter_user_scene_aliases() -> N
     assert window._hidden_linear_algebra_aliases == {"sem__addition_triangle"}
     assert calls == []
     assert renders == []
+
+
+def test_switching_a_flow_step_keeps_each_case_pane_on_its_own_step() -> None:
+    """流程窗格各显示自己那一步：切换步骤不能把所有窗格刷成同一张图。
+
+    向量减法两步分别是「a、b」与「从 b 的终点指向 a 的终点的 a-b」。面板上点
+    第二步时，仅第二步窗格显示 a-b，第一步窗格必须保持原样。
+    """
+
+    window = MainWindow.__new__(MainWindow)
+    window._active_linear_algebra_topic_id = "ch01.ops.subtraction"
+    window.pane_manager = ScenePaneManager()
+    first = window.pane_manager.register_case("case.subtraction.operands", name="第一步：向量 a、b")
+    second = window.pane_manager.register_case(
+        "case.subtraction.difference", name="第二步：a-b 的终点关系"
+    )
+    window._teaching_case_pane_ids = [first, second]
+    window._teaching_case_stage_refs = {
+        first: ("stage.subtraction.operands",),
+        second: ("stage.subtraction.difference",),
+    }
+    window._active_linear_algebra_compiled = SimpleNamespace(
+        topic_id="ch01.ops.subtraction",
+        storyboard=(
+            SimpleNamespace(id="stage.subtraction.operands", visible_aliases=("sem__a", "sem__b")),
+            SimpleNamespace(
+                id="stage.subtraction.difference",
+                visible_aliases=("sem__a", "sem__b", "sem__rel.subtraction.endpoints"),
+            ),
+        ),
+    )
+    window._hidden_linear_algebra_aliases = set()
+    applied: dict[str, list[tuple[str, bool]]] = {}
+
+    for pane_id in (first, second):
+        calls: list[tuple[str, bool]] = []
+        applied[pane_id] = calls
+        pane = window.pane_manager.pane(pane_id)
+        pane.scene_mode = SceneMode.TWO_D
+        pane.renderer_2d = pane.renderer_3d = SimpleNamespace(render=lambda: None)
+        pane.runtime = SimpleNamespace(
+            geometry_controller=SimpleNamespace(
+                set_agent_alias_visible=lambda alias, visible, sink=calls: sink.append((alias, visible))
+            ),
+            geometry3d_controller=None,
+            _vector_additions=(),
+        )
+
+    window._select_linear_algebra_stage("ch01.ops.subtraction", "stage.subtraction.difference")
+
+    relation = "sem__rel.subtraction.endpoints"
+    assert (relation, False) in applied[first]
+    assert (relation, True) in applied[second]
+    assert window._active_linear_algebra_stage_id == "stage.subtraction.difference"
+    # 第二步是超集，选它本身不隐藏任何别名；关键是第一步窗格仍按自己的步骤取掩码。
+    assert window._hidden_linear_algebra_aliases == set()
+
+
+def test_extended_case_panes_still_follow_the_selected_stage() -> None:
+    """绑定多个步骤的案例窗格仍随选中阶段切换（4–8 章的逐步讲解）。"""
+
+    window = MainWindow.__new__(MainWindow)
+    window._active_linear_algebra_topic_id = "ch04.space.closure"
+    window.pane_manager = ScenePaneManager()
+    pane_id = window.pane_manager.register_case("case.closure", name="案例")
+    window._teaching_case_pane_ids = [pane_id]
+    window._teaching_case_stage_refs = {pane_id: ("stage.closure.one", "stage.closure.two")}
+    window._active_linear_algebra_compiled = SimpleNamespace(
+        topic_id="ch04.space.closure",
+        storyboard=(
+            SimpleNamespace(id="stage.closure.one", visible_aliases=("sem__one",)),
+            SimpleNamespace(id="stage.closure.two", visible_aliases=("sem__one", "sem__two")),
+        ),
+    )
+    calls: list[tuple[str, bool]] = []
+    pane = window.pane_manager.pane(pane_id)
+    pane.scene_mode = SceneMode.TWO_D
+    pane.renderer_2d = pane.renderer_3d = SimpleNamespace(render=lambda: None)
+    pane.runtime = SimpleNamespace(
+        geometry_controller=SimpleNamespace(
+            set_agent_alias_visible=lambda alias, visible, sink=calls: sink.append((alias, visible))
+        ),
+        geometry3d_controller=None,
+        _vector_additions=(),
+    )
+
+    window._select_linear_algebra_stage("ch04.space.closure", "stage.closure.two")
+
+    assert ("sem__one", True) in calls
+    assert ("sem__two", True) in calls
+
+
+def test_lecture_vector_addition_binds_only_the_pane_that_shows_the_sum() -> None:
+    """数学案例流程的第一步只画 a、b，不能替它补出和向量与平行四边形。
+
+    否则第一步与第二步两个窗格会变得一模一样。
+    """
+    from contextlib import contextmanager
+
+    window = MainWindow.__new__(MainWindow)
+    window._active_linear_algebra_topic_id = "ch01.ops.addition"
+    window.pane_manager = SimpleNamespace(panes={"p1": object(), "p2": object()})
+    window._teaching_case_pane_ids = ["p1", "p2"]
+    scenes = {
+        "p1": SimpleNamespace(
+            linear_objects=[
+                SimpleNamespace(agent_alias="sem__flow_a"),
+                SimpleNamespace(agent_alias="sem__flow_b"),
+            ],
+            _vector_additions=[],
+        ),
+        "p2": SimpleNamespace(
+            linear_objects=[
+                SimpleNamespace(agent_alias="sem__flow_a"),
+                SimpleNamespace(agent_alias="sem__flow_b"),
+                SimpleNamespace(agent_alias="sem__flow_sum"),
+            ],
+            _vector_additions=[],
+        ),
+    }
+    current = {"pane": "p1"}
+
+    @contextmanager
+    def using_pane(pane_id=None):
+        previous = current["pane"]
+        current["pane"] = pane_id or previous
+        try:
+            yield
+        finally:
+            current["pane"] = previous
+
+    window._using_pane = using_pane
+    window._pane_scene = lambda pane_id=None: scenes[current["pane"]]
+    registered: list[dict] = []
+    window._command_register_vector_addition = registered.append
+
+    window._register_linear_algebra_case_vector_additions()
+
+    assert [operation["result_vector"] for operation in registered] == ["sem__flow_sum"]

@@ -13,14 +13,14 @@ def make_linear_algebra_dialog() -> LinearAlgebraDialog:
     return LinearAlgebraDialog()
 
 
-def test_default_tree_has_all_eight_open_chapters_and_sections() -> None:
+def test_default_tree_shows_chapters_and_sections_but_hides_topics() -> None:
     dialog = make_linear_algebra_dialog()
     assert dialog.tree.topLevelItemCount() == 8
     for index in range(8):
         chapter = dialog.tree.topLevelItem(index)
         assert chapter.isExpanded()
         assert chapter.childCount() > 0
-        assert all(chapter.child(i).isExpanded() for i in range(chapter.childCount()))
+        assert all(not chapter.child(i).isExpanded() for i in range(chapter.childCount()))
 
 
 def test_branch_click_does_not_emit_but_topic_leaf_does() -> None:
@@ -133,6 +133,30 @@ def test_structured_teaching_artifact_renders_math_layers() -> None:
     assert dialog.content_view.examples_label.isHidden() is True
     assert dialog.content_view.analogy_boundary_label.isHidden() is True
     assert dialog.content_view.read_guide_label.isHidden() is True
+    dialog.close()
+
+
+def test_structured_geometry_markdown_table_is_rendered_as_rich_text() -> None:
+    dialog = make_linear_algebra_dialog()
+    artifact = TeachingArtifact.from_dict(composition_artifact_payload())
+    structured = replace(
+        artifact.explanation,
+        geometric_meaning=(
+            "数乘把长度变为原来的 $|k|$ 倍。\n\n"
+            "| $k$ 的值 | 几何效果 |\n"
+            "| --- | --- |\n"
+            "| $k>1$ | 拉伸（伸长） |\n"
+            "| $k=-1$ | 反向，长度不变 |\n"
+        ),
+    )
+
+    dialog.content_view.set_content(structured)
+
+    rendered = dialog.content_view.geometry_label.text()
+    assert "<table" in rendered
+    assert "<td" in rendered
+    assert "反向，长度不变" in rendered
+    assert "| --- |" not in rendered
     dialog.close()
 
 

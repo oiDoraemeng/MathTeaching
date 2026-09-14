@@ -18,6 +18,7 @@ from .validation import (
     ValidationIssue,
     validate_artifact_payload,
     validate_claim_bindings,
+    validate_placeholder_explanations,
     validate_source_evidence,
     validate_teaching_depth,
     validate_worked_examples,
@@ -291,6 +292,7 @@ class TeachingArtifactStore:
             *validate_teaching_depth(artifact),
             *validate_worked_examples(artifact),
             *validate_claim_bindings(artifact),
+            *validate_placeholder_explanations(artifact),
         )
         if issues:
             return PublishResult(ok=False, issues=tuple(sorted(issues, key=lambda issue: (issue.path, issue.code, issue.message))))

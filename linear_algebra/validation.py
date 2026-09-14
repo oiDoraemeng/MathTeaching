@@ -21,6 +21,7 @@ from linear_algebra.teaching.compile_resources import compiled_resource_store
 from linear_algebra.teaching.validation import (
     validate_claim_bindings,
     validate_closed_references,
+    validate_placeholder_explanations,
     validate_source_evidence,
     validate_teaching_depth,
     validate_worked_examples,
@@ -183,6 +184,7 @@ def validate_curriculum(
                     *validate_closed_references(artifact),
                     *validate_claim_bindings(artifact),
                     *validate_teaching_depth(artifact),
+                    *validate_placeholder_explanations(artifact),
                     *validate_worked_examples(artifact),
                 )
             )
@@ -244,7 +246,7 @@ def validate_all_topics(
     artifact_root: Path | None = None,
     snapshot_root: Path | None = None,
 ) -> ValidationReport:
-    """Validate the complete 93-topic release surface deterministically.
+    """Validate the complete 90-topic release surface deterministically.
 
     Chapter 1--3 artifacts are read from the published store.  Chapters 4--8
     are currently represented by reviewed fixtures plus their checked-in
@@ -260,7 +262,7 @@ def validate_all_topics(
     snapshot_store = CompiledSnapshotStore(snapshot_root) if snapshot_root is not None else None
     issues: list[TopicValidationIssue] = []
     records: list[TopicValidationRecord] = []
-    expected_counts = {1: 24, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6}
+    expected_counts = {1: 21, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6}
     counts = Counter(topic.chapter_number for topic in registry.topics)
     if counts != Counter(expected_counts):
         # Keep the issue topic-neutral so consumers can still render all rows.
@@ -530,6 +532,7 @@ def audit_published_artifacts(
             *validate_closed_references(artifact),
             *validate_claim_bindings(artifact),
             *validate_teaching_depth(artifact),
+            *validate_placeholder_explanations(artifact),
             *validate_worked_examples(artifact),
         ):
             errors.append(f"{topic.id}: {issue.code} {issue.path}: {issue.message}")
@@ -569,9 +572,9 @@ def validate_registry(registry: CurriculumRegistry) -> tuple[str, ...]:
     topic_ids = [topic.id for topic in registry.topics]
     if len(topic_ids) != len(set(topic_ids)):
         errors.append("catalog: duplicate topic IDs")
-    expected_counts = Counter({1: 24, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6})
+    expected_counts = Counter({1: 21, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6})
     if Counter(topic.chapter_number for topic in registry.topics) != expected_counts:
-        errors.append("catalog: expected chapter topic counts 24/15/15/16/8/3/6/6")
+        errors.append("catalog: expected chapter topic counts 21/15/15/16/8/3/6/6")
     node_ids = [node.id for node in registry.nodes]
     if len(node_ids) != len(set(node_ids)):
         errors.append("catalog: duplicate node IDs")

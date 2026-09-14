@@ -59,6 +59,19 @@ _VECTOR_FOUNDATION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "formula", "worked_examples", "geometric_meaning"),
 )
+# 讲义 1.3.1 的两种定义把公式直接写在定义块内，正文只有「定义」「内积的
+# 基本性质」与一组数值案例：不要求独立的「公式」或「几何意义」小节。
+_INNER_DEFINITIONS = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples", "invariants"),
+)
+# 讲义 1.4.1 的投影公式（定理 1.6）与「从 v 的终点向 u 所在直线作垂线，垂足
+# 对应的向量」都写在定义 1.13 之内，正文只有「定义」「定理 1.6（投影公式）的
+# 推导」与一组数值案例：同样不要求独立的「公式」或「几何意义」小节。
+_PROJECTION_DEFINITION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "derivation", "worked_examples"),
+)
 _BRIDGE = TeachingProfile(
     TeachingLevel.TRANSFER,
     (*_CORE.required_sections, "connections"),
@@ -88,15 +101,12 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch01.ops.subtraction": _VECTOR_FOUNDATION,
     "ch01.ops.scalar": _VECTOR_FOUNDATION,
     "ch01.ops.linear-combination": _VECTOR_FOUNDATION,
-    "ch01.ops.velocity": _VECTOR_FOUNDATION,
-    "ch01.ops.cross-product": _VECTOR_FOUNDATION,
-    "ch01.ops.scalar-triple": _VECTOR_FOUNDATION,
     "ch01.inner.equivalence": _VECTOR_FOUNDATION,
-    "ch01.inner.definitions": _VECTOR_FOUNDATION,
+    "ch01.inner.definitions": _INNER_DEFINITIONS,
     "ch01.inner.applications": _VECTOR_FOUNDATION,
     "ch01.inner.cauchy-schwarz": _VECTOR_FOUNDATION,
     "ch01.inner.examples": _VECTOR_FOUNDATION,
-    "ch01.projection.definition": _VECTOR_FOUNDATION,
+    "ch01.projection.definition": _PROJECTION_DEFINITION,
     "ch01.projection.properties": _VECTOR_FOUNDATION,
     "ch01.projection.force": _VECTOR_FOUNDATION,
     "ch01.proof.method": _VECTOR_FOUNDATION,

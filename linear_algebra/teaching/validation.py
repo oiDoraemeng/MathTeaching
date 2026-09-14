@@ -387,6 +387,45 @@ def validate_teaching_depth(artifact: TeachingArtifact) -> tuple[ValidationIssue
     return tuple(_sorted_issues(issues))
 
 
+#: Sentence fragments the deterministic fixture payload uses as stand-ins for
+#: real lecture prose.  They are grammatically valid but carry no content, so a
+#: shipped artifact containing any of them is treated as a regression to the
+#: "few sentences of boilerplate" the walkthrough rejected.
+_PLACEHOLDER_MARKERS: tuple[str, ...] = (
+    "的确定性数学语义 artifact。",
+    "的对象和定义。",
+    "向量在有限维空间中的方向和尺度保持可读。",
+    "数值关系与讲义定义一致。",
+    "不要混淆对象和坐标。",
+    "与前置线性表示相连。",
+    "二维示意推广到有限维时保留代数关系。",
+    "先识别对象，再核对公式和不变量。",
+    "先定义，再公式，最后读数值例。",
+)
+
+
+def validate_placeholder_explanations(artifact: TeachingArtifact) -> tuple[ValidationIssue, ...]:
+    """Reject deterministic fixture boilerplate left in the explanation prose."""
+
+    issues: list[ValidationIssue] = []
+
+    def walk(node: object, path: str) -> None:
+        if isinstance(node, str):
+            for marker in _PLACEHOLDER_MARKERS:
+                if marker in node:
+                    issues.append(ValidationIssue("placeholder_explanation", path, marker))
+                    break
+        elif isinstance(node, Mapping):
+            for key, value in node.items():
+                walk(value, f"{path}.{key}")
+        elif isinstance(node, (list, tuple)):
+            for index, value in enumerate(node):
+                walk(value, f"{path}[{index}]")
+
+    walk(artifact.to_dict().get("explanation"), "$.explanation")
+    return tuple(_sorted_issues(issues))
+
+
 def validate_worked_examples(artifact: TeachingArtifact) -> tuple[ValidationIssue, ...]:
     """Return diagnostics for every machine-checkable worked example."""
 
@@ -476,6 +515,7 @@ __all__ = [
     "validate_artifact_payload",
     "validate_claim_bindings",
     "validate_closed_references",
+    "validate_placeholder_explanations",
     "validate_source_evidence",
     "validate_teaching_depth",
     "validate_worked_examples",

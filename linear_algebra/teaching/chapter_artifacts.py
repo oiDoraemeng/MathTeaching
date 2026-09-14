@@ -183,7 +183,7 @@ def _artifact_payload_generic(topic_id: str, *, status: str = "reviewed") -> dic
     _refresh_digests(payload)
     return payload
 
-def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str, object]:
+def _artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str, object]:
     payload = _artifact_payload_generic(topic_id, status=status)
     if topic_id.startswith('ch08.'):
         from linear_algebra.chapter_08_semantics import spec_for
@@ -290,6 +290,22 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         claim["formula_symbols"] = list(spec.roles)
         payload["explanation"]["symbol_roles"] = {role: role for role in spec.roles}
         payload["explanation"]["invariants"]=list(spec.invariants)
+        _refresh_digests(payload)
+    return payload
+
+
+def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str, object]:
+    """Return a chapter 4-8 payload with the lecture content applied.
+
+    The typed visual graph keeps satisfying every chapter contract; the
+    lecture table only rewrites the explanation, the worked cases and the
+    multi-window case layout.
+    """
+
+    payload = _artifact_payload_for(topic_id, status=status)
+    from linear_algebra.teaching import lecture_content
+
+    if lecture_content.apply(payload):
         _refresh_digests(payload)
     return payload
 

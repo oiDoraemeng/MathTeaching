@@ -1,4 +1,4 @@
-"""Release-gate tests for the complete 93-topic linear algebra curriculum."""
+"""Release-gate tests for the complete 90-topic linear algebra curriculum."""
 
 from pathlib import Path
 
@@ -9,11 +9,11 @@ from linear_algebra.validation import validate_all_topics
 PROJECT_ROOT = Path(__file__).parents[1]
 
 
-def test_full_validation_accepts_exact_93_topic_distribution() -> None:
+def test_full_validation_accepts_exact_90_topic_distribution() -> None:
     report = validate_all_topics(PROJECT_ROOT)
 
     assert report.chapter_counts == {
-        1: 24,
+        1: 21,
         2: 15,
         3: 15,
         4: 16,
@@ -22,7 +22,7 @@ def test_full_validation_accepts_exact_93_topic_distribution() -> None:
         7: 6,
         8: 6,
     }
-    assert report.topic_count == 93
+    assert report.topic_count == 90
     assert report.issues == ()
     assert report.errors == ()
 
@@ -31,7 +31,7 @@ def test_full_validation_records_every_topic_release_witness() -> None:
     report = validate_all_topics(PROJECT_ROOT)
     records = report.topic_records
 
-    assert len(records) == 93
+    assert len(records) == 90
     assert tuple(record.topic_id for record in records) == tuple(
         topic.id for topic in catalog_registry().topics
     )
@@ -61,7 +61,7 @@ def test_validation_requires_published_snapshots_when_snapshot_root_is_explicit(
     report = validate_all_topics(PROJECT_ROOT, snapshot_root=tmp_path)
 
     missing = [issue for issue in report.issues if issue.code == "missing_snapshot"]
-    assert len(missing) == 93
+    assert len(missing) == 90
     assert missing[0].topic_id == "ch01.high-dimensional.analogy"
     assert list(report.issues) == sorted(
         report.issues,
