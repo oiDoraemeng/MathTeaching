@@ -17,6 +17,7 @@ class LinearAlgebraTreeModel:
         self._nodes = {node.id: node for node in registry.nodes}
         self._topics = {topic.id: topic for topic in registry.topics}
         self._items: dict[str, QTreeWidgetItem] = {}
+        self._artifact_store = runtime_teaching_store()
         self._searchable = self._build_search_index()
         self._primary_searchable = self._build_primary_search_index()
         self._query = ""
@@ -172,11 +173,11 @@ class LinearAlgebraTreeModel:
                 *explanation.searchable_text,
             ]
             try:
-                bundle = self.registry.resolve_bundle(topic.id, artifact_store=runtime_teaching_store())
+                stored = self._artifact_store.published(topic.id)
             except (KeyError, OSError, TypeError, ValueError):
-                bundle = None
-            if bundle is not None and bundle.artifact is not None:
-                structured = bundle.artifact.explanation
+                stored = None
+            if stored is not None:
+                structured = stored.artifact.explanation
                 values.extend(
                     [
                         structured.definition,
