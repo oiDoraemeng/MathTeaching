@@ -10,6 +10,12 @@ def test_tree_model_preserves_all_topics_in_source_order() -> None:
     model = LinearAlgebraTreeModel(tree, catalog_registry())
     assert tree.topLevelItemCount() == 8
     assert model.visible_topic_ids() == tuple(topic.id for topic in catalog_registry().topics)
+    assert model.default_expansion_is_restored()
+    assert all(
+        not tree.topLevelItem(index).child(child_index).isExpanded()
+        for index in range(tree.topLevelItemCount())
+        for child_index in range(tree.topLevelItem(index).childCount())
+    )
 
 
 def test_search_keeps_cramer_ancestors_and_hides_unrelated_topics() -> None:

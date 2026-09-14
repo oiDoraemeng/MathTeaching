@@ -62,8 +62,11 @@ class LinearAlgebraTreeModel:
         self._expanded_node_ids = set()
         for node_id, item in self._items.items():
             node = self._nodes[node_id]
-            item.setExpanded(node.kind in {"chapter", "section"})
-            if node.kind in {"chapter", "section"} and item.childCount():
+            # Keep the catalog scannable on first open: chapters are the first
+            # level and remain open so their sections (the second level) are
+            # visible, while topic leaves stay collapsed until requested.
+            item.setExpanded(node.kind == "chapter")
+            if node.kind == "chapter" and item.childCount():
                 self._expanded_node_ids.add(node_id)
 
     def expand_all(self) -> None:
@@ -89,7 +92,7 @@ class LinearAlgebraTreeModel:
 
     def default_expansion_is_restored(self) -> bool:
         return all(
-            item.isExpanded() == (self._nodes[node_id].kind in {"chapter", "section"})
+            item.isExpanded() == (self._nodes[node_id].kind == "chapter")
             for node_id, item in self._items.items()
             if item.childCount()
         )
