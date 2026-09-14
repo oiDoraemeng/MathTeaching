@@ -24,11 +24,9 @@ LEGACY_PLAN_DIGESTS = {
     "ch01.ops.subtraction": "sha256:86739d3926804242fe1ae18947e8aed9d5dd3fe9848918cd998f055ce3deddd7",
     "ch01.ops.scalar": "sha256:fda9ff56813c525ddf954c37ac8ed328d2a78423af9040e353a1c1de465cfcb8",
     "ch01.ops.linear-combination": "sha256:423a60449c466f5e1b2dda613d720b0c93d2a231173d73eb31e9902c3fe3cf29",
-    "ch01.inner.equivalence": "sha256:ced43992407a03d281cc418cb1d636accb71cd23d118aa9a526893c01651fc95",
     "ch01.inner.definitions": "sha256:59eeafbf679929d3313676abf48a165bc60bf54ec845a74030e6881e7416087f",
     "ch01.inner.applications": "sha256:3aa2fe524cec1f43b368869e8cb46e995dd3ddb19333fb885af528089911afaa",
     "ch01.inner.cauchy-schwarz": "sha256:264f34bd521f05f03bb0e268e35158e2895bc33227ce999fdfcd9f3a49daeb9e",
-    "ch01.inner.examples": "sha256:45e5c983c28d279483b14fa1fa5f70f8018c0fc22492bf31131dfa62b44bfb6d",
     "ch01.projection.definition": "sha256:66450b1edbf36646762a740be7239a41f6439eb97c2398cae640f8eaa8e10711",
     "ch01.projection.properties": "sha256:08d7274f46c8ee0ebeef7ea8f7b111f9b47e2b9b350f4df93ba3cae10dfcff21",
     "ch01.projection.force": "sha256:95037f3eb47fc9014e6816a2d2603e029dbd6fb02579c830e29a69726a32bb42",
@@ -80,7 +78,7 @@ def test_all_legacy_topic_ids_and_plan_digests_are_frozen(legacy_registry_bundle
     legacy_ids = tuple(topic.id for topic in topic_entries() if topic.chapter_number <= 3)
 
     assert legacy_ids == tuple(LEGACY_PLAN_DIGESTS)
-    assert len(legacy_ids) == 51
+    assert len(legacy_ids) == 49
     for topic_id, expected_digest in LEGACY_PLAN_DIGESTS.items():
         bundle = registry.resolve_bundle(topic_id, artifact_store=store)
         assert bundle.compiled.plan_digest == expected_digest

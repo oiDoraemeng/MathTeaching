@@ -129,7 +129,7 @@ def test_canonical_resources_and_index_preserve_63_non_chapter_one_rows():
     baseline=json.loads(subprocess.check_output(['git','show','HEAD:linear_algebra/teaching/data/index.json']).decode('utf8'))['topics']
     old=lambda items:[r for r in items if 2<=r['chapter']<=7]
     assert len(old(rows))==63 and old(rows)==old(baseline)
-    assert len(rows)==len({r['topic_id'] for r in rows})==90
+    assert len(rows)==len({r['topic_id'] for r in rows})==88
     by_id={r['topic_id']:r for r in rows}; recipes=recipes_for_topics()
     for topic in TOPICS:
         assert 'draw.'+topic in recipes

@@ -1,4 +1,4 @@
-"""Chapter 1: Vectors and Geometric Measurement - 21 topic builders."""
+"""Chapter 1: Vectors and Geometric Measurement - 19 topic builders."""
 
 from __future__ import annotations
 
@@ -188,23 +188,6 @@ def build_linear_combination(context: RenderContext) -> CommandPlan:
     return CommandPlan(scene="2d", operations=tuple(ops), summary="线性组合生成新向量")
 
 
-def build_inner_product_equivalence(context: RenderContext) -> CommandPlan:
-    """内积两种定义的几何等价"""
-    a = [2.5, 1.0]
-    b = [1.2, 2.0]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_angle_arc([0, 0], a, b, radius=0.5))
-    ops.append(make_polygon([[0, 0], a, b], color=role_color("neutral"), opacity=0.1))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(
-        scene="2d", operations=tuple(ops), summary="内积的分量定义与夹角定义等价"
-    )
-
-
 def build_inner_product_definitions(context: RenderContext) -> CommandPlan:
     """内积、夹角与投影"""
     a = [3.0, 1.0]
@@ -253,25 +236,6 @@ def build_cauchy_schwarz(context: RenderContext) -> CommandPlan:
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="投影长度不超过原向量")
-
-
-def build_inner_product_examples(context: RenderContext) -> CommandPlan:
-    """内积几何分层例题"""
-    a1 = [2.0, 1.0]
-    b1 = [1.5, 1.8]
-    a2 = [2.0, 1.0]
-    b2 = [0.8, -1.6]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], a1, "a1", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b1, "b1", role="secondary"))
-    ops.append(make_angle_arc([0, 0], a1, b1, radius=0.4))
-    ops.extend(make_vector_2d([0, 0], a2, "a2", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b2, "b2", role="result"))
-    ops.append(make_angle_arc([0, 0], a2, b2, radius=0.4, alias="angle_obtuse"))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="锐角和钝角的内积符号")
 
 
 def build_projection_definition(context: RenderContext) -> CommandPlan:
@@ -421,11 +385,9 @@ BUILDERS = {
     "draw.ch01.ops.subtraction": build_vector_subtraction,
     "draw.ch01.ops.scalar": build_vector_scalar,
     "draw.ch01.ops.linear-combination": build_linear_combination,
-    "draw.ch01.inner.equivalence": build_inner_product_equivalence,
     "draw.ch01.inner.definitions": build_inner_product_definitions,
     "draw.ch01.inner.applications": build_inner_product_applications,
     "draw.ch01.inner.cauchy-schwarz": build_cauchy_schwarz,
-    "draw.ch01.inner.examples": build_inner_product_examples,
     "draw.ch01.projection.definition": build_projection_definition,
     "draw.ch01.projection.properties": build_projection_properties,
     "draw.ch01.projection.force": build_projection_force,

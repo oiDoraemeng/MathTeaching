@@ -33,7 +33,7 @@ def test_all_catalog_contexts_resolve_in_catalog_order_without_excluded_blocks()
 
     contexts = tuple(repo.context_for(entry) for entry in entries)
 
-    assert len(contexts) == 90
+    assert len(contexts) == 88
     assert tuple(context.topic_id for context in contexts) == tuple(entry.id for entry in entries)
     assert all(context.spans for context in contexts)
     assert all("自检" not in context.excerpt for context in contexts)

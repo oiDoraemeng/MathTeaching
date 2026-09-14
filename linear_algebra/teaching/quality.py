@@ -123,11 +123,9 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
         _refine_remaining_chapter_one(topic_id, explanation, visual)
         result["connections"] = []
         symbols_by_topic = {
-            "ch01.inner.equivalence": ["a", "b"],
             "ch01.inner.definitions": ["a", "b"],
             "ch01.inner.applications": ["a", "b"],
             "ch01.inner.cauchy-schwarz": ["a", "b"],
-            "ch01.inner.examples": ["a", "b"],
             "ch01.projection.definition": ["v", "u", "p", "r"],
             "ch01.projection.properties": ["v", "u"],
             "ch01.projection.force": ["v", "u", "p", "r"],
@@ -1419,11 +1417,6 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
 
     claim_refs = [f"claim.{topic_id}"]
     definitions: dict[str, tuple[str, str, str, str]] = {
-        "ch01.inner.equivalence": (
-            "内积两种定义的几何等价", "坐标计算与长度、夹角公式表示同一个内积。",
-            r"设 $\boldsymbol a=(a_1,a_2)$、$\boldsymbol b=(b_1,b_2)$，两者夹角为 $\theta$。",
-            r"\boldsymbol a\cdot\boldsymbol b=a_1b_1+a_2b_2=\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert\cos\theta",
-        ),
         "ch01.inner.definitions": (
             "1.3.1 内积的两种定义", "内积既可由夹角定义，也可按坐标分量计算。",
             r"设 $\boldsymbol a,\boldsymbol b$ 为非零向量，夹角为 $\theta$；在二维坐标中写作 $\boldsymbol a=(a_1,a_2)$、$\boldsymbol b=(b_1,b_2)$。",
@@ -1438,11 +1431,6 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
             "柯西—施瓦茨不等式", "内积的绝对值不超过两个向量长度的乘积。",
             r"对任意向量 $\boldsymbol a,\boldsymbol b$，内积的绝对值有一个由长度给出的上界。",
             r"\lvert\boldsymbol a\cdot\boldsymbol b\rvert\leq\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert",
-        ),
-        "ch01.inner.examples": (
-            "内积几何分层例题", "由内积的符号和数值判断夹角关系，并计算长度与功。",
-            r"内积按对应分量相乘后求和；非零向量的夹角由内积与长度确定。",
-            r"\boldsymbol a\cdot\boldsymbol b=a_1b_1+a_2b_2,\qquad \cos\theta=\frac{\boldsymbol a\cdot\boldsymbol b}{\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert}",
         ),
         "ch01.projection.definition": (
             "投影的定义", "正交投影沿目标方向，残差与目标方向正交。",
@@ -1535,7 +1523,6 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
         )
         formula = ""
     derivations: dict[str, list[str]] = {
-        "ch01.inner.equivalence": [r"由余弦定理，$\lvert\boldsymbol a-\boldsymbol b\rvert^2=\lvert\boldsymbol a\rvert^2+\lvert\boldsymbol b\rvert^2-2\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert\cos\theta$。", r"按坐标展开同一左端，得 $\lvert\boldsymbol a-\boldsymbol b\rvert^2=\lvert\boldsymbol a\rvert^2+\lvert\boldsymbol b\rvert^2-2(a_1b_1+a_2b_2)$，比较两式即得公式。"],
         # 讲义「##### 定理 1.6（投影公式）的推导」原文（含末尾的「直观」一句）。
         "ch01.projection.definition": [
             r"由定义 1.13：$\boldsymbol v-\operatorname{Proj}_{\boldsymbol u}(\boldsymbol v)$ 与 $\boldsymbol u$ 正交，即 $(\boldsymbol v-\operatorname{Proj}_{\boldsymbol u}(\boldsymbol v))\cdot\boldsymbol u=0$。",
@@ -1550,11 +1537,9 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
         "ch01.proof.parallelogram-diagonals": [r"对角线 $AC$ 的中点为 $\frac12(\boldsymbol a+\boldsymbol b)$；对角线 $BD$ 的中点也化为同一向量。"],
     }
     examples_map: dict[str, list[dict[str, Any]]] = {
-        "ch01.inner.equivalence": [{"id": "example.inner.equivalence", "title": "案例一：两种定义给出同一数", "kind": "inner_product", "given": [[1, 2], [3, 4]], "result": 11.0, "calculation": [r"$$\boldsymbol a=(1,2),\qquad \boldsymbol b=(3,4)$$", r"$$\boldsymbol a\cdot\boldsymbol b=1\times3+2\times4=11$$"], "checks": [{"name": "dot", "expected": 11.0, "tolerance": 1e-9}]}],
         "ch01.inner.definitions": [{"id": "example.inner.definition", "title": "案例一：同屏用两种定义求同一个内积", "kind": "inner_product", "given": [[2, 0], [1, 1]], "result": 2.0, "calculation": [r"$$\boldsymbol a=(2,0),\qquad \boldsymbol b=(1,1),\qquad \lvert\boldsymbol a\rvert=2,\qquad \lvert\boldsymbol b\rvert=\sqrt2,\qquad \theta=45^\circ$$", "几何定义：用两向量的长度和夹角计算。", r"$$\boldsymbol a\cdot\boldsymbol b=\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert\cos\theta=2\times\sqrt2\times\frac{\sqrt2}{2}=2$$", "代数定义：用坐标分量分别相乘再相加。", r"$$\boldsymbol a\cdot\boldsymbol b=a_1b_1+a_2b_2=2\times1+0\times1=2$$", r"两种定义得到同一个值 $2$；图中 $\boldsymbol b$ 在 $\boldsymbol a$ 上的投影为 $\operatorname{proj}_{\boldsymbol a}\boldsymbol b=(1,0)$，投影长度 $\lvert\boldsymbol b\rvert\cos\theta=1$。"], "checks": [{"name": "dot", "expected": 2.0, "tolerance": 1e-9}]}],
         "ch01.inner.applications": [{"id": "example.inner.length", "title": "案例一：由内积求长度", "kind": "inner_product", "given": [[3, 4], [3, 4]], "result": 25.0, "calculation": [r"$$\lvert\boldsymbol a\rvert=\sqrt{\boldsymbol a\cdot\boldsymbol a}=\sqrt{25}=5$$"], "checks": [{"name": "dot", "expected": 25.0, "tolerance": 1e-9}]}, {"id": "example.inner.orthogonal", "title": "案例二：正交判定", "kind": "inner_product", "given": [[2, 0], [0, 3]], "result": 0.0, "calculation": [r"$$\boldsymbol a\cdot\boldsymbol b=0\Longrightarrow\boldsymbol a\perp\boldsymbol b$$"], "checks": [{"name": "dot", "expected": 0.0, "tolerance": 1e-9}]}, {"id": "example.inner.angle", "title": "案例三：由内积求夹角", "kind": "inner_product", "given": [[1, 0], [1, 1]], "result": 1.0, "calculation": [r"$$\boldsymbol a\cdot\boldsymbol b=1,\qquad \cos\theta=\frac1{\sqrt2},\qquad \theta=45^\circ$$"], "checks": [{"name": "dot", "expected": 1.0, "tolerance": 1e-9}]}],
         "ch01.inner.cauchy-schwarz": [{"id": "example.cauchy.bound", "title": "案例一：投影界", "kind": "inner_product", "given": [[3, 4], [1, 0]], "result": 3.0, "calculation": [r"$$\lvert\boldsymbol a\cdot\boldsymbol b\rvert=3\leq5=\lvert\boldsymbol a\rvert\,\lvert\boldsymbol b\rvert$$"], "checks": [{"name": "dot", "expected": 3.0, "tolerance": 1e-9}]}],
-        "ch01.inner.examples": [{"id": "example.inner.ex1", "title": "案例一：正交", "kind": "inner_product", "given": [[1, 0], [0, 1]], "result": 0.0, "calculation": [r"$$\boldsymbol a\cdot\boldsymbol b=0$$"], "checks": [{"name": "dot", "expected": 0.0, "tolerance": 1e-9}]}, {"id": "example.inner.ex2", "title": "案例二：向量长度", "kind": "inner_product", "given": [[3, 4], [3, 4]], "result": 25.0, "calculation": [r"$$\lvert\boldsymbol a\rvert=5$$"], "checks": [{"name": "dot", "expected": 25.0, "tolerance": 1e-9}]}, {"id": "example.inner.ex3", "title": "案例三：夹角", "kind": "inner_product", "given": [[1, 2], [3, 4]], "result": 11.0, "calculation": [r"$$\boldsymbol a\cdot\boldsymbol b=11$$"], "checks": [{"name": "dot", "expected": 11.0, "tolerance": 1e-9}]}, {"id": "example.inner.ex4", "title": "案例四：力做功", "kind": "inner_product", "given": [[3, 4], [6, 0]], "result": 18.0, "calculation": [r"$$W=\boldsymbol F\cdot\boldsymbol d=3\times6+4\times0=18\ \mathrm J$$"], "checks": [{"name": "dot", "expected": 18.0, "tolerance": 1e-9}]}],
         # 讲义 1.4.1 只给出定义 1.13 与定理 1.6，没有数值例，因此按讲义的定义自己构造案例：
         # 取 u=(2,1)、v=(3,4)（两条向量的终点都不落在坐标轴上），则
         # α=(v·u)/(u·u)=(3×2+4×1)/(2×2+1×1)=10/5=2，投影 p=2u=(4,2)、残差 r=v-p=(-1,2)，且 r·u=0。
@@ -1642,12 +1627,10 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
     for example in examples:
         example["claim_refs"] = claim_refs
     geometry_map = {
-        "ch01.inner.equivalence": r"同一对向量的夹角、长度和坐标分量共同确定一个内积值；案例一中两种公式都得到 $11$。",
         # 1.3.1 的「直观理解」按讲义位置并入「定义」分节，此处不再单列几何意义。
         "ch01.inner.definitions": "",
         "ch01.inner.applications": r"内积的三个结果分别对应向量长度、垂直关系和夹角；案例一、二、三按此顺序展示。",
         "ch01.inner.cauchy-schwarz": r"内积的绝对值不超过长度乘积，几何上表示带符号投影的绝对值不超过被投影向量的长度；案例一给出严格不等式。",
-        "ch01.inner.examples": r"内积为零表示直角，内积的数值可用于长度和夹角计算，力与位移的内积给出功；四个案例分别对应这些几何量。",
         # 1.4.1 的「从 v 的终点向 u 所在直线作垂线，垂足对应的向量」按讲义位置
         # 并入「定义」分节，此处不再单列几何意义。
         "ch01.projection.definition": "",
@@ -1996,13 +1979,6 @@ _BATCH_LESSONS: dict[str, dict[str, Any]] = {
         "geometry": r"二维标准基 $\boldsymbol e_1,\boldsymbol e_2$ 的线性组合给出平面中的位置；系数分别指定沿两条基方向的位移。",
         "case": ("案例一：标准基组合", [r"$$2\boldsymbol e_1+3\boldsymbol e_2=2(1,0)+3(0,1)=(2,3)$$"]),
     },
-    "ch01.inner.equivalence": {
-        "definition": r"内积既可按坐标分量定义，也可按向量长度和夹角定义；这两个定义给出相同的数。",
-        "formula": r"\boldsymbol a\cdot\boldsymbol b=a_1b_1+a_2b_2=\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert\cos\theta",
-        "derivation": [r"将 $\boldsymbol a$ 投影到 $\boldsymbol b$ 的方向，投影长度为 $\lvert\boldsymbol a\rvert\cos\theta$。", r"投影长度再乘 $\lvert\boldsymbol b\rvert$，得到 $\boldsymbol a\cdot\boldsymbol b=\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert\cos\theta$；将坐标轴取为正交基时，同一量为 $a_1b_1+a_2b_2$。"],
-        "geometry": r"内积测量一个向量在另一个向量方向上的带符号分量；夹角改变时，该投影随之改变。",
-        "case": ("案例一：正交向量", [r"$$\boldsymbol e_1\cdot\boldsymbol e_2=0=\lvert\boldsymbol e_1\rvert\lvert\boldsymbol e_2\rvert\cos90^\circ$$"]),
-    },
     "ch01.inner.definitions": {
         "definition": r"两非零向量的内积由其中一个向量在另一个方向上的带符号投影确定。",
         "formula": r"\boldsymbol a\cdot\boldsymbol b=\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert\cos\theta",
@@ -2021,12 +1997,6 @@ _BATCH_LESSONS: dict[str, dict[str, Any]] = {
         "derivation": [r"$\boldsymbol a$ 在 $\boldsymbol b$ 方向上的投影长度不超过 $\lvert\boldsymbol a\rvert$。", r"投影长度为 $\dfrac{\lvert\boldsymbol a\cdot\boldsymbol b\rvert}{\lvert\boldsymbol b\rvert}$，两边乘 $\lvert\boldsymbol b\rvert$ 即得不等式。"],
         "geometry": r"等号在两个非零向量共线时成立；不等式比较的是向量长度和沿另一方向的投影长度。",
         "case": ("案例一：投影界", [r"$$\boldsymbol a=(3,4),\quad \boldsymbol b=(1,0),\quad \lvert\boldsymbol a\cdot\boldsymbol b\rvert=3\leq5=\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert$$"]),
-    },
-    "ch01.inner.examples": {
-        "definition": r"使用内积公式可以在坐标中计算夹角，并据此判断向量的方向关系。",
-        "formula": r"\cos\theta=\frac{\boldsymbol a\cdot\boldsymbol b}{\lvert\boldsymbol a\rvert\lvert\boldsymbol b\rvert}",
-        "geometry": r"夹角只与向量方向有关；内积为零时两箭头垂直，内积为正或负时夹角分别为锐角或钝角。",
-        "case": ("案例一：计算夹角", [r"$$\boldsymbol a=(1,0),\quad \boldsymbol b=(1,1),\quad \boldsymbol a\cdot\boldsymbol b=1$$", r"$$\cos\theta=\frac{1}{\sqrt2},\qquad \theta=45^\circ$$"]),
     },
     "ch01.projection.definition": {
         "definition": r"设 $\boldsymbol u\ne\boldsymbol0$。$\boldsymbol v$ 在 $\boldsymbol u$ 方向上的正交投影是与 $\boldsymbol u$ 共线的向量 $\boldsymbol p$。",
@@ -2175,11 +2145,9 @@ _BATCH_NUMERIC: dict[str, tuple[Any, Any]] = {
     "ch01.ops.subtraction": ([[4, 3], [-1, -2]], [3.0, 1.0]),
     "ch01.ops.scalar": ([[1, 2], [1, 2]], [2.0, 4.0]),
     "ch01.ops.linear-combination": ([[[1, 0], [0, 1]], [2, 3]], [2.0, 3.0]),
-    "ch01.inner.equivalence": ([[1, 0], [0, 1]], 0.0),
     "ch01.inner.definitions": ([[2, 0], [1, 1]], 2.0),
     "ch01.inner.applications": ([[2, 0], [0, 3]], 0.0),
     "ch01.inner.cauchy-schwarz": ([[3, 4], [1, 0]], 3.0),
-    "ch01.inner.examples": ([[1, 0], [1, 1]], 1.0),
     "ch01.projection.definition": ([[3, 4], [1, 0]], [3.0, 0.0]),
     "ch01.projection.properties": ([[3, 4], [1, 0]], [3.0, 0.0]),
     "ch01.projection.force": ([[3, 4], [1, 1]], [3.5, 3.5]),
@@ -2217,11 +2185,6 @@ _MULTI_CASES: dict[str, tuple[dict[str, Any], ...]] = {
         {"title": "案例一：由内积求长度", "kind": "inner_product", "given": [[3, 4], [3, 4]], "result": 25.0, "check": "dot", "vectors": [[3, 4], [3, 0]], "lines": [r"$$\boldsymbol a=(3,4),\qquad \lvert\boldsymbol a\rvert=\sqrt{\boldsymbol a\cdot\boldsymbol a}=5$$"]},
         {"title": "案例二：正交判定", "kind": "inner_product", "given": [[2, 0], [0, 3]], "result": 0.0, "check": "dot", "vectors": [[2, 0], [0, 3]], "lines": [r"$$\boldsymbol a=(2,0),\quad \boldsymbol b=(0,3),\quad \boldsymbol a\cdot\boldsymbol b=0$$", r"$$\therefore\ \boldsymbol a\perp\boldsymbol b$$"]},
         {"title": "案例三：由内积求夹角", "kind": "inner_product", "given": [[1, 0], [1, 1]], "result": 1.0, "check": "dot", "vectors": [[1, 0], [1, 1]], "lines": [r"$$\boldsymbol a=(1,0),\quad \boldsymbol b=(1,1),\quad \cos\theta=\frac1{\sqrt2}$$", r"$$\theta=45^\circ$$"]},
-    ),
-    "ch01.inner.examples": (
-        {"title": "案例一：锐角", "kind": "inner_product", "given": [[1, 0], [1, 1]], "result": 1.0, "check": "dot", "vectors": [[1, 0], [1, 1]], "lines": [r"$$\boldsymbol a\cdot\boldsymbol b=1>0\quad\Longrightarrow\quad\theta\text{ 为锐角}$$"]},
-        {"title": "案例二：钝角", "kind": "inner_product", "given": [[1, 0], [-1, 1]], "result": -1.0, "check": "dot", "vectors": [[1, 0], [-1, 1]], "lines": [r"$$\boldsymbol a\cdot\boldsymbol b=-1<0\quad\Longrightarrow\quad\theta\text{ 为钝角}$$"]},
-        {"title": "案例三：直角", "kind": "inner_product", "given": [[1, 0], [0, 1]], "result": 0.0, "check": "dot", "vectors": [[1, 0], [0, 1]], "lines": [r"$$\boldsymbol a\cdot\boldsymbol b=0\quad\Longrightarrow\quad\boldsymbol a\perp\boldsymbol b$$"]},
     ),
     "ch01.projection.force": (
         {"title": "案例一：坐标轴分解", "kind": "projection", "given": [[3, 4], [1, 0]], "result": [3.0, 0.0], "check": "projection", "vectors": [[3, 4], [1, 0]], "lines": [r"$$\boldsymbol F=(3,4),\quad \operatorname{proj}_{(1,0)}\boldsymbol F=(3,0)$$", r"$$\boldsymbol F_{\perp}=(0,4)$$"]},

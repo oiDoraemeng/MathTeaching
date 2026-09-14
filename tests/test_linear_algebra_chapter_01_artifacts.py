@@ -8,13 +8,13 @@ from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
 from linear_algebra.visualizations.contracts import contract_for
 
 
-def test_chapter_01_has_21_published_grounded_artifacts() -> None:
+def test_chapter_01_has_19_published_grounded_artifacts() -> None:
     report = validate_chapter_artifacts(1, bundled_store(), lecture_source_repository())
-    assert report.topic_count == 21
+    assert report.topic_count == 19
     assert report.errors == ()
     levels = dict(report.minimum_level_counts)
     # Chapter one now uses the concise lecture-note workflow throughout.
-    assert levels == {"L2": 21}
+    assert levels == {"L2": 19}
 
 
 def test_point_vector_distinction_uses_a_native_standard_basis_label_in_2d() -> None:
