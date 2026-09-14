@@ -102,7 +102,7 @@ def test_workspace_restore_rebuilds_lecture_compilation_for_stage_routing():
     window = workspace()
     manager = window.pane_manager
     compiled_a = window._resolve_linear_algebra_compiled("ch01.ops.addition")
-    compiled_b = window._resolve_linear_algebra_compiled("ch01.ops.cross-product")
+    compiled_b = window._resolve_linear_algebra_compiled("ch01.vector.coordinate-system")
     assert compiled_a is not None
     assert compiled_b is not None
     stage_a = compiled_a.storyboard[0].id
@@ -117,8 +117,8 @@ def test_workspace_restore_rebuilds_lecture_compilation_for_stage_routing():
     snapshot_a = window._scene_snapshot_from_current_state()
 
     manager.leave_lecture()
-    case_b = manager.register_case("cross-product-case")
-    manager.enter_lecture("cross-product-case")
+    case_b = manager.register_case("coordinate-system-case")
+    manager.enter_lecture("coordinate-system-case")
     window._teaching_case_pane_ids = [case_b]
     window._teaching_case_stage_refs = {case_b: (compiled_b.storyboard[0].id,)}
     window._active_linear_algebra_topic_id = compiled_b.topic_id
