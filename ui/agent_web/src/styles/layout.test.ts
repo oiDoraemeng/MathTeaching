@@ -33,6 +33,15 @@ describe("Agent Web timeline layout", () => {
     expect(block(".turn-actions.visible")).toContain("visibility: visible");
   });
 
+  it("styles tables in both lecture and structured math explanations", () => {
+    const css = layoutCss();
+    expect(css).toContain(".math-case-lecture .markdown-content table,");
+    expect(css).toContain(".math-case-structured .markdown-content table");
+    expect(block(".math-case-structured .markdown-content table")).toContain("table-layout: fixed");
+    expect(block(".math-case-structured .markdown-content table")).toContain("border: 1px solid var(--agent-border)");
+    expect(css).toContain(".math-case-structured .markdown-content th, .math-case-structured .markdown-content td");
+  });
+
   it("enforces readable text and minimum interaction targets", () => {
     const textFloor = [
       ".turn-actions button",

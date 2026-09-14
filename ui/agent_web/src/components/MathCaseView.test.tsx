@@ -27,4 +27,16 @@ describe("MathCaseView", () => {
     expect(screen.getByRole("heading", { name: "向量加法" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "结论", level: 2 })).toBeInTheDocument();
   });
+
+  it("renders the lecture definition and section titles for a case without a standalone formula", () => {
+    render(<MathCaseView caseData={{
+      id: "ch01.inner.definitions", category: "内积", name: "1.3.1 内积的两种定义", formula: "", steps: [], conclusion: "",
+      definition: "定义 1.10（内积）：设 $\\boldsymbol a$ 与 $\\boldsymbol b$ 为两个向量。",
+      invariants: ["性质 1.1（对称性）"],
+      sections: [{ id: "definition", title: "定义" }, { id: "invariants", title: "内积的基本性质" }],
+    }} />);
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "内积的基本性质", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "讲义正文" })).not.toBeInTheDocument();
+  });
 });

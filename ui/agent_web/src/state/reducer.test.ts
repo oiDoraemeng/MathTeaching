@@ -122,6 +122,19 @@ describe("MathAgent reducer", () => {
     expect(state.cases[0].summary).toBe("更新后的解释");
     expect(state.activeTab).toBe("case:vector-subtraction");
   });
+  it("keeps a case whose formulas live inside the definition prose", () => {
+    const caseEvent: TimelineEvent = { type: "math_case", session_id: "", payload: {
+      case_id: "ch01.inner.definitions", category: "内积", name: "1.3.1 内积的两种定义", formula: "",
+      definition: "定义 1.10（内积）：设 $\\boldsymbol a$ 与 $\\boldsymbol b$ 为两个向量。",
+      invariants: ["性质 1.1（对称性）"],
+      sections: [{ id: "definition", title: "定义" }, { id: "invariants", title: "内积的基本性质" }],
+    } };
+    const state = appReducer(initialState(), { type: "event_received", event: caseEvent });
+    expect(state.activeTab).toBe("case:ch01.inner.definitions");
+    expect(state.cases[0].definition).toContain("定义 1.10");
+    expect(state.cases[0].invariants).toEqual(["性质 1.1（对称性）"]);
+    expect(state.cases[0].sections).toEqual([{ id: "definition", title: "定义" }, { id: "invariants", title: "内积的基本性质" }]);
+  });
   it("closes a case tab and returns to the active session", () => {
     const caseEvent: TimelineEvent = { type: "math_case", session_id: "", payload: {
       case_id: "vector-addition", category: "向量", name: "向量加法", formula: "a+b", steps: ["step"], conclusion: "sum",

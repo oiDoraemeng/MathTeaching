@@ -5,10 +5,32 @@ from __future__ import annotations
 from typing import Mapping
 
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QTextDocument
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from linear_algebra.explanations.model import ExplanationContent
 from linear_algebra.teaching.model import ExplanationContentV2
+
+
+def _render_markdown_tables(value: str) -> str:
+    """Use Qt's GitHub Markdown parser when the content contains a table."""
+    if "|" not in value or "\n" not in value:
+        return value
+    document = QTextDocument()
+    document.setMarkdown(value, QTextDocument.MarkdownFeature.MarkdownDialectGitHub)
+    rendered = document.toHtml()
+    return rendered if "<table" in rendered else value
+
+
+def _set_label_content(label: QLabel, value: str) -> None:
+    """Set plain text normally and use rich text only when a table exists."""
+    rendered = _render_markdown_tables(value)
+    if rendered == value:
+        label.setTextFormat(Qt.TextFormat.AutoText)
+        label.setText(value)
+    else:
+        label.setTextFormat(Qt.TextFormat.RichText)
+        label.setText(rendered)
 
 
 class LinearAlgebraContentView(QWidget):
@@ -26,6 +48,12 @@ class LinearAlgebraContentView(QWidget):
         self.steps_label = QLabel(self)
         self.meaning_label = QLabel(self)
         self.conclusion_label = QLabel(self)
+        self._legacy_labels = (
+            self.formula_label,
+            self.steps_label,
+            self.meaning_label,
+            self.conclusion_label,
+        )
         self.definition_label = QLabel(self)
         self.derivation_label = QLabel(self)
         self.examples_label = QLabel(self)
@@ -137,12 +165,16 @@ class LinearAlgebraContentView(QWidget):
         self.title_label.setText(content.title)
         self.summary_label.setText(content.summary)
         if isinstance(content, ExplanationContentV2):
+            for label in self._legacy_labels:
+                label.hide()
             self._set_structured_content(content)
         else:
             self.formula_label.setText(content.formula)
             self.steps_label.setText("\n".join(f"{index}. {step}" for index, step in enumerate(content.steps, start=1)))
-            self.meaning_label.setText(content.geometric_meaning)
+            _set_label_content(self.meaning_label, content.geometric_meaning)
             self.conclusion_label.setText(content.conclusion)
+            for label in self._legacy_labels:
+                label.setVisible(bool(label.text()))
             for label in self._structured_labels:
                 label.hide()
         self.setVisible(True)
@@ -193,7 +225,7 @@ class LinearAlgebraContentView(QWidget):
         geometric_meaning = content.geometric_meaning or section_text.get("geometric_meaning", "")
         self.formula_label.setText(formula)
         self.steps_label.setText("\n".join(f"{index}. {step}" for index, step in enumerate(derivation, start=1)))
-        self.meaning_label.setText(geometric_meaning)
+        _set_label_content(self.meaning_label, geometric_meaning)
         self.conclusion_label.setText(content.conclusion)
         examples = []
         for index, example in enumerate(content.worked_examples, start=1):
@@ -201,18 +233,27 @@ class LinearAlgebraContentView(QWidget):
             calculation = "\n".join(example.calculation)
             checks = "; ".join(f"{check.name}={check.expected}" for check in example.checks)
             examples.append(f"{index}. {title}\n{calculation}\n结果：{example.result}\n校验：{checks}".strip())
+        def _titled(section_id: str, fallback: str) -> str:
+            """分节标题以讲义为准，产物未给出标题时回退到默认标题。"""
+            for item in getattr(content, "sections", ()) or ():
+                if str(getattr(item, "id", "")) == section_id:
+                    title = str(getattr(item, "title", "") or "").strip()
+                    if title and title != section_id:
+                        return title
+            return fallback
+
         def set_section(label: QLabel, title: str, body: str) -> None:
             body = body.strip()
-            label.setText(f"{title}\n{body}" if body else "")
+            _set_label_content(label, f"{title}\n{body}" if body else "")
             label.setVisible(bool(body))
 
-        set_section(self.definition_label, "定义", definition)
+        set_section(self.definition_label, _titled("definition", "定义"), definition)
         set_section(self.derivation_label, "推导", self.steps_label.text())
-        set_section(self.examples_label, "数字例题", "\n\n".join(examples))
+        set_section(self.examples_label, _titled("worked_examples", "数字例题"), "\n\n".join(examples))
         set_section(self.intuition_label, "直觉", content.intuition)
         set_section(self.geometry_label, "几何意义", geometric_meaning)
         set_section(self.pitfalls_label, "误区", "\n".join(f"• {value}" for value in content.pitfalls))
-        set_section(self.invariants_label, "不变量", "\n".join(f"• {value}" for value in content.invariants))
+        set_section(self.invariants_label, _titled("invariants", "不变量"), "\n".join(f"• {value}" for value in content.invariants))
         set_section(self.connections_label, "关联", "\n".join(f"• {value}" for value in content.connections))
         set_section(self.analogy_boundary_label, "类比边界", content.analogy_boundary)
         set_section(self.read_guide_label, "读图提示", "\n".join(f"{index}. {value}" for index, value in enumerate(content.read_guide, start=1)))

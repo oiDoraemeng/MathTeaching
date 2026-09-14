@@ -372,6 +372,14 @@ class AgentSidebarWeb(QWidget):
                 for symbol, role in dict(getattr(explanation, "symbol_roles", {})).items()
             },
             "worked_examples": [_worked_example_payload(example) for example in tuple(getattr(explanation, "worked_examples", ()))[:8]],
+            # 分节标题随产物一起给出，前端按讲义标题渲染而不是按主题 id 硬编码。
+            "sections": [
+                {
+                    "id": str(getattr(section, "id", ""))[:64],
+                    "title": str(getattr(section, "title", ""))[:128],
+                }
+                for section in tuple(getattr(explanation, "sections", ()))[:12]
+            ],
             "case_layout": _case_layout_payload(getattr(explanation, "case_layout", None)),
         }
         topic_id = str(case_id or getattr(case, "topic_id", getattr(case, "id", "")))[:128]

@@ -37,9 +37,11 @@
 .math-case-lecture .markdown-content ul, .math-case-lecture .markdown-content ol { margin: 9px 0; padding-left: 24px; }
 .math-case-lecture .markdown-content li { margin: 4px 0; }
 .math-case-lecture .markdown-content blockquote { margin: 12px 0; padding-left: 12px; color: var(--agent-muted); border-left: 2px solid var(--agent-accent); }
-.math-case-lecture .markdown-content table { width: 100%; margin: 14px 0; border-collapse: collapse; font-size: 12px; }
-.math-case-lecture .markdown-content th, .math-case-lecture .markdown-content td { padding: 7px 8px; border-bottom: 1px solid var(--agent-border-subtle); text-align: left; vertical-align: top; }
-.math-case-lecture .markdown-content th { color: var(--agent-secondary); font-weight: 600; }
+.math-case-lecture .markdown-content table,
+.math-case-structured .markdown-content table { width: 100%; max-width: 100%; margin: 14px 0; border: 1px solid var(--agent-border); border-collapse: collapse; table-layout: fixed; font-size: 12px; }
+.math-case-lecture .markdown-content th, .math-case-lecture .markdown-content td,
+.math-case-structured .markdown-content th, .math-case-structured .markdown-content td { padding: 8px 10px; border: 1px solid var(--agent-border); overflow-wrap: anywhere; text-align: left; vertical-align: middle; }
+.math-case-lecture .markdown-content th, .math-case-structured .markdown-content th { color: var(--agent-text); background: var(--agent-elevated); font-weight: 600; }
 .math-case-section { margin: 25px 0; padding: 0 0 18px; border-bottom: 1px solid var(--agent-border-subtle); }
 .math-case-section h2, .math-case-evidence-section h2, .math-case-storyboard h2, .math-case-conclusion h2 { margin: 0 0 8px; font-size: 14px; }
 .math-case-steps { margin: 11px 0; padding-left: 25px; color: var(--agent-text); }

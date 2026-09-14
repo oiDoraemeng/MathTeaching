@@ -133,6 +133,12 @@ export interface CaseProjection {
   compilerVersion?: string | null;
   caseLayout?: CaseLayoutProjection;
   activeCaseId?: string;
+  sections?: CaseSectionProjection[];
+}
+
+export interface CaseSectionProjection {
+  id: string;
+  title: string;
 }
 
 export interface CaseSourceProjection {

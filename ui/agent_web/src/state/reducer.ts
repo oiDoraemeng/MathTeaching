@@ -192,10 +192,12 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
   const formula = typeof payload.formula === "string" ? payload.formula : "";
   const conclusion = typeof payload.conclusion === "string" ? payload.conclusion : "";
   const steps = Array.isArray(payload.steps) ? payload.steps.filter((value): value is string => typeof value === "string").slice(0, 12) : [];
-  // Definition/formula identify a valid structured case.  Derivation steps
-  // and conclusion are optional for lecture sections whose source does not
-  // justify them; the view omits those blocks when empty.
-  if (!id || !name || !formula) return null;
+  // The case id is the only required identity.  Lecture sections such as
+  // 1.3.1（内积的两种定义）and 1.4.1（投影的定义）write the formulas inside the
+  // definition prose and artifact sections, so an empty standalone formula
+  // must not drop the whole case.  Derivation steps and conclusion are
+  // optional as well; the view omits those blocks when empty.
+  if (!id) return null;
   const list = (key: string, limit = 16) => Array.isArray(payload[key]) ? payload[key].filter((value): value is string => typeof value === "string").slice(0, limit) : undefined;
   const object = (key: string) => payload[key] && typeof payload[key] === "object" && !Array.isArray(payload[key]) ? payload[key] as Record<string, string> : undefined;
   const claims = Array.isArray(payload.claims) ? payload.claims.filter((value): value is Record<string, unknown> => Boolean(value) && typeof value === "object" && !Array.isArray(value)).slice(0, 24).map((claim) => ({
@@ -291,6 +293,12 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
     transferNote: typeof payload.transfer_note === "string" ? payload.transfer_note : "",
     readGuide: list("read_guide", 12),
     workedExamples: examples,
+    sections: Array.isArray(payload.sections)
+      ? payload.sections.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object" && !Array.isArray(item)).slice(0, 12).map((item) => ({
+          id: typeof item.id === "string" ? item.id : "",
+          title: typeof item.title === "string" ? item.title : "",
+        }))
+      : [],
     claims,
     symbolRoles: object("symbol_roles"),
     symbolPalette: object("symbol_palette"),

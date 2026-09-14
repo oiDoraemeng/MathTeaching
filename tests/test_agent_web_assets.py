@@ -23,6 +23,19 @@ def test_agent_web_dist_contains_local_manifest_and_assets() -> None:
                 assert not Path(path).is_absolute()
 
 
+def test_agent_web_dist_contains_structured_math_table_styles() -> None:
+    manifest = json.loads((WEB_ROOT / "dist" / "manifest.json").read_text(encoding="utf-8"))
+    entry = manifest["index.html"]
+    css_files = entry.get("css", [])
+    assert css_files
+    bundled_css = "\n".join(
+        (WEB_ROOT / "dist" / path).read_text(encoding="utf-8")
+        for path in css_files
+    )
+    assert ".math-case-structured .markdown-content table" in bundled_css
+    assert "table-layout:fixed" in bundled_css
+
+
 def test_agent_web_declares_required_local_dependencies() -> None:
     package = json.loads((WEB_ROOT / "package.json").read_text(encoding="utf-8"))
     dependencies = {**package.get("dependencies", {}), **package.get("devDependencies", {})}

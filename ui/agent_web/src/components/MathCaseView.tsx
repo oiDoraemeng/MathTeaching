@@ -18,12 +18,17 @@ export function MathCaseView({
   const stages = caseData.storyboard ?? [];
   const paneCases = caseData.caseLayout?.cases ?? [];
   const [activePaneId, setActivePaneId] = useState(caseData.activeCaseId ?? paneCases[0]?.id ?? "");
-  const [showingAllPanes, setShowingAllPanes] = useState(false);
+  // 数学案例流程的 default_pane_count 为 2：首屏即“全部显示”，两个步骤并排。
+  const [showingAllPanes, setShowingAllPanes] = useState(
+    paneCases.length > 1 && (caseData.caseLayout?.defaultPaneCount ?? 1) > 1,
+  );
   const [stageIndex, setStageIndex] = useState(0);
   const stage = stages[stageIndex];
   const isVectorAddition = caseData.id === "ch01.ops.addition";
+  // 讲义 1.2.1–1.2.4 都写成“自带公式的定义 + 正下方的几何解释”。
+  const definitionOwnsFormula = lectureDefinitionOwnsFormula(caseData.id);
   const hasCaseLayout = paneCases.length > 0;
-  const definitionAndFormula = isVectorAddition
+  const definitionAndFormula = definitionOwnsFormula
     ? caseData.definition?.trim() ?? ""
     : [
       caseData.definition?.trim(),
@@ -47,7 +52,9 @@ export function MathCaseView({
   useEffect(() => {
     setStageIndex(0);
     setActivePaneId(caseData.activeCaseId ?? paneCases[0]?.id ?? "");
-    setShowingAllPanes(false);
+    const showAll = paneCases.length > 1 && (caseData.caseLayout?.defaultPaneCount ?? 1) > 1;
+    setShowingAllPanes(showAll);
+    if (showAll) onSetCasePaneCount?.(Math.min(4, paneCases.length));
   }, [caseData.id, caseData.activeCaseId]);
 
   const selectPane = (paneId: string, stageId?: string) => {
@@ -103,10 +110,10 @@ export function MathCaseView({
         </section>
       ) : (
         <section className="math-case-structured" aria-label="结构化数学解释">
-          {section("定义与公式", definitionAndFormula)}
+          {section(sectionTitle(caseData, "definition", definitionOwnsFormula ? "定义" : "定义与公式"), definitionAndFormula)}
           {caseData.steps.length > 0 && (
             <section className="math-case-section">
-              <h2>推导</h2>
+              <h2>{sectionTitle(caseData, "derivation", "推导")}</h2>
               <ol className="math-case-steps">
                 {caseData.steps.map((step, index) => (
                   <li key={`${caseData.id}-${index}`}><MarkdownContent>{step}</MarkdownContent></li>
@@ -114,14 +121,20 @@ export function MathCaseView({
               </ol>
             </section>
           )}
-          {section("直觉", caseData.intuition)}
+          {section(sectionTitle(caseData, "intuition", "直觉"), caseData.intuition)}
+          {/* 讲义把几何解释直接写在定义下方，向量加法与减法保留这一顺序。 */}
+          {definitionOwnsFormula && section(sectionTitle(caseData, "geometric_meaning", "几何意义"), caseData.geometricMeaning)}
           {section(
-            isVectorAddition
-              ? "向量加法的基本性质"
-              : caseData.id === "ch01.inner.definitions" ? "内积的基本性质" : "不变量",
+            sectionTitle(
+              caseData,
+              "invariants",
+              isVectorAddition
+                ? "向量加法的基本性质"
+                : caseData.id === "ch01.inner.definitions" ? "内积的基本性质" : "不变量",
+            ),
             caseData.invariants?.join("\n\n"),
           )}
-          {section("几何意义", caseData.geometricMeaning)}
+          {!definitionOwnsFormula && section(sectionTitle(caseData, "geometric_meaning", "几何意义"), caseData.geometricMeaning)}
           {workedExamples(caseData, hasCaseLayout && paneCases.length > 1 ? (
             <div className="math-case-example-controls" role="list" aria-label="二维案例选择">
               {paneCases.map((pane) => (
@@ -239,7 +252,7 @@ function workedExamples(caseData: CaseProjection, controls?: ReactNode) {
   const hasCaseLayout = (caseData.caseLayout?.cases?.length ?? 0) > 0;
   return (
     <section className="math-case-section">
-      <h2>{hasCaseLayout ? "案例" : "数字例题"}</h2>
+      <h2>{hasCaseLayout ? sectionTitle(caseData, "worked_examples", lectureDefinitionOwnsFormula(caseData.id) ? "数学案例" : "案例") : "数字例题"}</h2>
       {caseData.workedExamples?.map((example, index) => (
         <article className="math-case-example" key={example.id || `${caseData.id}-example-${index}`}>
           {!hasCaseLayout && <h3>{example.title || example.kind || `例题 ${index + 1}`}</h3>}
@@ -253,13 +266,29 @@ function workedExamples(caseData: CaseProjection, controls?: ReactNode) {
           ))}
           {/* Results and checker payloads are audit data.  The displayed
               calculation already states the mathematical result, so showing
-              both produces the duplicated “结果/校验” lines the lecture view
+              both produces the duplicated "结果/校验" lines the lecture view
               must avoid. */}
         </article>
       ))}
       {controls}
     </section>
   );
+}
+
+/** 分节标题以讲义为准：artifact 的 sections 给出标题，缺失或仍是英文 id 时回退默认值。 */
+function sectionTitle(caseData: CaseProjection, id: string, fallback: string): string {
+  const title = caseData.sections?.find((item) => item.id === id)?.title?.trim();
+  return title && title !== id ? title : fallback;
+}
+
+/** 讲义 1.2.1/1.2.2/1.2.3/1.2.4、1.3.1、1.4.1 同构：定义自带公式，几何解释紧随定义。 */
+function lectureDefinitionOwnsFormula(topicId: string): boolean {
+  return topicId === "ch01.ops.addition"
+    || topicId === "ch01.ops.subtraction"
+    || topicId === "ch01.ops.scalar"
+    || topicId === "ch01.ops.linear-combination"
+    || topicId === "ch01.inner.definitions"
+    || topicId === "ch01.projection.definition";
 }
 
 function isFormulaOnly(line: string): boolean {
