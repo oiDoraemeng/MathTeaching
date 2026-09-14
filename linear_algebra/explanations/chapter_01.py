@@ -29,9 +29,7 @@ CONTENT = {
 "ch01.projection.definition": _content("ch01.projection.definition", "投影、垂足与残差", "投影把向量分成平行分量和正交残差。", r"v=Proj_u(v)+(v-Proj_u(v))", "从向量终点向目标方向作垂线，垂足给出投影端点。", "投影分解是沿方向测量信息的基本方法。", "画出目标方向 u。", "标出投影向量、垂足和残差。"),
 "ch01.projection.properties": _content("ch01.projection.properties", "投影的可加性与齐次性", "投影对加法和数乘保持线性。", r"Proj_u(v+w)=Proj_u(v)+Proj_u(w)", "分别投影再相加，与先相加再投影落在同一点。", "正交投影是一个线性变换。", "显示两个输入向量的投影。", "对比合成向量的投影。"),
 "ch01.projection.force": _content("ch01.projection.force", "坐标轴与斜面上的力分解", "力向量可分解为沿轴向和垂直方向的分量。", r"F=F_parallel+F_perpendicular", "投影提供沿斜面方向的有效分量，残差是法向分量。", "工程中的分力计算就是投影几何。", "画出斜面方向。", "标注平行分量和法向分量。"),
-"ch01.proof.method": _content("ch01.proof.method", "几何问题转向量的四步方法", "选点、设向量、写关系、翻译回几何。", r"geometry -> vectors -> algebra -> geometry", "同一条几何关系可以用坐标和向量的等式表达。", "向量让平行、共线和中点关系变成可计算对象。", "标出几何对象和对应向量。", "显示从图形到等式的四步链路。"),
 "ch01.proof.midline": _content("ch01.proof.midline", "三角形中位线定理", "两边中点连线平行第三边且长度减半。", r"MN=(C-B)/2", "中点坐标相减后直接得到 MN 是 BC 的一半。", "向量等式同时给出平行关系和长度关系。", "显示三角形和两个中点。", "突出中位线与第三边。"),
 "ch01.proof.centroid": _content("ch01.proof.centroid", "三角形重心定理", "三条中线交于同一个重心。", r"G=(A+B+C)/3", "三个顶点位置向量的平均值落在每条中线的三等分位置。", "重心是顶点向量的平均，具有对称的几何意义。", "画出三条中线。", "标出它们的公共交点 G。"),
 "ch01.proof.parallelogram-diagonals": _content("ch01.proof.parallelogram-diagonals", "平行四边形对角线互相平分", "两条对角线拥有同一个中点。", r"(A+C)/2=(B+D)/2", "用顶点向量相加可以证明两个对角线中点相同。", "对角线平分是平行四边形的向量特征。", "显示四个顶点和两条对角线。", "标出相同的中点。"),
-"ch01.high-dimensional.analogy": _content("ch01.high-dimensional.analogy", "从二维、三维到 n 维的向量类比", "高维向量遵循相同的加法、数乘和内积规则。", r"v=(v_1,...,v_n)", "用二维和三维箭头承载高维坐标规则，而不假装绘制 n 维空间。", "低维类比帮助理解高维代数结构。", "并列显示二维、三维和坐标列表。", "标注保持不变的代数规则。"),
 }

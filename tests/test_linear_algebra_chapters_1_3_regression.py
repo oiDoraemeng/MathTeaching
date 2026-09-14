@@ -30,11 +30,9 @@ LEGACY_PLAN_DIGESTS = {
     "ch01.projection.definition": "sha256:66450b1edbf36646762a740be7239a41f6439eb97c2398cae640f8eaa8e10711",
     "ch01.projection.properties": "sha256:08d7274f46c8ee0ebeef7ea8f7b111f9b47e2b9b350f4df93ba3cae10dfcff21",
     "ch01.projection.force": "sha256:95037f3eb47fc9014e6816a2d2603e029dbd6fb02579c830e29a69726a32bb42",
-    "ch01.proof.method": "sha256:377d861dd3fe75342b6373cbb14d156f0c5c0cc6a7d7d8159d1625720bfbcc71",
     "ch01.proof.midline": "sha256:c4f3fbb033f3234d55203e05a7b48289e0cd2b01d4f3b5430880a9f533af5640",
     "ch01.proof.centroid": "sha256:5de6421a77a36b5a797f748c0e6d8b522de19ca6bf4431183b80603e000a3b7c",
     "ch01.proof.parallelogram-diagonals": "sha256:8f1b8650bb4b211abe3036f0b58ef1f5d7b8f9670668602af8eb07a8b83decc3",
-    "ch01.high-dimensional.analogy": "sha256:219911982690061d76bf69125b0de9e829b54d037f96ad8c123c0a6002429d17",
     "ch02.batch.inner-products": "sha256:4e2581e44db8bb10d0dec2592412cc7e004556681833bd38bd71170a55e6b361",
     "ch02.batch.projection": "sha256:2b2db32eabf64b601d8f306beecde78dbce4dd703d31f55d370666bbedaa0009",
     "ch02.matrix.additive-distributivity": "sha256:4c2b51cff78dca33ebd36d565448ea9c0a8a2772c45e632233df8a89dab124e3",
@@ -78,7 +76,7 @@ def test_all_legacy_topic_ids_and_plan_digests_are_frozen(legacy_registry_bundle
     legacy_ids = tuple(topic.id for topic in topic_entries() if topic.chapter_number <= 3)
 
     assert legacy_ids == tuple(LEGACY_PLAN_DIGESTS)
-    assert len(legacy_ids) == 49
+    assert len(legacy_ids) == 47
     for topic_id, expected_digest in LEGACY_PLAN_DIGESTS.items():
         bundle = registry.resolve_bundle(topic_id, artifact_store=store)
         assert bundle.compiled.plan_digest == expected_digest

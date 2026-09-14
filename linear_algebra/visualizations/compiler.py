@@ -36,7 +36,6 @@ _SAFE_ALIAS = re.compile(r"[^A-Za-z0-9_.:-]+")
 # those values so the picture and the worked numbers cannot drift apart.
 _PROOF_TOPICS = frozenset(
     {
-        "ch01.proof.method",
         "ch01.proof.midline",
         "ch01.proof.centroid",
         "ch01.proof.parallelogram-diagonals",
@@ -1050,21 +1049,8 @@ def _proof_figure_operations(
         add_segment("proof__diagonal_bd", "proof__point_B", "proof__point_D", color=role_color("transformed_b"), style="dashed")
         formula = "M(AC) = M(BD) = (a + b) / 2"
         vertices = [origin, vertex_d, vertex_c_para, vertex_c]
-    else:  # ch01.proof.method — the general four-step translation figure.
-        add_point("proof__point_A", origin, "A")
-        add_point("proof__point_B", vertex_b, "B")
-        add_point("proof__point_C", vertex_c, "C")
-        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("vector_a"))
-        add_segment("proof__side_b", "proof__point_A", "proof__point_C", color=role_color("vector_b"))
-        add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("transformed_a"))
-        centre = ((origin[0] + vertex_b[0] + vertex_c[0]) / 3.0, (origin[1] + vertex_b[1] + vertex_c[1]) / 3.0)
-        # Place the side labels inside the triangle: the horizontal side AB
-        # otherwise collides with the axes and their tick numbers.
-        add_note("proof__note_ab", "a", outward_label(origin, vertex_b, centre, -0.30))
-        add_note("proof__note_ac", "b", outward_label(origin, vertex_c, centre, -0.30))
-        add_note("proof__note_bc", "BC", outward_label(vertex_b, vertex_c, centre, -0.30))
-        formula = "BC = b - a"
-        vertices = [origin, vertex_b, vertex_c]
+    else:
+        raise ValueError(f"unsupported geometry-proof topic: {topic_id}")
 
     x_values = [float(operation["coordinates"][0]) for operation in point_ops]
     y_values = [float(operation["coordinates"][1]) for operation in point_ops]

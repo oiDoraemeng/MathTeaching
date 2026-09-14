@@ -13,14 +13,16 @@ REMOVED_CHAPTER_ONE_TOPICS = {
     "ch01.ops.scalar-triple",
     "ch01.inner.equivalence",
     "ch01.inner.examples",
+    "ch01.proof.method",
+    "ch01.high-dimensional.analogy",
 }
 
 
 def test_manifest_has_exact_chapter_counts_and_three_levels() -> None:
     topics = topic_entries()
-    assert len(topics) == 88
-    assert Counter(item.chapter_number for item in topics) == Counter({1: 19, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6})
-    assert len({item.id for item in topics}) == 88
+    assert len(topics) == 86
+    assert Counter(item.chapter_number for item in topics) == Counter({1: 17, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6})
+    assert len({item.id for item in topics}) == 86
     assert REMOVED_CHAPTER_ONE_TOPICS.isdisjoint({item.id for item in topics})
     assert all(len(item.source_path) == 3 for item in topics)
     nodes = lecture_manifest()
@@ -50,6 +52,8 @@ def test_removed_chapter_one_topics_have_no_runtime_content_or_drawings() -> Non
     assert "1.2.7 混合积" not in lecture
     assert "两种定义等价性的证明" not in lecture
     assert "1.3.4 分层例题" not in lecture
+    assert "1.5.1 基本方法" not in lecture
+    assert "1.7 n维向量的几何直觉拓展" not in lecture
     for topic_id in REMOVED_CHAPTER_ONE_TOPICS:
         assert not (data / "compiled" / f"{topic_id}.json").exists()
         assert not (data / "published" / "ch01" / topic_id).exists()
@@ -59,7 +63,7 @@ def test_removed_chapter_one_topics_have_no_runtime_content_or_drawings() -> Non
 def test_manifest_builds_three_chapters_with_children() -> None:
     nodes = {node.id: node for node in lecture_manifest()}
     chapters = [nodes[f"ch{number:02d}"] for number in (1, 2, 3)]
-    assert [len(chapter.children) for chapter in chapters] == [6, 9, 7]
+    assert [len(chapter.children) for chapter in chapters] == [5, 9, 7]
     for chapter in chapters:
         assert all(nodes[child].parent_id == chapter.id for child in chapter.children)
 

@@ -67,11 +67,9 @@ _SPEC: dict[str, dict[str, Any]] = {
     "ch01.projection.definition": {"formula": "p=((v\u00b7u)/(u\u00b7u))u", "kind": "projection", "given": {"vector": [3, 4], "direction": [2, 1]}, "result": [4.0, 2.0], "check": "projection", "statement": "投影把 v 分解成沿 u 的分量 p 与垂直残差 r。", "relation": "projection", "special": "projection"},
     "ch01.projection.properties": {"formula": "P(v+w)=Pv+Pw", "kind": "projection", "given": {"vector": [3, 4], "direction": [1, 0]}, "result": [3.0, 0.0], "check": "projection", "statement": "固定方向的正交投影保持加法和数乘，因此是线性变换。", "relation": "projection", "special": "projection"},
     "ch01.projection.force": {"formula": "F=F_{parallel}+F_{perpendicular}", "kind": "projection", "given": {"vector": [3, 4], "direction": [1, 1]}, "result": [3.5, 3.5], "check": "projection", "statement": "力沿斜面方向的有效分量由投影给出，法向分量是残差。", "relation": "projection", "special": "projection"},
-    "ch01.proof.method": {"formula": "\vec{AB}=B-A", "kind": "vector_addition", "given": {"a": [2, 1], "b": [1, 3]}, "result": [3.0, 4.0], "check": "sum", "statement": "把点转换为位置向量，再用向量等式表达几何关系。", "relation": "maps_to"},
     "ch01.proof.midline": {"formula": "M=(A+B)/2, N=(A+C)/2\u21d2MN=(B-C)/2", "kind": "vector_addition", "given": {"a": [2, 1], "b": [1, 3]}, "result": [3.0, 4.0], "check": "sum", "statement": "中点的平均公式使两腰中点连线平行于第三边且长度减半。", "relation": "difference"},
     "ch01.proof.centroid": {"formula": "G=(A+B+C)/3", "kind": "vector_addition", "given": {"a": [1, 0], "b": [0, 1]}, "result": [1.0, 1.0], "check": "sum", "statement": "重心是三个顶点位置向量的平均，三条中线在同一点相交。", "relation": "sum"},
     "ch01.proof.parallelogram-diagonals": {"formula": "(A+C)/2=(B+D)/2", "kind": "vector_addition", "given": {"a": [2, 1], "b": [1, 3]}, "result": [3.0, 4.0], "check": "sum", "statement": "平行四边形对角线端点的平均位置相同，所以互相平分。", "relation": "compare"},
-    "ch01.high-dimensional.analogy": {"formula": "T(x)=Ax", "kind": "matrix_transform", "given": {"matrix": [[1, 0, 0], [0, 2, 0], [0, 0, 3]], "vector": [1, 2, 3]}, "result": [1.0, 4.0, 9.0], "check": "transformed", "statement": "二维和三维的分量运算可逐坐标推广到 n 维；几何图像需由代数不变量替代。", "relation": "maps_to", "scene": "3d", "matrix": True, "analogy": True},
 }
 
 

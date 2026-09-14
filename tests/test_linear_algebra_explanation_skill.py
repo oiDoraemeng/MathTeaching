@@ -22,11 +22,9 @@ def test_geometry_proof_skill_records_the_accepted_figures() -> None:
         ".agents/linear-algebra-explanation-skill/references/geometry-proof-accepted-contract.md"
     ).read_text(encoding="utf-8")
     for required in (
-        "ch01.proof.method",
         "ch01.proof.midline",
         "ch01.proof.centroid",
         "ch01.proof.parallelogram-diagonals",
-        "BC = b - a",
         "DE = ½ BC",
         "AG : GD = 2 : 1",
         "M(AC) = M(BD) = (a + b) / 2",

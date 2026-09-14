@@ -200,7 +200,7 @@ def test_registry_and_canonical_publication_preserve_prior_57_non_chapter_one_ro
     legacy = lambda records: [r for r in records if 2 <= r['chapter'] <= 6]
     assert len(legacy(rows)) == 57
     assert legacy(rows) == legacy(baseline['topics'])
-    assert len(rows) == len({r['topic_id'] for r in rows}) == 88
+    assert len(rows) == len({r['topic_id'] for r in rows}) == 86
     assert sum(r['chapter'] == 8 for r in rows) == 6
     recipes = recipes_for_topics()
     by_id = {r['topic_id']: r for r in rows}

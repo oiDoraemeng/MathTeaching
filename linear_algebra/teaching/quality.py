@@ -119,7 +119,7 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
                 claim["explanation_refs"] = ["definition", "formula", "derivation", "worked_examples", "geometric_meaning"]
                 claim["formula"] = str(explanation.get("formula", ""))
                 claim["formula_symbols"] = ["a", "b"]
-    elif topic_id.startswith("ch01.inner.") or topic_id.startswith("ch01.projection.") or topic_id.startswith("ch01.proof.") or topic_id == "ch01.high-dimensional.analogy":
+    elif topic_id.startswith("ch01.inner.") or topic_id.startswith("ch01.projection.") or topic_id.startswith("ch01.proof."):
         _refine_remaining_chapter_one(topic_id, explanation, visual)
         result["connections"] = []
         symbols_by_topic = {
@@ -129,11 +129,9 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
             "ch01.projection.definition": ["v", "u", "p", "r"],
             "ch01.projection.properties": ["v", "u"],
             "ch01.projection.force": ["v", "u", "p", "r"],
-            "ch01.proof.method": ["a", "b"],
             "ch01.proof.midline": ["a", "b"],
             "ch01.proof.centroid": ["a", "b"],
             "ch01.proof.parallelogram-diagonals": ["a", "b"],
-            "ch01.high-dimensional.analogy": ["a", "b"],
         }
         for claim in result.get("claims", []):
             if isinstance(claim, dict):
@@ -1156,31 +1154,6 @@ _PROOF_TOPIC_SPECS: dict[str, dict[str, Any]] = {
     # Section 1.5 draws a construction, not a pair of free arrows.  Each spec
     # fixes the two lecture inputs (a, b) and the readable label the 2D pane
     # shows, so the picture and the recomputed numbers come from one source.
-    "ch01.proof.method": {
-        "a": [3.0, 0.6],
-        "b": [1.0, 2.6],
-        "case_title": "案例一：把三角形的边写成向量差",
-        "invariant": "三条边都可以写成位置向量之差",
-        "title": "几何问题转向量的四步方法",
-        "summary": r"选原点、写位置向量、列向量方程、再翻译回几何：几何关系由此变成可计算的代数等式。",
-        "definition": r"取 $A$ 为原点，设 $\overrightarrow{AB}=\boldsymbol a$、$\overrightarrow{AC}=\boldsymbol b$，则 $B=\boldsymbol a$、$C=\boldsymbol b$，第三边为 $\overrightarrow{BC}=C-B=\boldsymbol b-\boldsymbol a$。",
-        "formula": r"\overrightarrow{BC}=\boldsymbol b-\boldsymbol a",
-        "derivation": [
-            r"步骤 1（几何 $\rightarrow$ 代数）：选定原点 $A$，把点换成位置向量，$B=\boldsymbol a$、$C=\boldsymbol b$。",
-            r"步骤 2（写方程）：把几何条件写成向量方程，例如第三边 $\overrightarrow{BC}=C-B$。",
-            r"步骤 3（代数运算）：用加减法整理，得 $\overrightarrow{BC}=\boldsymbol b-\boldsymbol a$。",
-            r"步骤 4（翻译回去）：把向量等式读回平行、共线或长度关系。",
-        ],
-        "geometric_meaning": r"同一个三角形既可以看成三条线段，也可以看成三个位置向量之差：图中 $\boldsymbol a$、$\boldsymbol b$ 是从 $A$ 出发的两条边，第三边由两条边的终点相减得到。",
-        "example_kind": "vector_addition",
-        "example_given": [[1.0, 2.6], [-3.0, -0.6]],
-        "example_result": [-2.0, 2.0],
-        "example_check": "sum",
-        "example_calculation": [
-            r"$$\boldsymbol a=(3,\ 0.6),\qquad \boldsymbol b=(1,\ 2.6)$$",
-            r"$$\overrightarrow{BC}=\boldsymbol b-\boldsymbol a=\boldsymbol b+(-\boldsymbol a)=(1-3,\ 2.6-0.6)=(-2,\ 2)$$",
-        ],
-    },
     "ch01.proof.midline": {
         # 案例点刻意避开坐标轴：$B$、$C$ 都取在坐标轴之外，只有讲义规定的
         # 原点 $A$ 落在坐标原点上，图形不会退化成贴轴的直角三角形。
@@ -1447,11 +1420,6 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
             r"设力向量为 $\boldsymbol F$，目标方向为非零向量 $\boldsymbol u$；沿方向分量为投影，垂直分量为残差。",
             r"\boldsymbol F=\boldsymbol F_{\parallel}+\boldsymbol F_{\perp},\qquad \boldsymbol F_{\parallel}=\operatorname{proj}_{\boldsymbol u}\boldsymbol F",
         ),
-        "ch01.proof.method": (
-            "几何问题转向量的四步方法", "向量证明依次完成对象表示、方程建立、代数运算和几何回译。",
-            r"选定原点后，用位置向量表示点，再把几何条件写成向量方程。",
-            r"\text{几何关系}\longrightarrow\text{向量方程}\longrightarrow\text{代数整理}\longrightarrow\text{几何结论}",
-        ),
         "ch01.proof.midline": (
             "三角形中位线定理", "两边中点连线平行于第三边，长度为第三边的一半。",
             r"取 $A$ 为原点，设 $\overrightarrow{AB}=\boldsymbol a$、$\overrightarrow{AC}=\boldsymbol b$；$D,E$ 分别为 $AB,AC$ 的中点。",
@@ -1466,11 +1434,6 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
             "平行四边形对角线互相平分", "两条对角线的中点位置向量相同。",
             r"取 $A$ 为原点，设 $\overrightarrow{AB}=\boldsymbol a$、$\overrightarrow{AD}=\boldsymbol b$，则 $\overrightarrow{AC}=\boldsymbol a+\boldsymbol b$。",
             r"\frac{\boldsymbol a+\boldsymbol b}{2}=\frac{\boldsymbol a+(\boldsymbol a+\boldsymbol b-\boldsymbol a)}{2}",
-        ),
-        "ch01.high-dimensional.analogy": (
-            "从二维、三维到 n 维的向量表示", "分量运算和长度公式可由二维、三维推广到 $\mathbb R^n$。",
-            r"$\mathbb R^n$ 中的向量是 $n$ 个有序实数组成的元素。",
-            r"\boldsymbol x=(x_1,\ldots,x_n),\qquad \lvert\boldsymbol x\rvert=\sqrt{x_1^2+\cdots+x_n^2},\qquad \boldsymbol a\cdot\boldsymbol b=\sum_{i=1}^n a_i b_i",
         ),
     }
     title, summary, definition, formula = definitions[topic_id]
@@ -1584,11 +1547,9 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
         ],
         "ch01.projection.properties": [{"id": "example.projection.add", "title": "案例一：投影的可加性", "kind": "projection", "given": [[3, 4], [1, 0]], "result": [3.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(1,0)}(3,4)=(3,0)$$"], "checks": [{"name": "projection", "expected": [3.0, 0.0], "tolerance": 1e-9}]}, {"id": "example.projection.homogeneous", "title": "案例二：投影的齐次性", "kind": "projection", "given": [[6, 8], [1, 0]], "result": [6.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(1,0)}(6,8)=(6,0)=2(3,0)$$"], "checks": [{"name": "projection", "expected": [6.0, 0.0], "tolerance": 1e-9}]}],
         "ch01.projection.force": [{"id": "example.force.axis", "title": "案例一：坐标轴分解", "kind": "projection", "given": [[5, 0], [1, 0]], "result": [5.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(1,0)}(5,0)=(5,0)$$"], "checks": [{"name": "projection", "expected": [5.0, 0.0], "tolerance": 1e-9}]}, {"id": "example.force.zero", "title": "案例二：垂直方向分量", "kind": "projection", "given": [[5, 0], [0, 1]], "result": [0.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(0,1)}(5,0)=(0,0)$$"], "checks": [{"name": "projection", "expected": [0.0, 0.0], "tolerance": 1e-9}]}, {"id": "example.force.calc", "title": "案例三：计算层投影", "kind": "projection", "given": [[3, 4], [1, 0]], "result": [3.0, 0.0], "calculation": [r"$$\operatorname{proj}_{(1,0)}(3,4)=(3,0)$$"], "checks": [{"name": "projection", "expected": [3.0, 0.0], "tolerance": 1e-9}]}, {"id": "example.force.slope", "title": "案例四：斜面方向有效分力", "kind": "projection", "given": [[10, 20], [3, 1]], "result": [15.0, 5.0], "calculation": [r"$$\operatorname{proj}_{(3,1)}(10,20)=(15,5)$$"], "checks": [{"name": "projection", "expected": [15.0, 5.0], "tolerance": 1e-9}]}],
-        "ch01.proof.method": [{"id": "example.proof.method", "title": "案例一：四步向量证明流程", "kind": "vector_addition", "given": [[2, 1], [1, 3]], "result": [3.0, 4.0], "calculation": [r"$$\boldsymbol a=(2,1),\qquad \boldsymbol b=(1,3),\qquad \boldsymbol a+\boldsymbol b=(3,4)$$"], "checks": [{"name": "sum", "expected": [3.0, 4.0], "tolerance": 1e-9}]}],
         "ch01.proof.midline": [{"id": "example.proof.midline", "title": "案例一：中位线", "kind": "vector_addition", "given": [[2, 0], [0, 2]], "result": [2.0, 2.0], "calculation": [r"$$\overrightarrow{DE}=\frac12(\boldsymbol b-\boldsymbol a)=\frac12\overrightarrow{BC}$$"], "checks": [{"name": "sum", "expected": [2.0, 2.0], "tolerance": 1e-9}]}],
         "ch01.proof.centroid": [{"id": "example.proof.centroid", "title": "案例一：三角形重心", "kind": "vector_addition", "given": [[1, 0], [0, 1]], "result": [1.0, 1.0], "calculation": [r"$$\overrightarrow{AG}=\frac13(\boldsymbol a+\boldsymbol b)$$"], "checks": [{"name": "sum", "expected": [1.0, 1.0], "tolerance": 1e-9}]}],
         "ch01.proof.parallelogram-diagonals": [{"id": "example.proof.parallelogram", "title": "案例一：对角线中点", "kind": "vector_addition", "given": [[2, 1], [1, 3]], "result": [3.0, 4.0], "calculation": [r"$$M_{AC}=M_{BD}=\frac12(\boldsymbol a+\boldsymbol b)$$"], "checks": [{"name": "sum", "expected": [3.0, 4.0], "tolerance": 1e-9}]}],
-        "ch01.high-dimensional.analogy": [{"id": "example.high-dimensional.components", "title": "案例一：三维分量公式", "kind": "inner_product", "given": [[1, 2, 2], [1, 2, 2]], "result": 9.0, "calculation": [r"$$\boldsymbol v=(1,2,2),\qquad \lvert\boldsymbol v\rvert^2=1^2+2^2+2^2=9$$"], "checks": [{"name": "dot", "expected": 9.0, "tolerance": 1e-9}] }],
     }
     examples = examples_map[topic_id]
     if topic_id == "ch01.inner.definitions":
@@ -1636,11 +1597,9 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
         "ch01.projection.definition": "",
         "ch01.projection.properties": r"固定方向的投影保持向量加法和数乘，因此投影后的分量可按相同线性规则组合；两个案例分别核验加性和齐次性。",
         "ch01.projection.force": r"力向量分解为沿坐标轴或斜面方向的有效分量与正交分量；四个案例展示目标方向改变时投影的变化。",
-        "ch01.proof.method": r"几何对象先被表示为位置向量，再由向量方程表达关系；案例一把这四步落实到一个向量计算中。",
         "ch01.proof.midline": r"中位线向量是第三边向量的一半，因此与第三边平行且长度减半；案例一对应 $\overrightarrow{DE}=\frac12\overrightarrow{BC}$。",
         "ch01.proof.centroid": r"重心位于从顶点到对边中点的中线上，位置向量由三个顶点的平均关系确定；案例一给出该平均式。",
         "ch01.proof.parallelogram-diagonals": r"两条对角线的中点具有相同的位置向量，因而对角线互相平分；案例一写出这两个中点的共同表达式。",
-        "ch01.high-dimensional.analogy": r"二维、三维中的分量、长度和内积公式保留同一代数形式；当维数为 $n$ 时，案例一用三维向量核验平方和公式。",
     }
     _set_case_explanation(explanation, title=title, summary=summary, definition=definition, formula=formula,
                           geometry=geometry_map[topic_id],
@@ -1706,10 +1665,8 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
             {"id": "worked_examples", "title": "数学案例", "text": "", "claim_refs": claim_refs},
         ]
     explanation["symbol_roles"] = {"a": "vector_a", "b": "vector_b", "c": "vector_b", "v": "vector_a", "u": "direction", "p": "projection", "r": "residual", "k": "scalar"}
-    if topic_id == "ch01.high-dimensional.analogy":
-        explanation["symbol_roles"] = {"x": "vector_a", "a": "vector_a", "b": "vector_b"}
 
-    visual["scene_kind"] = "3d" if topic_id in {"ch01.high-dimensional.analogy"} else "2d"
+    visual["scene_kind"] = "2d"
     entities: list[dict[str, Any]] = []
     relations: list[dict[str, Any]] = []
     stages: list[dict[str, Any]] = []
@@ -2016,12 +1973,6 @@ _BATCH_LESSONS: dict[str, dict[str, Any]] = {
         "geometry": r"以斜面方向为投影方向时，$\boldsymbol F_{\parallel}$ 沿斜面，$\boldsymbol F_{\perp}$ 沿法线；两分量构成直角三角形。",
         "case": ("案例一：斜向分量", [r"$$\boldsymbol F=(3,4),\quad \boldsymbol u=(1,1),\quad \operatorname{proj}_{\boldsymbol u}\boldsymbol F=\left(\frac72,\frac72\right)$$"]),
     },
-    "ch01.proof.method": {
-        "definition": r"向量法把几何点替换为位置向量，把线段、平行、中点等关系替换为向量等式。",
-        "formula": r"\overrightarrow{AB}=\boldsymbol b-\boldsymbol a",
-        "geometry": r"两点的位置向量之差给出从 $A$ 指向 $B$ 的有向线段；平行、共线和中点条件都可在同一坐标图中读为向量关系。",
-        "case": ("案例一：两点确定的向量", [r"$$A=(1,3),\quad B=(4,7),\quad \overrightarrow{AB}=B-A=(3,4)$$"]),
-    },
     "ch01.proof.midline": {
         "definition": r"三角形两边中点的连线称为中位线。",
         "formula": r"\overrightarrow{MN}=\frac12\overrightarrow{BC}",
@@ -2042,12 +1993,6 @@ _BATCH_LESSONS: dict[str, dict[str, Any]] = {
         "derivation": [r"若 $ABCD$ 是平行四边形，则 $\boldsymbol a+\boldsymbol c=\boldsymbol b+\boldsymbol d$。", r"两边除以 $2$，两条对角线的中点位置向量相同。"],
         "geometry": r"两条对角线在同一个中点相交，因此彼此平分。",
         "case": ("案例一：共同中点", [r"$$A=(0,0),\quad B=(4,0),\quad C=(5,2),\quad D=(1,2)$$", r"$$\frac{A+C}{2}=\frac{B+D}{2}=\left(\frac52,1\right)$$"]),
-    },
-    "ch01.high-dimensional.analogy": {
-        "definition": r"$n$ 维向量是有序实数列，向量加法和数乘逐分量定义。",
-        "formula": r"\boldsymbol x=(x_1,\ldots,x_n),\qquad T(\boldsymbol x)=A\boldsymbol x",
-        "geometry": r"二维、三维图形只用于展示低维情形；在 $n$ 维中用分量、内积、长度和线性关系描述向量，而不把低维图像当作高维图像。",
-        "case": ("案例一：三维代表", [r"$$\boldsymbol x=(1,2,3),\quad \operatorname{diag}(1,2,3)\boldsymbol x=(1,4,9)$$"]),
     },
     "ch02.batch.inner-products": {
         "definition": r"将多个向量组成列矩阵时，矩阵乘积可一次给出一批向量之间的内积。",
@@ -2151,11 +2096,9 @@ _BATCH_NUMERIC: dict[str, tuple[Any, Any]] = {
     "ch01.projection.definition": ([[3, 4], [1, 0]], [3.0, 0.0]),
     "ch01.projection.properties": ([[3, 4], [1, 0]], [3.0, 0.0]),
     "ch01.projection.force": ([[3, 4], [1, 1]], [3.5, 3.5]),
-    "ch01.proof.method": ([[2, 1], [1, 3]], [3.0, 4.0]),
     "ch01.proof.midline": ([[2, 1], [1, 3]], [3.0, 4.0]),
     "ch01.proof.centroid": ([[1, 0], [0, 1]], [1.0, 1.0]),
     "ch01.proof.parallelogram-diagonals": ([[2, 1], [1, 3]], [3.0, 4.0]),
-    "ch01.high-dimensional.analogy": ([[[1, 0, 0], [0, 2, 0], [0, 0, 3]], [1, 2, 3]], [1.0, 4.0, 9.0]),
     "ch02.batch.inner-products": ([[[1, 0], [0, 1]], [2, 3]], [2.0, 3.0]),
     "ch02.batch.projection": ([[3, 4], [1, 0]], [3.0, 0.0]),
     "ch02.matrix.additive-distributivity": ([[[6, 8], [10, 12]], [1, 1]], [14.0, 22.0]),

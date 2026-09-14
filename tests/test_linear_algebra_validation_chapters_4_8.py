@@ -1,4 +1,4 @@
-"""Release-gate tests for the complete 88-topic linear algebra curriculum."""
+"""Release-gate tests for the complete 86-topic linear algebra curriculum."""
 
 from pathlib import Path
 
@@ -9,11 +9,11 @@ from linear_algebra.validation import validate_all_topics
 PROJECT_ROOT = Path(__file__).parents[1]
 
 
-def test_full_validation_accepts_exact_88_topic_distribution() -> None:
+def test_full_validation_accepts_exact_86_topic_distribution() -> None:
     report = validate_all_topics(PROJECT_ROOT)
 
     assert report.chapter_counts == {
-        1: 19,
+        1: 17,
         2: 15,
         3: 15,
         4: 16,
@@ -22,7 +22,7 @@ def test_full_validation_accepts_exact_88_topic_distribution() -> None:
         7: 6,
         8: 6,
     }
-    assert report.topic_count == 88
+    assert report.topic_count == 86
     assert report.issues == ()
     assert report.errors == ()
 
@@ -31,7 +31,7 @@ def test_full_validation_records_every_topic_release_witness() -> None:
     report = validate_all_topics(PROJECT_ROOT)
     records = report.topic_records
 
-    assert len(records) == 88
+    assert len(records) == 86
     assert tuple(record.topic_id for record in records) == tuple(
         topic.id for topic in catalog_registry().topics
     )
@@ -49,10 +49,10 @@ def test_validation_reports_missing_artifact_with_stable_issue_fields(
     missing = [issue for issue in report.issues if issue.code == "missing_artifact"]
     assert missing
     assert missing[0].chapter == 1
-    assert missing[0].topic_id == "ch01.high-dimensional.analogy"
+    assert missing[0].topic_id == "ch01.inner.applications"
     assert missing[0].category == "artifact"
     assert missing[0].path == "published"
-    assert str(missing[0]).startswith("chapter:1 topic:ch01.high-dimensional.analogy artifact:")
+    assert str(missing[0]).startswith("chapter:1 topic:ch01.inner.applications artifact:")
 
 
 def test_validation_requires_published_snapshots_when_snapshot_root_is_explicit(
@@ -61,8 +61,8 @@ def test_validation_requires_published_snapshots_when_snapshot_root_is_explicit(
     report = validate_all_topics(PROJECT_ROOT, snapshot_root=tmp_path)
 
     missing = [issue for issue in report.issues if issue.code == "missing_snapshot"]
-    assert len(missing) == 88
-    assert missing[0].topic_id == "ch01.high-dimensional.analogy"
+    assert len(missing) == 86
+    assert missing[0].topic_id == "ch01.inner.applications"
     assert list(report.issues) == sorted(
         report.issues,
         key=lambda issue: (issue.chapter, issue.topic_id, issue.category, issue.path, issue.code, issue.message),

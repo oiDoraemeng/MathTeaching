@@ -1,4 +1,4 @@
-"""Chapter 1: Vectors and Geometric Measurement - 19 topic builders."""
+"""Chapter 1: Vectors and Geometric Measurement - 17 topic builders."""
 
 from __future__ import annotations
 
@@ -286,20 +286,6 @@ def build_projection_force(context: RenderContext) -> CommandPlan:
     return CommandPlan(scene="2d", operations=tuple(ops), summary="力的投影分解")
 
 
-def build_proof_method(context: RenderContext) -> CommandPlan:
-    """几何问题转向量的四步方法"""
-    a = [2.0, 1.5]
-    b = [1.2, 2.2]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.1))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="向量方法证明几何定理")
-
-
 def build_midline_theorem(context: RenderContext) -> CommandPlan:
     """三角形中位线定理"""
     a = [0, 0]
@@ -360,21 +346,6 @@ def build_parallelogram_diagonals(context: RenderContext) -> CommandPlan:
     return CommandPlan(scene="2d", operations=tuple(ops), summary="对角线共同中点")
 
 
-def build_high_dimensional_analogy(context: RenderContext) -> CommandPlan:
-    """从二维、三维到 n 维的向量类比"""
-    v2d = [2.0, 1.5, 0.0]
-    v3d = [1.5, 1.2, 1.8]
-
-    ops = []
-    ops.append(make_vector_3d([0, 0, 0], v2d, "v2d", role="primary"))
-    ops.append(make_vector_3d([0, 0, 0], v3d, "v3d", role="construction"))
-    ops.append(make_label("2D 嵌入", [v2d[0] / 2, v2d[1] / 2, 0.0]))
-    ops.append(make_label("3D", [v3d[0] / 2, v3d[1] / 2, v3d[2] / 2]))
-    ops.append(make_view_fit(padding=1.3))
-
-    return CommandPlan(scene="3d", operations=tuple(ops), summary="低维类比理解高维结构")
-
-
 # Builder registry for Chapter 1
 BUILDERS = {
     "draw.ch01.vector.magnitude": build_vector_magnitude,
@@ -391,9 +362,7 @@ BUILDERS = {
     "draw.ch01.projection.definition": build_projection_definition,
     "draw.ch01.projection.properties": build_projection_properties,
     "draw.ch01.projection.force": build_projection_force,
-    "draw.ch01.proof.method": build_proof_method,
     "draw.ch01.proof.midline": build_midline_theorem,
     "draw.ch01.proof.centroid": build_centroid_theorem,
     "draw.ch01.proof.parallelogram-diagonals": build_parallelogram_diagonals,
-    "draw.ch01.high-dimensional.analogy": build_high_dimensional_analogy,
 }
