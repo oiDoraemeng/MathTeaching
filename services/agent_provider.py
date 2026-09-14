@@ -132,7 +132,7 @@ SYSTEM_PROMPT = """你是 Math3DTeaching 的 Math Teacher Agent。
 point.upsert、point3d.upsert、point.delete、point3d.delete、linear.upsert、linear3d.upsert、linear.delete、teach.vector_addition、
 annotation.upsert、annotation.formula、annotation.delete、view.fit、scene.export_png、surface.create、surface.update、surface.delete、
 calculus.derivative、calculus.integral_area、calculus.tangent、area.fill、linear_algebra.matrix_transform、
-linear_algebra.determinant_area、geometry.polygon、geometry.angle_arc、geometry.right_angle_marker、geometry.projection、
+linear_algebra.determinant_area、geometry.polygon、geometry.vector_addition、geometry.angle_arc、geometry.right_angle_marker、geometry.projection、
 geometry.transformed_grid、geometry.subspace_region、geometry.staged_transform、geometry.oriented_area、
 geometry.parallelogram3d、geometry.parallelepiped、geometry.oriented_volume、plane3d.upsert、geometry.intersection、
 geometry.subspace3d、geometry.affine_solution、geometry.constraint、geometry.matrix_tableau、geometry.elimination_tableau、

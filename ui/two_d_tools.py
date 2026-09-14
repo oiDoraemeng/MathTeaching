@@ -41,6 +41,7 @@ class TwoDGeometryToolbar(QFrame):
         self.point_button = self._button("circle-dot", "点", "pointToolButton")
         self.line_button = self._button("pen-line", "线工具", "lineToolButton")
         self.vector_button = self._button("vector", "向量", "linearVectorToolButton")
+        self.addition_button = self._button("plus", "加法", "vectorAdditionToolButton")
         layout.addWidget(self.select_button)
         layout.addWidget(self.point_button)
         layout.addWidget(self.line_button)
@@ -76,6 +77,7 @@ class TwoDGeometryToolbar(QFrame):
         self.area_button = self._button("square", "有向面积", "areaToolButton")
         self._linear_algebra_buttons = (
             self.vector_button,
+            self.addition_button,
             self.angle_button,
             self.projection_button,
             self.polygon_button,
@@ -100,6 +102,7 @@ class TwoDGeometryToolbar(QFrame):
         self.point_button.clicked.connect(lambda: self._toggle_tool("point"))
         self.line_button.clicked.connect(self._toggle_line_flyout)
         self.vector_button.clicked.connect(lambda: self._toggle_tool("vector"))
+        self.addition_button.clicked.connect(lambda: self._select_tool("addition"))
         self.angle_button.clicked.connect(lambda: self._select_tool("angle"))
         self.projection_button.clicked.connect(lambda: self._select_tool("projection"))
         self.polygon_button.clicked.connect(lambda: self._select_tool("polygon"))
@@ -123,6 +126,7 @@ class TwoDGeometryToolbar(QFrame):
         self.point_button.setChecked(tool == "point")
         self.line_button.setChecked(tool in self.line_buttons)
         self.vector_button.setChecked(tool == "vector")
+        self.addition_button.setChecked(tool == "addition")
         self.angle_button.setChecked(tool == "angle")
         self.projection_button.setChecked(tool == "projection")
         self.polygon_button.setChecked(tool == "polygon")

@@ -66,6 +66,20 @@ class CurveSceneControllerTests(unittest.TestCase):
         self.assertEqual(set(self.controller.meshes), {self.layer.id, second.id})
         self.assertEqual(len([name for name in self.plotter.actors if name.startswith("curve:")]), 2)
 
+    def test_coordinate_transform_maps_sampled_curve_points(self) -> None:
+        controller = CurveSceneController(
+            self.plotter,
+            Plot2DDomain(x_range=(-1, 1), y_range=(-2, 2), curve_resolution=32, implicit_resolution=32),
+            ((2.0, 0.0), (0.0, 1.0)),
+        )
+        controller.add_layer(self.layer)
+
+        mesh = controller.meshes[self.layer.id]
+        self.assertAlmostEqual(float(mesh.points[0, 0]), -2.0)
+        self.assertAlmostEqual(float(mesh.points[0, 1]), 0.25)
+        self.assertAlmostEqual(float(mesh.points[-1, 0]), 2.0)
+        self.assertAlmostEqual(float(mesh.points[-1, 1]), 0.25)
+
 
 if __name__ == "__main__":
     unittest.main()

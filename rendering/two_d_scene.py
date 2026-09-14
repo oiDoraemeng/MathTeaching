@@ -19,6 +19,64 @@ _AXIS_Y_KEY = "axis_Y"
 _TICK_KEY = "tick_marks"
 _LABEL_KEY = "tick_labels"
 
+# A 2 x 2 matrix maps coordinates from the source basis into the displayed
+# world coordinates.  Keeping this as a small tuple (rather than a numpy
+# matrix) makes it safe to carry in a pane snapshot.
+CoordinateTransform = tuple[tuple[float, float], tuple[float, float]]
+
+
+def coordinate_source_bounds(
+    bounds: ViewportBounds,
+    matrix: CoordinateTransform,
+) -> ViewportBounds:
+    """Return source-coordinate bounds that cover a displayed viewport.
+
+    The visible camera bounds are expressed in the transformed/world basis.
+    Grid ticks are generated in source coordinates, so the four viewport
+    corners are mapped through the inverse matrix first.
+    """
+    a, b = matrix[0]
+    c, d = matrix[1]
+    determinant = a * d - b * c
+    if abs(determinant) <= 1e-12:
+        raise ValueError("Coordinate transform matrix must be invertible")
+    inverse = ((d / determinant, -b / determinant), (-c / determinant, a / determinant))
+    corners = (
+        (bounds.x_range[0], bounds.y_range[0]),
+        (bounds.x_range[0], bounds.y_range[1]),
+        (bounds.x_range[1], bounds.y_range[0]),
+        (bounds.x_range[1], bounds.y_range[1]),
+    )
+    source = tuple(
+        (
+            inverse[0][0] * x + inverse[0][1] * y,
+            inverse[1][0] * x + inverse[1][1] * y,
+        )
+        for x, y in corners
+    )
+    return ViewportBounds(
+        (min(point[0] for point in source), max(point[0] for point in source)),
+        (min(point[1] for point in source), max(point[1] for point in source)),
+    )
+
+
+def _transform_point(
+    point: tuple[float, float, float], matrix: CoordinateTransform
+) -> tuple[float, float, float]:
+    x, y, z = point
+    return (
+        matrix[0][0] * x + matrix[0][1] * y,
+        matrix[1][0] * x + matrix[1][1] * y,
+        z,
+    )
+
+
+def _transform_segments(
+    segments: list[tuple[tuple[float, float, float], tuple[float, float, float]]],
+    matrix: CoordinateTransform,
+) -> list[tuple[tuple[float, float, float], tuple[float, float, float]]]:
+    return [(_transform_point(start, matrix), _transform_point(end, matrix)) for start, end in segments]
+
 
 def _overscan_bounds(bounds: ViewportBounds, fraction: float = 0.10) -> ViewportBounds:
     """Return bounds expanded for line geometry while retaining visible ticks.
@@ -89,55 +147,81 @@ class TwoDGuides:
         effective_theme: str = "light",
         previous_spacing: float | None = None,
         spacing: float | None = None,
+        coordinate_transform: CoordinateTransform | None = None,
     ) -> float:
         """按给定可见范围就地更新所有二维辅助线。"""
+        source_bounds = (
+            coordinate_source_bounds(bounds, coordinate_transform)
+            if coordinate_transform is not None
+            else bounds
+        )
         if spacing is None:
             spacing = tick_spacing(
-                bounds.y_span,
+                source_bounds.y_span,
                 appearance.tick_spacing_mode,
                 appearance.tick_spacing,
                 previous_spacing=previous_spacing,
             )
-        x_ticks = tick_values(bounds.x_range, spacing)
-        y_ticks = tick_values(bounds.y_range, spacing)
+        x_ticks = tick_values(source_bounds.x_range, spacing)
+        y_ticks = tick_values(source_bounds.y_range, spacing)
         # Extend guide geometry beyond the visible viewport.  VTK clips actors
         # to the viewport, so terminating lines exactly at the current bounds
         # creates a faint artificial frame when zooming or panning.  Keeping
         # the sampled ticks tied to ``bounds`` while overscanning line
         # endpoints preserves pointer anchored camera interaction and lets the
         # viewport provide the only clipping boundary.
-        draw_bounds = _overscan_bounds(bounds)
+        draw_bounds = _overscan_bounds(source_bounds)
 
         grid_color = _grid_color(appearance, effective_theme)
+        grid_mesh = self._grid_mesh(draw_bounds, spacing, x_ticks, y_ticks) if appearance.show_grid else pv.PolyData()
+        if coordinate_transform is not None and grid_mesh.n_points:
+            grid_mesh = self._transform_mesh(grid_mesh, coordinate_transform)
         self._set_geometry(
             _GRID_KEY,
-            self._grid_mesh(draw_bounds, spacing, x_ticks, y_ticks) if appearance.show_grid else pv.PolyData(),
+            grid_mesh,
             color=grid_color,
             line_width=1.0,
         )
 
+        x_axis = [((draw_bounds.x_range[0], 0, 0), (draw_bounds.x_range[1], 0, 0))]
+        y_axis = [((0, draw_bounds.y_range[0], 0), (0, draw_bounds.y_range[1], 0))]
+        if coordinate_transform is not None:
+            x_axis = _transform_segments(x_axis, coordinate_transform)
+            y_axis = _transform_segments(y_axis, coordinate_transform)
         self._set_geometry(
             _AXIS_X_KEY,
-            _segments_to_polydata([((draw_bounds.x_range[0], 0, 0), (draw_bounds.x_range[1], 0, 0))]),
+            _segments_to_polydata(x_axis),
             color=_axis_color(appearance, "X", effective_theme),
-            line_width=2.5,
+            line_width=2,  # X 轴线 宽度
         )
         self._set_geometry(
             _AXIS_Y_KEY,
-            _segments_to_polydata([((0, draw_bounds.y_range[0], 0), (0, draw_bounds.y_range[1], 0))]),
+            _segments_to_polydata(y_axis),
             color=_axis_color(appearance, "Y", effective_theme),
-            line_width=2.5,
+            line_width=2, # Y 轴线 宽度
         )
 
         label_color = appearance.contrast_axis_color(effective_theme)
         if appearance.show_ticks:
-            segments, points, labels = self._tick_geometry(bounds, spacing, x_ticks, y_ticks)
+            segments, points, labels = self._tick_geometry(source_bounds, spacing, x_ticks, y_ticks)
+            if coordinate_transform is not None:
+                segments = _transform_segments(segments, coordinate_transform)
+                points = [_transform_point(point, coordinate_transform) for point in points]
             self._set_geometry(_TICK_KEY, _segments_to_polydata(segments), color=label_color, line_width=1.4)
             self._set_labels(points, labels, label_color)
         else:
             self._set_geometry(_TICK_KEY, pv.PolyData(), color=label_color, line_width=1.4)
             self._set_labels([], [], label_color)
         return spacing
+
+    @staticmethod
+    def _transform_mesh(mesh: pv.PolyData, matrix: CoordinateTransform) -> pv.PolyData:
+        transformed = mesh.copy()
+        transformed.points = np.asarray(
+            [_transform_point(tuple(point), matrix) for point in mesh.points],
+            dtype=float,
+        )
+        return transformed
 
     def clear(self) -> None:
         """在绘图器清空后丢弃已缓存的演员引用。"""

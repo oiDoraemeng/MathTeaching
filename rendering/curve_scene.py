@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import numpy as np
 import pyvista as pv
 
 from geometry.cas_curve import CurveExpressionError, build_curve_mesh, parse_curve_expression
 from models.curve_layer import CurveLayer, Plot2DDomain
+from rendering.two_d_scene import CoordinateTransform
 
 
 class CurveRenderError(RuntimeError):
@@ -15,9 +17,15 @@ class CurveRenderError(RuntimeError):
 class CurveSceneController:
     """管理曲线演员，同时保持笛卡尔网格不受影响。"""
 
-    def __init__(self, plotter: pv.Plotter, domain: Plot2DDomain | None = None) -> None:
+    def __init__(
+        self,
+        plotter: pv.Plotter,
+        domain: Plot2DDomain | None = None,
+        coordinate_transform: CoordinateTransform | None = None,
+    ) -> None:
         self.plotter = plotter
         self.domain = domain or Plot2DDomain()
+        self.coordinate_transform = coordinate_transform
         self.layers: dict[str, CurveLayer] = {}
         self.meshes: dict[str, pv.PolyData] = {}
 
@@ -99,7 +107,21 @@ class CurveSceneController:
             raise CurveRenderError(f"无法创建函数“{layer.name}”。") from error
         if mesh.n_points == 0 or mesh.n_cells == 0:
             raise CurveRenderError(f"函数“{layer.name}”未与当前绘图范围相交。")
+        if self.coordinate_transform is not None:
+            mesh = self._transform_mesh(mesh, self.coordinate_transform)
         return mesh
+
+    @staticmethod
+    def _transform_mesh(mesh: pv.PolyData, matrix: CoordinateTransform) -> pv.PolyData:
+        """Map sampled source-coordinate points into the displayed basis."""
+        transformed = mesh.copy()
+        points = np.asarray(mesh.points, dtype=float).copy()
+        x_values = points[:, 0].copy()
+        y_values = points[:, 1].copy()
+        points[:, 0] = matrix[0][0] * x_values + matrix[0][1] * y_values
+        points[:, 1] = matrix[1][0] * x_values + matrix[1][1] * y_values
+        transformed.points = points
+        return transformed
 
     def _replace_actor(self, layer: CurveLayer, mesh: pv.PolyData) -> None:
         self.plotter.remove_actor(self.actor_name(layer.id), render=False)

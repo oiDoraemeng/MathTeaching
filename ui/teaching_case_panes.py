@@ -58,13 +58,38 @@ def case_pane_placement(count: int, index: int) -> tuple[int, int, int, int]:
         raise ValueError("案例窗格位置无效。") from error
 
 
+# 编译计划里声明式能力补出的对象统一使用 cap__ 前缀；它们属于整节的证据，
+# 不属于任何一个案例步骤。
+_CAPABILITY_ALIAS_KEYS = (
+    "alias",
+    "result_alias",
+    "foot_alias",
+    "residual_alias",
+    "annotation_alias",
+    "aliases",
+)
+
+
+def _capability_alias(operation: Mapping[str, Any]) -> bool:
+    """Return True when an operation carries capability-evidence aliases."""
+
+    for key in _CAPABILITY_ALIAS_KEYS:
+        candidate = operation.get(key)
+        values = candidate if isinstance(candidate, (list, tuple)) else (candidate,)
+        if any(isinstance(value, str) and value.startswith("cap__") for value in values):
+            return True
+    return False
+
+
 def _operation_visible(operation: Mapping[str, Any], controlled: set[str], visible: set[str]) -> bool:
+    # 能力覆盖图形不是某个案例的证据，避免它在多个窗格中重复出现。例如向量减法
+    # 声明 projection_2d，编译器补出的投影残差正好从 B 连到 A，若不过滤会让每一步
+    # 窗格都多出一条把 A、B 连起来的线段。
+    if _capability_alias(operation):
+        return False
     alias = operation.get("alias")
     if not isinstance(alias, str):
         return True
-    if alias == "cap__polygon":
-        # 能力覆盖图形不是某个案例的证据，避免它在多个窗格中重复出现。
-        return False
     return alias not in controlled or alias in visible
 
 
@@ -357,7 +382,16 @@ class TeachingCasePaneGrid(QFrame):
         super().__init__(parent)
         self.compiled = compiled
         self.pane_manager = pane_manager
-        self.cases = tuple(cases)[:4]
+        case_capacity = 4
+        if pane_manager is not None:
+            user_pane_count = sum(
+                pane.source == "user" for pane in pane_manager.panes.values()
+            )
+            case_capacity = min(
+                case_capacity,
+                max(1, pane_manager.MAX_RETAINED_PANES - user_pane_count),
+            )
+        self.cases = tuple(cases)[:case_capacity]
         self.pane_count = 1
         self.selected_case_id = str(getattr(self.cases[0], "id", "")) if self.cases else ""
         self._layout = QGridLayout(self)

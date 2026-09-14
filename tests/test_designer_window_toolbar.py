@@ -160,8 +160,12 @@ def test_loading_new_chapters_preserves_the_single_toolbar_contract(
     window._set_2d_geometry_tool = MagicMock()
     statuses: list[tuple[str, bool]] = []
     window.algebra_panel = SimpleNamespace(
-        set_status=lambda text, is_error=False: statuses.append((text, is_error))
+        set_status=lambda text, is_error=False: statuses.append((text, is_error)),
+        set_scene_mode=lambda _mode: None,
     )
+    # This test isolates the toolbar contract; the 2-D mode transition itself
+    # is covered by the linear-algebra loading test.
+    window._set_scene_mode = MagicMock()
 
     MainWindow._configure_viewport(window)
     shell.resize(1000, 700)

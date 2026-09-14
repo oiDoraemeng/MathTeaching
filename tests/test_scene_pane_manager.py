@@ -2,6 +2,7 @@ from PySide6.QtCore import QSize
 import pytest
 
 from ui.scene_pane_manager import HistoryEntry, ScenePaneManager
+from ui.scene_pane_state import ScenePaneState
 
 
 def test_layouts_have_expected_visible_panes_and_rectangles() -> None:
@@ -85,6 +86,64 @@ def test_cannot_delete_last_pane_and_layout_range_is_checked() -> None:
     for count in (0, 5, True, "2"):
         with pytest.raises(ValueError):
             manager.set_layout(count)
+
+
+def test_retained_panes_are_capped_at_ten_and_cases_are_evicted_first() -> None:
+    manager = ScenePaneManager()
+    users = [manager.create_pane() for _ in range(6)]
+    cases = [manager.register_case(f"case-{index}") for index in range(3)]
+    assert len(manager.panes) == manager.MAX_RETAINED_PANES
+
+    deleted: list[str] = []
+    manager.pane_deleted.connect(deleted.append)
+    replacement = manager.create_pane()
+
+    assert len(manager.panes) == manager.MAX_RETAINED_PANES
+    assert deleted == [cases[0]]
+    assert replacement in manager.panes
+    assert all(pane_id in manager.panes for pane_id in users)
+
+
+def test_retained_pane_limit_preserves_active_user_when_no_cases_exist() -> None:
+    manager = ScenePaneManager()
+    created = [manager.create_pane() for _ in range(9)]
+    active = manager.active_pane_id
+
+    replacement = manager.create_pane()
+
+    assert len(manager.panes) == manager.MAX_RETAINED_PANES
+    assert active in manager.panes
+    assert created[0] not in manager.panes
+    assert replacement in manager.panes
+
+
+def test_workspace_restore_trims_hidden_cases_before_user_panes() -> None:
+    manager = ScenePaneManager()
+    states = [
+        *[manager.pane(manager.active_pane_id)],
+        *[
+            ScenePaneState(f"user-{index}", f"用户 {index}")
+            for index in range(1, 8)
+        ],
+        *[
+            ScenePaneState(f"case-{index}", f"案例 {index}", source="case", source_id=f"case-{index}")
+            for index in range(4)
+        ],
+    ]
+    visible = [states[0].pane_id]
+
+    manager.restore_workspace(
+        states,
+        visible,
+        visible[0],
+        lecture_case_ids=tuple(state.pane_id for state in states if state.source == "case"),
+    )
+
+    assert len(manager.panes) == manager.MAX_RETAINED_PANES
+    assert "case-0" not in manager.panes
+    assert "case-1" not in manager.panes
+    assert all(f"user-{index}" in manager.panes for index in range(1, 8))
+    assert manager.workspace_metadata()["lecture_case_ids"] == ["case-2", "case-3"]
 
 
 def test_deleting_last_visible_pane_promotes_a_retained_sibling() -> None:

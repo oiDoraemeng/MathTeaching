@@ -220,6 +220,44 @@ def test_direct_scene_command_accepts_an_explicit_pane() -> None:
     assert window.pane_manager.active_pane_id == first
 
 
+def test_constraint_compiler_output_replays_in_a_2d_pane() -> None:
+    from linear_algebra.visualizations.families.constraints import ConstraintFamilyCompiler
+
+    window = _pane_window()
+    target = window.pane_manager.visible_pane_ids()[0]
+    operation = ConstraintFamilyCompiler.compile({"matrix": [[1, 0], [2, 0]], "rhs": [1, 2]})["operations"][0]
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+
+    validation = service.execute(CommandPlan(scene="2d", operations=(operation,)), pane_id=target)
+
+    assert validation.valid
+    scene = window._pane_scene(target)
+    assert any(item.agent_alias == "constraint__line" for item in scene.linear_objects)
+    assert {item.agent_alias for item in scene.geometry_points} >= {"constraint__line__start", "constraint__line__end"}
+
+
+def test_constraint_compiler_output_replays_in_a_3d_pane() -> None:
+    from linear_algebra.visualizations.families.constraints import ConstraintFamilyCompiler
+    from models.scene_mode import SceneMode
+    from rendering.geometry_3d_scene import Geometry3DSceneController
+
+    window = _pane_window()
+    target = window.pane_manager.visible_pane_ids()[0]
+    scene = window._pane_scene(target)
+    scene.scene_mode = SceneMode.THREE_D
+    scene.geometry3d_controller = Geometry3DSceneController(window._pane_renderer(target))
+    operation = ConstraintFamilyCompiler.compile({
+        "matrix": [[1, 0, 0], [0, 0, 0], [0, 0, 0]],
+        "rhs": [1, 0, 0],
+    })["operations"][0]
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+
+    validation = service.execute(CommandPlan(scene="3d", operations=(operation,)), pane_id=target)
+
+    assert validation.valid
+    assert "geometry3d:plane:constraint__plane" in scene.geometry3d_controller.actors
+
+
 @pytest.mark.parametrize("pane_id", ["deleted-pane", ""])
 def test_missing_command_pane_fails_before_any_mutation(pane_id: str) -> None:
     window = _pane_window()

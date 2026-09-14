@@ -35,7 +35,8 @@ class ScenePaneManager(QObject):
     visible_panes_changed = Signal()
 
     MIN_PANES = 1
-    MAX_PANES = 4  # maximum visible panes; total retained panes is unbounded
+    MAX_PANES = 4
+    MAX_RETAINED_PANES = 10
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -94,6 +95,20 @@ class ScenePaneManager(QObject):
         the final collection even while processing deletion notifications.
         """
         restored = [ScenePaneState.from_snapshot(state.to_snapshot()) for state in states]
+        if len(restored) > self.MAX_RETAINED_PANES:
+            visible_set = set(visible_ids)
+            removable = sorted(
+                (state for state in restored if state.pane_id not in visible_set),
+                key=lambda state: state.source != "case",
+            )
+            remove_count = len(restored) - self.MAX_RETAINED_PANES
+            if len(removable) < remove_count:
+                raise ValueError("workspace cannot retain more than ten panes")
+            removed_ids = {state.pane_id for state in removable[:remove_count]}
+            restored = [state for state in restored if state.pane_id not in removed_ids]
+            lecture_case_ids = tuple(pid for pid in lecture_case_ids if pid not in removed_ids)
+            if lecture_user_visible is not None:
+                lecture_user_visible = tuple(pid for pid in lecture_user_visible if pid not in removed_ids)
         ids = [state.pane_id for state in restored]
         if not ids or len(ids) != len(set(ids)):
             raise ValueError("workspace requires unique pane IDs")
@@ -269,6 +284,8 @@ class ScenePaneManager(QObject):
         """Create a retained, initially hidden-or-visible blank pane state."""
         if source not in {"user", "case"}:
             raise ValueError("source must be user or case")
+        if len(self._pane_order) >= self.MAX_RETAINED_PANES:
+            self.delete_pane(self._eviction_candidate())
         pane_id = f"pane-{self._next_pane_id_number}"
         self._next_pane_id_number += 1
         display_number = next(number for number in range(1, len(self._pane_order) + 2) if number not in self._display_numbers.values())
@@ -278,6 +295,21 @@ class ScenePaneManager(QObject):
         if not self._visible_ids:
             self._visible_ids.append(pane_id)
         return pane_id
+
+    def _eviction_candidate(self) -> str:
+        """Choose one retained pane to discard before allocating another."""
+        visible = set(self.visible_pane_ids())
+        active = getattr(self, "_active_pane_id", None)
+
+        def priority(pane_id: str) -> tuple[int, int, int]:
+            pane = self._panes[pane_id]
+            return (
+                0 if pane.source == "case" else 1,
+                0 if pane_id not in visible else 1,
+                0 if pane_id != active else 1,
+            )
+
+        return min(self._pane_order, key=priority)
 
     def delete_pane(self, pane_id: str) -> None:
         """Permanently remove a pane and repair the layout and active focus."""
@@ -291,6 +323,9 @@ class ScenePaneManager(QObject):
             self._visible_ids.remove(pane_id)
         del self._panes[pane_id]
         del self._display_numbers[pane_id]
+        self._lecture_case_ids = tuple(pid for pid in self._lecture_case_ids if pid != pane_id)
+        if self._lecture_user_visible is not None:
+            self._lecture_user_visible = tuple(pid for pid in self._lecture_user_visible if pid != pane_id)
         # A deleted pane's callbacks may close over state that no longer
         # exists.  They cannot safely be replayed by global history.
         self._undo_stack = [entry for entry in self._undo_stack if entry.pane_id != pane_id]

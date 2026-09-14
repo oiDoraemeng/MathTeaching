@@ -49,11 +49,25 @@ class Geometry3DSceneController:
 
     def remove_alias(self, alias: str) -> None:
         """Remove every actor owned by one lesson alias."""
-        for prefix in (f"geometry3d:linear:{alias}", f"geometry3d:plane:{alias}", f"geometry3d:solid:{alias}", f"geometry3d:annotation:{alias}"):
-            self._remove(prefix)
-        self.linears.pop(alias, None)
-        self.planes.pop(alias, None)
-        self.solids.pop(alias, None)
+        prefixes = (
+            f"geometry3d:linear:{alias}",
+            f"geometry3d:plane:{alias}",
+            f"geometry3d:solid:{alias}",
+            f"geometry3d:annotation:{alias}",
+            f"geometry3d:quadratic:{alias}",
+        )
+        for name in tuple(self.actors):
+            if any(
+                name == prefix
+                or name.startswith(f"{prefix}__")
+                or name.startswith(f"{prefix}:")
+                for prefix in prefixes
+            ):
+                self._remove(name)
+        for collection in (self.linears, self.planes, self.solids):
+            for child_alias in tuple(collection):
+                if child_alias == alias or child_alias.startswith(f"{alias}__"):
+                    collection.pop(child_alias, None)
 
     def set_visible(self, alias: str, visible: bool) -> None:
         """Show or hide all 3D actors belonging to one semantic alias."""

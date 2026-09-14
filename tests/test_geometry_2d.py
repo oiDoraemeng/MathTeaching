@@ -99,6 +99,89 @@ class Geometry2DTests(unittest.TestCase):
         self.assertEqual(first_kwargs["point_size"], 11.0)
         self.assertTrue(second_kwargs["render_points_as_spheres"])
 
+    def test_collinear_vector_labels_keep_their_own_colors(self) -> None:
+        """共线向量（a 与 2a）的标签按各自线段的颜色绘制。
+
+        两个向量叠在同一条射线上、标签又紧挨在一起；若共用一个颜色，读者分不清
+        哪个标签属于哪个向量。
+        """
+
+        class LabelPlotter(FakePlotter):
+            def __init__(self) -> None:
+                super().__init__()
+                self.label_calls: list[dict[str, object]] = []
+
+            def add_point_labels(self, points, labels, *, name: str, **kwargs) -> FakeActor:
+                actor = FakeActor()
+                self.actors[name] = actor
+                self.label_calls.append(
+                    {
+                        "name": name,
+                        "labels": list(labels),
+                        "positions": [tuple(point) for point in points],
+                        "text_color": kwargs.get("text_color"),
+                    }
+                )
+                return actor
+
+        plotter = LabelPlotter()
+        controller = GeometrySceneController(plotter, self.bounds)
+        origin = Point2D("O", 0.0, 0.0)
+        first_end = Point2D("A", 1.0, 0.0)
+        second_end = Point2D("", 2.0, 0.0)
+        for point in (origin, first_end, second_end):
+            controller.add_point(point)
+        controller.add_linear(
+            Linear2D("a", "vector", origin.id, first_end.id, color="#2F6BFF", label="a")
+        )
+        doubled = Linear2D("2a", "vector", origin.id, second_end.id, color="#6B7280", label="2a")
+        controller.add_linear(doubled)
+
+        def annotation_calls() -> list[dict[str, object]]:
+            return [
+                call
+                for call in plotter.label_calls
+                if str(call["name"]).startswith("geometry:annotations")
+            ]
+
+        def annotation_actor_names() -> set[str]:
+            return {name for name in plotter.actors if name.startswith("geometry:annotations")}
+
+        def labels_of(actor_name: str) -> list[str]:
+            return next(
+                call["labels"] for call in reversed(annotation_calls()) if call["name"] == actor_name
+            )
+
+        by_label = {label: call for call in annotation_calls() for label in call["labels"]}
+        self.assertEqual(set(by_label), {"a", "2a"})
+        self.assertEqual(by_label["a"]["text_color"], "#2F6BFF")
+        self.assertEqual(by_label["2a"]["text_color"], "#6B7280")
+        blue_actor = str(by_label["a"]["name"])
+        gray_actor = str(by_label["2a"]["name"])
+        self.assertNotEqual(blue_actor, gray_actor)
+        self.assertEqual(annotation_actor_names(), {blue_actor, gray_actor})
+
+        # 标签落在线段中点下方，不再压在箭杆与轴线上。
+        a_positions = next(
+            call["positions"] for call in reversed(annotation_calls()) if call["name"] == blue_actor
+        )
+        self.assertEqual(a_positions[0][0], 0.5)
+        self.assertLess(a_positions[0][1], 0.0)
+
+        # 隐藏一个向量时，它的标签随之消失；恢复后标签回来。
+        controller.set_visible(doubled.id, False)
+        self.assertEqual(annotation_actor_names(), {blue_actor})
+        self.assertEqual(labels_of(blue_actor), ["a"])
+
+        controller.set_visible(doubled.id, True)
+        self.assertEqual(annotation_actor_names(), {blue_actor, gray_actor})
+        self.assertEqual(labels_of(gray_actor), ["2a"])
+
+        # 移除向量同样带走它的标签演员，不留旧标签。
+        controller.remove_object(doubled.id)
+        self.assertEqual(annotation_actor_names(), {blue_actor})
+        self.assertEqual(labels_of(blue_actor), ["a"])
+
     def test_teaching_angle_arc_is_one_polyline_with_all_samples(self) -> None:
         plotter = FakePlotter()
         controller = GeometrySceneController(plotter, self.bounds)

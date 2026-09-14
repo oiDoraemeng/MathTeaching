@@ -54,3 +54,16 @@ def test_3d_vector_arrow_uses_a_screen_width_shaft_and_cone_head() -> None:
     assert mesh.n_faces > 0
     assert kwargs["line_width"] == 2.0
     assert kwargs["render_lines_as_tubes"] is False
+
+
+def test_remove_alias_clears_nested_linear_algebra_children() -> None:
+    plotter = FakePlotter()
+    controller = Geometry3DSceneController(plotter)
+    controller.add_linear("constraint__line", (0, 0, 0), (1, 0, 0), kind="segment")
+    controller.add_plane("constraint__plane", (0, 0, 0), (0, 0, 1))
+
+    controller.remove_alias("constraint")
+
+    assert plotter.actors == {}
+    assert controller.linears == {}
+    assert controller.planes == {}

@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from contextlib import contextmanager
+from collections.abc import Iterable, Iterator
 from math import acos, atan2, cos, hypot, pi, sin
 
 import numpy as np
@@ -67,6 +68,8 @@ class GeometrySceneController:
         self._hover_id: str | None = None
         self._selected_id: str | None = None
         self._has_labels = False
+        # 每个颜色一个标注标签演员，刷新时整组替换。
+        self._annotation_actors: list[str] = []
         self._draft_kind: LinearKind | None = None
         self._draft_start: tuple[float, float] | None = None
         self._draft_end: tuple[float, float] | None = None
@@ -74,6 +77,53 @@ class GeometrySceneController:
         self._meshes: dict[str, pv.PolyData] = {}
         self._actors: dict[str, object] = {}
         self._teaching_actors: dict[str, object] = {}
+        self._teaching_meshes: dict[str, pv.PolyData] = {}
+        # Label actors are relatively expensive in VTK. Defer them while a
+        # scene command is adding or updating a group of objects.
+        self._batch_depth = 0
+        self._labels_dirty = False
+        self._annotations_dirty = False
+
+    @contextmanager
+    def batch_update(self) -> Iterator[None]:
+        """Defer aggregate label/annotation actors until a group is complete."""
+        self._batch_depth += 1
+        try:
+            yield
+        finally:
+            self.end_batch_update()
+
+    def begin_batch_update(self) -> None:
+        """Start a batch that can be closed by :meth:`end_batch_update`."""
+        self._batch_depth += 1
+
+    def end_batch_update(self) -> None:
+        """Close a batch started by :meth:`begin_batch_update`."""
+        if self._batch_depth <= 0:
+            return
+        self._batch_depth -= 1
+        if self._batch_depth != 0:
+            return
+        labels_dirty = self._labels_dirty
+        annotations_dirty = self._annotations_dirty
+        self._labels_dirty = False
+        self._annotations_dirty = False
+        if labels_dirty:
+            self._refresh_labels()
+        if annotations_dirty:
+            self._refresh_annotations()
+
+    def _request_labels_refresh(self) -> None:
+        if self._batch_depth:
+            self._labels_dirty = True
+        else:
+            self._refresh_labels()
+
+    def _request_annotations_refresh(self) -> None:
+        if self._batch_depth:
+            self._annotations_dirty = True
+        else:
+            self._refresh_annotations()
 
     @staticmethod
     def point_actor_name(point_id: str) -> str:
@@ -100,20 +150,20 @@ class GeometrySceneController:
         if point.id not in self.order:
             self.order.append(point.id)
         self._sync_point(point)
-        self._refresh_labels()
+        self._request_labels_refresh()
 
     def add_linear(self, linear: Linear2D) -> None:
         self.linears[linear.id] = linear
         if linear.id not in self.order:
             self.order.append(linear.id)
         self._sync_linear(linear)
-        self._refresh_annotations()
+        self._request_annotations_refresh()
 
     def add_annotation(self, annotation: Annotation2D) -> None:
         self.annotations[annotation.id] = annotation
         if annotation.id not in self.order:
             self.order.append(annotation.id)
-        self._refresh_annotations()
+        self._request_annotations_refresh()
 
     def move_point(self, point_id: str, x: float, y: float) -> None:
         """更新点坐标，并联动刷新依赖它的线类对象和标签。"""
@@ -126,8 +176,8 @@ class GeometrySceneController:
         for linear in self.linears.values():
             if point_id in {linear.start_point_id, linear.end_point_id}:
                 self._sync_linear(linear)
-        self._refresh_labels()
-        self._refresh_annotations()
+        self._request_labels_refresh()
+        self._request_annotations_refresh()
 
     def remove_object(self, object_id: str) -> None:
         for name in (
@@ -146,20 +196,22 @@ class GeometrySceneController:
             self._hover_id = None
         if self._selected_id == object_id:
             self._selected_id = None
-        self._refresh_labels()
-        self._refresh_annotations()
+        self._request_labels_refresh()
+        self._request_annotations_refresh()
 
     def set_visible(self, object_id: str, visible: bool) -> None:
         if object_id in self.points:
             self.points[object_id].visible = visible
             self._sync_point(self.points[object_id])
-            self._refresh_labels()
+            self._request_labels_refresh()
         if object_id in self.linears:
             self.linears[object_id].visible = visible
             self._sync_linear(self.linears[object_id])
+            # 向量标签属于线对象：隐藏向量时它的标签必须一起消失。
+            self._request_annotations_refresh()
         if object_id in self.annotations:
             self.annotations[object_id].visible = visible
-            self._refresh_annotations()
+            self._request_annotations_refresh()
 
     def set_agent_alias_visible(self, alias: str, visible: bool) -> None:
         """Show or hide regular scene objects owned by a semantic alias.
@@ -177,15 +229,16 @@ class GeometrySceneController:
                 agent_alias == alias or agent_alias.startswith(prefix)
             )
 
-        for point in tuple(self.points.values()):
-            if belongs_to(point):
-                self.set_visible(point.id, visible)
-        for linear in tuple(self.linears.values()):
-            if belongs_to(linear):
-                self.set_visible(linear.id, visible)
-        for annotation in tuple(self.annotations.values()):
-            if belongs_to(annotation):
-                self.set_visible(annotation.id, visible)
+        with self.batch_update():
+            for point in tuple(self.points.values()):
+                if belongs_to(point):
+                    self.set_visible(point.id, visible)
+            for linear in tuple(self.linears.values()):
+                if belongs_to(linear):
+                    self.set_visible(linear.id, visible)
+            for annotation in tuple(self.annotations.values()):
+                if belongs_to(annotation):
+                    self.set_visible(annotation.id, visible)
 
     def set_hover(self, object_id: str | None) -> bool:
         """设置悬浮对象，返回悬浮目标是否发生变化。"""
@@ -195,7 +248,7 @@ class GeometrySceneController:
         self._hover_id = object_id
         self._restyle(previous)
         self._restyle(object_id)
-        self._refresh_labels()
+        self._request_labels_refresh()
         return True
 
     def set_selected(self, object_id: str | None) -> bool:
@@ -206,7 +259,7 @@ class GeometrySceneController:
         self._selected_id = object_id
         self._restyle(previous)
         self._restyle(object_id)
-        self._refresh_labels()
+        self._request_labels_refresh()
         return True
 
     @property
@@ -243,8 +296,8 @@ class GeometrySceneController:
         self.bounds = bounds
         for linear in self.linears.values():
             self._sync_linear(linear)
-        self._refresh_labels()
-        self._refresh_annotations()
+        self._request_labels_refresh()
+        self._request_annotations_refresh()
         if (
             self._draft_kind is not None
             and self._draft_start is not None
@@ -274,6 +327,7 @@ class GeometrySceneController:
         for name in tuple(self._teaching_actors):
             self.plotter.remove_actor(name, render=False)
         self._teaching_actors.clear()
+        self._teaching_meshes.clear()
 
     def clear_teaching_prefix(self, prefix: str) -> None:
         """Remove only teaching actors whose names contain a caller-owned prefix.
@@ -288,6 +342,7 @@ class GeometrySceneController:
             if marker in name:
                 self.plotter.remove_actor(name, render=False)
                 self._teaching_actors.pop(name, None)
+                self._teaching_meshes.pop(name, None)
 
     def set_teaching_visible(self, alias: str, visible: bool) -> None:
         """Show or hide every teaching actor owned by one semantic alias."""
@@ -356,6 +411,7 @@ class GeometrySceneController:
         alias: str | None = None,
         origin: tuple[float, float] = (0.0, 0.0),
         color: str = "#2777b6",
+        style: str = "solid",
     ) -> None:
         vx, vy = vector
         dx, dy = direction
@@ -366,8 +422,9 @@ class GeometrySceneController:
         ox, oy = origin
         foot = (ox + scale * dx, oy + scale * dy)
         endpoint_xy = (ox + vx, oy + vy)
-        projection = _segments_mesh([(origin, foot)])
-        residual = _segments_mesh([(foot, endpoint_xy)])
+        # 投影与垂足连线属于辅助构造，可按语义要求画成虚线。
+        projection = _styled_segment_mesh((origin, foot), style)
+        residual = _styled_segment_mesh((foot, endpoint_xy), style)
         self._replace_teaching_actor(
             f"geometry:teaching:projection:{result_alias}", projection, color=color, line_width=3.0
         )
@@ -562,9 +619,19 @@ class GeometrySceneController:
     def _replace_teaching_actor(self, name: str, mesh: pv.PolyData, **kwargs: object) -> object:
         old = self._teaching_actors.get(name)
         if old is not None:
+            stored = self._teaching_meshes.get(name)
+            if stored is not None:
+                # Teaching overlays such as the vector-addition polygon are
+                # updated on every drag. Keep the VTK actor and replace only
+                # its data to avoid remove/add churn in the render window.
+                stored.copy_from(mesh)
+                _set_prop(old, **kwargs)
+                return old
             self.plotter.remove_actor(name, render=False)
-        actor = self.plotter.add_mesh(mesh, name=name, render=False, **kwargs)
+        stored = mesh.copy()
+        actor = self.plotter.add_mesh(stored, name=name, render=False, **kwargs)
         self._teaching_actors[name] = actor
+        self._teaching_meshes[name] = stored
         return actor
 
     def _drop_actor(self, name: str) -> None:
@@ -746,10 +813,19 @@ class GeometrySceneController:
         positions: list[tuple[float, float, float]] = []
         texts: list[str] = []
         offset = self._label_offset()
+        # 多个向量从同一原点出发时，编译出的计划会为每个向量各生成一个同名同坐标的点。
+        # 若不去重，标签放置器会把重叠的“O”摊开成多个标签，看起来像有多个原点。
+        seen: set[tuple[str, float, float]] = set()
         for point in self.points.values():
             if not point.visible:
                 continue
-            positions.append((point.x + offset, point.y + offset, 0.0))
+            x = point.x + offset
+            y = point.y + offset
+            key = (point.name, round(x, 9), round(y, 9))
+            if key in seen:
+                continue
+            seen.add(key)
+            positions.append((x, y, 0.0))
             texts.append(self._point_label_text(point))
         if not positions:
             return
@@ -768,20 +844,23 @@ class GeometrySceneController:
         self._has_labels = True
 
     def _refresh_annotations(self) -> None:
-        """刷新独立教学标注，不将其混入点名标签。"""
+        """刷新独立教学标注，不将其混入点名标签。
+
+        每个颜色一个标签演员：共线的向量（例如 a 与 2a）标签紧挨在一起，只有让
+        标签使用所在线段的颜色，才能一眼看出哪个标签属于哪个向量。
+        """
         add_labels = getattr(self.plotter, "add_point_labels", None)
         if add_labels is None:
             return
-        self.plotter.remove_actor(_ANNOTATION_ACTOR, render=False)
-        positions: list[tuple[float, float, float]] = []
-        texts: list[str] = []
-        colors: list[str] = []
+        for name in self._annotation_actors:
+            self.plotter.remove_actor(name, render=False)
+        self._annotation_actors = []
+        grouped: dict[str, list[tuple[tuple[float, float, float], str]]] = {}
         for annotation in self.annotations.values():
             if not annotation.visible:
                 continue
-            positions.append((annotation.x + annotation.offset_x, annotation.y + annotation.offset_y, 0.0))
-            texts.append(annotation.text)
-            colors.append(annotation.color)
+            position = (annotation.x + annotation.offset_x, annotation.y + annotation.offset_y, 0.0)
+            grouped.setdefault(annotation.color, []).append((position, annotation.text))
         for linear in self.linears.values():
             if not linear.visible or not linear.label:
                 continue
@@ -789,30 +868,48 @@ class GeometrySceneController:
             end = self.points.get(linear.end_point_id)
             if start is None or end is None:
                 continue
-            positions.append(((start.x + end.x) / 2.0, (start.y + end.y) / 2.0, 0.0))
-            texts.append(linear.label)
-            colors.append(linear.color)
-        if not positions:
-            return
-        # PyVista 点标签演员只支持一个颜色；使用首个标注颜色保持轻量，
-        # 后续可在需要时按颜色拆分演员。
-        add_labels(
-            positions,
-            texts,
-            font_size=14,
-            text_color=colors[0],
-            shape=None,
-            show_points=False,
-            always_visible=True,
-            name=_ANNOTATION_ACTOR,
-            render=False,
-            render_points_as_spheres=False,
-        )
+            position = self._linear_label_position(start, end)
+            grouped.setdefault(linear.color, []).append((position, linear.label))
+        for color, items in grouped.items():
+            name = f"{_ANNOTATION_ACTOR}:{color.lstrip('#').lower()}"
+            add_labels(
+                [position for position, _text in items],
+                [text for _position, text in items],
+                font_size=14,
+                text_color=color,
+                shape=None,
+                show_points=False,
+                always_visible=True,
+                name=name,
+                render=False,
+                render_points_as_spheres=False,
+            )
+            self._annotation_actors.append(name)
 
     def _point_label_text(self, point: Point2D) -> str:
         if point.id in {self._selected_id, self._hover_id}:
             return f"{point.name} = ({format_number(point.x)}, {format_number(point.y)})"
         return point.name
+
+    def _linear_label_position(self, start: Point2D, end: Point2D) -> tuple[float, float, float]:
+        """把向量标签放在线段下方，避免压在箭杆、轴线与网格线上。
+
+        取景由最大跨度决定，因此偏移量也按最大跨度取，视觉上接近固定的一行高度。
+        """
+
+        mid_x = (start.x + end.x) / 2.0
+        mid_y = (start.y + end.y) / 2.0
+        dx = end.x - start.x
+        dy = end.y - start.y
+        length = hypot(dx, dy)
+        offset = max(self.bounds.x_span, self.bounds.y_span) * 0.02
+        if length <= 1e-12:
+            return (mid_x, mid_y - offset, 0.0)
+        normal_x, normal_y = -dy / length, dx / length
+        # 两条法线里取指向下方的一条；竖直向量没有“下方”，固定取右侧。
+        if normal_y > 0.0 or (normal_y == 0.0 and normal_x < 0.0):
+            normal_x, normal_y = -normal_x, -normal_y
+        return (mid_x + normal_x * offset, mid_y + normal_y * offset, 0.0)
 
     def _label_offset(self) -> float:
         return min(self.bounds.x_span, self.bounds.y_span) * 0.015

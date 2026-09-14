@@ -50,6 +50,17 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         self.assertEqual(events, ["ray", None])
         self.assertFalse(toolbar.line_button.isChecked())
 
+    def test_vector_addition_tool_is_available_as_a_top_level_command(self) -> None:
+        host = QWidget()
+        toolbar = TwoDGeometryToolbar(host)
+        events: list[object] = []
+        toolbar.tool_selected.connect(events.append)
+
+        toolbar.addition_button.click()
+
+        self.assertEqual(events, ["addition"])
+        self.assertTrue(toolbar.addition_button.isChecked())
+
     def test_line_button_click_toggles_flyout(self) -> None:
         host = QWidget()
         host.resize(800, 600)
@@ -125,6 +136,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
             toolbar.point_button,
             toolbar.line_button,
             toolbar.vector_button,
+            toolbar.addition_button,
             toolbar.angle_button,
             toolbar.projection_button,
             toolbar.polygon_button,
@@ -150,6 +162,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         toolbar = TwoDGeometryToolbar(host)
         names = [
             icon_name(toolbar.vector_button),
+            icon_name(toolbar.addition_button),
             icon_name(toolbar.line_button),
             icon_name(toolbar.angle_button),
             icon_name(toolbar.projection_button),

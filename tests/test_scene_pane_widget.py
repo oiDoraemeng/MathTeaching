@@ -149,18 +149,47 @@ def test_lecture_and_user_tabs_share_one_container_and_case_chrome_controls(qapp
     window._load_linear_algebra_topic("ch01.ops.addition")
 
     cases = window._teaching_case_pane_ids
-    assert tuple(container.interactors) == (cases[0],)
-    assert getattr(window, "_teaching_case_pane_grid", None) is None
-    window._set_teaching_case_pane_count(3)
+    # 数学案例流程默认“全部显示”，两个步骤窗格同时存在。
     assert set(container.interactors) == set(cases)
+    assert getattr(window, "_teaching_case_pane_grid", None) is None
     container._chromes[cases[1]].hide_requested.emit()
     assert cases[1] not in container.interactors
     container._chromes[cases[0]].fullscreen_requested.emit()
     assert tuple(container.interactors) == (cases[0],)
     window._reveal_algebra_pane(users[-1], 1)
     assert tuple(container.interactors) == (users[-1],)
-    assert len(manager.panes) == 7
+    assert len(manager.panes) == 6
     container.close()
+
+
+def test_opening_case_group_at_retained_limit_keeps_first_case_and_ten_panes() -> None:
+    from services.scene_commands import CommandPlan
+
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    for _ in range(manager.MAX_RETAINED_PANES - 1):
+        manager.create_pane()
+    cases = tuple(
+        SimpleNamespace(id=f"case-{index}", purpose=f"案例 {index}", stage_refs=())
+        for index in range(3)
+    )
+    explanation = SimpleNamespace(case_layout=SimpleNamespace(cases=cases))
+    compiled = SimpleNamespace(
+        topic_id="ch04.limit",
+        plan=CommandPlan(scene="2d", operations=()),
+        storyboard=(object(),),
+    )
+    window._close_teaching_case_panes = lambda: None
+    window._sync_layout_buttons = lambda: None
+    window.algebra_panel = SimpleNamespace(sync_pane_tabs=lambda: None)
+
+    window._open_teaching_case_panes_impl(explanation, compiled, defer_render=True)
+
+    assert len(manager.panes) == manager.MAX_RETAINED_PANES
+    assert len(window._teaching_case_pane_ids) == 1
+    pane_id = window._teaching_case_pane_ids[0]
+    assert manager.pane(pane_id).source_id == "case-0"
+    assert manager.visible_pane_ids() == (pane_id,)
 
 
 def test_manager_visibility_changes_refresh_retained_case_surfaces(qapp):

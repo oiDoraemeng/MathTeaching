@@ -1,7 +1,10 @@
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
+from linear_algebra.registry import catalog_registry, runtime_teaching_store
+from linear_algebra.teaching.source import LectureSourceRepository
 from services.scene_commands import CommandPlan
 from ui.teaching_case_panes import case_pane_layout, case_pane_placement, case_plan
 from ui.scene_pane_widget import PaneChrome
@@ -54,3 +57,42 @@ def test_case_plan_filters_stage_aliases_and_capability_polygon():
 def test_case_pane_uses_shared_pane_chrome():
     """Case viewports keep the shared title/control chrome contract."""
     assert issubclass(TeachingCasePane, PaneChrome)
+
+
+def test_case_plan_drops_capability_evidence_from_every_step():
+    """能力证据（cap__*）不进案例窗格。
+
+    向量减法声明 projection_2d，编译器补出的投影残差正好从 B 连到 A；若不过滤，
+    第一步窗格也会出现把 A、B 连起来的线段。
+    """
+
+    compiled = catalog_registry().resolve_bundle(
+        "ch01.ops.subtraction",
+        artifact_store=runtime_teaching_store(),
+        source_repository=LectureSourceRepository(Path(".agents") / "线性代数讲义.md"),
+    ).compiled
+
+    operands = case_plan(compiled, "stage.subtraction.operands")
+    assert {
+        str(operation["alias"]) for operation in operands.operations if operation.get("alias")
+    } == {
+        "sem__a__origin",
+        "sem__a__end",
+        "sem__a",
+        "sem__b__origin",
+        "sem__b__end",
+        "sem__b",
+    }
+    assert not any(
+        str(value).startswith("cap__")
+        for operation in operands.operations
+        for value in operation.values()
+        if isinstance(value, str)
+    )
+
+    difference = case_plan(compiled, "stage.subtraction.difference")
+    aliases = {
+        str(operation["alias"]) for operation in difference.operations if operation.get("alias")
+    }
+    assert "sem__rel.subtraction.endpoints" in aliases
+    assert not any(alias.startswith("cap__") for alias in aliases)

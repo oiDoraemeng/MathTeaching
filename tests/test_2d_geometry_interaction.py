@@ -162,6 +162,75 @@ def _make_window() -> MainWindow:
 
 
 class TwoDGeometryInteractionTests(unittest.TestCase):
+    def test_vector_addition_relation_tracks_input_drag_and_result_drag(self) -> None:
+        window = _make_window()
+        for operation in (
+            {"op": "point.upsert", "alias": "O", "coordinates": [0, 0]},
+            {"op": "point.upsert", "alias": "A", "coordinates": [2, 1]},
+            {"op": "point.upsert", "alias": "B0", "coordinates": [4, 4]},
+            {"op": "point.upsert", "alias": "B", "coordinates": [5, 6]},
+        ):
+            window._command_upsert_point(operation)
+        window._command_upsert_linear(
+            {"op": "linear.upsert", "alias": "a", "kind": "vector", "start": "O", "end": "A"}
+        )
+        window._command_upsert_linear(
+            {"op": "linear.upsert", "alias": "b", "kind": "vector", "start": "B0", "end": "B"}
+        )
+        window._command_register_vector_addition(
+            {
+                "op": "geometry.vector_addition",
+                "alias": "rel",
+                "vector_a": "a",
+                "vector_b": "b",
+                "result_vector": "sum",
+                "result_start": "sum_origin",
+                "result_end": "sum_end",
+                "translated_vector": "translated_b",
+                "construction_aliases": ["construction_b", "construction_a"],
+                "polygon_aliases": ["parallelogram"],
+                "annotation_alias": "formula",
+            }
+        )
+
+        scene = window._pane_scene()
+        second = next(item for item in scene.linear_objects if item.agent_alias == "b")
+        second_start = window._geometry_point_ref(second.start_point_id)
+        assert second_start is not None
+        self.assertEqual((second_start.x, second_start.y), (0.0, 0.0))
+        first = next(item for item in scene.linear_objects if item.agent_alias == "a")
+        first_end = window._geometry_point_ref(first.end_point_id)
+        assert first_end is not None
+        window._move_addition_point(first_end, (3.0, 2.0))
+        window._update_vector_additions_for_point(first_end.id)
+
+        result_end = window._geometry_point_ref("sum_end")
+        assert result_end is not None
+        self.assertEqual((result_end.x, result_end.y), (4.0, 4.0))
+        polygon = scene._agent_teaching_2d["parallelogram"]
+        self.assertEqual(polygon["vertices"], [[0.0, 0.0], [3.0, 2.0], [4.0, 4.0], [1.0, 2.0]])
+        translated = next(item for item in scene.linear_objects if item.agent_alias == "translated_b")
+        translated_start = window._geometry_point_ref(translated.start_point_id)
+        translated_end = window._geometry_point_ref(translated.end_point_id)
+        assert translated_start is not None and translated_end is not None
+        self.assertEqual((translated_start.x, translated_start.y), (3.0, 2.0))
+        self.assertEqual((translated_end.x, translated_end.y), (4.0, 4.0))
+
+        window._select_geometry_object(second.id)
+        window._move_addition_point(result_end, (10.0, 10.0))
+        window._update_vector_additions_for_point(result_end.id)
+        second_end = window._geometry_point_ref(second.end_point_id)
+        assert second_end is not None
+        self.assertEqual((second_end.x, second_end.y), (7.0, 8.0))
+        self.assertEqual((result_end.x, result_end.y), (10.0, 10.0))
+
+        window._hidden_linear_algebra_aliases = {"sum"}
+        window._refresh_vector_addition(scene._vector_additions[0], create_missing=True)
+        result = window._geometry_linear_ref("sum")
+        assert result is not None
+        self.assertFalse(result.visible)
+        self.assertFalse(window._pane_renderer().actors[f"geometry:linear:{result.id}"].visibility)
+
     def test_select_drag_marquee_copies_only_enclosed_objects(self) -> None:
         window = _make_window()
         points = [Point2D("A", 0, 0), Point2D("B", 1, 1), Point2D("C", 7, 7)]

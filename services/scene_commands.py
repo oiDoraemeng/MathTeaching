@@ -154,6 +154,7 @@ _ALLOWED_OPERATIONS = frozenset(
         "linear_algebra.matrix_transform",
         "linear_algebra.determinant_area",
         "geometry.polygon",
+        "geometry.vector_addition",
         "geometry.angle_arc",
         "geometry.right_angle_marker",
         "geometry.projection",
@@ -190,7 +191,7 @@ _THREE_D_OPERATIONS = frozenset({
     "point3d.upsert", "point3d.delete", "linear3d.upsert", "plane3d.upsert",
     "geometry.parallelogram3d", "geometry.parallelepiped", "geometry.oriented_volume",
     "geometry.subspace3d",
-    "surface.create", "surface.update", "surface.delete", "geometry.intersection", "geometry.constraint",
+    "surface.create", "surface.update", "surface.delete", "geometry.intersection",
     "geometry.projection3d", "geometry.orthogonalization",
 })
 _TWO_D_OPERATIONS = frozenset(
@@ -212,6 +213,7 @@ _TWO_D_OPERATIONS = frozenset(
         "linear_algebra.determinant_area",
         "area.fill",
         "geometry.polygon",
+        "geometry.vector_addition",
         "geometry.angle_arc",
         "geometry.right_angle_marker",
         "geometry.projection",
@@ -229,6 +231,21 @@ def _validate_scene_scope(scene: str, operation: dict[str, Any]) -> None:
     name = operation.get("op")
     if name == "scene.set_mode" and str(operation.get("mode", scene)) != scene:
         raise CommandError("scene.set_mode.mode 必须与 CommandPlan.scene 一致。")
+    if name == "geometry.constraint":
+        matrix = operation.get("matrix")
+        dimension = operation.get("dimension")
+        if dimension is None and isinstance(matrix, (list, tuple)):
+            dimension = len(matrix)
+        if isinstance(dimension, bool) or not isinstance(dimension, int) or dimension not in (2, 3):
+            raise CommandError("geometry.constraint.dimension 必须是 2 或 3。")
+        if isinstance(matrix, (list, tuple)) and len(matrix) != dimension:
+            raise CommandError("geometry.constraint.dimension 必须与矩阵维度一致。")
+        operation_scene = operation.get("scene")
+        if operation_scene is not None and operation_scene != f"{dimension}d":
+            raise CommandError("geometry.constraint.scene 必须与矩阵维度一致。")
+        if scene != f"{dimension}d":
+            raise CommandError(f"geometry.constraint ({dimension}d) 只能用于 scene={dimension}d。")
+        return
     if scene == "2d" and name in _THREE_D_OPERATIONS:
         raise CommandError(f"{name} 只能用于 scene=3d。")
     if scene == "3d" and name in _TWO_D_OPERATIONS:
@@ -367,7 +384,7 @@ class SceneCommandService:
         name = operation.get("op")
         if name not in _ALLOWED_OPERATIONS:
             raise CommandError(f"不支持的操作: {name!r}。")
-        known_keys = {"op", "alias", "coordinates", "name", "kind", "role", "color", "style", "start", "end", "bounds", "matrix", "rhs", "tolerance", "solution_state", "rank", "augmented_rank", "entity_count", "stage_count", "sample_count", "vectors", "stages", "aliases", "eigenvalues", "principal_axes", "signature", "classification", "contour_vertices", "contour_segments", "mesh_vertices", "mesh_faces", "axis_segments", "basis_matrix", "standard_vector", "alternate_coordinates", "basis_alias", "standard_alias", "alternate_alias", "values", "coefficients", "fit", "projection", "residual", "vector", "right_angle", "data_alias", "fit_alias", "projection_alias", "residual_alias", "eigenspaces", "roots", "roots_alias", "complex_roots", "operation_label", "highlight_rows", "scene", "alias_prefix", "basis", "origin", "offset", "opacity", "vertices", "outline", "step", "direction", "foot", "intersection_alias", "state_alias", "domain_basis", "kernel_basis", "image_basis", "lanes", "input_vectors", "output_vectors", "relations", "particular_solution", "nullspace_basis", "translation", "constraints", "intersection", "row_operation", "claim_refs", "stage_id", "data", "dimension"}
+        known_keys = {"op", "alias", "coordinates", "name", "kind", "role", "color", "style", "start", "end", "bounds", "matrix", "rhs", "tolerance", "solution_state", "rank", "augmented_rank", "entity_count", "stage_count", "sample_count", "vectors", "stages", "aliases", "eigenvalues", "principal_axes", "signature", "classification", "contour_vertices", "contour_segments", "mesh_vertices", "mesh_faces", "axis_segments", "basis_matrix", "standard_vector", "alternate_coordinates", "basis_alias", "standard_alias", "alternate_alias", "values", "coefficients", "fit", "projection", "residual", "vector", "right_angle", "data_alias", "fit_alias", "projection_alias", "residual_alias", "eigenspaces", "roots", "roots_alias", "complex_roots", "operation_label", "highlight_rows", "scene", "alias_prefix", "basis", "origin", "offset", "opacity", "vertices", "outline", "step", "direction", "foot", "intersection_alias", "state_alias", "solution_geometry", "domain_basis", "kernel_basis", "image_basis", "lanes", "input_vectors", "output_vectors", "relations", "particular_solution", "nullspace_basis", "translation", "constraints", "intersection", "row_operation", "claim_refs", "stage_id", "data", "dimension", "vector_a", "vector_b", "result_vector", "result_start", "result_end", "translated_vector", "construction_aliases", "polygon_alias", "polygon_aliases", "annotation_alias", "show_triangle_rule", "show_parallelogram"}
         extended_names = {"geometry.subspace_region", "geometry.subspace3d", "geometry.mapping_bundle", "geometry.affine_solution", "geometry.constraint", "geometry.matrix_tableau", "geometry.elimination_tableau", "geometry.basis_grid", "geometry.coordinate_readout", "geometry.least_squares", "geometry.spectrum", "geometry.projection3d", "geometry.orthogonalization", "geometry.quadratic_level_set"}
         if name in extended_names and any(key not in known_keys for key in operation):
             raise CommandError(f"操作包含未知字段: {next(key for key in operation if key not in known_keys)!r}")
@@ -469,6 +486,29 @@ class SceneCommandService:
             if abs(twice_area) <= 1e-12:
                 raise CommandError("geometry.polygon.vertices 不能退化为共线点。")
             _validate_opacity(operation.get("opacity", 0.24))
+        elif name == "geometry.vector_addition":
+            _require_text(operation, "alias")
+            for key in ("vector_a", "vector_b"):
+                _require_text(operation, key)
+            for key in ("result_vector", "result_start", "result_end", "translated_vector", "polygon_alias", "annotation_alias"):
+                value = operation.get(key)
+                if value is not None:
+                    _require_text(operation, key)
+            aliases = operation.get("polygon_aliases")
+            if aliases is not None and (
+                not isinstance(aliases, (list, tuple))
+                or not all(isinstance(value, str) and value.strip() for value in aliases)
+            ):
+                raise CommandError("geometry.vector_addition.polygon_aliases 必须是字符串数组。")
+            aliases = operation.get("construction_aliases")
+            if aliases is not None and (
+                not isinstance(aliases, (list, tuple))
+                or not all(isinstance(value, str) and value.strip() for value in aliases)
+            ):
+                raise CommandError("geometry.vector_addition.construction_aliases 必须是字符串数组。")
+            for key in ("show_triangle_rule", "show_parallelogram"):
+                if key in operation and not isinstance(operation[key], bool):
+                    raise CommandError(f"geometry.vector_addition.{key} 必须是布尔值。")
         elif name in {"geometry.angle_arc", "geometry.right_angle_marker"}:
             _require_text(operation, "alias")
             _point(operation.get("vertex"), "vertex")
@@ -487,6 +527,8 @@ class SceneCommandService:
                 raise CommandError("geometry.projection.direction 不能是零向量。")
             for key in ("result_alias", "foot_alias", "residual_alias"):
                 _require_text(operation, key)
+            if "style" in operation and operation["style"] not in _STYLE_VALUES:
+                raise CommandError("geometry.projection.style 必须是 solid 或 dashed。")
         elif name == "geometry.transformed_grid":
             _validate_matrix_2(operation.get("matrix"), field_name="matrix")
             _validate_bounds(operation.get("bounds"))
@@ -575,7 +617,7 @@ class SceneCommandService:
             for row in matrix:
                 if not isinstance(row, (list, tuple)) or len(row) != len(matrix): raise CommandError("constraint matrix must be square")
                 _require_coordinates(row, dimensions=len(matrix))
-                _require_coordinates(rhs, dimensions=len(matrix))
+            _require_coordinates(rhs, dimensions=len(matrix))
             tolerance = operation.get("tolerance", 1e-9)
             _require_finite_number(tolerance, "tolerance")
             if float(tolerance) <= 0: raise CommandError("constraint tolerance must be positive")
@@ -595,6 +637,37 @@ class SceneCommandService:
             budget_errors = _validate_budget("lecture-v1", scene=str(operation.get("scene", "3d" if len(matrix) == 3 else "2d")), entity_count=entity_count, stage_count=stage_count, sample_count=sample_count, bounds=tuple(float(value) for value in bounds))
             if budget_errors:
                 raise CommandError("constraint render_budget: " + "; ".join(budget_errors))
+            solution_geometry = operation.get("solution_geometry")
+            if not isinstance(solution_geometry, dict):
+                raise CommandError("constraint solution_geometry must be an object")
+            solution_op = solution_geometry.get("op")
+            if len(matrix) == 2:
+                if solution_op == "point.upsert":
+                    _require_coordinates(solution_geometry.get("coordinates"), dimensions=2)
+                elif solution_op == "linear.upsert":
+                    _require_coordinates(solution_geometry.get("start"), dimensions=2)
+                    _require_coordinates(solution_geometry.get("end"), dimensions=2)
+                elif solution_op == "annotation.upsert":
+                    _require_coordinates(solution_geometry.get("position"), dimensions=2)
+                    _require_text(solution_geometry, "text")
+                else:
+                    raise CommandError("constraint solution_geometry operation is invalid")
+            elif solution_op == "point3d.upsert":
+                _require_coordinates(solution_geometry.get("coordinates"), dimensions=3)
+            elif solution_op == "linear3d.upsert":
+                _require_coordinates(solution_geometry.get("start"), dimensions=3)
+                _require_coordinates(solution_geometry.get("end"), dimensions=3)
+            elif solution_op == "plane3d.upsert":
+                _require_coordinates(solution_geometry.get("origin"), dimensions=3)
+                _require_coordinates(solution_geometry.get("normal"), dimensions=3)
+                _require_finite_number(solution_geometry.get("size"), "solution_geometry.size")
+                if float(solution_geometry["size"]) <= 0:
+                    raise CommandError("constraint solution_geometry.size must be positive")
+            elif solution_op == "annotation.formula":
+                _require_coordinates(solution_geometry.get("position"), dimensions=3)
+                _require_text(solution_geometry, "text")
+            else:
+                raise CommandError("constraint solution_geometry operation is invalid")
         elif name in {"geometry.matrix_tableau", "geometry.elimination_tableau"}:
             matrix = operation.get("matrix")
             rhs = operation.get("rhs")
@@ -900,6 +973,27 @@ def _expand_vector_addition(operation: dict[str, Any]) -> list[dict[str, Any]]:
                 {"op": "annotation.upsert", "alias": scoped("vector_addition_equivalent"), "text": "平行四边形法 = 三角形法", "position": [origin[0] + c[0] * 0.48, origin[1] + c[1] * 0.48 + 0.55], "color": "#2f9e5b"},
             ]
         )
+    ops.append(
+        {
+            "op": "geometry.vector_addition",
+            "alias": scoped("vector_addition_relation"),
+            "vector_a": str(operation.get("a_vector_alias", scoped("a"))),
+            "vector_b": str(operation.get("b_vector_alias", scoped("b"))),
+            "result_vector": str(operation.get("sum_vector_alias", scoped("a_plus_b"))),
+            "result_start": aliases["origin"],
+            "result_end": aliases["sum_end"],
+            "translated_vector": scoped("triangle_translated_b") if operation.get("show_triangle_rule", True) else None,
+            "construction_aliases": [scoped("construction_a_to_c"), scoped("construction_b_to_c")]
+            if operation.get("show_parallelogram", True)
+            else [],
+            "polygon_aliases": [scoped("vector_addition_parallelogram")]
+            if operation.get("show_parallelogram", True)
+            else [],
+            "annotation_alias": scoped("vector_addition_result"),
+            "show_triangle_rule": bool(operation.get("show_triangle_rule", True)),
+            "show_parallelogram": bool(operation.get("show_parallelogram", True)),
+        }
+    )
     if not operation.get("show_parallelogram", True):
         ops = [item for item in ops if not item.get("alias", "").startswith(scoped("construction_"))]
     try:

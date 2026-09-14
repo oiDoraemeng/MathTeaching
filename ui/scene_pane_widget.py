@@ -56,9 +56,9 @@ class PaneChrome(QFrame):
 class ScenePaneWidget(QWidget):
     """Own the transient viewport controls for panes while states stay retained.
 
-    An interactor is allocated only while its pane is visible.  The state object
-    remains in ``ScenePaneManager`` when a pane is hidden, so restoring a layout
-    can recreate the control without losing the scene model.
+    An interactor is allocated only while its pane is visible.  Hidden state is
+    retained up to the manager's bounded pane limit, so restoring a layout can
+    recreate the control without losing the scene model.
     """
 
     def __init__(self, manager: ScenePaneManager, parent: QWidget | None = None,

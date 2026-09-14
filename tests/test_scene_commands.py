@@ -73,7 +73,46 @@ class SceneCommandTests(unittest.TestCase):
         dashed = [operation for operation in operations if operation.get("style") == "dashed"]
         self.assertEqual({operation["alias"] for operation in dashed}, {"construction_a_to_c", "construction_b_to_c"})
         self.assertTrue(any(operation.get("alias") == "triangle_translated_b" for operation in operations))
+        relation = next(operation for operation in operations if operation.get("op") == "geometry.vector_addition")
+        self.assertEqual(relation["vector_a"], "a")
+        self.assertEqual(relation["vector_b"], "b")
+        self.assertTrue(relation["show_parallelogram"])
+        self.assertTrue(relation["show_triangle_rule"])
         self.assertEqual(operations[-1], {"op": "view.fit", "padding": 1.15})
+
+    def test_vector_addition_relation_validates_visibility_flags(self) -> None:
+        valid = SceneCommandService().preview(
+            CommandPlan(
+                scene="2d",
+                operations=(
+                    {
+                        "op": "geometry.vector_addition",
+                        "alias": "sum_relation",
+                        "vector_a": "a",
+                        "vector_b": "b",
+                        "show_parallelogram": False,
+                        "show_triangle_rule": False,
+                    },
+                ),
+            )
+        )
+        self.assertTrue(valid.valid, valid.messages)
+
+        invalid = SceneCommandService().preview(
+            CommandPlan(
+                scene="2d",
+                operations=(
+                    {
+                        "op": "geometry.vector_addition",
+                        "alias": "sum_relation",
+                        "vector_a": "a",
+                        "vector_b": "b",
+                        "show_parallelogram": "false",
+                    },
+                ),
+            )
+        )
+        self.assertFalse(invalid.valid)
 
     def test_unknown_operation_is_rejected_before_execution(self) -> None:
         host = FakeHost()

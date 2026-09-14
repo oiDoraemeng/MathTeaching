@@ -39,7 +39,7 @@ class Linear2D:
     end_point_id: str
     visible: bool = True
     color: str = "#2777b6"
-    line_width: float = 2.4
+    line_width: float = 2.5
     id: str = field(default_factory=lambda: uuid4().hex)
     style: LinearStyle = "solid"
     role: LinearRole = "primary"
