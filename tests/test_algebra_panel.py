@@ -160,6 +160,28 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertEqual(list(panel._pane_models), ["pane-1"])
         self.assertEqual(panel.formula_tabs.count(), 1)
 
+    def test_retained_pane_limit_keeps_algebra_tabs_bounded_and_evicts_case_tab(self) -> None:
+        panel = AlgebraPanel()
+        manager = ScenePaneManager()
+        panel.set_pane_manager(manager)
+        panel.set_pane_id(manager.active_pane_id)
+        for _ in range(7):
+            pane_id = manager.create_pane()
+            panel.set_pane_id(pane_id)
+        case_ids = []
+        for index in range(2):
+            pane_id = manager.register_case(f"case-{index}")
+            case_ids.append(pane_id)
+            panel.set_pane_id(pane_id)
+
+        replacement = manager.create_pane()
+        panel.set_pane_id(replacement)
+
+        self.assertEqual(len(manager.panes), manager.MAX_RETAINED_PANES)
+        self.assertEqual(panel.formula_tabs.count(), manager.MAX_RETAINED_PANES)
+        self.assertNotIn(case_ids[0], panel._pane_models)
+        self.assertIn(case_ids[1], panel._pane_models)
+
     def test_closing_algebra_tab_removes_scene_pane(self) -> None:
         panel = AlgebraPanel()
         manager = ScenePaneManager()

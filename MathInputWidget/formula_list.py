@@ -29,6 +29,7 @@ class _FormulaListBridge(QObject):
     edit_cancelled = Signal(str)
     visibility_changed = Signal(str, bool)
     settings_requested = Signal(str, int, int)
+    matrix_submitted = Signal(str)
 
     @Slot(str)
     def editRequested(self, layer_id: str) -> None:
@@ -50,6 +51,10 @@ class _FormulaListBridge(QObject):
     def settingsRequested(self, layer_id: str, top: int, height: int) -> None:
         self.settings_requested.emit(layer_id, top, height)
 
+    @Slot(str)
+    def matrixSubmitted(self, text: str) -> None:
+        self.matrix_submitted.emit(text)
+
 
 class FormulaListWidget(QWidget):
     """在同一个 WebEngine 页面中渲染全部函数行与活动编辑器。"""
@@ -59,12 +64,14 @@ class FormulaListWidget(QWidget):
     edit_cancelled = Signal(str)
     visibility_changed = Signal(str, bool)
     settings_requested = Signal(str, object)
+    matrix_submitted = Signal(str)
 
     def __init__(self, parent: QWidget | None = None, initial_theme: str = "light") -> None:
         super().__init__(parent)
         self._layers: dict[str, Layer] = {}
         self._page_ready = False
         self._active_layer_id: str | None = None
+        self._matrix_transform_enabled = False
 
         self.setObjectName("formulaListWidget")
         layout = QVBoxLayout(self)
@@ -91,6 +98,7 @@ class FormulaListWidget(QWidget):
         self._bridge.edit_cancelled.connect(self._on_edit_cancelled)
         self._bridge.visibility_changed.connect(self.visibility_changed)
         self._bridge.settings_requested.connect(self._on_settings_requested)
+        self._bridge.matrix_submitted.connect(self.matrix_submitted)
 
     def showEvent(self, event: QShowEvent) -> None:
         """窗口显示时触发数据同步并强制 WebEngine 重绘，修复最小化后空白问题。"""
@@ -104,6 +112,16 @@ class FormulaListWidget(QWidget):
         self._layers = {layer.id: layer for layer in layers}
         self._active_layer_id = None
         self._send_layers()
+
+    def set_matrix_transform_editor(self, enabled: bool = True) -> None:
+        """Render the matrix editor inside the shared algebra WebEngine area."""
+        self._matrix_transform_enabled = bool(enabled)
+        if not self._page_ready:
+            return
+        payload = "true" if self._matrix_transform_enabled else "false"
+        self._run_javascript(
+            f"if (window.formulaListReady) window.formulaList.setMatrixTransform({payload});"
+        )
 
     def sync_layer(self, layer_id: str, layer: Layer | None) -> None:
         if layer is None:
@@ -162,6 +180,10 @@ class FormulaListWidget(QWidget):
             f"if (window.formulaListReady) "
             f"window.formulaList.setLayers({json.dumps(payload)});"
         )
+        if self._matrix_transform_enabled:
+            self._run_javascript(
+                "if (window.formulaListReady) window.formulaList.setMatrixTransform(true);"
+            )
 
     def _serialize_layer(self, layer: Layer) -> dict[str, Any]:
         if isinstance(layer, Annotation2D):

@@ -98,6 +98,75 @@
       cursor: text;
     }
     .formula-cell::-webkit-scrollbar { display: none; }
+    .matrix-transform-editor {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      padding: 10px;
+      background: var(--mi-row-bg, #f9fafb);
+      border: 1px solid var(--mi-border, #cfd8e1);
+      border-radius: 8px;
+    }
+    .matrix-transform-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .matrix-transform-title {
+      color: var(--mi-text-primary, #1f2937);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .matrix-transform-hint {
+      color: var(--mi-text-primary, #667085);
+      font-size: 12px;
+    }
+    .matrix-transform-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .matrix-transform-bracket {
+      color: var(--mi-text-primary, #667085);
+      font-size: 24px;
+      line-height: 1;
+    }
+    .matrix-transform-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(48px, 1fr));
+      gap: 4px;
+      flex: 0 1 140px;
+    }
+    .matrix-transform-grid math-field {
+      box-sizing: border-box;
+      min-width: 48px;
+      min-height: 30px;
+      padding: 1px 4px;
+      border: 1px solid var(--mi-border, #cfd8e1);
+      border-radius: 5px;
+      background: var(--mi-bg-panel, #ffffff);
+      font-size: 16px;
+      text-align: center;
+    }
+    .matrix-transform-grid math-field:focus-within {
+      border-color: var(--mi-focus, #2f7ebd);
+    }
+    .matrix-transform-apply {
+      flex: 0 0 auto;
+      min-height: 30px;
+      padding: 4px 10px;
+      color: var(--mi-bg-panel, #ffffff);
+      background: var(--mi-focus, #2f7ebd);
+      border: 0;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .matrix-transform-apply:hover {
+      filter: brightness(0.95);
+    }
     math-field {
       box-sizing: border-box;
       display: block;
@@ -182,6 +251,8 @@
         const bridge = channel.objects.bridge;
         let layers = new Map();
         let active = null;
+        let matrixTransformEnabled = false;
+        let matrixTransformValue = ['1', '0', '0', '1'];
         const eyeIcon = () =>
           '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>';
         const eyeOffIcon = () =>
@@ -189,6 +260,59 @@
         const visibilityIcon = (visible) => visible ? eyeIcon() : eyeOffIcon();
         const settingsIcon = () =>
           '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>';
+
+        const matrixEditorFor = () => list.querySelector('.matrix-transform-editor');
+        const matrixFields = () => Array.from(
+          list.querySelectorAll('.matrix-transform-grid math-field'),
+        );
+        const matrixText = () => {
+          const values = matrixFields().map((field) => field.getValue('latex').trim());
+          matrixTransformValue = values.map((value, index) => value || matrixTransformValue[index]);
+          return `${matrixTransformValue[0]},${matrixTransformValue[1]};${matrixTransformValue[2]},${matrixTransformValue[3]}`;
+        };
+        const renderMatrixTransformEditor = () => {
+          const current = matrixEditorFor();
+          if (!matrixTransformEnabled) {
+            current?.remove();
+            return;
+          }
+          if (current) return;
+          const editor = document.createElement('section');
+          editor.className = 'matrix-transform-editor';
+          editor.innerHTML = `
+            <div class="matrix-transform-header">
+              <span class="matrix-transform-title">矩阵变换</span>
+              <span class="matrix-transform-hint">在代数编辑区输入 2×2 矩阵</span>
+            </div>
+            <div class="matrix-transform-controls">
+              <span class="matrix-transform-bracket">[</span>
+              <div class="matrix-transform-grid">
+                <math-field aria-label="矩阵第一行第一列">${matrixTransformValue[0]}</math-field>
+                <math-field aria-label="矩阵第一行第二列">${matrixTransformValue[1]}</math-field>
+                <math-field aria-label="矩阵第二行第一列">${matrixTransformValue[2]}</math-field>
+                <math-field aria-label="矩阵第二行第二列">${matrixTransformValue[3]}</math-field>
+              </div>
+              <span class="matrix-transform-bracket">]</span>
+              <button type="button" class="matrix-transform-apply">应用</button>
+            </div>`;
+          list.prepend(editor);
+          const fields = matrixFields();
+          fields.forEach((field) => {
+            field.addEventListener('input', () => {
+              const index = fields.indexOf(field);
+              if (index >= 0) matrixTransformValue[index] = field.getValue('latex').trim();
+            });
+            field.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                bridge.matrixSubmitted(matrixText());
+              }
+            });
+          });
+          editor.querySelector('.matrix-transform-apply').addEventListener('click', () => {
+            bridge.matrixSubmitted(matrixText());
+          });
+        };
 
         const rowFor = (layerId) => list.querySelector(`[data-layer-id="${CSS.escape(layerId)}"]`);
         const fieldFor = (layerId) => rowFor(layerId)?.querySelector('math-field');
@@ -350,6 +474,12 @@
             list.append(row);
             bindRow(layer, row, field);
           }
+          renderMatrixTransformEditor();
+        };
+
+        const setMatrixTransform = (enabled) => {
+          matrixTransformEnabled = Boolean(enabled);
+          renderMatrixTransformEditor();
         };
         const updateLayer = (layer) => {
           layers.set(layer.id, {...layer});
@@ -394,6 +524,7 @@
           updateLayer,
           setSelected,
           beginEdit,
+          setMatrixTransform,
           acceptEdit: () => finishEdit(false),
           cancelEdit: () => finishEdit(true),
         };

@@ -724,6 +724,7 @@ class AlgebraPanel(QFrame):
     manual_intersection_requested = Signal(str, str)
     linear_algebra_requested = Signal(str)
     linear_algebra_opened = Signal()
+    matrix_transform_requested = Signal(str, str)
     pane_changed = Signal(str)
     MIN_WIDTH = 260
     DEFAULT_WIDTH = 320
@@ -739,6 +740,7 @@ class AlgebraPanel(QFrame):
         self._inline_active_layer_id: str | None = None
         self._pane_id = "pane-1"
         self._pane_models: dict[str, FormulaListWidget] = {}
+        self._matrix_transform_panes: set[str] = set()
         self._pane_manager = None
         self.inline_editor = None
         self.setObjectName("algebraPanel")
@@ -955,6 +957,7 @@ class AlgebraPanel(QFrame):
         index = pane_ids.index(pane_id)
         was_current = self._pane_id == pane_id
         model = self._pane_models.pop(pane_id)
+        self._matrix_transform_panes.discard(pane_id)
         self.formula_tabs.blockSignals(True)
         try:
             self.formula_tabs.removeTab(index)
@@ -1001,6 +1004,30 @@ class AlgebraPanel(QFrame):
             self.set_pane_id(pane_id, title)
             self.formula_tabs.setTabText(list(self._pane_models).index(pane_id), str(title))
         self.set_pane_id(self._pane_id)
+
+    def add_matrix_transform_tab(self, pane_id: str, title: str | None = None) -> FormulaListWidget:
+        """Add or select a scene tab with an editor inside its algebra area."""
+        pane_id = str(pane_id)
+        self.set_pane_id(pane_id, title)
+        model = self._pane_models[pane_id]
+        if pane_id not in self._matrix_transform_panes:
+            model.matrix_submitted.connect(
+                lambda text, pid=pane_id: self.matrix_transform_requested.emit(pid, text)
+            )
+            self._matrix_transform_panes.add(pane_id)
+        model.set_matrix_transform_editor(True)
+        index = list(self._pane_models).index(pane_id)
+        self.formula_tabs.setCurrentIndex(index)
+        self._pane_id = pane_id
+        self.formula_list = self._pane_models[pane_id]
+        self.rows_container = self.formula_list
+        self.rows_scroll = self.formula_list
+        return model
+
+    def matrix_transform_editor(self, pane_id: str):
+        """Return the WebEngine-backed matrix editor host for a pane."""
+        model = self._pane_models.get(str(pane_id))
+        return model if model is not None and str(pane_id) in self._matrix_transform_panes else None
 
     def _on_tab_changed(self, index: int) -> None:
         if index < 0 or index >= len(self._pane_models):
