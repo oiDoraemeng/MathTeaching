@@ -39,6 +39,22 @@ def test_store_allocates_revisions_and_published_is_separate(tmp_path: Path) -> 
     assert store.published(artifact.topic_id) is None
 
 
+def test_published_reader_uses_the_index_as_the_activation_boundary(tmp_path: Path) -> None:
+    store = TeachingArtifactStore(tmp_path)
+    artifact = TeachingArtifact.from_dict(composition_artifact_payload())
+    first = store.save_published(artifact)
+    store.upsert_published_topic(first)
+
+    second = store.save_published(artifact)
+
+    assert second.revision == 2
+    assert store.published(artifact.topic_id).artifact.revision == 1
+
+    store.upsert_published_topic(second)
+
+    assert store.published(artifact.topic_id).artifact.revision == 2
+
+
 def test_accepted_raw_reply_is_audited_but_not_in_published_payload(tmp_path: Path) -> None:
     store = TeachingArtifactStore(tmp_path)
     artifact = TeachingArtifact.from_dict(composition_artifact_payload())

@@ -1,4 +1,4 @@
-"""Re-review existing published teaching artifacts with the local quality adapter."""
+"""Incrementally publish changed teaching artifacts with the local quality adapter."""
 
 from __future__ import annotations
 
@@ -10,18 +10,9 @@ if __package__ in {None, ""}:  # pragma: no cover
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from linear_algebra.catalog.manifest import topic_entries
-from linear_algebra.teaching.model import TeachingArtifact
-from linear_algebra.teaching.quality import refine_payload
+from linear_algebra.teaching.authoring import synchronize_topic
 from linear_algebra.teaching.source import LectureSourceRepository
 from linear_algebra.teaching.store import TeachingArtifactStore
-from linear_algebra.teaching.validation import (
-    validate_claim_bindings,
-    validate_closed_references,
-    validate_placeholder_explanations,
-    validate_source_evidence,
-    validate_teaching_depth,
-    validate_worked_examples,
-)
 
 
 def main() -> int:
@@ -32,41 +23,21 @@ def main() -> int:
     repository = LectureSourceRepository(source)
     store = TeachingArtifactStore(root)
     updated = 0
+    rejected = 0
     for topic in topic_entries():
-        stored = store.published(topic.id)
-        if stored is None:
-            continue
-        context = repository.context_for(topic)
-        payload = refine_payload(stored.artifact.to_dict())
-        payload["status"] = "draft"
-        payload["revision"] = 1
-        generated = payload.setdefault("generated", {})
-        generated["raw_reply_digest"] = "sha256:pending"
-        generated["artifact_digest"] = "sha256:pending"
-        artifact = TeachingArtifact.from_dict(payload)
-        raw_reply = json.dumps(artifact.to_dict(), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-        issues = (
-            *validate_source_evidence(artifact, context, topic),
-            *validate_closed_references(artifact),
-            *validate_claim_bindings(artifact),
-            *validate_teaching_depth(artifact),
-            *validate_placeholder_explanations(artifact),
-            *validate_worked_examples(artifact),
-        )
-        if issues:
-            details = "; ".join(f"{item.code}:{item.path}" for item in issues)
-            raise ValueError(f"{topic.id}: {details}")
-        draft = store.save_draft(artifact, raw_reply=raw_reply)
-        reviewed = store.review_draft(topic.id, draft.revision, "codex-math-explanation-review")
-        reviewed_artifact = store.get(topic.id, reviewed.revision, "reviewed").artifact
-        published = store.publish(reviewed_artifact, source_context=context, topic=topic, raw_reply=raw_reply)
-        if not published.ok:
-            details = "; ".join(f"{item.code}:{item.path}" for item in published.issues)
-            raise ValueError(f"{topic.id}: {details}")
-        updated += 1
-        print(json.dumps({"topic_id": topic.id, "published_revision": published.revision.revision}, ensure_ascii=False))
-    print(json.dumps({"updated": updated}, ensure_ascii=False))
-    return 0
+        result = synchronize_topic(topic, store=store, source_repository=repository)
+        if result.status == "published":
+            updated += 1
+        elif result.status == "rejected":
+            rejected += 1
+        print(json.dumps({
+            "topic_id": topic.id,
+            "status": result.status,
+            "revision": result.revision,
+            "issues": list(result.issues),
+        }, ensure_ascii=False))
+    print(json.dumps({"updated": updated, "rejected": rejected}, ensure_ascii=False))
+    return 1 if rejected else 0
 
 
 if __name__ == "__main__":

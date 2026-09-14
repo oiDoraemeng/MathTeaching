@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import dataclass, replace
 import hashlib
 import json
@@ -114,15 +115,28 @@ class TeachingArtifactStore:
     def __init__(self, root: Path) -> None:
         self.root = Path(root).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
+        self._index_cache_signature: tuple[int, int] | None = None
+        self._index_cache_payload: dict[str, object] | None = None
 
     def index_payload(self) -> dict[str, object]:
         """Read the chapter index, preserving the legacy empty-store shape."""
+        return deepcopy(self._cached_index_payload())
+
+    def _cached_index_payload(self) -> dict[str, object]:
+        """Return the internal read-only index view used by hot-path lookups."""
+
         path = self.root / "index.json"
         if not path.is_file():
             return {"schema_version": 1, "topics": []}
+        stat = path.stat()
+        signature = (stat.st_mtime_ns, stat.st_size)
+        if self._index_cache_signature == signature and self._index_cache_payload is not None:
+            return self._index_cache_payload
         payload = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(payload, dict) or not isinstance(payload.get("topics", []), list):
             raise ValueError("index payload must contain a topics array")
+        self._index_cache_signature = signature
+        self._index_cache_payload = payload
         return payload
 
     def publish_chapter(self, chapter: int, revisions: Mapping[str, int]) -> dict[str, object]:
@@ -157,10 +171,11 @@ class TeachingArtifactStore:
                 raise ValueError(f"compiled snapshot contract mismatch for {topic_id!r}")
             entries.append({"topic_id": topic_id, "published_revision": revision, "source_hash": artifact.source.source_hash})
         payload = self.index_payload()
-        old_topics = [item for item in payload.get("topics", []) if isinstance(item, dict)]
+        old_topics = self._index_topics(payload)
         prefix = f"ch{chapter:02d}."
         payload["topics"] = [item for item in old_topics if not str(item.get("topic_id", "")).startswith(prefix)] + entries
         self._write_stable_json(self.root / "index.json", payload)
+        self._invalidate_index_cache()
         return payload
 
     def unpublish_chapter(self, chapter: int) -> dict[str, object]:
@@ -168,8 +183,13 @@ class TeachingArtifactStore:
             raise ValueError("chapter must be a positive integer")
         payload = self.index_payload()
         prefix = f"ch{chapter:02d}."
-        payload["topics"] = [item for item in payload.get("topics", []) if not (isinstance(item, dict) and str(item.get("topic_id", "")).startswith(prefix))]
+        payload["topics"] = [
+            item
+            for item in self._index_topics(payload)
+            if not str(item.get("topic_id", "")).startswith(prefix)
+        ]
         self._write_stable_json(self.root / "index.json", payload)
+        self._invalidate_index_cache()
         return payload
 
     def save_draft(self, artifact: TeachingArtifact, *, raw_reply: str) -> ArtifactRevision:
@@ -194,10 +214,70 @@ class TeachingArtifactStore:
         return StoredArtifact.from_payload(payload)
 
     def published(self, topic_id: str) -> StoredArtifact | None:
+        index_path = self.root / "index.json"
+        if index_path.is_file():
+            payload = self._cached_index_payload()
+            for item in self._index_topics(payload):
+                if item.get("topic_id") != topic_id:
+                    continue
+                revision = item.get("published_revision", item.get("revision"))
+                if isinstance(revision, bool) or not isinstance(revision, int) or revision < 1:
+                    raise ValueError(f"invalid published revision for {topic_id!r}")
+                try:
+                    return self.get(topic_id, revision, "published")
+                except FileNotFoundError:
+                    # Some extended chapter releases intentionally keep their
+                    # reviewed artifact outside this store and use the index as
+                    # a compiled-resource witness.  Callers can then use their
+                    # established reviewed fallback, but must never select an
+                    # unindexed rN file instead.
+                    return None
+            return None
         revisions = self.list_revisions(topic_id, "published")
         if not revisions:
             return None
         return self.get(topic_id, revisions[-1].revision, "published")
+
+    def upsert_published_topic(
+        self,
+        revision: ArtifactRevision,
+        *,
+        metadata: Mapping[str, object] | None = None,
+    ) -> dict[str, object]:
+        """Atomically make one validated published revision runtime-visible."""
+
+        if revision.state != "published":
+            raise ValueError("index activation requires a published revision")
+        stored = self.get(revision.topic_id, revision.revision, "published")
+        artifact = stored.artifact
+        if artifact.status != "published" or artifact.revision != revision.revision:
+            raise ValueError(f"published revision mismatch for {revision.topic_id!r}")
+
+        payload = self.index_payload()
+        topics = self._index_topics(payload)
+        previous = next(
+            (dict(item) for item in topics if item.get("topic_id") == revision.topic_id),
+            {},
+        )
+        row = {
+            **previous,
+            **dict(metadata or {}),
+            "topic_id": revision.topic_id,
+            "chapter": int(revision.topic_id[2:4]),
+            "revision": revision.revision,
+            "published_revision": revision.revision,
+            "source_hash": artifact.source.source_hash,
+            "artifact_digest": artifact_digest(artifact),
+        }
+        merged_topics = sorted(
+            [item for item in topics if item.get("topic_id") != revision.topic_id] + [row],
+            key=lambda item: str(item.get("topic_id", "")),
+        )
+        payload["topics"] = merged_topics
+        payload["topic_count"] = len(merged_topics)
+        self._write_stable_json(self.root / "index.json", payload)
+        self._invalidate_index_cache()
+        return payload
 
     def load_published(self, topic_id: str, *, current_context: object) -> LoadedArtifact | None:
         stored = self.published(topic_id)
@@ -407,6 +487,17 @@ class TeachingArtifactStore:
             "decision": record.decision,
             "timestamp": record.timestamp,
         })
+
+    def _invalidate_index_cache(self) -> None:
+        self._index_cache_signature = None
+        self._index_cache_payload = None
+
+    @staticmethod
+    def _index_topics(payload: Mapping[str, object]) -> list[dict[str, object]]:
+        topics = payload.get("topics", [])
+        if not isinstance(topics, list):
+            raise ValueError("index payload must contain a topics array")
+        return [dict(item) for item in topics if isinstance(item, dict)]
 
     @staticmethod
     def _validate_topic_id(topic_id: str) -> None:

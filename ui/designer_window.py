@@ -36,9 +36,15 @@ from models.geometry_2d import (
     parse_point_coordinates,
 )
 from models.function_catalog import catalog_entries, catalog_entry
-from linear_algebra.registry import catalog_registry, runtime_teaching_store
+from linear_algebra.registry import CurriculumRegistry, catalog_registry, runtime_teaching_store
+from linear_algebra.teaching.authoring import (
+    AuthoringSyncResult,
+    synchronize_topic,
+    workspace_authoring_available,
+)
 from linear_algebra.teaching.load_states import LoadPhase, fingerprint
 from linear_algebra.teaching.source import LectureSourceRepository
+from linear_algebra.teaching.store import TeachingArtifactStore
 from linear_algebra.visualizations.common import RenderContext
 from linear_algebra.visualizations.compiler import CompiledVisualization, storyboard_visibility
 from models.scene_mode import SceneAppearance, SceneMode
@@ -503,6 +509,8 @@ class MainWindow:
         self,
         theme_mode: ThemeMode = "system",
         effective_theme: EffectiveTheme = "light",
+        *,
+        enable_teaching_authoring: bool = False,
     ) -> None:
         self.theme_mode = theme_mode
         self.effective_theme = effective_theme
@@ -518,6 +526,7 @@ class MainWindow:
         self._active_linear_algebra_explanation_case: object | None = None
         self._active_linear_algebra_category: str | None = None
         self._active_linear_algebra_source_diagnostic: object | None = None
+        self._teaching_authoring_enabled = enable_teaching_authoring
         self._active_linear_algebra_stage_id: str | None = None
         self._active_linear_algebra_stage_metadata: StoryboardVisibility | None = None
         self._pending_curriculum_transaction = None
@@ -1933,14 +1942,22 @@ class MainWindow:
         manager.active_pane_changed.emit(active)
         manager.active_pane_id_changed.emit(active)
 
-    @staticmethod
-    def _resolve_linear_algebra_compiled(topic_id: str) -> CompiledVisualization | None:
+    def _resolve_linear_algebra_compiled(self, topic_id: str) -> CompiledVisualization | None:
         """Rebuild the runtime-only lecture compiler state for a snapshot."""
         try:
-            return catalog_registry().resolve_bundle(
+            registry = catalog_registry()
+            store = runtime_teaching_store()
+            source_repository = self._linear_algebra_source_repository()
+            self._synchronize_linear_algebra_authoring(
                 topic_id,
-                artifact_store=runtime_teaching_store(),
-                source_repository=MainWindow._linear_algebra_source_repository(),
+                registry=registry,
+                store=store,
+                source_repository=source_repository,
+            )
+            return registry.resolve_bundle(
+                topic_id,
+                artifact_store=store,
+                source_repository=source_repository,
             ).compiled
         except (KeyError, ValueError, OSError):
             return None
@@ -3668,6 +3685,14 @@ class MainWindow:
 
     def _load_linear_algebra_topic(self, topic_id: str) -> None:
         registry = catalog_registry()
+        store = runtime_teaching_store()
+        source_repository = self._linear_algebra_source_repository()
+        authoring_sync = self._synchronize_linear_algebra_authoring(
+            topic_id,
+            registry=registry,
+            store=store,
+            source_repository=source_repository,
+        )
         previous = {
             "topic_id": getattr(self, "_active_linear_algebra_topic_id", None),
             "compiled": getattr(self, "_active_linear_algebra_compiled", None),
@@ -3692,8 +3717,8 @@ class MainWindow:
         try:
             bundle = registry.resolve_bundle(
                 topic_id,
-                artifact_store=runtime_teaching_store(),
-                source_repository=self._linear_algebra_source_repository(),
+                artifact_store=store,
+                source_repository=source_repository,
             )
             topic = bundle.topic
             before_scene, before_explanation = self.teaching_fingerprints()
@@ -3802,7 +3827,17 @@ class MainWindow:
                 detail = str(error)
             self.algebra_panel.set_status(f"案例面板显示失败: {detail}", is_error=True)
             return
-        if bundle.source_diagnostic is not None:
+        if authoring_sync is not None and authoring_sync.status == "rejected":
+            detail = authoring_sync.issues[0] if authoring_sync.issues else "校验失败"
+            self.algebra_panel.set_status(
+                f"已加载主题: {topic.title}（本地教学改动未发布: {detail}）",
+                is_error=True,
+            )
+        elif authoring_sync is not None and authoring_sync.status == "published":
+            self.algebra_panel.set_status(
+                f"已增量发布并加载主题: {topic.title}（r{authoring_sync.revision}）"
+            )
+        elif bundle.source_diagnostic is not None:
             _, old_hash, current_hash = bundle.source_diagnostic
             self.algebra_panel.set_status(f"已加载主题: {topic.title}（stale_source: {old_hash} → {current_hash}）")
         else:
@@ -3813,6 +3848,28 @@ class MainWindow:
         self._pending_curriculum_previous_scene = None
         self._pending_curriculum_host_executed = False
         self._pending_curriculum_finalized = False
+
+    def _synchronize_linear_algebra_authoring(
+        self,
+        topic_id: str,
+        *,
+        registry: CurriculumRegistry,
+        store: TeachingArtifactStore,
+        source_repository: LectureSourceRepository,
+    ) -> AuthoringSyncResult | None:
+        if not getattr(self, "_teaching_authoring_enabled", False):
+            return None
+        if not workspace_authoring_available(store=store):
+            return None
+        try:
+            topic = registry.get_topic(topic_id)
+            return synchronize_topic(
+                topic,
+                store=store,
+                source_repository=source_repository,
+            )
+        except (KeyError, OSError, TypeError, ValueError) as error:
+            return AuthoringSyncResult(topic_id, "rejected", issues=(str(error),))
 
     def _finalize_linear_algebra_topic_load(self, topic: object, bundle: object, explanation_case: object, lesson_plan: object) -> None:
         """Publish explanation and identity only after the scene transaction commits."""
