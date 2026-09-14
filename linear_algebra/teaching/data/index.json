@@ -1,14 +1,7 @@
 {
   "schema_version": 1,
-  "topic_count": 88,
+  "topic_count": 86,
   "topics": [
-    {
-      "artifact_digest": "sha256:972a8e93a2a06248927e7990af7f2d913d06e0352ce8667433ecb5bc65e381f8",
-      "chapter": 1,
-      "revision": 1,
-      "source_hash": "sha256:4b015b6cb5bb0c4b69ee907c70f6e2cab0903c68a52e4d750245354ae93bc756",
-      "topic_id": "ch01.high-dimensional.analogy"
-    },
     {
       "artifact_digest": "sha256:4d95fbcffd1e9dbbee786c9ec4ba6f6f8060d07d12bb352f6966ffca58873d17",
       "chapter": 1,
@@ -85,13 +78,6 @@
       "revision": 1,
       "source_hash": "sha256:3b0b668a61fcc041c6bf6b27cc98a127cf2743ab2ec11b5546419b8dc4316c06",
       "topic_id": "ch01.proof.centroid"
-    },
-    {
-      "artifact_digest": "sha256:902e2baaa568425ad2f9b54a1e1a38b471b8907d6fb511c7ba1831ee78397651",
-      "chapter": 1,
-      "revision": 1,
-      "source_hash": "sha256:ea74cbc672edc3f084c07253b34cf704c8aee2835e88b473795a22a715bf75b4",
-      "topic_id": "ch01.proof.method"
     },
     {
       "artifact_digest": "sha256:8e05b9db233082f7d045cbe76187cdfe93d4c393eee7583b46371c13482bc023",
