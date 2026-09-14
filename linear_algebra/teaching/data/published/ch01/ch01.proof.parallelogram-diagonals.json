@@ -40,22 +40,11 @@
       "statement": "平行四边形的两条对角线互相平分，两个中点位置向量相同。"
     }
   ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch01.proof.parallelogram-diagonals"
-      ],
-      "description": "当前主题的数学结构连接到 ch01.proof.method。",
-      "id": "connection.ch01.proof.parallelogram-diagonals",
-      "relation": "conceptual_continuation",
-      "target_topic_id": "ch01.proof.method"
-    }
-  ],
+  "connections": [],
   "explanation": {
     "analogy_boundary": "",
     "conclusion": "两条对角线中点恒相同；交换 a、b 不改变交点。",
     "connections": [
-      "连接主题：ch01.proof.method",
       "比较同一结构在下一主题中的表示。"
     ],
     "definition": "平行四边形的两条对角线互相平分，两个中点位置向量相同。",
@@ -174,7 +163,6 @@
       "b": "vector_b"
     },
     "title": "平行四边形对角线互相平分",
-    "transfer_note": "将本主题的关系迁移到 ch01.proof.method，保持公式和图形不变量。",
     "worked_examples": [
       {
         "calculation": [
@@ -189,7 +177,7 @@
               2
             ],
             "name": "result",
-            "tolerance": 1e-09
+            "tolerance": 1e-9
           }
         ],
         "claim_refs": [

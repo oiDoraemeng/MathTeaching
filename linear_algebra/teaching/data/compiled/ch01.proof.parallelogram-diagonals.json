@@ -7,8 +7,8 @@
       {
         "alias": "sem__case1_a__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -16,8 +16,8 @@
       {
         "alias": "sem__case1_a__end",
         "coordinates": [
-          2.0,
-          1.0
+          2,
+          1
         ],
         "name": "a",
         "op": "point.upsert"
@@ -35,8 +35,8 @@
       {
         "alias": "sem__case1_b__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -44,8 +44,8 @@
       {
         "alias": "sem__case1_b__end",
         "coordinates": [
-          1.0,
-          3.0
+          1,
+          3
         ],
         "name": "b",
         "op": "point.upsert"
@@ -63,8 +63,8 @@
       {
         "alias": "sem__case1_r__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -72,8 +72,8 @@
       {
         "alias": "sem__case1_r__end",
         "coordinates": [
-          3.0,
-          4.0
+          3,
+          4
         ],
         "name": "result",
         "op": "point.upsert"
@@ -96,20 +96,20 @@
         "outline": true,
         "vertices": [
           [
-            0.0,
-            0.0
+            0,
+            0
           ],
           [
-            2.0,
-            1.0
+            2,
+            1
           ],
           [
-            3.0,
-            4.0
+            3,
+            4
           ],
           [
-            1.0,
-            3.0
+            1,
+            3
           ]
         ]
       },
@@ -131,7 +131,7 @@
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "",
