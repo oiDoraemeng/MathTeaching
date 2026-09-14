@@ -44,28 +44,6 @@
     "topic_id": "ch01.inner.definitions"
   },
   {
-    "artifact_digest": "sha256:c5276edb190370c0b23f571e6d7dd9c798fd80fd897eae1f9e8d53bacd00dbf3",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:3c175e718394065e64e9218a462d9886f01c3f3c118d58ec50cad6fe0b65e581",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "source_hash": "sha256:18371503c870b3e41027bcfb2cc9b77e7f4595fa93f1041b11f68921e280b4f6",
-    "stage_count": 2,
-    "topic_id": "ch01.inner.equivalence"
-  },
-  {
-    "artifact_digest": "sha256:a6c3d3141854ca2b5f25633655886160b6619b9c23dea07f358f454f15440d90",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:c8e583db16ee94500b557e14def64659dbd438e2e6a56a3eded1176d879988e4",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "source_hash": "sha256:76f421df33e08871c34eb5bea7755ac7eaf5b7ca4a8d68ebeb44f783cb773035",
-    "stage_count": 2,
-    "topic_id": "ch01.inner.examples"
-  },
-  {
     "artifact_digest": "sha256:ceebf89aaeb3c30279ed436ce792c435fd207648638e136d7eed971655970be6",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
@@ -75,17 +53,6 @@
     "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
     "stage_count": 3,
     "topic_id": "ch01.ops.addition"
-  },
-  {
-    "artifact_digest": "sha256:edf1b0bb3e6690018d2e3b6170002997c26e3a693efc251279c6ed33a8cd7210",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:c16cc749b0e80a48ecf77633c0088e428af7039280114a6a5357db1b455043dc",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "source_hash": "sha256:10f1b4819f2af3b6c3c2b0373beb97de3b41dbcd3e5f9498fd65ef7466a9b9a6",
-    "stage_count": 2,
-    "topic_id": "ch01.ops.cross-product"
   },
   {
     "artifact_digest": "sha256:8a27e168d47ff44fe572bc82f8202448e595ac4210cbc8942379c37144f17c4b",
@@ -110,17 +77,6 @@
     "topic_id": "ch01.ops.scalar"
   },
   {
-    "artifact_digest": "sha256:8b475583a95ff0ea2eab09834ef1a7582026553d58f9cc8be8ee56ed5e00ec1f",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:bb76bde8dde1e95fef4abba8db37e52848971a5863586ab960f6a19c16958a53",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "source_hash": "sha256:4e497dc05627bf09c03cba04c8fa9c93828cd0daace46a310f30768c1f541417",
-    "stage_count": 2,
-    "topic_id": "ch01.ops.scalar-triple"
-  },
-  {
     "artifact_digest": "sha256:a3af5565bbe24aa3e31a641a47fcd0695021b1306a770b2e6c9889c93e7c284b",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
@@ -130,17 +86,6 @@
     "source_hash": "sha256:13b887d608b560325e74c97308bcf60f892ddea2f61914445bef1fb98e6390fd",
     "stage_count": 2,
     "topic_id": "ch01.ops.subtraction"
-  },
-  {
-    "artifact_digest": "sha256:635072f2270e51a9cbf0d7f02c9722786c6aef7245610ccf06cc076750701022",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:57d60fae4a28e941fe1884b9735d5a9e80787e19db18dee76d4b6fedb3e62e9a",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "source_hash": "sha256:36b093c8ac050829f151499dd884e2c8a917f483b3fbe03bfb2688a856278b79",
-    "stage_count": 2,
-    "topic_id": "ch01.ops.velocity"
   },
   {
     "artifact_digest": "sha256:ded30b4fc18f2695fab02cc3a371115b419eaa006fe3308a111713d07b8dd96c",
