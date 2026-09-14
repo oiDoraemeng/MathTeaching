@@ -28,6 +28,18 @@ def test_nonfinite_basis_is_rejected_before_scene_mutation():
         SubspaceFamilyCompiler.compile({"primitive": "geometry.subspace3d", "dimension": 3, "basis": [[float("nan"), 0, 0]]})
 
 
+def test_validate_aggregates_invalid_affine_offset_without_raising():
+    issues = SubspaceFamilyCompiler.validate({
+        "primitive": "geometry.subspace3d",
+        "dimension": 3,
+        "basis": [[1, 0, 0]],
+        "is_linear": True,
+        "affine_offset": ["bad", 0, 0],
+    })
+    assert issues
+    assert any(issue.code == "numeric_invalid" for issue in issues)
+
+
 @pytest.mark.parametrize("bounds", ([2, -2, -1, 1, -1, 1], [0, 1, 0, 1], [0, float("nan"), 0, 1, 0, 1]))
 def test_bounds_are_finite_dimension_matched_and_ordered(bounds):
     with pytest.raises(VisualCompileError):

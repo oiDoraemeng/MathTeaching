@@ -30,6 +30,37 @@ from .limits import validate_budget
 
 COMPILER_VERSION = "visual-compiler-v1"
 _SAFE_ALIAS = re.compile(r"[^A-Za-z0-9_.:-]+")
+# Section 1.5 (geometry proofs) draws a constructed figure rather than a pair
+# of free vectors.  Its entity graph declares the two lecture inputs ``a`` and
+# ``b``; the figure below derives every midpoint, third side and diagonal from
+# those values so the picture and the worked numbers cannot drift apart.
+_PROOF_TOPICS = frozenset(
+    {
+        "ch01.proof.method",
+        "ch01.proof.midline",
+        "ch01.proof.centroid",
+        "ch01.proof.parallelogram-diagonals",
+    }
+)
+# 采用“数学案例流程”并排展示的小节：多个案例窗格必须共用一个固定视角，
+# 否则“全部显示”时各窗格按自身对象缩放，会出现一大一小。
+_FLOW_VIEW_TOPICS = frozenset(
+    {
+        "ch01.ops.addition",
+        "ch01.ops.subtraction",
+        "ch01.ops.scalar",
+        "ch01.ops.linear-combination",
+        "ch01.inner.definitions",
+    }
+)
+# 流程里向量用小写标注；向量的终点是“点”，用大写标注以区别。a+b 的终点是
+# 平行四边形与原点相对的顶点，记为 C（不是 A+B）；单一字母标签直接大写，
+# 带系数或正负号的标签不再造点。数乘的两步各自落在一个点上：a 的终点是 A，
+# 缩放后的 2a 终点是 B。
+_FLOW_POINT_LABELS = {
+    "ch01.ops.addition": {"flow_a": "A", "flow_b": "B", "flow_sum": "C"},
+    "ch01.ops.scalar": {"a": "A", "two_a": "B"},
+}
 
 
 @dataclass(frozen=True)
@@ -166,7 +197,12 @@ class VisualSemanticsCompiler:
                 alias_issues.append(CompileIssue("missing_computed_invariant", "$.family_evidence.invariants", "family did not prove every required invariant"))
             if alias_issues:
                 raise VisualCompileError(tuple(alias_issues))
-        if not chapter4_owned and not chapter5_owned and not chapter6_owned and not chapter7_owned and not chapter8_owned:
+        if resolved_topic in _PROOF_TOPICS:
+            proof_operations, proof_aliases = _compile_proof_figure(resolved_topic, semantics, context)
+            operations.extend(proof_operations)
+            for key, values in proof_aliases.items():
+                aliases.setdefault(key, []).extend(values)
+        elif not chapter4_owned and not chapter5_owned and not chapter6_owned and not chapter7_owned and not chapter8_owned:
             for entity in semantics.entities:
                 entity_operations, entity_aliases = self._compile_entity(entity, semantics.scene_kind, context)
                 operations.extend(entity_operations)
@@ -182,12 +218,29 @@ class VisualSemanticsCompiler:
         if not resolved_topic.startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08.")):
             self._emit_declared_capability_evidence(semantics, context, operations, aliases, resolved_topic)
 
+        # 动态向量加法关系要先算出别名，才能跟随它所属关系的阶段可见性：
+        # 只画 a、b 的第一步窗格不应执行和向量与平行四边形的联动操作。
+        # 与声明能力证据一致，第 4–8 章由族编译器负责，不注入该二维联动。
+        addition_operation = (
+            None
+            if (chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned or chapter8_owned)
+            else _vector_addition_operation(semantics, aliases)
+        )
+        if addition_operation is not None:
+            addition_alias = str(addition_operation["alias"])
+            for relation in semantics.relations:
+                if relation.kind == "sum" and _alias(relation.id) in addition_alias:
+                    aliases.setdefault(relation.id, []).append(addition_alias)
+                    break
+
         storyboard, stage_operations, stage_issues = self._compile_storyboard(
             semantics, context, aliases, emit_generic_geometry=not (chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned or chapter8_owned)
         )
         if stage_issues:
             raise VisualCompileError(tuple(stage_issues))
         operations.extend(stage_operations)
+        if addition_operation is not None:
+            operations.append(addition_operation)
         if chapter4_owned or chapter5_owned or chapter6_owned or chapter7_owned or chapter8_owned:
             operation_names = {str(operation.get("op")) for operation in operations}
             missing_operations = set(contract.expected_operations) - operation_names
@@ -198,7 +251,14 @@ class VisualSemanticsCompiler:
         # executable model output.  Emit them only for topics that explicitly
         # request the capability; this preserves the compact plan shape for
         # topics whose contract does not include a formula label.
-        if artifact is not None and _topic_requires_capability(resolved_topic, "annotation_formula"):
+        # Section 1.5 figures already carry a student-readable formula label
+        # bound to the drawn construction, so they must not also receive the
+        # generic raw-source annotation at a fixed off-figure position.
+        if (
+            artifact is not None
+            and resolved_topic not in _PROOF_TOPICS
+            and _topic_requires_capability(resolved_topic, "annotation_formula")
+        ):
             formula = artifact.explanation.formula.strip()
             if formula:
                 operations.append(
@@ -209,7 +269,35 @@ class VisualSemanticsCompiler:
                         "position": [context.bounds[0] + 0.35, context.bounds[3] - 0.35],
                     }
                 )
-        operations.append({"op": "view.fit", "padding": 1.15})
+        view_fit: dict[str, Any] = {
+            "op": "view.fit",
+            "padding": 1.45 if resolved_topic in _PROOF_TOPICS else 1.15,
+        }
+        if resolved_topic in _FLOW_VIEW_TOPICS:
+            # 流程主题的多个案例窗格必须共享同一视角：若各自按本窗格对象
+            # 自适应缩放，“全部显示”时会出现一大一小。这里给出覆盖所有
+            # 向量终点（含原点）的固定边界，让每个窗格使用同一相机。
+            try:
+                endpoints = [
+                    _coordinates(entity.value, 2)
+                    for entity in semantics.entities
+                    if entity.kind == "vector" and entity.dimension == 2
+                ]
+            except (TypeError, ValueError):
+                endpoints = []
+            if endpoints:
+                xs = [0.0, *(point[0] for point in endpoints)]
+                ys = [0.0, *(point[1] for point in endpoints)]
+                min_x, max_x = min(xs), max(xs)
+                min_y, max_y = min(ys), max(ys)
+                # 共线向量（例如数乘的 a 与 2a）只占一条轴，退化边界会被
+                # 渲染层忽略；补出最小跨度，保证所有窗格仍共用一个视角。
+                if max_x <= min_x:
+                    min_x, max_x = min_x - 0.5, max_x + 0.5
+                if max_y <= min_y:
+                    min_y, max_y = min_y - 0.5, max_y + 0.5
+                view_fit["bounds"] = [min_x, max_x, min_y, max_y]
+        operations.append(view_fit)
         summary = artifact.explanation.title if artifact is not None else f"visual semantics: {resolved_topic}"
         plan = CommandPlan(scene=semantics.scene_kind, operations=tuple(operations), summary=summary)
         validation = SceneCommandService().validate(plan)
@@ -308,7 +396,8 @@ class VisualSemanticsCompiler:
                 operations.append({"op": "geometry.polygon", "alias": "cap__polygon", "vertices": vertices, "color": role_color("area"), "opacity": 0.24, "outline": True})
         if "projection_2d" in declared and "geometry.projection" not in operation_names:
             if len(vectors2) >= 2:
-                operations.append({"op": "geometry.projection", "vector": list(vectors2[0]), "direction": list(vectors2[1]), "result_alias": "cap__projection", "foot_alias": "cap__foot", "residual_alias": "cap__residual", "color": role_color("projection")})
+                # 投影是辅助构造，按讲义习惯默认画成虚线。
+                operations.append({"op": "geometry.projection", "vector": list(vectors2[0]), "direction": list(vectors2[1]), "result_alias": "cap__projection", "foot_alias": "cap__foot", "residual_alias": "cap__residual", "style": "dashed", "color": role_color("projection")})
         if "transformed_grid" in declared and "geometry.transformed_grid" not in operation_names and semantics.scene_kind == "2d" and "staged_transform" not in declared:
             matrix = next(
                 (matrix for entity in semantics.entities if (matrix := _matrix2(entity.value)) is not None),
@@ -382,13 +471,14 @@ class VisualSemanticsCompiler:
                 or stage.id.startswith("stage.cross-product.")
                 or stage.id.startswith("stage.scalar-triple.")
                 or stage.id.startswith("stage.claim.ch01.ops.addition.")
+                or stage.id.startswith("stage.flow.")
                 or stage.id.startswith("stage.case.")
             )
             if show_case_stage_title:
                 visible_aliases_list.append(title_alias)
             if emit_generic_geometry:
                 operations.extend(_stage_geometry_operations(semantics, stage, index, aliases, context))
-                visible_aliases_list.extend(_stage_specific_aliases(semantics, index))
+                visible_aliases_list.extend(_stage_specific_aliases(semantics, stage, index))
             visible_aliases = tuple(dict.fromkeys(visible_aliases_list))
             compiled.append(
                 CompiledStoryboardStage(
@@ -513,7 +603,30 @@ class VisualSemanticsCompiler:
             if scene == "2d":
                 is_magnitude_topic = context.topic_id == "ch01.vector.magnitude"
                 is_point_distinction_topic = context.topic_id == "ch01.vector.point-distinction"
+                is_flow_topic = context.topic_id in _FLOW_VIEW_TOPICS
                 is_zero_vector = not any(abs(value) > 1e-12 for value in coordinates)
+                # The vector label is placed once on the segment; repeating it
+                # at the endpoint makes the magnitude example look cluttered.
+                # A zero vector has no segment, so retain its point label.
+                end_name = (
+                    ""
+                    if is_point_distinction_topic
+                    else entity.label
+                    if (is_zero_vector or not is_magnitude_topic)
+                    else ""
+                )
+                # 流程里向量用小写 a、b 标注；向量终点是一个“点”，改用大写
+                # A、B、C 与向量区分，避免点与向量看起来完全一样。
+                if is_flow_topic:
+                    explicit = _FLOW_POINT_LABELS.get(context.topic_id, {})
+                    if entity.id in explicit:
+                        end_name = explicit[entity.id]
+                    else:
+                        end_name = (
+                            entity.label.upper()
+                            if len(entity.label) == 1 and entity.label.isalpha()
+                            else ""
+                        )
                 operations.extend(
                     [
                         {
@@ -532,17 +645,7 @@ class VisualSemanticsCompiler:
                             "op": "point.upsert",
                             "alias": end,
                             "coordinates": list(coordinates),
-                            # The vector label is placed once on the segment;
-                            # repeating it at the endpoint makes the magnitude
-                            # example look cluttered.  A zero vector has no
-                            # segment, so retain its point label instead.
-                            "name": (
-                                ""
-                                if is_point_distinction_topic
-                                else entity.label
-                                if (is_zero_vector or not is_magnitude_topic)
-                                else ""
-                            ),
+                            "name": end_name,
                         },
                         {
                             "op": "linear.upsert",
@@ -675,20 +778,22 @@ class VisualSemanticsCompiler:
         if relation.kind == "projects_to" and semantics.scene_kind == "2d":
             source_coordinates = _coordinates(source.value, 2)
             direction_coordinates = _coordinates(target.value, 2)
-            foot = next((entity for entity in semantics.entities if entity.role == "foot"), None)
-            residual = next((entity for entity in semantics.entities if entity.role == "residual"), None)
-            operations.append(
-                {
-                    "op": "geometry.projection",
-                    "alias": relation_alias,
-                    "vector": list(source_coordinates),
-                    "direction": list(direction_coordinates),
-                    "result_alias": _alias(target.id),
-                    "foot_alias": _alias(foot.id) if foot else f"{relation_alias}__foot",
-                    "residual_alias": _alias(residual.id) if residual else f"{relation_alias}__residual",
-                    "color": role_color("projection"),
-                }
-            )
+            foot = _pick_role_entity(semantics.entities, "foot", target.id)
+            residual = _pick_role_entity(semantics.entities, "residual", target.id)
+            # 投影与垂足连线属于辅助构造，按讲义约定一律画成虚线。
+            # VisualRelation.style 的默认值 "solid" 无法与「未指定」区分，故此处不读取。
+            projection: dict[str, Any] = {
+                "op": "geometry.projection",
+                "alias": relation_alias,
+                "vector": list(source_coordinates),
+                "direction": list(direction_coordinates),
+                "result_alias": _alias(target.id),
+                "foot_alias": _alias(foot.id) if foot else f"{relation_alias}__foot",
+                "residual_alias": _alias(residual.id) if residual else f"{relation_alias}__residual",
+                "style": "dashed",
+                "color": role_color("projection"),
+            }
+            operations.append(projection)
             return operations, [relation_alias]
         matrix = _matrix2(relation.parameters.get("matrix")) if isinstance(relation.parameters, Mapping) else None
         if relation.kind == "maps_to" and matrix is not None and semantics.scene_kind == "2d":
@@ -758,9 +863,337 @@ class VisualSemanticsCompiler:
         return operations, [relation_alias]
 
 
+def _compile_proof_figure(
+    topic_id: str, semantics: VisualSemantics, context: RenderContext
+) -> tuple[list[dict[str, Any]], dict[str, list[str]]]:
+    """Build the constructed figure for one section 1.5 geometry proof.
+
+    The semantic graph supplies the two lecture inputs ``a`` and ``b``; every
+    other point, side, median and diagonal is derived from them, so a change to
+    the worked numbers moves the drawing with it.  Declared entity and relation
+    IDs are bound to concrete figure aliases so the claim evidence ledger keeps
+    its one-to-one witness.
+    """
+
+    def declared(role: str, fallback: tuple[float, float]) -> tuple[VisualEntity | None, tuple[float, float]]:
+        for entity in semantics.entities:
+            if entity.role == role and entity.kind == "vector" and entity.dimension == 2:
+                return entity, _coordinates(entity.value, 2)
+        return None, fallback
+
+    entity_a, side_a = declared("vector_a", (3.0, 0.6))
+    entity_b, side_b = declared("vector_b", (1.0, 2.6))
+    operations = _proof_figure_operations(topic_id, side_a, side_b)
+    aliases: dict[str, list[str]] = {}
+    if entity_a is not None:
+        aliases[entity_a.id] = ["proof__side_a"]
+    if entity_b is not None:
+        aliases[entity_b.id] = ["proof__side_b"]
+    for relation in semantics.relations:
+        aliases[relation.id] = ["proof__region"]
+    if topic_id == "ch01.proof.midline":
+        # 中位线定理按讲义的证明顺序展开：一个窗格一步，只显示这一步刚引进的
+        # 构造，最后一步才补上第三边与结论标注。
+        base = [
+            "proof__region",
+            "proof__point_A", "proof__point_B", "proof__point_C",
+            "proof__side_a", "proof__side_b",
+        ]
+        midpoints = ["proof__point_D", "proof__point_E"]
+        aliases[f"stage.case.{topic_id}.1"] = list(base)
+        aliases[f"stage.case.{topic_id}.2"] = base + midpoints
+        aliases[f"stage.case.{topic_id}.3"] = base + midpoints + ["proof__midline", "proof__formula"]
+        aliases[f"stage.case.{topic_id}.4"] = base + midpoints + [
+            "proof__midline", "proof__side_bc", "proof__note_midline", "proof__formula",
+        ]
+    return operations, aliases
+
+
+def _proof_figure_operations(
+    topic_id: str, side_a: tuple[float, float], side_b: tuple[float, float]
+) -> list[dict[str, Any]]:
+    """Emit the validated operations for one 1.5 construction figure."""
+
+    origin = (0.0, 0.0)
+    vertex_b = (float(side_a[0]), float(side_a[1]))
+    vertex_c = (float(side_b[0]), float(side_b[1]))
+    point_ops: list[dict[str, Any]] = []
+    segment_ops: list[dict[str, Any]] = []
+    note_ops: list[dict[str, Any]] = []
+
+    def add_point(alias: str, coordinates: tuple[float, float], name: str) -> None:
+        point_ops.append(
+            {
+                "op": "point.upsert",
+                "alias": alias,
+                "coordinates": [round(float(coordinates[0]), 6), round(float(coordinates[1]), 6)],
+                "name": name,
+            }
+        )
+
+    def add_segment(
+        alias: str,
+        start: str,
+        end: str,
+        *,
+        color: str,
+        role: str = "primary",
+        style: str = "solid",
+    ) -> None:
+        segment_ops.append(
+            {
+                "op": "linear.upsert",
+                "alias": alias,
+                "start": start,
+                "end": end,
+                "kind": "segment",
+                "role": role,
+                "color": color,
+                "style": style,
+            }
+        )
+
+    def add_note(alias: str, text: str, position: tuple[float, float]) -> None:
+        note_ops.append(
+            {
+                "op": "annotation.upsert",
+                "alias": alias,
+                "text": text,
+                "position": [round(float(position[0]), 6), round(float(position[1]), 6)],
+            }
+        )
+
+    def midpoint(first: tuple[float, float], second: tuple[float, float]) -> tuple[float, float]:
+        return ((first[0] + second[0]) / 2.0, (first[1] + second[1]) / 2.0)
+
+    def between(first: tuple[float, float], second: tuple[float, float], ratio: float) -> tuple[float, float]:
+        return (first[0] + (second[0] - first[0]) * ratio, first[1] + (second[1] - first[1]) * ratio)
+
+    def outward_label(
+        first: tuple[float, float],
+        second: tuple[float, float],
+        away: tuple[float, float],
+        distance: float = 0.30,
+    ) -> tuple[float, float]:
+        """Return a midpoint label pushed to the side facing away from ``away``."""
+
+        mid = midpoint(first, second)
+        normal = (second[1] - first[1], first[0] - second[0])
+        length = math.hypot(normal[0], normal[1]) or 1.0
+        unit = (normal[0] / length, normal[1] / length)
+        if unit[0] * (away[0] - mid[0]) + unit[1] * (away[1] - mid[1]) > 0:
+            unit = (-unit[0], -unit[1])
+        return (mid[0] + unit[0] * distance, mid[1] + unit[1] * distance)
+
+    if topic_id == "ch01.proof.midline":
+        midpoint_d = midpoint(origin, vertex_b)
+        midpoint_e = midpoint(origin, vertex_c)
+        add_point("proof__point_A", origin, "A")
+        add_point("proof__point_B", vertex_b, "B")
+        add_point("proof__point_C", vertex_c, "C")
+        add_point("proof__point_D", midpoint_d, "D")
+        add_point("proof__point_E", midpoint_e, "E")
+        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("construction"), role="construction")
+        add_segment("proof__side_b", "proof__point_A", "proof__point_C", color=role_color("construction"), role="construction")
+        add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("vector_a"))
+        add_segment("proof__midline", "proof__point_D", "proof__point_E", color=role_color("transformed_b"))
+        centre = ((origin[0] + vertex_b[0] + vertex_c[0]) / 3.0, (origin[1] + vertex_b[1] + vertex_c[1]) / 3.0)
+        add_note(
+            "proof__note_midline",
+            "DE // BC",
+            outward_label(midpoint_d, midpoint_e, centre, 0.42),
+        )
+        formula = "DE = ½ BC"
+        vertices = [origin, vertex_b, vertex_c]
+    elif topic_id == "ch01.proof.centroid":
+        midpoint_bc = midpoint(vertex_b, vertex_c)
+        midpoint_ca = midpoint(vertex_c, origin)
+        midpoint_ab = midpoint(origin, vertex_b)
+        centre = (
+            (origin[0] + vertex_b[0] + vertex_c[0]) / 3.0,
+            (origin[1] + vertex_b[1] + vertex_c[1]) / 3.0,
+        )
+        add_point("proof__point_A", origin, "A")
+        add_point("proof__point_B", vertex_b, "B")
+        add_point("proof__point_C", vertex_c, "C")
+        add_point("proof__point_D", midpoint_bc, "D")
+        add_point("proof__point_E", midpoint_ca, "E")
+        add_point("proof__point_F", midpoint_ab, "F")
+        add_point("proof__point_G", centre, "G")
+        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("construction"), role="construction")
+        add_segment("proof__side_b", "proof__point_B", "proof__point_C", color=role_color("construction"), role="construction")
+        add_segment("proof__side_c", "proof__point_C", "proof__point_A", color=role_color("construction"), role="construction")
+        add_segment("proof__median_a", "proof__point_A", "proof__point_D", color=role_color("projection"), style="dashed")
+        add_segment("proof__median_b", "proof__point_B", "proof__point_E", color=role_color("projection"), style="dashed")
+        add_segment("proof__median_c", "proof__point_C", "proof__point_F", color=role_color("projection"), style="dashed")
+        add_note(
+            "proof__note_centroid",
+            "AG : GD = 2 : 1",
+            outward_label(origin, midpoint_bc, centre, 0.36),
+        )
+        formula = "AG = (a + b) / 3"
+        vertices = [origin, vertex_b, vertex_c]
+    elif topic_id == "ch01.proof.parallelogram-diagonals":
+        vertex_d = vertex_b
+        vertex_c_para = (vertex_b[0] + vertex_c[0], vertex_b[1] + vertex_c[1])
+        centre = midpoint(origin, vertex_c_para)
+        add_point("proof__point_A", origin, "A")
+        add_point("proof__point_B", vertex_d, "B")
+        add_point("proof__point_C", vertex_c_para, "C")
+        add_point("proof__point_D", vertex_c, "D")
+        add_point("proof__point_M", centre, "M")
+        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("vector_a"))
+        add_segment("proof__side_b", "proof__point_A", "proof__point_D", color=role_color("vector_b"))
+        add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("construction"), role="construction")
+        add_segment("proof__side_dc", "proof__point_D", "proof__point_C", color=role_color("construction"), role="construction")
+        add_segment("proof__diagonal_ac", "proof__point_A", "proof__point_C", color=role_color("transformed_a"), style="dashed")
+        add_segment("proof__diagonal_bd", "proof__point_B", "proof__point_D", color=role_color("transformed_b"), style="dashed")
+        formula = "M(AC) = M(BD) = (a + b) / 2"
+        vertices = [origin, vertex_d, vertex_c_para, vertex_c]
+    else:  # ch01.proof.method — the general four-step translation figure.
+        add_point("proof__point_A", origin, "A")
+        add_point("proof__point_B", vertex_b, "B")
+        add_point("proof__point_C", vertex_c, "C")
+        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("vector_a"))
+        add_segment("proof__side_b", "proof__point_A", "proof__point_C", color=role_color("vector_b"))
+        add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("transformed_a"))
+        centre = ((origin[0] + vertex_b[0] + vertex_c[0]) / 3.0, (origin[1] + vertex_b[1] + vertex_c[1]) / 3.0)
+        # Place the side labels inside the triangle: the horizontal side AB
+        # otherwise collides with the axes and their tick numbers.
+        add_note("proof__note_ab", "a", outward_label(origin, vertex_b, centre, -0.30))
+        add_note("proof__note_ac", "b", outward_label(origin, vertex_c, centre, -0.30))
+        add_note("proof__note_bc", "BC", outward_label(vertex_b, vertex_c, centre, -0.30))
+        formula = "BC = b - a"
+        vertices = [origin, vertex_b, vertex_c]
+
+    x_values = [float(operation["coordinates"][0]) for operation in point_ops]
+    y_values = [float(operation["coordinates"][1]) for operation in point_ops]
+    left, right = min(x_values), max(x_values)
+    bottom, top = min(y_values), max(y_values)
+    margin_y = max((top - bottom) * 0.08, 0.10)
+    # A long student-readable label is centred under the construction so the
+    # fitted pane never clips it against a figure edge.
+    formula_position = ((left + right) / 2.0, bottom - margin_y)
+
+    operations: list[dict[str, Any]] = [
+        {
+            "op": "geometry.polygon",
+            "alias": "proof__region",
+            "vertices": [[round(float(point[0]), 6), round(float(point[1]), 6)] for point in vertices],
+            "color": role_color("area"),
+            "opacity": 0.12,
+            "outline": True,
+        }
+    ]
+    operations.extend(point_ops)
+    operations.extend(segment_ops)
+    operations.extend(note_ops)
+    operations.append(
+        {
+            "op": "annotation.formula",
+            "alias": "proof__formula",
+            "text": formula,
+            "position": [round(float(formula_position[0]), 6), round(float(formula_position[1]), 6)],
+        }
+    )
+    return operations
+
+
 def _alias(value: str) -> str:
     result = _SAFE_ALIAS.sub("_", value).strip("_") or "semantic"
     return f"sem__{result}"
+
+
+def _pick_role_entity(entities, role: str, anchor: str):
+    """Return the ``role`` entity belonging to the same group as ``anchor``.
+
+    A topic may declare the same role for several cases (e.g. two projections),
+    so a bare ``next(role == ...)`` lookup would bind every relation to the first
+    case's entity. Prefer the entity sharing ``anchor``'s ``case<n>_`` prefix and
+    only fall back to positional selection when the choice is unambiguous.
+    """
+    candidates = [entity for entity in entities if entity.role == role]
+    if len(candidates) <= 1:
+        return candidates[0] if candidates else None
+    prefix = anchor.rsplit("_", 1)[0]
+    for entity in candidates:
+        if entity.id.rsplit("_", 1)[0] == prefix:
+            return entity
+    return candidates[0]
+
+
+def _vector_addition_operation(
+    semantics: VisualSemantics,
+    aliases: Mapping[str, list[str] | tuple[str, ...]],
+) -> dict[str, Any] | None:
+    """Describe an explicit 2-D semantic sum as a live scene relation.
+
+    The compiled drawing still contains the ordinary point/linear operations;
+    this small metadata operation lets the Qt host keep the derived endpoint,
+    translated copy, and construction polygon synchronized after a drag.
+    """
+    if semantics.scene_kind != "2d":
+        return None
+    vectors = [entity for entity in semantics.entities if entity.kind == "vector" and entity.dimension == 2]
+    for relation in semantics.relations:
+        if relation.kind != "sum":
+            continue
+        source = next((entity for entity in vectors if entity.id == relation.source_ref), None)
+        target = next((entity for entity in vectors if entity.id == relation.target_ref), None)
+        if source is None or target is None:
+            continue
+        def close(left: object, right: object) -> bool:
+            try:
+                return all(abs(float(a) - float(b)) <= 1e-9 for a, b in zip(left, right, strict=True))  # type: ignore[arg-type]
+            except (TypeError, ValueError):
+                return False
+        source_value = tuple(float(value) for value in source.value)
+        target_value = tuple(float(value) for value in target.value)
+        result = next(
+            (
+                entity for entity in vectors
+                if entity.id not in {source.id, target.id}
+                and close(entity.value, (source_value[0] + target_value[0], source_value[1] + target_value[1]))
+            ),
+            None,
+        )
+        if result is None:
+            # Some family semantics use ``target`` for the result and carry
+            # the second addend as a numeric relation parameter.
+            result = target
+            other = next(
+                (
+                    entity for entity in vectors
+                    if entity.id != source.id
+                    and close(entity.value, relation.parameters.get("other_vector"))
+                ),
+                None,
+            ) if isinstance(relation.parameters, Mapping) else None
+            if other is None:
+                continue
+            first, second = source, other
+        else:
+            first, second = source, target
+        first_aliases = tuple(aliases.get(first.id, ()))
+        second_aliases = tuple(aliases.get(second.id, ()))
+        result_aliases = tuple(aliases.get(result.id, ()))
+        first_vector = first_aliases[0] if first_aliases else _alias(first.id)
+        second_vector = second_aliases[0] if second_aliases else _alias(second.id)
+        result_vector = result_aliases[0] if result_aliases else _alias(result.id)
+        polygon_aliases = ["sem__addition_parallelogram"]
+        if str(relation.id).endswith("addition.flow"):
+            polygon_aliases.append("cap__polygon")
+        return {
+            "op": "geometry.vector_addition",
+            "alias": f"dynamic__{_alias(relation.id)}",
+            "vector_a": first_vector,
+            "vector_b": second_vector,
+            "result_vector": result_vector,
+            "result_start": f"{result_vector}__origin",
+            "result_end": f"{result_vector}__end",
+            "polygon_aliases": polygon_aliases,
+        }
+    return None
 
 
 def _stage_title(semantics: VisualSemantics, title: str, index: int) -> str:
@@ -799,12 +1232,30 @@ def _stage_caption(semantics: VisualSemantics, caption: str, index: int) -> str:
     return caption
 
 
-def _stage_specific_aliases(semantics: VisualSemantics, index: int) -> tuple[str, ...]:
+def _stage_relation(semantics: VisualSemantics, stage: Any, kind: str):
+    """Return the relation of ``kind`` that ``stage`` actually references.
+
+    Per-pane construction geometry (orientation arcs, right-angle markers) used
+    to look up ``next(relation.kind == kind)``, so every pane of a topic with
+    several relations of that kind drew the *first* case's marker and the panes
+    looked identical.  Selecting the referenced relation keeps each pane on its
+    own case.  A stage that predates stage-scoped references still draws the
+    marker when the topic declares exactly one relation of that kind.
+    """
+    refs = tuple(getattr(stage, "relation_refs", ()) or ())
+    relations = [relation for relation in semantics.relations if relation.kind == kind]
+    if refs:
+        return next((relation for relation in relations if relation.id in refs), None)
+    return relations[0] if len(relations) == 1 else None
+
+
+def _stage_specific_aliases(semantics: VisualSemantics, stage: Any, index: int) -> tuple[str, ...]:
     """Return aliases for stage-only construction geometry."""
     relation_kinds = {relation.kind for relation in semantics.relations}
     if "sum" in relation_kinds:
-        stage_id = str(getattr(semantics.stages[index], "id", "")) if index < len(semantics.stages) else ""
-        if "components" in stage_id:
+        stage_id = str(getattr(stage, "id", ""))
+        # 第一步只给出 a、b 两个向量，没有额外构造几何。
+        if "components" in stage_id or "objects" in stage_id:
             return ()
         if "geometry" in stage_id:
             return (
@@ -822,17 +1273,26 @@ def _stage_specific_aliases(semantics: VisualSemantics, index: int) -> tuple[str
     if "composition_order" in relation_kinds:
         stage_alias = f"sem__stage_order__{index + 1}"
         return (stage_alias,)
-    if "projects_to" in relation_kinds:
-        stage_alias = f"sem__projection__{index + 1}"
-        return (stage_alias,)
+    # 投影只由 projects_to 关系本身落笔画：引用该关系的窗格才会显示投影。
+    # 这里不再按窗格额外补一条 sem__projection__N，否则未引用投影的窗格
+    # （例如「第一步：几何定义」）也会出现投影，并与关系笔画叠成两条。
     if "maps_to" in relation_kinds:
         return (f"sem__mapping_grid__{index + 1}",)
     if "spans" in relation_kinds:
         return (f"sem__span__{index + 1}",)
+    # 夹角弧与直角标记只属于引用对应关系的窗格，否则每个窗格都会补出同一条弧。
     if "orientation" in relation_kinds:
-        return (f"sem__orientation__{index + 1}",)
+        return (
+            (f"sem__orientation__{index + 1}",)
+            if _stage_relation(semantics, stage, "orientation") is not None
+            else ()
+        )
     if "orthogonal_to" in relation_kinds:
-        return (f"sem__orthogonal__{index + 1}",)
+        return (
+            (f"sem__orthogonal__{index + 1}",)
+            if _stage_relation(semantics, stage, "orthogonal_to") is not None
+            else ()
+        )
     return ()
 
 
@@ -855,7 +1315,7 @@ def _stage_geometry_operations(
         a = _coordinates(vectors[0].value, 2)
         b = _coordinates(vectors[1].value, 2)
         stage_id = str(getattr(stage, "id", ""))
-        if "components" in stage_id:
+        if "components" in stage_id or "objects" in stage_id:
             return []
         if "geometry" in stage_id:
             endpoint = (a[0] + b[0], a[1] + b[1])
@@ -935,31 +1395,26 @@ def _stage_geometry_operations(
                 "aliases": point_aliases,
             }
         ]
-    if "projects_to" in relation_kinds:
-        relation = next((item for item in semantics.relations if item.kind == "projects_to"), None)
-        if relation is None:
-            return []
-        source = entity_by_id.get(relation.source_ref)
-        direction = entity_by_id.get(relation.target_ref)
-        if source is None or direction is None or source.kind != "vector" or direction.kind != "vector":
-            return []
-        stage_alias = f"sem__projection__{index + 1}"
-        return [{
-            "op": "geometry.projection",
-            "alias": stage_alias,
-            "vector": list(_coordinates(source.value, 2)),
-            "direction": list(_coordinates(direction.value, 2)),
-            "result_alias": stage_alias,
-            "foot_alias": f"{stage_alias}__foot",
-            "residual_alias": f"{stage_alias}__residual",
-            "color": role_color("projection"),
-        }]
     if "maps_to" in relation_kinds:
         matrix = next(
             (_matrix2(relation.parameters.get("matrix")) for relation in semantics.relations if relation.kind == "maps_to" and isinstance(relation.parameters, Mapping) and _matrix2(relation.parameters.get("matrix")) is not None),
             None,
         )
         if matrix is None:
+            return []
+        # A stage that already draws a grid or matrix entity owns its grid
+        # geometry.  Adding the automatic transformed grid on top would stack
+        # two grids in the same pane (the "floating duplicate grid" the
+        # walkthrough reported) and would show the transformed grid even in the
+        # stage that is supposed to display the *standard* grid.
+        stage_refs = tuple(getattr(stage, "input_entity_refs", ()) or ()) + tuple(
+            getattr(stage, "output_entity_refs", ()) or ()
+        )
+        if any(
+            entity_by_id[ref].kind in {"grid", "matrix"}
+            for ref in stage_refs
+            if ref in entity_by_id
+        ):
             return []
         stage_alias = f"sem__mapping_grid__{index + 1}"
         return [{"op": "geometry.transformed_grid", "alias": stage_alias, "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color("transformed_a")}]
@@ -975,14 +1430,14 @@ def _stage_geometry_operations(
             return []
         return [{"op": "geometry.polygon", "alias": f"sem__span__{index + 1}", "vertices": [list(point) for point in points], "color": role_color("area"), "opacity": 0.24, "outline": True}]
     if "orientation" in relation_kinds:
-        relation = next((item for item in semantics.relations if item.kind == "orientation"), None)
+        relation = _stage_relation(semantics, stage, "orientation")
         if relation is None:
             return []
         first = _coordinates(entity_by_id[relation.source_ref].value, 2)
         second = _coordinates(entity_by_id[relation.target_ref].value, 2)
         return [{"op": "geometry.angle_arc", "alias": f"sem__orientation__{index + 1}", "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "radius": 0.45, "color": role_color("projection")}]
     if "orthogonal_to" in relation_kinds:
-        relation = next((item for item in semantics.relations if item.kind == "orthogonal_to"), None)
+        relation = _stage_relation(semantics, stage, "orthogonal_to")
         if relation is None:
             return []
         first = _coordinates(entity_by_id[relation.source_ref].value, 2)
@@ -1096,14 +1551,30 @@ def _stage_anchor(
 
 
 def storyboard_visibility(compiled: CompiledVisualization, stage_id: str) -> tuple[tuple[str, ...], tuple[str, ...]]:
-    """Return aliases controlled by a storyboard and those shown for one stage."""
+    """Return aliases controlled by a storyboard and those shown for one stage.
+
+    Every alias bound to a semantic object of a storyboard topic (entity,
+    relation or chapter-owned stage) is stage-scoped: a pane must only show the
+    ones it references.  Deriving the controlled set solely from the union of
+    ``visible_aliases`` let aliases that *no* stage references (for example the
+    projection foot kept out of the first step) fall outside the mask, so the
+    runtime showed them in every pane and the panes became identical.
+    """
     stage = next((item for item in compiled.storyboard if item.id == stage_id), None)
     if stage is None:
         raise ValueError(f"unknown storyboard stage: {stage_id}")
-    all_aliases = tuple(
-        dict.fromkeys(alias for item in compiled.storyboard for alias in item.visible_aliases)
-    )
-    return all_aliases, stage.visible_aliases
+    controlled: list[str] = []
+    for item in compiled.storyboard:
+        controlled.extend(item.visible_aliases)
+    for _semantic_id, values in getattr(compiled, "aliases", ()) or ():
+        controlled.extend(str(value) for value in values)
+    # A vector entity binds its ``__end`` alias but not the co-located
+    # ``__origin`` point; the storyboard adds that origin only where the end is
+    # visible.  Mirror the rule so the shared origin is masked like its vector.
+    for alias in tuple(controlled):
+        if alias.endswith("__end"):
+            controlled.append(f"{alias[:-5]}__origin")
+    return tuple(dict.fromkeys(controlled)), stage.visible_aliases
 
 
 __all__ = [

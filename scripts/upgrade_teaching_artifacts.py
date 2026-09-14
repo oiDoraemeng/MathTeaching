@@ -17,6 +17,7 @@ from linear_algebra.teaching.store import TeachingArtifactStore
 from linear_algebra.teaching.validation import (
     validate_claim_bindings,
     validate_closed_references,
+    validate_placeholder_explanations,
     validate_source_evidence,
     validate_teaching_depth,
     validate_worked_examples,
@@ -49,6 +50,7 @@ def main() -> int:
             *validate_closed_references(artifact),
             *validate_claim_bindings(artifact),
             *validate_teaching_depth(artifact),
+            *validate_placeholder_explanations(artifact),
             *validate_worked_examples(artifact),
         )
         if issues:

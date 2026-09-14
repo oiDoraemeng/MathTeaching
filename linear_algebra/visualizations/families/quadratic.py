@@ -40,7 +40,10 @@ class QuadraticFamilyCompiler:
             values = np.asarray(payload.get("matrix"), dtype=float)
             if values.ndim != 2 or values.shape[0] not in (2, 3) or values.shape[0] != values.shape[1]: raise ValueError("matrix must be finite square 2D or 3D")
             dimension = int(values.shape[0]); bounds = tuple(float(x) for x in payload.get("bounds", (-2, 2, -2, 2) if dimension == 2 else (-2, 2, -2, 2, -2, 2)))
-            sample_count = int(payload.get("sample_count", 128 * 128 if dimension == 2 else 64 * 64 * 64))
+            raw_sample_count = payload.get("sample_count", 128 * 128 if dimension == 2 else 64 * 64 * 64)
+            if isinstance(raw_sample_count, bool) or not isinstance(raw_sample_count, int) or raw_sample_count < 0:
+                raise ValueError("sample_count must be a non-negative integer")
+            sample_count = raw_sample_count
             errors = validate_budget("lecture-v1", scene=f"{dimension}d", entity_count=3, stage_count=3, sample_count=sample_count, bounds=bounds)
             if errors: raise ValueError("render_budget: " + "; ".join(errors))
             evidence = classify_quadratic(values, payload.get("tolerance", 1e-9)); aliases = ("quadratic__original", "quadratic__principal", "quadratic__standard")

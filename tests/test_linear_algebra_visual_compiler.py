@@ -44,27 +44,46 @@ def test_compiler_emits_valid_plan_and_stable_digest() -> None:
     }
 
 
-def test_addition_storyboard_contains_distinct_geometry_examples() -> None:
+def test_addition_flow_shows_vectors_then_parallelogram() -> None:
     semantics = VisualSemantics.from_dict({
             "scene_kind": "2d",
             "entities": [
-                {"id": "a", "kind": "vector", "dimension": 2, "value": [3, 1], "role": "vector_a", "label": "a", "claim_refs": []},
-                {"id": "b", "kind": "vector", "dimension": 2, "value": [1, 2], "role": "vector_b", "label": "b", "claim_refs": []},
-                {"id": "sum", "kind": "vector", "dimension": 2, "value": [4, 3], "role": "transformed_a", "label": "a+b", "claim_refs": []},
+                {"id": "flow_a", "kind": "vector", "dimension": 2, "value": [3, 1], "role": "vector_a", "label": "a", "claim_refs": []},
+                {"id": "flow_b", "kind": "vector", "dimension": 2, "value": [1, 2], "role": "vector_b", "label": "b", "claim_refs": []},
+                {"id": "flow_sum", "kind": "vector", "dimension": 2, "value": [4, 3], "role": "transformed_a", "label": "a+b", "claim_refs": []},
             ],
-            "relations": [{"id": "sum-rel", "kind": "sum", "source_ref": "a", "target_ref": "b", "parameters": {}, "claim_refs": []}],
+            "relations": [{"id": "rel.addition.flow", "kind": "sum", "source_ref": "flow_a", "target_ref": "flow_b", "parameters": {}, "claim_refs": []}],
             "stages": [
-                {"id": "stage.triangle", "title": "观察对象", "caption": "", "layout": "sequence", "input_entity_refs": ["a", "b"], "output_entity_refs": ["sum"], "relation_refs": ["sum-rel"], "expected_invariants": []},
-                {"id": "stage.parallelogram", "title": "代数验证", "caption": "", "layout": "sequence", "input_entity_refs": ["a", "b"], "output_entity_refs": ["sum"], "relation_refs": ["sum-rel"], "expected_invariants": []},
+                {"id": "stage.flow.objects", "title": "第一步：向量 a 与 b", "caption": "a 与 b 从原点出发。", "layout": "overlay", "input_entity_refs": ["flow_a", "flow_b"], "output_entity_refs": [], "relation_refs": [], "expected_invariants": []},
+                {"id": "stage.flow.parallelogram", "title": "第二步：a+b 与平行四边形", "caption": "对角线就是 a+b。", "layout": "overlay", "input_entity_refs": ["flow_a", "flow_b"], "output_entity_refs": ["flow_sum"], "relation_refs": ["rel.addition.flow"], "expected_invariants": []},
             ],
         })
     compiled = VisualSemanticsCompiler().compile(semantics, _permissive_contract("ch01.ops.addition"), RenderContext.default("ch01.ops.addition"), topic_id="ch01.ops.addition")
     first, second = compiled.storyboard
-    assert first.title == "三角形法则"
-    assert second.title == "平行四边形法则"
+    assert first.title == "第一步：向量 a 与 b"
+    assert second.title == "第二步：a+b 与平行四边形"
     assert first.visible_aliases != second.visible_aliases
-    assert any("triangle" in alias for alias in first.visible_aliases)
+    assert not any("parallelogram" in alias for alias in first.visible_aliases)
+    assert not any("flow_sum" in alias for alias in first.visible_aliases)
     assert any("parallelogram" in alias for alias in second.visible_aliases)
+    assert any("flow_sum" in alias for alias in second.visible_aliases)
+    # 两个案例窗格共享同一固定视角，避免“全部显示”时一大一小。
+    view = compiled.plan.operations[-1]
+    assert view["op"] == "view.fit"
+    assert view["bounds"] == [0.0, 4.0, 0.0, 3.0]
+    # 向量用小写 a、b 标注，向量终点是“点”，用大写 A、B 区分。
+    points = {op["alias"]: op["name"] for op in compiled.plan.operations if op.get("op") == "point.upsert"}
+    labels = {op["alias"]: op["label"] for op in compiled.plan.operations if op.get("op") == "linear.upsert"}
+    assert points["sem__flow_a__end"] == "A"
+    assert points["sem__flow_b__end"] == "B"
+    assert points["sem__flow_sum__end"] == "C"
+    assert labels["sem__flow_a"] == "a"
+    assert labels["sem__flow_b"] == "b"
+    assert labels["sem__flow_sum"] == "a+b"
+    relation = next(operation for operation in compiled.plan.operations if operation.get("op") == "geometry.vector_addition")
+    assert relation["vector_a"] == "sem__flow_a"
+    assert relation["vector_b"] == "sem__flow_b"
+    assert relation["result_vector"] == "sem__flow_sum"
 
 
 def test_magnitude_case_uses_clean_2d_labels_without_internal_annotations() -> None:
@@ -268,7 +287,7 @@ def test_compiler_maps_signed_area_and_volume_orientation_primitives() -> None:
         }
     )
 
-    area_plan = VisualSemanticsCompiler().compile(area, _permissive_contract("ch01.ops.cross-product"), RenderContext.default("ch01.ops.cross-product")).plan
+    area_plan = VisualSemanticsCompiler().compile(area, _permissive_contract("ch03.det.oriented-area"), RenderContext.default("ch03.det.oriented-area")).plan
     volume_plan = VisualSemanticsCompiler().compile(volume, _permissive_contract("ch03.det.multiplicativity"), RenderContext.default("ch03.det.multiplicativity")).plan
 
     assert any(operation["op"] == "geometry.oriented_area" for operation in area_plan.operations)

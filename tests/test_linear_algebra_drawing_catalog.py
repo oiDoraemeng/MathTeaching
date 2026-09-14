@@ -9,7 +9,9 @@ from linear_algebra.catalog.drawing_index import (
 )
 
 
-CATALOG = Path("openspec/changes/extend-linear-algebra-chapters-4-8/drawing-catalog.md")
+_CATALOGS = sorted(Path("openspec/changes/archive").glob("*-extend-linear-algebra-chapters-4-8/drawing-catalog.md"))
+assert _CATALOGS, "No archived linear algebra drawing catalog found"
+CATALOG = _CATALOGS[-1]
 
 
 def test_catalog_has_expected_chapter_distribution_and_claims():

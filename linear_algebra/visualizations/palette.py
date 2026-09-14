@@ -9,6 +9,7 @@ ROLE_COLORS: dict[str, str] = {
     "basis_e2": "#F08A24",
     "transformed_a": "#7B61FF",
     "transformed_b": "#D64550",
+    "combination": "#2A9D8F",
     "area": "#E09F3E",
     "projection": "#2A9D8F",
     "residual": "#E76F51",

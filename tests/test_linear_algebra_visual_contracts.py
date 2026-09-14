@@ -22,7 +22,7 @@ def test_projection_contract_rejects_missing_residual() -> None:
 
 def test_all_catalog_topics_resolve_explicit_contracts() -> None:
     contracts = tuple(contract_for(topic.id) for topic in topic_entries())
-    assert len(contracts) == 93
+    assert len(contracts) == 90
     assert {contract.topic_id for contract in contracts} == {topic.id for topic in topic_entries()}
 
 

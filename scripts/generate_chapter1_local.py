@@ -61,15 +61,12 @@ _SPEC: dict[str, dict[str, Any]] = {
     "ch01.ops.subtraction": {"formula": "a-b=a+(-b)", "kind": "vector_addition", "given": {"a": [4, 3], "b": [-1, -2]}, "result": [3.0, 1.0], "check": "sum", "statement": "减法等于加上相反向量，结果表示从 b 到 a 的位移。", "relation": "difference"},
     "ch01.ops.scalar": {"formula": "2v=v+v", "kind": "vector_addition", "given": {"a": [1, 2], "b": [1, 2]}, "result": [2.0, 4.0], "check": "sum", "statement": "数乘改变长度，正负号决定同向或反向，共线性保持不变。", "relation": "scalar_multiple"},
     "ch01.ops.linear-combination": {"formula": "2e_1+3e_2=(2,3)", "kind": "matrix_transform", "given": {"matrix": [[1, 0], [0, 1]], "vector": [2, 3]}, "result": [2.0, 3.0], "check": "transformed", "statement": "线性组合是带系数的向量和，系数就是在给定基底方向上的读数。", "relation": "maps_to", "matrix": True},
-    "ch01.ops.velocity": {"formula": "v_{absolute}=v_{relative}+v_{frame}", "kind": "vector_addition", "given": {"a": [3, 0, 0], "b": [1, 2, 0]}, "result": [4.0, 2.0, 0.0], "check": "sum", "statement": "速度合成是位移向量加法在单位时间上的应用。", "relation": "sum", "scene": "3d"},
-    "ch01.ops.cross-product": {"formula": "a\u00d7b=n", "kind": "oriented_volume", "given": {"a": [1, 0, 0], "b": [0, 1, 0], "c": [0, 0, 1]}, "result": 1.0, "check": "triple_product", "statement": "叉积方向同时垂直于两个因子，并由右手定则确定正负。", "relation": "cross", "scene": "3d", "special": "cross"},
-    "ch01.ops.scalar-triple": {"formula": "a\u00b7(b\u00d7c)=V", "kind": "oriented_volume", "given": {"a": [1, 0, 0], "b": [0, 2, 0], "c": [0, 0, 3]}, "result": 6.0, "check": "volume", "statement": "混合积给出三条边张成的平行六面体有向体积。", "relation": "invariant", "scene": "3d", "volume": True},
     "ch01.inner.equivalence": {"formula": "a\u00b7b=a_1b_1+a_2b_2=||a||||b||cos\u03b8", "kind": "inner_product", "given": {"a": [1, 0], "b": [0, 1]}, "result": 0.0, "check": "dot", "statement": "坐标定义与几何定义通过投影长度相等而统一。", "relation": "compare"},
     "ch01.inner.definitions": {"formula": "a\u00b7b=||a||||b||cos\u03b8", "kind": "inner_product", "given": {"a": [2, 0], "b": [1, 1]}, "result": 2.0, "check": "dot", "statement": "内积等于一个向量在另一个方向上的带符号投影乘长度。", "relation": "orientation"},
     "ch01.inner.applications": {"formula": "a\u00b7b=0\u21d4a\u22a5b", "kind": "inner_product", "given": {"a": [2, 0], "b": [0, 3]}, "result": 0.0, "check": "dot", "statement": "内积同时测量长度、夹角和正交性。", "relation": "orthogonal_to"},
     "ch01.inner.cauchy-schwarz": {"formula": "|a\u00b7b|\u2264||a||||b||", "kind": "inner_product", "given": {"a": [3, 4], "b": [1, 0]}, "result": 3.0, "check": "dot", "statement": "投影长度不超过原向量长度，得到柯西-施瓦茨不等式。", "relation": "compare"},
     "ch01.inner.examples": {"formula": "cos\u03b8=(a\u00b7b)/(||a||||b||)", "kind": "inner_product", "given": {"a": [1, 0], "b": [1, 1]}, "result": 1.0, "check": "dot", "statement": "通过内积可计算夹角并判断两个方向的关系。", "relation": "orientation"},
-    "ch01.projection.definition": {"formula": "p=((v\u00b7u)/(u\u00b7u))u", "kind": "projection", "given": {"vector": [3, 4], "direction": [1, 0]}, "result": [3.0, 0.0], "check": "projection", "statement": "投影把 v 分解成沿 u 的分量 p 与垂直残差 r。", "relation": "projection", "special": "projection"},
+    "ch01.projection.definition": {"formula": "p=((v\u00b7u)/(u\u00b7u))u", "kind": "projection", "given": {"vector": [3, 4], "direction": [2, 1]}, "result": [4.0, 2.0], "check": "projection", "statement": "投影把 v 分解成沿 u 的分量 p 与垂直残差 r。", "relation": "projection", "special": "projection"},
     "ch01.projection.properties": {"formula": "P(v+w)=Pv+Pw", "kind": "projection", "given": {"vector": [3, 4], "direction": [1, 0]}, "result": [3.0, 0.0], "check": "projection", "statement": "固定方向的正交投影保持加法和数乘，因此是线性变换。", "relation": "projection", "special": "projection"},
     "ch01.projection.force": {"formula": "F=F_{parallel}+F_{perpendicular}", "kind": "projection", "given": {"vector": [3, 4], "direction": [1, 1]}, "result": [3.5, 3.5], "check": "projection", "statement": "力沿斜面方向的有效分量由投影给出，法向分量是残差。", "relation": "projection", "special": "projection"},
     "ch01.proof.method": {"formula": "\vec{AB}=B-A", "kind": "vector_addition", "given": {"a": [2, 1], "b": [1, 3]}, "result": [3.0, 4.0], "check": "sum", "statement": "把点转换为位置向量，再用向量等式表达几何关系。", "relation": "maps_to"},
@@ -279,9 +276,28 @@ def main() -> int:
         published = store.publish(reviewed, source_context=context, topic=topic)
         if not published.ok:
             raise ValueError(f"{topic.id}: " + "; ".join(issue.code for issue in published.issues))
-        summaries.append({"topic_id": topic.id, "draft_revision": draft_revision.revision, "reviewed_revision": reviewed_revision.revision, "published_revision": published.revision.revision if published.revision else None, "source_hash": context.source_hash})
-    index = {"schema_version": 1, "chapter": 1, "topics": summaries}
+        published_revision = published.revision.revision if published.revision else None
+        summaries.append({
+            "topic_id": topic.id,
+            "chapter": 1,
+            "revision": published_revision,
+            "draft_revision": draft_revision.revision,
+            "reviewed_revision": reviewed_revision.revision,
+            "published_revision": published_revision,
+            "source_hash": context.source_hash,
+        })
     index_path = root / "index.json"
+    if index_path.is_file():
+        current = json.loads(index_path.read_text(encoding="utf-8"))
+        current_topics = current.get("topics", []) if isinstance(current, dict) else []
+    else:
+        current_topics = []
+    retained = [
+        row for row in current_topics
+        if isinstance(row, dict) and not str(row.get("topic_id", "")).startswith("ch01.")
+    ]
+    topics = sorted([*retained, *summaries], key=lambda row: str(row["topic_id"]))
+    index = {"schema_version": 1, "topic_count": len(topics), "topics": topics}
     index_path.parent.mkdir(parents=True, exist_ok=True)
     index_path.write_text(json.dumps(index, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"chapter": 1, "topics": len(summaries), "published": len(summaries), "index": str(index_path)}, ensure_ascii=False, sort_keys=True))

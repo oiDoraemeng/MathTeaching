@@ -62,9 +62,6 @@ def contract_for(topic_id: str) -> VisualContract:
         "ch03.det.multiplicativity": VisualContract(
             topic_id, (), (), ("same_measure", "composition_order"), (), 3,
         ),
-        "ch01.ops.cross-product": VisualContract(
-            topic_id, (), (), ("orientation", "orthogonal_to"), ("vector",), 2,
-        ),
         "ch03.inverse.undo": VisualContract(
             topic_id, (), (), ("composition_order", "compare"), (), 3,
         ),

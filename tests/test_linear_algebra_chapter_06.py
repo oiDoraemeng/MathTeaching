@@ -52,9 +52,9 @@ def test_chapter6_corrupted_parameter_rejected(topic,field):
 def test_chapter6_index_has_three_rows_and_preserves_previous_chapters():
     import json
     rows=json.loads(open('linear_algebra/teaching/data/index.json',encoding='utf8').read())['topics']
-    assert len(rows)==93
+    assert len(rows)==90
     assert sum(row['topic_id'].startswith('ch06.') for row in rows)==3
-    assert sum(row['topic_id'].startswith(('ch01.','ch02.','ch03.','ch04.','ch05.')) for row in rows)==78
+    assert sum(row['topic_id'].startswith(('ch01.','ch02.','ch03.','ch04.','ch05.')) for row in rows)==75
 
 
 TOPICS = ('ch06.basis-change.motivation', 'ch06.basis-change.coordinates', 'ch06.similarity-transform')
@@ -179,7 +179,7 @@ def test_different_consistent_example_is_computed_from_artifact():
     assert evidence['standard_vector'] == [5., 5.]
 
 
-def test_canonical_resources_index_and_prior_78_rows_are_preserved():
+def test_canonical_resources_index_and_prior_54_non_chapter_one_rows_are_preserved():
     import json
     import subprocess
     from pathlib import Path
@@ -187,10 +187,10 @@ def test_canonical_resources_index_and_prior_78_rows_are_preserved():
     data = Path('linear_algebra/teaching/data')
     baseline = json.loads(subprocess.check_output(['git', 'show', 'HEAD:linear_algebra/teaching/data/index.json']).decode('utf8'))
     rows = json.loads((data/'index.json').read_text(encoding='utf8'))['topics']
-    legacy = lambda rs: [r for r in rs if r['topic_id'].startswith(('ch01.', 'ch02.', 'ch03.', 'ch04.', 'ch05.'))]
-    assert len(legacy(rows)) == 78
+    legacy = lambda rs: [r for r in rs if r['topic_id'].startswith(('ch02.', 'ch03.', 'ch04.', 'ch05.'))]
+    assert len(legacy(rows)) == 54
     assert legacy(rows) == legacy(baseline['topics'])
-    assert len(rows) == len({r['topic_id'] for r in rows}) == 93
+    assert len(rows) == len({r['topic_id'] for r in rows}) == 90
     assert sum(r['topic_id'].startswith('ch07.') for r in rows) == 6
     assert sum(r['topic_id'].startswith('ch08.') for r in rows) == 6
     by_id = {r['topic_id']: r for r in rows}

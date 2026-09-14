@@ -16,6 +16,7 @@ from .vocabulary import (
     ENTITY_KINDS,
     LAYOUTS,
     RELATION_KINDS,
+    RELATION_STYLES,
     VECTOR_DIMENSIONS,
     validate_semantic_value,
 )
@@ -321,6 +322,7 @@ class VisualRelation:
     target_ref: str
     parameters: Mapping[str, JsonValue]
     claim_refs: tuple[str, ...]
+    style: str = "solid"
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "id", _constructor_string(self.id, "id"))
@@ -330,6 +332,7 @@ class VisualRelation:
         parameters = _freeze_semantic_parameters(self.parameters, "$.parameters")
         object.__setattr__(self, "parameters", parameters)
         object.__setattr__(self, "claim_refs", _constructor_string_tuple(self.claim_refs, "claim_refs"))
+        object.__setattr__(self, "style", _constructor_vocabulary_choice(self.style, "style", RELATION_STYLES))
 
 
 @dataclass(frozen=True)
@@ -696,7 +699,7 @@ def _decode_visual_entity(payload: Mapping[str, object], path: str) -> VisualEnt
 
 
 def _decode_visual_relation(payload: Mapping[str, object], path: str) -> VisualRelation:
-    record = _object(payload, path, _RELATION_FIELDS)
+    record = _object_optional(payload, path, _RELATION_FIELDS, (*_RELATION_FIELDS, "style"))
     return VisualRelation(
         id=_string(record["id"], f"{path}.id"),
         kind=_vocabulary_choice(record["kind"], f"{path}.kind", RELATION_KINDS),
@@ -704,6 +707,7 @@ def _decode_visual_relation(payload: Mapping[str, object], path: str) -> VisualR
         target_ref=_string(record["target_ref"], f"{path}.target_ref"),
         parameters=_freeze_semantic_parameters(record["parameters"], f"{path}.parameters"),
         claim_refs=_string_tuple(record["claim_refs"], f"{path}.claim_refs"),
+        style=_vocabulary_choice(record.get("style", "solid"), f"{path}.style", RELATION_STYLES),
     )
 
 
@@ -889,6 +893,21 @@ def _encode_worked_example_check(check: WorkedExampleCheck) -> dict[str, object]
     }
 
 
+def _encode_visual_relation(relation: VisualRelation) -> dict[str, object]:
+    encoded: dict[str, object] = {
+        "id": relation.id,
+        "kind": relation.kind,
+        "source_ref": relation.source_ref,
+        "target_ref": relation.target_ref,
+        "parameters": _thaw_json(relation.parameters),
+        "claim_refs": list(relation.claim_refs),
+    }
+    # 默认实线不写字段，保持既有产物字节稳定。
+    if relation.style != "solid":
+        encoded["style"] = relation.style
+    return encoded
+
+
 def _encode_visual_semantics(semantics: VisualSemantics) -> dict[str, object]:
     encoded = {
         "scene_kind": semantics.scene_kind,
@@ -904,17 +923,7 @@ def _encode_visual_semantics(semantics: VisualSemantics) -> dict[str, object]:
             }
             for entity in semantics.entities
         ],
-        "relations": [
-            {
-                "id": relation.id,
-                "kind": relation.kind,
-                "source_ref": relation.source_ref,
-                "target_ref": relation.target_ref,
-                "parameters": _thaw_json(relation.parameters),
-                "claim_refs": list(relation.claim_refs),
-            }
-            for relation in semantics.relations
-        ],
+        "relations": [_encode_visual_relation(relation) for relation in semantics.relations],
         "stages": [
             {
                 "id": stage.id,

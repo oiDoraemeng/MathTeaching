@@ -71,15 +71,22 @@ def _normal_rhs(rhs: object, rows: int) -> list[float]:
 
 def _operation_from_mapping(operation: Mapping[str, object]) -> RowOperation:
     kind = operation.get("kind", operation.get("op"))
+
+    def row_index(field: str) -> int:
+        value = operation[field]
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise ValueError(f"{field} row index is invalid")
+        return value
+
     try:
         if kind == "swap":
-            return Swap(int(operation["first"]), int(operation["second"]), str(operation.get("label", "交换行")))
+            return Swap(row_index("first"), row_index("second"), str(operation.get("label", "交换行")))
         if kind == "scale":
-            return Scale(int(operation["row"]), _number(operation["factor"], "factor"), str(operation.get("label", "缩放行")))
+            return Scale(row_index("row"), _number(operation["factor"], "factor"), str(operation.get("label", "缩放行")))
         if kind == "eliminate":
-            return Eliminate(int(operation["target"]), int(operation["source"]), _number(operation["factor"], "factor"), str(operation.get("label", "消元")))
+            return Eliminate(row_index("target"), row_index("source"), _number(operation["factor"], "factor"), str(operation.get("label", "消元")))
     except (KeyError, TypeError, ValueError) as error:
-        raise ValueError("row operation is invalid") from error
+        raise ValueError(f"row operation is invalid: {error}") from error
     raise ValueError("row operation kind is invalid")
 
 

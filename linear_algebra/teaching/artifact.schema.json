@@ -208,6 +208,7 @@
         "source_ref": {"type": "string"},
         "target_ref": {"type": "string"},
         "parameters": {"type": "object", "additionalProperties": {"$ref": "#/$defs/semantic_value"}},
+        "style": {"enum": ["solid", "dashed"]},
         "claim_refs": {"$ref": "#/$defs/string_array"}
       }
     },

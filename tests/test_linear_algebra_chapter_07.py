@@ -188,7 +188,7 @@ def test_alternative_consistent_diagonalization_is_not_fixture_lookup():
     assert result.family_evidence['endpoint_error'] < 1e-9
 
 
-def test_registry_and_canonical_publication_preserve_prior_81_rows():
+def test_registry_and_canonical_publication_preserve_prior_57_non_chapter_one_rows():
     import json
     import subprocess
     from pathlib import Path
@@ -197,10 +197,10 @@ def test_registry_and_canonical_publication_preserve_prior_81_rows():
     data = Path('linear_algebra/teaching/data')
     baseline = json.loads(subprocess.check_output(['git','show','HEAD:linear_algebra/teaching/data/index.json']).decode('utf8'))
     rows = json.loads((data/'index.json').read_text(encoding='utf8'))['topics']
-    legacy = lambda records: [r for r in records if r['chapter'] <= 6]
-    assert len(legacy(rows)) == 81
+    legacy = lambda records: [r for r in records if 2 <= r['chapter'] <= 6]
+    assert len(legacy(rows)) == 57
     assert legacy(rows) == legacy(baseline['topics'])
-    assert len(rows) == len({r['topic_id'] for r in rows}) == 93
+    assert len(rows) == len({r['topic_id'] for r in rows}) == 90
     assert sum(r['chapter'] == 8 for r in rows) == 6
     recipes = recipes_for_topics()
     by_id = {r['topic_id']: r for r in rows}

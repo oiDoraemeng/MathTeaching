@@ -25,6 +25,16 @@ def test_typed_row_operations_are_immutable_and_apply_exactly():
         apply_row_operation([[1, 2]], [5], Scale(row=0, factor=0))
 
 
+@pytest.mark.parametrize("operation", [
+    {"kind": "swap", "first": 1.9, "second": 0},
+    {"kind": "swap", "first": True, "second": 0},
+    {"kind": "scale", "row": "0", "factor": 2},
+])
+def test_mapping_row_indices_are_not_coerced(operation):
+    with pytest.raises(ValueError, match="row index"):
+        apply_row_operation([[1, 2], [3, 4]], [5, 6], operation)
+
+
 def test_matrix_tableau_compiler_emits_immutable_stages_aliases_and_invariants():
     result = MatrixTableauCompiler.compile({
         "matrix": [[1, 2], [3, 4]], "rhs": [5, 6],

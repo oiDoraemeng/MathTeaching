@@ -1,4 +1,4 @@
-"""Chapter 1: Vectors and Geometric Measurement - 24 topic builders."""
+"""Chapter 1: Vectors and Geometric Measurement - 21 topic builders."""
 
 from __future__ import annotations
 
@@ -8,13 +8,11 @@ from services.scene_commands import CommandPlan
 from .primitives import (
     make_angle_arc,
     make_label,
-    make_plane_3d,
     make_polygon,
     make_projection,
     make_right_angle_marker,
     make_vector_2d,
     make_vector_3d,
-    make_parallelepiped,
     make_view_fit,
 )
 from ..palette import role_color
@@ -188,61 +186,6 @@ def build_linear_combination(context: RenderContext) -> CommandPlan:
     ops.append(make_view_fit(padding=1.15))
 
     return CommandPlan(scene="2d", operations=tuple(ops), summary="线性组合生成新向量")
-
-
-def build_velocity_composition(context: RenderContext) -> CommandPlan:
-    """速度合成的几何表示"""
-    v_carrier = [2.5, 0.5, 0.0]
-    v_relative = [0.5, 1.8, 0.6]
-    v_total = [
-        v_carrier[0] + v_relative[0],
-        v_carrier[1] + v_relative[1],
-        v_carrier[2] + v_relative[2],
-    ]
-
-    ops = []
-    ops.append(make_vector_3d([0, 0, 0], v_carrier, "v_carrier", role="primary"))
-    ops.append(make_vector_3d([0, 0, 0], v_relative, "v_relative", role="construction"))
-    ops.append(make_vector_3d(v_carrier, v_total, "v_rel_translated", role="construction"))
-    ops.append(make_vector_3d([0, 0, 0], v_total, "v_total", role="result"))
-    ops.append(make_parallelepiped([0, 0, 0], [v_carrier, v_relative, [0.0, 0.0, 0.25]], opacity=0.10))
-    ops.append(make_view_fit(padding=1.15))
-
-    return CommandPlan(scene="3d", operations=tuple(ops), summary="速度的三维向量合成")
-
-
-def build_cross_product(context: RenderContext) -> CommandPlan:
-    """叉积的三维旋转方向"""
-    a = [2.0, 0.5, 0.8]
-    b = [0.3, 2.0, 0.5]
-
-    ops = []
-    ops.append(make_vector_3d([0, 0, 0], a, "a", role="primary"))
-    ops.append(make_vector_3d([0, 0, 0], b, "b", role="secondary"))
-    ops.append(
-        make_plane_3d([0, 0, 0], [0, 0, 1], size=3.5, color=role_color("neutral"), opacity=0.15)
-    )
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="3d", operations=tuple(ops), summary="叉积与右手法则")
-
-
-def build_scalar_triple_product(context: RenderContext) -> CommandPlan:
-    """混合积与平行六面体体积"""
-    a = [2.0, 0.5, 0.3]
-    b = [0.3, 2.0, 0.5]
-    c = [0.5, 0.3, 2.2]
-
-    ops = []
-    ops.append(make_vector_3d([0, 0, 0], a, "a", role="primary"))
-    ops.append(make_vector_3d([0, 0, 0], b, "b", role="secondary"))
-    ops.append(make_vector_3d([0, 0, 0], c, "c", role="result"))
-    ops.append(
-        make_parallelepiped([0, 0, 0], [a, b, c], color=role_color("volume"), opacity=0.2)
-    )
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="3d", operations=tuple(ops), summary="混合积表示有向体积")
 
 
 def build_inner_product_equivalence(context: RenderContext) -> CommandPlan:
@@ -478,9 +421,6 @@ BUILDERS = {
     "draw.ch01.ops.subtraction": build_vector_subtraction,
     "draw.ch01.ops.scalar": build_vector_scalar,
     "draw.ch01.ops.linear-combination": build_linear_combination,
-    "draw.ch01.ops.velocity": build_velocity_composition,
-    "draw.ch01.ops.cross-product": build_cross_product,
-    "draw.ch01.ops.scalar-triple": build_scalar_triple_product,
     "draw.ch01.inner.equivalence": build_inner_product_equivalence,
     "draw.ch01.inner.definitions": build_inner_product_definitions,
     "draw.ch01.inner.applications": build_inner_product_applications,

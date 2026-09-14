@@ -21,3 +21,9 @@ def test_quadratic_rejects_nonsymmetric_and_over_budget():
         QuadraticFamilyCompiler.compile({"matrix": [[1,2],[0,1]]})
     with pytest.raises(VisualCompileError, match="budget"):
         QuadraticFamilyCompiler.compile({"matrix": [[1,0],[0,1]], "sample_count": 128 * 128 + 1})
+
+
+@pytest.mark.parametrize("sample_count", [True, 1.5, "128"])
+def test_quadratic_rejects_non_integer_sample_count(sample_count):
+    with pytest.raises(VisualCompileError, match="sample_count"):
+        QuadraticFamilyCompiler.compile({"matrix": [[1, 0], [0, 1]], "sample_count": sample_count})

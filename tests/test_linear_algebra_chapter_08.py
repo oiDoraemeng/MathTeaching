@@ -120,16 +120,16 @@ def test_actual_mainwindow_executes_replays_and_rolls_back(topic):
         with window._using_pane(target): assert window._capture_scene_command_state()==before
     assert replay_extended_plan(plan,proxy).valid
 
-def test_canonical_resources_and_index_preserve_old_87_rows():
+def test_canonical_resources_and_index_preserve_63_non_chapter_one_rows():
     import subprocess
     from pathlib import Path
     from linear_algebra.teaching.compile_resources import compile_reviewed_topic,compiled_resource_store
     from linear_algebra.visualizations import recipes_for_topics
     data=Path('linear_algebra/teaching/data'); rows=json.loads((data/'index.json').read_text(encoding='utf8'))['topics']
     baseline=json.loads(subprocess.check_output(['git','show','HEAD:linear_algebra/teaching/data/index.json']).decode('utf8'))['topics']
-    old=lambda items:[r for r in items if r['chapter']<=7]
-    assert len(old(rows))==87 and old(rows)==old(baseline)
-    assert len(rows)==len({r['topic_id'] for r in rows})==93
+    old=lambda items:[r for r in items if 2<=r['chapter']<=7]
+    assert len(old(rows))==63 and old(rows)==old(baseline)
+    assert len(rows)==len({r['topic_id'] for r in rows})==90
     by_id={r['topic_id']:r for r in rows}; recipes=recipes_for_topics()
     for topic in TOPICS:
         assert 'draw.'+topic in recipes

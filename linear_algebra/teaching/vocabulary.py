@@ -23,6 +23,8 @@ RELATION_KINDS = frozenset(
     }
 )
 LAYOUTS = frozenset({"overlay", "side_by_side", "sequence"})
+# Line style for a relation's drawn construction (e.g. an auxiliary projection).
+RELATION_STYLES = frozenset({"solid", "dashed"})
 
 VECTOR_DIMENSIONS = frozenset({2, 3})
 MAX_MATRIX_ROWS = 3
@@ -175,6 +177,7 @@ def _validate_semantic_matrix(value: object, path: str) -> None:
 
 __all__ = [
     "ENTITY_KINDS", "LAYOUTS", "MAX_MATRIX_COLUMNS", "MAX_MATRIX_ROWS", "RELATION_KINDS",
+    "RELATION_STYLES",
     "SemanticIssue", "VECTOR_DIMENSIONS", "VisualVocabulary", "require_finite_number",
     "validate_semantic_value",
 ]

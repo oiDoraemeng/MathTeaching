@@ -61,9 +61,10 @@ class SubspaceFamilyCompiler:
         if dimension not in (2, 3):
             issues.append(CompileIssue("invalid_dimension", "$.dimension", "dimension must be 2 or 3"))
             return tuple(issues)
+        affine_offset_values: tuple[float, ...] | None = None
         try:
             _numbers(payload.get("origin", [0] * dimension), "origin", dimension)
-            _numbers(payload.get("affine_offset", [0] * dimension), "affine_offset", dimension)
+            affine_offset_values = _numbers(payload.get("affine_offset", [0] * dimension), "affine_offset", dimension)
         except VisualCompileError as error:
             issues.extend(error.issues)
         basis = payload.get("basis", [])
@@ -75,7 +76,7 @@ class SubspaceFamilyCompiler:
                     _numbers(vector, f"basis[{index}]", dimension)
                 except VisualCompileError as error:
                     issues.extend(error.issues)
-        if payload.get("is_linear", False) and any(abs(value) > 1e-12 for value in _numbers(payload.get("affine_offset", [0] * dimension), "affine_offset", dimension)):
+        if payload.get("is_linear", False) and affine_offset_values is not None and any(abs(value) > 1e-12 for value in affine_offset_values):
             issues.append(CompileIssue("origin_required", "$.affine_offset", "origin_required: linear subspaces must pass through origin"))
         bounds = payload.get("bounds", [-2, 2, -2, 2, -2, 2] if dimension == 3 else [-2, 2, -2, 2])
         validated_bounds: tuple[float, ...] = ()
