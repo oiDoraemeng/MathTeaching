@@ -66,6 +66,14 @@ _render_check.png
 _export_check.png
 screenshot_*.png
 capture_*.png
+_preview_out/
+_pytest_out.txt
+_tmp_*.py
+_tmp_*.txt
+_tmp_*.png
+
+# Regenerable linear-algebra compilation metadata
+linear_algebra/teaching/data/snapshots/
 
 # uv / package manager cache
 .uv-cache/
