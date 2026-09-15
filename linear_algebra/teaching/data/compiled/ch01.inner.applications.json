@@ -1,7 +1,8 @@
 {
-  "artifact_digest": "sha256:6e529e97d283100bb65d20bdceb3c10cfd33fa73927db7f47054f7021a158261",
+  "artifact_digest": "sha256:18870f00d1fe3aab3fb7a31ead7e81b8506599dfa38de2c59b153a06d66eccb9",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:f82bbcc843d6fcbab94dc7badf8896b51ad533c7854198878cd2d9a48770e49a",
   "plan": {
     "operations": [
       {
@@ -314,14 +315,14 @@
         "alias": "sem__orientation__2",
         "color": "#2A9D8F",
         "first": [
-          3.0,
-          4.0
+          2.0,
+          0.0
         ],
         "op": "geometry.angle_arc",
         "radius": 0.45,
         "second": [
-          3.0,
-          4.0
+          0.0,
+          3.0
         ],
         "vertex": [
           0.0,
@@ -332,14 +333,14 @@
         "alias": "sem__orientation__3",
         "color": "#2A9D8F",
         "first": [
-          3.0,
-          4.0
+          1.0,
+          0.0
         ],
         "op": "geometry.angle_arc",
         "radius": 0.45,
         "second": [
-          3.0,
-          4.0
+          1.0,
+          1.0
         ],
         "vertex": [
           0.0,
@@ -355,10 +356,11 @@
     "summary": "内积的长度、正交与夹角应用",
     "version": 1
   },
-  "plan_digest": "sha256:ee3f5c88a5db962205526f0efa8065a67300e222547b0ca2a42e4850c641a221",
+  "plan_digest": "sha256:3aa2fe524cec1f43b368869e8cb46e995dd3ddb19333fb885af528089911afaa",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 14,
+  "revision": 18,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c",
   "stages": [

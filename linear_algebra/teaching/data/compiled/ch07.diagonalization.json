@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:b6ac7cf079ee92449e451571087f3dd5459333c2cfb25b65a2c5f1d01599f2fa",
+  "artifact_digest": "sha256:e851cf3a9f19b772e80126d6e4f427197a0511ff77fa749059f1226eb580b611",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:d0a73d8fb579aeaca0fed6812d0ed3a2fd9f6ff8d3b7cadf707c8e5b9630353f",
@@ -197,20 +197,20 @@
         "matrices": [
           [
             [
-              1.0,
-              1.0
+              1,
+              1
             ],
             [
-              0.0,
-              1.0
+              0,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ]
       },
@@ -222,20 +222,20 @@
         "matrices": [
           [
             [
-              3.0,
-              0.0
+              3,
+              0
             ],
             [
-              0.0,
-              2.0
+              0,
+              2
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1.0,
-            1.0
+            1,
+            1
           ]
         ]
       },
@@ -247,20 +247,20 @@
         "matrices": [
           [
             [
-              1.0,
-              -1.0
+              1,
+              -1
             ],
             [
-              0.0,
-              1.0
+              0,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            3.0,
-            2.0
+            3,
+            2
           ]
         ]
       },
@@ -272,20 +272,20 @@
         "matrices": [
           [
             [
-              3.0,
-              1.0
+              3,
+              1
             ],
             [
-              0.0,
-              2.0
+              0,
+              2
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ]
       },
@@ -297,20 +297,20 @@
         "matrices": [
           [
             [
-              1.0,
-              1.0
+              1,
+              1
             ],
             [
-              0.0,
-              1.0
+              0,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ]
       },
@@ -322,20 +322,20 @@
         "matrices": [
           [
             [
-              3.0,
-              0.0
+              3,
+              0
             ],
             [
-              0.0,
-              2.0
+              0,
+              2
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1.0,
-            1.0
+            1,
+            1
           ]
         ]
       },
@@ -347,20 +347,20 @@
         "matrices": [
           [
             [
-              1.0,
-              -1.0
+              1,
+              -1
             ],
             [
-              0.0,
-              1.0
+              0,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            3.0,
-            2.0
+            3,
+            2
           ]
         ]
       },
@@ -372,20 +372,20 @@
         "matrices": [
           [
             [
-              3.0,
-              1.0
+              3,
+              1
             ],
             [
-              0.0,
-              2.0
+              0,
+              2
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ]
       },
@@ -425,10 +425,8 @@
     "summary": "7.4 对角化的几何意义",
     "version": 1
   },
-  "plan_digest": "sha256:94da29aea5ddff7f426686dee8e8f989e31c8bbb32fc6c7dc8b6d45be87c77b2",
-  "read_guide": [
-    "先定义，再公式，最后读数值例。"
-  ],
+  "plan_digest": "sha256:0311ddfddfeaba811a1506c40d2d4355c0dc599125c51a45d3856e58813c42ed",
+  "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
   "scene_family": "spectral_orthogonal",

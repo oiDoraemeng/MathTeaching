@@ -1,98 +1,15 @@
 {
-  "artifact_digest": "sha256:6ad420a21d2ffe463ce5804ba499c51187f30737c8013d21bff0f1dc23d744ee",
+  "artifact_digest": "sha256:547db7447432e58cff86f82d33b495e60179c23509f191bf83a7ffd295f556ba",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:f1f2e06ef429919736757a5196ae4470701b0fbf672ce407a22ec3097f926118",
   "plan": {
     "operations": [
       {
-        "alias": "sem__case1_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_a__end",
-        "coordinates": [
-          1.0,
-          0.0
-        ],
-        "name": "a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_a",
-        "color": "#2F6BFF",
-        "end": "sem__case1_a__end",
-        "kind": "vector",
-        "label": "a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__case1_a__origin"
-      },
-      {
-        "alias": "sem__case1_b__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_b__end",
-        "coordinates": [
-          0.0,
-          1.0
-        ],
-        "name": "b",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_b",
-        "color": "#F08A24",
-        "end": "sem__case1_b__end",
-        "kind": "vector",
-        "label": "b",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__case1_b__origin"
-      },
-      {
-        "alias": "sem__case1_r__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_r__end",
-        "coordinates": [
-          1.0,
-          1.0
-        ],
-        "name": "result",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_r",
-        "color": "#6B7280",
-        "end": "sem__case1_r__end",
-        "kind": "vector",
-        "label": "result",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "sem__case1_r__origin"
-      },
-      {
-        "alias": "cap__polygon",
+        "alias": "proof__region",
         "color": "#E09F3E",
         "op": "geometry.polygon",
-        "opacity": 0.24,
+        "opacity": 0.12,
         "outline": true,
         "vertices": [
           [
@@ -100,41 +17,170 @@
             0.0
           ],
           [
-            1.0,
+            4.5,
             0.0
           ],
           [
-            1.0,
-            1.0
-          ],
-          [
-            0.0,
-            1.0
+            1.5,
+            3.0
           ]
         ]
       },
       {
-        "alias": "sem__ch01.proof.centroid__formula",
+        "alias": "proof__point_A",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "A",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_B",
+        "coordinates": [
+          4.5,
+          0.0
+        ],
+        "name": "B",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_C",
+        "coordinates": [
+          1.5,
+          3.0
+        ],
+        "name": "C",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_D",
+        "coordinates": [
+          3.0,
+          1.5
+        ],
+        "name": "D",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_E",
+        "coordinates": [
+          0.75,
+          1.5
+        ],
+        "name": "E",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_F",
+        "coordinates": [
+          2.25,
+          0.0
+        ],
+        "name": "F",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_G",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "G",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__side_a",
+        "color": "#6B7280",
+        "end": "proof__point_B",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "construction",
+        "start": "proof__point_A",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__side_b",
+        "color": "#6B7280",
+        "end": "proof__point_C",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "construction",
+        "start": "proof__point_B",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__side_c",
+        "color": "#6B7280",
+        "end": "proof__point_A",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "construction",
+        "start": "proof__point_C",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__median_a",
+        "color": "#2A9D8F",
+        "end": "proof__point_D",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_A",
+        "style": "dashed"
+      },
+      {
+        "alias": "proof__median_b",
+        "color": "#2A9D8F",
+        "end": "proof__point_E",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_B",
+        "style": "dashed"
+      },
+      {
+        "alias": "proof__median_c",
+        "color": "#2A9D8F",
+        "end": "proof__point_F",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_C",
+        "style": "dashed"
+      },
+      {
+        "alias": "proof__note_centroid",
+        "op": "annotation.upsert",
+        "position": [
+          1.660997,
+          0.428006
+        ],
+        "text": "AG : GD = 2 : 1"
+      },
+      {
+        "alias": "proof__formula",
         "op": "annotation.formula",
         "position": [
-          -2.65,
-          2.65
+          2.25,
+          -0.24
         ],
-        "text": "\\overrightarrow{AG}=\\frac13(\\boldsymbol a+\\boldsymbol b)"
+        "text": "AG = (a + b) / 3"
       },
       {
         "op": "view.fit",
-        "padding": 1.15
+        "padding": 1.45
       }
     ],
     "scene": "2d",
     "summary": "三角形重心定理",
     "version": 1
   },
-  "plan_digest": "sha256:c6fe05aaf1597648817d256ddf31f2b416e64fe0e2b7df5521e0240d5d8eb880",
+  "plan_digest": "sha256:5de6421a77a36b5a797f748c0e6d8b522de19ca6bf4431183b80603e000a3b7c",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 13,
+  "revision": 17,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:3b0b668a61fcc041c6bf6b27cc98a127cf2743ab2ec11b5546419b8dc4316c06",
   "stages": [
@@ -146,24 +192,16 @@
       "caption": "",
       "id": "stage.case.ch01.proof.centroid.1",
       "layout": "overlay",
-      "title": "案例一：三角形重心",
+      "title": "案例一：三条中线交于重心",
       "visible_aliases": [
-        "sem__case1_a",
-        "sem__case1_a__end",
-        "sem__case1_a__origin",
-        "sem__case1_b",
-        "sem__case1_b__end",
-        "sem__case1_b__origin",
-        "sem__case1_r",
-        "sem__case1_r__end",
-        "sem__case1_r__origin",
-        "sem__rel.case.ch01.proof.centroid.1"
+        "proof__side_a",
+        "proof__side_b",
+        "proof__region"
       ],
       "visible_refs": [
-        "case1_a",
-        "case1_b",
-        "case1_r",
-        "rel.case.ch01.proof.centroid.1"
+        "proof_a",
+        "proof_b",
+        "rel.proof.ch01.proof.centroid"
       ]
     }
   ],

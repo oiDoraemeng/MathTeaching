@@ -195,7 +195,7 @@
               0
             ],
             "name": "projection",
-            "tolerance": 1e-09
+            "tolerance": 1e-9
           }
         ],
         "claim_refs": [
@@ -233,7 +233,7 @@
   "revision": 1,
   "schema_version": 1,
   "source": {
-    "excerpt": "#### 1.4.1 投影的定义\n\n定义 1.13（投影向量） 设 u 是一个非零向量。向量 v 在 u 所在直线上的正交投影（简称投影）为一个沿 u 方向的向量，记为 $\\operatorname{Proj}_{u}(v)$，满足：\n$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交\n即\"从 v 的终点向 u 所在直线作垂线，垂足对应的向量\"。\n定理 1.6（投影公式）\n$$\n\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\times u = [(v \\cdot u) / |u|^{2}] \\times u\n$$\n当 u 为单位向量（$|u| = 1$）时，公式简化为：\n$$\n\\operatorname{Proj}_{u}(v) = (v \\cdot u) \\times u\n$$\n公式的含义：系数 $\\frac{v \\cdot u}{u \\cdot u}$ 计算的是\"v 在 u 上的影子长度是 u 的多少倍\"；乘以 u 是赋予它 u 的方向。\n\n##### 定理 1.6（投影公式）的推导\n\n由定义 1.13：$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交，即 $(v - \\operatorname{Proj}_{u}(v)) \\cdot u = 0$。\n设 $\\operatorname{Proj}_{u}(v) = \\alpha \\cdot u$（投影必然沿 u 的方向，$\\alpha$ 是待定系数）。\n代入：$(v - \\alpha u) \\cdot u = 0 \\rightarrow v \\cdot u - \\alpha(u \\cdot u) = 0 \\rightarrow \\alpha = \\frac{v \\cdot u}{u \\cdot u}$。\n因此 $\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\cdot u$。■\n直观: 系数 $\\alpha$ 是「v 在 u 方向上的影子长度是 u 的多少倍」。当 $|u|=1$ 时，$\\alpha = v \\cdot u$。",
+    "excerpt": "#### 1.4.1 投影的定义\n\n定义 1.13（投影向量） 设 u 是一个非零向量。向量 v 在 u 所在直线上的正交投影（简称投影）为一个沿 u 方向的向量，记为 $\\operatorname{Proj}_{u}(v)$，满足：\n$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交\n即\"从 v 的终点向 u 所在直线作垂线，垂足对应的向量\"。\n定理 1.6（投影公式）\n$$\n\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\times u = [(v \\cdot u) / |u|^{2}] \\times u\n$$\n当 u 为单位向量（$|u| = 1$）时，公式简化为：\n$$\n\\operatorname{Proj}_{u}(v) = (v \\cdot u) \\times u\n$$\n公式的含义：系数 $\\frac{v \\cdot u}{u \\cdot u}$ 计算的是\"v 在 u 上的影子长度是 u 的多少倍\"；乘以 u 是赋予它 u 的方向。\n\n##### 定理 1.6（投影公式）的推导\n\n由定义 1.13：$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交，即 $(v - \\operatorname{Proj}_{u}(v)) \\cdot u = 0$。\n设 $\\operatorname{Proj}_{u}(v) = \\alpha \\cdot u$（投影必然沿 u 的方向，$\\alpha$ 是待定系数）。\n代入：$(v - \\alpha u) \\cdot u = 0 \\rightarrow v \\cdot u - \\alpha(u \\cdot u) = 0 \\rightarrow \\alpha = \\frac{v \\cdot u}{u \\cdot u}$。\n因此 $\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\cdot u$。\n直观: 系数 $\\alpha$ 是「v 在 u 方向上的影子长度是 u 的多少倍」。当 $|u|=1$ 时，$\\alpha = v \\cdot u$。",
     "heading_level": 4,
     "heading_path": [
       "第1章 向量与几何测量",
@@ -261,7 +261,7 @@
         ],
         "id": "第1章 向量与几何测量 / 1.4 投影 / 1.4.1 投影的定义::1::sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789",
         "start_line": 427,
-        "text": "#### 1.4.1 投影的定义\n\n定义 1.13（投影向量） 设 u 是一个非零向量。向量 v 在 u 所在直线上的正交投影（简称投影）为一个沿 u 方向的向量，记为 $\\operatorname{Proj}_{u}(v)$，满足：\n$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交\n即\"从 v 的终点向 u 所在直线作垂线，垂足对应的向量\"。\n定理 1.6（投影公式）\n$$\n\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\times u = [(v \\cdot u) / |u|^{2}] \\times u\n$$\n当 u 为单位向量（$|u| = 1$）时，公式简化为：\n$$\n\\operatorname{Proj}_{u}(v) = (v \\cdot u) \\times u\n$$\n公式的含义：系数 $\\frac{v \\cdot u}{u \\cdot u}$ 计算的是\"v 在 u 上的影子长度是 u 的多少倍\"；乘以 u 是赋予它 u 的方向。\n\n##### 定理 1.6（投影公式）的推导\n\n由定义 1.13：$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交，即 $(v - \\operatorname{Proj}_{u}(v)) \\cdot u = 0$。\n设 $\\operatorname{Proj}_{u}(v) = \\alpha \\cdot u$（投影必然沿 u 的方向，$\\alpha$ 是待定系数）。\n代入：$(v - \\alpha u) \\cdot u = 0 \\rightarrow v \\cdot u - \\alpha(u \\cdot u) = 0 \\rightarrow \\alpha = \\frac{v \\cdot u}{u \\cdot u}$。\n因此 $\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\cdot u$。■\n直观: 系数 $\\alpha$ 是「v 在 u 方向上的影子长度是 u 的多少倍」。当 $|u|=1$ 时，$\\alpha = v \\cdot u$。"
+        "text": "#### 1.4.1 投影的定义\n\n定义 1.13（投影向量） 设 u 是一个非零向量。向量 v 在 u 所在直线上的正交投影（简称投影）为一个沿 u 方向的向量，记为 $\\operatorname{Proj}_{u}(v)$，满足：\n$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交\n即\"从 v 的终点向 u 所在直线作垂线，垂足对应的向量\"。\n定理 1.6（投影公式）\n$$\n\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\times u = [(v \\cdot u) / |u|^{2}] \\times u\n$$\n当 u 为单位向量（$|u| = 1$）时，公式简化为：\n$$\n\\operatorname{Proj}_{u}(v) = (v \\cdot u) \\times u\n$$\n公式的含义：系数 $\\frac{v \\cdot u}{u \\cdot u}$ 计算的是\"v 在 u 上的影子长度是 u 的多少倍\"；乘以 u 是赋予它 u 的方向。\n\n##### 定理 1.6（投影公式）的推导\n\n由定义 1.13：$v - \\operatorname{Proj}_{u}(v)$ 与 u 正交，即 $(v - \\operatorname{Proj}_{u}(v)) \\cdot u = 0$。\n设 $\\operatorname{Proj}_{u}(v) = \\alpha \\cdot u$（投影必然沿 u 的方向，$\\alpha$ 是待定系数）。\n代入：$(v - \\alpha u) \\cdot u = 0 \\rightarrow v \\cdot u - \\alpha(u \\cdot u) = 0 \\rightarrow \\alpha = \\frac{v \\cdot u}{u \\cdot u}$。\n因此 $\\operatorname{Proj}_{u}(v) = [\\frac{v \\cdot u}{u \\cdot u}] \\cdot u$。\n直观: 系数 $\\alpha$ 是「v 在 u 方向上的影子长度是 u 的多少倍」。当 $|u|=1$ 时，$\\alpha = v \\cdot u$。"
       }
     ]
   },

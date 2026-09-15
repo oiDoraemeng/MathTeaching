@@ -1,43 +1,44 @@
 {
-  "artifact_digest": "sha256:c6cebd2aff5ebec86310625101da2f91688b8f52e2f70fe05fb42c3b180bc10f",
+  "artifact_digest": "sha256:04b0052eae4dcea35ac11d950839bc50b5e3a0197b1fa23039a876c4df2f8228",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:2d49b2dad075ba180301abce26de6fb31032f58672f75114f299d373be152270",
   "plan": {
     "operations": [
       {
         "alias": "sem__x",
         "color": "#2F6BFF",
         "end": [
-          1.0,
-          2.0,
-          3.0
+          1,
+          2,
+          3
         ],
         "kind": "vector",
         "label": "x",
         "op": "linear3d.upsert",
         "role": "primary",
         "start": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ]
       },
       {
         "alias": "sem__y",
         "color": "#7B61FF",
         "end": [
-          1.0,
-          4.0,
-          9.0
+          1,
+          4,
+          9
         ],
         "kind": "vector",
         "label": "T(x)",
         "op": "linear3d.upsert",
         "role": "primary",
         "start": [
-          0.0,
-          0.0,
-          0.0
+          0,
+          0,
+          0
         ]
       },
       {
@@ -47,7 +48,7 @@
           -2.65,
           2.65
         ],
-        "text": "T(\\boldsymbol x)=A\\boldsymbol x,\\qquad \\operatorname{rank}(A)\\leq\\min(m,n)"
+        "text": "A ∈ R^{m×n}:  Ax 的列视角 x_1·(第1列)+...+x_n·(第n列) 对任意 n 维成立"
       },
       {
         "op": "view.fit",
@@ -55,19 +56,24 @@
       }
     ],
     "scene": "3d",
-    "summary": "n 维矩阵运算的低维类比",
+    "summary": "高维拓展：n 维空间中的矩阵运算",
     "version": 1
   },
-  "plan_digest": "sha256:14f2c694bfc046c4c8675e78ada5e5cea656a17675d8cd4cf93449176f9093bb",
-  "read_guide": [],
+  "plan_digest": "sha256:924547c443bc5c575239307460fd9bf9926b6d8127ff425bbc1645850fdaae88",
+  "read_guide": [
+    "先确认 m×n 矩阵的可乘条件。",
+    "再看列视角在三维示例中的逐坐标效果。",
+    "最后记住高维依赖不变量而非图形。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 13,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:aec0866b91b7031cc30af32b39f6dd7728fe7a7490b88d28680b456e83f83fe6",
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "逐坐标计算在三维示例中可见，并可推广到 n 维。",
@@ -84,6 +90,54 @@
         "sem__x_maps_to_y",
         "sem__stage.analogy__title",
         "sem__mapping_grid__1"
+      ],
+      "visible_refs": [
+        "x",
+        "y",
+        "x_maps_to_y"
+      ]
+    },
+    {
+      "anchor": [
+        0,
+        2.65
+      ],
+      "caption": "先看三维输入向量 x 的三个分量。",
+      "id": "stage.analogy.input",
+      "layout": "overlay",
+      "title": "三维输入向量",
+      "visible_aliases": [
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__x_maps_to_y",
+        "sem__stage.analogy.input__title",
+        "sem__mapping_grid__2"
+      ],
+      "visible_refs": [
+        "x",
+        "x_maps_to_y"
+      ]
+    },
+    {
+      "anchor": [
+        0,
+        2.65
+      ],
+      "caption": "每个分量独立按对应比例拉伸。",
+      "id": "stage.analogy.output",
+      "layout": "overlay",
+      "title": "逐坐标变换后的像",
+      "visible_aliases": [
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__x_maps_to_y",
+        "sem__stage.analogy.output__title",
+        "sem__mapping_grid__3"
       ],
       "visible_refs": [
         "x",

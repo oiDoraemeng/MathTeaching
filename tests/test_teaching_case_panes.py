@@ -96,3 +96,55 @@ def test_case_plan_drops_capability_evidence_from_every_step():
     }
     assert "sem__rel.subtraction.endpoints" in aliases
     assert not any(alias.startswith("cap__") for alias in aliases)
+
+
+@pytest.mark.parametrize(
+    "topic_id, grid_bounds, cases",
+    [
+        (
+            "ch02.matrix.transformed-grid",
+            [-12.0, 12.0, -12.0, 12.0],
+            (
+                ([[1.0, 0.0], [0.0, 1.0]], None),
+                ([[2.0, 1.0], [1.0, 2.0]], "A=[[2,1],[1,2]]"),
+                # 第三步只画输入与它的像：变形网格已经在第二步给出。
+                (None, None),
+            ),
+        ),
+        (
+            "ch02.matrix.stretch-rotate-scale",
+            [-12.0, 12.0, -12.0, 12.0],
+            (
+                ([[1.0, 0.0], [0.0, 1.0]], None),
+                ([[2.0, 0.0], [0.0, 1.0]], "A=[[2,0],[0,1]]"),
+                ([[0.0, -1.0], [1.0, 0.0]], "R=[[0,-1],[1,0]]"),
+                ([[0.0, -1.0], [2.0, 0.0]], "B=[[0,-1],[2,0]]"),
+            ),
+        ),
+    ],
+)
+def test_matrix_vector_case_panes_use_the_matrix_transform_feature(topic_id, grid_bounds, cases):
+    """2.5 的矩阵案例窗格用软件已有的矩阵变换功能：网格、样本点的像与矩阵标注。"""
+
+    compiled = catalog_registry().resolve_bundle(
+        topic_id,
+        artifact_store=runtime_teaching_store(),
+        source_repository=LectureSourceRepository(Path(".agents") / "线性代数讲义.md"),
+    ).compiled
+
+    assert len(compiled.storyboard) == len(cases)
+    for stage, (matrix, label) in zip(compiled.storyboard, cases):
+        operations = case_plan(compiled, stage.id).operations
+        grid_ops = [op for op in operations if op.get("op") == "geometry.transformed_grid"]
+        staged_ops = [op for op in operations if op.get("op") == "geometry.staged_transform"]
+        label_ops = [op for op in operations if op.get("op") == "annotation.upsert"]
+        if matrix is None:
+            assert (grid_ops, staged_ops, label_ops) == ([], [], [])
+            continue
+        assert [op["matrix"] for op in grid_ops] == [matrix]
+        # 取样范围远大于窗格视野：网格铺满窗格并由视口裁切，而不是一小块悬浮网格。
+        assert [op["bounds"] for op in grid_ops] == [grid_bounds]
+        # 样本点取标准基：它们在变换后的位置正是讲义所说的两列。
+        assert [op["matrices"] for op in staged_ops] == [[matrix]]
+        assert [op["points"] for op in staged_ops] == [[[1.0, 0.0], [0.0, 1.0]]]
+        assert [op["text"] for op in label_ops] == ([] if label is None else [label])

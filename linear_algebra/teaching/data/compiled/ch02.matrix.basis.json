@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:e02efe6096cadb4477d69fdee1bfa042d4af5f2ae50c5595a683c428409e24c9",
+  "artifact_digest": "sha256:5fb0f1e14a6df396835b11005f3b00a6118b35bdb271bbcc31daeb5b31350c4d",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:2bff479788502a9884aa81bb6991c08de85d5d3a961c4b98616b1edffc69105c",
   "plan": {
     "operations": [
       {
         "alias": "sem__A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            1.0,
-            1.0
+            1,
+            1
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__x__end",
         "coordinates": [
-          2.0,
-          3.0
+          2,
+          3
         ],
         "name": "x",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          5.0,
-          3.0
+          5,
+          3
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -86,43 +87,21 @@
         "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
-            1.0,
-            1.0
+            1,
+            1
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
         "op": "linear_algebra.matrix_transform"
       },
       {
-        "alias": "sem__mapping_grid__1",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            1.0,
-            1.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
-          0.0,
+          0,
           2.65
         ],
         "text": "输入与变换"
@@ -134,7 +113,7 @@
           -2.65,
           2.65
         ],
-        "text": "[T]_{\\mathcal B}=S^{-1}AS"
+        "text": "A e_j = A 的第 j 列；换基后矩阵 = P^{-1} A P"
       },
       {
         "op": "view.fit",
@@ -145,16 +124,21 @@
     "summary": "矩阵的列与新基坐标",
     "version": 1
   },
-  "plan_digest": "sha256:6c1e74b1f1100cd8e40dcaddb2d3441f524f6a0f28c7d6949994cd0054001707",
-  "read_guide": [],
+  "plan_digest": "sha256:aca7fe950f2be71a0847c51ea577c55febaeb1b7a058553ca17abedbbf22fbbb",
+  "read_guide": [
+    "确认所选基的两根尺子方向。",
+    "读出 x 在新基下的坐标。",
+    "核对同一变换在不同基下的矩阵。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 12,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:ef6de7167277e0291b976d335c4a9c431c26d6aa51cb06e8d39f993d7806e088",
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "矩阵 A 作用于向量 x。",

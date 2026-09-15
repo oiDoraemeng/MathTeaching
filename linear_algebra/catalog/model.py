@@ -38,6 +38,37 @@ class LessonNode:
     required_capabilities: tuple[str, ...]
 
 
+_INLINE_MATH_SYMBOLS: tuple[tuple[str, str], ...] = (
+    (r"\times", "×"),
+    (r"\cdot", "·"),
+    (r"\div", "÷"),
+    (r"\pm", "±"),
+    (r"\neq", "≠"),
+    (r"\leq", "≤"),
+    (r"\geq", "≥"),
+    (r"\rightarrow", "→"),
+    (r"\to", "→"),
+    (r"\det", "det"),
+)
+
+
+def display_heading(heading: str) -> str:
+    """Return a lecture heading rendered for display instead of source anchoring.
+
+    Lecture headings keep their verbatim TeX so the catalog can anchor them back
+    to the Markdown source (``2.5 矩阵 $\\times$ 向量（核心节）``).  The lecture
+    tree shows the same heading, so the raw commands have to be replaced by the
+    symbols they stand for before they reach the user.
+    """
+
+    if "$" not in heading:
+        return heading
+    rendered = heading
+    for command, symbol in _INLINE_MATH_SYMBOLS:
+        rendered = rendered.replace(command, symbol)
+    return rendered.replace("$", "").strip()
+
+
 def topic_entry(
     *,
     topic_id: str,

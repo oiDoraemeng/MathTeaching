@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:e7988d3072941497b5151530b34079fcbb7efabc7521d1a3927fdc1c91fad892",
+  "artifact_digest": "sha256:c7b92d6a8115c08e7bdb1f6b6852bb51b2609c308859357c9fbfd05342c6b106",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:8fe4c37cd868f7c353eefb1fffe8f70bcd70879f52eac1a4104a6c1c2eec943b",
@@ -4839,9 +4839,7 @@
     "version": 1
   },
   "plan_digest": "sha256:51c154862ac5074004e178cd09c466f113f6962c1a88ffc4ab9dbf22ecfab99f",
-  "read_guide": [
-    "先定义，再公式，最后读数值例。"
-  ],
+  "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
   "scene_family": "quadratic_level_set",

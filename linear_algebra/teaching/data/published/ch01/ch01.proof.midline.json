@@ -189,7 +189,7 @@
               1
             ],
             "name": "result",
-            "tolerance": 1e-09
+            "tolerance": 1e-9
           }
         ],
         "claim_refs": [
@@ -227,7 +227,7 @@
   "revision": 1,
   "schema_version": 1,
   "source": {
-    "excerpt": "#### 1.5.2 核心例题：三角形中位线定理\n\n命题：三角形两边中点的连线平行于第三边，且长度是第三边的一半。\n向量证明：\n取 A 为原点。设 $AB = a$，$AC = b$。\nD 是 AB 中点 $\\rightarrow AD = \\frac{a}{2}$\nE 是 AC 中点 $\\rightarrow AE = \\frac{b}{2}$\n$$\nDE = AE - AD = \\frac{b}{2} - \\frac{a}{2} = \\tfrac{1}{2}(b - a)\n$$\n又 $BC = AC - AB = b - a$\n所以 $DE = \\tfrac{1}{2} \\cdot BC \\rightarrow DE$ 平行于 BC，且长度是 BC 的一半。■\n注意：全程没有添加一条辅助线，没有用到任何全等或相似三角形。这就是向量方法的威力——几何归约为代数。\n\n##### 补充例题：三角形重心定理\n\n命题: 三角形三条中线交于一点（重心），且重心到顶点的距离是到对边中点距离的2倍。\n向量证明: 取 A 为原点。设 $AB = a$，$AC = b$。\nBC 边中点 D：$AD = \\frac{b + a}{2}$。\n设重心 G 在 AD 上且 AG:$GD=2$:1，则 $AG = (\\frac{2}{3})AD = \\frac{a+b}{3}$。\n同理，AB 边中点 E：$AE = \\frac{a}{2}$。AG 也应在 CE 上（以 C 为起点的对应比例可类似验证），\n且 $BG = \\frac{b-2a}{3}$ 也满足 2:1 比例 $\\rightarrow$ 三条中线共点。■\n（完整的对称性验证留给学生作为练习）\n\n##### 补充例题：平行四边形对角线互相平分\n\n命题: 平行四边形的两条对角线互相平分。\n向量证明: 取 A 为原点。$AB = a$，$AD = b$，则 $C = a+b$。\n对角线 AC 的中点为 $\\frac{a+b}{2}$。\n对角线 BD 的中点为 $(a + (a+b-a))/2 = \\frac{2a+b-a}{2} = \\frac{a+b}{2}$。\n两条对角线的中点重合 $\\rightarrow$ 互相平分。■",
+    "excerpt": "#### 1.5.2 核心例题：三角形中位线定理\n\n命题：三角形两边中点的连线平行于第三边，且长度是第三边的一半。\n向量证明：\n取 A 为原点。设 $AB = a$，$AC = b$。\nD 是 AB 中点 $\\rightarrow AD = \\frac{a}{2}$\nE 是 AC 中点 $\\rightarrow AE = \\frac{b}{2}$\n$$\nDE = AE - AD = \\frac{b}{2} - \\frac{a}{2} = \\tfrac{1}{2}(b - a)\n$$\n又 $BC = AC - AB = b - a$\n所以 $DE = \\tfrac{1}{2} \\cdot BC \\rightarrow DE$ 平行于 BC，且长度是 BC 的一半。\n注意：全程没有添加一条辅助线，没有用到任何全等或相似三角形。这就是向量方法的威力——几何归约为代数。\n\n##### 补充例题：三角形重心定理\n\n命题: 三角形三条中线交于一点（重心），且重心到顶点的距离是到对边中点距离的2倍。\n向量证明: 取 A 为原点。设 $AB = a$，$AC = b$。\nBC 边中点 D：$AD = \\frac{b + a}{2}$。\n设重心 G 在 AD 上且 AG:$GD=2$:1，则 $AG = (\\frac{2}{3})AD = \\frac{a+b}{3}$。\n同理，AB 边中点 E：$AE = \\frac{a}{2}$。AG 也应在 CE 上（以 C 为起点的对应比例可类似验证），\n且 $BG = \\frac{b-2a}{3}$ 也满足 2:1 比例 $\\rightarrow$ 三条中线共点。\n（完整的对称性验证留给学生作为练习）\n\n##### 补充例题：平行四边形对角线互相平分\n\n命题: 平行四边形的两条对角线互相平分。\n向量证明: 取 A 为原点。$AB = a$，$AD = b$，则 $C = a+b$。\n对角线 AC 的中点为 $\\frac{a+b}{2}$。\n对角线 BD 的中点为 $(a + (a+b-a))/2 = \\frac{2a+b-a}{2} = \\frac{a+b}{2}$。\n两条对角线的中点重合 $\\rightarrow$ 互相平分。",
     "heading_level": 4,
     "heading_path": [
       "第1章 向量与几何测量",
@@ -255,7 +255,7 @@
         ],
         "id": "第1章 向量与几何测量 / 1.5 几何证明：向量的威力 / 1.5.2 核心例题：三角形中位线定理::1::sha256:71150484c6087cdee298ce32f28634cfc4c618d29a90e0e5c1dd0c6890d9e57a",
         "start_line": 493,
-        "text": "#### 1.5.2 核心例题：三角形中位线定理\n\n命题：三角形两边中点的连线平行于第三边，且长度是第三边的一半。\n向量证明：\n取 A 为原点。设 $AB = a$，$AC = b$。\nD 是 AB 中点 $\\rightarrow AD = \\frac{a}{2}$\nE 是 AC 中点 $\\rightarrow AE = \\frac{b}{2}$\n$$\nDE = AE - AD = \\frac{b}{2} - \\frac{a}{2} = \\tfrac{1}{2}(b - a)\n$$\n又 $BC = AC - AB = b - a$\n所以 $DE = \\tfrac{1}{2} \\cdot BC \\rightarrow DE$ 平行于 BC，且长度是 BC 的一半。■\n注意：全程没有添加一条辅助线，没有用到任何全等或相似三角形。这就是向量方法的威力——几何归约为代数。\n\n##### 补充例题：三角形重心定理\n\n命题: 三角形三条中线交于一点（重心），且重心到顶点的距离是到对边中点距离的2倍。\n向量证明: 取 A 为原点。设 $AB = a$，$AC = b$。\nBC 边中点 D：$AD = \\frac{b + a}{2}$。\n设重心 G 在 AD 上且 AG:$GD=2$:1，则 $AG = (\\frac{2}{3})AD = \\frac{a+b}{3}$。\n同理，AB 边中点 E：$AE = \\frac{a}{2}$。AG 也应在 CE 上（以 C 为起点的对应比例可类似验证），\n且 $BG = \\frac{b-2a}{3}$ 也满足 2:1 比例 $\\rightarrow$ 三条中线共点。■\n（完整的对称性验证留给学生作为练习）\n\n##### 补充例题：平行四边形对角线互相平分\n\n命题: 平行四边形的两条对角线互相平分。\n向量证明: 取 A 为原点。$AB = a$，$AD = b$，则 $C = a+b$。\n对角线 AC 的中点为 $\\frac{a+b}{2}$。\n对角线 BD 的中点为 $(a + (a+b-a))/2 = \\frac{2a+b-a}{2} = \\frac{a+b}{2}$。\n两条对角线的中点重合 $\\rightarrow$ 互相平分。■"
+        "text": "#### 1.5.2 核心例题：三角形中位线定理\n\n命题：三角形两边中点的连线平行于第三边，且长度是第三边的一半。\n向量证明：\n取 A 为原点。设 $AB = a$，$AC = b$。\nD 是 AB 中点 $\\rightarrow AD = \\frac{a}{2}$\nE 是 AC 中点 $\\rightarrow AE = \\frac{b}{2}$\n$$\nDE = AE - AD = \\frac{b}{2} - \\frac{a}{2} = \\tfrac{1}{2}(b - a)\n$$\n又 $BC = AC - AB = b - a$\n所以 $DE = \\tfrac{1}{2} \\cdot BC \\rightarrow DE$ 平行于 BC，且长度是 BC 的一半。\n注意：全程没有添加一条辅助线，没有用到任何全等或相似三角形。这就是向量方法的威力——几何归约为代数。\n\n##### 补充例题：三角形重心定理\n\n命题: 三角形三条中线交于一点（重心），且重心到顶点的距离是到对边中点距离的2倍。\n向量证明: 取 A 为原点。设 $AB = a$，$AC = b$。\nBC 边中点 D：$AD = \\frac{b + a}{2}$。\n设重心 G 在 AD 上且 AG:$GD=2$:1，则 $AG = (\\frac{2}{3})AD = \\frac{a+b}{3}$。\n同理，AB 边中点 E：$AE = \\frac{a}{2}$。AG 也应在 CE 上（以 C 为起点的对应比例可类似验证），\n且 $BG = \\frac{b-2a}{3}$ 也满足 2:1 比例 $\\rightarrow$ 三条中线共点。\n（完整的对称性验证留给学生作为练习）\n\n##### 补充例题：平行四边形对角线互相平分\n\n命题: 平行四边形的两条对角线互相平分。\n向量证明: 取 A 为原点。$AB = a$，$AD = b$，则 $C = a+b$。\n对角线 AC 的中点为 $\\frac{a+b}{2}$。\n对角线 BD 的中点为 $(a + (a+b-a))/2 = \\frac{2a+b-a}{2} = \\frac{a+b}{2}$。\n两条对角线的中点重合 $\\rightarrow$ 互相平分。"
       }
     ]
   },

@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:4305bc5ef17e95ebc68467b4899110ac8605ee3ea42b888eba11531114e3dfe9",
+  "artifact_digest": "sha256:b77b404deeaea3ff09a1a6e4720cef0efb33e66bcc4c833d06c129d839b93d2e",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:659322cbd543d39fe434095cd68a56ee6f5baf676a4e97191f445a7305ab7dae",
   "plan": {
     "operations": [
       {
         "alias": "sem__A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            1.0,
-            2.0
+            1,
+            2
           ],
           [
-            3.0,
-            4.0
+            3,
+            4
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__x__end",
         "coordinates": [
-          1.0,
-          2.0
+          1,
+          2
         ],
         "name": "x",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          5.0,
-          11.0
+          5,
+          11
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -86,46 +87,64 @@
         "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
-            1.0,
-            2.0
+            1,
+            2
           ],
           [
-            3.0,
-            4.0
+            3,
+            4
           ]
         ],
         "op": "linear_algebra.matrix_transform"
       },
       {
-        "alias": "sem__mapping_grid__1",
+        "alias": "sem__stage.input__title",
+        "op": "annotation.upsert",
+        "position": [
+          0,
+          2.65
+        ],
+        "text": "输入与变换"
+      },
+      {
+        "alias": "sem__stage.lecture.columns__title",
+        "op": "annotation.upsert",
+        "position": [
+          0,
+          2.65
+        ],
+        "text": "矩阵的列方向"
+      },
+      {
+        "alias": "sem__mapping_grid__3",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#7B61FF",
         "matrix": [
           [
-            1.0,
-            2.0
+            1,
+            2
           ],
           [
-            3.0,
-            4.0
+            3,
+            4
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
-        "alias": "sem__stage.input__title",
+        "alias": "sem__stage.lecture.combination__title",
         "op": "annotation.upsert",
         "position": [
-          0.0,
+          0,
           2.65
         ],
-        "text": "输入与变换"
+        "text": "列的加权组合"
       },
       {
         "alias": "sem__ch02.matrix.row-column__formula",
@@ -134,7 +153,7 @@
           -2.65,
           2.65
         ],
-        "text": "(A\\boldsymbol x)_i=\\operatorname{row}_i(A)\\cdot\\boldsymbol x=\\sum_jx_jA_{:j}"
+        "text": "(Ax)_i = row_i(A)·x = sum_j x_j A_{:j}"
       },
       {
         "op": "view.fit",
@@ -145,16 +164,21 @@
     "summary": "矩阵乘向量的行视角与列视角",
     "version": 1
   },
-  "plan_digest": "sha256:a3c2ee35e5eba7a2fe3510c8b9226325d6efbea1fe305ce20b9295689637f584",
-  "read_guide": [],
+  "plan_digest": "sha256:4a0040884569fb39c30fd5fd0c3e6fe4c4e8bb957023346035c1f7f402bd7843",
+  "read_guide": [
+    "先用行视角写出各分量。",
+    "再用列视角把结果写成列的线性组合。",
+    "核对两种算法得到同一向量。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 12,
+  "revision": 16,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:07fbb794fc533cc2655cad99b8e37a59ec70268f4cec18e7c0b6e10d0f91348c",
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "矩阵 A 作用于向量 x。",
@@ -175,6 +199,56 @@
       ],
       "visible_refs": [
         "A",
+        "x",
+        "y",
+        "A_maps_x_to_y"
+      ]
+    },
+    {
+      "anchor": [
+        0,
+        2.65
+      ],
+      "caption": "先看两列作为候选方向。",
+      "id": "stage.lecture.columns",
+      "layout": "overlay",
+      "title": "矩阵的列方向",
+      "visible_aliases": [
+        "sem__A",
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__A_maps_x_to_y",
+        "sem__stage.lecture.columns__title",
+        "sem__mapping_grid__2"
+      ],
+      "visible_refs": [
+        "A",
+        "x",
+        "A_maps_x_to_y"
+      ]
+    },
+    {
+      "anchor": [
+        0,
+        2.65
+      ],
+      "caption": "按 x 的分量加权得到输出。",
+      "id": "stage.lecture.combination",
+      "layout": "overlay",
+      "title": "列的加权组合",
+      "visible_aliases": [
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__A_maps_x_to_y",
+        "sem__stage.lecture.combination__title",
+        "sem__mapping_grid__3"
+      ],
+      "visible_refs": [
         "x",
         "y",
         "A_maps_x_to_y"

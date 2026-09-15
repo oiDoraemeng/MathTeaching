@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:14ed3e8b8ce6cb5f5ee711fdd18bc93d85bfdc901733920a898c59c0b0fb740a",
+  "artifact_digest": "sha256:e88fcca659fa33e7e72db824a84908f1734a7e1da1dfa6c12299915258b97be9",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:7098fbd2be8521ff7039aaf7c04c95c3abb2085d4ddb412a7bb563c6d9f0b57e",
   "plan": {
     "operations": [
       {
         "alias": "sem__A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            3.0,
-            1.0
+            3,
+            1
           ],
           [
-            2.0,
-            4.0
+            2,
+            4
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__a__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__a__end",
         "coordinates": [
-          3.0,
-          2.0
+          3,
+          2
         ],
         "name": "column a",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__b__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__b__end",
         "coordinates": [
-          1.0,
-          4.0
+          1,
+          4
         ],
         "name": "column b",
         "op": "point.upsert"
@@ -88,12 +89,12 @@
         "op": "geometry.oriented_area",
         "vectors": [
           [
-            3.0,
-            2.0
+            3,
+            2
           ],
           [
-            1.0,
-            4.0
+            1,
+            4
           ]
         ]
       },
@@ -101,37 +102,15 @@
         "alias": "sem__det_maps_to_area",
         "matrix": [
           [
-            3.0,
-            1.0
+            3,
+            1
           ],
           [
-            2.0,
-            4.0
+            2,
+            4
           ]
         ],
         "op": "linear_algebra.matrix_transform"
-      },
-      {
-        "alias": "sem__mapping_grid__1",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            3.0,
-            1.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
       },
       {
         "alias": "sem__stage.det.input__title",
@@ -145,24 +124,24 @@
       {
         "alias": "sem__mapping_grid__2",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#7B61FF",
         "matrix": [
           [
-            3.0,
-            1.0
+            3,
+            1
           ],
           [
-            2.0,
-            4.0
+            2,
+            4
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__stage.det.measure__title",
@@ -191,12 +170,13 @@
     "summary": "2×2 求逆公式的几何参数",
     "version": 1
   },
-  "plan_digest": "sha256:419e4bf15d1e2dba73018b7a1710691f1391f0477c60b2aeba8c35b3bac79bc5",
+  "plan_digest": "sha256:387c2362561c51b96abc02abb29e8714b00ac5eb646f004bbed09c499bcc361d",
   "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 8,
+  "revision": 9,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:1e1869e796f6a4440cfab9915bf03553ca938b34742a29655ce1b0ed2334154c",
   "stages": [

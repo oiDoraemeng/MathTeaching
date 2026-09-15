@@ -1,14 +1,15 @@
 {
-  "artifact_digest": "sha256:b6711d0f857ec6998fff0265f4a5de466820448c862586be4cca6818fc58c117",
+  "artifact_digest": "sha256:8cd8e403eedd217e95f435f769f0789d1fc53fb9ba9fcc0d5a2cb3acecbe1d0d",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:8193f209d2698fd1d7e273d1240a4674dfa631c2d77bad0b76b6351925e3ec11",
   "plan": {
     "operations": [
       {
         "alias": "sem__v__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -16,8 +17,8 @@
       {
         "alias": "sem__v__end",
         "coordinates": [
-          3.0,
-          4.0
+          3,
+          4
         ],
         "name": "v",
         "op": "point.upsert"
@@ -35,8 +36,8 @@
       {
         "alias": "sem__u__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -44,8 +45,8 @@
       {
         "alias": "sem__u__end",
         "coordinates": [
-          1.0,
-          0.0
+          1,
+          0
         ],
         "name": "u",
         "op": "point.upsert"
@@ -63,8 +64,8 @@
       {
         "alias": "sem__p__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -72,8 +73,8 @@
       {
         "alias": "sem__p__end",
         "coordinates": [
-          3.0,
-          0.0
+          3,
+          0
         ],
         "name": "p",
         "op": "point.upsert"
@@ -91,8 +92,8 @@
       {
         "alias": "sem__H",
         "coordinates": [
-          3.0,
-          0.0
+          3,
+          0
         ],
         "name": "H",
         "op": "point.upsert"
@@ -100,8 +101,8 @@
       {
         "alias": "sem__r__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -109,8 +110,8 @@
       {
         "alias": "sem__r__end",
         "coordinates": [
-          0.0,
-          4.0
+          0,
+          4
         ],
         "name": "r",
         "op": "point.upsert"
@@ -129,16 +130,17 @@
         "alias": "sem__v_projects_to_u",
         "color": "#2A9D8F",
         "direction": [
-          1.0,
-          0.0
+          1,
+          0
         ],
         "foot_alias": "sem__H",
         "op": "geometry.projection",
         "residual_alias": "sem__r",
         "result_alias": "sem__u",
+        "style": "dashed",
         "vector": [
-          3.0,
-          4.0
+          3,
+          4
         ]
       },
       {
@@ -154,56 +156,40 @@
         "alias": "sem__r_orthogonal_u",
         "color": "#6B7280",
         "first": [
-          0.0,
-          4.0
+          0,
+          4
         ],
         "op": "geometry.right_angle_marker",
         "second": [
-          1.0,
-          0.0
+          1,
+          0
         ],
         "size": 0.3,
         "vertex": [
-          0.0,
-          0.0
+          0,
+          0
         ]
       },
       {
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#7B61FF",
         "matrix": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
-        "alias": "sem__projection__1",
-        "color": "#2A9D8F",
-        "direction": [
-          1.0,
-          0.0
-        ],
-        "foot_alias": "sem__projection__1__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__1__residual",
-        "result_alias": "sem__projection__1",
-        "vector": [
-          3.0,
-          4.0
-        ]
+        "step": 1
       },
       {
         "alias": "sem__stage.input__title",
@@ -215,22 +201,6 @@
         "text": "输入向量"
       },
       {
-        "alias": "sem__projection__2",
-        "color": "#2A9D8F",
-        "direction": [
-          1.0,
-          0.0
-        ],
-        "foot_alias": "sem__projection__2__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__2__residual",
-        "result_alias": "sem__projection__2",
-        "vector": [
-          3.0,
-          4.0
-        ]
-      },
-      {
         "alias": "sem__stage.projection__title",
         "op": "annotation.upsert",
         "position": [
@@ -240,19 +210,21 @@
         "text": "投影分量"
       },
       {
-        "alias": "sem__projection__3",
-        "color": "#2A9D8F",
-        "direction": [
-          1.0,
-          0.0
+        "alias": "sem__orthogonal__3",
+        "color": "#6B7280",
+        "first": [
+          0,
+          4
         ],
-        "foot_alias": "sem__projection__3__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__3__residual",
-        "result_alias": "sem__projection__3",
-        "vector": [
-          3.0,
-          4.0
+        "op": "geometry.right_angle_marker",
+        "second": [
+          1,
+          0
+        ],
+        "size": 0.3,
+        "vertex": [
+          0,
+          0
         ]
       },
       {
@@ -265,6 +237,24 @@
         "text": "正交残差"
       },
       {
+        "alias": "sem__stage.lecture.source__title",
+        "op": "annotation.upsert",
+        "position": [
+          0,
+          2.65
+        ],
+        "text": "原始向量与方向"
+      },
+      {
+        "alias": "sem__stage.lecture.projection__title",
+        "op": "annotation.upsert",
+        "position": [
+          0,
+          2.65
+        ],
+        "text": "投影结果"
+      },
+      {
         "op": "view.fit",
         "padding": 1.15
       }
@@ -273,10 +263,15 @@
     "summary": "投影矩阵把一批向量压到方向上",
     "version": 1
   },
-  "plan_digest": "sha256:651f6b03a975bbf479bdb92b043799229bbc2c951fc0aef1999e743b46411d20",
-  "read_guide": [],
+  "plan_digest": "sha256:2b2db32eabf64b601d8f306beecde78dbce4dd703d31f55d370666bbedaa0009",
+  "read_guide": [
+    "确认方向 u 已单位化。",
+    "读出投影 p 与残差 r。",
+    "验证 p+r=v 且 r 与 u 垂直。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 12,
+  "revision": 16,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:18e7642a880b874828bfee6824477b44b80aaac5b2c703abc508923f1d009780",
   "stages": [
@@ -297,8 +292,7 @@
         "sem__u__end",
         "sem__u__origin",
         "sem__v_projects_to_u",
-        "sem__stage.input__title",
-        "sem__projection__1"
+        "sem__stage.input__title"
       ],
       "visible_refs": [
         "v",
@@ -328,8 +322,7 @@
         "sem__H",
         "sem__v_projects_to_u",
         "sem__v_decomposes_p_r",
-        "sem__stage.projection__title",
-        "sem__projection__2"
+        "sem__stage.projection__title"
       ],
       "visible_refs": [
         "v",
@@ -362,7 +355,7 @@
         "sem__v_decomposes_p_r",
         "sem__r_orthogonal_u",
         "sem__stage.residual__title",
-        "sem__projection__3"
+        "sem__orthogonal__3"
       ],
       "visible_refs": [
         "p",
@@ -370,6 +363,64 @@
         "v",
         "v_decomposes_p_r",
         "r_orthogonal_u"
+      ]
+    },
+    {
+      "anchor": [
+        0,
+        2.65
+      ],
+      "caption": "先观察向量 v 与单位方向 u 的夹角。",
+      "id": "stage.lecture.source",
+      "layout": "overlay",
+      "title": "原始向量与方向",
+      "visible_aliases": [
+        "sem__v",
+        "sem__v__end",
+        "sem__v__origin",
+        "sem__u",
+        "sem__u__end",
+        "sem__u__origin",
+        "sem__v_projects_to_u",
+        "sem__stage.lecture.source__title"
+      ],
+      "visible_refs": [
+        "v",
+        "u",
+        "v_projects_to_u"
+      ]
+    },
+    {
+      "anchor": [
+        0,
+        2.65
+      ],
+      "caption": "垂足 H 把 v 压到 u 方向上。",
+      "id": "stage.lecture.projection",
+      "layout": "overlay",
+      "title": "投影结果",
+      "visible_aliases": [
+        "sem__v",
+        "sem__v__end",
+        "sem__v__origin",
+        "sem__u",
+        "sem__u__end",
+        "sem__u__origin",
+        "sem__p",
+        "sem__p__end",
+        "sem__p__origin",
+        "sem__H",
+        "sem__v_projects_to_u",
+        "sem__v_decomposes_p_r",
+        "sem__stage.lecture.projection__title"
+      ],
+      "visible_refs": [
+        "v",
+        "u",
+        "p",
+        "H",
+        "v_projects_to_u",
+        "v_decomposes_p_r"
       ]
     }
   ],

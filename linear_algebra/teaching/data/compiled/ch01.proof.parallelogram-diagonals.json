@@ -1,160 +1,184 @@
 {
-  "artifact_digest": "sha256:97adf0849e9fbd3a078db0a1369e006a6d06019b43fadcdcfdb18d180adfdee4",
+  "artifact_digest": "sha256:52e1fd6c3490b1c2db59574b4322c8921fb5f9ef5b3ce3ae5239cb0d288a62e3",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:cfac6e955a326fa6e350e54ad74a81fdc7737a9f097643067d2df8a00fdc355f",
   "plan": {
     "operations": [
       {
-        "alias": "sem__case1_a__origin",
-        "coordinates": [
-          0,
-          0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_a__end",
-        "coordinates": [
-          2,
-          1
-        ],
-        "name": "a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_a",
-        "color": "#2F6BFF",
-        "end": "sem__case1_a__end",
-        "kind": "vector",
-        "label": "a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__case1_a__origin"
-      },
-      {
-        "alias": "sem__case1_b__origin",
-        "coordinates": [
-          0,
-          0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_b__end",
-        "coordinates": [
-          1,
-          3
-        ],
-        "name": "b",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_b",
-        "color": "#F08A24",
-        "end": "sem__case1_b__end",
-        "kind": "vector",
-        "label": "b",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__case1_b__origin"
-      },
-      {
-        "alias": "sem__case1_r__origin",
-        "coordinates": [
-          0,
-          0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_r__end",
-        "coordinates": [
-          3,
-          4
-        ],
-        "name": "result",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_r",
-        "color": "#6B7280",
-        "end": "sem__case1_r__end",
-        "kind": "vector",
-        "label": "result",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "sem__case1_r__origin"
-      },
-      {
-        "alias": "cap__polygon",
+        "alias": "proof__region",
         "color": "#E09F3E",
         "op": "geometry.polygon",
-        "opacity": 0.24,
+        "opacity": 0.12,
         "outline": true,
         "vertices": [
           [
-            0,
-            0
+            0.0,
+            0.0
           ],
           [
-            2,
-            1
+            3.2,
+            0.4
           ],
           [
-            3,
-            4
+            4.2,
+            3.0
           ],
           [
-            1,
-            3
+            1.0,
+            2.6
           ]
         ]
       },
       {
+        "alias": "proof__point_A",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "A",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_B",
+        "coordinates": [
+          3.2,
+          0.4
+        ],
+        "name": "B",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_C",
+        "coordinates": [
+          4.2,
+          3.0
+        ],
+        "name": "C",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_D",
+        "coordinates": [
+          1.0,
+          2.6
+        ],
+        "name": "D",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_M",
+        "coordinates": [
+          2.1,
+          1.5
+        ],
+        "name": "M",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__side_a",
+        "color": "#2F6BFF",
+        "end": "proof__point_B",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_A",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__side_b",
+        "color": "#F08A24",
+        "end": "proof__point_D",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_A",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__side_bc",
+        "color": "#6B7280",
+        "end": "proof__point_C",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "construction",
+        "start": "proof__point_B",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__side_dc",
+        "color": "#6B7280",
+        "end": "proof__point_C",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "construction",
+        "start": "proof__point_D",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__diagonal_ac",
+        "color": "#7B61FF",
+        "end": "proof__point_C",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_A",
+        "style": "dashed"
+      },
+      {
+        "alias": "proof__diagonal_bd",
+        "color": "#D64550",
+        "end": "proof__point_D",
+        "kind": "segment",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_B",
+        "style": "dashed"
+      },
+      {
+        "alias": "proof__formula",
+        "op": "annotation.formula",
+        "position": [
+          2.1,
+          -0.24
+        ],
+        "text": "M(AC) = M(BD) = (a + b) / 2"
+      },
+      {
         "op": "view.fit",
-        "padding": 1.15
+        "padding": 1.45
       }
     ],
     "scene": "2d",
     "summary": "平行四边形对角线互相平分",
     "version": 1
   },
-  "plan_digest": "sha256:cfa43995db0483591b37e57dc49283fed019bd6adb3a325e08c36daa131eff95",
+  "plan_digest": "sha256:8f1b8650bb4b211abe3036f0b58ef1f5d7b8f9670668602af8eb07a8b83decc3",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 13,
+  "revision": 17,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:ca9691ba96b556f0ecf214baf60ec08e9b71e904972b13e04c52404984c0730d",
   "stages": [
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
       "caption": "",
       "id": "stage.case.ch01.proof.parallelogram-diagonals.1",
       "layout": "overlay",
-      "title": "案例一：对角线中点",
+      "title": "案例一：两条对角线的中点重合",
       "visible_aliases": [
-        "sem__case1_a",
-        "sem__case1_a__end",
-        "sem__case1_a__origin",
-        "sem__case1_b",
-        "sem__case1_b__end",
-        "sem__case1_b__origin",
-        "sem__case1_r",
-        "sem__case1_r__end",
-        "sem__case1_r__origin",
-        "sem__rel.case.ch01.proof.parallelogram-diagonals.1"
+        "proof__side_a",
+        "proof__side_b",
+        "proof__region"
       ],
       "visible_refs": [
-        "case1_a",
-        "case1_b",
-        "case1_r",
-        "rel.case.ch01.proof.parallelogram-diagonals.1"
+        "proof_a",
+        "proof_b",
+        "rel.proof.ch01.proof.parallelogram-diagonals"
       ]
     }
   ],

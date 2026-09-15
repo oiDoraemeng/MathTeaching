@@ -1,7 +1,8 @@
 {
-  "artifact_digest": "sha256:5108bc32e88bb8480daa310ccedb1d4e1a9fcf96af1548b103239776239fd090",
+  "artifact_digest": "sha256:ba2ca9c2bc9529e9b7ea11e799b854208b5c196e47e73b7f274544d5436c6cae",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:bfb9cba9c92e55f0ff33deb8ffc411a48754f38a0020ffbeb37f73e3cf6dae89",
   "plan": {
     "operations": [
       {
@@ -499,6 +500,7 @@
         "op": "geometry.projection",
         "residual_alias": "sem__case1_r",
         "result_alias": "sem__case1_u",
+        "style": "dashed",
         "vector": [
           5.0,
           0.0
@@ -511,10 +513,11 @@
           0.0,
           1.0
         ],
-        "foot_alias": "sem__case1_H",
+        "foot_alias": "sem__case2_H",
         "op": "geometry.projection",
-        "residual_alias": "sem__case1_r",
+        "residual_alias": "sem__case2_r",
         "result_alias": "sem__case2_u",
+        "style": "dashed",
         "vector": [
           5.0,
           0.0
@@ -527,10 +530,11 @@
           1.0,
           0.0
         ],
-        "foot_alias": "sem__case1_H",
+        "foot_alias": "sem__case3_H",
         "op": "geometry.projection",
-        "residual_alias": "sem__case1_r",
+        "residual_alias": "sem__case3_r",
         "result_alias": "sem__case3_u",
+        "style": "dashed",
         "vector": [
           3.0,
           4.0
@@ -543,10 +547,11 @@
           3.0,
           1.0
         ],
-        "foot_alias": "sem__case1_H",
+        "foot_alias": "sem__case4_H",
         "op": "geometry.projection",
-        "residual_alias": "sem__case1_r",
+        "residual_alias": "sem__case4_r",
         "result_alias": "sem__case4_u",
+        "style": "dashed",
         "vector": [
           10.0,
           20.0
@@ -571,66 +576,74 @@
         ]
       },
       {
-        "alias": "sem__projection__1",
-        "color": "#2A9D8F",
-        "direction": [
+        "alias": "sem__orthogonal__1",
+        "color": "#6B7280",
+        "first": [
+          0.0,
+          0.0
+        ],
+        "op": "geometry.right_angle_marker",
+        "second": [
           1.0,
           0.0
         ],
-        "foot_alias": "sem__projection__1__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__1__residual",
-        "result_alias": "sem__projection__1",
-        "vector": [
-          5.0,
+        "size": 0.3,
+        "vertex": [
+          0.0,
           0.0
         ]
       },
       {
-        "alias": "sem__projection__2",
-        "color": "#2A9D8F",
-        "direction": [
-          1.0,
+        "alias": "sem__orthogonal__2",
+        "color": "#6B7280",
+        "first": [
+          5.0,
           0.0
         ],
-        "foot_alias": "sem__projection__2__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__2__residual",
-        "result_alias": "sem__projection__2",
-        "vector": [
-          5.0,
+        "op": "geometry.right_angle_marker",
+        "second": [
+          0.0,
+          1.0
+        ],
+        "size": 0.3,
+        "vertex": [
+          0.0,
           0.0
         ]
       },
       {
-        "alias": "sem__projection__3",
-        "color": "#2A9D8F",
-        "direction": [
+        "alias": "sem__orthogonal__3",
+        "color": "#6B7280",
+        "first": [
+          0.0,
+          4.0
+        ],
+        "op": "geometry.right_angle_marker",
+        "second": [
           1.0,
           0.0
         ],
-        "foot_alias": "sem__projection__3__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__3__residual",
-        "result_alias": "sem__projection__3",
-        "vector": [
-          5.0,
+        "size": 0.3,
+        "vertex": [
+          0.0,
           0.0
         ]
       },
       {
-        "alias": "sem__projection__4",
-        "color": "#2A9D8F",
-        "direction": [
-          1.0,
-          0.0
+        "alias": "sem__orthogonal__4",
+        "color": "#6B7280",
+        "first": [
+          -5.0,
+          15.0
         ],
-        "foot_alias": "sem__projection__4__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__4__residual",
-        "result_alias": "sem__projection__4",
-        "vector": [
-          5.0,
+        "op": "geometry.right_angle_marker",
+        "second": [
+          3.0,
+          1.0
+        ],
+        "size": 0.3,
+        "vertex": [
+          0.0,
           0.0
         ]
       },
@@ -643,10 +656,11 @@
     "summary": "坐标轴与斜面上的力分解",
     "version": 1
   },
-  "plan_digest": "sha256:f78bfe55018e4737bc9b6981e829485527c61a990b78bdefee43af2e147ce044",
+  "plan_digest": "sha256:95037f3eb47fc9014e6816a2d2603e029dbd6fb02579c830e29a69726a32bb42",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 13,
+  "revision": 16,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:85f23c9fa0886bbe72549992d8606f7f26a2e68d2e3ef9872dc0f4c4cfd8c66d",
   "stages": [
@@ -676,7 +690,7 @@
         "sem__rel.case.ch01.projection.force.1",
         "sem__rel.case.ch01.projection.force.1.decompose",
         "sem__rel.case.ch01.projection.force.1.orthogonal",
-        "sem__projection__1"
+        "sem__orthogonal__1"
       ],
       "visible_refs": [
         "case1_v",
@@ -715,7 +729,7 @@
         "sem__rel.case.ch01.projection.force.2",
         "sem__rel.case.ch01.projection.force.2.decompose",
         "sem__rel.case.ch01.projection.force.2.orthogonal",
-        "sem__projection__2"
+        "sem__orthogonal__2"
       ],
       "visible_refs": [
         "case2_v",
@@ -754,7 +768,7 @@
         "sem__rel.case.ch01.projection.force.3",
         "sem__rel.case.ch01.projection.force.3.decompose",
         "sem__rel.case.ch01.projection.force.3.orthogonal",
-        "sem__projection__3"
+        "sem__orthogonal__3"
       ],
       "visible_refs": [
         "case3_v",
@@ -793,7 +807,7 @@
         "sem__rel.case.ch01.projection.force.4",
         "sem__rel.case.ch01.projection.force.4.decompose",
         "sem__rel.case.ch01.projection.force.4.orthogonal",
-        "sem__projection__4"
+        "sem__orthogonal__4"
       ],
       "visible_refs": [
         "case4_v",

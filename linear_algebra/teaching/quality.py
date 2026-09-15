@@ -116,7 +116,13 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
         result["connections"] = []
         for claim in result.get("claims", []):
             if isinstance(claim, dict):
-                claim["explanation_refs"] = ["definition", "formula", "derivation", "worked_examples", "geometric_meaning"]
+                # 分节以产物为准：1.5.2 只有「命题 / 公式 / 向量证明」，
+                # claim 不能引用已移除的「案例」「注意」分节。
+                claim["explanation_refs"] = [
+                    str(section["id"])
+                    for section in explanation.get("sections", [])
+                    if isinstance(section, Mapping) and section.get("id")
+                ]
                 claim["formula"] = str(explanation.get("formula", ""))
                 claim["formula_symbols"] = ["a", "b"]
     elif topic_id.startswith("ch01.inner.") or topic_id.startswith("ch01.projection.") or topic_id.startswith("ch01.proof."):
@@ -144,6 +150,22 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
                 ]
                 claim["formula"] = str(explanation.get("formula", ""))
                 claim["formula_symbols"] = symbols_by_topic.get(topic_id, ["a", "b"])
+    elif topic_id in _MATRIX_VECTOR_TOPIC_SPECS:
+        _refine_matrix_vector_subsection(topic_id, explanation, visual)
+        spec = _MATRIX_VECTOR_TOPIC_SPECS[topic_id]
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                # 分节以产物为准：2.5 的公式并入定义/例题，claim 不能引用已移除的
+                # 「公式」分节。
+                claim["explanation_refs"] = [
+                    str(section["id"])
+                    for section in explanation.get("sections", [])
+                    if isinstance(section, Mapping) and section.get("id")
+                ]
+                claim["statement"] = str(spec["statement"])
+                claim["formula"] = str(spec["claim_formula"])
+                claim["formula_symbols"] = [str(item) for item in spec["formula_symbols"]]
     elif topic_id == "ch02.matrix.composition":
         _refine_matrix_composition(result, explanation, visual, example)
     else:
@@ -167,6 +189,19 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
             claim["stage_refs"] = [str(item["id"]) for item in visual.get("stages", []) if isinstance(item, Mapping) and item.get("id")]
 
     _sync_sections(explanation)
+    # The lecture merger may replace the visible section set (for example,
+    # when a generated ``connections`` section has no matching lecture
+    # content).  Claims must only refer to sections that will actually be
+    # published, otherwise the bundle is rejected before the case panel can
+    # render any explanation or scene.
+    section_ids = [
+        str(section["id"])
+        for section in explanation.get("sections", [])
+        if isinstance(section, Mapping) and section.get("id")
+    ]
+    for claim in result.get("claims", []):
+        if isinstance(claim, dict):
+            claim["explanation_refs"] = section_ids
     _sync_searchable_text(explanation)
     generated = result.setdefault("generated", {})
     generated.update({
@@ -1159,45 +1194,37 @@ _PROOF_TOPIC_SPECS: dict[str, dict[str, Any]] = {
         # 原点 $A$ 落在坐标原点上，图形不会退化成贴轴的直角三角形。
         "a": [3.6, 1.2],
         "b": [1.2, 3.2],
-        "case_title": "案例：三角形中位线定理",
+        "case_title": "三角形中位线定理",
         "invariant": r"$DE$ 与 $BC$ 平行且长度恒为 $BC$ 的一半",
         "title": "三角形中位线定理",
         "summary": r"三角形两边中点的连线平行于第三边，且长度是第三边的一半。",
         "definition": r"三角形两边中点的连线平行于第三边，且长度是第三边的一半。",
         "formula": r"\overrightarrow{DE}=\frac12(\boldsymbol b-\boldsymbol a)=\frac12\overrightarrow{BC}",
+        # 讲义把中位线定理写成“命题 + 向量证明”，所以证明保持一段连贯文字：
+        # 用数学的因为（$\because$）所以（$\therefore$）符号串联，不拆成分条编号。
         "derivation": [
-            r"取 $A$ 为原点。设 $\overrightarrow{AB}=\boldsymbol a$，$\overrightarrow{AC}=\boldsymbol b$。",
-            r"$D$ 是 $AB$ 中点 $\rightarrow \overrightarrow{AD}=\frac12\boldsymbol a$",
-            r"$E$ 是 $AC$ 中点 $\rightarrow \overrightarrow{AE}=\frac12\boldsymbol b$",
-            r"$\overrightarrow{DE}=\overrightarrow{AE}-\overrightarrow{AD}=\frac12\boldsymbol b-\frac12\boldsymbol a=\frac12(\boldsymbol b-\boldsymbol a)$",
-            r"又 $\overrightarrow{BC}=\overrightarrow{AC}-\overrightarrow{AB}=\boldsymbol b-\boldsymbol a$",
-            r"所以 $\overrightarrow{DE}=\frac12\overrightarrow{BC}$，即 $DE$ 平行于 $BC$，且长度是 $BC$ 的一半。",
+            r"取 $A$ 为原点，设 $\overrightarrow{AB}=\boldsymbol a$，$\overrightarrow{AC}=\boldsymbol b$"
+            "\n\n"
+            r"$\because D$ 是 $AB$ 中点，$E$ 是 $AC$ 中点"
+            "\n\n"
+            r"$\therefore \overrightarrow{AD}=\frac12\boldsymbol a$，$\overrightarrow{AE}=\frac12\boldsymbol b$"
+            "\n\n"
+            r"$\therefore \overrightarrow{DE}=\overrightarrow{AE}-\overrightarrow{AD}=\frac12\boldsymbol b-\frac12\boldsymbol a=\frac12(\boldsymbol b-\boldsymbol a)$"
+            "\n\n"
+            r"$\because \overrightarrow{BC}=\overrightarrow{AC}-\overrightarrow{AB}=\boldsymbol b-\boldsymbol a$"
+            "\n\n"
+            r"$\therefore \overrightarrow{DE}=\frac12\overrightarrow{BC}$"
+            "\n\n"
+            r"即 $DE$ 平行于 $BC$，且长度是 $BC$ 的一半",
+
         ],
-        "geometric_meaning": r"全程没有添加一条辅助线，没有用到任何全等或相似三角形。这就是向量方法的威力——几何归约为代数。",
+        # 讲义 1.5.2 只有「命题」与「向量证明」两段：命题进定义块，证明自带
+        # 全部公式，不再单列「案例」或「注意」分节。
+        "sections": ("definition", "formula", "derivation"),
         "section_titles": {
-            "definition": "定义",
+            "definition": "命题",
             "derivation": "向量证明",
-            "worked_examples": "案例",
-            "geometric_meaning": "注意",
         },
-        # 讲义把中位线定理写成一个先后过程，于是案例也逐步展开：一个窗格一步，
-        # 窗格数与步骤数一致，再一步步拼出完整证明。
-        "steps": [
-            r"第一步：取 $A$ 为原点，设 $\overrightarrow{AB}=\boldsymbol a$、$\overrightarrow{AC}=\boldsymbol b$",
-            r"第二步：两边的中点 $D$、$E$",
-            r"第三步：中位线 $\overrightarrow{DE}=\frac12(\boldsymbol b-\boldsymbol a)$",
-            r"第四步：$\overrightarrow{DE}=\frac12\overrightarrow{BC}$，平行且半长",
-        ],
-        "example_kind": "scalar_multiple",
-        "example_given": [0.5, [-2.4, 2.0]],
-        "example_result": [-1.2, 1.0],
-        "example_check": "scalar_multiple",
-        "example_calculation": [
-            r"$$\boldsymbol a=(3.6,\ 1.2),\qquad \boldsymbol b=(1.2,\ 3.2)$$",
-            r"$$\overrightarrow{BC}=\boldsymbol b-\boldsymbol a=(-2.4,\ 2)$$",
-            r"$$\overrightarrow{AD}=\frac12\boldsymbol a=(1.8,\ 0.6),\qquad \overrightarrow{AE}=\frac12\boldsymbol b=(0.6,\ 1.6)$$",
-            r"$$\overrightarrow{DE}=\overrightarrow{AE}-\overrightarrow{AD}=(-1.2,\ 1)=\frac12\overrightarrow{BC}$$",
-        ],
     },
     "ch01.proof.centroid": {
         "a": [4.5, 0.0],
@@ -1262,25 +1289,14 @@ def _refine_geometry_proof(topic_id: str, explanation: dict[str, Any], visual: d
 
     spec = _PROOF_TOPIC_SPECS[topic_id]
     claim_refs = [f"claim.{topic_id}"]
-    example = {
-        "id": f"example.{topic_id}",
-        "title": spec["case_title"],
-        "kind": spec["example_kind"],
-        "given": spec["example_given"],
-        "calculation": list(spec["example_calculation"]),
-        "result": spec["example_result"],
-        "checks": [
-            {
-                "name": spec["example_check"],
-                "expected": spec["example_result"],
-                "tolerance": 1e-9,
-            }
-        ],
-        "claim_refs": claim_refs,
-    }
-    section_ids = ("definition", "formula", "derivation", "worked_examples", "geometric_meaning")
-    # 讲义的小节标题就是软件里的分节标题：命题写成“定义”，向量证明写成
-    # “向量证明”，不再出现“定义与公式”这类拼接出来的名字。
+    section_ids = tuple(
+        spec.get(
+            "sections",
+            ("definition", "formula", "derivation", "worked_examples", "geometric_meaning"),
+        )
+    )
+    # 讲义的小节标题就是软件里的分节标题：讲义写“命题”就显示“命题”，
+    # 向量证明写成“向量证明”，不再出现“定义与公式”这类拼接出来的名字。
     section_titles = {
         "definition": "定义",
         "formula": "公式",
@@ -1289,6 +1305,27 @@ def _refine_geometry_proof(topic_id: str, explanation: dict[str, Any], visual: d
         "geometric_meaning": "几何意义",
     }
     section_titles.update(dict(spec.get("section_titles", {})))
+    # 讲义没有案例的小节（例如中位线定理）不造案例：既没有 worked_examples，
+    # 也没有 case_layout，图形仍由唯一的 stage 画出来。
+    with_case = "worked_examples" in section_ids
+    example: dict[str, Any] | None = None
+    if with_case:
+        example = {
+            "id": f"example.{topic_id}",
+            "title": spec["case_title"],
+            "kind": spec["example_kind"],
+            "given": spec["example_given"],
+            "calculation": list(spec["example_calculation"]),
+            "result": spec["example_result"],
+            "checks": [
+                {
+                    "name": spec["example_check"],
+                    "expected": spec["example_result"],
+                    "tolerance": 1e-9,
+                }
+            ],
+            "claim_refs": claim_refs,
+        }
     explanation.update(
         {
             "title": spec["title"],
@@ -1296,8 +1333,10 @@ def _refine_geometry_proof(topic_id: str, explanation: dict[str, Any], visual: d
             "definition": spec["definition"],
             "formula": spec["formula"],
             "derivation": list(spec["derivation"]),
-            "geometric_meaning": spec["geometric_meaning"],
-            "worked_examples": [example],
+            "geometric_meaning": (
+                spec.get("geometric_meaning", "") if "geometric_meaning" in section_ids else ""
+            ),
+            "worked_examples": [example] if example is not None else [],
         }
     )
     for key in (
@@ -1348,13 +1387,17 @@ def _refine_geometry_proof(topic_id: str, explanation: dict[str, Any], visual: d
                 "expected_invariants": [spec["invariant"]],
             }
         ]
-        cases = [
-            {
-                "id": f"case.proof.{topic_id}", "topic_id": topic_id,
-                "example_ref": example["id"], "claim_refs": claim_refs,
-                "stage_refs": [stage_id], "purpose": spec["case_title"],
-            }
-        ]
+        cases = (
+            [
+                {
+                    "id": f"case.proof.{topic_id}", "topic_id": topic_id,
+                    "example_ref": example["id"], "claim_refs": claim_refs,
+                    "stage_refs": [stage_id], "purpose": spec["case_title"],
+                }
+            ]
+            if example is not None
+            else []
+        )
         default_pane_count = 1
     visual.update(
         {
@@ -1379,9 +1422,374 @@ def _refine_geometry_proof(topic_id: str, explanation: dict[str, Any], visual: d
             "stages": stages,
         }
     )
+    if cases:
+        explanation["case_layout"] = {
+            "default_pane_count": default_pane_count,
+            "cases": cases,
+        }
+    else:
+        explanation.pop("case_layout", None)
+
+
+# 2.5 矩阵 × 向量（核心节）的三个小节：讲义给出的是算法（2.5.1）、定理（2.5.2）
+# 与例题（2.5.3），本身没有为 2.5.1、2.5.2 提供数值案例。案例按讲义的定义/定理
+# 自定，取值刻意避开坐标轴；案例按数学流程逐步展开，一步一个窗格，同一个结果由
+# 不同视角得到。定义块逐字搬讲义原文（只把裸写的符号包进 $...$），不概括、不新增。
+_MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
+    "ch02.matrix.row-column": {
+        "title": "矩阵乘向量的行视角与列视角",
+        "statement": "矩阵乘向量的行视角逐行作内积，列视角把各列按输入分量作线性组合；两种视角给出同一个输出。",
+        "summary": (
+            r"设 $A$ 是 $m \times n$ 矩阵，$\boldsymbol x$ 是 $n$ 维列向量："
+            r"算法一逐行作内积，算法二把各列按 $\boldsymbol x$ 的分量线性组合。"
+        ),
+        "definition": "\n\n".join(
+            (
+                r"设 $\boldsymbol A$ 是 $m \times n$ 矩阵，$\boldsymbol x$ 是 $n$ 维列向量。",
+                r"算法一（行视角 — 内积法）：$\boldsymbol A\boldsymbol x$ 的第 $i$ 个分量 $=$ $\boldsymbol A$ 的第 $i$ 行与 $\boldsymbol x$ 的内积。",
+                '这是"怎么算"——算得快，但不解释"什么意思"。',
+                "算法二（列视角 — 线性组合法）：",
+                r"$$\boldsymbol A\boldsymbol x=x_{1}\cdot(\boldsymbol A\text{ 的第 }1\text{ 列})+x_{2}\cdot(\boldsymbol A\text{ 的第 }2\text{ 列})+\cdots+x_{n}\cdot(\boldsymbol A\text{ 的第 }n\text{ 列})$$",
+                r'这就是"什么意思"：把矩阵各列取出来，用 $\boldsymbol x$ 的分量当系数，组合起来。结果向量的每一项都是"第 $k$ 列 $\times$ 系数"的叠加。',
+            )
+        ),
+        "claim_formula": r"\boldsymbol A\boldsymbol x=x_{1}\cdot(\boldsymbol A\text{ 的第 }1\text{ 列})+\cdots+x_{n}\cdot(\boldsymbol A\text{ 的第 }n\text{ 列})",
+        "formula_symbols": ["A", "x"],
+        "symbol_roles": {"A": "matrix_a", "x": "combination"},
+        "sections": (("definition", "定义"), ("worked_examples", "数学案例")),
+        "entities": (
+            ("mv_x", "vector", [2, 3], "combination", "x"),
+            ("mv_r1", "vector", [1, 2], "vector_a", "r1"),
+            ("mv_r2", "vector", [3, 1], "vector_b", "r2"),
+            ("mv_c1", "vector", [1, 3], "vector_a", "c1"),
+            ("mv_c2", "vector", [2, 1], "vector_b", "c2"),
+            ("mv_s1", "vector", [2, 6], "transformed_a", "2c1"),
+            ("mv_s2", "vector", [6, 3], "transformed_b", "3c2"),
+            ("mv_sum", "vector", [8, 9], "combination", "Ax"),
+        ),
+        "relations": (
+            ("rel.case.ch02.matrix.row-column.rows", "compare", "mv_r1", "mv_r2"),
+            ("rel.case.ch02.matrix.row-column.columns", "compare", "mv_c1", "mv_c2"),
+        ),
+        "steps": (
+            {
+                "purpose": "第一步：行视角（内积法）",
+                "invariant": "行视角与列视角得到同一个向量 (8, 9)",
+                "given": [[[1, 2], [3, 1]], [2, 3]],
+                "result": [8, 9],
+                "lines": (
+                    r"图中画出 $\boldsymbol A=\begin{pmatrix}1&2\\3&1\end{pmatrix}$ 的两行 "
+                    r"$\boldsymbol r_{1}=(1,2)$（终点 $R_1$）、$\boldsymbol r_{2}=(3,1)$（终点 $R_2$），"
+                    r"以及输入向量 $\boldsymbol x=(2,3)$（终点 $X$）。",
+                    r"$$\boldsymbol r_{1}\cdot\boldsymbol x=1\times2+2\times3=8,\qquad \boldsymbol r_{2}\cdot\boldsymbol x=3\times2+1\times3=9$$",
+                    r"$$\therefore\ \boldsymbol A\boldsymbol x=(8,9)$$",
+                ),
+                "inputs": ("mv_x", "mv_r1", "mv_r2"),
+                "outputs": (),
+                "relations": ("rel.case.ch02.matrix.row-column.rows",),
+            },
+            {
+                "purpose": "第二步：列视角（线性组合法）",
+                "invariant": "行视角与列视角得到同一个向量 (8, 9)",
+                "given": [[[1, 2], [3, 1]], [2, 3]],
+                "result": [8, 9],
+                "lines": (
+                    r"图中画出 $\boldsymbol A$ 的两列 $\boldsymbol c_{1}=(1,3)$（终点 $C_1$）、"
+                    r"$\boldsymbol c_{2}=(2,1)$（终点 $C_2$），以及按系数缩放后的 "
+                    r"$2\boldsymbol c_{1}=(2,6)$（终点 $S_1$）、$3\boldsymbol c_{2}=(6,3)$（终点 $S_2$）。",
+                    r"$$2\boldsymbol c_{1}+3\boldsymbol c_{2}=(2,6)+(6,3)=(8,9)$$",
+                    r"相加得到的 $\boldsymbol A\boldsymbol x=(8,9)$（终点 $Y$）与第一步的行视角结果重合。",
+                ),
+                "inputs": ("mv_c1", "mv_c2", "mv_s1", "mv_s2"),
+                "outputs": ("mv_sum",),
+                "relations": ("rel.case.ch02.matrix.row-column.columns",),
+            },
+        ),
+    },
+    "ch02.matrix.transformed-grid": {
+        "title": "基向量变换与网格变形",
+        "statement": "矩阵的两列分别是标准基向量的像；知道两列如何移动，就能确定整张坐标网格的拉伸、旋转或压扁。",
+        "summary": (
+            r"定理 2.2：$\boldsymbol A$ 的两列就是标准基向量 $\boldsymbol e_{1},\boldsymbol e_{2}$ 被送到的"
+            r"新位置，整张坐标网格的变形由两列完全确定。"
+        ),
+        "definition": "\n\n".join(
+            (
+                r"定理 2.2（矩阵变换的基向量解释） 设 $\boldsymbol A$ 是 $2 \times 2$ 矩阵。则：",
+                r"- $\boldsymbol A$ 的第 1 列 $=$ 标准基向量 $\boldsymbol e_{1}$ 被 $\boldsymbol A$ 送到的新位置",
+                r"- $\boldsymbol A$ 的第 2 列 $=$ $\boldsymbol e_{2}$ 被 $\boldsymbol A$ 送到的新位置",
+                r"任何向量 $\boldsymbol x=(x_{1},x_{2})$ 被 $\boldsymbol A$ 变换后：",
+                r"$$\boldsymbol A\boldsymbol x=x_{1}\cdot(\boldsymbol e_{1}\text{ 被 }\boldsymbol A\text{ 送到哪儿})+x_{2}\cdot(\boldsymbol e_{2}\text{ 被 }\boldsymbol A\text{ 送到哪儿})$$",
+                r'直觉总结：矩阵 $\boldsymbol A$ 的两列 $=$ 两根"新尺子"的方向和长度。$\boldsymbol A\boldsymbol x=$ 用新尺子重新"量"出 $\boldsymbol x$ 的位置。',
+                r'整个坐标网格被 $\boldsymbol A$ 拉伸、旋转、压扁——网格的变形由两列完全确定。这就是"线性变换"的视觉本质。',
+            )
+        ),
+        "claim_formula": r"\boldsymbol A\boldsymbol x=x_{1}\boldsymbol A\boldsymbol e_{1}+x_{2}\boldsymbol A\boldsymbol e_{2}",
+        "formula_symbols": ["A", "x"],
+        "symbol_roles": {"A": "matrix_a", "x": "combination"},
+        "sections": (("definition", "定理"), ("worked_examples", "数学案例")),
+        "entities": (
+            ("mv_grid_base", "grid", [[1, 0], [0, 1]], "construction", "I"),
+            ("mv_e1", "vector", [1, 0], "basis_e1", "e1"),
+            ("mv_e2", "vector", [0, 1], "basis_e2", "e2"),
+            ("mv_grid_A", "grid", [[2, 1], [1, 2]], "transformed_a", "A"),
+            ("mv_ae1", "vector", [2, 1], "vector_a", "Ae1"),
+            ("mv_ae2", "vector", [1, 2], "vector_b", "Ae2"),
+            ("mv_x", "vector", [3, 2], "combination", "x"),
+            ("mv_Ax", "vector", [8, 7], "transformed_b", "Ax"),
+        ),
+        "relations": (
+            ("rel.case.ch02.matrix.transformed-grid.basis", "invariant", "mv_grid_base", "mv_grid_A"),
+        ),
+        "steps": (
+            {
+                "purpose": "第一步：标准基与原始网格",
+                "invariant": "标准基 (1, 0)、(0, 1) 确定未变形的网格",
+                "given": [[[1, 0], [0, 1]], [1, 0]],
+                "result": [1, 0],
+                "lines": (
+                    r"图中画出标准基 $\boldsymbol e_{1}=(1,0)$（终点 $E_1$）、$\boldsymbol e_{2}=(0,1)$（终点 $E_2$），"
+                    r"以及由它们确定的未变形网格。",
+                    r"$$\boldsymbol e_{1}=(1,0),\qquad \boldsymbol e_{2}=(0,1)$$",
+                ),
+                "inputs": ("mv_grid_base", "mv_e1", "mv_e2"),
+                "outputs": (),
+                "relations": (),
+            },
+            {
+                "purpose": "第二步：两列的像与网格变形",
+                "invariant": "两列就是两条标准基向量被送到的位置",
+                "given": [[[2, 1], [1, 2]], [1, 0]],
+                "result": [2, 1],
+                "lines": (
+                    r"图中画出 $\boldsymbol A=\begin{pmatrix}2&1\\1&2\end{pmatrix}$ 作用后的网格（图内标注 $\boldsymbol A=[[2,1],[1,2]]$），"
+                    r"以及标准基被送到的新位置 $\boldsymbol A\boldsymbol e_{1}=(2,1)$（终点 $F_1$）、$\boldsymbol A\boldsymbol e_{2}=(1,2)$（终点 $F_2$）——它们就是 $\boldsymbol A$ 的两列。",
+                    r"$$\boldsymbol A\boldsymbol e_{1}=(2,1),\qquad \boldsymbol A\boldsymbol e_{2}=(1,2)$$",
+                ),
+                "inputs": ("mv_grid_A", "mv_ae1", "mv_ae2"),
+                "outputs": (),
+                "relations": ("rel.case.ch02.matrix.transformed-grid.basis",),
+            },
+            {
+                "purpose": "第三步：任意向量的像",
+                "invariant": "任意向量的像由两列的系数组合确定",
+                "given": [[[2, 1], [1, 2]], [3, 2]],
+                "result": [8, 7],
+                "lines": (
+                    r"图中画出输入向量 $\boldsymbol x=(3,2)$（终点 $X$）与它的像 $\boldsymbol A\boldsymbol x=(8,7)$（终点 $Y$）。",
+                    r"$$\boldsymbol A\boldsymbol x=3\times(2,1)+2\times(1,2)=(6,3)+(2,4)=(8,7)$$",
+                ),
+                # 变形网格已经在第二步给出；第三步只保留输入与像，窗格内容才不会
+                # 因为网格范围（±3）与终点的像（8,7）拉开而与其他窗格不一致。
+                "inputs": ("mv_x",),
+                "outputs": ("mv_Ax",),
+                "relations": (),
+            },
+        ),
+    },
+    "ch02.matrix.stretch-rotate-scale": {
+        "title": "拉伸、旋转与缩放的矩阵图像",
+        "statement": "对角矩阵沿坐标轴拉伸，旋转矩阵保持长度只改变方向；把两者乘在一起，同一个矩阵就会同时拉伸与旋转。",
+        "summary": (
+            r"例1 的 $\boldsymbol A$ 横向拉伸，例2 的 $\boldsymbol R$ 逆时针旋转 $90^\circ$；"
+            r"最后一窗格里两列同时被拉伸和旋转，网格一起变形。"
+        ),
+        "definition": "\n\n".join(
+            (
+                "**【理解层】**",
+                r"例1：$\boldsymbol A = \begin{pmatrix}2 & 0 \\ 0 & 1\end{pmatrix}$。$\boldsymbol e_{1} \rightarrow (2,0)$，$\boldsymbol e_{2} \rightarrow (0,1)$。描述变换效果。",
+                r"$x$ 方向拉伸 $2$ 倍，$y$ 方向不变。$\rightarrow$ 横向拉伸。",
+                r"例2：$\boldsymbol A = \begin{pmatrix}0 & -1 \\ 1 & 0\end{pmatrix}$。$\boldsymbol e_{1} \rightarrow (0,1)$，$\boldsymbol e_{2} \rightarrow (-1,0)$。描述变换效果。",
+                r"逆时针旋转 $90^\circ$。",
+                "**【计算层】**",
+                r"例3：$\boldsymbol A = \begin{pmatrix}1 & 2 \\ 3 & 4\end{pmatrix}$，$\boldsymbol x = (1, 2)$。用两种方法计算 $\boldsymbol A\boldsymbol x$ 并验证一致。",
+                r"列视角：$1 \times (1,3) + 2 \times (2,4) = (1,3) + (4,8) = (5,11)$。 ✓",
+                "**【应用层】**",
+                r"验证 $\boldsymbol A(\boldsymbol x_{1} + \boldsymbol x_{2}) = \boldsymbol A\boldsymbol x_{1} + \boldsymbol A\boldsymbol x_{2}$，$\boldsymbol A(k\boldsymbol x) = k \cdot \boldsymbol A\boldsymbol x$。",
+                "和第 1.4 节投影发现的规律完全一样！矩阵乘法也是一种线性变换。第4章全面揭晓。",
+            )
+        ),
+        "claim_formula": r"\boldsymbol A\boldsymbol e_{j}=\boldsymbol A\text{ 的第 }j\text{ 列}",
+        "formula_symbols": ["A"],
+        "symbol_roles": {"A": "matrix_a", "R": "matrix_a", "B": "matrix_a"},
+        "sections": (("definition", "分层例题"), ("worked_examples", "数学案例")),
+        "entities": (
+            ("mv_grid_base", "grid", [[1, 0], [0, 1]], "construction", "I"),
+            ("mv_e1", "vector", [1, 0], "basis_e1", "e1"),
+            ("mv_e2", "vector", [0, 1], "basis_e2", "e2"),
+            ("mv_grid_stretch", "grid", [[2, 0], [0, 1]], "transformed_a", "A"),
+            ("mv_stretch_e1", "vector", [2, 0], "vector_a", "Ae1"),
+            ("mv_stretch_e2", "vector", [0, 1], "vector_b", "Ae2"),
+            ("mv_grid_rotate", "grid", [[0, -1], [1, 0]], "transformed_a", "R"),
+            ("mv_rotate_e1", "vector", [0, 1], "vector_a", "Re1"),
+            ("mv_rotate_e2", "vector", [-1, 0], "vector_b", "Re2"),
+            ("mv_grid_combo", "grid", [[0, -1], [2, 0]], "transformed_a", "B"),
+            ("mv_combo_e1", "vector", [0, 2], "vector_a", "Be1"),
+            ("mv_combo_e2", "vector", [-1, 0], "vector_b", "Be2"),
+        ),
+        "relations": (
+            ("rel.case.ch02.matrix.stretch-rotate-scale.base", "compare", "mv_grid_base", "mv_grid_stretch"),
+            ("rel.case.ch02.matrix.stretch-rotate-scale.rotate", "compare", "mv_grid_rotate", "mv_grid_combo"),
+        ),
+        "steps": (
+            {
+                "purpose": "第一步：未变换的标准网格",
+                "invariant": "标准基 (1, 0)、(0, 1) 确定未变形的网格",
+                "given": [[[1, 0], [0, 1]], [1, 0]],
+                "result": [1, 0],
+                "lines": (
+                    r"图中画出标准基 $\boldsymbol e_{1}=(1,0)$（终点 $E_1$）、$\boldsymbol e_{2}=(0,1)$（终点 $E_2$），"
+                    r"以及未变换的标准网格。",
+                    r"$$\boldsymbol e_{1}=(1,0),\qquad \boldsymbol e_{2}=(0,1)$$",
+                ),
+                "inputs": ("mv_grid_base", "mv_e1", "mv_e2"),
+                "outputs": (),
+                "relations": (),
+            },
+            {
+                "purpose": "第二步：例1 横向拉伸",
+                "invariant": "横向拉伸只改变 x 方向，y 方向不动",
+                "given": [[[2, 0], [0, 1]], [1, 0]],
+                "result": [2, 0],
+                "lines": (
+                    r"图中画出横向拉伸后的网格（图内标注 $\boldsymbol A=[[2,0],[0,1]]$），"
+                    r"以及两个标准基被送到的新位置，终点记为 $F_1$、$F_2$。",
+                    r"$$\boldsymbol A\boldsymbol e_{1}=(2,0),\qquad \boldsymbol A\boldsymbol e_{2}=(0,1)$$",
+                ),
+                "inputs": ("mv_grid_stretch", "mv_stretch_e1", "mv_stretch_e2"),
+                "outputs": (),
+                "relations": ("rel.case.ch02.matrix.stretch-rotate-scale.base",),
+            },
+            {
+                "purpose": "第三步：例2 逆时针旋转",
+                "invariant": "旋转保持长度，只改变方向",
+                "given": [[[0, -1], [1, 0]], [1, 0]],
+                "result": [0, 1],
+                "lines": (
+                    r"图中画出逆时针旋转 $90^\circ$ 后的网格（图内标注 $\boldsymbol R=[[0,-1],[1,0]]$），"
+                    r"以及两个标准基被送到的新位置，终点记为 $G_1$、$G_2$。",
+                    r"$$\boldsymbol R\boldsymbol e_{1}=(0,1),\qquad \boldsymbol R\boldsymbol e_{2}=(-1,0)$$",
+                ),
+                "inputs": ("mv_grid_rotate", "mv_rotate_e1", "mv_rotate_e2"),
+                "outputs": (),
+                "relations": (),
+            },
+            {
+                "purpose": "第四步：拉伸与旋转同时存在",
+                "invariant": "复合矩阵的两列同时被拉伸和旋转",
+                "given": [[[0, -1], [2, 0]], [1, 0]],
+                "result": [0, 2],
+                "lines": (
+                    r"图中画出先拉伸再旋转后的网格（图内标注 $\boldsymbol B=[[0,-1],[2,0]]$），"
+                    r"两个标准基被送到的新位置同时带有拉伸与旋转，终点记为 $H_1$、$H_2$。",
+                    r"$$\boldsymbol B\boldsymbol e_{1}=(0,2),\qquad \boldsymbol B\boldsymbol e_{2}=(-1,0)$$",
+                ),
+                "inputs": ("mv_grid_combo", "mv_combo_e1", "mv_combo_e2"),
+                "outputs": (),
+                "relations": ("rel.case.ch02.matrix.stretch-rotate-scale.rotate",),
+            },
+        ),
+    },
+}
+
+
+def _refine_matrix_vector_subsection(
+    topic_id: str, explanation: dict[str, Any], visual: dict[str, Any]
+) -> None:
+    """Publish one 2.5 subsection as lecture text plus a step-by-step math case.
+
+    The definition block carries the lecture verbatim (only bare symbols are
+    wrapped in ``$...$``).  The case is authored from that definition, keeps
+    away from the coordinate axes, and renders one pane per algebraic step, so
+    the same result can be read off two different views.
+    """
+
+    spec = _MATRIX_VECTOR_TOPIC_SPECS[topic_id]
+    claim_refs = [f"claim.{topic_id}"]
+    steps = tuple(spec["steps"])
+    examples = [
+        {
+            "id": f"example.{topic_id}.{index}",
+            "title": str(step["purpose"]),
+            "kind": "matrix_transform",
+            "given": deepcopy(step["given"]),
+            "calculation": list(step["lines"]),
+            "result": deepcopy(step["result"]),
+            "checks": [
+                {
+                    "name": "transformed",
+                    "expected": deepcopy(step["result"]),
+                    "tolerance": 1e-9,
+                }
+            ],
+            "claim_refs": claim_refs,
+        }
+        for index, step in enumerate(steps, start=1)
+    ]
+    explanation.update(
+        {
+            "title": str(spec["title"]),
+            "summary": str(spec["summary"]),
+            "definition": str(spec["definition"]),
+            # 讲义把公式写在定义（2.5.1）与例题（2.5.3）里、把定理写在 2.5.2 里，
+            # 软件不再单列「公式」分节；claim 仍保留一条机器可读的公式。
+            "formula": "",
+            "derivation": [],
+            "geometric_meaning": "",
+            "worked_examples": examples,
+        }
+    )
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+    explanation["sections"] = [
+        {"id": section_id, "title": title, "text": "", "claim_refs": claim_refs}
+        for section_id, title in spec["sections"]
+    ]
+    explanation["symbol_roles"] = dict(spec["symbol_roles"])
+
+    visual["scene_kind"] = "2d"
+    visual["entities"] = [
+        {
+            "id": entity_id, "kind": kind, "dimension": 2, "value": deepcopy(value),
+            "role": role, "label": label, "claim_refs": claim_refs,
+        }
+        for entity_id, kind, value, role, label in spec["entities"]
+    ]
+    visual["relations"] = [
+        {
+            "id": relation_id, "kind": kind, "source_ref": source, "target_ref": target,
+            "parameters": {}, "claim_refs": claim_refs,
+        }
+        for relation_id, kind, source, target in spec["relations"]
+    ]
+    stage_ids = [f"stage.case.{topic_id}.{index}" for index in range(1, len(steps) + 1)]
+    visual["stages"] = [
+        {
+            "id": stage_id,
+            "title": str(step["purpose"]),
+            "caption": "",
+            "layout": "overlay",
+            "input_entity_refs": list(step["inputs"]),
+            "output_entity_refs": list(step["outputs"]),
+            "relation_refs": list(step["relations"]),
+            "expected_invariants": [str(step["invariant"])],
+        }
+        for stage_id, step in zip(stage_ids, steps)
+    ]
     explanation["case_layout"] = {
-        "default_pane_count": default_pane_count,
-        "cases": cases,
+        # 数学案例流程默认“全部显示”：一步一个窗格，各窗格共用同一视角。
+        "default_pane_count": len(steps),
+        "cases": [
+            {
+                "id": f"case.{topic_id}.{index}", "topic_id": topic_id,
+                "example_ref": examples[index - 1]["id"], "claim_refs": claim_refs,
+                "stage_refs": [stage_id], "purpose": str(step["purpose"]),
+            }
+            for index, (stage_id, step) in enumerate(zip(stage_ids, steps), start=1)
+        ],
     }
 
 
@@ -1439,12 +1847,12 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
     title, summary, definition, formula = definitions[topic_id]
     if topic_id == "ch01.inner.definitions":
         definition = (
-            r"定义 1.10（内积 / 点积 — 几何定义） 设 $\boldsymbol a,\boldsymbol b$ 为两个向量，"
+            r"**（内积 / 点积 — 几何定义）** 设 $\boldsymbol a,\boldsymbol b$ 为两个向量，"
             r"其夹角为 $\theta$（$0\leq\theta\leq\pi$），则："
             "\n\n"
             r"$$\boldsymbol a\cdot\boldsymbol b=\lvert\boldsymbol a\rvert\cdot\lvert\boldsymbol b\rvert\cdot\cos(\theta)$$"
             "\n\n"
-            r"定义 1.11（内积 — 代数计算） 在 $\mathbb R^2$ 中，设 "
+            r"**（内积 — 代数计算）** 在 $\mathbb R^2$ 中，设 "
             r"$\boldsymbol a=(a_1,a_2)$，$\boldsymbol b=(b_1,b_2)$，则："
             "\n\n"
             r"$$\boldsymbol a\cdot\boldsymbol b=a_1\cdot b_1+a_2\cdot b_2$$"
@@ -1607,7 +2015,7 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
     if topic_id == "ch01.inner.definitions":
         explanation["invariants"] = [
             (
-                r"性质 1.1（交换律 / 对称性）：对任意向量 $\boldsymbol a,\boldsymbol b$，"
+                r"**（交换律 / 对称性）**：对任意向量 $\boldsymbol a,\boldsymbol b$，"
                 "\n\n"
                 r"$$\boldsymbol a\cdot\boldsymbol b=\boldsymbol b\cdot\boldsymbol a$$"
                 "\n\n"
@@ -1615,7 +2023,7 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
                 r"所以 $a_1b_1+a_2b_2=b_1a_1+b_2a_2=\boldsymbol b\cdot\boldsymbol a$。"
             ),
             (
-                r"性质 1.2（分配律 / 双线性1）：对任意向量 $\boldsymbol a,\boldsymbol b,\boldsymbol c$，"
+                r"**（分配律 / 双线性1）**：对任意向量 $\boldsymbol a,\boldsymbol b,\boldsymbol c$，"
                 "\n\n"
                 r"$$\boldsymbol a\cdot(\boldsymbol b+\boldsymbol c)=\boldsymbol a\cdot\boldsymbol b+\boldsymbol a\cdot\boldsymbol c$$"
                 "\n\n"
@@ -1623,14 +2031,14 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
                 r"=(a_1b_1+a_2b_2)+(a_1c_1+a_2c_2)=\boldsymbol a\cdot\boldsymbol b+\boldsymbol a\cdot\boldsymbol c$。"
             ),
             (
-                r"性质 1.3（数乘结合律 / 双线性2）：对任意实数 $k$ 与向量 $\boldsymbol a,\boldsymbol b$，"
+                r"**（数乘结合律 / 双线性2）**：对任意实数 $k$ 与向量 $\boldsymbol a,\boldsymbol b$，"
                 "\n\n"
                 r"$$(k\boldsymbol a)\cdot\boldsymbol b=k\,(\boldsymbol a\cdot\boldsymbol b)=\boldsymbol a\cdot(k\boldsymbol b)$$"
                 "\n\n"
                 r"证明：$(k\boldsymbol a)\cdot\boldsymbol b=(ka_1)b_1+(ka_2)b_2=k(a_1b_1+a_2b_2)=k\,(\boldsymbol a\cdot\boldsymbol b)$。"
             ),
             (
-                r"性质 1.4（正定性）：对任意向量 $\boldsymbol a$，"
+                r"**（正定性）**：对任意向量 $\boldsymbol a$，"
                 "\n\n"
                 r"$$\boldsymbol a\cdot\boldsymbol a\geq0,\qquad \boldsymbol a\cdot\boldsymbol a=0\Longleftrightarrow\boldsymbol a=\boldsymbol0$$"
                 "\n\n"

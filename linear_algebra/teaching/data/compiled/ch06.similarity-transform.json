@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:58e5490dca28fc19ce9600dca9f65670f00aa37e8620c9d382621024cc02ae54",
+  "artifact_digest": "sha256:02b3988c40f73cc0c52d8febfdbd3d454ed17d957aebdd5730e692cdc9b3cf71",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:ce7a212384742990bef3ad0c2a56e33ac180fb345af1904c3d096feb2c8f5ba4",
@@ -344,20 +344,20 @@
         "matrices": [
           [
             [
-              1.0,
-              -1.0
+              1,
+              -1
             ],
             [
-              1.0,
-              1.0
+              1,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1.0,
-            2.0
+            1,
+            2
           ]
         ]
       },
@@ -403,20 +403,20 @@
         "matrices": [
           [
             [
-              2.0,
-              1.0
+              2,
+              1
             ],
             [
-              1.0,
-              2.0
+              1,
+              2
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            -1.0,
-            3.0
+            -1,
+            3
           ]
         ]
       },
@@ -440,8 +440,8 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            1.0,
-            5.0
+            1,
+            5
           ]
         ]
       },
@@ -532,20 +532,20 @@
         "matrices": [
           [
             [
-              1.0,
-              -1.0
+              1,
+              -1
             ],
             [
-              1.0,
-              1.0
+              1,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1.0,
-            2.0
+            1,
+            2
           ]
         ]
       },
@@ -582,20 +582,20 @@
         "matrices": [
           [
             [
-              2.0,
-              1.0
+              2,
+              1
             ],
             [
-              1.0,
-              2.0
+              1,
+              2
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            -1.0,
-            3.0
+            -1,
+            3
           ]
         ]
       },
@@ -644,8 +644,8 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            1.0,
-            5.0
+            1,
+            5
           ]
         ]
       },
@@ -710,10 +710,8 @@
     "summary": "6.3 相似变换——同一个变换在不同基下的矩阵",
     "version": 1
   },
-  "plan_digest": "sha256:8afb471a7eca866e08ffdc783e60641ee2fcef3c61854249c4f3cd11d0be613c",
-  "read_guide": [
-    "先定义，再公式，最后读数值例。"
-  ],
+  "plan_digest": "sha256:74034647506fd893b4fe3726f2d75958703caf67675e4ad0edc2e49c6521a15b",
+  "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
   "scene_family": "basis_change",

@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:a17cf25fd3d925814362959ca459c8908bd56b2ca20ecb95ad0d8ca2adf9f8ba",
+  "artifact_digest": "sha256:2f679588c3747b1884145357d1342073d796a5324b79a9bcc08f48e6f79cd616",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:11910aa57dea62123854abd2f979fec5d5d81c9e2d4ff74e3bddff49a83556ee",
   "plan": {
     "operations": [
       {
         "alias": "sem__A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            1.0,
-            2.0
+            1,
+            2
           ],
           [
-            2.0,
-            4.0
+            2,
+            4
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__x__end",
         "coordinates": [
-          1.0,
-          1.0
+          1,
+          1
         ],
         "name": "x",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          3.0,
-          6.0
+          3,
+          6
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -86,12 +87,12 @@
         "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
-            1.0,
-            2.0
+            1,
+            2
           ],
           [
-            2.0,
-            4.0
+            2,
+            4
           ]
         ],
         "op": "linear_algebra.matrix_transform"
@@ -99,51 +100,29 @@
       {
         "basis": [
           [
-            1.0,
-            1.0
+            1,
+            1
           ],
           [
-            3.0,
-            6.0
+            3,
+            6
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#E09F3E",
         "op": "geometry.subspace_region",
         "opacity": 0.2
       },
       {
-        "alias": "sem__mapping_grid__1",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            1.0,
-            2.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
-          0.0,
+          0,
           2.65
         ],
         "text": "输入与变换"
@@ -157,16 +136,21 @@
     "summary": "秩与输出空间的真实维度",
     "version": 1
   },
-  "plan_digest": "sha256:6b37994f3b13ba7c83169b6344776c032596eca0b2a2db0df25302121e8b2430",
-  "read_guide": [],
+  "plan_digest": "sha256:09d5e3a361ffda2952b4e23e6c6ea507551d31ece5b4922563d9ba0700807c68",
+  "read_guide": [
+    "先看两列是否共线。",
+    "再判断变换后是面、线还是点。",
+    "最后用行列式是否为零做核对。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 12,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:504217b49a51096d84540949f881c4ae9ecd6f676c74f04a2843446a6c85697c",
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "矩阵 A 作用于向量 x。",

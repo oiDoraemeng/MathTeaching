@@ -13,8 +13,9 @@ def test_chapter_01_has_17_published_grounded_artifacts() -> None:
     assert report.topic_count == 17
     assert report.errors == ()
     levels = dict(report.minimum_level_counts)
-    # Chapter one now uses the concise lecture-note workflow throughout.
-    assert levels == {"L2": 17}
+    # Chapter one uses the concise lecture-note workflow throughout; 1.5.2 is a
+    # proof-only subsection (命题 + 向量证明, no case) so it only reads at L1.
+    assert levels == {"L1": 1, "L2": 16}
 
 
 def test_point_vector_distinction_uses_a_native_standard_basis_label_in_2d() -> None:

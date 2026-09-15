@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 import argparse
 import json
-import subprocess
 import os
 import shutil
 import tempfile
@@ -241,19 +240,6 @@ def compile_chapter_04(
         # the aggregate index.  A malformed baseline therefore leaves files
         # untouched rather than producing a partial release.
         index_payload = _merged_chapter_index_payload(resources, chapter=4, output_path=destination)
-        if destination.resolve() == (Path(__file__).with_name("data") / "index.json").resolve():
-            # The release baseline predates Chapter 4.  A dirty working index
-            # must not silently publish unrelated chapter revisions.
-            baseline = json.loads(subprocess.check_output(
-                ["git", "show", "90f6c09^:linear_algebra/teaching/data/index.json"],
-                cwd=Path(__file__).resolve().parents[2],
-            ).decode("utf-8"))
-            legacy = [row for row in baseline["topics"] if str(row["topic_id"]).startswith(("ch01.","ch02.","ch03."))]
-            if len(legacy) != 54 or len({row["topic_id"] for row in legacy}) != 54:
-                raise ValueError("release baseline must contain 54 unique Chapter 1–3 rows")
-            other = [row for row in index_payload["topics"] if not str(row["topic_id"]).startswith(("ch01.","ch02.","ch03."))]
-            index_payload["topics"] = sorted([*legacy,*other],key=lambda row: row["topic_id"])
-            index_payload["topic_count"] = len(index_payload["topics"])
     else:
         destination = None
         index_payload = None

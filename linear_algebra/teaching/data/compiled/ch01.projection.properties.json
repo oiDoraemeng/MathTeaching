@@ -1,7 +1,8 @@
 {
-  "artifact_digest": "sha256:2e5525a72d0534d0c4ca1ab83f104b6923b82063cfc317aa49a53bc42db75469",
+  "artifact_digest": "sha256:412cb19a55f0ae8dd10f948a8b0fe7b7454a5150b66d8ccfdcb7229b7ed63ed0",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:2211e64f6943c95804af4e0ff832aa7dcce96f9184b11b3a4024c8cc96e23c8a",
   "plan": {
     "operations": [
       {
@@ -257,6 +258,7 @@
         "op": "geometry.projection",
         "residual_alias": "sem__case1_r",
         "result_alias": "sem__case1_u",
+        "style": "dashed",
         "vector": [
           3.0,
           4.0
@@ -269,45 +271,50 @@
           1.0,
           0.0
         ],
-        "foot_alias": "sem__case1_H",
+        "foot_alias": "sem__case2_H",
         "op": "geometry.projection",
-        "residual_alias": "sem__case1_r",
+        "residual_alias": "sem__case2_r",
         "result_alias": "sem__case2_u",
+        "style": "dashed",
         "vector": [
           6.0,
           8.0
         ]
       },
       {
-        "alias": "sem__projection__1",
-        "color": "#2A9D8F",
-        "direction": [
+        "alias": "sem__orthogonal__1",
+        "color": "#6B7280",
+        "first": [
+          0.0,
+          4.0
+        ],
+        "op": "geometry.right_angle_marker",
+        "second": [
           1.0,
           0.0
         ],
-        "foot_alias": "sem__projection__1__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__1__residual",
-        "result_alias": "sem__projection__1",
-        "vector": [
-          3.0,
-          4.0
+        "size": 0.3,
+        "vertex": [
+          0.0,
+          0.0
         ]
       },
       {
-        "alias": "sem__projection__2",
-        "color": "#2A9D8F",
-        "direction": [
+        "alias": "sem__orthogonal__2",
+        "color": "#6B7280",
+        "first": [
+          0.0,
+          8.0
+        ],
+        "op": "geometry.right_angle_marker",
+        "second": [
           1.0,
           0.0
         ],
-        "foot_alias": "sem__projection__2__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__2__residual",
-        "result_alias": "sem__projection__2",
-        "vector": [
-          3.0,
-          4.0
+        "size": 0.3,
+        "vertex": [
+          0.0,
+          0.0
         ]
       },
       {
@@ -319,10 +326,11 @@
     "summary": "投影的可加性与齐次性",
     "version": 1
   },
-  "plan_digest": "sha256:2e23a78474f635acb6bf8698e762352e22c80d02c2902f4f4239b9e332643c61",
+  "plan_digest": "sha256:08d7274f46c8ee0ebeef7ea8f7b111f9b47e2b9b350f4df93ba3cae10dfcff21",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 14,
+  "revision": 17,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:8aca69b44713fdac8bf4cb3885c96563418db00aaa21ad288a0a0c79c25162c9",
   "stages": [
@@ -352,7 +360,7 @@
         "sem__rel.case.ch01.projection.properties.1",
         "sem__rel.case.ch01.projection.properties.1.decompose",
         "sem__rel.case.ch01.projection.properties.1.orthogonal",
-        "sem__projection__1"
+        "sem__orthogonal__1"
       ],
       "visible_refs": [
         "case1_v",
@@ -391,7 +399,7 @@
         "sem__rel.case.ch01.projection.properties.2",
         "sem__rel.case.ch01.projection.properties.2.decompose",
         "sem__rel.case.ch01.projection.properties.2.orthogonal",
-        "sem__projection__2"
+        "sem__orthogonal__2"
       ],
       "visible_refs": [
         "case2_v",

@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:64e8948bd8b53e61479c6bc48bc4856ef7464d00cf7e5fb5f0b045fffc87e7bc",
+  "artifact_digest": "sha256:f155d74405eafbd8c991073a2609319e2c69305639b468800ebbee1d7cac6cce",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:fd2ef7b1b22c6f866508ef3c2f0f9243bfec95fc8cf9a07ada677d3fdd889442",
@@ -252,20 +252,20 @@
         "matrices": [
           [
             [
-              1.0,
-              -1.0
+              1,
+              -1
             ],
             [
-              1.0,
-              1.0
+              1,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            2.0,
-            3.0
+            2,
+            3
           ]
         ]
       },
@@ -323,8 +323,8 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            -1.0,
-            5.0
+            -1,
+            5
           ]
         ]
       },
@@ -370,20 +370,20 @@
         "matrices": [
           [
             [
-              1.0,
-              -1.0
+              1,
+              -1
             ],
             [
-              1.0,
-              1.0
+              1,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            2.0,
-            3.0
+            2,
+            3
           ]
         ]
       },
@@ -432,8 +432,8 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            -1.0,
-            5.0
+            -1,
+            5
           ]
         ]
       },
@@ -489,10 +489,8 @@
     "summary": "6.1 为什么要换基——动机",
     "version": 1
   },
-  "plan_digest": "sha256:f0eb70cb3fb56aeaa628d54a4a15d27b1574d06853bf27faf48e5ca77e6baacd",
-  "read_guide": [
-    "先定义，再公式，最后读数值例。"
-  ],
+  "plan_digest": "sha256:95163436fdd0a70b9aca0c8172e07c3ef16600bfc573b567e035d86515b6aa8a",
+  "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
   "scene_family": "basis_change",

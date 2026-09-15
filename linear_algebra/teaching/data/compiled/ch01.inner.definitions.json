@@ -1,7 +1,8 @@
 {
-  "artifact_digest": "sha256:8c35257f2ef9d2f7a08feb661566a951869fba38098be08aaefd04c0cceb27b4",
+  "artifact_digest": "sha256:cfa6f9de5a06a802ca727d83e427bd3779f589e1962beb04aa2f1ac4a6e48281",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:3e5b94f1279a05a58b2e7b4ca1ef8287d1b8e54cf9f7295cad2687cbe29e83d4",
   "plan": {
     "operations": [
       {
@@ -17,9 +18,9 @@
         "alias": "sem__case1_a__end",
         "coordinates": [
           2.0,
-          0.0
+          1.0
         ],
-        "name": "a",
+        "name": "A",
         "op": "point.upsert"
       },
       {
@@ -28,6 +29,7 @@
         "end": "sem__case1_a__end",
         "kind": "vector",
         "label": "a",
+        "label_side": "above",
         "op": "linear.upsert",
         "role": "primary",
         "start": "sem__case1_a__origin"
@@ -45,9 +47,9 @@
         "alias": "sem__case1_b__end",
         "coordinates": [
           1.0,
-          1.0
+          2.0
         ],
-        "name": "b",
+        "name": "B",
         "op": "point.upsert"
       },
       {
@@ -56,12 +58,13 @@
         "end": "sem__case1_b__end",
         "kind": "vector",
         "label": "b",
+        "label_side": "above",
         "op": "linear.upsert",
         "role": "primary",
         "start": "sem__case1_b__origin"
       },
       {
-        "alias": "sem__case1_r__origin",
+        "alias": "sem__case1_p__origin",
         "coordinates": [
           0.0,
           0.0
@@ -70,51 +73,294 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_r__end",
+        "alias": "sem__case1_p__end",
         "coordinates": [
-          2.0,
-          0.0
+          1.6,
+          0.8
         ],
-        "name": "result",
+        "name": "P",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_r",
-        "color": "#6B7280",
-        "end": "sem__case1_r__end",
+        "alias": "sem__case1_p",
+        "color": "#2A9D8F",
+        "end": "sem__case1_p__end",
         "kind": "vector",
-        "label": "result",
+        "label": "p",
+        "label_side": "above",
         "op": "linear.upsert",
-        "role": "result",
-        "start": "sem__case1_r__origin"
+        "role": "primary",
+        "start": "sem__case1_p__origin"
       },
       {
-        "color": "#2A9D8F",
-        "direction": [
-          1.0,
+        "alias": "sem__case1_H",
+        "coordinates": [
+          1.6,
+          0.8
+        ],
+        "name": "H",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_a__end",
+        "coordinates": [
+          2.0,
           1.0
         ],
-        "foot_alias": "cap__foot",
-        "op": "geometry.projection",
-        "residual_alias": "cap__residual",
-        "result_alias": "cap__projection",
-        "vector": [
-          2.0,
+        "name": "A",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_a",
+        "color": "#2F6BFF",
+        "end": "sem__case2_a__end",
+        "kind": "vector",
+        "label": "a",
+        "label_side": "above",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_a__origin"
+      },
+      {
+        "alias": "sem__case2_b__origin",
+        "coordinates": [
+          0.0,
           0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_b__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "B",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_b",
+        "color": "#F08A24",
+        "end": "sem__case2_b__end",
+        "kind": "vector",
+        "label": "b",
+        "label_side": "above",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_b__origin"
+      },
+      {
+        "alias": "sem__case2_p__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_p__end",
+        "coordinates": [
+          1.6,
+          0.8
+        ],
+        "name": "P",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_p",
+        "color": "#2A9D8F",
+        "end": "sem__case2_p__end",
+        "kind": "vector",
+        "label": "p",
+        "label_side": "above",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_p__origin"
+      },
+      {
+        "alias": "sem__case2_H",
+        "coordinates": [
+          1.6,
+          0.8
+        ],
+        "name": "H",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.1",
+        "color": "#2A9D8F",
+        "direction": [
+          2.0,
+          1.0
+        ],
+        "foot_alias": "sem__case1_H",
+        "op": "geometry.projection",
+        "residual_alias": "sem__rel.case.ch01.inner.definitions.1__residual",
+        "result_alias": "sem__case1_a",
+        "style": "dashed",
+        "vector": [
+          1.0,
+          2.0
         ]
       },
       {
-        "alias": "cap__angle",
+        "alias": "sem__rel.case.ch01.inner.definitions.1__length_a",
+        "color": "#2A9D8F",
+        "op": "annotation.upsert",
+        "position": [
+          1.560748,
+          0.478505
+        ],
+        "text": "|a| = √5"
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.1__length_p",
+        "color": "#2A9D8F",
+        "op": "annotation.upsert",
+        "position": [
+          0.792748,
+          0.094505
+        ],
+        "text": "|p| = 4/√5"
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.1__product_end",
+        "coordinates": [
+          3.577709,
+          1.788854
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.1__length",
+        "color": "#E09F3E",
+        "end": "sem__rel.case.ch01.inner.definitions.1__product_end",
+        "kind": "segment",
+        "label_side": "below",
+        "op": "linear.upsert",
+        "role": "construction",
+        "start": "sem__case1_a__origin",
+        "style": "dashed"
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.1__length_product",
+        "color": "#E09F3E",
+        "op": "annotation.upsert",
+        "position": [
+          2.909602,
+          1.152932
+        ],
+        "text": "a·b = 4"
+      },
+      {
+        "alias": "sem__rel.angle.ch01.inner.definitions.1",
         "color": "#2A9D8F",
         "first": [
           2.0,
-          0.0
+          1.0
         ],
         "op": "geometry.angle_arc",
         "radius": 0.45,
         "second": [
           1.0,
+          2.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.2",
+        "color": "#2A9D8F",
+        "direction": [
+          2.0,
           1.0
+        ],
+        "foot_alias": "sem__case2_H",
+        "op": "geometry.projection",
+        "residual_alias": "sem__rel.case.ch01.inner.definitions.2__residual",
+        "result_alias": "sem__case2_a",
+        "style": "dashed",
+        "vector": [
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.2__length_a",
+        "color": "#2A9D8F",
+        "op": "annotation.upsert",
+        "position": [
+          1.560748,
+          0.478505
+        ],
+        "text": "|a| = √5"
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.2__length_p",
+        "color": "#2A9D8F",
+        "op": "annotation.upsert",
+        "position": [
+          0.792748,
+          0.094505
+        ],
+        "text": "|p| = 4/√5"
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.2__product_end",
+        "coordinates": [
+          3.577709,
+          1.788854
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.2__length",
+        "color": "#E09F3E",
+        "end": "sem__rel.case.ch01.inner.definitions.2__product_end",
+        "kind": "segment",
+        "label_side": "below",
+        "op": "linear.upsert",
+        "role": "construction",
+        "start": "sem__case2_a__origin",
+        "style": "dashed"
+      },
+      {
+        "alias": "sem__rel.case.ch01.inner.definitions.2__length_product",
+        "color": "#E09F3E",
+        "op": "annotation.upsert",
+        "position": [
+          2.909602,
+          1.152932
+        ],
+        "text": "a·b = 4"
+      },
+      {
+        "alias": "sem__rel.angle.ch01.inner.definitions.2",
+        "color": "#2A9D8F",
+        "first": [
+          2.0,
+          1.0
+        ],
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          1.0,
+          2.0
         ],
         "vertex": [
           0.0,
@@ -126,13 +372,13 @@
         "color": "#2A9D8F",
         "first": [
           2.0,
-          0.0
+          1.0
         ],
         "op": "geometry.angle_arc",
         "radius": 0.45,
         "second": [
           1.0,
-          1.0
+          2.0
         ],
         "vertex": [
           0.0,
@@ -140,6 +386,30 @@
         ]
       },
       {
+        "alias": "sem__orientation__2",
+        "color": "#2A9D8F",
+        "first": [
+          2.0,
+          1.0
+        ],
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          1.0,
+          2.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bounds": [
+          0.0,
+          3.5777087639996634,
+          0.0,
+          2.0
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
@@ -148,10 +418,11 @@
     "summary": "1.3.1 内积的两种定义",
     "version": 1
   },
-  "plan_digest": "sha256:49836b2df395d63b2a8a4cc9d553e74a7979bc85e5a47c2efa8a16dc1977dffb",
+  "plan_digest": "sha256:95ade5b55e9b5a10d944e7fdb141cca273f89685968876dac62a21e0eb7a35fc",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 18,
+  "revision": 28,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:f7f7d9ef3f7be4ba1e2483a74a5fee817f38b0fcd899a4965f3c74af9624dd5b",
   "stages": [
@@ -160,10 +431,10 @@
         0.0,
         2.65
       ],
-      "caption": "",
+      "caption": "$\\boldsymbol a=(2,1)$ 与 $\\boldsymbol b=(1,2)$ 从同一原点出发，夹角为 $\\theta$；几何定义 $\\boldsymbol a\\cdot\\boldsymbol b=\\lvert\\boldsymbol a\\rvert\\,\\lvert\\boldsymbol b\\rvert\\cos\\theta=\\sqrt5\\cdot\\sqrt5\\cdot\\dfrac45=4$。",
       "id": "stage.case.ch01.inner.definitions.1",
       "layout": "overlay",
-      "title": "案例一：坐标内积与夹角",
+      "title": "第一步：几何定义",
       "visible_aliases": [
         "sem__case1_a",
         "sem__case1_a__end",
@@ -171,17 +442,51 @@
         "sem__case1_b",
         "sem__case1_b__end",
         "sem__case1_b__origin",
-        "sem__case1_r",
-        "sem__case1_r__end",
-        "sem__case1_r__origin",
-        "sem__rel.case.ch01.inner.definitions.1",
+        "sem__rel.angle.ch01.inner.definitions.1",
         "sem__orientation__1"
       ],
       "visible_refs": [
         "case1_a",
         "case1_b",
-        "case1_r",
-        "rel.case.ch01.inner.definitions.1"
+        "rel.angle.ch01.inner.definitions.1"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "$\\boldsymbol b$ 在 $\\boldsymbol a$ 上的投影（虚线）为 $\\boldsymbol p=(1.6,0.8)$，投影长度 $\\lvert\\boldsymbol b\\rvert\\cos\\theta=\\dfrac4{\\sqrt5}$；乘以 $\\lvert\\boldsymbol a\\rvert=\\sqrt5$ 得 $\\boldsymbol a\\cdot\\boldsymbol b=4$，与按坐标分量相乘再相加（$2\\times1+1\\times2=4$）一致。",
+      "id": "stage.case.ch01.inner.definitions.2",
+      "layout": "overlay",
+      "title": "第二步：代数定义",
+      "visible_aliases": [
+        "sem__case2_a",
+        "sem__case2_a__end",
+        "sem__case2_a__origin",
+        "sem__case2_b",
+        "sem__case2_b__end",
+        "sem__case2_b__origin",
+        "sem__case2_p",
+        "sem__case2_p__end",
+        "sem__case2_p__origin",
+        "sem__case2_H",
+        "sem__rel.case.ch01.inner.definitions.2",
+        "sem__rel.case.ch01.inner.definitions.2__length_a",
+        "sem__rel.case.ch01.inner.definitions.2__length_p",
+        "sem__rel.case.ch01.inner.definitions.2__product_end",
+        "sem__rel.case.ch01.inner.definitions.2__length",
+        "sem__rel.case.ch01.inner.definitions.2__length_product",
+        "sem__rel.angle.ch01.inner.definitions.2",
+        "sem__orientation__2"
+      ],
+      "visible_refs": [
+        "case2_a",
+        "case2_b",
+        "case2_p",
+        "case2_H",
+        "rel.case.ch01.inner.definitions.2",
+        "rel.angle.ch01.inner.definitions.2"
       ]
     }
   ],

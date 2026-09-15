@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:856e2a124ef06cca25f186d1f6788aa05f6b7298c7e48fdf4b5e2b0b40d2e5b2",
+  "artifact_digest": "sha256:361b3e8fbbe57817e5930a80fb3af0acec584df982c3915ddc13fa8e55254202",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:752f0be1933d7acfbab7b588fe9f915ceda536f50e2a5ff6264e384cf99255b7",
@@ -80,8 +80,8 @@
         "alias": "ch07.eigenspace__relation__root_2",
         "basis": [
           [
-            -1.0,
-            1.0
+            -1,
+            1
           ]
         ],
         "bounds": [
@@ -96,8 +96,8 @@
         "alias": "ch07.eigenspace__relation__root_3",
         "basis": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ]
         ],
         "bounds": [
@@ -112,8 +112,8 @@
         "alias": "ch07.eigenspace__stage__nullspace__root_2",
         "basis": [
           [
-            -1.0,
-            1.0
+            -1,
+            1
           ]
         ],
         "bounds": [
@@ -128,8 +128,8 @@
         "alias": "ch07.eigenspace__stage__nullspace__root_3",
         "basis": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ]
         ],
         "bounds": [
@@ -158,10 +158,8 @@
     "summary": "7.3 求特征向量",
     "version": 1
   },
-  "plan_digest": "sha256:27864a82cd1331ae08533db89b80889f4430bdb292549fdc96bd3c4f34f426ac",
-  "read_guide": [
-    "先定义，再公式，最后读数值例。"
-  ],
+  "plan_digest": "sha256:681975ecc58ac0d3ef6a463ae8c01785325291e9e39ea3fc4b4c8baa141bca03",
+  "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
   "scene_family": "spectral_orthogonal",

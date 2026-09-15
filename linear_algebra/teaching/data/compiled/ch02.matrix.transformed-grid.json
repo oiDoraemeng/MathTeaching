@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:7838e4ae6b6d9f2e07d9936cf82f3e0155e278ff83e03dd315ad1ceedb87999d",
+  "artifact_digest": "sha256:239ad7d2d570a978278b556bc5087035ae63704d0ae0e9267588f944c9f559b1",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:b800ab74262eacaaed0eec0fc85f3377bb0339d80fe849f5a1ce422467404537",
   "plan": {
     "operations": [
       {
         "alias": "sem__A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            2.0,
-            1.0
+            2,
+            1
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__x__end",
         "coordinates": [
-          1.0,
-          2.0
+          1,
+          2
         ],
         "name": "x",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          4.0,
-          2.0
+          4,
+          2
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -85,35 +86,35 @@
       {
         "alias": "sem__grid",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            0.0,
-            0.0
+            1,
+            0
           ],
           [
-            1.0,
-            0.0
+            0,
+            1
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
-            2.0,
-            1.0
+            2,
+            1
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
         "op": "linear_algebra.matrix_transform"
@@ -128,94 +129,28 @@
         "text": "invariant: coordinate grid → Ax"
       },
       {
-        "alias": "sem__mapping_grid__1",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            2.0,
-            1.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
-          0.0,
+          0,
           2.65
         ],
         "text": "输入与变换"
       },
       {
-        "alias": "sem__mapping_grid__2",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            2.0,
-            1.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
         "alias": "sem__stage.grid_input__title",
         "op": "annotation.upsert",
         "position": [
-          0.0,
+          0,
           2.65
         ],
         "text": "标准网格"
       },
       {
-        "alias": "sem__mapping_grid__3",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            2.0,
-            1.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
         "alias": "sem__stage.grid_output__title",
         "op": "annotation.upsert",
         "position": [
-          2.0,
+          2,
           2.65
         ],
         "text": "变换后网格"
@@ -229,16 +164,21 @@
     "summary": "基向量变换与网格变形",
     "version": 1
   },
-  "plan_digest": "sha256:b7fd0ed4641f2685263e51303bf3cf50e28347ea4da06522dd08c25ff89a91f8",
-  "read_guide": [],
+  "plan_digest": "sha256:ee06cd31ef21c5b1962fbe61de210438f31b6f4abd7ac2b3c59cfbb0b6c0c9a3",
+  "read_guide": [
+    "先看 A 的两列方向。",
+    "再观察标准网格如何变成平行四边形网格。",
+    "最后核对 x 的像落在变形网格的对应格子。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 12,
+  "revision": 16,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:0cde074da638ed97935945c66fb4ae0ef0677d4ad90d6300ca1a3e429c3f2b12",
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "矩阵 A 作用于向量 x。",
@@ -266,7 +206,7 @@
     },
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "标准基向量确定原始网格。",
@@ -274,7 +214,6 @@
       "layout": "side_by_side",
       "title": "标准网格",
       "visible_aliases": [
-        "sem__A",
         "sem__x",
         "sem__x__end",
         "sem__x__origin",
@@ -283,14 +222,13 @@
         "sem__mapping_grid__2"
       ],
       "visible_refs": [
-        "A",
         "x",
         "grid"
       ]
     },
     {
       "anchor": [
-        2.0,
+        2,
         2.65
       ],
       "caption": "两列的像确定变形后的网格。",
@@ -299,22 +237,16 @@
       "title": "变换后网格",
       "visible_aliases": [
         "sem__A",
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
         "sem__y",
         "sem__y__end",
         "sem__y__origin",
-        "sem__grid",
         "sem__grid_invariant",
         "sem__stage.grid_output__title",
         "sem__mapping_grid__3"
       ],
       "visible_refs": [
         "A",
-        "x",
         "y",
-        "grid",
         "grid_invariant"
       ]
     }

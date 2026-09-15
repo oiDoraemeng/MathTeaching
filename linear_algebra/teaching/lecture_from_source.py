@@ -32,6 +32,17 @@ from typing import Any, Mapping
 _TEMPLATE_DEFINITION = re.compile(r"^.+ 的对象和定义。$")
 _TEMPLATE_SUMMARY = re.compile(r"^.+ 的确定性数学语义 artifact。$")
 
+# 2.5 矩阵 × 向量（核心节）的三个小节由本地质量适配器逐字搬入讲义原文，
+# 并自带分节标题与数学案例。若再让本模块按标记切分后追加，同一段原文会出现
+# 两遍，所以这里直接跳过这三个主题。
+_VERBATIM_TOPICS = frozenset(
+    {
+        "ch02.matrix.row-column",
+        "ch02.matrix.transformed-grid",
+        "ch02.matrix.stretch-rotate-scale",
+    }
+)
+
 # Boilerplate body lines that carry no lecture content.
 _FILLERS = frozenset({
     "与前置线性表示相连。",
@@ -236,6 +247,8 @@ def apply(payload: dict[str, Any]) -> bool:
     """
     chapter = _chapter_of(payload)
     if chapter is not None and chapter < 2:
+        return False
+    if str(payload.get("topic_id", "")) in _VERBATIM_TOPICS:
         return False
     source = payload.get("source")
     if not isinstance(source, Mapping):

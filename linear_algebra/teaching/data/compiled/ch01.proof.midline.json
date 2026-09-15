@@ -1,98 +1,15 @@
 {
-  "artifact_digest": "sha256:34a3417ef32a19372c95e6ff1313b4812fc2f6ed0d6090d4d1cc8500f33b43a4",
+  "artifact_digest": "sha256:eebd7ab2183e0bb07388aef6d23324b9cc7a4eb8051914f8a5e5c65e2a10a7a9",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:34569554538b0db019b71370cecc1455e5cdfa4a47d8168d8245648c3273de94",
   "plan": {
     "operations": [
       {
-        "alias": "sem__case1_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_a__end",
-        "coordinates": [
-          2.0,
-          0.0
-        ],
-        "name": "a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_a",
-        "color": "#2F6BFF",
-        "end": "sem__case1_a__end",
-        "kind": "vector",
-        "label": "a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__case1_a__origin"
-      },
-      {
-        "alias": "sem__case1_b__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_b__end",
-        "coordinates": [
-          0.0,
-          2.0
-        ],
-        "name": "b",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_b",
-        "color": "#F08A24",
-        "end": "sem__case1_b__end",
-        "kind": "vector",
-        "label": "b",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__case1_b__origin"
-      },
-      {
-        "alias": "sem__case1_r__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_r__end",
-        "coordinates": [
-          2.0,
-          2.0
-        ],
-        "name": "result",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__case1_r",
-        "color": "#6B7280",
-        "end": "sem__case1_r__end",
-        "kind": "vector",
-        "label": "result",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "sem__case1_r__origin"
-      },
-      {
-        "alias": "cap__polygon",
+        "alias": "proof__region",
         "color": "#E09F3E",
         "op": "geometry.polygon",
-        "opacity": 0.24,
+        "opacity": 0.12,
         "outline": true,
         "vertices": [
           [
@@ -100,32 +17,123 @@
             0.0
           ],
           [
-            2.0,
-            0.0
+            3.6,
+            1.2
           ],
           [
-            2.0,
-            2.0
-          ],
-          [
-            0.0,
-            2.0
+            1.2,
+            3.2
           ]
         ]
       },
       {
+        "alias": "proof__point_A",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "A",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_B",
+        "coordinates": [
+          3.6,
+          1.2
+        ],
+        "name": "B",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_C",
+        "coordinates": [
+          1.2,
+          3.2
+        ],
+        "name": "C",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_D",
+        "coordinates": [
+          1.8,
+          0.6
+        ],
+        "name": "D",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__point_E",
+        "coordinates": [
+          0.6,
+          1.6
+        ],
+        "name": "E",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "proof__side_a",
+        "color": "#2F6BFF",
+        "end": "proof__point_B",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_A",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__side_b",
+        "color": "#F08A24",
+        "end": "proof__point_C",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_A",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__side_bc",
+        "color": "#2F6BFF",
+        "end": "proof__point_C",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_B",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__midline",
+        "color": "#D64550",
+        "end": "proof__point_E",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_D",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__note_midline",
+        "op": "annotation.upsert",
+        "position": [
+          0.931123,
+          0.777347
+        ],
+        "text": "DE // BC"
+      },
+      {
         "op": "view.fit",
-        "padding": 1.15
+        "padding": 1.45
       }
     ],
     "scene": "2d",
     "summary": "三角形中位线定理",
     "version": 1
   },
-  "plan_digest": "sha256:51d83de76f0e1b347d8c8d63f116ea119a52b39e6f81a458bec2d485fb0817f4",
+  "plan_digest": "sha256:ef698dd38942fce8724934c6ab59f110933a256d13d16f4c56c4972526f542a9",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 13,
+  "revision": 20,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:71150484c6087cdee298ce32f28634cfc4c618d29a90e0e5c1dd0c6890d9e57a",
   "stages": [
@@ -137,24 +145,24 @@
       "caption": "",
       "id": "stage.case.ch01.proof.midline.1",
       "layout": "overlay",
-      "title": "案例一：中位线",
+      "title": "三角形中位线定理",
       "visible_aliases": [
-        "sem__case1_a",
-        "sem__case1_a__end",
-        "sem__case1_a__origin",
-        "sem__case1_b",
-        "sem__case1_b__end",
-        "sem__case1_b__origin",
-        "sem__case1_r",
-        "sem__case1_r__end",
-        "sem__case1_r__origin",
-        "sem__rel.case.ch01.proof.midline.1"
+        "proof__region",
+        "proof__point_A",
+        "proof__point_B",
+        "proof__point_C",
+        "proof__point_D",
+        "proof__point_E",
+        "proof__side_a",
+        "proof__side_b",
+        "proof__side_bc",
+        "proof__midline",
+        "proof__note_midline"
       ],
       "visible_refs": [
-        "case1_a",
-        "case1_b",
-        "case1_r",
-        "rel.case.ch01.proof.midline.1"
+        "proof_a",
+        "proof_b",
+        "rel.proof.ch01.proof.midline"
       ]
     }
   ],

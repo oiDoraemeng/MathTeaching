@@ -1,11 +1,12 @@
 {
-  "artifact_digest": "sha256:3e7a7dcfb11cb01b6ed0d4da2afc853d972e37d2572aba4f5426e29569bb93fe",
+  "artifact_digest": "sha256:d92e0a42473eefd27de3fe626676f38749b8bf5c0ccab87348d3d9b62c58a8c7",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:b9a27963c4e6f35061987c2da3a76cca0cc64290a3c66fd294e72ceab3df255d",
   "plan": {
     "operations": [
       {
-        "alias": "sem__e1_scaled__origin",
+        "alias": "sem__a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__e1_scaled__end",
+        "alias": "sem__a__end",
         "coordinates": [
-          2.0,
-          0.0
+          3.0,
+          1.0
         ],
-        "name": "2e₁",
+        "name": "A",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__e1_scaled",
+        "alias": "sem__a",
         "color": "#2F6BFF",
-        "end": "sem__e1_scaled__end",
+        "end": "sem__a__end",
         "kind": "vector",
-        "label": "2e₁",
+        "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__e1_scaled__origin"
+        "start": "sem__a__origin"
       },
       {
-        "alias": "sem__e2_scaled__origin",
+        "alias": "sem__b__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,23 +43,79 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__e2_scaled__end",
+        "alias": "sem__b__end",
         "coordinates": [
-          0.0,
-          3.0
+          1.0,
+          2.0
         ],
-        "name": "3e₂",
+        "name": "B",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__e2_scaled",
+        "alias": "sem__b",
         "color": "#F08A24",
-        "end": "sem__e2_scaled__end",
+        "end": "sem__b__end",
         "kind": "vector",
-        "label": "3e₂",
+        "label": "b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__e2_scaled__origin"
+        "start": "sem__b__origin"
+      },
+      {
+        "alias": "sem__two_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__two_a__end",
+        "coordinates": [
+          6.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__two_a",
+        "color": "#7B61FF",
+        "end": "sem__two_a__end",
+        "kind": "vector",
+        "label": "2a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__two_a__origin"
+      },
+      {
+        "alias": "sem__neg_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__neg_b__end",
+        "coordinates": [
+          -1.0,
+          -2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__neg_b",
+        "color": "#D64550",
+        "end": "sem__neg_b__end",
+        "kind": "vector",
+        "label": "-b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__neg_b__origin"
       },
       {
         "alias": "sem__combination__origin",
@@ -72,20 +129,20 @@
       {
         "alias": "sem__combination__end",
         "coordinates": [
-          2.0,
-          3.0
+          5.0,
+          0.0
         ],
-        "name": "2e₁+3e₂",
+        "name": "",
         "op": "point.upsert"
       },
       {
         "alias": "sem__combination",
-        "color": "#6B7280",
+        "color": "#2A9D8F",
         "end": "sem__combination__end",
         "kind": "vector",
-        "label": "2e₁+3e₂",
+        "label": "2a-b",
         "op": "linear.upsert",
-        "role": "result",
+        "role": "primary",
         "start": "sem__combination__origin"
       },
       {
@@ -100,20 +157,26 @@
             0.0
           ],
           [
-            2.0,
-            0.0
+            3.0,
+            1.0
           ],
           [
-            2.0,
+            4.0,
             3.0
           ],
           [
-            0.0,
-            3.0
+            1.0,
+            2.0
           ]
         ]
       },
       {
+        "bounds": [
+          -1.0,
+          6.0,
+          -2.0,
+          2.0
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
@@ -122,10 +185,11 @@
     "summary": "线性组合",
     "version": 1
   },
-  "plan_digest": "sha256:8f9bd6a3a4d96905a4f3533aa1353ec2ad29fbc3ff7bb97935b4c5ebb1e6cac8",
+  "plan_digest": "sha256:423a60449c466f5e1b2dda613d720b0c93d2a231173d73eb31e9902c3fe3cf29",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 14,
+  "revision": 25,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:362d3489a75e26192a944f7311d74f97bab2362a8a4b1b9488a8045d4ccbec32",
   "stages": [
@@ -134,25 +198,77 @@
         0.0,
         2.65
       ],
-      "caption": "",
-      "id": "stage.linear-combination.standard-basis",
+      "caption": "$\\boldsymbol a=(3,1)$、$\\boldsymbol b=(1,2)$ 从原点出发。",
+      "id": "stage.linear-combination.vectors",
       "layout": "overlay",
-      "title": "案例一：标准基组合",
+      "title": "第一步：向量 a 与 b",
       "visible_aliases": [
-        "sem__e1_scaled",
-        "sem__e1_scaled__end",
-        "sem__e1_scaled__origin",
-        "sem__e2_scaled",
-        "sem__e2_scaled__end",
-        "sem__e2_scaled__origin",
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin"
+      ],
+      "visible_refs": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "系数 2 与 −1 作用在 $\\boldsymbol a$、$\\boldsymbol b$ 上，得到 $2\\boldsymbol a=(6,2)$ 与 $-\\boldsymbol b=(-1,-2)$。",
+      "id": "stage.linear-combination.terms",
+      "layout": "overlay",
+      "title": "第二步：2a 与 -b",
+      "visible_aliases": [
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin",
+        "sem__two_a",
+        "sem__two_a__end",
+        "sem__two_a__origin",
+        "sem__neg_b",
+        "sem__neg_b__end",
+        "sem__neg_b__origin"
+      ],
+      "visible_refs": [
+        "a",
+        "b",
+        "two_a",
+        "neg_b"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "把各项相加：$2\\boldsymbol a+(-\\boldsymbol b)=(5,0)$。",
+      "id": "stage.linear-combination.result",
+      "layout": "overlay",
+      "title": "第三步：线性组合 2a-b",
+      "visible_aliases": [
+        "sem__two_a",
+        "sem__two_a__end",
+        "sem__two_a__origin",
+        "sem__neg_b",
+        "sem__neg_b__end",
+        "sem__neg_b__origin",
         "sem__combination",
         "sem__combination__end",
         "sem__combination__origin",
         "sem__rel.linear-combination.result"
       ],
       "visible_refs": [
-        "e1_scaled",
-        "e2_scaled",
+        "two_a",
+        "neg_b",
         "combination",
         "rel.linear-combination.result"
       ]

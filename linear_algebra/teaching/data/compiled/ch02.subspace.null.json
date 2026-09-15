@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:1caed6be18035937504a6e50acc976ba77104c63e8a067b5c638bbb1dd290acd",
+  "artifact_digest": "sha256:60efab658e9973c96790fd2748c9650c107d9edddc703d7a595d34402131108d",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:194ecf005a592154aca4ee7467de6fc21b90a29da66d9c38953782adeb2952ca",
   "plan": {
     "operations": [
       {
         "alias": "sem__A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ],
           [
-            0.0,
-            0.0
+            0,
+            0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__x__end",
         "coordinates": [
-          0.0,
-          2.0
+          0,
+          2
         ],
         "name": "x",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -86,12 +87,12 @@
         "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ],
           [
-            0.0,
-            0.0
+            0,
+            0
           ]
         ],
         "op": "linear_algebra.matrix_transform"
@@ -108,19 +109,19 @@
       {
         "basis": [
           [
-            0.0,
-            2.0
+            0,
+            2
           ],
           [
-            0.0,
-            0.0
+            0,
+            0
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#E09F3E",
         "op": "geometry.subspace_region",
@@ -134,64 +135,42 @@
         "matrices": [
           [
             [
-              1.0,
-              0.0
+              1,
+              0
             ],
             [
-              0.0,
-              0.0
+              0,
+              0
             ]
           ],
           [
             [
-              1.0,
-              0.0
+              1,
+              0
             ],
             [
-              0.0,
-              1.0
+              0,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0.0,
-            2.0
+            0,
+            2
           ],
           [
-            0.0,
-            0.0
+            0,
+            0
           ]
         ]
-      },
-      {
-        "alias": "sem__mapping_grid__1",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
       },
       {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
-          0.0,
+          0,
           2.65
         ],
         "text": "输入与变换"
@@ -199,30 +178,30 @@
       {
         "alias": "sem__mapping_grid__2",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#7B61FF",
         "matrix": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ],
           [
-            0.0,
-            0.0
+            0,
+            0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__stage.null_input__title",
         "op": "annotation.upsert",
         "position": [
-          0.0,
+          0,
           2.65
         ],
         "text": "输入方向"
@@ -230,30 +209,30 @@
       {
         "alias": "sem__mapping_grid__3",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#7B61FF",
         "matrix": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ],
           [
-            0.0,
-            0.0
+            0,
+            0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__stage.null_output__title",
         "op": "annotation.upsert",
         "position": [
-          2.0,
+          2,
           2.65
         ],
         "text": "压到原点"
@@ -267,16 +246,21 @@
     "summary": "零空间是被压到原点的方向",
     "version": 1
   },
-  "plan_digest": "sha256:62891894f9e01b74c04ff3b740af8b2073c0d6304015c8afdd0886ca13d0cc1a",
-  "read_guide": [],
+  "plan_digest": "sha256:182d4bcaa33c5ab213767beaaa0d26b1ce0045937b582ccf8743bf30bf031fb5",
+  "read_guide": [
+    "先解 Ax=0。",
+    "再确认解集对加法与数乘封闭。",
+    "最后数出被压到原点的方向个数。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 12,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:d00c8934450a55c3e2cbbab779f31ce99c00bc1d63eb73446d94a01711428fcf",
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "矩阵 A 作用于向量 x。",
@@ -304,7 +288,7 @@
     },
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "选择零空间中的 y 轴方向。",
@@ -324,7 +308,7 @@
     },
     {
       "anchor": [
-        2.0,
+        2,
         2.65
       ],
       "caption": "A 作用后该方向变成零向量。",

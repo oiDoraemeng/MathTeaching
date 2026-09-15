@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:04ce2de6b572f2a4f0644136da8e971777fa59265d7f1dee67468d02c6c8225a",
+  "artifact_digest": "sha256:98bbc215c11e42b815f74c58f5d7fa8f14633e4f793cf5d38f92b9fef58ed2ee",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:5325c35321e5a561d5450cdb1bd120a4dad80ff9392d61331f9ea82b524fc4a5",
   "plan": {
     "operations": [
       {
         "alias": "sem__A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ],
           [
-            0.0,
-            0.0
+            0,
+            0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__x__end",
         "coordinates": [
-          2.0,
-          3.0
+          2,
+          3
         ],
         "name": "x",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          2.0,
-          0.0
+          2,
+          0
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -86,12 +87,12 @@
         "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ],
           [
-            0.0,
-            0.0
+            0,
+            0
           ]
         ],
         "op": "linear_algebra.matrix_transform"
@@ -99,51 +100,29 @@
       {
         "basis": [
           [
-            2.0,
-            3.0
+            2,
+            3
           ],
           [
-            2.0,
-            0.0
+            2,
+            0
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#E09F3E",
         "op": "geometry.subspace_region",
         "opacity": 0.2
       },
       {
-        "alias": "sem__mapping_grid__1",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
-          0.0,
+          0,
           2.65
         ],
         "text": "输入与变换"
@@ -157,16 +136,21 @@
     "summary": "列空间是变换可到达的位置",
     "version": 1
   },
-  "plan_digest": "sha256:48c71199f872603b0eccaf50f938e3871bf3f6d24adce7bd13f86bfcf21ee06c",
-  "read_guide": [],
+  "plan_digest": "sha256:0da4b6aad9abee4404d35828c5d95a9fe42f5c0359f49e577fab677eae28e4dc",
+  "read_guide": [
+    "先写出矩阵各列。",
+    "再看这些列的线性组合能覆盖哪些位置。",
+    "最后核对输出的可达范围。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 12,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:3c3cbf1bf7340f9aac6047bf8f3e00c3818f5371f302700b7cda3f50d368b3e4",
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "矩阵 A 作用于向量 x。",

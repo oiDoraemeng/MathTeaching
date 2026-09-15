@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:d1a91c550f1cf7f4383a48ce041fc0cad9d28cba516a2f8d6a06bc2722374529",
+  "artifact_digest": "sha256:21fddbcf5faa1e1ab22f4645b449f3244387264b01f17fe6a15d9859551bd759",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:edd5d59b52533ff1bc113731a14fbf0c86c7281b63035f954d885f1fc3a25763",
   "plan": {
     "operations": [
       {
         "alias": "sem__case1_A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            2.0,
-            0.0
+            2,
+            0
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__case1_x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__case1_x__end",
         "coordinates": [
-          1.0,
-          0.0
+          1,
+          0
         ],
         "name": "x",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__case1_y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__case1_y__end",
         "coordinates": [
-          2.0,
-          0.0
+          2,
+          0
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -85,30 +86,30 @@
       {
         "alias": "sem__case2_A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            0.0,
-            -1.0
+            0,
+            -1
           ],
           [
-            1.0,
-            0.0
+            1,
+            0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__case2_x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -116,8 +117,8 @@
       {
         "alias": "sem__case2_x__end",
         "coordinates": [
-          1.0,
-          0.0
+          1,
+          0
         ],
         "name": "x",
         "op": "point.upsert"
@@ -135,8 +136,8 @@
       {
         "alias": "sem__case2_y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -144,8 +145,8 @@
       {
         "alias": "sem__case2_y__end",
         "coordinates": [
-          0.0,
-          1.0
+          0,
+          1
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -163,30 +164,30 @@
       {
         "alias": "sem__case3_A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            1.0,
-            2.0
+            1,
+            2
           ],
           [
-            3.0,
-            4.0
+            3,
+            4
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__case3_x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -194,8 +195,8 @@
       {
         "alias": "sem__case3_x__end",
         "coordinates": [
-          1.0,
-          2.0
+          1,
+          2
         ],
         "name": "x",
         "op": "point.upsert"
@@ -213,8 +214,8 @@
       {
         "alias": "sem__case3_y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -222,8 +223,8 @@
       {
         "alias": "sem__case3_y__end",
         "coordinates": [
-          5.0,
-          11.0
+          5,
+          11
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -241,30 +242,30 @@
       {
         "alias": "sem__case4_A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
             0.5,
-            0.0
+            0
           ],
           [
-            0.0,
+            0,
             0.5
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__case4_x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -272,8 +273,8 @@
       {
         "alias": "sem__case4_x__end",
         "coordinates": [
-          100.0,
-          200.0
+          100,
+          200
         ],
         "name": "x",
         "op": "point.upsert"
@@ -291,8 +292,8 @@
       {
         "alias": "sem__case4_y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -300,8 +301,8 @@
       {
         "alias": "sem__case4_y__end",
         "coordinates": [
-          50.0,
-          100.0
+          50,
+          100
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -324,124 +325,36 @@
         "matrices": [
           [
             [
-              2.0,
-              0.0
+              2,
+              0
             ],
             [
-              0.0,
-              1.0
+              0,
+              1
             ]
           ],
           [
             [
-              1.0,
-              0.0
+              1,
+              0
             ],
             [
-              0.0,
-              1.0
+              0,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ],
           [
-            2.0,
-            0.0
+            2,
+            0
           ]
         ]
-      },
-      {
-        "alias": "sem__mapping_grid__1",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            2.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
-        "alias": "sem__mapping_grid__2",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            2.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
-        "alias": "sem__mapping_grid__3",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            2.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
-        "alias": "sem__mapping_grid__4",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            2.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
       },
       {
         "op": "view.fit",
@@ -449,19 +362,24 @@
       }
     ],
     "scene": "2d",
-    "summary": "拉伸、旋转与缩放的矩阵图像",
+    "summary": "拉伸、旋转与缩放：把几何效应组合起来",
     "version": 1
   },
-  "plan_digest": "sha256:45bbb745c6e5e11b01033f85d61dea04ed394107e306a9c01f1024939a772e5a",
-  "read_guide": [],
+  "plan_digest": "sha256:5427c1a1cf66dc76ba1b6b4fb0916748a41a5b6ce4293f6133e3355b117a4272",
+  "read_guide": [
+    "先分别辨认纯拉伸、纯旋转、纯缩放的网格。",
+    "再看一般矩阵两列的落点。",
+    "核对长度与夹角哪些保持不变。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 12,
+  "revision": 16,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:e75201702eb0c61f55827cf094c28b02e0564fdb0fbc76f72d4fe150317b852c",
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "先看输入网格，再看它被矩阵拉伸、旋转或剪切后的形状。",
@@ -488,7 +406,7 @@
     },
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "对比同一网格在变换后的方向和面积变化。",
@@ -515,7 +433,7 @@
     },
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "对比同一网格在变换后的方向和面积变化。",
@@ -542,7 +460,7 @@
     },
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "对比同一网格在变换后的方向和面积变化。",

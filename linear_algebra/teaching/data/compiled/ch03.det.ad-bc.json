@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:850ae87fcba7aa84a3a337db26acee48ecb90b6eabf8f2847d169a4054922403",
+  "artifact_digest": "sha256:cb11d71bec69f9f23e9f201320674f3503ce06fc44920df4ed012dd998c323e4",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:96e7ec92b7e742fa96bcf8df3a87364b138f66bc180428d0ea59aaffce46af1d",
   "plan": {
     "operations": [
       {
         "alias": "sem__A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            3.0,
-            1.0
+            3,
+            1
           ],
           [
-            2.0,
-            4.0
+            2,
+            4
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__a__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__a__end",
         "coordinates": [
-          3.0,
-          2.0
+          3,
+          2
         ],
         "name": "column a",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__b__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__b__end",
         "coordinates": [
-          1.0,
-          4.0
+          1,
+          4
         ],
         "name": "column b",
         "op": "point.upsert"
@@ -88,12 +89,12 @@
         "op": "geometry.oriented_area",
         "vectors": [
           [
-            3.0,
-            2.0
+            3,
+            2
           ],
           [
-            1.0,
-            4.0
+            1,
+            4
           ]
         ]
       },
@@ -101,12 +102,12 @@
         "alias": "sem__det_maps_to_area",
         "matrix": [
           [
-            3.0,
-            1.0
+            3,
+            1
           ],
           [
-            2.0,
-            4.0
+            2,
+            4
           ]
         ],
         "op": "linear_algebra.matrix_transform"
@@ -119,44 +120,22 @@
         "outline": true,
         "vertices": [
           [
-            0.0,
-            0.0
+            0,
+            0
           ],
           [
-            3.0,
-            2.0
+            3,
+            2
           ],
           [
-            4.0,
-            6.0
+            4,
+            6
           ],
           [
-            1.0,
-            4.0
+            1,
+            4
           ]
         ]
-      },
-      {
-        "alias": "sem__mapping_grid__1",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            3.0,
-            1.0
-          ],
-          [
-            2.0,
-            4.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
       },
       {
         "alias": "sem__stage.det.input__title",
@@ -170,24 +149,24 @@
       {
         "alias": "sem__mapping_grid__2",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#7B61FF",
         "matrix": [
           [
-            3.0,
-            1.0
+            3,
+            1
           ],
           [
-            2.0,
-            4.0
+            2,
+            4
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__stage.det.measure__title",
@@ -216,12 +195,13 @@
     "summary": "ad-bc 的面积分解",
     "version": 1
   },
-  "plan_digest": "sha256:8c1dc65f2efde7cad8451a867eb7a81ab7977dda69d683a72ed27dc8ce83f4fc",
+  "plan_digest": "sha256:da9a6a5c2740e5b469867237d42e6ba70e2aebbc625c52cca667e56750192623",
   "read_guide": [
-    "先读输入对象和公式变量，再沿图中的关系读输出，最后核对数值和不变量。"
+    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 10,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:cf8be46dd084ee719f2fdc8a314eb6ed8106ff42972a605d2f3e80ea9d061546",
   "stages": [

@@ -1,11 +1,12 @@
 {
-  "artifact_digest": "sha256:7ea78a952ceca1878905060212104c54191eea60f40993f624bafdc2ce9d4024",
+  "artifact_digest": "sha256:ff2828cd51a8381bc01e98a5e24db5b2242fc5c132cfab9fc93cf85575be8795",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:0a136535072ca30220af20fb34473a16ddcd5026f08abffd709f77b8303fa1cf",
   "plan": {
     "operations": [
       {
-        "alias": "sem__components_a__origin",
+        "alias": "sem__flow_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__components_a__end",
+        "alias": "sem__flow_a__end",
         "coordinates": [
           3.0,
           1.0
         ],
-        "name": "a",
+        "name": "A",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__components_a",
+        "alias": "sem__flow_a",
         "color": "#2F6BFF",
-        "end": "sem__components_a__end",
+        "end": "sem__flow_a__end",
         "kind": "vector",
         "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__components_a__origin"
+        "start": "sem__flow_a__origin"
       },
       {
-        "alias": "sem__components_b__origin",
+        "alias": "sem__flow_b__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,26 +43,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__components_b__end",
+        "alias": "sem__flow_b__end",
         "coordinates": [
           1.0,
           2.0
         ],
-        "name": "b",
+        "name": "B",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__components_b",
+        "alias": "sem__flow_b",
         "color": "#F08A24",
-        "end": "sem__components_b__end",
+        "end": "sem__flow_b__end",
         "kind": "vector",
         "label": "b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__components_b__origin"
+        "start": "sem__flow_b__origin"
       },
       {
-        "alias": "sem__components_sum__origin",
+        "alias": "sem__flow_sum__origin",
         "coordinates": [
           0.0,
           0.0
@@ -70,191 +71,23 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__components_sum__end",
+        "alias": "sem__flow_sum__end",
         "coordinates": [
           4.0,
           3.0
         ],
-        "name": "a+b",
+        "name": "C",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__components_sum",
+        "alias": "sem__flow_sum",
         "color": "#7B61FF",
-        "end": "sem__components_sum__end",
+        "end": "sem__flow_sum__end",
         "kind": "vector",
         "label": "a+b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__components_sum__origin"
-      },
-      {
-        "alias": "sem__geometry_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__geometry_a__end",
-        "coordinates": [
-          1.0,
-          2.0
-        ],
-        "name": "a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__geometry_a",
-        "color": "#2F6BFF",
-        "end": "sem__geometry_a__end",
-        "kind": "vector",
-        "label": "a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__geometry_a__origin"
-      },
-      {
-        "alias": "sem__geometry_b__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__geometry_b__end",
-        "coordinates": [
-          3.0,
-          4.0
-        ],
-        "name": "b",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__geometry_b",
-        "color": "#F08A24",
-        "end": "sem__geometry_b__end",
-        "kind": "vector",
-        "label": "b",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__geometry_b__origin"
-      },
-      {
-        "alias": "sem__geometry_sum__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__geometry_sum__end",
-        "coordinates": [
-          4.0,
-          6.0
-        ],
-        "name": "a+b",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__geometry_sum",
-        "color": "#7B61FF",
-        "end": "sem__geometry_sum__end",
-        "kind": "vector",
-        "label": "a+b",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__geometry_sum__origin"
-      },
-      {
-        "alias": "sem__velocity_1__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__velocity_1__end",
-        "coordinates": [
-          10.0,
-          0.0
-        ],
-        "name": "v1",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__velocity_1",
-        "color": "#2F6BFF",
-        "end": "sem__velocity_1__end",
-        "kind": "vector",
-        "label": "v1",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__velocity_1__origin"
-      },
-      {
-        "alias": "sem__velocity_2__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__velocity_2__end",
-        "coordinates": [
-          0.0,
-          5.0
-        ],
-        "name": "v2",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__velocity_2",
-        "color": "#F08A24",
-        "end": "sem__velocity_2__end",
-        "kind": "vector",
-        "label": "v2",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__velocity_2__origin"
-      },
-      {
-        "alias": "sem__velocity_sum__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__velocity_sum__end",
-        "coordinates": [
-          10.0,
-          5.0
-        ],
-        "name": "v",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__velocity_sum",
-        "color": "#7B61FF",
-        "end": "sem__velocity_sum__end",
-        "kind": "vector",
-        "label": "v",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__velocity_sum__origin"
+        "start": "sem__flow_sum__origin"
       },
       {
         "alias": "cap__polygon",
@@ -282,62 +115,50 @@
         ]
       },
       {
-        "alias": "sem__addition_geometry__translated_b",
-        "color": "#F08A24",
-        "end": "sem__geometry_sum__end",
-        "kind": "vector",
-        "label": "b",
-        "op": "linear.upsert",
-        "role": "construction",
-        "start": "sem__geometry_a__end"
-      },
-      {
-        "alias": "sem__addition_geometry__triangle",
-        "color": "#F08A24",
-        "op": "geometry.polygon",
-        "opacity": 0.1,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            1.0,
-            2.0
-          ],
-          [
-            4.0,
-            6.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__addition_geometry__parallelogram",
+        "alias": "sem__addition_parallelogram",
         "color": "#6B7280",
         "op": "geometry.polygon",
-        "opacity": 0.08,
+        "opacity": 0.14,
         "outline": true,
         "vertices": [
           [
             0.0,
             0.0
-          ],
-          [
-            1.0,
-            2.0
-          ],
-          [
-            4.0,
-            6.0
           ],
           [
             3.0,
-            4.0
+            1.0
+          ],
+          [
+            4.0,
+            3.0
+          ],
+          [
+            1.0,
+            2.0
           ]
         ]
       },
       {
+        "alias": "dynamic__sem__rel.addition.flow",
+        "op": "geometry.vector_addition",
+        "polygon_aliases": [
+          "sem__addition_parallelogram",
+          "cap__polygon"
+        ],
+        "result_end": "sem__flow_sum__end",
+        "result_start": "sem__flow_sum__origin",
+        "result_vector": "sem__flow_sum",
+        "vector_a": "sem__flow_a",
+        "vector_b": "sem__flow_b"
+      },
+      {
+        "bounds": [
+          0.0,
+          4.0,
+          0.0,
+          3.0
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
@@ -346,10 +167,11 @@
     "summary": "向量加法",
     "version": 1
   },
-  "plan_digest": "sha256:9c33ec3a773efac7847c10c1b8111de9bc6128356d8c5310213d1172663b7f50",
+  "plan_digest": "sha256:28d36cbf27d448be3b41b99c1849378e1bb7f03acb737f3118b2a9e1b4bb86ae",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 23,
+  "revision": 31,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:136d44f5e808ab93057b47ff42c3931c0de9f803cbef7ddf23e962ad78ae109b",
   "stages": [
@@ -358,27 +180,21 @@
         0.0,
         2.65
       ],
-      "caption": "由 $\\boldsymbol a=(3,1)$、$\\boldsymbol b=(1,2)$ 得到 $\\boldsymbol a+\\boldsymbol b=(4,3)$。",
-      "id": "stage.claim.ch01.ops.addition.components",
+      "caption": "$\\boldsymbol a=(3,1)$、$\\boldsymbol b=(1,2)$ 从原点出发。",
+      "id": "stage.flow.objects",
       "layout": "overlay",
-      "title": "案例一：分量计算",
+      "title": "第一步：向量 a 与 b",
       "visible_aliases": [
-        "sem__components_a",
-        "sem__components_a__end",
-        "sem__components_a__origin",
-        "sem__components_b",
-        "sem__components_b__end",
-        "sem__components_b__origin",
-        "sem__components_sum",
-        "sem__components_sum__end",
-        "sem__components_sum__origin",
-        "sem__rel.addition.components"
+        "sem__flow_a",
+        "sem__flow_a__end",
+        "sem__flow_a__origin",
+        "sem__flow_b",
+        "sem__flow_b__end",
+        "sem__flow_b__origin"
       ],
       "visible_refs": [
-        "components_a",
-        "components_b",
-        "components_sum",
-        "rel.addition.components"
+        "flow_a",
+        "flow_b"
       ]
     },
     {
@@ -386,58 +202,29 @@
         0.0,
         2.65
       ],
-      "caption": "$\\boldsymbol a=(1,2)$、$\\boldsymbol b=(3,4)$ 的两种作图均给出 $\\boldsymbol a+\\boldsymbol b=(4,6)$。",
-      "id": "stage.claim.ch01.ops.addition.geometry",
+      "caption": "以 $\\boldsymbol a$、$\\boldsymbol b$ 为邻边作平行四边形，对角线为 $\\boldsymbol a+\\boldsymbol b=(4,3)$。",
+      "id": "stage.flow.parallelogram",
       "layout": "overlay",
-      "title": "案例二：三角形法则与平行四边形法则",
+      "title": "第二步：a+b 与平行四边形",
       "visible_aliases": [
-        "sem__geometry_a",
-        "sem__geometry_a__end",
-        "sem__geometry_a__origin",
-        "sem__geometry_b",
-        "sem__geometry_b__end",
-        "sem__geometry_b__origin",
-        "sem__geometry_sum",
-        "sem__geometry_sum__end",
-        "sem__geometry_sum__origin",
-        "sem__rel.addition.geometry",
-        "sem__addition_geometry__translated_b",
-        "sem__addition_geometry__triangle",
-        "sem__addition_geometry__parallelogram"
+        "sem__flow_a",
+        "sem__flow_a__end",
+        "sem__flow_a__origin",
+        "sem__flow_b",
+        "sem__flow_b__end",
+        "sem__flow_b__origin",
+        "sem__flow_sum",
+        "sem__flow_sum__end",
+        "sem__flow_sum__origin",
+        "sem__rel.addition.flow",
+        "dynamic__sem__rel.addition.flow",
+        "sem__addition_parallelogram"
       ],
       "visible_refs": [
-        "geometry_a",
-        "geometry_b",
-        "geometry_sum",
-        "rel.addition.geometry"
-      ]
-    },
-    {
-      "anchor": [
-        0.0,
-        2.65
-      ],
-      "caption": "$\\boldsymbol v_1=(10,0)$、$\\boldsymbol v_2=(0,5)$ 的和为 $\\boldsymbol v=(10,5)$。",
-      "id": "stage.claim.ch01.ops.addition.velocity",
-      "layout": "overlay",
-      "title": "案例三：速度向量相加",
-      "visible_aliases": [
-        "sem__velocity_1",
-        "sem__velocity_1__end",
-        "sem__velocity_1__origin",
-        "sem__velocity_2",
-        "sem__velocity_2__end",
-        "sem__velocity_2__origin",
-        "sem__velocity_sum",
-        "sem__velocity_sum__end",
-        "sem__velocity_sum__origin",
-        "sem__rel.addition.velocity"
-      ],
-      "visible_refs": [
-        "velocity_1",
-        "velocity_2",
-        "velocity_sum",
-        "rel.addition.velocity"
+        "flow_a",
+        "flow_b",
+        "flow_sum",
+        "rel.addition.flow"
       ]
     }
   ],

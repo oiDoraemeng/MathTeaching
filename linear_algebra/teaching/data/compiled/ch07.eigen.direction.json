@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:5532f54f344f8d8c0edf147a980c1687b679e155e1368c3caee94ea398ff4521",
+  "artifact_digest": "sha256:71b106b62af7178c5fc660a32a338d52262a38e250876623bc3f334a75cf5dae",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:cffa4c528f500567876d7ade84209fc8337b6a2374759d8c034385ea030e00c7",
@@ -143,7 +143,7 @@
       {
         "alias": "entity_ch07_eigen_direction_reverse_output__end",
         "coordinates": [
-          -0.0,
+          0.0,
           -1.0
         ],
         "name": "",
@@ -237,20 +237,20 @@
         "matrices": [
           [
             [
-              2.0,
-              0.0
+              2,
+              0
             ],
             [
-              0.0,
-              -1.0
+              0,
+              -1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ]
         ]
       },
@@ -262,20 +262,20 @@
         "matrices": [
           [
             [
-              2.0,
-              0.0
+              2,
+              0
             ],
             [
-              0.0,
-              -1.0
+              0,
+              -1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ]
       },
@@ -287,20 +287,20 @@
         "matrices": [
           [
             [
-              1.0,
-              0.0
+              1,
+              0
             ],
             [
-              0.0,
-              0.0
+              0,
+              0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ]
       },
@@ -312,20 +312,20 @@
         "matrices": [
           [
             [
-              2.0,
-              0.0
+              2,
+              0
             ],
             [
-              0.0,
-              -1.0
+              0,
+              -1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ]
         ]
       },
@@ -337,20 +337,20 @@
         "matrices": [
           [
             [
-              2.0,
-              0.0
+              2,
+              0
             ],
             [
-              0.0,
-              -1.0
+              0,
+              -1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ]
       },
@@ -362,20 +362,20 @@
         "matrices": [
           [
             [
-              1.0,
-              0.0
+              1,
+              0
             ],
             [
-              0.0,
-              0.0
+              0,
+              0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ]
       },
@@ -415,10 +415,8 @@
     "summary": "7.1.1 定义",
     "version": 1
   },
-  "plan_digest": "sha256:f6544ea3429e87a60f7f68c9669af93e1a151864fd4cd7e0a5c8a820da3365b2",
-  "read_guide": [
-    "先定义，再公式，最后读数值例。"
-  ],
+  "plan_digest": "sha256:16dbc32f99b64dff19edfd35ec076679ebba837b2a78c83bef2a168eb4b18197",
+  "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
   "scene_family": "spectral_orthogonal",

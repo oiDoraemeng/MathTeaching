@@ -10,7 +10,7 @@ from .chapter_05 import CHAPTER as CHAPTER_5, TOPICS as CHAPTER_5_TOPICS
 from .chapter_06 import CHAPTER as CHAPTER_6, TOPICS as CHAPTER_6_TOPICS
 from .chapter_07 import CHAPTER as CHAPTER_7, TOPICS as CHAPTER_7_TOPICS
 from .chapter_08 import CHAPTER as CHAPTER_8, TOPICS as CHAPTER_8_TOPICS
-from .model import LessonEntry, LessonNode
+from .model import LessonEntry, LessonNode, display_heading
 
 _ALL_TOPICS: tuple[LessonEntry, ...] = (*CHAPTER_1_TOPICS, *CHAPTER_2_TOPICS, *CHAPTER_3_TOPICS, *CHAPTER_4_TOPICS, *CHAPTER_5_TOPICS, *CHAPTER_6_TOPICS, *CHAPTER_7_TOPICS, *CHAPTER_8_TOPICS)
 
@@ -45,7 +45,7 @@ def lecture_manifest() -> tuple[LessonNode, ...]:
             nodes[section_id] = LessonNode(
                 id=section_id,
                 kind="section",
-                title=entry.source_path[1],
+                title=display_heading(entry.source_path[1]),
                 order=(entry.chapter_number, index),
                 parent_id=chapter_id,
                 children=(),

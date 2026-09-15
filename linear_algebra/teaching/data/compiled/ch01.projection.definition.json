@@ -1,7 +1,8 @@
 {
-  "artifact_digest": "sha256:d60d06e579cedb3f84a19e254b56c9dc4cf2a37c5a3acd7a22763c642c3aecef",
+  "artifact_digest": "sha256:e0da1b5379291e69bd7b865581dd4987a683384bac22c8a37b51edc2c6a04487",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:f0ba3a6fef2bbcee9f7ac413eb927766b25e1ef0ccf84b26a4f1b99692cd318b",
   "plan": {
     "operations": [
       {
@@ -44,8 +45,8 @@
       {
         "alias": "sem__case1_u__end",
         "coordinates": [
-          1.0,
-          0.0
+          2.0,
+          1.0
         ],
         "name": "u",
         "op": "point.upsert"
@@ -72,8 +73,8 @@
       {
         "alias": "sem__case1_p__end",
         "coordinates": [
-          3.0,
-          0.0
+          4.0,
+          2.0
         ],
         "name": "p",
         "op": "point.upsert"
@@ -91,8 +92,8 @@
       {
         "alias": "sem__case1_H",
         "coordinates": [
-          3.0,
-          0.0
+          4.0,
+          2.0
         ],
         "name": "H",
         "op": "point.upsert"
@@ -109,8 +110,8 @@
       {
         "alias": "sem__case1_r__end",
         "coordinates": [
-          0.0,
-          4.0
+          -1.0,
+          2.0
         ],
         "name": "r",
         "op": "point.upsert"
@@ -126,16 +127,293 @@
         "start": "sem__case1_r__origin"
       },
       {
+        "alias": "sem__case2_v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_v__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_v",
+        "color": "#2F6BFF",
+        "end": "sem__case2_v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_v__origin"
+      },
+      {
+        "alias": "sem__case2_u__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_u__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "u",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_u",
+        "color": "#2A9D8F",
+        "end": "sem__case2_u__end",
+        "kind": "vector",
+        "label": "u",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_u__origin"
+      },
+      {
+        "alias": "sem__case2_p__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_p__end",
+        "coordinates": [
+          4.0,
+          2.0
+        ],
+        "name": "p",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_p",
+        "color": "#2A9D8F",
+        "end": "sem__case2_p__end",
+        "kind": "vector",
+        "label": "p",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_p__origin"
+      },
+      {
+        "alias": "sem__case2_H",
+        "coordinates": [
+          4.0,
+          2.0
+        ],
+        "name": "H",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_r__end",
+        "coordinates": [
+          -1.0,
+          2.0
+        ],
+        "name": "r",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_r",
+        "color": "#E76F51",
+        "end": "sem__case2_r__end",
+        "kind": "vector",
+        "label": "r",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_r__origin"
+      },
+      {
+        "alias": "sem__case3_v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_v__end",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "v",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_v",
+        "color": "#2F6BFF",
+        "end": "sem__case3_v__end",
+        "kind": "vector",
+        "label": "v",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case3_v__origin"
+      },
+      {
+        "alias": "sem__case3_u__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_u__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "u",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_u",
+        "color": "#2A9D8F",
+        "end": "sem__case3_u__end",
+        "kind": "vector",
+        "label": "u",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case3_u__origin"
+      },
+      {
+        "alias": "sem__case3_p__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_p__end",
+        "coordinates": [
+          4.0,
+          2.0
+        ],
+        "name": "p",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_p",
+        "color": "#2A9D8F",
+        "end": "sem__case3_p__end",
+        "kind": "vector",
+        "label": "p",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case3_p__origin"
+      },
+      {
+        "alias": "sem__case3_H",
+        "coordinates": [
+          4.0,
+          2.0
+        ],
+        "name": "H",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_r__end",
+        "coordinates": [
+          -1.0,
+          2.0
+        ],
+        "name": "r",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case3_r",
+        "color": "#E76F51",
+        "end": "sem__case3_r__end",
+        "kind": "vector",
+        "label": "r",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case3_r__origin"
+      },
+      {
         "alias": "sem__rel.case.ch01.projection.definition.1",
         "color": "#2A9D8F",
         "direction": [
-          1.0,
-          0.0
+          2.0,
+          1.0
         ],
         "foot_alias": "sem__case1_H",
         "op": "geometry.projection",
         "residual_alias": "sem__case1_r",
         "result_alias": "sem__case1_u",
+        "style": "dashed",
+        "vector": [
+          3.0,
+          4.0
+        ]
+      },
+      {
+        "alias": "sem__rel.case.ch01.projection.definition.2",
+        "color": "#2A9D8F",
+        "direction": [
+          2.0,
+          1.0
+        ],
+        "foot_alias": "sem__case2_H",
+        "op": "geometry.projection",
+        "residual_alias": "sem__case2_r",
+        "result_alias": "sem__case2_u",
+        "style": "dashed",
+        "vector": [
+          3.0,
+          4.0
+        ]
+      },
+      {
+        "alias": "sem__rel.case.ch01.projection.definition.3",
+        "color": "#2A9D8F",
+        "direction": [
+          2.0,
+          1.0
+        ],
+        "foot_alias": "sem__case3_H",
+        "op": "geometry.projection",
+        "residual_alias": "sem__case3_r",
+        "result_alias": "sem__case3_u",
+        "style": "dashed",
         "vector": [
           3.0,
           4.0
@@ -150,8 +428,8 @@
         ],
         "op": "geometry.right_angle_marker",
         "second": [
-          1.0,
-          0.0
+          2.0,
+          1.0
         ],
         "size": 0.3,
         "vertex": [
@@ -160,51 +438,21 @@
         ]
       },
       {
-        "alias": "sem__projection__1",
-        "color": "#2A9D8F",
-        "direction": [
-          1.0,
-          0.0
+        "alias": "sem__orthogonal__3",
+        "color": "#6B7280",
+        "first": [
+          -1.0,
+          2.0
         ],
-        "foot_alias": "sem__projection__1__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__1__residual",
-        "result_alias": "sem__projection__1",
-        "vector": [
-          3.0,
-          4.0
-        ]
-      },
-      {
-        "alias": "sem__projection__2",
-        "color": "#2A9D8F",
-        "direction": [
-          1.0,
-          0.0
+        "op": "geometry.right_angle_marker",
+        "second": [
+          2.0,
+          1.0
         ],
-        "foot_alias": "sem__projection__2__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__2__residual",
-        "result_alias": "sem__projection__2",
-        "vector": [
-          3.0,
-          4.0
-        ]
-      },
-      {
-        "alias": "sem__projection__3",
-        "color": "#2A9D8F",
-        "direction": [
-          1.0,
+        "size": 0.3,
+        "vertex": [
+          0.0,
           0.0
-        ],
-        "foot_alias": "sem__projection__3__foot",
-        "op": "geometry.projection",
-        "residual_alias": "sem__projection__3__residual",
-        "result_alias": "sem__projection__3",
-        "vector": [
-          3.0,
-          4.0
         ]
       },
       {
@@ -213,13 +461,14 @@
       }
     ],
     "scene": "2d",
-    "summary": "投影、垂足与残差",
+    "summary": "投影的定义",
     "version": 1
   },
-  "plan_digest": "sha256:5af33367c30bbfcc669acc1b9735b55849c7a5862de39610f239c2177387e295",
+  "plan_digest": "sha256:66450b1edbf36646762a740be7239a41f6439eb97c2398cae640f8eaa8e10711",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 14,
+  "revision": 17,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:2e508a67fd5f4be4046684b5498d4102d5e85d6ae9b987a2a6d4542405b6d789",
   "stages": [
@@ -228,38 +477,21 @@
         0.0,
         2.65
       ],
-      "caption": "沿着方向线读出投影分量。",
+      "caption": "$\\boldsymbol u=(2,1)$、$\\boldsymbol v=(3,4)$ 从同一原点出发；$\\boldsymbol u$ 是一条斜直线，不是坐标轴。",
       "id": "stage.case.ch01.projection.definition.1",
       "layout": "overlay",
-      "title": "案例一：x 轴投影",
+      "title": "第一步：给出方向 u 与向量 v",
       "visible_aliases": [
         "sem__case1_v",
         "sem__case1_v__end",
         "sem__case1_v__origin",
         "sem__case1_u",
         "sem__case1_u__end",
-        "sem__case1_u__origin",
-        "sem__case1_p",
-        "sem__case1_p__end",
-        "sem__case1_p__origin",
-        "sem__case1_r",
-        "sem__case1_r__end",
-        "sem__case1_r__origin",
-        "sem__case1_H",
-        "sem__rel.case.ch01.projection.definition.1",
-        "sem__rel.case.ch01.projection.definition.1.decompose",
-        "sem__rel.case.ch01.projection.definition.1.orthogonal",
-        "sem__projection__1"
+        "sem__case1_u__origin"
       ],
       "visible_refs": [
         "case1_v",
-        "case1_u",
-        "case1_p",
-        "case1_r",
-        "case1_H",
-        "rel.case.ch01.projection.definition.1",
-        "rel.case.ch01.projection.definition.1.decompose",
-        "rel.case.ch01.projection.definition.1.orthogonal"
+        "case1_u"
       ]
     },
     {
@@ -267,38 +499,31 @@
         0.0,
         2.65
       ],
-      "caption": "看垂直方向上剩下的残差。",
-      "id": "stage.case.ch01.projection.definition.1.projection",
+      "caption": "从 $\\boldsymbol v$ 的终点向 $\\boldsymbol u$ 所在直线作垂线，垂足为 $H$；$\\overrightarrow{OH}$ 就是投影 $\\boldsymbol p=\\frac{\\boldsymbol v\\cdot\\boldsymbol u}{\\boldsymbol u\\cdot\\boldsymbol u}\\boldsymbol u=\\frac{10}{5}(2,1)=(4,2)$。",
+      "id": "stage.case.ch01.projection.definition.2",
       "layout": "overlay",
-      "title": "投影分量",
+      "title": "第二步：作垂线，得投影 p 与垂足 H",
       "visible_aliases": [
-        "sem__case1_v",
-        "sem__case1_v__end",
-        "sem__case1_v__origin",
-        "sem__case1_u",
-        "sem__case1_u__end",
-        "sem__case1_u__origin",
-        "sem__case1_p",
-        "sem__case1_p__end",
-        "sem__case1_p__origin",
-        "sem__case1_r",
-        "sem__case1_r__end",
-        "sem__case1_r__origin",
-        "sem__case1_H",
-        "sem__rel.case.ch01.projection.definition.1",
-        "sem__rel.case.ch01.projection.definition.1.decompose",
-        "sem__rel.case.ch01.projection.definition.1.orthogonal",
-        "sem__projection__2"
+        "sem__case2_v",
+        "sem__case2_v__end",
+        "sem__case2_v__origin",
+        "sem__case2_u",
+        "sem__case2_u__end",
+        "sem__case2_u__origin",
+        "sem__case2_p",
+        "sem__case2_p__end",
+        "sem__case2_p__origin",
+        "sem__case2_H",
+        "sem__rel.case.ch01.projection.definition.2",
+        "sem__rel.case.ch01.projection.definition.2.decompose"
       ],
       "visible_refs": [
-        "case1_v",
-        "case1_u",
-        "case1_p",
-        "case1_r",
-        "case1_H",
-        "rel.case.ch01.projection.definition.1",
-        "rel.case.ch01.projection.definition.1.decompose",
-        "rel.case.ch01.projection.definition.1.orthogonal"
+        "case2_v",
+        "case2_u",
+        "case2_p",
+        "case2_H",
+        "rel.case.ch01.projection.definition.2",
+        "rel.case.ch01.projection.definition.2.decompose"
       ]
     },
     {
@@ -306,38 +531,38 @@
         0.0,
         2.65
       ],
-      "caption": "看垂直方向上剩下的残差。",
-      "id": "stage.case.ch01.projection.definition.1.residual",
+      "caption": "$\\boldsymbol r=\\boldsymbol v-\\boldsymbol p=(3,4)-(4,2)=(-1,2)$，$\\boldsymbol r\\cdot\\boldsymbol u=(-1)\\times2+2\\times1=0$，所以 $\\boldsymbol r\\perp\\boldsymbol u$，即 $\\boldsymbol v=\\boldsymbol p+\\boldsymbol r$。",
+      "id": "stage.case.ch01.projection.definition.3",
       "layout": "overlay",
-      "title": "正交残差",
+      "title": "第三步：残差 r 与 u 正交",
       "visible_aliases": [
-        "sem__case1_v",
-        "sem__case1_v__end",
-        "sem__case1_v__origin",
-        "sem__case1_u",
-        "sem__case1_u__end",
-        "sem__case1_u__origin",
-        "sem__case1_p",
-        "sem__case1_p__end",
-        "sem__case1_p__origin",
-        "sem__case1_r",
-        "sem__case1_r__end",
-        "sem__case1_r__origin",
-        "sem__case1_H",
-        "sem__rel.case.ch01.projection.definition.1",
-        "sem__rel.case.ch01.projection.definition.1.decompose",
-        "sem__rel.case.ch01.projection.definition.1.orthogonal",
-        "sem__projection__3"
+        "sem__case3_v",
+        "sem__case3_v__end",
+        "sem__case3_v__origin",
+        "sem__case3_u",
+        "sem__case3_u__end",
+        "sem__case3_u__origin",
+        "sem__case3_p",
+        "sem__case3_p__end",
+        "sem__case3_p__origin",
+        "sem__case3_r",
+        "sem__case3_r__end",
+        "sem__case3_r__origin",
+        "sem__case3_H",
+        "sem__rel.case.ch01.projection.definition.3",
+        "sem__rel.case.ch01.projection.definition.3.decompose",
+        "sem__rel.case.ch01.projection.definition.3.orthogonal",
+        "sem__orthogonal__3"
       ],
       "visible_refs": [
-        "case1_v",
-        "case1_u",
-        "case1_p",
-        "case1_r",
-        "case1_H",
-        "rel.case.ch01.projection.definition.1",
-        "rel.case.ch01.projection.definition.1.decompose",
-        "rel.case.ch01.projection.definition.1.orthogonal"
+        "case3_v",
+        "case3_u",
+        "case3_p",
+        "case3_r",
+        "case3_H",
+        "rel.case.ch01.projection.definition.3",
+        "rel.case.ch01.projection.definition.3.decompose",
+        "rel.case.ch01.projection.definition.3.orthogonal"
       ]
     }
   ],

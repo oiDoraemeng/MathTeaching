@@ -72,6 +72,19 @@ _PROJECTION_DEFINITION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "derivation", "worked_examples"),
 )
+# 讲义 1.5.2 把中位线定理写成「命题 + 向量证明」两段：命题就是定义块，
+# 证明自带全部公式；这一小节没有独立的「案例」或「几何意义（注意）」内容。
+_PROOF_MIDLINE = TeachingProfile(
+    TeachingLevel.READ,
+    ("definition", "formula", "derivation"),
+)
+# 2.5 矩阵 × 向量（核心节）的三个小节把公式写在定义（2.5.1）、定理（2.5.2）或
+# 例题（2.5.3）之内，正文只有「定义 / 定理 / 分层例题」与一组分步数学案例：
+# 不要求独立的「公式」或「几何意义」小节。
+_MATRIX_VECTOR_SUBSECTION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
 _BRIDGE = TeachingProfile(
     TeachingLevel.TRANSFER,
     (*_CORE.required_sections, "connections"),
@@ -107,15 +120,15 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch01.projection.definition": _PROJECTION_DEFINITION,
     "ch01.projection.properties": _VECTOR_FOUNDATION,
     "ch01.projection.force": _VECTOR_FOUNDATION,
-    "ch01.proof.midline": _VECTOR_FOUNDATION,
+    "ch01.proof.midline": _PROOF_MIDLINE,
     "ch01.proof.centroid": _VECTOR_FOUNDATION,
     "ch01.proof.parallelogram-diagonals": _VECTOR_FOUNDATION,
     "ch02.batch.inner-products": _VECTOR_FOUNDATION,
     "ch02.batch.projection": _VECTOR_FOUNDATION,
     "ch02.matrix.additive-distributivity": _VECTOR_FOUNDATION,
-    "ch02.matrix.row-column": _VECTOR_FOUNDATION,
-    "ch02.matrix.transformed-grid": _VECTOR_FOUNDATION,
-    "ch02.matrix.stretch-rotate-scale": _VECTOR_FOUNDATION,
+    "ch02.matrix.row-column": _MATRIX_VECTOR_SUBSECTION,
+    "ch02.matrix.transformed-grid": _MATRIX_VECTOR_SUBSECTION,
+    "ch02.matrix.stretch-rotate-scale": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.composition": _VECTOR_FOUNDATION,
     "ch02.matrix.basis": _VECTOR_FOUNDATION,
     "ch02.matrix.powers": _VECTOR_FOUNDATION,

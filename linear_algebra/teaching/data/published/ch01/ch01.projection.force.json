@@ -199,7 +199,7 @@
               5
             ],
             "name": "projection",
-            "tolerance": 1e-09
+            "tolerance": 1e-9
           }
         ],
         "claim_refs": [

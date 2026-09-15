@@ -285,6 +285,19 @@ def test_composition_refinement_binds_both_endpoints_to_the_visual_graph() -> No
     assert "先 A 后 B" in {stage["title"] for stage in refined["visual_semantics"]["stages"]}
 
 
+def test_refinement_rebinds_claims_to_the_final_explanation_sections() -> None:
+    """Lecture merging must not leave a claim pointing at a removed section."""
+
+    payload = composition_artifact_payload()
+    payload["topic_id"] = "ch02.batch.inner-products"
+    payload["claims"][0]["explanation_refs"] = ["connections"]  # type: ignore[index]
+
+    refined = refine_payload(payload)
+
+    section_ids = [section["id"] for section in refined["explanation"]["sections"]]
+    assert refined["claims"][0]["explanation_refs"] == section_ids
+
+
 def test_inner_product_definitions_refinement_walks_both_definitions_in_two_panes() -> None:
     payload = composition_artifact_payload()
     payload["topic_id"] = "ch01.inner.definitions"

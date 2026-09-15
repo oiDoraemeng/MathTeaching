@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:1211023c6b29fdeefc675f89a2da382c721ea2ae02121415f15a349b73a4cd73",
+  "artifact_digest": "sha256:9ac142c1b465357cd94a630c86cd5a48532d0e62c53b410e325c071e9a7fd937",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:1fcaebf52f908ee466460e91f6b5c3f2afdaf652ddd3b56ec50a06161cdd0cae",
   "plan": {
     "operations": [
       {
         "alias": "sem__A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            2.0,
-            0.0
+            2,
+            0
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__x__end",
         "coordinates": [
-          1.0,
-          1.0
+          1,
+          1
         ],
         "name": "x",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          2.0,
-          1.0
+          2,
+          1
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -86,12 +87,12 @@
         "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
-            2.0,
-            0.0
+            2,
+            0
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
         "op": "linear_algebra.matrix_transform"
@@ -104,67 +105,85 @@
         "matrices": [
           [
             [
-              2.0,
-              0.0
+              2,
+              0
             ],
             [
-              0.0,
-              1.0
+              0,
+              1
             ]
           ],
           [
             [
-              1.0,
-              0.0
+              1,
+              0
             ],
             [
-              0.0,
-              1.0
+              0,
+              1
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1.0,
-            1.0
+            1,
+            1
           ],
           [
-            2.0,
-            1.0
+            2,
+            1
           ]
         ]
-      },
-      {
-        "alias": "sem__mapping_grid__1",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            2.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
       },
       {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
-          0.0,
+          0,
           2.65
         ],
         "text": "输入与变换"
+      },
+      {
+        "alias": "sem__stage.lecture.source__title",
+        "op": "annotation.upsert",
+        "position": [
+          0,
+          2.65
+        ],
+        "text": "输入向量"
+      },
+      {
+        "alias": "sem__mapping_grid__3",
+        "bounds": [
+          -3,
+          3,
+          -3,
+          3
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1
+      },
+      {
+        "alias": "sem__stage.lecture.image__title",
+        "op": "annotation.upsert",
+        "position": [
+          0,
+          2.65
+        ],
+        "text": "重复变换后的像"
       },
       {
         "op": "view.fit",
@@ -172,19 +191,24 @@
       }
     ],
     "scene": "2d",
-    "summary": "矩阵幂表示重复变换",
+    "summary": "矩阵幂、转置与对称分解",
     "version": 1
   },
-  "plan_digest": "sha256:610a009884caefff3e8993fc228a65c93ee92acf9ad66367fd87fddbc1cf58a3",
-  "read_guide": [],
+  "plan_digest": "sha256:03187262de2817e38036a9393fdecd4a7b284e79425b6c2a69a81747eda19a1f",
+  "read_guide": [
+    "先确认 A 是方阵。",
+    "再按定义计算 A^2 观察重复变换。",
+    "最后验证转置性质与对称分解。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 12,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:69c514d44197850d620d63c0d7f1df0b68e69d1dfdbe1446a5396a9d8aecbd49",
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "矩阵 A 作用于向量 x。",
@@ -206,6 +230,52 @@
       "visible_refs": [
         "A",
         "x",
+        "y",
+        "A_maps_x_to_y"
+      ]
+    },
+    {
+      "anchor": [
+        0,
+        2.65
+      ],
+      "caption": "从 x 出发准备重复施加 A。",
+      "id": "stage.lecture.source",
+      "layout": "overlay",
+      "title": "输入向量",
+      "visible_aliases": [
+        "sem__A",
+        "sem__x",
+        "sem__x__end",
+        "sem__x__origin",
+        "sem__A_maps_x_to_y",
+        "sem__stage.lecture.source__title",
+        "sem__mapping_grid__2"
+      ],
+      "visible_refs": [
+        "A",
+        "x",
+        "A_maps_x_to_y"
+      ]
+    },
+    {
+      "anchor": [
+        0,
+        2.65
+      ],
+      "caption": "连续施加 A 后的落点。",
+      "id": "stage.lecture.image",
+      "layout": "overlay",
+      "title": "重复变换后的像",
+      "visible_aliases": [
+        "sem__y",
+        "sem__y__end",
+        "sem__y__origin",
+        "sem__A_maps_x_to_y",
+        "sem__stage.lecture.image__title",
+        "sem__mapping_grid__3"
+      ],
+      "visible_refs": [
         "y",
         "A_maps_x_to_y"
       ]

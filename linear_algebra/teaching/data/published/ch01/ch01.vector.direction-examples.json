@@ -180,7 +180,7 @@
           {
             "expected": 2,
             "name": "result",
-            "tolerance": 1e-09
+            "tolerance": 1e-9
           }
         ],
         "claim_refs": [

@@ -1,36 +1,37 @@
 {
-  "artifact_digest": "sha256:245a77d2df30a4b45a88f9f00ac21a5c95cae0235835698d8f6c792cd8901dae",
+  "artifact_digest": "sha256:4a1b4946025367e8da442924be5820373f67676f58a445fc0ac20bf9c40e4d13",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:fbf6a0fe17d91df3331728dc588b611ac8a457b211aa3faeee96b1061bc31643",
   "plan": {
     "operations": [
       {
         "alias": "sem__A",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -3,
+          3,
+          -3,
+          3
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1.0
+        "step": 1
       },
       {
         "alias": "sem__x__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -38,8 +39,8 @@
       {
         "alias": "sem__x__end",
         "coordinates": [
-          2.0,
-          3.0
+          2,
+          3
         ],
         "name": "x",
         "op": "point.upsert"
@@ -57,8 +58,8 @@
       {
         "alias": "sem__y__origin",
         "coordinates": [
-          0.0,
-          0.0
+          0,
+          0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -66,8 +67,8 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          2.0,
-          3.0
+          2,
+          3
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -86,43 +87,21 @@
         "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
-            1.0,
-            0.0
+            1,
+            0
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
         "op": "linear_algebra.matrix_transform"
       },
       {
-        "alias": "sem__mapping_grid__1",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
-          0.0,
+          0,
           2.65
         ],
         "text": "输入与变换"
@@ -136,16 +115,21 @@
     "summary": "批量内积与多角度比较",
     "version": 1
   },
-  "plan_digest": "sha256:869dca859f1570685505939f3ecbec239b9ff312a4bc89d981801bc4608f6c9b",
-  "read_guide": [],
+  "plan_digest": "sha256:4e2581e44db8bb10d0dec2592412cc7e004556681833bd38bd71170a55e6b361",
+  "read_guide": [
+    "先看参考向量 u 的长度与方向。",
+    "再看矩阵各列与 u 的夹角。",
+    "最后核对每个内积的正负与大小顺序。"
+  ],
   "render_profile": "lecture-v1",
-  "revision": 12,
+  "revision": 18,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:8d0f7df5e4e32f439e01001cb86315c36061b1ef23c0d23756f5bff315aaa2a2",
   "stages": [
     {
       "anchor": [
-        0.0,
+        0,
         2.65
       ],
       "caption": "矩阵 A 作用于向量 x。",

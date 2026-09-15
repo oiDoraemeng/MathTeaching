@@ -1,7 +1,8 @@
 {
-  "artifact_digest": "sha256:73685f1026776e4af7e2b790b4e0ea00bb7265bbb834a5aa778c4f94dfd4f72e",
+  "artifact_digest": "sha256:363d29e37c3e787f5f7786a1d75e7a39123d4919475080bf3dcf9f9e240c7707",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:f129a492f3532d2b58de0974ee7a601d8cbc94fab799b45bbdbe6cd65f40d6db",
   "plan": {
     "operations": [
       {
@@ -19,7 +20,7 @@
           3.0,
           1.0
         ],
-        "name": "a",
+        "name": "A",
         "op": "point.upsert"
       },
       {
@@ -47,7 +48,7 @@
           1.0,
           2.0
         ],
-        "name": "b",
+        "name": "B",
         "op": "point.upsert"
       },
       {
@@ -59,34 +60,6 @@
         "op": "linear.upsert",
         "role": "primary",
         "start": "sem__b__origin"
-      },
-      {
-        "alias": "sem__r__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__r__end",
-        "coordinates": [
-          2.0,
-          -1.0
-        ],
-        "name": "a-b",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__r",
-        "color": "#6B7280",
-        "end": "sem__r__end",
-        "kind": "vector",
-        "label": "a-b",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "sem__r__origin"
       },
       {
         "alias": "sem__rel.subtraction.endpoints",
@@ -108,12 +81,19 @@
         "op": "geometry.projection",
         "residual_alias": "cap__residual",
         "result_alias": "cap__projection",
+        "style": "dashed",
         "vector": [
           3.0,
           1.0
         ]
       },
       {
+        "bounds": [
+          0.0,
+          3.0,
+          0.0,
+          2.0
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
@@ -122,10 +102,11 @@
     "summary": "向量减法",
     "version": 1
   },
-  "plan_digest": "sha256:62238fe208ef52738a47f4da271a78606a156cda753434d71263942db4ea191c",
+  "plan_digest": "sha256:86739d3926804242fe1ae18947e8aed9d5dd3fe9848918cd998f055ce3deddd7",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 15,
+  "revision": 24,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:13b887d608b560325e74c97308bcf60f892ddea2f61914445bef1fb98e6390fd",
   "stages": [
@@ -134,10 +115,32 @@
         0.0,
         2.65
       ],
-      "caption": "",
-      "id": "stage.subtraction.endpoints",
+      "caption": "$\\boldsymbol a=(3,1)$、$\\boldsymbol b=(1,2)$ 从原点出发。",
+      "id": "stage.subtraction.operands",
       "layout": "overlay",
-      "title": "案例一：终点间的位移",
+      "title": "第一步：向量 a 与 b",
+      "visible_aliases": [
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__b",
+        "sem__b__end",
+        "sem__b__origin"
+      ],
+      "visible_refs": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "从 $\\boldsymbol b$ 的终点指向 $\\boldsymbol a$ 的终点的箭头等于 $\\boldsymbol a-\\boldsymbol b$。",
+      "id": "stage.subtraction.difference",
+      "layout": "overlay",
+      "title": "第二步：a-b 的终点关系",
       "visible_aliases": [
         "sem__a",
         "sem__a__end",

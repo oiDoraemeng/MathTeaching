@@ -43,6 +43,13 @@ _PROOF_TOPICS = frozenset(
 )
 # 采用“数学案例流程”并排展示的小节：多个案例窗格必须共用一个固定视角，
 # 否则“全部显示”时各窗格按自身对象缩放，会出现一大一小。
+_MATRIX_VECTOR_CASE_TOPICS = frozenset(
+    {
+        "ch02.matrix.row-column",
+        "ch02.matrix.transformed-grid",
+        "ch02.matrix.stretch-rotate-scale",
+    }
+)
 _FLOW_VIEW_TOPICS = frozenset(
     {
         "ch01.ops.addition",
@@ -50,15 +57,44 @@ _FLOW_VIEW_TOPICS = frozenset(
         "ch01.ops.scalar",
         "ch01.ops.linear-combination",
         "ch01.inner.definitions",
+        *_MATRIX_VECTOR_CASE_TOPICS,
     }
 )
+# 2.5 的矩阵案例用软件已有的矩阵变换功能画网格：取样范围取得比窗格视野大得多，
+# 于是变形网格铺满整个窗格、由视口负责裁切（与工具箱“矩阵变换”取当前视口范围
+# 一样），而不是在原来坐标系里悬浮一小块网格。案例窗格取景时会把网格演员排除
+# 在外，所以取样范围不会把相机拉远。
+_MATRIX_VECTOR_GRID_BOUNDS: tuple[float, float, float, float] = (-12.0, 12.0, -12.0, 12.0)
+
+
+def _case_grid_bounds(topic_id: str, fallback: tuple[float, ...]) -> tuple[float, ...]:
+    """Return the grid sampling rectangle used by one topic's case pane."""
+
+    if topic_id not in _MATRIX_VECTOR_CASE_TOPICS:
+        return fallback
+    return _MATRIX_VECTOR_GRID_BOUNDS
 # 流程里向量用小写标注；向量的终点是“点”，用大写标注以区别。a+b 的终点是
 # 平行四边形与原点相对的顶点，记为 C（不是 A+B）；单一字母标签直接大写，
 # 带系数或正负号的标签不再造点。数乘的两步各自落在一个点上：a 的终点是 A，
-# 缩放后的 2a 终点是 B。
+# 缩放后的 2a 终点是 B。2.5 的案例按同一规则给每个向量的终点一个不同的
+# 大写标签（行/列、原像/像用不同字母），点与向量不会重名。
 _FLOW_POINT_LABELS = {
     "ch01.ops.addition": {"flow_a": "A", "flow_b": "B", "flow_sum": "C"},
     "ch01.ops.scalar": {"a": "A", "two_a": "B"},
+    "ch02.matrix.row-column": {
+        "mv_x": "X", "mv_r1": "R1", "mv_r2": "R2",
+        "mv_c1": "C1", "mv_c2": "C2", "mv_s1": "S1", "mv_s2": "S2", "mv_sum": "Y",
+    },
+    "ch02.matrix.transformed-grid": {
+        "mv_e1": "E1", "mv_e2": "E2", "mv_ae1": "F1", "mv_ae2": "F2",
+        "mv_x": "X", "mv_Ax": "Y",
+    },
+    "ch02.matrix.stretch-rotate-scale": {
+        "mv_e1": "E1", "mv_e2": "E2",
+        "mv_stretch_e1": "F1", "mv_stretch_e2": "F2",
+        "mv_rotate_e1": "G1", "mv_rotate_e2": "G2",
+        "mv_combo_e1": "H1", "mv_combo_e2": "H2",
+    },
 }
 
 
@@ -214,6 +250,8 @@ class VisualSemanticsCompiler:
                 operations.extend(relation_operations)
                 aliases.setdefault(relation.id, []).extend(relation_aliases)
 
+            _emit_matrix_vector_transform(resolved_topic, semantics, context, operations, aliases)
+
         if not resolved_topic.startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08.")):
             self._emit_declared_capability_evidence(semantics, context, operations, aliases, resolved_topic)
 
@@ -275,7 +313,8 @@ class VisualSemanticsCompiler:
         if resolved_topic in _FLOW_VIEW_TOPICS:
             # 流程主题的多个案例窗格必须共享同一视角：若各自按本窗格对象
             # 自适应缩放，“全部显示”时会出现一大一小。这里给出覆盖所有
-            # 向量终点（含原点）的固定边界，让每个窗格使用同一相机。
+            # 向量终点（含原点）的固定边界，让每个窗格使用同一相机；网格
+            # 由视口裁切，因此不参与取景。
             try:
                 endpoints = [
                     _coordinates(entity.value, 2)
@@ -284,6 +323,12 @@ class VisualSemanticsCompiler:
                 ]
             except (TypeError, ValueError):
                 endpoints = []
+            if resolved_topic == _INNER_PRODUCT_TOPIC:
+                # a·b 用 OA 的延长线段表示，可能长过所有向量；取景必须把它
+                # 算进去，否则延长段会被窗格裁掉。
+                extension = _inner_product_extension_endpoint(semantics)
+                if extension is not None:
+                    endpoints.append(extension)
             if endpoints:
                 xs = [0.0, *(point[0] for point in endpoints)]
                 ys = [0.0, *(point[1] for point in endpoints)]
@@ -659,6 +704,10 @@ class VisualSemanticsCompiler:
                                 if (is_magnitude_topic and is_zero_vector)
                                 else entity.label
                             ),
+                            # 内积小节把向量名标在线上方，好给线下的模长标注留出位置。
+                            "label_side": (
+                                "above" if context.topic_id == _INNER_PRODUCT_TOPIC else "below"
+                            ),
                         },
                     ]
                 )
@@ -669,7 +718,8 @@ class VisualSemanticsCompiler:
         elif entity.kind in {"matrix", "grid"} and scene == "2d":
             matrix = _matrix2(entity.value)
             if matrix is not None:
-                operations.append({"op": "geometry.transformed_grid", "alias": prefix, "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color(entity.role)})
+                grid_bounds = _case_grid_bounds(context.topic_id, context.bounds)
+                operations.append({"op": "geometry.transformed_grid", "alias": prefix, "matrix": matrix, "bounds": list(grid_bounds), "step": 1.0, "color": role_color(entity.role)})
                 aliases.append(prefix)
         elif entity.kind in {"basis", "region"} and scene == "2d":
             basis = _vectors2(entity.value)
@@ -793,7 +843,22 @@ class VisualSemanticsCompiler:
                 "color": role_color("projection"),
             }
             operations.append(projection)
-            return operations, [relation_alias]
+            aliases = [relation_alias]
+            if context.topic_id == _INNER_PRODUCT_TOPIC:
+                projection_entity = _pick_role_entity(semantics.entities, "projection", target.id)
+                annotations, length_aliases = _inner_product_length_annotations(
+                    context,
+                    relation_alias,
+                    f"{_alias(target.id)}__origin",
+                    direction_coordinates,
+                    source_coordinates,
+                    target.label,
+                    source.label,
+                    projection_entity.label if projection_entity is not None else "p",
+                )
+                operations.extend(annotations)
+                aliases.extend(length_aliases)
+            return operations, aliases
         matrix = _matrix2(relation.parameters.get("matrix")) if isinstance(relation.parameters, Mapping) else None
         if relation.kind == "maps_to" and matrix is not None and semantics.scene_kind == "2d":
             operations.append(
@@ -891,19 +956,14 @@ def _compile_proof_figure(
     for relation in semantics.relations:
         aliases[relation.id] = ["proof__region"]
     if topic_id == "ch01.proof.midline":
-        # 中位线定理按讲义的证明顺序展开：一个窗格一步，只显示这一步刚引进的
-        # 构造，最后一步才补上第三边与结论标注。
-        base = [
+        # 用户确认：中位线定理只画一张完整构造图（一个窗格），三角形、两腰、
+        # 两个中点、中位线、第三边与结论标注一次画全，不再按步骤拆成多张。
+        aliases[f"stage.case.{topic_id}.1"] = [
             "proof__region",
             "proof__point_A", "proof__point_B", "proof__point_C",
+            "proof__point_D", "proof__point_E",
             "proof__side_a", "proof__side_b",
-        ]
-        midpoints = ["proof__point_D", "proof__point_E"]
-        aliases[f"stage.case.{topic_id}.1"] = list(base)
-        aliases[f"stage.case.{topic_id}.2"] = base + midpoints
-        aliases[f"stage.case.{topic_id}.3"] = base + midpoints + ["proof__midline", "proof__formula"]
-        aliases[f"stage.case.{topic_id}.4"] = base + midpoints + [
-            "proof__midline", "proof__side_bc", "proof__note_midline", "proof__formula",
+            "proof__side_bc", "proof__midline", "proof__note_midline",
         ]
     return operations, aliases
 
@@ -938,6 +998,7 @@ def _proof_figure_operations(
         color: str,
         role: str = "primary",
         style: str = "solid",
+        kind: str = "segment",
     ) -> None:
         segment_ops.append(
             {
@@ -945,7 +1006,7 @@ def _proof_figure_operations(
                 "alias": alias,
                 "start": start,
                 "end": end,
-                "kind": "segment",
+                "kind": kind,
                 "role": role,
                 "color": color,
                 "style": style,
@@ -992,17 +1053,19 @@ def _proof_figure_operations(
         add_point("proof__point_C", vertex_c, "C")
         add_point("proof__point_D", midpoint_d, "D")
         add_point("proof__point_E", midpoint_e, "E")
-        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("construction"), role="construction")
-        add_segment("proof__side_b", "proof__point_A", "proof__point_C", color=role_color("construction"), role="construction")
-        add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("vector_a"))
-        add_segment("proof__midline", "proof__point_D", "proof__point_E", color=role_color("transformed_b"))
+        # 用户确认：这一小节全部按向量画（$\overrightarrow{AB}=\boldsymbol a$ 等），
+        # 不画成普通线段；图中也不再重复显示结论公式 DE = ½ BC。
+        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("vector_a"), kind="vector")
+        add_segment("proof__side_b", "proof__point_A", "proof__point_C", color=role_color("vector_b"), kind="vector")
+        add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("vector_a"), kind="vector")
+        add_segment("proof__midline", "proof__point_D", "proof__point_E", color=role_color("transformed_b"), kind="vector")
         centre = ((origin[0] + vertex_b[0] + vertex_c[0]) / 3.0, (origin[1] + vertex_b[1] + vertex_c[1]) / 3.0)
         add_note(
             "proof__note_midline",
             "DE // BC",
             outward_label(midpoint_d, midpoint_e, centre, 0.42),
         )
-        formula = "DE = ½ BC"
+        formula = ""
         vertices = [origin, vertex_b, vertex_c]
     elif topic_id == "ch01.proof.centroid":
         midpoint_bc = midpoint(vertex_b, vertex_c)
@@ -1074,14 +1137,15 @@ def _proof_figure_operations(
     operations.extend(point_ops)
     operations.extend(segment_ops)
     operations.extend(note_ops)
-    operations.append(
-        {
-            "op": "annotation.formula",
-            "alias": "proof__formula",
-            "text": formula,
-            "position": [round(float(formula_position[0]), 6), round(float(formula_position[1]), 6)],
-        }
-    )
+    if formula:
+        operations.append(
+            {
+                "op": "annotation.formula",
+                "alias": "proof__formula",
+                "text": formula,
+                "position": [round(float(formula_position[0]), 6), round(float(formula_position[1]), 6)],
+            }
+        )
     return operations
 
 
@@ -1106,6 +1170,179 @@ def _pick_role_entity(entities, role: str, anchor: str):
         if entity.id.rsplit("_", 1)[0] == prefix:
             return entity
     return candidates[0]
+
+
+# The 内积（两种定义）lesson is the one place where the lecture reads the
+# projection as the arithmetic itself: ``a·b = |a|·|p|``.  Label the three
+# student-facing lengths on the pane that draws the projection.
+_INNER_PRODUCT_TOPIC = "ch01.inner.definitions"
+
+
+def _format_radical_length(squared: float) -> str | None:
+    """Return an exact ``n``/``√n`` text for a squared length, else ``None``.
+
+    Lecture labels prefer the exact surd (``√5``) to a rounded decimal, but only
+    when the squared length is a small integer whose root is an integer or a
+    squarefree surd.
+    """
+    rounded = int(round(squared))
+    if rounded <= 0 or abs(squared - rounded) > 1e-9:
+        return None
+    root = math.isqrt(rounded)
+    return str(root) if root * root == rounded else f"√{rounded}"
+
+
+def _magnitude_text(value: float) -> str:
+    """Format a length label, preferring the exact surd over a decimal.
+
+    Lecture labels keep the exact radical (``√5``); the rounded ``≈`` form is
+    only a fallback for lengths that have no small-integer surd.
+    """
+    exact = _format_radical_length(value * value)
+    if exact:
+        return f"= {exact}"
+    approximate = f"{value:.3f}".rstrip("0").rstrip(".")
+    return f"≈ {approximate}"
+
+
+def _projection_magnitude_text(dot: float, length_a: float) -> str:
+    """``|p| = |a·b| / |a|``: keep the exact ratio ``n/√m`` when one exists."""
+    length_p = abs(dot) / length_a
+    denominator = _format_radical_length(length_a * length_a)
+    if (
+        denominator is not None
+        and denominator.startswith("√")
+        and abs(dot) > 1e-9
+        and abs(dot - round(dot)) <= 1e-9
+    ):
+        return f"= {abs(int(round(dot)))}/{denominator}"
+    return _magnitude_text(length_p)
+
+
+def _inner_product_extension_endpoint(semantics: VisualSemantics) -> tuple[float, float] | None:
+    """Return the tip of the ``OA`` extension whose length equals ``a·b``.
+
+    The projection pane draws ``a·b`` as a segment from the origin along ``a``;
+    its tip can sit beyond every vector endpoint, so view fitting has to know
+    about it explicitly.
+    """
+    entities = {entity.id: entity for entity in semantics.entities}
+    for relation in semantics.relations:
+        if relation.kind != "projects_to":
+            continue
+        target = entities.get(relation.target_ref)
+        source = entities.get(relation.source_ref)
+        if target is None or source is None:
+            continue
+        try:
+            ax, ay = _coordinates(target.value, 2)
+            bx, by = _coordinates(source.value, 2)
+        except (TypeError, ValueError):
+            continue
+        length_a = math.hypot(ax, ay)
+        if length_a == 0.0:
+            continue
+        dot = ax * bx + ay * by
+        return (ax / length_a * dot, ay / length_a * dot)
+    return None
+
+
+def _inner_product_length_annotations(
+    context: RenderContext,
+    relation_alias: str,
+    origin_alias: str,
+    direction: tuple[float, float],
+    source: tuple[float, float],
+    target_label: str,
+    source_label: str,
+    projection_label: str,
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """Annotate ``|a|``, ``|p|`` and the ``OA`` extension carrying ``a·b``.
+
+    ``direction`` is the vector the projection lands on (``a``) and ``source`` is
+    the vector being projected (``b``), so ``p = (a·b / a·a)·a`` and the
+    projection length satisfies ``a·b = |a|·|p|``.  Both lengths hang just below
+    the primitive they measure, and ``a·b`` is drawn as a segment from the origin
+    along ``a`` whose length is exactly ``|a·b|``.
+    """
+    ax, ay = direction
+    dot = ax * source[0] + ay * source[1]
+    length_a = math.hypot(ax, ay)
+    if length_a == 0.0:
+        return [], []
+    unit_x, unit_y = ax / length_a, ay / length_a
+    scale = dot / (length_a * length_a)
+    px, py = ax * scale, ay * scale
+    bounds = context.bounds
+    span = max(
+        abs(float(bounds[1]) - float(bounds[0])),
+        abs(float(bounds[3]) - float(bounds[2])),
+    )
+    offset = span * 0.045
+    # 两条法线里取指向下方的一条，把模长标注压在对应线段的下方。
+    down_x, down_y = unit_y, -unit_x
+    if down_y > 0.0 or (down_y == 0.0 and down_x < 0.0):
+        down_x, down_y = -down_x, -down_y
+    product = (
+        str(int(round(dot)))
+        if abs(dot - round(dot)) <= 1e-9
+        else f"{dot:.3f}".rstrip("0").rstrip(".")
+    )
+    color = role_color("projection")
+    product_color = role_color("area")
+    product_end = f"{relation_alias}__product_end"
+    # a·b 的延长段落在 a 的正中间偏外的位置，标注取延长段中点。
+    reach_x, reach_y = unit_x * (length_a + dot) / 2.0, unit_y * (length_a + dot) / 2.0
+    annotations = [
+        {
+            "op": "annotation.upsert",
+            "alias": f"{relation_alias}__length_a",
+            "text": f"|{target_label}| {_magnitude_text(length_a)}",
+            "position": [
+                round(ax * 0.72 + down_x * offset, 6),
+                round(ay * 0.72 + down_y * offset, 6),
+            ],
+            "color": color,
+        },
+        {
+            "op": "annotation.upsert",
+            "alias": f"{relation_alias}__length_p",
+            "text": f"|{projection_label}| {_projection_magnitude_text(dot, length_a)}",
+            "position": [
+                round(px * 0.42 + down_x * offset, 6),
+                round(py * 0.42 + down_y * offset, 6),
+            ],
+            "color": color,
+        },
+        {
+            "op": "point.upsert",
+            "alias": product_end,
+            "coordinates": [round(unit_x * dot, 6), round(unit_y * dot, 6)],
+            "name": "",
+        },
+        {
+            "op": "linear.upsert",
+            "alias": f"{relation_alias}__length",
+            "start": origin_alias,
+            "end": product_end,
+            "kind": "segment",
+            "role": "construction",
+            "style": "dashed",
+            "color": product_color,
+            "label_side": "below",
+        },
+        {
+            "op": "annotation.upsert",
+            "alias": f"{relation_alias}__length_product",
+            "text": f"{target_label}·{source_label} = {product}",
+            "position": [
+                round(reach_x + down_x * offset, 6),
+                round(reach_y + down_y * offset, 6),
+            ],
+            "color": product_color,
+        },
+    ]
+    return annotations, [annotation["alias"] for annotation in annotations]
 
 
 def _vector_addition_operation(
@@ -1448,6 +1685,102 @@ def _matrix2(value: object) -> list[list[float]] | None:
         return None
     matrix = [[float(item) for item in row] for row in value]
     return matrix if all(math.isfinite(item) for row in matrix for item in row) else None
+
+
+def _matrix_label(name: str, matrix: list[list[float]]) -> str:
+    """Return the scene-friendly matrix label used by the transform tool."""
+
+    return (
+        f"{name}=["
+        f"[{matrix[0][0]:g},{matrix[0][1]:g}],[{matrix[1][0]:g},{matrix[1][1]:g}]"
+        "]"
+    )
+
+
+def _stage_content_corner(
+    semantics: VisualSemantics, entity_id: str
+) -> tuple[float, float] | None:
+    """Return the top-left corner of the drawn objects of one case step."""
+
+    stage = next(
+        (
+            item
+            for item in semantics.stages
+            if entity_id in (*item.input_entity_refs, *item.output_entity_refs)
+        ),
+        None,
+    )
+    if stage is None:
+        return None
+    refs = {*stage.input_entity_refs, *stage.output_entity_refs}
+    points: list[tuple[float, float]] = [(0.0, 0.0)]
+    for entity in semantics.entities:
+        if entity.id in refs and entity.kind == "vector" and entity.dimension == 2:
+            try:
+                points.append(_coordinates(entity.value, 2))
+            except (TypeError, ValueError):
+                continue
+    if len(points) == 1:
+        return None
+    return (
+        round(min(point[0] for point in points) - 0.4, 6),
+        round(max(point[1] for point in points) + 0.45, 6),
+    )
+
+
+def _emit_matrix_vector_transform(
+    topic_id: str,
+    semantics: VisualSemantics,
+    context: RenderContext,
+    operations: list[dict[str, Any]],
+    aliases: dict[str, list[str]],
+) -> None:
+    """Draw a 2.5 matrix case with the software's existing matrix-transform feature.
+
+    工具箱里的“矩阵变换”由三部分组成：网格、若干样本点在变换后的位置，以及
+    矩阵标注。这里对案例里每一个矩阵对象生成同一组操作，并把别名挂在同一个
+    实体上，于是只有引用它的那一步窗格会显示这一组图形。样本点取标准基
+    $(1,0)$、$(0,1)$：它们在新位置上的点正是讲义说的两列；网格的取样范围取
+    得比窗格大得多，由视口裁切，因此它是这个窗格自己的那套（变形）坐标系，
+    而不是叠在原坐标系里的一小块。
+    """
+
+    if topic_id not in _MATRIX_VECTOR_CASE_TOPICS:
+        return
+    for entity in semantics.entities:
+        if entity.kind not in {"matrix", "grid"}:
+            continue
+        matrix = _matrix2(entity.value)
+        if matrix is None:
+            continue
+        prefix = _alias(entity.id)
+        staged_alias = f"{prefix}__staged"
+        label_alias = f"{prefix}__label"
+        aliases.setdefault(entity.id, []).extend((staged_alias, label_alias))
+        operations.append(
+            {
+                "op": "geometry.staged_transform",
+                "alias": staged_alias,
+                "matrices": [matrix],
+                "points": [[1.0, 0.0], [0.0, 1.0]],
+                "aliases": [f"{staged_alias}__end1", f"{staged_alias}__end2"],
+                "color": role_color(entity.role),
+            }
+        )
+        if matrix == [[1.0, 0.0], [0.0, 1.0]]:
+            # 未变换的参考网格没有矩阵可标注（它与标准基相同）。
+            continue
+        position = _stage_content_corner(semantics, entity.id)
+        if position is None:
+            continue
+        operations.append(
+            {
+                "op": "annotation.upsert",
+                "alias": label_alias,
+                "text": _matrix_label(str(entity.label), matrix),
+                "position": [position[0], position[1]],
+            }
+        )
 
 
 def _vectors2(value: object) -> tuple[tuple[float, float], ...]:

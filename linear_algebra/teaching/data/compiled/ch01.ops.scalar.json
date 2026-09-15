@@ -1,11 +1,12 @@
 {
-  "artifact_digest": "sha256:b923c5047c4a88ea3b28013480ffee8a1ecbf6c2a96f8a4852eda4f119d992a4",
+  "artifact_digest": "sha256:739bde5c4b22b62a6c5edbbe266b575e2e7537173c0d0c2e85721a64c032bac0",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:d6e0d0fc353bbb8fc9b46825a6e32964d0033cf20311735b19f2f59917ddfc9a",
   "plan": {
     "operations": [
       {
-        "alias": "sem__scalar_1_a__origin",
+        "alias": "sem__a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -14,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__scalar_1_a__end",
+        "alias": "sem__a__end",
         "coordinates": [
-          1.0,
-          2.0
+          2.0,
+          1.0
         ],
-        "name": "a",
+        "name": "A",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__scalar_1_a",
+        "alias": "sem__a",
         "color": "#2F6BFF",
-        "end": "sem__scalar_1_a__end",
+        "end": "sem__a__end",
         "kind": "vector",
         "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__scalar_1_a__origin"
+        "start": "sem__a__origin"
       },
       {
-        "alias": "sem__scalar_1_ka__origin",
+        "alias": "sem__two_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -42,205 +43,44 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__scalar_1_ka__end",
+        "alias": "sem__two_a__end",
         "coordinates": [
-          2.0,
-          4.0
+          4.0,
+          2.0
         ],
-        "name": "2a",
+        "name": "B",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__scalar_1_ka",
-        "color": "#6B7280",
-        "end": "sem__scalar_1_ka__end",
+        "alias": "sem__two_a",
+        "color": "#7B61FF",
+        "end": "sem__two_a__end",
         "kind": "vector",
         "label": "2a",
         "op": "linear.upsert",
-        "role": "result",
-        "start": "sem__scalar_1_ka__origin"
-      },
-      {
-        "alias": "sem__scalar_2_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_2_a__end",
-        "coordinates": [
-          2.0,
-          4.0
-        ],
-        "name": "a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_2_a",
-        "color": "#2F6BFF",
-        "end": "sem__scalar_2_a__end",
-        "kind": "vector",
-        "label": "a",
-        "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__scalar_2_a__origin"
+        "start": "sem__two_a__origin"
       },
       {
-        "alias": "sem__scalar_2_ka__origin",
-        "coordinates": [
+        "bounds": [
           0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_2_ka__end",
-        "coordinates": [
-          1.0,
+          4.0,
+          0.0,
           2.0
         ],
-        "name": "0.5a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_2_ka",
-        "color": "#6B7280",
-        "end": "sem__scalar_2_ka__end",
-        "kind": "vector",
-        "label": "0.5a",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "sem__scalar_2_ka__origin"
-      },
-      {
-        "alias": "sem__scalar_3_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_3_a__end",
-        "coordinates": [
-          1.0,
-          2.0
-        ],
-        "name": "a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_3_a",
-        "color": "#2F6BFF",
-        "end": "sem__scalar_3_a__end",
-        "kind": "vector",
-        "label": "a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__scalar_3_a__origin"
-      },
-      {
-        "alias": "sem__scalar_3_ka__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_3_ka__end",
-        "coordinates": [
-          -1.0,
-          -2.0
-        ],
-        "name": "-1a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_3_ka",
-        "color": "#6B7280",
-        "end": "sem__scalar_3_ka__end",
-        "kind": "vector",
-        "label": "-1a",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "sem__scalar_3_ka__origin"
-      },
-      {
-        "alias": "sem__scalar_4_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_4_a__end",
-        "coordinates": [
-          1.0,
-          -1.0
-        ],
-        "name": "a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_4_a",
-        "color": "#2F6BFF",
-        "end": "sem__scalar_4_a__end",
-        "kind": "vector",
-        "label": "a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__scalar_4_a__origin"
-      },
-      {
-        "alias": "sem__scalar_4_ka__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_4_ka__end",
-        "coordinates": [
-          -2.0,
-          2.0
-        ],
-        "name": "-2a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__scalar_4_ka",
-        "color": "#6B7280",
-        "end": "sem__scalar_4_ka__end",
-        "kind": "vector",
-        "label": "-2a",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "sem__scalar_4_ka__origin"
-      },
-      {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "2d",
-    "summary": "向量数乘与共线",
+    "summary": "向量数乘",
     "version": 1
   },
-  "plan_digest": "sha256:75fe680cfe2f6d6e96e31a4fc8559faf22ddddf5060e80f43f45b3bafaa42cef",
+  "plan_digest": "sha256:fda9ff56813c525ddf954c37ac8ed328d2a78423af9040e353a1c1de465cfcb8",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 15,
+  "revision": 27,
+  "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:97c86f565c4e7e22e53b929cd529fa89bb2f2618a16a3d709697feba599fc875",
   "stages": [
@@ -249,23 +89,17 @@
         0.0,
         2.65
       ],
-      "caption": "",
-      "id": "stage.scalar.1",
+      "caption": "$\\boldsymbol a=(2,1)$ 从原点出发，终点记为 A。",
+      "id": "stage.scalar.vector",
       "layout": "overlay",
-      "title": "案例一：k 大于 1 时拉伸",
+      "title": "第一步：向量 a",
       "visible_aliases": [
-        "sem__scalar_1_a",
-        "sem__scalar_1_a__end",
-        "sem__scalar_1_a__origin",
-        "sem__scalar_1_ka",
-        "sem__scalar_1_ka__end",
-        "sem__scalar_1_ka__origin",
-        "sem__rel.scalar.1"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin"
       ],
       "visible_refs": [
-        "scalar_1_a",
-        "scalar_1_ka",
-        "rel.scalar.1"
+        "a"
       ]
     },
     {
@@ -273,71 +107,23 @@
         0.0,
         2.65
       ],
-      "caption": "",
-      "id": "stage.scalar.2",
+      "caption": "把 $\\boldsymbol a=(2,1)$ 沿原来的方向拉伸 2 倍得到 $2\\boldsymbol a=(4,2)$，终点记为 B，两者共线。",
+      "id": "stage.scalar.multiple",
       "layout": "overlay",
-      "title": "案例二：k 在 0 与 1 之间时压缩",
+      "title": "第二步：2a",
       "visible_aliases": [
-        "sem__scalar_2_a",
-        "sem__scalar_2_a__end",
-        "sem__scalar_2_a__origin",
-        "sem__scalar_2_ka",
-        "sem__scalar_2_ka__end",
-        "sem__scalar_2_ka__origin",
-        "sem__rel.scalar.2"
+        "sem__a",
+        "sem__a__end",
+        "sem__a__origin",
+        "sem__two_a",
+        "sem__two_a__end",
+        "sem__two_a__origin",
+        "sem__rel.scalar.multiple"
       ],
       "visible_refs": [
-        "scalar_2_a",
-        "scalar_2_ka",
-        "rel.scalar.2"
-      ]
-    },
-    {
-      "anchor": [
-        0.0,
-        2.65
-      ],
-      "caption": "",
-      "id": "stage.scalar.3",
-      "layout": "overlay",
-      "title": "案例三：k 等于 −1 时反向",
-      "visible_aliases": [
-        "sem__scalar_3_a",
-        "sem__scalar_3_a__end",
-        "sem__scalar_3_a__origin",
-        "sem__scalar_3_ka",
-        "sem__scalar_3_ka__end",
-        "sem__scalar_3_ka__origin",
-        "sem__rel.scalar.3"
-      ],
-      "visible_refs": [
-        "scalar_3_a",
-        "scalar_3_ka",
-        "rel.scalar.3"
-      ]
-    },
-    {
-      "anchor": [
-        0.0,
-        2.65
-      ],
-      "caption": "",
-      "id": "stage.scalar.4",
-      "layout": "overlay",
-      "title": "案例四：k 小于 0 时反向并缩放",
-      "visible_aliases": [
-        "sem__scalar_4_a",
-        "sem__scalar_4_a__end",
-        "sem__scalar_4_a__origin",
-        "sem__scalar_4_ka",
-        "sem__scalar_4_ka__end",
-        "sem__scalar_4_ka__origin",
-        "sem__rel.scalar.4"
-      ],
-      "visible_refs": [
-        "scalar_4_a",
-        "scalar_4_ka",
-        "rel.scalar.4"
+        "a",
+        "two_a",
+        "rel.scalar.multiple"
       ]
     }
   ],
