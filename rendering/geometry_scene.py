@@ -929,7 +929,7 @@ class GeometrySceneController:
         dy = end.y - start.y
         length = hypot(dx, dy)
         # 上方留白略大于下方：向量名紧贴线段，同时避免压到线下的模长标注。
-        offset = max(self.bounds.x_span, self.bounds.y_span) * (0.03 if side == "above" else 0.02)
+        offset = max(self.bounds.x_span, self.bounds.y_span) * (0.012 if side == "above" else 0.02)
         if length <= 1e-12:
             return (mid_x, mid_y + (offset if side == "above" else -offset), 0.0)
         normal_x, normal_y = -dy / length, dx / length
@@ -941,7 +941,7 @@ class GeometrySceneController:
         return (mid_x + normal_x * offset, mid_y + normal_y * offset, 0.0)
 
     def _label_offset(self) -> float:
-        return min(self.bounds.x_span, self.bounds.y_span) * 0.005
+        return min(self.bounds.x_span, self.bounds.y_span) * 0.015
 
     def _replace_draft(
         self,
