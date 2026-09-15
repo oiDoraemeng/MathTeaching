@@ -409,6 +409,71 @@ describe("MathCaseView structured artifact", () => {
     expect(screen.queryByRole("region", { name: "几何图形例子" })).not.toBeInTheDocument();
   });
 
+  it("renders 2.5.1 as the lecture definition plus one two-step math case", () => {
+    const onSetCasePaneCount = vi.fn();
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id: "ch02.matrix.row-column",
+          category: "2.5 矩阵 × 向量（核心节）",
+          name: "矩阵乘向量的行视角与列视角",
+          formula: "",
+          steps: [],
+          conclusion: "",
+          definition:
+            "设 $\\boldsymbol A$ 是 $m \\times n$ 矩阵，$\\boldsymbol x$ 是 $n$ 维列向量。\n\n"
+            + "算法一（行视角 — 内积法）：$\\boldsymbol A\\boldsymbol x$ 的第 $i$ 个分量 $=$ $\\boldsymbol A$ 的第 $i$ 行与 $\\boldsymbol x$ 的内积。\n\n"
+            + "$$\\boldsymbol A\\boldsymbol x=x_{1}\\cdot(\\boldsymbol A\\text{ 的第 }1\\text{ 列})+\\cdots$$",
+          sections: [
+            { id: "definition", title: "定义" },
+            { id: "worked_examples", title: "数学案例" },
+          ],
+          workedExamples: [
+            {
+              id: "example.ch02.matrix.row-column.1",
+              title: "第一步：行视角（内积法）",
+              calculation: ["$$\\boldsymbol A\\boldsymbol x=(8,9)$$"],
+              result: [8, 9],
+              checks: [{ name: "transformed", expected: [8, 9] }],
+            },
+            {
+              id: "example.ch02.matrix.row-column.2",
+              title: "第二步：列视角（线性组合法）",
+              calculation: ["$$\\boldsymbol A\\boldsymbol x=2\\times(1,3)+3\\times(2,1)=(8,9)$$"],
+              result: [8, 9],
+              checks: [{ name: "transformed", expected: [8, 9] }],
+            },
+          ],
+          storyboard: [
+            { id: "stage.case.ch02.matrix.row-column.1", title: "第一步：行视角（内积法）", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+            { id: "stage.case.ch02.matrix.row-column.2", title: "第二步：列视角（线性组合法）", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 1] },
+          ],
+          caseLayout: {
+            defaultPaneCount: 2,
+            cases: [
+              { id: "case.ch02.matrix.row-column.1", topicId: "ch02.matrix.row-column", exampleRef: "example.ch02.matrix.row-column.1", claimRefs: [], stageRefs: ["stage.case.ch02.matrix.row-column.1"], purpose: "第一步：行视角（内积法）" },
+              { id: "case.ch02.matrix.row-column.2", topicId: "ch02.matrix.row-column", exampleRef: "example.ch02.matrix.row-column.2", claimRefs: [], stageRefs: ["stage.case.ch02.matrix.row-column.2"], purpose: "第二步：列视角（线性组合法）" },
+            ],
+          },
+        }}
+        onSetCasePaneCount={onSetCasePaneCount}
+      />,
+    );
+
+    // 讲义 2.5.1 把两种算法写在定义块内：标题写「定义」，不另立「公式」分节。
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(container.querySelector(".math-case-formula")).toBeNull();
+    const headings = Array.from(container.querySelectorAll(".math-case-structured h2")).map((item) => item.textContent);
+    expect(headings).toEqual(["定义", "数学案例"]);
+    // 首屏默认“全部显示”，两步并排。
+    expect(screen.getByRole("button", { name: "全部显示" })).toHaveAttribute("aria-pressed", "true");
+    expect(onSetCasePaneCount).toHaveBeenCalledWith(2);
+    expect(screen.getByRole("button", { name: "第一步：行视角（内积法）" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "第二步：列视角（线性组合法）" })).toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "几何图形例子" })).not.toBeInTheDocument();
+  });
+
   it("uses the lecture excerpt as a continuous note instead of section cards", () => {
     render(
       <MathCaseView

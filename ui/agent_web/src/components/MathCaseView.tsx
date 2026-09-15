@@ -25,6 +25,8 @@ export function MathCaseView({
   const [stageIndex, setStageIndex] = useState(0);
   const stage = stages[stageIndex];
   const isVectorAddition = caseData.id === "ch01.ops.addition";
+  // 1.5 的几何证明小节按讲义正文排版，与带案例的小节同一字号层级。
+  const isLectureProof = lectureProofSubsection(caseData.id);
   // 讲义 1.2.1–1.2.4 都写成“自带公式的定义 + 正下方的几何解释”。
   const definitionOwnsFormula = lectureDefinitionOwnsFormula(caseData.id);
   const hasCaseLayout = paneCases.length > 0;
@@ -86,7 +88,7 @@ export function MathCaseView({
   );
 
   return (
-    <article className={`math-case-view${isVectorAddition ? " math-case-view--vector-addition" : ""}${hasCaseLayout && !isVectorAddition ? " math-case-view--case-layout" : ""}`} aria-label={`${caseData.name}数学解释`}>
+    <article className={`math-case-view${isVectorAddition ? " math-case-view--vector-addition" : ""}${hasCaseLayout && !isVectorAddition ? " math-case-view--case-layout" : ""}${isLectureProof ? " math-case-view--proof" : ""}`} aria-label={`${caseData.name}数学解释`}>
       <header className="math-case-header">
         <span>{caseData.category}</span>
         <h1>{caseData.name}</h1>
@@ -114,7 +116,8 @@ export function MathCaseView({
           {caseData.steps.length > 0 && (
             <section className="math-case-section">
               <h2>{sectionTitle(caseData, "derivation", "推导")}</h2>
-              <ol className="math-case-steps">
+              {/* 只有一段证明时它是连贯的讲义正文，不再套上“1.”的编号。 */}
+              <ol className={`math-case-steps${caseData.steps.length === 1 ? " math-case-steps--single" : ""}`}>
                 {caseData.steps.map((step, index) => (
                   <li key={`${caseData.id}-${index}`}><MarkdownContent>{step}</MarkdownContent></li>
                 ))}
@@ -190,10 +193,13 @@ export function MathCaseView({
               </button>
             </div>
           )}
-          <div className="math-case-section-heading">
-            <h2>图形例子</h2>
-            <span>{stageIndex + 1}/{stages.length}</span>
-          </div>
+          {/* 只有一张图时不再重复标题与说明，只保留切换按钮。 */}
+          {stages.length > 1 && (
+            <div className="math-case-section-heading">
+              <h2>图形例子</h2>
+              <span>{stageIndex + 1}/{stages.length}</span>
+            </div>
+          )}
           {!caseControlsCoverStages && (
             <div className="math-case-stage-track" role="list" aria-label="几何例子">
               {stages.map((item, index) => (
@@ -209,10 +215,12 @@ export function MathCaseView({
               ))}
             </div>
           )}
-          <div className="math-case-stage">
-            <h3>{stage?.title}</h3>
-            <p>{stage?.caption}</p>
-          </div>
+          {stages.length > 1 && (
+            <div className="math-case-stage">
+              <h3>{stage?.title}</h3>
+              <p>{stage?.caption}</p>
+            </div>
+          )}
           {stages.length > 1 && !caseControlsCoverStages && (
             <div className="math-case-stage-actions">
               <button
@@ -281,14 +289,25 @@ function sectionTitle(caseData: CaseProjection, id: string, fallback: string): s
   return title && title !== id ? title : fallback;
 }
 
-/** 讲义 1.2.1/1.2.2/1.2.3/1.2.4、1.3.1、1.4.1 同构：定义自带公式，几何解释紧随定义。 */
+/** 讲义把公式写在定义（或定理、例题）块内的同构小节：定义块自带公式，不再单列「公式」分节。 */
 function lectureDefinitionOwnsFormula(topicId: string): boolean {
   return topicId === "ch01.ops.addition"
     || topicId === "ch01.ops.subtraction"
     || topicId === "ch01.ops.scalar"
     || topicId === "ch01.ops.linear-combination"
     || topicId === "ch01.inner.definitions"
-    || topicId === "ch01.projection.definition";
+    || topicId === "ch01.projection.definition"
+    // 讲义 2.5 的三个小节：公式写在定义（2.5.1）、定理（2.5.2）与例题（2.5.3）之内。
+    || topicId === "ch02.matrix.row-column"
+    || topicId === "ch02.matrix.transformed-grid"
+    || topicId === "ch02.matrix.stretch-rotate-scale";
+}
+
+/** 讲义 1.5 的三个几何证明小节按讲义正文排版（没有案例窗格，字号仍按讲义层级）。 */
+function lectureProofSubsection(topicId: string): boolean {
+  return topicId === "ch01.proof.midline"
+    || topicId === "ch01.proof.centroid"
+    || topicId === "ch01.proof.parallelogram-diagonals";
 }
 
 function isFormulaOnly(line: string): boolean {

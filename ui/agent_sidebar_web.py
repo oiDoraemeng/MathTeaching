@@ -389,7 +389,10 @@ class AgentSidebarWeb(QWidget):
         explanation_payload = {
             "claims": [_claim_payload(claim) for claim in claims[:24]],
             "formula": formula_text[:512],
-            "derivation": [str(step)[:1024] for step in derivation_values[:16]],
+            # One lecture-proof paragraph can be a few hundred characters long;
+            # never cut it mid-formula, because the KaTeX tail then renders as a
+            # broken expression.
+            "derivation": [str(step)[:4096] for step in derivation_values[:16]],
             "numeric_example": structured["worked_examples"],
             "symbol_roles": dict(getattr(explanation, "symbol_roles", {})),
             "geometric_meaning": structured["geometric_meaning"],
@@ -405,7 +408,7 @@ class AgentSidebarWeb(QWidget):
             "category": str(category or getattr(case, "category", ""))[:64],
             "name": str(getattr(explanation, "title", getattr(case, "name", "")))[:128],
             "formula": formula_text[:512] or str(getattr(case, "formula", ""))[:512],
-            "steps": [str(step)[:512] for step in derivation_values[:12]] or [str(step)[:512] for step in tuple(getattr(case, "steps", ()))[:12]],
+            "steps": [str(step)[:4096] for step in derivation_values[:12]] or [str(step)[:4096] for step in tuple(getattr(case, "steps", ()))[:12]],
             "conclusion": conclusion_text[:1024] or str(getattr(case, "conclusion", ""))[:1024],
             "summary": str(getattr(explanation, "summary", getattr(case, "summary", "")))[:512],
             # Keep the lecture excerpt available to the document renderer.  It
