@@ -53,11 +53,7 @@ def main() -> int:
     mode = normalize_theme_mode(settings.value("ui/theme", "system"))
     effective = effective_theme(mode, app.styleHints().colorScheme())
     app.setFont(build_application_font())
-    window = MainWindow(
-        theme_mode=mode,
-        effective_theme=effective,
-        enable_teaching_authoring=True,
-    )
+    window = MainWindow(theme_mode=mode, effective_theme=effective)
 
     def _system_theme_changed(color_scheme: Qt.ColorScheme) -> None:
         if getattr(window, "theme_mode", "system") != "system":
