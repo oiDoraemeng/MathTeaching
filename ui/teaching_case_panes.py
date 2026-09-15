@@ -278,6 +278,7 @@ class TeachingCasePane(PaneChrome):
         self.bounds = self._current_bounds()
         self.guides.render(self.bounds, SceneAppearance(show_grid=True), effective_theme="light")
         points: dict[str, Point2D] = {}
+        grid_aliases: list[str] = []
         for operation in plan.operations:
             name = str(operation.get("op", ""))
             alias = str(operation.get("alias", ""))
@@ -316,9 +317,50 @@ class TeachingCasePane(PaneChrome):
                     opacity=float(operation.get("opacity", 0.24)),
                     outline=bool(operation.get("outline", True)),
                 )
+            elif name == "geometry.transformed_grid":
+                # 矩阵案例窗格用已有的线性变换图元：同一条命令在这里只画该步
+                # 变换后的网格（作为这个窗格自己的坐标系）。多画的那层灰色原始
+                # 网格会叠在窗格本来就有的坐标网格上，看起来像悬浮的第二套网格。
+                matrix = tuple(
+                    tuple(float(value) for value in row) for row in operation["matrix"]
+                )
+                bounds = tuple(float(value) for value in operation["bounds"])
+                self.geometry.add_teaching_transformed_grid(
+                    matrix,  # type: ignore[arg-type]
+                    bounds,  # type: ignore[arg-type]
+                    step=float(operation.get("step", 1.0)),
+                    alias=alias or None,
+                    color=str(operation.get("color", "#5b8def")),
+                    origin=tuple(float(value) for value in operation.get("origin", (0.0, 0.0))),  # type: ignore[arg-type]
+                    show_source_grid=False,
+                )
+                if alias:
+                    grid_aliases.append(alias)
+            elif name == "geometry.staged_transform":
+                # 矩阵变换功能的另一半：若干样本点经过矩阵后落到的位置。
+                matrices = tuple(
+                    tuple(tuple(float(value) for value in row) for row in matrix)
+                    for matrix in operation["matrices"]
+                )
+                staged_points = tuple(
+                    tuple(float(value) for value in point) for point in operation["points"]
+                )
+                self.geometry.add_teaching_staged_transform(
+                    matrices,  # type: ignore[arg-type]
+                    staged_points,  # type: ignore[arg-type]
+                    tuple(str(value) for value in operation.get("aliases", ())),
+                    alias=alias or None,
+                    color=str(operation.get("color", "#2777b6")),
+                )
+        # 网格演员的取样范围覆盖整个视野、变形后更大，若一起参与取景会把相机
+        # 拉远。取景时先隐藏它们，取景完成后再显示，由视口负责裁切。
+        for grid_alias in grid_aliases:
+            self.geometry.set_teaching_visible(grid_alias, False)
         self.plotter.reset_camera()
         configure_2d_camera(self.plotter)
         self.plotter.camera.parallel_scale = max(6.5, float(self.plotter.camera.parallel_scale))
+        for grid_alias in grid_aliases:
+            self.geometry.set_teaching_visible(grid_alias, True)
         if saved_camera:
             try:
                 if saved_camera.get("camera_position") is not None:

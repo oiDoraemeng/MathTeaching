@@ -17,9 +17,11 @@ from rendering.geometry_scene import GeometrySceneController
 from rendering.ticks import ViewportBounds
 from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
 from linear_algebra.chapter_04_semantics import TOPIC_SEMANTICS
+from linear_algebra.registry import catalog_registry, runtime_teaching_store
 from services.scene_commands import CommandError, CommandPlan, SceneCommandService
 from ui.designer_window import MainWindow
 from ui.scene_pane_manager import ScenePaneManager
+from ui.teaching_case_panes import case_plan
 
 from ui.designer_window import _SceneCommandBridge, _SceneCommandHostProxy
 
@@ -151,6 +153,46 @@ def _drawing_plan() -> CommandPlan:
         {"op": "annotation.upsert", "alias": "label", "text": "A to B", "position": [2, 3]},
         {"op": "view.fit", "padding": 1.2},
     ))
+
+
+def test_matrix_case_plan_replays_all_primitives_without_rolling_back() -> None:
+    """A real chapter-2 case must leave its transformed grid and vectors visible.
+
+    This covers the deferred path used when a case-pane interactor becomes
+    available.  In particular it catches model fields accepted by commands but
+    missing from ``Linear2D``: such a mismatch raises midway through the plan
+    and the transaction deliberately restores an empty pane.
+    """
+    compiled = catalog_registry().resolve_bundle(
+        "ch02.matrix.transformed-grid",
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    window = _pane_window()
+    pane_id = window.pane_manager.visible_pane_ids()[0]
+    plan = None
+    for stage in compiled.storyboard:
+        candidate = case_plan(compiled, stage.id)
+        if any(operation.get("op") == "geometry.transformed_grid" for operation in candidate.operations):
+            plan = candidate
+            break
+    assert plan is not None
+
+    result = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window))).execute(
+        plan, pane_id=pane_id
+    )
+
+    scene = window._pane_scene(pane_id)
+    assert result.valid
+    assert scene.geometry_points
+    assert scene.linear_objects
+    assert {item.label_side for item in scene.linear_objects} <= {"above", "below"}
+    grid_aliases = {
+        str(operation["alias"])
+        for operation in plan.operations
+        if operation.get("op") == "geometry.transformed_grid"
+    }
+    assert grid_aliases & set(scene._agent_teaching_2d)
+    assert window._pane_renderer(pane_id).add_mesh.call_count > 0
 
 
 def test_transformed_grid_origin_reaches_real_host_mesh():

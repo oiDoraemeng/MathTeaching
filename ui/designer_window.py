@@ -2424,6 +2424,7 @@ class MainWindow:
             "style": str(operation.get("style", "solid")),
             "role": str(operation.get("role", "primary")),
             "label": operation.get("label"),
+            "label_side": str(operation.get("label_side", "below")),
         }
         if linear is None:
             linear = Linear2D(
@@ -2444,6 +2445,7 @@ class MainWindow:
             linear.style = kwargs["style"]  # type: ignore[assignment]
             linear.role = kwargs["role"]  # type: ignore[assignment]
             linear.label = kwargs["label"]
+            linear.label_side = kwargs["label_side"]  # type: ignore[assignment]
         if self._pane_scene().geometry_controller is not None:
             self._pane_scene().geometry_controller.linears.pop(linear.id, None)
             self._pane_scene().geometry_controller.add_linear(linear)

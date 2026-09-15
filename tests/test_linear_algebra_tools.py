@@ -14,6 +14,7 @@ class _FakePlotter:
     def __init__(self) -> None:
         self.actors: dict[str, object] = {}
         self.meshes: dict[str, object] = {}
+        self.removed: list[str] = []
 
     def add_mesh(self, mesh, *, name: str, **_kwargs):
         actor = object()
@@ -22,6 +23,7 @@ class _FakePlotter:
         return actor
 
     def remove_actor(self, name: str, **_kwargs) -> None:
+        self.removed.append(name)
         self.actors.pop(name, None)
         self.meshes.pop(name, None)
 
@@ -110,6 +112,49 @@ def test_transform_plan_uses_distinct_aliases_for_grid_and_stages() -> None:
     ]
     assert plan.operations[0]["alias"] == "la_tool_transform_1_grid"
     assert plan.operations[1]["alias"] == "la_tool_transform_1_staged"
+
+
+def test_transformed_grid_can_skip_the_source_grid_overlay() -> None:
+    """案例窗格只画变形后的网格，不再把灰色原始网格叠在原坐标系上。"""
+
+    plotter = _FakePlotter()
+    controller = GeometrySceneController(plotter, ViewportBounds((-3, 3), (-3, 3)))
+
+    controller.add_teaching_transformed_grid(
+        ((2.0, 0.0), (0.0, 1.0)),
+        (-2, 2, -2, 2),
+        alias="case_grid",
+    )
+    assert set(plotter.actors) == {
+        "geometry:teaching:grid:case_grid:original",
+        "geometry:teaching:grid:case_grid:transformed",
+    }
+
+    controller.add_teaching_transformed_grid(
+        ((2.0, 0.0), (0.0, 1.0)),
+        (-2, 2, -2, 2),
+        alias="case_grid",
+        show_source_grid=False,
+    )
+    assert set(plotter.actors) == {"geometry:teaching:grid:case_grid:transformed"}
+    assert set(controller._teaching_actors) == {"geometry:teaching:grid:case_grid:transformed"}
+
+
+def test_skipping_an_uncreated_source_grid_does_not_remove_an_unknown_actor() -> None:
+    """A new case pane may omit the source grid before any actor exists."""
+
+    plotter = _FakePlotter()
+    controller = GeometrySceneController(plotter, ViewportBounds((-3, 3), (-3, 3)))
+
+    controller.add_teaching_transformed_grid(
+        ((2.0, 0.0), (0.0, 1.0)),
+        (-2, 2, -2, 2),
+        alias="case_grid",
+        show_source_grid=False,
+    )
+
+    assert plotter.removed == []
+    assert set(plotter.actors) == {"geometry:teaching:grid:case_grid:transformed"}
 
 
 def test_teaching_actor_prefix_can_be_cleared_without_touching_other_actors() -> None:

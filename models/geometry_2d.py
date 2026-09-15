@@ -12,6 +12,7 @@ LinearKind: TypeAlias = Literal["line", "segment", "ray", "vector"]
 GeometryKind: TypeAlias = Literal["point", "line", "segment", "ray", "vector"]
 LinearStyle: TypeAlias = Literal["solid", "dashed"]
 LinearRole: TypeAlias = Literal["primary", "construction", "result"]
+LinearLabelSide: TypeAlias = Literal["above", "below"]
 LINEAR_KINDS = frozenset(("line", "segment", "ray", "vector"))
 
 
@@ -39,11 +40,15 @@ class Linear2D:
     end_point_id: str
     visible: bool = True
     color: str = "#2777b6"
-    line_width: float = 2.5
+    line_width: float = 3.2
     id: str = field(default_factory=lambda: uuid4().hex)
     style: LinearStyle = "solid"
     role: LinearRole = "primary"
     label: str | None = None
+    # Teaching plans carry the requested side for a vector/segment label.
+    # It must be part of the persisted model because command transactions
+    # construct Linear2D directly from the operation payload.
+    label_side: LinearLabelSide = "below"
     agent_alias: str | None = None
 
     def __post_init__(self) -> None:
@@ -54,6 +59,8 @@ class Linear2D:
             raise ValueError(f"Unsupported linear style: {self.style}")
         if self.role not in {"primary", "construction", "result"}:
             raise ValueError(f"Unsupported linear role: {self.role}")
+        if self.label_side not in {"above", "below"}:
+            raise ValueError(f"Unsupported linear label side: {self.label_side}")
 
 
 @dataclass

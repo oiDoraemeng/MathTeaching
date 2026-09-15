@@ -180,7 +180,7 @@ class TwoDGuides:
             _GRID_KEY,
             grid_mesh,
             color=grid_color,
-            line_width=1.0,
+            line_width=1.0, # 网格线宽度
         )
 
         x_axis = [((draw_bounds.x_range[0], 0, 0), (draw_bounds.x_range[1], 0, 0))]
@@ -210,7 +210,7 @@ class TwoDGuides:
             self._set_geometry(_TICK_KEY, _segments_to_polydata(segments), color=label_color, line_width=1.4)
             self._set_labels(points, labels, label_color)
         else:
-            self._set_geometry(_TICK_KEY, pv.PolyData(), color=label_color, line_width=1.4)
+            self._set_geometry(_TICK_KEY, pv.PolyData(), color=label_color, line_width=1.4) # 刻度线宽度
             self._set_labels([], [], label_color)
         return spacing
 

@@ -9,7 +9,7 @@ from math import acos, atan2, cos, hypot, pi, sin
 import numpy as np
 import pyvista as pv
 
-from models.geometry_2d import Annotation2D, Linear2D, LinearKind, Point2D, format_number
+from models.geometry_2d import Annotation2D, Linear2D, LinearKind, LinearLabelSide, Point2D, format_number
 from rendering.ticks import ViewportBounds
 
 _DRAFT_ACTOR = "geometry:draft"
@@ -454,14 +454,28 @@ class GeometrySceneController:
         alias: str | None = None,
         color: str = "#5b8def",
         origin: tuple[float, float] = (0.0, 0.0),
+        show_source_grid: bool = True,
     ) -> None:
-        original = _grid_mesh(bounds, step)
+        """Draw a grid and its linear image.
+
+        ``show_source_grid=False`` draws only the transformed grid, for views
+        that already carry their own source coordinate system (the lecture case
+        panes): the extra grey source grid would otherwise float on top of the
+        original axes.  The default keeps the matrix-transform tool unchanged.
+        """
+
         transformed = _grid_mesh(bounds, step, matrix=matrix)
         if origin != (0.0, 0.0):
-            original.translate((origin[0],origin[1],0.0),inplace=True)
-            transformed.translate((origin[0],origin[1],0.0),inplace=True)
+            transformed.translate((origin[0], origin[1], 0.0), inplace=True)
         suffix = f":{alias}" if alias else ""
-        self._replace_teaching_actor(f"geometry:teaching:grid{suffix}:original", original, color="#a6afbd", line_width=1.0)
+        source_name = f"geometry:teaching:grid{suffix}:original"
+        if show_source_grid:
+            original = _grid_mesh(bounds, step)
+            if origin != (0.0, 0.0):
+                original.translate((origin[0], origin[1], 0.0), inplace=True)
+            self._replace_teaching_actor(source_name, original, color="#a6afbd", line_width=1.0)
+        else:
+            self._drop_actor(source_name)
         self._replace_teaching_actor(f"geometry:teaching:grid{suffix}:transformed", transformed, color=color, line_width=2.0)
 
     def add_teaching_basis_grid(
@@ -635,10 +649,20 @@ class GeometrySceneController:
         return actor
 
     def _drop_actor(self, name: str) -> None:
-        """移除演员并清理持久化缓存。"""
-        self.plotter.remove_actor(name, render=False)
+        """Remove one controller-owned actor and its persistent caches.
+
+        A teaching grid may suppress its source-grid actor before that actor
+        has ever been materialised.  Do not ask the underlying PyVista
+        renderer to remove an unknown name in that case: some renderer
+        adapters have no actor registry during initialisation.  The two local
+        registries are the authoritative ownership boundary.
+        """
+        if name in self._actors or name in self._teaching_actors:
+            self.plotter.remove_actor(name, render=False)
         self._meshes.pop(name, None)
         self._actors.pop(name, None)
+        self._teaching_meshes.pop(name, None)
+        self._teaching_actors.pop(name, None)
 
     def _restyle(self, object_id: str | None) -> None:
         if object_id is None:
@@ -868,7 +892,7 @@ class GeometrySceneController:
             end = self.points.get(linear.end_point_id)
             if start is None or end is None:
                 continue
-            position = self._linear_label_position(start, end)
+            position = self._linear_label_position(start, end, linear.label_side)
             grouped.setdefault(linear.color, []).append((position, linear.label))
         for color, items in grouped.items():
             name = f"{_ANNOTATION_ACTOR}:{color.lstrip('#').lower()}"
@@ -891,8 +915,10 @@ class GeometrySceneController:
             return f"{point.name} = ({format_number(point.x)}, {format_number(point.y)})"
         return point.name
 
-    def _linear_label_position(self, start: Point2D, end: Point2D) -> tuple[float, float, float]:
-        """把向量标签放在线段下方，避免压在箭杆、轴线与网格线上。
+    def _linear_label_position(
+        self, start: Point2D, end: Point2D, side: LinearLabelSide = "below"
+    ) -> tuple[float, float, float]:
+        """Place a linear label above or below its primitive.
 
         取景由最大跨度决定，因此偏移量也按最大跨度取，视觉上接近固定的一行高度。
         """
@@ -902,17 +928,20 @@ class GeometrySceneController:
         dx = end.x - start.x
         dy = end.y - start.y
         length = hypot(dx, dy)
-        offset = max(self.bounds.x_span, self.bounds.y_span) * 0.02
+        # 上方留白略大于下方：向量名紧贴线段，同时避免压到线下的模长标注。
+        offset = max(self.bounds.x_span, self.bounds.y_span) * (0.03 if side == "above" else 0.02)
         if length <= 1e-12:
-            return (mid_x, mid_y - offset, 0.0)
+            return (mid_x, mid_y + (offset if side == "above" else -offset), 0.0)
         normal_x, normal_y = -dy / length, dx / length
         # 两条法线里取指向下方的一条；竖直向量没有“下方”，固定取右侧。
         if normal_y > 0.0 or (normal_y == 0.0 and normal_x < 0.0):
             normal_x, normal_y = -normal_x, -normal_y
+        if side == "above":
+            normal_x, normal_y = -normal_x, -normal_y
         return (mid_x + normal_x * offset, mid_y + normal_y * offset, 0.0)
 
     def _label_offset(self) -> float:
-        return min(self.bounds.x_span, self.bounds.y_span) * 0.015
+        return min(self.bounds.x_span, self.bounds.y_span) * 0.005
 
     def _replace_draft(
         self,
@@ -1017,7 +1046,9 @@ def _vector_mesh(
         return pv.PolyData()
     unit = (direction[0] / length, direction[1] / length) # 单位方向向量
     normal = (-unit[1], unit[0]) # 法向量，用于计算箭头底边的两个顶点
-    size = min(length * 0.34, min(bounds.x_span, bounds.y_span) * 0.03)
+    # 0.34：箭头长度相对于向量长度的比例
+    # 0.03：箭头最大长度 0.02：箭头最小长度
+    size = min(length * 0.34, min(bounds.x_span, bounds.y_span) * 0.05)
     size = max(size, min(bounds.x_span, bounds.y_span) * 0.02)
     base = (end[0] - unit[0] * size, end[1] - unit[1] * size)
     half = size * 0.2
