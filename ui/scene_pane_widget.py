@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Callable, Any
 
-from PySide6.QtCore import Qt, QEvent, QTimer, QObject
+from PySide6.QtCore import Qt, QEvent, QTimer, QObject, QRect
 from PySide6.QtWidgets import QWidget, QFrame, QHBoxLayout, QLabel, QToolButton, QVBoxLayout, QMessageBox
 from PySide6.QtCore import Signal
 from shiboken6 import isValid
@@ -106,6 +106,14 @@ class ScenePaneWidget(QWidget):
 
     def interactor(self, pane_id: str | None = None) -> Any | None:
         return self._interactors.get(pane_id or self.manager.active_pane_id)
+
+    def pane_rect(self, pane_id: str | None = None) -> QRect:
+        """Return the requested visible pane's geometry in viewport coordinates."""
+        target = pane_id or self.manager.active_pane_id
+        chrome = self._chromes.get(target)
+        if chrome is not None and isValid(chrome):
+            return chrome.geometry()
+        return self.manager.layout_rects(self.size()).get(target, self.rect())
 
     def sync_layout(self) -> tuple[str, ...]:
         visible = self.manager.visible_pane_ids()

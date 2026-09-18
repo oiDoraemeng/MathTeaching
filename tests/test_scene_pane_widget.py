@@ -192,6 +192,95 @@ def test_opening_case_group_at_retained_limit_keeps_first_case_and_ten_panes() -
     assert manager.visible_pane_ids() == (pane_id,)
 
 
+def test_clear_pending_plans_keeps_the_token_of_panes_without_a_renderer() -> None:
+    """多窗格案例逐个物化：还没绑定渲染器的窗格必须保住自己的 hand-off token。"""
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    materialized = manager.register_case("case-0")
+    staged = manager.register_case("case-1")
+    for pane_id in (materialized, staged):
+        pane = manager.pane(pane_id)
+        pane.scene_mode = "3d"
+        pane.scene_3d["pending_plan"] = {"scene": "3d", "operations": []}
+    # 已物化的窗格拥有渲染器；等待中的窗格可能已经有 runtime（案例向量绑定会
+    # 提前创建），但还没有渲染器，所以令牌必须留下。
+    manager.pane(materialized).renderer_3d = object()
+    manager.pane(staged).runtime = SimpleNamespace()
+    window._teaching_case_pane_ids = [materialized, staged]
+
+    window._clear_pending_curriculum_plans()
+
+    assert "pending_plan" not in manager.pane(materialized).scene_3d
+    assert "pending_plan" in manager.pane(staged).scene_3d
+
+
+def test_reopening_a_case_group_rebuilds_retained_panes_from_current_artifacts() -> None:
+    """案例窗格会带着上一次载入的图形被保留，重新载入必须换成新产物。"""
+    from services.scene_commands import CommandPlan
+
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    stale = manager.register_case("case-0")
+    manager.pane(stale).scene_3d["geometry3d"] = {"stale": True}
+    manager.pane(stale).runtime = SimpleNamespace(_agent_geometry3d={"stale": {}})
+    cases = (SimpleNamespace(id="case-0", purpose="案例", stage_refs=()),)
+    explanation = SimpleNamespace(case_layout=SimpleNamespace(cases=cases, default_pane_count=1))
+    compiled = SimpleNamespace(topic_id="ch04.limit", plan=CommandPlan(scene="3d", operations=()), storyboard=())
+    window._close_teaching_case_panes = lambda: None
+    window._sync_layout_buttons = lambda: None
+    window.algebra_panel = SimpleNamespace(sync_pane_tabs=lambda: None)
+    window.scene_pane_widget = None
+
+    window._open_teaching_case_panes_impl(explanation, compiled, defer_render=True)
+
+    rebuilt = window._teaching_case_pane_ids[0]
+    assert rebuilt != stale and stale not in manager.panes
+    pane = manager.pane(rebuilt)
+    assert pane.runtime is None
+    assert "geometry3d" not in pane.scene_3d
+    assert "pending_plan" in pane.scene_3d
+
+
+@pytest.mark.parametrize("host_executed", [False, True])
+def test_case_pane_materializes_its_own_staged_plan_and_masks_it(host_executed: bool) -> None:
+    """每个案例窗格都要执行自己的计划，再套自己的舞台掩码（否则窗口是空的）。"""
+    from services.scene_commands import CommandPlan
+
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    host_pane = manager.register_case("case-0")
+    other_pane = manager.register_case("case-1")
+    plan = CommandPlan(scene="3d", operations=())
+    for pane_id in (host_pane, other_pane):
+        pane = manager.pane(pane_id)
+        pane.scene_mode = "3d"
+        pane.scene_3d["pending_plan"] = plan.to_dict()
+    window._teaching_case_pane_ids = [host_pane, other_pane]
+    window._teaching_case_stage_refs = {host_pane: ("stage.a",), other_pane: ("stage.b",)}
+    window._pane_widgets_ready = True
+    window.window = object()
+    window._render_scene = lambda: None
+    window._using_pane = lambda _pane_id: __import__("contextlib").nullcontext()
+    window._pending_curriculum_transaction = None
+    window._pending_curriculum_host_executed = host_executed
+    executed: list[tuple[str, tuple]] = []
+    window.scene_command_service = SimpleNamespace(
+        execute=lambda pending_plan, pane_id=None, activate_pane=True: (
+            executed.append((pane_id, tuple(pending_plan.operations))),
+            SimpleNamespace(valid=True, messages=()),
+        )[1]
+    )
+    masked: list[bool] = []
+    window._apply_linear_algebra_storyboard_visibility = lambda *args, **kwargs: masked.append(True)
+
+    window._on_pane_interactor_created(other_pane, object())
+
+    # host_pane 已经物化（可能已提交主题事务），other_pane 仍要自己物化。
+    assert executed == [(other_pane, ())]
+    assert masked == [True]
+    assert "pending_plan" not in manager.pane(other_pane).scene_3d
+
+
 def test_manager_visibility_changes_refresh_retained_case_surfaces(qapp):
     manager = ScenePaneManager()
     container = ScenePaneWidget(manager, interactor_factory=FakeInteractor)

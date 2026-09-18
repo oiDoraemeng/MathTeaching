@@ -241,6 +241,7 @@ class TeachingCasePane(PaneChrome):
         # replaced from the camera immediately during the first render.
         self.bounds = ViewportBounds((-1.0, 1.0), (-1.0, 1.0))
         self.guides = TwoDGuides(self.plotter)
+        self.coordinate_transform = None
         self.geometry = GeometrySceneController(self.plotter, self.bounds)
         self._render_case()
 
@@ -271,12 +272,30 @@ class TeachingCasePane(PaneChrome):
 
     def _render_case(self) -> None:
         plan = case_plan(self.compiled, self._stage_id())
+        transform_operation = next(
+            (
+                operation
+                for operation in plan.operations
+                if operation.get("op") == "linear_algebra.coordinate_transform"
+            ),
+            None,
+        )
+        self.coordinate_transform = (
+            tuple(tuple(float(value) for value in row) for row in transform_operation["matrix"])
+            if transform_operation is not None
+            else None
+        )
         configure_2d_camera(self.plotter)
         state = self.pane_manager.pane(self.pane_id) if self.pane_manager and self.pane_id else None
         saved_camera = dict(state.camera_2d) if state is not None else {}
         self.plotter.set_background(SceneAppearance().background_color("light"))
         self.bounds = self._current_bounds()
-        self.guides.render(self.bounds, SceneAppearance(show_grid=True), effective_theme="light")
+        self.guides.render(
+            self.bounds,
+            SceneAppearance(show_grid=True),
+            effective_theme="light",
+            coordinate_transform=self.coordinate_transform,
+        )
         points: dict[str, Point2D] = {}
         grid_aliases: list[str] = []
         for operation in plan.operations:
@@ -299,6 +318,9 @@ class TeachingCasePane(PaneChrome):
                     end.id,
                     color=str(operation.get("color", "#2777b6")),
                     role=str(operation.get("role", "primary")),
+                    # 计划里声明的虚线必须传下去：投影连线、外接矩形等辅助构造
+                    # 全靠它，否则案例窗格会把虚线画成实线。
+                    style=str(operation.get("style", "solid")),
                     label=str(operation.get("label")) if operation.get("label") is not None else None,
                     agent_alias=alias,
                 )
@@ -306,7 +328,16 @@ class TeachingCasePane(PaneChrome):
             elif name == "annotation.upsert":
                 x, y = (float(value) for value in operation["position"])
                 self.geometry.add_annotation(
-                    Annotation2D(alias, str(operation.get("text", "")), x, y, agent_alias=alias)
+                    Annotation2D(
+                        alias,
+                        str(operation.get("text", "")),
+                        x,
+                        y,
+                        latex=str(operation.get("latex"))
+                        if operation.get("latex") is not None
+                        else None,
+                        agent_alias=alias,
+                    )
                 )
             elif name == "geometry.polygon":
                 vertices = tuple(tuple(float(value) for value in point) for point in operation["vertices"])
@@ -394,7 +425,12 @@ class TeachingCasePane(PaneChrome):
                     "parallel_scale": float(camera.parallel_scale),
                 }
             self.geometry.set_bounds(bounds)
-            self.guides.render(bounds, SceneAppearance(show_grid=True), effective_theme="light")
+            self.guides.render(
+                bounds,
+                SceneAppearance(show_grid=True),
+                effective_theme="light",
+                coordinate_transform=self.coordinate_transform,
+            )
         except (AttributeError, RuntimeError, ValueError):
             return
 

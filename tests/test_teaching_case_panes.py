@@ -105,10 +105,21 @@ def test_case_plan_drops_capability_evidence_from_every_step():
             "ch02.matrix.transformed-grid",
             [-12.0, 12.0, -12.0, 12.0],
             (
-                ([[1.0, 0.0], [0.0, 1.0]], None),
-                ([[2.0, 1.0], [1.0, 2.0]], "A=[[2,1],[1,2]]"),
-                # 第三步只画输入与它的像：变形网格已经在第二步给出。
+                # 第一步只画标准基向量，不画网格。
                 (None, None),
+                ([[2.0, 0.0], [0.0, 1.0]], "A=[[2,0],[0,1]]"),
+                ([[0.0, -1.0], [1.0, 0.0]], "R=[[0,-1],[1,0]]"),
+                ([[2.0, 1.0], [1.0, 2.0]], "A=[[2,1],[1,2]]"),
+            ),
+        ),
+        (
+            "ch02.matrix.basis",
+            [-12.0, 12.0, -12.0, 12.0],
+            (
+                # 第一步：讲义给出的标准基旋转矩阵，两列的像落在坐标轴上。
+                ([[0.0, -1.0], [1.0, 0.0]], "A=[[0,-1],[1,0]]"),
+                # 第二步：换一组基 v1=(1,1)、v2=(1,2)，同一个旋转的矩阵变成 B。
+                ([[-3.0, -5.0], [2.0, 3.0]], "B=[[-3,-5],[2,3]]"),
             ),
         ),
         (
@@ -124,7 +135,7 @@ def test_case_plan_drops_capability_evidence_from_every_step():
     ],
 )
 def test_matrix_vector_case_panes_use_the_matrix_transform_feature(topic_id, grid_bounds, cases):
-    """2.5 的矩阵案例窗格用软件已有的矩阵变换功能：网格、样本点的像与矩阵标注。"""
+    """2.5、2.7 的矩阵案例窗格用软件已有的矩阵变换功能：网格、样本点的像与矩阵标注。"""
 
     compiled = catalog_registry().resolve_bundle(
         topic_id,
@@ -136,8 +147,24 @@ def test_matrix_vector_case_panes_use_the_matrix_transform_feature(topic_id, gri
     for stage, (matrix, label) in zip(compiled.storyboard, cases):
         operations = case_plan(compiled, stage.id).operations
         grid_ops = [op for op in operations if op.get("op") == "geometry.transformed_grid"]
+        coordinate_ops = [op for op in operations if op.get("op") == "linear_algebra.coordinate_transform"]
         staged_ops = [op for op in operations if op.get("op") == "geometry.staged_transform"]
         label_ops = [op for op in operations if op.get("op") == "annotation.upsert"]
+        if topic_id == "ch02.matrix.basis":
+            # 2.7 uses the actual coordinate-system transform: the first
+            # pane stays on the standard basis, while the second pane
+            # changes its basis to S=[v1 v2] instead of drawing a second
+            # teaching-grid overlay.
+            if stage is compiled.storyboard[0]:
+                assert not coordinate_ops
+            else:
+                assert [op["matrix"] for op in coordinate_ops] == [[[1.0, 1.0], [1.0, 2.0]]]
+                assert coordinate_ops[0]["show_original"] is False
+                assert coordinate_ops[0]["show_transformed"] is True
+            assert not grid_ops
+            assert not staged_ops
+            assert [op["text"] for op in label_ops] == [label]
+            continue
         if matrix is None:
             assert (grid_ops, staged_ops, label_ops) == ([], [], [])
             continue
