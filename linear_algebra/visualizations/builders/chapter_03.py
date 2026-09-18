@@ -17,65 +17,19 @@ from ..palette import role_color
 
 
 def build_oriented_area(context: RenderContext) -> CommandPlan:
-    """行列式的有向面积定义"""
-    a = [2.5, 0.5]
-    b = [0.8, 2.0]
+    """行列式的几何定义：两列张成的有向平行四边形"""
+    a = [2.0, 1.0]
+    b = [1.0, 3.0]
 
     ops = []
+    ops.append(make_polygon([[0, 0], [1, 0], [1, 1], [0, 1]], opacity=0.12, outline=True, color=role_color("neutral"), alias="unit_square"))
     ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
     ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2))
-    ops.append(make_label("det>0", [1.0, 1.0], offset=[0, 0]))
+    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.24, outline=True, color=role_color("area"), alias="oriented_area"))
+    ops.append(make_label("5", [1.0, 1.6], offset=[0, 0]))
     ops.append(make_view_fit(padding=1.2))
 
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="行列式是有向面积")
-
-
-def build_ad_bc_decomposition(context: RenderContext) -> CommandPlan:
-    """ad-bc 公式的面积分解"""
-    a = [2.0, 0.5]
-    b = [0.5, 1.5]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="ad-bc的几何推导")
-
-
-def build_det_sign_zero_one(context: RenderContext) -> CommandPlan:
-    """行列式符号、零和一的几何意义"""
-    a1 = [1.5, 0.5]
-    b1 = [0.5, 1.5]
-    a2 = [1.0, 0.0]
-    b2 = [0.0, 1.0]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], a1, "a1", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b1, "b1", role="secondary"))
-    ops.append(make_polygon([[0, 0], a1, [a1[0] + b1[0], a1[1] + b1[1]], b1], opacity=0.15, alias="positive_area"))
-    ops.extend(make_vector_2d([0, 0], a2, "a2", role="result"))
-    ops.extend(make_vector_2d([0, 0], b2, "b2", role="auxiliary"))
-    ops.append(make_polygon([[0, 0], a2, [a2[0] + b2[0], a2[1] + b2[1]], b2], opacity=0.1, outline=True, color=role_color("neutral"), alias="unit_area"))
-    ops.append(make_view_fit(padding=1.3))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="det的符号、零、一")
-
-
-def build_det_examples(context: RenderContext) -> CommandPlan:
-    """行列式面积缩放分层例题"""
-    a = [2.0, 0.5]
-    b = [0.8, 2.0]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="计算和比较不同矩阵的行列式")
+    return CommandPlan(scene="2d", operations=tuple(ops), summary="行列式等于两列张成的有向平行四边形面积")
 
 
 def build_det_row_swap(context: RenderContext) -> CommandPlan:
@@ -258,9 +212,6 @@ def build_inverse_reverse_order(context: RenderContext) -> CommandPlan:
 
 BUILDERS = {
     "draw.ch03.det.oriented-area": build_oriented_area,
-    "draw.ch03.det.ad-bc": build_ad_bc_decomposition,
-    "draw.ch03.det.sign-zero-one": build_det_sign_zero_one,
-    "draw.ch03.det.examples": build_det_examples,
     "draw.ch03.det.row-swap": build_det_row_swap,
     "draw.ch03.det.scaling": build_det_scaling,
     "draw.ch03.det.shear": build_det_shear,

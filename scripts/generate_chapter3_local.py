@@ -34,10 +34,7 @@ import generate_chapter1_local as chapter1
 
 
 _SPEC = {
-    "ch03.det.oriented-area": {"formula": "det(A)=ad-bc", "kind": "oriented_area", "given": {"a": [2, 1], "b": [1, 3]}, "result": 5.0, "check": "area", "statement": "二维行列式是以矩阵两列为邻边的平行四边形有向面积；符号记录方向是否翻转。", "relation": "same_measure"},
-    "ch03.det.ad-bc": {"formula": "det([[a,b],[c,d]])=ad-bc", "kind": "determinant", "given": {"matrix": [[3, 1], [2, 4]]}, "result": 10.0, "check": "determinant", "statement": "2×2 行列式按 ad-bc 计算，其中 ad 是主对角方向面积，bc 是交叉项修正。", "relation": "invariant"},
-    "ch03.det.sign-zero-one": {"formula": "det(A)>0,=0,<0", "kind": "determinant", "given": {"matrix": [[1, 2], [2, 4]]}, "result": 0.0, "check": "determinant", "statement": "行列式正负表示方向是否保持，零表示面积退化为零，绝对值为一表示面积不变。", "relation": "invariant"},
-    "ch03.det.examples": {"formula": "det(A)=ad-bc", "kind": "determinant", "given": {"matrix": [[3, 1], [2, 4]]}, "result": 10.0, "check": "determinant", "statement": "通过分层例题可把行列式数值直接解释为面积缩放因子，并识别退化变换。", "relation": "maps_to"},
+    "ch03.det.oriented-area": {"formula": "det(A)=ad-bc", "kind": "oriented_area", "given": {"a": [2, 1], "b": [1, 3]}, "result": 5.0, "check": "area", "statement": "行列式等于以矩阵两列为邻边的平行四边形的有向面积；单位正方形因此变成面积 5 的平行四边形。", "relation": "same_measure"},
     "ch03.det.row-swap": {"formula": "det(PA)=-det(A)", "kind": "determinant", "given": {"matrix": [[1, 2], [3, 4]]}, "result": -2.0, "check": "determinant", "statement": "交换两行会翻转两列的有向平行四边形方向，因此行列式变号而绝对面积不变。", "relation": "orientation"},
     "ch03.det.scaling": {"formula": "det(A')=k\\,det(A)", "kind": "determinant", "given": {"matrix": [[2, 0], [0, 3]]}, "result": 6.0, "check": "determinant", "statement": "某一行乘以 k 等价于沿一个方向拉伸 k 倍，行列式也乘以 k。", "relation": "same_measure"},
     "ch03.det.shear": {"formula": "det([[1,k],[0,1]])=1", "kind": "determinant", "given": {"matrix": [[1, 2], [0, 1]]}, "result": 1.0, "check": "determinant", "statement": "切变只改变平行四边形的倾斜，不改变底和高的乘积，所以面积保持不变。", "relation": "invariant"},
@@ -91,7 +88,9 @@ def _normalize_visual(payload: dict, topic_id: str) -> None:
     if spec["kind"] == "oriented_area":
         a, b = spec["given"]["a"], spec["given"]["b"]
         area = _entity("area", "area", 2, [a, b], "area", claim_id, "oriented area")
-        entities[:] = [item for item in entities if item["id"] not in {"r"}]
+        # 质量适配器可能已经给出面积实体（并与单位正方形对照一起发布），
+        # 这里按 id 去重后再补，避免同一 id 出现两次。
+        entities[:] = [item for item in entities if item["id"] not in {"r", "area"}]
         entities.append(area)
         for relation in relations:
             if relation["target_ref"] == "r":

@@ -3,10 +3,10 @@ from .model import LessonEntry, topic_entry
 CHAPTER = "第3章 行列式"
 
 TOPICS: tuple[LessonEntry, ...] = (
-    topic_entry(topic_id="ch03.det.oriented-area", chapter_number=3, section_id="ch03.s31", title="行列式的有向面积定义", source_path=(CHAPTER, "3.1 问题引入：变换对面积的缩放", "3.1.1 行列式的几何定义"), heading_path=(CHAPTER, "3.1 问题引入：变换对面积的缩放", "3.1.1 行列式的几何定义"), heading_level=4, required_capabilities=("oriented_area_2d", "polygon_2d")),
-    topic_entry(topic_id="ch03.det.ad-bc", chapter_number=3, section_id="ch03.s31", title="ad-bc 的面积分解", source_path=(CHAPTER, "3.1 问题引入：变换对面积的缩放", "3.1.2 $2 \\times 2$ 行列式公式"), heading_path=(CHAPTER, "3.1 问题引入：变换对面积的缩放", "3.1.2 $2 \\times 2$ 行列式公式"), heading_level=4, required_capabilities=("oriented_area_2d", "polygon_2d", "annotation_formula")),
-    topic_entry(topic_id="ch03.det.sign-zero-one", chapter_number=3, section_id="ch03.s31", title="行列式符号、零和一的几何意义", source_path=(CHAPTER, "3.1 问题引入：变换对面积的缩放", "3.1.3 几何意义速查"), heading_path=(CHAPTER, "3.1 问题引入：变换对面积的缩放", "3.1.3 几何意义速查"), heading_level=4, required_capabilities=("oriented_area_2d", "staged_transform")),
-    topic_entry(topic_id="ch03.det.examples", chapter_number=3, section_id="ch03.s31", title="行列式面积缩放分层例题", source_path=(CHAPTER, "3.1 问题引入：变换对面积的缩放", "3.1.4 分层例题"), heading_path=(CHAPTER, "3.1 问题引入：变换对面积的缩放", "3.1.4 分层例题"), heading_level=4, required_capabilities=("oriented_area_2d", "transformed_grid")),
+    # 3.1 目录在软件中合并为单一小节「行列式的几何定义」，内容为讲义
+    # 3.1.1–3.1.3 原文（定义 3.1、定理 3.1、几何意义速查）。讲义原文不改，
+    # 因此锚点取整个 3.1 小节，目录显示名由 source_path 独立给出。
+    topic_entry(topic_id="ch03.det.oriented-area", chapter_number=3, section_id="ch03.s31", title="行列式的几何定义", source_path=(CHAPTER, "行列式的几何意义", "3.1.1 行列式的几何定义"), heading_path=(CHAPTER, "3.1 问题引入：变换对面积的缩放"), heading_level=3, required_capabilities=("oriented_area_2d", "polygon_2d")),
     topic_entry(topic_id="ch03.det.row-swap", chapter_number=3, section_id="ch03.s32", title="交换两行翻转方向", source_path=(CHAPTER, "3.2 行列式的核心性质", "交换两行的方向变化"), heading_path=(CHAPTER, "3.2 行列式的核心性质"), heading_level=3, required_capabilities=("oriented_area_2d", "staged_transform")),
     topic_entry(topic_id="ch03.det.scaling", chapter_number=3, section_id="ch03.s32", title="一行数乘改变面积比例", source_path=(CHAPTER, "3.2 行列式的核心性质", "一行乘常数的面积变化"), heading_path=(CHAPTER, "3.2 行列式的核心性质"), heading_level=3, required_capabilities=("oriented_area_2d", "staged_transform")),
     topic_entry(topic_id="ch03.det.shear", chapter_number=3, section_id="ch03.s32", title="切变保持面积不变", source_path=(CHAPTER, "3.2 行列式的核心性质", "切变保持面积"), heading_path=(CHAPTER, "3.2 行列式的核心性质"), heading_level=3, required_capabilities=("oriented_area_2d", "staged_transform")),

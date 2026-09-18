@@ -3,7 +3,7 @@ from __future__ import annotations
 from linear_algebra.visualizations.common import RenderContext
 from services.scene_commands import CommandPlan
 
-_IDS = ("space.closure", "subspace.classification", "subspace.intersection", "subspace.col-null", "span.dimension", "dependence.redundancy", "nullspace.test", "rank.collapse", "basis.span", "dimension.ladder", "coordinates.readout", "linear-map.definition", "linear-map.compare", "linear-map.matrix-columns", "kernel-image", "rank-nullity")
+_IDS = ("space.closure", "subspace.classification", "subspace.intersection", "subspace.col-null", "span.dimension", "dependence.redundancy", "nullspace.test", "rank.collapse", "basis.definition", "linear-map.definition", "linear-map.compare", "linear-map.matrix-columns", "kernel-image", "rank-nullity")
 
 def _compile_evidence(topic: str):
     """Load the reviewed semantic graph and compile it through the real contract."""

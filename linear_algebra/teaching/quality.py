@@ -11,6 +11,8 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, Mapping
 
+_BATCH_INNER_PRODUCT_FORMULA = r"(\boldsymbol u\cdot V)_{j}=\boldsymbol u\cdot \boldsymbol v_{j}"
+
 
 def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
     """Return a reviewed-quality payload while preserving source and graph data."""
@@ -166,8 +168,28 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
                 claim["statement"] = str(spec["statement"])
                 claim["formula"] = str(spec["claim_formula"])
                 claim["formula_symbols"] = [str(item) for item in spec["formula_symbols"]]
+    elif topic_id == "ch02.batch.inner-products":
+        _refine_batch_inner_products(explanation, visual)
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                # 定义 2.4 自带公式并被前端并入定义块，所以不再单列「公式」分节；
+                # claim 的公式只是机器可读的简写，符号都落在 u 与 V 上。
+                claim["statement"] = "行向量乘矩阵，结果的每一列是 u 与 V 对应列的内积——一次算出一批方向。"
+                claim["formula"] = _BATCH_INNER_PRODUCT_FORMULA
+                claim["formula_symbols"] = ["u", "V"]
     elif topic_id == "ch02.matrix.composition":
         _refine_matrix_composition(result, explanation, visual, example)
+    elif topic_id == "ch03.det.oriented-area":
+        _refine_det_geometry(explanation, visual)
+        result["connections"] = []
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                # 3.1 把公式（定理 3.1）并入「定义」块，所以不再单列「公式」分节；
+                # claim 的公式只是机器可读的简写，符号都落在两列与面积上。
+                claim["statement"] = "行列式等于以矩阵两列为邻边的平行四边形的有向面积，按 ad-bc 计算。"
+                claim["formula"] = _DET_GEOMETRY_FORMULA
+                claim["formula_symbols"] = ["a", "b", "area"]
     else:
         _refine_generic(topic_id, explanation, visual, example)
 
@@ -178,6 +200,8 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
     from linear_algebra.teaching import lecture_content
 
     lecture_content.apply(result)
+    if topic_id == "ch04.subspace.col-null":
+        _refine_col_null(result, explanation, visual)
 
     # Refined case layouts may replace the template graph.  Keep the single
     # source-grounded claim bound to the exact entities, relations and stages
@@ -210,6 +234,315 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
         "prompt_version": "teaching-artifact-v1",
     })
     return result
+
+
+_DET_GEOMETRY_FORMULA = r"\det(\begin{pmatrix}a&b\\c&d\end{pmatrix})=ad-bc"
+
+_COL_NULL_DEFINITION = "\n\n".join(
+    (
+        r"定义 4.3（列空间） $\operatorname{Col}(A) = \{Ax \mid x \in R^{n}\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。",
+        r"列空间是子空间（含零向量 $+$ 加法/数乘封闭）。",
+        r"定义 4.4（零空间） $\operatorname{Null}(A) = \{x \mid Ax = 0\} =$ 被变换压缩到零的全部输入。",
+        r"零空间也是子空间。",
+    )
+)
+_COL_NULL_PROOF = "\n\n".join(
+    (
+        r"Col(A) 是子空间的证明: $① 0 = A \cdot 0 \in \operatorname{Col}(A)$；",
+        r"② 加法：$A \cdot x_{1}\in\operatorname{Col}(A), A \cdot x_{2}\in\operatorname{Col}(A) \rightarrow A \cdot x_{1}+A \cdot x_{2} = A \cdot (x_{1}+x_{2}) \in \operatorname{Col}(A) ✓$；",
+        r"③ 数乘：$k \cdot (A \cdot x) = A \cdot (kx) \in \operatorname{Col}(A) ✓$。$\rightarrow \operatorname{Col}(A)$ 是子空间。",
+        r"Null(A) 是子空间的证明: $① A \cdot 0 = 0 \rightarrow 0 \in \operatorname{Null}(A)$；",
+        r"② 加法：$x_{1},x_{2}\in\operatorname{Null}(A) \rightarrow A \cdot (x_{1}+x_{2}) = 0 \rightarrow x_{1}+x_{2}\in\operatorname{Null}(A) ✓$；",
+        r"③ 数乘：$A \cdot (kx) = k \cdot A \cdot x = k \cdot 0 = 0 \rightarrow kx\in\operatorname{Null}(A) ✓$。$\rightarrow \operatorname{Null}(A)$ 是子空间。",
+    )
+)
+_COL_NULL_GEOMETRY = "\n".join(
+    (
+        r"几何直观：",
+        r"$A = \begin{pmatrix}1 & 0 \\ 0 & 0\end{pmatrix}$（投影到 x 轴）",
+        r"$\operatorname{Col}(A) = x$ 轴 $\leftarrow$ 能输出到的所有地方",
+        r"$\operatorname{Null}(A) = y$ 轴 $\leftarrow$ 被压到零的全部方向",
+    )
+)
+# 「不变量」块的文字必须仍然是讲义原话：4.1.3 只有两条可核验的断言（两个集合各自
+# 含零向量并对加法、数乘封闭），这里把它写成学生可读的完整句子，而不是内部校验 id。
+_COL_NULL_INVARIANTS = (
+    r"$\operatorname{Col}(A)$ 含零向量，且对加法和数乘封闭。",
+    r"$\operatorname{Null}(A)$ 含零向量，且对加法和数乘封闭。",
+)
+
+
+def _refine_col_null(result: dict[str, Any], explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    """Keep 4.1.3 lecture prose verbatim and add the two checked 3D cases.
+
+    讲义只给出二维直观图（$A=\\begin{pmatrix}1&0\\\\0&0\\end{pmatrix}$ 把平面压到 $x$ 轴）。
+    三维案例把它升一维：$A=\\operatorname{diag}(1,1,0)$ 把空间压到 $xy$ 平面，于是
+    「所有可能的输出」是那张平面，「被压到零的全部输入」是那条竖直的 $z$ 轴。
+    两个案例各自回答定义 4.3、定义 4.4 中的一个，因此各自独立成一个窗格。
+    """
+
+    claim_id = "claim.ch04.subspace.col-null"
+    column_example_id = "example.ch04.subspace.col-null.column-space"
+    null_example_id = "example.ch04.subspace.col-null.null-space"
+    projection_matrix = r"\boldsymbol A=\begin{pmatrix}1&0&0\\0&1&0\\0&0&0\end{pmatrix}"
+    explanation.update(
+        {
+            "summary": _COL_NULL_DEFINITION.split("\n\n", 1)[0],
+            "definition": _COL_NULL_DEFINITION,
+            "formula": "",
+            "derivation": [_COL_NULL_PROOF],
+            # 讲义把「几何直观」写在定义 4.3/4.4 的下方，证明之前；分节顺序照抄讲义。
+            "geometric_meaning": _COL_NULL_GEOMETRY,
+            "worked_examples": [
+                {
+                    "id": column_example_id,
+                    "title": "案例一：列空间——所有可能的输出",
+                    "kind": "matrix_transform",
+                    "given": [[[1, 0, 0], [0, 1, 0], [0, 0, 0]], [2, 0, 3]],
+                    "calculation": [
+                        r"$$" + projection_matrix + r"$$",
+                        r"$$\boldsymbol x_1=(2,0,3)^{\mathsf T},\qquad \boldsymbol x_2=(-1,2,2)^{\mathsf T},\qquad \boldsymbol x_3=(-1,-2,1)^{\mathsf T}$$",
+                        r"$$\boldsymbol A\boldsymbol x_1=(2,0,0)^{\mathsf T},\qquad \boldsymbol A\boldsymbol x_2=(-1,2,0)^{\mathsf T},\qquad \boldsymbol A\boldsymbol x_3=(-1,-2,0)^{\mathsf T}$$",
+                        r"三支输入的高度、水平方向都不同，可它们的输出全部落在同一张平面上，并且朝平面里三个不同的方向铺开。",
+                        r"$$\operatorname{Col}(\boldsymbol A)=\{\boldsymbol A\boldsymbol x\mid \boldsymbol x\in R^{3}\}=\operatorname{span}(\boldsymbol e_1,\boldsymbol e_2)$$",
+                        r"所以 $\operatorname{Col}(\boldsymbol A)$ 就是这张平面：无论输入取什么，输出只会落在这里。",
+                    ],
+                    "result": [2.0, 0.0, 0.0],
+                    "checks": [{"name": "result", "expected": [2.0, 0.0, 0.0], "tolerance": 1e-9}],
+                    "claim_refs": [claim_id],
+                },
+                {
+                    "id": null_example_id,
+                    "title": "案例二：零空间——与平面垂直的输入被压成一点",
+                    "kind": "matrix_transform",
+                    "given": [[[1, 0, 0], [0, 1, 0], [0, 0, 0]], [0, 0, 3]],
+                    "calculation": [
+                        r"$$" + projection_matrix + r"$$",
+                        r"$$\boldsymbol k=(0,0,3)^{\mathsf T}$$",
+                        r"$$\boldsymbol A\boldsymbol k=(0,0,0)^{\mathsf T}$$",
+                        r"这支输入沿着 $z$ 方向，也就是垂直于那张平面；它被压到原点。",
+                        r"$$\operatorname{Null}(\boldsymbol A)=\{\boldsymbol x\mid \boldsymbol A\boldsymbol x=0\}=\operatorname{span}(\boldsymbol e_3)$$",
+                        r"反向看：不沿 $z$ 方向的输入不会被压成零——步骤①里的 $\boldsymbol x_1,\boldsymbol x_2,\boldsymbol x_3$ 输出都还落在平面上、离原点有距离。",
+                        r"所以 $\operatorname{Null}(\boldsymbol A)$ 就是这条垂直于平面的方向：只有它上面的输入被压成零。",
+                    ],
+                    "result": [0.0, 0.0, 0.0],
+                    "checks": [{"name": "result", "expected": [0.0, 0.0, 0.0], "tolerance": 1e-9}],
+                    "claim_refs": [claim_id],
+                },
+            ],
+            "pitfalls": [],
+            "connections": [],
+            "intuition": "",
+            "read_guide": [],
+            "invariants": list(_COL_NULL_INVARIANTS),
+            "symbol_roles": {"x": "input_vector_a", "A": "column_space", "k": "kernel_vector"},
+            "sections": [
+                {"id": "definition", "title": "定义", "text": "", "claim_refs": [claim_id]},
+                {"id": "geometric_meaning", "title": "几何直观", "text": "", "claim_refs": [claim_id]},
+                {"id": "derivation", "title": "列空间和零空间为子空间的证明", "text": "", "claim_refs": [claim_id]},
+                {"id": "worked_examples", "title": "数学案例", "text": "", "claim_refs": [claim_id]},
+            ],
+            "case_layout": {
+                # 两个案例是一条完整讲解里的先后两步（先看输出落在哪，再看什么被压没），
+                # 首屏并排显示，两步共用同一视角。
+                "default_pane_count": 2,
+                "cases": [
+                    {
+                        "id": "case.ch04.subspace.col-null.column-space",
+                        "topic_id": "ch04.subspace.col-null",
+                        "example_ref": column_example_id,
+                        "claim_refs": [claim_id],
+                        "stage_refs": ["stage.ch04.subspace.col-null.column_space"],
+                        "purpose": "① 列空间：三支输入，输出都落在这张平面上",
+                    },
+                    {
+                        "id": "case.ch04.subspace.col-null.null-space",
+                        "topic_id": "ch04.subspace.col-null",
+                        "example_ref": null_example_id,
+                        "claim_refs": [claim_id],
+                        "stage_refs": ["stage.ch04.subspace.col-null.null_space"],
+                        "purpose": "② 零空间：与平面垂直的输入被压成一点",
+                    },
+                ],
+            },
+        }
+    )
+    for claim in result.get("claims", []):
+        if isinstance(claim, dict):
+            claim["explanation_refs"] = ["definition", "geometric_meaning", "derivation", "worked_examples"]
+            claim["formula"] = r"\boldsymbol A=\operatorname{diag}(1,1,0),\quad \operatorname{Null}(\boldsymbol A)=\operatorname{span}(\boldsymbol e_3),\quad \operatorname{Col}(\boldsymbol A)=\operatorname{span}(\boldsymbol e_1,\boldsymbol e_2)"
+            claim["formula_symbols"] = ["A", "x", "k"]
+
+# 讲义 3.1.1–3.1.3 原文逐字入库：只把矩阵写成 pmatrix 块公式，并把讲义里散落的
+# 数学符号补进 $...$（数学内容与文字一个都不改）。公式并入「定义」，不单列「公式」。
+_DET_GEOMETRY_DEFINITION = "\n\n".join(
+    (
+        r"定义 3.1（行列式——几何定义） 设 $\boldsymbol A$ 是 $2 \times 2$ 矩阵。$\boldsymbol A$ 的行列式，记为 $\det(\boldsymbol A)$ 或 $|\boldsymbol A|$，等于以 $\boldsymbol A$ 的两列为邻边的平行四边形的有向面积。",
+        "\n".join(
+            (
+                r"- 若 $\det(\boldsymbol A) > 0$，两列的顺序与 $e_{1} \rightarrow e_{2}$ 的旋转方向一致（逆时针）",
+                r"- 若 $\det(\boldsymbol A) < 0$，方向相反（顺时针）",
+                r"- 若 $\det(\boldsymbol A) = 0$，两列共线，平行四边形退化为线段$\rightarrow$面积为零",
+            )
+        ),
+        r"定理 3.1（$2 \times 2$ 行列式公式）",
+        r"$$\det(\begin{pmatrix} a & b \\ c & d \end{pmatrix}) = ad - bc$$",
+        '推导直觉：$a$ 和 $d$ 构成"主轴方向的矩形面积"，$bc$ 是"交叉项"的修正。',
+        r"$3 \times 3$ 行列式用三阶展开公式，几何上对应平行六面体的有向体积。",
+    )
+)
+
+# 讲义 3.1.3 的速查表：按用户确认规范为有效的两列四行，文字仍用讲义原话。
+_DET_GEOMETRY_MEANING = "\n".join(
+    (
+        r"| $\det(\boldsymbol A)$ | 几何含义 |",
+        r"| --- | --- |",
+        r"| $= 0$ | 面积降为零$\rightarrow$信息丢失（至少一个维度被压扁） |",
+        r"| $> 0$ | 面积放大且方向不变 |",
+        '| $< 0$ | 面积放大但方向反转（"翻面"） |',
+        r"| $|\det(\boldsymbol A)| = 1$ | 面积不变（如纯旋转） |",
+    )
+)
+
+# 讲义 3.1.1–3.1.3 没有数值案例；按定义自定一个两步案例：第一步给出单位正方形，
+# 第二步给出两个像张成的平行四边形，并把两列放进外接矩形，用两条辅助线切掉四个
+# 直角三角形，把 ad - bc 在图上直接读出来（图形由 compiler 依两列计算生成）。
+_DET_GEOMETRY_CASE_STEPS = (
+    (
+        "第一步：单位正方形",
+        (
+            r"标准基向量 $\boldsymbol e_{1}=(1,0)$、$\boldsymbol e_{2}=(0,1)$ 张成面积为 $1$ 的单位正方形。",
+            r"$$|\det(\boldsymbol e_{1},\boldsymbol e_{2})|=1$$",
+        ),
+    ),
+    (
+        "第二步：矩阵变换得到的平行四边形",
+        (
+            r"取矩阵 $$\boldsymbol A=\begin{pmatrix} 2 & 1 \\ 1 & 3 \end{pmatrix},$$ 即定理 3.1 中的 $a=2$、$b=1$、$c=1$、$d=3$。",
+            r"矩阵变换 $\boldsymbol A$ 把两条标准基向量分别送到它的两列：$$\boldsymbol A\boldsymbol e_{1}=(2,1)=\boldsymbol v_{1},\qquad \boldsymbol A\boldsymbol e_{2}=(1,3)=\boldsymbol v_{2}$$",
+            r"于是第一格的单位正方形被这个矩阵变换成以 $\boldsymbol v_{1}$、$\boldsymbol v_{2}$ 为邻边的平行四边形：$\boldsymbol e_{1}$、$\boldsymbol e_{2}$ 的像就是它的两条邻边。",
+            r"把两列放进外接矩形：宽 $a+b=3$、高 $c+d=4$，面积 $3\times4=12$。",
+            r"从外接矩形右下角连到 $\boldsymbol v_{1}$、左上角连到 $\boldsymbol v_{2}$（图中灰色虚线），切掉四个直角三角形：两个底 $a+b=3$、高 $c=1$，面积各 $1.5$；两个底 $c+d=4$、高 $b=1$，面积各 $2$。",
+            r"$$S=12-1.5-1.5-2-2=5$$",
+            r"$$S=(a+b)(c+d)-c(a+b)-b(c+d)=ad-bc=2\times3-1\times1=5$$",
+        ),
+    ),
+)
+
+
+def _refine_det_geometry(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    """3.1 的单一小节：定义（含公式）、几何意义速查表与两步数学案例。"""
+
+    claim_id = "claim.ch03.det.oriented-area"
+    explanation.update({
+        "summary": r"行列式等于以矩阵两列为邻边的平行四边形的有向面积，按 $ad-bc$ 计算。",
+        "definition": _DET_GEOMETRY_DEFINITION,
+        "formula": "",
+        "derivation": [],
+        "geometric_meaning": _DET_GEOMETRY_MEANING,
+        "symbol_roles": {"a": "vector_a", "b": "vector_b", "area": "area"},
+    })
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+    # 分节标题听命讲义：定义 / 几何意义速查，案例由本小节自定。
+    explanation["sections"] = [
+        {"id": "definition", "title": "定义", "text": "", "claim_refs": [claim_id]},
+        {"id": "geometric_meaning", "title": "几何意义速查", "text": "", "claim_refs": [claim_id]},
+        {"id": "worked_examples", "title": "数学案例", "text": "", "claim_refs": [claim_id]},
+    ]
+    step_ids = (
+        "example.ch03.det.oriented-area.1",
+        "example.ch03.det.oriented-area.2",
+    )
+    givens = ([[1, 0], [0, 1]], [[2, 1], [1, 3]])
+    results = (1.0, 5.0)
+    explanation["worked_examples"] = [
+        {
+            "id": step_id,
+            "title": step[0],
+            "kind": "oriented_area",
+            "given": given,
+            "calculation": list(step[1]),
+            "result": result,
+            "checks": [{"name": "area", "expected": result, "tolerance": 1e-9}],
+            "claim_refs": [claim_id],
+        }
+        for step_id, step, given, result in zip(
+            step_ids, _DET_GEOMETRY_CASE_STEPS, givens, results
+        )
+    ]
+    stage_ids = (
+        "stage.case.ch03.det.oriented-area.1",
+        "stage.case.ch03.det.oriented-area.2",
+    )
+    relation_ids = (
+        "rel.case.ch03.det.oriented-area.1",
+        "rel.case.ch03.det.oriented-area.2",
+    )
+    # 外接矩形构造由 compiler 依两列算出：这里只声明"两列被分解进外接矩形"。
+    box_relation_id = "rel.box.ch03.det.oriented-area"
+    visual.update({
+        "scene_kind": "2d",
+        "entities": [
+            {"id": "e1", "kind": "vector", "dimension": 2, "value": [1, 0], "role": "vector_a", "label": "e1", "claim_refs": [claim_id]},
+            {"id": "e2", "kind": "vector", "dimension": 2, "value": [0, 1], "role": "vector_b", "label": "e2", "claim_refs": [claim_id]},
+            {"id": "unit_square", "kind": "area", "dimension": 2, "value": [[1, 0], [0, 1]], "role": "neutral", "label": "unit square", "claim_refs": [claim_id]},
+            {"id": "v1", "kind": "vector", "dimension": 2, "value": [2, 1], "role": "vector_a", "label": "v1", "claim_refs": [claim_id]},
+            {"id": "v2", "kind": "vector", "dimension": 2, "value": [1, 3], "role": "vector_b", "label": "v2", "claim_refs": [claim_id]},
+            {"id": "area", "kind": "area", "dimension": 2, "value": [[2, 1], [1, 3]], "role": "area", "label": "ad-bc=5", "claim_refs": [claim_id]},
+        ],
+        "relations": [
+            {"id": relation_ids[0], "kind": "same_measure", "source_ref": "e1", "target_ref": "unit_square", "parameters": {}, "claim_refs": [claim_id]},
+            {"id": relation_ids[1], "kind": "same_measure", "source_ref": "v1", "target_ref": "area", "parameters": {}, "claim_refs": [claim_id]},
+            {"id": box_relation_id, "kind": "decomposes_into", "source_ref": "v1", "target_ref": "v2", "parameters": {}, "style": "dashed", "claim_refs": [claim_id]},
+        ],
+        "stages": [
+            {
+                "id": stage_ids[0],
+                "title": _DET_GEOMETRY_CASE_STEPS[0][0],
+                "caption": r"$\boldsymbol e_{1}=(1,0)$、$\boldsymbol e_{2}=(0,1)$ 张成面积为 $1$ 的单位正方形。",
+                "layout": "overlay",
+                "input_entity_refs": ["e1", "e2"],
+                "output_entity_refs": ["unit_square"],
+                "relation_refs": [relation_ids[0]],
+                "expected_invariants": ["unit area"],
+            },
+            {
+                "id": stage_ids[1],
+                "title": _DET_GEOMETRY_CASE_STEPS[1][0],
+                "caption": r"矩阵变换 $\boldsymbol A=\begin{pmatrix}2&1\\1&3\end{pmatrix}$ 把 $\boldsymbol e_{1},\boldsymbol e_{2}$ 送到 $\boldsymbol v_{1}=(2,1)$、$\boldsymbol v_{2}=(1,3)$；外接矩形减去四个直角三角形，面积正好是 $ad-bc$。",
+                "layout": "overlay",
+                "input_entity_refs": ["v1", "v2"],
+                "output_entity_refs": ["area"],
+                "relation_refs": [relation_ids[1], box_relation_id],
+                "expected_invariants": ["signed area"],
+            },
+        ],
+    })
+    explanation["case_layout"] = {
+        "default_pane_count": 2,
+        "cases": [
+            {
+                "id": "case.ch03.det.oriented-area.1",
+                "topic_id": "ch03.det.oriented-area",
+                "example_ref": step_ids[0],
+                "claim_refs": [claim_id],
+                "stage_refs": [stage_ids[0]],
+                "purpose": _DET_GEOMETRY_CASE_STEPS[0][0],
+            },
+            {
+                "id": "case.ch03.det.oriented-area.2",
+                "topic_id": "ch03.det.oriented-area",
+                "example_ref": step_ids[1],
+                "claim_refs": [claim_id],
+                "stage_refs": [stage_ids[1]],
+                "purpose": _DET_GEOMETRY_CASE_STEPS[1][0],
+            },
+        ],
+    }
 
 
 def _refine_vector_addition(explanation: dict[str, Any], visual: dict[str, Any], example: dict[str, Any]) -> None:
@@ -1435,6 +1768,9 @@ def _refine_geometry_proof(topic_id: str, explanation: dict[str, Any], visual: d
 # 与例题（2.5.3），本身没有为 2.5.1、2.5.2 提供数值案例。案例按讲义的定义/定理
 # 自定，取值刻意避开坐标轴；案例按数学流程逐步展开，一步一个窗格，同一个结果由
 # 不同视角得到。定义块逐字搬讲义原文（只把裸写的符号包进 $...$），不概括、不新增。
+# 2.7 矩阵与基只有定义 2.9（基）与核心认知（含标准基下旋转 $90^\circ$ 的矩阵），
+# 同样没有数值案例：案例按定义自定，把标准基与一组新基各放一个窗格，展示同一个
+# 旋转换一组基之后矩阵随之改变。
 _MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
     "ch02.matrix.row-column": {
         "title": "矩阵乘向量的行视角与列视角",
@@ -1529,35 +1865,75 @@ _MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
         "symbol_roles": {"A": "matrix_a", "x": "combination"},
         "sections": (("definition", "定理"), ("worked_examples", "数学案例")),
         "entities": (
-            ("mv_grid_base", "grid", [[1, 0], [0, 1]], "construction", "I"),
+            # 第一窗格（标准基向量）：只画两根标尺，不画网格。
             ("mv_e1", "vector", [1, 0], "basis_e1", "e1"),
             ("mv_e2", "vector", [0, 1], "basis_e2", "e2"),
+            # 参考网格只作为「两列决定网格变形」这一不变式的左端保留，不再进入任何窗格。
+            ("mv_grid_base", "grid", [[1, 0], [0, 1]], "construction", "I"),
+            # 第二窗格（横向拉伸）：A = [[2, 0], [0, 1]]，两列落在坐标轴上。
+            ("mv_grid_stretch", "grid", [[2, 0], [0, 1]], "transformed_a", "A"),
+            ("mv_stretch_e1", "vector", [2, 0], "vector_a", "Ae1"),
+            ("mv_stretch_e2", "vector", [0, 1], "vector_b", "Ae2"),
+            # 第三窗格（逆时针旋转）：R = [[0, -1], [1, 0]]。
+            ("mv_grid_rotate", "grid", [[0, -1], [1, 0]], "transformed_a", "R"),
+            ("mv_rotate_e1", "vector", [0, 1], "vector_a", "Re1"),
+            ("mv_rotate_e2", "vector", [-1, 0], "vector_b", "Re2"),
+            # 第四窗格（两列的像与网格变形）：沿用原有 A = [[2, 1], [1, 2]]。
             ("mv_grid_A", "grid", [[2, 1], [1, 2]], "transformed_a", "A"),
             ("mv_ae1", "vector", [2, 1], "vector_a", "Ae1"),
             ("mv_ae2", "vector", [1, 2], "vector_b", "Ae2"),
-            ("mv_x", "vector", [3, 2], "combination", "x"),
-            ("mv_Ax", "vector", [8, 7], "transformed_b", "Ax"),
         ),
         "relations": (
             ("rel.case.ch02.matrix.transformed-grid.basis", "invariant", "mv_grid_base", "mv_grid_A"),
         ),
         "steps": (
             {
-                "purpose": "第一步：标准基与原始网格",
-                "invariant": "标准基 (1, 0)、(0, 1) 确定未变形的网格",
+                "purpose": "第一步：标准基向量",
+                "invariant": "标准基 (1, 0)、(0, 1) 指出两个坐标方向",
                 "given": [[[1, 0], [0, 1]], [1, 0]],
                 "result": [1, 0],
                 "lines": (
-                    r"图中画出标准基 $\boldsymbol e_{1}=(1,0)$（终点 $E_1$）、$\boldsymbol e_{2}=(0,1)$（终点 $E_2$），"
-                    r"以及由它们确定的未变形网格。",
+                    r"图中画出标准基 $\boldsymbol e_{1}=(1,0)$（终点 $E_1$）、$\boldsymbol e_{2}=(0,1)$（终点 $E_2$）。",
                     r"$$\boldsymbol e_{1}=(1,0),\qquad \boldsymbol e_{2}=(0,1)$$",
+                    r"它们是量出平面内任何向量位置的两根“标尺”。",
                 ),
-                "inputs": ("mv_grid_base", "mv_e1", "mv_e2"),
+                # 第一窗格只展示标准基向量，不画网格。
+                "inputs": ("mv_e1", "mv_e2"),
                 "outputs": (),
                 "relations": (),
             },
             {
-                "purpose": "第二步：两列的像与网格变形",
+                "purpose": "第二步：横向拉伸",
+                "invariant": "对角矩阵把 x 方向拉伸 2 倍，y 方向不动",
+                "given": [[[2, 0], [0, 1]], [1, 0]],
+                "result": [2, 0],
+                "lines": (
+                    r"取 $\boldsymbol A=\begin{pmatrix}2&0\\0&1\end{pmatrix}$（图内标注 $\boldsymbol A=[[2,0],[0,1]]$），"
+                    r"网格沿 $x$ 方向被拉伸 $2$ 倍：$\boldsymbol e_{1}$ 被送到 $(2,0)$（终点 $G_1$），"
+                    r"$\boldsymbol e_{2}$ 停在 $(0,1)$（终点 $G_2$）。",
+                    r"$$\boldsymbol A\boldsymbol e_{1}=(2,0),\qquad \boldsymbol A\boldsymbol e_{2}=(0,1)$$",
+                ),
+                "inputs": ("mv_grid_stretch", "mv_stretch_e1", "mv_stretch_e2"),
+                "outputs": (),
+                "relations": (),
+            },
+            {
+                "purpose": "第三步：逆时针旋转",
+                "invariant": "旋转保持长度，只改变方向",
+                "given": [[[0, -1], [1, 0]], [1, 0]],
+                "result": [0, 1],
+                "lines": (
+                    r"取 $\boldsymbol R=\begin{pmatrix}0&-1\\1&0\end{pmatrix}$（图内标注 $\boldsymbol R=[[0,-1],[1,0]]$），"
+                    r"网格整体逆时针转过 $90^\circ$：$\boldsymbol e_{1}$ 被送到 $(0,1)$（终点 $H_1$），"
+                    r"$\boldsymbol e_{2}$ 被送到 $(-1,0)$（终点 $H_2$）。",
+                    r"$$\boldsymbol R\boldsymbol e_{1}=(0,1),\qquad \boldsymbol R\boldsymbol e_{2}=(-1,0)$$",
+                ),
+                "inputs": ("mv_grid_rotate", "mv_rotate_e1", "mv_rotate_e2"),
+                "outputs": (),
+                "relations": (),
+            },
+            {
+                "purpose": "第四步：两列的像与网格变形",
                 "invariant": "两列就是两条标准基向量被送到的位置",
                 "given": [[[2, 1], [1, 2]], [1, 0]],
                 "result": [2, 1],
@@ -1569,21 +1945,6 @@ _MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
                 "inputs": ("mv_grid_A", "mv_ae1", "mv_ae2"),
                 "outputs": (),
                 "relations": ("rel.case.ch02.matrix.transformed-grid.basis",),
-            },
-            {
-                "purpose": "第三步：任意向量的像",
-                "invariant": "任意向量的像由两列的系数组合确定",
-                "given": [[[2, 1], [1, 2]], [3, 2]],
-                "result": [8, 7],
-                "lines": (
-                    r"图中画出输入向量 $\boldsymbol x=(3,2)$（终点 $X$）与它的像 $\boldsymbol A\boldsymbol x=(8,7)$（终点 $Y$）。",
-                    r"$$\boldsymbol A\boldsymbol x=3\times(2,1)+2\times(1,2)=(6,3)+(2,4)=(8,7)$$",
-                ),
-                # 变形网格已经在第二步给出；第三步只保留输入与像，窗格内容才不会
-                # 因为网格范围（±3）与终点的像（8,7）拉开而与其他窗格不一致。
-                "inputs": ("mv_x",),
-                "outputs": ("mv_Ax",),
-                "relations": (),
             },
         ),
     },
@@ -1690,6 +2051,89 @@ _MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
             },
         ),
     },
+    "ch02.matrix.basis": {
+        "title": "矩阵的列与新基坐标",
+        "statement": (
+            "同一个变换用不同的基描述，矩阵就不同：矩阵的列始终是基向量被送到的"
+            "新位置在新基下的坐标。"
+        ),
+        "summary": (
+            r"定义 2.9：$R^{n}$ 中 $n$ 个线性无关的向量组成的一组有序向量称为 $R^{n}$ "
+            r"的一组基；变换本身客观，描述它的矩阵随所选的基改变。"
+        ),
+        "definition": "\n\n".join(
+            (
+                r"一句话动机：同一个变换，用不同的基描述，矩阵就不同——这是「坐标系自由」的第一步。",
+                r"定义 2.9（基） $R^{n}$ 中 $n$ 个线性无关的向量组成的一组有序向量，称为 $R^{n}$ 的一组基。",
+                r"我们平时用的 $(e_{1}, e_{2})$ 只是众多基中的一组——它是标准基，但不是唯一的基。",
+                r'核心认知：变换本身是客观的（比如"逆时针旋转 $90^\circ$"），但描述它的矩阵取决于你用什么基来记录坐标。',
+                r"用标准基时，旋转 $90^\circ$ 的矩阵是 $\begin{pmatrix}0 & -1 \\ 1 & 0\end{pmatrix}$；但换一组基，同样的旋转，矩阵就变了。",
+            )
+        ),
+        # 讲义 2.7 只给了标准基下的旋转矩阵，换基后的矩阵由案例给出；claim 的公式
+        # 把两个矩阵并排写下，符号都落在 A 与 B 上。
+        "claim_formula": (
+            r"\boldsymbol A=\begin{pmatrix}0&-1\\1&0\end{pmatrix}\ (\text{标准基}),\qquad "
+            r"\boldsymbol B=\begin{pmatrix}-3&-5\\2&3\end{pmatrix}\ (\text{新基})"
+        ),
+        "formula_symbols": ["A", "B"],
+        "symbol_roles": {"A": "matrix_a", "B": "matrix_a"},
+        "sections": (("definition", "定义"), ("worked_examples", "数学案例")),
+        "entities": (
+            # 第一窗格是标准基：A 就是讲义给出的「旋转 90° 的矩阵」，两列 (0,1)、
+            # (-1,0) 是两根标准基向量的像，正是这个窗格要读的东西。
+            ("mv_basis_grid_a", "grid", [[0, -1], [1, 0]], "transformed_a", "A"),
+            ("mv_basis_ae1", "vector", [0, 1], "vector_a", "Ae1"),
+            ("mv_basis_ae2", "vector", [-1, 0], "vector_b", "Ae2"),
+            # 第二窗格换一组基 v1=(1,1)、v2=(1,2)：同一个旋转在新基下的矩阵是 B，
+            # 它的两列避开坐标轴，读数不会蹭到网格线。
+            ("mv_basis_grid_b", "grid", [[-3, -5], [2, 3]], "transformed_a", "B"),
+            ("mv_basis_v1", "vector", [1, 1], "basis_e1", "v1"),
+            ("mv_basis_v2", "vector", [1, 2], "basis_e2", "v2"),
+            ("mv_basis_bv1", "vector", [-3, 2], "vector_a", "Bv1"),
+            ("mv_basis_bv2", "vector", [-5, 3], "vector_b", "Bv2"),
+        ),
+        "relations": (
+            ("rel.case.ch02.matrix.basis.change", "compare", "mv_basis_grid_a", "mv_basis_grid_b"),
+        ),
+        "steps": (
+            {
+                "purpose": "第一步：标准基下的旋转",
+                "invariant": "标准基下逆时针旋转 90° 的矩阵是 (0,-1;1,0)",
+                "given": [[[0, -1], [1, 0]], [1, 0]],
+                "result": [0, 1],
+                "lines": (
+                    r"图中用矩阵变换画出标准基被逆时针旋转 $90^\circ$ 之后的网格"
+                    r"（图内标注 $\boldsymbol A=[[0,-1],[1,0]]$）。",
+                    r"$$\boldsymbol A=\begin{pmatrix}0&-1\\1&0\end{pmatrix},\qquad \boldsymbol A\boldsymbol e_{1}=(0,1),\qquad \boldsymbol A\boldsymbol e_{2}=(-1,0)$$",
+                    r"$\boldsymbol A$ 的两列 $(0,1)$、$(-1,0)$ 就是两根标准基向量被送到的新位置"
+                    r"（终点 $F_1$、$F_2$）。",
+                ),
+                "inputs": ("mv_basis_grid_a", "mv_basis_ae1", "mv_basis_ae2"),
+                "outputs": (),
+                "relations": (),
+            },
+            {
+                "purpose": "第二步：换一组基，矩阵改变",
+                "invariant": "同一个旋转在基 v1=(1,1)、v2=(1,2) 下的矩阵是 (-3,-5;2,3)",
+                "given": [[[-3, -5], [2, 3]], [1, 0]],
+                "result": [-3, 2],
+                "lines": (
+                    r"换一组基 $\boldsymbol v_{1}=(1,1)$（终点 $V_1$）、$\boldsymbol v_{2}=(1,2)$（终点 $V_2$）："
+                    r"两根向量线性无关，仍是平面的一组基；同一个逆时针旋转 $90^\circ$ 在这组基下的矩阵已经变成 $\boldsymbol B$。",
+                    r"$$\boldsymbol B=\begin{pmatrix}-3&-5\\2&3\end{pmatrix}$$",
+                    r"第二窗格调用软件的矩阵变换功能，把新基 $\boldsymbol v_1,\boldsymbol v_2$ 设为坐标系的两根基向量（图内标注 $\boldsymbol B=[[-3,-5],[2,3]]$），"
+                    r"$\boldsymbol B$ 的两列 $(-3,2)$、$(-5,3)$ 就是两根新基向量被同一个旋转送到的新位置"
+                    r"在新基下的坐标（终点 $G_1$、$G_2$）——同一个旋转换一组基，矩阵就变了。",
+                ),
+                "inputs": (
+                    "mv_basis_grid_b", "mv_basis_v1", "mv_basis_v2", "mv_basis_bv1", "mv_basis_bv2",
+                ),
+                "outputs": (),
+                "relations": ("rel.case.ch02.matrix.basis.change",),
+            },
+        ),
+    },
 }
 
 
@@ -1790,6 +2234,170 @@ def _refine_matrix_vector_subsection(
             }
             for index, (stage_id, step) in enumerate(zip(stage_ids, steps), start=1)
         ],
+    }
+
+
+def _refine_batch_inner_products(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    """Publish 讲义 2.2 批量内积 as the lecture definition plus its worked case.
+
+    讲义 2.2 只有「定义 2.4（行向量与矩阵乘法 — 批量内积）」+ 一句话总结与一组
+    分层例题；例题只保留**一个**：u=(2,3)，V 是一个 2×2 矩阵，两列取 (2,1) 与
+    (-1,2)（刻意不用标准基 e1、e2）。案例只写成一块、V 只写一次，u 一次乘 V
+    就同时得到两个内积分量 u·V=[7,4]。画法沿用 1.3.1 已确认工件（一条 u、虚线
+    投影与垂足、夹角弧，以及窗格上的模长标注），把 V 两列的整套图元叠进
+    **同一个窗格**（``default_pane_count`` 为 1）。
+    """
+
+    topic_id = "ch02.batch.inner-products"
+    claim_refs = [f"claim.{topic_id}"]
+    u_value = [2.0, 3.0]
+    # V 的两列刻意不用标准基 e1、e2：v1=(2,1)、v2=(-1,2)。
+    columns = ([2.0, 1.0], [-1.0, 2.0])
+    components = [
+        u_value[0] * column[0] + u_value[1] * column[1] for column in columns
+    ]
+    examples = [
+        {
+            "id": f"example.{topic_id}.batch",
+            "title": "u 一次乘 V：两个分量一起算出",
+            "kind": "inner_product",
+            "given": [list(u_value), list(columns[0])],
+            "result": components[0],
+            "calculation": [
+                r"$$V=\begin{bmatrix}2 & -1\\ 1 & 2\end{bmatrix},\qquad \boldsymbol u=(2,3)$$",
+                r"$V$ 的两列是 $\boldsymbol v_1=(2,1)$、$\boldsymbol v_2=(-1,2)$；"
+                r"$\boldsymbol u\cdot V$ 就是 $\boldsymbol u$ 分别与这两列作内积：",
+                r"$$(\boldsymbol u\cdot V)_1=\boldsymbol u\cdot\boldsymbol v_1=2\times2+3\times1=7,\qquad"
+                r"(\boldsymbol u\cdot V)_2=\boldsymbol u\cdot\boldsymbol v_2=2\times(-1)+3\times2=4$$",
+                r"把两个内积依次排成一行：$\boldsymbol u\cdot V=[7,\,4]$，"
+                r"一次乘法同时算出两个方向上的内积。",
+            ],
+            "checks": [{"name": "dot", "expected": components[0], "tolerance": 1e-9}],
+        }
+    ]
+    for example in examples:
+        example["claim_refs"] = claim_refs
+    explanation.update(
+        {
+            "title": "批量内积",
+            "summary": "一次内积算一个角度——那要算一百个角度呢？答案是批量内积。",
+            "definition": (
+                r"定义 2.4（行向量与矩阵乘法 — 批量内积）设 $\boldsymbol u$ 是一个 $1\times m$ 行向量，"
+                r"$V$ 是一个 $m\times n$ 矩阵。定义乘积 $\boldsymbol u\cdot V$ 为一个 $1\times n$ 行向量，"
+                r"其第 $j$ 个分量是 $\boldsymbol u$ 与 $V$ 的第 $j$ 列的内积："
+                "\n\n"
+                r"$$(\boldsymbol u\cdot V)_{j}=u_{1}\cdot v_{1j}+u_{2}\cdot v_{2j}+\cdots+u_{m}\cdot v_{mj}$$"
+                "\n\n"
+                r"一句话总结：一行乘一矩阵，结果每一列给出一个内积——一次性完成。"
+            ),
+            # 定义 2.4 自带公式并被前端并入定义块，按讲义位置不再单列「公式」分节；
+            # claim 仍保留一条机器可读的简写公式。
+            "formula": "",
+            "derivation": [],
+            "geometric_meaning": "",
+            "worked_examples": examples,
+        }
+    )
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+    explanation["sections"] = [
+        {"id": "definition", "title": "定义", "text": "", "claim_refs": claim_refs},
+        {"id": "worked_examples", "title": "数学案例", "text": "", "claim_refs": claim_refs},
+    ]
+    explanation["symbol_roles"] = {"u": "vector_a", "v": "vector_b", "V": "matrix_a"}
+
+    entities: list[dict[str, Any]] = []
+    relations: list[dict[str, Any]] = []
+    stage_input_refs: list[str] = []
+    stage_output_refs: list[str] = []
+    stage_relation_refs: list[str] = []
+    # 每一步都用 1.3.1 的画法：把 V 的一列投影到 u 上（虚线），标出垂足与夹角，
+    # 再用「|u| × 投影长度」读出该列给出的内积。批量内积的画面是「一次看两列」，
+    # 所以这里只收集两列的图元，稍后统一装进唯一的一个窗格叠加显示（不是并排）。
+    # 两列同用 vector_b（橙）会叠在一起分不清，沿用 ch01.ops.scalar 的做法借用
+    # 调色板的 transformed_a（紫）给 v2，v1 保持 vector_b，两列一眼分得开。
+    column_roles = ("vector_b", "transformed_a")
+    for index, column in enumerate(columns, start=1):
+        suffix = str(index)
+        u_id, v_id = f"case{suffix}_u", f"case{suffix}_v"
+        dot = u_value[0] * column[0] + u_value[1] * column[1]
+        denominator = u_value[0] * u_value[0] + u_value[1] * u_value[1]
+        scale = dot / denominator
+        projected = [scale * u_value[0], scale * u_value[1]]
+        entities.extend([
+            {
+                "id": u_id, "kind": "vector", "dimension": 2, "value": list(u_value),
+                "role": "vector_a", "label": "u", "claim_refs": claim_refs,
+            },
+            {
+                "id": v_id, "kind": "vector", "dimension": 2, "value": list(column),
+                "role": column_roles[index - 1], "label": f"v{index}", "claim_refs": claim_refs,
+            },
+        ])
+        angle_id = f"rel.angle.{topic_id}.{suffix}"
+        relations.append({
+            "id": angle_id, "kind": "orientation", "source_ref": u_id, "target_ref": v_id,
+            "parameters": {}, "claim_refs": claim_refs,
+        })
+        p_id, h_id = f"case{suffix}_p", f"case{suffix}_H"
+        entities.extend([
+            {
+                "id": p_id, "kind": "vector", "dimension": 2, "value": projected,
+                "role": "projection", "label": f"p{index}", "claim_refs": claim_refs,
+            },
+            {
+                "id": h_id, "kind": "point", "dimension": 2, "value": projected,
+                "role": "foot", "label": f"H{index}", "claim_refs": claim_refs,
+            },
+        ])
+        project_id = f"rel.case.{topic_id}.{suffix}"
+        relations.append({
+            "id": project_id, "kind": "projects_to", "source_ref": v_id, "target_ref": u_id,
+            "parameters": {}, "style": "dashed", "claim_refs": claim_refs,
+        })
+        stage_relation_refs.extend([project_id, angle_id])
+        stage_input_refs.extend([u_id, v_id, p_id])
+        stage_output_refs.append(h_id)
+
+    # 两列共用唯一一个 stage：在同一窗格里叠加渲染，而不是拆成并排的两个窗格。
+    stage_id = f"stage.case.{topic_id}.1"
+    stages = [
+        {
+            "id": stage_id, "title": "一步：u 与 V 的两列", "caption": (
+                r"$\boldsymbol u=(2,3)$ 与矩阵 $V$ 的两列 $\boldsymbol v_1=(2,1)$、"
+                r"$\boldsymbol v_2=(-1,2)$ 从同一原点出发，夹角分别为 $\theta_1,\theta_2$；"
+                r"把两列分别投影到 $\boldsymbol u$ 上（虚线），垂足为 $H_1,H_2$，"
+                r"用 $\lvert\boldsymbol u\rvert=\sqrt{13}$ 乘各自的投影长度即得 "
+                r"$\boldsymbol u\cdot V=[7,4]$。"
+            ),
+            "layout": "overlay",
+            "input_entity_refs": stage_input_refs,
+            "output_entity_refs": stage_output_refs,
+            "relation_refs": stage_relation_refs,
+            "expected_invariants": ["u·V=[7,4]：一次乘法同时得到两个内积分量"],
+        }
+    ]
+    cases = [
+        {
+            "id": f"case.{topic_id}.1", "topic_id": topic_id,
+            "example_ref": str(examples[0]["id"]), "claim_refs": claim_refs,
+            "stage_refs": [stage_id], "purpose": "一个窗格：u 与 V 的两列 v1、v2",
+        }
+    ]
+
+    visual.update({
+        "scene_kind": "2d",
+        "entities": entities,
+        "relations": relations,
+        "stages": stages,
+    })
+    explanation["case_layout"] = {
+        # 批量内积只用一个窗格：V 的两列在同一画面里叠加显示，首屏即可读出两个内积分量。
+        "default_pane_count": 1,
+        "cases": cases,
     }
 
 

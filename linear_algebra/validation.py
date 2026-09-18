@@ -262,7 +262,7 @@ def validate_all_topics(
     snapshot_store = CompiledSnapshotStore(snapshot_root) if snapshot_root is not None else None
     issues: list[TopicValidationIssue] = []
     records: list[TopicValidationRecord] = []
-    expected_counts = {1: 17, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6}
+    expected_counts = {1: 17, 2: 15, 3: 12, 4: 14, 5: 8, 6: 3, 7: 6, 8: 6}
     counts = Counter(topic.chapter_number for topic in registry.topics)
     if counts != Counter(expected_counts):
         # Keep the issue topic-neutral so consumers can still render all rows.
@@ -572,9 +572,9 @@ def validate_registry(registry: CurriculumRegistry) -> tuple[str, ...]:
     topic_ids = [topic.id for topic in registry.topics]
     if len(topic_ids) != len(set(topic_ids)):
         errors.append("catalog: duplicate topic IDs")
-    expected_counts = Counter({1: 17, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6})
+    expected_counts = Counter({1: 17, 2: 15, 3: 12, 4: 14, 5: 8, 6: 3, 7: 6, 8: 6})
     if Counter(topic.chapter_number for topic in registry.topics) != expected_counts:
-        errors.append("catalog: expected chapter topic counts 17/15/15/16/8/3/6/6")
+        errors.append("catalog: expected chapter topic counts 17/15/12/14/8/3/6/6")
     node_ids = [node.id for node in registry.nodes]
     if len(node_ids) != len(set(node_ids)):
         errors.append("catalog: duplicate node IDs")

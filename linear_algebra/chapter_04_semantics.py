@@ -119,11 +119,27 @@ _MAPPING: dict[str, Chapter4Semantic] = {
  ("intersection_closed","union_not_closed"), ("plane3d.upsert","geometry.intersection","geometry.parallelogram3d"), r"U\cap V=\operatorname{span}(e_1);\ e_2+e_3\notin U\cup V", "cross_product", (V(0,0,1),V(0,1,0)), V(-1,0,0), "union_sum"),
 
 "ch04.subspace.col-null": Chapter4Semantic(
- "2d", "subspace_region", ("transformed_grid","subspace_region","vector_2d"),
- (E("map_A","matrix",2,A10,"A"), E("domain","basis",2,I2,"R² domain"), E("codomain","basis",2,I2,"R² codomain"), E("kernel","subspace",2,M(V(0,1)),"Null(A)"), E("column_space","subspace",2,M(V(1,0)),"Col(A)"), E("kernel_vector","vector",2,V(0,1),"k"), E("zero","point",2,V(0,0),"0"), E("image_vector","vector",2,V(2,0),"A(2,3)")),
- (R("kernel_map","maps_to","kernel_vector","zero",matrix=A10,expected_result=V(0,0)), R("kernel_binding","kernel_of","kernel","map_A",expected_nullity=1.0), R("column_binding","image_of","map_A","column_space",expected_rank=1.0), R("domain_image","maps_to","domain","column_space",matrix=A10,input_vector=V(2,3),expected_result=V(2,0))),
- (S("domain","核方向",("domain","kernel","kernel_vector"),("zero",),("kernel_map","kernel_binding"),("kernel_to_zero",),"side_by_side"), S("codomain","列空间",("map_A","codomain"),("column_space","image_vector"),("column_binding","domain_image"),("image_x_axis","diag_1_0"),"side_by_side")),
- ("diag_1_0","kernel_to_zero","image_x_axis"), ("geometry.transformed_grid","geometry.subspace_region","linear.upsert"), r"A=\operatorname{diag}(1,0),\ Null(A)=\operatorname{span}(e_2),\ Col(A)=\operatorname{span}(e_1)", "matrix_transform", (A10,V(2,3)), V(2,0), "kernel_vector"),
+ # 4.1.3 的三维类比：A=diag(1,1,0) 把 R³ 沿竖直方向压到 xy 平面，正是讲义二维图
+ # A=(1 0;0 0)（压到 x 轴）升一维的结果。矩阵只作为关系参数，不再单独画成一个与
+ # 列空间重合的平面；两组案例都用多支采样向量把「子空间」本身铺出来：
+ #   列空间：三支高度和水平方向都不同的输入，输出全部落在平面上、并把平面铺开三个方向；
+ #   零空间：一支垂直于平面的代表输入被压到原点。
+ #   零空间窗格只放这条主线：那张平面、一支竖直向量、原点，加上平面上下各一小段虚线；
+ #   一支轴外向量都不放（轴外采样全部留在列空间窗格），否则「垂直于平面」会被读糊。
+ "3d", "subspace_region", ("vector_3d","subspace_region","linear3d","plane3d"),
+ (E("column_space","subspace",3,XY,"Col(A)"), E("null_space","subspace",3,M(V(0,0,1)),"Null(A)"),
+  E("input_vector_a","vector",3,V(2,0,3),"x1"), E("output_vector_a","vector",3,V(2,0,0),"A x1"),
+  E("input_vector_b","vector",3,V(-1,2,2),"x2"), E("output_vector_b","vector",3,V(-1,2,0),"A x2"),
+  E("input_vector_c","vector",3,V(-1,-2,1),"x3"), E("output_vector_c","vector",3,V(-1,-2,0),"A x3"),
+  E("kernel_vector","vector",3,V(0,0,3),"k"),
+  E("zero","point",3,V(0,0,0),"0")),
+ (R("projection_a","maps_to","input_vector_a","output_vector_a",matrix=M(V(1,0,0),V(0,1,0),V(0,0,0)),input_vector=V(2,0,3),expected_result=V(2,0,0)),
+  R("projection_b","maps_to","input_vector_b","output_vector_b",matrix=M(V(1,0,0),V(0,1,0),V(0,0,0)),input_vector=V(-1,2,2),expected_result=V(-1,2,0)),
+  R("projection_c","maps_to","input_vector_c","output_vector_c",matrix=M(V(1,0,0),V(0,1,0),V(0,0,0)),input_vector=V(-1,-2,1),expected_result=V(-1,-2,0)),
+  R("collapse","maps_to","kernel_vector","zero",matrix=M(V(1,0,0),V(0,1,0),V(0,0,0)),input_vector=V(0,0,3),expected_result=V(0,0,0))),
+ (S("column_space","列空间：所有可能的输出",("input_vector_a","input_vector_b","input_vector_c","column_space"),("output_vector_a","output_vector_b","output_vector_c"),("projection_a","projection_b","projection_c"),("diag_1_1_0","image_xy_plane"),"side_by_side"),
+  S("null_space","零空间：与平面垂直的方向被压成一点",("column_space","null_space","kernel_vector"),("zero",),("collapse",),("kernel_to_zero",),"side_by_side")),
+ ("diag_1_1_0","kernel_to_zero","image_xy_plane"), ("plane3d.upsert","linear3d.upsert","point3d.upsert"), r"\boldsymbol A=\operatorname{diag}(1,1,0),\ Null(\boldsymbol A)=\operatorname{span}(\boldsymbol e_3),\ Col(\boldsymbol A)=\operatorname{span}(\boldsymbol e_1,\boldsymbol e_2)", "matrix_transform", (M(V(1,0,0),V(0,1,0),V(0,0,0)),V(2,0,3)), V(2,0,0), "kernel_vector"),
 "ch04.span.dimension": Chapter4Semantic(
  "3d", "subspace_region", ("vector_3d","subspace_region"),
  (E("span_1d","basis",3,M(V(1,0,0))), E("span_2d","basis",3,XY), E("span_3d","basis",3,I3)),
@@ -151,26 +167,18 @@ _MAPPING: dict[str, Chapter4Semantic] = {
  (R("rank_two_result","rank_of","rank_two","plane_image",expected_rank=2.0), R("rank_one_result","rank_of","rank_one","line_image",expected_rank=1.0), R("rank_zero_result","rank_of","rank_zero","point_image",expected_rank=0.0)),
  (S("rank_two","rank 2 平面",("rank_two",),("plane_image",),("rank_two_result",),("rank_two_plane",)), S("rank_one","rank 1 直线",("rank_one",),("line_image",),("rank_one_result",),("rank_one_line",)), S("rank_zero","rank 0 原点",("rank_zero",),("point_image",),("rank_zero_result",),("rank_zero_point","rank_collapse_sequence"))),
  ("rank_two_plane","rank_one_line","rank_zero_point","rank_collapse_sequence"), ("geometry.transformed_grid","geometry.subspace_region","point.upsert"), r"rank(I)=2,\ rank(diag(1,0))=1,\ rank(0)=0", "determinant", I2, 1.0, "rank_one"),
-"ch04.basis.span": Chapter4Semantic(
- "2d", "subspace_region", ("vector_2d","subspace_region"),
- (E("independent_basis","basis",2,I2), E("spanning_set","subspace",2,I2,"R²"), E("too_few","basis",2,M(V(1,0))), E("too_many","basis",2,M(V(1,0),V(0,1),V(1,1)))),
- (R("basis_binding","basis_of","independent_basis","spanning_set",expected_rank=2.0,vector_count=2.0), R("too_few_span","dimension_of","too_few","spanning_set",expected_dimension=1.0), R("too_many_dependence","linear_dependence","too_many","spanning_set",expected_rank=2.0,vector_count=3.0)),
- (S("complete","独立且生成",("independent_basis",),("spanning_set",),("basis_binding",),("independent_and_spanning",)), S("comparisons","过少与冗余",("too_few","too_many"),("spanning_set",),("too_few_span","too_many_dependence"),("too_few_not_spanning","too_many_redundant"),"side_by_side")),
- ("independent_and_spanning","too_few_not_spanning","too_many_redundant"), ("geometry.subspace_region",), r"rank(e_1,e_2)=2;\ rank(e_1)=1;\ rank(e_1,e_2,e_1+e_2)=2<3", "determinant", I2, 1.0, "too_many"),
-
-"ch04.dimension.ladder": Chapter4Semantic(
- "3d", "subspace_region", ("vector_3d","subspace_region"),
- (E("point","point",3,V(0,0,0)), E("line","subspace",3,M(V(1,0,0))), E("plane","subspace",3,XY), E("volume","subspace",3,I3)),
- (R("point_in_line","contains","line","point",container_dimension=1.0,member_dimension=0.0), R("line_in_plane","contains","plane","line",container_dimension=2.0,member_dimension=1.0), R("plane_in_volume","contains","volume","plane",container_dimension=3.0,member_dimension=2.0)),
- (S("ladder_low","点线面",("point","line"),("plane",),("point_in_line","line_in_plane"),("nested_0_1_2",),"overlay"), S("ladder_full","面与体",("plane",),("volume",),("plane_in_volume",),("nested_dimensions",),"overlay")),
- ("nested_0_1_2","nested_dimensions"), ("point3d.upsert","linear3d.upsert","plane3d.upsert"), r"\{0\}\subset span(e_1)\subset span(e_1,e_2)\subset R^3", "oriented_volume", (V(1,0,0),V(0,1,0),V(0,0,1)), 1.0, "volume"),
-
-"ch04.coordinates.readout": Chapter4Semantic(
+"ch04.basis.definition": Chapter4Semantic(
+ # 4.3 合并后的唯一条目：定义（4.3.1 定义 4.10 与维数）、维数（4.3.2）、坐标（4.3.3）
+ # 写在同一小节里。两个窗格画同一个向量终点：标准基一格、斜基一格。点完全不动，
+ # 只把尺子换成 B={b1=(1,1),b2=(1,-1)}，读数就从 (5,3) 变成 (4,1)——坐标不是向量
+ # 本身，是向量相对某一组基的读数。数字取讲义 4.3.3 例 4（B 的列就是那两根基向量）。
+ # 坐标读数只作为关系的参数（coordinates）存在，不另立实体：否则窗格里会多出两支与
+ # 主向量完全重合的箭头，反而把「同一个向量」读糊。
  "2d", "basis_change", ("transformed_grid","vector_2d"),
- (E("standard_basis","basis",2,I2), E("oblique_basis","basis",2,M(V(1,1),V(0,1))), E("same_vector","vector",2,V(2,1),"v"), E("standard_coordinates","vector",2,V(2,1),"[v]E"), E("oblique_coordinates","vector",2,V(1,1),"[v]B")),
- (R("standard_readout","coordinate_equivalence","standard_basis","same_vector",basis_matrix=I2,coordinates=V(2,1),expected_vector=V(2,1)), R("oblique_readout","coordinate_equivalence","oblique_basis","same_vector",basis_matrix=M(V(1,1),V(0,1)),coordinates=V(1,1),expected_vector=V(2,1)), R("same_geometric_vector","same_measure","standard_coordinates","oblique_coordinates",expected_vector=V(2,1))),
- (S("standard","标准基读数",("standard_basis","same_vector"),("standard_coordinates",),("standard_readout",),("standard_reconstruction",),"side_by_side"), S("oblique","斜基读数",("oblique_basis","same_vector"),("oblique_coordinates",),("oblique_readout","same_geometric_vector"),("coordinate_reconstruction",),"side_by_side")),
- ("standard_reconstruction","coordinate_reconstruction"), ("geometry.coordinate_readout","geometry.subspace_region","linear.upsert"), r"v=2e_1+e_2=b_1+b_2=(2,1)", "matrix_transform", (M(V(1,1),V(0,1)),V(1,1)), V(2,1), "oblique_coordinates"),
+ (E("standard_basis","basis",2,I2,"e"), E("oblique_basis","basis",2,M(V(1,1),V(1,-1)),"B"), E("same_vector","vector",2,V(5,3),"x")),
+ (R("standard_readout","coordinate_equivalence","standard_basis","same_vector",basis_matrix=I2,coordinates=V(5,3),expected_vector=V(5,3)), R("oblique_readout","coordinate_equivalence","oblique_basis","same_vector",basis_matrix=M(V(1,1),V(1,-1)),coordinates=V(4,1),expected_vector=V(5,3))),
+ (S("standard","标准基下的读数",("standard_basis","same_vector"),("same_vector",),("standard_readout",),("standard_reconstruction",),"side_by_side"), S("oblique","新基下的读数",("oblique_basis","same_vector"),("same_vector",),("oblique_readout",),("basis_independent_and_spanning","coordinate_reconstruction"),"side_by_side")),
+ ("basis_independent_and_spanning","standard_reconstruction","coordinate_reconstruction"), ("geometry.coordinate_readout","geometry.subspace_region","linear.upsert"), r"\boldsymbol x=5\boldsymbol e_1+3\boldsymbol e_2=\begin{pmatrix}1&1\\1&-1\end{pmatrix}\begin{pmatrix}4\\1\end{pmatrix}=(5,3)", "matrix_transform", (M(V(1,1),V(1,-1)),V(4,1)), V(5,3), "oblique_basis"),
 
 "ch04.linear-map.definition": Chapter4Semantic(
  "2d", "basis_change", ("transformed_grid","staged_transform","vector_2d"),

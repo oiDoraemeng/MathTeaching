@@ -15,7 +15,7 @@ def _content(topic_id: str, title: str, summary: str, formula: str, meaning: str
 
 
 CONTENT = {
-"ch02.batch.inner-products": _content("ch02.batch.inner-products", "批量内积与多角度比较", "一行乘矩阵同时得到多个内积。", r"uV=(u.v_1,...,u.v_n)", "矩阵的每一列提供一个待比较方向，结果是一组投影或角度数据。", "批量内积把重复的几何测量组织成一次矩阵运算。", "画出同一个 u 与多列向量。", "用结果标出每个方向上的内积。"),
+"ch02.batch.inner-products": _content("ch02.batch.inner-products", "行向量与矩阵乘法", "一行乘矩阵同时得到多个内积。", r"uV=(u.v_1,...,u.v_n)", "矩阵的每一列提供一个待比较方向，结果是一组投影或角度数据。", "批量内积把重复的几何测量组织成一次矩阵运算。", "画出同一个 u 与多列向量。", "用结果标出每个方向上的内积。"),
 "ch02.batch.projection": _content("ch02.batch.projection", "投影矩阵把一批向量压到方向上", "同一个投影矩阵可以作用于许多输入向量。", r"P=uu^T, Pv=Proj_u(v)", "所有输出落在同一条目标方向上，垂直分量被消除。", "投影矩阵是批量执行正交投影的线性变换。", "显示多个输入向量。", "把它们同时压到目标轴。"),
 "ch02.matrix.additive-distributivity": _content("ch02.matrix.additive-distributivity", "矩阵加法与变换分配律", "先加矩阵再变换等于分别变换后相加。", r"(A+B)x=Ax+Bx", "两条变换路径的终点重合，说明矩阵加法继承了向量加法。", "分配律可以用终点一致的几何图验证。", "画出 A、B 对同一向量的作用。", "比较两条路径的结果。"),
 "ch02.matrix.row-column": _content("ch02.matrix.row-column", "矩阵乘向量的行视角与列视角", "行视角计算分量，列视角解释组合。", r"Ax=x_1a_1+x_2a_2", "同一个结果既可以看作行内积，也可以看作列向量的线性组合。", "两种算法描述同一个几何终点。", "显示矩阵两列和输入坐标。", "用首尾相接得到 Ax。"),

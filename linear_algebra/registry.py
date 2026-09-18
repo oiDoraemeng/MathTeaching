@@ -30,6 +30,10 @@ if TYPE_CHECKING:
 CAPABILITIES: Mapping[str, str] = MappingProxyType({
     "vector_2d": "linear.upsert",
     "vector_3d": "linear3d.upsert",
+    # 第 4 章的三维小节直接以图元命名自己声明的能力：子空间的平面与直线分别由
+    # plane3d / linear3d 画出，能力名与操作名在这里显式对应。
+    "linear3d": "linear3d.upsert",
+    "plane3d": "plane3d.upsert",
     "annotation_formula": "annotation.formula",
     "polygon_2d": "geometry.polygon",
     "angle_2d": "geometry.angle_arc",
@@ -40,6 +44,7 @@ CAPABILITIES: Mapping[str, str] = MappingProxyType({
     "oriented_volume_3d": "geometry.oriented_volume",
     "batch_inner_product": "linear.upsert",
     "transformed_grid": "geometry.transformed_grid",
+    "coordinate_transform": "linear_algebra.coordinate_transform",
     "staged_transform": "geometry.staged_transform",
     "subspace_region": "geometry.subspace_region",
     "oriented_area_2d": "geometry.oriented_area",

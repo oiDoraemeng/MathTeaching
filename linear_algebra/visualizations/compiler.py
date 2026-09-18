@@ -48,6 +48,8 @@ _MATRIX_VECTOR_CASE_TOPICS = frozenset(
         "ch02.matrix.row-column",
         "ch02.matrix.transformed-grid",
         "ch02.matrix.stretch-rotate-scale",
+        # 2.7 矩阵与基用两组基各占一个窗格，展示同一个旋转在换基后的矩阵。
+        "ch02.matrix.basis",
     }
 )
 _FLOW_VIEW_TOPICS = frozenset(
@@ -57,6 +59,12 @@ _FLOW_VIEW_TOPICS = frozenset(
         "ch01.ops.scalar",
         "ch01.ops.linear-combination",
         "ch01.inner.definitions",
+        # 2.2 批量内积沿用 1.3.1 的窗格词汇（u、V 的一列、投影与夹角），
+        # 多个案例窗格必须共用同一视角。
+        "ch02.batch.inner-products",
+        # 3.1 的案例是两步流程：单位正方形一格、两个像与 ad - bc 的外接矩形
+        # 构造一格，两格必须共用一个固定视角。
+        "ch03.det.oriented-area",
         *_MATRIX_VECTOR_CASE_TOPICS,
     }
 )
@@ -65,6 +73,15 @@ _FLOW_VIEW_TOPICS = frozenset(
 # 一样），而不是在原来坐标系里悬浮一小块网格。案例窗格取景时会把网格演员排除
 # 在外，所以取样范围不会把相机拉远。
 _MATRIX_VECTOR_GRID_BOUNDS: tuple[float, float, float, float] = (-12.0, 12.0, -12.0, 12.0)
+# 3.1 案例把外接矩形的面积标注写在矩形上边之外，取景与标注位置共用这个边距。
+_DET_BOX_LABEL_MARGIN = 0.45
+# 2.7 的第二个案例把 B 的列写成新基坐标。坐标系命令把 source
+# coordinates 映射到显示世界；案例中的 Bv1/Bv2 因而要先换回实际位置，
+# 否则它们会被误画在 (-3,2)、(-5,3) 的标准坐标位置。
+_CH02_BASIS_MATRIX: tuple[tuple[float, float], tuple[float, float]] = (
+    (1.0, 1.0),
+    (1.0, 2.0),
+)
 
 
 def _case_grid_bounds(topic_id: str, fallback: tuple[float, ...]) -> tuple[float, ...]:
@@ -86,14 +103,23 @@ _FLOW_POINT_LABELS = {
         "mv_c1": "C1", "mv_c2": "C2", "mv_s1": "S1", "mv_s2": "S2", "mv_sum": "Y",
     },
     "ch02.matrix.transformed-grid": {
-        "mv_e1": "E1", "mv_e2": "E2", "mv_ae1": "F1", "mv_ae2": "F2",
-        "mv_x": "X", "mv_Ax": "Y",
+        "mv_e1": "E1", "mv_e2": "E2",
+        "mv_stretch_e1": "G1", "mv_stretch_e2": "G2",
+        "mv_rotate_e1": "H1", "mv_rotate_e2": "H2",
+        "mv_ae1": "F1", "mv_ae2": "F2",
     },
     "ch02.matrix.stretch-rotate-scale": {
         "mv_e1": "E1", "mv_e2": "E2",
         "mv_stretch_e1": "F1", "mv_stretch_e2": "F2",
         "mv_rotate_e1": "G1", "mv_rotate_e2": "G2",
         "mv_combo_e1": "H1", "mv_combo_e2": "H2",
+    },
+    # 2.7 的两个窗格各用一组字母：标准基下旋转的两列记 F1、F2，新基与其像记
+    # V1、V2、G1、G2，同一个窗格里的点不会重名。
+    "ch02.matrix.basis": {
+        "mv_basis_ae1": "F1", "mv_basis_ae2": "F2",
+        "mv_basis_v1": "V1", "mv_basis_v2": "V2",
+        "mv_basis_bv1": "G1", "mv_basis_bv2": "G2",
     },
 }
 
@@ -238,8 +264,20 @@ class VisualSemanticsCompiler:
             for key, values in proof_aliases.items():
                 aliases.setdefault(key, []).extend(values)
         elif not chapter4_owned and not chapter5_owned and not chapter6_owned and not chapter7_owned and not chapter8_owned:
+            # 投影箭头跟随来源向量配色的修正只服务内积小节（1.3.1 / 2.2）；其余小节保持
+            # 原有配色，避免非预期地改动既有 plan digest。
+            projection_roles = (
+                _projection_source_roles(semantics)
+                if context.topic_id in _INNER_PRODUCT_TOPICS
+                else {}
+            )
             for entity in semantics.entities:
-                entity_operations, entity_aliases = self._compile_entity(entity, semantics.scene_kind, context)
+                entity_operations, entity_aliases = self._compile_entity(
+                    entity,
+                    semantics.scene_kind,
+                    context,
+                    color_role=projection_roles.get(entity.id),
+                )
                 operations.extend(entity_operations)
                 aliases.setdefault(entity.id, []).extend(entity_aliases)
 
@@ -323,12 +361,16 @@ class VisualSemanticsCompiler:
                 ]
             except (TypeError, ValueError):
                 endpoints = []
-            if resolved_topic == _INNER_PRODUCT_TOPIC:
+            if resolved_topic in _INNER_PRODUCT_TOPICS:
                 # a·b 用 OA 的延长线段表示，可能长过所有向量；取景必须把它
                 # 算进去，否则延长段会被窗格裁掉。
                 extension = _inner_product_extension_endpoint(semantics)
                 if extension is not None:
                     endpoints.append(extension)
+            if resolved_topic == "ch03.det.oriented-area":
+                # 3.1 的案例把两列放进外接矩形，并在矩形上方标出矩形面积；
+                # 取景必须覆盖矩形对角与标注位置，否则“全部显示”时会被裁掉。
+                endpoints.extend(_det_geometry_view_endpoints(semantics))
             if endpoints:
                 xs = [0.0, *(point[0] for point in endpoints)]
                 ys = [0.0, *(point[1] for point in endpoints)]
@@ -442,7 +484,7 @@ class VisualSemanticsCompiler:
             if len(vectors2) >= 2:
                 # 投影是辅助构造，按讲义习惯默认画成虚线。
                 operations.append({"op": "geometry.projection", "vector": list(vectors2[0]), "direction": list(vectors2[1]), "result_alias": "cap__projection", "foot_alias": "cap__foot", "residual_alias": "cap__residual", "style": "dashed", "color": role_color("projection")})
-        if "transformed_grid" in declared and "geometry.transformed_grid" not in operation_names and semantics.scene_kind == "2d" and "staged_transform" not in declared:
+        if "transformed_grid" in declared and topic_id != "ch02.matrix.basis" and "geometry.transformed_grid" not in operation_names and semantics.scene_kind == "2d" and "staged_transform" not in declared:
             matrix = next(
                 (matrix for entity in semantics.entities if (matrix := _matrix2(entity.value)) is not None),
                 None,
@@ -626,12 +668,18 @@ class VisualSemanticsCompiler:
         return issues
 
     def _compile_entity(
-        self, entity: VisualEntity, scene: str, context: RenderContext
+        self,
+        entity: VisualEntity,
+        scene: str,
+        context: RenderContext,
+        color_role: str | None = None,
     ) -> tuple[list[dict[str, Any]], list[str]]:
         operations: list[dict[str, Any]] = []
         aliases: list[str] = []
         prefix = _alias(entity.id)
         role = entity.role if entity.role in {"construction", "result"} else "primary"
+        # 投影箭头跟随它所属向量的颜色（见 _projection_source_roles）。
+        entity_color = role_color(color_role or entity.role)
         if entity.kind == "point":
             coordinates = _coordinates(entity.value, entity.dimension)
             if scene == "2d":
@@ -641,6 +689,19 @@ class VisualSemanticsCompiler:
             aliases.append(prefix)
         elif entity.kind == "vector":
             coordinates = _coordinates(entity.value, entity.dimension)
+            if context.topic_id == "ch02.matrix.basis" and entity.id in {
+                "mv_basis_bv1", "mv_basis_bv2"
+            }:
+                # These two values are the columns of B in the alternate
+                # basis.  Render their physical images in the world selected
+                # by S=[v1 v2], while preserving the semantic values for the
+                # explanation and evidence layers.
+                coordinates = (
+                    _CH02_BASIS_MATRIX[0][0] * coordinates[0]
+                    + _CH02_BASIS_MATRIX[0][1] * coordinates[1],
+                    _CH02_BASIS_MATRIX[1][0] * coordinates[0]
+                    + _CH02_BASIS_MATRIX[1][1] * coordinates[1],
+                )
             origin = f"{prefix}__origin"
             end = f"{prefix}__end"
             aliases.extend((prefix, end))
@@ -671,6 +732,24 @@ class VisualSemanticsCompiler:
                             if len(entity.label) == 1 and entity.label.isalpha()
                             else ""
                         )
+                linear_op = {
+                    "op": "linear.upsert",
+                    "alias": prefix,
+                    "start": origin,
+                    "end": end,
+                    "kind": "vector",
+                    "role": role,
+                    "color": entity_color,
+                    "label": (
+                        ""
+                        if (is_magnitude_topic and is_zero_vector)
+                        else entity.label
+                    ),
+                }
+                # 内积小节把向量名标在线上方，好给线下的模长标注留出位置。
+                # 其余小节沿用几何模型默认的 "below"，不写入计划以避免历史摘要漂移。
+                if context.topic_id in _INNER_PRODUCT_TOPICS:
+                    linear_op["label_side"] = "above"
                 operations.extend(
                     [
                         {
@@ -691,24 +770,7 @@ class VisualSemanticsCompiler:
                             "coordinates": list(coordinates),
                             "name": end_name,
                         },
-                        {
-                            "op": "linear.upsert",
-                            "alias": prefix,
-                            "start": origin,
-                            "end": end,
-                            "kind": "vector",
-                            "role": role,
-                            "color": role_color(entity.role),
-                            "label": (
-                                ""
-                                if (is_magnitude_topic and is_zero_vector)
-                                else entity.label
-                            ),
-                            # 内积小节把向量名标在线上方，好给线下的模长标注留出位置。
-                            "label_side": (
-                                "above" if context.topic_id == _INNER_PRODUCT_TOPIC else "below"
-                            ),
-                        },
+                        linear_op,
                     ]
                 )
             else:
@@ -718,8 +780,9 @@ class VisualSemanticsCompiler:
         elif entity.kind in {"matrix", "grid"} and scene == "2d":
             matrix = _matrix2(entity.value)
             if matrix is not None:
-                grid_bounds = _case_grid_bounds(context.topic_id, context.bounds)
-                operations.append({"op": "geometry.transformed_grid", "alias": prefix, "matrix": matrix, "bounds": list(grid_bounds), "step": 1.0, "color": role_color(entity.role)})
+                if context.topic_id != "ch02.matrix.basis":
+                    grid_bounds = _case_grid_bounds(context.topic_id, context.bounds)
+                    operations.append({"op": "geometry.transformed_grid", "alias": prefix, "matrix": matrix, "bounds": list(grid_bounds), "step": 1.0, "color": role_color(entity.role)})
                 aliases.append(prefix)
         elif entity.kind in {"basis", "region"} and scene == "2d":
             basis = _vectors2(entity.value)
@@ -824,6 +887,15 @@ class VisualSemanticsCompiler:
             # compiler-internal relation label would repeat the case title and
             # expose implementation vocabulary such as “compare”.
             return operations, [relation_alias]
+        if (
+            relation.kind == "decomposes_into"
+            and context.topic_id == "ch03.det.oriented-area"
+            and semantics.scene_kind == "2d"
+        ):
+            # 3.1 的案例用外接矩形说明 |det| = ad - bc：两条辅助线把矩形切成
+            # 平行四边形加四个直角三角形，图形与标注都由两列算出，不再人工给值。
+            box_operations, box_aliases = _determinant_box_construction(relation, semantics)
+            return box_operations, [_alias(relation.id), *box_aliases]
         if relation.kind == "projects_to" and semantics.scene_kind == "2d":
             source_coordinates = _coordinates(source.value, 2)
             direction_coordinates = _coordinates(target.value, 2)
@@ -840,11 +912,18 @@ class VisualSemanticsCompiler:
                 "foot_alias": _alias(foot.id) if foot else f"{relation_alias}__foot",
                 "residual_alias": _alias(residual.id) if residual else f"{relation_alias}__residual",
                 "style": "dashed",
-                "color": role_color("projection"),
+                # 投影线跟随被投影向量的颜色：2.2 的两列本就不同色，学生正在
+                # 看的那一列与它的投影必须同色，否则两条投影线共用一个通用色。
+                # 该配色修正仅用于内积小节，其余小节保留原通用投影色以免计划摘要漂移。
+                "color": (
+                    role_color(source.role)
+                    if context.topic_id in _INNER_PRODUCT_TOPICS
+                    else role_color("projection")
+                ),
             }
             operations.append(projection)
             aliases = [relation_alias]
-            if context.topic_id == _INNER_PRODUCT_TOPIC:
+            if context.topic_id in _INNER_PRODUCT_TOPICS:
                 projection_entity = _pick_role_entity(semantics.entities, "projection", target.id)
                 annotations, length_aliases = _inner_product_length_annotations(
                     context,
@@ -855,6 +934,8 @@ class VisualSemanticsCompiler:
                     target.label,
                     source.label,
                     projection_entity.label if projection_entity is not None else "p",
+                    direction_color=role_color(target.role),
+                    source_color=role_color(source.role),
                 )
                 operations.extend(annotations)
                 aliases.extend(length_aliases)
@@ -1172,10 +1253,33 @@ def _pick_role_entity(entities, role: str, anchor: str):
     return candidates[0]
 
 
-# The 内积（两种定义）lesson is the one place where the lecture reads the
-# projection as the arithmetic itself: ``a·b = |a|·|p|``.  Label the three
-# student-facing lengths on the pane that draws the projection.
-_INNER_PRODUCT_TOPIC = "ch01.inner.definitions"
+def _projection_source_roles(semantics: VisualSemantics) -> dict[str, str]:
+    """Map every ``projection`` entity to the role of the vector it comes from.
+
+    A projection arrow pictures one component of the vector being projected, so
+    the two are drawn in the same color.  Without this mapping the arrow keeps the
+    generic ``projection`` swatch and stops matching its own vector — most
+    visibly in 2.2, where the two matrix columns already carry distinct colors.
+    """
+    entities = {entity.id: entity for entity in semantics.entities}
+    color_roles: dict[str, str] = {}
+    for relation in semantics.relations:
+        if relation.kind != "projects_to":
+            continue
+        source = entities.get(relation.source_ref)
+        target = entities.get(relation.target_ref)
+        if source is None or target is None:
+            continue
+        projection = _pick_role_entity(semantics.entities, "projection", target.id)
+        if projection is not None:
+            color_roles[projection.id] = source.role
+    return color_roles
+
+
+# 1.3.1「内积的两种定义」与 2.2「行向量与矩阵乘法（批量内积）」都把投影读作内积
+# 本身：``a·b = |a|·|p|``。这两个小节在画投影的窗格上标出三段学生可见的长度，并把
+# 向量名移到线上方，给线下方留出模长标注的位置。
+_INNER_PRODUCT_TOPICS = frozenset({"ch01.inner.definitions", "ch02.batch.inner-products"})
 
 
 def _format_radical_length(squared: float) -> str | None:
@@ -1205,9 +1309,12 @@ def _magnitude_text(value: float) -> str:
     return f"≈ {approximate}"
 
 
-def _projection_magnitude_text(dot: float, length_a: float) -> str:
-    """``|p| = |a·b| / |a|``: keep the exact ratio ``n/√m`` when one exists."""
-    length_p = abs(dot) / length_a
+def _projection_ratio(dot: float, length_a: float) -> tuple[int, str] | None:
+    """Return the exact ratio ``(|a·b|, √m)`` for ``|p| = |a·b| / |a|`` when it exists.
+
+    ``|a|`` is a small-integer surd and ``a·b`` is an integer, so ``|p|`` can be
+    written exactly as ``n/√m``; any other case falls back to a decimal.
+    """
     denominator = _format_radical_length(length_a * length_a)
     if (
         denominator is not None
@@ -1215,8 +1322,31 @@ def _projection_magnitude_text(dot: float, length_a: float) -> str:
         and abs(dot) > 1e-9
         and abs(dot - round(dot)) <= 1e-9
     ):
-        return f"= {abs(int(round(dot)))}/{denominator}"
-    return _magnitude_text(length_p)
+        return abs(int(round(dot))), denominator
+    return None
+
+
+def _projection_magnitude_text(dot: float, length_a: float) -> str:
+    """``|p| = |a·b| / |a|``: keep the exact ratio ``n/√m`` when one exists."""
+    ratio = _projection_ratio(dot, length_a)
+    if ratio is not None:
+        numerator, denominator = ratio
+        return f"= {numerator}/{denominator}"
+    return _magnitude_text(abs(dot) / length_a)
+
+
+def _projection_magnitude_latex(dot: float, length_a: float, label: str) -> str | None:
+    """Stacked-fraction LaTeX for ``|p|`` when the exact ratio exists.
+
+    ``denominator`` is the display surd ``√m``; emit proper LaTeX so the label
+    renderer can stack it as a fraction over the radical.
+    """
+    ratio = _projection_ratio(dot, length_a)
+    if ratio is None:
+        return None
+    numerator, denominator = ratio
+    radicand = denominator[1:]
+    return rf"|{label}| = \frac{{{numerator}}}{{\sqrt{{{radicand}}}}}"
 
 
 def _inner_product_extension_endpoint(semantics: VisualSemantics) -> tuple[float, float] | None:
@@ -1256,6 +1386,9 @@ def _inner_product_length_annotations(
     target_label: str,
     source_label: str,
     projection_label: str,
+    *,
+    direction_color: str | None = None,
+    source_color: str | None = None,
 ) -> tuple[list[dict[str, Any]], list[str]]:
     """Annotate ``|a|``, ``|p|`` and the ``OA`` extension carrying ``a·b``.
 
@@ -1288,8 +1421,10 @@ def _inner_product_length_annotations(
         if abs(dot - round(dot)) <= 1e-9
         else f"{dot:.3f}".rstrip("0").rstrip(".")
     )
-    color = role_color("projection")
-    product_color = role_color("area")
+    # 「|a|」跟着方向向量、「|p|」与「a·b」跟着被投影向量：同一案例的线与标注
+    # 统一取所属向量的颜色，学生不必靠文字就能把线段和向量对上。
+    direction_color = direction_color or role_color("direction")
+    source_color = source_color or role_color("projection")
     product_end = f"{relation_alias}__product_end"
     # a·b 的延长段落在 a 的正中间偏外的位置，标注取延长段中点。
     reach_x, reach_y = unit_x * (length_a + dot) / 2.0, unit_y * (length_a + dot) / 2.0
@@ -1302,17 +1437,18 @@ def _inner_product_length_annotations(
                 round(ax * 0.72 + down_x * offset, 6),
                 round(ay * 0.72 + down_y * offset, 6),
             ],
-            "color": color,
+            "color": direction_color,
         },
         {
             "op": "annotation.upsert",
             "alias": f"{relation_alias}__length_p",
             "text": f"|{projection_label}| {_projection_magnitude_text(dot, length_a)}",
+            "latex": _projection_magnitude_latex(dot, length_a, projection_label),
             "position": [
                 round(px * 0.42 + down_x * offset, 6),
                 round(py * 0.42 + down_y * offset, 6),
             ],
-            "color": color,
+            "color": source_color,
         },
         {
             "op": "point.upsert",
@@ -1328,7 +1464,7 @@ def _inner_product_length_annotations(
             "kind": "segment",
             "role": "construction",
             "style": "dashed",
-            "color": product_color,
+            "color": source_color,
             "label_side": "below",
         },
         {
@@ -1339,7 +1475,7 @@ def _inner_product_length_annotations(
                 round(reach_x + down_x * offset, 6),
                 round(reach_y + down_y * offset, 6),
             ],
-            "color": product_color,
+            "color": source_color,
         },
     ]
     return annotations, [annotation["alias"] for annotation in annotations]
@@ -1417,6 +1553,157 @@ def _vector_addition_operation(
             "polygon_aliases": polygon_aliases,
         }
     return None
+
+
+def _det_box_columns(
+    relation: VisualRelation, semantics: VisualSemantics
+) -> tuple[tuple[float, float], tuple[float, float]]:
+    """Return the two columns ``(v1, v2)`` of the 3.1 outer-rectangle case."""
+
+    entity_by_id = {entity.id: entity for entity in semantics.entities}
+    return (
+        _coordinates(entity_by_id[relation.source_ref].value, 2),
+        _coordinates(entity_by_id[relation.target_ref].value, 2),
+    )
+
+
+def _det_geometry_view_endpoints(semantics: VisualSemantics) -> list[tuple[float, float]]:
+    """Return the 3.1 case points a shared case-pane view must contain."""
+
+    relation = next(
+        (item for item in semantics.relations if item.kind == "decomposes_into"),
+        None,
+    )
+    if relation is None:
+        return []
+    try:
+        first, second = _det_box_columns(relation, semantics)
+    except (KeyError, TypeError, ValueError):
+        return []
+    if min(first[0], first[1], second[0], second[1]) <= 0.0:
+        return []
+    return [(first[0] + second[0], first[1] + second[1] + _DET_BOX_LABEL_MARGIN)]
+
+
+def _det_number(value: float) -> str:
+    """Render one scene label number with characters the label font can draw."""
+
+    return f"{float(value):g}"
+
+
+def _determinant_box_construction(
+    relation: VisualRelation, semantics: VisualSemantics
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """外接矩形 + 两条辅助线：让 ``ad - bc`` 在图上直接读出来。
+
+    把两列 ``v1=(a,c)``、``v2=(b,d)`` 放进以原点与 ``v1+v2`` 为对角的外接矩形
+    ``(a+b) x (c+d)``；从矩形右下角连到 ``v1``、从矩形左上角连到 ``v2`` 的两条
+    辅助线把矩形切成平行四边形加四个直角三角形。四个三角形都是「底 x 高 / 2」：
+    两个底 ``a+b``、高 ``c``，两个底 ``c+d``、高 ``b``，于是
+
+    ``S = (a+b)(c+d) - c(a+b) - b(c+d) = ad - bc``。
+
+    辅助构造统一用 construction 表示色画成虚线，并与它自己的面积标注同色；图内
+    标注只写可渲染字符，公式与推导留在讲解面板。
+    """
+
+    (a, c), (b, d) = _det_box_columns(relation, semantics)
+    if min(a, b, c, d) <= 0.0:
+        raise VisualCompileError(
+            (
+                CompileIssue(
+                    "det_geometry_box_requires_positive_columns",
+                    f"$.relations.{relation.id}",
+                    "外接矩形构造要求 v1、v2 的分量均为正数",
+                ),
+            )
+        )
+    width, height = a + b, c + d
+    prefix = _alias(relation.id)
+    dashed = role_color("construction")
+    operations: list[dict[str, Any]] = []
+
+    def _point(suffix: str, coordinates: tuple[float, float]) -> str:
+        alias = f"{prefix}__{suffix}"
+        operations.append(
+            {
+                "op": "point.upsert",
+                "alias": alias,
+                "coordinates": [coordinates[0], coordinates[1]],
+                "name": "",
+            }
+        )
+        return alias
+
+    def _edge(suffix: str, start: str, end: str) -> None:
+        operations.append(
+            {
+                "op": "linear.upsert",
+                "alias": f"{prefix}__{suffix}",
+                "start": start,
+                "end": end,
+                "kind": "segment",
+                "role": "construction",
+                "color": dashed,
+                "style": "dashed",
+            }
+        )
+
+    def _label(suffix: str, text: str, position: tuple[float, float], color: str) -> None:
+        operations.append(
+            {
+                "op": "annotation.upsert",
+                "alias": f"{prefix}__{suffix}",
+                "text": text,
+                "position": [position[0], position[1]],
+                "color": color,
+            }
+        )
+
+    origin = f"{_alias(relation.source_ref)}__origin"
+    first_end = f"{_alias(relation.source_ref)}__end"
+    second_end = f"{_alias(relation.target_ref)}__end"
+    bottom_right = _point("bottom-right", (width, 0.0))
+    top_right = _point("top-right", (width, height))
+    top_left = _point("top-left", (0.0, height))
+    _edge("box-bottom", origin, bottom_right)
+    _edge("box-right", bottom_right, top_right)
+    _edge("box-top", top_right, top_left)
+    _edge("box-left", top_left, origin)
+    _edge("cut-first", bottom_right, first_end)
+    _edge("cut-second", top_left, second_end)
+    _label(
+        "box-area",
+        f"(a+b)(c+d)={_det_number(width * height)}",
+        (width / 2.0, height + _DET_BOX_LABEL_MARGIN),
+        dashed,
+    )
+    _label("corner-first-bottom", f"-{_det_number(width * c / 2.0)}", ((width + a) / 3.0, c / 3.0), dashed)
+    _label(
+        "corner-first-top",
+        f"-{_det_number(b * height / 2.0)}",
+        ((2.0 * width + a) / 3.0, (height + c) / 3.0),
+        dashed,
+    )
+    _label("corner-second-bottom", f"-{_det_number(b * height / 2.0)}", (b / 3.0, (height + d) / 3.0), dashed)
+    _label(
+        "corner-second-top",
+        f"-{_det_number(width * c / 2.0)}",
+        ((width + b) / 3.0, (2.0 * height + d) / 3.0),
+        dashed,
+    )
+    _label(
+        "area-total",
+        f"ad-bc={_det_number(a * d - b * c)}",
+        (width / 2.0, height / 2.0),
+        role_color("area"),
+    )
+    aliases = [
+        str(operation["alias"])
+        for operation in operations
+        if isinstance(operation.get("alias"), str)
+    ]
+    return operations, aliases
 
 
 def _stage_title(semantics: VisualSemantics, title: str, index: int) -> str:
@@ -1747,6 +2034,7 @@ def _emit_matrix_vector_transform(
 
     if topic_id not in _MATRIX_VECTOR_CASE_TOPICS:
         return
+    entity_by_id = {entity.id: entity for entity in semantics.entities}
     for entity in semantics.entities:
         if entity.kind not in {"matrix", "grid"}:
             continue
@@ -1756,6 +2044,36 @@ def _emit_matrix_vector_transform(
         prefix = _alias(entity.id)
         staged_alias = f"{prefix}__staged"
         label_alias = f"{prefix}__label"
+        if topic_id == "ch02.matrix.basis":
+            # 2.7 的第二窗格不是独立生成一层 teaching grid，而是复用工具箱的
+            # “矩阵变换”坐标系：S 的两列就是新基 v1、v2。第一窗格不设置
+            # 变换，保留软件默认的标准基坐标系。
+            if entity.id == "mv_basis_grid_b":
+                if "mv_basis_v1" in entity_by_id and "mv_basis_v2" in entity_by_id:
+                    coordinate_alias = prefix
+                    operations.append(
+                        {
+                            "op": "linear_algebra.coordinate_transform",
+                            "alias": coordinate_alias,
+                            "matrix": [list(row) for row in _CH02_BASIS_MATRIX],
+                            "show_original": False,
+                            "show_transformed": True,
+                        }
+                    )
+            aliases.setdefault(entity.id, []).append(label_alias)
+            if matrix == [[1.0, 0.0], [0.0, 1.0]]:
+                continue
+            position = _stage_content_corner(semantics, entity.id)
+            if position is not None:
+                operations.append(
+                    {
+                        "op": "annotation.upsert",
+                        "alias": label_alias,
+                        "text": _matrix_label(str(entity.label), matrix),
+                        "position": [position[0], position[1]],
+                    }
+                )
+            continue
         aliases.setdefault(entity.id, []).extend((staged_alias, label_alias))
         operations.append(
             {

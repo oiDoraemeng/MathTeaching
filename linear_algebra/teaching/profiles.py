@@ -80,10 +80,31 @@ _PROOF_MIDLINE = TeachingProfile(
 )
 # 2.5 矩阵 × 向量（核心节）的三个小节把公式写在定义（2.5.1）、定理（2.5.2）或
 # 例题（2.5.3）之内，正文只有「定义 / 定理 / 分层例题」与一组分步数学案例：
-# 不要求独立的「公式」或「几何意义」小节。
+# 不要求独立的「公式」或「几何意义」小节。2.7 矩阵与基同样把「旋转 90° 的矩阵」
+# 写在核心认知里，正文只有「定义 2.9（基）」与一组分步数学案例。
 _MATRIX_VECTOR_SUBSECTION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "worked_examples"),
+)
+# 讲义 2.2 的批量内积把「定义 2.4」与一句话总结连写，公式就在定义块内，正文
+# 只有「定义」与一组分层例题（例 1 单位阵）：同样不要求独立的「公式」或
+# 「几何意义」小节。
+_BATCH_INNER_PRODUCT = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+# 讲义 3.1 的几何定义把行列式公式（定理 3.1）写在定义块内，正文随后是
+# 「几何意义速查」表与一组数值案例：不要求独立的「公式」或「推导」小节。
+_DET_GEOMETRY = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "geometric_meaning", "worked_examples"),
+)
+# 讲义 4.3 的三小节合并成一个小节：定义 4.10 与定理 4.1 连写（公式就在定义块内），
+# 4.3.2 只有一段「性质 4 的证明」进「推导」，读数案例由定义自定；不要求独立的
+# 「公式」或「几何意义」小节。
+_BASIS_DEFINITION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "derivation", "worked_examples"),
 )
 _BRIDGE = TeachingProfile(
     TeachingLevel.TRANSFER,
@@ -123,14 +144,14 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch01.proof.midline": _PROOF_MIDLINE,
     "ch01.proof.centroid": _VECTOR_FOUNDATION,
     "ch01.proof.parallelogram-diagonals": _VECTOR_FOUNDATION,
-    "ch02.batch.inner-products": _VECTOR_FOUNDATION,
+    "ch02.batch.inner-products": _BATCH_INNER_PRODUCT,
     "ch02.batch.projection": _VECTOR_FOUNDATION,
     "ch02.matrix.additive-distributivity": _VECTOR_FOUNDATION,
     "ch02.matrix.row-column": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.transformed-grid": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.stretch-rotate-scale": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.composition": _VECTOR_FOUNDATION,
-    "ch02.matrix.basis": _VECTOR_FOUNDATION,
+    "ch02.matrix.basis": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.powers": _VECTOR_FOUNDATION,
     "ch02.subspace.independence": _VECTOR_FOUNDATION,
     "ch02.subspace.rank": _VECTOR_FOUNDATION,
@@ -138,10 +159,7 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch02.subspace.column": _VECTOR_FOUNDATION,
     "ch02.subspace.rank-nullity": _VECTOR_FOUNDATION,
     "ch02.high-dimensional.analogy": _VECTOR_FOUNDATION,
-    "ch03.det.oriented-area": _CORE,
-    "ch03.det.ad-bc": _CORE,
-    "ch03.det.sign-zero-one": _CORE,
-    "ch03.det.examples": _CORE,
+    "ch03.det.oriented-area": _DET_GEOMETRY,
     "ch03.det.row-swap": _CORE,
     "ch03.det.scaling": _CORE,
     "ch03.det.shear": _CORE,
@@ -169,6 +187,16 @@ _PROFILES.update({
     for topic in topic_entries()
     if topic.chapter_number in {4, 5, 6, 7, 8}
 })
+# 4.1.3 contains definitions, a proof, and a geometric reading, but no
+# standalone formula/pitfalls/connections headings.  Keep those formulas in
+# the definition and proof blocks so the UI follows the lecture structure.
+_PROFILES["ch04.subspace.col-null"] = TeachingProfile(
+    TeachingLevel.EXPLAIN,
+    ("definition", "derivation", "worked_examples", "geometric_meaning"),
+)
+# 4.3 合并后的「基的定义」：定义、维数与坐标写在同一小节，公式在定义块内，
+# 讲义唯一的证明进「推导」，读数案例由定义自定。
+_PROFILES["ch04.basis.definition"] = _BASIS_DEFINITION
 
 
 def profile_for(topic_id: str) -> TeachingProfile:

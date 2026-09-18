@@ -9,6 +9,7 @@ from types import MappingProxyType
 from linear_algebra.chapter_04_semantics import Chapter4Semantic, semantic_for
 from linear_algebra.teaching.model import VisualEntity, VisualRelation, VisualSemantics
 from ..compiler import CompileIssue, VisualCompileError
+from ..palette import known_role, role_color
 
 TOL = 1e-9
 
@@ -109,6 +110,48 @@ def _cross(a: object, b: object) -> list[float]:
 def _entity_alias(role: str) -> str: return f"ch04__entity__{role}"
 def _relation_alias(name: str) -> str: return f"ch04__relation__{name}"
 
+# 4.1.3 的取色：颜色归属于对象（那张平面、那条直线、每个向量和原点各自一种颜色），
+# 由对象派生的虚线跟随源对象取色。颜色值本身只来自共享调色板，这里只决定哪些主题
+# 按对象取色；其他主题继续沿用渲染器默认色。
+_COL_NULL_COLORED_TOPIC = "ch04.subspace.col-null"
+
+
+@dataclass(frozen=True)
+class _SubspaceLook:
+    """How one topic draws a subspace itself (plane for rank 2, line for rank 1).
+
+    ``line_marks`` are the intervals (in units of the direction vector) drawn as
+    segments; the default is one centred segment through the origin.
+    """
+
+    plane_size: float
+    plane_opacity: float
+    line_marks: tuple[tuple[float, float], ...] = ((-2.0, 2.0),)
+    line_style: str = "solid"
+
+
+_DEFAULT_LOOK = _SubspaceLook(2.5, 0.2)
+_LOOKS: Mapping[str, _SubspaceLook] = MappingProxyType({
+    # 4.1.3 的子空间要装下它所有的采样向量：平面盖过三支输入、三支输出的落点，
+    # 否则箭头会戳出平面之外。零空间是 1 维的，任何画在轴上的线段都会被同方向的
+    # 采样向量完全盖住，所以只在所有竖直向量之外各画一小段虚线，表示这条轴继续延伸；
+    # 主角是那支垂直穿出平面的代表向量。
+    # Keep the z=0 plane visibly present without washing out the three output
+    # vectors that lie on it, especially in a narrow case pane.
+    "ch04.subspace.col-null": _SubspaceLook(5.0, 0.08, ((3.3, 4.2), (-3.8, -2.9)), "dashed"),
+})
+
+
+def _look(topic_id: str) -> _SubspaceLook:
+    return _LOOKS.get(topic_id, _DEFAULT_LOOK)
+
+
+def _object_color(topic_id: str, role: str) -> str | None:
+    """Return the topic-local object color, or None to keep renderer defaults."""
+    if topic_id != _COL_NULL_COLORED_TOPIC or not known_role(role):
+        return None
+    return role_color(role)
+
 
 def _primary_entity_alias(role: str, entity: VisualEntity) -> str:
     alias = _entity_alias(role)
@@ -127,8 +170,6 @@ def _layout_operations(topic: str, role: str, operations: list[dict[str,Any]]) -
     if topic=="ch04.linear-map.compare":
         lanes={"rotation":(-8,4),"stretch":(0,4),"projection":(8,4),"translation":(-8,-4),"square_map":(0,-4),"constant_shift":(8,-4)}
         offset=lanes.get(role,(0,0))
-    elif topic=="ch04.subspace.col-null":
-        offset=(4,0) if role in {"codomain","column_space","image_vector","zero"} else (-4,0)
     else:
         return operations
     for operation in operations:
@@ -151,7 +192,7 @@ def _normal(basis: list[list[float]]) -> list[float]:
     return result
 
 
-def _entity_operations(entity: VisualEntity, alias: str, scene: str, context: Any) -> tuple[list[dict[str, Any]], tuple[str, ...]]:
+def _entity_operations(entity: VisualEntity, alias: str, scene: str, context: Any, topic_id: str = "") -> tuple[list[dict[str, Any]], tuple[str, ...]]:
     ops: list[dict[str, Any]] = []
     if scene == "2d":
         if entity.kind == "point":
@@ -179,19 +220,20 @@ def _entity_operations(entity: VisualEntity, alias: str, scene: str, context: An
             raise ValueError(f"unsupported 2d entity kind {entity.kind}")
         return ops, (alias,)
 
+    color = _object_color(topic_id, entity.role)
     if entity.kind == "point":
         ops.append({"op":"point3d.upsert","alias":alias,"coordinates":_vector(entity.value,3),"name":entity.label})
         return ops, (alias,)
     if entity.kind == "vector":
         vector=_vector(entity.value,3)
         if any(abs(v)>TOL for v in vector):
-            ops.append({"op":"linear3d.upsert","alias":alias,"start":[0.0,0.0,0.0],"end":vector,"kind":"vector","role":"primary"})
+            ops.append({"op":"linear3d.upsert","alias":alias,"start":[0.0,0.0,0.0],"end":vector,"kind":"vector","role":"primary",**_color_kwargs(color)})
         else:
             ops.append({"op":"point3d.upsert","alias":alias,"coordinates":vector,"name":entity.label})
         return ops, (alias,)
     if entity.kind == "affine_set":
         basis=_matrix(entity.value)
-        ops.append({"op":"plane3d.upsert","alias":alias,"origin":basis[-1],"normal":_normal(basis[:2]),"size":2.5,"opacity":0.2})
+        ops.append({"op":"plane3d.upsert","alias":alias,"origin":basis[-1],"normal":_normal(basis[:2]),"size":2.5,"opacity":0.2,**_color_kwargs(color)})
         return ops, (alias,)
     if entity.kind in {"matrix","basis","subspace","region"}:
         vectors=_matrix(entity.value)
@@ -201,22 +243,40 @@ def _entity_operations(entity: VisualEntity, alias: str, scene: str, context: An
         if entity.kind == "basis" and entity.role == "independent_set" and rank == 3:
             ops.append({"op":"geometry.parallelepiped","alias":alias,"origin":[0.0,0.0,0.0],"vectors":vectors[:3],"opacity":0.16})
             return ops, (alias,)
+        look=_look(topic_id)
         if rank == 2:
-            ops.append({"op":"plane3d.upsert","alias":alias,"origin":[0.0,0.0,0.0],"normal":_normal(vectors),"size":2.5,"opacity":0.2})
+            algebra_kwargs = (
+                {"algebra_visible": True, "algebra_label": entity.label}
+                if topic_id == _COL_NULL_COLORED_TOPIC and entity.role == "column_space"
+                else {}
+            )
+            ops.append({"op":"plane3d.upsert","alias":alias,"origin":[0.0,0.0,0.0],"normal":_normal(vectors),"size":look.plane_size,"opacity":look.plane_opacity,**_color_kwargs(color),**algebra_kwargs})
             return ops, (alias,)
         if rank == 1:
             vector=next(v for v in vectors if any(abs(x)>TOL for x in v))
-            ops.append({"op":"linear3d.upsert","alias":alias,"start":_scale(vector,-2.0),"end":_scale(vector,2.0),"kind":"segment","role":"primary"})
-            return ops, (alias,)
+            style_kwargs=_color_kwargs(color)
+            if look.line_style != "solid":
+                style_kwargs["style"]=look.line_style
+            aliases=[]
+            for index,(from_units,to_units) in enumerate(look.line_marks,1):
+                mark_alias=alias if index==1 else f"{alias}__extent_{index}"
+                ops.append({"op":"linear3d.upsert","alias":mark_alias,"start":_scale(vector,from_units),"end":_scale(vector,to_units),"kind":"segment","role":"primary",**style_kwargs})
+                aliases.append(mark_alias)
+            return ops, tuple(aliases)
         aliases=[]
         for index, vector in enumerate(vectors[:3], 1):
             axis=f"{alias}__axis_{index}"; aliases.append(axis)
             if any(abs(x)>TOL for x in vector):
-                ops.append({"op":"linear3d.upsert","alias":axis,"start":[0.0,0.0,0.0],"end":vector,"kind":"vector","role":"primary"})
+                ops.append({"op":"linear3d.upsert","alias":axis,"start":[0.0,0.0,0.0],"end":vector,"kind":"vector","role":"primary",**_color_kwargs(color)})
             else:
                 ops.append({"op":"point3d.upsert","alias":axis,"coordinates":[0.0,0.0,0.0],"name":"0"})
         return ops, tuple(aliases)
     raise ValueError(f"unsupported 3d entity kind {entity.kind}")
+
+
+def _color_kwargs(color: str | None) -> dict[str, Any]:
+    """Only override the renderer color when the topic declares an object color."""
+    return {} if color is None else {"color": color}
 
 
 def _parameters(relation: VisualRelation) -> Mapping[str, object]:
@@ -287,11 +347,33 @@ def _relation_operations(topic_id: str, relation: VisualRelation, entities: Mapp
             if source.kind == "constraint": return [{"op":"curve.create","alias":alias,"kind":"explicit","expression":"y=x^2"}]
             return _vector_relation(alias,p["origin_image"])
         if relation.kind == "basis_of" or (relation.kind in {"dimension_of","linear_dependence","contains"} and source.kind in {"basis","subspace"}):
-            return _entity_operations(source,alias,"2d",context)[0]
+            return _entity_operations(source,alias,"2d",context,topic_id)[0]
         # A target redrawn with a relation-specific alias is a geometric
         # witness of the typed relation, never a text-only bookkeeping edge.
-        return _entity_operations(target,alias,"2d",context)[0]
+        return _entity_operations(target,alias,"2d",context,topic_id)[0]
 
+    if topic_id == "ch04.subspace.col-null" and relation.kind == "maps_to":
+        # 4.1.3 的 maps_to 画「输入到输出的落差」：源对象已经被压到目标位置，
+        # 所以关系只补一条虚线连接（颜色跟随源对象），不再把目标重画一遍——
+        # 否则同一张图里会出现两个重合的平面/向量。
+        start = _vector(source.value, 3)
+        end = _vector(target.value, 3)
+        if all(abs(value) <= TOL for value in end):
+            # 目标就是原点时连线完全落在源向量自己身上（零空间把输入压成一点），
+            # 画出来等于没画：只把「像」画成原点上的那个点。
+            return [{"op": "point3d.upsert", "alias": alias, "coordinates": end, "name": target.label}]
+        return [
+            {
+                "op": "linear3d.upsert",
+                "alias": alias,
+                "start": start,
+                "end": end,
+                "kind": "segment",
+                "role": "construction",
+                "style": "dashed",
+                "color": _object_color(topic_id, source.role) or role_color("construction"),
+            }
+        ]
     if relation.kind == "intersects_in":
         return [{"op":"geometry.intersection","alias":alias,"first":_primary_entity_alias(source.role,source),"second":_primary_entity_alias(target.role,target)}]
     if relation.kind == "linear_combination":
@@ -324,7 +406,7 @@ def _relation_operations(topic_id: str, relation: VisualRelation, entities: Mapp
     if relation.kind == "affine_translation":
         basis=_matrix(source.value)
         return [{"op":"plane3d.upsert","alias":alias,"origin":_vector(p["offset"],3),"normal":_normal(basis),"size":2.5,"opacity":0.16}]
-    return _entity_operations(target,alias,"3d",context)[0]
+    return _entity_operations(target,alias,"3d",context,topic_id)[0]
 
 
 def _mathematical_evidence(topic_id: str, by_role: Mapping[str, VisualEntity], relations: tuple[VisualRelation, ...] = ()) -> dict[str, object]:
@@ -346,15 +428,34 @@ def _mathematical_evidence(topic_id: str, by_role: Mapping[str, VisualEntity], r
         checks["intersection_closed"]=_rank(inter)==1 and all(_in_span(u,x) and _in_span(v,x) for x in _matrix(inter))
         checks["union_not_closed"]=_close(_add(value("union_u"),value("union_v")),total) and not _in_span(u,total) and not _in_span(v,total)
     elif topic_id == "ch04.subspace.col-null":
-        matrix=value("map_A"); checks["diag_1_0"]=_close(matrix,[[1,0],[0,0]])
-        checks["kernel_to_zero"]=_close(_matvec(matrix,value("kernel_vector")),[0,0]) and _in_span(value("kernel"),value("kernel_vector"))
-        columns=[list(column) for column in zip(*_matrix(matrix))]
+        # A 只作为关系参数存在：矩阵不是一个几何对象，画成平面会和列空间重合。
+        # 每支采样向量既画在实体里、又写在关系参数里；两边必须一致，改动任何一边
+        # 都会让这里重算失败。
+        # 三支轴外采样输入都从同一原点出发，输出全部落在那张平面上、并把平面
+        # 铺开三个方向；零空间的代表竖直采样被压到原点。
+        matrix=_matrix(parameters["projection_a"]["matrix"])
+        checks["diag_1_1_0"]=_close(matrix,[[1,0,0],[0,1,0],[0,0,0]])
+        null_basis=_matrix(value("null_space"))
+        kernel=_vector(value("kernel_vector"),3)
+        kernel_sample=_vector(parameters["collapse"]["input_vector"],3)
+        checks["kernel_to_zero"]=(
+            _close(kernel,kernel_sample)
+            and _close(_matvec(matrix,kernel),[0,0,0])
+            and _in_span(null_basis,kernel)
+        )
+        columns=[list(column) for column in zip(*matrix)]
         image_basis=_matrix(value("column_space"))
-        image_parameters=parameters["domain_image"]
-        sample=image_parameters["input_vector"]
-        image=_matvec(matrix,sample)
-        checks["image_x_axis"]=_rank(image_basis)==_rank(columns)==1 and all(_in_span(image_basis,column) for column in columns) and all(_in_span(columns,v) for v in image_basis) and _close(image,value("image_vector")) and _in_span(image_basis,image)
-        numbers.update(columns=columns,image=image,image_rank=_rank(columns))
+        names=("a","b","c")
+        samples={name:_vector(value(f"input_vector_{name}"),3) for name in names}
+        parameter_samples={name:_vector(parameters[f"projection_{name}"]["input_vector"],3) for name in names}
+        images={name:_matvec(matrix,sample) for name,sample in samples.items()}
+        checks["image_xy_plane"]=(
+            _rank(image_basis)==_rank(columns)==2 and _same_span(image_basis,columns)
+            and all(_close(samples[name],parameter_samples[name]) for name in names)
+            and all(_close(image,value(f"output_vector_{name}")) for name,image in images.items())
+            and all(_in_span(image_basis,image) for image in images.values())
+        )
+        numbers.update(columns=columns,images=images,image_rank=_rank(columns))
     elif topic_id == "ch04.span.dimension":
         ranks=[_rank(value(f"span_{i}d")) for i in (1,2,3)]; numbers["ranks"]=ranks
         checks.update(span_rank_1=ranks[0]==1,span_rank_2=ranks[1]==2,span_rank_3=ranks[2]==3,rank_equals_dimension=ranks==[1,2,3])
@@ -373,17 +474,33 @@ def _mathematical_evidence(topic_id: str, by_role: Mapping[str, VisualEntity], r
         ranks=[_rank(value(role)) for role in ("rank_two","rank_one","rank_zero")]; numbers["ranks"]=ranks
         columns=lambda role: [list(c) for c in zip(*_matrix(value(role)))]
         checks.update(rank_two_plane=ranks[0]==2 and _same_span(columns("rank_two"),value("plane_image")),rank_one_line=ranks[1]==1 and _same_span(columns("rank_one"),value("line_image")),rank_zero_point=ranks[2]==0 and _close(value("point_image"),_matvec(value("rank_zero"),[1,1])),rank_collapse_sequence=ranks==[2,1,0])
-    elif topic_id == "ch04.basis.span":
-        complete=_rank(value("independent_basis")); few=_rank(value("too_few")); many=_rank(value("too_many")); numbers.update(complete_rank=complete,too_few_rank=few,too_many_rank=many)
-        checks.update(independent_and_spanning=complete==2,too_few_not_spanning=few==1,too_many_redundant=many==2 and len(_matrix(value("too_many")))==3)
-    elif topic_id == "ch04.dimension.ladder":
-        dims=[0,_rank(value("line")),_rank(value("plane")),_rank(value("volume"))]; numbers["dimensions"]=dims
-        lower=_in_span(value("line"),value("point")) and all(_in_span(value("plane"),v) for v in _matrix(value("line")))
-        upper=all(_in_span(value("volume"),v) for v in _matrix(value("plane")))
-        checks.update(nested_0_1_2=dims[:3]==[0,1,2] and lower,nested_dimensions=dims==[0,1,2,3] and lower and upper)
-    elif topic_id == "ch04.coordinates.readout":
-        standard=_matvec(value("standard_basis"),value("standard_coordinates")); alternate=_matvec(value("oblique_basis"),value("oblique_coordinates")); numbers.update(standard=standard,alternate=alternate)
-        checks["standard_reconstruction"]=_close(standard,value("same_vector")); checks["coordinate_reconstruction"]=_close(alternate,value("same_vector"))
+    elif topic_id == "ch04.basis.definition":
+        # 定义 4.10 要两条：线性无关、生成整个空间。两组基都按列给出（基是向量组），
+        # 秩 = 2 说明无冗余，与标准基张成同一个空间说明能生成整个 R²。读数部分同时
+        # 核对关系参数里的基矩阵与实体值一致——任何一边被改，这里重算就会失败。
+        standard_matrix=_matrix(value("standard_basis"))
+        oblique_matrix=_matrix(value("oblique_basis"))
+        oblique_columns=[list(column) for column in zip(*oblique_matrix)]
+        standard_columns=[list(column) for column in zip(*standard_matrix)]
+        standard_parameters=parameters["standard_readout"]; oblique_parameters=parameters["oblique_readout"]
+        standard_readout=_matvec(standard_parameters["basis_matrix"],standard_parameters["coordinates"])
+        oblique_readout=_matvec(oblique_parameters["basis_matrix"],oblique_parameters["coordinates"])
+        numbers.update(oblique_columns=oblique_columns,standard_readout=standard_readout,oblique_readout=oblique_readout)
+        checks["basis_independent_and_spanning"]=(
+            _rank(oblique_columns)==2
+            and _same_span(oblique_columns,standard_columns)
+            and _same_span(oblique_columns,standard_matrix)
+        )
+        checks["standard_reconstruction"]=(
+            _close(standard_readout,value("same_vector"))
+            and _close(_matrix(standard_parameters["basis_matrix"]),standard_matrix)
+            and _close(standard_parameters["expected_vector"],value("same_vector"))
+        )
+        checks["coordinate_reconstruction"]=(
+            _close(oblique_readout,value("same_vector"))
+            and _close(_matrix(oblique_parameters["basis_matrix"]),oblique_matrix)
+            and _close(oblique_parameters["expected_vector"],value("same_vector"))
+        )
     elif topic_id == "ch04.linear-map.definition":
         matrix=value("map_T"); Tu=_matvec(matrix,value("u")); Tv=_matvec(matrix,value("v")); Tsum=_matvec(matrix,value("sum_test")); Tscaled=_matvec(matrix,value("homogeneity_test"))
         scalar=float(parameters["input_scaling"]["scalar"])
@@ -526,7 +643,7 @@ class Chapter4FamilyCompiler:
         spec=semantic_for(topic_id); entities_by_id={item.id:item for item in semantics.entities}; by_role={item.role:item for item in semantics.entities}
         operations: list[dict[str,Any]]=[]; aliases: dict[str,tuple[str,...]]={}
         for entity in semantics.entities:
-            entity_ops,entity_aliases=_entity_operations(entity,_entity_alias(entity.role),spec.scene_kind,context)
+            entity_ops,entity_aliases=_entity_operations(entity,_entity_alias(entity.role),spec.scene_kind,context,topic_id)
             operations.extend(_layout_operations(topic_id,entity.role,entity_ops)); aliases[entity.id]=entity_aliases
         if spec.scene_kind == "3d":
             # A three-dimensional family still needs one protocol-level geometry
@@ -557,6 +674,13 @@ class Chapter4FamilyCompiler:
                     "opacity": 0.16,
                 }
             )
+            if topic_id == _COL_NULL_COLORED_TOPIC:
+                # 4.1.3 不再显示脚手架方格：列空间已由那张平面加三支采样向量铺满，
+                # 再叠一个与列空间重合的单位方格会被误读成第二个集合。这里把它的别名
+                # 登记为「受舞台管理」的别名、却不写进任何舞台的可见集合，于是每个案例
+                # 窗格都会把它遮掉；同时本主题仍保有一个协议级几何图元（见本分支上方
+                # 关于三维家族硬性要求的注释）。
+                aliases["ch04__scene__parallelogram"] = ("ch04__scene__parallelogram",)
         if topic_id == "ch04.kernel-image":
             bundle_alias="ch04__kernel_image__bundle"
             domain=_matrix(by_role["domain"].value); kernel=[_vector(by_role["kernel_direction"].value,2)]; image=_matrix(by_role["image"].value)

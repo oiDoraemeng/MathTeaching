@@ -217,7 +217,7 @@ def compile_chapter_04(
     reviewed_payloads: Mapping[str, Mapping[str, object]] | None = None,
     reviewed_root: str | Path | None = None,
 ) -> tuple[CompiledResource, ...]:
-    """Build all sixteen chapter-4 resources and upsert their index rows.
+    """Build all fourteen chapter-4 resources and upsert their index rows.
 
     Compilation of every topic completes before a resource or index is
     touched.  The index update is chapter-scoped: every existing Chapter 4 row
@@ -226,8 +226,8 @@ def compile_chapter_04(
     """
     payloads=reviewed_payloads if reviewed_payloads is not None else load_reviewed_artifacts()
     topic_ids = tuple(sorted(topic_id for topic_id in payloads if topic_id.startswith("ch04.")))
-    if len(topic_ids) != 16:
-        raise ValueError(f"chapter 4 requires 16 reviewed artifacts, found {len(topic_ids)}")
+    if len(topic_ids) != 14:
+        raise ValueError(f"chapter 4 requires 14 reviewed artifacts, found {len(topic_ids)}")
     resources = tuple(_compile_reviewed_payload(topic_id,payloads[topic_id]) for topic_id in topic_ids)
     output = compiled_resource_store(output_root)
     if sync_index:
