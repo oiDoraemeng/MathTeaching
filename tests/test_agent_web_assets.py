@@ -21,6 +21,8 @@ def test_agent_web_dist_contains_local_manifest_and_assets() -> None:
             if path:
                 assert not path.startswith(("http:", "https:", "file:"))
                 assert not Path(path).is_absolute()
+                if key == "file":
+                    assert (WEB_ROOT / "dist" / path).is_file()
 
 
 def test_agent_web_dist_contains_structured_math_table_styles() -> None:

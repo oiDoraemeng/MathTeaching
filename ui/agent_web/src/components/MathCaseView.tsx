@@ -29,6 +29,9 @@ export function MathCaseView({
   const isLectureProof = lectureProofSubsection(caseData.id);
   // 讲义 1.2.1–1.2.4 都写成“自带公式的定义 + 正下方的几何解释”。
   const definitionOwnsFormula = lectureDefinitionOwnsFormula(caseData.id);
+  // 分节顺序以讲义为准：4.1.3 把「几何直观」写在定义下方、证明之前，产物里的
+  // sections 顺序就是讲义顺序，前端不再强行把「推导」排在几何解释之前。
+  const geometricBeforeDerivation = sectionComesBefore(caseData, "geometric_meaning", "derivation");
   const hasCaseLayout = paneCases.length > 0;
   const definitionAndFormula = definitionOwnsFormula
     ? caseData.definition?.trim() ?? ""
@@ -87,6 +90,8 @@ export function MathCaseView({
       : null
   );
 
+  const geometricSection = section(sectionTitle(caseData, "geometric_meaning", "几何意义"), caseData.geometricMeaning);
+
   return (
     <article className={`math-case-view${isVectorAddition ? " math-case-view--vector-addition" : ""}${hasCaseLayout && !isVectorAddition ? " math-case-view--case-layout" : ""}${isLectureProof ? " math-case-view--proof" : ""}`} aria-label={`${caseData.name}数学解释`}>
       <header className="math-case-header">
@@ -113,6 +118,7 @@ export function MathCaseView({
       ) : (
         <section className="math-case-structured" aria-label="结构化数学解释">
           {section(sectionTitle(caseData, "definition", definitionOwnsFormula ? "定义" : "定义与公式"), definitionAndFormula)}
+          {geometricBeforeDerivation && geometricSection}
           {caseData.steps.length > 0 && (
             <section className="math-case-section">
               <h2>{sectionTitle(caseData, "derivation", "推导")}</h2>
@@ -126,7 +132,7 @@ export function MathCaseView({
           )}
           {section(sectionTitle(caseData, "intuition", "直觉"), caseData.intuition)}
           {/* 讲义把几何解释直接写在定义下方，向量加法与减法保留这一顺序。 */}
-          {definitionOwnsFormula && section(sectionTitle(caseData, "geometric_meaning", "几何意义"), caseData.geometricMeaning)}
+          {definitionOwnsFormula && !geometricBeforeDerivation && geometricSection}
           {section(
             sectionTitle(
               caseData,
@@ -137,7 +143,7 @@ export function MathCaseView({
             ),
             caseData.invariants?.join("\n\n"),
           )}
-          {!definitionOwnsFormula && section(sectionTitle(caseData, "geometric_meaning", "几何意义"), caseData.geometricMeaning)}
+          {!definitionOwnsFormula && !geometricBeforeDerivation && geometricSection}
           {workedExamples(caseData, hasCaseLayout && paneCases.length > 1 ? (
             <div className="math-case-example-controls" role="list" aria-label="二维案例选择">
               {paneCases.map((pane) => (
@@ -289,6 +295,14 @@ function sectionTitle(caseData: CaseProjection, id: string, fallback: string): s
   return title && title !== id ? title : fallback;
 }
 
+/** 分节顺序：产物 sections 里 first 是否排在 second 之前（缺失时按原顺序处理）。 */
+function sectionComesBefore(caseData: CaseProjection, first: string, second: string): boolean {
+  const sections = caseData.sections ?? [];
+  const firstIndex = sections.findIndex((item) => item.id === first);
+  const secondIndex = sections.findIndex((item) => item.id === second);
+  return firstIndex >= 0 && secondIndex >= 0 && firstIndex < secondIndex;
+}
+
 /** 讲义把公式写在定义（或定理、例题）块内的同构小节：定义块自带公式，不再单列「公式」分节。 */
 function lectureDefinitionOwnsFormula(topicId: string): boolean {
   return topicId === "ch01.ops.addition"
@@ -300,7 +314,17 @@ function lectureDefinitionOwnsFormula(topicId: string): boolean {
     // 讲义 2.5 的三个小节：公式写在定义（2.5.1）、定理（2.5.2）与例题（2.5.3）之内。
     || topicId === "ch02.matrix.row-column"
     || topicId === "ch02.matrix.transformed-grid"
-    || topicId === "ch02.matrix.stretch-rotate-scale";
+    || topicId === "ch02.matrix.stretch-rotate-scale"
+    // 讲义 2.7 矩阵与基：旋转 90° 的矩阵写在核心认知里，定义块自带全部公式。
+    || topicId === "ch02.matrix.basis"
+    // 讲义 2.2 批量内积：公式写在定义 2.4 之内，定义块自带公式，案例区叫「数学案例」。
+    || topicId === "ch02.batch.inner-products"
+    // 讲义 4.1.3 的 Col(A)、Null(A) 就写在定义 4.3、4.4 之内：定义块自带公式，
+    // 分节名按讲义原文作「定义」，不再拼成「定义与公式」。
+    || topicId === "ch04.subspace.col-null"
+    // 讲义 4.3 合并后的「基的定义」：定义 4.10、定理 4.1 与坐标公式都写在定义块内，
+    // 定义块自带公式，案例区叫「数学案例」。
+    || topicId === "ch04.basis.definition";
 }
 
 /** 讲义 1.5 的三个几何证明小节按讲义正文排版（没有案例窗格，字号仍按讲义层级）。 */

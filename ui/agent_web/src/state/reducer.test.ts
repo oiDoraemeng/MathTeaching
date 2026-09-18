@@ -111,16 +111,19 @@ describe("MathAgent reducer", () => {
     const gap = appReducer(state, { type: "event_received", event: event("execution", 3, { text: "done" }) });
     expect(gap.gapDetected).toBe(true);
   });
-  it("creates one reusable case tab and activates it", () => {
+  it("replaces the previous math case tab and activates the new case", () => {
     const caseEvent: TimelineEvent = { type: "math_case", session_id: "", payload: {
       case_id: "vector-subtraction", category: "向量", name: "向量减法", formula: "a-b=(1,-1)",
       steps: ["加上相反向量"], conclusion: "减法等价于加法。", summary: "向量减法",
     } };
     let state = appReducer(initialState(), { type: "event_received", event: caseEvent });
-    state = appReducer(state, { type: "event_received", event: { ...caseEvent, payload: { ...caseEvent.payload, summary: "更新后的解释" } } });
+    state = appReducer(state, { type: "event_received", event: { ...caseEvent, payload: {
+      ...caseEvent.payload, case_id: "vector-scalar", name: "向量数乘", summary: "更新后的解释",
+    } } });
     expect(state.cases).toHaveLength(1);
+    expect(state.cases[0].id).toBe("vector-scalar");
     expect(state.cases[0].summary).toBe("更新后的解释");
-    expect(state.activeTab).toBe("case:vector-subtraction");
+    expect(state.activeTab).toBe("case:vector-scalar");
   });
   it("keeps a case whose formulas live inside the definition prose", () => {
     const caseEvent: TimelineEvent = { type: "math_case", session_id: "", payload: {

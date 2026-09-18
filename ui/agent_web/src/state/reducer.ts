@@ -345,10 +345,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       if (event.type === "math_case") {
         const nextCase = caseFromEvent(event);
         if (!nextCase) return state;
-        const cases = state.cases.some((item) => item.id === nextCase.id)
-          ? state.cases.map((item) => item.id === nextCase.id ? nextCase : item)
-          : [...state.cases, nextCase];
-        return { ...state, cases, activeTab: `case:${nextCase.id}` };
+        return { ...state, cases: [nextCase], activeTab: `case:${nextCase.id}` };
       }
       if (event.type === "math_case_focus") {
         const caseId = typeof event.payload.case_id === "string" ? event.payload.case_id : "";
