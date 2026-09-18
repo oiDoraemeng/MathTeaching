@@ -4,6 +4,71 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="mathlive-fonts.css">
   <style>
+    /* 中文走系统黑体：优先装机的现代黑体，找不到再回退到雅黑，最后才用系统默认。
+       size-adjust 只缩放这一个族，KaTeX 公式字形不受影响——否则同一字号下
+       中文会占满 em 方框，看起来比公式字形大很多。 */
+    @font-face {
+      font-family: "MI CJK";
+      src: local("Microsoft YaHei UI"), local("Microsoft YaHei"), local("微软雅黑"),
+           local("HarmonyOS Sans SC"), local("MiSans"), local("Source Han Sans SC"),
+           local("Source Han Sans CN"), local("Noto Sans SC"), local("思源黑体"),
+           local("PingFang SC"), local("Heiti SC");
+      unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+      size-adjust: 80%;
+    }
+    /* 关键修复：MathLive 把中日韩字符当成普通数学符号渲染（class=ML__cmr / ML__mathit），
+       字体链在它自己的样式里写死为 KaTeX_Main / KaTeX_Math，--text-font-family 根本管不到。
+       于是中文直接回退到系统默认字体，并占满整个 em 方框，看着比公式字形大一圈。
+       下面给这两个数学字体族各补一组「只覆盖中日韩字形」的面：unicode-range 让它只接管
+       中文，size-adjust 只缩放中文，KaTeX 的公式字形完全不受影响。 */
+    @font-face {
+      font-family: KaTeX_Main;
+      src: local("Microsoft YaHei UI"), local("Microsoft YaHei"), local("微软雅黑"),
+           local("HarmonyOS Sans SC"), local("MiSans"), local("Source Han Sans SC"),
+           local("Source Han Sans CN"), local("Noto Sans SC"), local("思源黑体"),
+           local("PingFang SC"), local("Heiti SC");
+      font-style: normal;
+      font-weight: 400;
+      unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+      size-adjust: 80%;
+    }
+    @font-face {
+      font-family: KaTeX_Main;
+      src: local("Microsoft YaHei UI"), local("Microsoft YaHei"), local("微软雅黑"),
+           local("HarmonyOS Sans SC"), local("MiSans"), local("Source Han Sans SC"),
+           local("Source Han Sans CN"), local("Noto Sans SC"), local("思源黑体"),
+           local("PingFang SC"), local("Heiti SC");
+      font-style: normal;
+      font-weight: 700;
+      unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+      size-adjust: 80%;
+    }
+    @font-face {
+      font-family: KaTeX_Math;
+      src: local("Microsoft YaHei UI"), local("Microsoft YaHei"), local("微软雅黑"),
+           local("HarmonyOS Sans SC"), local("MiSans"), local("Source Han Sans SC"),
+           local("Source Han Sans CN"), local("Noto Sans SC"), local("思源黑体"),
+           local("PingFang SC"), local("Heiti SC");
+      font-style: italic;
+      font-weight: 400;
+      unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+      size-adjust: 80%;
+    }
+    @font-face {
+      font-family: KaTeX_Math;
+      src: local("Microsoft YaHei UI"), local("Microsoft YaHei"), local("微软雅黑"),
+           local("HarmonyOS Sans SC"), local("MiSans"), local("Source Han Sans SC"),
+           local("Source Han Sans CN"), local("Noto Sans SC"), local("思源黑体"),
+           local("PingFang SC"), local("Heiti SC");
+      font-style: italic;
+      font-weight: 700;
+      unicode-range: U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+      size-adjust: 80%;
+    }
+    :root {
+      --mi-cjk-font: "MI CJK", "Microsoft YaHei UI", "Microsoft YaHei",
+                     "PingFang SC", system-ui, sans-serif;
+    }
     html, body {
       width: 100%;
       height: 100%;
@@ -26,6 +91,10 @@
       --contains-highlight-background-color: var(--mi-selected-bg, #eaf2fd);
       border-radius: 4px;
       font-size: 18px;
+      /* 文本 run 走 --text-font-family（MathLive 的公开变量）；font-family 兜住
+         数学模式里 KaTeX 字体没有的中日韩字形。两处都要设，中文才会统一变好看。 */
+      font-family: var(--mi-cjk-font);
+      --text-font-family: var(--mi-cjk-font);
       cursor: text;
     }
     math-field::part(virtual-keyboard-toggle),
