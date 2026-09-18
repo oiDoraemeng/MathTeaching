@@ -87,7 +87,7 @@ def _chapter4_visual_payload(topic_id: str, claim_id: str) -> tuple[dict[str, ob
     ]
     stages = [
         {
-            "id": stage_ids[item.name], "title": item.title, "caption": semantic.formula,
+            "id": stage_ids[item.name], "title": item.title, "caption": item.caption or semantic.formula,
             "layout": item.layout,
             "input_entity_refs": [entity_ids[role] for role in item.input_roles],
             "output_entity_refs": [entity_ids[role] for role in item.output_roles],
@@ -312,6 +312,13 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         from linear_algebra.teaching.quality import _refine_col_null
 
         _refine_col_null(payload, payload["explanation"], payload["visual_semantics"])
+        _refresh_digests(payload)
+    elif topic_id == "ch04.basis.definition":
+        # 4.3 合并后只剩这一个条目：4.3.1–4.3.3 的讲义原文由适配器逐字搬入，
+        # 讲义自带的例 4 作为两步两窗格的读数案例。
+        from linear_algebra.teaching.quality import _refine_basis_definition
+
+        _refine_basis_definition(payload, payload["explanation"], payload["visual_semantics"])
         _refresh_digests(payload)
     return payload
 

@@ -115,6 +115,57 @@ def _relation_alias(name: str) -> str: return f"ch04__relation__{name}"
 # 按对象取色；其他主题继续沿用渲染器默认色。
 _COL_NULL_COLORED_TOPIC = "ch04.subspace.col-null"
 
+# 4.3「基与维数」的取色：两个窗格画的是同一个点、同一个向量，能区分的只有「尺子」。
+# 所以颜色跟着尺子走：标准基两根方向蓝/橙，新基两根方向紫/红；被量的那个向量自己在
+# 两窗格里都是青绿——它是唯一不动的东西，颜色也必须一直不变。读数（分量箭头、基网格）
+# 由它正在用的那组基派生，跟随源尺子的颜色，这正是这个案例的看点。
+_BASIS_COLORED_TOPIC = "ch04.basis.definition"
+_BASIS_GENERATOR_TOKENS: Mapping[str, tuple[str, str]] = MappingProxyType({
+    "standard_basis": ("basis_e1", "basis_e2"),
+    "oblique_basis": ("transformed_a", "transformed_b"),
+})
+_BASIS_OBJECT_TOKENS: Mapping[str, str] = MappingProxyType({
+    "same_vector": "combination",
+})
+
+# 两组基各自的两根方向尺子，窗格标记直接写它们自己的名字，和正文写法一致
+# （正文写 $\boldsymbol e_1$、$\boldsymbol b_1$，标记就写 e₁、b₁）。用户不用认颜色
+# 也能看出这次读数是在哪把尺子上量的。
+_BASIS_GENERATOR_LABELS: Mapping[str, tuple[str, str]] = MappingProxyType({
+    "standard_basis": ("e₁", "e₂"),
+    "oblique_basis": ("b₁", "b₂"),
+})
+
+_SUBSCRIPT_DIGITS = "₀₁₂₃₄₅₆₇₈₉"
+
+
+def _subscript(index: int) -> str:
+    """把序号写成 Unicode 下标：标记里写 e₁ 比写 e_1 更接近它在正文里的样子。"""
+    return "".join(_SUBSCRIPT_DIGITS[int(digit)] for digit in str(index))
+
+
+def _generator_label(topic_id: str, role: str, index: int, fallback: str) -> str:
+    """Return the marker text for one generator direction of a basis."""
+    labels = _BASIS_GENERATOR_LABELS.get(role) if topic_id == _BASIS_COLORED_TOPIC else None
+    if labels is not None and index <= len(labels):
+        return labels[index - 1]
+    return f"{fallback}{_subscript(index)}" if fallback else ""
+
+
+def _basis_generator_colors(topic_id: str, role: str) -> tuple[str, ...]:
+    """Return one palette color per generator of the named basis (empty elsewhere)."""
+    if topic_id != _BASIS_COLORED_TOPIC:
+        return ()
+    tokens = _BASIS_GENERATOR_TOKENS.get(role)
+    return tuple(role_color(token) for token in tokens) if tokens else ()
+
+
+def _basis_generator_labels(topic_id: str, role: str) -> tuple[str, ...]:
+    """Return one marker text per generator of the named basis (empty elsewhere)."""
+    if topic_id != _BASIS_COLORED_TOPIC:
+        return ()
+    return _BASIS_GENERATOR_LABELS.get(role, ())
+
 
 @dataclass(frozen=True)
 class _SubspaceLook:
@@ -148,6 +199,9 @@ def _look(topic_id: str) -> _SubspaceLook:
 
 def _object_color(topic_id: str, role: str) -> str | None:
     """Return the topic-local object color, or None to keep renderer defaults."""
+    if topic_id == _BASIS_COLORED_TOPIC:
+        token = _BASIS_OBJECT_TOKENS.get(role)
+        return role_color(token) if token is not None else None
     if topic_id != _COL_NULL_COLORED_TOPIC or not known_role(role):
         return None
     return role_color(role)
@@ -195,11 +249,12 @@ def _normal(basis: list[list[float]]) -> list[float]:
 def _entity_operations(entity: VisualEntity, alias: str, scene: str, context: Any, topic_id: str = "") -> tuple[list[dict[str, Any]], tuple[str, ...]]:
     ops: list[dict[str, Any]] = []
     if scene == "2d":
+        color = _object_color(topic_id, entity.role)
         if entity.kind == "point":
             ops.append({"op":"point.upsert","alias":alias,"coordinates":_vector(entity.value,2),"name":entity.label})
         elif entity.kind == "vector":
             origin=f"{alias}__origin"; end=f"{alias}__end"
-            ops.extend(({"op":"point.upsert","alias":origin,"coordinates":[0.0,0.0],"name":"O"}, {"op":"point.upsert","alias":end,"coordinates":_vector(entity.value,2),"name":entity.label}, {"op":"linear.upsert","alias":alias,"start":origin,"end":end,"kind":"vector","role":"primary"}))
+            ops.extend(({"op":"point.upsert","alias":origin,"coordinates":[0.0,0.0],"name":"O"}, {"op":"point.upsert","alias":end,"coordinates":_vector(entity.value,2),"name":entity.label}, {"op":"linear.upsert","alias":alias,"start":origin,"end":end,"kind":"vector","role":"primary",**_color_kwargs(color)}))
         elif entity.kind == "matrix":
             ops.append({"op":"geometry.transformed_grid","alias":alias,"matrix":_matrix(entity.value),"bounds":_bounds(context,2),"step":1.0})
         elif entity.kind in {"basis","subspace","region"}:
@@ -209,9 +264,14 @@ def _entity_operations(entity: VisualEntity, alias: str, scene: str, context: An
             ops.append({"op":"geometry.subspace_region","alias":alias,"basis":basis[:2],"bounds":_bounds(context,2),"opacity":0.2})
             # The region protocol accepts two directions; render every member
             # separately so a redundant third generator is never discarded.
+            # A basis is a pair of rulers, so each direction gets its own color
+            # instead of one color for the whole set.
             if entity.kind == "basis":
+                generator_colors=_basis_generator_colors(topic_id, entity.role)
                 for index, vector in enumerate(basis, 1):
-                    ops.extend(_vector_relation(f"{alias}__generator_{index}",vector))
+                    tone=generator_colors[index-1] if index <= len(generator_colors) else None
+                    mark=_generator_label(topic_id, entity.role, index, entity.label)
+                    ops.extend(_vector_relation(f"{alias}__generator_{index}",vector,tone,mark))
         elif entity.kind == "affine_set":
             ops.append({"op":"geometry.subspace_region","alias":alias,"basis":[[1.0,0.0],[0.0,1.0]],"origin":_vector(entity.value,2),"bounds":_bounds(context,2),"opacity":0.16})
         elif entity.kind == "constraint":
@@ -283,11 +343,13 @@ def _parameters(relation: VisualRelation) -> Mapping[str, object]:
     return relation.parameters
 
 
-def _vector_relation(alias: str, endpoint: object) -> list[dict[str, Any]]:
+def _vector_relation(alias: str, endpoint: object, color: str | None = None, label: str = "") -> list[dict[str, Any]]:
     origin=f"{alias}__origin"; end=f"{alias}__end"
+    # 箭头尖上的标记写这支向量自己的名字（e₁、x、2u……）；计划没说名字的向量就
+    # 不画标记——统一写 "result" 只会让每个窗格都多出一个看不出指谁的词。
     return [{"op":"point.upsert","alias":origin,"coordinates":[0.0,0.0],"name":"O"},
-            {"op":"point.upsert","alias":end,"coordinates":_vector(endpoint,2),"name":"result"},
-            {"op":"linear.upsert","alias":alias,"start":origin,"end":end,"kind":"vector","role":"result"}]
+            {"op":"point.upsert","alias":end,"coordinates":_vector(endpoint,2),"name":label},
+            {"op":"linear.upsert","alias":alias,"start":origin,"end":end,"kind":"vector","role":"result",**_color_kwargs(color)}]
 
 
 def _coordinate_operation(alias: str, basis: object, coordinates: object, vector: object, context: Any) -> dict[str, Any]:
@@ -298,18 +360,33 @@ def _coordinate_operation(alias: str, basis: object, coordinates: object, vector
             "entity_count":4,"sample_count":4}
 
 
-def _coordinate_operations(alias: str, basis: object, coordinates: object, vector: object, context: Any) -> list[dict[str, Any]]:
+def _coefficient_text(value: float) -> str:
+    """把系数写成窗格里能读的样子：整数不拖小数点。"""
+    return str(int(round(value))) if abs(value - round(value)) <= TOL else f"{value:.4g}"
+
+
+def _coordinate_operations(alias: str, basis: object, coordinates: object, vector: object, context: Any,
+                           basis_colors: tuple[str, ...] = (), basis_labels: tuple[str, ...] = ()) -> list[dict[str, Any]]:
+    """Draw one readout: its grid and each component arrow follow the basis being used.
+
+    两条分量箭头是这个案例真正要讲的东西——它们把「读数」拆成「每根基各走了多少」。
+    所以标记写在箭头上（5e₁、3e₂ 这样的项），拐点只是几何端点，不带标记。
+    """
     readout=_coordinate_operation(alias,basis,coordinates,vector,context)
-    grid={**readout,"op":"geometry.basis_grid","alias":f"{alias}__grid"}
+    grid={**readout,"op":"geometry.basis_grid","alias":f"{alias}__grid",**_color_kwargs(basis_colors[0] if basis_colors else None)}
     operations=[grid,readout]
     endpoint=[0.0,0.0]
     for index,(column,coefficient) in enumerate(zip(zip(*_matrix(basis)),_vector(coordinates)),1):
         next_endpoint=_add(endpoint,_scale(column,coefficient))
         term=f"{alias}__component_{index}"
+        tone=basis_colors[index-1] if index <= len(basis_colors) else None
+        symbol=basis_labels[index-1] if index <= len(basis_labels) else ""
+        mark=f"{_coefficient_text(coefficient)}{symbol}" if symbol else ""
         operations.extend([
             {"op":"point.upsert","alias":f"{term}__start","coordinates":endpoint},
             {"op":"point.upsert","alias":f"{term}__end","coordinates":next_endpoint},
-            {"op":"linear.upsert","alias":term,"start":f"{term}__start","end":f"{term}__end","kind":"vector","role":"result"},
+            {"op":"linear.upsert","alias":term,"start":f"{term}__start","end":f"{term}__end","kind":"vector","role":"result",
+             "label":mark,**_color_kwargs(tone)},
         ])
         endpoint=next_endpoint
     return operations
@@ -320,7 +397,11 @@ def _relation_operations(topic_id: str, relation: VisualRelation, entities: Mapp
     source=entities[relation.source_ref]; target=entities[relation.target_ref]
     if source.dimension == 2:
         if relation.kind == "coordinate_equivalence":
-            return _coordinate_operations(alias,p["basis_matrix"],p["coordinates"],p["expected_vector"],context)
+            # A readout measures with one specific basis, so its grid and component
+            # arrows borrow that basis's own colors.
+            return _coordinate_operations(alias,p["basis_matrix"],p["coordinates"],p["expected_vector"],context,
+                                          _basis_generator_colors(topic_id, source.role),
+                                          _basis_generator_labels(topic_id, source.role))
         if relation.kind == "same_measure":
             spec=semantic_for(topic_id); by_role={e.role:e for e in entities.values()}
             basis=by_role["oblique_basis"].value; coords=by_role["oblique_coordinates"].value; vector=by_role["same_vector"].value
@@ -342,7 +423,7 @@ def _relation_operations(topic_id: str, relation: VisualRelation, entities: Mapp
             result=_add(a,b)
             return [{"op":"geometry.polygon","alias":alias,"vertices":[[0.0,0.0],a,result,b],"opacity":0.16,"outline":True}]
         if relation.kind in {"scalar_multiple","homogeneity"}:
-            return _vector_relation(alias,target.value)
+            return _vector_relation(alias,target.value,label=target.label)
         if relation.kind == "not_linear":
             if source.kind == "constraint": return [{"op":"curve.create","alias":alias,"kind":"explicit","expression":"y=x^2"}]
             return _vector_relation(alias,p["origin_image"])
@@ -383,7 +464,9 @@ def _relation_operations(topic_id: str, relation: VisualRelation, entities: Mapp
             end=_add(endpoint,vector)
             operations.append({"op":"linear3d.upsert","alias":f"{alias}__term_{index}","start":endpoint,"end":end,"kind":"vector","role":"result"})
             endpoint=end
-        operations.append({"op":"point3d.upsert","alias":alias,"coordinates":endpoint,"name":"zero combination"})
+        # 组合的落点写目标实体自己的名字（「0」），不写 "zero combination"——窗格标记
+        # 是给学生看的数学写法，不是编译器的内部术语。
+        operations.append({"op":"point3d.upsert","alias":alias,"coordinates":endpoint,"name":target.label})
         return operations
     if relation.kind in {"union_counterexample","linear_combination","sum"}:
         if relation.kind == "union_counterexample":
@@ -401,7 +484,7 @@ def _relation_operations(topic_id: str, relation: VisualRelation, entities: Mapp
             next_endpoint=_add(endpoint,vector)
             operations.append({"op":"linear3d.upsert","alias":f"{alias}__term_{index}","start":endpoint,"end":next_endpoint,"kind":"vector","role":"result"})
             endpoint=next_endpoint
-        operations.append({"op":"point3d.upsert","alias":f"{alias}__residual","coordinates":endpoint,"name":"Ax"})
+        operations.append({"op":"point3d.upsert","alias":f"{alias}__residual","coordinates":endpoint,"name":target.label})
         return operations
     if relation.kind == "affine_translation":
         basis=_matrix(source.value)
