@@ -72,7 +72,7 @@ def test_vector_addition_published_content_omits_unjustified_layers() -> None:
 
 
 def test_matrix_vector_subsections_publish_the_lecture_verbatim() -> None:
-    """2.5 的三个小节按讲义原文给出定义/定理/例题，不概括、不单列「公式」分节。"""
+    """2.5 的三个小节与 2.7 按讲义原文给出定义/定理/例题，不概括、不单列「公式」分节。"""
 
     store = runtime_teaching_store()
 
@@ -106,7 +106,13 @@ def test_matrix_vector_subsections_publish_the_lecture_verbatim() -> None:
         "整个坐标网格被 $\\boldsymbol A$ 拉伸、旋转、压扁",
     ):
         assert required in transformed.definition
-    assert transformed.case_layout.default_pane_count == 3
+    assert [case.purpose for case in transformed.case_layout.cases] == [
+        "第一步：标准基向量",
+        "第二步：横向拉伸",
+        "第三步：逆时针旋转",
+        "第四步：两列的像与网格变形",
+    ]
+    assert transformed.case_layout.default_pane_count == 4
 
     stretch = store.published("ch02.matrix.stretch-rotate-scale").artifact.explanation
     assert [section.title for section in stretch.sections] == ["分层例题", "数学案例"]
@@ -122,18 +128,127 @@ def test_matrix_vector_subsections_publish_the_lecture_verbatim() -> None:
     ]
     assert stretch.case_layout.default_pane_count == 4
 
+    basis = store.published("ch02.matrix.basis").artifact.explanation
+    # 讲义 2.7 只有「定义 2.9（基）」与核心认知，标题听命讲义，正文逐字保留。
+    assert [section.title for section in basis.sections] == ["定义", "数学案例"]
+    for required in (
+        "一句话动机：同一个变换，用不同的基描述，矩阵就不同",
+        "定义 2.9（基）",
+        "$R^{n}$ 中 $n$ 个线性无关的向量组成的一组有序向量",
+        "它是标准基，但不是唯一的基",
+        "核心认知：变换本身是客观的",
+        "描述它的矩阵取决于你用什么基来记录坐标",
+    ):
+        assert required in basis.definition
+    assert [case.purpose for case in basis.case_layout.cases] == [
+        "第一步：标准基下的旋转",
+        "第二步：换一组基，矩阵改变",
+    ]
+    assert basis.case_layout.default_pane_count == 2
+
 
 def test_matrix_vector_case_data_avoids_the_coordinate_axes() -> None:
-    """2.5.1、2.5.2 的自定案例取值避开坐标轴（标准基向量由讲义固定，不在此列）。"""
+    """2.5.1、2.5.2 与 2.7 的自定案例取值避开坐标轴（标准基向量由讲义固定，不在此列）。"""
 
     store = runtime_teaching_store()
-    for topic_id in ("ch02.matrix.row-column", "ch02.matrix.transformed-grid"):
+    for topic_id in (
+        "ch02.matrix.row-column",
+        "ch02.matrix.transformed-grid",
+        "ch02.matrix.basis",
+    ):
         artifact = store.published(topic_id).artifact
+        # 标准基向量及其像（拉伸/旋转矩阵的两列）由讲义固定，本身就落在坐标轴上。
+        fixed = {
+            "mv_e1", "mv_e2",
+            "mv_stretch_e1", "mv_stretch_e2",
+            "mv_rotate_e1", "mv_rotate_e2",
+            # 2.7 第一个窗格就是讲义的标准基旋转：两列 (0,1)、(-1,0) 由讲义固定。
+            "mv_basis_ae1", "mv_basis_ae2",
+        }
         for entity in artifact.visual_semantics.entities:
-            if entity.kind != "vector" or entity.id in {"mv_e1", "mv_e2"}:
+            if entity.kind != "vector" or entity.id in fixed:
                 continue
             value = tuple(float(item) for item in entity.value)
             assert all(abs(item) > 0.0 for item in value), (topic_id, entity.id, value)
+
+
+def test_det_geometry_merges_the_first_three_3_1_subsections_into_one_topic() -> None:
+    """3.1 目录合并为单一小节：定义（含定理 3.1 公式）、几何意义速查与单案例。"""
+
+    from linear_algebra.catalog.manifest import lecture_manifest, topic_entries
+
+    section = next(node for node in lecture_manifest() if node.id == "ch03.s31")
+    assert (section.title, section.children) == ("行列式的几何意义", ("ch03.det.oriented-area",))
+    assert [topic.id for topic in topic_entries() if topic.section_id == "ch03.s31"] == [
+        "ch03.det.oriented-area"
+    ]
+
+    explanation = runtime_teaching_store().published("ch03.det.oriented-area").artifact.explanation
+    # 分节标题听命讲义：公式并入定义块，不单列「公式」；3.1.3 保留速查表标题。
+    assert [(item.id, item.title) for item in explanation.sections] == [
+        ("definition", "定义"),
+        ("geometric_meaning", "几何意义速查"),
+        ("worked_examples", "数学案例"),
+    ]
+    for required in (
+        "定义 3.1（行列式——几何定义）",
+        r"等于以 $\boldsymbol A$ 的两列为邻边的平行四边形的有向面积。",
+        r"定理 3.1（$2 \times 2$ 行列式公式）",
+        # 矩阵写成矩阵形式，不再把 pmatrix 压成一行。
+        r"$$\det(\begin{pmatrix} a & b \\ c & d \end{pmatrix}) = ad - bc$$",
+        '推导直觉：$a$ 和 $d$ 构成"主轴方向的矩形面积"，$bc$ 是"交叉项"的修正。',
+        r"$3 \times 3$ 行列式用三阶展开公式，几何上对应平行六面体的有向体积。",
+    ):
+        assert required in explanation.definition
+    assert explanation.formula == ""
+    assert explanation.derivation == ()
+    assert r"| $\det(\boldsymbol A)$ | 几何含义 |" in explanation.geometric_meaning
+    for row in ("$= 0$", "$> 0$", "$< 0$", r"$|\det(\boldsymbol A)| = 1$"):
+        assert row in explanation.geometric_meaning
+    assert "面积不变（如纯旋转）" in explanation.geometric_meaning
+    # 3.1.4 分层例题随该小节删除：正文与检索文本都不再保留。
+    assert "分层例题" not in explanation.definition
+    assert not any("分层例题" in item for item in explanation.searchable_text)
+    # 讲义 3.1.1–3.1.3 无数值案例：按定义自定的两步案例，首屏“全部显示”两格。
+    assert explanation.case_layout is not None
+    assert [case.id for case in explanation.case_layout.cases] == [
+        "case.ch03.det.oriented-area.1",
+        "case.ch03.det.oriented-area.2",
+    ]
+    assert [case.purpose for case in explanation.case_layout.cases] == [
+        "第一步：单位正方形",
+        "第二步：矩阵变换得到的平行四边形",
+    ]
+    # 案例正文必须写出矩阵本身，并说明是矩阵变换把单位正方形送过去。
+    case_text = "\n".join(
+        line for example in explanation.worked_examples for line in example.calculation
+    )
+    assert r"\boldsymbol A=\begin{pmatrix} 2 & 1 \\ 1 & 3 \end{pmatrix}" in case_text
+    assert "矩阵变换" in case_text
+    assert "a=2" in case_text and "d=3" in case_text
+    assert explanation.case_layout.default_pane_count == 2
+
+    artifact = runtime_teaching_store().published("ch03.det.oriented-area").artifact
+    compiled = VisualSemanticsCompiler().compile(
+        artifact, context=RenderContext.default("ch03.det.oriented-area")
+    )
+    # 第二步用外接矩形加两条切角辅助线说明 ad - bc：四条边 + 两条辅助线都是虚线。
+    second = case_plan(compiled, "stage.case.ch03.det.oriented-area.2")
+    dashed = [operation for operation in second.operations if operation.get("style") == "dashed"]
+    assert len(dashed) == 6
+    labels = {
+        str(operation.get("text"))
+        for operation in second.operations
+        if operation.get("op") == "annotation.upsert"
+    }
+    assert {"(a+b)(c+d)=12", "ad-bc=5", "-1.5", "-2"} <= labels
+    # 第一步窗格只画单位正方形与两条标准基向量，不含外接矩形构造。
+    first = case_plan(compiled, "stage.case.ch03.det.oriented-area.1")
+    assert not any(operation.get("style") == "dashed" for operation in first.operations)
+    assert {str(operation.get("label")) for operation in first.operations if operation.get("label")} == {
+        "e1",
+        "e2",
+    }
 
 
 def _pane_radius(plan) -> float:
@@ -168,8 +283,9 @@ def test_matrix_vector_case_panes_share_one_fixed_view() -> None:
     compiler = VisualSemanticsCompiler()
     for topic_id, pane_count in (
         ("ch02.matrix.row-column", 2),
-        ("ch02.matrix.transformed-grid", 3),
+        ("ch02.matrix.transformed-grid", 4),
         ("ch02.matrix.stretch-rotate-scale", 4),
+        ("ch02.matrix.basis", 2),
     ):
         artifact = store.published(topic_id).artifact
         compiled = compiler.compile(artifact, context=RenderContext.default(topic_id))

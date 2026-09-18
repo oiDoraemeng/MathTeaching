@@ -8,7 +8,7 @@ from linear_algebra.teaching.validation import validate_artifact_payload
 
 def test_all_39_chapter_artifacts_are_deterministic_and_reviewed_only():
     payloads = load_reviewed_artifacts()
-    assert len(payloads) == 39
+    assert len(payloads) == 37
     assert all(payload["status"] == "reviewed" for payload in payloads.values())
     for topic_id, payload in payloads.items():
         assert artifact_payload_for(topic_id) == artifact_payload_for(topic_id)
@@ -28,7 +28,7 @@ def test_artifacts_have_closed_source_and_visual_graphs():
 def test_materialized_resources_and_receipts_are_digestable():
     drafts = load_draft_artifacts()
     reviewed = load_reviewed_artifacts()
-    assert len(drafts) == len(reviewed) == 39
+    assert len(drafts) == len(reviewed) == 37
     for topic_id, payload in reviewed.items():
         assert payload["status"] == "reviewed"
         assert drafts[topic_id]["status"] == "draft"

@@ -112,6 +112,13 @@ def test_opening_lecture_retains_user_content_and_shows_the_whole_case_flow():
     window._set_teaching_case_pane_count(1)
     assert len(window.pane_manager.visible_pane_ids()) == 1
     assert not set(user_ids).intersection(window.pane_manager.visible_pane_ids())
+    old_case_ids = set(window._teaching_case_pane_ids)
+
+    window._load_linear_algebra_topic("ch01.ops.scalar")
+
+    assert not old_case_ids.intersection(window.pane_manager.panes)
+    assert all(pane.source == "user" or pane.pane_id in window._teaching_case_pane_ids
+               for pane in window.pane_manager.panes.values())
 
 
 def test_selecting_a_geometric_example_does_not_filter_user_scene_aliases() -> None:

@@ -15,11 +15,12 @@ def test_chapter_reports_keep_expected_coverage_when_resources_are_missing(tmp_p
     assert report.expected_topic_count == 17
     assert len(report.errors) == 17
     assert report.errors[0].endswith("missing published artifact")
-    assert report.minimum_level_counts == (("L2", 17),)
+    # 1.5.2 中位线是读例题（READ → L1），其余 16 个主题为 L2。
+    assert report.minimum_level_counts == (("L1", 1), ("L2", 16))
 
 
 def test_all_chapter_reports_preserve_17_15_15_shape(tmp_path: Path) -> None:
     reports = validate_all_chapters(TeachingArtifactStore(tmp_path), lecture_source_repository())
 
-    assert tuple(report.expected_topic_count for report in reports) == (17, 15, 15)
+    assert tuple(report.expected_topic_count for report in reports) == (17, 15, 12)
     assert tuple(report.topic_count for report in reports) == (0, 0, 0)

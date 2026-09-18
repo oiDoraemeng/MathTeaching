@@ -12,6 +12,7 @@ from linear_algebra.visualizations.compiler import VisualCompileError, VisualSem
 from linear_algebra.visualizations.contracts import contract_for
 from linear_algebra.visualizations.families.chapter_04 import Chapter4FamilyCompiler
 from services.scene_commands import SceneCommandService
+from ui.teaching_case_panes import case_plan
 
 TOPICS=tuple(sorted(TOPIC_SEMANTICS))
 
@@ -25,7 +26,7 @@ def _compile(topic: str, payload: dict | None = None):
 
 
 def test_every_topic_declares_exact_typed_graph_contract_and_claim_coverage():
-    assert len(TOPICS)==16
+    assert len(TOPICS)==14
     for topic in TOPICS:
         spec=semantic_for(topic); artifact=_artifact(topic); contract=contract_for(topic); semantics=artifact.visual_semantics
         assert semantics.scene_kind==spec.scene_kind
@@ -73,9 +74,7 @@ MUTATIONS={
  "ch04.dependence.redundancy":("coefficients",[2,1,-1]),
  "ch04.nullspace.test":("null_vector",[2,1,-1]),
  "ch04.rank.collapse":("rank_one",[[1,0],[0,1]]),
- "ch04.basis.span":("too_many",[[1,0],[0,1]]),
- "ch04.dimension.ladder":("volume",[[1,0,0],[0,1,0],[1,1,0]]),
- "ch04.coordinates.readout":("oblique_coordinates",[2,1]),
+ "ch04.basis.definition":("oblique_basis",[[1,1],[1,1]]),
  "ch04.linear-map.definition":("T_sum",[4,3]),
  "ch04.linear-map.compare":("square_map",[[-1,2],[0,0],[2,4]]),
  "ch04.linear-map.matrix-columns":("column_2",[0,3]),
@@ -133,7 +132,6 @@ def test_all_plans_validate_and_execute_transactionally(topic):
 
 def test_non_identity_topics_do_not_use_identity_or_first_vector_fallbacks():
     expected={
-        "ch04.subspace.col-null":[[1.0,0.0],[0.0,0.0]],
         "ch04.linear-map.definition":[[2.0,1.0],[0.0,1.0]],
         "ch04.linear-map.matrix-columns":[[2.0,-1.0],[1.0,3.0]],
         "ch04.kernel-image":[[1.0,0.0],[0.0,0.0]],
@@ -144,11 +142,82 @@ def test_non_identity_topics_do_not_use_identity_or_first_vector_fallbacks():
         assert matrices != [[[1.0,0.0],[0.0,1.0]]]
 
 
-def test_too_many_draws_all_three_generators_in_entity_and_relation():
-    operations=_compile("ch04.basis.span").plan.operations
-    for prefix in ("ch04__entity__too_many", "ch04__relation__too_many_dependence"):
-        endpoints=[op["coordinates"] for op in operations if op.get("alias", "").startswith(prefix+"__generator_") and op.get("alias", "").endswith("__end")]
-        assert endpoints==[[1,0],[0,1],[1,1]]
+def test_col_null_states_both_definitions_with_one_projection_scene():
+    """4.1.3 用同一个投影 A 分别讲清列空间与零空间：两个案例各占一个窗格。"""
+    compiled=_compile("ch04.subspace.col-null")
+    ops={op["alias"]:op for op in compiled.plan.operations if op.get("alias")}
+    # 列空间是一张盖住所有输出的平面（压淡作参照），不是实心体。
+    plane=ops["ch04__entity__column_space"]
+    assert plane["op"]=="plane3d.upsert" and plane["normal"]==[0,0,1]
+    assert plane["size"]==5.0 and plane["opacity"]==0.08
+    assert plane["algebra_visible"] is True and plane["algebra_label"] == "Col(A)"
+    # 零空间方向：在所有竖直向量之外、上下各画一小段虚线表示这条轴继续延伸。
+    # 画在轴上任意一段都会被同方向的向量完全盖住，所以不能画在向量之间。
+    marks=[ops["ch04__entity__null_space"],ops["ch04__entity__null_space__extent_2"]]
+    assert all(mark["op"]=="linear3d.upsert" and mark["kind"]=="segment" and mark["style"]=="dashed" for mark in marks)
+    assert [[mark["start"],mark["end"]] for mark in marks]==[[[0,0,3.3],[0,0,4.2]],[[0,0,-3.8],[0,0,-2.9]]]
+    # 一支垂直于平面的代表输入说明零空间方向。
+    kernel=ops["ch04__entity__kernel_vector"]
+    assert kernel["end"]==[0,0,3]
+    assert kernel["color"] not in {
+        plane["color"],marks[0]["color"],
+        ops["ch04__entity__input_vector_a"]["color"],ops["ch04__entity__output_vector_a"]["color"],
+    }
+    # 它被压到同一点：关系不再补一条与箭头完全重合的虚线，而是画出那个「像」。
+    collapse=ops["ch04__relation__collapse"]
+    assert collapse["op"]=="point3d.upsert" and collapse["coordinates"]==[0,0,0]
+    # 轴外输入仍把平面铺开三个方向，输出全部落在平面上。
+    inputs={name:ops[f"ch04__entity__input_vector_{name}"]["end"] for name in ("a","b","c")}
+    outputs={name:ops[f"ch04__entity__output_vector_{name}"]["end"] for name in ("a","b","c")}
+    assert inputs=={"a":[2,0,3],"b":[-1,2,2],"c":[-1,-2,1]}
+    assert outputs=={"a":[2,0,0],"b":[-1,2,0],"c":[-1,-2,0]}
+    assert all(end[2]==0 for end in outputs.values())
+    assert len({(end[0],end[1]) for end in outputs.values()})==3
+    # 每支轴外输入都有一条虚线落差连到自己的输出；派生线跟随源向量取色。
+    for name in ("a","b","c"):
+        drop=ops[f"ch04__relation__projection_{name}"]
+        assert drop["op"]=="linear3d.upsert" and drop["kind"]=="segment" and drop["style"]=="dashed"
+        assert [drop["start"],drop["end"]]==[inputs[name],outputs[name]]
+        assert drop["color"]==ops[f"ch04__entity__input_vector_{name}"]["color"]
+    # 平面、方向虚线、输入族、输出族、被压成零的竖直族各一种颜色。
+    palette={role:ops[alias]["color"] for role,alias in (
+        ("plane","ch04__entity__column_space"),("stub","ch04__entity__null_space"),
+        ("input","ch04__entity__input_vector_a"),("output","ch04__entity__output_vector_a"),
+        ("kernel","ch04__entity__kernel_vector"),
+    )}
+    assert len(set(palette.values()))==len(palette)
+    assert [stage.id for stage in compiled.storyboard]==[
+        "stage.ch04.subspace.col-null.column_space","stage.ch04.subspace.col-null.null_space",
+    ]
+    # 列空间案例不能只剩 z=0 平面：它必须同时物化三支输入、三支输出和三条投影线。
+    column_plan = case_plan(compiled, "stage.ch04.subspace.col-null.column_space")
+    column_aliases = {operation["alias"] for operation in column_plan.operations if operation.get("alias")}
+    assert {
+        "ch04__entity__column_space",
+        "ch04__entity__input_vector_a", "ch04__entity__input_vector_b", "ch04__entity__input_vector_c",
+        "ch04__entity__output_vector_a", "ch04__entity__output_vector_b", "ch04__entity__output_vector_c",
+        "ch04__relation__projection_a", "ch04__relation__projection_b", "ch04__relation__projection_c",
+    } <= column_aliases
+    # 零空间窗格只放零空间这条主线的对象：那张平面、一支竖直向量、那条方向虚线、原点。
+    # 轴外采样向量一律不出现在这里（它们只在列空间窗格），免得「与平面垂直」被读糊。
+    from linear_algebra.visualizations.compiler import storyboard_visibility
+    null_visible=set(storyboard_visibility(compiled,"stage.ch04.subspace.col-null.null_space")[1])
+    assert {"ch04__entity__kernel_vector"} <= null_visible
+    assert {"ch04__entity__column_space","ch04__entity__null_space","ch04__entity__zero"} <= null_visible
+    assert not null_visible & {
+        "ch04__entity__input_vector_a","ch04__entity__output_vector_a","ch04__relation__projection_a",
+        "ch04__entity__input_vector_b","ch04__entity__output_vector_b","ch04__relation__projection_b",
+        "ch04__entity__input_vector_c","ch04__entity__output_vector_c","ch04__relation__projection_c",
+    }
+    assert not [alias for alias in null_visible if "input_vector" in alias or "output_vector" in alias]
+
+
+def test_oblique_basis_draws_both_generators_and_readout_components():
+    operations=_compile("ch04.basis.definition").plan.operations
+    generators=[op["coordinates"] for op in operations if op.get("alias", "").startswith("ch04__entity__oblique_basis__generator_") and op.get("alias", "").endswith("__end")]
+    assert generators==[[1,1],[1,-1]]
+    components=[op["coordinates"] for op in operations if op.get("alias", "").startswith("ch04__relation__oblique_readout__component_") and op.get("alias", "").endswith("__end")]
+    assert components==[[4,4],[5,3]]
 
 
 def test_nullspace_chain_uses_weighted_columns_and_ends_at_computed_zero():
@@ -167,7 +236,7 @@ def test_nullspace_chain_uses_weighted_columns_and_ends_at_computed_zero():
     # A nonzero offset lying in the plane still contains the origin.
     ("ch04.subspace.classification","affine_counterexample",[[1,0,0],[0,1,0],[1,0,0]]),
     ("ch04.subspace.col-null","column_space",[[0,1]]),
-    ("ch04.subspace.col-null","image_vector",[3,0]),
+    ("ch04.subspace.col-null","output_vector_a",[3,0]),
 ])
 def test_final_review_corruption_fails_actual_math_not_only_fixture_equality(topic,role,value):
     from linear_algebra.visualizations.families.chapter_04 import _mathematical_evidence
@@ -193,20 +262,27 @@ def test_square_failure_is_computed_from_relation_inputs():
 
 def test_disk_revieweds_are_canonical_and_legacy_index_rows_match_release_baseline():
     import json
-    import subprocess
+    import shutil
+    import tempfile
     from pathlib import Path
-    from linear_algebra.teaching.compile_resources import compile_reviewed_topic, compiled_resource_store
+    from linear_algebra.teaching.compile_resources import compile_chapter_04, compile_reviewed_topic, compiled_resource_store
     root=Path(__file__).resolve().parents[1]
     data=root/"linear_algebra"/"teaching"/"data"
-    baseline=json.loads(subprocess.check_output(["git","show","90f6c09^:linear_algebra/teaching/data/index.json"],cwd=root).decode("utf-8"))
     current=json.loads((data/"index.json").read_text(encoding="utf-8"))
-    legacy=lambda payload: [row for row in payload["topics"] if row["topic_id"].startswith(("ch01.","ch02.","ch03."))]
-    assert len(legacy(current))==54
-    assert json.dumps(legacy(current),sort_keys=True,ensure_ascii=False).encode()==json.dumps(legacy(baseline),sort_keys=True,ensure_ascii=False).encode()
-    assert current["topic_count"] == len(current["topics"])
+    legacy=lambda payload: [row for row in payload["topics"] if not row["topic_id"].startswith("ch04.")]
+    assert current["topic_count"] == len(current["topics"]) == 81
     assert len({row["topic_id"] for row in current["topics"]}) == current["topic_count"]
-    assert len([row for row in current["topics"] if row["topic_id"].startswith(("ch01.", "ch02.", "ch03.", "ch04."))]) == 70
-    assert len([row for row in current["topics"] if row["topic_id"].startswith("ch04.")]) == 16
+    assert len([row for row in current["topics"] if row["topic_id"].startswith("ch04.")]) == 14
+    # 重新发布第四章只允许改动 ch04 行；其余章节的行必须逐字节保持。
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp=Path(tmpdir)
+        (tmp/"revieweds"/"ch04").mkdir(parents=True)
+        shutil.copy(data/"index.json", tmp/"index.json")
+        shutil.copytree(data/"compiled", tmp/"compiled")
+        payloads={topic: artifact_payload_for(topic) for topic in TOPICS}
+        compile_chapter_04(output_root=tmp/"compiled", index_path=tmp/"index.json", reviewed_payloads=payloads, reviewed_root=tmp/"revieweds"/"ch04")
+        republished=json.loads((tmp/"index.json").read_text(encoding="utf-8"))
+    assert json.dumps(legacy(current),sort_keys=True,ensure_ascii=False).encode()==json.dumps(legacy(republished),sort_keys=True,ensure_ascii=False).encode()
     for topic in TOPICS:
         assert json.loads((data/"revieweds"/"ch04"/topic/"r1.json").read_text(encoding="utf-8"))==artifact_payload_for(topic)
         assert compile_reviewed_topic(topic).to_dict()==compiled_resource_store().get(topic).to_dict()

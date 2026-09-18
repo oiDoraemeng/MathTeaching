@@ -28,15 +28,16 @@ def test_linear_examples_recompute_all_three_axioms(role, field):
 
 
 def test_oblique_arrows_grid_and_decomposition_share_matrix_columns():
-    plan=VisualSemanticsCompiler().compile(TeachingArtifact.from_dict(artifact_payload_for("ch04.coordinates.readout"))).plan
+    plan=VisualSemanticsCompiler().compile(TeachingArtifact.from_dict(artifact_payload_for("ch04.basis.definition"))).plan
     operations={op.get("alias"):op for op in plan.operations}
     prefix="ch04__entity__oblique_basis"
-    assert [operations[f"{prefix}__generator_{i}__end"]["coordinates"] for i in (1,2)]==[[1,0],[1,1]]
+    assert [operations[f"{prefix}__generator_{i}__end"]["coordinates"] for i in (1,2)]==[[1,1],[1,-1]]
     relation="ch04__relation__oblique_readout"
     assert operations[f"{relation}__grid"]["op"]=="geometry.basis_grid"
-    assert operations[f"{relation}__grid"]["basis_matrix"]==[[1,1],[0,1]]
-    assert operations[f"{relation}__component_1__end"]["coordinates"]==[1,0]
-    assert operations[f"{relation}__component_2__end"]["coordinates"]==operations[relation]["standard_vector"]==[2,1]
+    assert operations[f"{relation}__grid"]["basis_matrix"]==[[1,1],[1,-1]]
+    assert operations[f"{relation}__grid"]["alternate_coordinates"]==[4,1]
+    assert operations[f"{relation}__component_1__end"]["coordinates"]==[4,4]
+    assert operations[f"{relation}__component_2__end"]["coordinates"]==operations[relation]["standard_vector"]==[5,3]
 
 
 def test_dependence_draws_every_weighted_term_as_closed_zero_chain():
@@ -47,7 +48,7 @@ def test_dependence_draws_every_weighted_term_as_closed_zero_chain():
 
 
 @pytest.mark.parametrize("topic,role,value", [
-    ("ch04.dimension.ladder","line",[[0,0,1]]),
+    ("ch04.basis.definition","same_vector",[5,4]),
     ("ch04.rank-nullity","collapsed",[1,0,0]),
     ("ch04.rank-nullity","nullity",[[1,0,0]]),
     ("ch04.rank-nullity","rank",[[1,0,0],[0,0,1]]),
@@ -72,16 +73,33 @@ def test_linear_and_nonlinear_examples_have_distinct_geometric_lanes():
     assert ops["ch04__entity__square_map"]["expression"]=="y=(x-(0))^2+(-4)"
 
 
-def test_col_null_domain_and_codomain_use_separate_origins():
-    plan=VisualSemanticsCompiler().compile(TeachingArtifact.from_dict(artifact_payload_for("ch04.subspace.col-null"))).plan
-    ops={op.get("alias"):op for op in plan.operations}
-    assert ops["ch04__entity__domain"]["origin"]==[-4,0]
-    assert ops["ch04__entity__kernel"]["origin"]==[-4,0]
-    assert ops["ch04__entity__column_space"]["origin"]==[4,0]
-    assert ops["ch04__entity__codomain"]["origin"]==[4,0]
+def test_col_null_scene_draws_each_object_once_on_the_same_origin():
+    """四·一·三 把「所有可能的输出」与「被压到零的输入」画在同一个原点上的同一幅图里。"""
+    payload=artifact_payload_for("ch04.subspace.col-null")
+    artifact=TeachingArtifact.from_dict(payload)
+    plan=VisualSemanticsCompiler().compile(artifact).plan
+    ops=[op for op in plan.operations if op.get("alias")]
+    planes=[op["alias"] for op in ops if op["op"]=="plane3d.upsert"]
+    # 列空间只有一张平面：矩阵本身不再画成一个重合的平面。
+    assert planes==["ch04__entity__column_space"]
+    # 三支轴外输入 + 三支轴外输出 + 一支垂直于平面的输入都从同一个原点出发。
+    vectors=[op for op in ops if op["op"]=="linear3d.upsert" and op["kind"]=="vector"]
+    assert len(vectors)==7
+    assert all(op["start"]==[0.0,0.0,0.0] for op in vectors)
+    # 两个案例各绑定一个舞台，首屏并排显示同一步图形。
+    layout=artifact.explanation.case_layout
+    assert layout is not None and layout.default_pane_count==2
+    assert [case.stage_refs for case in layout.cases]==[
+        ("stage.ch04.subspace.col-null.column_space",),
+        ("stage.ch04.subspace.col-null.null_space",),
+    ]
+    assert [(case.id, case.example_ref) for case in layout.cases]==[
+        ("case.ch04.subspace.col-null.column-space","example.ch04.subspace.col-null.column-space"),
+        ("case.ch04.subspace.col-null.null-space","example.ch04.subspace.col-null.null-space"),
+    ]
 
 
-@pytest.mark.parametrize("kind,nth", [("write",1),("write",10),("write",34),("replace",1),("replace",8),("replace",17)])
+@pytest.mark.parametrize("kind,nth", [("write",1),("write",10),("write",30),("replace",1),("replace",8),("replace",15)])
 @pytest.mark.parametrize("existing", [True,False])
 def test_failed_release_restores_every_file_byte_for_byte(tmp_path,monkeypatch,kind,nth,existing):
     output=tmp_path/"compiled"; index=tmp_path/"index.json"
@@ -96,8 +114,8 @@ def test_failed_release_restores_every_file_byte_for_byte(tmp_path,monkeypatch,k
     target=Path if kind=="write" else release.os
     name="write_bytes" if kind=="write" else "replace"
     original=getattr(target,name)
-    # New destinations have no backup writes, hence only 17 stage writes.
-    failure_at=min(nth,17) if not existing and kind=="write" else nth
+    # New destinations have no backup writes, hence only 15 stage writes.
+    failure_at=min(nth,15) if not existing and kind=="write" else nth
     def fail_once(*args,**kwargs):
         nonlocal calls
         calls+=1
@@ -112,7 +130,7 @@ def test_failed_release_restores_every_file_byte_for_byte(tmp_path,monkeypatch,k
     assert not list(tmp_path.rglob(".ch04-release-*"))
 
 
-@pytest.mark.parametrize("kind,nth", [("write",1),("write",32),("write",66),("replace",1),("replace",20),("replace",33)])
+@pytest.mark.parametrize("kind,nth", [("write",1),("write",32),("write",58),("replace",1),("replace",20),("replace",29)])
 @pytest.mark.parametrize("existing", [True,False])
 def test_entire_script_rolls_back_reviewed_compiled_and_index(tmp_path,monkeypatch,kind,nth,existing):
     from scripts.release_chapter04 import main
@@ -125,7 +143,7 @@ def test_entire_script_rolls_back_reviewed_compiled_and_index(tmp_path,monkeypat
     name="write_bytes" if kind=="write" else "replace"
     original=getattr(target,name)
     calls=0
-    failure_at=min(nth,33) if kind=="write" and not existing else nth
+    failure_at=min(nth,29) if kind=="write" and not existing else nth
     def fail_once(*args,**kwargs):
         nonlocal calls
         calls+=1

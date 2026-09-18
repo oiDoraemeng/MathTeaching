@@ -20,9 +20,9 @@ REMOVED_CHAPTER_ONE_TOPICS = {
 
 def test_manifest_has_exact_chapter_counts_and_three_levels() -> None:
     topics = topic_entries()
-    assert len(topics) == 86
-    assert Counter(item.chapter_number for item in topics) == Counter({1: 17, 2: 15, 3: 15, 4: 16, 5: 8, 6: 3, 7: 6, 8: 6})
-    assert len({item.id for item in topics}) == 86
+    assert len(topics) == 81
+    assert Counter(item.chapter_number for item in topics) == Counter({1: 17, 2: 15, 3: 12, 4: 14, 5: 8, 6: 3, 7: 6, 8: 6})
+    assert len({item.id for item in topics}) == 81
     assert REMOVED_CHAPTER_ONE_TOPICS.isdisjoint({item.id for item in topics})
     assert all(len(item.source_path) == 3 for item in topics)
     nodes = lecture_manifest()

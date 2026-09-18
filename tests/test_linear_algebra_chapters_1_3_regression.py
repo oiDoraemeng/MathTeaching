@@ -24,7 +24,7 @@ LEGACY_PLAN_DIGESTS = {
     "ch01.ops.subtraction": "sha256:86739d3926804242fe1ae18947e8aed9d5dd3fe9848918cd998f055ce3deddd7",
     "ch01.ops.scalar": "sha256:fda9ff56813c525ddf954c37ac8ed328d2a78423af9040e353a1c1de465cfcb8",
     "ch01.ops.linear-combination": "sha256:423a60449c466f5e1b2dda613d720b0c93d2a231173d73eb31e9902c3fe3cf29",
-    "ch01.inner.definitions": "sha256:95ade5b55e9b5a10d944e7fdb141cca273f89685968876dac62a21e0eb7a35fc",
+    "ch01.inner.definitions": "sha256:87727eef228c62cb72f94048a50757360234607f01ffeac3b17df86a349bb9b5",
     "ch01.inner.applications": "sha256:3aa2fe524cec1f43b368869e8cb46e995dd3ddb19333fb885af528089911afaa",
     "ch01.inner.cauchy-schwarz": "sha256:264f34bd521f05f03bb0e268e35158e2895bc33227ce999fdfcd9f3a49daeb9e",
     "ch01.projection.definition": "sha256:66450b1edbf36646762a740be7239a41f6439eb97c2398cae640f8eaa8e10711",
@@ -33,25 +33,24 @@ LEGACY_PLAN_DIGESTS = {
     "ch01.proof.midline": "sha256:ef698dd38942fce8724934c6ab59f110933a256d13d16f4c56c4972526f542a9",
     "ch01.proof.centroid": "sha256:5de6421a77a36b5a797f748c0e6d8b522de19ca6bf4431183b80603e000a3b7c",
     "ch01.proof.parallelogram-diagonals": "sha256:8f1b8650bb4b211abe3036f0b58ef1f5d7b8f9670668602af8eb07a8b83decc3",
-    "ch02.batch.inner-products": "sha256:4e2581e44db8bb10d0dec2592412cc7e004556681833bd38bd71170a55e6b361",
-    "ch02.batch.projection": "sha256:2b2db32eabf64b601d8f306beecde78dbce4dd703d31f55d370666bbedaa0009",
-    "ch02.matrix.additive-distributivity": "sha256:4c2b51cff78dca33ebd36d565448ea9c0a8a2772c45e632233df8a89dab124e3",
+    "ch02.batch.inner-products": "sha256:e7dbeb49e88770e1d6a7a9bc32cae6e8984c938cc9e892af6fee405cba3a6c63",
+    "ch02.batch.projection": "sha256:3cfa17678f2a1e8b07f6861e9e3d7b9b863da0bacc76151a834d23ac843117e3",
+    "ch02.matrix.additive-distributivity": "sha256:c9740c08c8f0dadaddfb757f7b4927d7f33dae4f6c047335b6c17a048f6dee95",
     "ch02.matrix.row-column": "sha256:14bf287a1ad72e10340e2f71e69676f56e697e9c22ba2368c7b25de3a3066b87",
-    "ch02.matrix.transformed-grid": "sha256:fd62789e0a152e6585212a41933e9134b1f1f1770cc5e8c36409f0d09a14a01d",
+    "ch02.matrix.transformed-grid": "sha256:67c74bebb5afd024f977ff6b907f8838cad32bad2ffcfb061a24016da3829a3c",
     "ch02.matrix.stretch-rotate-scale": "sha256:c8d35032796a651d9a227938a6395b44e49839905150b972d8dff3a9d9e3379d",
-    "ch02.matrix.composition": "sha256:0b9cb46b9db85818f268d13115fe7f38ebc58764bbd4f28fd166f9a1f04a3199",
-    "ch02.matrix.basis": "sha256:aca7fe950f2be71a0847c51ea577c55febaeb1b7a058553ca17abedbbf22fbbb",
-    "ch02.matrix.powers": "sha256:03187262de2817e38036a9393fdecd4a7b284e79425b6c2a69a81747eda19a1f",
+    "ch02.matrix.composition": "sha256:efa1dd269ebe968fdc49db7cf500597b29f8b721d476250857f6192f7c620c41",
+    "ch02.matrix.basis": "sha256:4825278e2c8287fa5eefcd0f74082f9d6759d7537575f1a1a986b417ff897a20",
+    "ch02.matrix.powers": "sha256:c78385e0ff98a993de305952ae0ce9ee1be509b3a5a08aa256f0b659a23d34fe",
     "ch02.subspace.independence": "sha256:b1f8fa3c756f422838cb6e297620863d4fde5807ff8567ef25251eb947d8026f",
     "ch02.subspace.rank": "sha256:09d5e3a361ffda2952b4e23e6c6ea507551d31ece5b4922563d9ba0700807c68",
     "ch02.subspace.null": "sha256:182d4bcaa33c5ab213767beaaa0d26b1ce0045937b582ccf8743bf30bf031fb5",
     "ch02.subspace.column": "sha256:0da4b6aad9abee4404d35828c5d95a9fe42f5c0359f49e577fab677eae28e4dc",
-    "ch02.subspace.rank-nullity": "sha256:2a953bb12ec5661096e29c480db7974787aacc4a53829c60e7e865bb3e099f3a",
-    "ch02.high-dimensional.analogy": "sha256:924547c443bc5c575239307460fd9bf9926b6d8127ff425bbc1645850fdaae88",
-    "ch03.det.oriented-area": "sha256:7c1a0156921aafbf2a7f2e7f8e4a769196f103a826037356eb8574a123c66c45",
-    "ch03.det.ad-bc": "sha256:da9a6a5c2740e5b469867237d42e6ba70e2aebbc625c52cca667e56750192623",
-    "ch03.det.sign-zero-one": "sha256:2e7b6839ff3f6da268514565b3ec60091511d3fb263311062622d0e019484d54",
-    "ch03.det.examples": "sha256:746140e62cc59c2c4bca9eead3e6d80bdf16f2184606cb15fd0e41e4a231d774",
+    "ch02.subspace.rank-nullity": "sha256:a065dd4c97213e31e103b7fa445a0d2e4e51abcb1e7fcc1fa6f545a33b27b719",
+    "ch02.high-dimensional.analogy": "sha256:14f2c694bfc046c4c8675e78ada5e5cea656a17675d8cd4cf93449176f9093bb",
+    # 3.1 的四个小节已合并为单一小节「行列式的几何定义」：案例改为两步流程
+    # （单位正方形 / 两个像 + 外接矩形与切角辅助线），冻结的 digest 相应更新。
+    "ch03.det.oriented-area": "sha256:a568f67cf2e15697170e5715c452d1bad983c413b25dc59b120d6cd0581da75e",
     "ch03.det.row-swap": "sha256:cac64eb0b748e2514d099a7c44f72d6401366ce00c9c5643ada26921304e72d3",
     "ch03.det.scaling": "sha256:48071122621c703f14a27096f32878699e30b9033e8d12e6fe1c2190961685ee",
     "ch03.det.shear": "sha256:f955248683a5bf6c3dab44a0cac8f3f8d35aabc225448afa364ec64313935334",
@@ -76,7 +75,7 @@ def test_all_legacy_topic_ids_and_plan_digests_are_frozen(legacy_registry_bundle
     legacy_ids = tuple(topic.id for topic in topic_entries() if topic.chapter_number <= 3)
 
     assert legacy_ids == tuple(LEGACY_PLAN_DIGESTS)
-    assert len(legacy_ids) == 47
+    assert len(legacy_ids) == 44
     for topic_id, expected_digest in LEGACY_PLAN_DIGESTS.items():
         bundle = registry.resolve_bundle(topic_id, artifact_store=store)
         assert bundle.compiled.plan_digest == expected_digest

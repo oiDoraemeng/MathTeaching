@@ -26,4 +26,4 @@ def test_every_new_topic_compiles_replays_and_matches_published_resource(topic_i
 
 def test_integration_matrix_has_exact_new_topic_distribution() -> None:
     chapters = {chapter: sum(topic.chapter_number == chapter for topic in catalog_registry().topics) for chapter in range(4, 9)}
-    assert chapters == {4: 16, 5: 8, 6: 3, 7: 6, 8: 6}
+    assert chapters == {4: 14, 5: 8, 6: 3, 7: 6, 8: 6}

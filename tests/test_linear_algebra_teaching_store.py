@@ -158,7 +158,7 @@ def test_populated_index_preserves_chapter_1_to_3_entries_on_failed_gate(tmp_pat
     payload = json.loads(bundled_index.read_text(encoding="utf-8"))
     payload["topics"].extend([
         {"topic_id": "ch02.matrix.composition", "published_revision": 1},
-        {"topic_id": "ch03.det.ad-bc", "published_revision": 1},
+        {"topic_id": "ch03.det.oriented-area", "published_revision": 1},
     ])
     store = TeachingArtifactStore(tmp_path)
     store._write_stable_json(tmp_path / "index.json", payload)
@@ -170,7 +170,7 @@ def test_populated_index_preserves_chapter_1_to_3_entries_on_failed_gate(tmp_pat
     ids = {item["topic_id"] for item in after["topics"]}
     assert "ch01.vector.magnitude" in ids
     assert "ch02.matrix.composition" in ids
-    assert "ch03.det.ad-bc" in ids
+    assert "ch03.det.oriented-area" in ids
 
 
 @pytest.mark.parametrize("failure", ["stale", "empty", "mismatch"])

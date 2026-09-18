@@ -309,10 +309,11 @@ def test_inner_product_definitions_refinement_walks_both_definitions_in_two_pane
     assert explanation.get("derivation", []) == []
     assert "intuition" not in explanation
     assert "pitfalls" not in explanation
-    # 讲义 1.3.1 的定义块自带定义 1.10（几何定义）与定义 1.11（代数计算），
-    # 公式写在定义块内，不再单列「公式」分节；「直观理解」按讲义位置并入定义。
-    assert "定义 1.10" in explanation["definition"]
-    assert "定义 1.11" in explanation["definition"]
+    # 讲义 1.3.1 的定义块自带几何定义与代数计算两段（讲义编号在本批改动中
+    # 统一改为加粗小标题），公式写在定义块内，不再单列「公式」分节；
+    # 「直观理解」按讲义位置并入定义。
+    assert "**（内积 / 点积 — 几何定义）**" in explanation["definition"]
+    assert "**（内积 — 代数计算）**" in explanation["definition"]
     assert "直观理解" in explanation["definition"]
     assert explanation.get("formula", "") == ""
     # 分节标题照讲义原文：只有「定义」「数学案例」「内积的基本性质」三节。
@@ -340,13 +341,14 @@ def test_inner_product_definitions_refinement_walks_both_definitions_in_two_pane
         "第一步：几何定义",
         "第二步：代数定义",
     ]
-    # 性质 1.1--1.4 统一写成「性质陈述 + 展示公式 + 证明」，公式用展示式排版，
-    # 不能挤在一行里只靠行内 $...$ 显示。
+    # 交换律、分配律、数乘结合律、正定性四条性质统一写成
+    # 「加粗小标题 + 展示公式 + 证明」（讲义编号在本批改动中改为加粗小标题），
+    # 公式用展示式排版，不能挤在一行里只靠行内 $...$ 显示。
     invariants = explanation["invariants"]
-    assert "性质 1.1" in invariants[0]
+    assert "**（交换律 / 对称性）**" in invariants[0]
     assert r"$$\boldsymbol a\cdot\boldsymbol b=\boldsymbol b\cdot\boldsymbol a$$" in invariants[0]
     assert "证明" in invariants[0]
-    assert "性质 1.4" in invariants[3]
+    assert "**（正定性）**" in invariants[3]
     assert (
         r"$$\boldsymbol a\cdot\boldsymbol a\geq0,\qquad \boldsymbol a\cdot\boldsymbol a=0\Longleftrightarrow\boldsymbol a=\boldsymbol0$$"
         in invariants[3]
