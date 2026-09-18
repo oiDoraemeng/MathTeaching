@@ -94,6 +94,9 @@ def test_restore_redraws_every_visible_pane_without_changing_focus(container, mo
     window.window = QWidget()
     window.pane_manager = container.manager
     window.scene_pane_widget = container
+    window.algebra_panel = SimpleNamespace(rebuild_render_surface=Mock())
+    window.agent_panel = SimpleNamespace(rebuild_render_surface=Mock())
+    window._pane_renderer = lambda required=False: None
     ids = container.manager.visible_pane_ids()
     container.manager.focus_pane(ids[1])
     rendered = []
@@ -106,6 +109,8 @@ def test_restore_redraws_every_visible_pane_without_changing_focus(container, mo
     assert refresh.called
     assert rendered == list(ids)
     assert container.manager.active_pane_id == ids[1]
+    window.algebra_panel.rebuild_render_surface.assert_called_once_with()
+    window.agent_panel.rebuild_render_surface.assert_called_once_with()
     window.window.close()
 
 

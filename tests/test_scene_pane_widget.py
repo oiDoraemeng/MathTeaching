@@ -76,7 +76,11 @@ def test_hiding_pane_clears_selection_band_before_interactor_is_recreated(qapp):
     runtime = manager.pane(second).runtime = SimpleNamespace(
         _selection_band=QRubberBand(QRubberBand.Shape.Rectangle, widget.interactor(second)),
         _selection_start=(1.0, 2.0), _selection_pixel_start=object(),
-        _dragging_point_id="P", _drag_start_geometry_state=object(), _drag_moved=True,
+        _dragging_point_id="P", _dragging_annotation_id="A",
+        _drag_start_geometry_state=object(), _drag_moved=True,
+        _dragging_3d_annotation_alias="mark-1",
+        _dragging_3d_annotation_moved=True,
+        _drag_start_3d_annotation_state=object(),
     )
 
     manager.focus_pane(first)
@@ -87,8 +91,12 @@ def test_hiding_pane_clears_selection_band_before_interactor_is_recreated(qapp):
     assert runtime._selection_start is None
     assert runtime._selection_pixel_start is None
     assert runtime._dragging_point_id is None
+    assert runtime._dragging_annotation_id is None
     assert runtime._drag_start_geometry_state is None
     assert runtime._drag_moved is False
+    assert runtime._dragging_3d_annotation_alias is None
+    assert runtime._dragging_3d_annotation_moved is False
+    assert runtime._drag_start_3d_annotation_state is None
     assert widget.interactor(second) is not None
 
 

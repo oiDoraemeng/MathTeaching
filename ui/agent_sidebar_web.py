@@ -22,6 +22,7 @@ from PySide6.QtWidgets import QVBoxLayout, QWidget
 from linear_algebra.visualizations.palette import ROLE_COLORS, role_color
 
 from .agent_bridge import AgentBridge
+from .web_surface import rebuild_web_surface
 
 
 def register_mathagent_url_scheme() -> None:
@@ -244,6 +245,9 @@ class AgentSidebarWeb(QWidget):
         self._document_loaded = False
         self._pending_theme: str | None = None
         self._pending_math_case: dict[str, object] | None = None
+        self._current_math_case: dict[str, object] | None = None
+        self._current_math_case_focus: tuple[str, str] | None = None
+        self._scene_mode: str | None = None
         self.bridge = AgentBridge(dispatcher, self)
         self.view = QWebEngineView(self)
         self.page = _LocalPage(self.view)
@@ -324,7 +328,26 @@ class AgentSidebarWeb(QWidget):
             # 触发 WebEngine 重新渲染，不使用 Reload 避免丢失状态
             self.view.update()
 
+    def restore_render_surface(self) -> None:
+        """Reload the local document and replay the native-side UI state."""
+        view = getattr(self, "view", None)
+        if view is None:
+            return
+        view.show()
+        self.rebuild_render_surface()
+        self._document_loaded = False
+        view.reload()
+
+    def rebuild_render_surface(self) -> bool:
+        """重新分配 WebEngine 的合成表面，不重载文档。
+
+        最小化恢复后 Chromium 不会重建已释放的渲染表面，仅靠 ``update()`` 无法
+        让页面重新合成；这里让控件重新经历一次隐藏/显示来强制重建。
+        """
+        return rebuild_web_surface(getattr(self, "view", None))
+
     def set_scene_mode(self, is_2d: bool) -> None:
+        self._scene_mode = "2d" if is_2d else "3d"
         self.bridge.emit_event(
             {
                 "protocol_version": 1,
@@ -430,6 +453,7 @@ class AgentSidebarWeb(QWidget):
         }
         payload.update(structured)
         payload["explanation"] = explanation_payload
+        self._current_math_case = payload
         if not self._document_loaded:
             self._pending_math_case = payload
             return
@@ -448,6 +472,9 @@ class AgentSidebarWeb(QWidget):
 
     def show_math_case_focus(self, case_id: str, pane_id: str) -> None:
         """Synchronize the native case-pane focus without touching Agent sessions."""
+        self._current_math_case_focus = (str(case_id)[:128], str(pane_id)[:128])
+        if self._current_math_case is not None and self._current_math_case.get("case_id") == self._current_math_case_focus[0]:
+            self._current_math_case["active_case_id"] = self._current_math_case_focus[1]
         self.bridge.emit_event(
             {
                 "protocol_version": 1,
@@ -459,11 +486,29 @@ class AgentSidebarWeb(QWidget):
         )
 
     def _replay_pending_case(self) -> None:
-        if self._pending_math_case is None or not self._document_loaded:
+        if not self._document_loaded:
             return
-        payload = self._pending_math_case
+        payload = self._pending_math_case or self._current_math_case
         self._pending_math_case = None
-        self._emit_math_case_payload(payload)
+        if payload is not None:
+            self._emit_math_case_payload(payload)
+        if self._scene_mode is not None:
+            self.bridge.emit_event({
+                "protocol_version": 1,
+                "type": "scene_context",
+                "request_id": "scene-mode-restore",
+                "session_id": "",
+                "payload": {"scene_mode": self._scene_mode},
+            })
+        if self._current_math_case_focus is not None:
+            case_id, pane_id = self._current_math_case_focus
+            self.bridge.emit_event({
+                "protocol_version": 1,
+                "type": "math_case_focus",
+                "request_id": f"math-case-focus-restore-{case_id}-{pane_id}",
+                "session_id": "",
+                "payload": {"case_id": case_id, "pane_id": pane_id},
+            })
 
     def _install_scheme_handler(self) -> None:
         handler = _LocalAssetHandler(self.asset_root, QWebEngineProfile.defaultProfile())

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 from types import SimpleNamespace
+from unittest.mock import MagicMock
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
@@ -149,6 +150,30 @@ def test_web_host_replays_latest_case_after_document_load() -> None:
 
     assert emitted[-1]["type"] == "math_case"
     assert emitted[-1]["payload"]["case_id"] == "ch01.ops.addition"
+
+
+def test_web_host_replays_current_case_after_render_surface_restore() -> None:
+    app = QApplication.instance() or QApplication([])
+    host = AgentSidebarWeb(lambda _message: None)
+    emitted: list[dict[str, object]] = []
+    host.bridge.event_json.connect(lambda raw: emitted.append(json.loads(raw)))
+    host._document_loaded = True
+
+    from linear_algebra.registry import catalog_registry
+
+    registry = catalog_registry()
+    topic = registry.get_topic("ch01.ops.addition")
+    explanation = registry.get_explanation(topic.explanation_id)
+    host.show_math_case(explanation, case_id=topic.id, category=topic.source_path[1])
+    host.view.reload = MagicMock()
+    emitted.clear()
+
+    host.restore_render_surface()
+
+    assert host._document_loaded is False
+    host._request_initial_snapshot(True)
+    assert emitted[-1]["type"] == "math_case"
+    assert emitted[-1]["payload"]["case_id"] == topic.id
 
 
 def test_web_math_case_keeps_structured_artifact_metadata_without_scene_ops() -> None:

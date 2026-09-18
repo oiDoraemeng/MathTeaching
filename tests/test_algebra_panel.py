@@ -91,6 +91,19 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertEqual(len(panel.formula_list.findChildren(QWebEngineView)), 1)
         self.assertEqual(list(panel.formula_list._layers), [first.id, second.id])
 
+    def test_restore_render_surface_reloads_active_formula_page(self) -> None:
+        panel = AlgebraPanel()
+        model = panel.formula_list
+        model._page_ready = True
+        model._active_layer_id = "layer-1"
+        model.web_view.reload = MagicMock()
+
+        panel.restore_render_surface()
+
+        self.assertFalse(model._page_ready)
+        self.assertEqual(model._pending_edit_id, "layer-1")
+        model.web_view.reload.assert_called_once_with()
+
     def test_switching_tabs_commits_previous_formula_and_focuses_manager(self) -> None:
         class Manager:
             active_pane_id = "pane-1"

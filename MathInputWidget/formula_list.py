@@ -16,10 +16,26 @@ from models.curve_layer import CurveLayer
 from models.geometry_2d import Annotation2D, GeometryObject, Linear2D, Point2D, geometry_latex
 from models.geometry_3d import AlgebraAnnotation3D, AlgebraPlane3D, AlgebraVector3D
 from models.surface_layer import SurfaceLayer
+from ui.tokens import TokenError, flatten_theme
+from ui.web_surface import rebuild_web_surface
+
 from .theme_bridge import ThemeBridge
 
 
 Layer = SurfaceLayer | CurveLayer | GeometryObject | Annotation2D | AlgebraVector3D | AlgebraPlane3D | AlgebraAnnotation3D
+
+
+def _panel_background(theme: str) -> QColor:
+    """Return the opaque panel fill shared by the page and its host widget.
+
+    Chromium clears its composited surface with the page background color before
+    the HTML paints.  A fully transparent clear color exposes the platform
+    backing store instead, which is black on Windows, so the algebra area showed
+    a black rectangle from startup until the first paint.
+    """
+    if theme not in ("light", "dark"):
+        raise TokenError(f"unknown theme: {theme}")
+    return QColor(str(flatten_theme(theme)["bg_panel"]))
 
 
 class _FormulaListBridge(QObject):
@@ -93,7 +109,8 @@ class FormulaListWidget(QWidget):
         self._theme_bridge = ThemeBridge(self.web_view, initial_theme)
         self._theme_bridge.install(initial_theme)
         self.web_view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
-        self.web_view.page().setBackgroundColor(QColor(0, 0, 0, 0))
+        # 页面清屏色必须不透明：透明色会在首帧绘制前透出平台 backing store（Windows 上为黑色）。
+        self.web_view.page().setBackgroundColor(_panel_background(initial_theme))
         self._bridge = _FormulaListBridge(self)
         self._channel = QWebChannel(self.web_view.page())
         self._channel.registerObject("bridge", self._bridge)
@@ -119,6 +136,33 @@ class FormulaListWidget(QWidget):
         if hasattr(self, "web_view") and self.web_view is not None:
             self.web_view.update()
         self._send_layers()
+
+    def restore_render_surface(self) -> None:
+        """Recreate the HTML surface after the top-level window is restored.
+
+        Qt does not guarantee a child ``showEvent`` when only the native
+        window state changes.  Reloading is intentional here: all algebra
+        state lives in ``_layers`` and ``loadFinished`` sends it back to the
+        page, so a lost Chromium surface cannot leave the panel blank.
+        """
+        view = getattr(self, "web_view", None)
+        if view is None:
+            return
+        if self._active_layer_id is not None:
+            self._pending_edit_id = self._active_layer_id
+            self._active_layer_id = None
+        view.show()
+        self.rebuild_render_surface()
+        self._page_ready = False
+        view.reload()
+
+    def rebuild_render_surface(self) -> bool:
+        """重新分配 WebEngine 的合成表面，不重载文档。
+
+        最小化恢复后 Chromium 不会重建已释放的渲染表面，仅靠 ``reload()`` 无法
+        让页面重新合成；这里让控件重新经历一次隐藏/显示来强制重建。
+        """
+        return rebuild_web_surface(getattr(self, "web_view", None))
 
     def set_layers(self, layers: list[Layer]) -> None:
         self._layers = {layer.id: layer for layer in layers}
@@ -316,6 +360,8 @@ class FormulaListWidget(QWidget):
         QTimer.singleShot(0, lambda: self.begin_edit(layer_id))
 
     def set_theme(self, theme: str) -> None:
+        # 主题切换时同步清屏色，避免重绘瞬间再次露出黑色 backing store。
+        self.web_view.page().setBackgroundColor(_panel_background(theme))
         self._theme_bridge.set_theme(theme)
 
     def _on_edit_requested(self, layer_id: str) -> None:

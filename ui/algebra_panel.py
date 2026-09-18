@@ -857,6 +857,23 @@ class AlgebraPanel(QFrame):
     def showEvent(self, event: QShowEvent) -> None:
         super().showEvent(event)
 
+    def restore_render_surface(self) -> None:
+        """Restore the active algebra WebEngine after window restoration."""
+        model = self._pane_models.get(self._pane_id) or self.formula_list
+        restore = getattr(model, "restore_render_surface", None)
+        if callable(restore):
+            restore()
+        self.update()
+        self.repaint()
+
+    def rebuild_render_surface(self) -> bool:
+        """重新分配当前窗格的 WebEngine 合成表面，不重载文档。"""
+        model = self._pane_models.get(self._pane_id) or self.formula_list
+        rebuild = getattr(model, "rebuild_render_surface", None)
+        if not callable(rebuild):
+            return False
+        return bool(rebuild())
+
     def sync_overlay_theme(self, theme: ThemeName) -> None:
         self._effective_theme = theme
         for model in self._pane_models.values():
