@@ -193,12 +193,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:ae6fecea1a40e608155acde8f21744c1af23ab2b17607d254bdded6b7e178875",
+    "artifact_digest": "sha256:95081dcded2d5eaf8e53dfc9dc237524676cb92900bed6bca0295c5516658416",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:e55a65b5f260e287adc89d1db94901ca0a01885f88b16c15c64dac4081c7dc54",
+    "raw_reply_digest": "sha256:02139a8dffb84cf283ea1ee665ac0f6face358afa74cce69e534422d4ce80ed0",
     "source_hash": "sha256:c3e0590e4674a7cd2b236761b7620353bea48594140dd885d990dc59a18e6bfb"
   },
   "revision": 1,
@@ -280,7 +280,7 @@
         "dimension": 2,
         "id": "entity.ch04.kernel-image.domain",
         "kind": "basis",
-        "label": "domain",
+        "label": "e",
         "role": "domain",
         "value": [
           [
@@ -300,7 +300,7 @@
         "dimension": 2,
         "id": "entity.ch04.kernel-image.kernel_direction",
         "kind": "vector",
-        "label": "kernel_direction",
+        "label": "e₂",
         "role": "kernel_direction",
         "value": [
           0.0,
@@ -314,7 +314,7 @@
         "dimension": 2,
         "id": "entity.ch04.kernel-image.zero",
         "kind": "point",
-        "label": "zero",
+        "label": "O",
         "role": "zero",
         "value": [
           0.0,
@@ -344,7 +344,7 @@
         "dimension": 2,
         "id": "entity.ch04.kernel-image.sample_input",
         "kind": "vector",
-        "label": "sample_input",
+        "label": "x",
         "role": "sample_input",
         "value": [
           2.0,
@@ -358,7 +358,7 @@
         "dimension": 2,
         "id": "entity.ch04.kernel-image.sample_output",
         "kind": "vector",
-        "label": "sample_output",
+        "label": "T(x)",
         "role": "sample_output",
         "value": [
           2.0,

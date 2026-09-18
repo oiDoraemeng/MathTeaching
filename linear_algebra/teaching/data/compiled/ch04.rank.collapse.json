@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:177f790d0cb8d3434f084409916e5245348a4ddffab65cc1e4658f81742ae97d",
+  "artifact_digest": "sha256:b728372bb4c0182506ccec401a9ef31a4595abcac0bb1eae90e1ef358b89d165",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:52b181d4b9908851901ad870e179c235ff1094edbda6f794ddab405db49e3954",
@@ -112,7 +112,7 @@
           0.0,
           0.0
         ],
-        "name": "point_image",
+        "name": "O",
         "op": "point.upsert"
       },
       {
@@ -214,7 +214,7 @@
     "summary": "4.2.4 极大无关组与秩",
     "version": 1
   },
-  "plan_digest": "sha256:843baea39c089d6c9f7b8540120dbd9f2b3187b94bebc39bc975cce71c410479",
+  "plan_digest": "sha256:4f2c0b490c2852a92078a5dc0f5ff60edf5294aa921e7a94f53059b3aaaa3b3d",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

@@ -56,26 +56,6 @@
       "revision": 1,
       "source_hash": "sha256:504217b49a51096d84540949f881c4ae9ecd6f676c74f04a2843446a6c85697c",
       "topic_id": "ch02.subspace.rank"
-    },
-    {
-      "revision": 1,
-      "source_hash": "sha256:d00c8934450a55c3e2cbbab779f31ce99c00bc1d63eb73446d94a01711428fcf",
-      "topic_id": "ch02.subspace.null"
-    },
-    {
-      "revision": 1,
-      "source_hash": "sha256:3c3cbf1bf7340f9aac6047bf8f3e00c3818f5371f302700b7cda3f50d368b3e4",
-      "topic_id": "ch02.subspace.column"
-    },
-    {
-      "revision": 1,
-      "source_hash": "sha256:076aa1d68e0591a5dde42584d6df6188c128a1bf2d5f18300cfdfe06a29fd13f",
-      "topic_id": "ch02.subspace.rank-nullity"
-    },
-    {
-      "revision": 1,
-      "source_hash": "sha256:aec0866b91b7031cc30af32b39f6dd7728fe7a7490b88d28680b456e83f83fe6",
-      "topic_id": "ch02.high-dimensional.analogy"
     }
   ]
 }

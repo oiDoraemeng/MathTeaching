@@ -11,10 +11,13 @@
         "derivation",
         "worked_examples"
       ],
-      "formula": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+      "formula": "\\boldsymbol x=4\\boldsymbol b_{1}+1\\boldsymbol b_{2}=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
       "formula_symbols": [
-        "standard_basis",
-        "oblique_basis"
+        "x",
+        "e_1",
+        "e_2",
+        "b_1",
+        "b_2"
       ],
       "id": "claim.ch04.basis.definition",
       "relation_refs": [
@@ -44,28 +47,51 @@
   ],
   "explanation": {
     "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch04.basis.definition"
+          ],
+          "example_ref": "example.ch04.basis.definition.standard",
+          "id": "case.ch04.basis.definition.1",
+          "purpose": "① 标准基下的读数：横竖各数格数，读出 (5,3)",
+          "stage_refs": [
+            "stage.ch04.basis.definition.standard"
+          ],
+          "topic_id": "ch04.basis.definition"
+        },
+        {
+          "claim_refs": [
+            "claim.ch04.basis.definition"
+          ],
+          "example_ref": "example.ch04.basis.definition.oblique",
+          "id": "case.ch04.basis.definition.2",
+          "purpose": "② 新基下的读数：同一个点，读数变成 (4,1)",
+          "stage_refs": [
+            "stage.ch04.basis.definition.oblique"
+          ],
+          "topic_id": "ch04.basis.definition"
+        }
+      ],
+      "default_pane_count": 2
+    },
     "conclusion": "数值关系与讲义定义一致。",
-    "connections": [
-      "与前置线性表示相连。"
-    ],
-    "definition": "基的定义 的对象和定义。",
+    "connections": [],
+    "definition": "**（基）** $V$ 的一组基满足两个条件：\n\n1. 线性无关 —— 没有冗余\n2. 生成整个空间 —— 任何向量都能写成基的线性组合\n\n基 $=$ \"最小的完整尺子组\"——少了量不全，多了有冗余。\n\n标准基 $e_{1},...,e_{n}$ 是 $R^{n}$ 最常见的一组基。\n\n**（维数唯一性）** 同一空间任何基的向量个数相等。这个个数 $=$ 空间的维数 $\\dim(V)$。\n$R^{2}$ 的维数 $= 2$，$R^{3}$ 的维数 $= 3$。\n维数的关键性质：\n1. 若 $H$ 是 $V$ 的子空间，则 $\\dim(H) \\leq \\dim(V)$\n2. $\\dim(R^{n}) = n$\n3. 一组基恰好含有 $\\dim(V)$ 个向量——不能多（多了必相关），不能少（少了张不满整个空间）\n4. 若一组线性无关向量个数 $= \\dim(V)$，则它自动构成一组基（不需要再验证\"生成\"条件）\n\n**（坐标）** 给定基 $B=\\{v_{1},...,v_{n}\\}$，任何向量 $x$ 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 $x$ 在基 $B$ 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。",
     "derivation": [
-      "代入 v=(1,2)。",
-      "计算得到 result=(2,4)。"
+      "设 $\\{v_{1}, \\dots ,v_{n}\\}$ 是 $\\dim(V)=n$ 的空间中 $n$ 个线性无关的向量。\n\n若它们不生成 $V$，则存在 $w \\in V$ 无法表示为它们的线性组合 $\\rightarrow \\{v_{1}, \\dots ,v_{n},w\\}$ 中有 $n+1$ 个向量线性无关 $\\rightarrow$ 与 $\\dim(V)=n$ 矛盾。\n\n因此 $n$ 个线性无关向量必然生成整个空间，自动构成一组基。■"
     ],
-    "formula": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
-    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "formula": "",
+    "geometric_meaning": "",
+    "intuition": "",
     "invariants": [
-      "basis_independent_and_spanning",
-      "standard_reconstruction",
-      "coordinate_reconstruction"
+      "基的两个条件：线性无关——没有冗余；生成整个空间——任何向量都能写成基的线性组合。",
+      "标准基下 $x=5e_{1}+3e_{2}$，读数就是 $(5,3)$。",
+      "换一组基 $B=\\{(1,1),(1,-1)\\}$ 后 $x=4b_{1}+1b_{2}$，同一个向量的读数变成 $(4,1)$。"
     ],
-    "pitfalls": [
-      "不要混淆对象和坐标。"
-    ],
-    "read_guide": [
-      "先定义，再公式，最后读数值例。"
-    ],
+    "pitfalls": [],
+    "read_guide": [],
     "searchable_text": [
       "基的定义",
       "线性空间",
@@ -77,38 +103,43 @@
           "claim.ch04.basis.definition"
         ],
         "id": "definition",
-        "text": "definition: 基的定义。",
-        "title": "definition"
+        "text": "",
+        "title": "定义"
       },
       {
         "claim_refs": [
           "claim.ch04.basis.definition"
         ],
         "id": "derivation",
-        "text": "derivation: 基的定义。",
-        "title": "derivation"
+        "text": "",
+        "title": "性质 4 的证明"
       },
       {
         "claim_refs": [
           "claim.ch04.basis.definition"
         ],
         "id": "worked_examples",
-        "text": "worked_examples: 基的定义。",
-        "title": "worked_examples"
+        "text": "",
+        "title": "数学案例"
       }
     ],
-    "summary": "基的定义 的确定性数学语义 artifact。",
+    "summary": "**（基）** $V$ 的一组基满足两个条件：",
     "symbol_roles": {
-      "oblique_basis": "oblique_basis",
-      "same_vector": "same_vector",
-      "standard_basis": "standard_basis"
+      "b_1": "oblique_basis",
+      "b_2": "oblique_basis",
+      "e_1": "standard_basis",
+      "e_2": "standard_basis",
+      "x": "same_vector"
     },
     "title": "基的定义",
     "transfer_note": "先识别对象，再核对公式和不变量。",
     "worked_examples": [
       {
         "calculation": [
-          "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)"
+          "$$\\boldsymbol x=(5,3)$$",
+          "标准基 $e_{1}=(1,0)$、$e_{2}=(0,1)$ 就是横竖两把尺子：",
+          "$$\\boldsymbol x=5e_{1}+3e_{2}=5\\begin{pmatrix}1\\\\0\\end{pmatrix}+3\\begin{pmatrix}0\\\\1\\end{pmatrix}=\\begin{pmatrix}5\\\\3\\end{pmatrix}$$",
+          "沿 $x$ 轴数 5 格、沿 $y$ 轴数 3 格，读数就是 $(5,3)$——这是最熟悉的一套尺子。"
         ],
         "checks": [
           {
@@ -126,36 +157,85 @@
         "given": [
           [
             [
-              1.0,
-              1.0
+              1,
+              0
             ],
             [
-              1.0,
-              -1.0
+              0,
+              1
             ]
           ],
           [
-            4.0,
-            1.0
+            5,
+            3
           ]
         ],
-        "id": "example.ch04.basis.definition",
+        "id": "example.ch04.basis.definition.standard",
         "kind": "matrix_transform",
         "result": [
           5.0,
           3.0
         ],
-        "title": "主题数值例"
+        "title": "第一步：标准基下的读数"
+      },
+      {
+        "calculation": [
+          "同一个点 $\\boldsymbol x=(5,3)$ 一步都没动，只把尺子换成 $b_{1}=(1,1)$、$b_{2}=(1,-1)$：",
+          "$$\\boldsymbol x=c_{1}b_{1}+c_{2}b_{2},\\qquad c_{1}\\begin{pmatrix}1\\\\1\\end{pmatrix}+c_{2}\\begin{pmatrix}1\\\\-1\\end{pmatrix}=\\begin{pmatrix}5\\\\3\\end{pmatrix}$$",
+          "把待求的读数写在右边，方程组写成矩阵形式：",
+          "$$\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}c_{1}\\\\c_{2}\\end{pmatrix}=\\begin{pmatrix}5\\\\3\\end{pmatrix}$$",
+          "两边左乘逆矩阵，读数一次求出：",
+          "$$\\begin{pmatrix}c_{1}\\\\c_{2}\\end{pmatrix}=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}^{-1}\\begin{pmatrix}5\\\\3\\end{pmatrix}=\\frac{1}{-2}\\begin{pmatrix}-1&-1\\\\-1&1\\end{pmatrix}\\begin{pmatrix}5\\\\3\\end{pmatrix}=\\begin{pmatrix}4\\\\1\\end{pmatrix}$$",
+          "验算：$4b_{1}+1b_{2}=4(1,1)+1(1,-1)=(5,3)$，回到原处。",
+          "所以 $\\boldsymbol x$ 在基 $B$ 下的坐标是 $(4,1)$：向右上数 4 格、向右下数 1 格。",
+          "点没变，变的是尺子——坐标从来不是向量本身，而是它相对某一组基的读数。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              5.0,
+              3.0
+            ],
+            "name": "reconstruction",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.basis.definition"
+        ],
+        "given": [
+          [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              -1
+            ]
+          ],
+          [
+            4,
+            1
+          ]
+        ],
+        "id": "example.ch04.basis.definition.oblique",
+        "kind": "matrix_transform",
+        "result": [
+          4.0,
+          1.0
+        ],
+        "title": "第二步：换一组基，同一个点的读数变了"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:9f5c9dfe28b5fd902a58d0cef6739b5bddca68a36b9bb0222dc937dc5e8295c6",
+    "artifact_digest": "sha256:43e3ba272ea6e1f5c4f449093a10034a0ba58f567b28afb9d735e639f784adc0",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:e0f6f8461c4182f459ba8906512e15c9c90f0c4171037791c7863c8fd71344e1",
+    "raw_reply_digest": "sha256:58986b791de3d417ac9b396340f5ffc70ce6f50d74e5d4cbf3d7aedd2c880dad",
     "source_hash": "sha256:673e2bba22d2d77b10624b8aabf9b10e61619c2f9736345c9c6ecdf17b9d82e0"
   },
   "revision": 1,
@@ -324,7 +404,7 @@
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+        "caption": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=5\\begin{pmatrix}1\\\\0\\end{pmatrix}+3\\begin{pmatrix}0\\\\1\\end{pmatrix}=\\begin{pmatrix}5\\\\3\\end{pmatrix}",
         "expected_invariants": [
           "standard_reconstruction"
         ],
@@ -343,7 +423,7 @@
         "title": "标准基下的读数"
       },
       {
-        "caption": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+        "caption": "\\boldsymbol x=4\\boldsymbol b_1+1\\boldsymbol b_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=\\begin{pmatrix}5\\\\3\\end{pmatrix}",
         "expected_invariants": [
           "basis_independent_and_spanning",
           "coordinate_reconstruction"

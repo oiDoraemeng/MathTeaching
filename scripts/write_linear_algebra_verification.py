@@ -166,8 +166,8 @@ def run_verification(
             key=lambda row: str(row.get("topic_id", "")),
         )
     )
-    if len(digests) != 44:
-        raise VerificationFailed("topic-digests", 1, f"expected 44 published topics, got {len(digests)}")
+    if len(digests) != 35:
+        raise VerificationFailed("topic-digests", 1, f"expected 35 published topics, got {len(digests)}")
     destination = Path(output_dir)
     _write_atomic(destination / "topic-digests.json", json.dumps(list(digests), ensure_ascii=False, indent=2, sort_keys=True) + "\n")
     lines = ["# Automated Validation", "", f"Topic digests: {len(digests)}", ""]
@@ -192,7 +192,7 @@ _FOCUS_TOPICS = (
     "ch01.projection.definition",
     "ch02.matrix.transformed-grid",
     "ch02.matrix.composition",
-    "ch02.subspace.null",
+    "ch02.subspace.rank",
     "ch03.det.multiplicativity",
     "ch03.inverse.undo",
 )

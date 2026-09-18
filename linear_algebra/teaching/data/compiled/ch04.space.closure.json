@@ -169,7 +169,7 @@
           2.0,
           0.0
         ],
-        "name": "result",
+        "name": "2u",
         "op": "point.upsert"
       },
       {
@@ -249,7 +249,7 @@
     "summary": "4.1.1 线性空间",
     "version": 1
   },
-  "plan_digest": "sha256:6c380540efcd28ff02831f9d0d34b4daf6e8b3daff43d00c626e7520494665a5",
+  "plan_digest": "sha256:d9c42a95f087c703679db93effe742d1a5af4e6b932c2cde843d0162cd3e47f1",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

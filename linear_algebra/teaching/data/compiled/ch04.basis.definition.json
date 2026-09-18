@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:e0f6f8461c4182f459ba8906512e15c9c90f0c4171037791c7863c8fd71344e1",
+  "artifact_digest": "sha256:b88a31168b9953ab38d0cfc33c87c29e329e92d772b979c47ac00dbaa8bcd8e7",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:6585a2444ed2e4a5a938dbf36afb01c18a5bf9ee3332f6590641b6acf337dba6",
@@ -41,11 +41,12 @@
           1.0,
           0.0
         ],
-        "name": "result",
+        "name": "e₁",
         "op": "point.upsert"
       },
       {
         "alias": "ch04__entity__standard_basis__generator_1",
+        "color": "#2F6BFF",
         "end": "ch04__entity__standard_basis__generator_1__end",
         "kind": "vector",
         "op": "linear.upsert",
@@ -67,11 +68,12 @@
           0.0,
           1.0
         ],
-        "name": "result",
+        "name": "e₂",
         "op": "point.upsert"
       },
       {
         "alias": "ch04__entity__standard_basis__generator_2",
+        "color": "#F08A24",
         "end": "ch04__entity__standard_basis__generator_2__end",
         "kind": "vector",
         "op": "linear.upsert",
@@ -114,11 +116,12 @@
           1.0,
           1.0
         ],
-        "name": "result",
+        "name": "b₁",
         "op": "point.upsert"
       },
       {
         "alias": "ch04__entity__oblique_basis__generator_1",
+        "color": "#7B61FF",
         "end": "ch04__entity__oblique_basis__generator_1__end",
         "kind": "vector",
         "op": "linear.upsert",
@@ -140,11 +143,12 @@
           1.0,
           -1.0
         ],
-        "name": "result",
+        "name": "b₂",
         "op": "point.upsert"
       },
       {
         "alias": "ch04__entity__oblique_basis__generator_2",
+        "color": "#D64550",
         "end": "ch04__entity__oblique_basis__generator_2__end",
         "kind": "vector",
         "op": "linear.upsert",
@@ -171,6 +175,7 @@
       },
       {
         "alias": "ch04__entity__same_vector",
+        "color": "#2A9D8F",
         "end": "ch04__entity__same_vector__end",
         "kind": "vector",
         "op": "linear.upsert",
@@ -201,6 +206,7 @@
           -3.0,
           3.0
         ],
+        "color": "#2F6BFF",
         "entity_count": 4,
         "op": "geometry.basis_grid",
         "sample_count": 4,
@@ -263,8 +269,10 @@
       },
       {
         "alias": "ch04__relation__standard_readout__component_1",
+        "color": "#2F6BFF",
         "end": "ch04__relation__standard_readout__component_1__end",
         "kind": "vector",
+        "label": "5e₁",
         "op": "linear.upsert",
         "role": "result",
         "start": "ch04__relation__standard_readout__component_1__start"
@@ -287,8 +295,10 @@
       },
       {
         "alias": "ch04__relation__standard_readout__component_2",
+        "color": "#F08A24",
         "end": "ch04__relation__standard_readout__component_2__end",
         "kind": "vector",
+        "label": "3e₂",
         "op": "linear.upsert",
         "role": "result",
         "start": "ch04__relation__standard_readout__component_2__start"
@@ -317,6 +327,7 @@
           -3.0,
           3.0
         ],
+        "color": "#7B61FF",
         "entity_count": 4,
         "op": "geometry.basis_grid",
         "sample_count": 4,
@@ -379,8 +390,10 @@
       },
       {
         "alias": "ch04__relation__oblique_readout__component_1",
+        "color": "#7B61FF",
         "end": "ch04__relation__oblique_readout__component_1__end",
         "kind": "vector",
+        "label": "4b₁",
         "op": "linear.upsert",
         "role": "result",
         "start": "ch04__relation__oblique_readout__component_1__start"
@@ -403,8 +416,10 @@
       },
       {
         "alias": "ch04__relation__oblique_readout__component_2",
+        "color": "#D64550",
         "end": "ch04__relation__oblique_readout__component_2__end",
         "kind": "vector",
+        "label": "1b₂",
         "op": "linear.upsert",
         "role": "result",
         "start": "ch04__relation__oblique_readout__component_2__start"
@@ -436,10 +451,8 @@
     "summary": "基的定义",
     "version": 1
   },
-  "plan_digest": "sha256:ebbe3d045ba0eaec3e8535681fbbc671d0cd33786ead0d11a849a1d3f674c74c",
-  "read_guide": [
-    "先定义，再公式，最后读数值例。"
-  ],
+  "plan_digest": "sha256:3571f709c3dbc110e013ef6a5833a90867152908f0f80613761d17feba460f84",
+  "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
   "scene_family": "basis_change",
@@ -451,7 +464,7 @@
         -1.5,
         2.65
       ],
-      "caption": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+      "caption": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=5\\begin{pmatrix}1\\\\0\\end{pmatrix}+3\\begin{pmatrix}0\\\\1\\end{pmatrix}=\\begin{pmatrix}5\\\\3\\end{pmatrix}",
       "id": "stage.ch04.basis.definition.standard",
       "layout": "side_by_side",
       "title": "标准基下的读数",
@@ -481,7 +494,7 @@
         1.5,
         2.65
       ],
-      "caption": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+      "caption": "\\boldsymbol x=4\\boldsymbol b_1+1\\boldsymbol b_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=\\begin{pmatrix}5\\\\3\\end{pmatrix}",
       "id": "stage.ch04.basis.definition.oblique",
       "layout": "side_by_side",
       "title": "新基下的读数",

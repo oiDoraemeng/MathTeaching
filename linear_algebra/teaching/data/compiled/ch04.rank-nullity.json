@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:dd2809647c124a283025fa7992508ee6e6fb971ba13e61b949b6d487f5b543b7",
+  "artifact_digest": "sha256:9b7b02b2186a33957346dfc44f6eb492a564e844de8f615f56ec148e2be51809",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:55ed11ef6609635720b8832d28238fc29ffe6d07d0eeca212fa06018b974d79e",
@@ -140,7 +140,7 @@
           0.0,
           0.0
         ],
-        "name": "zero",
+        "name": "O",
         "op": "point3d.upsert"
       },
       {
@@ -204,7 +204,7 @@
           0.0,
           0.0
         ],
-        "name": "zero",
+        "name": "O",
         "op": "point3d.upsert"
       },
       {
@@ -232,7 +232,7 @@
     "summary": "4.5.2 秩-零化度定理",
     "version": 1
   },
-  "plan_digest": "sha256:f656b2f2ebb8116cea76936a75f235f3cb1352495d0c9e89b5c3668fb62395fe",
+  "plan_digest": "sha256:1db0c23c31e214f517e1806009ecf2873aba6019db17afc02d76e8c6149201c0",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

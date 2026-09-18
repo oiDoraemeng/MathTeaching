@@ -193,12 +193,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:f3fa86719265838a6ada2d2628c51d6c248db0d9d2d0e63139b0797b601b5a1c",
+    "artifact_digest": "sha256:62d8827c74b13d951da4e826a3f47f378c3879fc7dbd7f3bab8d6ff47ae1512b",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:f671d53d66d276ace4311416b65a0f439c82ea46dbfc440a86bc8862039c1af0",
+    "raw_reply_digest": "sha256:6353925f642218635202c0ee9f9b4b0179d044faf6dcc7f0cb8373345d670f2f",
     "source_hash": "sha256:19e5d74100e2416f18026e10fbc79d06541197cb81692c73189a33d1bddff536"
   },
   "revision": 1,
@@ -356,7 +356,7 @@
         "dimension": 2,
         "id": "entity.ch04.rank.collapse.point_image",
         "kind": "point",
-        "label": "point_image",
+        "label": "O",
         "role": "point_image",
         "value": [
           0.0,

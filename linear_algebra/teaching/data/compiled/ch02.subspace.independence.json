@@ -1,34 +1,90 @@
 {
-  "artifact_digest": "sha256:907c0292f1fba8a5aba4257582fa42c7052babf390b5cd2f216da6e15b08e645",
+  "artifact_digest": "sha256:5145b6c6fb2cf023706394527fabfbcecf60212bbad24662466982be8163e592",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:8d0597eccd693f9b278899a9b4381841876cae4ef7f058f188be809aea41d43d",
   "plan": {
     "operations": [
       {
-        "alias": "sem__A",
+        "alias": "sem__ind_v1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__ind_v1__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__ind_v1",
+        "color": "#2F6BFF",
+        "end": "sem__ind_v1__end",
+        "kind": "vector",
+        "label": "v1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__ind_v1__origin"
+      },
+      {
+        "alias": "sem__ind_v2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__ind_v2__end",
+        "coordinates": [
+          -1.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__ind_v2",
+        "color": "#F08A24",
+        "end": "sem__ind_v2__end",
+        "kind": "vector",
+        "label": "v2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__ind_v2__origin"
+      },
+      {
+        "alias": "sem__ind_plane",
+        "basis": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            -1.0,
+            2.0
+          ]
+        ],
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#6B7280",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "color": "#E09F3E",
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
       },
       {
-        "alias": "sem__x__origin",
+        "alias": "sem__ind_v2_collinear__origin",
         "coordinates": [
           0.0,
           0.0
@@ -37,74 +93,29 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x__end",
+        "alias": "sem__ind_v2_collinear__end",
         "coordinates": [
-          1.0,
-          1.0
+          -2.0,
+          -1.0
         ],
-        "name": "x",
+        "name": "",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x",
-        "color": "#2F6BFF",
-        "end": "sem__x__end",
+        "alias": "sem__ind_v2_collinear",
+        "color": "#F08A24",
+        "end": "sem__ind_v2_collinear__end",
         "kind": "vector",
-        "label": "x",
+        "label": "v2",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__x__origin"
+        "start": "sem__ind_v2_collinear__origin"
       },
       {
-        "alias": "sem__y__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__y__end",
-        "coordinates": [
-          1.0,
-          1.0
-        ],
-        "name": "Ax",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__y",
-        "color": "#7B61FF",
-        "end": "sem__y__end",
-        "kind": "vector",
-        "label": "Ax",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__y__origin"
-      },
-      {
-        "alias": "sem__A_maps_x_to_y",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "linear_algebra.matrix_transform"
-      },
-      {
+        "alias": "sem__ind_line",
         "basis": [
           [
-            1.0,
-            1.0
-          ],
-          [
-            1.0,
+            2.0,
             1.0
           ]
         ],
@@ -119,27 +130,52 @@
         "opacity": 0.2
       },
       {
-        "alias": "sem__stage.input__title",
-        "op": "annotation.upsert",
-        "position": [
+        "alias": "sem__ind_v3__origin",
+        "coordinates": [
           0.0,
-          2.65
+          0.0
         ],
-        "text": "输入与变换"
+        "name": "O",
+        "op": "point.upsert"
       },
       {
+        "alias": "sem__ind_v3__end",
+        "coordinates": [
+          1.0,
+          3.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__ind_v3",
+        "color": "#2A9D8F",
+        "end": "sem__ind_v3__end",
+        "kind": "vector",
+        "label": "v3",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__ind_v3__origin"
+      },
+      {
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "2d",
-    "summary": "线性无关与线性相关的方向图",
+    "summary": "线性无关与线性相关",
     "version": 1
   },
-  "plan_digest": "sha256:b1f8fa3c756f422838cb6e297620863d4fde5807ff8567ef25251eb947d8026f",
+  "plan_digest": "sha256:3e35510a4e2bba9f30db1dfc577c4ea8f95e4cbfe35e942d178678e0ad4a5f1f",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 13,
+  "revision": 14,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:7f30d55c4caabb696d2580af0a348294585bb9d7485a413ae46873e7287124c9",
@@ -149,27 +185,79 @@
         0.0,
         2.65
       ],
-      "caption": "矩阵 A 作用于向量 x。",
-      "id": "stage.input",
+      "caption": "",
+      "id": "stage.case.ch02.subspace.independence.1",
       "layout": "overlay",
-      "title": "输入与变换",
+      "title": "第一步：两个方向不同（线性无关）",
       "visible_aliases": [
-        "sem__A",
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__y",
-        "sem__y__end",
-        "sem__y__origin",
-        "sem__A_maps_x_to_y",
-        "sem__stage.input__title",
-        "sem__mapping_grid__1"
+        "sem__ind_v1",
+        "sem__ind_v1__end",
+        "sem__ind_v1__origin",
+        "sem__ind_v2",
+        "sem__ind_v2__end",
+        "sem__ind_v2__origin",
+        "sem__ind_plane",
+        "sem__rel.case.ch02.subspace.independence.compare"
       ],
       "visible_refs": [
-        "A",
-        "x",
-        "y",
-        "A_maps_x_to_y"
+        "ind_v1",
+        "ind_v2",
+        "ind_plane",
+        "rel.case.ch02.subspace.independence.compare"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.ch02.subspace.independence.2",
+      "layout": "overlay",
+      "title": "第二步：两个方向相同（线性相关）",
+      "visible_aliases": [
+        "sem__ind_v1",
+        "sem__ind_v1__end",
+        "sem__ind_v1__origin",
+        "sem__ind_v2_collinear",
+        "sem__ind_v2_collinear__end",
+        "sem__ind_v2_collinear__origin",
+        "sem__ind_line",
+        "sem__rel.case.ch02.subspace.independence.collinear"
+      ],
+      "visible_refs": [
+        "ind_v1",
+        "ind_v2_collinear",
+        "ind_line",
+        "rel.case.ch02.subspace.independence.collinear"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.ch02.subspace.independence.3",
+      "layout": "overlay",
+      "title": "第三步：三个向量中有一个能被拼出来（必相关）",
+      "visible_aliases": [
+        "sem__ind_v1",
+        "sem__ind_v1__end",
+        "sem__ind_v1__origin",
+        "sem__ind_v2",
+        "sem__ind_v2__end",
+        "sem__ind_v2__origin",
+        "sem__ind_v3",
+        "sem__ind_v3__end",
+        "sem__ind_v3__origin",
+        "sem__rel.case.ch02.subspace.independence.combine"
+      ],
+      "visible_refs": [
+        "ind_v1",
+        "ind_v2",
+        "ind_v3",
+        "rel.case.ch02.subspace.independence.combine"
       ]
     }
   ],

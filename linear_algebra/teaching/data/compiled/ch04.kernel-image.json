@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:bbfad5c042547b94aeb8c2cf7da883e9a4476f04ea847b2340b7c5341ac362f2",
+  "artifact_digest": "sha256:757adb5f330f8d00359b8687aa72a89531dc596ac1023bba0dafab0f5e4e5d13",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:f80528300b10802cf91e6c81396210a043dc74cc646daf1214b2369fa2f06168",
@@ -62,7 +62,7 @@
           1.0,
           0.0
         ],
-        "name": "result",
+        "name": "e₁",
         "op": "point.upsert"
       },
       {
@@ -88,7 +88,7 @@
           0.0,
           1.0
         ],
-        "name": "result",
+        "name": "e₂",
         "op": "point.upsert"
       },
       {
@@ -114,7 +114,7 @@
           0.0,
           1.0
         ],
-        "name": "kernel_direction",
+        "name": "e₂",
         "op": "point.upsert"
       },
       {
@@ -131,7 +131,7 @@
           0.0,
           0.0
         ],
-        "name": "zero",
+        "name": "O",
         "op": "point.upsert"
       },
       {
@@ -166,7 +166,7 @@
           2.0,
           3.0
         ],
-        "name": "sample_input",
+        "name": "x",
         "op": "point.upsert"
       },
       {
@@ -192,7 +192,7 @@
           2.0,
           0.0
         ],
-        "name": "sample_output",
+        "name": "T(x)",
         "op": "point.upsert"
       },
       {
@@ -408,7 +408,7 @@
     "summary": "4.5.1 定义",
     "version": 1
   },
-  "plan_digest": "sha256:79165c125729757ab0ee8b689e7c53db559ddf3ea9fe1eb7838a767a745842d4",
+  "plan_digest": "sha256:9d26e66dcd2348d30695f7d2aed330193aede0f0bc8c58b858db03291ab7d415",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

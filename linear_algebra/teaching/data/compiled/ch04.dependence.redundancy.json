@@ -167,7 +167,7 @@
           0.0,
           0.0
         ],
-        "name": "zero combination",
+        "name": "0",
         "op": "point3d.upsert"
       },
       {
@@ -228,7 +228,7 @@
     "summary": "4.2.2 线性相关与线性无关",
     "version": 1
   },
-  "plan_digest": "sha256:98daabca3707b0e2e70eaf3daa2d358fcd6439533e30faf8840aecaf82dc3b18",
+  "plan_digest": "sha256:b9ab30d554b9357017e630017df8c5f06e4495df1bc3c085aa2dd869c1a7b133",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

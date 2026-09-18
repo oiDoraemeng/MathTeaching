@@ -191,12 +191,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:4267f5cac0421a88c60e90903f31de3cb453d9eff0786622464258fdff81a058",
+    "artifact_digest": "sha256:d73bb8558c1457b67bd375d8acda87f61d0ece4af81c7992c5d36219018d543d",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:3a9c61f00cf2b8fe7f06f587846798230842790ad63ea314651f2a2989de1a60",
+    "raw_reply_digest": "sha256:782a531db1221c609b85522d783661e2564f7a9e70754264a8a10def81843c56",
     "source_hash": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a"
   },
   "revision": 1,
@@ -278,7 +278,7 @@
         "dimension": 2,
         "id": "entity.ch04.linear-map.matrix-columns.standard_e1",
         "kind": "vector",
-        "label": "standard_e1",
+        "label": "e₁",
         "role": "standard_e1",
         "value": [
           1.0,
@@ -292,7 +292,7 @@
         "dimension": 2,
         "id": "entity.ch04.linear-map.matrix-columns.standard_e2",
         "kind": "vector",
-        "label": "standard_e2",
+        "label": "e₂",
         "role": "standard_e2",
         "value": [
           0.0,
@@ -306,7 +306,7 @@
         "dimension": 2,
         "id": "entity.ch04.linear-map.matrix-columns.column_1",
         "kind": "vector",
-        "label": "column_1",
+        "label": "a₁",
         "role": "column_1",
         "value": [
           2.0,
@@ -320,7 +320,7 @@
         "dimension": 2,
         "id": "entity.ch04.linear-map.matrix-columns.column_2",
         "kind": "vector",
-        "label": "column_2",
+        "label": "a₂",
         "role": "column_2",
         "value": [
           -1.0,

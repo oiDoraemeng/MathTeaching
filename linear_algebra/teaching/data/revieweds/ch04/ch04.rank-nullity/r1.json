@@ -206,12 +206,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:7c8de1e558a7fa78fd7cbd83c1cd2db43f80593071c9334d61b030cea8559317",
+    "artifact_digest": "sha256:b8e120b2b3fb346cfd107a765ebd0309be27dd7416f6627ead5807c4d285be15",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:f46467f440e5ba25fe77ee0b0d02f8fb0fce6092e022a73fe6760b04388f454e",
+    "raw_reply_digest": "sha256:de229c9fd7288a0f75af12d07177df93ef55ddf3e3af19671702017996b34299",
     "source_hash": "sha256:910cde36ce4337bb338d37515cd732f69fe149d3c1ccb1b1ee0dce67f2e028fa"
   },
   "revision": 1,
@@ -300,7 +300,7 @@
         "dimension": 3,
         "id": "entity.ch04.rank-nullity.domain",
         "kind": "basis",
-        "label": "domain",
+        "label": "e",
         "role": "domain",
         "value": [
           [
@@ -388,7 +388,7 @@
         "dimension": 3,
         "id": "entity.ch04.rank-nullity.collapsed",
         "kind": "vector",
-        "label": "collapsed",
+        "label": "e₃",
         "role": "collapsed",
         "value": [
           0.0,
@@ -403,7 +403,7 @@
         "dimension": 3,
         "id": "entity.ch04.rank-nullity.zero",
         "kind": "point",
-        "label": "zero",
+        "label": "O",
         "role": "zero",
         "value": [
           0.0,

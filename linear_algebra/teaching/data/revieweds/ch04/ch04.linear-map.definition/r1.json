@@ -205,12 +205,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:edb24472c8017a76943033aead7c869ce7e190b505846fb9aaa2dd778fa3fe1d",
+    "artifact_digest": "sha256:2bd0ec0f55e043e08d040d7897375f7687b20c0ade8395191631836453658bd1",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:76a8f4a169d42b1ce749d873252d9d8dbc5d78431723858ab104cc3a9ee145a5",
+    "raw_reply_digest": "sha256:405afe1b69b55f0e12e9024d62f0c0dfa29d850254e256a8d8dc9ab1847eb334",
     "source_hash": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb"
   },
   "revision": 1,
@@ -334,7 +334,7 @@
         "dimension": 2,
         "id": "entity.ch04.linear-map.definition.T_u",
         "kind": "vector",
-        "label": "T_u",
+        "label": "T(u)",
         "role": "T_u",
         "value": [
           4.0,
@@ -348,7 +348,7 @@
         "dimension": 2,
         "id": "entity.ch04.linear-map.definition.T_v",
         "kind": "vector",
-        "label": "T_v",
+        "label": "T(v)",
         "role": "T_v",
         "value": [
           -1.0,
@@ -362,7 +362,7 @@
         "dimension": 2,
         "id": "entity.ch04.linear-map.definition.T_sum",
         "kind": "vector",
-        "label": "T_sum",
+        "label": "T(u+v)",
         "role": "T_sum",
         "value": [
           3.0,
@@ -390,7 +390,7 @@
         "dimension": 2,
         "id": "entity.ch04.linear-map.definition.T_scaled",
         "kind": "vector",
-        "label": "T_scaled",
+        "label": "3T(u)",
         "role": "T_scaled",
         "value": [
           12.0,
@@ -404,7 +404,7 @@
         "dimension": 2,
         "id": "entity.ch04.linear-map.definition.origin",
         "kind": "point",
-        "label": "origin",
+        "label": "O",
         "role": "origin",
         "value": [
           0.0,

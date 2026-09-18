@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:efaf07784bac15743aa986fda9eaeb15d592e8397b9f255c5571e11a508f9270",
+  "artifact_digest": "sha256:6464bbd7f9ed12970a17eb5b5f0c9fe6691247f76b3b86b14829c9a1510bbcbe",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:1969785347457be40258cee91b32b8696e19a7ea3de9a0fdb16448b96bb9f65f",
@@ -142,7 +142,7 @@
           0.0,
           0.0
         ],
-        "name": "origin",
+        "name": "O",
         "op": "point.upsert"
       },
       {
@@ -235,7 +235,7 @@
           -7.0,
           -3.0
         ],
-        "name": "result",
+        "name": "",
         "op": "point.upsert"
       },
       {
@@ -267,7 +267,7 @@
           8.0,
           -2.0
         ],
-        "name": "result",
+        "name": "",
         "op": "point.upsert"
       },
       {
@@ -305,7 +305,7 @@
     "summary": "4.4.2 是 vs 不是线性变换",
     "version": 1
   },
-  "plan_digest": "sha256:889bda8c2b7998a9a1c7c598df634bf36739dcf3664b1753b36e4d218aa6fc7a",
+  "plan_digest": "sha256:18088052b321cf0044026bba6e816c6895be26eacbf25f83b7f48ecbd8c4deb1",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

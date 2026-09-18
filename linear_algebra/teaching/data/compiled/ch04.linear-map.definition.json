@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:dcdd707f146b1e8aa53bc7375248686089cbf5385a726f3fda87458e27c2ab6b",
+  "artifact_digest": "sha256:a570f46616b263dd09c64ffb37d8b123c7aca30676687f15bd1cdeb96cf6fbed",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:eba5c8a6abcbe842e47e86f8ba2aee22ffc21ce689f7759909eef448d077d050",
@@ -119,7 +119,7 @@
           4.0,
           2.0
         ],
-        "name": "T_u",
+        "name": "T(u)",
         "op": "point.upsert"
       },
       {
@@ -145,7 +145,7 @@
           -1.0,
           1.0
         ],
-        "name": "T_v",
+        "name": "T(v)",
         "op": "point.upsert"
       },
       {
@@ -171,7 +171,7 @@
           3.0,
           3.0
         ],
-        "name": "T_sum",
+        "name": "T(u+v)",
         "op": "point.upsert"
       },
       {
@@ -223,7 +223,7 @@
           12.0,
           6.0
         ],
-        "name": "T_scaled",
+        "name": "3T(u)",
         "op": "point.upsert"
       },
       {
@@ -240,7 +240,7 @@
           0.0,
           0.0
         ],
-        "name": "origin",
+        "name": "O",
         "op": "point.upsert"
       },
       {
@@ -348,7 +348,7 @@
           3.0,
           6.0
         ],
-        "name": "result",
+        "name": "3u",
         "op": "point.upsert"
       },
       {
@@ -374,7 +374,7 @@
           12.0,
           6.0
         ],
-        "name": "result",
+        "name": "3T(u)",
         "op": "point.upsert"
       },
       {
@@ -442,7 +442,7 @@
     "summary": "4.4.1 线性变换的定义",
     "version": 1
   },
-  "plan_digest": "sha256:7b07b1b6365b0dbd2855f71be720f67cb4313df51438c76d5a561163ae35a4fe",
+  "plan_digest": "sha256:7e8e1ed71897f38988b68a6bb24f0f5d206e7ffff38594654446c813b4c568b4",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

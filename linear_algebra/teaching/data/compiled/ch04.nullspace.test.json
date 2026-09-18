@@ -204,7 +204,7 @@
           0.0,
           0.0
         ],
-        "name": "Ax",
+        "name": "x≠0",
         "op": "point3d.upsert"
       },
       {
@@ -236,7 +236,7 @@
     "summary": "4.2.3 判定方法——拼矩阵解 $Ax=0$",
     "version": 1
   },
-  "plan_digest": "sha256:88401f1af6e733574b18535915de08f897822d1fa0db2535d4905c5d5f7ac289",
+  "plan_digest": "sha256:76b52578e5cd593243c2f08e7b7e0af0cdcfe79cf56bac65147ded12545a1305",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:d8c3cab54860b4450ef345a78769411411a6deb8b0d77b5cf7e51c7e93e5f0fe",
+  "artifact_digest": "sha256:9327f2e76f282d4298825728c47ada2d94ec828821f99b5681158cd755bd77d8",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:62c9d865ad6e3feaa7a90227c4bd041b28786d12e9e946e6eead00a200836983",
@@ -41,7 +41,7 @@
           1.0,
           0.0
         ],
-        "name": "standard_e1",
+        "name": "e₁",
         "op": "point.upsert"
       },
       {
@@ -67,7 +67,7 @@
           0.0,
           1.0
         ],
-        "name": "standard_e2",
+        "name": "e₂",
         "op": "point.upsert"
       },
       {
@@ -93,7 +93,7 @@
           2.0,
           1.0
         ],
-        "name": "column_1",
+        "name": "a₁",
         "op": "point.upsert"
       },
       {
@@ -119,7 +119,7 @@
           -1.0,
           3.0
         ],
-        "name": "column_2",
+        "name": "a₂",
         "op": "point.upsert"
       },
       {
@@ -223,7 +223,7 @@
     "summary": "4.4.3 线性变换的矩阵表示",
     "version": 1
   },
-  "plan_digest": "sha256:abcd58346432bb274d2d552e26a31d42fe7c65918eeefef76badb5dfa83ab305",
+  "plan_digest": "sha256:3b1f623acd6219a5731b6bebfb9519c7a3a7370eba76bd275bd70e7e37aa1961",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

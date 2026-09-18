@@ -195,12 +195,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:36fefb5f75d90277e7d8a9d63ac09dcd0be9976505b0daaa53e9162a6e9b6915",
+    "artifact_digest": "sha256:9fb71677a11cb214f1ebcf72f3986db0a9d0d6edb84950c0265dbf46f0b23b6e",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:c848a6bad14d281ee76d8f8e8d4f0d5ad418b07884ea7cd8789d396a703025ab",
+    "raw_reply_digest": "sha256:dac3e868a55a9606485e19b85b89948b8021d22fb2981d089a60e68dfc2ba954",
     "source_hash": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47"
   },
   "revision": 1,
@@ -375,7 +375,7 @@
         "dimension": 2,
         "id": "entity.ch04.linear-map.compare.origin",
         "kind": "point",
-        "label": "origin",
+        "label": "O",
         "role": "origin",
         "value": [
           0.0,
