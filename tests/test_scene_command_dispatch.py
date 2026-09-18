@@ -207,6 +207,38 @@ def test_transformed_grid_origin_reaches_real_host_mesh():
     assert np.allclose(meshes["geometry:teaching:grid:lane:transformed"].center,[8,4,0])
 
 
+def test_coordinate_transform_replaces_pane_coordinate_system_without_teaching_grid():
+    window = _pane_window()
+    window._render_2d_scene = MagicMock()
+    target = window.pane_manager.visible_pane_ids()[0]
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+
+    result = service.execute(
+        CommandPlan(
+            scene="2d",
+            operations=(
+                {
+                    "op": "linear_algebra.coordinate_transform",
+                    "alias": "basis-change",
+                    "matrix": [[1.0, 1.0], [1.0, 2.0]],
+                    "show_original": False,
+                    "show_transformed": True,
+                },
+            ),
+        ),
+        pane_id=target,
+    )
+
+    scene = window._pane_scene(target)
+    assert result.valid
+    assert scene._two_d_coordinate_transform == ((1.0, 1.0), (1.0, 2.0))
+    assert scene._two_d_show_original_coordinate_system is False
+    assert scene._two_d_show_transformed_coordinate_system is True
+    assert scene.pane.scene_2d["coordinate_transform"] == [[1.0, 1.0], [1.0, 2.0]]
+    assert not scene._agent_teaching_2d
+    window._render_2d_scene.assert_called_once()
+
+
 @pytest.mark.parametrize("explicit", [False, True])
 def test_scene_commands_mutate_only_the_resolved_pane(explicit: bool) -> None:
     window = _pane_window()

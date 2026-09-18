@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from dataclasses import dataclass, field
+from uuid import uuid4
 
 from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QRect, QSignalBlocker, QTimer, Qt, Signal
 from PySide6.QtGui import QAction, QColor, QCursor, QMouseEvent, QShowEvent
@@ -185,6 +187,7 @@ from MathInputWidget import FormulaEditorPopup, FormulaListWidget, FormulaPrevie
 from models.curve_layer import CurveLayer
 from models.function_catalog import CatalogEntry
 from models.geometry_2d import Annotation2D, GeometryObject, Linear2D, Point2D
+from models.geometry_3d import AlgebraAnnotation3D, AlgebraPlane3D, AlgebraVector3D
 from models.scene_mode import SceneMode
 from models.surface_layer import SurfaceLayer
 from ui.icons import apply_icon, icon_color, retint_icons
@@ -192,7 +195,23 @@ from ui.linear_algebra_dialog import LinearAlgebraDialog
 from ui.tokens import ThemeName, apply_drop_shadow, apply_rounded_overlay
 
 
-Layer = SurfaceLayer | CurveLayer | GeometryObject | Annotation2D
+@dataclass(frozen=True)
+class FormulaDraft:
+    """A temporary editable row used to add a formula in the algebra list."""
+
+    id: str = field(default_factory=lambda: f"formula-draft-{uuid4().hex}")
+    name: str = "新公式"
+    kind: str = "explicit"
+    expression: str = ""
+    latex: str = ""
+    visible: bool = True
+    color: str = "#4f7cac"
+    editable: bool = True
+    placeholder: str = ""
+    is_draft: bool = True
+
+
+Layer = SurfaceLayer | CurveLayer | GeometryObject | Annotation2D | AlgebraVector3D | AlgebraPlane3D | AlgebraAnnotation3D | FormulaDraft
 _PLACEHOLDERS = {
     SceneMode.THREE_D: {
         "explicit": "z = x^2 - y^2",
@@ -205,8 +224,6 @@ _PLACEHOLDERS = {
         "parametric": "(cos(t), sin(t)); t=[0, 2*pi]",
     },
 }
-
-
 class LayerSettingsPopup(QDialog):
     """随曲线或曲面类型切换的单图层显示控制面板。"""
 
@@ -450,11 +467,11 @@ class GeometrySettingsPopup(QDialog):
         self.delete_button.clicked.connect(self._request_delete)
         layout.addWidget(self.delete_button)
 
-    def open_geometry(self, geometry: GeometryObject | Annotation2D, anchor: QPoint | None) -> None:
+    def open_geometry(self, geometry: GeometryObject | Annotation2D | AlgebraAnnotation3D, anchor: QPoint | None) -> None:
         self._object_id = geometry.id
         if isinstance(geometry, Point2D):
             self.title.setText("点设置")
-        elif isinstance(geometry, Annotation2D):
+        elif isinstance(geometry, (Annotation2D, AlgebraAnnotation3D)):
             self.title.setText("标注设置")
         else:
             names = {"line": "直线", "segment": "线段", "ray": "射线", "vector": "向量"}
@@ -725,6 +742,9 @@ class AlgebraPanel(QFrame):
     linear_algebra_requested = Signal(str)
     linear_algebra_opened = Signal()
     matrix_transform_requested = Signal(str, str)
+    matrix_transform_visibility_requested = Signal(str, bool, bool)
+    three_d_vector_updated = Signal(str, str, str)
+    annotation_updated = Signal(str, str, str)
     pane_changed = Signal(str)
     MIN_WIDTH = 260
     DEFAULT_WIDTH = 320
@@ -755,7 +775,8 @@ class AlgebraPanel(QFrame):
         title.setObjectName("algebraTitle")
         toolbar.addWidget(title)
         toolbar.addStretch()
-        self.new_formula_button = self._icon_button("plus", "新增公式")
+        self.new_formula_button = self._tool_button("新增", "新增公式")
+        self.new_formula_button.setFixedWidth(44)
         self.function_catalog_button = self._tool_button("函数", "函数目录")
         self.function_catalog_button.setFixedWidth(44)
         self.linear_algebra_button = self._tool_button("线性代数", "线性代数案例")
@@ -878,7 +899,6 @@ class AlgebraPanel(QFrame):
         self.settings_popup.hide()
         self.geometry_settings_popup.hide()
         self.catalog_popup.hide()
-
     def set_pane_id(self, pane_id: str, title: str | None = None) -> None:
         """Activate (or create) the algebra tab associated with a scene pane."""
         pane_id = str(pane_id)
@@ -1014,6 +1034,11 @@ class AlgebraPanel(QFrame):
             model.matrix_submitted.connect(
                 lambda text, pid=pane_id: self.matrix_transform_requested.emit(pid, text)
             )
+            model.coordinate_system_visibility_changed.connect(
+                lambda show_original, show_transformed, pid=pane_id: self.matrix_transform_visibility_requested.emit(
+                    pid, show_original, show_transformed
+                )
+            )
             self._matrix_transform_panes.add(pane_id)
         model.set_matrix_transform_editor(True)
         index = list(self._pane_models).index(pane_id)
@@ -1126,11 +1151,18 @@ class AlgebraPanel(QFrame):
 
     def _open_new_formula(self) -> None:
         self.settings_popup.hide()
+        self.geometry_settings_popup.hide()
         self.catalog_popup.hide()
+        self.formula_popup.dismiss()
         self.formula_list.cancel_edit()
         self._active_layer_id = None
         placeholder = _PLACEHOLDERS[self._scene_mode]["explicit"]
-        self.formula_popup.open_formula("", "explicit", placeholder, self._popup_anchor(self.new_formula_button))
+        self._layers = [layer for layer in self._layers if not isinstance(layer, FormulaDraft)]
+        draft = FormulaDraft(placeholder=placeholder)
+        self._layers.append(draft)
+        self.formula_list.set_layers(self._layers)
+        self._inline_active_layer_id = draft.id
+        self.formula_list.begin_edit(draft.id)
 
     def _open_catalog(self) -> None:
         self.settings_popup.hide()
@@ -1160,7 +1192,11 @@ class AlgebraPanel(QFrame):
         self.formula_popup.dismiss()
         self.catalog_popup.hide()
         self.formula_list.cancel_edit()
-        if isinstance(layer, (Point2D, Linear2D, Annotation2D)):
+        if isinstance(layer, AlgebraPlane3D):
+            self.settings_popup.hide()
+            self.geometry_settings_popup.hide()
+            return
+        if isinstance(layer, (Point2D, Linear2D, Annotation2D, AlgebraAnnotation3D)):
             self.settings_popup.hide()
             self.geometry_settings_popup.open_geometry(layer, anchor)
             return
@@ -1181,7 +1217,7 @@ class AlgebraPanel(QFrame):
     def _open_inline_formula_for_layer(self, layer_id: str, *_args: object) -> None:
         layer = self._layer(layer_id)
         # 线类几何对象由端点决定，不可行内编辑；点和函数曲线可以。
-        if layer is None or isinstance(layer, Linear2D):
+        if layer is None or isinstance(layer, (Linear2D, AlgebraPlane3D)):
             return
         self.settings_popup.hide()
         self.catalog_popup.hide()
@@ -1196,10 +1232,53 @@ class AlgebraPanel(QFrame):
         self, model: FormulaListWidget, layer_id: str, latex: str
     ) -> None:
         layer = model._layers.get(layer_id)
-        if layer is not None and not isinstance(layer, Linear2D) and latex.strip():
+        if isinstance(layer, FormulaDraft) and latex.strip():
+            self._inline_active_layer_id = layer_id
+            self.add_requested.emit(layer.kind, latex)
+            return
+        if isinstance(layer, AlgebraVector3D) and latex.strip():
+            self.three_d_vector_updated.emit(self._pane_id_for_model(model), layer.alias, latex)
+            return
+        if isinstance(layer, (Annotation2D, AlgebraAnnotation3D)) and latex.strip():
+            self.annotation_updated.emit(self._pane_id_for_model(model), layer.id, latex)
+            return
+        if layer is not None and not isinstance(layer, (Linear2D, AlgebraPlane3D)) and latex.strip():
             self._inline_active_layer_id = layer_id
             self.update_requested.emit(layer_id, layer.kind, latex)
             self.pane_update_requested.emit(self._pane_id_for_model(model), layer_id, layer.kind, latex)
+
+    def begin_three_d_vector_edit(self, alias: str) -> None:
+        """Focus the newly created vector row in the existing algebra list."""
+        layer = self._layer(alias)
+        if not isinstance(layer, AlgebraVector3D):
+            return
+        self.settings_popup.hide()
+        self.catalog_popup.hide()
+        self.formula_popup.dismiss()
+        self._active_layer_id = None
+        self._inline_active_layer_id = alias
+        self.formula_list.begin_edit(alias)
+
+    def begin_annotation_edit(self, layer_id: str) -> None:
+        """Focus a user mark in the shared MathLive algebra list."""
+        layer = self._layer(layer_id)
+        if not isinstance(layer, (Annotation2D, AlgebraAnnotation3D)):
+            return
+        self.settings_popup.hide()
+        self.geometry_settings_popup.hide()
+        self.catalog_popup.hide()
+        self.formula_popup.dismiss()
+        self._active_layer_id = None
+        self._inline_active_layer_id = layer_id
+        self.formula_list.begin_edit(layer_id)
+
+    def commit_annotation_edit(self) -> None:
+        """Commit a user mark before a native scene click takes WebEngine focus."""
+        layer = self._layer(self._inline_active_layer_id)
+        if not isinstance(layer, (Annotation2D, AlgebraAnnotation3D)):
+            return
+        self.formula_list.commit_active_mark()
+        self._inline_active_layer_id = None
 
     def _pane_id_for_model(self, model: FormulaListWidget) -> str:
         return next((pane_id for pane_id, candidate in self._pane_models.items() if candidate is model), self._pane_id)
@@ -1208,6 +1287,9 @@ class AlgebraPanel(QFrame):
         self._active_layer_id = None
 
     def _cancel_inline_formula_edit(self, layer_id: str | None = None) -> None:
+        if layer_id is not None and isinstance(self._layer(layer_id), FormulaDraft):
+            self._layers = [layer for layer in self._layers if layer.id != layer_id]
+            self.formula_list.set_layers(self._layers)
         if layer_id is None or layer_id == self._inline_active_layer_id:
             self._inline_active_layer_id = None
 

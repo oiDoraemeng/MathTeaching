@@ -69,6 +69,16 @@ class ScenePaneManager(QObject):
     def history(self) -> tuple[HistoryEntry, ...]:
         return tuple(self._undo_stack)
 
+    @property
+    def can_undo(self) -> bool:
+        """Whether the shared workspace history has an operation to undo."""
+        return bool(self._undo_stack)
+
+    @property
+    def can_redo(self) -> bool:
+        """Whether the shared workspace history has an operation to redo."""
+        return bool(self._redo_stack)
+
     def pane(self, pane_id: str) -> ScenePaneState:
         try:
             return self._panes[pane_id]

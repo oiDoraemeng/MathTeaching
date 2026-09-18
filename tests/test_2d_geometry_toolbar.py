@@ -22,7 +22,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.application = QApplication.instance() or QApplication([])
 
-    def test_toolbar_stays_at_the_top_left_and_line_hover_opens_the_flyout(self) -> None:
+    def test_toolbar_stays_at_the_left_middle_and_line_hover_opens_the_flyout(self) -> None:
         host = QWidget()
         host.resize(800, 600)
         toolbar = TwoDGeometryToolbar(host)
@@ -32,8 +32,8 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         QApplication.processEvents()
 
         self.assertEqual(toolbar.x(), 12)
-        self.assertEqual(toolbar.y(), 12)
-        self.assertEqual(toolbar.layout().direction(), QBoxLayout.Direction.LeftToRight)
+        self.assertEqual(toolbar.y(), max(8, (host.height() - toolbar.height()) // 2))
+        self.assertEqual(toolbar.layout().direction(), QBoxLayout.Direction.TopToBottom)
         QApplication.sendEvent(toolbar.line_button, QEvent(QEvent.Type.Enter))
         QApplication.processEvents()
         self.assertTrue(toolbar.line_flyout.isVisible())
@@ -50,6 +50,21 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         self.assertEqual(events, ["ray", None])
         self.assertFalse(toolbar.line_button.isChecked())
 
+    def test_dashed_segment_tool_is_available_in_the_line_flyout(self) -> None:
+        host = QWidget()
+        toolbar = TwoDGeometryToolbar(host)
+        events: list[object] = []
+        toolbar.tool_selected.connect(events.append)
+
+        toolbar.line_buttons["dashed_segment"].click()
+
+        self.assertEqual(events, ["dashed_segment"])
+        self.assertTrue(toolbar.line_buttons["dashed_segment"].isChecked())
+        self.assertEqual(
+            toolbar.line_buttons["dashed_segment"].property("_kiro_icon_state")[0],
+            "minus-dashed",
+        )
+
     def test_vector_addition_tool_is_available_as_a_top_level_command(self) -> None:
         host = QWidget()
         toolbar = TwoDGeometryToolbar(host)
@@ -60,6 +75,18 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
 
         self.assertEqual(events, ["addition"])
         self.assertTrue(toolbar.addition_button.isChecked())
+
+    def test_annotation_tool_is_available_as_a_top_level_command(self) -> None:
+        host = QWidget()
+        toolbar = TwoDGeometryToolbar(host)
+        events: list[object] = []
+        toolbar.tool_selected.connect(events.append)
+
+        toolbar.annotation_button.click()
+
+        self.assertEqual(events, ["annotation"])
+        self.assertTrue(toolbar.annotation_button.isChecked())
+        self.assertEqual(toolbar.annotation_button.property("_kiro_icon_state")[0], "type")
 
     def test_line_button_click_toggles_flyout(self) -> None:
         host = QWidget()
@@ -105,7 +132,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
 
         self.assertFalse(toolbar.snap_button.isChecked())
 
-    def test_linear_algebra_mode_reuses_the_horizontal_top_left_toolbar(self) -> None:
+    def test_linear_algebra_mode_reuses_the_vertical_left_middle_toolbar(self) -> None:
         host = QWidget()
         host.resize(900, 600)
         toolbar = TwoDGeometryToolbar(host)
@@ -118,8 +145,8 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
 
         self.assertTrue(toolbar.is_linear_algebra_mode())
         self.assertEqual(toolbar.x(), 12)
-        self.assertEqual(toolbar.y(), 12)
-        self.assertEqual(toolbar.layout().direction(), QBoxLayout.Direction.LeftToRight)
+        self.assertEqual(toolbar.y(), max(8, (host.height() - toolbar.height()) // 2))
+        self.assertEqual(toolbar.layout().direction(), QBoxLayout.Direction.TopToBottom)
         self.assertTrue(toolbar.angle_button.isVisible())
         self.assertTrue(toolbar.area_button.isVisible())
 
@@ -134,6 +161,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         controls = (
             toolbar.select_button,
             toolbar.point_button,
+            toolbar.annotation_button,
             toolbar.line_button,
             toolbar.vector_button,
             toolbar.addition_button,
@@ -244,6 +272,17 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
             def set_linear_algebra_mode(self, enabled: bool) -> None:
                 self.linear_algebra_mode = enabled
 
+        class FakeThreeDToolbar:
+            def __init__(self) -> None:
+                self.visible = None
+                self.vector_active = None
+
+            def setVisible(self, visible: bool) -> None:
+                self.visible = visible
+
+            def set_vector_active(self, active: bool) -> None:
+                self.vector_active = active
+
         class FakeSettings:
             def set_mode(self, _mode) -> None:
                 pass
@@ -255,6 +294,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         window.pane_manager = ScenePaneManager()
         window.scene_mode_button = FakeButton()
         window.two_d_geometry_toolbar = FakeToolbar()
+        window.three_d_geometry_toolbar = FakeThreeDToolbar()
         window.scene_settings_panel = FakeSettings()
         window._pane_scene().scene_appearances = {
             SceneMode.TWO_D: SceneAppearance(),
@@ -266,11 +306,13 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         MainWindow._sync_scene_controls(window)
         self.assertTrue(window.two_d_geometry_toolbar.visible)
         self.assertTrue(window.two_d_geometry_toolbar.linear_algebra_mode)
+        self.assertFalse(window.three_d_geometry_toolbar.visible)
 
         window._pane_scene().scene_mode = SceneMode.THREE_D
         MainWindow._sync_scene_controls(window)
-        self.assertTrue(window.two_d_geometry_toolbar.visible)
+        self.assertFalse(window.two_d_geometry_toolbar.visible)
         self.assertTrue(window.two_d_geometry_toolbar.line_flyout.hidden)
+        self.assertTrue(window.three_d_geometry_toolbar.visible)
 
 
 if __name__ == "__main__":

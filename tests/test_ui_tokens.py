@@ -27,6 +27,7 @@ from ui.tokens import (
     load_tokens,
 )
 from ui.two_d_tools import TwoDGeometryToolbar
+from ui.three_d_tools import ThreeDGeometryToolbar
 from rendering.lighting import LightSettings
 
 AGENT_SELECTOR_ALLOWLIST = {"#agentsidebar", "#agentsidebarweb", "#agentbutton"}
@@ -105,6 +106,7 @@ def test_overlay_and_dialog_chrome_use_token_metrics(theme: str) -> None:
     for selector in (
         "#viewportToolbar",
         "#twoDGeometryToolbar",
+        "#threeDGeometryToolbar",
         "#twoDLineFlyout",
         "#sceneSettingsPanel",
     ):
@@ -159,12 +161,14 @@ def test_floating_widget_construction_names_and_token_shadows(monkeypatch) -> No
 
     MainWindow._configure_viewport(window)
     toolbar = TwoDGeometryToolbar(viewport_host)
+    three_d_toolbar = ThreeDGeometryToolbar(viewport_host)
     settings = SceneSettingsPanel(viewport_host)
     dialog = LightingDialog(LightSettings(), "光泽塑料", shell)
 
     widgets = (
         (window.viewport_toolbar, "viewportToolbar", "overlay"),
         (toolbar, "twoDGeometryToolbar", "overlay"),
+        (three_d_toolbar, "threeDGeometryToolbar", "overlay"),
         (toolbar.line_flyout, "twoDLineFlyout", "overlay"),
         (settings, "sceneSettingsPanel", "overlay"),
         (dialog, "lightingDialog", "modal"),

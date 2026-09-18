@@ -65,6 +65,7 @@ class FakeAlgebraPanel:
     def __init__(self) -> None:
         self.layers: list[object] = []
         self.statuses: list[tuple[str, bool]] = []
+        self.annotation_commit_count = 0
 
     def set_layers(self, layers) -> None:
         self.layers = list(layers)
@@ -80,6 +81,12 @@ class FakeAlgebraPanel:
 
     def begin_geometry_edit(self, _layer_id: str) -> None:
         pass
+
+    def begin_annotation_edit(self, _layer_id: str) -> None:
+        pass
+
+    def commit_annotation_edit(self) -> None:
+        self.annotation_commit_count += 1
 
     def finish_edit(self) -> None:
         pass
@@ -283,6 +290,41 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         self.assertEqual(window._pane_scene().geometry_points[0].name, "A")
         self.assertEqual(len(window.algebra_panel.layers), 1)
 
+    def test_annotation_tool_creates_an_editable_text_row_at_the_clicked_position(self) -> None:
+        window = _make_window()
+        window._pane_scene()._active_2d_tool = "annotation"
+
+        event = FakeMouseEvent(40, 60)
+        self.assertTrue(window._handle_geometry_mouse_press(event))
+
+        annotation = window._pane_scene().annotations[0]
+        self.assertTrue(event.accepted)
+        self.assertTrue(annotation.editable)
+        self.assertEqual((annotation.x, annotation.y), (-2.0, -2.0))
+        self.assertEqual(annotation.text, "")
+        self.assertEqual(annotation.color, "#263241")
+        self.assertIsNone(window._pane_scene()._active_2d_tool)
+        self.assertIn(annotation, window.algebra_panel.layers)
+        self.assertEqual(window.algebra_panel.annotation_commit_count, 1)
+
+        window._update_annotation_from_algebra(
+            window._pane().pane_id, annotation.id, r"\text{中文 English 标记}"
+        )
+        self.assertEqual(annotation.text, "中文 English 标记")
+        self.assertEqual(annotation.latex, r"\text{中文 English 标记}")
+
+        window._undo_2d_geometry()
+        self.assertEqual(window._pane_scene().annotations[0].text, "")
+
+    def test_annotation_tool_uses_a_light_label_on_a_dark_scene(self) -> None:
+        window = _make_window()
+        window.effective_theme = "dark"
+        window._pane_scene()._active_2d_tool = "annotation"
+
+        self.assertTrue(window._handle_geometry_mouse_press(FakeMouseEvent(50, 50)))
+
+        self.assertEqual(window._pane_scene().annotations[0].color, "#f3f6fa")
+
     def test_point_tool_preserves_cursor_coordinates_when_grid_snap_is_disabled(self) -> None:
         window = _make_window()
         window._pane_scene()._active_2d_tool = "point"
@@ -475,6 +517,18 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
             [linear.kind for linear in window._pane_scene().linear_objects],
             ["line", "segment", "ray", "vector"],
         )
+
+    def test_dashed_segment_tool_persists_a_dashed_segment(self) -> None:
+        window = _make_window()
+        window._pane_scene()._active_2d_tool = "dashed_segment"
+
+        self.assertTrue(window._handle_geometry_mouse_press(FakeMouseEvent(25, 75)))
+        self.assertTrue(window._handle_geometry_mouse_press(FakeMouseEvent(75, 25)))
+
+        self.assertEqual(len(window._pane_scene().linear_objects), 1)
+        dashed = window._pane_scene().linear_objects[0]
+        self.assertEqual(dashed.kind, "segment")
+        self.assertEqual(dashed.style, "dashed")
 
     def test_linear_algebra_vector_tools_execute_after_two_vector_clicks(self) -> None:
         window = _make_window()

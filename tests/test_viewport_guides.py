@@ -67,6 +67,29 @@ class ViewportGuideTests(unittest.TestCase):
         self.assertIsNotNone(tick_actor)
         self.assertNotIn("tick_labels", plotter.actors)
 
+    def test_2d_guides_can_keep_original_and_transformed_actors_separate(self) -> None:
+        plotter = FakePlotter()
+        appearance = SceneAppearance()
+        original = TwoDGuides(plotter)
+        original.actor_prefix = "original_"
+        transformed = TwoDGuides(plotter)
+
+        original.render(ViewportBounds((-2, 2), (-2, 2)), appearance, muted=True)
+        transformed.render(
+            ViewportBounds((-2, 2), (-2, 2)),
+            appearance,
+            coordinate_transform=((2.0, 0.0), (0.0, 1.0)),
+        )
+
+        self.assertIn("original_grid_lines", plotter.actors)
+        self.assertIn("original_axis_X", plotter.actors)
+        self.assertIn("grid_lines", plotter.actors)
+        self.assertIn("axis_X", plotter.actors)
+        self.assertNotEqual(
+            plotter.meshes["original_grid_lines"].points.tolist(),
+            plotter.meshes["grid_lines"].points.tolist(),
+        )
+
     def test_3d_ticks_can_be_hidden_while_axes_remain(self) -> None:
         plotter = FakePlotter()
 

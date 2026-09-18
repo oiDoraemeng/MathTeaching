@@ -3,6 +3,7 @@
 import os
 import unittest
 from pathlib import Path
+from unittest.mock import MagicMock
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
@@ -12,9 +13,9 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 from MathInputWidget import FormulaListWidget, FormulaPreviewWidget
 from models.function_catalog import CatalogEntry
 from models.scene_mode import SceneMode
-from models.geometry_2d import Linear2D, Point2D
+from models.geometry_2d import Annotation2D, Linear2D, Point2D
 from models.surface_layer import SurfaceLayer
-from ui.algebra_panel import AlgebraPanel
+from ui.algebra_panel import AlgebraPanel, FormulaDraft
 from ui.scene_pane_manager import ScenePaneManager
 from ui.scene_pane_widget import ScenePaneWidget
 from ui.tokens import build_qss
@@ -33,6 +34,43 @@ class AlgebraPanelTests(unittest.TestCase):
         panel._submit_formula("implicit", r"x^2+y^2+z^2=1")
 
         self.assertEqual(events, [("implicit", r"x^2+y^2+z^2=1")])
+
+    def test_new_formula_action_is_labeled_add(self) -> None:
+        panel = AlgebraPanel()
+
+        self.assertEqual(panel.new_formula_button.text(), "新增")
+
+    def test_new_formula_action_inserts_an_inline_draft_without_a_popup(self) -> None:
+        panel = AlgebraPanel()
+
+        panel._open_new_formula()
+
+        drafts = [layer for layer in panel._layers if isinstance(layer, FormulaDraft)]
+        self.assertEqual(len(drafts), 1)
+        self.assertIn(drafts[0].id, panel.formula_list._layers)
+        self.assertEqual(panel._inline_active_layer_id, drafts[0].id)
+        self.assertFalse(panel.formula_popup.isVisible())
+
+    def test_inline_draft_submits_through_the_existing_add_signal(self) -> None:
+        panel = AlgebraPanel()
+        events: list[tuple[str, str]] = []
+        panel.add_requested.connect(lambda kind, expression: events.append((kind, expression)))
+        panel._open_new_formula()
+        draft = next(layer for layer in panel._layers if isinstance(layer, FormulaDraft))
+
+        panel._submit_inline_formula_from_model(panel.formula_list, draft.id, r"y=x^2")
+
+        self.assertEqual(events, [("explicit", r"y=x^2")])
+
+    def test_cancelling_an_inline_draft_removes_its_row(self) -> None:
+        panel = AlgebraPanel()
+        panel._open_new_formula()
+        draft = next(layer for layer in panel._layers if isinstance(layer, FormulaDraft))
+
+        panel._cancel_inline_formula_edit(draft.id)
+
+        self.assertNotIn(draft.id, panel.formula_list._layers)
+        self.assertFalse(any(isinstance(layer, FormulaDraft) for layer in panel._layers))
 
     def test_catalog_previews_inherit_the_effective_theme_when_created_later(self) -> None:
         panel = AlgebraPanel()
@@ -384,6 +422,43 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertEqual(point_payload["latex"], "A=(1, 2)")
         self.assertFalse(segment_payload["editable"])
         self.assertIn(r"\overline{", segment_payload["latex"])
+
+    def test_user_annotation_rows_commit_and_close_immediately(self) -> None:
+        annotation = Annotation2D("标记 1", "标记", 1.0, 2.0, latex="标记", editable=True)
+        panel = AlgebraPanel()
+        panel.set_layers([annotation])
+
+        payload = panel.formula_list._serialize_layer(annotation)
+        assert payload["editable"] is True
+        assert payload["commitImmediately"] is True
+
+        html = Path(__file__).parents[1] / "MathInputWidget" / "formula_list.html"
+        source = html.read_text(encoding="utf-8")
+        assert "if (active.commitImmediately)" in source
+        assert "finishEdit(false);" in source
+        assert "commitActiveMark" in source
+
+    def test_scene_click_commits_the_active_annotation_row(self) -> None:
+        annotation = Annotation2D("标记 1", "标记", 1.0, 2.0, latex="标记", editable=True)
+        panel = AlgebraPanel()
+        panel.set_layers([annotation])
+        panel._inline_active_layer_id = annotation.id
+        panel.formula_list.commit_active_mark = MagicMock()
+
+        panel.commit_annotation_edit()
+
+        panel.formula_list.commit_active_mark.assert_called_once_with()
+        self.assertIsNone(panel._inline_active_layer_id)
+
+    def test_formula_list_forwards_mark_commit_to_the_web_page(self) -> None:
+        widget = FormulaListWidget()
+        widget._run_javascript = MagicMock()
+
+        widget.commit_active_mark()
+
+        widget._run_javascript.assert_called_once_with(
+            "if (window.formulaListReady) window.formulaList.commitActiveMark();"
+        )
 
     def test_geometry_objects_use_the_geometry_delete_menu(self) -> None:
         first = Point2D("A", 1.0, 2.0)

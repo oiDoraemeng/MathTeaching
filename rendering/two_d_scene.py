@@ -61,21 +61,25 @@ def coordinate_source_bounds(
 
 
 def _transform_point(
-    point: tuple[float, float, float], matrix: CoordinateTransform
+    point: tuple[float, float, float], matrix: CoordinateTransform, z_offset: float = 0.0
 ) -> tuple[float, float, float]:
     x, y, z = point
     return (
         matrix[0][0] * x + matrix[0][1] * y,
         matrix[1][0] * x + matrix[1][1] * y,
-        z,
+        z + z_offset,
     )
 
 
 def _transform_segments(
     segments: list[tuple[tuple[float, float, float], tuple[float, float, float]]],
     matrix: CoordinateTransform,
+    z_offset: float = 0.0,
 ) -> list[tuple[tuple[float, float, float], tuple[float, float, float]]]:
-    return [(_transform_point(start, matrix), _transform_point(end, matrix)) for start, end in segments]
+    return [
+        (_transform_point(start, matrix, z_offset), _transform_point(end, matrix, z_offset))
+        for start, end in segments
+    ]
 
 
 def _overscan_bounds(bounds: ViewportBounds, fraction: float = 0.10) -> ViewportBounds:
@@ -135,6 +139,7 @@ class TwoDGuides:
 
     def __init__(self, plotter: pv.Plotter) -> None:
         self.plotter = plotter # 保存绘图器实例
+        self.actor_prefix = ""
         self._meshes: dict[str, pv.PolyData] = {} # 保存网格、坐标轴和刻度的网格数据
         self._actors: dict[str, object] = {}  # 保存网格、坐标轴和刻度的演员引用
         self._has_labels = False   # 用于判断是否需要重建点标签演员
@@ -148,6 +153,8 @@ class TwoDGuides:
         previous_spacing: float | None = None,
         spacing: float | None = None,
         coordinate_transform: CoordinateTransform | None = None,
+        muted: bool = False,
+        z_offset: float = 0.0,
     ) -> float:
         """按给定可见范围就地更新所有二维辅助线。"""
         source_bounds = (
@@ -172,53 +179,101 @@ class TwoDGuides:
         # viewport provide the only clipping boundary.
         draw_bounds = _overscan_bounds(source_bounds)
 
-        grid_color = _grid_color(appearance, effective_theme)
+        if muted:
+            grid_color = "#aeb7c2"
+        elif coordinate_transform is not None:
+            grid_color = "#5b8def"
+        else:
+            grid_color = _grid_color(appearance, effective_theme)
         grid_mesh = self._grid_mesh(draw_bounds, spacing, x_ticks, y_ticks) if appearance.show_grid else pv.PolyData()
-        if coordinate_transform is not None and grid_mesh.n_points:
-            grid_mesh = self._transform_mesh(grid_mesh, coordinate_transform)
+        if grid_mesh.n_points:
+            if coordinate_transform is not None:
+                grid_mesh = self._transform_mesh(grid_mesh, coordinate_transform, z_offset)
+            elif z_offset:
+                grid_mesh = grid_mesh.copy()
+                grid_mesh.points[:, 2] += z_offset
         self._set_geometry(
             _GRID_KEY,
             grid_mesh,
             color=grid_color,
-            line_width=1.0, # 网格线宽度
+            line_width=0.8 if muted else 1.35, # 网格线宽度
         )
 
         x_axis = [((draw_bounds.x_range[0], 0, 0), (draw_bounds.x_range[1], 0, 0))]
         y_axis = [((0, draw_bounds.y_range[0], 0), (0, draw_bounds.y_range[1], 0))]
         if coordinate_transform is not None:
-            x_axis = _transform_segments(x_axis, coordinate_transform)
-            y_axis = _transform_segments(y_axis, coordinate_transform)
+            x_axis = _transform_segments(x_axis, coordinate_transform, z_offset)
+            y_axis = _transform_segments(y_axis, coordinate_transform, z_offset)
+        elif z_offset:
+            x_axis = _transform_segments(x_axis, ((1.0, 0.0), (0.0, 1.0)), z_offset)
+            y_axis = _transform_segments(y_axis, ((1.0, 0.0), (0.0, 1.0)), z_offset)
+        axis_color = (
+            "#7f8b98"
+            if muted
+            else "#2563eb"
+            if coordinate_transform is not None
+            else _axis_color(appearance, "X", effective_theme)
+        )
         self._set_geometry(
             _AXIS_X_KEY,
             _segments_to_polydata(x_axis),
-            color=_axis_color(appearance, "X", effective_theme),
-            line_width=2,  # X 轴线 宽度
+            color=axis_color,
+            line_width=1.25 if muted else 2.6,  # X 轴线 宽度
+        )
+        axis_y_color = (
+            "#7f8b98"
+            if muted
+            else "#2563eb"
+            if coordinate_transform is not None
+            else _axis_color(appearance, "Y", effective_theme)
         )
         self._set_geometry(
             _AXIS_Y_KEY,
             _segments_to_polydata(y_axis),
-            color=_axis_color(appearance, "Y", effective_theme),
-            line_width=2, # Y 轴线 宽度
+            color=axis_y_color,
+            line_width=1.25 if muted else 2.6, # Y 轴线 宽度
         )
 
-        label_color = appearance.contrast_axis_color(effective_theme)
+        label_color = (
+            "#7f8b98"
+            if muted
+            else "#2563eb"
+            if coordinate_transform is not None
+            else appearance.contrast_axis_color(effective_theme)
+        )
         if appearance.show_ticks:
             segments, points, labels = self._tick_geometry(source_bounds, spacing, x_ticks, y_ticks)
             if coordinate_transform is not None:
-                segments = _transform_segments(segments, coordinate_transform)
-                points = [_transform_point(point, coordinate_transform) for point in points]
-            self._set_geometry(_TICK_KEY, _segments_to_polydata(segments), color=label_color, line_width=1.4)
+                segments = _transform_segments(segments, coordinate_transform, z_offset)
+                points = [_transform_point(point, coordinate_transform, z_offset) for point in points]
+            elif z_offset:
+                identity = ((1.0, 0.0), (0.0, 1.0))
+                segments = _transform_segments(segments, identity, z_offset)
+                points = [_transform_point(point, identity, z_offset) for point in points]
+            self._set_geometry(
+                _TICK_KEY,
+                _segments_to_polydata(segments),
+                color=label_color,
+                line_width=1.0 if muted else 1.7,
+            )
             self._set_labels(points, labels, label_color)
         else:
-            self._set_geometry(_TICK_KEY, pv.PolyData(), color=label_color, line_width=1.4) # 刻度线宽度
+            self._set_geometry(
+                _TICK_KEY,
+                pv.PolyData(),
+                color=label_color,
+                line_width=1.0 if muted else 1.7,
+            ) # 刻度线宽度
             self._set_labels([], [], label_color)
         return spacing
 
     @staticmethod
-    def _transform_mesh(mesh: pv.PolyData, matrix: CoordinateTransform) -> pv.PolyData:
+    def _transform_mesh(
+        mesh: pv.PolyData, matrix: CoordinateTransform, z_offset: float = 0.0
+    ) -> pv.PolyData:
         transformed = mesh.copy()
         transformed.points = np.asarray(
-            [_transform_point(tuple(point), matrix) for point in mesh.points],
+            [_transform_point(tuple(point), matrix, z_offset) for point in mesh.points],
             dtype=float,
         )
         return transformed
@@ -230,6 +285,7 @@ class TwoDGuides:
         self._has_labels = False
 
     def _set_geometry(self, key: str, mesh: pv.PolyData, *, color: str, line_width: float) -> None:
+        key = self._actor_key(key)
         actor = self._actors.get(key)
         if actor is None:
             stored = mesh.copy()
@@ -257,15 +313,18 @@ class TwoDGuides:
         # 点标签演员无法像网格一样就地调整，只能重建；调用方已在可见范围不变时
         # 跳过刷新，因此不会在每一帧都重复创建标签。
         if self._has_labels:
-            self.plotter.remove_actor(_LABEL_KEY, render=False)
+            self.plotter.remove_actor(self._actor_key(_LABEL_KEY), render=False)
             self._has_labels = False
         if not points:
             return
         self.plotter.add_point_labels(
             points, labels, font_size=12, text_color=color, shape=None,
-            always_visible=True, name=_LABEL_KEY, render_points_as_spheres=False,
+            always_visible=True, name=self._actor_key(_LABEL_KEY), render_points_as_spheres=False,
         )
         self._has_labels = True
+
+    def _actor_key(self, key: str) -> str:
+        return f"{self.actor_prefix}{key}"
 
     @staticmethod
     def _grid_mesh(

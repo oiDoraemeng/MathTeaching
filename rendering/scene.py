@@ -20,9 +20,8 @@ from rendering.materials import material_preset
 # fit, so its camera must be positioned explicitly.
 _CAMERA_POSITION = [(12.8, -14.4, 11.4), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
 
-# Coordinate axes use this as their reference world-space extent.  The pane
-# renderer compensates the extent against perspective zoom so their on-screen
-# size remains stable while the camera moves.
+# Coordinate axes use a fixed world-space extent.  Camera motion changes only
+# the view; it never rebuilds coordinate-system geometry.
 DEFAULT_3D_AXIS_EXTENT = 4.5
 
 

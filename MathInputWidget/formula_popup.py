@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from PySide6.QtCore import QEvent, QObject, QPoint, QTimer, Qt, Signal
-from PySide6.QtGui import QCloseEvent
+from PySide6.QtGui import QCloseEvent, QGuiApplication
 from PySide6.QtWidgets import QApplication, QDialog, QVBoxLayout, QWidget
 
 from ui.tokens import apply_rounded_overlay
@@ -24,6 +24,10 @@ class FormulaEditorPopup(QDialog):
         super().__init__(parent)
         self._anchor: QPoint | None = None
         self._kind = "explicit"
+        self._resize_timer = QTimer(self)
+        self._resize_timer.setSingleShot(True)
+        self._resize_timer.setInterval(16)
+        self._resize_timer.timeout.connect(self._apply_pending_resize)
         self.setObjectName("formulaEditorPopup")
         self.setWindowTitle("编辑公式")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
@@ -56,9 +60,13 @@ class FormulaEditorPopup(QDialog):
         self._kind = kind
         self.editor.set_placeholder(placeholder)
         self.editor.set_latex(latex)
+        self.setMinimumSize(self._MINIMUM_WIDTH, self._MINIMUM_HEIGHT)
         self.show()
         self._move_to_anchor()
-        QTimer.singleShot(0, self.editor.show_virtual_keyboard)
+        # Desktop input should not open MathLive's virtual keyboard on every
+        # new formula. It causes a large animated resize and repeated layout
+        # work; the explicit API remains available when needed.
+        QTimer.singleShot(0, self.editor.focus_editor)
 
     def current_kind(self) -> str:
         """编辑现有图层时保持原类型；新增图层仍由公式语法决定类型。"""
@@ -75,6 +83,7 @@ class FormulaEditorPopup(QDialog):
         """关闭悬浮编辑器，并丢弃仅由该弹窗保存的草稿。"""
         if not self.isVisible():
             return
+        self._resize_timer.stop()
         self.editor.hide_virtual_keyboard()
         self.hide()
         self.dismissed.emit()
@@ -100,6 +109,12 @@ class FormulaEditorPopup(QDialog):
             self.submitted.emit(self.current_kind(), latex)
 
     def _resize_for_keyboard(self, _height: int) -> None:
+        if self.isVisible() and not self._resize_timer.isActive():
+            self._resize_timer.start()
+
+    def _apply_pending_resize(self) -> None:
+        if not self.isVisible():
+            return
         self.adjustSize()
         self.resize(
             max(self._MINIMUM_WIDTH, self.width()),
@@ -108,5 +123,23 @@ class FormulaEditorPopup(QDialog):
         self._move_to_anchor()
 
     def _move_to_anchor(self) -> None:
-        if self._anchor is not None:
+        if self._anchor is None:
+            return
+        screen = QGuiApplication.screenAt(self._anchor) or self.screen() or QGuiApplication.primaryScreen()
+        if screen is None:
             self.move(self._anchor)
+            return
+        available = screen.availableGeometry()
+        margin = 12
+        max_width = max(1, available.width() - 2 * margin)
+        max_height = max(1, available.height() - 2 * margin)
+        self.setMinimumWidth(min(self._MINIMUM_WIDTH, max_width))
+        self.setMinimumHeight(min(self._MINIMUM_HEIGHT, max_height))
+        if self.width() > max_width or self.height() > max_height:
+            self.resize(min(self.width(), max_width), min(self.height(), max_height))
+        x = min(max(self._anchor.x(), available.left() + margin), available.right() - self.width() - margin + 1)
+        y = self._anchor.y()
+        if y + self.height() + margin > available.bottom() + 1:
+            y = self._anchor.y() - self.height() - 4
+        y = min(max(y, available.top() + margin), available.bottom() - self.height() - margin + 1)
+        self.move(x, y)

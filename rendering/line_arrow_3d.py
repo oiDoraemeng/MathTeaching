@@ -12,8 +12,10 @@ def line_arrow_mesh(
     start: Iterable[float],
     end: Iterable[float],
     *,
-    tip_length_ratio: float,
-    tip_radius_ratio: float,
+    tip_length_ratio: float | None = None,
+    tip_radius_ratio: float | None = None,
+    tip_length: float | None = None,
+    tip_radius: float | None = None,
     tip_resolution: int = 20,
 ) -> pv.PolyData:
     """Build an arrow whose shaft is a line cell and head is a solid cone.
@@ -30,8 +32,18 @@ def line_arrow_mesh(
         return pv.PolyData()
 
     unit = direction / length
-    tip_length = length * max(0.0, min(float(tip_length_ratio), 0.4))
-    tip_radius = length * max(0.0, float(tip_radius_ratio))
+    if tip_length is None:
+        if tip_length_ratio is None:
+            raise ValueError("tip_length or tip_length_ratio is required")
+        tip_length = length * max(0.0, min(float(tip_length_ratio), 0.4))
+    else:
+        tip_length = max(0.0, float(tip_length))
+    if tip_radius is None:
+        if tip_radius_ratio is None:
+            raise ValueError("tip_radius or tip_radius_ratio is required")
+        tip_radius = length * max(0.0, float(tip_radius_ratio))
+    else:
+        tip_radius = max(0.0, float(tip_radius))
     shaft = pv.Line(tuple(origin), tuple(tip))
     head = pv.Cone(
         center=tuple(tip - 0.5 * tip_length * unit),

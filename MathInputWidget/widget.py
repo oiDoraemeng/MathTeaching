@@ -55,6 +55,7 @@ class MathInputWidget(QWidget):
         self._placeholder = ""
         self._page_ready = False
         self._focus_requested = False
+        self._show_keyboard_requested = False
         self._keyboard_height = 0
         self._formula_height = self._EDITOR_HEIGHT
         self.web_view: QWebEngineView | None = None
@@ -92,18 +93,19 @@ class MathInputWidget(QWidget):
         if self._page_ready:
             self._run_javascript(f"window.mathInput.setPlaceholder({json.dumps(placeholder)});")
 
-    def focus_editor(self) -> None:
+    def focus_editor(self, *, show_keyboard: bool = False) -> None:
         """在页面准备完成后聚焦 MathLive 输入框。"""
         if not self.isVisible():
             return
         self._focus_requested = True
+        self._show_keyboard_requested = bool(show_keyboard)
         self._ensure_web_view()
         if self._page_ready:
-            self._focus_math_field()
+            self._focus_math_field(show_keyboard=show_keyboard)
 
     def show_virtual_keyboard(self) -> None:
         """聚焦输入框并显示 MathLive 悬浮虚拟键盘。"""
-        self.focus_editor()
+        self.focus_editor(show_keyboard=True)
 
     def hide_virtual_keyboard(self) -> None:
         """隐藏虚拟键盘，并将控件恢复为紧凑高度。"""
@@ -117,7 +119,7 @@ class MathInputWidget(QWidget):
         super().showEvent(event)
         self._ensure_web_view()
         if self._focus_requested and self._page_ready:
-            QTimer.singleShot(0, self._focus_math_field)
+            QTimer.singleShot(0, lambda: self._focus_math_field(show_keyboard=self._show_keyboard_requested))
 
     def hideEvent(self, event: QHideEvent) -> None:
         """宿主关闭后不保留游离的 MathLive 虚拟键盘。"""
@@ -136,7 +138,7 @@ class MathInputWidget(QWidget):
         self._set_browser_latex(self._latex)
         self.set_placeholder(self._placeholder)
         if self._focus_requested:
-            QTimer.singleShot(0, self._focus_math_field)
+            QTimer.singleShot(0, lambda: self._focus_math_field(show_keyboard=self._show_keyboard_requested))
 
     def _on_latex_changed(self, latex: str) -> None:
         self._latex = latex
@@ -149,6 +151,8 @@ class MathInputWidget(QWidget):
     def _set_keyboard_height(self, keyboard_height: int) -> None:
         """调整原生宿主高度，避免 MathLive 键盘被裁剪。"""
         keyboard_height = max(0, keyboard_height)
+        if keyboard_height == self._keyboard_height:
+            return
         was_visible = self._keyboard_height > 0
         self._keyboard_height = keyboard_height
         self._update_widget_height()
@@ -186,10 +190,10 @@ class MathInputWidget(QWidget):
             QTimer.singleShot(0, self.hide_virtual_keyboard)
         return super().eventFilter(watched, event)
 
-    def _focus_math_field(self) -> None:
+    def _focus_math_field(self, *, show_keyboard: bool = False) -> None:
         if not self._page_ready or not self.isVisible():
             return
-        self._run_javascript("window.mathInput.focus();")
+        self._run_javascript(f"window.mathInput.focus({str(bool(show_keyboard)).lower()});")
 
     def _run_javascript(self, source: str) -> None:
         if self.web_view is not None:

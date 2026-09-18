@@ -46,6 +46,11 @@
     .layer-row:hover {
       border-color: var(--mi-border, #cfd8e1);
     }
+    .layer-row.draft .visibility-button,
+    .layer-row.draft .settings-button {
+      visibility: hidden;
+      pointer-events: none;
+    }
     .layer-row.selected {
       background: var(--mi-selected-bg, #eaf2fd);
       border-color: var(--mi-selected-border, #8ab4f8);
@@ -128,6 +133,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      flex-wrap: wrap;
     }
     .matrix-transform-bracket {
       color: var(--mi-text-primary, #667085);
@@ -166,6 +172,23 @@
     }
     .matrix-transform-apply:hover {
       filter: brightness(0.95);
+    }
+    .matrix-transform-visibility {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--mi-text-primary, #667085);
+      font-size: 12px;
+    }
+    .matrix-transform-visibility label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .matrix-transform-visibility input {
+      accent-color: var(--mi-focus, #2f7ebd);
     }
     math-field {
       box-sizing: border-box;
@@ -253,6 +276,8 @@
         let active = null;
         let matrixTransformEnabled = false;
         let matrixTransformValue = ['1', '0', '0', '1'];
+        let showOriginalCoordinateSystem = true;
+        let showTransformedCoordinateSystem = true;
         const eyeIcon = () =>
           '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></svg>';
         const eyeOffIcon = () =>
@@ -295,6 +320,12 @@
               <span class="matrix-transform-bracket">]</span>
               <button type="button" class="matrix-transform-apply">应用</button>
             </div>`;
+          const visibility = document.createElement('div');
+          visibility.className = 'matrix-transform-visibility';
+          visibility.innerHTML = `
+            <label><input type="checkbox" data-coordinate-system="original" ${showOriginalCoordinateSystem ? 'checked' : ''}>显示原坐标系</label>
+            <label><input type="checkbox" data-coordinate-system="transformed" ${showTransformedCoordinateSystem ? 'checked' : ''}>显示变换后坐标系</label>`;
+          editor.append(visibility);
           list.prepend(editor);
           const fields = matrixFields();
           fields.forEach((field) => {
@@ -311,6 +342,19 @@
           });
           editor.querySelector('.matrix-transform-apply').addEventListener('click', () => {
             bridge.matrixSubmitted(matrixText());
+          });
+          visibility.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+            checkbox.addEventListener('change', () => {
+              if (checkbox.dataset.coordinateSystem === 'original') {
+                showOriginalCoordinateSystem = checkbox.checked;
+              } else {
+                showTransformedCoordinateSystem = checkbox.checked;
+              }
+              bridge.coordinateSystemVisibilityChanged(
+                showOriginalCoordinateSystem,
+                showTransformedCoordinateSystem,
+              );
+            });
           });
         };
 
@@ -373,9 +417,17 @@
         const commit = () => {
           if (!active || active.submissionPending) return;
           const latex = active.field.getValue('latex');
-          if (!latex || latex === active.savedLatex) return;
+          if (!latex || latex === active.savedLatex) {
+            if (active.commitImmediately) {
+              finishEdit(!latex);
+            }
+            return;
+          }
           active.submissionPending = true;
           bridge.formulaSubmitted(active.layerId, latex);
+          if (active.commitImmediately) {
+            finishEdit(false);
+          }
         };
         const cancel = () => {
           if (!active) return;
@@ -395,16 +447,18 @@
             field,
             savedLatex: field.getValue('latex'),
             submissionPending: false,
+            commitImmediately: Boolean(layers.get(layerId)?.commitImmediately),
           };
           setReadOnly(field, false);
           field.classList.add('editing');
           field.scrollIntoView({ block: 'nearest' });
           const installToolbar = installFieldToolbar(field);
           installToolbar();
-          showKeyboard(field, installToolbar);
+          field.focus();
           bridge.editRequested(layerId);
         };
         const bindRow = (layer, row, field) => {
+          field.mathVirtualKeyboardPolicy = 'manual';
           field.setValue(layer.latex || '', { silenceNotifications: true });
           setReadOnly(field, true);
           watchField(row, field);
@@ -451,7 +505,7 @@
           list.replaceChildren();
           for (const layer of layers.values()) {
             const row = document.createElement('div');
-            row.className = 'layer-row';
+            row.className = layer.draft ? 'layer-row draft' : 'layer-row';
             row.dataset.layerId = layer.id;
             const visibility = document.createElement('button');
             visibility.className = 'visibility-button';
@@ -462,6 +516,7 @@
             cell.className = 'formula-cell';
             const field = document.createElement('math-field');
             field.setAttribute('aria-label', layer.editable ? '公式' : '几何对象');
+            if (layer.placeholder) field.setAttribute('placeholder', layer.placeholder);
             const settings = document.createElement('button');
             settings.className = 'settings-button';
             settings.type = 'button';
@@ -480,6 +535,16 @@
         const setMatrixTransform = (enabled) => {
           matrixTransformEnabled = Boolean(enabled);
           renderMatrixTransformEditor();
+        };
+        const setMatrixTransformVisibility = (showOriginal, showTransformed) => {
+          showOriginalCoordinateSystem = Boolean(showOriginal);
+          showTransformedCoordinateSystem = Boolean(showTransformed);
+          const editor = matrixEditorFor();
+          if (!editor) return;
+          const original = editor.querySelector('[data-coordinate-system="original"]');
+          const transformed = editor.querySelector('[data-coordinate-system="transformed"]');
+          if (original) original.checked = showOriginalCoordinateSystem;
+          if (transformed) transformed.checked = showTransformedCoordinateSystem;
         };
         const updateLayer = (layer) => {
           layers.set(layer.id, {...layer});
@@ -525,8 +590,12 @@
           setSelected,
           beginEdit,
           setMatrixTransform,
+          setMatrixTransformVisibility,
           acceptEdit: () => finishEdit(false),
           cancelEdit: () => finishEdit(true),
+          commitActiveMark: () => {
+            if (active?.commitImmediately) commit();
+          },
         };
         window.formulaListReady = true;
         if (window.pendingFormulaLayers) {

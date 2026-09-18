@@ -10,6 +10,7 @@ import numpy as np
 import pyvista as pv
 
 from models.geometry_2d import Annotation2D, Linear2D, LinearKind, LinearLabelSide, Point2D, format_number
+from rendering import math_labels
 from rendering.ticks import ViewportBounds
 
 _DRAFT_ACTOR = "geometry:draft"
@@ -18,10 +19,18 @@ _ANNOTATION_ACTOR = "geometry:annotations"
 
 _HOVER_HALO_COLOR = "#f0c674"
 _SELECTED_HALO_COLOR = "#8ab4f8"
+# 教学标注字号，同时用于文本排版度量。
+_ANNOTATION_FONT_SIZE = 11
 # 悬浮/选中时线宽的放大量。
 _LINE_HALO_WIDTH = 7.0
 _POINT_SIZE = 11.0
 _POINT_HALO_SIZE = 24.0
+# 虚线节距按视口跨度的比例取值。同一窗格里所有虚线共用同一个节距，长短不同的
+# 虚线因此疏密一致；缩放时只改变它的世界尺寸，屏幕上的疏密保持不变。
+# 调小 = 虚线更密，调大 = 更疏。
+_DASH_LENGTH_RATIO = 0.012
+# 每段虚线在自身节距里占的比例：0.62 表示约六成实线、四成间隙。
+_DASH_DUTY = 0.62
 
 
 def linear_mesh(
@@ -38,15 +47,16 @@ def linear_mesh(
     """
     start_xy = _coordinates(start)
     end_xy = _coordinates(end)
+    dash_length = dashed_length_for(bounds)
     if kind == "line":
         segment = _line_extent(start_xy, end_xy, bounds)
-        return _styled_segment_mesh(segment, style)
+        return _styled_segment_mesh(segment, style, dash_length=dash_length)
     if kind == "ray":
         segment = _ray_extent(start_xy, end_xy, bounds)
-        return _styled_segment_mesh(segment, style)
+        return _styled_segment_mesh(segment, style, dash_length=dash_length)
     if kind == "vector":
         return _vector_mesh(start_xy, end_xy, bounds)
-    return _styled_segment_mesh((start_xy, end_xy), style)
+    return _styled_segment_mesh((start_xy, end_xy), style, dash_length=dash_length)
 
 
 class GeometrySceneController:
@@ -71,6 +81,7 @@ class GeometrySceneController:
         # 每个颜色一个标注标签演员，刷新时整组替换。
         self._annotation_actors: list[str] = []
         self._draft_kind: LinearKind | None = None
+        self._draft_style = "solid"
         self._draft_start: tuple[float, float] | None = None
         self._draft_end: tuple[float, float] | None = None
         # 持久化演员与其就地更新的网格，键为演员名。
@@ -303,22 +314,26 @@ class GeometrySceneController:
             and self._draft_start is not None
             and self._draft_end is not None
         ):
-            self._replace_draft(self._draft_kind, self._draft_start, self._draft_end)
+            self._replace_draft(self._draft_kind, self._draft_start, self._draft_end, style=self._draft_style)
 
     def set_draft(
         self,
         kind: LinearKind,
         start: Point2D | tuple[float, float],
         end: tuple[float, float],
+        *,
+        style: str = "solid",
     ) -> None:
         self._draft_kind = kind
+        self._draft_style = style
         self._draft_start = _coordinates(start)
         self._draft_end = end
-        self._replace_draft(kind, self._draft_start, end)
+        self._replace_draft(kind, self._draft_start, end, style=style)
 
     def clear_draft(self) -> None:
         self._drop_actor(_DRAFT_ACTOR)
         self._draft_kind = None
+        self._draft_style = "solid"
         self._draft_start = None
         self._draft_end = None
 
@@ -422,9 +437,11 @@ class GeometrySceneController:
         ox, oy = origin
         foot = (ox + scale * dx, oy + scale * dy)
         endpoint_xy = (ox + vx, oy + vy)
-        # 投影与垂足连线属于辅助构造，可按语义要求画成虚线。
-        projection = _styled_segment_mesh((origin, foot), style)
-        residual = _styled_segment_mesh((foot, endpoint_xy), style)
+        # 投影与垂足连线属于辅助构造，可按语义要求画成虚线。节距与普通虚线
+        # 线段共用，因此投影垂线和 a·b 延长段的疏密一致。
+        dash_length = dashed_length_for(self.bounds)
+        projection = _styled_segment_mesh((origin, foot), style, dash_length=dash_length)
+        residual = _styled_segment_mesh((foot, endpoint_xy), style, dash_length=dash_length)
         self._replace_teaching_actor(
             f"geometry:teaching:projection:{result_alias}", projection, color=color, line_width=3.0
         )
@@ -862,6 +879,7 @@ class GeometrySceneController:
             show_points=False,
             always_visible=True,
             name=_LABEL_ACTOR,
+            font_file=math_labels.label_font_file(),
             render=False,
             render_points_as_spheres=False,
         )
@@ -883,8 +901,11 @@ class GeometrySceneController:
         for annotation in self.annotations.values():
             if not annotation.visible:
                 continue
+            text = self._annotation_text(annotation)
+            if not text:
+                continue
             position = (annotation.x + annotation.offset_x, annotation.y + annotation.offset_y, 0.0)
-            grouped.setdefault(annotation.color, []).append((position, annotation.text))
+            grouped.setdefault(annotation.color, []).append((position, text))
         for linear in self.linears.values():
             if not linear.visible or not linear.label:
                 continue
@@ -899,16 +920,26 @@ class GeometrySceneController:
             add_labels(
                 [position for position, _text in items],
                 [text for _position, text in items],
-                font_size=14,
+                font_size=_ANNOTATION_FONT_SIZE,
                 text_color=color,
                 shape=None,
                 show_points=False,
                 always_visible=True,
                 name=name,
+                font_file=math_labels.label_font_file(),
                 render=False,
                 render_points_as_spheres=False,
             )
             self._annotation_actors.append(name)
+
+    def _annotation_text(self, annotation: Annotation2D) -> str:
+        """标注显示文本，带 ``latex`` 的标注会排成堆叠分数等数学形式。"""
+        return math_labels.display_text(
+            annotation.text,
+            annotation.latex,
+            font_size=_ANNOTATION_FONT_SIZE,
+            bold=True,
+        )
 
     def _point_label_text(self, point: Point2D) -> str:
         if point.id in {self._selected_id, self._hover_id}:
@@ -948,8 +979,10 @@ class GeometrySceneController:
         kind: LinearKind,
         start: tuple[float, float],
         end: tuple[float, float],
+        *,
+        style: str = "solid",
     ) -> None:
-        mesh = linear_mesh(kind, start, end, self.bounds)
+        mesh = linear_mesh(kind, start, end, self.bounds, style=style)
         has_geometry = mesh.n_points > 0 and mesh.n_cells > 0
         draft_actor = self._get_or_create_linear_actor(
             _DRAFT_ACTOR,
@@ -1048,7 +1081,7 @@ def _vector_mesh(
     normal = (-unit[1], unit[0]) # 法向量，用于计算箭头底边的两个顶点
     # 0.34：箭头长度相对于向量长度的比例
     # 0.03：箭头最大长度 0.02：箭头最小长度
-    size = min(length * 0.34, min(bounds.x_span, bounds.y_span) * 0.05)
+    size = min(length * 0.34, min(bounds.x_span, bounds.y_span) * 0.04)
     size = max(size, min(bounds.x_span, bounds.y_span) * 0.02)
     base = (end[0] - unit[0] * size, end[1] - unit[1] * size)
     half = size * 0.2
@@ -1121,9 +1154,20 @@ def _segments_mesh(
     return mesh
 
 
+def dashed_length_for(bounds: ViewportBounds) -> float:
+    """Return the dash pitch shared by every dashed line in one viewport.
+
+    节距只取决于视口跨度，与线段本身的长短无关，因此同一个窗格里的投影虚线、
+    延长虚线等看起来疏密一致。
+    """
+    return max(min(bounds.x_span, bounds.y_span), 1e-9) * _DASH_LENGTH_RATIO
+
+
 def _styled_segment_mesh(
     segment: tuple[tuple[float, float], tuple[float, float]] | None,
     style: str,
+    *,
+    dash_length: float | None = None,
 ) -> pv.PolyData:
     if segment is None:
         return pv.PolyData()
@@ -1135,14 +1179,20 @@ def _styled_segment_mesh(
     length = hypot(dx, dy)
     if length <= 1e-12:
         return pv.PolyData()
-    # 固定数量的短划线不依赖 VTK line stipple，跨平台输出一致。
-    dash_count = 16
+    # 短划线不依赖 VTK line stipple，跨平台输出一致。段数由线长除以统一节距换算，
+    # 而不是固定段数：固定段数会让短线每段很短、长线每段很长，看起来一密一疏。
+    if dash_length is not None and dash_length > 1e-12:
+        dash_count = max(2, int(round(length / dash_length)))
+    else:
+        dash_count = 24
+    if dash_count % 2:
+        dash_count += 1
     pieces: list[tuple[tuple[float, float], tuple[float, float]]] = []
     for index in range(dash_count):
         if index % 2:
             continue
         t0 = index / dash_count
-        t1 = min(1.0, (index + 0.62) / dash_count)
+        t1 = min(1.0, (index + _DASH_DUTY) / dash_count)
         pieces.append(
             (
                 (start[0] + dx * t0, start[1] + dy * t0),

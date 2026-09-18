@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QTimer, Qt, Signal
+from PySide6.QtCore import QEasingCurve, QEvent, QObject, QPoint, QPropertyAnimation, QRect, QTimer, Qt, Signal
 from PySide6.QtWidgets import QBoxLayout, QFrame, QToolButton, QVBoxLayout, QWidget
 
 from models.geometry_2d import LinearKind
@@ -13,7 +13,7 @@ ToolKind = LinearKind | str
 
 
 class TwoDGeometryToolbar(QFrame):
-    """统一的二维/线性代数工具栏，横向固定在画布左上角。"""
+    """统一的二维/线性代数工具栏，固定在视口左侧中部，不随焦点窗格移动。"""
 
     tool_selected = Signal(object)
     snap_toggled = Signal(bool)
@@ -32,18 +32,20 @@ class TwoDGeometryToolbar(QFrame):
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
         apply_drop_shadow(self, "overlay")
         apply_rounded_overlay(self, "md")
-        layout = QBoxLayout(QBoxLayout.Direction.LeftToRight, self)
+        layout = QBoxLayout(QBoxLayout.Direction.TopToBottom, self)
         self._layout = layout
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
 
         self.select_button = self._button("move", "选择/移动", "selectToolButton")
         self.point_button = self._button("circle-dot", "点", "pointToolButton")
+        self.annotation_button = self._button("type", "标记", "annotationToolButton")
         self.line_button = self._button("pen-line", "线工具", "lineToolButton")
         self.vector_button = self._button("vector", "向量", "linearVectorToolButton")
         self.addition_button = self._button("plus", "加法", "vectorAdditionToolButton")
         layout.addWidget(self.select_button)
         layout.addWidget(self.point_button)
+        layout.addWidget(self.annotation_button)
         layout.addWidget(self.line_button)
         layout.addWidget(self.vector_button)
 
@@ -57,9 +59,10 @@ class TwoDGeometryToolbar(QFrame):
         flyout_layout = QVBoxLayout(self.line_flyout)
         flyout_layout.setContentsMargins(4, 4, 4, 4)
         flyout_layout.setSpacing(4)
-        self.line_buttons: dict[LinearKind, QToolButton] = {
+        self.line_buttons: dict[str, QToolButton] = {
             "line": self._button("slash", "直线", "lineGeometryButton"),
             "segment": self._button("minus", "线段", "segmentToolButton"),
+            "dashed_segment": self._button("minus-dashed", "虚线段", "dashedSegmentToolButton"),
             "ray": self._button("arrow-up-right", "射线", "rayToolButton"),
             # "vector" removed - now a separate top-level tool in linear algebra mode
         }
@@ -100,6 +103,7 @@ class TwoDGeometryToolbar(QFrame):
 
         self.select_button.clicked.connect(lambda: self._toggle_tool("select"))
         self.point_button.clicked.connect(lambda: self._toggle_tool("point"))
+        self.annotation_button.clicked.connect(lambda: self._toggle_tool("annotation"))
         self.line_button.clicked.connect(self._toggle_line_flyout)
         self.vector_button.clicked.connect(lambda: self._toggle_tool("vector"))
         self.addition_button.clicked.connect(lambda: self._select_tool("addition"))
@@ -124,6 +128,7 @@ class TwoDGeometryToolbar(QFrame):
         self._active_tool = tool
         self.select_button.setChecked(tool == "select")
         self.point_button.setChecked(tool == "point")
+        self.annotation_button.setChecked(tool == "annotation")
         self.line_button.setChecked(tool in self.line_buttons)
         self.vector_button.setChecked(tool == "vector")
         self.addition_button.setChecked(tool == "addition")
@@ -144,14 +149,14 @@ class TwoDGeometryToolbar(QFrame):
         # The shared geometry toolbar remains vertical in every scene mode.
         # `_enabled` is retained only for integrations that call the former
         # mode-specific API.
-        self._layout.setDirection(QBoxLayout.Direction.LeftToRight)
+        self._layout.setDirection(QBoxLayout.Direction.TopToBottom)
         self.vector_button.setVisible(self._linear_algebra_mode)
         for button in self._linear_algebra_buttons[1:]:
             button.setVisible(self._linear_algebra_mode)
         if not self._linear_algebra_mode:
             self.set_active_tool(
                 self._active_tool
-                if self._active_tool in {"select", "point", "line", "segment", "ray", "vector"}
+                if self._active_tool in {"select", "point", "annotation", "line", "segment", "dashed_segment", "ray", "vector"}
                 else None
             )
         self.adjustSize()
@@ -175,12 +180,21 @@ class TwoDGeometryToolbar(QFrame):
         self.undo_button.setEnabled(can_undo)
         self.redo_button.setEnabled(can_redo)
 
-    def position_in_host(self) -> None:
+    def position_in_host(self, host_rect: QRect | None = None) -> None:
+        """Place this toolbar at the left centre of the viewport host.
+
+        The toolbar is anchored to the whole viewport, so switching the focused
+        scene pane never moves it.
+        """
         parent = self.parentWidget()
         if parent is None:
             return
         self.adjustSize()
-        self.move(12, 12)
+        target = host_rect if host_rect is not None else parent.rect()
+        self.move(
+            target.x() + 12,
+            target.y() + max(8, (target.height() - self.height()) // 2),
+        )
         if self.line_flyout.isVisible():
             self._position_flyout()
 

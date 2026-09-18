@@ -59,6 +59,24 @@ class MathInputWidgetTests(unittest.TestCase):
         popup_source = Path(__file__).parents[1] / "MathInputWidget" / "formula_popup.py"
         self.assertNotIn("QComboBox", popup_source.read_text(encoding="utf-8"))
 
+    def test_formula_popup_does_not_open_virtual_keyboard_on_focus(self) -> None:
+        html_source = (Path(__file__).parents[1] / "MathInputWidget" / "mathlive.html").read_text(
+            encoding="utf-8"
+        )
+
+        focusin_block = html_source.split("field.addEventListener('focusin'", 1)[1].split("});", 1)[0]
+        self.assertNotIn("mathVirtualKeyboard.show()", focusin_block)
+        self.assertIn("focus: (showKeyboard = false)", html_source)
+
+    def test_formula_list_uses_manual_virtual_keyboard_policy(self) -> None:
+        list_source = (Path(__file__).parents[1] / "MathInputWidget" / "formula_list.html").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("field.mathVirtualKeyboardPolicy = 'manual'", list_source)
+        start_edit = list_source.split("const startEdit =", 1)[1].split("const bindRow =", 1)[0]
+        self.assertNotIn("showKeyboard(field", start_edit)
+
 
 if __name__ == "__main__":
     unittest.main()

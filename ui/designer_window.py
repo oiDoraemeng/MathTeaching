@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from contextlib import contextmanager, nullcontext
 from dataclasses import asdict, dataclass, replace
-from math import isfinite, radians, sqrt, tan
+from math import isfinite
+import re
 import time
 from uuid import uuid4
 from pathlib import Path
@@ -35,6 +36,7 @@ from models.geometry_2d import (
     format_number,
     parse_point_coordinates,
 )
+from models.geometry_3d import AlgebraAnnotation3D, AlgebraPlane3D, AlgebraVector3D
 from models.function_catalog import catalog_entries, catalog_entry
 from linear_algebra.registry import CurriculumRegistry, catalog_registry, runtime_teaching_store
 from linear_algebra.teaching.authoring import (
@@ -55,6 +57,7 @@ from rendering.geometry_scene import GeometrySceneController
 from rendering.geometry_3d_scene import Geometry3DSceneController
 from rendering.layer_scene import LayerRenderError, LayerSceneController
 from rendering.lighting import LightSettings
+from rendering import math_labels
 from rendering.scene import DEFAULT_3D_AXIS_EXTENT, build_scene, configure_3d_camera_interaction, update_lighting
 from rendering.ticks import ViewportBounds, tick_spacing, visible_2d_bounds
 from rendering.two_d_scene import CoordinateTransform, TwoDGuides, configure_2d_camera, coordinate_source_bounds
@@ -71,6 +74,7 @@ from ui.status_bar import AppStatusBar
 from ui.panel_resize_handle import PanelResizeSpec, _PanelResizeHandle
 from ui.tokens import apply_drop_shadow, apply_rounded_overlay
 from ui.native_chrome import CustomTitleBar, apply_native_titlebar_theme
+from ui.three_d_tools import ThreeDGeometryToolbar
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 from ui.linear_algebra_tools import (
     build_polygon_tool_plan,
@@ -107,8 +111,90 @@ from agent.providers import ModelProvider
 # 因而无需立刻重建辅助线和曲线采样。
 _GUIDE_MARGIN = 2.5
 
+_ANNOTATION_TEXT_COMMAND = re.compile(r"\\(?:text|mathrm|operatorname)\{([^{}]*)\}")
+
+
+def _annotation_display_text(source: str) -> str:
+    """Keep ordinary language legible when MathLive wraps it in text commands."""
+    text = _ANNOTATION_TEXT_COMMAND.sub(lambda match: match.group(1), source.strip())
+    return text.replace(r"\,", " ").replace(r"\ ", " ")
+
 ThemeMode = Literal["light", "dark", "system"]
 EffectiveTheme = Literal["light", "dark"]
+
+
+_VECTOR_3D_COORDINATE_PATTERN = re.compile(
+    r"""
+    ^\s*
+    (?:[A-Za-z][A-Za-z0-9_]*\s*=\s*)?          # optional v= prefix
+    \\?[(\[]?\s*
+    (?P<x>[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?)
+    \s*,\s*
+    (?P<y>[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?)
+    \s*,\s*
+    (?P<z>[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?)
+    \s*\\?[)\]]?\s*$
+    """,
+    re.VERBOSE,
+)
+_VECTOR_3D_COLUMN_PATTERN = re.compile(
+    r"\\begin\{(?P<delimiter>pmatrix|bmatrix|matrix|vmatrix)\}(?P<values>.*?)"
+    r"\\end\{(?P=delimiter)\}",
+    re.DOTALL,
+)
+_VECTOR_3D_FRACTION_PATTERN = re.compile(
+    r"^(?P<sign>[+-]?)(?:"
+    r"(?P<number>(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)"
+    r"|\\frac\{(?P<numerator>[-+]?(?:\d+(?:\.\d*)?|\.\d+))\}"
+    r"\{(?P<denominator>[-+]?(?:\d+(?:\.\d*)?|\.\d+))\}"
+    r")$"
+)
+
+
+def _parse_3d_vector_component(text: str) -> float | None:
+    """Read one finite number or a simple MathLive fraction."""
+    compact = str(text).replace(r"\,", "").replace(" ", "")
+    match = _VECTOR_3D_FRACTION_PATTERN.fullmatch(compact)
+    if match is None:
+        return None
+    try:
+        sign = -1.0 if match.group("sign") == "-" else 1.0
+        if match.group("number") is not None:
+            value = float(match.group("number"))
+        else:
+            denominator = float(match.group("denominator"))
+            if abs(denominator) <= 1e-18:
+                return None
+            value = float(match.group("numerator")) / denominator
+    except (TypeError, ValueError):
+        return None
+    value *= sign
+    return value if isfinite(value) else None
+
+
+def parse_3d_vector_endpoint(text: str) -> tuple[float, float, float] | None:
+    """Parse a finite endpoint from tuple or column-vector MathLive input."""
+    source = str(text)
+    column = _VECTOR_3D_COLUMN_PATTERN.search(source)
+    if column is not None:
+        components = column.group("values").split(r"\\")
+        if len(components) != 3:
+            return None
+        endpoint = tuple(_parse_3d_vector_component(component) for component in components)
+        if any(value is None for value in endpoint):
+            return None
+        values = tuple(float(value) for value in endpoint)
+        return values if all(isfinite(value) for value in values) else None
+
+    cleaned = source.replace("\\left", "").replace("\\right", "").replace("{", "").replace("}", "")
+    match = _VECTOR_3D_COORDINATE_PATTERN.match(cleaned)
+    if match is None:
+        return None
+    try:
+        endpoint = tuple(float(match.group(component)) for component in ("x", "y", "z"))
+    except ValueError:
+        return None
+    return endpoint if all(isfinite(value) for value in endpoint) else None
 
 
 class _UnavailableAgentProvider:
@@ -270,7 +356,11 @@ class _GeometryInputFilter(QObject):
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         # Route every viewport interaction to the pane that received it first.
         container = getattr(self.owner, "scene_pane_widget", None)
-        if container is not None and event.type() in (QEvent.Type.MouseButtonPress, QEvent.Type.FocusIn):
+        if container is not None and event.type() in (
+            QEvent.Type.MouseButtonPress,
+            QEvent.Type.FocusIn,
+            QEvent.Type.Wheel,
+        ):
             for pane_id, widget in container.interactors.items():
                 if watched is widget or watched is getattr(widget, "interactor", None):
                     self.owner.pane_manager.activate_for_tool(pane_id)
@@ -383,10 +473,15 @@ class _PaneSceneRuntime:
         self._two_d_coordinate_transform: CoordinateTransform | None = _coerce_coordinate_transform(
             pane.scene_2d.get("coordinate_transform")
         )
+        self._two_d_show_original_coordinate_system = pane.scene_2d.get(
+            "show_original_coordinate_system", True
+        ) is not False
+        self._two_d_show_transformed_coordinate_system = pane.scene_2d.get(
+            "show_transformed_coordinate_system", True
+        ) is not False
+        self._two_d_original_guides: TwoDGuides | None = None
         self._three_d_axes: ThreeDAxes | None = None
         self._three_d_spacing: float | None = None
-        self._three_d_extent: float | None = None
-        self._three_d_reference_projection_scale: float | None = None
         self._last_domain_extent: float | None = None
         self._viewport_refreshing = False
         self._viewport_refresh_pending = False
@@ -1188,6 +1283,10 @@ class MainWindow:
             self.viewport_host,
             theme=getattr(self, "effective_theme", "light"),
         )
+        self.three_d_geometry_toolbar = ThreeDGeometryToolbar(
+            self.viewport_host,
+            theme=getattr(self, "effective_theme", "light"),
+        )
         self.scene_settings_panel = SceneSettingsPanel(self.viewport_host)
         self.scene_settings_panel.hide()
         self._scene_settings_animation = QPropertyAnimation(self.scene_settings_panel, b"geometry", self.window)
@@ -1204,6 +1303,10 @@ class MainWindow:
         self.two_d_geometry_toolbar.snap_toggled.connect(self._set_snap_to_grid)
         self.two_d_geometry_toolbar.undo_requested.connect(self._undo_2d_geometry)
         self.two_d_geometry_toolbar.redo_requested.connect(self._redo_2d_geometry)
+        self.three_d_geometry_toolbar.vector_requested.connect(self._on_3d_vector_requested)
+        self.three_d_geometry_toolbar.annotation_requested.connect(self._on_3d_annotation_requested)
+        self.three_d_geometry_toolbar.undo_requested.connect(self._undo_2d_geometry)
+        self.three_d_geometry_toolbar.redo_requested.connect(self._redo_2d_geometry)
         self._configure_2d_history_shortcuts()
         self._pane_scene()._viewport_refresh_timer = QTimer(self.window)
         self._pane_scene()._viewport_refresh_timer.setSingleShot(True)
@@ -1323,10 +1426,11 @@ class MainWindow:
 
     def _on_viewport_interaction_finished(self, *_args: object) -> None:
         if self._pane_scene().scene_mode is not SceneMode.TWO_D:
-            # Some VTK zoom paths only emit EndInteractionEvent, so apply the
-            # screen-size compensation once more after the interaction ends.
-            self._refresh_3d_axes_for_camera()
+            # Usually unchanged after the per-frame update; also covers a
+            # backend which only reports the final camera state here.
+            self._refresh_3d_arrows_for_camera()
             self._save_current_view_state()
+            return
         self._queue_viewport_refresh()
 
     @staticmethod
@@ -1349,7 +1453,10 @@ class MainWindow:
         if self._pane_scene()._viewport_refreshing:
             return
         if self._pane_scene().scene_mode is not SceneMode.TWO_D:
-            self._refresh_3d_axes_for_camera()
+            # The shaft line width is already a VTK screen-space property.
+            # Update only the cone mesh so the arrow head is also stable in
+            # pixels, without rebuilding coordinate axes or actors.
+            self._refresh_3d_arrows_for_camera()
             return
         try:
             visible = self._current_2d_bounds()
@@ -1412,9 +1519,15 @@ class MainWindow:
             max(8, (host.height() - toolbar_height) // 2),
         )
         self.viewport_toolbar.raise_()
-        if hasattr(self, "two_d_geometry_toolbar"):
-            self.two_d_geometry_toolbar.position_in_host()
-            self.two_d_geometry_toolbar.raise_()
+        # 左侧工具固定在整个视口的左侧中部，不随焦点窗格移动。
+        for toolbar in (
+            getattr(self, "two_d_geometry_toolbar", None),
+            getattr(self, "three_d_geometry_toolbar", None),
+        ):
+            if toolbar is None:
+                continue
+            toolbar.position_in_host(host.rect())
+            toolbar.raise_()
         if (
             self.scene_settings_panel.isVisible()
             and self._scene_settings_animation.state() != QPropertyAnimation.State.Running
@@ -1449,9 +1562,12 @@ class MainWindow:
         panel.linear_algebra_opened.connect(self._enter_linear_algebra_workspace)
         panel.linear_algebra_requested.connect(self._load_linear_algebra_topic)
         panel.matrix_transform_requested.connect(self._apply_matrix_transform_from_tab)
+        panel.matrix_transform_visibility_requested.connect(self._set_matrix_coordinate_system_visibility)
         panel.builtin_requested.connect(self._add_builtin_surface)
         panel.lighting_requested.connect(self._show_lighting_dialog)
         panel.pane_update_requested.connect(self._update_formula_for_scene)
+        panel.three_d_vector_updated.connect(self._update_3d_vector_from_algebra)
+        panel.annotation_updated.connect(self._update_annotation_from_algebra)
         panel.pane_visibility_requested.connect(self._reveal_algebra_pane)
         panel.delete_requested.connect(self._remove_layer_for_scene)
         panel.visibility_changed.connect(self._set_layer_visibility)
@@ -1480,7 +1596,10 @@ class MainWindow:
         with self._using_pane(pane_id):
             mode = self._pane_scene().scene_mode
             panel.set_scene_mode(mode)
-            panel.set_layers(self._two_d_panel_layers() if mode is SceneMode.TWO_D else self._pane_scene().layers)
+            panel.set_layers(
+                self._two_d_panel_layers() if mode is SceneMode.TWO_D else self._three_d_panel_layers()
+            )
+        self._sync_scene_controls()
 
     # ------------------------------------------------------------------
     # AI 场景命令适配层
@@ -1601,7 +1720,7 @@ class MainWindow:
             if getattr(scene, "_agent_points3d_render_pending", False):
                 scene._agent_points3d_render_pending = False
                 self._render_agent_points3d(render=False)
-            self._sync_panel_layers(scene.layers if scene.scene_mode is SceneMode.THREE_D else self._two_d_panel_layers())
+            self._sync_panel_layers(self._three_d_panel_layers() if scene.scene_mode is SceneMode.THREE_D else self._two_d_panel_layers())
             self._pane_renderer().render()
             self._sync_pane_state()
             if after != scene._scene_command_snapshot:
@@ -2065,6 +2184,27 @@ class MainWindow:
         if name == "scene.clear":
             self._command_clear_scope(str(operation.get("scope", "all")))
             return
+        if name == "linear_algebra.coordinate_transform":
+            if self._pane_scene().scene_mode is not SceneMode.TWO_D:
+                raise CommandError("坐标系矩阵变换需要处于二维场景。")
+            matrix = tuple(
+                tuple(float(value) for value in row) for row in operation["matrix"]  # type: ignore[index]
+            )
+            determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+            if abs(determinant) <= 1e-12:
+                raise CommandError("坐标系矩阵变换必须使用可逆矩阵。")
+            runtime = self._pane_scene()
+            runtime._two_d_coordinate_transform = matrix  # type: ignore[assignment]
+            runtime._two_d_show_original_coordinate_system = bool(operation.get("show_original", True))
+            runtime._two_d_show_transformed_coordinate_system = bool(operation.get("show_transformed", True))
+            pane = self._pane()
+            pane.scene_2d["coordinate_transform"] = [list(matrix[0]), list(matrix[1])]
+            pane.scene_2d["show_original_coordinate_system"] = runtime._two_d_show_original_coordinate_system
+            pane.scene_2d["show_transformed_coordinate_system"] = runtime._two_d_show_transformed_coordinate_system
+            # Rebuild the same guide/curve pipeline used by the matrix editor;
+            # this is a coordinate-system transform, not a teaching-grid overlay.
+            self._render_2d_scene()
+            return
         if name == "point3d.upsert":
             self._command_upsert_point3d(operation)
             return
@@ -2178,7 +2318,11 @@ class MainWindow:
             kind=str(operation.get("kind", "vector")),
             color=str(operation.get("color", "#2777b6")),
             role=str(operation.get("role", "primary")),
+            # 计划里声明的虚线必须传下去：被压到零的方向、投影连线等辅助构造全靠它。
+            style=str(operation.get("style", "solid")),
         )
+        if operation.get("visible") is False:
+            self._pane_scene().geometry3d_controller.set_visible(alias, False)
 
     def _command_upsert_plane3d(self, operation: dict[str, object]) -> None:
         if self._pane_scene().scene_mode is not SceneMode.THREE_D or self._pane_scene().geometry3d_controller is None:
@@ -2193,6 +2337,8 @@ class MainWindow:
             opacity=float(operation.get("opacity", 0.24)),
             color=str(operation.get("color", "#5b8def")),
         )
+        if operation.get("visible") is False:
+            self._pane_scene().geometry3d_controller.set_visible(alias, False)
 
     def _command_upsert_solid3d(self, operation: dict[str, object]) -> None:
         if self._pane_scene().scene_mode is not SceneMode.THREE_D or self._pane_scene().geometry3d_controller is None:
@@ -2220,6 +2366,7 @@ class MainWindow:
                 "alias": operation["alias"],
                 "text": operation["text"],
                 "position": position,
+                "latex": operation.get("latex"),
             })
             return
         if len(position) != 3:
@@ -2228,10 +2375,31 @@ class MainWindow:
         add_labels = getattr(self._pane_renderer(), "add_point_labels", None)
         if callable(add_labels):
             name = f"geometry3d:annotation:{operation['alias']}"
-            self._pane_renderer().remove_actor(name, render=False)
+            remove_actor = getattr(self._pane_renderer(), "remove_actor", None)
+            if callable(remove_actor):
+                remove_actor(name, render=False)
+            if operation.get("visible") is False:
+                return
+            latex_value = operation.get("latex")
+            text = math_labels.display_text(
+                _annotation_display_text(str(operation.get("text", ""))),
+                latex_value if isinstance(latex_value, str) else None,
+                font_size=11,
+                bold=True,
+            )
+            if not text:
+                return
+            color = str(
+                operation.get(
+                    "color",
+                    "#f3f6fa" if getattr(self, "effective_theme", "light") == "dark" else "#263241",
+                )
+            )
             add_labels(
-                [position], [str(operation["text"])], name=name, shape=None, show_points=False,
-                always_visible=True, render=False,
+                [position], [text], name=name, shape=None, show_points=False,
+                font_size=11, text_color=color, always_visible=True,
+                font_file=math_labels.label_font_file(), render=False,
+                render_points_as_spheres=False,
             )
 
     def _command_teaching_geometry(self, operation: dict[str, object]) -> None:
@@ -2464,6 +2632,7 @@ class MainWindow:
         else:
             annotation.text = str(operation["text"])
             annotation.x, annotation.y = x, y
+            annotation.latex = operation.get("latex") if operation.get("latex") is not None else annotation.latex
         if self._pane_scene().geometry_controller is not None:
             self._pane_scene().geometry_controller.annotations.pop(annotation.id, None)
             self._pane_scene().geometry_controller.add_annotation(annotation)
@@ -2648,6 +2817,11 @@ class MainWindow:
         self._teaching_case_pane_grid = None
         if getattr(self.pane_manager, "_lecture_user_visible", None) is not None:
             self.pane_manager.leave_lecture()
+        for pane_id, pane in tuple(self.pane_manager.panes.items()):
+            if pane.source == "case":
+                self.pane_manager.delete_pane(pane_id)
+        self._teaching_case_pane_ids = []
+        self._teaching_case_stage_refs = {}
         if hasattr(self, "teaching_case_pane_host"):
             self.teaching_case_pane_host.hide()
         container = getattr(self, "scene_pane_widget", None)
@@ -2674,12 +2848,21 @@ class MainWindow:
         self._sync_layout_buttons()
 
     def _clear_pending_curriculum_plans(self) -> None:
-        """Remove staged lecture plans after the single host transaction.
+        """Remove staged lecture plans that an already materialized pane must not replay.
 
         ``ScenePaneWidget.sync_layout`` may recreate more than one renderer.  A
-        pending plan is only a hand-off token for the first renderer; leaving it
-        on another pane would make a later interactor callback execute the same
-        curriculum transaction a second time.
+        pending plan is a hand-off token for one renderer: the pane consumes it
+        inside its own ``_on_pane_interactor_created`` callback, so a token left
+        on a pane that already has its renderer belongs to a recreated surface
+        and must not be replayed (that would re-run the whole plan).
+
+        Panes whose renderer is not bound yet must keep their token.  ``MathCaseView``
+        layouts with more than one visible pane (4.1.3 is the first) materialize
+        their renderers one by one, so clearing the whole list here would leave
+        every later case pane empty: no plan executed, nothing to mask.  A pane
+        can own a runtime (bookkeeping such as vector-sum bindings creates one)
+        while still waiting for its renderer, so the renderer binding is the real
+        materialization signal.
         """
 
         manager = getattr(self, "pane_manager", None)
@@ -2689,6 +2872,8 @@ class MainWindow:
             if pane_id not in manager.panes:
                 continue
             pane = manager.pane(pane_id)
+            if pane.renderer_2d is None and pane.renderer_3d is None:
+                continue
             data = pane.scene_2d if pane.scene_mode == "2d" else pane.scene_3d
             data.pop("pending_plan", None)
 
@@ -2750,16 +2935,21 @@ class MainWindow:
                                 self._clear_pending_curriculum_plans()
                                 self._pending_curriculum_transaction = None
                                 return
-                        # The transaction may have completed synchronously while
-                        # this renderer was being created.  Its hand-off token is
-                        # intentionally ignored rather than replayed.
-                        if getattr(self, "_pending_curriculum_host_executed", False):
-                            return
+                        # No topic transaction to commit here: either this chapter
+                        # has none, or the pane that materialized first already
+                        # committed it.  Either way this pane owns its own actors,
+                        # so its staged plan must run in this runtime — a case
+                        # layout with more than one visible pane (4.1.3 is the
+                        # first) would otherwise stay completely empty.
                         result = self.scene_command_service.execute(
                             CommandPlan.from_dict(pending), pane_id=pane_id, activate_pane=False,
                         )
                         if not result.valid:
                             raise CommandError("；".join(result.messages))
+                        # Staged plans carry every stage of the topic; the mask
+                        # reduces this pane to the step its case binds.  Nothing
+                        # happens for topics without a compiled storyboard.
+                        self._apply_linear_algebra_storyboard_visibility()
                     except Exception:
                         data = pane.scene_2d if pane.scene_mode == "2d" else pane.scene_3d
                         data["pending_plan"] = pending
@@ -2805,14 +2995,20 @@ class MainWindow:
         self._teaching_case_pane_ids = []
         self._teaching_case_stage_refs = {}
         for case_id, name, refs in descriptors:
+            # 每次载入都以当前产物为准。案例窗格是保留的：上一次载入留下的图形
+            # 存在窗格状态里，会被重放出来（旧舞台、旧配色），于是改过产物后重开
+            # 主题看不到任何变化。旧窗格先丢弃，再按新计划重新物化。
+            try:
+                self.pane_manager.close_case(case_id)
+            except (AttributeError, RuntimeError, ValueError):
+                pass
             pane_id = self.pane_manager.register_case(case_id, name=name)
             pane = self.pane_manager.pane(pane_id)
-            if pane.runtime is None and not pane.scene_2d and not pane.scene_3d:
-                extended = str(getattr(compiled, "topic_id", "")).startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08."))
-                plan = compiled.plan if extended and getattr(compiled, "storyboard", ()) else (case_plan(compiled, refs[0]) if refs else compiled.plan)
-                pane.scene_mode = plan.scene
-                data = pane.scene_2d if plan.scene == "2d" else pane.scene_3d
-                data["pending_plan"] = plan.to_dict()
+            extended = str(getattr(compiled, "topic_id", "")).startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08."))
+            plan = compiled.plan if extended and getattr(compiled, "storyboard", ()) else (case_plan(compiled, refs[0]) if refs else compiled.plan)
+            pane.scene_mode = plan.scene
+            data = pane.scene_2d if plan.scene == "2d" else pane.scene_3d
+            data["pending_plan"] = plan.to_dict()
             self._teaching_case_pane_ids.append(pane_id)
             self._teaching_case_stage_refs[pane_id] = refs
         self._teaching_case_pane_ids = [
@@ -2942,7 +3138,23 @@ class MainWindow:
 
         for alias in getattr(self._pane_scene(), "_agent_points3d", {}):
             self._pane_renderer().remove_actor(f"agent-point:{alias}", render=False)
+        vector_starts = tuple(
+            tuple(float(value) for value in operation.get("start", ()))
+            for operation in getattr(self._pane_scene(), "_agent_geometry3d", {}).values()
+            if isinstance(operation, dict)
+            and operation.get("op") == "linear3d.upsert"
+            and operation.get("kind") == "vector"
+            and len(operation.get("start", ())) == 3
+        )
         for alias, coordinates in getattr(self._pane_scene(), "_agent_points3d", {}).items():
+            # 教学向量已经用箭杆表达方向；与其起点重合的教学点不再叠加球体，
+            # 否则 4.1.3 的多个向量都会在原点形成一个无意义的大球。
+            is_teaching_point = not str(alias).startswith("manual_")
+            if is_teaching_point and any(
+                all(abs(float(point) - float(start)) <= 1e-9 for point, start in zip(coordinates, vector_start))
+                for vector_start in vector_starts
+            ):
+                continue
             mesh = pv.Sphere(radius=0.08, center=coordinates, theta_resolution=16, phi_resolution=8)
             self._pane_renderer().add_mesh(mesh, name=f"agent-point:{alias}", color="#d64545", render=False)
         if render:
@@ -3184,6 +3396,10 @@ class MainWindow:
         else:
             self._render_3d_scene()
 
+    def _annotation_text_color(self) -> str:
+        """Use a legible default color for user-created marks in either theme."""
+        return "#f3f6fa" if getattr(self, "effective_theme", "light") == "dark" else "#263241"
+
     def _render_3d_scene(self) -> None:
         appearance = self._pane_scene().scene_appearances[SceneMode.THREE_D]
         effective_theme = getattr(self, "effective_theme", "light")
@@ -3208,8 +3424,7 @@ class MainWindow:
         configure_3d_camera_interaction(self._pane_renderer())
         # build_scene 内部会调用 plotter.clear() 清除全部 actor，因此坐标轴需要重新创建。
         self._pane_scene()._three_d_axes = ThreeDAxes(self._pane_renderer())
-        # Use a fixed reference extent.  During interaction the pane applies a
-        # projection compensation so the axes keep a stable on-screen size.
+        # Axes remain fixed world-space geometry while the camera moves.
         extent = DEFAULT_3D_AXIS_EXTENT
         # 切换场景会重新创建坐标轴；沿用上次三维间距，避免同一视角重建后跳到另一档刻度。
         previous_spacing = self._pane_scene()._three_d_spacing
@@ -3223,8 +3438,6 @@ class MainWindow:
             previous_spacing=previous_spacing,
         )
         self._pane_scene()._three_d_spacing = spacing
-        self._pane_scene()._three_d_extent = DEFAULT_3D_AXIS_EXTENT
-        self._pane_scene()._three_d_reference_projection_scale = self._camera_projection_scale()
         focal = tuple(self._pane_renderer().camera.focal_point)
         self._pane_scene().plot_domain = PlotDomain(
             x_range=(focal[0] - extent, focal[0] + extent),
@@ -3253,9 +3466,14 @@ class MainWindow:
             else:
                 available_layers.append(layer)
         self._pane_scene().layers = available_layers
-        self._sync_panel_layers(self._pane_scene().layers)
+        self._sync_panel_layers(self._three_d_panel_layers())
         self.algebra_panel.set_status("三维场景已准备好")
         for operation in tuple(getattr(self._pane_scene(), "_agent_geometry3d", {}).values()):
+            if (
+                operation.get("op") == "annotation.formula"
+                and str(operation.get("alias", "")).startswith("manual_annotation_")
+            ):
+                operation["color"] = self._annotation_text_color()
             if operation.get("op") == "linear3d.upsert":
                 self._command_upsert_linear3d(operation)
             elif operation.get("op") == "plane3d.upsert":
@@ -3299,14 +3517,32 @@ class MainWindow:
             appearance.tick_spacing,
         )
         # plotter.clear() 会清除全部 actor，因此二维辅助线池也必须重新建立。
+        self._pane_scene()._two_d_original_guides = None
+        if coordinate_transform is not None:
+            self._pane_scene()._two_d_original_guides = TwoDGuides(self._pane_renderer())
+            self._pane_scene()._two_d_original_guides.actor_prefix = "original_"
+            if self._pane_scene()._two_d_show_original_coordinate_system:
+                self._pane_scene()._two_d_original_guides.render(
+                    sampling_bounds,
+                    appearance,
+                    effective_theme=effective_theme,
+                    spacing=tick_spacing(
+                        visible.y_span,
+                        appearance.tick_spacing_mode,
+                        appearance.tick_spacing,
+                    ),
+                    muted=True,
+                    z_offset=-0.03,
+                )
         self._pane_scene()._two_d_guides = TwoDGuides(self._pane_renderer())
-        self._pane_scene()._two_d_guides.render(
-            sampling_bounds,
-            appearance,
-            effective_theme=effective_theme,
-            spacing=spacing,
-            coordinate_transform=coordinate_transform,
-        )
+        if self._pane_scene()._two_d_show_transformed_coordinate_system:
+            self._pane_scene()._two_d_guides.render(
+                sampling_bounds,
+                appearance,
+                effective_theme=effective_theme,
+                spacing=spacing,
+                coordinate_transform=coordinate_transform,
+            )
         self._pane_scene()._two_d_guide_spacing = spacing
         self._pane_scene()._two_d_guide_bounds = sampling_bounds
         self._pane_scene()._two_d_sample_bounds = sampling_bounds
@@ -3334,6 +3570,8 @@ class MainWindow:
             for linear in self._pane_scene().linear_objects:
                 geometry_controller.add_linear(linear)
             for annotation in getattr(self._pane_scene(), "annotations", []):
+                if annotation.editable:
+                    annotation.color = self._annotation_text_color()
                 geometry_controller.add_annotation(annotation)
             for operation in tuple(getattr(self._pane_scene(), "_agent_teaching_2d", {}).values()):
                 self._command_teaching_geometry(operation)
@@ -3439,12 +3677,31 @@ class MainWindow:
 
         sampling_bounds = visible.expanded(_GUIDE_MARGIN)
         if self._pane_scene()._two_d_guides is not None:
-            self._pane_scene()._two_d_guides.render(
+            if self._pane_scene()._two_d_show_transformed_coordinate_system:
+                self._pane_scene()._two_d_guides.render(
+                    sampling_bounds,
+                    appearance,
+                    effective_theme=effective_theme,
+                    spacing=spacing,
+                    coordinate_transform=coordinate_transform,
+                )
+        original_guides = getattr(self._pane_scene(), "_two_d_original_guides", None)
+        if (
+            coordinate_transform is not None
+            and original_guides is not None
+            and self._pane_scene()._two_d_show_original_coordinate_system
+        ):
+            original_guides.render(
                 sampling_bounds,
                 appearance,
                 effective_theme=effective_theme,
-                spacing=spacing,
-                coordinate_transform=coordinate_transform,
+                spacing=tick_spacing(
+                    visible.y_span,
+                    appearance.tick_spacing_mode,
+                    appearance.tick_spacing,
+                ),
+                muted=True,
+                z_offset=-0.03,
             )
         self._pane_scene()._two_d_guide_spacing = spacing
         self._pane_scene()._two_d_guide_bounds = sampling_bounds
@@ -3489,66 +3746,21 @@ class MainWindow:
         """
         return DEFAULT_3D_AXIS_EXTENT
 
-    def _camera_distance(self) -> float | None:
-        camera = getattr(self._pane_renderer(), "camera", None)
-        if camera is None:
-            return None
-        try:
-            position = tuple(float(value) for value in camera.position)
-            focal = tuple(float(value) for value in camera.focal_point)
-        except (AttributeError, TypeError, ValueError):
-            return None
-        distance = sqrt(sum((current - target) ** 2 for current, target in zip(position, focal)))
-        return distance if distance > 1e-6 else None
-
-    def _camera_projection_scale(self) -> float | None:
-        """Return the perspective scale that determines on-screen world size.
-
-        A 3-D dolly changes the camera distance while wheel zoom commonly
-        changes ``camera.view_angle``.  Both affect the projected size of a
-        world-space vector, so compensation must account for both values.
-        """
-        camera = getattr(self._pane_renderer(), "camera", None)
-        if camera is None:
-            return None
-        distance = self._camera_distance()
-        try:
-            view_angle = float(camera.view_angle)
-        except (AttributeError, TypeError, ValueError):
-            return distance
-        if distance is None or not isfinite(view_angle) or not 0.0 < view_angle < 180.0:
-            return None
-        scale = distance * tan(radians(view_angle) / 2.0)
-        return scale if isfinite(scale) and scale > 1e-9 else None
-
-    def _refresh_3d_axes_for_camera(self) -> None:
-        axes = self._pane_scene()._three_d_axes
-        reference_scale = self._pane_scene()._three_d_reference_projection_scale
-        current_scale = self._camera_projection_scale()
-        if axes is None or reference_scale is None or current_scale is None:
+    def _refresh_3d_arrows_for_camera(self) -> None:
+        """Keep 3-D vector heads a constant pixel size during camera motion."""
+        controller = getattr(self._pane_scene(), "geometry3d_controller", None)
+        refresh = getattr(controller, "refresh_vector_heads", None)
+        if not callable(refresh):
             return
-        extent = DEFAULT_3D_AXIS_EXTENT * current_scale / reference_scale
-        previous_extent = self._pane_scene()._three_d_extent or DEFAULT_3D_AXIS_EXTENT
-        # Avoid rebuilding labels for negligible camera changes.
-        if abs(extent - previous_extent) <= max(1e-4, previous_extent * 1e-3):
+        try:
+            refresh()
+        except (AttributeError, RuntimeError, TypeError, ValueError):
             return
-        appearance = self._pane_scene().scene_appearances[SceneMode.THREE_D]
-        effective_theme = getattr(self, "effective_theme", "light")
-        self._pane_scene()._three_d_spacing = axes.render(
-            extent,
-            axis_color_mode=appearance.axis_color_mode,
-            contrast_color=appearance.contrast_axis_color(effective_theme),
-            show_ticks=appearance.show_ticks,
-            tick_spacing_mode=appearance.tick_spacing_mode,
-            custom_tick_spacing=appearance.tick_spacing,
-            previous_spacing=self._pane_scene()._three_d_spacing,
-        )
-        self._pane_renderer().render()
 
     def _refresh_3d_viewport(
         self, *, resample: bool = True, render: bool = True, force: bool = False
     ) -> None:
-        """刷新三维视口，并记录坐标轴的相机投影基准。"""
+        """Refresh 3-D settings and remeasure screen-sized vector heads."""
         if force and self._pane_scene()._three_d_axes is not None:
             appearance = self._pane_scene().scene_appearances[SceneMode.THREE_D]
             effective_theme = getattr(self, "effective_theme", "light")
@@ -3562,8 +3774,11 @@ class MainWindow:
                 custom_tick_spacing=appearance.tick_spacing,
                 previous_spacing=None,
             )
-            self._pane_scene()._three_d_extent = DEFAULT_3D_AXIS_EXTENT
-            self._pane_scene()._three_d_reference_projection_scale = self._camera_projection_scale()
+
+        # A Qt resize changes world-units-per-pixel without emitting a VTK
+        # camera interaction.  Recompute only cone geometry here; the axes
+        # remain fixed world-space actors and are not rebuilt.
+        self._refresh_3d_arrows_for_camera()
 
         if render:
             self._pane_renderer().render()
@@ -3587,7 +3802,8 @@ class MainWindow:
     ) -> None:
         self.algebra_panel.set_scene_mode(self._pane_scene().scene_mode)
         self.algebra_panel.set_catalog_entries(catalog_entries(self._pane_scene().scene_mode))
-        self.algebra_panel.set_layers(layers)
+        displayed_layers = self._three_d_panel_layers() if self._pane_scene().scene_mode is SceneMode.THREE_D else layers
+        self.algebra_panel.set_layers(displayed_layers)
         self._sync_scene_controls()
 
     def _add_formula_for_scene(self, kind: str, latex: str) -> None:
@@ -3595,6 +3811,233 @@ class MainWindow:
             self._add_cas_curve(kind, latex)
         else:
             self._add_cas_surface(kind, latex)
+
+    def _on_3d_annotation_requested(self) -> None:
+        """Arm or cancel one 3-D viewport click for a user-owned mark."""
+        self.pane_manager.activate_for_tool()
+        toolbar = getattr(self, "three_d_geometry_toolbar", None)
+        if self._pane_scene().scene_mode is not SceneMode.THREE_D:
+            if toolbar is not None:
+                toolbar.set_annotation_active(False)
+            return
+        active = (
+            bool(toolbar.annotation_button.isChecked())
+            if toolbar is not None
+            else not bool(getattr(self._pane_scene(), "_pending_3d_annotation", False))
+        )
+        self._pane_scene()._pending_3d_annotation = active
+        if active:
+            self.algebra_panel.set_status("标记工具：请在三维场景中单击标记位置")
+        else:
+            self.algebra_panel.set_status("已取消标记")
+
+    def _create_3d_annotation(self, position: tuple[float, float, float]) -> bool:
+        """Create one editable mark at a picked 3-D position."""
+        before = self._capture_scene_command_state()
+        existing = getattr(self._pane_scene(), "_agent_geometry3d", {})
+        index = 1
+        while f"annotation:manual_annotation_{index}" in existing:
+            index += 1
+        alias = f"manual_annotation_{index}"
+        operation = {
+            "op": "annotation.formula",
+            "alias": alias,
+            "text": "",
+            "latex": "",
+            "position": position,
+            "visible": True,
+            "color": self._annotation_text_color(),
+        }
+        try:
+            self._command_formula_annotation(operation)
+        except CommandError as error:
+            self.algebra_panel.set_status(str(error), is_error=True)
+            return False
+
+        after = self._capture_scene_command_state()
+        pane_id = self._pane().pane_id
+        self.pane_manager.push(
+            pane_id,
+            lambda state=before, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+            lambda state=after, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+            "三维标记",
+        )
+        self._sync_pane_state()
+        self.algebra_panel.set_layers(self._three_d_panel_layers())
+        begin_edit = getattr(self.algebra_panel, "begin_annotation_edit", None)
+        if callable(begin_edit):
+            begin_edit(alias)
+        self._update_geometry_history_controls()
+        self.algebra_panel.set_status("已新增标记，请直接在代数区输入文字或数学表达式")
+        renderer = self._pane_renderer(required=False)
+        if renderer is not None and callable(getattr(renderer, "render", None)):
+            renderer.render()
+        return True
+
+    def _on_3d_vector_requested(self) -> None:
+        """Insert an editable vector row in the focused pane's algebra list."""
+        self.pane_manager.activate_for_tool()
+        if self._pane_scene().scene_mode is not SceneMode.THREE_D:
+            return
+        self._create_3d_vector()
+
+    def _create_3d_vector(self) -> None:
+        """Create a default vector, then focus its existing algebra list row."""
+        endpoint = (1.0, 0.0, 0.0)
+
+        before = self._capture_scene_command_state()
+        existing = getattr(self._pane_scene(), "_agent_geometry3d", {})
+        index = 1
+        while f"manual_vector_{index}" in existing:
+            index += 1
+        alias = f"manual_vector_{index}"
+        try:
+            self._command_upsert_linear3d({
+                "op": "linear3d.upsert",
+                "alias": alias,
+                "start": (0.0, 0.0, 0.0),
+                "end": endpoint,
+                "kind": "vector",
+                "color": "#2777b6",
+                "role": "primary",
+            })
+        except CommandError as error:
+            self.algebra_panel.set_status(str(error), is_error=True)
+            return
+
+        after = self._capture_scene_command_state()
+        pane_id = self._pane().pane_id
+        self.pane_manager.push(
+            pane_id,
+            lambda state=before, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+            lambda state=after, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+            "三维向量",
+        )
+        self._sync_pane_state()
+        self.algebra_panel.set_layers(self._three_d_panel_layers())
+        self.algebra_panel.begin_three_d_vector_edit(alias)
+        toolbar = getattr(self, "three_d_geometry_toolbar", None)
+        if toolbar is not None:
+            toolbar.set_vector_active(True)
+        self._update_geometry_history_controls()
+        self.algebra_panel.set_status("已新增向量，请直接在代数区修改其分量")
+
+    def _update_3d_vector_from_algebra(self, pane_id: str, alias: str, latex: str) -> None:
+        """Apply edits from a vector's ordinary MathLive algebra row."""
+        if pane_id not in self.pane_manager.panes:
+            return
+        with self._using_pane(pane_id):
+            if self._pane_scene().scene_mode is not SceneMode.THREE_D:
+                return
+            endpoint = parse_3d_vector_endpoint(latex)
+            if endpoint is None:
+                self.algebra_panel.set_status("向量格式无效，请填写三个数值分量", is_error=True)
+                return
+            if sum(component * component for component in endpoint) <= 1e-18:
+                self.algebra_panel.set_status("向量终点不能是原点", is_error=True)
+                return
+            operations = getattr(self._pane_scene(), "_agent_geometry3d", {})
+            current = operations.get(alias)
+            if not isinstance(current, dict) or current.get("op") != "linear3d.upsert":
+                return
+            before = self._capture_scene_command_state()
+            operation = dict(current)
+            operation["end"] = endpoint
+            try:
+                self._command_upsert_linear3d(operation)
+            except CommandError as error:
+                self.algebra_panel.set_status(str(error), is_error=True)
+                return
+            after = self._capture_scene_command_state()
+            self.pane_manager.push(
+                pane_id,
+                lambda state=before, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+                lambda state=after, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+                "编辑三维向量",
+            )
+            self._sync_pane_state()
+            row = self._three_d_vector_row(alias)
+            if row is not None:
+                self.algebra_panel.sync_layer(alias, row)
+            self.algebra_panel.finish_edit()
+        toolbar = getattr(self, "three_d_geometry_toolbar", None)
+        if toolbar is not None:
+            toolbar.set_vector_active(False)
+        self._update_geometry_history_controls()
+        self.algebra_panel.set_status("已更新向量")
+
+    def _update_annotation_from_algebra(self, pane_id: str, layer_id: str, latex: str) -> None:
+        """Update the text of a user mark without parsing it as a function."""
+        if pane_id not in self.pane_manager.panes:
+            return
+        updated = False
+        with self._using_pane(pane_id):
+            source = latex.strip()
+            if not source:
+                return
+            if self._pane_scene().scene_mode is SceneMode.TWO_D:
+                annotation = next(
+                    (
+                        item
+                        for item in self._pane_scene().annotations
+                        if item.id == layer_id and item.editable
+                    ),
+                    None,
+                )
+                if annotation is None:
+                    return
+                before = self._capture_geometry_state()
+                annotation.text = _annotation_display_text(source)
+                annotation.latex = source
+                controller = getattr(self._pane_scene(), "geometry_controller", None)
+                if controller is not None:
+                    controller.annotations.pop(annotation.id, None)
+                    controller.add_annotation(annotation)
+                self._record_geometry_change(before)
+                self.algebra_panel.sync_layer(annotation.id, annotation)
+                self.algebra_panel.finish_edit()
+                updated = True
+            elif self._pane_scene().scene_mode is SceneMode.THREE_D:
+                operations = getattr(self._pane_scene(), "_agent_geometry3d", {})
+                current = operations.get(f"annotation:{layer_id}")
+                if (
+                    not str(layer_id).startswith("manual_annotation_")
+                    or not isinstance(current, dict)
+                    or current.get("op") != "annotation.formula"
+                ):
+                    return
+                before = self._capture_scene_command_state()
+                operation = dict(current)
+                operation["text"] = _annotation_display_text(source)
+                operation["latex"] = source
+                self._command_formula_annotation(operation)
+                after = self._capture_scene_command_state()
+                self.pane_manager.push(
+                    pane_id,
+                    lambda state=before, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+                    lambda state=after, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+                    "编辑三维标记",
+                )
+                self._sync_pane_state()
+                row = self._three_d_annotation_row(layer_id)
+                if row is not None:
+                    self.algebra_panel.sync_layer(layer_id, row)
+                self.algebra_panel.finish_edit()
+                updated = True
+        if not updated:
+            return
+        renderer = self._pane_renderer(required=False)
+        if renderer is not None and callable(getattr(renderer, "render", None)):
+            renderer.render()
+        self._update_geometry_history_controls()
+        self.algebra_panel.set_status("已更新标记")
+
+    def _restore_scene_command_state_for_pane(self, pane_id: str, state: _SceneCommandState) -> None:
+        """Replay a shared-history scene state in the pane that created it."""
+        with self._using_pane(pane_id):
+            self._restore_scene_command_state(state)
+            self._sync_pane_state()
+        self._update_geometry_history_controls()
 
     def _reveal_algebra_pane(self, pane_id: str, _count: int) -> None:
         container = getattr(self, "scene_pane_widget", None)
@@ -3745,14 +4188,16 @@ class MainWindow:
                 from types import SimpleNamespace
                 compiled = SimpleNamespace(topic_id=topic.id, plan=lesson_plan, storyboard=())
             extended = getattr(bundle.topic, "chapter_number", 0) >= 4
+            # 每次载入都必须重置交接标记：上一章留下的 True 会让这一章的案例窗格
+            # 以为主题事务已经提交过，于是不再物化自己的计划，留下一个空窗格。
+            self._pending_curriculum_host_executed = False
+            self._pending_curriculum_finalized = False
             if extended:
                 self._pending_curriculum_transaction = transaction
                 self._pending_curriculum_bundle = bundle
                 self._pending_curriculum_explanation = explanation_case
                 self._pending_curriculum_plan = lesson_plan
                 self._pending_curriculum_previous_scene = previous_scene_snapshot
-                self._pending_curriculum_host_executed = False
-                self._pending_curriculum_finalized = False
             self._open_teaching_case_panes(explanation_case, compiled)
             if extended:
                 target_pane = next(iter(getattr(self, "_teaching_case_pane_ids", ())), None)
@@ -4051,7 +4496,7 @@ class MainWindow:
             self.algebra_panel.set_status(f"无法绘制曲面: {error}", is_error=True)
             return False
         self._pane_scene().layers.append(layer)
-        self.algebra_panel.set_layers(self._pane_scene().layers)
+        self._sync_panel_layers(self._pane_scene().layers)
         self.algebra_panel.set_status(f"已添加 {layer.name}")
         self._pane_renderer().render()
         return True
@@ -4139,17 +4584,22 @@ class MainWindow:
         if self._pane_scene().scene_mode is SceneMode.TWO_D:
             if self._geometry_object(layer_id) is not None:
                 self._remove_geometry_object(layer_id)
+            elif self._annotation_2d(layer_id) is not None:
+                self._remove_annotation(layer_id)
             else:
                 self._remove_curve(layer_id)
         else:
-            self._remove_surface(layer_id)
+            if self._three_d_annotation_row(layer_id) is not None:
+                self._remove_3d_annotation(layer_id)
+            else:
+                self._remove_surface(layer_id)
 
     def _remove_surface(self, layer_id: str) -> None:
         if self._pane_scene().layer_controller is None:
             return
         self._pane_scene().layer_controller.remove_layer(layer_id)
         self._pane_scene().layers = [layer for layer in self._pane_scene().layers if layer.id != layer_id]
-        self.algebra_panel.set_layers(self._pane_scene().layers)
+        self._sync_panel_layers(self._pane_scene().layers)
         self.algebra_panel.set_status("已删除曲面")
         self._pane_renderer().render()
 
@@ -4161,6 +4611,50 @@ class MainWindow:
         self._pane_scene()._two_d_object_order = [item_id for item_id in self._pane_scene()._two_d_object_order if item_id != layer_id]
         self.algebra_panel.set_layers(self._two_d_panel_layers())
         self.algebra_panel.set_status("已删除曲线")
+        self._pane_renderer().render()
+
+    def _remove_annotation(self, annotation_id: str) -> None:
+        annotation = self._annotation_2d(annotation_id)
+        if annotation is None:
+            return
+        before = self._capture_geometry_state()
+        self._pane_scene().annotations = [
+            item for item in self._pane_scene().annotations if item.id != annotation_id
+        ]
+        self._pane_scene()._two_d_object_order = [
+            item_id for item_id in self._pane_scene()._two_d_object_order if item_id != annotation_id
+        ]
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        if controller is not None:
+            controller.remove_object(annotation_id)
+        self.algebra_panel.set_layers(self._two_d_panel_layers())
+        self._record_geometry_change(before)
+        self._update_geometry_history_controls()
+        self.algebra_panel.set_status("已删除标记")
+        self._pane_renderer().render()
+
+    def _remove_3d_annotation(self, alias: str) -> None:
+        operations = getattr(self._pane_scene(), "_agent_geometry3d", {})
+        operation = operations.get(f"annotation:{alias}")
+        if not isinstance(operation, dict):
+            return
+        before = self._capture_scene_command_state()
+        operations.pop(f"annotation:{alias}", None)
+        remove_actor = getattr(self._pane_renderer(), "remove_actor", None)
+        if callable(remove_actor):
+            remove_actor(f"geometry3d:annotation:{alias}", render=False)
+        after = self._capture_scene_command_state()
+        pane_id = self._pane().pane_id
+        self.pane_manager.push(
+            pane_id,
+            lambda state=before, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+            lambda state=after, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+            "删除三维标记",
+        )
+        self._sync_pane_state()
+        self.algebra_panel.set_layers(self._three_d_panel_layers())
+        self._update_geometry_history_controls()
+        self.algebra_panel.set_status("已删除标记")
         self._pane_renderer().render()
 
     def _remove_geometry_object(self, object_id: str) -> None:
@@ -4227,10 +4721,60 @@ class MainWindow:
         if self._pane_scene().scene_mode is SceneMode.TWO_D:
             if self._geometry_object(layer_id) is not None:
                 self._set_geometry_visibility(layer_id, visible)
+            elif self._annotation_2d(layer_id) is not None:
+                self._set_annotation_visibility(layer_id, visible)
             else:
                 self._set_curve_visibility(layer_id, visible)
         else:
-            self._set_surface_visibility(layer_id, visible)
+            if self._three_d_vector_row(layer_id) is not None:
+                self._set_3d_vector_visibility(layer_id, visible)
+            elif self._three_d_annotation_row(layer_id) is not None:
+                self._set_3d_annotation_visibility(layer_id, visible)
+            elif self._three_d_plane_row(layer_id) is not None:
+                self._set_3d_plane_visibility(layer_id, visible)
+            else:
+                self._set_surface_visibility(layer_id, visible)
+
+    def _set_3d_vector_visibility(self, alias: str, visible: bool) -> None:
+        operations = getattr(self._pane_scene(), "_agent_geometry3d", {})
+        operation = operations.get(alias)
+        if not isinstance(operation, dict):
+            return
+        operation["visible"] = bool(visible)
+        controller = getattr(self._pane_scene(), "geometry3d_controller", None)
+        setter = getattr(controller, "set_visible", None)
+        if callable(setter):
+            setter(alias, bool(visible))
+        row = self._three_d_vector_row(alias)
+        if row is not None:
+            self.algebra_panel.sync_layer(alias, row)
+        self._pane_renderer().render()
+
+    def _set_3d_annotation_visibility(self, alias: str, visible: bool) -> None:
+        operations = getattr(self._pane_scene(), "_agent_geometry3d", {})
+        operation = operations.get(f"annotation:{alias}")
+        if not isinstance(operation, dict):
+            return
+        operation["visible"] = bool(visible)
+        self._command_formula_annotation(operation)
+        row = self._three_d_annotation_row(alias)
+        if row is not None:
+            self.algebra_panel.sync_layer(alias, row)
+        self._pane_renderer().render()
+
+    def _set_3d_plane_visibility(self, alias: str, visible: bool) -> None:
+        operation = getattr(self._pane_scene(), "_agent_geometry3d", {}).get(alias)
+        if not isinstance(operation, dict):
+            return
+        operation["visible"] = bool(visible)
+        controller = getattr(self._pane_scene(), "geometry3d_controller", None)
+        setter = getattr(controller, "set_visible", None)
+        if callable(setter):
+            setter(alias, bool(visible))
+        row = self._three_d_plane_row(alias)
+        if row is not None:
+            self.algebra_panel.sync_layer(alias, row)
+        self._pane_renderer().render()
 
     def _set_surface_visibility(self, layer_id: str, visible: bool) -> None:
         if self._pane_scene().layer_controller is not None:
@@ -4256,6 +4800,20 @@ class MainWindow:
             self._pane_scene().geometry_controller.set_visible(layer_id, visible)
         self.algebra_panel.sync_layer(layer_id, geometry)
         self._record_geometry_change(before)
+        self._pane_renderer().render()
+
+    def _set_annotation_visibility(self, layer_id: str, visible: bool) -> None:
+        annotation = self._annotation_2d(layer_id)
+        if annotation is None or annotation.visible == visible:
+            return
+        before = self._capture_geometry_state()
+        annotation.visible = visible
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        if controller is not None:
+            controller.set_visible(layer_id, visible)
+        self.algebra_panel.sync_layer(layer_id, annotation)
+        self._record_geometry_change(before)
+        self._update_geometry_history_controls()
         self._pane_renderer().render()
 
     def _set_surface_intersections_visibility(self, layer_id: str, visible: bool) -> None:
@@ -4393,7 +4951,15 @@ class MainWindow:
         self._close_scene_settings(immediate=True)
         self._render_scene()
 
-    _TOOL_LABELS = {"line": "直线", "segment": "线段", "ray": "射线", "vector": "向量", "addition": "向量加法"}
+    _TOOL_LABELS = {
+        "line": "直线",
+        "segment": "线段",
+        "dashed_segment": "虚线段",
+        "ray": "射线",
+        "vector": "向量",
+        "annotation": "标记",
+        "addition": "向量加法",
+    }
 
     def _set_2d_geometry_tool(self, tool: ToolKind | None) -> None:
         """切换当前二维几何创建工具，并清理未完成的两点操作。"""
@@ -4511,6 +5077,11 @@ class MainWindow:
             return None
 
         model = panel.add_matrix_transform_tab(pane_id, pane.name)
+        runtime = self._pane_scene(pane_id)
+        model.set_matrix_transform_visibility(
+            runtime._two_d_show_original_coordinate_system,
+            runtime._two_d_show_transformed_coordinate_system,
+        )
         model.setFocus()
         panel.set_status("请输入 2×2 矩阵，然后点击“应用”")
         toolbar = getattr(self, "two_d_geometry_toolbar", None)
@@ -4560,7 +5131,24 @@ class MainWindow:
             sync_state = getattr(self, "_sync_pane_state", None)
             if callable(sync_state):
                 sync_state()
-            panel.set_status("已应用矩阵变换，原坐标系已替换")
+            panel.set_status("已应用矩阵变换，可切换原坐标系和变换后坐标系显示")
+
+    def _set_matrix_coordinate_system_visibility(
+        self, pane_id: str, show_original: bool, show_transformed: bool
+    ) -> None:
+        """Toggle the reference and transformed guide systems for one pane."""
+        manager = getattr(self, "pane_manager", None)
+        if manager is None or pane_id not in manager.panes:
+            return
+        with self._using_pane(pane_id):
+            runtime = self._pane_scene()
+            runtime._two_d_show_original_coordinate_system = bool(show_original)
+            runtime._two_d_show_transformed_coordinate_system = bool(show_transformed)
+            pane = self._pane()
+            pane.scene_2d["show_original_coordinate_system"] = bool(show_original)
+            pane.scene_2d["show_transformed_coordinate_system"] = bool(show_transformed)
+            if runtime.scene_mode is SceneMode.TWO_D and self._pane_renderer(required=False) is not None:
+                self._render_2d_scene()
 
     def _next_linear_algebra_tool_alias(self, kind: str) -> str:
         self._pane_scene()._linear_algebra_tool_sequence = getattr(self._pane_scene(), "_linear_algebra_tool_sequence", 0) + 1
@@ -5304,13 +5892,20 @@ class MainWindow:
         self._update_geometry_history_controls()
 
     def _update_geometry_history_controls(self) -> None:
-        can_undo = bool(getattr(self._pane_scene(), "_geometry_undo_stack", [])) or bool(
+        can_undo = bool(getattr(self.pane_manager, "can_undo", False)) or bool(
+            getattr(self._pane_scene(), "_geometry_undo_stack", [])
+        ) or bool(
             getattr(self._pane_scene(), "_scene_command_undo_stack", [])
         )
-        can_redo = bool(getattr(self._pane_scene(), "_geometry_redo_stack", [])) or bool(
+        can_redo = bool(getattr(self.pane_manager, "can_redo", False)) or bool(
+            getattr(self._pane_scene(), "_geometry_redo_stack", [])
+        ) or bool(
             getattr(self._pane_scene(), "_scene_command_redo_stack", [])
         )
-        for toolbar in (getattr(self, "two_d_geometry_toolbar", None),):
+        for toolbar in (
+            getattr(self, "two_d_geometry_toolbar", None),
+            getattr(self, "three_d_geometry_toolbar", None),
+        ):
             if toolbar is None or not hasattr(toolbar, "set_history_state"):
                 continue
             toolbar.set_history_state(
@@ -5419,6 +6014,11 @@ class MainWindow:
 
     def _handle_geometry_mouse_press(self, event: QMouseEvent) -> bool:
         """处理被激活工具的左键单击；其他输入仍交给 PyVista。"""
+        commit_annotation = getattr(self.algebra_panel, "commit_annotation_edit", None)
+        if callable(commit_annotation):
+            commit_annotation()
+        if self._pane_scene().scene_mode is SceneMode.THREE_D:
+            return self._handle_3d_annotation_mouse_press(event)
         tool = self._pane_scene()._active_2d_tool
         linear_algebra_tool = getattr(self._pane_scene(), "_active_linear_algebra_tool", None)
         if (
@@ -5459,6 +6059,11 @@ class MainWindow:
                 scene._selection_band.show()
             event.accept()
             return True
+        if tool == "annotation":
+            self._create_2d_annotation(*coordinates)
+            self._set_2d_geometry_tool(None)
+            event.accept()
+            return True
         coordinates = self._maybe_snap(*coordinates)
         before = self._capture_geometry_state()
         point, created = self._get_or_create_geometry_point(*coordinates, record_history=False)
@@ -5488,7 +6093,13 @@ class MainWindow:
             self.algebra_panel.set_status("请单击与第一个点不同的位置", is_error=True)
             event.accept()
             return True
-        linear = self._create_linear_geometry(tool, first, point, record_history=False)
+        linear = self._create_linear_geometry(
+            self._linear_geometry_kind(tool),
+            first,
+            point,
+            style=self._linear_geometry_style(tool),
+            record_history=False,
+        )
         self._pane_scene()._pending_geometry_point_id = None
         if self._pane_scene().geometry_controller is not None:
             self._pane_scene().geometry_controller.clear_draft()
@@ -5496,6 +6107,25 @@ class MainWindow:
             self._record_geometry_change(before)
         self.algebra_panel.set_status(f"已创建{self._TOOL_LABELS[tool]} {linear.name}")
         self._pane_renderer().render()
+        event.accept()
+        return True
+
+    def _handle_3d_annotation_mouse_press(self, event: QMouseEvent) -> bool:
+        if (
+            event.button() != Qt.MouseButton.LeftButton
+            or not getattr(self._pane_scene(), "_pending_3d_annotation", False)
+        ):
+            return False
+        position = self._three_d_annotation_position(event)
+        if position is None:
+            self.algebra_panel.set_status("无法确定标记位置，请在三维视口内单击", is_error=True)
+            event.accept()
+            return True
+        if self._create_3d_annotation(position):
+            self._pane_scene()._pending_3d_annotation = False
+            toolbar = getattr(self, "three_d_geometry_toolbar", None)
+            if toolbar is not None:
+                toolbar.set_annotation_active(False)
         event.accept()
         return True
 
@@ -5554,12 +6184,17 @@ class MainWindow:
                 self._pane_renderer().render()
             return False
         if (
-            tool in {"line", "segment", "ray", "vector"}
+            tool in {"line", "segment", "dashed_segment", "ray", "vector"}
             and self._pane_scene()._pending_geometry_point_id is not None
         ):
             first = self._point_2d(self._pane_scene()._pending_geometry_point_id)
             if first is not None:
-                self._pane_scene().geometry_controller.set_draft(tool, first, self._maybe_snap(*coordinates))
+                self._pane_scene().geometry_controller.set_draft(
+                    self._linear_geometry_kind(tool),
+                    first,
+                    self._maybe_snap(*coordinates),
+                    style=self._linear_geometry_style(tool),
+                )
                 self._pane_renderer().render()
         return False
 
@@ -5694,6 +6329,41 @@ class MainWindow:
     def _hit_tolerance(self) -> float:
         return self._point_snap_tolerance()
 
+    def _three_d_annotation_position(self, event: QMouseEvent) -> tuple[float, float, float] | None:
+        """Map a viewport click to the plane through the current camera focus.
+
+        A focal-plane projection keeps marks placeable over empty space instead
+        of requiring a mesh pick, while still following the visible 3-D view.
+        """
+        plotter = self._pane_renderer(required=False)
+        interactor = getattr(plotter, "interactor", None)
+        vtk_interactor = getattr(plotter, "iren", None)
+        if interactor is None or vtk_interactor is None:
+            return None
+        try:
+            width = max(1, int(interactor.width()))
+            height = max(1, int(interactor.height()))
+            screen_x = int(event.position().x())
+            screen_y = int(height - event.position().y())
+            if not 0 <= screen_x <= width or not 0 <= screen_y <= height:
+                return None
+            renderer = vtk_interactor.get_poked_renderer(screen_x, screen_y)
+            if renderer is None:
+                return None
+            focal = renderer.GetActiveCamera().GetFocalPoint()
+            renderer.SetWorldPoint(*focal, 1.0)
+            renderer.WorldToDisplay()
+            depth = renderer.GetDisplayPoint()[2]
+            renderer.SetDisplayPoint(screen_x, screen_y, depth)
+            renderer.DisplayToWorld()
+            world = renderer.GetWorldPoint()
+            if len(world) != 4 or abs(float(world[3])) <= 1e-12:
+                return None
+            position = tuple(float(value) / float(world[3]) for value in world[:3])
+            return position if all(isfinite(value) for value in position) else None
+        except (AttributeError, RuntimeError, TypeError, ValueError):
+            return None
+
     def _viewport_to_world(self, screen_x: float, screen_y: float) -> tuple[float, float] | None:
         interactor = getattr(self._pane_renderer(), "interactor", None)
         if interactor is None:
@@ -5706,6 +6376,36 @@ class MainWindow:
         x = bounds.x_range[0] + float(screen_x) / width * bounds.x_span
         y = bounds.y_range[1] - float(screen_y) / height * bounds.y_span
         return x, y
+
+    def _create_2d_annotation(self, x: float, y: float) -> Annotation2D:
+        """Place one editable mark and focus its existing algebra-list row."""
+        before = self._capture_geometry_state()
+        index = 1 + sum(
+            1 for annotation in self._pane_scene().annotations if annotation.editable
+        )
+        annotation = Annotation2D(
+            name=f"标记 {index}",
+            text="",
+            x=x,
+            y=y,
+            latex="",
+            color=self._annotation_text_color(),
+            editable=True,
+        )
+        self._pane_scene().annotations.append(annotation)
+        self._pane_scene()._two_d_object_order.append(annotation.id)
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        if controller is not None:
+            controller.add_annotation(annotation)
+        self.algebra_panel.set_layers(self._two_d_panel_layers())
+        self._record_geometry_change(before)
+        begin_edit = getattr(self.algebra_panel, "begin_annotation_edit", None)
+        if callable(begin_edit):
+            begin_edit(annotation.id)
+        self._update_geometry_history_controls()
+        self.algebra_panel.set_status("已新增标记，请直接在代数区输入文字或数学表达式")
+        self._pane_renderer().render()
+        return annotation
 
     def _get_or_create_geometry_point(
         self,
@@ -5735,6 +6435,7 @@ class MainWindow:
         start: Point2D,
         end: Point2D,
         *,
+        style: str = "solid",
         record_history: bool = True,
     ) -> Linear2D:
         before = self._capture_geometry_state()
@@ -5743,6 +6444,7 @@ class MainWindow:
             kind=kind,
             start_point_id=start.id,
             end_point_id=end.id,
+            style=style,  # type: ignore[arg-type]
         )
         self._pane_scene().linear_objects.append(linear)
         self._pane_scene()._two_d_object_order.append(linear.id)
@@ -5752,6 +6454,15 @@ class MainWindow:
         if record_history:
             self._record_geometry_change(before)
         return linear
+
+    @staticmethod
+    def _linear_geometry_kind(tool: str) -> LinearKind:
+        """Map toolbar variants to the persisted geometric kind."""
+        return "segment" if tool == "dashed_segment" else tool  # type: ignore[return-value]
+
+    @staticmethod
+    def _linear_geometry_style(tool: str) -> str:
+        return "dashed" if tool == "dashed_segment" else "solid"
 
     def _point_snap_tolerance(self) -> float:
         interactor = getattr(self._pane_renderer(), "interactor", None)
@@ -6034,15 +6745,20 @@ class MainWindow:
         self.scene_mode_button.setText("2D" if self._pane_scene().scene_mode is SceneMode.TWO_D else "3D")
         if hasattr(self, "two_d_geometry_toolbar"):
             is_2d = self._pane_scene().scene_mode is SceneMode.TWO_D
-            # The existing toolbar is the complete toolbar and is always
-            # expanded. It stays visible in both scenes for discoverability.
             self.two_d_geometry_toolbar.set_linear_algebra_mode(True)
-            # The unified toolbar is a persistent canvas affordance. It stays
-            # visible even while the 3D scene is active so users can discover
-            # the complete set of tools without opening another panel.
-            self.two_d_geometry_toolbar.setVisible(True)
+            self.two_d_geometry_toolbar.setVisible(is_2d)
             if not is_2d:
                 self.two_d_geometry_toolbar.line_flyout.hide()
+        if hasattr(self, "three_d_geometry_toolbar"):
+            is_3d = self._pane_scene().scene_mode is SceneMode.THREE_D
+            self.three_d_geometry_toolbar.setVisible(is_3d)
+            if not is_3d:
+                self.three_d_geometry_toolbar.set_vector_active(False)
+                clear_annotation = getattr(self.three_d_geometry_toolbar, "set_annotation_active", None)
+                if callable(clear_annotation):
+                    clear_annotation(False)
+                self._pane_scene()._pending_3d_annotation = False
+        self._position_viewport_overlays()
         self.scene_settings_panel.set_mode(self._pane_scene().scene_mode)
         if hasattr(self, "agent_panel"):
             self.agent_panel.set_scene_mode(self._pane_scene().scene_mode is SceneMode.TWO_D)
@@ -6130,6 +6846,111 @@ class MainWindow:
             if object_id in objects
         ]
 
+    def _three_d_vector_row(self, alias: str) -> AlgebraVector3D | None:
+        operation = getattr(self._pane_scene(), "_agent_geometry3d", {}).get(alias)
+        if (
+            not isinstance(operation, dict)
+            or operation.get("op") != "linear3d.upsert"
+            or operation.get("kind") != "vector"
+        ):
+            return None
+        try:
+            end = tuple(float(value) for value in operation["end"])
+        except (KeyError, TypeError, ValueError):
+            return None
+        if len(end) != 3:
+            return None
+        symbol = operation.get("algebra_symbol")
+        if not isinstance(symbol, str) or not symbol.strip():
+            symbol = self._three_d_vector_symbol(alias)
+        return AlgebraVector3D(
+            alias=alias,
+            end=end,
+            visible=operation.get("visible") is not False,
+            color=str(operation.get("color", "#2777b6")),
+            symbol=symbol,
+        )
+
+    @staticmethod
+    def _three_d_vector_symbol(alias: str) -> str | None:
+        """Use compact textbook symbols for the 4.1.3 teaching vectors."""
+        prefix = "ch04__entity__input_vector_"
+        if alias.startswith(prefix):
+            return rf"\vec{{x}}_{{{alias.removeprefix(prefix)}}}"
+        prefix = "ch04__entity__output_vector_"
+        if alias.startswith(prefix):
+            return rf"\vec{{y}}_{{{alias.removeprefix(prefix)}}}"
+        if alias == "ch04__entity__kernel_vector":
+            return r"\vec{k}"
+        return None
+
+    def _three_d_plane_row(self, alias: str) -> AlgebraPlane3D | None:
+        operation = getattr(self._pane_scene(), "_agent_geometry3d", {}).get(alias)
+        if (
+            not isinstance(operation, dict)
+            or operation.get("op") != "plane3d.upsert"
+            or operation.get("algebra_visible") is not True
+        ):
+            return None
+        try:
+            origin = tuple(float(value) for value in operation["origin"])
+            normal = tuple(float(value) for value in operation["normal"])
+        except (KeyError, TypeError, ValueError):
+            return None
+        if len(origin) != 3 or len(normal) != 3:
+            return None
+        return AlgebraPlane3D(
+            alias=alias,
+            origin=origin,
+            normal=normal,
+            label=str(operation.get("algebra_label") or alias),
+            visible=operation.get("visible") is not False,
+            color=str(operation.get("color", "#5b8def")),
+        )
+
+    def _three_d_annotation_row(self, alias: str) -> AlgebraAnnotation3D | None:
+        operation = getattr(self._pane_scene(), "_agent_geometry3d", {}).get(f"annotation:{alias}")
+        if (
+            not str(alias).startswith("manual_annotation_")
+            or not isinstance(operation, dict)
+            or operation.get("op") != "annotation.formula"
+        ):
+            return None
+        try:
+            position = tuple(float(value) for value in operation["position"])
+        except (KeyError, TypeError, ValueError):
+            return None
+        if len(position) != 3:
+            return None
+        text = str(operation.get("text", ""))
+        return AlgebraAnnotation3D(
+            alias=alias,
+            position=position,
+            text=text,
+            source=str(operation.get("latex", text)),
+            visible=operation.get("visible") is not False,
+            color=str(operation.get("color", "#263241")),
+        )
+
+    def _three_d_panel_layers(self) -> list[SurfaceLayer | AlgebraVector3D | AlgebraPlane3D | AlgebraAnnotation3D]:
+        vector_rows = [
+            row
+            for alias in getattr(self._pane_scene(), "_agent_geometry3d", {})
+            if (row := self._three_d_vector_row(alias)) is not None
+        ]
+        plane_rows = [
+            row
+            for alias in getattr(self._pane_scene(), "_agent_geometry3d", {})
+            if (row := self._three_d_plane_row(alias)) is not None
+        ]
+        annotation_rows = [
+            row
+            for alias in getattr(self._pane_scene(), "_agent_geometry3d", {})
+            if str(alias).startswith("annotation:")
+            and (row := self._three_d_annotation_row(str(alias).removeprefix("annotation:"))) is not None
+        ]
+        return [*self._pane_scene().layers, *plane_rows, *vector_rows, *annotation_rows]
+
     def _layer(self, layer_id: str) -> SurfaceLayer | None:
         return next((layer for layer in self._pane_scene().layers if layer.id == layer_id), None)
 
@@ -6146,6 +6967,12 @@ class MainWindow:
         if point is not None:
             return point
         return next((linear for linear in self._pane_scene().linear_objects if linear.id == object_id), None)
+
+    def _annotation_2d(self, annotation_id: str) -> Annotation2D | None:
+        return next(
+            (annotation for annotation in self._pane_scene().annotations if annotation.id == annotation_id),
+            None,
+        )
 
     def _current_camera_position(self) -> list | None:
         if not self._pane_renderer(required=False):
@@ -6177,6 +7004,7 @@ class MainWindow:
         for widget in (
             getattr(self, "viewport_toolbar", None),
             getattr(self, "two_d_geometry_toolbar", None),
+            getattr(self, "three_d_geometry_toolbar", None),
             getattr(getattr(self, "two_d_geometry_toolbar", None), "line_flyout", None),
             getattr(self, "scene_settings_panel", None),
         ):
@@ -6190,6 +7018,9 @@ class MainWindow:
         two_d_toolbar = getattr(self, "two_d_geometry_toolbar", None)
         if two_d_toolbar is not None and hasattr(two_d_toolbar, "set_theme"):
             two_d_toolbar.set_theme(effective_theme)
+        three_d_toolbar = getattr(self, "three_d_geometry_toolbar", None)
+        if three_d_toolbar is not None and hasattr(three_d_toolbar, "set_theme"):
+            three_d_toolbar.set_theme(effective_theme)
         agent_settings_dialog = getattr(self, "_agent_settings_dialog", None)
         if agent_settings_dialog is not None:
             agent_settings_dialog.set_effective_theme(effective_theme)

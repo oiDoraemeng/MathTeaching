@@ -94,7 +94,6 @@
       };
       window.mathVirtualKeyboard.addEventListener('geometrychange', reportKeyboardHeight);
       field.addEventListener('focusin', () => {
-        window.mathVirtualKeyboard.show();
         requestAnimationFrame(installToolbar);
         requestAnimationFrame(reportKeyboardHeight);
       });
@@ -105,9 +104,9 @@
           height.schedule();
         },
         setPlaceholder: (placeholder) => { field.placeholder = placeholder || ''; },
-        focus: () => {
+        focus: (showKeyboard = false) => {
           field.focus();
-          window.mathVirtualKeyboard.show();
+          if (showKeyboard) window.mathVirtualKeyboard.show();
           requestAnimationFrame(installToolbar);
           requestAnimationFrame(reportKeyboardHeight);
         },

@@ -1,8 +1,10 @@
 """保持二维和三维相机模式独立的回归测试。"""
 
 import unittest
-from math import radians, tan
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
+
+from PySide6.QtCore import QEvent
 
 from rendering.scene import DEFAULT_3D_AXIS_EXTENT, build_scene, configure_3d_camera_interaction
 from rendering.two_d_scene import configure_2d_camera
@@ -122,60 +124,66 @@ class SceneCameraModeTests(unittest.TestCase):
 
     def test_3d_axis_extent_is_a_fixed_world_value(self) -> None:
         from ui.designer_window import MainWindow
-        from ui.scene_pane_manager import ScenePaneManager
 
         window = object.__new__(MainWindow)
-        window.pane_manager = ScenePaneManager()
-        window._pane_scene()._three_d_extent = None
-        window._pane_renderer = lambda: object()  # type: ignore[method-assign]
-
         self.assertEqual(MainWindow._current_3d_axis_extent(window), DEFAULT_3D_AXIS_EXTENT)
 
-        window._pane_scene()._three_d_extent = 7.0
-        self.assertEqual(MainWindow._current_3d_axis_extent(window), DEFAULT_3D_AXIS_EXTENT)
 
-    def test_3d_axis_compensation_accounts_for_view_angle_zoom(self) -> None:
-        from models.scene_mode import SceneAppearance, SceneMode
+    def test_wheel_input_activates_its_own_pane_before_zoom_handling(self) -> None:
+        from ui.designer_window import _GeometryInputFilter
+        from ui.scene_pane_manager import ScenePaneManager
+
+        class WheelEvent:
+            @staticmethod
+            def type() -> QEvent.Type:
+                return QEvent.Type.Wheel
+
+        manager = ScenePaneManager()
+        first, second = manager.set_layout(2)
+        watched = object()
+        owner = SimpleNamespace(
+            pane_manager=manager,
+            scene_pane_widget=SimpleNamespace(interactors={second: watched}),
+        )
+        _GeometryInputFilter(owner, None).eventFilter(watched, WheelEvent())
+
+        self.assertEqual(manager.active_pane_id, second)
+        self.assertNotEqual(manager.active_pane_id, first)
+
+    def test_3d_interactions_update_vector_heads_without_rebuilding_axes(self) -> None:
+        from models.scene_mode import SceneMode
         from ui.designer_window import MainWindow
         from ui.scene_pane_manager import ScenePaneManager
 
-        class Camera:
-            position = (12.8, -14.4, 11.4)
-            focal_point = (0.0, 0.0, 0.0)
-            view_angle = 30.0
+        window = object.__new__(MainWindow)
+        window.pane_manager = ScenePaneManager()
+        window._pane_scene().scene_mode = SceneMode.THREE_D
+        window._pane_scene()._viewport_refreshing = False
+        window._queue_viewport_refresh = MagicMock()
+        window._refresh_3d_arrows_for_camera = MagicMock()
+        window._save_current_view_state = MagicMock()
 
-        class Renderer:
-            camera = Camera()
+        MainWindow._on_viewport_interacting(window)
+        MainWindow._on_viewport_interaction_finished(window)
 
-            def render(self) -> None:
-                pass
+        window._queue_viewport_refresh.assert_not_called()
+        self.assertEqual(window._refresh_3d_arrows_for_camera.call_count, 2)
+        window._save_current_view_state.assert_called_once_with()
 
-        class Axes:
-            def __init__(self) -> None:
-                self.extents: list[float] = []
-
-            def render(self, extent: float, **_kwargs: object) -> float:
-                self.extents.append(extent)
-                return 1.0
+    def test_3d_viewport_refresh_remeasures_vector_heads_after_resize(self) -> None:
+        from models.scene_mode import SceneMode
+        from ui.designer_window import MainWindow
+        from ui.scene_pane_manager import ScenePaneManager
 
         window = object.__new__(MainWindow)
         window.pane_manager = ScenePaneManager()
-        window._pane().renderer_2d = window._pane().renderer_3d = Renderer()
-        window._pane_scene().scene_appearances = {SceneMode.THREE_D: SceneAppearance()}
-        axes = Axes()
-        window._pane_scene()._three_d_axes = axes
-        window._pane_scene()._three_d_extent = DEFAULT_3D_AXIS_EXTENT
-        window._pane_scene()._three_d_reference_projection_scale = MainWindow._camera_projection_scale(window)
-        window._pane_scene()._three_d_spacing = 1.0
-        window.effective_theme = "light"
+        window._pane_scene().scene_mode = SceneMode.THREE_D
+        window._pane_scene()._three_d_axes = None
+        window._refresh_3d_arrows_for_camera = MagicMock()
 
-        # VTK's camera.zoom(2) halves the view angle while keeping distance;
-        # the axis world length must halve to keep the same screen size.
-        Renderer.camera.view_angle = 15.0
-        MainWindow._refresh_3d_axes_for_camera(window)
+        MainWindow._refresh_3d_viewport(window, render=False)
 
-        expected_ratio = tan(radians(15.0 / 2.0)) / tan(radians(30.0 / 2.0))
-        self.assertAlmostEqual(axes.extents[-1], DEFAULT_3D_AXIS_EXTENT * expected_ratio)
+        window._refresh_3d_arrows_for_camera.assert_called_once_with()
 
     def test_3d_left_rotation_focuses_origin_and_middle_button_pans(self) -> None:
         plotter = FakePlotter()

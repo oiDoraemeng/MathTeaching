@@ -11,6 +11,7 @@ from services.scene_commands import CommandPlan
 from ui.designer_window import MainWindow
 from ui.icons import LUCIDE_SVG, retint_icons
 from ui.scene_pane_manager import ScenePaneManager
+from ui.three_d_tools import ThreeDGeometryToolbar
 from ui.two_d_tools import TwoDGeometryToolbar
 
 
@@ -68,7 +69,7 @@ def test_layout_checked_selector_is_in_stylesheet() -> None:
     assert "#viewportToolbar QToolButton:checked" in build_qss("light")
 
 
-def test_loading_new_chapters_preserves_the_single_toolbar_contract(
+def test_loading_new_chapters_preserves_the_mode_specific_toolbar_contract(
     qapp: QApplication,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -173,11 +174,14 @@ def test_loading_new_chapters_preserves_the_single_toolbar_contract(
     qapp.processEvents()
     window._position_viewport_overlays()
 
-    toolbar = window.two_d_geometry_toolbar
+    two_d_toolbar = window.two_d_geometry_toolbar
+    three_d_toolbar = window.three_d_geometry_toolbar
     assert len(viewport_host.findChildren(TwoDGeometryToolbar)) == 1
-    assert toolbar.isVisible()
+    assert len(viewport_host.findChildren(ThreeDGeometryToolbar)) == 1
+    assert not two_d_toolbar.isVisible()
+    assert three_d_toolbar.isVisible()
 
-    def toolbar_contract() -> tuple[object, ...]:
+    def toolbar_contract(toolbar: QWidget) -> tuple[object, ...]:
         actions = tuple(
             (id(button), button.objectName(), button.toolTip(), button.shortcut().toString())
             for button in toolbar.findChildren(QToolButton)
@@ -200,20 +204,27 @@ def test_loading_new_chapters_preserves_the_single_toolbar_contract(
             shortcuts,
         )
 
-    baseline = toolbar_contract()
-    assert baseline[2] == toolbar.pos()
-    assert (toolbar.x(), toolbar.y()) == (12, 12)
-    assert baseline[3] == QBoxLayout.Direction.LeftToRight
+    two_d_baseline = toolbar_contract(two_d_toolbar)
+    three_d_baseline = toolbar_contract(three_d_toolbar)
+    assert two_d_baseline[2] == two_d_toolbar.pos()
+    assert three_d_baseline[2] == three_d_toolbar.pos()
+    assert two_d_toolbar.x() == three_d_toolbar.x() == 12
+    assert two_d_baseline[3] == QBoxLayout.Direction.TopToBottom
+    assert three_d_baseline[3] == QBoxLayout.Direction.TopToBottom
 
     window._enter_linear_algebra_workspace()
-    assert toolbar_contract() == baseline
+    assert toolbar_contract(two_d_toolbar) == two_d_baseline
+    assert toolbar_contract(three_d_toolbar) == three_d_baseline
 
     for topic_id in plans:
         window._load_linear_algebra_topic(topic_id)
         assert statuses[-1][1] is False, statuses
-        assert window.two_d_geometry_toolbar is toolbar
+        assert window.two_d_geometry_toolbar is two_d_toolbar
+        assert window.three_d_geometry_toolbar is three_d_toolbar
         assert len(viewport_host.findChildren(TwoDGeometryToolbar)) == 1
-        assert toolbar_contract() == baseline
+        assert len(viewport_host.findChildren(ThreeDGeometryToolbar)) == 1
+        assert toolbar_contract(two_d_toolbar) == two_d_baseline
+        assert toolbar_contract(three_d_toolbar) == three_d_baseline
 
     assert opened == [(topic_id, topic_id) for topic_id in plans]
     assert statuses and all(not is_error for _text, is_error in statuses)

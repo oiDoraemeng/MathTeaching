@@ -152,6 +152,7 @@ _ALLOWED_OPERATIONS = frozenset(
         "area.fill",
         "calculus.tangent",
         "linear_algebra.matrix_transform",
+        "linear_algebra.coordinate_transform",
         "linear_algebra.determinant_area",
         "geometry.polygon",
         "geometry.vector_addition",
@@ -210,6 +211,7 @@ _TWO_D_OPERATIONS = frozenset(
         "calculus.integral_area",
         "calculus.tangent",
         "linear_algebra.matrix_transform",
+        "linear_algebra.coordinate_transform",
         "linear_algebra.determinant_area",
         "area.fill",
         "geometry.polygon",
@@ -392,7 +394,22 @@ class SceneCommandService:
             return _expand_vector_addition(operation)
         if name == "linear_algebra.determinant_area":
             return _expand_determinant_area(operation)
-        if name == "linear_algebra.matrix_transform":
+        if name == "linear_algebra.coordinate_transform":
+            matrix = operation.get("matrix")
+            if not isinstance(matrix, (list, tuple)) or len(matrix) != 2 or any(
+                not isinstance(row, (list, tuple)) or len(row) != 2 for row in matrix
+            ):
+                raise CommandError("coordinate_transform.matrix 必须是 2x2 矩阵。")
+            for row in matrix:
+                for value in row:
+                    _require_finite_number(value, "matrix")
+            determinant = float(matrix[0][0]) * float(matrix[1][1]) - float(matrix[0][1]) * float(matrix[1][0])
+            if abs(determinant) <= 1e-12:
+                raise CommandError("coordinate_transform.matrix 必须可逆。")
+            for key in ("show_original", "show_transformed"):
+                if key in operation and not isinstance(operation[key], bool):
+                    raise CommandError(f"{key} 必须是布尔值。")
+        elif name == "linear_algebra.matrix_transform":
             return _expand_matrix_transform(operation)
         if name == "calculus.derivative":
             return _expand_derivative(operation)
@@ -1301,4 +1318,3 @@ def _rule_based_explanation(prompt: str) -> str:
     if "积分" in text:
         return "定积分可以理解为带符号面积的累积；连续小矩形的极限给出积分值。"
     return "我可以解释数学概念，也可以把点、向量、曲线或曲面整理成可审核的 CommandPlan。请给出具体对象或公式。"
-

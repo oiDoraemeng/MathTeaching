@@ -78,6 +78,9 @@ class Annotation2D:
     offset_y: float = 0.0
     id: str = field(default_factory=lambda: uuid4().hex)
     agent_alias: str | None = None
+    # Teacher-generated annotations remain read-only. Marks placed from the
+    # viewport opt in so the shared algebra row can edit their content.
+    editable: bool = False
 
 
 GeometryObject: TypeAlias = Point2D | Linear2D
