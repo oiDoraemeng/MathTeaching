@@ -10,6 +10,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 import pytest
 from PySide6.QtWidgets import QApplication, QBoxLayout, QWidget
+from PySide6.QtCore import Qt
 
 from models.geometry_3d import AlgebraAnnotation3D, AlgebraPlane3D, AlgebraVector3D
 from models.scene_mode import SceneMode
@@ -189,6 +190,22 @@ def _three_d_window() -> MainWindow:
     return window
 
 
+class _MouseEvent:
+    def __init__(self) -> None:
+        self.accepted = False
+
+    @staticmethod
+    def button():
+        return Qt.MouseButton.LeftButton
+
+    @staticmethod
+    def position():
+        return SimpleNamespace(x=lambda: 30.0, y=lambda: 40.0)
+
+    def accept(self) -> None:
+        self.accepted = True
+
+
 def test_new_algebra_vector_row_creates_and_updates_an_origin_vector_with_history() -> None:
     window = _three_d_window()
 
@@ -251,6 +268,51 @@ def test_new_three_d_mark_creates_an_editable_row_and_keeps_plain_text() -> None
     assert window._pane_scene()._agent_geometry3d["annotation:manual_annotation_1"]["text"] == ""
     window._undo_2d_geometry()
     assert "annotation:manual_annotation_1" not in window._pane_scene()._agent_geometry3d
+
+
+def test_three_d_mark_uses_hand_cursor_and_drag_is_undoable() -> None:
+    window = _three_d_window()
+    assert window._create_3d_annotation((1.0, 2.0, 3.0))
+    event = _MouseEvent()
+    cursor_calls = []
+    window._three_d_annotation_at = lambda _event: "manual_annotation_1"
+    window._three_d_annotation_position = lambda _event: (4.0, 5.0, 6.0)
+    window._set_3d_annotation_cursor = cursor_calls.append
+
+    assert window._handle_3d_annotation_mouse_move(event) is False
+    assert cursor_calls[-1] is Qt.CursorShape.OpenHandCursor
+    assert window._handle_3d_annotation_mouse_press(event)
+    assert cursor_calls[-1] is Qt.CursorShape.ClosedHandCursor
+    assert window._handle_3d_annotation_mouse_move(event)
+    assert window._handle_3d_annotation_mouse_release(event)
+
+    operation = window._pane_scene()._agent_geometry3d["annotation:manual_annotation_1"]
+    assert operation["position"] == (4.0, 5.0, 6.0)
+    assert window.pane_manager.can_undo
+    window._undo_2d_geometry()
+    restored = window._pane_scene()._agent_geometry3d["annotation:manual_annotation_1"]
+    assert restored["position"] == (1.0, 2.0, 3.0)
+
+
+def test_three_d_mark_hover_redraws_an_outline_and_clears_it() -> None:
+    window = _three_d_window()
+    renderer = window._pane().renderer_3d
+    renderer.add_point_labels = MagicMock()
+    renderer.remove_actor = MagicMock()
+    assert window._create_3d_annotation((1.0, 2.0, 3.0))
+    window._update_annotation_from_algebra(
+        window._pane().pane_id,
+        "manual_annotation_1",
+        "标记内容",
+    )
+
+    window._set_3d_annotation_hover("manual_annotation_1")
+    assert renderer.add_point_labels.call_args.kwargs["shape"] == "rounded_rect"
+    assert renderer.add_point_labels.call_args.kwargs["shape_color"] == "#1a73e8"
+    assert renderer.add_point_labels.call_args.kwargs["fill_shape"] is False
+
+    window._set_3d_annotation_hover(None)
+    assert renderer.add_point_labels.call_args.kwargs["shape"] is None
 
 
 def test_three_d_mark_supports_visibility_and_deletion() -> None:

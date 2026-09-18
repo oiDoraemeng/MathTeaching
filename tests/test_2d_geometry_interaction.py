@@ -3,6 +3,8 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
+from PySide6.QtCore import Qt
+
 from models.curve_layer import CurveLayer
 from models.geometry_2d import Annotation2D, Point2D
 from models.scene_mode import SceneMode
@@ -47,6 +49,7 @@ class FakePlotter:
         self.camera = FakeCamera()
         self.interactor = FakeInteractor()
         self.actors: dict[str, FakeActor] = {}
+        self.label_calls: list[dict[str, object]] = []
         self.render_count = 0
 
     def add_mesh(self, _mesh, *, name: str, **_kwargs) -> FakeActor:
@@ -56,6 +59,9 @@ class FakePlotter:
 
     def remove_actor(self, name: str, **_kwargs) -> None:
         self.actors.pop(name, None)
+
+    def add_point_labels(self, _points, _labels, **kwargs) -> None:
+        self.label_calls.append(kwargs)
 
     def render(self) -> None:
         self.render_count += 1
@@ -324,6 +330,41 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         self.assertTrue(window._handle_geometry_mouse_press(FakeMouseEvent(50, 50)))
 
         self.assertEqual(window._pane_scene().annotations[0].color, "#f3f6fa")
+
+    def test_editable_annotation_uses_hand_cursor_and_can_be_dragged(self) -> None:
+        window = _make_window()
+        annotation = Annotation2D("标记 1", "拖动我", 0.0, 0.0, editable=True)
+        window._pane_scene().annotations = [annotation]
+        window._pane_scene().geometry_controller.add_annotation(annotation)
+        window._pane_scene()._active_2d_tool = None
+
+        window._handle_geometry_mouse_move(FakeMouseEvent(50, 50))
+        self.assertEqual(
+            window._pane_renderer().interactor.cursor,
+            Qt.CursorShape.OpenHandCursor,
+        )
+        self.assertEqual(window._pane_scene().geometry_controller._hover_id, annotation.id)
+        self.assertEqual(window._pane_renderer().label_calls[-1]["shape"], "rounded_rect")
+
+        self.assertFalse(window._handle_geometry_mouse_move(FakeMouseEvent(90, 50)))
+        self.assertEqual(window._pane_renderer().interactor.cursor, Qt.CursorShape.ArrowCursor)
+        self.assertIsNone(window._pane_scene().geometry_controller._hover_id)
+        self.assertIsNone(window._pane_renderer().label_calls[-1]["shape"])
+
+        window._handle_geometry_mouse_move(FakeMouseEvent(50, 50))
+        self.assertTrue(window._handle_geometry_mouse_press(FakeMouseEvent(50, 50)))
+        self.assertEqual(
+            window._pane_renderer().interactor.cursor,
+            Qt.CursorShape.ClosedHandCursor,
+        )
+        self.assertTrue(window._handle_geometry_mouse_move(FakeMouseEvent(70, 40)))
+        window._handle_geometry_mouse_release(FakeMouseEvent(70, 40))
+
+        self.assertEqual((annotation.x, annotation.y), (4.0, 2.0))
+        self.assertTrue(window.pane_manager.can_undo)
+        window._undo_2d_geometry()
+        restored = window._pane_scene().annotations[0]
+        self.assertEqual((restored.x, restored.y), (0.0, 0.0))
 
     def test_point_tool_preserves_cursor_coordinates_when_grid_snap_is_disabled(self) -> None:
         window = _make_window()

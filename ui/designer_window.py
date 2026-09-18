@@ -34,6 +34,7 @@ from models.geometry_2d import (
     LinearKind,
     Point2D,
     format_number,
+    operation_label,
     parse_point_coordinates,
 )
 from models.geometry_3d import AlgebraAnnotation3D, AlgebraPlane3D, AlgebraVector3D
@@ -76,6 +77,7 @@ from ui.tokens import apply_drop_shadow, apply_rounded_overlay
 from ui.native_chrome import CustomTitleBar, apply_native_titlebar_theme
 from ui.three_d_tools import ThreeDGeometryToolbar
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
+from ui.web_surface import rebuild_web_surface
 from ui.linear_algebra_tools import (
     build_polygon_tool_plan,
     build_transform_tool_plan,
@@ -375,6 +377,8 @@ class _GeometryInputFilter(QObject):
             return self.owner._handle_geometry_mouse_move(event)
         if event.type() == QEvent.Type.MouseButtonRelease and isinstance(event, QMouseEvent):
             return self.owner._handle_geometry_mouse_release(event)
+        if event.type() == QEvent.Type.Leave:
+            return self.owner._handle_geometry_mouse_leave()
         if event.type() == QEvent.Type.KeyPress and isinstance(event, QKeyEvent):
             return self.owner._handle_geometry_key_press(event)
         return False
@@ -499,11 +503,16 @@ class _PaneSceneRuntime:
         self._pending_geometry_point_id: str | None = None
         self._snap_to_grid = False
         self._dragging_point_id: str | None = None
+        self._dragging_annotation_id: str | None = None
         self._selection_start: tuple[float, float] | None = None
         self._selection_pixel_start: QPoint | None = None
         self._selection_band: QRubberBand | None = None
         self._drag_moved = False
         self._drag_start_geometry_state: _GeometryHistoryState | None = None
+        self._dragging_3d_annotation_alias: str | None = None
+        self._dragging_3d_annotation_moved = False
+        self._drag_start_3d_annotation_state: _SceneCommandState | None = None
+        self._hovered_3d_annotation_alias: str | None = None
         self._geometry_undo_stack: list[_GeometryHistoryState] = []
         self._geometry_redo_stack: list[_GeometryHistoryState] = []
         self._scene_command_undo_stack: list[_SceneCommandState] = []
@@ -810,20 +819,31 @@ class MainWindow:
             case_grid.updateGeometry()
             case_grid.update()
 
+        # 立即重建 WebEngine 合成表面，不重载页面避免状态丢失。
+        # reload() 操作延迟到 _deferred_render_surfaces 中执行。
+        algebra_panel = getattr(self, "algebra_panel", None)
+        if algebra_panel is not None:
+            rebuild_algebra = getattr(algebra_panel, "rebuild_render_surface", None)
+            if callable(rebuild_algebra):
+                result = rebuild_algebra()
+                print(f"[DEBUG] Algebra rebuild immediate: {result}")
+
         panel = getattr(self, "agent_panel", None)
-        view = getattr(panel, "view", None) if panel is not None else None
-        if view is not None:
-            view.show()
-            view.update()
-            view.repaint()
-            page = getattr(panel, "page", None)
-            if page is not None:
-                try:
-                    page.runJavaScript("window.dispatchEvent(new Event('resize')); void document.body.offsetHeight;")
-                except Exception:
-                    pass
+        if panel is not None:
+            rebuild_agent = getattr(panel, "rebuild_render_surface", None)
+            if callable(rebuild_agent):
+                result = rebuild_agent()
+                print(f"[DEBUG] Agent rebuild immediate: {result}")
+            else:
+                view = getattr(panel, "view", None)
+                if view is not None:
+                    view.show()
+                    rebuild_web_surface(view)
+                    view.update()
         window.update()
         QTimer.singleShot(120, self._deferred_render_surfaces)
+
+    _WEB_SURFACE_RETRY_MS = 400
 
     def _deferred_render_surfaces(self) -> None:
         """在窗口合成器完成恢复后再补一次轻量刷新。"""
@@ -839,10 +859,29 @@ class MainWindow:
                 plotter.render()
             except Exception:
                 pass
-        panel = getattr(self, "agent_panel", None)
-        view = getattr(panel, "view", None) if panel is not None else None
-        if view is not None:
-            view.update()
+        self._rebuild_web_render_surfaces()
+        # Windows 的恢复动画可能尚未结束，稍后再补一次表面重建。
+        QTimer.singleShot(self._WEB_SURFACE_RETRY_MS, self._rebuild_web_render_surfaces)
+
+    def _rebuild_web_render_surfaces(self) -> None:
+        """重新分配两侧 WebEngine 面板的合成表面，不重载文档。
+
+        最小化会释放窗口的渲染表面，Chromium 恢复后不会自动重建；仅调用
+        ``update()`` 无法让页面重新合成，代数区与数学解释区因此永久空白。
+        """
+        window = getattr(self, "window", None)
+        if window is None or window.isMinimized():
+            return
+        for panel in (getattr(self, "algebra_panel", None), getattr(self, "agent_panel", None)):
+            if panel is None:
+                continue
+            rebuild = getattr(panel, "rebuild_render_surface", None)
+            if callable(rebuild):
+                result = rebuild()
+                panel_name = "algebra" if panel == getattr(self, "algebra_panel", None) else "agent"
+                print(f"[DEBUG] {panel_name} rebuild deferred: {result}")
+                continue
+            rebuild_web_surface(getattr(panel, "view", None))
 
     def _load_designer_form(self) -> QWidget:
         form_path = Path(__file__).with_name("main_window.ui")
@@ -2093,6 +2132,10 @@ class MainWindow:
         self._pane_scene()._agent_teaching_2d = {alias: dict(operation) for alias, operation in state.teaching_2d}
         self._pane_scene()._agent_geometry3d = {alias: dict(operation) for alias, operation in state.geometry_3d}
         self._pane_scene()._vector_additions = [dict(relation) for relation in state.vector_additions]
+        self._pane_scene()._dragging_3d_annotation_alias = None
+        self._pane_scene()._dragging_3d_annotation_moved = False
+        self._pane_scene()._drag_start_3d_annotation_state = None
+        self._pane_scene()._hovered_3d_annotation_alias = None
         if self._pane_scene().scene_mode is not state.scene_mode:
             # Hidden panes do not own a renderer yet.  Restore their serializable
             # state directly and let pane creation render it later.
@@ -2371,10 +2414,11 @@ class MainWindow:
             return
         if len(position) != 3:
             raise CommandError("三维公式标注需要三个坐标。")
-        self._pane_scene()._agent_geometry3d[f"annotation:{operation['alias']}"] = dict(operation)
+        alias = str(operation["alias"])
+        self._pane_scene()._agent_geometry3d[f"annotation:{alias}"] = dict(operation)
         add_labels = getattr(self._pane_renderer(), "add_point_labels", None)
         if callable(add_labels):
-            name = f"geometry3d:annotation:{operation['alias']}"
+            name = f"geometry3d:annotation:{alias}"
             remove_actor = getattr(self._pane_renderer(), "remove_actor", None)
             if callable(remove_actor):
                 remove_actor(name, render=False)
@@ -2395,11 +2439,25 @@ class MainWindow:
                     "#f3f6fa" if getattr(self, "effective_theme", "light") == "dark" else "#263241",
                 )
             )
+            is_hovered = (
+                alias.startswith("manual_annotation_")
+                and alias == getattr(self._pane_scene(), "_hovered_3d_annotation_alias", None)
+            )
+            label_style: dict[str, object] = {}
+            if is_hovered:
+                label_style = {
+                    "shape_color": "#1a73e8",
+                    "fill_shape": False,
+                    "shape_opacity": 1.0,
+                    "margin": 6,
+                }
             add_labels(
-                [position], [text], name=name, shape=None, show_points=False,
+                [position], [text], name=name,
+                shape=None if not is_hovered else "rounded_rect", show_points=False,
                 font_size=11, text_color=color, always_visible=True,
                 font_file=math_labels.label_font_file(), render=False,
                 render_points_as_spheres=False,
+                **label_style,
             )
 
     def _command_teaching_geometry(self, operation: dict[str, object]) -> None:
@@ -2571,7 +2629,7 @@ class MainWindow:
         coordinates = tuple(float(value) for value in operation["coordinates"])  # type: ignore[index]
         point = next((item for item in self._pane_scene().geometry_points if item.agent_alias == alias), None)
         if point is None:
-            point = Point2D(str(operation.get("name", alias)), *coordinates, agent_alias=alias)
+            point = Point2D(operation_label(operation), *coordinates, agent_alias=alias)
             self._pane_scene().geometry_points.append(point)
             self._pane_scene()._two_d_object_order.append(point.id)
             if self._pane_scene().geometry_controller is not None:
@@ -2596,7 +2654,7 @@ class MainWindow:
         }
         if linear is None:
             linear = Linear2D(
-                str(operation.get("name", alias)),
+                operation_label(operation),
                 str(operation["kind"]),
                 start.id,
                 end.id,
@@ -3826,6 +3884,12 @@ class MainWindow:
             else not bool(getattr(self._pane_scene(), "_pending_3d_annotation", False))
         )
         self._pane_scene()._pending_3d_annotation = active
+        interactor = getattr(self._pane_renderer(required=False), "interactor", None)
+        set_cursor = getattr(interactor, "setCursor", None)
+        if callable(set_cursor):
+            set_cursor(
+                Qt.CursorShape.CrossCursor if active else Qt.CursorShape.ArrowCursor
+            )
         if active:
             self.algebra_panel.set_status("标记工具：请在三维场景中单击标记位置")
         else:
@@ -4967,6 +5031,7 @@ class MainWindow:
             tool = None
         self._pane_scene()._pending_geometry_point_id = None
         self._pane_scene()._dragging_point_id = None
+        self._pane_scene()._dragging_annotation_id = None
         self._pane_scene()._selection_start = None
         band = self._pane_scene()._selection_band
         if band is not None:
@@ -4990,6 +5055,7 @@ class MainWindow:
             cursor = {
                 None: Qt.CursorShape.ArrowCursor,
                 "select": Qt.CursorShape.ArrowCursor,
+                "annotation": Qt.CursorShape.CrossCursor,
             }.get(tool, Qt.CursorShape.CrossCursor)
             self._pane_renderer().interactor.setCursor(cursor)
 
@@ -5980,6 +6046,7 @@ class MainWindow:
         self._pane_scene()._two_d_object_order = list(state.object_order)
         self._pane_scene()._pending_geometry_point_id = None
         self._pane_scene()._dragging_point_id = None
+        self._pane_scene()._dragging_annotation_id = None
         self._pane_scene()._drag_moved = False
         self._pane_scene()._drag_start_geometry_state = None
 
@@ -6027,6 +6094,10 @@ class MainWindow:
         ):
             return False
         if tool is None and linear_algebra_tool is None:
+            coordinates = self._viewport_to_world(event.position().x(), event.position().y())
+            if coordinates is not None and self._begin_annotation_drag(*coordinates):
+                event.accept()
+                return True
             return False
         coordinates = self._viewport_to_world(event.position().x(), event.position().y())
         if coordinates is None:
@@ -6060,6 +6131,9 @@ class MainWindow:
             event.accept()
             return True
         if tool == "annotation":
+            if self._begin_annotation_drag(*coordinates):
+                event.accept()
+                return True
             self._create_2d_annotation(*coordinates)
             self._set_2d_geometry_tool(None)
             event.accept()
@@ -6111,10 +6185,22 @@ class MainWindow:
         return True
 
     def _handle_3d_annotation_mouse_press(self, event: QMouseEvent) -> bool:
-        if (
-            event.button() != Qt.MouseButton.LeftButton
-            or not getattr(self._pane_scene(), "_pending_3d_annotation", False)
-        ):
+        if event.button() != Qt.MouseButton.LeftButton:
+            return False
+        annotation_alias = self._three_d_annotation_at(event)
+        if annotation_alias is not None:
+            scene = self._pane_scene()
+            scene._dragging_3d_annotation_alias = annotation_alias
+            scene._dragging_3d_annotation_moved = False
+            scene._drag_start_3d_annotation_state = self._capture_scene_command_state()
+            select_layer = getattr(self.algebra_panel, "set_selected_layer", None)
+            if callable(select_layer):
+                select_layer(annotation_alias)
+            self._set_3d_annotation_hover(annotation_alias)
+            self._set_3d_annotation_cursor(Qt.CursorShape.ClosedHandCursor)
+            event.accept()
+            return True
+        if not getattr(self._pane_scene(), "_pending_3d_annotation", False):
             return False
         position = self._three_d_annotation_position(event)
         if position is None:
@@ -6126,30 +6212,235 @@ class MainWindow:
             toolbar = getattr(self, "three_d_geometry_toolbar", None)
             if toolbar is not None:
                 toolbar.set_annotation_active(False)
+            self._set_3d_annotation_cursor(Qt.CursorShape.ArrowCursor)
         event.accept()
         return True
 
+    def _handle_3d_annotation_mouse_move(self, event: QMouseEvent) -> bool:
+        scene = self._pane_scene()
+        alias = getattr(scene, "_dragging_3d_annotation_alias", None)
+        if alias is not None:
+            position = self._three_d_annotation_position(event)
+            operation = getattr(scene, "_agent_geometry3d", {}).get(f"annotation:{alias}")
+            if position is None or not isinstance(operation, dict):
+                return True
+            updated = dict(operation)
+            updated["position"] = position
+            self._command_formula_annotation(updated)
+            scene._dragging_3d_annotation_moved = True
+            row = self._three_d_annotation_row(alias)
+            if row is not None:
+                self.algebra_panel.sync_layer(alias, row)
+            renderer = self._pane_renderer(required=False)
+            if renderer is not None and callable(getattr(renderer, "render", None)):
+                renderer.render()
+            event.accept()
+            return True
+
+        annotation_alias = self._three_d_annotation_at(event)
+        self._set_3d_annotation_hover(annotation_alias)
+        cursor = (
+            Qt.CursorShape.OpenHandCursor
+            if annotation_alias is not None
+            else Qt.CursorShape.CrossCursor
+            if getattr(scene, "_pending_3d_annotation", False)
+            else Qt.CursorShape.ArrowCursor
+        )
+        self._set_3d_annotation_cursor(cursor)
+        return False
+
+    def _handle_3d_annotation_mouse_release(self, event: QMouseEvent) -> bool:
+        scene = self._pane_scene()
+        alias = getattr(scene, "_dragging_3d_annotation_alias", None)
+        if alias is None:
+            return False
+        if scene._dragging_3d_annotation_moved:
+            before = scene._drag_start_3d_annotation_state
+            after = self._capture_scene_command_state()
+            if before is not None and before != after:
+                pane_id = self._pane().pane_id
+                self.pane_manager.push(
+                    pane_id,
+                    lambda state=before, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+                    lambda state=after, target=pane_id: self._restore_scene_command_state_for_pane(target, state),
+                    "移动三维标记",
+                )
+                self._sync_pane_state()
+                row = self._three_d_annotation_row(alias)
+                if row is not None:
+                    self.algebra_panel.sync_layer(alias, row)
+                self.algebra_panel.set_status(f"已移动标记 {row.name if row is not None else alias}")
+                self._update_geometry_history_controls()
+        scene._dragging_3d_annotation_alias = None
+        scene._dragging_3d_annotation_moved = False
+        scene._drag_start_3d_annotation_state = None
+        hovered_alias = self._three_d_annotation_at(event)
+        self._set_3d_annotation_hover(hovered_alias)
+        self._set_3d_annotation_cursor(
+            Qt.CursorShape.OpenHandCursor
+            if hovered_alias is not None
+            else Qt.CursorShape.CrossCursor
+            if getattr(scene, "_pending_3d_annotation", False)
+            else Qt.CursorShape.ArrowCursor
+        )
+        event.accept()
+        return True
+
+    def _set_3d_annotation_cursor(self, cursor: Qt.CursorShape) -> None:
+        interactor = getattr(self._pane_renderer(required=False), "interactor", None)
+        set_cursor = getattr(interactor, "setCursor", None)
+        if callable(set_cursor):
+            set_cursor(cursor)
+
+    def _set_3d_annotation_hover(self, alias: str | None) -> None:
+        """Redraw the previous and current 3-D mark when hover changes."""
+        scene = self._pane_scene()
+        previous = getattr(scene, "_hovered_3d_annotation_alias", None)
+        if alias == previous:
+            return
+        scene._hovered_3d_annotation_alias = alias
+        operations = getattr(scene, "_agent_geometry3d", {})
+        for candidate in (previous, alias):
+            if candidate is None:
+                continue
+            operation = operations.get(f"annotation:{candidate}")
+            if isinstance(operation, dict):
+                self._command_formula_annotation(dict(operation))
+        renderer = self._pane_renderer(required=False)
+        if renderer is not None and callable(getattr(renderer, "render", None)):
+            renderer.render()
+
+    def _three_d_annotation_at(self, event: QMouseEvent) -> str | None:
+        """Pick a toolbar-created 3-D mark by its projected label anchor."""
+        plotter = self._pane_renderer(required=False)
+        interactor = getattr(plotter, "interactor", None)
+        vtk_interactor = getattr(plotter, "iren", None)
+        if interactor is None or vtk_interactor is None:
+            return None
+        try:
+            width = max(1, int(interactor.width()))
+            height = max(1, int(interactor.height()))
+            screen_x = float(event.position().x())
+            screen_y = float(event.position().y())
+            if not 0.0 <= screen_x <= width or not 0.0 <= screen_y <= height:
+                return None
+            renderer = vtk_interactor.get_poked_renderer(int(screen_x), int(height - screen_y))
+            if renderer is None:
+                return None
+            best: tuple[float, str] | None = None
+            for key, operation in getattr(self._pane_scene(), "_agent_geometry3d", {}).items():
+                if not str(key).startswith("annotation:") or not isinstance(operation, dict):
+                    continue
+                alias = str(key).removeprefix("annotation:")
+                if (
+                    not alias.startswith("manual_annotation_")
+                    or operation.get("op") != "annotation.formula"
+                    or operation.get("visible") is False
+                ):
+                    continue
+                position = tuple(float(value) for value in operation["position"])
+                if len(position) != 3:
+                    continue
+                renderer.SetWorldPoint(*position, 1.0)
+                renderer.WorldToDisplay()
+                display = renderer.GetDisplayPoint()
+                distance_sq = (float(display[0]) - screen_x) ** 2 + (height - float(display[1]) - screen_y) ** 2
+                if distance_sq <= 18.0**2 and (best is None or distance_sq < best[0]):
+                    best = (distance_sq, alias)
+            return best[1] if best is not None else None
+        except (AttributeError, KeyError, RuntimeError, TypeError, ValueError):
+            return None
+
     def _begin_select_or_drag(self, x: float, y: float) -> bool:
-        """选择工具左键按下：命中对象则选中，命中点则准备拖动。"""
+        """选择工具左键按下：命中对象则选中，可编辑点和标记可拖动。"""
         if self._pane_scene().geometry_controller is None:
             return False
         hit_id = self._pane_scene().geometry_controller.hit_test(x, y, self._hit_tolerance())
         self._select_geometry_object(hit_id)
-        self._pane_scene()._dragging_point_id = hit_id if hit_id in self._pane_scene().geometry_controller.points else None
+        controller = self._pane_scene().geometry_controller
+        self._pane_scene()._dragging_point_id = hit_id if hit_id in controller.points else None
+        self._pane_scene()._dragging_annotation_id = (
+            hit_id
+            if hit_id in controller.annotations and controller.annotations[hit_id].editable
+            else None
+        )
         self._pane_scene()._drag_start_geometry_state = (
-            self._capture_geometry_state() if self._pane_scene()._dragging_point_id is not None else None
+            self._capture_geometry_state()
+            if self._pane_scene()._dragging_point_id is not None
+            or self._pane_scene()._dragging_annotation_id is not None
+            else None
         )
         self._pane_scene()._drag_moved = False
+        if (
+            self._pane_scene()._dragging_point_id is not None
+            or self._pane_scene()._dragging_annotation_id is not None
+        ):
+            self._pane_renderer().interactor.setCursor(Qt.CursorShape.ClosedHandCursor)
         self._pane_renderer().render()
         # 命中对象时拦截事件，避免触发相机平移；未命中则放行以便平移画布。
         return hit_id is not None
 
+    def _begin_annotation_drag(self, x: float, y: float) -> bool:
+        """Start moving an editable mark while the mark tool is active."""
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        if controller is None:
+            return False
+        annotation_id = controller.hit_test_annotation(
+            x, y, self._hit_tolerance(), editable_only=True
+        )
+        if annotation_id is None:
+            return False
+        self._select_geometry_object(annotation_id)
+        self._pane_scene()._dragging_point_id = None
+        self._pane_scene()._dragging_annotation_id = annotation_id
+        self._pane_scene()._drag_start_geometry_state = self._capture_geometry_state()
+        self._pane_scene()._drag_moved = False
+        self._pane_renderer().interactor.setCursor(Qt.CursorShape.ClosedHandCursor)
+        self._pane_renderer().render()
+        return True
+
     def _handle_geometry_mouse_move(self, event: QMouseEvent) -> bool:
+        if self._pane_scene().scene_mode is SceneMode.THREE_D:
+            return self._handle_3d_annotation_mouse_move(event)
         if self._pane_scene().scene_mode is not SceneMode.TWO_D or self._pane_scene().geometry_controller is None:
             return False
         tool = self._pane_scene()._active_2d_tool
         coordinates = self._viewport_to_world(event.position().x(), event.position().y())
         if coordinates is None:
+            if self._pane_scene()._dragging_annotation_id is None:
+                if self._pane_scene().geometry_controller.set_hover(None):
+                    self._pane_renderer().render()
+                self._pane_renderer().interactor.setCursor(
+                    Qt.CursorShape.CrossCursor
+                    if tool == "annotation"
+                    else Qt.CursorShape.ArrowCursor
+                )
+            return False
+        if self._pane_scene()._dragging_annotation_id is not None:
+            annotation_id = self._pane_scene()._dragging_annotation_id
+            self._pane_scene().geometry_controller.move_annotation(
+                annotation_id, *coordinates
+            )
+            annotation = self._annotation_2d(annotation_id)
+            if annotation is not None:
+                self.algebra_panel.sync_layer(annotation.id, annotation)
+            self._pane_scene()._drag_moved = True
+            self._pane_renderer().render()
+            event.accept()
+            return True
+        if tool in {None, "annotation"}:
+            annotation_id = self._pane_scene().geometry_controller.hit_test_annotation(
+                *coordinates, self._hit_tolerance(), editable_only=True
+            )
+            if self._pane_scene().geometry_controller.set_hover(annotation_id):
+                self._pane_renderer().render()
+            self._pane_renderer().interactor.setCursor(
+                Qt.CursorShape.OpenHandCursor
+                if annotation_id is not None
+                else Qt.CursorShape.CrossCursor
+                if tool == "annotation"
+                else Qt.CursorShape.ArrowCursor
+            )
             return False
         if tool == "select":
             if self._pane_scene()._selection_start is not None:
@@ -6176,6 +6467,10 @@ class MainWindow:
                 cursor = (
                     Qt.CursorShape.OpenHandCursor
                     if hit_id in self._pane_scene().geometry_controller.points
+                    or (
+                        hit_id in self._pane_scene().geometry_controller.annotations
+                        and self._pane_scene().geometry_controller.annotations[hit_id].editable
+                    )
                     else Qt.CursorShape.PointingHandCursor
                     if hit_id is not None
                     else Qt.CursorShape.ArrowCursor
@@ -6198,8 +6493,25 @@ class MainWindow:
                 self._pane_renderer().render()
         return False
 
+    def _handle_geometry_mouse_leave(self) -> bool:
+        """Clear marker hover feedback as soon as the pointer exits a viewport."""
+        scene = self._pane_scene()
+        if scene.scene_mode is SceneMode.THREE_D:
+            if getattr(scene, "_dragging_3d_annotation_alias", None) is None:
+                self._set_3d_annotation_hover(None)
+                self._set_3d_annotation_cursor(Qt.CursorShape.ArrowCursor)
+            return False
+        controller = getattr(scene, "geometry_controller", None)
+        if controller is not None and getattr(scene, "_dragging_annotation_id", None) is None:
+            if controller.set_hover(None):
+                self._pane_renderer().render()
+            self._pane_renderer().interactor.setCursor(Qt.CursorShape.ArrowCursor)
+        return False
+
     def _handle_geometry_mouse_release(self, event: QMouseEvent) -> bool:
         scene = self._pane_scene()
+        if scene.scene_mode is SceneMode.THREE_D:
+            return self._handle_3d_annotation_mouse_release(event)
         if scene._selection_start is not None:
             from services.scene_clipboard import rectangle_select
             end = self._viewport_to_world(event.position().x(), event.position().y())
@@ -6213,16 +6525,40 @@ class MainWindow:
                 self.algebra_panel.set_status(f"已选择 {len(selected)} 个对象，可复制到其他窗格")
             event.accept()
             return True
-        if self._pane_scene()._dragging_point_id is None:
+        if (
+            self._pane_scene()._dragging_point_id is None
+            and self._pane_scene()._dragging_annotation_id is None
+        ):
             return False
         point = self._point_2d(self._pane_scene()._dragging_point_id)
+        annotation = self._annotation_2d(self._pane_scene()._dragging_annotation_id)
         if point is not None and self._pane_scene()._drag_moved:
             if self._pane_scene()._drag_start_geometry_state is not None:
                 self._record_geometry_change(self._pane_scene()._drag_start_geometry_state)
             self.algebra_panel.set_status(f"已移动点 {point.name}")
+        elif annotation is not None and self._pane_scene()._drag_moved:
+            if self._pane_scene()._drag_start_geometry_state is not None:
+                self._record_geometry_change(self._pane_scene()._drag_start_geometry_state)
+            self.algebra_panel.set_status(f"已移动标记 {annotation.name}")
         self._pane_scene()._dragging_point_id = None
+        self._pane_scene()._dragging_annotation_id = None
         self._pane_scene()._drag_moved = False
         self._pane_scene()._drag_start_geometry_state = None
+        coordinates = self._viewport_to_world(event.position().x(), event.position().y())
+        remaining_annotation = (
+            self._pane_scene().geometry_controller.hit_test_annotation(
+                *coordinates, self._hit_tolerance(), editable_only=True
+            )
+            if coordinates is not None and self._pane_scene().geometry_controller is not None
+            else None
+        )
+        self._pane_renderer().interactor.setCursor(
+            Qt.CursorShape.OpenHandCursor
+            if remaining_annotation is not None
+            else Qt.CursorShape.CrossCursor
+            if self._pane_scene()._active_2d_tool == "annotation"
+            else Qt.CursorShape.ArrowCursor
+        )
         return False
 
     def _handle_geometry_double_click(self, event: QMouseEvent) -> bool:
@@ -6962,11 +7298,12 @@ class MainWindow:
             return None
         return next((point for point in self._pane_scene().geometry_points if point.id == point_id), None)
 
-    def _geometry_object(self, object_id: str) -> GeometryObject | None:
+    def _geometry_object(self, object_id: str) -> GeometryObject | Annotation2D | None:
         point = self._point_2d(object_id)
         if point is not None:
             return point
-        return next((linear for linear in self._pane_scene().linear_objects if linear.id == object_id), None)
+        linear = next((linear for linear in self._pane_scene().linear_objects if linear.id == object_id), None)
+        return linear if linear is not None else self._annotation_2d(object_id)
 
     def _annotation_2d(self, annotation_id: str) -> Annotation2D | None:
         return next(

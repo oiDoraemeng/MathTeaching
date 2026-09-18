@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import Literal, TypeAlias
+from typing import Literal, Mapping, TypeAlias
 from uuid import uuid4
 
 
@@ -134,6 +134,18 @@ def format_number(value: float) -> str:
         return "0"
     text = f"{value:.4f}".rstrip("0").rstrip(".")
     return "0" if text in {"-0", ""} else text
+
+
+def operation_label(operation: Mapping[str, object]) -> str:
+    """返回计划声明的显示名；计划没声明就返回空串。
+
+    别名（``ch04__relation__standard_readout__component_1__start``）是对象的身份，
+    不是给人看的文字。一旦拿它兜底，窗格里就会出现一串内部编号当标记；没声明
+    名字的辅助点（读数拐点、分量端点）本来也不需要标记，所以这里返回空串，
+    由渲染层跳过。
+    """
+    name = operation.get("name")
+    return name.strip() if isinstance(name, str) else ""
 
 
 _COORDINATE_PATTERN = re.compile(

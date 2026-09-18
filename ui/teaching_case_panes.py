@@ -15,7 +15,7 @@ from PySide6.QtCore import QEvent, Qt, Signal
 from PySide6.QtWidgets import QFrame, QGridLayout, QLabel, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
 
-from models.geometry_2d import Annotation2D, Linear2D, Point2D
+from models.geometry_2d import Annotation2D, Linear2D, Point2D, operation_label
 from models.scene_mode import SceneAppearance
 from rendering.geometry_scene import GeometrySceneController
 from rendering.ticks import ViewportBounds, visible_2d_bounds
@@ -303,7 +303,7 @@ class TeachingCasePane(PaneChrome):
             alias = str(operation.get("alias", ""))
             if name == "point.upsert":
                 coordinates = tuple(float(value) for value in operation["coordinates"])
-                point = Point2D(str(operation.get("name", alias)), *coordinates, agent_alias=alias)
+                point = Point2D(operation_label(operation), *coordinates, agent_alias=alias)
                 points[alias] = point
                 self.geometry.add_point(point)
             elif name == "linear.upsert":
@@ -312,7 +312,7 @@ class TeachingCasePane(PaneChrome):
                 if start is None or end is None:
                     continue
                 linear = Linear2D(
-                    str(operation.get("name", alias)),
+                    operation_label(operation),
                     str(operation.get("kind", "vector")),
                     start.id,
                     end.id,

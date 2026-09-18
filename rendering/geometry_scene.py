@@ -190,6 +190,15 @@ class GeometrySceneController:
         self._request_labels_refresh()
         self._request_annotations_refresh()
 
+    def move_annotation(self, annotation_id: str, x: float, y: float) -> None:
+        """Move a user mark while preserving its display offset and text."""
+        annotation = self.annotations.get(annotation_id)
+        if annotation is None or not annotation.editable:
+            return
+        annotation.x = float(x)
+        annotation.y = float(y)
+        self._request_annotations_refresh()
+
     def remove_object(self, object_id: str) -> None:
         for name in (
             self.point_actor_name(object_id),
@@ -260,6 +269,8 @@ class GeometrySceneController:
         self._restyle(previous)
         self._restyle(object_id)
         self._request_labels_refresh()
+        if previous in self.annotations or object_id in self.annotations:
+            self._request_annotations_refresh()
         return True
 
     def set_selected(self, object_id: str | None) -> bool:
@@ -300,7 +311,31 @@ class GeometrySceneController:
             distance = _distance_to_linear(linear.kind, (start.x, start.y), (end.x, end.y), (x, y))
             if distance <= tolerance and (best_linear is None or distance < best_linear[0]):
                 best_linear = (distance, linear.id)
-        return best_linear[1] if best_linear is not None else None
+        if best_linear is not None:
+            return best_linear[1]
+        return self.hit_test_annotation(x, y, tolerance)
+
+    def hit_test_annotation(
+        self,
+        x: float,
+        y: float,
+        tolerance: float,
+        *,
+        editable_only: bool = False,
+    ) -> str | None:
+        """Return the nearest annotation anchor within a touch-friendly radius."""
+        best: tuple[float, str] | None = None
+        radius = max(float(tolerance), 1e-9) * 1.5
+        for annotation in self.annotations.values():
+            if not annotation.visible or (editable_only and not annotation.editable):
+                continue
+            distance = hypot(
+                annotation.x + annotation.offset_x - x,
+                annotation.y + annotation.offset_y - y,
+            )
+            if distance <= radius and (best is None or distance < best[0]):
+                best = (distance, annotation.id)
+        return best[1] if best is not None else None
 
     def set_bounds(self, bounds: ViewportBounds) -> None:
         """更新依赖视口范围的直线、射线、向量箭头、标签和临时预览。"""
@@ -860,6 +895,10 @@ class GeometrySceneController:
         for point in self.points.values():
             if not point.visible:
                 continue
+            # 没有名字的点只是几何端点（读数拐点、分量端点），不是要说名的对象；
+            # 给它画标记只会把内部编号摊到画面上。
+            if not point.name:
+                continue
             x = point.x + offset
             y = point.y + offset
             key = (point.name, round(x, 9), round(y, 9))
@@ -897,7 +936,7 @@ class GeometrySceneController:
         for name in self._annotation_actors:
             self.plotter.remove_actor(name, render=False)
         self._annotation_actors = []
-        grouped: dict[str, list[tuple[tuple[float, float, float], str]]] = {}
+        grouped: dict[tuple[str, bool], list[tuple[tuple[float, float, float], str]]] = {}
         for annotation in self.annotations.values():
             if not annotation.visible:
                 continue
@@ -905,7 +944,8 @@ class GeometrySceneController:
             if not text:
                 continue
             position = (annotation.x + annotation.offset_x, annotation.y + annotation.offset_y, 0.0)
-            grouped.setdefault(annotation.color, []).append((position, text))
+            is_hovered = annotation.id == self._hover_id
+            grouped.setdefault((annotation.color, is_hovered), []).append((position, text))
         for linear in self.linears.values():
             if not linear.visible or not linear.label:
                 continue
@@ -914,21 +954,30 @@ class GeometrySceneController:
             if start is None or end is None:
                 continue
             position = self._linear_label_position(start, end, linear.label_side)
-            grouped.setdefault(linear.color, []).append((position, linear.label))
-        for color, items in grouped.items():
-            name = f"{_ANNOTATION_ACTOR}:{color.lstrip('#').lower()}"
+            grouped.setdefault((linear.color, False), []).append((position, linear.label))
+        for (color, is_hovered), items in grouped.items():
+            name = f"{_ANNOTATION_ACTOR}:{color.lstrip('#').lower()}:{'hover' if is_hovered else 'default'}"
+            label_style: dict[str, object] = {}
+            if is_hovered:
+                label_style = {
+                    "shape_color": "#1a73e8",
+                    "fill_shape": False,
+                    "shape_opacity": 1.0,
+                    "margin": 6,
+                }
             add_labels(
                 [position for position, _text in items],
                 [text for _position, text in items],
                 font_size=_ANNOTATION_FONT_SIZE,
                 text_color=color,
-                shape=None,
+                shape=None if not is_hovered else "rounded_rect",
                 show_points=False,
                 always_visible=True,
                 name=name,
                 font_file=math_labels.label_font_file(),
                 render=False,
                 render_points_as_spheres=False,
+                **label_style,
             )
             self._annotation_actors.append(name)
 

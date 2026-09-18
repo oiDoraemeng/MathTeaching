@@ -182,7 +182,12 @@ class ScenePaneWidget(QWidget):
         for name, value in (
             ("_selection_band", None), ("_selection_start", None),
             ("_selection_pixel_start", None), ("_dragging_point_id", None),
+            ("_dragging_annotation_id", None),
             ("_drag_start_geometry_state", None), ("_drag_moved", False),
+            ("_dragging_3d_annotation_alias", None),
+            ("_dragging_3d_annotation_moved", False),
+            ("_drag_start_3d_annotation_state", None),
+            ("_hovered_3d_annotation_alias", None),
         ):
             if hasattr(runtime, name):
                 setattr(runtime, name, value)
