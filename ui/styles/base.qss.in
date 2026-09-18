@@ -1,6 +1,7 @@
 QMainWindow, #viewportHost { background: $bg_canvas; color: $text_primary; }
 #algebraPanel, #agentSidebar { background: $bg_panel; }
 #algebraPanel { border: 0; }
+#formulaListWidget { background: $bg_panel; }
 #algebraTitle { color: $text_primary; font-size: ${size_title}px; font-weight: 600; }
 #sectionHeader { color: $text_secondary; font-size: ${size_caption}px; letter-spacing: 0.2px; }
 #algebraLayerRow, #catalogEntryRow { background: $bg_elevated; border: 1px solid transparent; border-radius: ${radius_md}px; }
