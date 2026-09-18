@@ -178,7 +178,7 @@ def test_det_geometry_merges_the_first_three_3_1_subsections_into_one_topic() ->
     from linear_algebra.catalog.manifest import lecture_manifest, topic_entries
 
     section = next(node for node in lecture_manifest() if node.id == "ch03.s31")
-    assert (section.title, section.children) == ("行列式的几何意义", ("ch03.det.oriented-area",))
+    assert (section.title, section.children) == ("3.1 行列式的几何意义", ("ch03.det.oriented-area",))
     assert [topic.id for topic in topic_entries() if topic.section_id == "ch03.s31"] == [
         "ch03.det.oriented-area"
     ]
@@ -249,6 +249,143 @@ def test_det_geometry_merges_the_first_three_3_1_subsections_into_one_topic() ->
         "e1",
         "e2",
     }
+
+
+def test_section_2_9_keeps_only_independence_and_rank() -> None:
+    """2.9 目录只剩「线性无关与线性相关」「秩」两条，小节显示名为「2.9 线性无关与秩」。"""
+
+    from linear_algebra.catalog.manifest import lecture_manifest, topic_entries
+
+    section = next(node for node in lecture_manifest() if node.id == "ch02.s29")
+    assert (section.title, section.children) == (
+        "2.9 线性无关与秩",
+        ("ch02.subspace.independence", "ch02.subspace.rank"),
+    )
+    assert [(topic.id, topic.title) for topic in topic_entries() if topic.section_id == "ch02.s29"] == [
+        ("ch02.subspace.independence", "线性无关与线性相关"),
+        ("ch02.subspace.rank", "秩"),
+    ]
+    # 讲义原文、锚点与既有编号体系不动：只有软件目录名被 display_title 覆盖。
+    assert section.source_path[1] == "2.9 秩、零空间与列空间（为第4章准备的代数工具）"
+    assert all(
+        topic.source_path[1] == "2.9 秩、零空间与列空间（为第4章准备的代数工具）"
+        for topic in topic_entries()
+        if topic.section_id == "ch02.s29"
+    )
+
+
+def test_independence_publishes_the_lecture_verbatim_with_three_panes() -> None:
+    """2.9.1 逐字给出定义 2.10/2.11、几何理解表与口诀，案例由定义自定（三窗格）。"""
+
+    explanation = runtime_teaching_store().published("ch02.subspace.independence").artifact.explanation
+    assert [(section.id, section.title) for section in explanation.sections] == [
+        ("definition", "定义"),
+        ("worked_examples", "数学案例"),
+    ]
+    for required in (
+        "**（线性无关）**",
+        r"$\boldsymbol v_{1}, \boldsymbol v_{2}, ..., \boldsymbol v_{k}$",
+        r"$$c_{1} \cdot \boldsymbol v_{1} + c_{2} \cdot \boldsymbol v_{2} + ... + c_{k} \cdot \boldsymbol v_{k} = 0 \Rightarrow c_{1} = c_{2} = ... = c_{k} = 0$$",
+        "**（线性相关）**",
+        r'换句话说，线性相关 $=$ 至少有一个向量可以被其他向量"拼出来"。',
+        "几何理解（最核心）：",
+        r"| 3个在 $R^{3}$ | 不共面（三个方向张成整个空间） | 共面 |",
+        r'💡 记忆口诀：线性无关 $=$ 每个向量都是"必要的"，少一个就不完整。',
+    ):
+        assert required in explanation.definition
+    # 讲义这两节只有定义（公式写在定义块内），不再单列「公式」或「几何意义」分节。
+    assert explanation.formula == ""
+    assert explanation.geometric_meaning == ""
+    assert explanation.derivation == ()
+    assert [case.purpose for case in explanation.case_layout.cases] == [
+        "第一步：两个方向不同（线性无关）",
+        "第二步：两个方向相同（线性相关）",
+        "第三步：三个向量中有一个能被拼出来（必相关）",
+    ]
+    assert explanation.case_layout.default_pane_count == 3
+    examples = explanation.worked_examples
+    assert [example.given for example in examples] == [
+        (((2, -1), (1, 2)), (1, 1)),
+        (((2, -2), (1, -1)), (1, 1)),
+        (((2, -1), (1, 2)), (1, 1)),
+    ]
+    assert [example.result for example in examples] == [(1, 3), (0, 0), (1, 3)]
+    case_text = "\n".join(line for example in examples for line in example.calculation)
+    # 案例文本里的向量与矩阵统一按《数学解释规则》加粗。
+    for required in (
+        r"$\boldsymbol v_{1}=(2,1)$",
+        r"$\boldsymbol v_{2}=(-2,-1)=-\boldsymbol v_{1}$",
+        r"$\boldsymbol v_{3}=(1,3)$",
+    ):
+        assert required in case_text
+
+
+def test_rank_publishes_the_lecture_tables_with_four_panes() -> None:
+    """2.9.2 逐字给出定义 2.12、几何理解、矩阵表与定理 2.6；案例用表里四个矩阵。"""
+
+    explanation = runtime_teaching_store().published("ch02.subspace.rank").artifact.explanation
+    assert [(section.id, section.title) for section in explanation.sections] == [
+        ("definition", "定义"),
+        ("worked_examples", "数学案例"),
+    ]
+    for required in (
+        "**（秩）**",
+        r"$\operatorname{rank}(\boldsymbol A)$",
+        r'简单理解：秩 $=$ 矩阵"真正有效"的列数',
+        "几何理解：",
+        r'秩 $=$ 变换后空间的"真实维度"',
+        r'$\operatorname{rank} = 1 \rightarrow$  变换后是一条"线"（压缩了一维）',
+        r"| $\begin{pmatrix}1 & 2 \\ 2 & 4\end{pmatrix}$ | 1 | 两列共线 $\rightarrow$ 只张成一条线 |",
+        r"| $\begin{pmatrix}0 & 0 \\ 0 & 0\end{pmatrix}$ | 0 | 全压到原点 |",
+        "**（秩与行列式）**",
+        r"$\operatorname{rank}(\boldsymbol A) = n \Leftrightarrow \det(\boldsymbol A) \neq 0 \Leftrightarrow \boldsymbol A$",
+    ):
+        assert required in explanation.definition
+    assert explanation.formula == ""
+    assert explanation.geometric_meaning == ""
+    assert [case.purpose for case in explanation.case_layout.cases] == [
+        "第一步：什么都没压扁（秩 2）",
+        "第二步：y 方向被压到零（秩 1）",
+        "第三步：两列共线（秩 1）",
+        "第四步：全压到原点（秩 0）",
+    ]
+    assert explanation.case_layout.default_pane_count == 4
+    examples = explanation.worked_examples
+    assert [example.given for example in examples] == [
+        ((1, 0), (0, 1)),
+        ((2, 0), (0, 0)),
+        ((1, 2), (2, 4)),
+        ((0, 0), (0, 0)),
+    ]
+    assert [example.kind for example in examples] == ["determinant"] * 4
+    # 四个矩阵的行列式与讲义表格一致（det = 1、0、0、0）。
+    assert [example.result for example in examples] == [1.0, 0.0, 0.0, 0.0]
+    assert [example.checks[0].expected for example in examples] == [1.0, 0.0, 0.0, 0.0]
+
+
+def test_section_2_9_case_panes_share_one_fixed_view() -> None:
+    """2.9 的数学案例流程默认“全部显示”：各窗格落在同一个取景下，不出现一大一小。"""
+
+    store = runtime_teaching_store()
+    compiler = VisualSemanticsCompiler()
+    for topic_id, pane_count in (
+        ("ch02.subspace.independence", 3),
+        ("ch02.subspace.rank", 4),
+    ):
+        artifact = store.published(topic_id).artifact
+        compiled = compiler.compile(artifact, context=RenderContext.default(topic_id))
+        assert len(compiled.storyboard) == pane_count
+        view = compiled.plan.operations[-1]
+        assert view["op"] == "view.fit" and view.get("bounds")
+        for stage in compiled.storyboard:
+            plan = case_plan(compiled, stage.id)
+            assert plan.operations
+    # 秩的四个窗格都以默认视野（±3）为基准，只为讲义表格里的列 (2, 4) 向上让出空间。
+    rank = compiler.compile(
+        store.published("ch02.subspace.rank").artifact,
+        context=RenderContext.default("ch02.subspace.rank"),
+    )
+    assert rank.plan.operations[-1]["bounds"] == [-3.0, 3.0, -3.0, 4.0]
 
 
 def _pane_radius(plan) -> float:

@@ -120,7 +120,7 @@ def test_actual_mainwindow_executes_replays_and_rolls_back(topic):
         with window._using_pane(target): assert window._capture_scene_command_state()==before
     assert replay_extended_plan(plan,proxy).valid
 
-def test_canonical_resources_and_index_preserve_63_non_chapter_one_rows():
+def test_canonical_resources_and_index_preserve_62_non_chapter_one_rows():
     import subprocess
     from pathlib import Path
     from linear_algebra.teaching.compile_resources import compile_reviewed_topic,compiled_resource_store
@@ -134,7 +134,7 @@ def test_canonical_resources_and_index_preserve_63_non_chapter_one_rows():
     keep=lambda r:{k:v for k,v in r.items() if k not in volatile}
     old=lambda items:[keep(r) for r in items if r['chapter'] in (5,6,7)]
     assert len(old(rows))==17 and old(rows)==old(baseline)
-    assert len(rows)==len({r['topic_id'] for r in rows})==81
+    assert len(rows)==len({r['topic_id'] for r in rows})==72
     by_id={r['topic_id']:r for r in rows}; recipes=recipes_for_topics()
     for topic in TOPICS:
         assert 'draw.'+topic in recipes

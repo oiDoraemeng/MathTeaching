@@ -17,9 +17,6 @@ from ui.designer_window import MainWindow
 
 LEGACY_PLAN_DIGESTS = {
     "ch01.vector.magnitude": "sha256:bb4f4238604ac4e65e25de180491d6357e6f99e1b2e50e8278889baea172d9e6",
-    "ch01.vector.point-distinction": "sha256:77b53ff6306c6c10b9e0bbd563090f7b8f99409755813392b4b9d926d25876d3",
-    "ch01.vector.coordinate-system": "sha256:1331ddb2299591d9cdb1c01c2f9ae24e5130950d066b19930c1fe57889984476",
-    "ch01.vector.direction-examples": "sha256:2cdbc6ecdbf5509bc686f5e855b0892009631f03be0b4e13d9520e809aba0e17",
     "ch01.ops.addition": "sha256:28d36cbf27d448be3b41b99c1849378e1bb7f03acb737f3118b2a9e1b4bb86ae",
     "ch01.ops.subtraction": "sha256:86739d3926804242fe1ae18947e8aed9d5dd3fe9848918cd998f055ce3deddd7",
     "ch01.ops.scalar": "sha256:fda9ff56813c525ddf954c37ac8ed328d2a78423af9040e353a1c1de465cfcb8",
@@ -28,8 +25,6 @@ LEGACY_PLAN_DIGESTS = {
     "ch01.inner.applications": "sha256:3aa2fe524cec1f43b368869e8cb46e995dd3ddb19333fb885af528089911afaa",
     "ch01.inner.cauchy-schwarz": "sha256:264f34bd521f05f03bb0e268e35158e2895bc33227ce999fdfcd9f3a49daeb9e",
     "ch01.projection.definition": "sha256:66450b1edbf36646762a740be7239a41f6439eb97c2398cae640f8eaa8e10711",
-    "ch01.projection.properties": "sha256:08d7274f46c8ee0ebeef7ea8f7b111f9b47e2b9b350f4df93ba3cae10dfcff21",
-    "ch01.projection.force": "sha256:95037f3eb47fc9014e6816a2d2603e029dbd6fb02579c830e29a69726a32bb42",
     "ch01.proof.midline": "sha256:ef698dd38942fce8724934c6ab59f110933a256d13d16f4c56c4972526f542a9",
     "ch01.proof.centroid": "sha256:5de6421a77a36b5a797f748c0e6d8b522de19ca6bf4431183b80603e000a3b7c",
     "ch01.proof.parallelogram-diagonals": "sha256:8f1b8650bb4b211abe3036f0b58ef1f5d7b8f9670668602af8eb07a8b83decc3",
@@ -42,12 +37,10 @@ LEGACY_PLAN_DIGESTS = {
     "ch02.matrix.composition": "sha256:efa1dd269ebe968fdc49db7cf500597b29f8b721d476250857f6192f7c620c41",
     "ch02.matrix.basis": "sha256:4825278e2c8287fa5eefcd0f74082f9d6759d7537575f1a1a986b417ff897a20",
     "ch02.matrix.powers": "sha256:c78385e0ff98a993de305952ae0ce9ee1be509b3a5a08aa256f0b659a23d34fe",
-    "ch02.subspace.independence": "sha256:b1f8fa3c756f422838cb6e297620863d4fde5807ff8567ef25251eb947d8026f",
-    "ch02.subspace.rank": "sha256:09d5e3a361ffda2952b4e23e6c6ea507551d31ece5b4922563d9ba0700807c68",
-    "ch02.subspace.null": "sha256:182d4bcaa33c5ab213767beaaa0d26b1ce0045937b582ccf8743bf30bf031fb5",
-    "ch02.subspace.column": "sha256:0da4b6aad9abee4404d35828c5d95a9fe42f5c0359f49e577fab677eae28e4dc",
-    "ch02.subspace.rank-nullity": "sha256:a065dd4c97213e31e103b7fa445a0d2e4e51abcb1e7fcc1fa6f545a33b27b719",
-    "ch02.high-dimensional.analogy": "sha256:14f2c694bfc046c4c8675e78ada5e5cea656a17675d8cd4cf93449176f9093bb",
+    # 2.9 只发布讲义 2.9.1「线性无关与线性相关」与 2.9.2「秩」：原零空间、列空间与
+    # 与后续章节的关系三节已从目录与数据中移除，冻结的 digest 相应更新。
+    "ch02.subspace.independence": "sha256:3e35510a4e2bba9f30db1dfc577c4ea8f95e4cbfe35e942d178678e0ad4a5f1f",
+    "ch02.subspace.rank": "sha256:ee0eab65aa4ba075d4e123888ee24f963e2da9ea1cb7256217eb553f1a9c3e65",
     # 3.1 的四个小节已合并为单一小节「行列式的几何定义」：案例改为两步流程
     # （单位正方形 / 两个像 + 外接矩形与切角辅助线），冻结的 digest 相应更新。
     "ch03.det.oriented-area": "sha256:a568f67cf2e15697170e5715c452d1bad983c413b25dc59b120d6cd0581da75e",
@@ -75,7 +68,7 @@ def test_all_legacy_topic_ids_and_plan_digests_are_frozen(legacy_registry_bundle
     legacy_ids = tuple(topic.id for topic in topic_entries() if topic.chapter_number <= 3)
 
     assert legacy_ids == tuple(LEGACY_PLAN_DIGESTS)
-    assert len(legacy_ids) == 44
+    assert len(legacy_ids) == 35
     for topic_id, expected_digest in LEGACY_PLAN_DIGESTS.items():
         bundle = registry.resolve_bundle(topic_id, artifact_store=store)
         assert bundle.compiled.plan_digest == expected_digest

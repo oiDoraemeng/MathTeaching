@@ -52,9 +52,9 @@ def test_chapter6_corrupted_parameter_rejected(topic,field):
 def test_chapter6_index_has_three_rows_and_preserves_previous_chapters():
     import json
     rows=json.loads(open('linear_algebra/teaching/data/index.json',encoding='utf8').read())['topics']
-    assert len(rows)==81
+    assert len(rows)==72
     assert sum(row['topic_id'].startswith('ch06.') for row in rows)==3
-    assert sum(row['topic_id'].startswith(('ch01.','ch02.','ch03.','ch04.','ch05.')) for row in rows)==66
+    assert sum(row['topic_id'].startswith(('ch01.','ch02.','ch03.','ch04.','ch05.')) for row in rows)==57
 
 
 TOPICS = ('ch06.basis-change.motivation', 'ch06.basis-change.coordinates', 'ch06.similarity-transform')
@@ -179,7 +179,7 @@ def test_different_consistent_example_is_computed_from_artifact():
     assert evidence['standard_vector'] == [5., 5.]
 
 
-def test_canonical_resources_index_and_prior_54_non_chapter_one_rows_are_preserved():
+def test_canonical_resources_index_and_prior_53_non_chapter_one_rows_are_preserved():
     import json
     import subprocess
     from pathlib import Path
@@ -195,7 +195,7 @@ def test_canonical_resources_index_and_prior_54_non_chapter_one_rows_are_preserv
     legacy = lambda rs: [keep(r) for r in rs if r['topic_id'].startswith('ch05.')]
     assert len(legacy(rows)) == 8
     assert legacy(rows) == legacy(baseline['topics'])
-    assert len(rows) == len({r['topic_id'] for r in rows}) == 81
+    assert len(rows) == len({r['topic_id'] for r in rows}) == 72
     assert sum(r['topic_id'].startswith('ch07.') for r in rows) == 6
     assert sum(r['topic_id'].startswith('ch08.') for r in rows) == 6
     by_id = {r['topic_id']: r for r in rows}

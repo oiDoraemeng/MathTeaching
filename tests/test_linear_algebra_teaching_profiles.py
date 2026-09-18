@@ -14,7 +14,7 @@ def test_every_topic_has_a_teaching_profile() -> None:
 
 def test_bridge_and_analogy_profiles_are_explicit() -> None:
     assert profile_for("ch02.matrix.composition").minimum_level >= TeachingLevel.EXPLAIN
-    analogy = profile_for("ch02.high-dimensional.analogy")
+    analogy = profile_for("ch03.det.high-dimensional-volume")
     assert analogy.minimum_level == TeachingLevel.EXPLAIN
     assert analogy.requires_analogy_boundary is True
 

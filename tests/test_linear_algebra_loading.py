@@ -39,7 +39,7 @@ def test_linear_algebra_toolbar_context_tracks_loaded_topic() -> None:
     window._active_linear_algebra_topic_id = "ch01.ops.addition"
     assert window._is_linear_algebra_context() is True
 
-    window._active_linear_algebra_topic_id = "ch01.vector.coordinate-system"
+    window._active_linear_algebra_topic_id = "ch03.det.high-dimensional-volume"
     assert window._is_linear_algebra_context() is False
 
     window._active_linear_algebra_topic_id = None
@@ -50,7 +50,7 @@ def test_opening_linear_algebra_enters_2d_workspace_and_reveals_tools() -> None:
     window = MainWindow.__new__(MainWindow)
     window.pane_manager = ScenePaneManager()
     window._pane_scene().scene_mode = SceneMode.THREE_D
-    window._active_linear_algebra_topic_id = "ch01.vector.coordinate-system"
+    window._active_linear_algebra_topic_id = "ch03.det.high-dimensional-volume"
     window.algebra_panel = SimpleNamespace(
         set_status=MagicMock(),
     )

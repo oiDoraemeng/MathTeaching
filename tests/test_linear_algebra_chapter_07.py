@@ -188,7 +188,7 @@ def test_alternative_consistent_diagonalization_is_not_fixture_lookup():
     assert result.family_evidence['endpoint_error'] < 1e-9
 
 
-def test_registry_and_canonical_publication_preserve_prior_57_non_chapter_one_rows():
+def test_registry_and_canonical_publication_preserve_prior_56_non_chapter_one_rows():
     import json
     import subprocess
     from pathlib import Path
@@ -205,7 +205,7 @@ def test_registry_and_canonical_publication_preserve_prior_57_non_chapter_one_ro
     legacy = lambda records: [keep(r) for r in records if r['chapter'] in (5, 6)]
     assert len(legacy(rows)) == 11
     assert legacy(rows) == legacy(baseline['topics'])
-    assert len(rows) == len({r['topic_id'] for r in rows}) == 81
+    assert len(rows) == len({r['topic_id'] for r in rows}) == 72
     assert sum(r['chapter'] == 8 for r in rows) == 6
     recipes = recipes_for_topics()
     by_id = {r['topic_id']: r for r in rows}

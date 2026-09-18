@@ -128,13 +128,26 @@ def test_reviewed_snapshot_and_index_digests_match_and_preserve_legacy():
     data = root / 'linear_algebra/teaching/data'
     current = json.loads((data / 'index.json').read_text(encoding='utf-8'))
     baseline = json.loads(subprocess.check_output(['git', 'show', 'HEAD:linear_algebra/teaching/data/index.json'], cwd=root).decode('utf-8'))
-    # 第 1、2 章在本批改动中被显式刷新（内容与图形），第 3 章 3.1 小节合并后主题集合随之变化。
+    # 第 1、2 章在本批改动中被显式刷新（内容与图形），第 3 章 3.1 小节合并后主题集合随之变化；
+    # 2.9 只保留讲义 2.9.1「线性无关与线性相关」与 2.9.2「秩」，另外三节已从目录与数据中移除。
     # 这里只保留第 1、2 章中并未被本轮改动触及的主题，并忽略被允许重生成的摘要字段。
-    changed = {'ch01.inner.definitions', 'ch02.batch.inner-products', 'ch02.matrix.basis', 'ch02.matrix.transformed-grid'}
+    changed = {
+        'ch01.inner.definitions', 'ch02.batch.inner-products', 'ch02.matrix.basis',
+        'ch02.matrix.transformed-grid',
+        # 2.9 的两个小节由质量适配器逐字搬入讲义，并自带分步数学案例。
+        'ch02.subspace.independence', 'ch02.subspace.rank',
+    }
+    removed = {'ch02.subspace.null', 'ch02.subspace.column', 'ch02.subspace.rank-nullity'}
     volatile = {'artifact_digest', 'plan_digest'}
     keep = lambda r: {k: v for k, v in r.items() if k not in volatile}
-    legacy = lambda rows: [keep(r) for r in rows if r['topic_id'].startswith(('ch01.', 'ch02.')) and r['topic_id'] not in changed]
-    assert len(legacy(current['topics'])) == 28
+    legacy = lambda rows: [
+        keep(r)
+        for r in rows
+        if r['topic_id'].startswith(('ch01.', 'ch02.'))
+        and r['topic_id'] not in changed
+        and r['topic_id'] not in removed
+    ]
+    assert len(legacy(current['topics'])) == 23
     assert legacy(current['topics']) == legacy(baseline['topics'])
     rows = {row['topic_id']: row for row in current['topics']}
     assert len([topic for topic in rows if topic.startswith('ch05.')]) == 8

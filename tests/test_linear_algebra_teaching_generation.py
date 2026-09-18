@@ -44,4 +44,4 @@ def test_topic_selection_requires_exactly_one_selector() -> None:
     with pytest.raises(ValueError):
         topics_for_request(TOPICS, topic_id=TOPICS[0].id, chapter=1)
     assert topics_for_request(TOPICS, topic_id="ch02.matrix.composition")[0].id == "ch02.matrix.composition"
-    assert len(topics_for_request(TOPICS, chapter=2)) == 15
+    assert len(topics_for_request(TOPICS, chapter=2)) == 11
