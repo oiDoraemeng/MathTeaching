@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:f155d74405eafbd8c991073a2609319e2c69305639b468800ebbee1d7cac6cce",
+  "artifact_digest": "sha256:a67a0fb9b57ee6e8285891c186d9c4619420af949e95c5d2427e7bff63b00202",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:fd2ef7b1b22c6f866508ef3c2f0f9243bfec95fc8cf9a07ada677d3fdd889442",
@@ -252,20 +252,20 @@
         "matrices": [
           [
             [
-              1,
-              -1
+              1.0,
+              -1.0
             ],
             [
-              1,
-              1
+              1.0,
+              1.0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            2,
-            3
+            2.0,
+            3.0
           ]
         ]
       },
@@ -323,8 +323,8 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            -1,
-            5
+            -1.0,
+            5.0
           ]
         ]
       },
@@ -370,20 +370,20 @@
         "matrices": [
           [
             [
-              1,
-              -1
+              1.0,
+              -1.0
             ],
             [
-              1,
-              1
+              1.0,
+              1.0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            2,
-            3
+            2.0,
+            3.0
           ]
         ]
       },
@@ -432,8 +432,8 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            -1,
-            5
+            -1.0,
+            5.0
           ]
         ]
       },
@@ -489,7 +489,7 @@
     "summary": "6.1 为什么要换基——动机",
     "version": 1
   },
-  "plan_digest": "sha256:95163436fdd0a70b9aca0c8172e07c3ef16600bfc573b567e035d86515b6aa8a",
+  "plan_digest": "sha256:f0eb70cb3fb56aeaa628d54a4a15d27b1574d06853bf27faf48e5ca77e6baacd",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

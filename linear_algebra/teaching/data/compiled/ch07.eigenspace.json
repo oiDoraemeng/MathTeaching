@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:361b3e8fbbe57817e5930a80fb3af0acec584df982c3915ddc13fa8e55254202",
+  "artifact_digest": "sha256:713c5abcf05c2371d8c9a04a0b64ef4ff76079e3352a54498f9dcdc36c7f703c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:752f0be1933d7acfbab7b588fe9f915ceda536f50e2a5ff6264e384cf99255b7",
@@ -80,8 +80,8 @@
         "alias": "ch07.eigenspace__relation__root_2",
         "basis": [
           [
-            -1,
-            1
+            -1.0,
+            1.0
           ]
         ],
         "bounds": [
@@ -96,8 +96,8 @@
         "alias": "ch07.eigenspace__relation__root_3",
         "basis": [
           [
-            1,
-            0
+            1.0,
+            0.0
           ]
         ],
         "bounds": [
@@ -112,8 +112,8 @@
         "alias": "ch07.eigenspace__stage__nullspace__root_2",
         "basis": [
           [
-            -1,
-            1
+            -1.0,
+            1.0
           ]
         ],
         "bounds": [
@@ -128,8 +128,8 @@
         "alias": "ch07.eigenspace__stage__nullspace__root_3",
         "basis": [
           [
-            1,
-            0
+            1.0,
+            0.0
           ]
         ],
         "bounds": [
@@ -158,7 +158,7 @@
     "summary": "7.3 求特征向量",
     "version": 1
   },
-  "plan_digest": "sha256:681975ecc58ac0d3ef6a463ae8c01785325291e9e39ea3fc4b4c8baa141bca03",
+  "plan_digest": "sha256:27864a82cd1331ae08533db89b80889f4430bdb292549fdc96bd3c4f34f426ac",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

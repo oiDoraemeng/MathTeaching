@@ -1,1 +1,779 @@
-{"claims":[{"entity_refs":["entity.ch07.gram-schmidt.input_vectors","entity.ch07.gram-schmidt.projection","entity.ch07.gram-schmidt.residual","entity.ch07.gram-schmidt.normalized"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","formula_symbols":["input_vectors","projection","residual","normalized"],"id":"claim.ch07.gram-schmidt","relation_refs":["relation.ch07.gram-schmidt.orthogonalize"],"source_refs":["第7章 特征值与特征向量 / 7.5 施密特正交化——构造标准正交基::1::sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436"],"stage_refs":["stage.ch07.gram-schmidt.input","stage.ch07.gram-schmidt.projection","stage.ch07.gram-schmidt.residual","stage.ch07.gram-schmidt.normalized"],"statement":"7.5 施密特正交化——构造标准正交基 的数学主张由显式对象、关系和不变量支持。"}],"connections":[{"claim_refs":["claim.ch07.gram-schmidt"],"description":"前置的线性表示与几何关系。","id":"connection.ch07.gram-schmidt.prior","relation":"prerequisite","target_topic_id":"ch03.det.ad-bc"}],"explanation":{"conclusion":"","connections":[],"definition":"## 7.5 施密特正交化——构造标准正交基\n施密特正交化（Gram-Schmidt）: 设$\\alpha_{1},\\alpha_{2}, \\dots ,\\alpha_{k}$线性无关。递归构造正交向量组$\\beta_{1}, \\dots ,\\beta_{k}$：\n$$\n\\beta_{1} = \\alpha_{1}\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1}\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n通用规律：每个新向量 $=$ 原向量 $-$ 在所有已得正交向量上的投影之和。\n单位化：$\\eta_{i} = \\beta_{i}/|\\beta_{i}|$，得到标准正交向量组$\\eta_{1},\\eta_{2}, \\dots ,\\eta_{k}$。\n##### 分层例题\n**【计算层】**将 $\\alpha_{1}=(1,1,0), \\alpha_{2}=(1,0,1), \\alpha_{3}=(0,1,1)$ 标准正交化。\n解——正交化：\n$$\n\\beta_{1} = \\alpha_{1} = (1,1,0)\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} = (1,0,1) - \\frac{1}{2} \\cdot (1,1,0) = (\\frac{1}{2}, -\\frac{1}{2}, 1)\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n$$\n= (0,1,1) - \\frac{1}{2} \\cdot (1,1,0) - \\frac{\\frac{1}{2}}{\\frac{3}{2}} \\cdot (\\frac{1}{2},-\\frac{1}{2},1)\n$$\n$$\n= (0,1,1) - (\\frac{1}{2},\\frac{1}{2},0) - (\\frac{1}{6},-\\frac{1}{6},\\frac{1}{3}) = (-\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3})\n$$\n单位化：$|\\beta_{1}|=\\sqrt{2} \\rightarrow \\eta_{1}=(\\frac{1}{\\sqrt{2}}, \\frac{1}{\\sqrt{2}}, 0)$；$|\\beta_{2}|=\\sqrt{\\frac{3}{2}} \\rightarrow \\eta_{2}=(\\frac{1}{\\sqrt{6}}, -\\frac{1}{\\sqrt{6}}, \\frac{2}{\\sqrt{6}})$；$|\\beta_{3}|=\\frac{2}{\\sqrt{3}} \\rightarrow \\eta_{3}=(-\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}})$。✓\n定理 7.3（正交向量组线性无关）: 两两正交的非零向量组一定线性无关。","derivation":["原始三维向量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","投影分量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","正交残差: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","归一化: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","证明: 设$\\sum c_{i}v_{i}=0$，两边与$v_{j}$做内积：$\\sum c_{i}(v_{i} \\cdot v_{j})=c_{j}|v_{j}|^{2}=0 \\rightarrow c_{j}=0$。■"],"formula":"u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","geometric_meaning":"","intuition":"一句话动机：第7.4节说实对称矩阵可以正交对角化——但特征向量默认不一定正交。怎么从普通基造出一组标准正交基？答案是施密特正交化。","invariants":["input_preserved","projection_subtracted","residual_orthogonal","orthonormal_basis"],"pitfalls":[],"read_guide":[],"searchable_text":["7.5 施密特正交化——构造标准正交基","本节目标：掌握施密特正交化$+$单位化的完整步骤，能独立完成3个向量的标准正交化。","u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","## 7.5 施密特正交化——构造标准正交基\n施密特正交化（Gram-Schmidt）: 设$\\alpha_{1},\\alpha_{2}, \\dots ,\\alpha_{k}$线性无关。递归构造正交向量组$\\beta_{1}, \\dots ,\\beta_{k}$：\n$$\n\\beta_{1} = \\alpha_{1}\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1}\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n通用规律：每个新向量 $=$ 原向量 $-$ 在所有已得正交向量上的投影之和。\n单位化：$\\eta_{i} = \\beta_{i}/|\\beta_{i}|$，得到标准正交向量组$\\eta_{1},\\eta_{2}, \\dots ,\\eta_{k}$。\n##### 分层例题\n**【计算层】**将 $\\alpha_{1}=(1,1,0), \\alpha_{2}=(1,0,1), \\alpha_{3}=(0,1,1)$ 标准正交化。\n解——正交化：\n$$\n\\beta_{1} = \\alpha_{1} = (1,1,0)\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} = (1,0,1) - \\frac{1}{2} \\cdot (1,1,0) = (\\frac{1}{2}, -\\frac{1}{2}, 1)\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n$$\n= (0,1,1) - \\frac{1}{2} \\cdot (1,1,0) - \\frac{\\frac{1}{2}}{\\frac{3}{2}} \\cdot (\\frac{1}{2},-\\frac{1}{2},1)\n$$\n$$\n= (0,1,1) - (\\frac{1}{2},\\frac{1}{2},0) - (\\frac{1}{6},-\\frac{1}{6},\\frac{1}{3}) = (-\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3})\n$$\n单位化：$|\\beta_{1}|=\\sqrt{2} \\rightarrow \\eta_{1}=(\\frac{1}{\\sqrt{2}}, \\frac{1}{\\sqrt{2}}, 0)$；$|\\beta_{2}|=\\sqrt{\\frac{3}{2}} \\rightarrow \\eta_{2}=(\\frac{1}{\\sqrt{6}}, -\\frac{1}{\\sqrt{6}}, \\frac{2}{\\sqrt{6}})$；$|\\beta_{3}|=\\frac{2}{\\sqrt{3}} \\rightarrow \\eta_{3}=(-\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}})$。✓\n定理 7.3（正交向量组线性无关）: 两两正交的非零向量组一定线性无关。","原始三维向量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","投影分量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","正交残差: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","归一化: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","证明: 设$\\sum c_{i}v_{i}=0$，两边与$v_{j}$做内积：$\\sum c_{i}(v_{i} \\cdot v_{j})=c_{j}|v_{j}|^{2}=0 \\rightarrow c_{j}=0$。■","input_preserved","projection_subtracted","residual_orthogonal","orthonormal_basis"],"sections":[{"claim_refs":["claim.ch07.gram-schmidt"],"id":"definition","text":"## 7.5 施密特正交化——构造标准正交基\n施密特正交化（Gram-Schmidt）: 设$\\alpha_{1},\\alpha_{2}, \\dots ,\\alpha_{k}$线性无关。递归构造正交向量组$\\beta_{1}, \\dots ,\\beta_{k}$：\n$$\n\\beta_{1} = \\alpha_{1}\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1}\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n通用规律：每个新向量 $=$ 原向量 $-$ 在所有已得正交向量上的投影之和。\n单位化：$\\eta_{i} = \\beta_{i}/|\\beta_{i}|$，得到标准正交向量组$\\eta_{1},\\eta_{2}, \\dots ,\\eta_{k}$。\n##### 分层例题\n**【计算层】**将 $\\alpha_{1}=(1,1,0), \\alpha_{2}=(1,0,1), \\alpha_{3}=(0,1,1)$ 标准正交化。\n解——正交化：\n$$\n\\beta_{1} = \\alpha_{1} = (1,1,0)\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} = (1,0,1) - \\frac{1}{2} \\cdot (1,1,0) = (\\frac{1}{2}, -\\frac{1}{2}, 1)\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n$$\n= (0,1,1) - \\frac{1}{2} \\cdot (1,1,0) - \\frac{\\frac{1}{2}}{\\frac{3}{2}} \\cdot (\\frac{1}{2},-\\frac{1}{2},1)\n$$\n$$\n= (0,1,1) - (\\frac{1}{2},\\frac{1}{2},0) - (\\frac{1}{6},-\\frac{1}{6},\\frac{1}{3}) = (-\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3})\n$$\n单位化：$|\\beta_{1}|=\\sqrt{2} \\rightarrow \\eta_{1}=(\\frac{1}{\\sqrt{2}}, \\frac{1}{\\sqrt{2}}, 0)$；$|\\beta_{2}|=\\sqrt{\\frac{3}{2}} \\rightarrow \\eta_{2}=(\\frac{1}{\\sqrt{6}}, -\\frac{1}{\\sqrt{6}}, \\frac{2}{\\sqrt{6}})$；$|\\beta_{3}|=\\frac{2}{\\sqrt{3}} \\rightarrow \\eta_{3}=(-\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}})$。✓\n定理 7.3（正交向量组线性无关）: 两两正交的非零向量组一定线性无关。","title":"definition"},{"claim_refs":["claim.ch07.gram-schmidt"],"id":"formula","text":"u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","title":"formula"},{"claim_refs":["claim.ch07.gram-schmidt"],"id":"derivation","text":"原始三维向量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||\n投影分量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||\n正交残差: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||\n归一化: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||\n证明: 设$\\sum c_{i}v_{i}=0$，两边与$v_{j}$做内积：$\\sum c_{i}(v_{i} \\cdot v_{j})=c_{j}|v_{j}|^{2}=0 \\rightarrow c_{j}=0$。■","title":"derivation"},{"claim_refs":["claim.ch07.gram-schmidt"],"id":"worked_examples","text":"u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","title":"worked_examples"},{"claim_refs":["claim.ch07.gram-schmidt"],"id":"geometric_meaning","text":"geometric_meaning: 7.5 施密特正交化——构造标准正交基。","title":"geometric_meaning"},{"claim_refs":["claim.ch07.gram-schmidt"],"id":"pitfalls","text":"pitfalls: 7.5 施密特正交化——构造标准正交基。","title":"pitfalls"},{"claim_refs":["claim.ch07.gram-schmidt"],"id":"connections","text":"connections: 7.5 施密特正交化——构造标准正交基。","title":"connections"},{"claim_refs":[],"id":"intuition","text":"一句话动机：第7.4节说实对称矩阵可以正交对角化——但特征向量默认不一定正交。怎么从普通基造出一组标准正交基？答案是施密特正交化。","title":"intuition"},{"claim_refs":[],"id":"invariants","text":"input_preserved\nprojection_subtracted\nresidual_orthogonal\northonormal_basis","title":"invariants"}],"summary":"本节目标：掌握施密特正交化$+$单位化的完整步骤，能独立完成3个向量的标准正交化。","symbol_roles":{"input_vectors":"input_vectors","normalized":"normalized","projection":"projection","residual":"residual"},"title":"7.5 施密特正交化——构造标准正交基","worked_examples":[{"calculation":["u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"],"checks":[{"expected":1,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch07.gram-schmidt"],"given":[[1,0,0],[1,0,0]],"id":"example.ch07.gram-schmidt.orthogonalize.0","kind":"inner_product","result":1,"title":"orthogonalize"},{"calculation":["u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"],"checks":[{"expected":0,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch07.gram-schmidt"],"given":[[1,0,0],[0,1,0]],"id":"example.ch07.gram-schmidt.orthogonalize.1","kind":"inner_product","result":0,"title":"orthogonalize"},{"calculation":["u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"],"checks":[{"expected":0,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch07.gram-schmidt"],"given":[[1,0,0],[0,0,1]],"id":"example.ch07.gram-schmidt.orthogonalize.2","kind":"inner_product","result":0,"title":"orthogonalize"},{"calculation":["u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"],"checks":[{"expected":0,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch07.gram-schmidt"],"given":[[0,1,0],[1,0,0]],"id":"example.ch07.gram-schmidt.orthogonalize.3","kind":"inner_product","result":0,"title":"orthogonalize"},{"calculation":["u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"],"checks":[{"expected":1,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch07.gram-schmidt"],"given":[[0,1,0],[0,1,0]],"id":"example.ch07.gram-schmidt.orthogonalize.4","kind":"inner_product","result":1,"title":"orthogonalize"},{"calculation":["u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"],"checks":[{"expected":0,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch07.gram-schmidt"],"given":[[0,1,0],[0,0,1]],"id":"example.ch07.gram-schmidt.orthogonalize.5","kind":"inner_product","result":0,"title":"orthogonalize"},{"calculation":["u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"],"checks":[{"expected":0,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch07.gram-schmidt"],"given":[[0,0,1],[1,0,0]],"id":"example.ch07.gram-schmidt.orthogonalize.6","kind":"inner_product","result":0,"title":"orthogonalize"},{"calculation":["u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"],"checks":[{"expected":0,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch07.gram-schmidt"],"given":[[0,0,1],[0,1,0]],"id":"example.ch07.gram-schmidt.orthogonalize.7","kind":"inner_product","result":0,"title":"orthogonalize"},{"calculation":["u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"],"checks":[{"expected":1,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch07.gram-schmidt"],"given":[[0,0,1],[0,0,1]],"id":"example.ch07.gram-schmidt.orthogonalize.8","kind":"inner_product","result":1,"title":"orthogonalize"}]},"generated":{"artifact_digest":"sha256:e64eb7a2b8c490995faacdf244131021fcf1fa4e612f63301d4fac33740d4c65","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:2d2c3f6a7c9635eb65a89da2f804811289c261855590bb8a3c96fda5a14aff9c","source_hash":"sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436"},"revision":1,"schema_version":1,"source":{"excerpt":"## 7.5 施密特正交化——构造标准正交基\n\n一句话动机：第7.4节说实对称矩阵可以正交对角化——但特征向量默认不一定正交。怎么从普通基造出一组标准正交基？答案是施密特正交化。\n本节目标：掌握施密特正交化$+$单位化的完整步骤，能独立完成3个向量的标准正交化。\n\n施密特正交化（Gram-Schmidt）: 设$\\alpha_{1},\\alpha_{2}, \\dots ,\\alpha_{k}$线性无关。递归构造正交向量组$\\beta_{1}, \\dots ,\\beta_{k}$：\n$$\n\\beta_{1} = \\alpha_{1}\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1}\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n通用规律：每个新向量 $=$ 原向量 $-$ 在所有已得正交向量上的投影之和。\n单位化：$\\eta_{i} = \\beta_{i}/|\\beta_{i}|$，得到标准正交向量组$\\eta_{1},\\eta_{2}, \\dots ,\\eta_{k}$。\n\n##### 分层例题\n\n**【计算层】**将 $\\alpha_{1}=(1,1,0), \\alpha_{2}=(1,0,1), \\alpha_{3}=(0,1,1)$ 标准正交化。\n解——正交化：\n$$\n\\beta_{1} = \\alpha_{1} = (1,1,0)\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} = (1,0,1) - \\frac{1}{2} \\cdot (1,1,0) = (\\frac{1}{2}, -\\frac{1}{2}, 1)\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n$$\n= (0,1,1) - \\frac{1}{2} \\cdot (1,1,0) - \\frac{\\frac{1}{2}}{\\frac{3}{2}} \\cdot (\\frac{1}{2},-\\frac{1}{2},1)\n$$\n$$\n= (0,1,1) - (\\frac{1}{2},\\frac{1}{2},0) - (\\frac{1}{6},-\\frac{1}{6},\\frac{1}{3}) = (-\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3})\n$$\n单位化：$|\\beta_{1}|=\\sqrt{2} \\rightarrow \\eta_{1}=(\\frac{1}{\\sqrt{2}}, \\frac{1}{\\sqrt{2}}, 0)$；$|\\beta_{2}|=\\sqrt{\\frac{3}{2}} \\rightarrow \\eta_{2}=(\\frac{1}{\\sqrt{6}}, -\\frac{1}{\\sqrt{6}}, \\frac{2}{\\sqrt{6}})$；$|\\beta_{3}|=\\frac{2}{\\sqrt{3}} \\rightarrow \\eta_{3}=(-\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}})$。✓\n\n定理 7.3（正交向量组线性无关）: 两两正交的非零向量组一定线性无关。\n证明: 设$\\sum c_{i}v_{i}=0$，两边与$v_{j}$做内积：$\\sum c_{i}(v_{i} \\cdot v_{j})=c_{j}|v_{j}|^{2}=0 \\rightarrow c_{j}=0$。■","heading_level":2,"heading_path":["第7章 特征值与特征向量","7.5 施密特正交化——构造标准正交基"],"neighboring_titles":["7.6 正交矩阵与正交变换"],"occurrence":1,"source_hash":"sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436","source_path":["第7章 特征值与特征向量","7.5 施密特正交化——构造标准正交基","7.5 施密特正交化——构造标准正交基"],"spans":[{"end_line":2476,"fingerprint":"sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436","heading_path":["第7章 特征值与特征向量","7.5 施密特正交化——构造标准正交基"],"id":"第7章 特征值与特征向量 / 7.5 施密特正交化——构造标准正交基::1::sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436","start_line":2435,"text":"## 7.5 施密特正交化——构造标准正交基\n\n一句话动机：第7.4节说实对称矩阵可以正交对角化——但特征向量默认不一定正交。怎么从普通基造出一组标准正交基？答案是施密特正交化。\n本节目标：掌握施密特正交化$+$单位化的完整步骤，能独立完成3个向量的标准正交化。\n\n施密特正交化（Gram-Schmidt）: 设$\\alpha_{1},\\alpha_{2}, \\dots ,\\alpha_{k}$线性无关。递归构造正交向量组$\\beta_{1}, \\dots ,\\beta_{k}$：\n$$\n\\beta_{1} = \\alpha_{1}\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1}\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n通用规律：每个新向量 $=$ 原向量 $-$ 在所有已得正交向量上的投影之和。\n单位化：$\\eta_{i} = \\beta_{i}/|\\beta_{i}|$，得到标准正交向量组$\\eta_{1},\\eta_{2}, \\dots ,\\eta_{k}$。\n\n##### 分层例题\n\n**【计算层】**将 $\\alpha_{1}=(1,1,0), \\alpha_{2}=(1,0,1), \\alpha_{3}=(0,1,1)$ 标准正交化。\n解——正交化：\n$$\n\\beta_{1} = \\alpha_{1} = (1,1,0)\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} = (1,0,1) - \\frac{1}{2} \\cdot (1,1,0) = (\\frac{1}{2}, -\\frac{1}{2}, 1)\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n$$\n= (0,1,1) - \\frac{1}{2} \\cdot (1,1,0) - \\frac{\\frac{1}{2}}{\\frac{3}{2}} \\cdot (\\frac{1}{2},-\\frac{1}{2},1)\n$$\n$$\n= (0,1,1) - (\\frac{1}{2},\\frac{1}{2},0) - (\\frac{1}{6},-\\frac{1}{6},\\frac{1}{3}) = (-\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3})\n$$\n单位化：$|\\beta_{1}|=\\sqrt{2} \\rightarrow \\eta_{1}=(\\frac{1}{\\sqrt{2}}, \\frac{1}{\\sqrt{2}}, 0)$；$|\\beta_{2}|=\\sqrt{\\frac{3}{2}} \\rightarrow \\eta_{2}=(\\frac{1}{\\sqrt{6}}, -\\frac{1}{\\sqrt{6}}, \\frac{2}{\\sqrt{6}})$；$|\\beta_{3}|=\\frac{2}{\\sqrt{3}} \\rightarrow \\eta_{3}=(-\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}})$。✓\n\n定理 7.3（正交向量组线性无关）: 两两正交的非零向量组一定线性无关。\n证明: 设$\\sum c_{i}v_{i}=0$，两边与$v_{j}$做内积：$\\sum c_{i}(v_{i} \\cdot v_{j})=c_{j}|v_{j}|^{2}=0 \\rightarrow c_{j}=0$。■"}]},"status":"reviewed","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch07.gram-schmidt","visual_semantics":{"entities":[{"claim_refs":["claim.ch07.gram-schmidt"],"dimension":3,"id":"entity.ch07.gram-schmidt.input_vectors","kind":"basis","label":"input_vectors","role":"input_vectors","value":[[1,0,0],[1,1,0],[1,1,1]]},{"claim_refs":["claim.ch07.gram-schmidt"],"dimension":3,"id":"entity.ch07.gram-schmidt.projection","kind":"basis","label":"projection","role":"projection","value":[[0,0,0],[1,0,0],[1,1,0]]},{"claim_refs":["claim.ch07.gram-schmidt"],"dimension":3,"id":"entity.ch07.gram-schmidt.residual","kind":"basis","label":"residual","role":"residual","value":[[1,0,0],[0,1,0],[0,0,1]]},{"claim_refs":["claim.ch07.gram-schmidt"],"dimension":3,"id":"entity.ch07.gram-schmidt.normalized","kind":"basis","label":"normalized","role":"normalized","value":[[1,0,0],[0,1,0],[0,0,1]]}],"relations":[{"claim_refs":["claim.ch07.gram-schmidt"],"id":"relation.ch07.gram-schmidt.orthogonalize","kind":"maps_to","parameters":{"normalized":[[1,0,0],[0,1,0],[0,0,1]],"projections":[[0,0,0],[1,0,0],[1,1,0]],"residuals":[[1,0,0],[0,1,0],[0,0,1]],"tolerance":1e-9,"vectors":[[1,0,0],[1,1,0],[1,1,1]]},"source_ref":"entity.ch07.gram-schmidt.input_vectors","target_ref":"entity.ch07.gram-schmidt.normalized"}],"scene_family":"spectral_orthogonal","scene_kind":"3d","stages":[{"caption":"u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","expected_invariants":["input_preserved"],"id":"stage.ch07.gram-schmidt.input","input_entity_refs":["entity.ch07.gram-schmidt.input_vectors"],"layout":"sequence","output_entity_refs":["entity.ch07.gram-schmidt.input_vectors"],"relation_refs":["relation.ch07.gram-schmidt.orthogonalize"],"title":"原始三维向量"},{"caption":"u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","expected_invariants":["projection_subtracted"],"id":"stage.ch07.gram-schmidt.projection","input_entity_refs":["entity.ch07.gram-schmidt.input_vectors","entity.ch07.gram-schmidt.normalized"],"layout":"sequence","output_entity_refs":["entity.ch07.gram-schmidt.projection"],"relation_refs":["relation.ch07.gram-schmidt.orthogonalize"],"title":"投影分量"},{"caption":"u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","expected_invariants":["residual_orthogonal"],"id":"stage.ch07.gram-schmidt.residual","input_entity_refs":["entity.ch07.gram-schmidt.input_vectors","entity.ch07.gram-schmidt.projection"],"layout":"sequence","output_entity_refs":["entity.ch07.gram-schmidt.residual"],"relation_refs":["relation.ch07.gram-schmidt.orthogonalize"],"title":"正交残差"},{"caption":"u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||","expected_invariants":["orthonormal_basis"],"id":"stage.ch07.gram-schmidt.normalized","input_entity_refs":["entity.ch07.gram-schmidt.residual"],"layout":"sequence","output_entity_refs":["entity.ch07.gram-schmidt.normalized"],"relation_refs":["relation.ch07.gram-schmidt.orthogonalize"],"title":"归一化"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch07.gram-schmidt.input_vectors",
+        "entity.ch07.gram-schmidt.projection",
+        "entity.ch07.gram-schmidt.residual",
+        "entity.ch07.gram-schmidt.normalized"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "formula_symbols": [
+        "input_vectors",
+        "projection",
+        "residual",
+        "normalized"
+      ],
+      "id": "claim.ch07.gram-schmidt",
+      "relation_refs": [
+        "relation.ch07.gram-schmidt.orthogonalize"
+      ],
+      "source_refs": [
+        "第7章 特征值与特征向量 / 7.5 施密特正交化——构造标准正交基::1::sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436"
+      ],
+      "stage_refs": [
+        "stage.ch07.gram-schmidt.input",
+        "stage.ch07.gram-schmidt.projection",
+        "stage.ch07.gram-schmidt.residual",
+        "stage.ch07.gram-schmidt.normalized"
+      ],
+      "statement": "7.5 施密特正交化——构造标准正交基 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch07.gram-schmidt"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch07.gram-schmidt.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "conclusion": "",
+    "connections": [],
+    "definition": "## 7.5 施密特正交化——构造标准正交基\n施密特正交化（Gram-Schmidt）: 设$\\alpha_{1},\\alpha_{2}, \\dots ,\\alpha_{k}$线性无关。递归构造正交向量组$\\beta_{1}, \\dots ,\\beta_{k}$：\n$$\n\\beta_{1} = \\alpha_{1}\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1}\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n通用规律：每个新向量 $=$ 原向量 $-$ 在所有已得正交向量上的投影之和。\n单位化：$\\eta_{i} = \\beta_{i}/|\\beta_{i}|$，得到标准正交向量组$\\eta_{1},\\eta_{2}, \\dots ,\\eta_{k}$。\n##### 分层例题\n**【计算层】**将 $\\alpha_{1}=(1,1,0), \\alpha_{2}=(1,0,1), \\alpha_{3}=(0,1,1)$ 标准正交化。\n解——正交化：\n$$\n\\beta_{1} = \\alpha_{1} = (1,1,0)\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} = (1,0,1) - \\frac{1}{2} \\cdot (1,1,0) = (\\frac{1}{2}, -\\frac{1}{2}, 1)\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n$$\n= (0,1,1) - \\frac{1}{2} \\cdot (1,1,0) - \\frac{\\frac{1}{2}}{\\frac{3}{2}} \\cdot (\\frac{1}{2},-\\frac{1}{2},1)\n$$\n$$\n= (0,1,1) - (\\frac{1}{2},\\frac{1}{2},0) - (\\frac{1}{6},-\\frac{1}{6},\\frac{1}{3}) = (-\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3})\n$$\n单位化：$|\\beta_{1}|=\\sqrt{2} \\rightarrow \\eta_{1}=(\\frac{1}{\\sqrt{2}}, \\frac{1}{\\sqrt{2}}, 0)$；$|\\beta_{2}|=\\sqrt{\\frac{3}{2}} \\rightarrow \\eta_{2}=(\\frac{1}{\\sqrt{6}}, -\\frac{1}{\\sqrt{6}}, \\frac{2}{\\sqrt{6}})$；$|\\beta_{3}|=\\frac{2}{\\sqrt{3}} \\rightarrow \\eta_{3}=(-\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}})$。✓\n定理 7.3（正交向量组线性无关）: 两两正交的非零向量组一定线性无关。",
+    "derivation": [
+      "原始三维向量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "投影分量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "正交残差: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "归一化: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "证明: 设$\\sum c_{i}v_{i}=0$，两边与$v_{j}$做内积：$\\sum c_{i}(v_{i} \\cdot v_{j})=c_{j}|v_{j}|^{2}=0 \\rightarrow c_{j}=0$。■"
+    ],
+    "formula": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+    "geometric_meaning": "",
+    "intuition": "一句话动机：第7.4节说实对称矩阵可以正交对角化——但特征向量默认不一定正交。怎么从普通基造出一组标准正交基？答案是施密特正交化。",
+    "invariants": [
+      "input_preserved",
+      "projection_subtracted",
+      "residual_orthogonal",
+      "orthonormal_basis"
+    ],
+    "pitfalls": [],
+    "read_guide": [],
+    "searchable_text": [
+      "7.5 施密特正交化——构造标准正交基",
+      "本节目标：掌握施密特正交化$+$单位化的完整步骤，能独立完成3个向量的标准正交化。",
+      "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "## 7.5 施密特正交化——构造标准正交基\n施密特正交化（Gram-Schmidt）: 设$\\alpha_{1},\\alpha_{2}, \\dots ,\\alpha_{k}$线性无关。递归构造正交向量组$\\beta_{1}, \\dots ,\\beta_{k}$：\n$$\n\\beta_{1} = \\alpha_{1}\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1}\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n通用规律：每个新向量 $=$ 原向量 $-$ 在所有已得正交向量上的投影之和。\n单位化：$\\eta_{i} = \\beta_{i}/|\\beta_{i}|$，得到标准正交向量组$\\eta_{1},\\eta_{2}, \\dots ,\\eta_{k}$。\n##### 分层例题\n**【计算层】**将 $\\alpha_{1}=(1,1,0), \\alpha_{2}=(1,0,1), \\alpha_{3}=(0,1,1)$ 标准正交化。\n解——正交化：\n$$\n\\beta_{1} = \\alpha_{1} = (1,1,0)\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} = (1,0,1) - \\frac{1}{2} \\cdot (1,1,0) = (\\frac{1}{2}, -\\frac{1}{2}, 1)\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n$$\n= (0,1,1) - \\frac{1}{2} \\cdot (1,1,0) - \\frac{\\frac{1}{2}}{\\frac{3}{2}} \\cdot (\\frac{1}{2},-\\frac{1}{2},1)\n$$\n$$\n= (0,1,1) - (\\frac{1}{2},\\frac{1}{2},0) - (\\frac{1}{6},-\\frac{1}{6},\\frac{1}{3}) = (-\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3})\n$$\n单位化：$|\\beta_{1}|=\\sqrt{2} \\rightarrow \\eta_{1}=(\\frac{1}{\\sqrt{2}}, \\frac{1}{\\sqrt{2}}, 0)$；$|\\beta_{2}|=\\sqrt{\\frac{3}{2}} \\rightarrow \\eta_{2}=(\\frac{1}{\\sqrt{6}}, -\\frac{1}{\\sqrt{6}}, \\frac{2}{\\sqrt{6}})$；$|\\beta_{3}|=\\frac{2}{\\sqrt{3}} \\rightarrow \\eta_{3}=(-\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}})$。✓\n定理 7.3（正交向量组线性无关）: 两两正交的非零向量组一定线性无关。",
+      "原始三维向量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "投影分量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "正交残差: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "归一化: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+      "证明: 设$\\sum c_{i}v_{i}=0$，两边与$v_{j}$做内积：$\\sum c_{i}(v_{i} \\cdot v_{j})=c_{j}|v_{j}|^{2}=0 \\rightarrow c_{j}=0$。■",
+      "input_preserved",
+      "projection_subtracted",
+      "residual_orthogonal",
+      "orthonormal_basis"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "id": "definition",
+        "text": "## 7.5 施密特正交化——构造标准正交基\n施密特正交化（Gram-Schmidt）: 设$\\alpha_{1},\\alpha_{2}, \\dots ,\\alpha_{k}$线性无关。递归构造正交向量组$\\beta_{1}, \\dots ,\\beta_{k}$：\n$$\n\\beta_{1} = \\alpha_{1}\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1}\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n通用规律：每个新向量 $=$ 原向量 $-$ 在所有已得正交向量上的投影之和。\n单位化：$\\eta_{i} = \\beta_{i}/|\\beta_{i}|$，得到标准正交向量组$\\eta_{1},\\eta_{2}, \\dots ,\\eta_{k}$。\n##### 分层例题\n**【计算层】**将 $\\alpha_{1}=(1,1,0), \\alpha_{2}=(1,0,1), \\alpha_{3}=(0,1,1)$ 标准正交化。\n解——正交化：\n$$\n\\beta_{1} = \\alpha_{1} = (1,1,0)\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} = (1,0,1) - \\frac{1}{2} \\cdot (1,1,0) = (\\frac{1}{2}, -\\frac{1}{2}, 1)\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n$$\n= (0,1,1) - \\frac{1}{2} \\cdot (1,1,0) - \\frac{\\frac{1}{2}}{\\frac{3}{2}} \\cdot (\\frac{1}{2},-\\frac{1}{2},1)\n$$\n$$\n= (0,1,1) - (\\frac{1}{2},\\frac{1}{2},0) - (\\frac{1}{6},-\\frac{1}{6},\\frac{1}{3}) = (-\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3})\n$$\n单位化：$|\\beta_{1}|=\\sqrt{2} \\rightarrow \\eta_{1}=(\\frac{1}{\\sqrt{2}}, \\frac{1}{\\sqrt{2}}, 0)$；$|\\beta_{2}|=\\sqrt{\\frac{3}{2}} \\rightarrow \\eta_{2}=(\\frac{1}{\\sqrt{6}}, -\\frac{1}{\\sqrt{6}}, \\frac{2}{\\sqrt{6}})$；$|\\beta_{3}|=\\frac{2}{\\sqrt{3}} \\rightarrow \\eta_{3}=(-\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}})$。✓\n定理 7.3（正交向量组线性无关）: 两两正交的非零向量组一定线性无关。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "id": "formula",
+        "text": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "id": "derivation",
+        "text": "原始三维向量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||\n投影分量: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||\n正交残差: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||\n归一化: u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||\n证明: 设$\\sum c_{i}v_{i}=0$，两边与$v_{j}$做内积：$\\sum c_{i}(v_{i} \\cdot v_{j})=c_{j}|v_{j}|^{2}=0 \\rightarrow c_{j}=0$。■",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "id": "worked_examples",
+        "text": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 7.5 施密特正交化——构造标准正交基。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 7.5 施密特正交化——构造标准正交基。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "id": "connections",
+        "text": "connections: 7.5 施密特正交化——构造标准正交基。",
+        "title": "connections"
+      },
+      {
+        "claim_refs": [],
+        "id": "intuition",
+        "text": "一句话动机：第7.4节说实对称矩阵可以正交对角化——但特征向量默认不一定正交。怎么从普通基造出一组标准正交基？答案是施密特正交化。",
+        "title": "intuition"
+      },
+      {
+        "claim_refs": [],
+        "id": "invariants",
+        "text": "input_preserved\nprojection_subtracted\nresidual_orthogonal\northonormal_basis",
+        "title": "invariants"
+      }
+    ],
+    "summary": "本节目标：掌握施密特正交化$+$单位化的完整步骤，能独立完成3个向量的标准正交化。",
+    "symbol_roles": {
+      "input_vectors": "input_vectors",
+      "normalized": "normalized",
+      "projection": "projection",
+      "residual": "residual"
+    },
+    "title": "7.5 施密特正交化——构造标准正交基",
+    "worked_examples": [
+      {
+        "calculation": [
+          "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"
+        ],
+        "checks": [
+          {
+            "expected": 1.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "given": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch07.gram-schmidt.orthogonalize.0",
+        "kind": "inner_product",
+        "result": 1.0,
+        "title": "orthogonalize"
+      },
+      {
+        "calculation": [
+          "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"
+        ],
+        "checks": [
+          {
+            "expected": 0.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "given": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch07.gram-schmidt.orthogonalize.1",
+        "kind": "inner_product",
+        "result": 0.0,
+        "title": "orthogonalize"
+      },
+      {
+        "calculation": [
+          "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"
+        ],
+        "checks": [
+          {
+            "expected": 0.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "given": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch07.gram-schmidt.orthogonalize.2",
+        "kind": "inner_product",
+        "result": 0.0,
+        "title": "orthogonalize"
+      },
+      {
+        "calculation": [
+          "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"
+        ],
+        "checks": [
+          {
+            "expected": 0.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "given": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch07.gram-schmidt.orthogonalize.3",
+        "kind": "inner_product",
+        "result": 0.0,
+        "title": "orthogonalize"
+      },
+      {
+        "calculation": [
+          "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"
+        ],
+        "checks": [
+          {
+            "expected": 1.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "given": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch07.gram-schmidt.orthogonalize.4",
+        "kind": "inner_product",
+        "result": 1.0,
+        "title": "orthogonalize"
+      },
+      {
+        "calculation": [
+          "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"
+        ],
+        "checks": [
+          {
+            "expected": 0.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "given": [
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch07.gram-schmidt.orthogonalize.5",
+        "kind": "inner_product",
+        "result": 0.0,
+        "title": "orthogonalize"
+      },
+      {
+        "calculation": [
+          "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"
+        ],
+        "checks": [
+          {
+            "expected": 0.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "given": [
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch07.gram-schmidt.orthogonalize.6",
+        "kind": "inner_product",
+        "result": 0.0,
+        "title": "orthogonalize"
+      },
+      {
+        "calculation": [
+          "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"
+        ],
+        "checks": [
+          {
+            "expected": 0.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "given": [
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch07.gram-schmidt.orthogonalize.7",
+        "kind": "inner_product",
+        "result": 0.0,
+        "title": "orthogonalize"
+      },
+      {
+        "calculation": [
+          "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||"
+        ],
+        "checks": [
+          {
+            "expected": 1.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "given": [
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch07.gram-schmidt.orthogonalize.8",
+        "kind": "inner_product",
+        "result": 1.0,
+        "title": "orthogonalize"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:1decad1ae3d96f9581fef4b0db0f48170e78d43c75b03c4142c3b483a501b582",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:4fb849c8b780d7ff9ba5265d06280ef91d48989e705543d2f2278a9414826823",
+    "source_hash": "sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "## 7.5 施密特正交化——构造标准正交基\n\n一句话动机：第7.4节说实对称矩阵可以正交对角化——但特征向量默认不一定正交。怎么从普通基造出一组标准正交基？答案是施密特正交化。\n本节目标：掌握施密特正交化$+$单位化的完整步骤，能独立完成3个向量的标准正交化。\n\n施密特正交化（Gram-Schmidt）: 设$\\alpha_{1},\\alpha_{2}, \\dots ,\\alpha_{k}$线性无关。递归构造正交向量组$\\beta_{1}, \\dots ,\\beta_{k}$：\n$$\n\\beta_{1} = \\alpha_{1}\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1}\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n通用规律：每个新向量 $=$ 原向量 $-$ 在所有已得正交向量上的投影之和。\n单位化：$\\eta_{i} = \\beta_{i}/|\\beta_{i}|$，得到标准正交向量组$\\eta_{1},\\eta_{2}, \\dots ,\\eta_{k}$。\n\n##### 分层例题\n\n**【计算层】**将 $\\alpha_{1}=(1,1,0), \\alpha_{2}=(1,0,1), \\alpha_{3}=(0,1,1)$ 标准正交化。\n解——正交化：\n$$\n\\beta_{1} = \\alpha_{1} = (1,1,0)\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} = (1,0,1) - \\frac{1}{2} \\cdot (1,1,0) = (\\frac{1}{2}, -\\frac{1}{2}, 1)\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n$$\n= (0,1,1) - \\frac{1}{2} \\cdot (1,1,0) - \\frac{\\frac{1}{2}}{\\frac{3}{2}} \\cdot (\\frac{1}{2},-\\frac{1}{2},1)\n$$\n$$\n= (0,1,1) - (\\frac{1}{2},\\frac{1}{2},0) - (\\frac{1}{6},-\\frac{1}{6},\\frac{1}{3}) = (-\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3})\n$$\n单位化：$|\\beta_{1}|=\\sqrt{2} \\rightarrow \\eta_{1}=(\\frac{1}{\\sqrt{2}}, \\frac{1}{\\sqrt{2}}, 0)$；$|\\beta_{2}|=\\sqrt{\\frac{3}{2}} \\rightarrow \\eta_{2}=(\\frac{1}{\\sqrt{6}}, -\\frac{1}{\\sqrt{6}}, \\frac{2}{\\sqrt{6}})$；$|\\beta_{3}|=\\frac{2}{\\sqrt{3}} \\rightarrow \\eta_{3}=(-\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}})$。✓\n\n定理 7.3（正交向量组线性无关）: 两两正交的非零向量组一定线性无关。\n证明: 设$\\sum c_{i}v_{i}=0$，两边与$v_{j}$做内积：$\\sum c_{i}(v_{i} \\cdot v_{j})=c_{j}|v_{j}|^{2}=0 \\rightarrow c_{j}=0$。■",
+    "heading_level": 2,
+    "heading_path": [
+      "第7章 特征值与特征向量",
+      "7.5 施密特正交化——构造标准正交基"
+    ],
+    "neighboring_titles": [
+      "7.6 正交矩阵与正交变换"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436",
+    "source_path": [
+      "第7章 特征值与特征向量",
+      "7.5 施密特正交化——构造标准正交基",
+      "7.5 施密特正交化——构造标准正交基"
+    ],
+    "spans": [
+      {
+        "end_line": 2358,
+        "fingerprint": "sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436",
+        "heading_path": [
+          "第7章 特征值与特征向量",
+          "7.5 施密特正交化——构造标准正交基"
+        ],
+        "id": "第7章 特征值与特征向量 / 7.5 施密特正交化——构造标准正交基::1::sha256:8cbebe4a1bc2d41790b8e193a8835bfac99fe2d0aef713bd1bf7e4c86ca42436",
+        "start_line": 2317,
+        "text": "## 7.5 施密特正交化——构造标准正交基\n\n一句话动机：第7.4节说实对称矩阵可以正交对角化——但特征向量默认不一定正交。怎么从普通基造出一组标准正交基？答案是施密特正交化。\n本节目标：掌握施密特正交化$+$单位化的完整步骤，能独立完成3个向量的标准正交化。\n\n施密特正交化（Gram-Schmidt）: 设$\\alpha_{1},\\alpha_{2}, \\dots ,\\alpha_{k}$线性无关。递归构造正交向量组$\\beta_{1}, \\dots ,\\beta_{k}$：\n$$\n\\beta_{1} = \\alpha_{1}\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1}\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n通用规律：每个新向量 $=$ 原向量 $-$ 在所有已得正交向量上的投影之和。\n单位化：$\\eta_{i} = \\beta_{i}/|\\beta_{i}|$，得到标准正交向量组$\\eta_{1},\\eta_{2}, \\dots ,\\eta_{k}$。\n\n##### 分层例题\n\n**【计算层】**将 $\\alpha_{1}=(1,1,0), \\alpha_{2}=(1,0,1), \\alpha_{3}=(0,1,1)$ 标准正交化。\n解——正交化：\n$$\n\\beta_{1} = \\alpha_{1} = (1,1,0)\n$$\n$$\n\\beta_{2} = \\alpha_{2} - \\frac{\\alpha_{2} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} = (1,0,1) - \\frac{1}{2} \\cdot (1,1,0) = (\\frac{1}{2}, -\\frac{1}{2}, 1)\n$$\n$$\n\\beta_{3} = \\alpha_{3} - \\frac{\\alpha_{3} \\cdot \\beta_{1}}{\\beta_{1} \\cdot \\beta_{1}} \\cdot \\beta_{1} - \\frac{\\alpha_{3} \\cdot \\beta_{2}}{\\beta_{2} \\cdot \\beta_{2}} \\cdot \\beta_{2}\n$$\n$$\n= (0,1,1) - \\frac{1}{2} \\cdot (1,1,0) - \\frac{\\frac{1}{2}}{\\frac{3}{2}} \\cdot (\\frac{1}{2},-\\frac{1}{2},1)\n$$\n$$\n= (0,1,1) - (\\frac{1}{2},\\frac{1}{2},0) - (\\frac{1}{6},-\\frac{1}{6},\\frac{1}{3}) = (-\\frac{2}{3}, \\frac{2}{3}, \\frac{2}{3})\n$$\n单位化：$|\\beta_{1}|=\\sqrt{2} \\rightarrow \\eta_{1}=(\\frac{1}{\\sqrt{2}}, \\frac{1}{\\sqrt{2}}, 0)$；$|\\beta_{2}|=\\sqrt{\\frac{3}{2}} \\rightarrow \\eta_{2}=(\\frac{1}{\\sqrt{6}}, -\\frac{1}{\\sqrt{6}}, \\frac{2}{\\sqrt{6}})$；$|\\beta_{3}|=\\frac{2}{\\sqrt{3}} \\rightarrow \\eta_{3}=(-\\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}}, \\frac{1}{\\sqrt{3}})$。✓\n\n定理 7.3（正交向量组线性无关）: 两两正交的非零向量组一定线性无关。\n证明: 设$\\sum c_{i}v_{i}=0$，两边与$v_{j}$做内积：$\\sum c_{i}(v_{i} \\cdot v_{j})=c_{j}|v_{j}|^{2}=0 \\rightarrow c_{j}=0$。■"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch07.gram-schmidt",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "dimension": 3,
+        "id": "entity.ch07.gram-schmidt.input_vectors",
+        "kind": "basis",
+        "label": "input_vectors",
+        "role": "input_vectors",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "dimension": 3,
+        "id": "entity.ch07.gram-schmidt.projection",
+        "kind": "basis",
+        "label": "projection",
+        "role": "projection",
+        "value": [
+          [
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "dimension": 3,
+        "id": "entity.ch07.gram-schmidt.residual",
+        "kind": "basis",
+        "label": "residual",
+        "role": "residual",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "dimension": 3,
+        "id": "entity.ch07.gram-schmidt.normalized",
+        "kind": "basis",
+        "label": "normalized",
+        "role": "normalized",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch07.gram-schmidt"
+        ],
+        "id": "relation.ch07.gram-schmidt.orthogonalize",
+        "kind": "maps_to",
+        "parameters": {
+          "normalized": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "projections": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              1.0,
+              1.0,
+              0.0
+            ]
+          ],
+          "residuals": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tolerance": 1e-09,
+          "vectors": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              1.0,
+              1.0,
+              0.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch07.gram-schmidt.input_vectors",
+        "target_ref": "entity.ch07.gram-schmidt.normalized"
+      }
+    ],
+    "scene_family": "spectral_orthogonal",
+    "scene_kind": "3d",
+    "stages": [
+      {
+        "caption": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+        "expected_invariants": [
+          "input_preserved"
+        ],
+        "id": "stage.ch07.gram-schmidt.input",
+        "input_entity_refs": [
+          "entity.ch07.gram-schmidt.input_vectors"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch07.gram-schmidt.input_vectors"
+        ],
+        "relation_refs": [
+          "relation.ch07.gram-schmidt.orthogonalize"
+        ],
+        "title": "原始三维向量"
+      },
+      {
+        "caption": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+        "expected_invariants": [
+          "projection_subtracted"
+        ],
+        "id": "stage.ch07.gram-schmidt.projection",
+        "input_entity_refs": [
+          "entity.ch07.gram-schmidt.input_vectors",
+          "entity.ch07.gram-schmidt.normalized"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch07.gram-schmidt.projection"
+        ],
+        "relation_refs": [
+          "relation.ch07.gram-schmidt.orthogonalize"
+        ],
+        "title": "投影分量"
+      },
+      {
+        "caption": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+        "expected_invariants": [
+          "residual_orthogonal"
+        ],
+        "id": "stage.ch07.gram-schmidt.residual",
+        "input_entity_refs": [
+          "entity.ch07.gram-schmidt.input_vectors",
+          "entity.ch07.gram-schmidt.projection"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch07.gram-schmidt.residual"
+        ],
+        "relation_refs": [
+          "relation.ch07.gram-schmidt.orthogonalize"
+        ],
+        "title": "正交残差"
+      },
+      {
+        "caption": "u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||",
+        "expected_invariants": [
+          "orthonormal_basis"
+        ],
+        "id": "stage.ch07.gram-schmidt.normalized",
+        "input_entity_refs": [
+          "entity.ch07.gram-schmidt.residual"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch07.gram-schmidt.normalized"
+        ],
+        "relation_refs": [
+          "relation.ch07.gram-schmidt.orthogonalize"
+        ],
+        "title": "归一化"
+      }
+    ]
+  }
+}

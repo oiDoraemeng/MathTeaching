@@ -1,0 +1,511 @@
+{
+  "artifact_digest": "sha256:e0f6f8461c4182f459ba8906512e15c9c90f0c4171037791c7863c8fd71344e1",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:6585a2444ed2e4a5a938dbf36afb01c18a5bf9ee3332f6590641b6acf337dba6",
+  "plan": {
+    "operations": [
+      {
+        "alias": "ch04__entity__standard_basis",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_1",
+        "end": "ch04__entity__standard_basis__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__standard_basis__generator_1__origin"
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_2__end",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__standard_basis__generator_2",
+        "end": "ch04__entity__standard_basis__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__standard_basis__generator_2__origin"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis",
+        "basis": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            -1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "op": "geometry.subspace_region",
+        "opacity": 0.2
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_1__end",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_1",
+        "end": "ch04__entity__oblique_basis__generator_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__oblique_basis__generator_1__origin"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_2__end",
+        "coordinates": [
+          1.0,
+          -1.0
+        ],
+        "name": "result",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__oblique_basis__generator_2",
+        "end": "ch04__entity__oblique_basis__generator_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__entity__oblique_basis__generator_2__origin"
+      },
+      {
+        "alias": "ch04__entity__same_vector__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__same_vector__end",
+        "coordinates": [
+          5.0,
+          3.0
+        ],
+        "name": "x",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__entity__same_vector",
+        "end": "ch04__entity__same_vector__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch04__entity__same_vector__origin"
+      },
+      {
+        "alias": "ch04__relation__standard_readout__grid",
+        "alternate_alias": "ch04__relation__standard_readout__alternate",
+        "alternate_coordinates": [
+          5.0,
+          3.0
+        ],
+        "basis_alias": "ch04__relation__standard_readout__basis",
+        "basis_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "entity_count": 4,
+        "op": "geometry.basis_grid",
+        "sample_count": 4,
+        "standard_alias": "ch04__relation__standard_readout__standard",
+        "standard_vector": [
+          5.0,
+          3.0
+        ],
+        "tolerance": 1e-09
+      },
+      {
+        "alias": "ch04__relation__standard_readout",
+        "alternate_alias": "ch04__relation__standard_readout__alternate",
+        "alternate_coordinates": [
+          5.0,
+          3.0
+        ],
+        "basis_alias": "ch04__relation__standard_readout__basis",
+        "basis_matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "entity_count": 4,
+        "op": "geometry.coordinate_readout",
+        "sample_count": 4,
+        "standard_alias": "ch04__relation__standard_readout__standard",
+        "standard_vector": [
+          5.0,
+          3.0
+        ],
+        "tolerance": 1e-09
+      },
+      {
+        "alias": "ch04__relation__standard_readout__component_1__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__standard_readout__component_1__end",
+        "coordinates": [
+          5.0,
+          0.0
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__standard_readout__component_1",
+        "end": "ch04__relation__standard_readout__component_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__standard_readout__component_1__start"
+      },
+      {
+        "alias": "ch04__relation__standard_readout__component_2__start",
+        "coordinates": [
+          5.0,
+          0.0
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__standard_readout__component_2__end",
+        "coordinates": [
+          5.0,
+          3.0
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__standard_readout__component_2",
+        "end": "ch04__relation__standard_readout__component_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__standard_readout__component_2__start"
+      },
+      {
+        "alias": "ch04__relation__oblique_readout__grid",
+        "alternate_alias": "ch04__relation__oblique_readout__alternate",
+        "alternate_coordinates": [
+          4.0,
+          1.0
+        ],
+        "basis_alias": "ch04__relation__oblique_readout__basis",
+        "basis_matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            -1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "entity_count": 4,
+        "op": "geometry.basis_grid",
+        "sample_count": 4,
+        "standard_alias": "ch04__relation__oblique_readout__standard",
+        "standard_vector": [
+          5.0,
+          3.0
+        ],
+        "tolerance": 1e-09
+      },
+      {
+        "alias": "ch04__relation__oblique_readout",
+        "alternate_alias": "ch04__relation__oblique_readout__alternate",
+        "alternate_coordinates": [
+          4.0,
+          1.0
+        ],
+        "basis_alias": "ch04__relation__oblique_readout__basis",
+        "basis_matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            -1.0
+          ]
+        ],
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "entity_count": 4,
+        "op": "geometry.coordinate_readout",
+        "sample_count": 4,
+        "standard_alias": "ch04__relation__oblique_readout__standard",
+        "standard_vector": [
+          5.0,
+          3.0
+        ],
+        "tolerance": 1e-09
+      },
+      {
+        "alias": "ch04__relation__oblique_readout__component_1__start",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__oblique_readout__component_1__end",
+        "coordinates": [
+          4.0,
+          4.0
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__oblique_readout__component_1",
+        "end": "ch04__relation__oblique_readout__component_1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__oblique_readout__component_1__start"
+      },
+      {
+        "alias": "ch04__relation__oblique_readout__component_2__start",
+        "coordinates": [
+          4.0,
+          4.0
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__oblique_readout__component_2__end",
+        "coordinates": [
+          5.0,
+          3.0
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch04__relation__oblique_readout__component_2",
+        "end": "ch04__relation__oblique_readout__component_2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "ch04__relation__oblique_readout__component_2__start"
+      },
+      {
+        "alias": "sem__stage.ch04.basis.definition.standard__title",
+        "op": "annotation.upsert",
+        "position": [
+          -1.5,
+          2.65
+        ],
+        "text": "标准基下的读数"
+      },
+      {
+        "alias": "sem__stage.ch04.basis.definition.oblique__title",
+        "op": "annotation.upsert",
+        "position": [
+          1.5,
+          2.65
+        ],
+        "text": "新基下的读数"
+      },
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "基的定义",
+    "version": 1
+  },
+  "plan_digest": "sha256:ebbe3d045ba0eaec3e8535681fbbc671d0cd33786ead0d11a849a1d3f674c74c",
+  "read_guide": [
+    "先定义，再公式，最后读数值例。"
+  ],
+  "render_profile": "lecture-v1",
+  "revision": 1,
+  "scene_family": "basis_change",
+  "schema_version": 1,
+  "source_hash": "sha256:673e2bba22d2d77b10624b8aabf9b10e61619c2f9736345c9c6ecdf17b9d82e0",
+  "stages": [
+    {
+      "anchor": [
+        -1.5,
+        2.65
+      ],
+      "caption": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+      "id": "stage.ch04.basis.definition.standard",
+      "layout": "side_by_side",
+      "title": "标准基下的读数",
+      "visible_aliases": [
+        "ch04__entity__standard_basis",
+        "ch04__entity__same_vector",
+        "ch04__relation__standard_readout__grid",
+        "ch04__relation__standard_readout",
+        "ch04__relation__standard_readout__component_1__start",
+        "ch04__relation__standard_readout__component_1__end",
+        "ch04__relation__standard_readout__component_1__origin",
+        "ch04__relation__standard_readout__component_1",
+        "ch04__relation__standard_readout__component_2__start",
+        "ch04__relation__standard_readout__component_2__end",
+        "ch04__relation__standard_readout__component_2__origin",
+        "ch04__relation__standard_readout__component_2",
+        "sem__stage.ch04.basis.definition.standard__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.basis.definition.standard_basis",
+        "entity.ch04.basis.definition.same_vector",
+        "relation.ch04.basis.definition.standard_readout"
+      ]
+    },
+    {
+      "anchor": [
+        1.5,
+        2.65
+      ],
+      "caption": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+      "id": "stage.ch04.basis.definition.oblique",
+      "layout": "side_by_side",
+      "title": "新基下的读数",
+      "visible_aliases": [
+        "ch04__entity__oblique_basis",
+        "ch04__entity__same_vector",
+        "ch04__relation__oblique_readout__grid",
+        "ch04__relation__oblique_readout",
+        "ch04__relation__oblique_readout__component_1__start",
+        "ch04__relation__oblique_readout__component_1__end",
+        "ch04__relation__oblique_readout__component_1__origin",
+        "ch04__relation__oblique_readout__component_1",
+        "ch04__relation__oblique_readout__component_2__start",
+        "ch04__relation__oblique_readout__component_2__end",
+        "ch04__relation__oblique_readout__component_2__origin",
+        "ch04__relation__oblique_readout__component_2",
+        "sem__stage.ch04.basis.definition.oblique__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.basis.definition.oblique_basis",
+        "entity.ch04.basis.definition.same_vector",
+        "relation.ch04.basis.definition.oblique_readout"
+      ]
+    }
+  ],
+  "topic_id": "ch04.basis.definition"
+}

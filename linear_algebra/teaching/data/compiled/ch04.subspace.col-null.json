@@ -1,420 +1,290 @@
 {
-  "artifact_digest": "sha256:aee6a7e5074886f54e417596aba6f38caa818f5f23998de184304b8dac379951",
+  "artifact_digest": "sha256:d40dbaac8a282a7edb004189aabff9101e6d5f2f1684ac4946801853f216bdb8",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:936c79388ce767a8e211e26126827bd1a3dfb11e3cc8d4dfa33f620e947bc42d",
+  "contract_digest": "sha256:fdbdf3d932217bd4a1f14d64062f5370451c80c22e54a970fc0c2fbfcda688d1",
   "plan": {
     "operations": [
       {
-        "alias": "ch04__entity__map_A",
-        "bounds": [
-          -1.25,
-          1.25,
-          -1.25,
-          1.25
-        ],
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "origin": [
-          -4.0,
-          0.0
-        ],
-        "step": 1.0
-      },
-      {
-        "alias": "ch04__entity__domain",
-        "basis": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -1.25,
-          1.25,
-          -1.25,
-          1.25
-        ],
-        "op": "geometry.subspace_region",
-        "opacity": 0.2,
-        "origin": [
-          -4.0,
-          0.0
-        ]
-      },
-      {
-        "alias": "ch04__entity__domain__generator_1__origin",
-        "coordinates": [
-          -4.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch04__entity__domain__generator_1__end",
-        "coordinates": [
-          -3.0,
-          0.0
-        ],
-        "name": "result",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch04__entity__domain__generator_1",
-        "end": "ch04__entity__domain__generator_1__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "ch04__entity__domain__generator_1__origin"
-      },
-      {
-        "alias": "ch04__entity__domain__generator_2__origin",
-        "coordinates": [
-          -4.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch04__entity__domain__generator_2__end",
-        "coordinates": [
-          -4.0,
-          1.0
-        ],
-        "name": "result",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch04__entity__domain__generator_2",
-        "end": "ch04__entity__domain__generator_2__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "ch04__entity__domain__generator_2__origin"
-      },
-      {
-        "alias": "ch04__entity__codomain",
-        "basis": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -1.25,
-          1.25,
-          -1.25,
-          1.25
-        ],
-        "op": "geometry.subspace_region",
-        "opacity": 0.2,
-        "origin": [
-          4.0,
-          0.0
-        ]
-      },
-      {
-        "alias": "ch04__entity__codomain__generator_1__origin",
-        "coordinates": [
-          4.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch04__entity__codomain__generator_1__end",
-        "coordinates": [
-          5.0,
-          0.0
-        ],
-        "name": "result",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch04__entity__codomain__generator_1",
-        "end": "ch04__entity__codomain__generator_1__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "ch04__entity__codomain__generator_1__origin"
-      },
-      {
-        "alias": "ch04__entity__codomain__generator_2__origin",
-        "coordinates": [
-          4.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch04__entity__codomain__generator_2__end",
-        "coordinates": [
-          4.0,
-          1.0
-        ],
-        "name": "result",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch04__entity__codomain__generator_2",
-        "end": "ch04__entity__codomain__generator_2__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "role": "result",
-        "start": "ch04__entity__codomain__generator_2__origin"
-      },
-      {
-        "alias": "ch04__entity__kernel",
-        "basis": [
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -1.25,
-          1.25,
-          -1.25,
-          1.25
-        ],
-        "op": "geometry.subspace_region",
-        "opacity": 0.2,
-        "origin": [
-          -4.0,
-          0.0
-        ]
-      },
-      {
+        "algebra_label": "Col(A)",
+        "algebra_visible": true,
         "alias": "ch04__entity__column_space",
-        "basis": [
-          [
-            1.0,
-            0.0
-          ]
+        "color": "#5B8DEF",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
         ],
-        "bounds": [
-          -1.25,
-          1.25,
-          -1.25,
-          1.25
-        ],
-        "op": "geometry.subspace_region",
-        "opacity": 0.2,
+        "op": "plane3d.upsert",
+        "opacity": 0.08,
         "origin": [
-          4.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": 5.0
+      },
+      {
+        "alias": "ch04__entity__null_space",
+        "color": "#6B7280",
+        "end": [
+          0.0,
+          0.0,
+          4.2
+        ],
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          3.3
+        ],
+        "style": "dashed"
+      },
+      {
+        "alias": "ch04__entity__null_space__extent_2",
+        "color": "#6B7280",
+        "end": [
+          -0.0,
+          -0.0,
+          -2.9
+        ],
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          -0.0,
+          -0.0,
+          -3.8
+        ],
+        "style": "dashed"
+      },
+      {
+        "alias": "ch04__entity__input_vector_a",
+        "color": "#7B61FF",
+        "end": [
+          2.0,
+          0.0,
+          3.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
           0.0
         ]
       },
       {
-        "alias": "ch04__entity__kernel_vector__origin",
-        "coordinates": [
-          -4.0,
+        "alias": "ch04__entity__output_vector_a",
+        "color": "#2A9D8F",
+        "end": [
+          2.0,
+          0.0,
           0.0
         ],
-        "name": "O",
-        "op": "point.upsert"
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
-        "alias": "ch04__entity__kernel_vector__end",
-        "coordinates": [
-          -4.0,
+        "alias": "ch04__entity__input_vector_b",
+        "color": "#7B61FF",
+        "end": [
+          -1.0,
+          2.0,
+          2.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__output_vector_b",
+        "color": "#2A9D8F",
+        "end": [
+          -1.0,
+          2.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__input_vector_c",
+        "color": "#7B61FF",
+        "end": [
+          -1.0,
+          -2.0,
           1.0
         ],
-        "name": "k",
-        "op": "point.upsert"
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__output_vector_c",
+        "color": "#2A9D8F",
+        "end": [
+          -1.0,
+          -2.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
         "alias": "ch04__entity__kernel_vector",
-        "end": "ch04__entity__kernel_vector__end",
+        "color": "#E63946",
+        "end": [
+          0.0,
+          0.0,
+          3.0
+        ],
         "kind": "vector",
-        "op": "linear.upsert",
+        "op": "linear3d.upsert",
         "role": "primary",
-        "start": "ch04__entity__kernel_vector__origin"
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
       },
       {
         "alias": "ch04__entity__zero",
         "coordinates": [
-          4.0,
+          0.0,
+          0.0,
           0.0
         ],
         "name": "0",
-        "op": "point.upsert"
+        "op": "point3d.upsert"
       },
       {
-        "alias": "ch04__entity__image_vector__origin",
+        "alias": "ch04__scene__parallelogram",
+        "op": "geometry.parallelogram3d",
+        "opacity": 0.16,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "vectors": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "alias": "ch04__relation__projection_a",
+        "color": "#7B61FF",
+        "end": [
+          2.0,
+          0.0,
+          0.0
+        ],
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "construction",
+        "start": [
+          2.0,
+          0.0,
+          3.0
+        ],
+        "style": "dashed"
+      },
+      {
+        "alias": "ch04__relation__projection_b",
+        "color": "#7B61FF",
+        "end": [
+          -1.0,
+          2.0,
+          0.0
+        ],
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "construction",
+        "start": [
+          -1.0,
+          2.0,
+          2.0
+        ],
+        "style": "dashed"
+      },
+      {
+        "alias": "ch04__relation__projection_c",
+        "color": "#7B61FF",
+        "end": [
+          -1.0,
+          -2.0,
+          0.0
+        ],
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "construction",
+        "start": [
+          -1.0,
+          -2.0,
+          1.0
+        ],
+        "style": "dashed"
+      },
+      {
+        "alias": "ch04__relation__collapse",
         "coordinates": [
-          4.0,
+          0.0,
+          0.0,
           0.0
         ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch04__entity__image_vector__end",
-        "coordinates": [
-          6.0,
-          0.0
-        ],
-        "name": "A(2,3)",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch04__entity__image_vector",
-        "end": "ch04__entity__image_vector__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "ch04__entity__image_vector__origin"
-      },
-      {
-        "alias": "ch04__relation__kernel_map",
-        "bounds": [
-          -1.25,
-          1.25,
-          -1.25,
-          1.25
-        ],
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "origin": [
-          -4.0,
-          0.0
-        ],
-        "step": 1.0
-      },
-      {
-        "alias": "ch04__relation__kernel_binding",
-        "bounds": [
-          -1.25,
-          1.25,
-          -1.25,
-          1.25
-        ],
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "origin": [
-          -4.0,
-          0.0
-        ],
-        "step": 1.0
-      },
-      {
-        "alias": "ch04__relation__column_binding",
-        "bounds": [
-          -1.25,
-          1.25,
-          -1.25,
-          1.25
-        ],
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "origin": [
-          -4.0,
-          0.0
-        ],
-        "step": 1.0
-      },
-      {
-        "alias": "ch04__relation__domain_image",
-        "bounds": [
-          -1.25,
-          1.25,
-          -1.25,
-          1.25
-        ],
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "origin": [
-          -4.0,
-          0.0
-        ],
-        "step": 1.0
-      },
-      {
-        "alias": "sem__stage.ch04.subspace.col-null.domain__title",
-        "op": "annotation.upsert",
-        "position": [
-          -1.5,
-          2.65
-        ],
-        "text": "核方向"
-      },
-      {
-        "alias": "sem__stage.ch04.subspace.col-null.codomain__title",
-        "op": "annotation.upsert",
-        "position": [
-          1.5,
-          2.65
-        ],
-        "text": "列空间"
+        "name": "0",
+        "op": "point3d.upsert"
       },
       {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
-    "scene": "2d",
+    "scene": "3d",
     "summary": "4.1.3 两大核心子空间：列空间与零空间",
     "version": 1
   },
-  "plan_digest": "sha256:e70e289689a9b9cf640741e6517e88a621792a711d1e7fd99652e2c79d01e456",
+  "plan_digest": "sha256:f59b258d39da4109915fac9306399cabde1f54b7e11153c59e25b7a339998175",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
@@ -427,26 +297,34 @@
         -1.5,
         2.65
       ],
-      "caption": "A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)",
-      "id": "stage.ch04.subspace.col-null.domain",
+      "caption": "\\boldsymbol A=\\operatorname{diag}(1,1,0),\\ Null(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\ Col(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+      "id": "stage.ch04.subspace.col-null.column_space",
       "layout": "side_by_side",
-      "title": "核方向",
+      "title": "列空间：所有可能的输出",
       "visible_aliases": [
-        "ch04__entity__domain",
-        "ch04__entity__kernel",
-        "ch04__entity__kernel_vector",
-        "ch04__entity__zero",
-        "ch04__relation__kernel_map",
-        "ch04__relation__kernel_binding",
-        "sem__stage.ch04.subspace.col-null.domain__title"
+        "ch04__entity__input_vector_a",
+        "ch04__entity__input_vector_b",
+        "ch04__entity__input_vector_c",
+        "ch04__entity__column_space",
+        "ch04__entity__output_vector_a",
+        "ch04__entity__output_vector_b",
+        "ch04__entity__output_vector_c",
+        "ch04__relation__projection_a",
+        "ch04__relation__projection_b",
+        "ch04__relation__projection_c",
+        "sem__stage.ch04.subspace.col-null.column_space__title"
       ],
       "visible_refs": [
-        "entity.ch04.subspace.col-null.domain",
-        "entity.ch04.subspace.col-null.kernel",
-        "entity.ch04.subspace.col-null.kernel_vector",
-        "entity.ch04.subspace.col-null.zero",
-        "relation.ch04.subspace.col-null.kernel_map",
-        "relation.ch04.subspace.col-null.kernel_binding"
+        "entity.ch04.subspace.col-null.input_vector_a",
+        "entity.ch04.subspace.col-null.input_vector_b",
+        "entity.ch04.subspace.col-null.input_vector_c",
+        "entity.ch04.subspace.col-null.column_space",
+        "entity.ch04.subspace.col-null.output_vector_a",
+        "entity.ch04.subspace.col-null.output_vector_b",
+        "entity.ch04.subspace.col-null.output_vector_c",
+        "relation.ch04.subspace.col-null.projection_a",
+        "relation.ch04.subspace.col-null.projection_b",
+        "relation.ch04.subspace.col-null.projection_c"
       ]
     },
     {
@@ -454,26 +332,25 @@
         1.5,
         2.65
       ],
-      "caption": "A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)",
-      "id": "stage.ch04.subspace.col-null.codomain",
+      "caption": "\\boldsymbol A=\\operatorname{diag}(1,1,0),\\ Null(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\ Col(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+      "id": "stage.ch04.subspace.col-null.null_space",
       "layout": "side_by_side",
-      "title": "列空间",
+      "title": "零空间：与平面垂直的方向被压成一点",
       "visible_aliases": [
-        "ch04__entity__map_A",
-        "ch04__entity__codomain",
         "ch04__entity__column_space",
-        "ch04__entity__image_vector",
-        "ch04__relation__column_binding",
-        "ch04__relation__domain_image",
-        "sem__stage.ch04.subspace.col-null.codomain__title"
+        "ch04__entity__null_space",
+        "ch04__entity__null_space__extent_2",
+        "ch04__entity__kernel_vector",
+        "ch04__entity__zero",
+        "ch04__relation__collapse",
+        "sem__stage.ch04.subspace.col-null.null_space__title"
       ],
       "visible_refs": [
-        "entity.ch04.subspace.col-null.map_A",
-        "entity.ch04.subspace.col-null.codomain",
         "entity.ch04.subspace.col-null.column_space",
-        "entity.ch04.subspace.col-null.image_vector",
-        "relation.ch04.subspace.col-null.column_binding",
-        "relation.ch04.subspace.col-null.domain_image"
+        "entity.ch04.subspace.col-null.null_space",
+        "entity.ch04.subspace.col-null.kernel_vector",
+        "entity.ch04.subspace.col-null.zero",
+        "relation.ch04.subspace.col-null.collapse"
       ]
     }
   ],

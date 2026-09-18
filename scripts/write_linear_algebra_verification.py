@@ -166,8 +166,8 @@ def run_verification(
             key=lambda row: str(row.get("topic_id", "")),
         )
     )
-    if len(digests) != 51:
-        raise VerificationFailed("topic-digests", 1, f"expected 51 published topics, got {len(digests)}")
+    if len(digests) != 44:
+        raise VerificationFailed("topic-digests", 1, f"expected 44 published topics, got {len(digests)}")
     destination = Path(output_dir)
     _write_atomic(destination / "topic-digests.json", json.dumps(list(digests), ensure_ascii=False, indent=2, sort_keys=True) + "\n")
     lines = ["# Automated Validation", "", f"Topic digests: {len(digests)}", ""]

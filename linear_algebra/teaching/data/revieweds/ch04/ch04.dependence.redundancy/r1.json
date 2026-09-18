@@ -1,1 +1,447 @@
-{"claims":[{"entity_refs":["entity.ch04.dependence.redundancy.dependent_set","entity.ch04.dependence.redundancy.independent_set","entity.ch04.dependence.redundancy.coefficients","entity.ch04.dependence.redundancy.zero_combination","entity.ch04.dependence.redundancy.redundant_vector"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3","formula_symbols":["dependent_set","independent_set"],"id":"claim.ch04.dependence.redundancy","relation_refs":["relation.ch04.dependence.redundancy.dependent_combination","relation.ch04.dependence.redundancy.independent_rank","relation.ch04.dependence.redundancy.redundancy"],"source_refs":["第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.2 线性相关与线性无关::1::sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c"],"stage_refs":["stage.ch04.dependence.redundancy.dependent","stage.ch04.dependence.redundancy.independent"],"statement":"4.2.2 线性相关与线性无关 的数学主张由显式对象、关系和不变量支持。"}],"connections":[{"claim_refs":["claim.ch04.dependence.redundancy"],"description":"前置的线性表示与几何关系。","id":"connection.ch04.dependence.redundancy.prior","relation":"prerequisite","target_topic_id":"ch03.det.ad-bc"}],"explanation":{"conclusion":"","connections":[],"definition":"#### 4.2.2 线性相关与线性无关\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |","derivation":[],"formula":"c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3","geometric_meaning":"","intuition":"","invariants":["nonzero_coefficients_sum_zero","independent_full_rank"],"pitfalls":[],"read_guide":[],"searchable_text":["4.2.2 线性相关与线性无关","c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3","#### 4.2.2 线性相关与线性无关\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |","nonzero_coefficients_sum_zero","independent_full_rank"],"sections":[{"claim_refs":["claim.ch04.dependence.redundancy"],"id":"definition","text":"#### 4.2.2 线性相关与线性无关\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |","title":"definition"},{"claim_refs":["claim.ch04.dependence.redundancy"],"id":"formula","text":"c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3","title":"formula"},{"claim_refs":["claim.ch04.dependence.redundancy"],"id":"derivation","text":"derivation: 4.2.2 线性相关与线性无关。","title":"derivation"},{"claim_refs":["claim.ch04.dependence.redundancy"],"id":"worked_examples","text":"c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3","title":"worked_examples"},{"claim_refs":["claim.ch04.dependence.redundancy"],"id":"geometric_meaning","text":"geometric_meaning: 4.2.2 线性相关与线性无关。","title":"geometric_meaning"},{"claim_refs":["claim.ch04.dependence.redundancy"],"id":"pitfalls","text":"pitfalls: 4.2.2 线性相关与线性无关。","title":"pitfalls"},{"claim_refs":["claim.ch04.dependence.redundancy"],"id":"connections","text":"connections: 4.2.2 线性相关与线性无关。","title":"connections"},{"claim_refs":[],"id":"invariants","text":"nonzero_coefficients_sum_zero\nindependent_full_rank","title":"invariants"}],"summary":"4.2.2 线性相关与线性无关","symbol_roles":{"coefficients":"coefficients","dependent_set":"dependent_set","independent_set":"independent_set","redundant_vector":"redundant_vector","zero_combination":"zero_combination"},"title":"4.2.2 线性相关与线性无关","worked_examples":[{"calculation":["c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3"],"checks":[{"expected":1,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch04.dependence.redundancy"],"given":[[1,0,0],[0,1,0],[0,0,1]],"id":"example.ch04.dependence.redundancy","kind":"oriented_volume","result":1,"title":"主题数值例"}]},"generated":{"artifact_digest":"sha256:e52e97d3e7ee148628959fa1b8147eccaa506b2201973d9c22c631126b101e5d","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:731bf659292d0bbb53589baecb25e33244a84673a6836ed8366c56e34240a8de","source_hash":"sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c"},"revision":1,"schema_version":1,"source":{"excerpt":"#### 4.2.2 线性相关与线性无关\n\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |","heading_level":4,"heading_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.2 线性组合、线性相关与线性无关","4.2.2 线性相关与线性无关"],"neighboring_titles":["4.2.1 生成集 Span","4.2.3 判定方法——拼矩阵解 $Ax=0$"],"occurrence":1,"source_hash":"sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c","source_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.2 线性组合、线性相关与线性无关","4.2.2 线性相关与线性无关"],"spans":[{"end_line":1526,"fingerprint":"sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c","heading_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.2 线性组合、线性相关与线性无关","4.2.2 线性相关与线性无关"],"id":"第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.2 线性相关与线性无关::1::sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c","start_line":1516,"text":"#### 4.2.2 线性相关与线性无关\n\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |"}]},"status":"reviewed","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch04.dependence.redundancy","visual_semantics":{"entities":[{"claim_refs":["claim.ch04.dependence.redundancy"],"dimension":3,"id":"entity.ch04.dependence.redundancy.dependent_set","kind":"basis","label":"相关组","role":"dependent_set","value":[[1,0,0],[0,1,0],[1,1,0]]},{"claim_refs":["claim.ch04.dependence.redundancy"],"dimension":3,"id":"entity.ch04.dependence.redundancy.independent_set","kind":"basis","label":"无关组","role":"independent_set","value":[[1,0,0],[0,1,0],[0,0,1]]},{"claim_refs":["claim.ch04.dependence.redundancy"],"dimension":3,"id":"entity.ch04.dependence.redundancy.coefficients","kind":"vector","label":"(1,1,-1)","role":"coefficients","value":[1,1,-1]},{"claim_refs":["claim.ch04.dependence.redundancy"],"dimension":3,"id":"entity.ch04.dependence.redundancy.zero_combination","kind":"point","label":"0","role":"zero_combination","value":[0,0,0]},{"claim_refs":["claim.ch04.dependence.redundancy"],"dimension":3,"id":"entity.ch04.dependence.redundancy.redundant_vector","kind":"vector","label":"c₃","role":"redundant_vector","value":[1,1,0]}],"relations":[{"claim_refs":["claim.ch04.dependence.redundancy"],"id":"relation.ch04.dependence.redundancy.dependent_combination","kind":"linear_combination","parameters":{"coefficients":[1,1,-1],"expected_result":[0,0,0]},"source_ref":"entity.ch04.dependence.redundancy.dependent_set","target_ref":"entity.ch04.dependence.redundancy.zero_combination"},{"claim_refs":["claim.ch04.dependence.redundancy"],"id":"relation.ch04.dependence.redundancy.independent_rank","kind":"dimension_of","parameters":{"expected_dimension":3},"source_ref":"entity.ch04.dependence.redundancy.independent_set","target_ref":"entity.ch04.dependence.redundancy.independent_set"},{"claim_refs":["claim.ch04.dependence.redundancy"],"id":"relation.ch04.dependence.redundancy.redundancy","kind":"sum","parameters":{"coefficients":[1,1,-1],"expected_result":[1,1,0]},"source_ref":"entity.ch04.dependence.redundancy.dependent_set","target_ref":"entity.ch04.dependence.redundancy.redundant_vector"}],"scene_family":"basis_change","scene_kind":"3d","stages":[{"caption":"c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3","expected_invariants":["nonzero_coefficients_sum_zero"],"id":"stage.ch04.dependence.redundancy.dependent","input_entity_refs":["entity.ch04.dependence.redundancy.dependent_set","entity.ch04.dependence.redundancy.coefficients"],"layout":"sequence","output_entity_refs":["entity.ch04.dependence.redundancy.zero_combination","entity.ch04.dependence.redundancy.redundant_vector"],"relation_refs":["relation.ch04.dependence.redundancy.dependent_combination","relation.ch04.dependence.redundancy.redundancy"],"title":"非零系数组合为零"},{"caption":"c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3","expected_invariants":["independent_full_rank"],"id":"stage.ch04.dependence.redundancy.independent","input_entity_refs":["entity.ch04.dependence.redundancy.independent_set"],"layout":"sequence","output_entity_refs":["entity.ch04.dependence.redundancy.independent_set"],"relation_refs":["relation.ch04.dependence.redundancy.independent_rank"],"title":"满秩无关组"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.dependence.redundancy.dependent_set",
+        "entity.ch04.dependence.redundancy.independent_set",
+        "entity.ch04.dependence.redundancy.coefficients",
+        "entity.ch04.dependence.redundancy.zero_combination",
+        "entity.ch04.dependence.redundancy.redundant_vector"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
+      "formula_symbols": [
+        "dependent_set",
+        "independent_set"
+      ],
+      "id": "claim.ch04.dependence.redundancy",
+      "relation_refs": [
+        "relation.ch04.dependence.redundancy.dependent_combination",
+        "relation.ch04.dependence.redundancy.independent_rank",
+        "relation.ch04.dependence.redundancy.redundancy"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.2 线性相关与线性无关::1::sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c"
+      ],
+      "stage_refs": [
+        "stage.ch04.dependence.redundancy.dependent",
+        "stage.ch04.dependence.redundancy.independent"
+      ],
+      "statement": "4.2.2 线性相关与线性无关 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.dependence.redundancy"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.dependence.redundancy.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "conclusion": "",
+    "connections": [],
+    "definition": "#### 4.2.2 线性相关与线性无关\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |",
+    "derivation": [],
+    "formula": "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
+    "geometric_meaning": "",
+    "intuition": "",
+    "invariants": [
+      "nonzero_coefficients_sum_zero",
+      "independent_full_rank"
+    ],
+    "pitfalls": [],
+    "read_guide": [],
+    "searchable_text": [
+      "4.2.2 线性相关与线性无关",
+      "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
+      "#### 4.2.2 线性相关与线性无关\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |",
+      "nonzero_coefficients_sum_zero",
+      "independent_full_rank"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "definition",
+        "text": "#### 4.2.2 线性相关与线性无关\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "formula",
+        "text": "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "derivation",
+        "text": "derivation: 4.2.2 线性相关与线性无关。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "worked_examples",
+        "text": "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.2.2 线性相关与线性无关。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.2.2 线性相关与线性无关。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "connections",
+        "text": "connections: 4.2.2 线性相关与线性无关。",
+        "title": "connections"
+      },
+      {
+        "claim_refs": [],
+        "id": "invariants",
+        "text": "nonzero_coefficients_sum_zero\nindependent_full_rank",
+        "title": "invariants"
+      }
+    ],
+    "summary": "4.2.2 线性相关与线性无关",
+    "symbol_roles": {
+      "coefficients": "coefficients",
+      "dependent_set": "dependent_set",
+      "independent_set": "independent_set",
+      "redundant_vector": "redundant_vector",
+      "zero_combination": "zero_combination"
+    },
+    "title": "4.2.2 线性相关与线性无关",
+    "worked_examples": [
+      {
+        "calculation": [
+          "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3"
+        ],
+        "checks": [
+          {
+            "expected": 1.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "given": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch04.dependence.redundancy",
+        "kind": "oriented_volume",
+        "result": 1.0,
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:409b6bc8432a918eb21455f4ae95249c382001f7beddd4d92d4c12b0226ad548",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:f54e77134acfe940357d1c28ce81525f3aa4b445b0e19271ecc4ec4bce1b1357",
+    "source_hash": "sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.2.2 线性相关与线性无关\n\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |",
+    "heading_level": 4,
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.2 线性组合、线性相关与线性无关",
+      "4.2.2 线性相关与线性无关"
+    ],
+    "neighboring_titles": [
+      "4.2.1 生成集 Span",
+      "4.2.3 判定方法——拼矩阵解 $Ax=0$"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.2 线性组合、线性相关与线性无关",
+      "4.2.2 线性相关与线性无关"
+    ],
+    "spans": [
+      {
+        "end_line": 1408,
+        "fingerprint": "sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c",
+        "heading_path": [
+          "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+          "4.2 线性组合、线性相关与线性无关",
+          "4.2.2 线性相关与线性无关"
+        ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.2 线性相关与线性无关::1::sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c",
+        "start_line": 1398,
+        "text": "#### 4.2.2 线性相关与线性无关\n\n定义 4.6（线性无关） $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n定义 4.7（线性相关） 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\"冗余\"的。\n\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch04.dependence.redundancy",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.dependence.redundancy.dependent_set",
+        "kind": "basis",
+        "label": "相关组",
+        "role": "dependent_set",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.dependence.redundancy.independent_set",
+        "kind": "basis",
+        "label": "无关组",
+        "role": "independent_set",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.dependence.redundancy.coefficients",
+        "kind": "vector",
+        "label": "(1,1,-1)",
+        "role": "coefficients",
+        "value": [
+          1.0,
+          1.0,
+          -1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.dependence.redundancy.zero_combination",
+        "kind": "point",
+        "label": "0",
+        "role": "zero_combination",
+        "value": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.dependence.redundancy.redundant_vector",
+        "kind": "vector",
+        "label": "c₃",
+        "role": "redundant_vector",
+        "value": [
+          1.0,
+          1.0,
+          0.0
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "relation.ch04.dependence.redundancy.dependent_combination",
+        "kind": "linear_combination",
+        "parameters": {
+          "coefficients": [
+            1.0,
+            1.0,
+            -1.0
+          ],
+          "expected_result": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "source_ref": "entity.ch04.dependence.redundancy.dependent_set",
+        "target_ref": "entity.ch04.dependence.redundancy.zero_combination"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "relation.ch04.dependence.redundancy.independent_rank",
+        "kind": "dimension_of",
+        "parameters": {
+          "expected_dimension": 3.0
+        },
+        "source_ref": "entity.ch04.dependence.redundancy.independent_set",
+        "target_ref": "entity.ch04.dependence.redundancy.independent_set"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "relation.ch04.dependence.redundancy.redundancy",
+        "kind": "sum",
+        "parameters": {
+          "coefficients": [
+            1.0,
+            1.0,
+            -1.0
+          ],
+          "expected_result": [
+            1.0,
+            1.0,
+            0.0
+          ]
+        },
+        "source_ref": "entity.ch04.dependence.redundancy.dependent_set",
+        "target_ref": "entity.ch04.dependence.redundancy.redundant_vector"
+      }
+    ],
+    "scene_family": "basis_change",
+    "scene_kind": "3d",
+    "stages": [
+      {
+        "caption": "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
+        "expected_invariants": [
+          "nonzero_coefficients_sum_zero"
+        ],
+        "id": "stage.ch04.dependence.redundancy.dependent",
+        "input_entity_refs": [
+          "entity.ch04.dependence.redundancy.dependent_set",
+          "entity.ch04.dependence.redundancy.coefficients"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch04.dependence.redundancy.zero_combination",
+          "entity.ch04.dependence.redundancy.redundant_vector"
+        ],
+        "relation_refs": [
+          "relation.ch04.dependence.redundancy.dependent_combination",
+          "relation.ch04.dependence.redundancy.redundancy"
+        ],
+        "title": "非零系数组合为零"
+      },
+      {
+        "caption": "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
+        "expected_invariants": [
+          "independent_full_rank"
+        ],
+        "id": "stage.ch04.dependence.redundancy.independent",
+        "input_entity_refs": [
+          "entity.ch04.dependence.redundancy.independent_set"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch04.dependence.redundancy.independent_set"
+        ],
+        "relation_refs": [
+          "relation.ch04.dependence.redundancy.independent_rank"
+        ],
+        "title": "满秩无关组"
+      }
+    ]
+  }
+}

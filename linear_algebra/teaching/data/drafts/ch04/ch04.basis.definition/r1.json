@@ -1,0 +1,367 @@
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.basis.definition.standard_basis",
+        "entity.ch04.basis.definition.oblique_basis",
+        "entity.ch04.basis.definition.same_vector"
+      ],
+      "explanation_refs": [
+        "definition",
+        "derivation",
+        "worked_examples"
+      ],
+      "formula": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+      "formula_symbols": [
+        "standard_basis",
+        "oblique_basis"
+      ],
+      "id": "claim.ch04.basis.definition",
+      "relation_refs": [
+        "relation.ch04.basis.definition.standard_readout",
+        "relation.ch04.basis.definition.oblique_readout"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数::1::sha256:673e2bba22d2d77b10624b8aabf9b10e61619c2f9736345c9c6ecdf17b9d82e0"
+      ],
+      "stage_refs": [
+        "stage.ch04.basis.definition.standard",
+        "stage.ch04.basis.definition.oblique"
+      ],
+      "statement": "基的定义 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.basis.definition"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.basis.definition.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "conclusion": "数值关系与讲义定义一致。",
+    "connections": [
+      "与前置线性表示相连。"
+    ],
+    "definition": "基的定义 的对象和定义。",
+    "derivation": [
+      "代入 v=(1,2)。",
+      "计算得到 result=(2,4)。"
+    ],
+    "formula": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+    "geometric_meaning": "向量在有限维空间中的方向和尺度保持可读。",
+    "invariants": [
+      "basis_independent_and_spanning",
+      "standard_reconstruction",
+      "coordinate_reconstruction"
+    ],
+    "pitfalls": [
+      "不要混淆对象和坐标。"
+    ],
+    "read_guide": [
+      "先定义，再公式，最后读数值例。"
+    ],
+    "searchable_text": [
+      "基的定义",
+      "线性空间",
+      "数值例"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.basis.definition"
+        ],
+        "id": "definition",
+        "text": "definition: 基的定义。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.basis.definition"
+        ],
+        "id": "derivation",
+        "text": "derivation: 基的定义。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.basis.definition"
+        ],
+        "id": "worked_examples",
+        "text": "worked_examples: 基的定义。",
+        "title": "worked_examples"
+      }
+    ],
+    "summary": "基的定义 的确定性数学语义 artifact。",
+    "symbol_roles": {
+      "oblique_basis": "oblique_basis",
+      "same_vector": "same_vector",
+      "standard_basis": "standard_basis"
+    },
+    "title": "基的定义",
+    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "worked_examples": [
+      {
+        "calculation": [
+          "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              5.0,
+              3.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.basis.definition"
+        ],
+        "given": [
+          [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              -1.0
+            ]
+          ],
+          [
+            4.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch04.basis.definition",
+        "kind": "matrix_transform",
+        "result": [
+          5.0,
+          3.0
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:0885e47f3d24a6553d153b09b35ab6d6b33144f117fb8de1bd86a1399928c183",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:cb6fb77c6f5e708debaa38c11d3495b7cbbc321509d27a1e5997ba4df0b77efe",
+    "source_hash": "sha256:673e2bba22d2d77b10624b8aabf9b10e61619c2f9736345c9c6ecdf17b9d82e0"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 4.3 基与维数\n\n#### 4.3.1 基的定义\n\n定义 4.10（基） V 的一组基满足两个条件：\n1. 线性无关 —— 没有冗余\n2. 生成整个空间 —— 任何向量都能写成基的线性组合\n基 $=$ \"最小的完整尺子组\"——少了量不全，多了有冗余。\n标准基 $e_{1},...,e_{n}$ 是 $R^{n}$ 最常见的一组基。\n\n#### 4.3.2 维数\n\n定理 4.1（维数唯一性） 同一空间任何基的向量个数相等。这个个数 $=$ 空间的维数 $\\dim(V)$。\n$R^{2}$ 的维数 $= 2$，$R^{3}$ 的维数 $= 3$。\n维数的关键性质：\n1. 若 H 是 V 的子空间，则 $\\dim(H) \\leq \\dim(V)$\n2. $\\dim(R^{n}) = n$\n3. 一组基恰好含有 $\\dim(V)$ 个向量——不能多（多了必相关），不能少（少了张不满整个空间）\n4. 若一组线性无关向量个数 $= \\dim(V)$，则它自动构成一组基（不需要再验证\"生成\"条件）\n\n##### 性质 4 的证明（基中向量个数$=\\dim(V)$时自动成基）\n\n设 $\\{v_{1}, \\dots ,v_{n}\\}$ 是 $\\dim(V)=n$ 的空间中 n 个线性无关的向量。\n若它们不生成 V，则存在 $w \\in V$ 无法表示为它们的线性组合 $\\rightarrow {v_{1}, \\dots ,v_{n},w}$ 中有 $n+1$ 个向量线性无关 $\\rightarrow$ 与 $\\dim(V)=n$ 矛盾。\n因此 n 个线性无关向量必然生成整个空间，自动构成一组基。■\n\n#### 4.3.3 坐标——向量的\"读数\"\n\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n\n##### 分层例题\n\n例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。",
+    "heading_level": 3,
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.3 基与维数"
+    ],
+    "neighboring_titles": [
+      "4.2 线性组合、线性相关与线性无关",
+      "4.4 线性变换"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:673e2bba22d2d77b10624b8aabf9b10e61619c2f9736345c9c6ecdf17b9d82e0",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.3 基与维数",
+      "基的定义"
+    ],
+    "spans": [
+      {
+        "end_line": 1504,
+        "fingerprint": "sha256:673e2bba22d2d77b10624b8aabf9b10e61619c2f9736345c9c6ecdf17b9d82e0",
+        "heading_path": [
+          "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+          "4.3 基与维数"
+        ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数::1::sha256:673e2bba22d2d77b10624b8aabf9b10e61619c2f9736345c9c6ecdf17b9d82e0",
+        "start_line": 1453,
+        "text": "### 4.3 基与维数\n\n#### 4.3.1 基的定义\n\n定义 4.10（基） V 的一组基满足两个条件：\n1. 线性无关 —— 没有冗余\n2. 生成整个空间 —— 任何向量都能写成基的线性组合\n基 $=$ \"最小的完整尺子组\"——少了量不全，多了有冗余。\n标准基 $e_{1},...,e_{n}$ 是 $R^{n}$ 最常见的一组基。\n\n#### 4.3.2 维数\n\n定理 4.1（维数唯一性） 同一空间任何基的向量个数相等。这个个数 $=$ 空间的维数 $\\dim(V)$。\n$R^{2}$ 的维数 $= 2$，$R^{3}$ 的维数 $= 3$。\n维数的关键性质：\n1. 若 H 是 V 的子空间，则 $\\dim(H) \\leq \\dim(V)$\n2. $\\dim(R^{n}) = n$\n3. 一组基恰好含有 $\\dim(V)$ 个向量——不能多（多了必相关），不能少（少了张不满整个空间）\n4. 若一组线性无关向量个数 $= \\dim(V)$，则它自动构成一组基（不需要再验证\"生成\"条件）\n\n##### 性质 4 的证明（基中向量个数$=\\dim(V)$时自动成基）\n\n设 $\\{v_{1}, \\dots ,v_{n}\\}$ 是 $\\dim(V)=n$ 的空间中 n 个线性无关的向量。\n若它们不生成 V，则存在 $w \\in V$ 无法表示为它们的线性组合 $\\rightarrow {v_{1}, \\dots ,v_{n},w}$ 中有 $n+1$ 个向量线性无关 $\\rightarrow$ 与 $\\dim(V)=n$ 矛盾。\n因此 n 个线性无关向量必然生成整个空间，自动构成一组基。■\n\n#### 4.3.3 坐标——向量的\"读数\"\n\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n\n##### 分层例题\n\n例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。"
+      }
+    ]
+  },
+  "status": "draft",
+  "teaching_profile": {
+    "minimum_level": 2,
+    "required_sections": [
+      "definition",
+      "derivation",
+      "worked_examples"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch04.basis.definition",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch04.basis.definition"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.basis.definition.standard_basis",
+        "kind": "basis",
+        "label": "e",
+        "role": "standard_basis",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.basis.definition"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.basis.definition.oblique_basis",
+        "kind": "basis",
+        "label": "B",
+        "role": "oblique_basis",
+        "value": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            -1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.basis.definition"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.basis.definition.same_vector",
+        "kind": "vector",
+        "label": "x",
+        "role": "same_vector",
+        "value": [
+          5.0,
+          3.0
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch04.basis.definition"
+        ],
+        "id": "relation.ch04.basis.definition.standard_readout",
+        "kind": "coordinate_equivalence",
+        "parameters": {
+          "basis_matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "coordinates": [
+            5.0,
+            3.0
+          ],
+          "expected_vector": [
+            5.0,
+            3.0
+          ]
+        },
+        "source_ref": "entity.ch04.basis.definition.standard_basis",
+        "target_ref": "entity.ch04.basis.definition.same_vector"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.basis.definition"
+        ],
+        "id": "relation.ch04.basis.definition.oblique_readout",
+        "kind": "coordinate_equivalence",
+        "parameters": {
+          "basis_matrix": [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              -1.0
+            ]
+          ],
+          "coordinates": [
+            4.0,
+            1.0
+          ],
+          "expected_vector": [
+            5.0,
+            3.0
+          ]
+        },
+        "source_ref": "entity.ch04.basis.definition.oblique_basis",
+        "target_ref": "entity.ch04.basis.definition.same_vector"
+      }
+    ],
+    "scene_family": "basis_change",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+        "expected_invariants": [
+          "standard_reconstruction"
+        ],
+        "id": "stage.ch04.basis.definition.standard",
+        "input_entity_refs": [
+          "entity.ch04.basis.definition.standard_basis",
+          "entity.ch04.basis.definition.same_vector"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.basis.definition.same_vector"
+        ],
+        "relation_refs": [
+          "relation.ch04.basis.definition.standard_readout"
+        ],
+        "title": "标准基下的读数"
+      },
+      {
+        "caption": "\\boldsymbol x=5\\boldsymbol e_1+3\\boldsymbol e_2=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix}\\begin{pmatrix}4\\\\1\\end{pmatrix}=(5,3)",
+        "expected_invariants": [
+          "basis_independent_and_spanning",
+          "coordinate_reconstruction"
+        ],
+        "id": "stage.ch04.basis.definition.oblique",
+        "input_entity_refs": [
+          "entity.ch04.basis.definition.oblique_basis",
+          "entity.ch04.basis.definition.same_vector"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.basis.definition.same_vector"
+        ],
+        "relation_refs": [
+          "relation.ch04.basis.definition.oblique_readout"
+        ],
+        "title": "新基下的读数"
+      }
+    ]
+  }
+}

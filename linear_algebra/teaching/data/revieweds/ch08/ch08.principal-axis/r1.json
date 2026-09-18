@@ -1,1 +1,553 @@
-{"claims":[{"entity_refs":["entity.ch08.principal-axis.matrix","entity.ch08.principal-axis.axes","entity.ch08.principal-axis.standard","entity.ch08.principal-axis.point","entity.ch08.principal-axis.coordinates"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"Q^T A Q=diag(8,2); x=Qy","formula_symbols":["matrix","axes","standard","point","coordinates"],"id":"claim.ch08.principal-axis","relation_refs":["relation.ch08.principal-axis.orthogonal_axes","relation.ch08.principal-axis.rotation","relation.ch08.principal-axis.standard_form"],"source_refs":["第8章 二次型与主轴定理 / 8.3 主轴定理：把歪的图形\"转正\" / 8.3.1 主轴定理::1::sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435"],"stage_refs":["original","axes","standard"],"statement":"8.3.1 主轴定理 的数学主张由显式对象、关系和不变量支持。"}],"connections":[{"claim_refs":["claim.ch08.principal-axis"],"description":"前置的线性表示与几何关系。","id":"connection.ch08.principal-axis.prior","relation":"prerequisite","target_topic_id":"ch03.det.ad-bc"}],"explanation":{"conclusion":"","connections":[],"definition":"#### 8.3.1 主轴定理\n定理 8.3（主轴定理） 设 A 是 $n \\times n$ 实对称矩阵。则存在正交矩阵 Q（$Q^{-1} = Q^{T}$），使得：\n$$\nQ^{T} A Q = D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})\n$$\n其中 $\\lambda_{1}, ..., \\lambda_{n}$ 是 A 的特征值，Q 的列是对应的正交归一化的特征向量。\n由此：做变量替换 $x = Qy$，二次型变为标准形：\n$$\nQ(x) = x^{T}Ax = (Qy)^{T}A(Qy) = y^{T}(Q^{T}AQ)y = y^{T}Dy = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2} + ... + \\lambda_{n}y_{n}^{2}\n$$","derivation":["原始倾斜二次型: Q^T A Q=diag(8,2); x=Qy","正交主轴坐标: Q^T A Q=diag(8,2); x=Qy","无交叉项标准形: Q^T A Q=diag(8,2); x=Qy","三步理解：\n原始二次型（x 坐标）：\n$Q(x) = ax^{2} + 2bxy + cy^{2}$   有 xy 项——图形歪\n旋转到特征基（y 坐标）：\n$y = Q^{T}x$（或等价地 $x = Qy$）\n$Q(y) = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2}$      没有 $y_{1}y_{2}$ 项——图形正了！"],"formula":"Q^T A Q=diag(8,2); x=Qy","geometric_meaning":"几何上：\n$y_{1}$ 轴 $= q_{1}$（第一个特征向量方向）$=$ 主轴一\n$y_{2}$ 轴 $= q_{2}$（第二个特征向量方向）$=$ 主轴二\n$\\lambda_{1} =$ 沿主轴一的\"紧度\"系数\n$\\lambda_{2} =$ 沿主轴二的\"紧度\"系数","intuition":"","invariants":["axes_are_eigenvectors","same_quadratic_value","cross_term_zero"],"pitfalls":[],"read_guide":[],"searchable_text":["8.3.1 主轴定理","Q^T A Q=diag(8,2); x=Qy","#### 8.3.1 主轴定理\n定理 8.3（主轴定理） 设 A 是 $n \\times n$ 实对称矩阵。则存在正交矩阵 Q（$Q^{-1} = Q^{T}$），使得：\n$$\nQ^{T} A Q = D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})\n$$\n其中 $\\lambda_{1}, ..., \\lambda_{n}$ 是 A 的特征值，Q 的列是对应的正交归一化的特征向量。\n由此：做变量替换 $x = Qy$，二次型变为标准形：\n$$\nQ(x) = x^{T}Ax = (Qy)^{T}A(Qy) = y^{T}(Q^{T}AQ)y = y^{T}Dy = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2} + ... + \\lambda_{n}y_{n}^{2}\n$$","原始倾斜二次型: Q^T A Q=diag(8,2); x=Qy","正交主轴坐标: Q^T A Q=diag(8,2); x=Qy","无交叉项标准形: Q^T A Q=diag(8,2); x=Qy","三步理解：\n原始二次型（x 坐标）：\n$Q(x) = ax^{2} + 2bxy + cy^{2}$   有 xy 项——图形歪\n旋转到特征基（y 坐标）：\n$y = Q^{T}x$（或等价地 $x = Qy$）\n$Q(y) = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2}$      没有 $y_{1}y_{2}$ 项——图形正了！","几何上：\n$y_{1}$ 轴 $= q_{1}$（第一个特征向量方向）$=$ 主轴一\n$y_{2}$ 轴 $= q_{2}$（第二个特征向量方向）$=$ 主轴二\n$\\lambda_{1} =$ 沿主轴一的\"紧度\"系数\n$\\lambda_{2} =$ 沿主轴二的\"紧度\"系数","axes_are_eigenvectors","same_quadratic_value","cross_term_zero"],"sections":[{"claim_refs":["claim.ch08.principal-axis"],"id":"definition","text":"#### 8.3.1 主轴定理\n定理 8.3（主轴定理） 设 A 是 $n \\times n$ 实对称矩阵。则存在正交矩阵 Q（$Q^{-1} = Q^{T}$），使得：\n$$\nQ^{T} A Q = D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})\n$$\n其中 $\\lambda_{1}, ..., \\lambda_{n}$ 是 A 的特征值，Q 的列是对应的正交归一化的特征向量。\n由此：做变量替换 $x = Qy$，二次型变为标准形：\n$$\nQ(x) = x^{T}Ax = (Qy)^{T}A(Qy) = y^{T}(Q^{T}AQ)y = y^{T}Dy = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2} + ... + \\lambda_{n}y_{n}^{2}\n$$","title":"definition"},{"claim_refs":["claim.ch08.principal-axis"],"id":"formula","text":"Q^T A Q=diag(8,2); x=Qy","title":"formula"},{"claim_refs":["claim.ch08.principal-axis"],"id":"derivation","text":"原始倾斜二次型: Q^T A Q=diag(8,2); x=Qy\n正交主轴坐标: Q^T A Q=diag(8,2); x=Qy\n无交叉项标准形: Q^T A Q=diag(8,2); x=Qy\n三步理解：\n原始二次型（x 坐标）：\n$Q(x) = ax^{2} + 2bxy + cy^{2}$   有 xy 项——图形歪\n旋转到特征基（y 坐标）：\n$y = Q^{T}x$（或等价地 $x = Qy$）\n$Q(y) = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2}$      没有 $y_{1}y_{2}$ 项——图形正了！","title":"derivation"},{"claim_refs":["claim.ch08.principal-axis"],"id":"worked_examples","text":"det(A)=a11*a22-a12*a21","title":"worked_examples"},{"claim_refs":["claim.ch08.principal-axis"],"id":"geometric_meaning","text":"几何上：\n$y_{1}$ 轴 $= q_{1}$（第一个特征向量方向）$=$ 主轴一\n$y_{2}$ 轴 $= q_{2}$（第二个特征向量方向）$=$ 主轴二\n$\\lambda_{1} =$ 沿主轴一的\"紧度\"系数\n$\\lambda_{2} =$ 沿主轴二的\"紧度\"系数","title":"geometric_meaning"},{"claim_refs":["claim.ch08.principal-axis"],"id":"pitfalls","text":"pitfalls: 8.3.1 主轴定理。","title":"pitfalls"},{"claim_refs":["claim.ch08.principal-axis"],"id":"connections","text":"connections: 8.3.1 主轴定理。","title":"connections"},{"claim_refs":[],"id":"invariants","text":"axes_are_eigenvectors\nsame_quadratic_value\ncross_term_zero","title":"invariants"}],"summary":"8.3.1 主轴定理","symbol_roles":{"axes":"axes","coordinates":"coordinates","matrix":"matrix","point":"point","standard":"standard"},"title":"8.3.1 主轴定理","worked_examples":[{"calculation":["det(A)=a11*a22-a12*a21"],"checks":[{"expected":16,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch08.principal-axis"],"given":[[5,-3],[-3,5]],"id":"example.ch08.principal-axis.matrix","kind":"determinant","result":16,"title":"matrix"},{"calculation":["det(A)=a11*a22-a12*a21"],"checks":[{"expected":16,"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch08.principal-axis"],"given":[[8,0],[0,2]],"id":"example.ch08.principal-axis.standard","kind":"determinant","result":16,"title":"standard"}]},"generated":{"artifact_digest":"sha256:7dd09a04932756d7eaccb4ff9f70cabf0b137d28cc606614d55aed060c7a45fe","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:8c4c80c3bf5069383f5976acd7a15ab2c8d1503df5a5767d73858d603b9a106e","source_hash":"sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435"},"revision":1,"schema_version":1,"source":{"excerpt":"#### 8.3.1 主轴定理\n\n定理 8.3（主轴定理） 设 A 是 $n \\times n$ 实对称矩阵。则存在正交矩阵 Q（$Q^{-1} = Q^{T}$），使得：\n$$\nQ^{T} A Q = D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})\n$$\n其中 $\\lambda_{1}, ..., \\lambda_{n}$ 是 A 的特征值，Q 的列是对应的正交归一化的特征向量。\n由此：做变量替换 $x = Qy$，二次型变为标准形：\n$$\nQ(x) = x^{T}Ax = (Qy)^{T}A(Qy) = y^{T}(Q^{T}AQ)y = y^{T}Dy = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2} + ... + \\lambda_{n}y_{n}^{2}\n$$\n\n三步理解：\n原始二次型（x 坐标）：\n$Q(x) = ax^{2} + 2bxy + cy^{2}$   有 xy 项——图形歪\n\n旋转到特征基（y 坐标）：\n$y = Q^{T}x$（或等价地 $x = Qy$）\n$Q(y) = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2}$      没有 $y_{1}y_{2}$ 项——图形正了！\n\n几何上：\n$y_{1}$ 轴 $= q_{1}$（第一个特征向量方向）$=$ 主轴一\n$y_{2}$ 轴 $= q_{2}$（第二个特征向量方向）$=$ 主轴二\n$\\lambda_{1} =$ 沿主轴一的\"紧度\"系数\n$\\lambda_{2} =$ 沿主轴二的\"紧度\"系数","heading_level":4,"heading_path":["第8章 二次型与主轴定理","8.3 主轴定理：把歪的图形\"转正\"","8.3.1 主轴定理"],"neighboring_titles":["8.3.2 完整计算例题"],"occurrence":1,"source_hash":"sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435","source_path":["第8章 二次型与主轴定理","8.3 主轴定理：把歪的图形\"转正\"","8.3.1 主轴定理"],"spans":[{"end_line":2612,"fingerprint":"sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435","heading_path":["第8章 二次型与主轴定理","8.3 主轴定理：把歪的图形\"转正\"","8.3.1 主轴定理"],"id":"第8章 二次型与主轴定理 / 8.3 主轴定理：把歪的图形\"转正\" / 8.3.1 主轴定理::1::sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435","start_line":2587,"text":"#### 8.3.1 主轴定理\n\n定理 8.3（主轴定理） 设 A 是 $n \\times n$ 实对称矩阵。则存在正交矩阵 Q（$Q^{-1} = Q^{T}$），使得：\n$$\nQ^{T} A Q = D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})\n$$\n其中 $\\lambda_{1}, ..., \\lambda_{n}$ 是 A 的特征值，Q 的列是对应的正交归一化的特征向量。\n由此：做变量替换 $x = Qy$，二次型变为标准形：\n$$\nQ(x) = x^{T}Ax = (Qy)^{T}A(Qy) = y^{T}(Q^{T}AQ)y = y^{T}Dy = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2} + ... + \\lambda_{n}y_{n}^{2}\n$$\n\n三步理解：\n原始二次型（x 坐标）：\n$Q(x) = ax^{2} + 2bxy + cy^{2}$   有 xy 项——图形歪\n\n旋转到特征基（y 坐标）：\n$y = Q^{T}x$（或等价地 $x = Qy$）\n$Q(y) = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2}$      没有 $y_{1}y_{2}$ 项——图形正了！\n\n几何上：\n$y_{1}$ 轴 $= q_{1}$（第一个特征向量方向）$=$ 主轴一\n$y_{2}$ 轴 $= q_{2}$（第二个特征向量方向）$=$ 主轴二\n$\\lambda_{1} =$ 沿主轴一的\"紧度\"系数\n$\\lambda_{2} =$ 沿主轴二的\"紧度\"系数"}]},"status":"reviewed","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch08.principal-axis","visual_semantics":{"entities":[{"claim_refs":["claim.ch08.principal-axis"],"dimension":2,"id":"entity.ch08.principal-axis.matrix","kind":"matrix","label":"matrix","role":"matrix","value":[[5,-3],[-3,5]]},{"claim_refs":["claim.ch08.principal-axis"],"dimension":2,"id":"entity.ch08.principal-axis.axes","kind":"matrix","label":"axes","role":"axes","value":[[0.7071067811865475,0.7071067811865475],[-0.7071067811865475,0.7071067811865475]]},{"claim_refs":["claim.ch08.principal-axis"],"dimension":2,"id":"entity.ch08.principal-axis.standard","kind":"matrix","label":"standard","role":"standard","value":[[8,0],[0,2]]},{"claim_refs":["claim.ch08.principal-axis"],"dimension":2,"id":"entity.ch08.principal-axis.point","kind":"vector","label":"point","role":"point","value":[2,1]},{"claim_refs":["claim.ch08.principal-axis"],"dimension":2,"id":"entity.ch08.principal-axis.coordinates","kind":"vector","label":"coordinates","role":"coordinates","value":[0.7071067811865475,2.1213203435596424]}],"relations":[{"claim_refs":["claim.ch08.principal-axis"],"id":"relation.ch08.principal-axis.orthogonal_axes","kind":"maps_to","parameters":{"axes":[[0.7071067811865475,0.7071067811865475],[-0.7071067811865475,0.7071067811865475]],"eigenvalues":[8,2],"matrix":[[5,-3],[-3,5]]},"source_ref":"entity.ch08.principal-axis.matrix","target_ref":"entity.ch08.principal-axis.axes"},{"claim_refs":["claim.ch08.principal-axis"],"id":"relation.ch08.principal-axis.rotation","kind":"maps_to","parameters":{"axes":[[0.7071067811865475,0.7071067811865475],[-0.7071067811865475,0.7071067811865475]],"coordinates":[0.7071067811865475,2.1213203435596424],"point":[2,1]},"source_ref":"entity.ch08.principal-axis.point","target_ref":"entity.ch08.principal-axis.coordinates"},{"claim_refs":["claim.ch08.principal-axis"],"id":"relation.ch08.principal-axis.standard_form","kind":"maps_to","parameters":{"axes":[[0.7071067811865475,0.7071067811865475],[-0.7071067811865475,0.7071067811865475]],"matrix":[[5,-3],[-3,5]],"signature":[2,0,0],"standard":[[8,0],[0,2]]},"source_ref":"entity.ch08.principal-axis.matrix","target_ref":"entity.ch08.principal-axis.standard"}],"scene_family":"quadratic_level_set","scene_kind":"2d","stages":[{"caption":"Q^T A Q=diag(8,2); x=Qy","expected_invariants":["axes_are_eigenvectors"],"id":"original","input_entity_refs":["entity.ch08.principal-axis.matrix","entity.ch08.principal-axis.point"],"layout":"sequence","output_entity_refs":["entity.ch08.principal-axis.matrix"],"relation_refs":["relation.ch08.principal-axis.orthogonal_axes"],"title":"原始倾斜二次型"},{"caption":"Q^T A Q=diag(8,2); x=Qy","expected_invariants":["axes_are_eigenvectors","same_quadratic_value"],"id":"axes","input_entity_refs":["entity.ch08.principal-axis.matrix","entity.ch08.principal-axis.axes","entity.ch08.principal-axis.point"],"layout":"sequence","output_entity_refs":["entity.ch08.principal-axis.axes","entity.ch08.principal-axis.coordinates"],"relation_refs":["relation.ch08.principal-axis.orthogonal_axes","relation.ch08.principal-axis.rotation"],"title":"正交主轴坐标"},{"caption":"Q^T A Q=diag(8,2); x=Qy","expected_invariants":["cross_term_zero","same_quadratic_value"],"id":"standard","input_entity_refs":["entity.ch08.principal-axis.matrix","entity.ch08.principal-axis.axes","entity.ch08.principal-axis.coordinates"],"layout":"sequence","output_entity_refs":["entity.ch08.principal-axis.standard"],"relation_refs":["relation.ch08.principal-axis.standard_form"],"title":"无交叉项标准形"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch08.principal-axis.matrix",
+        "entity.ch08.principal-axis.axes",
+        "entity.ch08.principal-axis.standard",
+        "entity.ch08.principal-axis.point",
+        "entity.ch08.principal-axis.coordinates"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "Q^T A Q=diag(8,2); x=Qy",
+      "formula_symbols": [
+        "matrix",
+        "axes",
+        "standard",
+        "point",
+        "coordinates"
+      ],
+      "id": "claim.ch08.principal-axis",
+      "relation_refs": [
+        "relation.ch08.principal-axis.orthogonal_axes",
+        "relation.ch08.principal-axis.rotation",
+        "relation.ch08.principal-axis.standard_form"
+      ],
+      "source_refs": [
+        "第8章 二次型与主轴定理 / 8.3 主轴定理：把歪的图形\"转正\" / 8.3.1 主轴定理::1::sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435"
+      ],
+      "stage_refs": [
+        "original",
+        "axes",
+        "standard"
+      ],
+      "statement": "8.3.1 主轴定理 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch08.principal-axis"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch08.principal-axis.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "conclusion": "",
+    "connections": [],
+    "definition": "#### 8.3.1 主轴定理\n定理 8.3（主轴定理） 设 A 是 $n \\times n$ 实对称矩阵。则存在正交矩阵 Q（$Q^{-1} = Q^{T}$），使得：\n$$\nQ^{T} A Q = D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})\n$$\n其中 $\\lambda_{1}, ..., \\lambda_{n}$ 是 A 的特征值，Q 的列是对应的正交归一化的特征向量。\n由此：做变量替换 $x = Qy$，二次型变为标准形：\n$$\nQ(x) = x^{T}Ax = (Qy)^{T}A(Qy) = y^{T}(Q^{T}AQ)y = y^{T}Dy = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2} + ... + \\lambda_{n}y_{n}^{2}\n$$",
+    "derivation": [
+      "原始倾斜二次型: Q^T A Q=diag(8,2); x=Qy",
+      "正交主轴坐标: Q^T A Q=diag(8,2); x=Qy",
+      "无交叉项标准形: Q^T A Q=diag(8,2); x=Qy",
+      "三步理解：\n原始二次型（x 坐标）：\n$Q(x) = ax^{2} + 2bxy + cy^{2}$   有 xy 项——图形歪\n旋转到特征基（y 坐标）：\n$y = Q^{T}x$（或等价地 $x = Qy$）\n$Q(y) = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2}$      没有 $y_{1}y_{2}$ 项——图形正了！"
+    ],
+    "formula": "Q^T A Q=diag(8,2); x=Qy",
+    "geometric_meaning": "几何上：\n$y_{1}$ 轴 $= q_{1}$（第一个特征向量方向）$=$ 主轴一\n$y_{2}$ 轴 $= q_{2}$（第二个特征向量方向）$=$ 主轴二\n$\\lambda_{1} =$ 沿主轴一的\"紧度\"系数\n$\\lambda_{2} =$ 沿主轴二的\"紧度\"系数",
+    "intuition": "",
+    "invariants": [
+      "axes_are_eigenvectors",
+      "same_quadratic_value",
+      "cross_term_zero"
+    ],
+    "pitfalls": [],
+    "read_guide": [],
+    "searchable_text": [
+      "8.3.1 主轴定理",
+      "Q^T A Q=diag(8,2); x=Qy",
+      "#### 8.3.1 主轴定理\n定理 8.3（主轴定理） 设 A 是 $n \\times n$ 实对称矩阵。则存在正交矩阵 Q（$Q^{-1} = Q^{T}$），使得：\n$$\nQ^{T} A Q = D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})\n$$\n其中 $\\lambda_{1}, ..., \\lambda_{n}$ 是 A 的特征值，Q 的列是对应的正交归一化的特征向量。\n由此：做变量替换 $x = Qy$，二次型变为标准形：\n$$\nQ(x) = x^{T}Ax = (Qy)^{T}A(Qy) = y^{T}(Q^{T}AQ)y = y^{T}Dy = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2} + ... + \\lambda_{n}y_{n}^{2}\n$$",
+      "原始倾斜二次型: Q^T A Q=diag(8,2); x=Qy",
+      "正交主轴坐标: Q^T A Q=diag(8,2); x=Qy",
+      "无交叉项标准形: Q^T A Q=diag(8,2); x=Qy",
+      "三步理解：\n原始二次型（x 坐标）：\n$Q(x) = ax^{2} + 2bxy + cy^{2}$   有 xy 项——图形歪\n旋转到特征基（y 坐标）：\n$y = Q^{T}x$（或等价地 $x = Qy$）\n$Q(y) = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2}$      没有 $y_{1}y_{2}$ 项——图形正了！",
+      "几何上：\n$y_{1}$ 轴 $= q_{1}$（第一个特征向量方向）$=$ 主轴一\n$y_{2}$ 轴 $= q_{2}$（第二个特征向量方向）$=$ 主轴二\n$\\lambda_{1} =$ 沿主轴一的\"紧度\"系数\n$\\lambda_{2} =$ 沿主轴二的\"紧度\"系数",
+      "axes_are_eigenvectors",
+      "same_quadratic_value",
+      "cross_term_zero"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "definition",
+        "text": "#### 8.3.1 主轴定理\n定理 8.3（主轴定理） 设 A 是 $n \\times n$ 实对称矩阵。则存在正交矩阵 Q（$Q^{-1} = Q^{T}$），使得：\n$$\nQ^{T} A Q = D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})\n$$\n其中 $\\lambda_{1}, ..., \\lambda_{n}$ 是 A 的特征值，Q 的列是对应的正交归一化的特征向量。\n由此：做变量替换 $x = Qy$，二次型变为标准形：\n$$\nQ(x) = x^{T}Ax = (Qy)^{T}A(Qy) = y^{T}(Q^{T}AQ)y = y^{T}Dy = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2} + ... + \\lambda_{n}y_{n}^{2}\n$$",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "formula",
+        "text": "Q^T A Q=diag(8,2); x=Qy",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "derivation",
+        "text": "原始倾斜二次型: Q^T A Q=diag(8,2); x=Qy\n正交主轴坐标: Q^T A Q=diag(8,2); x=Qy\n无交叉项标准形: Q^T A Q=diag(8,2); x=Qy\n三步理解：\n原始二次型（x 坐标）：\n$Q(x) = ax^{2} + 2bxy + cy^{2}$   有 xy 项——图形歪\n旋转到特征基（y 坐标）：\n$y = Q^{T}x$（或等价地 $x = Qy$）\n$Q(y) = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2}$      没有 $y_{1}y_{2}$ 项——图形正了！",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "worked_examples",
+        "text": "det(A)=a11*a22-a12*a21",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "geometric_meaning",
+        "text": "几何上：\n$y_{1}$ 轴 $= q_{1}$（第一个特征向量方向）$=$ 主轴一\n$y_{2}$ 轴 $= q_{2}$（第二个特征向量方向）$=$ 主轴二\n$\\lambda_{1} =$ 沿主轴一的\"紧度\"系数\n$\\lambda_{2} =$ 沿主轴二的\"紧度\"系数",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 8.3.1 主轴定理。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "connections",
+        "text": "connections: 8.3.1 主轴定理。",
+        "title": "connections"
+      },
+      {
+        "claim_refs": [],
+        "id": "invariants",
+        "text": "axes_are_eigenvectors\nsame_quadratic_value\ncross_term_zero",
+        "title": "invariants"
+      }
+    ],
+    "summary": "8.3.1 主轴定理",
+    "symbol_roles": {
+      "axes": "axes",
+      "coordinates": "coordinates",
+      "matrix": "matrix",
+      "point": "point",
+      "standard": "standard"
+    },
+    "title": "8.3.1 主轴定理",
+    "worked_examples": [
+      {
+        "calculation": [
+          "det(A)=a11*a22-a12*a21"
+        ],
+        "checks": [
+          {
+            "expected": 16.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "given": [
+          [
+            5.0,
+            -3.0
+          ],
+          [
+            -3.0,
+            5.0
+          ]
+        ],
+        "id": "example.ch08.principal-axis.matrix",
+        "kind": "determinant",
+        "result": 16.0,
+        "title": "matrix"
+      },
+      {
+        "calculation": [
+          "det(A)=a11*a22-a12*a21"
+        ],
+        "checks": [
+          {
+            "expected": 16.0,
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "given": [
+          [
+            8.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0
+          ]
+        ],
+        "id": "example.ch08.principal-axis.standard",
+        "kind": "determinant",
+        "result": 16.0,
+        "title": "standard"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:b0a6d5a183870984158f9762c66ab642156515214cfdbb93ac665f1fb23b76a3",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:ab73d451f061e954a743dd77380d0eedd645a0376f1049531dfebe42ffa4e0b2",
+    "source_hash": "sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 8.3.1 主轴定理\n\n定理 8.3（主轴定理） 设 A 是 $n \\times n$ 实对称矩阵。则存在正交矩阵 Q（$Q^{-1} = Q^{T}$），使得：\n$$\nQ^{T} A Q = D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})\n$$\n其中 $\\lambda_{1}, ..., \\lambda_{n}$ 是 A 的特征值，Q 的列是对应的正交归一化的特征向量。\n由此：做变量替换 $x = Qy$，二次型变为标准形：\n$$\nQ(x) = x^{T}Ax = (Qy)^{T}A(Qy) = y^{T}(Q^{T}AQ)y = y^{T}Dy = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2} + ... + \\lambda_{n}y_{n}^{2}\n$$\n\n三步理解：\n原始二次型（x 坐标）：\n$Q(x) = ax^{2} + 2bxy + cy^{2}$   有 xy 项——图形歪\n\n旋转到特征基（y 坐标）：\n$y = Q^{T}x$（或等价地 $x = Qy$）\n$Q(y) = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2}$      没有 $y_{1}y_{2}$ 项——图形正了！\n\n几何上：\n$y_{1}$ 轴 $= q_{1}$（第一个特征向量方向）$=$ 主轴一\n$y_{2}$ 轴 $= q_{2}$（第二个特征向量方向）$=$ 主轴二\n$\\lambda_{1} =$ 沿主轴一的\"紧度\"系数\n$\\lambda_{2} =$ 沿主轴二的\"紧度\"系数",
+    "heading_level": 4,
+    "heading_path": [
+      "第8章 二次型与主轴定理",
+      "8.3 主轴定理：把歪的图形\"转正\"",
+      "8.3.1 主轴定理"
+    ],
+    "neighboring_titles": [
+      "8.3.2 完整计算例题"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435",
+    "source_path": [
+      "第8章 二次型与主轴定理",
+      "8.3 主轴定理：把歪的图形\"转正\"",
+      "8.3.1 主轴定理"
+    ],
+    "spans": [
+      {
+        "end_line": 2494,
+        "fingerprint": "sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435",
+        "heading_path": [
+          "第8章 二次型与主轴定理",
+          "8.3 主轴定理：把歪的图形\"转正\"",
+          "8.3.1 主轴定理"
+        ],
+        "id": "第8章 二次型与主轴定理 / 8.3 主轴定理：把歪的图形\"转正\" / 8.3.1 主轴定理::1::sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435",
+        "start_line": 2469,
+        "text": "#### 8.3.1 主轴定理\n\n定理 8.3（主轴定理） 设 A 是 $n \\times n$ 实对称矩阵。则存在正交矩阵 Q（$Q^{-1} = Q^{T}$），使得：\n$$\nQ^{T} A Q = D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})\n$$\n其中 $\\lambda_{1}, ..., \\lambda_{n}$ 是 A 的特征值，Q 的列是对应的正交归一化的特征向量。\n由此：做变量替换 $x = Qy$，二次型变为标准形：\n$$\nQ(x) = x^{T}Ax = (Qy)^{T}A(Qy) = y^{T}(Q^{T}AQ)y = y^{T}Dy = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2} + ... + \\lambda_{n}y_{n}^{2}\n$$\n\n三步理解：\n原始二次型（x 坐标）：\n$Q(x) = ax^{2} + 2bxy + cy^{2}$   有 xy 项——图形歪\n\n旋转到特征基（y 坐标）：\n$y = Q^{T}x$（或等价地 $x = Qy$）\n$Q(y) = \\lambda_{1}y_{1}^{2} + \\lambda_{2}y_{2}^{2}$      没有 $y_{1}y_{2}$ 项——图形正了！\n\n几何上：\n$y_{1}$ 轴 $= q_{1}$（第一个特征向量方向）$=$ 主轴一\n$y_{2}$ 轴 $= q_{2}$（第二个特征向量方向）$=$ 主轴二\n$\\lambda_{1} =$ 沿主轴一的\"紧度\"系数\n$\\lambda_{2} =$ 沿主轴二的\"紧度\"系数"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch08.principal-axis",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.principal-axis.matrix",
+        "kind": "matrix",
+        "label": "matrix",
+        "role": "matrix",
+        "value": [
+          [
+            5.0,
+            -3.0
+          ],
+          [
+            -3.0,
+            5.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.principal-axis.axes",
+        "kind": "matrix",
+        "label": "axes",
+        "role": "axes",
+        "value": [
+          [
+            0.7071067811865475,
+            0.7071067811865475
+          ],
+          [
+            -0.7071067811865475,
+            0.7071067811865475
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.principal-axis.standard",
+        "kind": "matrix",
+        "label": "standard",
+        "role": "standard",
+        "value": [
+          [
+            8.0,
+            0.0
+          ],
+          [
+            0.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.principal-axis.point",
+        "kind": "vector",
+        "label": "point",
+        "role": "point",
+        "value": [
+          2.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.principal-axis.coordinates",
+        "kind": "vector",
+        "label": "coordinates",
+        "role": "coordinates",
+        "value": [
+          0.7071067811865475,
+          2.1213203435596424
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "relation.ch08.principal-axis.orthogonal_axes",
+        "kind": "maps_to",
+        "parameters": {
+          "axes": [
+            [
+              0.7071067811865475,
+              0.7071067811865475
+            ],
+            [
+              -0.7071067811865475,
+              0.7071067811865475
+            ]
+          ],
+          "eigenvalues": [
+            8.0,
+            2.0
+          ],
+          "matrix": [
+            [
+              5.0,
+              -3.0
+            ],
+            [
+              -3.0,
+              5.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch08.principal-axis.matrix",
+        "target_ref": "entity.ch08.principal-axis.axes"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "relation.ch08.principal-axis.rotation",
+        "kind": "maps_to",
+        "parameters": {
+          "axes": [
+            [
+              0.7071067811865475,
+              0.7071067811865475
+            ],
+            [
+              -0.7071067811865475,
+              0.7071067811865475
+            ]
+          ],
+          "coordinates": [
+            0.7071067811865475,
+            2.1213203435596424
+          ],
+          "point": [
+            2.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch08.principal-axis.point",
+        "target_ref": "entity.ch08.principal-axis.coordinates"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.principal-axis"
+        ],
+        "id": "relation.ch08.principal-axis.standard_form",
+        "kind": "maps_to",
+        "parameters": {
+          "axes": [
+            [
+              0.7071067811865475,
+              0.7071067811865475
+            ],
+            [
+              -0.7071067811865475,
+              0.7071067811865475
+            ]
+          ],
+          "matrix": [
+            [
+              5.0,
+              -3.0
+            ],
+            [
+              -3.0,
+              5.0
+            ]
+          ],
+          "signature": [
+            2,
+            0,
+            0
+          ],
+          "standard": [
+            [
+              8.0,
+              0.0
+            ],
+            [
+              0.0,
+              2.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch08.principal-axis.matrix",
+        "target_ref": "entity.ch08.principal-axis.standard"
+      }
+    ],
+    "scene_family": "quadratic_level_set",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "Q^T A Q=diag(8,2); x=Qy",
+        "expected_invariants": [
+          "axes_are_eigenvectors"
+        ],
+        "id": "original",
+        "input_entity_refs": [
+          "entity.ch08.principal-axis.matrix",
+          "entity.ch08.principal-axis.point"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.principal-axis.matrix"
+        ],
+        "relation_refs": [
+          "relation.ch08.principal-axis.orthogonal_axes"
+        ],
+        "title": "原始倾斜二次型"
+      },
+      {
+        "caption": "Q^T A Q=diag(8,2); x=Qy",
+        "expected_invariants": [
+          "axes_are_eigenvectors",
+          "same_quadratic_value"
+        ],
+        "id": "axes",
+        "input_entity_refs": [
+          "entity.ch08.principal-axis.matrix",
+          "entity.ch08.principal-axis.axes",
+          "entity.ch08.principal-axis.point"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.principal-axis.axes",
+          "entity.ch08.principal-axis.coordinates"
+        ],
+        "relation_refs": [
+          "relation.ch08.principal-axis.orthogonal_axes",
+          "relation.ch08.principal-axis.rotation"
+        ],
+        "title": "正交主轴坐标"
+      },
+      {
+        "caption": "Q^T A Q=diag(8,2); x=Qy",
+        "expected_invariants": [
+          "cross_term_zero",
+          "same_quadratic_value"
+        ],
+        "id": "standard",
+        "input_entity_refs": [
+          "entity.ch08.principal-axis.matrix",
+          "entity.ch08.principal-axis.axes",
+          "entity.ch08.principal-axis.coordinates"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch08.principal-axis.standard"
+        ],
+        "relation_refs": [
+          "relation.ch08.principal-axis.standard_form"
+        ],
+        "title": "无交叉项标准形"
+      }
+    ]
+  }
+}

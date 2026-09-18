@@ -1,158 +1,474 @@
 {
-  "artifact_digest": "sha256:4a1b4946025367e8da442924be5820373f67676f58a445fc0ac20bf9c40e4d13",
+  "artifact_digest": "sha256:ea18c42a94b7dabe55e03169f3cb8bf59c9b1a1904aa7d9642587923b801a45f",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:fbf6a0fe17d91df3331728dc588b611ac8a457b211aa3faeee96b1061bc31643",
   "plan": {
     "operations": [
       {
-        "alias": "sem__A",
-        "bounds": [
-          -3,
-          3,
-          -3,
-          3
-        ],
-        "color": "#6B7280",
-        "matrix": [
-          [
-            1,
-            0
-          ],
-          [
-            0,
-            1
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1
-      },
-      {
-        "alias": "sem__x__origin",
+        "alias": "sem__case1_u__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x__end",
+        "alias": "sem__case1_u__end",
         "coordinates": [
-          2,
-          3
+          2.0,
+          3.0
         ],
-        "name": "x",
+        "name": "U",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x",
+        "alias": "sem__case1_u",
         "color": "#2F6BFF",
-        "end": "sem__x__end",
+        "end": "sem__case1_u__end",
         "kind": "vector",
-        "label": "x",
+        "label": "u",
+        "label_side": "above",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__x__origin"
+        "start": "sem__case1_u__origin"
       },
       {
-        "alias": "sem__y__origin",
+        "alias": "sem__case1_v__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__y__end",
+        "alias": "sem__case1_v__end",
         "coordinates": [
-          2,
-          3
+          2.0,
+          1.0
         ],
-        "name": "Ax",
+        "name": "",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__y",
-        "color": "#7B61FF",
-        "end": "sem__y__end",
+        "alias": "sem__case1_v",
+        "color": "#F08A24",
+        "end": "sem__case1_v__end",
         "kind": "vector",
-        "label": "Ax",
+        "label": "v1",
+        "label_side": "above",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__y__origin"
+        "start": "sem__case1_v__origin"
       },
       {
-        "alias": "sem__A_maps_x_to_y",
-        "matrix": [
-          [
-            1,
-            0
-          ],
-          [
-            0,
-            1
-          ]
+        "alias": "sem__case1_p__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "op": "linear_algebra.matrix_transform"
+        "name": "O",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__stage.input__title",
+        "alias": "sem__case1_p__end",
+        "coordinates": [
+          1.0769230769230769,
+          1.6153846153846154
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case1_p",
+        "color": "#F08A24",
+        "end": "sem__case1_p__end",
+        "kind": "vector",
+        "label": "p1",
+        "label_side": "above",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case1_p__origin"
+      },
+      {
+        "alias": "sem__case1_H",
+        "coordinates": [
+          1.0769230769230769,
+          1.6153846153846154
+        ],
+        "name": "H1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_u__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_u__end",
+        "coordinates": [
+          2.0,
+          3.0
+        ],
+        "name": "U",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_u",
+        "color": "#2F6BFF",
+        "end": "sem__case2_u__end",
+        "kind": "vector",
+        "label": "u",
+        "label_side": "above",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_u__origin"
+      },
+      {
+        "alias": "sem__case2_v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_v__end",
+        "coordinates": [
+          -1.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_v",
+        "color": "#7B61FF",
+        "end": "sem__case2_v__end",
+        "kind": "vector",
+        "label": "v2",
+        "label_side": "above",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_v__origin"
+      },
+      {
+        "alias": "sem__case2_p__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_p__end",
+        "coordinates": [
+          0.6153846153846154,
+          0.9230769230769231
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__case2_p",
+        "color": "#7B61FF",
+        "end": "sem__case2_p__end",
+        "kind": "vector",
+        "label": "p2",
+        "label_side": "above",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__case2_p__origin"
+      },
+      {
+        "alias": "sem__case2_H",
+        "coordinates": [
+          0.6153846153846154,
+          0.9230769230769231
+        ],
+        "name": "H2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__rel.angle.ch02.batch.inner-products.1",
+        "color": "#2A9D8F",
+        "first": [
+          2.0,
+          3.0
+        ],
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          2.0,
+          1.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.1",
+        "color": "#F08A24",
+        "direction": [
+          2.0,
+          3.0
+        ],
+        "foot_alias": "sem__case1_H",
+        "op": "geometry.projection",
+        "residual_alias": "sem__rel.case.ch02.batch.inner-products.1__residual",
+        "result_alias": "sem__case1_u",
+        "style": "dashed",
+        "vector": [
+          2.0,
+          1.0
+        ]
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.1__length_a",
+        "color": "#2F6BFF",
         "op": "annotation.upsert",
         "position": [
-          0,
-          2.65
+          1.664654,
+          2.010231
         ],
-        "text": "输入与变换"
+        "text": "|u| = √13"
       },
       {
+        "alias": "sem__rel.case.ch02.batch.inner-products.1__length_p",
+        "color": "#F08A24",
+        "latex": "|p1| = \\frac{7}{\\sqrt{13}}",
+        "op": "annotation.upsert",
+        "position": [
+          0.676961,
+          0.528692
+        ],
+        "text": "|p1| = 7/√13"
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.1__product_end",
+        "coordinates": [
+          3.882901,
+          5.824352
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.1__length",
+        "color": "#F08A24",
+        "end": "sem__rel.case.ch02.batch.inner-products.1__product_end",
+        "kind": "segment",
+        "label_side": "below",
+        "op": "linear.upsert",
+        "role": "construction",
+        "start": "sem__case1_u__origin",
+        "style": "dashed"
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.1__length_product",
+        "color": "#F08A24",
+        "op": "annotation.upsert",
+        "position": [
+          3.166104,
+          4.262407
+        ],
+        "text": "u·v1 = 7"
+      },
+      {
+        "alias": "sem__rel.angle.ch02.batch.inner-products.2",
+        "color": "#2A9D8F",
+        "first": [
+          2.0,
+          3.0
+        ],
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          -1.0,
+          2.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.2",
+        "color": "#7B61FF",
+        "direction": [
+          2.0,
+          3.0
+        ],
+        "foot_alias": "sem__case2_H",
+        "op": "geometry.projection",
+        "residual_alias": "sem__rel.case.ch02.batch.inner-products.2__residual",
+        "result_alias": "sem__case2_u",
+        "style": "dashed",
+        "vector": [
+          -1.0,
+          2.0
+        ]
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.2__length_a",
+        "color": "#2F6BFF",
+        "op": "annotation.upsert",
+        "position": [
+          1.664654,
+          2.010231
+        ],
+        "text": "|u| = √13"
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.2__length_p",
+        "color": "#7B61FF",
+        "latex": "|p2| = \\frac{4}{\\sqrt{13}}",
+        "op": "annotation.upsert",
+        "position": [
+          0.483115,
+          0.237923
+        ],
+        "text": "|p2| = 4/√13"
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.2__product_end",
+        "coordinates": [
+          2.218801,
+          3.328201
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.2__length",
+        "color": "#7B61FF",
+        "end": "sem__rel.case.ch02.batch.inner-products.2__product_end",
+        "kind": "segment",
+        "label_side": "below",
+        "op": "linear.upsert",
+        "role": "construction",
+        "start": "sem__case2_u__origin",
+        "style": "dashed"
+      },
+      {
+        "alias": "sem__rel.case.ch02.batch.inner-products.2__length_product",
+        "color": "#7B61FF",
+        "op": "annotation.upsert",
+        "position": [
+          2.334054,
+          3.014332
+        ],
+        "text": "u·v2 = 4"
+      },
+      {
+        "alias": "sem__orientation__1",
+        "color": "#2A9D8F",
+        "first": [
+          2.0,
+          3.0
+        ],
+        "op": "geometry.angle_arc",
+        "radius": 0.45,
+        "second": [
+          2.0,
+          1.0
+        ],
+        "vertex": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bounds": [
+          -1.0,
+          3.882901373576604,
+          0.0,
+          5.824352060364906
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "2d",
-    "summary": "批量内积与多角度比较",
+    "summary": "批量内积",
     "version": 1
   },
-  "plan_digest": "sha256:4e2581e44db8bb10d0dec2592412cc7e004556681833bd38bd71170a55e6b361",
-  "read_guide": [
-    "先看参考向量 u 的长度与方向。",
-    "再看矩阵各列与 u 的夹角。",
-    "最后核对每个内积的正负与大小顺序。"
-  ],
+  "plan_digest": "sha256:e7dbeb49e88770e1d6a7a9bc32cae6e8984c938cc9e892af6fee405cba3a6c63",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 18,
+  "revision": 27,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:8d0f7df5e4e32f439e01001cb86315c36061b1ef23c0d23756f5bff315aaa2a2",
   "stages": [
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
-      "caption": "矩阵 A 作用于向量 x。",
-      "id": "stage.input",
+      "caption": "$\\boldsymbol u=(2,3)$ 与矩阵 $V$ 的两列 $\\boldsymbol v_1=(2,1)$、$\\boldsymbol v_2=(-1,2)$ 从同一原点出发，夹角分别为 $\\theta_1,\\theta_2$；把两列分别投影到 $\\boldsymbol u$ 上（虚线），垂足为 $H_1,H_2$，用 $\\lvert\\boldsymbol u\\rvert=\\sqrt{13}$ 乘各自的投影长度即得 $\\boldsymbol u\\cdot V=[7,4]$。",
+      "id": "stage.case.ch02.batch.inner-products.1",
       "layout": "overlay",
-      "title": "输入与变换",
+      "title": "一步：u 与 V 的两列",
       "visible_aliases": [
-        "sem__A",
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__y",
-        "sem__y__end",
-        "sem__y__origin",
-        "sem__A_maps_x_to_y",
-        "sem__stage.input__title",
-        "sem__mapping_grid__1"
+        "sem__case1_u",
+        "sem__case1_u__end",
+        "sem__case1_u__origin",
+        "sem__case1_v",
+        "sem__case1_v__end",
+        "sem__case1_v__origin",
+        "sem__case1_p",
+        "sem__case1_p__end",
+        "sem__case1_p__origin",
+        "sem__case2_u",
+        "sem__case2_u__end",
+        "sem__case2_u__origin",
+        "sem__case2_v",
+        "sem__case2_v__end",
+        "sem__case2_v__origin",
+        "sem__case2_p",
+        "sem__case2_p__end",
+        "sem__case2_p__origin",
+        "sem__case1_H",
+        "sem__case2_H",
+        "sem__rel.case.ch02.batch.inner-products.1",
+        "sem__rel.case.ch02.batch.inner-products.1__length_a",
+        "sem__rel.case.ch02.batch.inner-products.1__length_p",
+        "sem__rel.case.ch02.batch.inner-products.1__product_end",
+        "sem__rel.case.ch02.batch.inner-products.1__length",
+        "sem__rel.case.ch02.batch.inner-products.1__length_product",
+        "sem__rel.angle.ch02.batch.inner-products.1",
+        "sem__rel.case.ch02.batch.inner-products.2",
+        "sem__rel.case.ch02.batch.inner-products.2__length_a",
+        "sem__rel.case.ch02.batch.inner-products.2__length_p",
+        "sem__rel.case.ch02.batch.inner-products.2__product_end",
+        "sem__rel.case.ch02.batch.inner-products.2__length",
+        "sem__rel.case.ch02.batch.inner-products.2__length_product",
+        "sem__rel.angle.ch02.batch.inner-products.2",
+        "sem__orientation__1"
       ],
       "visible_refs": [
-        "A",
-        "x",
-        "y",
-        "A_maps_x_to_y"
+        "case1_u",
+        "case1_v",
+        "case1_p",
+        "case2_u",
+        "case2_v",
+        "case2_p",
+        "case1_H",
+        "case2_H",
+        "rel.case.ch02.batch.inner-products.1",
+        "rel.angle.ch02.batch.inner-products.1",
+        "rel.case.ch02.batch.inner-products.2",
+        "rel.angle.ch02.batch.inner-products.2"
       ]
     }
   ],

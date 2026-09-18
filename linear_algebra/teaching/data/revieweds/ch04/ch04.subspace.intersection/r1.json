@@ -1,1 +1,463 @@
-{"claims":[{"entity_refs":["entity.ch04.subspace.intersection.subspace_u","entity.ch04.subspace.intersection.subspace_v","entity.ch04.subspace.intersection.intersection","entity.ch04.subspace.intersection.union_u","entity.ch04.subspace.intersection.union_v","entity.ch04.subspace.intersection.union_sum"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V","formula_symbols":["subspace_u","subspace_v"],"id":"claim.ch04.subspace.intersection","relation_refs":["relation.ch04.subspace.intersection.intersection_result","relation.ch04.subspace.intersection.intersection_membership","relation.ch04.subspace.intersection.union_addition"],"source_refs":["第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"],"stage_refs":["stage.ch04.subspace.intersection.intersection","stage.ch04.subspace.intersection.union"],"statement":"4.1.2 子空间 的数学主张由显式对象、关系和不变量支持。"}],"connections":[{"claim_refs":["claim.ch04.subspace.intersection"],"description":"前置的线性表示与几何关系。","id":"connection.ch04.subspace.intersection.prior","relation":"prerequisite","target_topic_id":"ch03.det.ad-bc"}],"explanation":{"conclusion":"","connections":[],"definition":"#### 4.1.2 子空间\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。","derivation":["##### 性质 2 的证明（子空间交集仍是子空间）\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n##### 补充例题\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。"],"formula":"U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V","geometric_meaning":"几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n几何上：这是过原点的一个平面。\n##### 分层例题","intuition":"一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。","invariants":["intersection_closed","union_not_closed"],"pitfalls":[],"read_guide":[],"searchable_text":["4.1.2 子空间","本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。","U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V","#### 4.1.2 子空间\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。","##### 性质 2 的证明（子空间交集仍是子空间）\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n##### 补充例题\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。","几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n几何上：这是过原点的一个平面。\n##### 分层例题","intersection_closed","union_not_closed"],"sections":[{"claim_refs":["claim.ch04.subspace.intersection"],"id":"definition","text":"#### 4.1.2 子空间\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。","title":"definition"},{"claim_refs":["claim.ch04.subspace.intersection"],"id":"formula","text":"U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V","title":"formula"},{"claim_refs":["claim.ch04.subspace.intersection"],"id":"derivation","text":"##### 性质 2 的证明（子空间交集仍是子空间）\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n##### 补充例题\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。","title":"derivation"},{"claim_refs":["claim.ch04.subspace.intersection"],"id":"worked_examples","text":"U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V","title":"worked_examples"},{"claim_refs":["claim.ch04.subspace.intersection"],"id":"geometric_meaning","text":"几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n几何上：这是过原点的一个平面。\n##### 分层例题","title":"geometric_meaning"},{"claim_refs":["claim.ch04.subspace.intersection"],"id":"pitfalls","text":"pitfalls: 4.1.2 子空间。","title":"pitfalls"},{"claim_refs":["claim.ch04.subspace.intersection"],"id":"connections","text":"connections: 4.1.2 子空间。","title":"connections"},{"claim_refs":[],"id":"intuition","text":"一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。","title":"intuition"},{"claim_refs":[],"id":"invariants","text":"intersection_closed\nunion_not_closed","title":"invariants"}],"summary":"本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。","symbol_roles":{"intersection":"intersection","subspace_u":"subspace_u","subspace_v":"subspace_v","union_sum":"union_sum","union_u":"union_u","union_v":"union_v"},"title":"4.1.2 子空间","worked_examples":[{"calculation":["U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V"],"checks":[{"expected":[-1,0,0],"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch04.subspace.intersection"],"given":[[0,0,1],[0,1,0]],"id":"example.ch04.subspace.intersection","kind":"cross_product","result":[-1,0,0],"title":"主题数值例"}]},"generated":{"artifact_digest":"sha256:17454f5873cd4ec4daf4fb932243c4314321d56cfa9057d5f93c507ab7980e39","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:0df03d035aa9056a7ad11cb5223a8a1edf5f4ec6fbaf7592fcf075cd8b5d65ba","source_hash":"sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"},"revision":1,"schema_version":1,"source":{"excerpt":"#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。","heading_level":4,"heading_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.1 线性空间与子空间","4.1.2 子空间"],"neighboring_titles":["4.1.1 线性空间","4.1.3 两大核心子空间：列空间与零空间"],"occurrence":1,"source_hash":"sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2","source_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.1 线性空间与子空间","4.1.2 子空间"],"spans":[{"end_line":1480,"fingerprint":"sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2","heading_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.1 线性空间与子空间","4.1.2 子空间"],"id":"第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2","start_line":1441,"text":"#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。"}]},"status":"reviewed","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch04.subspace.intersection","visual_semantics":{"entities":[{"claim_refs":["claim.ch04.subspace.intersection"],"dimension":3,"id":"entity.ch04.subspace.intersection.subspace_u","kind":"subspace","label":"U=xy","role":"subspace_u","value":[[1,0,0],[0,1,0]]},{"claim_refs":["claim.ch04.subspace.intersection"],"dimension":3,"id":"entity.ch04.subspace.intersection.subspace_v","kind":"subspace","label":"V=xz","role":"subspace_v","value":[[1,0,0],[0,0,1]]},{"claim_refs":["claim.ch04.subspace.intersection"],"dimension":3,"id":"entity.ch04.subspace.intersection.intersection","kind":"subspace","label":"U∩V","role":"intersection","value":[[1,0,0]]},{"claim_refs":["claim.ch04.subspace.intersection"],"dimension":3,"id":"entity.ch04.subspace.intersection.union_u","kind":"vector","label":"u","role":"union_u","value":[0,1,0]},{"claim_refs":["claim.ch04.subspace.intersection"],"dimension":3,"id":"entity.ch04.subspace.intersection.union_v","kind":"vector","label":"v","role":"union_v","value":[0,0,1]},{"claim_refs":["claim.ch04.subspace.intersection"],"dimension":3,"id":"entity.ch04.subspace.intersection.union_sum","kind":"vector","label":"u+v","role":"union_sum","value":[0,1,1]}],"relations":[{"claim_refs":["claim.ch04.subspace.intersection"],"id":"relation.ch04.subspace.intersection.intersection_result","kind":"intersects_in","parameters":{"expected_basis":[[1,0,0]]},"source_ref":"entity.ch04.subspace.intersection.subspace_u","target_ref":"entity.ch04.subspace.intersection.subspace_v"},{"claim_refs":["claim.ch04.subspace.intersection"],"id":"relation.ch04.subspace.intersection.intersection_membership","kind":"contains","parameters":{"expected_membership":0},"source_ref":"entity.ch04.subspace.intersection.intersection","target_ref":"entity.ch04.subspace.intersection.union_sum"},{"claim_refs":["claim.ch04.subspace.intersection"],"id":"relation.ch04.subspace.intersection.union_addition","kind":"union_counterexample","parameters":{"in_union":0,"other_vector":[0,0,1]},"source_ref":"entity.ch04.subspace.intersection.union_u","target_ref":"entity.ch04.subspace.intersection.union_sum"}],"scene_family":"subspace_region","scene_kind":"3d","stages":[{"caption":"U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V","expected_invariants":["intersection_closed"],"id":"stage.ch04.subspace.intersection.intersection","input_entity_refs":["entity.ch04.subspace.intersection.subspace_u","entity.ch04.subspace.intersection.subspace_v"],"layout":"overlay","output_entity_refs":["entity.ch04.subspace.intersection.intersection"],"relation_refs":["relation.ch04.subspace.intersection.intersection_result"],"title":"交集"},{"caption":"U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V","expected_invariants":["union_not_closed"],"id":"stage.ch04.subspace.intersection.union","input_entity_refs":["entity.ch04.subspace.intersection.union_u","entity.ch04.subspace.intersection.union_v"],"layout":"sequence","output_entity_refs":["entity.ch04.subspace.intersection.union_sum"],"relation_refs":["relation.ch04.subspace.intersection.intersection_membership","relation.ch04.subspace.intersection.union_addition"],"title":"并集反例"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.subspace.intersection.subspace_u",
+        "entity.ch04.subspace.intersection.subspace_v",
+        "entity.ch04.subspace.intersection.intersection",
+        "entity.ch04.subspace.intersection.union_u",
+        "entity.ch04.subspace.intersection.union_v",
+        "entity.ch04.subspace.intersection.union_sum"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V",
+      "formula_symbols": [
+        "subspace_u",
+        "subspace_v"
+      ],
+      "id": "claim.ch04.subspace.intersection",
+      "relation_refs": [
+        "relation.ch04.subspace.intersection.intersection_result",
+        "relation.ch04.subspace.intersection.intersection_membership",
+        "relation.ch04.subspace.intersection.union_addition"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"
+      ],
+      "stage_refs": [
+        "stage.ch04.subspace.intersection.intersection",
+        "stage.ch04.subspace.intersection.union"
+      ],
+      "statement": "4.1.2 子空间的交与并 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.subspace.intersection"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.subspace.intersection.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "conclusion": "",
+    "connections": [],
+    "definition": "#### 4.1.2 子空间\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。",
+    "derivation": [
+      "##### 性质 2 的证明（子空间交集仍是子空间）\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n##### 补充例题\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。"
+    ],
+    "formula": "U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V",
+    "geometric_meaning": "几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n几何上：这是过原点的一个平面。\n##### 分层例题",
+    "intuition": "一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。",
+    "invariants": [
+      "intersection_closed",
+      "union_not_closed"
+    ],
+    "pitfalls": [],
+    "read_guide": [],
+    "searchable_text": [
+      "4.1.2 子空间的交与并",
+      "本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。",
+      "U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V",
+      "#### 4.1.2 子空间\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。",
+      "##### 性质 2 的证明（子空间交集仍是子空间）\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n##### 补充例题\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。",
+      "几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n几何上：这是过原点的一个平面。\n##### 分层例题",
+      "intersection_closed",
+      "union_not_closed"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "id": "definition",
+        "text": "#### 4.1.2 子空间\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "id": "formula",
+        "text": "U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "id": "derivation",
+        "text": "##### 性质 2 的证明（子空间交集仍是子空间）\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n##### 补充例题\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "id": "worked_examples",
+        "text": "U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "id": "geometric_meaning",
+        "text": "几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n几何上：这是过原点的一个平面。\n##### 分层例题",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.1.2 子空间的交与并。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "id": "connections",
+        "text": "connections: 4.1.2 子空间的交与并。",
+        "title": "connections"
+      },
+      {
+        "claim_refs": [],
+        "id": "intuition",
+        "text": "一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。",
+        "title": "intuition"
+      },
+      {
+        "claim_refs": [],
+        "id": "invariants",
+        "text": "intersection_closed\nunion_not_closed",
+        "title": "invariants"
+      }
+    ],
+    "summary": "本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。",
+    "symbol_roles": {
+      "intersection": "intersection",
+      "subspace_u": "subspace_u",
+      "subspace_v": "subspace_v",
+      "union_sum": "union_sum",
+      "union_u": "union_u",
+      "union_v": "union_v"
+    },
+    "title": "4.1.2 子空间的交与并",
+    "worked_examples": [
+      {
+        "calculation": [
+          "U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V"
+        ],
+        "checks": [
+          {
+            "expected": [
+              -1.0,
+              0.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "given": [
+          [
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ],
+        "id": "example.ch04.subspace.intersection",
+        "kind": "cross_product",
+        "result": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:4de4045f5ffed39395692ed0f904dd4c5b287c7c3868c36c37d0722447f9260d",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:c2a335c6c1dcafd6aa617ea088d3eb3e738fe4596a641ceaf9e1fcbfc8353d3c",
+    "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。",
+    "heading_level": 4,
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.1 线性空间与子空间",
+      "4.1.2 子空间"
+    ],
+    "neighboring_titles": [
+      "4.1.1 线性空间",
+      "4.1.3 两大核心子空间：列空间与零空间"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.1 线性空间与子空间",
+      "4.1.2 子空间"
+    ],
+    "spans": [
+      {
+        "end_line": 1362,
+        "fingerprint": "sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
+        "heading_path": [
+          "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+          "4.1 线性空间与子空间",
+          "4.1.2 子空间"
+        ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.2 子空间::1::sha256:9d7a1dc35061d35bb683d8adafee63947ecd7969bd88e33edbaa62eade630ab2",
+        "start_line": 1323,
+        "text": "#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch04.subspace.intersection",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.intersection.subspace_u",
+        "kind": "subspace",
+        "label": "U=xy",
+        "role": "subspace_u",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.intersection.subspace_v",
+        "kind": "subspace",
+        "label": "V=xz",
+        "role": "subspace_v",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.intersection.intersection",
+        "kind": "subspace",
+        "label": "U∩V",
+        "role": "intersection",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.intersection.union_u",
+        "kind": "vector",
+        "label": "u",
+        "role": "union_u",
+        "value": [
+          0.0,
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.intersection.union_v",
+        "kind": "vector",
+        "label": "v",
+        "role": "union_v",
+        "value": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.intersection.union_sum",
+        "kind": "vector",
+        "label": "u+v",
+        "role": "union_sum",
+        "value": [
+          0.0,
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "id": "relation.ch04.subspace.intersection.intersection_result",
+        "kind": "intersects_in",
+        "parameters": {
+          "expected_basis": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.intersection.subspace_u",
+        "target_ref": "entity.ch04.subspace.intersection.subspace_v"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "id": "relation.ch04.subspace.intersection.intersection_membership",
+        "kind": "contains",
+        "parameters": {
+          "expected_membership": 0.0
+        },
+        "source_ref": "entity.ch04.subspace.intersection.intersection",
+        "target_ref": "entity.ch04.subspace.intersection.union_sum"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.intersection"
+        ],
+        "id": "relation.ch04.subspace.intersection.union_addition",
+        "kind": "union_counterexample",
+        "parameters": {
+          "in_union": 0.0,
+          "other_vector": [
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.intersection.union_u",
+        "target_ref": "entity.ch04.subspace.intersection.union_sum"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "3d",
+    "stages": [
+      {
+        "caption": "U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V",
+        "expected_invariants": [
+          "intersection_closed"
+        ],
+        "id": "stage.ch04.subspace.intersection.intersection",
+        "input_entity_refs": [
+          "entity.ch04.subspace.intersection.subspace_u",
+          "entity.ch04.subspace.intersection.subspace_v"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch04.subspace.intersection.intersection"
+        ],
+        "relation_refs": [
+          "relation.ch04.subspace.intersection.intersection_result"
+        ],
+        "title": "交集"
+      },
+      {
+        "caption": "U\\cap V=\\operatorname{span}(e_1);\\ e_2+e_3\\notin U\\cup V",
+        "expected_invariants": [
+          "union_not_closed"
+        ],
+        "id": "stage.ch04.subspace.intersection.union",
+        "input_entity_refs": [
+          "entity.ch04.subspace.intersection.union_u",
+          "entity.ch04.subspace.intersection.union_v"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch04.subspace.intersection.union_sum"
+        ],
+        "relation_refs": [
+          "relation.ch04.subspace.intersection.intersection_membership",
+          "relation.ch04.subspace.intersection.union_addition"
+        ],
+        "title": "并集反例"
+      }
+    ]
+  }
+}

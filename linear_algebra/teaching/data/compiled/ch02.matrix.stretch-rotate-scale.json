@@ -1,488 +1,602 @@
 {
-  "artifact_digest": "sha256:21fddbcf5faa1e1ab22f4645b449f3244387264b01f17fe6a15d9859551bd759",
+  "artifact_digest": "sha256:81f2b37870f51d4bdcad51df0ccd88bfacfb6bbe5125dad53bf8a027fbc99c16",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:edd5d59b52533ff1bc113731a14fbf0c86c7281b63035f954d885f1fc3a25763",
   "plan": {
     "operations": [
       {
-        "alias": "sem__case1_A",
+        "alias": "sem__mv_grid_base",
         "bounds": [
-          -3,
-          3,
-          -3,
-          3
+          -12.0,
+          12.0,
+          -12.0,
+          12.0
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            2,
-            0
+            1.0,
+            0.0
           ],
           [
-            0,
-            1
+            0.0,
+            1.0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1
+        "step": 1.0
       },
       {
-        "alias": "sem__case1_x__origin",
+        "alias": "sem__mv_e1__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_x__end",
+        "alias": "sem__mv_e1__end",
         "coordinates": [
-          1,
-          0
+          1.0,
+          0.0
         ],
-        "name": "x",
+        "name": "E1",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_x",
+        "alias": "sem__mv_e1",
         "color": "#2F6BFF",
-        "end": "sem__case1_x__end",
+        "end": "sem__mv_e1__end",
         "kind": "vector",
-        "label": "x",
+        "label": "e1",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__case1_x__origin"
+        "start": "sem__mv_e1__origin"
       },
       {
-        "alias": "sem__case1_y__origin",
+        "alias": "sem__mv_e2__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_y__end",
+        "alias": "sem__mv_e2__end",
         "coordinates": [
-          2,
-          0
+          0.0,
+          1.0
         ],
-        "name": "Ax",
+        "name": "E2",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_y",
-        "color": "#7B61FF",
-        "end": "sem__case1_y__end",
+        "alias": "sem__mv_e2",
+        "color": "#F08A24",
+        "end": "sem__mv_e2__end",
         "kind": "vector",
-        "label": "Ax",
+        "label": "e2",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__case1_y__origin"
+        "start": "sem__mv_e2__origin"
       },
       {
-        "alias": "sem__case2_A",
+        "alias": "sem__mv_grid_stretch",
         "bounds": [
-          -3,
-          3,
-          -3,
-          3
+          -12.0,
+          12.0,
+          -12.0,
+          12.0
         ],
-        "color": "#6B7280",
+        "color": "#7B61FF",
         "matrix": [
           [
-            0,
-            -1
+            2.0,
+            0.0
           ],
           [
-            1,
-            0
+            0.0,
+            1.0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1
+        "step": 1.0
       },
       {
-        "alias": "sem__case2_x__origin",
+        "alias": "sem__mv_stretch_e1__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case2_x__end",
+        "alias": "sem__mv_stretch_e1__end",
         "coordinates": [
-          1,
-          0
+          2.0,
+          0.0
         ],
-        "name": "x",
+        "name": "F1",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case2_x",
+        "alias": "sem__mv_stretch_e1",
         "color": "#2F6BFF",
-        "end": "sem__case2_x__end",
+        "end": "sem__mv_stretch_e1__end",
         "kind": "vector",
-        "label": "x",
+        "label": "Ae1",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__case2_x__origin"
+        "start": "sem__mv_stretch_e1__origin"
       },
       {
-        "alias": "sem__case2_y__origin",
+        "alias": "sem__mv_stretch_e2__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case2_y__end",
+        "alias": "sem__mv_stretch_e2__end",
         "coordinates": [
-          0,
-          1
+          0.0,
+          1.0
         ],
-        "name": "Ax",
+        "name": "F2",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case2_y",
-        "color": "#7B61FF",
-        "end": "sem__case2_y__end",
+        "alias": "sem__mv_stretch_e2",
+        "color": "#F08A24",
+        "end": "sem__mv_stretch_e2__end",
         "kind": "vector",
-        "label": "Ax",
+        "label": "Ae2",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__case2_y__origin"
+        "start": "sem__mv_stretch_e2__origin"
       },
       {
-        "alias": "sem__case3_A",
+        "alias": "sem__mv_grid_rotate",
         "bounds": [
-          -3,
-          3,
-          -3,
-          3
+          -12.0,
+          12.0,
+          -12.0,
+          12.0
         ],
-        "color": "#6B7280",
+        "color": "#7B61FF",
         "matrix": [
           [
-            1,
-            2
+            0.0,
+            -1.0
           ],
           [
-            3,
-            4
+            1.0,
+            0.0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1
+        "step": 1.0
       },
       {
-        "alias": "sem__case3_x__origin",
+        "alias": "sem__mv_rotate_e1__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case3_x__end",
+        "alias": "sem__mv_rotate_e1__end",
         "coordinates": [
-          1,
-          2
+          0.0,
+          1.0
         ],
-        "name": "x",
+        "name": "G1",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case3_x",
+        "alias": "sem__mv_rotate_e1",
         "color": "#2F6BFF",
-        "end": "sem__case3_x__end",
+        "end": "sem__mv_rotate_e1__end",
         "kind": "vector",
-        "label": "x",
+        "label": "Re1",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__case3_x__origin"
+        "start": "sem__mv_rotate_e1__origin"
       },
       {
-        "alias": "sem__case3_y__origin",
+        "alias": "sem__mv_rotate_e2__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case3_y__end",
+        "alias": "sem__mv_rotate_e2__end",
         "coordinates": [
-          5,
-          11
+          -1.0,
+          0.0
         ],
-        "name": "Ax",
+        "name": "G2",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case3_y",
-        "color": "#7B61FF",
-        "end": "sem__case3_y__end",
+        "alias": "sem__mv_rotate_e2",
+        "color": "#F08A24",
+        "end": "sem__mv_rotate_e2__end",
         "kind": "vector",
-        "label": "Ax",
+        "label": "Re2",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__case3_y__origin"
+        "start": "sem__mv_rotate_e2__origin"
       },
       {
-        "alias": "sem__case4_A",
+        "alias": "sem__mv_grid_combo",
         "bounds": [
-          -3,
-          3,
-          -3,
-          3
+          -12.0,
+          12.0,
+          -12.0,
+          12.0
         ],
-        "color": "#6B7280",
+        "color": "#7B61FF",
         "matrix": [
           [
-            0.5,
-            0
+            0.0,
+            -1.0
           ],
           [
-            0,
-            0.5
+            2.0,
+            0.0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1
+        "step": 1.0
       },
       {
-        "alias": "sem__case4_x__origin",
+        "alias": "sem__mv_combo_e1__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case4_x__end",
+        "alias": "sem__mv_combo_e1__end",
         "coordinates": [
-          100,
-          200
+          0.0,
+          2.0
         ],
-        "name": "x",
+        "name": "H1",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case4_x",
+        "alias": "sem__mv_combo_e1",
         "color": "#2F6BFF",
-        "end": "sem__case4_x__end",
+        "end": "sem__mv_combo_e1__end",
         "kind": "vector",
-        "label": "x",
+        "label": "Be1",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__case4_x__origin"
+        "start": "sem__mv_combo_e1__origin"
       },
       {
-        "alias": "sem__case4_y__origin",
+        "alias": "sem__mv_combo_e2__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case4_y__end",
+        "alias": "sem__mv_combo_e2__end",
         "coordinates": [
-          50,
-          100
+          -1.0,
+          0.0
         ],
-        "name": "Ax",
+        "name": "H2",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case4_y",
-        "color": "#7B61FF",
-        "end": "sem__case4_y__end",
+        "alias": "sem__mv_combo_e2",
+        "color": "#F08A24",
+        "end": "sem__mv_combo_e2__end",
         "kind": "vector",
-        "label": "Ax",
+        "label": "Be2",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__case4_y__origin"
+        "start": "sem__mv_combo_e2__origin"
       },
       {
+        "alias": "sem__mv_grid_base__staged",
         "aliases": [
-          "cap__stage_source",
-          "cap__stage_target"
+          "sem__mv_grid_base__staged__end1",
+          "sem__mv_grid_base__staged__end2"
         ],
+        "color": "#6B7280",
         "matrices": [
           [
             [
-              2,
-              0
+              1.0,
+              0.0
             ],
             [
-              0,
-              1
-            ]
-          ],
-          [
-            [
-              1,
-              0
-            ],
-            [
-              0,
-              1
+              0.0,
+              1.0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1,
-            0
+            1.0,
+            0.0
           ],
           [
-            2,
-            0
+            0.0,
+            1.0
           ]
         ]
       },
       {
+        "alias": "sem__mv_grid_stretch__staged",
+        "aliases": [
+          "sem__mv_grid_stretch__staged__end1",
+          "sem__mv_grid_stretch__staged__end2"
+        ],
+        "color": "#7B61FF",
+        "matrices": [
+          [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__mv_grid_stretch__label",
+        "op": "annotation.upsert",
+        "position": [
+          -0.4,
+          1.45
+        ],
+        "text": "A=[[2,0],[0,1]]"
+      },
+      {
+        "alias": "sem__mv_grid_rotate__staged",
+        "aliases": [
+          "sem__mv_grid_rotate__staged__end1",
+          "sem__mv_grid_rotate__staged__end2"
+        ],
+        "color": "#7B61FF",
+        "matrices": [
+          [
+            [
+              0.0,
+              -1.0
+            ],
+            [
+              1.0,
+              0.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__mv_grid_rotate__label",
+        "op": "annotation.upsert",
+        "position": [
+          -1.4,
+          1.45
+        ],
+        "text": "R=[[0,-1],[1,0]]"
+      },
+      {
+        "alias": "sem__mv_grid_combo__staged",
+        "aliases": [
+          "sem__mv_grid_combo__staged__end1",
+          "sem__mv_grid_combo__staged__end2"
+        ],
+        "color": "#7B61FF",
+        "matrices": [
+          [
+            [
+              0.0,
+              -1.0
+            ],
+            [
+              2.0,
+              0.0
+            ]
+          ]
+        ],
+        "op": "geometry.staged_transform",
+        "points": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__mv_grid_combo__label",
+        "op": "annotation.upsert",
+        "position": [
+          -1.4,
+          2.45
+        ],
+        "text": "B=[[0,-1],[2,0]]"
+      },
+      {
+        "bounds": [
+          -1.0,
+          2.0,
+          0.0,
+          2.0
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "2d",
-    "summary": "拉伸、旋转与缩放：把几何效应组合起来",
+    "summary": "拉伸、旋转与缩放的矩阵图像",
     "version": 1
   },
-  "plan_digest": "sha256:5427c1a1cf66dc76ba1b6b4fb0916748a41a5b6ce4293f6133e3355b117a4272",
-  "read_guide": [
-    "先分别辨认纯拉伸、纯旋转、纯缩放的网格。",
-    "再看一般矩阵两列的落点。",
-    "核对长度与夹角哪些保持不变。"
-  ],
+  "plan_digest": "sha256:c8d35032796a651d9a227938a6395b44e49839905150b972d8dff3a9d9e3379d",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 16,
+  "revision": 19,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:e75201702eb0c61f55827cf094c28b02e0564fdb0fbc76f72d4fe150317b852c",
   "stages": [
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
-      "caption": "先看输入网格，再看它被矩阵拉伸、旋转或剪切后的形状。",
+      "caption": "",
       "id": "stage.case.ch02.matrix.stretch-rotate-scale.1",
       "layout": "overlay",
-      "title": "案例一：横向拉伸",
+      "title": "第一步：未变换的标准网格",
       "visible_aliases": [
-        "sem__case1_A",
-        "sem__case1_x",
-        "sem__case1_x__end",
-        "sem__case1_x__origin",
-        "sem__case1_y",
-        "sem__case1_y__end",
-        "sem__case1_y__origin",
-        "sem__rel.case.ch02.matrix.stretch-rotate-scale.1",
-        "sem__mapping_grid__1"
+        "sem__mv_grid_base",
+        "sem__mv_grid_base__staged",
+        "sem__mv_grid_base__label",
+        "sem__mv_e1",
+        "sem__mv_e1__end",
+        "sem__mv_e1__origin",
+        "sem__mv_e2",
+        "sem__mv_e2__end",
+        "sem__mv_e2__origin"
       ],
       "visible_refs": [
-        "case1_A",
-        "case1_x",
-        "case1_y",
-        "rel.case.ch02.matrix.stretch-rotate-scale.1"
+        "mv_grid_base",
+        "mv_e1",
+        "mv_e2"
       ]
     },
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
-      "caption": "对比同一网格在变换后的方向和面积变化。",
+      "caption": "",
       "id": "stage.case.ch02.matrix.stretch-rotate-scale.2",
       "layout": "overlay",
-      "title": "案例二：逆时针旋转",
+      "title": "第二步：例1 横向拉伸",
       "visible_aliases": [
-        "sem__case2_A",
-        "sem__case2_x",
-        "sem__case2_x__end",
-        "sem__case2_x__origin",
-        "sem__case2_y",
-        "sem__case2_y__end",
-        "sem__case2_y__origin",
-        "sem__rel.case.ch02.matrix.stretch-rotate-scale.2",
-        "sem__mapping_grid__2"
+        "sem__mv_grid_stretch",
+        "sem__mv_grid_stretch__staged",
+        "sem__mv_grid_stretch__label",
+        "sem__mv_stretch_e1",
+        "sem__mv_stretch_e1__end",
+        "sem__mv_stretch_e1__origin",
+        "sem__mv_stretch_e2",
+        "sem__mv_stretch_e2__end",
+        "sem__mv_stretch_e2__origin",
+        "sem__rel.case.ch02.matrix.stretch-rotate-scale.base"
       ],
       "visible_refs": [
-        "case2_A",
-        "case2_x",
-        "case2_y",
-        "rel.case.ch02.matrix.stretch-rotate-scale.2"
+        "mv_grid_stretch",
+        "mv_stretch_e1",
+        "mv_stretch_e2",
+        "rel.case.ch02.matrix.stretch-rotate-scale.base"
       ]
     },
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
-      "caption": "对比同一网格在变换后的方向和面积变化。",
+      "caption": "",
       "id": "stage.case.ch02.matrix.stretch-rotate-scale.3",
       "layout": "overlay",
-      "title": "案例三：列视角计算",
+      "title": "第三步：例2 逆时针旋转",
       "visible_aliases": [
-        "sem__case3_A",
-        "sem__case3_x",
-        "sem__case3_x__end",
-        "sem__case3_x__origin",
-        "sem__case3_y",
-        "sem__case3_y__end",
-        "sem__case3_y__origin",
-        "sem__rel.case.ch02.matrix.stretch-rotate-scale.3",
-        "sem__mapping_grid__3"
+        "sem__mv_grid_rotate",
+        "sem__mv_grid_rotate__staged",
+        "sem__mv_grid_rotate__label",
+        "sem__mv_rotate_e1",
+        "sem__mv_rotate_e1__end",
+        "sem__mv_rotate_e1__origin",
+        "sem__mv_rotate_e2",
+        "sem__mv_rotate_e2__end",
+        "sem__mv_rotate_e2__origin"
       ],
       "visible_refs": [
-        "case3_A",
-        "case3_x",
-        "case3_y",
-        "rel.case.ch02.matrix.stretch-rotate-scale.3"
+        "mv_grid_rotate",
+        "mv_rotate_e1",
+        "mv_rotate_e2"
       ]
     },
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
-      "caption": "对比同一网格在变换后的方向和面积变化。",
+      "caption": "",
       "id": "stage.case.ch02.matrix.stretch-rotate-scale.4",
       "layout": "overlay",
-      "title": "案例四：等比缩放",
+      "title": "第四步：拉伸与旋转同时存在",
       "visible_aliases": [
-        "sem__case4_A",
-        "sem__case4_x",
-        "sem__case4_x__end",
-        "sem__case4_x__origin",
-        "sem__case4_y",
-        "sem__case4_y__end",
-        "sem__case4_y__origin",
-        "sem__rel.case.ch02.matrix.stretch-rotate-scale.4",
-        "sem__mapping_grid__4"
+        "sem__mv_grid_combo",
+        "sem__mv_grid_combo__staged",
+        "sem__mv_grid_combo__label",
+        "sem__mv_combo_e1",
+        "sem__mv_combo_e1__end",
+        "sem__mv_combo_e1__origin",
+        "sem__mv_combo_e2",
+        "sem__mv_combo_e2__end",
+        "sem__mv_combo_e2__origin",
+        "sem__rel.case.ch02.matrix.stretch-rotate-scale.rotate"
       ],
       "visible_refs": [
-        "case4_A",
-        "case4_x",
-        "case4_y",
-        "rel.case.ch02.matrix.stretch-rotate-scale.4"
+        "mv_grid_combo",
+        "mv_combo_e1",
+        "mv_combo_e2",
+        "rel.case.ch02.matrix.stretch-rotate-scale.rotate"
       ]
     }
   ],

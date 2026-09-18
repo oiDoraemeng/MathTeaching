@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:6221134e23eabd7824766bfc49f11eeeec86e37504290cb1e0b49191589aca69",
+  "artifact_digest": "sha256:ea4a7fc187a336136120e0336ce6238879fe589f31917fa5c3d3e1599220c4bf",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:f4b75fda8501a9c30e08b48cadcea0f61e3031099192f67d77dca093f53df51f",
@@ -8,30 +8,30 @@
       {
         "alias": "sem__A",
         "bounds": [
-          -3,
-          3,
-          -3,
-          3
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            2,
-            0
+            2.0,
+            0.0
           ],
           [
-            0,
-            3
+            0.0,
+            3.0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1
+        "step": 1.0
       },
       {
         "alias": "sem__a__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -39,8 +39,8 @@
       {
         "alias": "sem__a__end",
         "coordinates": [
-          2,
-          0
+          2.0,
+          0.0
         ],
         "name": "column a",
         "op": "point.upsert"
@@ -58,8 +58,8 @@
       {
         "alias": "sem__b__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -67,8 +67,8 @@
       {
         "alias": "sem__b__end",
         "coordinates": [
-          0,
-          3
+          0.0,
+          3.0
         ],
         "name": "column b",
         "op": "point.upsert"
@@ -89,12 +89,12 @@
         "op": "geometry.oriented_area",
         "vectors": [
           [
-            2,
-            0
+            2.0,
+            0.0
           ],
           [
-            0,
-            3
+            0.0,
+            3.0
           ]
         ]
       },
@@ -102,12 +102,12 @@
         "alias": "sem__det_maps_to_area",
         "matrix": [
           [
-            2,
-            0
+            2.0,
+            0.0
           ],
           [
-            0,
-            3
+            0.0,
+            3.0
           ]
         ],
         "op": "linear_algebra.matrix_transform"
@@ -132,12 +132,12 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            2,
-            0
+            2.0,
+            0.0
           ],
           [
-            0,
-            3
+            0.0,
+            3.0
           ]
         ]
       },
@@ -162,12 +162,12 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            2,
-            0
+            2.0,
+            0.0
           ],
           [
-            0,
-            3
+            0.0,
+            3.0
           ]
         ]
       },
@@ -210,12 +210,12 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            2,
-            0
+            2.0,
+            0.0
           ],
           [
-            0,
-            3
+            0.0,
+            3.0
           ]
         ]
       },
@@ -242,7 +242,7 @@
     "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 10,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",

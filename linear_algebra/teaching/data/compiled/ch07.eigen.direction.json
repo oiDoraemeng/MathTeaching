@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:71b106b62af7178c5fc660a32a338d52262a38e250876623bc3f334a75cf5dae",
+  "artifact_digest": "sha256:dc087d761eb436af6b8e316f8a6afb0ff1ded88a31be0718223d97d64cc7d31b",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:cffa4c528f500567876d7ade84209fc8337b6a2374759d8c034385ea030e00c7",
@@ -143,7 +143,7 @@
       {
         "alias": "entity_ch07_eigen_direction_reverse_output__end",
         "coordinates": [
-          0.0,
+          -0.0,
           -1.0
         ],
         "name": "",
@@ -237,20 +237,20 @@
         "matrices": [
           [
             [
-              2,
-              0
+              2.0,
+              0.0
             ],
             [
-              0,
-              -1
+              0.0,
+              -1.0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1,
-            0
+            1.0,
+            0.0
           ]
         ]
       },
@@ -262,20 +262,20 @@
         "matrices": [
           [
             [
-              2,
-              0
+              2.0,
+              0.0
             ],
             [
-              0,
-              -1
+              0.0,
+              -1.0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0,
-            1
+            0.0,
+            1.0
           ]
         ]
       },
@@ -287,20 +287,20 @@
         "matrices": [
           [
             [
-              1,
-              0
+              1.0,
+              0.0
             ],
             [
-              0,
-              0
+              0.0,
+              0.0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0,
-            1
+            0.0,
+            1.0
           ]
         ]
       },
@@ -312,20 +312,20 @@
         "matrices": [
           [
             [
-              2,
-              0
+              2.0,
+              0.0
             ],
             [
-              0,
-              -1
+              0.0,
+              -1.0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            1,
-            0
+            1.0,
+            0.0
           ]
         ]
       },
@@ -337,20 +337,20 @@
         "matrices": [
           [
             [
-              2,
-              0
+              2.0,
+              0.0
             ],
             [
-              0,
-              -1
+              0.0,
+              -1.0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0,
-            1
+            0.0,
+            1.0
           ]
         ]
       },
@@ -362,20 +362,20 @@
         "matrices": [
           [
             [
-              1,
-              0
+              1.0,
+              0.0
             ],
             [
-              0,
-              0
+              0.0,
+              0.0
             ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
-            0,
-            1
+            0.0,
+            1.0
           ]
         ]
       },
@@ -415,7 +415,7 @@
     "summary": "7.1.1 定义",
     "version": 1
   },
-  "plan_digest": "sha256:16dbc32f99b64dff19edfd35ec076679ebba837b2a78c83bef2a168eb4b18197",
+  "plan_digest": "sha256:f6544ea3429e87a60f7f68c9669af93e1a151864fd4cd7e0a5c8a820da3365b2",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

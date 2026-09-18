@@ -3,24 +3,24 @@
   "schema_version": 1,
   "topics": [
     {
-      "revision": 7,
-      "source_hash": "sha256:30c9c572fd508014a09acfcfa88eda9ef94808885534b1f94dc4ee7fc0d61323",
+      "revision": 6,
+      "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
+      "topic_id": "ch03.cramer.area-ratio"
+    },
+    {
+      "revision": 2,
+      "source_hash": "sha256:325a14583a942b2e5d5c8f81bca1568ca4281a087bb1e401dec33530f3686d78",
+      "topic_id": "ch03.det.high-dimensional-volume"
+    },
+    {
+      "revision": 6,
+      "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
+      "topic_id": "ch03.det.multiplicativity"
+    },
+    {
+      "revision": 18,
+      "source_hash": "sha256:2335b4ec231d51cb971094f8fa3c6f468bd6390fdce36380e8f4933f6139a965",
       "topic_id": "ch03.det.oriented-area"
-    },
-    {
-      "revision": 7,
-      "source_hash": "sha256:cf8be46dd084ee719f2fdc8a314eb6ed8106ff42972a605d2f3e80ea9d061546",
-      "topic_id": "ch03.det.ad-bc"
-    },
-    {
-      "revision": 7,
-      "source_hash": "sha256:85c2dfa15eb9d5444acced285069532710e5182167f8b120e7bf98b9bd7689b4",
-      "topic_id": "ch03.det.sign-zero-one"
-    },
-    {
-      "revision": 7,
-      "source_hash": "sha256:64b698a22859115514a2815e7ded5618e1d7b41aac9a28eb5b0ce39d7cee09f4",
-      "topic_id": "ch03.det.examples"
     },
     {
       "revision": 7,
@@ -38,24 +38,9 @@
       "topic_id": "ch03.det.shear"
     },
     {
-      "revision": 6,
-      "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
-      "topic_id": "ch03.det.multiplicativity"
-    },
-    {
-      "revision": 6,
-      "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
-      "topic_id": "ch03.cramer.area-ratio"
-    },
-    {
       "revision": 2,
-      "source_hash": "sha256:1412f3abb56f905fb252ee42c4ff91603976acdf1595bb39007c54d5d9efe6e4",
-      "topic_id": "ch03.inverse.undo"
-    },
-    {
-      "revision": 2,
-      "source_hash": "sha256:1e1869e796f6a4440cfab9915bf03553ca938b34742a29655ce1b0ed2334154c",
-      "topic_id": "ch03.inverse.formula"
+      "source_hash": "sha256:4eeb58f2ff6eda37648b0c36dd461128c7afdd24872497bbd261dac8f8ed7ab3",
+      "topic_id": "ch03.det.zero.equivalence"
     },
     {
       "revision": 2,
@@ -64,18 +49,18 @@
     },
     {
       "revision": 2,
-      "source_hash": "sha256:4eeb58f2ff6eda37648b0c36dd461128c7afdd24872497bbd261dac8f8ed7ab3",
-      "topic_id": "ch03.det.zero.equivalence"
-    },
-    {
-      "revision": 2,
-      "source_hash": "sha256:325a14583a942b2e5d5c8f81bca1568ca4281a087bb1e401dec33530f3686d78",
-      "topic_id": "ch03.det.high-dimensional-volume"
+      "source_hash": "sha256:1e1869e796f6a4440cfab9915bf03553ca938b34742a29655ce1b0ed2334154c",
+      "topic_id": "ch03.inverse.formula"
     },
     {
       "revision": 2,
       "source_hash": "sha256:ffa4c79ebbf8be28ecd21dcd13d91bfa6b2234bf8797f7fc19ec0d33c0ddd905",
       "topic_id": "ch03.inverse.reverse-order"
+    },
+    {
+      "revision": 2,
+      "source_hash": "sha256:1412f3abb56f905fb252ee42c4ff91603976acdf1595bb39007c54d5d9efe6e4",
+      "topic_id": "ch03.inverse.undo"
     }
   ]
 }

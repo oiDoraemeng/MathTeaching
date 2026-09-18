@@ -1,1 +1,524 @@
-{"claims":[{"entity_refs":["entity.ch05.elementary-matrix-elimination.matrix","entity.ch05.elementary-matrix-elimination.rhs","entity.ch05.elementary-matrix-elimination.elementary_matrices","entity.ch05.elementary-matrix-elimination.tableau"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence","formula_symbols":["matrix","rhs","elementary_matrices","tableau"],"id":"claim.ch05.elementary-matrix-elimination","relation_refs":["relation.ch05.elementary-matrix-elimination.row_operation"],"source_refs":["第5章 线性方程组 / 5.7 初等矩阵与消元法的矩阵表述::1::sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b"],"stage_refs":["stage.ch05.elementary-matrix-elimination.initial","stage.ch05.elementary-matrix-elimination.elementary_1","stage.ch05.elementary-matrix-elimination.elementary_2","stage.ch05.elementary-matrix-elimination.final"],"statement":"5.7 初等矩阵与消元法的矩阵表述 的数学主张由显式对象、关系和不变量支持。"}],"connections":[{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"description":"前置的线性表示与几何关系。","id":"connection.ch05.elementary-matrix-elimination.prior","relation":"prerequisite","target_topic_id":"ch03.det.ad-bc"}],"explanation":{"conclusion":"","connections":[],"definition":"## 5.7 初等矩阵与消元法的矩阵表述\n定义 5.4（初等矩阵）: 单位矩阵I经过一次初等行（列）变换得到的矩阵。三种类型：\n$E_{ij}$ : 交换I的第i,j行\n$E_{i}(k)$: I的第i行乘以k（$k\\neq0$）\n$E_{ij}(k)$: I的第i行加上第j行的k倍\n核心定理：对A做一次初等行变换 $=$ 左乘对应的初等矩阵。消元全过程 $= E_{k} \\cdot \\cdot \\cdot E_{2}E_{1}A = U$。\nLU分解简介：若消元过程不使用行交换，则$A=LU$，L为下三角矩阵（对角线为1，元素为消元乘数），U为上三角矩阵。","derivation":["例题：$A=\\begin{pmatrix}2 & 1 \\\\ 4 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow U=\\begin{pmatrix}2 & 1 \\\\ 0 & 1\\end{pmatrix}$。$L=\\begin{pmatrix}1 & 0 \\\\ 2 & 1\\end{pmatrix}$。验证$LU=A$。"],"formula":"5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence","geometric_meaning":"","intuition":"一句话动机：变换中哪些方向上的向量「只伸缩、不转弯」？找到这些方向和伸缩倍数，变换就简单了——每个方向独立缩放。","invariants":["each elementary matrix realizes one row operation","row operations preserve solution set","finite numeric result"],"pitfalls":[],"read_guide":[],"searchable_text":["5.7 初等矩阵与消元法的矩阵表述","本节目标：掌握特征值和特征向量的求解，理解对角化的几何意义。","5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence","## 5.7 初等矩阵与消元法的矩阵表述\n定义 5.4（初等矩阵）: 单位矩阵I经过一次初等行（列）变换得到的矩阵。三种类型：\n$E_{ij}$ : 交换I的第i,j行\n$E_{i}(k)$: I的第i行乘以k（$k\\neq0$）\n$E_{ij}(k)$: I的第i行加上第j行的k倍\n核心定理：对A做一次初等行变换 $=$ 左乘对应的初等矩阵。消元全过程 $= E_{k} \\cdot \\cdot \\cdot E_{2}E_{1}A = U$。\nLU分解简介：若消元过程不使用行交换，则$A=LU$，L为下三角矩阵（对角线为1，元素为消元乘数），U为上三角矩阵。","例题：$A=\\begin{pmatrix}2 & 1 \\\\ 4 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow U=\\begin{pmatrix}2 & 1 \\\\ 0 & 1\\end{pmatrix}$。$L=\\begin{pmatrix}1 & 0 \\\\ 2 & 1\\end{pmatrix}$。验证$LU=A$。","each elementary matrix realizes one row operation","row operations preserve solution set","finite numeric result"],"sections":[{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"id":"definition","text":"## 5.7 初等矩阵与消元法的矩阵表述\n定义 5.4（初等矩阵）: 单位矩阵I经过一次初等行（列）变换得到的矩阵。三种类型：\n$E_{ij}$ : 交换I的第i,j行\n$E_{i}(k)$: I的第i行乘以k（$k\\neq0$）\n$E_{ij}(k)$: I的第i行加上第j行的k倍\n核心定理：对A做一次初等行变换 $=$ 左乘对应的初等矩阵。消元全过程 $= E_{k} \\cdot \\cdot \\cdot E_{2}E_{1}A = U$。\nLU分解简介：若消元过程不使用行交换，则$A=LU$，L为下三角矩阵（对角线为1，元素为消元乘数），U为上三角矩阵。","title":"definition"},{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"id":"formula","text":"5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence","title":"formula"},{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"id":"derivation","text":"例题：$A=\\begin{pmatrix}2 & 1 \\\\ 4 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow U=\\begin{pmatrix}2 & 1 \\\\ 0 & 1\\end{pmatrix}$。$L=\\begin{pmatrix}1 & 0 \\\\ 2 & 1\\end{pmatrix}$。验证$LU=A$。","title":"derivation"},{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"id":"worked_examples","text":"5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence","title":"worked_examples"},{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"id":"geometric_meaning","text":"geometric_meaning: 5.7 初等矩阵与消元法的矩阵表述。","title":"geometric_meaning"},{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"id":"pitfalls","text":"pitfalls: 5.7 初等矩阵与消元法的矩阵表述。","title":"pitfalls"},{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"id":"connections","text":"connections: 5.7 初等矩阵与消元法的矩阵表述。","title":"connections"},{"claim_refs":[],"id":"intuition","text":"一句话动机：变换中哪些方向上的向量「只伸缩、不转弯」？找到这些方向和伸缩倍数，变换就简单了——每个方向独立缩放。","title":"intuition"},{"claim_refs":[],"id":"invariants","text":"each elementary matrix realizes one row operation\nrow operations preserve solution set\nfinite numeric result","title":"invariants"}],"summary":"本节目标：掌握特征值和特征向量的求解，理解对角化的几何意义。","symbol_roles":{"elementary_matrices":"elementary_matrices","matrix":"matrix","rhs":"rhs","tableau":"tableau"},"title":"5.7 初等矩阵与消元法的矩阵表述","worked_examples":[{"calculation":["5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence"],"checks":[{"expected":[2,4],"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch05.elementary-matrix-elimination"],"given":[2,[1,2]],"id":"example.ch05.elementary-matrix-elimination","kind":"scalar_multiple","result":[2,4],"title":"主题数值例"}]},"generated":{"artifact_digest":"sha256:a8cf8a2d0232d8232ac2aea01bbdc782ec226c9f1a72ba1c55b3b8b746773a93","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:2c25e421ae1f83bba0060e64ad011fbbe95b3ef12b7501be69927b613a44c621","source_hash":"sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b"},"revision":1,"schema_version":1,"source":{"excerpt":"## 5.7 初等矩阵与消元法的矩阵表述\n\n定义 5.4（初等矩阵）: 单位矩阵I经过一次初等行（列）变换得到的矩阵。三种类型：\n$E_{ij}$ : 交换I的第i,j行\n$E_{i}(k)$: I的第i行乘以k（$k\\neq0$）\n$E_{ij}(k)$: I的第i行加上第j行的k倍\n\n一句话动机：变换中哪些方向上的向量「只伸缩、不转弯」？找到这些方向和伸缩倍数，变换就简单了——每个方向独立缩放。\n本节目标：掌握特征值和特征向量的求解，理解对角化的几何意义。\n核心定理：对A做一次初等行变换 $=$ 左乘对应的初等矩阵。消元全过程 $= E_{k} \\cdot \\cdot \\cdot E_{2}E_{1}A = U$。\n\nLU分解简介：若消元过程不使用行交换，则$A=LU$，L为下三角矩阵（对角线为1，元素为消元乘数），U为上三角矩阵。\n例题：$A=\\begin{pmatrix}2 & 1 \\\\ 4 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow U=\\begin{pmatrix}2 & 1 \\\\ 0 & 1\\end{pmatrix}$。$L=\\begin{pmatrix}1 & 0 \\\\ 2 & 1\\end{pmatrix}$。验证$LU=A$。","heading_level":2,"heading_path":["第5章 线性方程组","5.7 初等矩阵与消元法的矩阵表述"],"neighboring_titles":["5.6 基础解系——零空间的标准化描述","5.8 最小二乘法的完整推导"],"occurrence":1,"source_hash":"sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b","source_path":["第5章 线性方程组","5.7 初等矩阵与消元法的矩阵表述","5.7 初等矩阵与消元法的矩阵表述"],"spans":[{"end_line":2026,"fingerprint":"sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b","heading_path":["第5章 线性方程组","5.7 初等矩阵与消元法的矩阵表述"],"id":"第5章 线性方程组 / 5.7 初等矩阵与消元法的矩阵表述::1::sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b","start_line":2013,"text":"## 5.7 初等矩阵与消元法的矩阵表述\n\n定义 5.4（初等矩阵）: 单位矩阵I经过一次初等行（列）变换得到的矩阵。三种类型：\n$E_{ij}$ : 交换I的第i,j行\n$E_{i}(k)$: I的第i行乘以k（$k\\neq0$）\n$E_{ij}(k)$: I的第i行加上第j行的k倍\n\n一句话动机：变换中哪些方向上的向量「只伸缩、不转弯」？找到这些方向和伸缩倍数，变换就简单了——每个方向独立缩放。\n本节目标：掌握特征值和特征向量的求解，理解对角化的几何意义。\n核心定理：对A做一次初等行变换 $=$ 左乘对应的初等矩阵。消元全过程 $= E_{k} \\cdot \\cdot \\cdot E_{2}E_{1}A = U$。\n\nLU分解简介：若消元过程不使用行交换，则$A=LU$，L为下三角矩阵（对角线为1，元素为消元乘数），U为上三角矩阵。\n例题：$A=\\begin{pmatrix}2 & 1 \\\\ 4 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow U=\\begin{pmatrix}2 & 1 \\\\ 0 & 1\\end{pmatrix}$。$L=\\begin{pmatrix}1 & 0 \\\\ 2 & 1\\end{pmatrix}$。验证$LU=A$。"}]},"status":"reviewed","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch05.elementary-matrix-elimination","visual_semantics":{"entities":[{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"dimension":2,"id":"entity.ch05.elementary-matrix-elimination.matrix","kind":"matrix","label":"matrix","role":"matrix","value":[[1,2],[2,5]]},{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"dimension":2,"id":"entity.ch05.elementary-matrix-elimination.rhs","kind":"vector","label":"rhs","role":"rhs","value":[3,8]},{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"dimension":2,"id":"entity.ch05.elementary-matrix-elimination.elementary_matrices","kind":"matrix","label":"elementary_matrices","role":"elementary_matrices","value":[[2,0],[0,1]]},{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"dimension":2,"id":"entity.ch05.elementary-matrix-elimination.tableau","kind":"matrix","label":"tableau","role":"tableau","value":[[2,0],[0,1]]}],"relations":[{"claim_refs":["claim.ch05.elementary-matrix-elimination"],"id":"relation.ch05.elementary-matrix-elimination.row_operation","kind":"row_operation","parameters":{"elementary_matrices":[[[2,0],[0,1]],[[1,0],[-1,1]],[[1,-4],[0,1]]],"matrix":[[1,2],[2,5]],"operations":[[0,-1,2],[1,0,1],[0,1,4]],"rhs":[3,8],"solution_code":1,"tableau":[[2,0],[0,1]]},"source_ref":"entity.ch05.elementary-matrix-elimination.matrix","target_ref":"entity.ch05.elementary-matrix-elimination.tableau"}],"scene_family":"affine_solution","scene_kind":"2d","stages":[{"caption":"initial","expected_invariants":["each elementary matrix realizes one row operation","row operations preserve solution set","finite numeric result"],"id":"stage.ch05.elementary-matrix-elimination.initial","input_entity_refs":["entity.ch05.elementary-matrix-elimination.matrix","entity.ch05.elementary-matrix-elimination.rhs","entity.ch05.elementary-matrix-elimination.elementary_matrices","entity.ch05.elementary-matrix-elimination.tableau"],"layout":"sequence","output_entity_refs":["entity.ch05.elementary-matrix-elimination.matrix","entity.ch05.elementary-matrix-elimination.rhs","entity.ch05.elementary-matrix-elimination.elementary_matrices","entity.ch05.elementary-matrix-elimination.tableau"],"relation_refs":["relation.ch05.elementary-matrix-elimination.row_operation"],"title":"initial"},{"caption":"elementary_1","expected_invariants":["each elementary matrix realizes one row operation","row operations preserve solution set","finite numeric result"],"id":"stage.ch05.elementary-matrix-elimination.elementary_1","input_entity_refs":["entity.ch05.elementary-matrix-elimination.matrix","entity.ch05.elementary-matrix-elimination.rhs","entity.ch05.elementary-matrix-elimination.elementary_matrices","entity.ch05.elementary-matrix-elimination.tableau"],"layout":"sequence","output_entity_refs":["entity.ch05.elementary-matrix-elimination.matrix","entity.ch05.elementary-matrix-elimination.rhs","entity.ch05.elementary-matrix-elimination.elementary_matrices","entity.ch05.elementary-matrix-elimination.tableau"],"relation_refs":["relation.ch05.elementary-matrix-elimination.row_operation"],"title":"elementary_1"},{"caption":"elementary_2","expected_invariants":["each elementary matrix realizes one row operation","row operations preserve solution set","finite numeric result"],"id":"stage.ch05.elementary-matrix-elimination.elementary_2","input_entity_refs":["entity.ch05.elementary-matrix-elimination.matrix","entity.ch05.elementary-matrix-elimination.rhs","entity.ch05.elementary-matrix-elimination.elementary_matrices","entity.ch05.elementary-matrix-elimination.tableau"],"layout":"sequence","output_entity_refs":["entity.ch05.elementary-matrix-elimination.matrix","entity.ch05.elementary-matrix-elimination.rhs","entity.ch05.elementary-matrix-elimination.elementary_matrices","entity.ch05.elementary-matrix-elimination.tableau"],"relation_refs":["relation.ch05.elementary-matrix-elimination.row_operation"],"title":"elementary_2"},{"caption":"final","expected_invariants":["each elementary matrix realizes one row operation","row operations preserve solution set","finite numeric result"],"id":"stage.ch05.elementary-matrix-elimination.final","input_entity_refs":["entity.ch05.elementary-matrix-elimination.matrix","entity.ch05.elementary-matrix-elimination.rhs","entity.ch05.elementary-matrix-elimination.elementary_matrices","entity.ch05.elementary-matrix-elimination.tableau"],"layout":"sequence","output_entity_refs":["entity.ch05.elementary-matrix-elimination.matrix","entity.ch05.elementary-matrix-elimination.rhs","entity.ch05.elementary-matrix-elimination.elementary_matrices","entity.ch05.elementary-matrix-elimination.tableau"],"relation_refs":["relation.ch05.elementary-matrix-elimination.row_operation"],"title":"final"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch05.elementary-matrix-elimination.matrix",
+        "entity.ch05.elementary-matrix-elimination.rhs",
+        "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+        "entity.ch05.elementary-matrix-elimination.tableau"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence",
+      "formula_symbols": [
+        "matrix",
+        "rhs",
+        "elementary_matrices",
+        "tableau"
+      ],
+      "id": "claim.ch05.elementary-matrix-elimination",
+      "relation_refs": [
+        "relation.ch05.elementary-matrix-elimination.row_operation"
+      ],
+      "source_refs": [
+        "第5章 线性方程组 / 5.7 初等矩阵与消元法的矩阵表述::1::sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b"
+      ],
+      "stage_refs": [
+        "stage.ch05.elementary-matrix-elimination.initial",
+        "stage.ch05.elementary-matrix-elimination.elementary_1",
+        "stage.ch05.elementary-matrix-elimination.elementary_2",
+        "stage.ch05.elementary-matrix-elimination.final"
+      ],
+      "statement": "5.7 初等矩阵与消元法的矩阵表述 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch05.elementary-matrix-elimination"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch05.elementary-matrix-elimination.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "conclusion": "",
+    "connections": [],
+    "definition": "## 5.7 初等矩阵与消元法的矩阵表述\n定义 5.4（初等矩阵）: 单位矩阵I经过一次初等行（列）变换得到的矩阵。三种类型：\n$E_{ij}$ : 交换I的第i,j行\n$E_{i}(k)$: I的第i行乘以k（$k\\neq0$）\n$E_{ij}(k)$: I的第i行加上第j行的k倍\n核心定理：对A做一次初等行变换 $=$ 左乘对应的初等矩阵。消元全过程 $= E_{k} \\cdot \\cdot \\cdot E_{2}E_{1}A = U$。\nLU分解简介：若消元过程不使用行交换，则$A=LU$，L为下三角矩阵（对角线为1，元素为消元乘数），U为上三角矩阵。",
+    "derivation": [
+      "例题：$A=\\begin{pmatrix}2 & 1 \\\\ 4 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow U=\\begin{pmatrix}2 & 1 \\\\ 0 & 1\\end{pmatrix}$。$L=\\begin{pmatrix}1 & 0 \\\\ 2 & 1\\end{pmatrix}$。验证$LU=A$。"
+    ],
+    "formula": "5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence",
+    "geometric_meaning": "",
+    "intuition": "一句话动机：变换中哪些方向上的向量「只伸缩、不转弯」？找到这些方向和伸缩倍数，变换就简单了——每个方向独立缩放。",
+    "invariants": [
+      "each elementary matrix realizes one row operation",
+      "row operations preserve solution set",
+      "finite numeric result"
+    ],
+    "pitfalls": [],
+    "read_guide": [],
+    "searchable_text": [
+      "5.7 初等矩阵与消元法的矩阵表述",
+      "本节目标：掌握特征值和特征向量的求解，理解对角化的几何意义。",
+      "5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence",
+      "## 5.7 初等矩阵与消元法的矩阵表述\n定义 5.4（初等矩阵）: 单位矩阵I经过一次初等行（列）变换得到的矩阵。三种类型：\n$E_{ij}$ : 交换I的第i,j行\n$E_{i}(k)$: I的第i行乘以k（$k\\neq0$）\n$E_{ij}(k)$: I的第i行加上第j行的k倍\n核心定理：对A做一次初等行变换 $=$ 左乘对应的初等矩阵。消元全过程 $= E_{k} \\cdot \\cdot \\cdot E_{2}E_{1}A = U$。\nLU分解简介：若消元过程不使用行交换，则$A=LU$，L为下三角矩阵（对角线为1，元素为消元乘数），U为上三角矩阵。",
+      "例题：$A=\\begin{pmatrix}2 & 1 \\\\ 4 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow U=\\begin{pmatrix}2 & 1 \\\\ 0 & 1\\end{pmatrix}$。$L=\\begin{pmatrix}1 & 0 \\\\ 2 & 1\\end{pmatrix}$。验证$LU=A$。",
+      "each elementary matrix realizes one row operation",
+      "row operations preserve solution set",
+      "finite numeric result"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "id": "definition",
+        "text": "## 5.7 初等矩阵与消元法的矩阵表述\n定义 5.4（初等矩阵）: 单位矩阵I经过一次初等行（列）变换得到的矩阵。三种类型：\n$E_{ij}$ : 交换I的第i,j行\n$E_{i}(k)$: I的第i行乘以k（$k\\neq0$）\n$E_{ij}(k)$: I的第i行加上第j行的k倍\n核心定理：对A做一次初等行变换 $=$ 左乘对应的初等矩阵。消元全过程 $= E_{k} \\cdot \\cdot \\cdot E_{2}E_{1}A = U$。\nLU分解简介：若消元过程不使用行交换，则$A=LU$，L为下三角矩阵（对角线为1，元素为消元乘数），U为上三角矩阵。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "id": "formula",
+        "text": "5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "id": "derivation",
+        "text": "例题：$A=\\begin{pmatrix}2 & 1 \\\\ 4 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow U=\\begin{pmatrix}2 & 1 \\\\ 0 & 1\\end{pmatrix}$。$L=\\begin{pmatrix}1 & 0 \\\\ 2 & 1\\end{pmatrix}$。验证$LU=A$。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "id": "worked_examples",
+        "text": "5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 5.7 初等矩阵与消元法的矩阵表述。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 5.7 初等矩阵与消元法的矩阵表述。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "id": "connections",
+        "text": "connections: 5.7 初等矩阵与消元法的矩阵表述。",
+        "title": "connections"
+      },
+      {
+        "claim_refs": [],
+        "id": "intuition",
+        "text": "一句话动机：变换中哪些方向上的向量「只伸缩、不转弯」？找到这些方向和伸缩倍数，变换就简单了——每个方向独立缩放。",
+        "title": "intuition"
+      },
+      {
+        "claim_refs": [],
+        "id": "invariants",
+        "text": "each elementary matrix realizes one row operation\nrow operations preserve solution set\nfinite numeric result",
+        "title": "invariants"
+      }
+    ],
+    "summary": "本节目标：掌握特征值和特征向量的求解，理解对角化的几何意义。",
+    "symbol_roles": {
+      "elementary_matrices": "elementary_matrices",
+      "matrix": "matrix",
+      "rhs": "rhs",
+      "tableau": "tableau"
+    },
+    "title": "5.7 初等矩阵与消元法的矩阵表述",
+    "worked_examples": [
+      {
+        "calculation": [
+          "5.7 初等矩阵与消元法的矩阵表述: finite typed semantic evidence"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch05.elementary-matrix-elimination",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:c459b32adfea218ef9e01a6823141d8c05270322682dfb4a834c0c8cb4b7cfee",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:b3e4be45785103f5c5b75d85846e805dcca249ba7a13f1e0bcb865973e30eb92",
+    "source_hash": "sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "## 5.7 初等矩阵与消元法的矩阵表述\n\n定义 5.4（初等矩阵）: 单位矩阵I经过一次初等行（列）变换得到的矩阵。三种类型：\n$E_{ij}$ : 交换I的第i,j行\n$E_{i}(k)$: I的第i行乘以k（$k\\neq0$）\n$E_{ij}(k)$: I的第i行加上第j行的k倍\n\n一句话动机：变换中哪些方向上的向量「只伸缩、不转弯」？找到这些方向和伸缩倍数，变换就简单了——每个方向独立缩放。\n本节目标：掌握特征值和特征向量的求解，理解对角化的几何意义。\n核心定理：对A做一次初等行变换 $=$ 左乘对应的初等矩阵。消元全过程 $= E_{k} \\cdot \\cdot \\cdot E_{2}E_{1}A = U$。\n\nLU分解简介：若消元过程不使用行交换，则$A=LU$，L为下三角矩阵（对角线为1，元素为消元乘数），U为上三角矩阵。\n例题：$A=\\begin{pmatrix}2 & 1 \\\\ 4 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow U=\\begin{pmatrix}2 & 1 \\\\ 0 & 1\\end{pmatrix}$。$L=\\begin{pmatrix}1 & 0 \\\\ 2 & 1\\end{pmatrix}$。验证$LU=A$。",
+    "heading_level": 2,
+    "heading_path": [
+      "第5章 线性方程组",
+      "5.7 初等矩阵与消元法的矩阵表述"
+    ],
+    "neighboring_titles": [
+      "5.6 基础解系——零空间的标准化描述",
+      "5.8 最小二乘法的完整推导"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b",
+    "source_path": [
+      "第5章 线性方程组",
+      "5.7 初等矩阵与消元法的矩阵表述",
+      "5.7 初等矩阵与消元法的矩阵表述"
+    ],
+    "spans": [
+      {
+        "end_line": 1908,
+        "fingerprint": "sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b",
+        "heading_path": [
+          "第5章 线性方程组",
+          "5.7 初等矩阵与消元法的矩阵表述"
+        ],
+        "id": "第5章 线性方程组 / 5.7 初等矩阵与消元法的矩阵表述::1::sha256:a0ac1c5361fd36552d910f075b53d7cea688e61cc4d8094ddf773f1000495e5b",
+        "start_line": 1895,
+        "text": "## 5.7 初等矩阵与消元法的矩阵表述\n\n定义 5.4（初等矩阵）: 单位矩阵I经过一次初等行（列）变换得到的矩阵。三种类型：\n$E_{ij}$ : 交换I的第i,j行\n$E_{i}(k)$: I的第i行乘以k（$k\\neq0$）\n$E_{ij}(k)$: I的第i行加上第j行的k倍\n\n一句话动机：变换中哪些方向上的向量「只伸缩、不转弯」？找到这些方向和伸缩倍数，变换就简单了——每个方向独立缩放。\n本节目标：掌握特征值和特征向量的求解，理解对角化的几何意义。\n核心定理：对A做一次初等行变换 $=$ 左乘对应的初等矩阵。消元全过程 $= E_{k} \\cdot \\cdot \\cdot E_{2}E_{1}A = U$。\n\nLU分解简介：若消元过程不使用行交换，则$A=LU$，L为下三角矩阵（对角线为1，元素为消元乘数），U为上三角矩阵。\n例题：$A=\\begin{pmatrix}2 & 1 \\\\ 4 & 3\\end{pmatrix}$。消元：$R_{2}-2R_{1} \\rightarrow U=\\begin{pmatrix}2 & 1 \\\\ 0 & 1\\end{pmatrix}$。$L=\\begin{pmatrix}1 & 0 \\\\ 2 & 1\\end{pmatrix}$。验证$LU=A$。"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch05.elementary-matrix-elimination",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.elementary-matrix-elimination.matrix",
+        "kind": "matrix",
+        "label": "matrix",
+        "role": "matrix",
+        "value": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            5.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.elementary-matrix-elimination.rhs",
+        "kind": "vector",
+        "label": "rhs",
+        "role": "rhs",
+        "value": [
+          3.0,
+          8.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+        "kind": "matrix",
+        "label": "elementary_matrices",
+        "role": "elementary_matrices",
+        "value": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.elementary-matrix-elimination.tableau",
+        "kind": "matrix",
+        "label": "tableau",
+        "role": "tableau",
+        "value": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch05.elementary-matrix-elimination"
+        ],
+        "id": "relation.ch05.elementary-matrix-elimination.row_operation",
+        "kind": "row_operation",
+        "parameters": {
+          "elementary_matrices": [
+            [
+              [
+                2.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0
+              ]
+            ],
+            [
+              [
+                1.0,
+                0.0
+              ],
+              [
+                -1.0,
+                1.0
+              ]
+            ],
+            [
+              [
+                1.0,
+                -4.0
+              ],
+              [
+                0.0,
+                1.0
+              ]
+            ]
+          ],
+          "matrix": [
+            [
+              1.0,
+              2.0
+            ],
+            [
+              2.0,
+              5.0
+            ]
+          ],
+          "operations": [
+            [
+              0.0,
+              -1.0,
+              2.0
+            ],
+            [
+              1.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              4.0
+            ]
+          ],
+          "rhs": [
+            3.0,
+            8.0
+          ],
+          "solution_code": 1.0,
+          "tableau": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch05.elementary-matrix-elimination.matrix",
+        "target_ref": "entity.ch05.elementary-matrix-elimination.tableau"
+      }
+    ],
+    "scene_family": "affine_solution",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "initial",
+        "expected_invariants": [
+          "each elementary matrix realizes one row operation",
+          "row operations preserve solution set",
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.elementary-matrix-elimination.initial",
+        "input_entity_refs": [
+          "entity.ch05.elementary-matrix-elimination.matrix",
+          "entity.ch05.elementary-matrix-elimination.rhs",
+          "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+          "entity.ch05.elementary-matrix-elimination.tableau"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.elementary-matrix-elimination.matrix",
+          "entity.ch05.elementary-matrix-elimination.rhs",
+          "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+          "entity.ch05.elementary-matrix-elimination.tableau"
+        ],
+        "relation_refs": [
+          "relation.ch05.elementary-matrix-elimination.row_operation"
+        ],
+        "title": "initial"
+      },
+      {
+        "caption": "elementary_1",
+        "expected_invariants": [
+          "each elementary matrix realizes one row operation",
+          "row operations preserve solution set",
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.elementary-matrix-elimination.elementary_1",
+        "input_entity_refs": [
+          "entity.ch05.elementary-matrix-elimination.matrix",
+          "entity.ch05.elementary-matrix-elimination.rhs",
+          "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+          "entity.ch05.elementary-matrix-elimination.tableau"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.elementary-matrix-elimination.matrix",
+          "entity.ch05.elementary-matrix-elimination.rhs",
+          "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+          "entity.ch05.elementary-matrix-elimination.tableau"
+        ],
+        "relation_refs": [
+          "relation.ch05.elementary-matrix-elimination.row_operation"
+        ],
+        "title": "elementary_1"
+      },
+      {
+        "caption": "elementary_2",
+        "expected_invariants": [
+          "each elementary matrix realizes one row operation",
+          "row operations preserve solution set",
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.elementary-matrix-elimination.elementary_2",
+        "input_entity_refs": [
+          "entity.ch05.elementary-matrix-elimination.matrix",
+          "entity.ch05.elementary-matrix-elimination.rhs",
+          "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+          "entity.ch05.elementary-matrix-elimination.tableau"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.elementary-matrix-elimination.matrix",
+          "entity.ch05.elementary-matrix-elimination.rhs",
+          "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+          "entity.ch05.elementary-matrix-elimination.tableau"
+        ],
+        "relation_refs": [
+          "relation.ch05.elementary-matrix-elimination.row_operation"
+        ],
+        "title": "elementary_2"
+      },
+      {
+        "caption": "final",
+        "expected_invariants": [
+          "each elementary matrix realizes one row operation",
+          "row operations preserve solution set",
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.elementary-matrix-elimination.final",
+        "input_entity_refs": [
+          "entity.ch05.elementary-matrix-elimination.matrix",
+          "entity.ch05.elementary-matrix-elimination.rhs",
+          "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+          "entity.ch05.elementary-matrix-elimination.tableau"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.elementary-matrix-elimination.matrix",
+          "entity.ch05.elementary-matrix-elimination.rhs",
+          "entity.ch05.elementary-matrix-elimination.elementary_matrices",
+          "entity.ch05.elementary-matrix-elimination.tableau"
+        ],
+        "relation_refs": [
+          "relation.ch05.elementary-matrix-elimination.row_operation"
+        ],
+        "title": "final"
+      }
+    ]
+  }
+}

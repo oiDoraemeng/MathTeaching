@@ -1,1 +1,456 @@
-{"claims":[{"entity_refs":["entity.ch04.coordinates.readout.standard_basis","entity.ch04.coordinates.readout.oblique_basis","entity.ch04.coordinates.readout.same_vector","entity.ch04.coordinates.readout.standard_coordinates","entity.ch04.coordinates.readout.oblique_coordinates"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"v=2e_1+e_2=b_1+b_2=(2,1)","formula_symbols":["standard_basis","oblique_basis"],"id":"claim.ch04.coordinates.readout","relation_refs":["relation.ch04.coordinates.readout.standard_readout","relation.ch04.coordinates.readout.oblique_readout","relation.ch04.coordinates.readout.same_geometric_vector"],"source_refs":["第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.3 坐标——向量的\"读数\"::1::sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50"],"stage_refs":["stage.ch04.coordinates.readout.standard","stage.ch04.coordinates.readout.oblique"],"statement":"4.3.3 坐标——向量的\"读数\" 的数学主张由显式对象、关系和不变量支持。"}],"connections":[{"claim_refs":["claim.ch04.coordinates.readout"],"description":"前置的线性表示与几何关系。","id":"connection.ch04.coordinates.readout.prior","relation":"prerequisite","target_topic_id":"ch03.det.ad-bc"}],"explanation":{"conclusion":"","connections":[],"definition":"#### 4.3.3 坐标——向量的\"读数\"\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n##### 分层例题","derivation":["例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。"],"formula":"v=2e_1+e_2=b_1+b_2=(2,1)","geometric_meaning":"","intuition":"","invariants":["standard_reconstruction","coordinate_reconstruction"],"pitfalls":[],"read_guide":[],"searchable_text":["4.3.3 坐标——向量的\"读数\"","v=2e_1+e_2=b_1+b_2=(2,1)","#### 4.3.3 坐标——向量的\"读数\"\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n##### 分层例题","例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。","standard_reconstruction","coordinate_reconstruction"],"sections":[{"claim_refs":["claim.ch04.coordinates.readout"],"id":"definition","text":"#### 4.3.3 坐标——向量的\"读数\"\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n##### 分层例题","title":"definition"},{"claim_refs":["claim.ch04.coordinates.readout"],"id":"formula","text":"v=2e_1+e_2=b_1+b_2=(2,1)","title":"formula"},{"claim_refs":["claim.ch04.coordinates.readout"],"id":"derivation","text":"例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。","title":"derivation"},{"claim_refs":["claim.ch04.coordinates.readout"],"id":"worked_examples","text":"v=2e_1+e_2=b_1+b_2=(2,1)","title":"worked_examples"},{"claim_refs":["claim.ch04.coordinates.readout"],"id":"geometric_meaning","text":"geometric_meaning: 4.3.3 坐标——向量的\"读数\"。","title":"geometric_meaning"},{"claim_refs":["claim.ch04.coordinates.readout"],"id":"pitfalls","text":"pitfalls: 4.3.3 坐标——向量的\"读数\"。","title":"pitfalls"},{"claim_refs":["claim.ch04.coordinates.readout"],"id":"connections","text":"connections: 4.3.3 坐标——向量的\"读数\"。","title":"connections"},{"claim_refs":[],"id":"invariants","text":"standard_reconstruction\ncoordinate_reconstruction","title":"invariants"}],"summary":"4.3.3 坐标——向量的\"读数\"","symbol_roles":{"oblique_basis":"oblique_basis","oblique_coordinates":"oblique_coordinates","same_vector":"same_vector","standard_basis":"standard_basis","standard_coordinates":"standard_coordinates"},"title":"4.3.3 坐标——向量的\"读数\"","worked_examples":[{"calculation":["v=2e_1+e_2=b_1+b_2=(2,1)"],"checks":[{"expected":[2,1],"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch04.coordinates.readout"],"given":[[[1,1],[0,1]],[1,1]],"id":"example.ch04.coordinates.readout","kind":"matrix_transform","result":[2,1],"title":"主题数值例"}]},"generated":{"artifact_digest":"sha256:7bb85b8166159095824990c2b8cf9f5f905dd0ac54afc6eb1cb5b12fdfa87500","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:9f812d41c61f3799ad8a91ac2d30c11383ba91905ffbea5106352e631124c6e6","source_hash":"sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50"},"revision":1,"schema_version":1,"source":{"excerpt":"#### 4.3.3 坐标——向量的\"读数\"\n\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n\n##### 分层例题\n\n例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。","heading_level":4,"heading_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.3 基与维数","4.3.3 坐标——向量的\"读数\""],"neighboring_titles":["4.3.2 维数"],"occurrence":1,"source_hash":"sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50","source_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.3 基与维数","4.3.3 坐标——向量的\"读数\""],"spans":[{"end_line":1622,"fingerprint":"sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50","heading_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.3 基与维数","4.3.3 坐标——向量的\"读数\""],"id":"第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.3 坐标——向量的\"读数\"::1::sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50","start_line":1597,"text":"#### 4.3.3 坐标——向量的\"读数\"\n\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n\n##### 分层例题\n\n例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。"}]},"status":"reviewed","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch04.coordinates.readout","visual_semantics":{"entities":[{"claim_refs":["claim.ch04.coordinates.readout"],"dimension":2,"id":"entity.ch04.coordinates.readout.standard_basis","kind":"basis","label":"standard_basis","role":"standard_basis","value":[[1,0],[0,1]]},{"claim_refs":["claim.ch04.coordinates.readout"],"dimension":2,"id":"entity.ch04.coordinates.readout.oblique_basis","kind":"basis","label":"oblique_basis","role":"oblique_basis","value":[[1,1],[0,1]]},{"claim_refs":["claim.ch04.coordinates.readout"],"dimension":2,"id":"entity.ch04.coordinates.readout.same_vector","kind":"vector","label":"v","role":"same_vector","value":[2,1]},{"claim_refs":["claim.ch04.coordinates.readout"],"dimension":2,"id":"entity.ch04.coordinates.readout.standard_coordinates","kind":"vector","label":"[v]E","role":"standard_coordinates","value":[2,1]},{"claim_refs":["claim.ch04.coordinates.readout"],"dimension":2,"id":"entity.ch04.coordinates.readout.oblique_coordinates","kind":"vector","label":"[v]B","role":"oblique_coordinates","value":[1,1]}],"relations":[{"claim_refs":["claim.ch04.coordinates.readout"],"id":"relation.ch04.coordinates.readout.standard_readout","kind":"coordinate_equivalence","parameters":{"basis_matrix":[[1,0],[0,1]],"coordinates":[2,1],"expected_vector":[2,1]},"source_ref":"entity.ch04.coordinates.readout.standard_basis","target_ref":"entity.ch04.coordinates.readout.same_vector"},{"claim_refs":["claim.ch04.coordinates.readout"],"id":"relation.ch04.coordinates.readout.oblique_readout","kind":"coordinate_equivalence","parameters":{"basis_matrix":[[1,1],[0,1]],"coordinates":[1,1],"expected_vector":[2,1]},"source_ref":"entity.ch04.coordinates.readout.oblique_basis","target_ref":"entity.ch04.coordinates.readout.same_vector"},{"claim_refs":["claim.ch04.coordinates.readout"],"id":"relation.ch04.coordinates.readout.same_geometric_vector","kind":"same_measure","parameters":{"expected_vector":[2,1]},"source_ref":"entity.ch04.coordinates.readout.standard_coordinates","target_ref":"entity.ch04.coordinates.readout.oblique_coordinates"}],"scene_family":"basis_change","scene_kind":"2d","stages":[{"caption":"v=2e_1+e_2=b_1+b_2=(2,1)","expected_invariants":["standard_reconstruction"],"id":"stage.ch04.coordinates.readout.standard","input_entity_refs":["entity.ch04.coordinates.readout.standard_basis","entity.ch04.coordinates.readout.same_vector"],"layout":"side_by_side","output_entity_refs":["entity.ch04.coordinates.readout.standard_coordinates"],"relation_refs":["relation.ch04.coordinates.readout.standard_readout"],"title":"标准基读数"},{"caption":"v=2e_1+e_2=b_1+b_2=(2,1)","expected_invariants":["coordinate_reconstruction"],"id":"stage.ch04.coordinates.readout.oblique","input_entity_refs":["entity.ch04.coordinates.readout.oblique_basis","entity.ch04.coordinates.readout.same_vector"],"layout":"side_by_side","output_entity_refs":["entity.ch04.coordinates.readout.oblique_coordinates"],"relation_refs":["relation.ch04.coordinates.readout.oblique_readout","relation.ch04.coordinates.readout.same_geometric_vector"],"title":"斜基读数"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.coordinates.readout.standard_basis",
+        "entity.ch04.coordinates.readout.oblique_basis",
+        "entity.ch04.coordinates.readout.same_vector",
+        "entity.ch04.coordinates.readout.standard_coordinates",
+        "entity.ch04.coordinates.readout.oblique_coordinates"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "v=2e_1+e_2=b_1+b_2=(2,1)",
+      "formula_symbols": [
+        "standard_basis",
+        "oblique_basis"
+      ],
+      "id": "claim.ch04.coordinates.readout",
+      "relation_refs": [
+        "relation.ch04.coordinates.readout.standard_readout",
+        "relation.ch04.coordinates.readout.oblique_readout",
+        "relation.ch04.coordinates.readout.same_geometric_vector"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.3 坐标——向量的\"读数\"::1::sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50"
+      ],
+      "stage_refs": [
+        "stage.ch04.coordinates.readout.standard",
+        "stage.ch04.coordinates.readout.oblique"
+      ],
+      "statement": "4.3.3 坐标——向量的\"读数\" 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.coordinates.readout"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.coordinates.readout.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "conclusion": "",
+    "connections": [],
+    "definition": "#### 4.3.3 坐标——向量的\"读数\"\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n##### 分层例题",
+    "derivation": [
+      "例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。"
+    ],
+    "formula": "v=2e_1+e_2=b_1+b_2=(2,1)",
+    "geometric_meaning": "",
+    "intuition": "",
+    "invariants": [
+      "standard_reconstruction",
+      "coordinate_reconstruction"
+    ],
+    "pitfalls": [],
+    "read_guide": [],
+    "searchable_text": [
+      "4.3.3 坐标——向量的\"读数\"",
+      "v=2e_1+e_2=b_1+b_2=(2,1)",
+      "#### 4.3.3 坐标——向量的\"读数\"\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n##### 分层例题",
+      "例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。",
+      "standard_reconstruction",
+      "coordinate_reconstruction"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "definition",
+        "text": "#### 4.3.3 坐标——向量的\"读数\"\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n##### 分层例题",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "formula",
+        "text": "v=2e_1+e_2=b_1+b_2=(2,1)",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "derivation",
+        "text": "例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "worked_examples",
+        "text": "v=2e_1+e_2=b_1+b_2=(2,1)",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 4.3.3 坐标——向量的\"读数\"。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 4.3.3 坐标——向量的\"读数\"。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "connections",
+        "text": "connections: 4.3.3 坐标——向量的\"读数\"。",
+        "title": "connections"
+      },
+      {
+        "claim_refs": [],
+        "id": "invariants",
+        "text": "standard_reconstruction\ncoordinate_reconstruction",
+        "title": "invariants"
+      }
+    ],
+    "summary": "4.3.3 坐标——向量的\"读数\"",
+    "symbol_roles": {
+      "oblique_basis": "oblique_basis",
+      "oblique_coordinates": "oblique_coordinates",
+      "same_vector": "same_vector",
+      "standard_basis": "standard_basis",
+      "standard_coordinates": "standard_coordinates"
+    },
+    "title": "4.3.3 坐标——向量的\"读数\"",
+    "worked_examples": [
+      {
+        "calculation": [
+          "v=2e_1+e_2=b_1+b_2=(2,1)"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2.0,
+              1.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "given": [
+          [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "id": "example.ch04.coordinates.readout",
+        "kind": "matrix_transform",
+        "result": [
+          2.0,
+          1.0
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:56a9d407c0dd0e88af9b0c2c45cc6f9eee18c3151b26065acac359d2f1567362",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:937b2330eff4cc7699b857c82eb4e9d52884805d75e38cc407356f6489d71d41",
+    "source_hash": "sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.3.3 坐标——向量的\"读数\"\n\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n\n##### 分层例题\n\n例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。",
+    "heading_level": 4,
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.3 基与维数",
+      "4.3.3 坐标——向量的\"读数\""
+    ],
+    "neighboring_titles": [
+      "4.3.2 维数"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.3 基与维数",
+      "4.3.3 坐标——向量的\"读数\""
+    ],
+    "spans": [
+      {
+        "end_line": 1504,
+        "fingerprint": "sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50",
+        "heading_path": [
+          "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+          "4.3 基与维数",
+          "4.3.3 坐标——向量的\"读数\""
+        ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.3 基与维数 / 4.3.3 坐标——向量的\"读数\"::1::sha256:091f794b67c739f54b259ca4647f322a7fef7b401a9cfc31f5bebcfe0a722f50",
+        "start_line": 1479,
+        "text": "#### 4.3.3 坐标——向量的\"读数\"\n\n给定基 $B={v_{1},...,v_{n}}$，任何向量 x 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 x 在基 B 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。\n\n##### 分层例题\n\n例1：$R^{3}$ 的标准基是什么？维数？\n$$\ne_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1).\\dim(R^{3})=3\n$$\n例2：$\\{(1,1), (2,2)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：两个向量共线（相关），不满足\"线性无关\"条件。\n例3：$\\{(1,0), (0,1), (1,1)\\}$ 能构成 $R^{2}$ 的基吗？\n不能：三个向量在 $R^{2}$ 中必相关，不满足\"线性无关\"条件。$R^{2}$ 的基恰含 2 个向量。\n例4：（基变换）$x=(5,3)$ 在标准基下。求在基 $B=\\{(1,1), (1,-1)\\}$ 下的坐标。\n解 $c_{1}(1,1)+c_{2}(1,-1)=(5,3)$。$c_{1}+c_{2}=5, c_{1}-c_{2}=3 \\rightarrow c_{1}=4, c_{2}=1$。坐标$=(4,1)$。"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch04.coordinates.readout",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.coordinates.readout.standard_basis",
+        "kind": "basis",
+        "label": "standard_basis",
+        "role": "standard_basis",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.coordinates.readout.oblique_basis",
+        "kind": "basis",
+        "label": "oblique_basis",
+        "role": "oblique_basis",
+        "value": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.coordinates.readout.same_vector",
+        "kind": "vector",
+        "label": "v",
+        "role": "same_vector",
+        "value": [
+          2.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.coordinates.readout.standard_coordinates",
+        "kind": "vector",
+        "label": "[v]E",
+        "role": "standard_coordinates",
+        "value": [
+          2.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.coordinates.readout.oblique_coordinates",
+        "kind": "vector",
+        "label": "[v]B",
+        "role": "oblique_coordinates",
+        "value": [
+          1.0,
+          1.0
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "relation.ch04.coordinates.readout.standard_readout",
+        "kind": "coordinate_equivalence",
+        "parameters": {
+          "basis_matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "coordinates": [
+            2.0,
+            1.0
+          ],
+          "expected_vector": [
+            2.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch04.coordinates.readout.standard_basis",
+        "target_ref": "entity.ch04.coordinates.readout.same_vector"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "relation.ch04.coordinates.readout.oblique_readout",
+        "kind": "coordinate_equivalence",
+        "parameters": {
+          "basis_matrix": [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "coordinates": [
+            1.0,
+            1.0
+          ],
+          "expected_vector": [
+            2.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch04.coordinates.readout.oblique_basis",
+        "target_ref": "entity.ch04.coordinates.readout.same_vector"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.coordinates.readout"
+        ],
+        "id": "relation.ch04.coordinates.readout.same_geometric_vector",
+        "kind": "same_measure",
+        "parameters": {
+          "expected_vector": [
+            2.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch04.coordinates.readout.standard_coordinates",
+        "target_ref": "entity.ch04.coordinates.readout.oblique_coordinates"
+      }
+    ],
+    "scene_family": "basis_change",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "v=2e_1+e_2=b_1+b_2=(2,1)",
+        "expected_invariants": [
+          "standard_reconstruction"
+        ],
+        "id": "stage.ch04.coordinates.readout.standard",
+        "input_entity_refs": [
+          "entity.ch04.coordinates.readout.standard_basis",
+          "entity.ch04.coordinates.readout.same_vector"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.coordinates.readout.standard_coordinates"
+        ],
+        "relation_refs": [
+          "relation.ch04.coordinates.readout.standard_readout"
+        ],
+        "title": "标准基读数"
+      },
+      {
+        "caption": "v=2e_1+e_2=b_1+b_2=(2,1)",
+        "expected_invariants": [
+          "coordinate_reconstruction"
+        ],
+        "id": "stage.ch04.coordinates.readout.oblique",
+        "input_entity_refs": [
+          "entity.ch04.coordinates.readout.oblique_basis",
+          "entity.ch04.coordinates.readout.same_vector"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.coordinates.readout.oblique_coordinates"
+        ],
+        "relation_refs": [
+          "relation.ch04.coordinates.readout.oblique_readout",
+          "relation.ch04.coordinates.readout.same_geometric_vector"
+        ],
+        "title": "斜基读数"
+      }
+    ]
+  }
+}

@@ -1,161 +1,241 @@
 {
-  "artifact_digest": "sha256:b77b404deeaea3ff09a1a6e4720cef0efb33e66bcc4c833d06c129d839b93d2e",
+  "artifact_digest": "sha256:29ce99aaf48901433cc33c31670dad4e576b48d9a9e69e0086f5b0bc6695d1d4",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:659322cbd543d39fe434095cd68a56ee6f5baf676a4e97191f445a7305ab7dae",
   "plan": {
     "operations": [
       {
-        "alias": "sem__A",
-        "bounds": [
-          -3,
-          3,
-          -3,
-          3
-        ],
-        "color": "#6B7280",
-        "matrix": [
-          [
-            1,
-            2
-          ],
-          [
-            3,
-            4
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1
-      },
-      {
-        "alias": "sem__x__origin",
+        "alias": "sem__mv_x__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x__end",
+        "alias": "sem__mv_x__end",
         "coordinates": [
-          1,
-          2
+          2.0,
+          3.0
         ],
-        "name": "x",
+        "name": "X",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x",
-        "color": "#2F6BFF",
-        "end": "sem__x__end",
+        "alias": "sem__mv_x",
+        "color": "#2A9D8F",
+        "end": "sem__mv_x__end",
         "kind": "vector",
         "label": "x",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__x__origin"
+        "start": "sem__mv_x__origin"
       },
       {
-        "alias": "sem__y__origin",
+        "alias": "sem__mv_r1__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__y__end",
+        "alias": "sem__mv_r1__end",
         "coordinates": [
-          5,
-          11
+          1.0,
+          2.0
         ],
-        "name": "Ax",
+        "name": "R1",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__y",
+        "alias": "sem__mv_r1",
+        "color": "#2F6BFF",
+        "end": "sem__mv_r1__end",
+        "kind": "vector",
+        "label": "r1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_r1__origin"
+      },
+      {
+        "alias": "sem__mv_r2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_r2__end",
+        "coordinates": [
+          3.0,
+          1.0
+        ],
+        "name": "R2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_r2",
+        "color": "#F08A24",
+        "end": "sem__mv_r2__end",
+        "kind": "vector",
+        "label": "r2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_r2__origin"
+      },
+      {
+        "alias": "sem__mv_c1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_c1__end",
+        "coordinates": [
+          1.0,
+          3.0
+        ],
+        "name": "C1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_c1",
+        "color": "#2F6BFF",
+        "end": "sem__mv_c1__end",
+        "kind": "vector",
+        "label": "c1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_c1__origin"
+      },
+      {
+        "alias": "sem__mv_c2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_c2__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "C2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_c2",
+        "color": "#F08A24",
+        "end": "sem__mv_c2__end",
+        "kind": "vector",
+        "label": "c2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_c2__origin"
+      },
+      {
+        "alias": "sem__mv_s1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_s1__end",
+        "coordinates": [
+          2.0,
+          6.0
+        ],
+        "name": "S1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_s1",
         "color": "#7B61FF",
-        "end": "sem__y__end",
+        "end": "sem__mv_s1__end",
+        "kind": "vector",
+        "label": "2c1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_s1__origin"
+      },
+      {
+        "alias": "sem__mv_s2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_s2__end",
+        "coordinates": [
+          6.0,
+          3.0
+        ],
+        "name": "S2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_s2",
+        "color": "#D64550",
+        "end": "sem__mv_s2__end",
+        "kind": "vector",
+        "label": "3c2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_s2__origin"
+      },
+      {
+        "alias": "sem__mv_sum__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_sum__end",
+        "coordinates": [
+          8.0,
+          9.0
+        ],
+        "name": "Y",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_sum",
+        "color": "#2A9D8F",
+        "end": "sem__mv_sum__end",
         "kind": "vector",
         "label": "Ax",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__y__origin"
+        "start": "sem__mv_sum__origin"
       },
       {
-        "alias": "sem__A_maps_x_to_y",
-        "matrix": [
-          [
-            1,
-            2
-          ],
-          [
-            3,
-            4
-          ]
-        ],
-        "op": "linear_algebra.matrix_transform"
-      },
-      {
-        "alias": "sem__stage.input__title",
-        "op": "annotation.upsert",
-        "position": [
-          0,
-          2.65
-        ],
-        "text": "输入与变换"
-      },
-      {
-        "alias": "sem__stage.lecture.columns__title",
-        "op": "annotation.upsert",
-        "position": [
-          0,
-          2.65
-        ],
-        "text": "矩阵的列方向"
-      },
-      {
-        "alias": "sem__mapping_grid__3",
         "bounds": [
-          -3,
-          3,
-          -3,
-          3
+          0.0,
+          8.0,
+          0.0,
+          9.0
         ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            1,
-            2
-          ],
-          [
-            3,
-            4
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1
-      },
-      {
-        "alias": "sem__stage.lecture.combination__title",
-        "op": "annotation.upsert",
-        "position": [
-          0,
-          2.65
-        ],
-        "text": "列的加权组合"
-      },
-      {
-        "alias": "sem__ch02.matrix.row-column__formula",
-        "op": "annotation.formula",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "(Ax)_i = row_i(A)·x = sum_j x_j A_{:j}"
-      },
-      {
         "op": "view.fit",
         "padding": 1.15
       }
@@ -164,94 +244,76 @@
     "summary": "矩阵乘向量的行视角与列视角",
     "version": 1
   },
-  "plan_digest": "sha256:4a0040884569fb39c30fd5fd0c3e6fe4c4e8bb957023346035c1f7f402bd7843",
-  "read_guide": [
-    "先用行视角写出各分量。",
-    "再用列视角把结果写成列的线性组合。",
-    "核对两种算法得到同一向量。"
-  ],
+  "plan_digest": "sha256:14bf287a1ad72e10340e2f71e69676f56e697e9c22ba2368c7b25de3a3066b87",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 16,
+  "revision": 20,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:07fbb794fc533cc2655cad99b8e37a59ec70268f4cec18e7c0b6e10d0f91348c",
   "stages": [
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
-      "caption": "矩阵 A 作用于向量 x。",
-      "id": "stage.input",
+      "caption": "",
+      "id": "stage.case.ch02.matrix.row-column.1",
       "layout": "overlay",
-      "title": "输入与变换",
+      "title": "第一步：行视角（内积法）",
       "visible_aliases": [
-        "sem__A",
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__y",
-        "sem__y__end",
-        "sem__y__origin",
-        "sem__A_maps_x_to_y",
-        "sem__stage.input__title",
-        "sem__mapping_grid__1"
+        "sem__mv_x",
+        "sem__mv_x__end",
+        "sem__mv_x__origin",
+        "sem__mv_r1",
+        "sem__mv_r1__end",
+        "sem__mv_r1__origin",
+        "sem__mv_r2",
+        "sem__mv_r2__end",
+        "sem__mv_r2__origin",
+        "sem__rel.case.ch02.matrix.row-column.rows"
       ],
       "visible_refs": [
-        "A",
-        "x",
-        "y",
-        "A_maps_x_to_y"
+        "mv_x",
+        "mv_r1",
+        "mv_r2",
+        "rel.case.ch02.matrix.row-column.rows"
       ]
     },
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
-      "caption": "先看两列作为候选方向。",
-      "id": "stage.lecture.columns",
+      "caption": "",
+      "id": "stage.case.ch02.matrix.row-column.2",
       "layout": "overlay",
-      "title": "矩阵的列方向",
+      "title": "第二步：列视角（线性组合法）",
       "visible_aliases": [
-        "sem__A",
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__A_maps_x_to_y",
-        "sem__stage.lecture.columns__title",
-        "sem__mapping_grid__2"
+        "sem__mv_c1",
+        "sem__mv_c1__end",
+        "sem__mv_c1__origin",
+        "sem__mv_c2",
+        "sem__mv_c2__end",
+        "sem__mv_c2__origin",
+        "sem__mv_s1",
+        "sem__mv_s1__end",
+        "sem__mv_s1__origin",
+        "sem__mv_s2",
+        "sem__mv_s2__end",
+        "sem__mv_s2__origin",
+        "sem__mv_sum",
+        "sem__mv_sum__end",
+        "sem__mv_sum__origin",
+        "sem__rel.case.ch02.matrix.row-column.columns"
       ],
       "visible_refs": [
-        "A",
-        "x",
-        "A_maps_x_to_y"
-      ]
-    },
-    {
-      "anchor": [
-        0,
-        2.65
-      ],
-      "caption": "按 x 的分量加权得到输出。",
-      "id": "stage.lecture.combination",
-      "layout": "overlay",
-      "title": "列的加权组合",
-      "visible_aliases": [
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__y",
-        "sem__y__end",
-        "sem__y__origin",
-        "sem__A_maps_x_to_y",
-        "sem__stage.lecture.combination__title",
-        "sem__mapping_grid__3"
-      ],
-      "visible_refs": [
-        "x",
-        "y",
-        "A_maps_x_to_y"
+        "mv_c1",
+        "mv_c2",
+        "mv_s1",
+        "mv_s2",
+        "mv_sum",
+        "rel.case.ch02.matrix.row-column.columns"
       ]
     }
   ],

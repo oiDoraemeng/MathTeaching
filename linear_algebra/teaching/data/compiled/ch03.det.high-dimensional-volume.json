@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:f52c403e0a3057761e70a4dd15d3b5410aaf219e17760be27cfa3869f1ec6a0c",
+  "artifact_digest": "sha256:9775e09d590b220a560a233ed4a0296d868750e790a84530f2d23f930ac6ba62",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:902114635f3c7ab7a152f68801062eac9fba7ffa59f7c8c38242e5aec6722682",
@@ -9,54 +9,54 @@
         "alias": "sem__a",
         "color": "#2F6BFF",
         "end": [
-          1,
-          0,
-          0
+          1.0,
+          0.0,
+          0.0
         ],
         "kind": "vector",
         "label": "a",
         "op": "linear3d.upsert",
         "role": "primary",
         "start": [
-          0,
-          0,
-          0
+          0.0,
+          0.0,
+          0.0
         ]
       },
       {
         "alias": "sem__b",
         "color": "#F08A24",
         "end": [
-          0,
-          2,
-          0
+          0.0,
+          2.0,
+          0.0
         ],
         "kind": "vector",
         "label": "b",
         "op": "linear3d.upsert",
         "role": "primary",
         "start": [
-          0,
-          0,
-          0
+          0.0,
+          0.0,
+          0.0
         ]
       },
       {
         "alias": "sem__c",
         "color": "#2A9D8F",
         "end": [
-          0,
-          0,
-          3
+          0.0,
+          0.0,
+          3.0
         ],
         "kind": "vector",
         "label": "c",
         "op": "linear3d.upsert",
         "role": "primary",
         "start": [
-          0,
-          0,
-          0
+          0.0,
+          0.0,
+          0.0
         ]
       },
       {
@@ -64,25 +64,25 @@
         "color": "#2A9D8F",
         "op": "geometry.oriented_volume",
         "origin": [
-          0,
-          0,
-          0
+          0.0,
+          0.0,
+          0.0
         ],
         "vectors": [
           [
-            1,
-            0,
-            0
+            1.0,
+            0.0,
+            0.0
           ],
           [
-            0,
-            2,
-            0
+            0.0,
+            2.0,
+            0.0
           ],
           [
-            0,
-            0,
-            3
+            0.0,
+            0.0,
+            3.0
           ]
         ]
       },
@@ -109,14 +109,14 @@
     "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 11,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:325a14583a942b2e5d5c8f81bca1568ca4281a087bb1e401dec33530f3686d78",
   "stages": [
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
       "caption": "三条向量张成平行六面体。",

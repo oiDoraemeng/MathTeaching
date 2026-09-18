@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:b7c1ec618bb2d39681f86a6ce9e0dcc66b8cc4d80d17c4cf112253d7bd93d10c",
+  "artifact_digest": "sha256:826b168e9d56aa4a7b2374c9ac617c32119e303cbe91cb4d4fd6a5173a8850ec",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:31220d76904b77a14eacfc2bf826eddb4e6e4c5dfec484375a23ad64ae9bc6d1",
@@ -8,30 +8,30 @@
       {
         "alias": "sem__A",
         "bounds": [
-          -3,
-          3,
-          -3,
-          3
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            1,
-            0
+            1.0,
+            0.0
           ],
           [
-            0,
-            0
+            0.0,
+            0.0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1
+        "step": 1.0
       },
       {
         "alias": "sem__x__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -39,8 +39,8 @@
       {
         "alias": "sem__x__end",
         "coordinates": [
-          0,
-          2
+          0.0,
+          2.0
         ],
         "name": "x",
         "op": "point.upsert"
@@ -58,8 +58,8 @@
       {
         "alias": "sem__y__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -67,8 +67,8 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "Ax",
         "op": "point.upsert"
@@ -87,12 +87,12 @@
         "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
-            1,
-            0
+            1.0,
+            0.0
           ],
           [
-            0,
-            0
+            0.0,
+            0.0
           ]
         ],
         "op": "linear_algebra.matrix_transform"
@@ -100,19 +100,19 @@
       {
         "basis": [
           [
-            0,
-            2
+            0.0,
+            2.0
           ],
           [
-            0,
-            0
+            0.0,
+            0.0
           ]
         ],
         "bounds": [
-          -3,
-          3,
-          -3,
-          3
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
         "color": "#E09F3E",
         "op": "geometry.subspace_region",
@@ -122,7 +122,7 @@
         "alias": "sem__stage.input__title",
         "op": "annotation.upsert",
         "position": [
-          0,
+          0.0,
           2.65
         ],
         "text": "输入与变换"
@@ -134,7 +134,7 @@
           -2.65,
           2.65
         ],
-        "text": "rank(A) + dim(Null(A)) = n"
+        "text": "\\operatorname{rank}(A)+\\operatorname{nullity}(A)=n"
       },
       {
         "op": "view.fit",
@@ -142,24 +142,20 @@
       }
     ],
     "scene": "2d",
-    "summary": "秩-零化度定理：维数的守恒律",
+    "summary": "秩-零化度的维数守恒",
     "version": 1
   },
-  "plan_digest": "sha256:2a953bb12ec5661096e29c480db7974787aacc4a53829c60e7e865bb3e099f3a",
-  "read_guide": [
-    "先确定输入维数 n。",
-    "再分别读出行列式与零空间维数。",
-    "最后核对二者之和等于 n。"
-  ],
+  "plan_digest": "sha256:a065dd4c97213e31e103b7fa445a0d2e4e51abcb1e7fcc1fa6f545a33b27b719",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 12,
+  "revision": 14,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:076aa1d68e0591a5dde42584d6df6188c128a1bf2d5f18300cfdfe06a29fd13f",
   "stages": [
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
       "caption": "矩阵 A 作用于向量 x。",

@@ -1,1 +1,495 @@
-{"claims":[{"entity_refs":["entity.ch06.basis-change.motivation.standard_basis","entity.ch06.basis-change.motivation.basis_matrix","entity.ch06.basis-change.motivation.inverse_basis","entity.ch06.basis-change.motivation.alternate_coordinates","entity.ch06.basis-change.motivation.standard_vector"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"x=Pc,\\quad c=P^{-1}x","formula_symbols":["standard_basis","basis_matrix","inverse_basis","alternate_coordinates","standard_vector"],"id":"claim.ch06.basis-change.motivation","relation_refs":["relation.ch06.basis-change.motivation.forward","relation.ch06.basis-change.motivation.backward"],"source_refs":["第6章 基变换与相似变换 / 6.1 为什么要换基——动机::1::sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3"],"stage_refs":["forward","backward"],"statement":"6.1 为什么要换基——动机 的数学主张由显式对象、关系和不变量支持。"}],"connections":[{"claim_refs":["claim.ch06.basis-change.motivation"],"description":"前置的线性表示与几何关系。","id":"connection.ch06.basis-change.motivation.prior","relation":"prerequisite","target_topic_id":"ch03.det.ad-bc"}],"explanation":{"conclusion":"","connections":[],"definition":"### 6.1 为什么要换基——动机\n回顾第 1 章：向量 $(3,4) = 3 \\cdot e_{1}+4 \\cdot e_{2}$。坐标 $(3,4)$ 是\"用 $e_{1},e_{2}$ 这两把尺子量出来的读数\"。第 4 章：线性变换 A 把 $e_{1},e_{2}$ 送到新位置，矩阵的列就是 $e_{1},e_{2}$ 的去向——这一切都建立在标准基 $(e_{1},e_{2})$ 的基础上。\n现在问：如果用不同的尺子量同一个箭头，读数会变。同样的箭头，同一组尺子下读数是 $(3,4)$，另一组尺子下可能是 $(2,5)$。那么——同一个线性变换，在另一组尺子下，矩阵会变成什么样？\n这就是第 6 章的核心问题，也是第 7 章对角化的前置知识。","derivation":["新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x","标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x"],"formula":"x=Pc,\\quad c=P^{-1}x","geometric_meaning":"","intuition":"","invariants":["P inverse P = I","P c = x","P inverse x = c"],"pitfalls":[],"read_guide":[],"searchable_text":["6.1 为什么要换基——动机","x=Pc,\\quad c=P^{-1}x","### 6.1 为什么要换基——动机\n回顾第 1 章：向量 $(3,4) = 3 \\cdot e_{1}+4 \\cdot e_{2}$。坐标 $(3,4)$ 是\"用 $e_{1},e_{2}$ 这两把尺子量出来的读数\"。第 4 章：线性变换 A 把 $e_{1},e_{2}$ 送到新位置，矩阵的列就是 $e_{1},e_{2}$ 的去向——这一切都建立在标准基 $(e_{1},e_{2})$ 的基础上。\n现在问：如果用不同的尺子量同一个箭头，读数会变。同样的箭头，同一组尺子下读数是 $(3,4)$，另一组尺子下可能是 $(2,5)$。那么——同一个线性变换，在另一组尺子下，矩阵会变成什么样？\n这就是第 6 章的核心问题，也是第 7 章对角化的前置知识。","新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x","标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x","P inverse P = I","P c = x","P inverse x = c"],"sections":[{"claim_refs":["claim.ch06.basis-change.motivation"],"id":"definition","text":"### 6.1 为什么要换基——动机\n回顾第 1 章：向量 $(3,4) = 3 \\cdot e_{1}+4 \\cdot e_{2}$。坐标 $(3,4)$ 是\"用 $e_{1},e_{2}$ 这两把尺子量出来的读数\"。第 4 章：线性变换 A 把 $e_{1},e_{2}$ 送到新位置，矩阵的列就是 $e_{1},e_{2}$ 的去向——这一切都建立在标准基 $(e_{1},e_{2})$ 的基础上。\n现在问：如果用不同的尺子量同一个箭头，读数会变。同样的箭头，同一组尺子下读数是 $(3,4)$，另一组尺子下可能是 $(2,5)$。那么——同一个线性变换，在另一组尺子下，矩阵会变成什么样？\n这就是第 6 章的核心问题，也是第 7 章对角化的前置知识。","title":"definition"},{"claim_refs":["claim.ch06.basis-change.motivation"],"id":"formula","text":"x=Pc,\\quad c=P^{-1}x","title":"formula"},{"claim_refs":["claim.ch06.basis-change.motivation"],"id":"derivation","text":"新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x\n标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x","title":"derivation"},{"claim_refs":["claim.ch06.basis-change.motivation"],"id":"worked_examples","text":"x=Pc,\\quad c=P^{-1}x","title":"worked_examples"},{"claim_refs":["claim.ch06.basis-change.motivation"],"id":"geometric_meaning","text":"geometric_meaning: 6.1 为什么要换基——动机。","title":"geometric_meaning"},{"claim_refs":["claim.ch06.basis-change.motivation"],"id":"pitfalls","text":"pitfalls: 6.1 为什么要换基——动机。","title":"pitfalls"},{"claim_refs":["claim.ch06.basis-change.motivation"],"id":"connections","text":"connections: 6.1 为什么要换基——动机。","title":"connections"},{"claim_refs":[],"id":"invariants","text":"P inverse P = I\nP c = x\nP inverse x = c","title":"invariants"}],"summary":"6.1 为什么要换基——动机","symbol_roles":{"alternate_coordinates":"alternate_coordinates","basis_matrix":"basis_matrix","inverse_basis":"inverse_basis","standard_basis":"standard_basis","standard_vector":"standard_vector"},"title":"6.1 为什么要换基——动机","worked_examples":[{"calculation":["x=Pc,\\quad c=P^{-1}x"],"checks":[{"expected":[-1,5],"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch06.basis-change.motivation"],"given":[[[1,-1],[1,1]],[2,3]],"id":"example.ch06.basis-change.motivation.forward","kind":"matrix_transform","result":[-1,5],"title":"forward"},{"calculation":["x=Pc,\\quad c=P^{-1}x"],"checks":[{"expected":[2,3],"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch06.basis-change.motivation"],"given":[[[0.5,0.5],[-0.5,0.5]],[-1,5]],"id":"example.ch06.basis-change.motivation.backward","kind":"matrix_transform","result":[2,3],"title":"backward"}]},"generated":{"artifact_digest":"sha256:df71922c1dd41c9dffa1f7b488f305581323176fc4b39f185463b5c6b1bfd09a","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:9a589a600b8263e6a1a3d7e993b157fef07552b9d6e3331e936b14e4217da8f7","source_hash":"sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3"},"revision":1,"schema_version":1,"source":{"excerpt":"### 6.1 为什么要换基——动机\n\n回顾第 1 章：向量 $(3,4) = 3 \\cdot e_{1}+4 \\cdot e_{2}$。坐标 $(3,4)$ 是\"用 $e_{1},e_{2}$ 这两把尺子量出来的读数\"。第 4 章：线性变换 A 把 $e_{1},e_{2}$ 送到新位置，矩阵的列就是 $e_{1},e_{2}$ 的去向——这一切都建立在标准基 $(e_{1},e_{2})$ 的基础上。\n现在问：如果用不同的尺子量同一个箭头，读数会变。同样的箭头，同一组尺子下读数是 $(3,4)$，另一组尺子下可能是 $(2,5)$。那么——同一个线性变换，在另一组尺子下，矩阵会变成什么样？\n这就是第 6 章的核心问题，也是第 7 章对角化的前置知识。","heading_level":3,"heading_path":["第6章 基变换与相似变换","6.1 为什么要换基——动机"],"neighboring_titles":["6.2 基变换——同一个向量在不同基下的坐标"],"occurrence":1,"source_hash":"sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3","source_path":["第6章 基变换与相似变换","6.1 为什么要换基——动机","6.1 为什么要换基——动机"],"spans":[{"end_line":2071,"fingerprint":"sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3","heading_path":["第6章 基变换与相似变换","6.1 为什么要换基——动机"],"id":"第6章 基变换与相似变换 / 6.1 为什么要换基——动机::1::sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3","start_line":2066,"text":"### 6.1 为什么要换基——动机\n\n回顾第 1 章：向量 $(3,4) = 3 \\cdot e_{1}+4 \\cdot e_{2}$。坐标 $(3,4)$ 是\"用 $e_{1},e_{2}$ 这两把尺子量出来的读数\"。第 4 章：线性变换 A 把 $e_{1},e_{2}$ 送到新位置，矩阵的列就是 $e_{1},e_{2}$ 的去向——这一切都建立在标准基 $(e_{1},e_{2})$ 的基础上。\n现在问：如果用不同的尺子量同一个箭头，读数会变。同样的箭头，同一组尺子下读数是 $(3,4)$，另一组尺子下可能是 $(2,5)$。那么——同一个线性变换，在另一组尺子下，矩阵会变成什么样？\n这就是第 6 章的核心问题，也是第 7 章对角化的前置知识。"}]},"status":"reviewed","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch06.basis-change.motivation","visual_semantics":{"entities":[{"claim_refs":["claim.ch06.basis-change.motivation"],"dimension":2,"id":"entity.ch06.basis-change.motivation.standard_basis","kind":"matrix","label":"standard_basis","role":"standard_basis","value":[[1,0],[0,1]]},{"claim_refs":["claim.ch06.basis-change.motivation"],"dimension":2,"id":"entity.ch06.basis-change.motivation.basis_matrix","kind":"matrix","label":"basis_matrix","role":"basis_matrix","value":[[1,-1],[1,1]]},{"claim_refs":["claim.ch06.basis-change.motivation"],"dimension":2,"id":"entity.ch06.basis-change.motivation.inverse_basis","kind":"matrix","label":"inverse_basis","role":"inverse_basis","value":[[0.5,0.5],[-0.5,0.5]]},{"claim_refs":["claim.ch06.basis-change.motivation"],"dimension":2,"id":"entity.ch06.basis-change.motivation.alternate_coordinates","kind":"vector","label":"alternate_coordinates","role":"alternate_coordinates","value":[2,3]},{"claim_refs":["claim.ch06.basis-change.motivation"],"dimension":2,"id":"entity.ch06.basis-change.motivation.standard_vector","kind":"vector","label":"standard_vector","role":"standard_vector","value":[-1,5]}],"relations":[{"claim_refs":["claim.ch06.basis-change.motivation"],"id":"relation.ch06.basis-change.motivation.forward","kind":"maps_to","parameters":{"input":[2,3],"matrix":[[1,-1],[1,1]],"output":[-1,5]},"source_ref":"entity.ch06.basis-change.motivation.alternate_coordinates","target_ref":"entity.ch06.basis-change.motivation.standard_vector"},{"claim_refs":["claim.ch06.basis-change.motivation"],"id":"relation.ch06.basis-change.motivation.backward","kind":"maps_to","parameters":{"input":[-1,5],"matrix":[[0.5,0.5],[-0.5,0.5]],"output":[2,3]},"source_ref":"entity.ch06.basis-change.motivation.standard_vector","target_ref":"entity.ch06.basis-change.motivation.alternate_coordinates"}],"scene_family":"basis_change","scene_kind":"2d","stages":[{"caption":"x=Pc,\\quad c=P^{-1}x","expected_invariants":["P inverse P = I","P c = x","P inverse x = c"],"id":"forward","input_entity_refs":["entity.ch06.basis-change.motivation.alternate_coordinates","entity.ch06.basis-change.motivation.basis_matrix"],"layout":"side_by_side","output_entity_refs":["entity.ch06.basis-change.motivation.standard_vector"],"relation_refs":["relation.ch06.basis-change.motivation.forward"],"title":"新坐标 → 标准坐标"},{"caption":"x=Pc,\\quad c=P^{-1}x","expected_invariants":["P inverse P = I","P c = x","P inverse x = c"],"id":"backward","input_entity_refs":["entity.ch06.basis-change.motivation.standard_vector","entity.ch06.basis-change.motivation.inverse_basis"],"layout":"side_by_side","output_entity_refs":["entity.ch06.basis-change.motivation.alternate_coordinates"],"relation_refs":["relation.ch06.basis-change.motivation.backward"],"title":"标准坐标 → 新坐标"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch06.basis-change.motivation.standard_basis",
+        "entity.ch06.basis-change.motivation.basis_matrix",
+        "entity.ch06.basis-change.motivation.inverse_basis",
+        "entity.ch06.basis-change.motivation.alternate_coordinates",
+        "entity.ch06.basis-change.motivation.standard_vector"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "x=Pc,\\quad c=P^{-1}x",
+      "formula_symbols": [
+        "standard_basis",
+        "basis_matrix",
+        "inverse_basis",
+        "alternate_coordinates",
+        "standard_vector"
+      ],
+      "id": "claim.ch06.basis-change.motivation",
+      "relation_refs": [
+        "relation.ch06.basis-change.motivation.forward",
+        "relation.ch06.basis-change.motivation.backward"
+      ],
+      "source_refs": [
+        "第6章 基变换与相似变换 / 6.1 为什么要换基——动机::1::sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3"
+      ],
+      "stage_refs": [
+        "forward",
+        "backward"
+      ],
+      "statement": "6.1 为什么要换基——动机 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch06.basis-change.motivation"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch06.basis-change.motivation.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "conclusion": "",
+    "connections": [],
+    "definition": "### 6.1 为什么要换基——动机\n回顾第 1 章：向量 $(3,4) = 3 \\cdot e_{1}+4 \\cdot e_{2}$。坐标 $(3,4)$ 是\"用 $e_{1},e_{2}$ 这两把尺子量出来的读数\"。第 4 章：线性变换 A 把 $e_{1},e_{2}$ 送到新位置，矩阵的列就是 $e_{1},e_{2}$ 的去向——这一切都建立在标准基 $(e_{1},e_{2})$ 的基础上。\n现在问：如果用不同的尺子量同一个箭头，读数会变。同样的箭头，同一组尺子下读数是 $(3,4)$，另一组尺子下可能是 $(2,5)$。那么——同一个线性变换，在另一组尺子下，矩阵会变成什么样？\n这就是第 6 章的核心问题，也是第 7 章对角化的前置知识。",
+    "derivation": [
+      "新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x",
+      "标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x"
+    ],
+    "formula": "x=Pc,\\quad c=P^{-1}x",
+    "geometric_meaning": "",
+    "intuition": "",
+    "invariants": [
+      "P inverse P = I",
+      "P c = x",
+      "P inverse x = c"
+    ],
+    "pitfalls": [],
+    "read_guide": [],
+    "searchable_text": [
+      "6.1 为什么要换基——动机",
+      "x=Pc,\\quad c=P^{-1}x",
+      "### 6.1 为什么要换基——动机\n回顾第 1 章：向量 $(3,4) = 3 \\cdot e_{1}+4 \\cdot e_{2}$。坐标 $(3,4)$ 是\"用 $e_{1},e_{2}$ 这两把尺子量出来的读数\"。第 4 章：线性变换 A 把 $e_{1},e_{2}$ 送到新位置，矩阵的列就是 $e_{1},e_{2}$ 的去向——这一切都建立在标准基 $(e_{1},e_{2})$ 的基础上。\n现在问：如果用不同的尺子量同一个箭头，读数会变。同样的箭头，同一组尺子下读数是 $(3,4)$，另一组尺子下可能是 $(2,5)$。那么——同一个线性变换，在另一组尺子下，矩阵会变成什么样？\n这就是第 6 章的核心问题，也是第 7 章对角化的前置知识。",
+      "新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x",
+      "标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x",
+      "P inverse P = I",
+      "P c = x",
+      "P inverse x = c"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "id": "definition",
+        "text": "### 6.1 为什么要换基——动机\n回顾第 1 章：向量 $(3,4) = 3 \\cdot e_{1}+4 \\cdot e_{2}$。坐标 $(3,4)$ 是\"用 $e_{1},e_{2}$ 这两把尺子量出来的读数\"。第 4 章：线性变换 A 把 $e_{1},e_{2}$ 送到新位置，矩阵的列就是 $e_{1},e_{2}$ 的去向——这一切都建立在标准基 $(e_{1},e_{2})$ 的基础上。\n现在问：如果用不同的尺子量同一个箭头，读数会变。同样的箭头，同一组尺子下读数是 $(3,4)$，另一组尺子下可能是 $(2,5)$。那么——同一个线性变换，在另一组尺子下，矩阵会变成什么样？\n这就是第 6 章的核心问题，也是第 7 章对角化的前置知识。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "id": "formula",
+        "text": "x=Pc,\\quad c=P^{-1}x",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "id": "derivation",
+        "text": "新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x\n标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "id": "worked_examples",
+        "text": "x=Pc,\\quad c=P^{-1}x",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 6.1 为什么要换基——动机。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 6.1 为什么要换基——动机。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "id": "connections",
+        "text": "connections: 6.1 为什么要换基——动机。",
+        "title": "connections"
+      },
+      {
+        "claim_refs": [],
+        "id": "invariants",
+        "text": "P inverse P = I\nP c = x\nP inverse x = c",
+        "title": "invariants"
+      }
+    ],
+    "summary": "6.1 为什么要换基——动机",
+    "symbol_roles": {
+      "alternate_coordinates": "alternate_coordinates",
+      "basis_matrix": "basis_matrix",
+      "inverse_basis": "inverse_basis",
+      "standard_basis": "standard_basis",
+      "standard_vector": "standard_vector"
+    },
+    "title": "6.1 为什么要换基——动机",
+    "worked_examples": [
+      {
+        "calculation": [
+          "x=Pc,\\quad c=P^{-1}x"
+        ],
+        "checks": [
+          {
+            "expected": [
+              -1.0,
+              5.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "given": [
+          [
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              1.0,
+              1.0
+            ]
+          ],
+          [
+            2.0,
+            3.0
+          ]
+        ],
+        "id": "example.ch06.basis-change.motivation.forward",
+        "kind": "matrix_transform",
+        "result": [
+          -1.0,
+          5.0
+        ],
+        "title": "forward"
+      },
+      {
+        "calculation": [
+          "x=Pc,\\quad c=P^{-1}x"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2.0,
+              3.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "given": [
+          [
+            [
+              0.5,
+              0.5
+            ],
+            [
+              -0.5,
+              0.5
+            ]
+          ],
+          [
+            -1.0,
+            5.0
+          ]
+        ],
+        "id": "example.ch06.basis-change.motivation.backward",
+        "kind": "matrix_transform",
+        "result": [
+          2.0,
+          3.0
+        ],
+        "title": "backward"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:6ef9d7f2e3b585f559eee03cabc8008067e3963d654d007b152dec406132f8a2",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:65a9395fa4d6f3b7e85826f7e7b589cb3330551009487c0e01f1de423c9d27f9",
+    "source_hash": "sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 6.1 为什么要换基——动机\n\n回顾第 1 章：向量 $(3,4) = 3 \\cdot e_{1}+4 \\cdot e_{2}$。坐标 $(3,4)$ 是\"用 $e_{1},e_{2}$ 这两把尺子量出来的读数\"。第 4 章：线性变换 A 把 $e_{1},e_{2}$ 送到新位置，矩阵的列就是 $e_{1},e_{2}$ 的去向——这一切都建立在标准基 $(e_{1},e_{2})$ 的基础上。\n现在问：如果用不同的尺子量同一个箭头，读数会变。同样的箭头，同一组尺子下读数是 $(3,4)$，另一组尺子下可能是 $(2,5)$。那么——同一个线性变换，在另一组尺子下，矩阵会变成什么样？\n这就是第 6 章的核心问题，也是第 7 章对角化的前置知识。",
+    "heading_level": 3,
+    "heading_path": [
+      "第6章 基变换与相似变换",
+      "6.1 为什么要换基——动机"
+    ],
+    "neighboring_titles": [
+      "6.2 基变换——同一个向量在不同基下的坐标"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3",
+    "source_path": [
+      "第6章 基变换与相似变换",
+      "6.1 为什么要换基——动机",
+      "6.1 为什么要换基——动机"
+    ],
+    "spans": [
+      {
+        "end_line": 1953,
+        "fingerprint": "sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3",
+        "heading_path": [
+          "第6章 基变换与相似变换",
+          "6.1 为什么要换基——动机"
+        ],
+        "id": "第6章 基变换与相似变换 / 6.1 为什么要换基——动机::1::sha256:d9ba9d3bb75a20aa7445b7f2ae5d4051f07c9b10bbc1ee16537c9c2e1d4c19e3",
+        "start_line": 1948,
+        "text": "### 6.1 为什么要换基——动机\n\n回顾第 1 章：向量 $(3,4) = 3 \\cdot e_{1}+4 \\cdot e_{2}$。坐标 $(3,4)$ 是\"用 $e_{1},e_{2}$ 这两把尺子量出来的读数\"。第 4 章：线性变换 A 把 $e_{1},e_{2}$ 送到新位置，矩阵的列就是 $e_{1},e_{2}$ 的去向——这一切都建立在标准基 $(e_{1},e_{2})$ 的基础上。\n现在问：如果用不同的尺子量同一个箭头，读数会变。同样的箭头，同一组尺子下读数是 $(3,4)$，另一组尺子下可能是 $(2,5)$。那么——同一个线性变换，在另一组尺子下，矩阵会变成什么样？\n这就是第 6 章的核心问题，也是第 7 章对角化的前置知识。"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch06.basis-change.motivation",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.motivation.standard_basis",
+        "kind": "matrix",
+        "label": "standard_basis",
+        "role": "standard_basis",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.motivation.basis_matrix",
+        "kind": "matrix",
+        "label": "basis_matrix",
+        "role": "basis_matrix",
+        "value": [
+          [
+            1.0,
+            -1.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.motivation.inverse_basis",
+        "kind": "matrix",
+        "label": "inverse_basis",
+        "role": "inverse_basis",
+        "value": [
+          [
+            0.5,
+            0.5
+          ],
+          [
+            -0.5,
+            0.5
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.motivation.alternate_coordinates",
+        "kind": "vector",
+        "label": "alternate_coordinates",
+        "role": "alternate_coordinates",
+        "value": [
+          2.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.motivation.standard_vector",
+        "kind": "vector",
+        "label": "standard_vector",
+        "role": "standard_vector",
+        "value": [
+          -1.0,
+          5.0
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "id": "relation.ch06.basis-change.motivation.forward",
+        "kind": "maps_to",
+        "parameters": {
+          "input": [
+            2.0,
+            3.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              -1.0
+            ],
+            [
+              1.0,
+              1.0
+            ]
+          ],
+          "output": [
+            -1.0,
+            5.0
+          ]
+        },
+        "source_ref": "entity.ch06.basis-change.motivation.alternate_coordinates",
+        "target_ref": "entity.ch06.basis-change.motivation.standard_vector"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.motivation"
+        ],
+        "id": "relation.ch06.basis-change.motivation.backward",
+        "kind": "maps_to",
+        "parameters": {
+          "input": [
+            -1.0,
+            5.0
+          ],
+          "matrix": [
+            [
+              0.5,
+              0.5
+            ],
+            [
+              -0.5,
+              0.5
+            ]
+          ],
+          "output": [
+            2.0,
+            3.0
+          ]
+        },
+        "source_ref": "entity.ch06.basis-change.motivation.standard_vector",
+        "target_ref": "entity.ch06.basis-change.motivation.alternate_coordinates"
+      }
+    ],
+    "scene_family": "basis_change",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "x=Pc,\\quad c=P^{-1}x",
+        "expected_invariants": [
+          "P inverse P = I",
+          "P c = x",
+          "P inverse x = c"
+        ],
+        "id": "forward",
+        "input_entity_refs": [
+          "entity.ch06.basis-change.motivation.alternate_coordinates",
+          "entity.ch06.basis-change.motivation.basis_matrix"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch06.basis-change.motivation.standard_vector"
+        ],
+        "relation_refs": [
+          "relation.ch06.basis-change.motivation.forward"
+        ],
+        "title": "新坐标 → 标准坐标"
+      },
+      {
+        "caption": "x=Pc,\\quad c=P^{-1}x",
+        "expected_invariants": [
+          "P inverse P = I",
+          "P c = x",
+          "P inverse x = c"
+        ],
+        "id": "backward",
+        "input_entity_refs": [
+          "entity.ch06.basis-change.motivation.standard_vector",
+          "entity.ch06.basis-change.motivation.inverse_basis"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch06.basis-change.motivation.alternate_coordinates"
+        ],
+        "relation_refs": [
+          "relation.ch06.basis-change.motivation.backward"
+        ],
+        "title": "标准坐标 → 新坐标"
+      }
+    ]
+  }
+}

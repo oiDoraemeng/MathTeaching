@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:233f574676408b17eec505314cae3a7fbbdfa0eaca2729d34159546ec4e9a5d4",
+  "artifact_digest": "sha256:d26e937f57b1f91cb7dbf23f4eff2b1a297d1f85236cf213ba989274f99b3dae",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:ccd8b72fdf0e12cd812a23895acb1fabfd95ec270fa36c84cab881dfbc9b5e9d",
@@ -8,8 +8,8 @@
       {
         "alias": "sem__a__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -17,8 +17,8 @@
       {
         "alias": "sem__a__end",
         "coordinates": [
-          2,
-          1
+          2.0,
+          1.0
         ],
         "name": "a",
         "op": "point.upsert"
@@ -36,8 +36,8 @@
       {
         "alias": "sem__b__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -45,8 +45,8 @@
       {
         "alias": "sem__b__end",
         "coordinates": [
-          1,
-          3
+          1.0,
+          3.0
         ],
         "name": "b",
         "op": "point.upsert"
@@ -67,12 +67,12 @@
         "op": "geometry.oriented_area",
         "vectors": [
           [
-            2,
-            1
+            2.0,
+            1.0
           ],
           [
-            1,
-            3
+            1.0,
+            3.0
           ]
         ]
       },
@@ -93,20 +93,20 @@
         "outline": true,
         "vertices": [
           [
-            0,
-            0
+            0.0,
+            0.0
           ],
           [
-            2,
-            1
+            2.0,
+            1.0
           ],
           [
-            3,
-            4
+            3.0,
+            4.0
           ],
           [
-            1,
-            3
+            1.0,
+            3.0
           ]
         ]
       },
@@ -114,7 +114,7 @@
         "alias": "sem__stage.main__title",
         "op": "annotation.upsert",
         "position": [
-          0,
+          0.0,
           2.65
         ],
         "text": "数学关系"
@@ -142,14 +142,14 @@
     "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
   ],
   "render_profile": "lecture-v1",
-  "revision": 9,
+  "revision": 11,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
   "stages": [
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
       "caption": "从输入向量读出公式中的结果与不变量。",

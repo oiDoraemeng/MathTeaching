@@ -1,1 +1,692 @@
-{"claims":[{"entity_refs":["entity.ch04.subspace.col-null.map_A","entity.ch04.subspace.col-null.domain","entity.ch04.subspace.col-null.codomain","entity.ch04.subspace.col-null.kernel","entity.ch04.subspace.col-null.column_space","entity.ch04.subspace.col-null.kernel_vector","entity.ch04.subspace.col-null.zero","entity.ch04.subspace.col-null.image_vector"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)","formula_symbols":["map_A","domain"],"id":"claim.ch04.subspace.col-null","relation_refs":["relation.ch04.subspace.col-null.kernel_map","relation.ch04.subspace.col-null.kernel_binding","relation.ch04.subspace.col-null.column_binding","relation.ch04.subspace.col-null.domain_image"],"source_refs":["第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.3 两大核心子空间：列空间与零空间::1::sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0"],"stage_refs":["stage.ch04.subspace.col-null.domain","stage.ch04.subspace.col-null.codomain"],"statement":"4.1.3 两大核心子空间：列空间与零空间 的数学主张由显式对象、关系和不变量支持。"}],"connections":[{"claim_refs":["claim.ch04.subspace.col-null"],"description":"前置的线性表示与几何关系。","id":"connection.ch04.subspace.col-null.prior","relation":"prerequisite","target_topic_id":"ch03.det.ad-bc"}],"explanation":{"conclusion":"","connections":[],"definition":"#### 4.1.3 两大核心子空间：列空间与零空间\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。","derivation":["##### 列空间和零空间为子空间的证明\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；"],"formula":"A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)","geometric_meaning":"几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向","intuition":"一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。","invariants":["diag_1_0","kernel_to_zero","image_x_axis"],"pitfalls":[],"read_guide":[],"searchable_text":["4.1.3 两大核心子空间：列空间与零空间","本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。","A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)","#### 4.1.3 两大核心子空间：列空间与零空间\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。","##### 列空间和零空间为子空间的证明\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；","几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向","diag_1_0","kernel_to_zero","image_x_axis"],"sections":[{"claim_refs":["claim.ch04.subspace.col-null"],"id":"definition","text":"#### 4.1.3 两大核心子空间：列空间与零空间\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。","title":"definition"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"formula","text":"A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)","title":"formula"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"derivation","text":"##### 列空间和零空间为子空间的证明\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；","title":"derivation"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"worked_examples","text":"A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)","title":"worked_examples"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"geometric_meaning","text":"几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向","title":"geometric_meaning"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"pitfalls","text":"pitfalls: 4.1.3 两大核心子空间：列空间与零空间。","title":"pitfalls"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"connections","text":"connections: 4.1.3 两大核心子空间：列空间与零空间。","title":"connections"},{"claim_refs":[],"id":"intuition","text":"一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。","title":"intuition"},{"claim_refs":[],"id":"invariants","text":"diag_1_0\nkernel_to_zero\nimage_x_axis","title":"invariants"}],"summary":"本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。","symbol_roles":{"codomain":"codomain","column_space":"column_space","domain":"domain","image_vector":"image_vector","kernel":"kernel","kernel_vector":"kernel_vector","map_A":"map_A","zero":"zero"},"title":"4.1.3 两大核心子空间：列空间与零空间","worked_examples":[{"calculation":["A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)"],"checks":[{"expected":[2,0],"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch04.subspace.col-null"],"given":[[[1,0],[0,0]],[2,3]],"id":"example.ch04.subspace.col-null","kind":"matrix_transform","result":[2,0],"title":"主题数值例"}]},"generated":{"artifact_digest":"sha256:dee36f154344ed1c8f0fcc9d267c9e09184ae61f97f84432907235e7948f3eab","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:83755cb7da22380b97019ccfb523c4533d4cccf292c00655f84f82ec3249a465","source_hash":"sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0"},"revision":1,"schema_version":1,"source":{"excerpt":"#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。","heading_level":4,"heading_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.1 线性空间与子空间","4.1.3 两大核心子空间：列空间与零空间"],"neighboring_titles":["4.1.2 子空间"],"occurrence":1,"source_hash":"sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0","source_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.1 线性空间与子空间","4.1.3 两大核心子空间：列空间与零空间"],"spans":[{"end_line":1508,"fingerprint":"sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0","heading_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.1 线性空间与子空间","4.1.3 两大核心子空间：列空间与零空间"],"id":"第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.3 两大核心子空间：列空间与零空间::1::sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0","start_line":1481,"text":"#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。"}]},"status":"reviewed","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch04.subspace.col-null","visual_semantics":{"entities":[{"claim_refs":["claim.ch04.subspace.col-null"],"dimension":2,"id":"entity.ch04.subspace.col-null.map_A","kind":"matrix","label":"A","role":"map_A","value":[[1,0],[0,0]]},{"claim_refs":["claim.ch04.subspace.col-null"],"dimension":2,"id":"entity.ch04.subspace.col-null.domain","kind":"basis","label":"R² domain","role":"domain","value":[[1,0],[0,1]]},{"claim_refs":["claim.ch04.subspace.col-null"],"dimension":2,"id":"entity.ch04.subspace.col-null.codomain","kind":"basis","label":"R² codomain","role":"codomain","value":[[1,0],[0,1]]},{"claim_refs":["claim.ch04.subspace.col-null"],"dimension":2,"id":"entity.ch04.subspace.col-null.kernel","kind":"subspace","label":"Null(A)","role":"kernel","value":[[0,1]]},{"claim_refs":["claim.ch04.subspace.col-null"],"dimension":2,"id":"entity.ch04.subspace.col-null.column_space","kind":"subspace","label":"Col(A)","role":"column_space","value":[[1,0]]},{"claim_refs":["claim.ch04.subspace.col-null"],"dimension":2,"id":"entity.ch04.subspace.col-null.kernel_vector","kind":"vector","label":"k","role":"kernel_vector","value":[0,1]},{"claim_refs":["claim.ch04.subspace.col-null"],"dimension":2,"id":"entity.ch04.subspace.col-null.zero","kind":"point","label":"0","role":"zero","value":[0,0]},{"claim_refs":["claim.ch04.subspace.col-null"],"dimension":2,"id":"entity.ch04.subspace.col-null.image_vector","kind":"vector","label":"A(2,3)","role":"image_vector","value":[2,0]}],"relations":[{"claim_refs":["claim.ch04.subspace.col-null"],"id":"relation.ch04.subspace.col-null.kernel_map","kind":"maps_to","parameters":{"expected_result":[0,0],"matrix":[[1,0],[0,0]]},"source_ref":"entity.ch04.subspace.col-null.kernel_vector","target_ref":"entity.ch04.subspace.col-null.zero"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"relation.ch04.subspace.col-null.kernel_binding","kind":"kernel_of","parameters":{"expected_nullity":1},"source_ref":"entity.ch04.subspace.col-null.kernel","target_ref":"entity.ch04.subspace.col-null.map_A"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"relation.ch04.subspace.col-null.column_binding","kind":"image_of","parameters":{"expected_rank":1},"source_ref":"entity.ch04.subspace.col-null.map_A","target_ref":"entity.ch04.subspace.col-null.column_space"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"relation.ch04.subspace.col-null.domain_image","kind":"maps_to","parameters":{"expected_result":[2,0],"input_vector":[2,3],"matrix":[[1,0],[0,0]]},"source_ref":"entity.ch04.subspace.col-null.domain","target_ref":"entity.ch04.subspace.col-null.column_space"}],"scene_family":"subspace_region","scene_kind":"2d","stages":[{"caption":"A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)","expected_invariants":["kernel_to_zero"],"id":"stage.ch04.subspace.col-null.domain","input_entity_refs":["entity.ch04.subspace.col-null.domain","entity.ch04.subspace.col-null.kernel","entity.ch04.subspace.col-null.kernel_vector"],"layout":"side_by_side","output_entity_refs":["entity.ch04.subspace.col-null.zero"],"relation_refs":["relation.ch04.subspace.col-null.kernel_map","relation.ch04.subspace.col-null.kernel_binding"],"title":"核方向"},{"caption":"A=\\operatorname{diag}(1,0),\\ Null(A)=\\operatorname{span}(e_2),\\ Col(A)=\\operatorname{span}(e_1)","expected_invariants":["image_x_axis","diag_1_0"],"id":"stage.ch04.subspace.col-null.codomain","input_entity_refs":["entity.ch04.subspace.col-null.map_A","entity.ch04.subspace.col-null.codomain"],"layout":"side_by_side","output_entity_refs":["entity.ch04.subspace.col-null.column_space","entity.ch04.subspace.col-null.image_vector"],"relation_refs":["relation.ch04.subspace.col-null.column_binding","relation.ch04.subspace.col-null.domain_image"],"title":"列空间"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.subspace.col-null.column_space",
+        "entity.ch04.subspace.col-null.null_space",
+        "entity.ch04.subspace.col-null.input_vector_a",
+        "entity.ch04.subspace.col-null.output_vector_a",
+        "entity.ch04.subspace.col-null.input_vector_b",
+        "entity.ch04.subspace.col-null.output_vector_b",
+        "entity.ch04.subspace.col-null.input_vector_c",
+        "entity.ch04.subspace.col-null.output_vector_c",
+        "entity.ch04.subspace.col-null.kernel_vector",
+        "entity.ch04.subspace.col-null.zero"
+      ],
+      "explanation_refs": [
+        "definition",
+        "geometric_meaning",
+        "derivation",
+        "worked_examples"
+      ],
+      "formula": "\\boldsymbol A=\\operatorname{diag}(1,1,0),\\quad \\operatorname{Null}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\quad \\operatorname{Col}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+      "formula_symbols": [
+        "A",
+        "x",
+        "k"
+      ],
+      "id": "claim.ch04.subspace.col-null",
+      "relation_refs": [
+        "relation.ch04.subspace.col-null.projection_a",
+        "relation.ch04.subspace.col-null.projection_b",
+        "relation.ch04.subspace.col-null.projection_c",
+        "relation.ch04.subspace.col-null.collapse"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.3 两大核心子空间：列空间与零空间::1::sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0"
+      ],
+      "stage_refs": [
+        "stage.ch04.subspace.col-null.column_space",
+        "stage.ch04.subspace.col-null.null_space"
+      ],
+      "statement": "4.1.3 两大核心子空间：列空间与零空间 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.subspace.col-null"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.subspace.col-null.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch04.subspace.col-null"
+          ],
+          "example_ref": "example.ch04.subspace.col-null.column-space",
+          "id": "case.ch04.subspace.col-null.column-space",
+          "purpose": "① 列空间：三支输入，输出都落在这张平面上",
+          "stage_refs": [
+            "stage.ch04.subspace.col-null.column_space"
+          ],
+          "topic_id": "ch04.subspace.col-null"
+        },
+        {
+          "claim_refs": [
+            "claim.ch04.subspace.col-null"
+          ],
+          "example_ref": "example.ch04.subspace.col-null.null-space",
+          "id": "case.ch04.subspace.col-null.null-space",
+          "purpose": "② 零空间：与平面垂直的输入被压成一点",
+          "stage_refs": [
+            "stage.ch04.subspace.col-null.null_space"
+          ],
+          "topic_id": "ch04.subspace.col-null"
+        }
+      ],
+      "default_pane_count": 2
+    },
+    "conclusion": "",
+    "connections": [],
+    "definition": "定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n\n零空间也是子空间。",
+    "derivation": [
+      "Col(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\n\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。"
+    ],
+    "formula": "",
+    "geometric_meaning": "几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向",
+    "intuition": "",
+    "invariants": [
+      "$\\operatorname{Col}(A)$ 含零向量，且对加法和数乘封闭。",
+      "$\\operatorname{Null}(A)$ 含零向量，且对加法和数乘封闭。"
+    ],
+    "pitfalls": [],
+    "read_guide": [],
+    "searchable_text": [
+      "4.1.3 两大核心子空间：列空间与零空间",
+      "本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。",
+      "\\boldsymbol A=\\operatorname{diag}(1,1,0),\\ Null(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\ Col(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+      "#### 4.1.3 两大核心子空间：列空间与零空间\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。",
+      "##### 列空间和零空间为子空间的证明\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；",
+      "几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向",
+      "diag_1_1_0",
+      "kernel_to_zero",
+      "image_xy_plane"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "definition",
+        "text": "",
+        "title": "定义"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "geometric_meaning",
+        "text": "",
+        "title": "几何直观"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "derivation",
+        "text": "",
+        "title": "列空间和零空间为子空间的证明"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "worked_examples",
+        "text": "",
+        "title": "数学案例"
+      }
+    ],
+    "summary": "定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。",
+    "symbol_roles": {
+      "A": "column_space",
+      "k": "kernel_vector",
+      "x": "input_vector_a"
+    },
+    "title": "4.1.3 两大核心子空间：列空间与零空间",
+    "worked_examples": [
+      {
+        "calculation": [
+          "$$\\boldsymbol A=\\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&0\\end{pmatrix}$$",
+          "$$\\boldsymbol x_1=(2,0,3)^{\\mathsf T},\\qquad \\boldsymbol x_2=(-1,2,2)^{\\mathsf T},\\qquad \\boldsymbol x_3=(-1,-2,1)^{\\mathsf T}$$",
+          "$$\\boldsymbol A\\boldsymbol x_1=(2,0,0)^{\\mathsf T},\\qquad \\boldsymbol A\\boldsymbol x_2=(-1,2,0)^{\\mathsf T},\\qquad \\boldsymbol A\\boldsymbol x_3=(-1,-2,0)^{\\mathsf T}$$",
+          "三支输入的高度、水平方向都不同，可它们的输出全部落在同一张平面上，并且朝平面里三个不同的方向铺开。",
+          "$$\\operatorname{Col}(\\boldsymbol A)=\\{\\boldsymbol A\\boldsymbol x\\mid \\boldsymbol x\\in R^{3}\\}=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)$$",
+          "所以 $\\operatorname{Col}(\\boldsymbol A)$ 就是这张平面：无论输入取什么，输出只会落在这里。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2.0,
+              0.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "given": [
+          [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            2,
+            0,
+            3
+          ]
+        ],
+        "id": "example.ch04.subspace.col-null.column-space",
+        "kind": "matrix_transform",
+        "result": [
+          2.0,
+          0.0,
+          0.0
+        ],
+        "title": "案例一：列空间——所有可能的输出"
+      },
+      {
+        "calculation": [
+          "$$\\boldsymbol A=\\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&0\\end{pmatrix}$$",
+          "$$\\boldsymbol k=(0,0,3)^{\\mathsf T}$$",
+          "$$\\boldsymbol A\\boldsymbol k=(0,0,0)^{\\mathsf T}$$",
+          "这支输入沿着 $z$ 方向，也就是垂直于那张平面；它被压到原点。",
+          "$$\\operatorname{Null}(\\boldsymbol A)=\\{\\boldsymbol x\\mid \\boldsymbol A\\boldsymbol x=0\\}=\\operatorname{span}(\\boldsymbol e_3)$$",
+          "反向看：不沿 $z$ 方向的输入不会被压成零——步骤①里的 $\\boldsymbol x_1,\\boldsymbol x_2,\\boldsymbol x_3$ 输出都还落在平面上、离原点有距离。",
+          "所以 $\\operatorname{Null}(\\boldsymbol A)$ 就是这条垂直于平面的方向：只有它上面的输入被压成零。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "given": [
+          [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            0,
+            0,
+            3
+          ]
+        ],
+        "id": "example.ch04.subspace.col-null.null-space",
+        "kind": "matrix_transform",
+        "result": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "title": "案例二：零空间——与平面垂直的输入被压成一点"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:1d6b1590dcfe57478cd72fb707ec8b9278e5a9a08c797a813c41407f727b00c5",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:cee4470d056e4648f169a0b7c823818478ec2c4de18bd54365a5a57828b32041",
+    "source_hash": "sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。",
+    "heading_level": 4,
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.1 线性空间与子空间",
+      "4.1.3 两大核心子空间：列空间与零空间"
+    ],
+    "neighboring_titles": [
+      "4.1.2 子空间"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.1 线性空间与子空间",
+      "4.1.3 两大核心子空间：列空间与零空间"
+    ],
+    "spans": [
+      {
+        "end_line": 1390,
+        "fingerprint": "sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0",
+        "heading_path": [
+          "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+          "4.1 线性空间与子空间",
+          "4.1.3 两大核心子空间：列空间与零空间"
+        ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.3 两大核心子空间：列空间与零空间::1::sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0",
+        "start_line": 1363,
+        "text": "#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch04.subspace.col-null",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.column_space",
+        "kind": "subspace",
+        "label": "Col(A)",
+        "role": "column_space",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.null_space",
+        "kind": "subspace",
+        "label": "Null(A)",
+        "role": "null_space",
+        "value": [
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.input_vector_a",
+        "kind": "vector",
+        "label": "x1",
+        "role": "input_vector_a",
+        "value": [
+          2.0,
+          0.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.output_vector_a",
+        "kind": "vector",
+        "label": "A x1",
+        "role": "output_vector_a",
+        "value": [
+          2.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.input_vector_b",
+        "kind": "vector",
+        "label": "x2",
+        "role": "input_vector_b",
+        "value": [
+          -1.0,
+          2.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.output_vector_b",
+        "kind": "vector",
+        "label": "A x2",
+        "role": "output_vector_b",
+        "value": [
+          -1.0,
+          2.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.input_vector_c",
+        "kind": "vector",
+        "label": "x3",
+        "role": "input_vector_c",
+        "value": [
+          -1.0,
+          -2.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.output_vector_c",
+        "kind": "vector",
+        "label": "A x3",
+        "role": "output_vector_c",
+        "value": [
+          -1.0,
+          -2.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.kernel_vector",
+        "kind": "vector",
+        "label": "k",
+        "role": "kernel_vector",
+        "value": [
+          0.0,
+          0.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.zero",
+        "kind": "point",
+        "label": "0",
+        "role": "zero",
+        "value": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.projection_a",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            2.0,
+            0.0,
+            0.0
+          ],
+          "input_vector": [
+            2.0,
+            0.0,
+            3.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.col-null.input_vector_a",
+        "target_ref": "entity.ch04.subspace.col-null.output_vector_a"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.projection_b",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            -1.0,
+            2.0,
+            0.0
+          ],
+          "input_vector": [
+            -1.0,
+            2.0,
+            2.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.col-null.input_vector_b",
+        "target_ref": "entity.ch04.subspace.col-null.output_vector_b"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.projection_c",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            -1.0,
+            -2.0,
+            0.0
+          ],
+          "input_vector": [
+            -1.0,
+            -2.0,
+            1.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.col-null.input_vector_c",
+        "target_ref": "entity.ch04.subspace.col-null.output_vector_c"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.collapse",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "input_vector": [
+            0.0,
+            0.0,
+            3.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.col-null.kernel_vector",
+        "target_ref": "entity.ch04.subspace.col-null.zero"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "3d",
+    "stages": [
+      {
+        "caption": "\\boldsymbol A=\\operatorname{diag}(1,1,0),\\ Null(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\ Col(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+        "expected_invariants": [
+          "diag_1_1_0",
+          "image_xy_plane"
+        ],
+        "id": "stage.ch04.subspace.col-null.column_space",
+        "input_entity_refs": [
+          "entity.ch04.subspace.col-null.input_vector_a",
+          "entity.ch04.subspace.col-null.input_vector_b",
+          "entity.ch04.subspace.col-null.input_vector_c",
+          "entity.ch04.subspace.col-null.column_space"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.subspace.col-null.output_vector_a",
+          "entity.ch04.subspace.col-null.output_vector_b",
+          "entity.ch04.subspace.col-null.output_vector_c"
+        ],
+        "relation_refs": [
+          "relation.ch04.subspace.col-null.projection_a",
+          "relation.ch04.subspace.col-null.projection_b",
+          "relation.ch04.subspace.col-null.projection_c"
+        ],
+        "title": "列空间：所有可能的输出"
+      },
+      {
+        "caption": "\\boldsymbol A=\\operatorname{diag}(1,1,0),\\ Null(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\ Col(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+        "expected_invariants": [
+          "kernel_to_zero"
+        ],
+        "id": "stage.ch04.subspace.col-null.null_space",
+        "input_entity_refs": [
+          "entity.ch04.subspace.col-null.column_space",
+          "entity.ch04.subspace.col-null.null_space",
+          "entity.ch04.subspace.col-null.kernel_vector"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.subspace.col-null.zero"
+        ],
+        "relation_refs": [
+          "relation.ch04.subspace.col-null.collapse"
+        ],
+        "title": "零空间：与平面垂直的方向被压成一点"
+      }
+    ]
+  }
+}

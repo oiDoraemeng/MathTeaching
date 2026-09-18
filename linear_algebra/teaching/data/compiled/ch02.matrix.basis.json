@@ -1,121 +1,219 @@
 {
-  "artifact_digest": "sha256:5fb0f1e14a6df396835b11005f3b00a6118b35bdb271bbcc31daeb5b31350c4d",
+  "artifact_digest": "sha256:8908a3d12635e131d196eafa319d5574f8f6f3a9a8d2fefdc24c610ba65efecb",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:2bff479788502a9884aa81bb6991c08de85d5d3a961c4b98616b1edffc69105c",
   "plan": {
     "operations": [
       {
-        "alias": "sem__A",
-        "bounds": [
-          -3,
-          3,
-          -3,
-          3
-        ],
-        "color": "#6B7280",
-        "matrix": [
-          [
-            1,
-            1
-          ],
-          [
-            0,
-            1
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1
-      },
-      {
-        "alias": "sem__x__origin",
+        "alias": "sem__mv_basis_ae1__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x__end",
+        "alias": "sem__mv_basis_ae1__end",
         "coordinates": [
-          2,
-          3
+          0.0,
+          1.0
         ],
-        "name": "x",
+        "name": "F1",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x",
+        "alias": "sem__mv_basis_ae1",
         "color": "#2F6BFF",
-        "end": "sem__x__end",
+        "end": "sem__mv_basis_ae1__end",
         "kind": "vector",
-        "label": "x",
+        "label": "Ae1",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__x__origin"
+        "start": "sem__mv_basis_ae1__origin"
       },
       {
-        "alias": "sem__y__origin",
+        "alias": "sem__mv_basis_ae2__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__y__end",
+        "alias": "sem__mv_basis_ae2__end",
         "coordinates": [
-          5,
-          3
+          -1.0,
+          0.0
         ],
-        "name": "Ax",
+        "name": "F2",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__y",
-        "color": "#7B61FF",
-        "end": "sem__y__end",
+        "alias": "sem__mv_basis_ae2",
+        "color": "#F08A24",
+        "end": "sem__mv_basis_ae2__end",
         "kind": "vector",
-        "label": "Ax",
+        "label": "Ae2",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__y__origin"
+        "start": "sem__mv_basis_ae2__origin"
       },
       {
-        "alias": "sem__A_maps_x_to_y",
-        "matrix": [
-          [
-            1,
-            1
-          ],
-          [
-            0,
-            1
-          ]
+        "alias": "sem__mv_basis_v1__origin",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "op": "linear_algebra.matrix_transform"
+        "name": "O",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__stage.input__title",
+        "alias": "sem__mv_basis_v1__end",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "V1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_v1",
+        "color": "#2F6BFF",
+        "end": "sem__mv_basis_v1__end",
+        "kind": "vector",
+        "label": "v1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_basis_v1__origin"
+      },
+      {
+        "alias": "sem__mv_basis_v2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_v2__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "V2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_v2",
+        "color": "#F08A24",
+        "end": "sem__mv_basis_v2__end",
+        "kind": "vector",
+        "label": "v2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_basis_v2__origin"
+      },
+      {
+        "alias": "sem__mv_basis_bv1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_bv1__end",
+        "coordinates": [
+          -1.0,
+          1.0
+        ],
+        "name": "G1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_bv1",
+        "color": "#2F6BFF",
+        "end": "sem__mv_basis_bv1__end",
+        "kind": "vector",
+        "label": "Bv1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_basis_bv1__origin"
+      },
+      {
+        "alias": "sem__mv_basis_bv2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_bv2__end",
+        "coordinates": [
+          -2.0,
+          1.0
+        ],
+        "name": "G2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_bv2",
+        "color": "#F08A24",
+        "end": "sem__mv_basis_bv2__end",
+        "kind": "vector",
+        "label": "Bv2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_basis_bv2__origin"
+      },
+      {
+        "alias": "sem__mv_basis_grid_a__label",
         "op": "annotation.upsert",
         "position": [
-          0,
-          2.65
+          -1.4,
+          1.45
         ],
-        "text": "输入与变换"
+        "text": "A=[[0,-1],[1,0]]"
       },
       {
-        "alias": "sem__ch02.matrix.basis__formula",
-        "op": "annotation.formula",
+        "alias": "sem__mv_basis_grid_b",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ],
+        "op": "linear_algebra.coordinate_transform",
+        "show_original": false,
+        "show_transformed": true
+      },
+      {
+        "alias": "sem__mv_basis_grid_b__label",
+        "op": "annotation.upsert",
         "position": [
-          -2.65,
-          2.65
+          -5.4,
+          3.45
         ],
-        "text": "A e_j = A 的第 j 列；换基后矩阵 = P^{-1} A P"
+        "text": "B=[[-3,-5],[2,3]]"
       },
       {
+        "bounds": [
+          -5.0,
+          1.0,
+          0.0,
+          3.0
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
@@ -124,44 +222,72 @@
     "summary": "矩阵的列与新基坐标",
     "version": 1
   },
-  "plan_digest": "sha256:aca7fe950f2be71a0847c51ea577c55febaeb1b7a058553ca17abedbbf22fbbb",
-  "read_guide": [
-    "确认所选基的两根尺子方向。",
-    "读出 x 在新基下的坐标。",
-    "核对同一变换在不同基下的矩阵。"
-  ],
+  "plan_digest": "sha256:4825278e2c8287fa5eefcd0f74082f9d6759d7537575f1a1a986b417ff897a20",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 12,
+  "revision": 15,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:ef6de7167277e0291b976d335c4a9c431c26d6aa51cb06e8d39f993d7806e088",
   "stages": [
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
-      "caption": "矩阵 A 作用于向量 x。",
-      "id": "stage.input",
+      "caption": "",
+      "id": "stage.case.ch02.matrix.basis.1",
       "layout": "overlay",
-      "title": "输入与变换",
+      "title": "第一步：标准基下的旋转",
       "visible_aliases": [
-        "sem__A",
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__y",
-        "sem__y__end",
-        "sem__y__origin",
-        "sem__A_maps_x_to_y",
-        "sem__stage.input__title",
-        "sem__mapping_grid__1"
+        "sem__mv_basis_grid_a",
+        "sem__mv_basis_grid_a__label",
+        "sem__mv_basis_ae1",
+        "sem__mv_basis_ae1__end",
+        "sem__mv_basis_ae1__origin",
+        "sem__mv_basis_ae2",
+        "sem__mv_basis_ae2__end",
+        "sem__mv_basis_ae2__origin"
       ],
       "visible_refs": [
-        "A",
-        "x",
-        "y",
-        "A_maps_x_to_y"
+        "mv_basis_grid_a",
+        "mv_basis_ae1",
+        "mv_basis_ae2"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.ch02.matrix.basis.2",
+      "layout": "overlay",
+      "title": "第二步：换一组基，矩阵改变",
+      "visible_aliases": [
+        "sem__mv_basis_grid_b",
+        "sem__mv_basis_grid_b__label",
+        "sem__mv_basis_v1",
+        "sem__mv_basis_v1__end",
+        "sem__mv_basis_v1__origin",
+        "sem__mv_basis_v2",
+        "sem__mv_basis_v2__end",
+        "sem__mv_basis_v2__origin",
+        "sem__mv_basis_bv1",
+        "sem__mv_basis_bv1__end",
+        "sem__mv_basis_bv1__origin",
+        "sem__mv_basis_bv2",
+        "sem__mv_basis_bv2__end",
+        "sem__mv_basis_bv2__origin",
+        "sem__rel.case.ch02.matrix.basis.change"
+      ],
+      "visible_refs": [
+        "mv_basis_grid_b",
+        "mv_basis_v1",
+        "mv_basis_v2",
+        "mv_basis_bv1",
+        "mv_basis_bv2",
+        "rel.case.ch02.matrix.basis.change"
       ]
     }
   ],

@@ -1,1 +1,534 @@
-{"claims":[{"entity_refs":["entity.ch05.consistency.geometry.matrix","entity.ch05.consistency.geometry.rhs","entity.ch05.consistency.geometry.none_matrix","entity.ch05.consistency.geometry.none_rhs","entity.ch05.consistency.geometry.infinite_matrix","entity.ch05.consistency.geometry.infinite_rhs","entity.ch05.consistency.geometry.solution_state"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"5.3 解的存在性与唯一性: finite typed semantic evidence","formula_symbols":["matrix","rhs","none_matrix","none_rhs","infinite_matrix","infinite_rhs","solution_state"],"id":"claim.ch05.consistency.geometry","relation_refs":["relation.ch05.consistency.geometry.constraint_state"],"source_refs":["第5章 线性方程组 / 5.3 解的存在性与唯一性::1::sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e"],"stage_refs":["stage.ch05.consistency.geometry.unique","stage.ch05.consistency.geometry.none","stage.ch05.consistency.geometry.infinite"],"statement":"5.3 解的存在性与唯一性 的数学主张由显式对象、关系和不变量支持。"}],"connections":[{"claim_refs":["claim.ch05.consistency.geometry"],"description":"前置的线性表示与几何关系。","id":"connection.ch05.consistency.geometry.prior","relation":"prerequisite","target_topic_id":"ch03.det.ad-bc"}],"explanation":{"conclusion":"","connections":[],"definition":"### 5.3 解的存在性与唯一性\n定理 5.3（存在性 / 唯一性 判定）\n| 条件 | 存在性 | 唯一性 |\n| --- | --- | --- |\n| **$b \\in \\operatorname{Col}(A)$** | ✅ 有解 | — |\n| **$b \\notin \\operatorname{Col}(A)$** | ❌ 无解 | — |\n| **$\\operatorname{Null}(A) = \\{0\\}$** | — | ✅ 有且只有一个解 |\n| **$\\operatorname{Null}(A) \\neq {0}$** | — | ❌ 无穷多解，用特解 $+ \\operatorname{Null}(A)$ 表达 |\n定理 5.4（方阵的特殊情形） 若 A 是 $n \\times n$ 方阵且 $\\det(A) \\neq 0$：\n$Ax = b$ 有唯一解：$x = A^{-1}b$\n这是因为 $\\det \\neq 0 \\rightarrow \\operatorname{Null}(A) = \\{0\\} \\rightarrow$ 解唯一；且 A 可逆 $\\rightarrow \\operatorname{Col}(A) = R^{n} \\rightarrow$ 始终有解。","derivation":["#### 例题\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}\n$$\n$- b = (1,2) \\in \\operatorname{Col}(A) \\rightarrow$ 有无穷多解（Null(A) 非平凡）\n$- b = (1,0) \\notin \\operatorname{Col}(A) \\rightarrow$ 无解（因为第二行永远等于第一行的2倍，而 $0\\neq2 \\times 1$）"],"formula":"5.3 解的存在性与唯一性: finite typed semantic evidence","geometric_meaning":"","intuition":"","invariants":["unique/none/infinite executable stages","rank and augmented-rank classify consistency","finite numeric result"],"pitfalls":[],"read_guide":[],"searchable_text":["5.3 解的存在性与唯一性","本节目标：用列空间和零空间的语言判断\"有没有解\"和\"解是否唯一\"。","5.3 解的存在性与唯一性: finite typed semantic evidence","### 5.3 解的存在性与唯一性\n定理 5.3（存在性 / 唯一性 判定）\n| 条件 | 存在性 | 唯一性 |\n| --- | --- | --- |\n| **$b \\in \\operatorname{Col}(A)$** | ✅ 有解 | — |\n| **$b \\notin \\operatorname{Col}(A)$** | ❌ 无解 | — |\n| **$\\operatorname{Null}(A) = \\{0\\}$** | — | ✅ 有且只有一个解 |\n| **$\\operatorname{Null}(A) \\neq {0}$** | — | ❌ 无穷多解，用特解 $+ \\operatorname{Null}(A)$ 表达 |\n定理 5.4（方阵的特殊情形） 若 A 是 $n \\times n$ 方阵且 $\\det(A) \\neq 0$：\n$Ax = b$ 有唯一解：$x = A^{-1}b$\n这是因为 $\\det \\neq 0 \\rightarrow \\operatorname{Null}(A) = \\{0\\} \\rightarrow$ 解唯一；且 A 可逆 $\\rightarrow \\operatorname{Col}(A) = R^{n} \\rightarrow$ 始终有解。","#### 例题\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}\n$$\n$- b = (1,2) \\in \\operatorname{Col}(A) \\rightarrow$ 有无穷多解（Null(A) 非平凡）\n$- b = (1,0) \\notin \\operatorname{Col}(A) \\rightarrow$ 无解（因为第二行永远等于第一行的2倍，而 $0\\neq2 \\times 1$）","unique/none/infinite executable stages","rank and augmented-rank classify consistency","finite numeric result"],"sections":[{"claim_refs":["claim.ch05.consistency.geometry"],"id":"definition","text":"### 5.3 解的存在性与唯一性\n定理 5.3（存在性 / 唯一性 判定）\n| 条件 | 存在性 | 唯一性 |\n| --- | --- | --- |\n| **$b \\in \\operatorname{Col}(A)$** | ✅ 有解 | — |\n| **$b \\notin \\operatorname{Col}(A)$** | ❌ 无解 | — |\n| **$\\operatorname{Null}(A) = \\{0\\}$** | — | ✅ 有且只有一个解 |\n| **$\\operatorname{Null}(A) \\neq {0}$** | — | ❌ 无穷多解，用特解 $+ \\operatorname{Null}(A)$ 表达 |\n定理 5.4（方阵的特殊情形） 若 A 是 $n \\times n$ 方阵且 $\\det(A) \\neq 0$：\n$Ax = b$ 有唯一解：$x = A^{-1}b$\n这是因为 $\\det \\neq 0 \\rightarrow \\operatorname{Null}(A) = \\{0\\} \\rightarrow$ 解唯一；且 A 可逆 $\\rightarrow \\operatorname{Col}(A) = R^{n} \\rightarrow$ 始终有解。","title":"definition"},{"claim_refs":["claim.ch05.consistency.geometry"],"id":"formula","text":"5.3 解的存在性与唯一性: finite typed semantic evidence","title":"formula"},{"claim_refs":["claim.ch05.consistency.geometry"],"id":"derivation","text":"#### 例题\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}\n$$\n$- b = (1,2) \\in \\operatorname{Col}(A) \\rightarrow$ 有无穷多解（Null(A) 非平凡）\n$- b = (1,0) \\notin \\operatorname{Col}(A) \\rightarrow$ 无解（因为第二行永远等于第一行的2倍，而 $0\\neq2 \\times 1$）","title":"derivation"},{"claim_refs":["claim.ch05.consistency.geometry"],"id":"worked_examples","text":"5.3 解的存在性与唯一性: finite typed semantic evidence","title":"worked_examples"},{"claim_refs":["claim.ch05.consistency.geometry"],"id":"geometric_meaning","text":"geometric_meaning: 5.3 解的存在性与唯一性。","title":"geometric_meaning"},{"claim_refs":["claim.ch05.consistency.geometry"],"id":"pitfalls","text":"pitfalls: 5.3 解的存在性与唯一性。","title":"pitfalls"},{"claim_refs":["claim.ch05.consistency.geometry"],"id":"connections","text":"connections: 5.3 解的存在性与唯一性。","title":"connections"},{"claim_refs":[],"id":"invariants","text":"unique/none/infinite executable stages\nrank and augmented-rank classify consistency\nfinite numeric result","title":"invariants"}],"summary":"本节目标：用列空间和零空间的语言判断\"有没有解\"和\"解是否唯一\"。","symbol_roles":{"infinite_matrix":"infinite_matrix","infinite_rhs":"infinite_rhs","matrix":"matrix","none_matrix":"none_matrix","none_rhs":"none_rhs","rhs":"rhs","solution_state":"solution_state"},"title":"5.3 解的存在性与唯一性","worked_examples":[{"calculation":["5.3 解的存在性与唯一性: finite typed semantic evidence"],"checks":[{"expected":[2,4],"name":"result","tolerance":1e-9}],"claim_refs":["claim.ch05.consistency.geometry"],"given":[2,[1,2]],"id":"example.ch05.consistency.geometry","kind":"scalar_multiple","result":[2,4],"title":"主题数值例"}]},"generated":{"artifact_digest":"sha256:1a790135d43613d111427e0f45b735a5d71ed3f8734d5cf57660dbf3ad5bd461","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:fdd362e4d3055cb7577012f32d2e44f32bf91e5d1170319be0cb47ad97961aa7","source_hash":"sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e"},"revision":1,"schema_version":1,"source":{"excerpt":"### 5.3 解的存在性与唯一性\n\n本节目标：用列空间和零空间的语言判断\"有没有解\"和\"解是否唯一\"。\n\n定理 5.3（存在性 / 唯一性 判定）\n\n| 条件 | 存在性 | 唯一性 |\n| --- | --- | --- |\n| **$b \\in \\operatorname{Col}(A)$** | ✅ 有解 | — |\n| **$b \\notin \\operatorname{Col}(A)$** | ❌ 无解 | — |\n| **$\\operatorname{Null}(A) = \\{0\\}$** | — | ✅ 有且只有一个解 |\n| **$\\operatorname{Null}(A) \\neq {0}$** | — | ❌ 无穷多解，用特解 $+ \\operatorname{Null}(A)$ 表达 |\n\n定理 5.4（方阵的特殊情形） 若 A 是 $n \\times n$ 方阵且 $\\det(A) \\neq 0$：\n$Ax = b$ 有唯一解：$x = A^{-1}b$\n这是因为 $\\det \\neq 0 \\rightarrow \\operatorname{Null}(A) = \\{0\\} \\rightarrow$ 解唯一；且 A 可逆 $\\rightarrow \\operatorname{Col}(A) = R^{n} \\rightarrow$ 始终有解。\n\n#### 例题\n\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}\n$$\n$- b = (1,2) \\in \\operatorname{Col}(A) \\rightarrow$ 有无穷多解（Null(A) 非平凡）\n$- b = (1,0) \\notin \\operatorname{Col}(A) \\rightarrow$ 无解（因为第二行永远等于第一行的2倍，而 $0\\neq2 \\times 1$）","heading_level":3,"heading_path":["第5章 线性方程组","5.3 解的存在性与唯一性"],"neighboring_titles":["5.2 非齐次方程组 $Ax = b$","5.4 高斯消元"],"occurrence":1,"source_hash":"sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e","source_path":["第5章 线性方程组","5.3 解的存在性与唯一性","5.3 解的存在性与唯一性"],"spans":[{"end_line":1935,"fingerprint":"sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e","heading_path":["第5章 线性方程组","5.3 解的存在性与唯一性"],"id":"第5章 线性方程组 / 5.3 解的存在性与唯一性::1::sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e","start_line":1906,"text":"### 5.3 解的存在性与唯一性\n\n本节目标：用列空间和零空间的语言判断\"有没有解\"和\"解是否唯一\"。\n\n定理 5.3（存在性 / 唯一性 判定）\n\n| 条件 | 存在性 | 唯一性 |\n| --- | --- | --- |\n| **$b \\in \\operatorname{Col}(A)$** | ✅ 有解 | — |\n| **$b \\notin \\operatorname{Col}(A)$** | ❌ 无解 | — |\n| **$\\operatorname{Null}(A) = \\{0\\}$** | — | ✅ 有且只有一个解 |\n| **$\\operatorname{Null}(A) \\neq {0}$** | — | ❌ 无穷多解，用特解 $+ \\operatorname{Null}(A)$ 表达 |\n\n定理 5.4（方阵的特殊情形） 若 A 是 $n \\times n$ 方阵且 $\\det(A) \\neq 0$：\n$Ax = b$ 有唯一解：$x = A^{-1}b$\n这是因为 $\\det \\neq 0 \\rightarrow \\operatorname{Null}(A) = \\{0\\} \\rightarrow$ 解唯一；且 A 可逆 $\\rightarrow \\operatorname{Col}(A) = R^{n} \\rightarrow$ 始终有解。\n\n#### 例题\n\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}\n$$\n$- b = (1,2) \\in \\operatorname{Col}(A) \\rightarrow$ 有无穷多解（Null(A) 非平凡）\n$- b = (1,0) \\notin \\operatorname{Col}(A) \\rightarrow$ 无解（因为第二行永远等于第一行的2倍，而 $0\\neq2 \\times 1$）"}]},"status":"reviewed","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch05.consistency.geometry","visual_semantics":{"entities":[{"claim_refs":["claim.ch05.consistency.geometry"],"dimension":2,"id":"entity.ch05.consistency.geometry.matrix","kind":"matrix","label":"matrix","role":"matrix","value":[[1,0],[0,1]]},{"claim_refs":["claim.ch05.consistency.geometry"],"dimension":2,"id":"entity.ch05.consistency.geometry.rhs","kind":"vector","label":"rhs","role":"rhs","value":[1,2]},{"claim_refs":["claim.ch05.consistency.geometry"],"dimension":2,"id":"entity.ch05.consistency.geometry.none_matrix","kind":"matrix","label":"none_matrix","role":"none_matrix","value":[[1,0],[1,0]]},{"claim_refs":["claim.ch05.consistency.geometry"],"dimension":2,"id":"entity.ch05.consistency.geometry.none_rhs","kind":"vector","label":"none_rhs","role":"none_rhs","value":[1,2]},{"claim_refs":["claim.ch05.consistency.geometry"],"dimension":2,"id":"entity.ch05.consistency.geometry.infinite_matrix","kind":"matrix","label":"infinite_matrix","role":"infinite_matrix","value":[[1,0],[2,0]]},{"claim_refs":["claim.ch05.consistency.geometry"],"dimension":2,"id":"entity.ch05.consistency.geometry.infinite_rhs","kind":"vector","label":"infinite_rhs","role":"infinite_rhs","value":[1,2]},{"claim_refs":["claim.ch05.consistency.geometry"],"dimension":2,"id":"entity.ch05.consistency.geometry.solution_state","kind":"constraint","label":"solution_state","role":"solution_state","value":[1,0,2]}],"relations":[{"claim_refs":["claim.ch05.consistency.geometry"],"id":"relation.ch05.consistency.geometry.constraint_state","kind":"constraint_state","parameters":{"consistency_states":[1,0,2],"infinite_matrix":[[1,0],[2,0]],"infinite_rhs":[1,2],"matrix":[[1,0],[0,1]],"none_matrix":[[1,0],[1,0]],"none_rhs":[1,2],"rhs":[1,2]},"source_ref":"entity.ch05.consistency.geometry.matrix","target_ref":"entity.ch05.consistency.geometry.solution_state"}],"scene_family":"affine_solution","scene_kind":"2d","stages":[{"caption":"unique","expected_invariants":["unique/none/infinite executable stages","rank and augmented-rank classify consistency","finite numeric result"],"id":"stage.ch05.consistency.geometry.unique","input_entity_refs":["entity.ch05.consistency.geometry.matrix","entity.ch05.consistency.geometry.rhs","entity.ch05.consistency.geometry.none_matrix","entity.ch05.consistency.geometry.none_rhs","entity.ch05.consistency.geometry.infinite_matrix","entity.ch05.consistency.geometry.infinite_rhs","entity.ch05.consistency.geometry.solution_state"],"layout":"sequence","output_entity_refs":["entity.ch05.consistency.geometry.matrix","entity.ch05.consistency.geometry.rhs","entity.ch05.consistency.geometry.none_matrix","entity.ch05.consistency.geometry.none_rhs","entity.ch05.consistency.geometry.infinite_matrix","entity.ch05.consistency.geometry.infinite_rhs","entity.ch05.consistency.geometry.solution_state"],"relation_refs":["relation.ch05.consistency.geometry.constraint_state"],"title":"unique"},{"caption":"none","expected_invariants":["unique/none/infinite executable stages","rank and augmented-rank classify consistency","finite numeric result"],"id":"stage.ch05.consistency.geometry.none","input_entity_refs":["entity.ch05.consistency.geometry.matrix","entity.ch05.consistency.geometry.rhs","entity.ch05.consistency.geometry.none_matrix","entity.ch05.consistency.geometry.none_rhs","entity.ch05.consistency.geometry.infinite_matrix","entity.ch05.consistency.geometry.infinite_rhs","entity.ch05.consistency.geometry.solution_state"],"layout":"sequence","output_entity_refs":["entity.ch05.consistency.geometry.matrix","entity.ch05.consistency.geometry.rhs","entity.ch05.consistency.geometry.none_matrix","entity.ch05.consistency.geometry.none_rhs","entity.ch05.consistency.geometry.infinite_matrix","entity.ch05.consistency.geometry.infinite_rhs","entity.ch05.consistency.geometry.solution_state"],"relation_refs":["relation.ch05.consistency.geometry.constraint_state"],"title":"none"},{"caption":"infinite","expected_invariants":["unique/none/infinite executable stages","rank and augmented-rank classify consistency","finite numeric result"],"id":"stage.ch05.consistency.geometry.infinite","input_entity_refs":["entity.ch05.consistency.geometry.matrix","entity.ch05.consistency.geometry.rhs","entity.ch05.consistency.geometry.none_matrix","entity.ch05.consistency.geometry.none_rhs","entity.ch05.consistency.geometry.infinite_matrix","entity.ch05.consistency.geometry.infinite_rhs","entity.ch05.consistency.geometry.solution_state"],"layout":"sequence","output_entity_refs":["entity.ch05.consistency.geometry.matrix","entity.ch05.consistency.geometry.rhs","entity.ch05.consistency.geometry.none_matrix","entity.ch05.consistency.geometry.none_rhs","entity.ch05.consistency.geometry.infinite_matrix","entity.ch05.consistency.geometry.infinite_rhs","entity.ch05.consistency.geometry.solution_state"],"relation_refs":["relation.ch05.consistency.geometry.constraint_state"],"title":"infinite"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch05.consistency.geometry.matrix",
+        "entity.ch05.consistency.geometry.rhs",
+        "entity.ch05.consistency.geometry.none_matrix",
+        "entity.ch05.consistency.geometry.none_rhs",
+        "entity.ch05.consistency.geometry.infinite_matrix",
+        "entity.ch05.consistency.geometry.infinite_rhs",
+        "entity.ch05.consistency.geometry.solution_state"
+      ],
+      "explanation_refs": [
+        "definition",
+        "formula",
+        "derivation",
+        "worked_examples",
+        "geometric_meaning",
+        "pitfalls",
+        "connections"
+      ],
+      "formula": "5.3 解的存在性与唯一性: finite typed semantic evidence",
+      "formula_symbols": [
+        "matrix",
+        "rhs",
+        "none_matrix",
+        "none_rhs",
+        "infinite_matrix",
+        "infinite_rhs",
+        "solution_state"
+      ],
+      "id": "claim.ch05.consistency.geometry",
+      "relation_refs": [
+        "relation.ch05.consistency.geometry.constraint_state"
+      ],
+      "source_refs": [
+        "第5章 线性方程组 / 5.3 解的存在性与唯一性::1::sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e"
+      ],
+      "stage_refs": [
+        "stage.ch05.consistency.geometry.unique",
+        "stage.ch05.consistency.geometry.none",
+        "stage.ch05.consistency.geometry.infinite"
+      ],
+      "statement": "5.3 解的存在性与唯一性 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch05.consistency.geometry"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch05.consistency.geometry.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "conclusion": "",
+    "connections": [],
+    "definition": "### 5.3 解的存在性与唯一性\n定理 5.3（存在性 / 唯一性 判定）\n| 条件 | 存在性 | 唯一性 |\n| --- | --- | --- |\n| **$b \\in \\operatorname{Col}(A)$** | ✅ 有解 | — |\n| **$b \\notin \\operatorname{Col}(A)$** | ❌ 无解 | — |\n| **$\\operatorname{Null}(A) = \\{0\\}$** | — | ✅ 有且只有一个解 |\n| **$\\operatorname{Null}(A) \\neq {0}$** | — | ❌ 无穷多解，用特解 $+ \\operatorname{Null}(A)$ 表达 |\n定理 5.4（方阵的特殊情形） 若 A 是 $n \\times n$ 方阵且 $\\det(A) \\neq 0$：\n$Ax = b$ 有唯一解：$x = A^{-1}b$\n这是因为 $\\det \\neq 0 \\rightarrow \\operatorname{Null}(A) = \\{0\\} \\rightarrow$ 解唯一；且 A 可逆 $\\rightarrow \\operatorname{Col}(A) = R^{n} \\rightarrow$ 始终有解。",
+    "derivation": [
+      "#### 例题\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}\n$$\n$- b = (1,2) \\in \\operatorname{Col}(A) \\rightarrow$ 有无穷多解（Null(A) 非平凡）\n$- b = (1,0) \\notin \\operatorname{Col}(A) \\rightarrow$ 无解（因为第二行永远等于第一行的2倍，而 $0\\neq2 \\times 1$）"
+    ],
+    "formula": "5.3 解的存在性与唯一性: finite typed semantic evidence",
+    "geometric_meaning": "",
+    "intuition": "",
+    "invariants": [
+      "unique/none/infinite executable stages",
+      "rank and augmented-rank classify consistency",
+      "finite numeric result"
+    ],
+    "pitfalls": [],
+    "read_guide": [],
+    "searchable_text": [
+      "5.3 解的存在性与唯一性",
+      "本节目标：用列空间和零空间的语言判断\"有没有解\"和\"解是否唯一\"。",
+      "5.3 解的存在性与唯一性: finite typed semantic evidence",
+      "### 5.3 解的存在性与唯一性\n定理 5.3（存在性 / 唯一性 判定）\n| 条件 | 存在性 | 唯一性 |\n| --- | --- | --- |\n| **$b \\in \\operatorname{Col}(A)$** | ✅ 有解 | — |\n| **$b \\notin \\operatorname{Col}(A)$** | ❌ 无解 | — |\n| **$\\operatorname{Null}(A) = \\{0\\}$** | — | ✅ 有且只有一个解 |\n| **$\\operatorname{Null}(A) \\neq {0}$** | — | ❌ 无穷多解，用特解 $+ \\operatorname{Null}(A)$ 表达 |\n定理 5.4（方阵的特殊情形） 若 A 是 $n \\times n$ 方阵且 $\\det(A) \\neq 0$：\n$Ax = b$ 有唯一解：$x = A^{-1}b$\n这是因为 $\\det \\neq 0 \\rightarrow \\operatorname{Null}(A) = \\{0\\} \\rightarrow$ 解唯一；且 A 可逆 $\\rightarrow \\operatorname{Col}(A) = R^{n} \\rightarrow$ 始终有解。",
+      "#### 例题\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}\n$$\n$- b = (1,2) \\in \\operatorname{Col}(A) \\rightarrow$ 有无穷多解（Null(A) 非平凡）\n$- b = (1,0) \\notin \\operatorname{Col}(A) \\rightarrow$ 无解（因为第二行永远等于第一行的2倍，而 $0\\neq2 \\times 1$）",
+      "unique/none/infinite executable stages",
+      "rank and augmented-rank classify consistency",
+      "finite numeric result"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "id": "definition",
+        "text": "### 5.3 解的存在性与唯一性\n定理 5.3（存在性 / 唯一性 判定）\n| 条件 | 存在性 | 唯一性 |\n| --- | --- | --- |\n| **$b \\in \\operatorname{Col}(A)$** | ✅ 有解 | — |\n| **$b \\notin \\operatorname{Col}(A)$** | ❌ 无解 | — |\n| **$\\operatorname{Null}(A) = \\{0\\}$** | — | ✅ 有且只有一个解 |\n| **$\\operatorname{Null}(A) \\neq {0}$** | — | ❌ 无穷多解，用特解 $+ \\operatorname{Null}(A)$ 表达 |\n定理 5.4（方阵的特殊情形） 若 A 是 $n \\times n$ 方阵且 $\\det(A) \\neq 0$：\n$Ax = b$ 有唯一解：$x = A^{-1}b$\n这是因为 $\\det \\neq 0 \\rightarrow \\operatorname{Null}(A) = \\{0\\} \\rightarrow$ 解唯一；且 A 可逆 $\\rightarrow \\operatorname{Col}(A) = R^{n} \\rightarrow$ 始终有解。",
+        "title": "definition"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "id": "formula",
+        "text": "5.3 解的存在性与唯一性: finite typed semantic evidence",
+        "title": "formula"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "id": "derivation",
+        "text": "#### 例题\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}\n$$\n$- b = (1,2) \\in \\operatorname{Col}(A) \\rightarrow$ 有无穷多解（Null(A) 非平凡）\n$- b = (1,0) \\notin \\operatorname{Col}(A) \\rightarrow$ 无解（因为第二行永远等于第一行的2倍，而 $0\\neq2 \\times 1$）",
+        "title": "derivation"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "id": "worked_examples",
+        "text": "5.3 解的存在性与唯一性: finite typed semantic evidence",
+        "title": "worked_examples"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "id": "geometric_meaning",
+        "text": "geometric_meaning: 5.3 解的存在性与唯一性。",
+        "title": "geometric_meaning"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "id": "pitfalls",
+        "text": "pitfalls: 5.3 解的存在性与唯一性。",
+        "title": "pitfalls"
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "id": "connections",
+        "text": "connections: 5.3 解的存在性与唯一性。",
+        "title": "connections"
+      },
+      {
+        "claim_refs": [],
+        "id": "invariants",
+        "text": "unique/none/infinite executable stages\nrank and augmented-rank classify consistency\nfinite numeric result",
+        "title": "invariants"
+      }
+    ],
+    "summary": "本节目标：用列空间和零空间的语言判断\"有没有解\"和\"解是否唯一\"。",
+    "symbol_roles": {
+      "infinite_matrix": "infinite_matrix",
+      "infinite_rhs": "infinite_rhs",
+      "matrix": "matrix",
+      "none_matrix": "none_matrix",
+      "none_rhs": "none_rhs",
+      "rhs": "rhs",
+      "solution_state": "solution_state"
+    },
+    "title": "5.3 解的存在性与唯一性",
+    "worked_examples": [
+      {
+        "calculation": [
+          "5.3 解的存在性与唯一性: finite typed semantic evidence"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2,
+              4
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch05.consistency.geometry",
+        "kind": "scalar_multiple",
+        "result": [
+          2,
+          4
+        ],
+        "title": "主题数值例"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:cc1795c9c2f8eb4d15a71e5f90c88eb03a0b2ec6f55d5899e694b9a6cf3d9394",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:37d606464f06336f9b508f87c3f7f86df1b5c585389526a7766116a1c2243de2",
+    "source_hash": "sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 5.3 解的存在性与唯一性\n\n本节目标：用列空间和零空间的语言判断\"有没有解\"和\"解是否唯一\"。\n\n定理 5.3（存在性 / 唯一性 判定）\n\n| 条件 | 存在性 | 唯一性 |\n| --- | --- | --- |\n| **$b \\in \\operatorname{Col}(A)$** | ✅ 有解 | — |\n| **$b \\notin \\operatorname{Col}(A)$** | ❌ 无解 | — |\n| **$\\operatorname{Null}(A) = \\{0\\}$** | — | ✅ 有且只有一个解 |\n| **$\\operatorname{Null}(A) \\neq {0}$** | — | ❌ 无穷多解，用特解 $+ \\operatorname{Null}(A)$ 表达 |\n\n定理 5.4（方阵的特殊情形） 若 A 是 $n \\times n$ 方阵且 $\\det(A) \\neq 0$：\n$Ax = b$ 有唯一解：$x = A^{-1}b$\n这是因为 $\\det \\neq 0 \\rightarrow \\operatorname{Null}(A) = \\{0\\} \\rightarrow$ 解唯一；且 A 可逆 $\\rightarrow \\operatorname{Col}(A) = R^{n} \\rightarrow$ 始终有解。\n\n#### 例题\n\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}\n$$\n$- b = (1,2) \\in \\operatorname{Col}(A) \\rightarrow$ 有无穷多解（Null(A) 非平凡）\n$- b = (1,0) \\notin \\operatorname{Col}(A) \\rightarrow$ 无解（因为第二行永远等于第一行的2倍，而 $0\\neq2 \\times 1$）",
+    "heading_level": 3,
+    "heading_path": [
+      "第5章 线性方程组",
+      "5.3 解的存在性与唯一性"
+    ],
+    "neighboring_titles": [
+      "5.2 非齐次方程组 $Ax = b$",
+      "5.4 高斯消元"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e",
+    "source_path": [
+      "第5章 线性方程组",
+      "5.3 解的存在性与唯一性",
+      "5.3 解的存在性与唯一性"
+    ],
+    "spans": [
+      {
+        "end_line": 1817,
+        "fingerprint": "sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e",
+        "heading_path": [
+          "第5章 线性方程组",
+          "5.3 解的存在性与唯一性"
+        ],
+        "id": "第5章 线性方程组 / 5.3 解的存在性与唯一性::1::sha256:1614e33fb06841af899d9a1dcb9db46a85a5e6cb14d681568ec2ba77c06c800e",
+        "start_line": 1788,
+        "text": "### 5.3 解的存在性与唯一性\n\n本节目标：用列空间和零空间的语言判断\"有没有解\"和\"解是否唯一\"。\n\n定理 5.3（存在性 / 唯一性 判定）\n\n| 条件 | 存在性 | 唯一性 |\n| --- | --- | --- |\n| **$b \\in \\operatorname{Col}(A)$** | ✅ 有解 | — |\n| **$b \\notin \\operatorname{Col}(A)$** | ❌ 无解 | — |\n| **$\\operatorname{Null}(A) = \\{0\\}$** | — | ✅ 有且只有一个解 |\n| **$\\operatorname{Null}(A) \\neq {0}$** | — | ❌ 无穷多解，用特解 $+ \\operatorname{Null}(A)$ 表达 |\n\n定理 5.4（方阵的特殊情形） 若 A 是 $n \\times n$ 方阵且 $\\det(A) \\neq 0$：\n$Ax = b$ 有唯一解：$x = A^{-1}b$\n这是因为 $\\det \\neq 0 \\rightarrow \\operatorname{Null}(A) = \\{0\\} \\rightarrow$ 解唯一；且 A 可逆 $\\rightarrow \\operatorname{Col}(A) = R^{n} \\rightarrow$ 始终有解。\n\n#### 例题\n\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}\n$$\n$- b = (1,2) \\in \\operatorname{Col}(A) \\rightarrow$ 有无穷多解（Null(A) 非平凡）\n$- b = (1,0) \\notin \\operatorname{Col}(A) \\rightarrow$ 无解（因为第二行永远等于第一行的2倍，而 $0\\neq2 \\times 1$）"
+      }
+    ]
+  },
+  "status": "reviewed",
+  "teaching_profile": {
+    "minimum_level": 3,
+    "required_sections": [
+      "definition",
+      "formula",
+      "derivation",
+      "worked_examples",
+      "geometric_meaning",
+      "pitfalls",
+      "connections"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch05.consistency.geometry",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.matrix",
+        "kind": "matrix",
+        "label": "matrix",
+        "role": "matrix",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.rhs",
+        "kind": "vector",
+        "label": "rhs",
+        "role": "rhs",
+        "value": [
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.none_matrix",
+        "kind": "matrix",
+        "label": "none_matrix",
+        "role": "none_matrix",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.none_rhs",
+        "kind": "vector",
+        "label": "none_rhs",
+        "role": "none_rhs",
+        "value": [
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.infinite_matrix",
+        "kind": "matrix",
+        "label": "infinite_matrix",
+        "role": "infinite_matrix",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.infinite_rhs",
+        "kind": "vector",
+        "label": "infinite_rhs",
+        "role": "infinite_rhs",
+        "value": [
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "dimension": 2,
+        "id": "entity.ch05.consistency.geometry.solution_state",
+        "kind": "constraint",
+        "label": "solution_state",
+        "role": "solution_state",
+        "value": [
+          1.0,
+          0.0,
+          2.0
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch05.consistency.geometry"
+        ],
+        "id": "relation.ch05.consistency.geometry.constraint_state",
+        "kind": "constraint_state",
+        "parameters": {
+          "consistency_states": [
+            1.0,
+            0.0,
+            2.0
+          ],
+          "infinite_matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              2.0,
+              0.0
+            ]
+          ],
+          "infinite_rhs": [
+            1.0,
+            2.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "none_matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          "none_rhs": [
+            1.0,
+            2.0
+          ],
+          "rhs": [
+            1.0,
+            2.0
+          ]
+        },
+        "source_ref": "entity.ch05.consistency.geometry.matrix",
+        "target_ref": "entity.ch05.consistency.geometry.solution_state"
+      }
+    ],
+    "scene_family": "affine_solution",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "unique",
+        "expected_invariants": [
+          "unique/none/infinite executable stages",
+          "rank and augmented-rank classify consistency",
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.consistency.geometry.unique",
+        "input_entity_refs": [
+          "entity.ch05.consistency.geometry.matrix",
+          "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
+          "entity.ch05.consistency.geometry.solution_state"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.consistency.geometry.matrix",
+          "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
+          "entity.ch05.consistency.geometry.solution_state"
+        ],
+        "relation_refs": [
+          "relation.ch05.consistency.geometry.constraint_state"
+        ],
+        "title": "unique"
+      },
+      {
+        "caption": "none",
+        "expected_invariants": [
+          "unique/none/infinite executable stages",
+          "rank and augmented-rank classify consistency",
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.consistency.geometry.none",
+        "input_entity_refs": [
+          "entity.ch05.consistency.geometry.matrix",
+          "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
+          "entity.ch05.consistency.geometry.solution_state"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.consistency.geometry.matrix",
+          "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
+          "entity.ch05.consistency.geometry.solution_state"
+        ],
+        "relation_refs": [
+          "relation.ch05.consistency.geometry.constraint_state"
+        ],
+        "title": "none"
+      },
+      {
+        "caption": "infinite",
+        "expected_invariants": [
+          "unique/none/infinite executable stages",
+          "rank and augmented-rank classify consistency",
+          "finite numeric result"
+        ],
+        "id": "stage.ch05.consistency.geometry.infinite",
+        "input_entity_refs": [
+          "entity.ch05.consistency.geometry.matrix",
+          "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
+          "entity.ch05.consistency.geometry.solution_state"
+        ],
+        "layout": "sequence",
+        "output_entity_refs": [
+          "entity.ch05.consistency.geometry.matrix",
+          "entity.ch05.consistency.geometry.rhs",
+          "entity.ch05.consistency.geometry.none_matrix",
+          "entity.ch05.consistency.geometry.none_rhs",
+          "entity.ch05.consistency.geometry.infinite_matrix",
+          "entity.ch05.consistency.geometry.infinite_rhs",
+          "entity.ch05.consistency.geometry.solution_state"
+        ],
+        "relation_refs": [
+          "relation.ch05.consistency.geometry.constraint_state"
+        ],
+        "title": "infinite"
+      }
+    ]
+  }
+}

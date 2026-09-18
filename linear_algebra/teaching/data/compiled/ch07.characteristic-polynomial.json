@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:0a66a25191d0797dedc1ce99cd0a324fc9e369aafe32e7bd1a20115696d6a141",
+  "artifact_digest": "sha256:69d5a4d934d188515e0b7c03ec1ddea87ffa0cef1e0b8f3f98323d644081fc03",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:f95373deca84f1e6f10606210e1cb757fe4be9c9531044332fe392e720e839b1",
@@ -131,8 +131,8 @@
         "alias": "ch07.characteristic-polynomial__relation__root_2",
         "basis": [
           [
-            -1,
-            1
+            -1.0,
+            1.0
           ]
         ],
         "bounds": [
@@ -147,8 +147,8 @@
         "alias": "ch07.characteristic-polynomial__relation__root_3",
         "basis": [
           [
-            1,
-            0
+            1.0,
+            0.0
           ]
         ],
         "bounds": [
@@ -168,8 +168,8 @@
       {
         "alias": "ch07.characteristic-polynomial__relation__polynomial__root_0",
         "coordinates": [
-          2,
-          0
+          2.0,
+          0.0
         ],
         "name": "lambda",
         "op": "point.upsert"
@@ -177,8 +177,8 @@
       {
         "alias": "ch07.characteristic-polynomial__relation__polynomial__root_1",
         "coordinates": [
-          3,
-          0
+          3.0,
+          0.0
         ],
         "name": "lambda",
         "op": "point.upsert"
@@ -192,8 +192,8 @@
       {
         "alias": "ch07.characteristic-polynomial__relation__complex_spectrum__root_0",
         "coordinates": [
-          0,
-          -1
+          0.0,
+          -1.0
         ],
         "name": "lambda",
         "op": "point.upsert"
@@ -201,8 +201,8 @@
       {
         "alias": "ch07.characteristic-polynomial__relation__complex_spectrum__root_1",
         "coordinates": [
-          0,
-          1
+          0.0,
+          1.0
         ],
         "name": "lambda",
         "op": "point.upsert"
@@ -211,8 +211,8 @@
         "alias": "ch07.characteristic-polynomial__stage__nullspace__root_2",
         "basis": [
           [
-            -1,
-            1
+            -1.0,
+            1.0
           ]
         ],
         "bounds": [
@@ -227,8 +227,8 @@
         "alias": "ch07.characteristic-polynomial__stage__nullspace__root_3",
         "basis": [
           [
-            1,
-            0
+            1.0,
+            0.0
           ]
         ],
         "bounds": [
@@ -248,8 +248,8 @@
       {
         "alias": "ch07.characteristic-polynomial__stage__polynomial__polynomial__root_0",
         "coordinates": [
-          2,
-          0
+          2.0,
+          0.0
         ],
         "name": "lambda",
         "op": "point.upsert"
@@ -257,8 +257,8 @@
       {
         "alias": "ch07.characteristic-polynomial__stage__polynomial__polynomial__root_1",
         "coordinates": [
-          3,
-          0
+          3.0,
+          0.0
         ],
         "name": "lambda",
         "op": "point.upsert"
@@ -267,8 +267,8 @@
         "alias": "ch07.characteristic-polynomial__stage__polynomial__root_2",
         "basis": [
           [
-            -1,
-            1
+            -1.0,
+            1.0
           ]
         ],
         "bounds": [
@@ -283,8 +283,8 @@
         "alias": "ch07.characteristic-polynomial__stage__polynomial__root_3",
         "basis": [
           [
-            1,
-            0
+            1.0,
+            0.0
           ]
         ],
         "bounds": [
@@ -304,8 +304,8 @@
       {
         "alias": "ch07.characteristic-polynomial__stage__complex__complex_spectrum__root_0",
         "coordinates": [
-          0,
-          -1
+          0.0,
+          -1.0
         ],
         "name": "lambda",
         "op": "point.upsert"
@@ -313,8 +313,8 @@
       {
         "alias": "ch07.characteristic-polynomial__stage__complex__complex_spectrum__root_1",
         "coordinates": [
-          0,
-          1
+          0.0,
+          1.0
         ],
         "name": "lambda",
         "op": "point.upsert"
@@ -355,7 +355,7 @@
     "summary": "7.2.1 推导",
     "version": 1
   },
-  "plan_digest": "sha256:ebb900e63fbbf46936d07b62dc21c94394e0b76bbd97e668f1c5bc323be3831d",
+  "plan_digest": "sha256:7370808fe8fa5ad72c3d795f9a6c2e72f44f0b6823c8098f3f14e18e441c2ed8",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

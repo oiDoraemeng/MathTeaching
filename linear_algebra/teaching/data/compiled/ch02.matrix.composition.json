@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:b8cc6e7fe7e7e37171d1245a7abeb569a1182274c591dd5823ef2145e5df87c7",
+  "artifact_digest": "sha256:afa9883717d4b0ce262a346b65020b322b74e74de3220e4c735027028da2ec7a",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:8debe21481055d827cc43d94f797bf4381c6a41b6d293ceb80e39d53222fd165",
@@ -8,30 +8,30 @@
       {
         "alias": "sem__A",
         "bounds": [
-          -3,
-          3,
-          -3,
-          3
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
         ],
         "color": "#6B7280",
         "matrix": [
           [
-            2,
-            0
+            2.0,
+            0.0
           ],
           [
-            0,
-            1
+            0.0,
+            1.0
           ]
         ],
         "op": "geometry.transformed_grid",
-        "step": 1
+        "step": 1.0
       },
       {
         "alias": "sem__x__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -39,8 +39,8 @@
       {
         "alias": "sem__x__end",
         "coordinates": [
-          1,
-          1
+          1.0,
+          1.0
         ],
         "name": "x",
         "op": "point.upsert"
@@ -58,8 +58,8 @@
       {
         "alias": "sem__y__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -67,8 +67,8 @@
       {
         "alias": "sem__y__end",
         "coordinates": [
-          -2,
-          1
+          -2.0,
+          1.0
         ],
         "name": "ABx",
         "op": "point.upsert"
@@ -84,32 +84,10 @@
         "start": "sem__y__origin"
       },
       {
-        "alias": "sem__B",
-        "bounds": [
-          -3,
-          3,
-          -3,
-          3
-        ],
-        "color": "#6B7280",
-        "matrix": [
-          [
-            0,
-            -1
-          ],
-          [
-            1,
-            0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1
-      },
-      {
         "alias": "sem__z__origin",
         "coordinates": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "name": "O",
         "op": "point.upsert"
@@ -117,8 +95,8 @@
       {
         "alias": "sem__z__end",
         "coordinates": [
-          -1,
-          2
+          -1.0,
+          2.0
         ],
         "name": "BAx",
         "op": "point.upsert"
@@ -134,15 +112,37 @@
         "start": "sem__z__origin"
       },
       {
+        "alias": "sem__B",
+        "bounds": [
+          -3.0,
+          3.0,
+          -3.0,
+          3.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            0.0,
+            -1.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__A_maps_x_to_y",
         "matrix": [
           [
-            2,
-            0
+            2.0,
+            0.0
           ],
           [
-            0,
-            1
+            0.0,
+            1.0
           ]
         ],
         "op": "linear_algebra.matrix_transform"
@@ -177,12 +177,12 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            1,
-            1
+            1.0,
+            1.0
           ],
           [
-            -2,
-            1
+            -2.0,
+            1.0
           ]
         ]
       },
@@ -216,12 +216,12 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            1,
-            1
+            1.0,
+            1.0
           ],
           [
-            -1,
-            2
+            -1.0,
+            2.0
           ]
         ]
       },
@@ -264,12 +264,12 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            1,
-            1
+            1.0,
+            1.0
           ],
           [
-            -2,
-            1
+            -2.0,
+            1.0
           ]
         ]
       },
@@ -277,7 +277,7 @@
         "alias": "sem__stage.composition.input__title",
         "op": "annotation.upsert",
         "position": [
-          0,
+          0.0,
           2.65
         ],
         "text": "固定输入"
@@ -313,12 +313,12 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            1,
-            1
+            1.0,
+            1.0
           ],
           [
-            -2,
-            1
+            -2.0,
+            1.0
           ]
         ]
       },
@@ -362,12 +362,12 @@
         "op": "geometry.staged_transform",
         "points": [
           [
-            1,
-            1
+            1.0,
+            1.0
           ],
           [
-            -1,
-            2
+            -1.0,
+            2.0
           ]
         ]
       },
@@ -393,7 +393,7 @@
         "alias": "sem__stage.composition.formula__title",
         "op": "annotation.upsert",
         "position": [
-          0,
+          0.0,
           2.65
         ],
         "text": "代数结论"
@@ -404,24 +404,20 @@
       }
     ],
     "scene": "2d",
-    "summary": "复合变换与 AB ≠ BA",
+    "summary": "复合变换与 AB≠BA",
     "version": 1
   },
-  "plan_digest": "sha256:0b9cb46b9db85818f268d13115fe7f38ebc58764bbd4f28fd166f9a1f04a3199",
-  "read_guide": [
-    "先看两条路径各自的中间向量。",
-    "再比较 AB 与 BA 的终点 y 与 z。",
-    "最后确认二者是否相等。"
-  ],
+  "plan_digest": "sha256:efa1dd269ebe968fdc49db7cf500597b29f8b721d476250857f6192f7c620c41",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 14,
+  "revision": 16,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:249f825ba9ab6a2d3d042a39fa709e8e6e22611b121cfdf2759e82f232484499",
   "stages": [
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
       "caption": "同一向量 x 作为两条路径的输入。",
@@ -525,7 +521,7 @@
     },
     {
       "anchor": [
-        0,
+        0.0,
         2.65
       ],
       "caption": "两条路径对应不同的矩阵乘积，得到 AB≠BA。",

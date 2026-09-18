@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:e78b606b571f38916f439e916311a1069db7f52dfa01db9cf17be061eafd77e1",
+  "artifact_digest": "sha256:26af798cb7d324a6392c30e89689a83708c73222271c9f5f791eed4de2a53795",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:704cca45bd342f5a503352124a960e1c6ac99bb1e2938850d5a70ffe73ab2f32",
@@ -173,10 +173,10 @@
       }
     ],
     "scene": "3d",
-    "summary": "4.1.2 子空间",
+    "summary": "4.1.2 子空间的交与并",
     "version": 1
   },
-  "plan_digest": "sha256:00996faa4197e243d7111837868b7f919439110d7b4c2e38cb40c9366e7df790",
+  "plan_digest": "sha256:b2d83c96e24bea3094fb1e6664c8923e08253b1b013542f61fe3552ffb07ef1c",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
