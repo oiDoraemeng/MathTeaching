@@ -54,6 +54,12 @@ class Geometry2DTests(unittest.TestCase):
         # 箭头尖端应落在终点上。
         self.assertIn((1.0, 1.0), {tuple(point[:2]) for point in vector.points})
 
+    def test_dashed_segment_mesh_contains_multiple_dash_pieces(self) -> None:
+        dashed = linear_mesh("segment", self.first, self.second, self.bounds, style="dashed")
+
+        self.assertGreater(dashed.n_lines, 1)
+        self.assertEqual(dashed.n_faces, 0)
+
     def test_geometry_controller_updates_actor_visibility_and_bounds(self) -> None:
         plotter = FakePlotter()
         controller = GeometrySceneController(plotter, self.bounds)
