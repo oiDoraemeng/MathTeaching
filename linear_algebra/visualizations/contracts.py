@@ -56,9 +56,6 @@ def contract_for(topic_id: str) -> VisualContract:
             ("composition_order", "endpoint_diff", "compare"), (), 5,
             distinguishable_role_groups=(("transformed_a", "transformed_b"),),
         ),
-        "ch02.subspace.null": VisualContract(
-            topic_id, (), ("vector_a",), ("collapses_to",), (), 2,
-        ),
         "ch03.det.multiplicativity": VisualContract(
             topic_id, (), (), ("same_measure", "composition_order"), (), 3,
         ),

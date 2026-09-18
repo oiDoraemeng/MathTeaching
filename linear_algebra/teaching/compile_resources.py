@@ -591,7 +591,7 @@ def main(argv: list[str] | None = None) -> int:
             TeachingArtifactStore(args.artifact_root or Path(__file__).with_name("data")),
             compiled_resource_store(args.output_root),
         )
-        if report.count != 54 or report.errors:
+        if report.count != 35 or report.errors:
             for error in report.errors:
                 print(error)
             return 1

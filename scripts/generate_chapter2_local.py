@@ -131,8 +131,8 @@ _SPEC = {
     "ch02.subspace.independence": {
         "formula": "c_1v_1+c_2v_2=0\\Rightarrow c_1=c_2=0",
         "kind": "matrix_transform",
-        "given": {"matrix": [[1, 0], [0, 1]], "vector": [1, 1]},
-        "result": [1.0, 1.0],
+        "given": {"matrix": [[2, -1], [1, 2]], "vector": [1, 1]},
+        "result": [1.0, 3.0],
         "check": "transformed",
         "statement": "线性无关意味着只有全零系数才能组合出零向量；在平面中两条不共线方向各自都是必要的。",
         "relation": "compare",
@@ -140,56 +140,12 @@ _SPEC = {
     },
     "ch02.subspace.rank": {
         "formula": "\\operatorname{rank}(A)=\\dim\\operatorname{Col}(A)",
-        "kind": "matrix_transform",
-        "given": {"matrix": [[1, 2], [2, 4]], "vector": [1, 1]},
-        "result": [3.0, 6.0],
-        "check": "transformed",
-        "statement": "秩是列空间的真实维数；两列共线的矩阵只能把平面压到一条输出直线。",
-        "relation": "collapses_to",
-        "matrix": True,
-    },
-    "ch02.subspace.null": {
-        "formula": "\\operatorname{Null}(A)=\\{x\\mid Ax=0\\}",
-        "kind": "matrix_transform",
-        "given": {"matrix": [[1, 0], [0, 0]], "vector": [0, 2]},
-        "result": [0.0, 0.0],
-        "check": "transformed",
-        "statement": "零空间由被 A 压到原点的输入方向组成；投影到 x 轴时整条 y 轴都被消除。",
-        "relation": "collapses_to",
-        "matrix": True,
-        "null_space": True,
-    },
-    "ch02.subspace.column": {
-        "formula": "\\operatorname{Col}(A)=\\{Ax\\mid x\\in R^n\\}",
-        "kind": "matrix_transform",
-        "given": {"matrix": [[1, 0], [0, 0]], "vector": [2, 3]},
-        "result": [2.0, 0.0],
-        "check": "transformed",
-        "statement": "列空间是所有可能输出的集合；投影到 x 轴时任何输入的输出都落在 x 轴上。",
-        "relation": "maps_to",
-        "matrix": True,
-    },
-    "ch02.subspace.rank-nullity": {
-        "formula": "\\operatorname{rank}(A)+\\operatorname{nullity}(A)=n",
-        "kind": "matrix_transform",
-        "given": {"matrix": [[1, 0], [0, 0]], "vector": [0, 2]},
-        "result": [0.0, 0.0],
-        "check": "transformed",
-        "statement": "秩与零化度把输入维数分成可见输出方向和被压扁方向，两者之和保持为 n。",
+        "kind": "determinant",
+        "given": {"matrix": [[1, 0], [0, 1]]},
+        "result": 1.0,
+        "check": "determinant",
+        "statement": "秩是列向量中最大线性无关组的个数，也就是变换后空间的真实维度。",
         "relation": "invariant",
-        "matrix": True,
-    },
-    "ch02.high-dimensional.analogy": {
-        "formula": "T(x)=Ax,\\quad \\operatorname{rank}(A)\\leq\\min(m,n)",
-        "kind": "matrix_transform",
-        "given": {"matrix": [[1, 0, 0], [0, 2, 0], [0, 0, 3]], "vector": [1, 2, 3]},
-        "result": [1.0, 4.0, 9.0],
-        "check": "transformed",
-        "statement": "二维和三维的分量规则推广到 n 维；高维不再强求直接图像，而用秩、零空间和列空间等不变量理解变换。",
-        "relation": "maps_to",
-        "matrix": True,
-        "scene": "3d",
-        "analogy": True,
     },
 }
 
@@ -257,15 +213,8 @@ def _add_contract_semantics(payload: dict, topic_id: str) -> None:
         claim["entity_refs"].append("z")
         claim["relation_refs"].extend(["composition_order", "endpoint_diff", "composition_compare"])
         claim["stage_refs"] = [stage["id"] for stage in stages]
-
-    elif topic_id == "ch02.subspace.null":
-        relations.append({"id": "collapse_to_origin", "kind": "collapses_to", "source_ref": "x", "target_ref": "y", "parameters": {}, "claim_refs": [claim_id]})
-        stages.extend([
-            {"id": "stage.null_input", "title": "输入方向", "caption": "选择零空间中的 y 轴方向。", "layout": "side_by_side", "input_entity_refs": ["x"], "output_entity_refs": [], "relation_refs": [], "expected_invariants": ["null direction"]},
-            {"id": "stage.null_output", "title": "压到原点", "caption": "A 作用后该方向变成零向量。", "layout": "side_by_side", "input_entity_refs": ["x"], "output_entity_refs": ["y"], "relation_refs": ["collapse_to_origin"], "expected_invariants": ["collapsed to origin"]},
-        ])
-        claim["relation_refs"].append("collapse_to_origin")
-        claim["stage_refs"].extend(["stage.null_input", "stage.null_output"])
+    # 2.9 的两个小节（线性无关与秩）自带完整语义图，由质量适配器逐字搬入讲义并
+    # 定义分步数学案例，这里不需要再追加契约语义。
 
 
 def main() -> int:

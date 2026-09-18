@@ -1,4 +1,4 @@
-"""Chapter 2: Matrices and Transformations - 16 topic builders."""
+"""Chapter 2: Matrices and Transformations - 11 topic builders."""
 
 from __future__ import annotations
 
@@ -6,7 +6,6 @@ from linear_algebra.visualizations.common import RenderContext
 from services.scene_commands import CommandPlan
 
 from .primitives import (
-    make_label,
     make_polygon,
     make_vector_2d,
     make_view_fit,
@@ -153,9 +152,9 @@ def build_matrix_powers(context: RenderContext) -> CommandPlan:
 
 
 def build_subspace_independence(context: RenderContext) -> CommandPlan:
-    """线性无关与张成空间"""
-    v1 = [2.0, 0.5]
-    v2 = [0.5, 2.0]
+    """线性无关与线性相关：两个不共线的方向"""
+    v1 = [2.0, 1.0]
+    v2 = [-1.0, 2.0]
 
     ops = []
     ops.extend(make_vector_2d([0, 0], v1, "v1", role="primary"))
@@ -163,75 +162,21 @@ def build_subspace_independence(context: RenderContext) -> CommandPlan:
     ops.append(make_polygon([[-3, -3], [3, -3], [3, 3], [-3, 3]], color=role_color("neutral"), opacity=0.05))
     ops.append(make_view_fit(padding=1.2))
 
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="两个无关向量张成平面")
+    return CommandPlan(scene="2d", operations=tuple(ops), summary="两个不共线的方向线性无关")
 
 
 def build_subspace_rank(context: RenderContext) -> CommandPlan:
-    """秩：输出空间的维数"""
-    v1 = [2.0, 1.0]
-    v2 = [1.0, 2.0]
+    """秩：变换后空间的真实维度（满秩的第一格）"""
+    v1 = [1.0, 0.0]
+    v2 = [0.0, 1.0]
 
     ops = []
-    ops.extend(make_vector_2d([0, 0], v1, "v1", role="primary"))
-    ops.extend(make_vector_2d([0, 0], v2, "v2", role="secondary"))
+    ops.extend(make_vector_2d([0, 0], v1, "a1", role="primary"))
+    ops.extend(make_vector_2d([0, 0], v2, "a2", role="secondary"))
     ops.append(make_polygon([[-3, -3], [3, -3], [3, 3], [-3, 3]], color=role_color("vector_a"), opacity=0.08))
     ops.append(make_view_fit(padding=1.2))
 
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="输出空间的维数")
-
-
-def build_subspace_null(context: RenderContext) -> CommandPlan:
-    """零空间：被压缩到零的方向"""
-    v_in_null = [1.0, -0.5]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], v_in_null, "v", role="primary"))
-    ops.append(make_label("→ 0", [0.5, -0.25], offset=[0.3, 0]))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="映射到零的向量集合")
-
-
-def build_subspace_column(context: RenderContext) -> CommandPlan:
-    """列空间：所有可能的输出"""
-    v1 = [2.0, 0.8]
-    v2 = [0.8, 2.0]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], v1, "col1", role="primary"))
-    ops.extend(make_vector_2d([0, 0], v2, "col2", role="secondary"))
-    ops.append(make_polygon([[-3, -3], [3, -3], [3, 3], [-3, 3]], color=role_color("vector_a"), opacity=0.08))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="列向量张成的输出空间")
-
-
-def build_subspace_rank_nullity(context: RenderContext) -> CommandPlan:
-    """秩-零化度定理"""
-    v_in = [2.0, 1.0]
-    v_null = [1.0, -0.5]
-    v_out = [1.5, 1.5]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], v_in, "input", role="primary"))
-    ops.extend(make_vector_2d([0, 0], v_null, "null", role="auxiliary"))
-    ops.extend(make_vector_2d([0, 0], v_out, "output", role="secondary"))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="输入维数 = 秩 + 零化度")
-
-
-def build_high_dimensional_matrix_analogy(context: RenderContext) -> CommandPlan:
-    """高维矩阵的类比理解"""
-    v1 = [2.0, 1.0]
-    v2 = [1.0, 2.0]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], v1, "v1", role="primary"))
-    ops.extend(make_vector_2d([0, 0], v2, "v2", role="secondary"))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="从2D类比到高维")
+    return CommandPlan(scene="2d", operations=tuple(ops), summary="满秩时输出仍是整个平面")
 
 
 BUILDERS = {
@@ -246,8 +191,4 @@ BUILDERS = {
     "draw.ch02.matrix.powers": build_matrix_powers,
     "draw.ch02.subspace.independence": build_subspace_independence,
     "draw.ch02.subspace.rank": build_subspace_rank,
-    "draw.ch02.subspace.null": build_subspace_null,
-    "draw.ch02.subspace.column": build_subspace_column,
-    "draw.ch02.subspace.rank-nullity": build_subspace_rank_nullity,
-    "draw.ch02.high-dimensional.analogy": build_high_dimensional_matrix_analogy,
 }

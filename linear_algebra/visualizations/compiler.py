@@ -52,6 +52,16 @@ _MATRIX_VECTOR_CASE_TOPICS = frozenset(
         "ch02.matrix.basis",
     }
 )
+# 2.9 的两个小节（线性无关与线性相关、秩）也是按步骤的数学案例，但窗格的主角是
+# 「变换后的网格」而不是若干向量：取景若沿用向量的端点，原点会落到窗格角上、
+# 被压成的那条线会贴着边缘。它们改为以默认视野为基准共用同一相机，网格仍用大
+# 取样范围由视口裁切。
+_SUBSPACE_CASE_TOPICS = frozenset(
+    {
+        "ch02.subspace.independence",
+        "ch02.subspace.rank",
+    }
+)
 _FLOW_VIEW_TOPICS = frozenset(
     {
         "ch01.ops.addition",
@@ -87,7 +97,7 @@ _CH02_BASIS_MATRIX: tuple[tuple[float, float], tuple[float, float]] = (
 def _case_grid_bounds(topic_id: str, fallback: tuple[float, ...]) -> tuple[float, ...]:
     """Return the grid sampling rectangle used by one topic's case pane."""
 
-    if topic_id not in _MATRIX_VECTOR_CASE_TOPICS:
+    if topic_id not in _MATRIX_VECTOR_CASE_TOPICS and topic_id not in _SUBSPACE_CASE_TOPICS:
         return fallback
     return _MATRIX_VECTOR_GRID_BOUNDS
 # 流程里向量用小写标注；向量的终点是“点”，用大写标注以区别。a+b 的终点是
@@ -383,6 +393,22 @@ class VisualSemanticsCompiler:
                 if max_y <= min_y:
                     min_y, max_y = min_y - 0.5, max_y + 0.5
                 view_fit["bounds"] = [min_x, max_x, min_y, max_y]
+        elif resolved_topic in _SUBSPACE_CASE_TOPICS:
+            # 2.9 的案例主角是「变换后的网格」：以默认视野为基准（原点保持在
+            # 窗格中部，网格由视口裁切），只在案例向量超出视野时才把端点并进来
+            # —— 例如讲义表格里两列共线的矩阵 $\begin{pmatrix}1&2\\2&4\end{pmatrix}$
+            # 的列 (2, 4)。这样“全部显示”时每个窗格仍然共用同一张图。
+            try:
+                endpoints = [
+                    _coordinates(entity.value, 2)
+                    for entity in semantics.entities
+                    if entity.kind == "vector" and entity.dimension == 2
+                ]
+            except (TypeError, ValueError):
+                endpoints = []
+            xs = [float(context.bounds[0]), float(context.bounds[1]), *(point[0] for point in endpoints)]
+            ys = [float(context.bounds[2]), float(context.bounds[3]), *(point[1] for point in endpoints)]
+            view_fit["bounds"] = [min(xs), max(xs), min(ys), max(ys)]
         operations.append(view_fit)
         summary = artifact.explanation.title if artifact is not None else f"visual semantics: {resolved_topic}"
         plan = CommandPlan(scene=semantics.scene_kind, operations=tuple(operations), summary=summary)
@@ -707,19 +733,18 @@ class VisualSemanticsCompiler:
             aliases.extend((prefix, end))
             if scene == "2d":
                 is_magnitude_topic = context.topic_id == "ch01.vector.magnitude"
-                is_point_distinction_topic = context.topic_id == "ch01.vector.point-distinction"
-                is_flow_topic = context.topic_id in _FLOW_VIEW_TOPICS
+                # 2.9 的案例向量标签本身就是 v1、a1 这类多字符标签，按流程主题的
+                # 规则不再在终点重复一个同名点标；2.9 的取景另有 _SUBSPACE_CASE_TOPICS
+                # 的分支，所以这里单独把它们并入“标签去重”的判断。
+                is_flow_topic = (
+                    context.topic_id in _FLOW_VIEW_TOPICS
+                    or context.topic_id in _SUBSPACE_CASE_TOPICS
+                )
                 is_zero_vector = not any(abs(value) > 1e-12 for value in coordinates)
                 # The vector label is placed once on the segment; repeating it
                 # at the endpoint makes the magnitude example look cluttered.
                 # A zero vector has no segment, so retain its point label.
-                end_name = (
-                    ""
-                    if is_point_distinction_topic
-                    else entity.label
-                    if (is_zero_vector or not is_magnitude_topic)
-                    else ""
-                )
+                end_name = entity.label if (is_zero_vector or not is_magnitude_topic) else ""
                 # 流程里向量用小写 a、b 标注；向量终点是一个“点”，改用大写
                 # A、B、C 与向量区分，避免点与向量看起来完全一样。
                 if is_flow_topic:
@@ -756,13 +781,7 @@ class VisualSemanticsCompiler:
                             "op": "point.upsert",
                             "alias": origin,
                             "coordinates": [0.0, 0.0],
-                            "name": (
-                                ""
-                                if is_magnitude_topic and is_zero_vector
-                                else "O"
-                                if not is_point_distinction_topic or entity.id == "vector_v"
-                                else ""
-                            ),
+                            "name": "" if is_magnitude_topic and is_zero_vector else "O",
                         },
                         {
                             "op": "point.upsert",

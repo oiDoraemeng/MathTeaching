@@ -121,16 +121,10 @@ _ANALOGY = TeachingProfile(
 # silently change the minimum teaching depth.
 _PROFILES: dict[str, TeachingProfile] = {
     "ch01.vector.magnitude": _VECTOR_FOUNDATION,
-    # This introductory distinction is deliberately constrained to the
-    # lecture's definitions, standard-basis formula, and two geometric cases.
-    # It does not call for a synthetic derivation or a generic pitfalls block.
-    "ch01.vector.point-distinction": _VECTOR_FOUNDATION,
     # Chapters 1--2 are presented as concise lecture notes: definition and
     # formula, an actual derivation only where the lecture gives one, geometric
     # meaning, and checked cases.  Do not force generic "intuition", pitfalls,
     # or cross-topic transfer copy into every small subsection.
-    "ch01.vector.coordinate-system": _VECTOR_FOUNDATION,
-    "ch01.vector.direction-examples": _VECTOR_FOUNDATION,
     "ch01.ops.addition": _VECTOR_ADDITION,
     "ch01.ops.subtraction": _VECTOR_FOUNDATION,
     "ch01.ops.scalar": _VECTOR_FOUNDATION,
@@ -139,8 +133,6 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch01.inner.applications": _VECTOR_FOUNDATION,
     "ch01.inner.cauchy-schwarz": _VECTOR_FOUNDATION,
     "ch01.projection.definition": _PROJECTION_DEFINITION,
-    "ch01.projection.properties": _VECTOR_FOUNDATION,
-    "ch01.projection.force": _VECTOR_FOUNDATION,
     "ch01.proof.midline": _PROOF_MIDLINE,
     "ch01.proof.centroid": _VECTOR_FOUNDATION,
     "ch01.proof.parallelogram-diagonals": _VECTOR_FOUNDATION,
@@ -153,12 +145,11 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch02.matrix.composition": _VECTOR_FOUNDATION,
     "ch02.matrix.basis": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.powers": _VECTOR_FOUNDATION,
-    "ch02.subspace.independence": _VECTOR_FOUNDATION,
-    "ch02.subspace.rank": _VECTOR_FOUNDATION,
-    "ch02.subspace.null": _VECTOR_FOUNDATION,
-    "ch02.subspace.column": _VECTOR_FOUNDATION,
-    "ch02.subspace.rank-nullity": _VECTOR_FOUNDATION,
-    "ch02.high-dimensional.analogy": _VECTOR_FOUNDATION,
+    # 2.9 只剩讲义 2.9.1「线性无关与线性相关」与 2.9.2「秩」两小节：定义与公式
+    # 连写（公式就在定义块内），正文只有「定义」与一组分步数学案例，因此沿用
+    # 2.5 小节的 profile，不要求独立的「公式」或「几何意义」小节。
+    "ch02.subspace.independence": _MATRIX_VECTOR_SUBSECTION,
+    "ch02.subspace.rank": _MATRIX_VECTOR_SUBSECTION,
     "ch03.det.oriented-area": _DET_GEOMETRY,
     "ch03.det.row-swap": _CORE,
     "ch03.det.scaling": _CORE,
@@ -173,7 +164,6 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch03.inverse.reverse-order": _BRIDGE,
 }
 _PROFILES["ch02.matrix.composition"] = _BRIDGE
-_PROFILES["ch02.high-dimensional.analogy"] = _ANALOGY
 
 # Chapter 4–8 entries share the explicit core policy until chapter-specific
 # editorial profiles are authored; the mapping is still materialized per stable

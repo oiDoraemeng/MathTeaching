@@ -45,7 +45,7 @@ def lecture_manifest() -> tuple[LessonNode, ...]:
             nodes[section_id] = LessonNode(
                 id=section_id,
                 kind="section",
-                title=display_heading(entry.source_path[1]),
+                title=display_heading(entry.display_title or entry.source_path[1]),
                 order=(entry.chapter_number, index),
                 parent_id=chapter_id,
                 children=(),

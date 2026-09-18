@@ -46,7 +46,7 @@ def recipe_for_entry(entry: LessonEntry) -> VisualizationRecipe:
     builder_func = get_builder_for(entry.visualization_id)
 
     if builder_func is None:
-        # All 54 topics must have builders - no fallback
+        # All catalog topics must have builders - no fallback
         raise ValueError(
             f"No builder found for {entry.visualization_id}. "
             f"All topics must have a specific builder."

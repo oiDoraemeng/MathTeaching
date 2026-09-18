@@ -55,12 +55,12 @@ TBD - created by archiving change linear-algebra-case-tabs. Update Purpose after
 
 #### Scenario: Open lecture topic list
 - **WHEN** 用户点击“线性代数”按钮
-- **THEN** 树形目录保留前三章 54 个主题并新增第 4–8 章 39 个绘图主题
-- **AND** 新增主题按章节计数为第 4 章 16 个、第 5 章 8 个、第 6 章 3 个、第 7 章 6 个、第 8 章 6 个
+- **THEN** 树形目录保留前三章 35 个主题并新增第 4–8 章 37 个绘图主题
+- **AND** 新增主题按章节计数为第 4 章 14 个、第 5 章 8 个、第 6 章 3 个、第 7 章 6 个、第 8 章 6 个
 
 ### Requirement: Lecture topic loading
 
-每个主题 SHALL 通过稳定的 `topic_id` 关联讲义来源、已发布 `TeachingArtifact` 和 `VisualizationRecipe`。前八章 SHALL 覆盖前三章既有的 54 个主题和第 4–8 章绘图目录的 39 个主题，不收录练习、自检、挑战或纯符号推导条目。
+每个主题 SHALL 通过稳定的 `topic_id` 关联讲义来源、已发布 `TeachingArtifact` 和 `VisualizationRecipe`。前八章 SHALL 覆盖前三章既有的 35 个主题和第 4–8 章绘图目录的 37 个主题，不收录练习、自检、挑战或纯符号推导条目。
 
 用户选择叶子主题时，系统 SHALL 使用同一个 `topic_id` 解析数学解释、数字算例、视觉语义和绘图配方；不得通过显示标题、公式或自然语言相似度选择绘图主题。
 

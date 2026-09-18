@@ -22,6 +22,10 @@ class LessonEntry:
     explanation_id: str
     visualization_id: str
     required_capabilities: tuple[str, ...]
+    # 目录显示名覆盖。讲义标题原样保留在 source_path / source_anchor 里用于锚定
+    # Markdown 原文（改动它会破坏来源校验），个别小节在软件目录里要用更短的
+    # 名字时只覆盖显示名，例如 2.9 合并后只讲线性无关与秩。
+    display_title: str = ""
 
 
 @dataclass(frozen=True)
@@ -80,6 +84,7 @@ def topic_entry(
     heading_level: int,
     required_capabilities: tuple[str, ...],
     occurrence: int = 1,
+    display_title: str = "",
 ) -> LessonEntry:
     return LessonEntry(
         id=topic_id,
@@ -91,5 +96,6 @@ def topic_entry(
         explanation_id=f"explain.{topic_id}",
         visualization_id=f"draw.{topic_id}",
         required_capabilities=required_capabilities,
+        display_title=display_title,
     )
 

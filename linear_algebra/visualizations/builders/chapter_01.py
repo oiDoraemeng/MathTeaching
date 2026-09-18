@@ -1,4 +1,4 @@
-"""Chapter 1: Vectors and Geometric Measurement - 17 topic builders."""
+"""Chapter 1: Vectors and Geometric Measurement - 12 topic builders."""
 
 from __future__ import annotations
 
@@ -12,7 +12,6 @@ from .primitives import (
     make_projection,
     make_right_angle_marker,
     make_vector_2d,
-    make_vector_3d,
     make_view_fit,
 )
 from ..palette import role_color
@@ -30,64 +29,6 @@ def build_vector_magnitude(context: RenderContext) -> CommandPlan:
 
     return CommandPlan(
         scene="2d", operations=tuple(ops), summary="向量的方向、长度与零向量"
-    )
-
-
-def build_vector_point_distinction(context: RenderContext) -> CommandPlan:
-    """点与向量的本质区别"""
-    p = [1.5, 1.0]
-    q = [3.5, 2.5]
-
-    ops = []
-    ops.append(
-        {"op": "point.upsert", "alias": "P", "coordinates": p, "name": "P"}
-    )
-    ops.append(
-        {"op": "point.upsert", "alias": "Q", "coordinates": q, "name": "Q"}
-    )
-    ops.extend(make_vector_2d(p, q, "v", role="primary"))
-    ops.append(
-        make_label(
-            "v", [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2], offset=[0.2, 0]
-        )
-    )
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(
-        scene="2d", operations=tuple(ops), summary="点描述位置，向量描述位移"
-    )
-
-
-def build_vector_coordinate_system(context: RenderContext) -> CommandPlan:
-    """坐标系与右手约定"""
-    ops = []
-    ops.append(make_vector_3d([0, 0, 0], [1, 0, 0], "e1", role="primary"))
-    ops.append(make_vector_3d([0, 0, 0], [0, 1, 0], "e2", role="construction"))
-    ops.append(make_vector_3d([0, 0, 0], [0, 0, 1], "e3", role="result"))
-    ops.append(make_label("e₁", [0.5, 0, 0]))
-    ops.append(make_label("e₂", [0, 0.5, 0]))
-    ops.append(make_label("e₃", [0, 0, 0.5]))
-    ops.append(make_view_fit(padding=1.3))
-
-    return CommandPlan(scene="3d", operations=tuple(ops), summary="标准基与右手坐标约定")
-
-
-def build_vector_direction_examples(context: RenderContext) -> CommandPlan:
-    """方向、象限与分层例题"""
-    v1 = [1.5, 1.0]
-    v2 = [-1.2, 1.3]
-    v3 = [-1.0, -1.5]
-    v4 = [1.8, -1.2]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], v1, "v1", role="primary"))
-    ops.extend(make_vector_2d([0, 0], v2, "v2", role="secondary"))
-    ops.extend(make_vector_2d([0, 0], v3, "v3", role="result"))
-    ops.extend(make_vector_2d([0, 0], v4, "v4", role="auxiliary"))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(
-        scene="2d", operations=tuple(ops), summary="四个象限的向量方向示例"
     )
 
 
@@ -254,38 +195,6 @@ def build_projection_definition(context: RenderContext) -> CommandPlan:
     return CommandPlan(scene="2d", operations=tuple(ops), summary="投影分解为平行和正交分量")
 
 
-def build_projection_properties(context: RenderContext) -> CommandPlan:
-    """投影的可加性与齐次性"""
-    v = [2.2, 1.8]
-    w = [1.5, 2.2]
-    u = [2.5, 0.8]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], v, "v", role="primary"))
-    ops.extend(make_vector_2d([0, 0], w, "w", role="secondary"))
-    ops.extend(make_vector_2d([0, 0], u, "u", role="result"))
-    ops.append(make_projection(v, u, alias="projection_v"))
-    ops.append(make_projection(w, u, alias="projection_w"))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="投影算子的线性性质")
-
-
-def build_projection_force(context: RenderContext) -> CommandPlan:
-    """坐标轴与斜面上的力分解"""
-    f = [1.5, 2.5]
-    direction = [2.5, 0.8]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], f, "F", role="primary"))
-    ops.extend(make_vector_2d([0, 0], direction, "dir", role="auxiliary"))
-    ops.append(make_projection(f, direction))
-    ops.append(make_label("F", [f[0] / 2, f[1] / 2], offset=[0.2, 0.2]))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="力的投影分解")
-
-
 def build_midline_theorem(context: RenderContext) -> CommandPlan:
     """三角形中位线定理"""
     a = [0, 0]
@@ -349,9 +258,6 @@ def build_parallelogram_diagonals(context: RenderContext) -> CommandPlan:
 # Builder registry for Chapter 1
 BUILDERS = {
     "draw.ch01.vector.magnitude": build_vector_magnitude,
-    "draw.ch01.vector.point-distinction": build_vector_point_distinction,
-    "draw.ch01.vector.coordinate-system": build_vector_coordinate_system,
-    "draw.ch01.vector.direction-examples": build_vector_direction_examples,
     "draw.ch01.ops.addition": build_vector_addition,
     "draw.ch01.ops.subtraction": build_vector_subtraction,
     "draw.ch01.ops.scalar": build_vector_scalar,
@@ -360,8 +266,6 @@ BUILDERS = {
     "draw.ch01.inner.applications": build_inner_product_applications,
     "draw.ch01.inner.cauchy-schwarz": build_cauchy_schwarz,
     "draw.ch01.projection.definition": build_projection_definition,
-    "draw.ch01.projection.properties": build_projection_properties,
-    "draw.ch01.projection.force": build_projection_force,
     "draw.ch01.proof.midline": build_midline_theorem,
     "draw.ch01.proof.centroid": build_centroid_theorem,
     "draw.ch01.proof.parallelogram-diagonals": build_parallelogram_diagonals,
