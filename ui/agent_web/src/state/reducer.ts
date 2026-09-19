@@ -277,6 +277,8 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
     summary: typeof payload.summary === "string" ? payload.summary : "",
     sourceExcerpt: typeof payload.source_excerpt === "string" ? payload.source_excerpt : "",
     sceneMode: payload.scene_mode === "3d" ? "3d" : "2d",
+    sceneReady: payload.scene_ready !== false,
+    previewToken: typeof payload.preview_token === "string" ? payload.preview_token : null,
     artifactRevision: typeof payload.artifact_revision === "number" ? payload.artifact_revision : null,
     revision: typeof payload.revision === "number" ? payload.revision : (typeof payload.artifact_revision === "number" ? payload.artifact_revision : null),
     sourceHash: typeof payload.source_hash === "string" ? payload.source_hash : null,

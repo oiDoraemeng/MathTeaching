@@ -47,6 +47,7 @@ CLIENT_MESSAGE_TYPES = frozenset(
         "select_math_stage",
         "select_math_case_pane",
         "set_math_case_pane_count",
+        "math_case_preview_ready",
     }
 )
 
@@ -249,6 +250,22 @@ def _validate_event_payload(message_type: str, payload: dict[str, Any]) -> None:
             raise ProtocolError("invalid_event_payload", "set_math_case_pane_count requires a non-empty case_id", field="case_id")
         if isinstance(pane_count, bool) or pane_count not in {1, 2, 3, 4}:
             raise ProtocolError("invalid_event_payload", "pane_count must be 1, 2, 3, or 4", field="pane_count")
+        return
+    if message_type == "math_case_preview_ready":
+        if set(payload) != {"case_id", "preview_token"}:
+            raise ProtocolError(
+                "invalid_event_payload",
+                "math_case_preview_ready requires only case_id and preview_token",
+                field="payload",
+            )
+        for field in ("case_id", "preview_token"):
+            value = payload.get(field)
+            if not isinstance(value, str) or not value.strip() or len(value) > MAX_IDENTIFIER_LENGTH:
+                raise ProtocolError(
+                    "invalid_event_payload",
+                    f"math_case_preview_ready requires a non-empty {field}",
+                    field=field,
+                )
         return
     if message_type == "math_case_focus":
         if set(payload) != {"case_id", "pane_id"}:

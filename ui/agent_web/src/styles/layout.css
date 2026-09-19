@@ -18,14 +18,14 @@
 .session-tab:hover .session-tab-close, .session-tab:focus-within .session-tab-close { opacity: 1; pointer-events: auto; }
 .session-tab-close:hover { background: color-mix(in srgb, var(--agent-text) 12%, transparent); }
 .timeline { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 16px 14px 20px; scrollbar-color: var(--agent-border) transparent; }
-.math-case-view { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 30px 24px 42px; background: var(--agent-bg); }
+.math-case-view { flex: 1 1 auto; min-width: 0; min-height: 0; overflow-x: hidden; overflow-y: auto; padding: 30px 24px 42px; background: var(--agent-bg); }
 .math-case-header { margin: 0 auto 22px; max-width: 720px; }
 .math-case-header span { color: var(--agent-accent); font-size: 11px; }
 .math-case-header h1 { margin: 4px 0 7px; font-size: 22px; line-height: 1.3; }
 .math-case-header p { margin: 0; color: var(--agent-muted); font-size: 12px; line-height: 1.65; }
 .math-case-formula { max-width: 720px; margin: 15px auto 24px; padding: 8px 0 13px; border-bottom: 1px solid var(--agent-border-subtle); color: var(--agent-text); text-align: center; }
 .math-case-formula .katex-display { margin: 0; }
-.math-case-lecture, .math-case-structured { max-width: 720px; margin: 0 auto; color: var(--agent-text); font-size: 13px; line-height: 1.82; }
+.math-case-lecture, .math-case-structured { min-width: 0; max-width: 720px; margin: 0 auto; color: var(--agent-text); font-size: 13px; line-height: 1.82; }
 .math-case-lecture { padding-bottom: 10px; }
 .math-case-lecture > .markdown-content > h1, .math-case-lecture > .markdown-content > h2, .math-case-lecture > .markdown-content > h3, .math-case-lecture > .markdown-content > h4 { margin: 28px 0 10px; padding-top: 16px; border-top: 1px solid var(--agent-border-subtle); line-height: 1.35; }
 .math-case-lecture > .markdown-content > h1:first-child, .math-case-lecture > .markdown-content > h2:first-child, .math-case-lecture > .markdown-content > h3:first-child, .math-case-lecture > .markdown-content > h4:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
@@ -42,6 +42,12 @@
 .math-case-lecture .markdown-content th, .math-case-lecture .markdown-content td,
 .math-case-structured .markdown-content th, .math-case-structured .markdown-content td { padding: 8px 10px; border: 1px solid var(--agent-border); overflow-wrap: anywhere; text-align: left; vertical-align: middle; }
 .math-case-lecture .markdown-content th, .math-case-structured .markdown-content th { color: var(--agent-text); background: var(--agent-elevated); font-weight: 600; }
+.math-case-view .markdown-content, .math-case-view .markdown-content p, .math-case-view .markdown-content li, .math-case-view .markdown-content blockquote, .math-case-view .markdown-content h1, .math-case-view .markdown-content h2, .math-case-view .markdown-content h3, .math-case-view .markdown-content h4 { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
+/* KaTeX defaults to a non-wrapping line.  Preserve each atom but let a long
+   display expression break between atoms instead of widening the whole panel. */
+.math-case-view .katex-display, .math-case-view .katex-display > .katex { max-width: 100%; white-space: normal; }
+.math-case-view .katex .base { white-space: nowrap; }
+.math-case-view .katex .text { white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
 .math-case-section { margin: 25px 0; padding: 0 0 18px; border-bottom: 1px solid var(--agent-border-subtle); }
 .math-case-section h2, .math-case-evidence-section h2, .math-case-storyboard h2, .math-case-conclusion h2 { margin: 0 0 8px; font-size: 14px; }
 .math-case-steps { margin: 11px 0; padding-left: 25px; color: var(--agent-text); }

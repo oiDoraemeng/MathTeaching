@@ -36,6 +36,8 @@ def test_agent_web_dist_contains_structured_math_table_styles() -> None:
     )
     assert ".math-case-structured .markdown-content table" in bundled_css
     assert "table-layout:fixed" in bundled_css
+    assert "overflow-x:hidden" in bundled_css
+    assert ".math-case-view .katex-display" in bundled_css
 
 
 def test_agent_web_declares_required_local_dependencies() -> None:

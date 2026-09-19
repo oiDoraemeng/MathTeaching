@@ -367,6 +367,8 @@ class AgentSidebarWeb(QWidget):
         scene_mode: str | None = None,
         compiled: Any | None = None,
         source_diagnostic: object = None,
+        scene_ready: bool = True,
+        preview_token: str | None = None,
     ) -> None:
         """Publish one bounded, JSON-only teaching case to the Web UI."""
         explanation = getattr(case, "explanation", case)
@@ -440,6 +442,10 @@ class AgentSidebarWeb(QWidget):
             # motivated the bounded artifact.
             "source_excerpt": str(getattr(getattr(case, "source", None), "excerpt", ""))[:20000],
             "scene_mode": scene_mode if scene_mode in {"2d", "3d"} else "2d",
+            # A preview is readable immediately but must not send stage/pane
+            # intents until native VTK panes have been replaced for this topic.
+            "scene_ready": bool(scene_ready),
+            "preview_token": str(preview_token)[:128] if preview_token else None,
             "artifact_revision": getattr(case, "revision", None),
             "revision": getattr(case, "revision", None),
             "source_hash": source["source_hash"],

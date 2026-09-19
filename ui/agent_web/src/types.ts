@@ -108,6 +108,8 @@ export interface CaseProjection {
   /** Lecture-grounded prose kept with the artifact for the continuous note view. */
   sourceExcerpt?: string;
   sceneMode?: "2d" | "3d";
+  sceneReady?: boolean;
+  previewToken?: string | null;
   artifactRevision?: number | null;
   revision?: number | null;
   sourceHash?: string | null;
@@ -295,7 +297,8 @@ export type IntentType =
   | "open_skills"
   | "select_math_stage"
   | "select_math_case_pane"
-  | "set_math_case_pane_count";
+  | "set_math_case_pane_count"
+  | "math_case_preview_ready";
 
 export interface ClientIntent extends Omit<BridgeEnvelope, "type"> {
   type: IntentType;

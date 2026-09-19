@@ -16,6 +16,7 @@ import inspect
 from typing import Literal
 
 from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPoint, QPropertyAnimation, QRect, Qt, QThread, QTimer, Signal, Slot
+from PySide6.QtGui import QWindowStateChangeEvent
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent, QShortcut, QWheelEvent
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QInputDialog, QLineEdit, QRubberBand, QToolButton, QVBoxLayout, QWidget
@@ -340,11 +341,16 @@ class _WindowRestoreFilter(QObject):
     def __init__(self, callback: Callable[[], None], parent: QObject) -> None:
         super().__init__(parent)
         self._callback = callback
+        self._restore_timer = QTimer(self)
+        self._restore_timer.setSingleShot(True)
+        self._restore_timer.timeout.connect(callback)
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
-        if event.type() == QEvent.Type.WindowStateChange and isinstance(watched, QWidget):
-            if not watched.isMinimized():
-                QTimer.singleShot(0, self._callback)
+        if event.type() == QEvent.Type.WindowStateChange and isinstance(event, QWindowStateChangeEvent):
+            # 检查是否从最小化状态恢复（oldState 包含 Minimized 标志）
+            if (event.oldState() & Qt.WindowState.WindowMinimized) and not watched.isMinimized():
+                # 连续恢复事件只保留最后一次，避免叠加昂贵的 VTK/WebEngine 重绘。
+                self._restore_timer.start(300)
         return False
 
 
@@ -640,6 +646,8 @@ class MainWindow:
         self._pending_curriculum_previous_scene = None
         self._pending_curriculum_host_executed = False
         self._pending_curriculum_finalized = False
+        self._linear_algebra_load_generation = 0
+        self._pending_linear_algebra_scene_request: dict[str, object] | None = None
         self._hidden_linear_algebra_aliases: set[str] = set()
         self._teaching_case_pane_grid: TeachingCasePaneGrid | None = None
         self._scene_settings_closing = False
@@ -819,21 +827,20 @@ class MainWindow:
             case_grid.updateGeometry()
             case_grid.update()
 
-        # 立即重建 WebEngine 合成表面，不重载页面避免状态丢失。
-        # reload() 操作延迟到 _deferred_render_surfaces 中执行。
+        # 重建子控件的合成表面，不改变顶层窗口几何；移动最大化窗口会让
+        # Windows 的实际尺寸和标题栏状态短暂失步。
+
         algebra_panel = getattr(self, "algebra_panel", None)
         if algebra_panel is not None:
             rebuild_algebra = getattr(algebra_panel, "rebuild_render_surface", None)
             if callable(rebuild_algebra):
-                result = rebuild_algebra()
-                print(f"[DEBUG] Algebra rebuild immediate: {result}")
+                rebuild_algebra()
 
         panel = getattr(self, "agent_panel", None)
         if panel is not None:
             rebuild_agent = getattr(panel, "rebuild_render_surface", None)
             if callable(rebuild_agent):
-                result = rebuild_agent()
-                print(f"[DEBUG] Agent rebuild immediate: {result}")
+                rebuild_agent()
             else:
                 view = getattr(panel, "view", None)
                 if view is not None:
@@ -877,9 +884,7 @@ class MainWindow:
                 continue
             rebuild = getattr(panel, "rebuild_render_surface", None)
             if callable(rebuild):
-                result = rebuild()
-                panel_name = "algebra" if panel == getattr(self, "algebra_panel", None) else "agent"
-                print(f"[DEBUG] {panel_name} rebuild deferred: {result}")
+                rebuild()
                 continue
             rebuild_web_surface(getattr(panel, "view", None))
 
@@ -1035,6 +1040,12 @@ class MainWindow:
             pane_count = payload.get("pane_count")
             if topic_id == getattr(self, "_active_linear_algebra_topic_id", None) and type(pane_count) is int:
                 self._set_teaching_case_pane_count(pane_count)
+            return
+        if message_type == "math_case_preview_ready":
+            self._start_deferred_linear_algebra_scene_load(
+                str(payload.get("case_id", "")),
+                str(payload.get("preview_token", "")),
+            )
             return
         if message_type == "save_model_provider":
             from ui.agent_settings import AgentSettingsDialog
@@ -1279,6 +1290,7 @@ class MainWindow:
         self.scene_pane_widget = ScenePaneWidget(
             self.pane_manager, self.viewport_host,
             on_interactor_created=self._on_pane_interactor_created,
+            on_pane_viewport_changed=self._on_pane_viewport_changed,
         )
         layout.addWidget(self.scene_pane_widget, 1)
         self.scene_pane_widget.interactor().interactor.setMouseTracking(True)
@@ -1760,7 +1772,15 @@ class MainWindow:
                 scene._agent_points3d_render_pending = False
                 self._render_agent_points3d(render=False)
             self._sync_panel_layers(self._three_d_panel_layers() if scene.scene_mode is SceneMode.THREE_D else self._two_d_panel_layers())
-            self._pane_renderer().render()
+            renderer = self._pane_renderer()
+            renderer.render()
+            if scene.scene_mode is SceneMode.THREE_D:
+                # Teaching cases are often populated before their Qt/VTK pane
+                # has completed its first paint.  Rebuild vector heads only
+                # after that paint so they use the live camera and viewport,
+                # rather than the temporary world-space fallback.
+                self._refresh_3d_arrows_for_camera()
+                renderer.render()
             self._sync_pane_state()
             if after != scene._scene_command_snapshot:
                 scene._scene_command_undo_stack.append(scene._scene_command_snapshot)
@@ -2354,15 +2374,22 @@ class MainWindow:
         alias = str(operation["alias"])
         payload = dict(operation)
         self._pane_scene()._agent_geometry3d[alias] = payload
+        kind = str(operation.get("kind", "vector"))
+        style_kwargs = (
+            {"line_width": float(operation["line_width"])}
+            if kind != "vector" and "line_width" in operation
+            else {}
+        )
         self._pane_scene().geometry3d_controller.add_linear(
             alias,
             tuple(float(value) for value in operation["start"]),  # type: ignore[arg-type]
             tuple(float(value) for value in operation["end"]),  # type: ignore[arg-type]
-            kind=str(operation.get("kind", "vector")),
+            kind=kind,
             color=str(operation.get("color", "#2777b6")),
             role=str(operation.get("role", "primary")),
             # 计划里声明的虚线必须传下去：被压到零的方向、投影连线等辅助构造全靠它。
             style=str(operation.get("style", "solid")),
+            **style_kwargs,
         )
         if operation.get("visible") is False:
             self._pane_scene().geometry3d_controller.set_visible(alias, False)
@@ -2428,7 +2455,7 @@ class MainWindow:
             text = math_labels.display_text(
                 _annotation_display_text(str(operation.get("text", ""))),
                 latex_value if isinstance(latex_value, str) else None,
-                font_size=11,
+                font_size=math_labels.CASE_LABEL_FONT_SIZE,
                 bold=True,
             )
             if not text:
@@ -2454,7 +2481,7 @@ class MainWindow:
             add_labels(
                 [position], [text], name=name,
                 shape=None if not is_hovered else "rounded_rect", show_points=False,
-                font_size=11, text_color=color, always_visible=True,
+                font_size=math_labels.CASE_LABEL_FONT_SIZE, text_color=color, always_visible=True,
                 font_file=math_labels.label_font_file(), render=False,
                 render_points_as_spheres=False,
                 **label_style,
@@ -3013,6 +3040,60 @@ class MainWindow:
                         data["pending_plan"] = pending
                         raise
 
+    def _on_pane_viewport_changed(self, pane_id: str) -> None:
+        """Rebuild screen-sized 3-D arrow heads after a pane gets real geometry.
+
+        Case panes materialize their interactor before Qt assigns the final
+        geometry, so vector heads sized against the pre-layout viewport (the
+        QtInteractor default) come out oversized in the tall lecture layouts
+        (4.1/4.2 side-by-side case panes).  This callback runs after
+        ``setGeometry`` but before the first paint:  Qt has already updated the
+        widget's geometry, while the VTK render window only catches up once
+        its resize event is delivered.
+        """
+        # First pass synchronously: the size candidates skip the still-empty
+        # VTK window and fall through to the already-correct interactor
+        # height, so the very first paint shows correctly-sized heads instead
+        # of flashing oversized arrows that shrink a frame later.
+        self._refresh_case_pane_3d_arrow_heads(pane_id)
+
+        pending = getattr(self, "_pane_viewport_refresh_pending", None)
+        if pending is None:
+            pending = self._pane_viewport_refresh_pending = set()
+        if pane_id in pending:
+            return
+        pending.add(pane_id)
+
+        def refresh() -> None:
+            self._pane_viewport_refresh_pending.discard(pane_id)
+            # Second pass one event-loop turn later, once the resize/show has
+            # reached the VTK render window: re-measure and render, covering
+            # cases where the VTK size lagged behind the Qt geometry.
+            self._refresh_case_pane_3d_arrow_heads(pane_id, render=True)
+
+        QTimer.singleShot(0, refresh)
+
+    def _refresh_case_pane_3d_arrow_heads(self, pane_id: str, *, render: bool = False) -> None:
+        """Re-measure the pane's vector heads; ``render`` also repaints it."""
+        manager = getattr(self, "pane_manager", None)
+        if manager is None or pane_id not in manager.panes:
+            return
+        if not getattr(self, "_pane_widgets_ready", False):
+            return
+        pane = manager.pane(pane_id)
+        if pane.scene_mode != "3d" or pane.renderer_3d is None:
+            return
+        try:
+            with self._using_pane(pane_id):
+                self._refresh_3d_arrows_for_camera()
+                if render:
+                    renderer = self._pane_renderer(required=False)
+                    render_fn = getattr(renderer, "render", None)
+                    if callable(render_fn):
+                        render_fn()
+        except Exception:
+            pass
+
     def _set_teaching_case_pane_count(self, count: int) -> bool:
         ids = [pid for pid in getattr(self, "_teaching_case_pane_ids", ()) if pid in self.pane_manager.panes]
         if not ids:
@@ -3374,7 +3455,7 @@ class MainWindow:
 
     def _fit_2d_to_command_objects(self, padding: float, bounds: object = None) -> None:
         if self._pane_scene().scene_mode is SceneMode.THREE_D:
-            self._pane_renderer().reset_camera()
+            self._pane_renderer().reset_camera() # 把预设的相机位置覆盖掉
             self._pane_renderer().render()
             return
         explicit = self._explicit_2d_bounds(bounds)
@@ -4193,6 +4274,12 @@ class MainWindow:
         return LectureSourceRepository(Path(__file__).resolve().parents[1] / ".agents" / "线性代数讲义.md")
 
     def _load_linear_algebra_topic(self, topic_id: str) -> None:
+        # Rendering a case pane can allocate a VTK surface and run an entire
+        # lesson plan.  Advance this token before any work so a newer directory
+        # choice can invalidate a queued scene materialization.
+        generation = int(getattr(self, "_linear_algebra_load_generation", 0)) + 1
+        self._linear_algebra_load_generation = generation
+        self._pending_linear_algebra_scene_request = None
         registry = catalog_registry()
         store = runtime_teaching_store()
         source_repository = self._linear_algebra_source_repository()
@@ -4246,6 +4333,95 @@ class MainWindow:
         except (KeyError, CommandError, ValueError) as error:
             self.algebra_panel.set_status(f"未知或无效的线性代数主题 {topic_id}: {error}", is_error=True)
             return
+        request = {
+            "generation": generation,
+            "topic": topic,
+            "bundle": bundle,
+            "explanation_case": explanation_case,
+            "lesson_plan": lesson_plan,
+            "transaction": transaction,
+            "previous": previous,
+            "previous_scene_snapshot": previous_scene_snapshot,
+            "authoring_sync": authoring_sync,
+        }
+        if self._can_defer_linear_algebra_scene_load():
+            # QWebEngine confirms its first rendered explanation before VTK
+            # creates/recreates case renderers on the Qt thread.
+            self._pending_linear_algebra_scene_request = request
+            self._publish_linear_algebra_explanation_preview(
+                topic, bundle, explanation_case, lesson_plan, preview_token=str(generation),
+            )
+            self.algebra_panel.set_status(f"正在加载主题: {topic.title}")
+            QTimer.singleShot(
+                400,
+                lambda generation=generation, topic_id=topic.id: self._start_deferred_linear_algebra_scene_load(
+                    topic_id, str(generation),
+                ),
+            )
+            return
+        self._continue_linear_algebra_topic_load(request)
+
+    def _can_defer_linear_algebra_scene_load(self) -> bool:
+        """Use asynchronous scene creation only for the live Qt application."""
+        return (
+            isinstance(getattr(self, "window", None), QWidget)
+            and hasattr(self, "agent_panel")
+            and QApplication.instance() is not None
+        )
+
+    def _publish_linear_algebra_explanation_preview(
+        self,
+        topic: object,
+        bundle: object,
+        explanation_case: object,
+        lesson_plan: object,
+        *,
+        preview_token: str,
+    ) -> None:
+        """Show source-backed prose while the native scene is being prepared."""
+        if not hasattr(self, "agent_panel"):
+            return
+        if hasattr(self, "agent_sidebar"):
+            self._open_agent_panel()
+        self.agent_panel.show_math_case(
+            explanation_case,
+            case_id=topic.id,
+            category=topic.source_path[1],
+            scene_mode=lesson_plan.scene,
+            compiled=bundle.compiled,
+            source_diagnostic=bundle.source_diagnostic,
+            scene_ready=False,
+            preview_token=preview_token,
+        )
+
+    def _start_deferred_linear_algebra_scene_load(self, topic_id: str, preview_token: str) -> None:
+        """Start only the preview request that is still current."""
+        request = getattr(self, "_pending_linear_algebra_scene_request", None)
+        if request is None:
+            return
+        topic = request.get("topic")
+        generation = request.get("generation")
+        if (
+            generation != getattr(self, "_linear_algebra_load_generation", 0)
+            or str(getattr(topic, "id", "")) != topic_id
+            or str(generation) != preview_token
+        ):
+            return
+        self._pending_linear_algebra_scene_request = None
+        self._continue_linear_algebra_topic_load(request)
+
+    def _continue_linear_algebra_topic_load(self, request: dict[str, object]) -> None:
+        """Materialize one staged topic after the explanation has had time to paint."""
+        if request["generation"] != getattr(self, "_linear_algebra_load_generation", 0):
+            return
+        topic = request["topic"]
+        bundle = request["bundle"]
+        explanation_case = request["explanation_case"]
+        lesson_plan = request["lesson_plan"]
+        transaction = request["transaction"]
+        previous = request["previous"]
+        previous_scene_snapshot = request["previous_scene_snapshot"]
+        authoring_sync = request["authoring_sync"]
         try:
             compiled = bundle.compiled
             if compiled is None:
@@ -7209,15 +7385,17 @@ class MainWindow:
 
     @staticmethod
     def _three_d_vector_symbol(alias: str) -> str | None:
-        """Use compact textbook symbols for the 4.1.3 teaching vectors."""
+        """Use the same textbook symbols as the 4.1 scene labels."""
         prefix = "ch04__entity__input_vector_"
         if alias.startswith(prefix):
-            return rf"\vec{{x}}_{{{alias.removeprefix(prefix)}}}"
+            index = {"a": "1", "b": "2", "c": "3"}.get(alias.removeprefix(prefix))
+            return rf"\boldsymbol{{x}}_{{{index}}}" if index is not None else None
         prefix = "ch04__entity__output_vector_"
         if alias.startswith(prefix):
-            return rf"\vec{{y}}_{{{alias.removeprefix(prefix)}}}"
+            index = {"a": "1", "b": "2", "c": "3"}.get(alias.removeprefix(prefix))
+            return rf"\boldsymbol{{A}}\boldsymbol{{x}}_{{{index}}}" if index is not None else None
         if alias == "ch04__entity__kernel_vector":
-            return r"\vec{k}"
+            return r"\boldsymbol{k}"
         return None
 
     def _three_d_plane_row(self, alias: str) -> AlgebraPlane3D | None:

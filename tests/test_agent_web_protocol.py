@@ -136,6 +136,21 @@ def test_case_pane_selection_and_count_are_strictly_bounded() -> None:
         parse_envelope({**count.to_dict(), "payload": {"case_id": "ch01.ops.addition", "pane_count": 5}})
 
 
+def test_math_case_preview_ready_requires_the_current_preview_identity() -> None:
+    envelope = parse_envelope(
+        {
+            "protocol_version": 1,
+            "type": "math_case_preview_ready",
+            "request_id": "req-preview",
+            "session_id": "s1",
+            "payload": {"case_id": "ch01.ops.addition", "preview_token": "12"},
+        }
+    )
+    assert envelope.payload == {"case_id": "ch01.ops.addition", "preview_token": "12"}
+    with pytest.raises(ProtocolError, match="preview_token"):
+        parse_envelope({**envelope.to_dict(), "payload": {"case_id": "ch01.ops.addition", "preview_token": ""}})
+
+
 def test_math_case_focus_event_accepts_empty_session_and_validates_payload() -> None:
     event = parse_envelope(
         {

@@ -128,6 +128,7 @@ def test_web_host_emits_a_json_safe_math_case_event() -> None:
 
     assert emitted[-1]["type"] == "math_case"
     assert emitted[-1]["payload"]["case_id"] == "ch01.ops.subtraction"
+    assert emitted[-1]["payload"]["scene_ready"] is True
 
 
 def test_web_host_replays_latest_case_after_document_load() -> None:

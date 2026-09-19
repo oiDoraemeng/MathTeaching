@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { MathCaseView } from "./MathCaseView";
 
@@ -26,6 +26,25 @@ describe("MathCaseView", () => {
     render(<MathCaseView caseData={{ id: "case-1", category: "向量", name: "向量加法", formula: "a+b", steps: ["第一步"], conclusion: "结论" }} />);
     expect(screen.getByRole("heading", { name: "向量加法" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "结论", level: 2 })).toBeInTheDocument();
+  });
+
+  it("shows a rendered preview without sending case-pane commands before the scene is ready", async () => {
+    const onPreviewReady = vi.fn();
+    const onSetCasePaneCount = vi.fn();
+    render(<MathCaseView caseData={{
+      id: "case-preview", category: "向量", name: "预览", formula: "", steps: [], conclusion: "",
+      sceneReady: false, previewToken: "preview-8",
+      workedExamples: [{ id: "example", calculation: ["预览案例"], checks: [] }],
+      caseLayout: { defaultPaneCount: 2, cases: [
+        { id: "case-1", topicId: "case-preview", exampleRef: "example", claimRefs: [], stageRefs: [], purpose: "案例 1" },
+        { id: "case-2", topicId: "case-preview", exampleRef: "example", claimRefs: [], stageRefs: [], purpose: "案例 2" },
+      ] },
+    }} onPreviewReady={onPreviewReady} onSetCasePaneCount={onSetCasePaneCount} />);
+
+    expect(screen.getByRole("article", { name: "预览数学解释" })).toHaveAttribute("aria-busy", "true");
+    expect(screen.getByRole("button", { name: "案例 1" })).toBeDisabled();
+    await waitFor(() => expect(onPreviewReady).toHaveBeenCalledWith("preview-8"));
+    expect(onSetCasePaneCount).not.toHaveBeenCalled();
   });
 
   it("renders the lecture definition and section titles for a case without a standalone formula", () => {

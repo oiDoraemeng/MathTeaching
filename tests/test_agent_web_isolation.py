@@ -14,6 +14,7 @@ _VALID_CLIENT_PAYLOADS = {
         "stage_id": "stage.components",
     },
     "set_math_case_pane_count": {"case_id": "ch01.ops.addition", "pane_count": 3},
+    "math_case_preview_ready": {"case_id": "ch01.ops.addition", "preview_token": "1"},
 }
 
 

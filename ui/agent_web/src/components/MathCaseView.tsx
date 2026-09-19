@@ -9,11 +9,13 @@ export function MathCaseView({
   onSelectStage,
   onSelectCasePane,
   onSetCasePaneCount,
+  onPreviewReady,
 }: {
   caseData: CaseProjection;
   onSelectStage?: (stageId: string) => void;
   onSelectCasePane?: (paneId: string, stageId?: string) => void;
   onSetCasePaneCount?: (count: number) => void;
+  onPreviewReady?: (previewToken: string) => void;
 }) {
   const stages = caseData.storyboard ?? [];
   const paneCases = caseData.caseLayout?.cases ?? [];
@@ -24,9 +26,11 @@ export function MathCaseView({
   );
   const [stageIndex, setStageIndex] = useState(0);
   const stage = stages[stageIndex];
+  const sceneReady = caseData.sceneReady !== false;
   const isVectorAddition = caseData.id === "ch01.ops.addition";
   // 1.5 的几何证明小节按讲义正文排版，与带案例的小节同一字号层级。
   const isLectureProof = lectureProofSubsection(caseData.id);
+  const usesContinuousDerivation = isLectureProof || caseData.id === "ch01.inner.cauchy-schwarz";
   // 讲义 1.2.1–1.2.4 都写成“自带公式的定义 + 正下方的几何解释”。
   const definitionOwnsFormula = lectureDefinitionOwnsFormula(caseData.id);
   // 分节顺序以讲义为准：4.1.3 把「几何直观」写在定义下方、证明之前，产物里的
@@ -59,10 +63,26 @@ export function MathCaseView({
     setActivePaneId(caseData.activeCaseId ?? paneCases[0]?.id ?? "");
     const showAll = paneCases.length > 1 && (caseData.caseLayout?.defaultPaneCount ?? 1) > 1;
     setShowingAllPanes(showAll);
-    if (showAll) onSetCasePaneCount?.(Math.min(4, paneCases.length));
+    if (showAll && sceneReady) onSetCasePaneCount?.(Math.min(4, paneCases.length));
   }, [caseData.id, caseData.activeCaseId]);
 
+  useEffect(() => {
+    if (sceneReady || !caseData.previewToken) return;
+    // A double frame boundary guarantees the DOM has painted before native VTK
+    // work can occupy the Qt GUI thread.  The cleanup also drops a preview
+    // acknowledgement when the reader chooses another directory immediately.
+    let secondFrame = 0;
+    const firstFrame = requestAnimationFrame(() => {
+      secondFrame = requestAnimationFrame(() => onPreviewReady?.(caseData.previewToken!));
+    });
+    return () => {
+      cancelAnimationFrame(firstFrame);
+      if (secondFrame) cancelAnimationFrame(secondFrame);
+    };
+  }, [caseData.id, caseData.previewToken, sceneReady]);
+
   const selectPane = (paneId: string, stageId?: string) => {
+    if (!sceneReady) return;
     setActivePaneId(paneId);
     setShowingAllPanes(false);
     const nextIndex = stageId ? stages.findIndex((item) => item.id === stageId) : -1;
@@ -74,11 +94,13 @@ export function MathCaseView({
   };
 
   const showAllPanes = () => {
+    if (!sceneReady) return;
     setShowingAllPanes(true);
     onSetCasePaneCount?.(Math.min(4, paneCases.length));
   };
 
   const selectStage = (index: number) => {
+    if (!sceneReady) return;
     const next = Math.max(0, Math.min(index, stages.length - 1));
     setStageIndex(next);
     if (stages[next]) onSelectStage?.(stages[next].id);
@@ -93,7 +115,7 @@ export function MathCaseView({
   const geometricSection = section(sectionTitle(caseData, "geometric_meaning", "几何意义"), caseData.geometricMeaning);
 
   return (
-    <article className={`math-case-view${isVectorAddition ? " math-case-view--vector-addition" : ""}${hasCaseLayout && !isVectorAddition ? " math-case-view--case-layout" : ""}${isLectureProof ? " math-case-view--proof" : ""}`} aria-label={`${caseData.name}数学解释`}>
+    <article className={`math-case-view${isVectorAddition ? " math-case-view--vector-addition" : ""}${hasCaseLayout && !isVectorAddition ? " math-case-view--case-layout" : ""}${isLectureProof ? " math-case-view--proof" : ""}`} aria-label={`${caseData.name}数学解释`} aria-busy={!sceneReady}>
       <header className="math-case-header">
         <span>{caseData.category}</span>
         <h1>{caseData.name}</h1>
@@ -122,8 +144,8 @@ export function MathCaseView({
           {caseData.steps.length > 0 && (
             <section className="math-case-section">
               <h2>{sectionTitle(caseData, "derivation", "推导")}</h2>
-              {/* 只有一段证明时它是连贯的讲义正文，不再套上“1.”的编号。 */}
-              <ol className={`math-case-steps${caseData.steps.length === 1 ? " math-case-steps--single" : ""}`}>
+              {/* 讲义中的证明使用连续正文，不显示“1.”编号。 */}
+              <ol className={`math-case-steps${usesContinuousDerivation || caseData.steps.length === 1 ? " math-case-steps--single" : ""}`}>
                 {caseData.steps.map((step, index) => (
                   <li key={`${caseData.id}-${index}`}><MarkdownContent>{step}</MarkdownContent></li>
                 ))}
@@ -152,6 +174,7 @@ export function MathCaseView({
                   type="button"
                   className={!showingAllPanes && pane.id === activePaneId ? "active" : ""}
                   aria-current={!showingAllPanes && pane.id === activePaneId ? "true" : undefined}
+                  disabled={!sceneReady}
                   onClick={() => selectPane(pane.id, pane.stageRefs[0])}
                 >
                   {pane.purpose}
@@ -161,6 +184,7 @@ export function MathCaseView({
                 type="button"
                 className={showingAllPanes ? "active" : ""}
                 aria-pressed={showingAllPanes}
+                disabled={!sceneReady}
                 onClick={showAllPanes}
               >
                 全部显示
@@ -184,6 +208,7 @@ export function MathCaseView({
                   type="button"
                   className={!showingAllPanes && pane.id === activePaneId ? "active" : ""}
                   aria-current={!showingAllPanes && pane.id === activePaneId ? "true" : undefined}
+                  disabled={!sceneReady}
                   onClick={() => selectPane(pane.id, pane.stageRefs[0])}
                 >
                   {pane.purpose}
@@ -193,6 +218,7 @@ export function MathCaseView({
                 type="button"
                 className={showingAllPanes ? "active" : ""}
                 aria-pressed={showingAllPanes}
+                disabled={!sceneReady}
                 onClick={showAllPanes}
               >
                 全部显示
@@ -214,6 +240,7 @@ export function MathCaseView({
                   type="button"
                   className={index === stageIndex ? "active" : ""}
                   aria-current={index === stageIndex ? "step" : undefined}
+                  disabled={!sceneReady}
                   onClick={() => selectStage(index)}
                 >
                   {item.title}
@@ -233,7 +260,7 @@ export function MathCaseView({
                 type="button"
                 aria-label="上一几何例子"
                 title="上一几何例子"
-                disabled={stageIndex === 0}
+                disabled={!sceneReady || stageIndex === 0}
                 onClick={() => selectStage(stageIndex - 1)}
               >
                 <ChevronLeft size={15} aria-hidden="true" />
@@ -242,7 +269,7 @@ export function MathCaseView({
                 type="button"
                 aria-label="下一几何例子"
                 title="下一几何例子"
-                disabled={stageIndex === stages.length - 1}
+                disabled={!sceneReady || stageIndex === stages.length - 1}
                 onClick={() => selectStage(stageIndex + 1)}
               >
                 <ChevronRight size={15} aria-hidden="true" />
@@ -310,11 +337,10 @@ function lectureDefinitionOwnsFormula(topicId: string): boolean {
     || topicId === "ch01.ops.scalar"
     || topicId === "ch01.ops.linear-combination"
     || topicId === "ch01.inner.definitions"
+    || topicId === "ch01.inner.cauchy-schwarz"
     || topicId === "ch01.projection.definition"
-    // 讲义 2.5 的三个小节：公式写在定义（2.5.1）、定理（2.5.2）与例题（2.5.3）之内。
-    || topicId === "ch02.matrix.row-column"
+    // 讲义 2.5 已合并为「矩阵变换」：公式写在定义与定理块内。
     || topicId === "ch02.matrix.transformed-grid"
-    || topicId === "ch02.matrix.stretch-rotate-scale"
     // 讲义 2.7 矩阵与基：旋转 90° 的矩阵写在核心认知里，定义块自带全部公式。
     || topicId === "ch02.matrix.basis"
     // 讲义 2.2 批量内积：公式写在定义 2.4 之内，定义块自带公式，案例区叫「数学案例」。
@@ -322,6 +348,8 @@ function lectureDefinitionOwnsFormula(topicId: string): boolean {
     // 讲义 4.1.3 的 Col(A)、Null(A) 就写在定义 4.3、4.4 之内：定义块自带公式，
     // 分节名按讲义原文作「定义」，不再拼成「定义与公式」。
     || topicId === "ch04.subspace.col-null"
+    // 4.2 合并后的生成集、线性无关和线性相关定义及其公式都在同一「定义」块内。
+    || topicId === "ch04.dependence.redundancy"
     // 讲义 4.3 合并后的「基的定义」：定义 4.10、定理 4.1 与坐标公式都写在定义块内，
     // 定义块自带公式，案例区叫「数学案例」。
     || topicId === "ch04.basis.definition";

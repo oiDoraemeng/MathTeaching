@@ -224,7 +224,13 @@ class LinearAlgebraContentView(QWidget):
         derivation = content.derivation or ((section_text["derivation"],) if section_text.get("derivation") else ())
         geometric_meaning = content.geometric_meaning or section_text.get("geometric_meaning", "")
         self.formula_label.setText(formula)
-        self.steps_label.setText("\n".join(f"{index}. {step}" for index, step in enumerate(derivation, start=1)))
+        # 讲义把证明写成「命题 + 向量证明」两段时，derivation 是一整段连贯
+        # 正文（单个条目、内部用空行分隔），不显示"1. 2. 3."列表编号；
+        # 只有真正分条的推导才保留编号（与 Web 端 MathCaseView 一致）。
+        if len(derivation) == 1:
+            self.steps_label.setText(derivation[0])
+        else:
+            self.steps_label.setText("\n".join(f"{index}. {step}" for index, step in enumerate(derivation, start=1)))
         _set_label_content(self.meaning_label, geometric_meaning)
         self.conclusion_label.setText(content.conclusion)
         examples = []
