@@ -18,19 +18,9 @@
       "topic_id": "ch02.matrix.additive-distributivity"
     },
     {
-      "revision": 20,
-      "source_hash": "sha256:07fbb794fc533cc2655cad99b8e37a59ec70268f4cec18e7c0b6e10d0f91348c",
-      "topic_id": "ch02.matrix.row-column"
-    },
-    {
-      "revision": 21,
-      "source_hash": "sha256:0cde074da638ed97935945c66fb4ae0ef0677d4ad90d6300ca1a3e429c3f2b12",
-      "topic_id": "ch02.matrix.transformed-grid"
-    },
-    {
-      "revision": 19,
-      "source_hash": "sha256:e75201702eb0c61f55827cf094c28b02e0564fdb0fbc76f72d4fe150317b852c",
-      "topic_id": "ch02.matrix.stretch-rotate-scale"
+      "revision": 16,
+      "source_hash": "sha256:ef6de7167277e0291b976d335c4a9c431c26d6aa51cb06e8d39f993d7806e088",
+      "topic_id": "ch02.matrix.basis"
     },
     {
       "revision": 16,
@@ -38,14 +28,14 @@
       "topic_id": "ch02.matrix.composition"
     },
     {
-      "revision": 15,
-      "source_hash": "sha256:ef6de7167277e0291b976d335c4a9c431c26d6aa51cb06e8d39f993d7806e088",
-      "topic_id": "ch02.matrix.basis"
-    },
-    {
       "revision": 13,
       "source_hash": "sha256:69c514d44197850d620d63c0d7f1df0b68e69d1dfdbe1446a5396a9d8aecbd49",
       "topic_id": "ch02.matrix.powers"
+    },
+    {
+      "revision": 23,
+      "source_hash": "sha256:f68524efc470b67f5af5e6b6efafa642868cdd975867fc88219928e2cce8c611",
+      "topic_id": "ch02.matrix.transformed-grid"
     },
     {
       "revision": 14,

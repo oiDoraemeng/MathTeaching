@@ -1,24 +1,13 @@
 [
   {
-    "artifact_digest": "sha256:5aea1f2225f06f8a573f47bb7c95b9bddf65c522e380fa21e0f8150d11a85352",
+    "artifact_digest": "sha256:fef343a3d3465b0002232eedfe2065841c3d0ed599cfa0429d4ddbe7a6dfe402",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:3aa2fe524cec1f43b368869e8cb46e995dd3ddb19333fb885af528089911afaa",
+    "plan_digest": "sha256:4805679ed745a6c293d59869a6cc8b826fdbb910d54f1c2cc2a06580a7173a02",
     "render_profile": "lecture-v1",
-    "revision": 20,
-    "source_hash": "sha256:48aa7b7c05110543c691e4f1dd1174ec5acda1fdaf8dc7c78a9826fe8dbeb12c",
-    "stage_count": 3,
-    "topic_id": "ch01.inner.applications"
-  },
-  {
-    "artifact_digest": "sha256:aea1cefd65c4dea1ee106d024ce0d2cb655958c8c47754f8c878b4a4632f7f50",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:264f34bd521f05f03bb0e268e35158e2895bc33227ce999fdfcd9f3a49daeb9e",
-    "render_profile": "lecture-v1",
-    "revision": 20,
+    "revision": 21,
     "source_hash": "sha256:acb3755ccad90340b78463bcebf6fa74e07877c6addc4a61067e5e05d4ec5de0",
-    "stage_count": 1,
+    "stage_count": 2,
     "topic_id": "ch01.inner.cauchy-schwarz"
   },
   {
@@ -88,12 +77,12 @@
     "topic_id": "ch01.projection.definition"
   },
   {
-    "artifact_digest": "sha256:7795f59c14cf353cfbc390ca50265a4a540b92ce21c019fd0a568f0a067ffb0b",
+    "artifact_digest": "sha256:8127e65376d0ece255e7ed67de68d6725c13b36cdb2c9f21adc8d9bfe12a543f",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:5de6421a77a36b5a797f748c0e6d8b522de19ca6bf4431183b80603e000a3b7c",
+    "plan_digest": "sha256:e957d4ef26dc4b21b0a6cfa67b582451e14fd9eb0636d3e4bfcfae683978c3d6",
     "render_profile": "lecture-v1",
-    "revision": 19,
+    "revision": 20,
     "source_hash": "sha256:3b0b668a61fcc041c6bf6b27cc98a127cf2743ab2ec11b5546419b8dc4316c06",
     "stage_count": 1,
     "topic_id": "ch01.proof.centroid"
@@ -110,12 +99,12 @@
     "topic_id": "ch01.proof.midline"
   },
   {
-    "artifact_digest": "sha256:2289414e955bf4eed4e37bf3cae1d22cfa7f8d6607d7fedfdec354cffc1aeae2",
+    "artifact_digest": "sha256:88a5643c7d7fa346f5cc82c5691fd3963d4a4c4cbba0bf59a553221faa936837",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:8f1b8650bb4b211abe3036f0b58ef1f5d7b8f9670668602af8eb07a8b83decc3",
+    "plan_digest": "sha256:00379edf33edb0d6841a24f76402def6790797c9114e26cbae04c523cda45397",
     "render_profile": "lecture-v1",
-    "revision": 19,
+    "revision": 20,
     "source_hash": "sha256:ca9691ba96b556f0ecf214baf60ec08e9b71e904972b13e04c52404984c0730d",
     "stage_count": 1,
     "topic_id": "ch01.proof.parallelogram-diagonals"
@@ -165,12 +154,12 @@
     "topic_id": "ch02.matrix.additive-distributivity"
   },
   {
-    "artifact_digest": "sha256:8908a3d12635e131d196eafa319d5574f8f6f3a9a8d2fefdc24c610ba65efecb",
+    "artifact_digest": "sha256:da301e1afbe9f0dc7e3248cd5c6caa403ad4a2e27e40bae15cdccfbe0d4416d0",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:4825278e2c8287fa5eefcd0f74082f9d6759d7537575f1a1a986b417ff897a20",
+    "plan_digest": "sha256:f47256a7ec2ea5d36f38a034cc3bda634492135520123b96428302391b082e40",
     "render_profile": "lecture-v1",
-    "revision": 15,
+    "revision": 16,
     "source_hash": "sha256:ef6de7167277e0291b976d335c4a9c431c26d6aa51cb06e8d39f993d7806e088",
     "stage_count": 2,
     "topic_id": "ch02.matrix.basis"
@@ -198,35 +187,13 @@
     "topic_id": "ch02.matrix.powers"
   },
   {
-    "artifact_digest": "sha256:29ce99aaf48901433cc33c31670dad4e576b48d9a9e69e0086f5b0bc6695d1d4",
+    "artifact_digest": "sha256:53ec9be8a8f32e0fdc1e3edb3aa1105281c5ccee29b6aad2d4923a9e9f5b00e4",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:14bf287a1ad72e10340e2f71e69676f56e697e9c22ba2368c7b25de3a3066b87",
+    "plan_digest": "sha256:8d958082161d4ba266b55e6e587e6116f9fb3e99d781d914cb4ff9ba0fdf4599",
     "render_profile": "lecture-v1",
-    "revision": 20,
-    "source_hash": "sha256:07fbb794fc533cc2655cad99b8e37a59ec70268f4cec18e7c0b6e10d0f91348c",
-    "stage_count": 2,
-    "topic_id": "ch02.matrix.row-column"
-  },
-  {
-    "artifact_digest": "sha256:81f2b37870f51d4bdcad51df0ccd88bfacfb6bbe5125dad53bf8a027fbc99c16",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:c8d35032796a651d9a227938a6395b44e49839905150b972d8dff3a9d9e3379d",
-    "render_profile": "lecture-v1",
-    "revision": 19,
-    "source_hash": "sha256:e75201702eb0c61f55827cf094c28b02e0564fdb0fbc76f72d4fe150317b852c",
-    "stage_count": 4,
-    "topic_id": "ch02.matrix.stretch-rotate-scale"
-  },
-  {
-    "artifact_digest": "sha256:6e1d0b404f2305580ad539c81a90a0caee12d1292d6ecac5c8a3ea1523c7e6a8",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:67c74bebb5afd024f977ff6b907f8838cad32bad2ffcfb061a24016da3829a3c",
-    "render_profile": "lecture-v1",
-    "revision": 21,
-    "source_hash": "sha256:0cde074da638ed97935945c66fb4ae0ef0677d4ad90d6300ca1a3e429c3f2b12",
+    "revision": 23,
+    "source_hash": "sha256:f68524efc470b67f5af5e6b6efafa642868cdd975867fc88219928e2cce8c611",
     "stage_count": 4,
     "topic_id": "ch02.matrix.transformed-grid"
   },
@@ -262,17 +229,6 @@
     "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
     "stage_count": 1,
     "topic_id": "ch03.cramer.area-ratio"
-  },
-  {
-    "artifact_digest": "sha256:9775e09d590b220a560a233ed4a0296d868750e790a84530f2d23f930ac6ba62",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:5744129f7bcfd9e0ae494768d9cc7a05943a23e4d4ab6df1e5a93d06de05ff47",
-    "render_profile": "lecture-v1",
-    "revision": 11,
-    "source_hash": "sha256:325a14583a942b2e5d5c8f81bca1568ca4281a087bb1e401dec33530f3686d78",
-    "stage_count": 1,
-    "topic_id": "ch03.det.high-dimensional-volume"
   },
   {
     "artifact_digest": "sha256:23438721c6649326bf0e428f48d81461f4b584920bea676a11d0724d04fdea2d",
@@ -361,17 +317,6 @@
     "source_hash": "sha256:1e1869e796f6a4440cfab9915bf03553ca938b34742a29655ce1b0ed2334154c",
     "stage_count": 2,
     "topic_id": "ch03.inverse.formula"
-  },
-  {
-    "artifact_digest": "sha256:38967f65374bf898ee91fd9039f3dcf3e3e47b0b6d57a729e2ac832599cd95ba",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:d4ef9954671d74564885686c13a75e019650dd7065951ea654e37be5bcc794b8",
-    "render_profile": "lecture-v1",
-    "revision": 11,
-    "source_hash": "sha256:ffa4c79ebbf8be28ecd21dcd13d91bfa6b2234bf8797f7fc19ec0d33c0ddd905",
-    "stage_count": 3,
-    "topic_id": "ch03.inverse.reverse-order"
   },
   {
     "artifact_digest": "sha256:0c93d8af6feef1324472c25715d4d654df258f7dd386a9da9c0c03ca02be2741",

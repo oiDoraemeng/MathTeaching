@@ -191,12 +191,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:d73bb8558c1457b67bd375d8acda87f61d0ece4af81c7992c5d36219018d543d",
+    "artifact_digest": "sha256:abaaa9f71e1229e25a4a1f195eb3358a311d378e37d50176ec0d2f576871a5fe",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:782a531db1221c609b85522d783661e2564f7a9e70754264a8a10def81843c56",
+    "raw_reply_digest": "sha256:2c9efa39075b5b06d9bd019d7e4146cb0e62ea2f3afea486d7c3417c4a14ef05",
     "source_hash": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a"
   },
   "revision": 1,
@@ -221,7 +221,7 @@
     ],
     "spans": [
       {
-        "end_line": 1566,
+        "end_line": 1433,
         "fingerprint": "sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
@@ -229,7 +229,7 @@
           "4.4.3 线性变换的矩阵表示"
         ],
         "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.3 线性变换的矩阵表示::1::sha256:c1b63c04f7e9ea24946fc531648dbacfd40cc3bf008eec56143ab979ced6b65a",
-        "start_line": 1523,
+        "start_line": 1390,
         "text": "#### 4.4.3 线性变换的矩阵表示\n\n定理 4.2 每个线性变换 T 对应唯一矩阵 A，使得 $T(x)=Ax$。A 的第 j 列 $= T(e_{j})$。\n矩阵 A 的列 $=$ 标准基向量被送到的新位置。整个坐标网格的变形由 A 的两列完全决定。\n线性变换的基本性质：\n1. $T(0) = 0$（任何线性变换必把零向量送到零向量——取 $k=0$ 即证）\n2. $T(-v) = -T(v)$\n3. T 是单射（不同输入$\\rightarrow$不同输出）$\\Leftrightarrow \\operatorname{Ker}(T) = \\{0\\} \\Leftrightarrow \\det(A) \\neq 0$\n4. T 是满射（能到达全部输出空间）$\\Leftrightarrow \\operatorname{Im}(T) = R^{m} \\Leftrightarrow \\operatorname{rank} = m$\n性质 3-4 揭示了线性变换的核心结构：核控制\"能否区分输入\"，像控制\"能否到达输出\"。\n\n##### 性质 1-2 的证明\n\n性质 1（$T(0)=0$）: $T(0) = T(0 \\cdot v) = 0 \\cdot T(v) = 0$。（取 $k=0$，利用齐次性）。■\n性质 2（$T(-v)=-T(v)$）: $T(-v) = T((-1) \\cdot v) = (-1) \\cdot T(v) = -T(v)$。■\n\n性质 3 证明: T 是单射 $\\Leftrightarrow$ 若 $T(u)=T(v)$，则 $u=v \\Leftrightarrow$ 若 $T(u-v)=0$，则 $u-v=0 \\Leftrightarrow \\operatorname{Ker}(T)=\\{0\\}$。\n若 T 是单射且 A 是方阵，则 $Ax=0$ 只有零解 $\\rightarrow \\det(A)\\neq 0$。■\n性质 4 证明: $\\operatorname{Im}(T) = \\{T(v) \\mid v\\in R^{n}\\}$。T 是满射 $\\Leftrightarrow \\operatorname{Im}(T) = R^{m} \\Leftrightarrow \\dim(\\operatorname{Im}) = m \\Leftrightarrow \\operatorname{rank} = m$。■\n\n##### 补充例题\n\n例4（非矩阵形式的线性变换）: 判断 T: $P_{2} \\rightarrow P_{2}$（次数$\\leq2$的多项式空间）定义为 $T(p(x)) = p'(x)$（求导）是否是线性变换。\n解: （1）$T(p+q) = (p+q)' = p'+q' = T(p)+T(q) ✓$。\n（2）$T(kp) = (kp)' = kp' = k \\cdot T(p) ✓$。$\\rightarrow$ 求导是线性变换。\n其核 $\\operatorname{Ker}(T)$ = {常数多项式}（维数 $=1$），像 $\\operatorname{Im}(T)$ = {一次多项式}（维数 $=2$）。验证：$\\dim(\\operatorname{Ker})+\\dim(\\operatorname{Im})=1+2=3=\\dim(P_{2}) ✓$。\n\n##### 分层例题\n\n例1：$T(x,y) = (2x+y, x-y)$。求矩阵 A。\n$$\nT(e_{1})=T(1,0)=(2,1), T(e_{2})=T(0,1)=(1,-1) \\rightarrow A=\\begin{pmatrix}2 & 1 \\\\ 1 & -1\\end{pmatrix}\n$$\n例2：$A=\\begin{pmatrix}0 & 1 \\\\ 1 & 0\\end{pmatrix}$。描述 T 的几何效果。\n$e_{1} \\rightarrow (0,1), e_{2} \\rightarrow (1,0) \\rightarrow$ 关于 $y=x$ 的反射。\n例3：$T(x,y)=(x^{2}, y)$。线性变换吗？\n$T((1,0)+(2,0))=T(3,0)=(9,0)$。$T(1,0)+T(2,0)=(1,0)+(4,0)=(5,0)$。$9\\neq5 \\rightarrow$ 不是。"
       }
     ]

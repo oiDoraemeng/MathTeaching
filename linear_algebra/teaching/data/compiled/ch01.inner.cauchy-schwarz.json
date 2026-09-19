@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:aea1cefd65c4dea1ee106d024ce0d2cb655958c8c47754f8c878b4a4632f7f50",
+  "artifact_digest": "sha256:fef343a3d3465b0002232eedfe2065841c3d0ed599cfa0429d4ddbe7a6dfe402",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:db082a9fd18302bad307dfb5c8c1d4ec13eb0637a40a25a1116fe0c98d0cf8af",
   "plan": {
     "operations": [
       {
-        "alias": "sem__case1_a__origin",
+        "alias": "sem__equality_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_a__end",
+        "alias": "sem__equality_a__end",
         "coordinates": [
           3.0,
-          4.0
+          0.0
         ],
-        "name": "a",
+        "name": "A",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_a",
+        "alias": "sem__equality_a",
         "color": "#2F6BFF",
-        "end": "sem__case1_a__end",
+        "end": "sem__equality_a__end",
         "kind": "vector",
         "label": "a",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__case1_a__origin"
+        "start": "sem__equality_a__origin"
       },
       {
-        "alias": "sem__case1_b__origin",
+        "alias": "sem__equality_b__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,26 +43,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_b__end",
+        "alias": "sem__equality_b__end",
         "coordinates": [
-          1.0,
+          2.0,
           0.0
         ],
-        "name": "b",
+        "name": "B",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_b",
+        "alias": "sem__equality_b",
         "color": "#F08A24",
-        "end": "sem__case1_b__end",
+        "end": "sem__equality_b__end",
         "kind": "vector",
         "label": "b",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__case1_b__origin"
+        "start": "sem__equality_b__origin"
       },
       {
-        "alias": "sem__case1_r__origin",
+        "alias": "sem__strict_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -71,23 +71,151 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_r__end",
+        "alias": "sem__strict_a__end",
         "coordinates": [
           3.0,
-          4.0
+          0.0
         ],
-        "name": "result",
+        "name": "A",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__case1_r",
-        "color": "#6B7280",
-        "end": "sem__case1_r__end",
+        "alias": "sem__strict_a",
+        "color": "#2F6BFF",
+        "end": "sem__strict_a__end",
         "kind": "vector",
-        "label": "result",
+        "label": "a",
         "op": "linear.upsert",
-        "role": "result",
-        "start": "sem__case1_r__origin"
+        "role": "primary",
+        "start": "sem__strict_a__origin"
+      },
+      {
+        "alias": "sem__strict_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__strict_b__end",
+        "coordinates": [
+          2.0,
+          2.0
+        ],
+        "name": "B",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__strict_b",
+        "color": "#F08A24",
+        "end": "sem__strict_b__end",
+        "kind": "vector",
+        "label": "b",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__strict_b__origin"
+      },
+      {
+        "alias": "sem__strict_p__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__strict_p__end",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "P",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__strict_p",
+        "color": "#F08A24",
+        "end": "sem__strict_p__end",
+        "kind": "vector",
+        "label": "p",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__strict_p__origin"
+      },
+      {
+        "alias": "sem__strict_H",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "H",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__strict_r__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__strict_r__end",
+        "coordinates": [
+          0.0,
+          2.0
+        ],
+        "name": "R",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__strict_r",
+        "color": "#F08A24",
+        "end": "sem__strict_r__end",
+        "kind": "vector",
+        "label": "r",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__strict_r__origin"
+      },
+      {
+        "alias": "sem__rel.cauchy-schwarz.strict.projection",
+        "color": "#F08A24",
+        "direction": [
+          3.0,
+          0.0
+        ],
+        "foot_alias": "sem__strict_H",
+        "op": "geometry.projection",
+        "residual_alias": "sem__strict_r",
+        "result_alias": "sem__strict_a",
+        "style": "dashed",
+        "vector": [
+          2.0,
+          2.0
+        ]
+      },
+      {
+        "alias": "sem__rel.cauchy-schwarz.strict.orthogonal",
+        "color": "#F08A24",
+        "first": [
+          0.0,
+          2.0
+        ],
+        "op": "geometry.right_angle_marker",
+        "second": [
+          3.0,
+          0.0
+        ],
+        "size": 0.3,
+        "vertex": [
+          2.0,
+          0.0
+        ]
       },
       {
         "alias": "cap__polygon",
@@ -102,53 +230,43 @@
           ],
           [
             3.0,
-            4.0
-          ],
-          [
-            4.0,
-            4.0
-          ],
-          [
-            1.0,
             0.0
+          ],
+          [
+            3.0,
+            3.0
+          ],
+          [
+            -0.0,
+            3.0
           ]
         ]
       },
       {
-        "color": "#2A9D8F",
-        "direction": [
-          1.0,
-          0.0
-        ],
-        "foot_alias": "cap__foot",
-        "op": "geometry.projection",
-        "residual_alias": "cap__residual",
-        "result_alias": "cap__projection",
-        "style": "dashed",
-        "vector": [
-          3.0,
-          4.0
-        ]
-      },
-      {
-        "alias": "sem__orientation__1",
-        "color": "#2A9D8F",
-        "first": [
-          3.0,
-          4.0
-        ],
-        "op": "geometry.angle_arc",
-        "radius": 0.45,
-        "second": [
-          1.0,
-          0.0
-        ],
-        "vertex": [
+        "alias": "sem__stage.cauchy-schwarz.equality__title",
+        "op": "annotation.upsert",
+        "position": [
           0.0,
-          0.0
-        ]
+          2.65
+        ],
+        "text": "案例一：等号成立"
       },
       {
+        "alias": "sem__stage.cauchy-schwarz.strict__title",
+        "op": "annotation.upsert",
+        "position": [
+          0.0,
+          2.65
+        ],
+        "text": "案例二：严格不等式"
+      },
+      {
+        "bounds": [
+          0.0,
+          3.0,
+          0.0,
+          2.0
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
@@ -157,10 +275,10 @@
     "summary": "柯西—施瓦茨不等式",
     "version": 1
   },
-  "plan_digest": "sha256:264f34bd521f05f03bb0e268e35158e2895bc33227ce999fdfcd9f3a49daeb9e",
+  "plan_digest": "sha256:4805679ed745a6c293d59869a6cc8b826fdbb910d54f1c2cc2a06580a7173a02",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 20,
+  "revision": 21,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:acb3755ccad90340b78463bcebf6fa74e07877c6addc4a61067e5e05d4ec5de0",
@@ -170,28 +288,61 @@
         0.0,
         2.65
       ],
-      "caption": "",
-      "id": "stage.case.ch01.inner.cauchy-schwarz.1",
+      "caption": "$\\boldsymbol a=(3,0)$ 与 $\\boldsymbol b=(2,0)$ 共线，$\\lvert\\boldsymbol a\\cdot\\boldsymbol b\\rvert=\\lvert\\boldsymbol a\\rvert\\lvert\\boldsymbol b\\rvert$。",
+      "id": "stage.cauchy-schwarz.equality",
       "layout": "overlay",
-      "title": "案例一：投影界",
+      "title": "案例一：等号成立",
       "visible_aliases": [
-        "sem__case1_a",
-        "sem__case1_a__end",
-        "sem__case1_a__origin",
-        "sem__case1_b",
-        "sem__case1_b__end",
-        "sem__case1_b__origin",
-        "sem__case1_r",
-        "sem__case1_r__end",
-        "sem__case1_r__origin",
-        "sem__rel.case.ch01.inner.cauchy-schwarz.1",
-        "sem__orientation__1"
+        "sem__equality_a",
+        "sem__equality_a__end",
+        "sem__equality_a__origin",
+        "sem__equality_b",
+        "sem__equality_b__end",
+        "sem__equality_b__origin",
+        "sem__stage.cauchy-schwarz.equality__title",
+        "sem__orthogonal__1"
       ],
       "visible_refs": [
-        "case1_a",
-        "case1_b",
-        "case1_r",
-        "rel.case.ch01.inner.cauchy-schwarz.1"
+        "equality_a",
+        "equality_b"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "$\\boldsymbol p=(2,0)$ 是 $\\boldsymbol b$ 在 $\\boldsymbol a$ 方向上的投影，$\\boldsymbol r=(0,2)$ 与 $\\boldsymbol a$ 正交。",
+      "id": "stage.cauchy-schwarz.strict",
+      "layout": "overlay",
+      "title": "案例二：严格不等式",
+      "visible_aliases": [
+        "sem__strict_a",
+        "sem__strict_a__end",
+        "sem__strict_a__origin",
+        "sem__strict_b",
+        "sem__strict_b__end",
+        "sem__strict_b__origin",
+        "sem__strict_p",
+        "sem__strict_p__end",
+        "sem__strict_p__origin",
+        "sem__strict_r",
+        "sem__strict_r__end",
+        "sem__strict_r__origin",
+        "sem__strict_H",
+        "sem__rel.cauchy-schwarz.strict.projection",
+        "sem__rel.cauchy-schwarz.strict.orthogonal",
+        "sem__stage.cauchy-schwarz.strict__title",
+        "sem__orthogonal__2"
+      ],
+      "visible_refs": [
+        "strict_a",
+        "strict_b",
+        "strict_p",
+        "strict_r",
+        "strict_H",
+        "rel.cauchy-schwarz.strict.projection",
+        "rel.cauchy-schwarz.strict.orthogonal"
       ]
     }
   ],

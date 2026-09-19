@@ -1,12 +1,77 @@
 {
-  "artifact_digest": "sha256:2ba667508d372362e899922414bc62cd0fa052dcdbc622ecdb0252d5d9b9d793",
+  "artifact_digest": "sha256:f7707e1feec4753b94b696c0ada6d667b51134c9d0aad6157522166d09699e47",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:0a87e03907341ed194900be329391f0a40e2a6e047aa549cbb172174f3b9fdde",
+  "contract_digest": "sha256:52668aee089956191c1ceb20ef02cee982e2e87a05ded077aa5b0211a320682c",
   "plan": {
     "operations": [
       {
+        "algebra_symbol": "\\boldsymbol{e}_1",
+        "alias": "ch04__entity__independent_set__axis_1",
+        "color": "#2F6BFF",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "algebra_symbol": "\\boldsymbol{e}_2",
+        "alias": "ch04__entity__independent_set__axis_2",
+        "color": "#F08A24",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "algebra_symbol": "\\boldsymbol{e}_3",
+        "alias": "ch04__entity__independent_set__axis_3",
+        "color": "#7B61FF",
+        "end": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__entity__independent_sample",
+        "coordinates": [
+          2.0,
+          -1.0,
+          3.0
+        ],
+        "name": "x",
+        "op": "point3d.upsert"
+      },
+      {
         "alias": "ch04__entity__dependent_set",
+        "color": "#E76F51",
         "normal": [
           0.0,
           0.0,
@@ -22,38 +87,49 @@
         "size": 2.5
       },
       {
-        "alias": "ch04__entity__independent_set",
-        "op": "geometry.parallelepiped",
-        "opacity": 0.16,
-        "origin": [
-          0.0,
+        "algebra_symbol": "\\boldsymbol{u}",
+        "alias": "ch04__entity__dependent_set__generator_1",
+        "color": "#2F6BFF",
+        "end": [
+          1.0,
           0.0,
           0.0
         ],
-        "vectors": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ]
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
         ]
       },
       {
-        "alias": "ch04__entity__coefficients",
+        "algebra_symbol": "\\boldsymbol{v}",
+        "alias": "ch04__entity__dependent_set__generator_2",
+        "color": "#F08A24",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "algebra_symbol": "\\boldsymbol{w}",
+        "alias": "ch04__entity__dependent_set__generator_3",
+        "color": "#7B61FF",
         "end": [
           1.0,
           1.0,
-          -1.0
+          0.0
         ],
         "kind": "vector",
         "op": "linear3d.upsert",
@@ -73,22 +149,6 @@
         ],
         "name": "0",
         "op": "point3d.upsert"
-      },
-      {
-        "alias": "ch04__entity__redundant_vector",
-        "end": [
-          1.0,
-          1.0,
-          0.0
-        ],
-        "kind": "vector",
-        "op": "linear3d.upsert",
-        "role": "primary",
-        "start": [
-          0.0,
-          0.0,
-          0.0
-        ]
       },
       {
         "alias": "ch04__scene__parallelogram",
@@ -113,7 +173,69 @@
         ]
       },
       {
+        "alias": "ch04__relation__independent_combination__term_1",
+        "color": "#2F6BFF",
+        "end": [
+          2.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "result",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__independent_combination__term_2",
+        "color": "#F08A24",
+        "end": [
+          2.0,
+          -1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "result",
+        "start": [
+          2.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__independent_combination__term_3",
+        "color": "#7B61FF",
+        "end": [
+          2.0,
+          -1.0,
+          3.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "result",
+        "start": [
+          2.0,
+          -1.0,
+          0.0
+        ]
+      },
+      {
+        "alias": "ch04__relation__independent_combination",
+        "coordinates": [
+          2.0,
+          -1.0,
+          3.0
+        ],
+        "name": "x",
+        "op": "point3d.upsert"
+      },
+      {
         "alias": "ch04__relation__dependent_combination__term_1",
+        "color": "#2F6BFF",
         "end": [
           1.0,
           0.0,
@@ -130,6 +252,7 @@
       },
       {
         "alias": "ch04__relation__dependent_combination__term_2",
+        "color": "#F08A24",
         "end": [
           1.0,
           1.0,
@@ -146,6 +269,7 @@
       },
       {
         "alias": "ch04__relation__dependent_combination__term_3",
+        "color": "#7B61FF",
         "end": [
           0.0,
           0.0,
@@ -171,118 +295,73 @@
         "op": "point3d.upsert"
       },
       {
-        "alias": "ch04__relation__independent_rank",
-        "op": "geometry.parallelepiped",
-        "opacity": 0.16,
-        "origin": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "vectors": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            0.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "ch04__relation__redundancy",
-        "op": "geometry.parallelogram3d",
-        "opacity": 0.16,
-        "origin": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "vectors": [
-          [
-            1.0,
-            0.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0,
-            0.0
-          ]
-        ]
-      },
-      {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "3d",
-    "summary": "4.2.2 线性相关与线性无关",
+    "summary": "线性相关与线性无关",
     "version": 1
   },
-  "plan_digest": "sha256:b9ab30d554b9357017e630017df8c5f06e4495df1bc3c085aa2dd869c1a7b133",
+  "plan_digest": "sha256:bc69dd268168f29dd693b36f77d1b0675d5dcb2dd5e55d4238cc87ff84b83aff",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
-  "scene_family": "basis_change",
+  "scene_family": "subspace_region",
   "schema_version": 1,
-  "source_hash": "sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c",
+  "source_hash": "sha256:5e1f1eeb8a6e878275c16997f7f5a94332e59c48cc847b3dda235d78907f8db7",
   "stages": [
     {
       "anchor": [
-        -2.65,
+        -1.5,
         2.65
       ],
-      "caption": "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
-      "id": "stage.ch04.dependence.redundancy.dependent",
-      "layout": "sequence",
-      "title": "非零系数组合为零",
-      "visible_aliases": [
-        "ch04__entity__dependent_set",
-        "ch04__entity__coefficients",
-        "ch04__entity__zero_combination",
-        "ch04__entity__redundant_vector",
-        "ch04__relation__dependent_combination__term_1",
-        "ch04__relation__dependent_combination__term_2",
-        "ch04__relation__dependent_combination__term_3",
-        "ch04__relation__dependent_combination",
-        "ch04__relation__redundancy",
-        "sem__stage.ch04.dependence.redundancy.dependent__title"
-      ],
-      "visible_refs": [
-        "entity.ch04.dependence.redundancy.dependent_set",
-        "entity.ch04.dependence.redundancy.coefficients",
-        "entity.ch04.dependence.redundancy.zero_combination",
-        "entity.ch04.dependence.redundancy.redundant_vector",
-        "relation.ch04.dependence.redundancy.dependent_combination",
-        "relation.ch04.dependence.redundancy.redundancy"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "c_1+c_2-c_3=0,\\ rank[e_1\\ e_2\\ e_3]=3",
+      "caption": "\\boldsymbol{x}=2\\boldsymbol{e}_1-\\boldsymbol{e}_2+3\\boldsymbol{e}_3=\\begin{pmatrix}2\\\\-1\\\\3\\end{pmatrix}",
       "id": "stage.ch04.dependence.redundancy.independent",
-      "layout": "sequence",
-      "title": "满秩无关组",
+      "layout": "side_by_side",
+      "title": "三个不共面的向量张成整个三维空间",
       "visible_aliases": [
-        "ch04__entity__independent_set",
-        "ch04__relation__independent_rank",
+        "ch04__entity__independent_set__axis_1",
+        "ch04__entity__independent_set__axis_2",
+        "ch04__entity__independent_set__axis_3",
+        "ch04__entity__independent_sample",
+        "ch04__relation__independent_combination__term_1",
+        "ch04__relation__independent_combination__term_2",
+        "ch04__relation__independent_combination__term_3",
+        "ch04__relation__independent_combination",
         "sem__stage.ch04.dependence.redundancy.independent__title"
       ],
       "visible_refs": [
         "entity.ch04.dependence.redundancy.independent_set",
-        "relation.ch04.dependence.redundancy.independent_rank"
+        "entity.ch04.dependence.redundancy.independent_sample",
+        "relation.ch04.dependence.redundancy.independent_combination"
+      ]
+    },
+    {
+      "anchor": [
+        1.5,
+        2.65
+      ],
+      "caption": "\\boldsymbol{u}+\\boldsymbol{v}-\\boldsymbol{w}=\\begin{pmatrix}0\\\\0\\\\0\\end{pmatrix}",
+      "id": "stage.ch04.dependence.redundancy.dependent",
+      "layout": "side_by_side",
+      "title": "三个共面的向量含有冗余",
+      "visible_aliases": [
+        "ch04__entity__dependent_set",
+        "ch04__entity__dependent_set__generator_1",
+        "ch04__entity__dependent_set__generator_2",
+        "ch04__entity__dependent_set__generator_3",
+        "ch04__entity__zero_combination",
+        "ch04__relation__dependent_combination__term_1",
+        "ch04__relation__dependent_combination__term_2",
+        "ch04__relation__dependent_combination__term_3",
+        "ch04__relation__dependent_combination",
+        "sem__stage.ch04.dependence.redundancy.dependent__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.dependence.redundancy.dependent_set",
+        "entity.ch04.dependence.redundancy.zero_combination",
+        "relation.ch04.dependence.redundancy.dependent_combination"
       ]
     }
   ],

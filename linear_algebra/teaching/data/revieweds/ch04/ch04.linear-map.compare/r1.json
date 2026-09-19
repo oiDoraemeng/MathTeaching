@@ -195,12 +195,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:9fb71677a11cb214f1ebcf72f3986db0a9d0d6edb84950c0265dbf46f0b23b6e",
+    "artifact_digest": "sha256:7b4954293377309a743f64364590812e89df429fba117a71a0369f330d7ab90b",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:dac3e868a55a9606485e19b85b89948b8021d22fb2981d089a60e68dfc2ba954",
+    "raw_reply_digest": "sha256:d2145cabb7b9e18a59cec460801f8e48e356ad239abc5d6c17986687633738db",
     "source_hash": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47"
   },
   "revision": 1,
@@ -226,7 +226,7 @@
     ],
     "spans": [
       {
-        "end_line": 1522,
+        "end_line": 1389,
         "fingerprint": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
@@ -234,7 +234,7 @@
           "4.4.2 是 vs 不是线性变换"
         ],
         "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.2 是 vs 不是线性变换::1::sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
-        "start_line": 1513,
+        "start_line": 1380,
         "text": "#### 4.4.2 是 vs 不是线性变换\n\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 旋转 | $T(x,y)=(xcos\\theta-ysin\\theta, xsin\\theta+ycos\\theta)$ | 平移 | $T(x,y)=(x+1, y)$ |\n| 拉伸 | $T(x,y)=(ax, by)$ | 平方 | $T(x)=x^{2}$ |\n| 投影 | $T(v)=\\operatorname{Proj}(v)$ | 加常数 | $T(v)=v+b (b\\neq0)$ |\n\n判断平移：$T(v_{1}+v_{2})=(v_{11}+v_{21}+1, v_{12}+v_{22})$，但 $T(v_{1})+T(v_{2})=(v_{11}+1+v_{21}+1, ... ) \\rightarrow$ 加性不成立。"
       }
     ]

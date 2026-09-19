@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:6e1d0b404f2305580ad539c81a90a0caee12d1292d6ecac5c8a3ea1523c7e6a8",
+  "artifact_digest": "sha256:53ec9be8a8f32e0fdc1e3edb3aa1105281c5ccee29b6aad2d4923a9e9f5b00e4",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:b800ab74262eacaaed0eec0fc85f3377bb0339d80fe849f5a1ce422467404537",
@@ -64,10 +64,10 @@
       {
         "alias": "sem__mv_grid_base",
         "bounds": [
-          -12.0,
-          12.0,
-          -12.0,
-          12.0
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
         ],
         "color": "#6B7280",
         "matrix": [
@@ -86,10 +86,10 @@
       {
         "alias": "sem__mv_grid_stretch",
         "bounds": [
-          -12.0,
-          12.0,
-          -12.0,
-          12.0
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
         ],
         "color": "#7B61FF",
         "matrix": [
@@ -164,10 +164,10 @@
       {
         "alias": "sem__mv_grid_rotate",
         "bounds": [
-          -12.0,
-          12.0,
-          -12.0,
-          12.0
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
         ],
         "color": "#7B61FF",
         "matrix": [
@@ -242,10 +242,10 @@
       {
         "alias": "sem__mv_grid_A",
         "bounds": [
-          -12.0,
-          12.0,
-          -12.0,
-          12.0
+          -2.0,
+          2.0,
+          -2.0,
+          2.0
         ],
         "color": "#7B61FF",
         "matrix": [
@@ -386,7 +386,7 @@
           -0.4,
           1.45
         ],
-        "text": "A=[[2,0],[0,1]]"
+        "text": "$A=\\left[\\genfrac{}{}{0}{}{2\\quad 0}{0\\quad 1}\\right]$"
       },
       {
         "alias": "sem__mv_grid_rotate__staged",
@@ -426,7 +426,7 @@
           -1.4,
           1.45
         ],
-        "text": "R=[[0,-1],[1,0]]"
+        "text": "$R=\\left[\\genfrac{}{}{0}{}{0\\quad -1}{1\\quad \\ 0}\\right]$"
       },
       {
         "alias": "sem__mv_grid_A__staged",
@@ -466,7 +466,7 @@
           -0.4,
           2.45
         ],
-        "text": "A=[[2,1],[1,2]]"
+        "text": "$A=\\left[\\genfrac{}{}{0}{}{2\\quad 1}{1\\quad 2}\\right]$"
       },
       {
         "bounds": [
@@ -480,16 +480,16 @@
       }
     ],
     "scene": "2d",
-    "summary": "基向量变换与网格变形",
+    "summary": "矩阵变换",
     "version": 1
   },
-  "plan_digest": "sha256:67c74bebb5afd024f977ff6b907f8838cad32bad2ffcfb061a24016da3829a3c",
+  "plan_digest": "sha256:8d958082161d4ba266b55e6e587e6116f9fb3e99d781d914cb4ff9ba0fdf4599",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 21,
+  "revision": 23,
   "scene_family": "",
   "schema_version": 1,
-  "source_hash": "sha256:0cde074da638ed97935945c66fb4ae0ef0677d4ad90d6300ca1a3e429c3f2b12",
+  "source_hash": "sha256:f68524efc470b67f5af5e6b6efafa642868cdd975867fc88219928e2cce8c611",
   "stages": [
     {
       "anchor": [

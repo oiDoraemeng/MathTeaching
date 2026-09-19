@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:d40dbaac8a282a7edb004189aabff9101e6d5f2f1684ac4946801853f216bdb8",
+  "artifact_digest": "sha256:398e36189f216cfcea3dd11dc3a8b03b1778641c308241b41760a0bd0538f572",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:fdbdf3d932217bd4a1f14d64062f5370451c80c22e54a970fc0c2fbfcda688d1",
@@ -61,11 +61,12 @@
         "style": "dashed"
       },
       {
+        "algebra_symbol": "\\boldsymbol{x}_{1}",
         "alias": "ch04__entity__input_vector_a",
         "color": "#7B61FF",
         "end": [
           2.0,
-          0.0,
+          1.0,
           3.0
         ],
         "kind": "vector",
@@ -78,11 +79,12 @@
         ]
       },
       {
+        "algebra_symbol": "\\boldsymbol{A}\\boldsymbol{x}_{1}",
         "alias": "ch04__entity__output_vector_a",
         "color": "#2A9D8F",
         "end": [
           2.0,
-          0.0,
+          1.0,
           0.0
         ],
         "kind": "vector",
@@ -95,11 +97,12 @@
         ]
       },
       {
+        "algebra_symbol": "\\boldsymbol{x}_{2}",
         "alias": "ch04__entity__input_vector_b",
         "color": "#7B61FF",
         "end": [
-          -1.0,
-          2.0,
+          -2.0,
+          1.0,
           2.0
         ],
         "kind": "vector",
@@ -112,11 +115,12 @@
         ]
       },
       {
+        "algebra_symbol": "\\boldsymbol{A}\\boldsymbol{x}_{2}",
         "alias": "ch04__entity__output_vector_b",
         "color": "#2A9D8F",
         "end": [
-          -1.0,
-          2.0,
+          -2.0,
+          1.0,
           0.0
         ],
         "kind": "vector",
@@ -129,12 +133,13 @@
         ]
       },
       {
+        "algebra_symbol": "\\boldsymbol{x}_{3}",
         "alias": "ch04__entity__input_vector_c",
         "color": "#7B61FF",
         "end": [
           -1.0,
           -2.0,
-          1.0
+          -2.0
         ],
         "kind": "vector",
         "op": "linear3d.upsert",
@@ -146,6 +151,7 @@
         ]
       },
       {
+        "algebra_symbol": "\\boldsymbol{A}\\boldsymbol{x}_{3}",
         "alias": "ch04__entity__output_vector_c",
         "color": "#2A9D8F",
         "end": [
@@ -163,6 +169,7 @@
         ]
       },
       {
+        "algebra_symbol": "\\boldsymbol{k}",
         "alias": "ch04__entity__kernel_vector",
         "color": "#E63946",
         "end": [
@@ -216,7 +223,7 @@
         "color": "#7B61FF",
         "end": [
           2.0,
-          0.0,
+          1.0,
           0.0
         ],
         "kind": "segment",
@@ -224,7 +231,7 @@
         "role": "construction",
         "start": [
           2.0,
-          0.0,
+          1.0,
           3.0
         ],
         "style": "dashed"
@@ -233,16 +240,16 @@
         "alias": "ch04__relation__projection_b",
         "color": "#7B61FF",
         "end": [
-          -1.0,
-          2.0,
+          -2.0,
+          1.0,
           0.0
         ],
         "kind": "segment",
         "op": "linear3d.upsert",
         "role": "construction",
         "start": [
-          -1.0,
-          2.0,
+          -2.0,
+          1.0,
           2.0
         ],
         "style": "dashed"
@@ -261,7 +268,7 @@
         "start": [
           -1.0,
           -2.0,
-          1.0
+          -2.0
         ],
         "style": "dashed"
       },
@@ -276,32 +283,160 @@
         "op": "point3d.upsert"
       },
       {
+        "alias": "ch04__annotation__column_space__col_space",
+        "color": "#5B8DEF",
+        "op": "annotation.formula",
+        "position": [
+          -2.35,
+          -2.35,
+          0.12
+        ],
+        "text": "Col(A)"
+      },
+      {
+        "alias": "ch04__annotation__column_space__input_a",
+        "color": "#7B61FF",
+        "op": "annotation.formula",
+        "position": [
+          1.05,
+          0.57,
+          1.65
+        ],
+        "text": "x_1"
+      },
+      {
+        "alias": "ch04__annotation__column_space__output_a",
+        "color": "#2A9D8F",
+        "op": "annotation.formula",
+        "position": [
+          1.05,
+          0.6,
+          0.12
+        ],
+        "text": "Ax_1"
+      },
+      {
+        "alias": "ch04__annotation__column_space__input_b",
+        "color": "#7B61FF",
+        "op": "annotation.formula",
+        "position": [
+          -1.1,
+          0.6,
+          1.1
+        ],
+        "text": "x_2"
+      },
+      {
+        "alias": "ch04__annotation__column_space__output_b",
+        "color": "#2A9D8F",
+        "op": "annotation.formula",
+        "position": [
+          -1.1,
+          0.6,
+          0.12
+        ],
+        "text": "Ax_2"
+      },
+      {
+        "alias": "ch04__annotation__column_space__input_c",
+        "color": "#7B61FF",
+        "op": "annotation.formula",
+        "position": [
+          -0.66,
+          -1.14,
+          -1.0
+        ],
+        "text": "x_3"
+      },
+      {
+        "alias": "ch04__annotation__column_space__output_c",
+        "color": "#2A9D8F",
+        "op": "annotation.formula",
+        "position": [
+          -0.64,
+          -1.15,
+          0.12
+        ],
+        "text": "Ax_3"
+      },
+      {
+        "alias": "ch04__annotation__null_space__col_space",
+        "color": "#5B8DEF",
+        "op": "annotation.formula",
+        "position": [
+          -2.35,
+          -2.35,
+          0.12
+        ],
+        "text": "Col(A)"
+      },
+      {
+        "alias": "ch04__annotation__null_space__null_space",
+        "color": "#6B7280",
+        "op": "annotation.formula",
+        "position": [
+          0.18,
+          0.18,
+          4.35
+        ],
+        "text": "Null(A)"
+      },
+      {
+        "alias": "ch04__annotation__null_space__kernel",
+        "color": "#E63946",
+        "op": "annotation.formula",
+        "position": [
+          0.16,
+          0.16,
+          1.58
+        ],
+        "text": "k"
+      },
+      {
+        "alias": "ch04__annotation__null_space__zero",
+        "color": "#6B7280",
+        "op": "annotation.formula",
+        "position": [
+          0.16,
+          0.16,
+          0.16
+        ],
+        "text": "0"
+      },
+      {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "3d",
-    "summary": "4.1.3 两大核心子空间：列空间与零空间",
+    "summary": "线性空间",
     "version": 1
   },
-  "plan_digest": "sha256:f59b258d39da4109915fac9306399cabde1f54b7e11153c59e25b7a339998175",
+  "plan_digest": "sha256:466c7ee0443d24d6d8a8082b3ddf11393e2cb6668670cfdd79356441617f3ea8",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
   "scene_family": "subspace_region",
   "schema_version": 1,
-  "source_hash": "sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0",
+  "source_hash": "sha256:8ffae19b0fa2ba7d238c1d80d061f36f418e5ef6256b22aefa5f5d9eb0909c61",
   "stages": [
     {
       "anchor": [
         -1.5,
         2.65
       ],
-      "caption": "\\boldsymbol A=\\operatorname{diag}(1,1,0),\\ Null(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\ Col(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+      "caption": "\\boldsymbol A=\\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&0\\end{pmatrix},\\quad \\operatorname{Null}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\quad \\operatorname{Col}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
       "id": "stage.ch04.subspace.col-null.column_space",
       "layout": "side_by_side",
       "title": "列空间：所有可能的输出",
       "visible_aliases": [
+        "ch04__annotation__column_space__col_space",
+        "ch04__annotation__column_space__input_a",
+        "ch04__annotation__column_space__output_a",
+        "ch04__annotation__column_space__input_b",
+        "ch04__annotation__column_space__output_b",
+        "ch04__annotation__column_space__input_c",
+        "ch04__annotation__column_space__output_c",
         "ch04__entity__input_vector_a",
         "ch04__entity__input_vector_b",
         "ch04__entity__input_vector_c",
@@ -332,11 +467,15 @@
         1.5,
         2.65
       ],
-      "caption": "\\boldsymbol A=\\operatorname{diag}(1,1,0),\\ Null(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\ Col(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+      "caption": "\\boldsymbol A=\\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&0\\end{pmatrix},\\quad \\operatorname{Null}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\quad \\operatorname{Col}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
       "id": "stage.ch04.subspace.col-null.null_space",
       "layout": "side_by_side",
       "title": "零空间：与平面垂直的方向被压成一点",
       "visible_aliases": [
+        "ch04__annotation__null_space__col_space",
+        "ch04__annotation__null_space__null_space",
+        "ch04__annotation__null_space__kernel",
+        "ch04__annotation__null_space__zero",
         "ch04__entity__column_space",
         "ch04__entity__null_space",
         "ch04__entity__null_space__extent_2",

@@ -1,1 +1,661 @@
-{"claims":[{"entity_refs":["entity.ch04.subspace.col-null.v","entity.ch04.subspace.col-null.result"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"v=(1,2),\\quad 2v=(2,4)","formula_symbols":["v","result"],"id":"claim.ch04.subspace.col-null","relation_refs":["relation.ch04.subspace.col-null.maps"],"source_refs":["第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.3 两大核心子空间：列空间与零空间::1::sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0"],"stage_refs":["stage.ch04.subspace.col-null.input"],"statement":"4.1.3 两大核心子空间：列空间与零空间 的线性表示保持可检验的向量关系。"}],"connections":[{"claim_refs":["claim.ch04.subspace.col-null"],"description":"前置的线性表示与几何关系。","id":"connection.ch04.subspace.col-null.prior","relation":"prerequisite","target_topic_id":"ch03.det.oriented-area"}],"explanation":{"analogy_boundary":"二维示意推广到有限维时保留代数关系。","conclusion":"数值关系与讲义定义一致。","connections":["与前置线性表示相连。"],"definition":"4.1.3 两大核心子空间：列空间与零空间 的对象和定义。","derivation":["代入 v=(1,2)。","计算得到 result=(2,4)。"],"formula":"v=(1,2),\\quad 2v=(2,4)","geometric_meaning":"向量在有限维空间中的方向和尺度保持可读。","invariants":["finite numeric result"],"pitfalls":["不要混淆对象和坐标。"],"read_guide":["先定义，再公式，最后读数值例。"],"searchable_text":["4.1.3 两大核心子空间：列空间与零空间","线性空间","数值例"],"sections":[{"claim_refs":["claim.ch04.subspace.col-null"],"id":"definition","text":"definition: 4.1.3 两大核心子空间：列空间与零空间。","title":"definition"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"formula","text":"formula: 4.1.3 两大核心子空间：列空间与零空间。","title":"formula"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"derivation","text":"derivation: 4.1.3 两大核心子空间：列空间与零空间。","title":"derivation"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"worked_examples","text":"worked_examples: 4.1.3 两大核心子空间：列空间与零空间。","title":"worked_examples"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"geometric_meaning","text":"geometric_meaning: 4.1.3 两大核心子空间：列空间与零空间。","title":"geometric_meaning"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"pitfalls","text":"pitfalls: 4.1.3 两大核心子空间：列空间与零空间。","title":"pitfalls"},{"claim_refs":["claim.ch04.subspace.col-null"],"id":"connections","text":"connections: 4.1.3 两大核心子空间：列空间与零空间。","title":"connections"}],"summary":"4.1.3 两大核心子空间：列空间与零空间 的确定性讲义 artifact。","symbol_roles":{"result":"transformed_a","v":"vector_a"},"title":"4.1.3 两大核心子空间：列空间与零空间","transfer_note":"先识别对象，再核对公式和不变量。","worked_examples":[{"calculation":["2*(1,2)=(2,4)"],"checks":[{"expected":[2,4],"name":"result","tolerance":1e-09}],"claim_refs":["claim.ch04.subspace.col-null"],"given":[2,[1,2]],"id":"example.ch04.subspace.col-null","kind":"scalar_multiple","result":[2,4],"title":"数值例"}]},"generated":{"artifact_digest":"sha256:ec533caec2e81c87df98fff07b4e5cc8f730e5b3eaba5a4e10e461cff10a4db0","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:cc204cb8c4fb0b43016d25e31ca8150a07d3e3f99933dbdeb28d8bab45a5f970","source_hash":"sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0"},"revision":1,"schema_version":1,"source":{"excerpt":"#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。","heading_level":4,"heading_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.1 线性空间与子空间","4.1.3 两大核心子空间：列空间与零空间"],"neighboring_titles":["4.1.2 子空间"],"occurrence":1,"source_hash":"sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0","source_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.1 线性空间与子空间","4.1.3 两大核心子空间：列空间与零空间"],"spans":[{"end_line":1615,"fingerprint":"sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0","heading_path":["第4章 线性空间、线性无关与线性变换（全书核心枢纽）","4.1 线性空间与子空间","4.1.3 两大核心子空间：列空间与零空间"],"id":"第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间 / 4.1.3 两大核心子空间：列空间与零空间::1::sha256:6d9a29e55f9a21b1846003bb5658be910fcd5cc07e231cbf3b4eec2335bb13d0","start_line":1588,"text":"#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。"}]},"status":"draft","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch04.subspace.col-null","visual_semantics":{"entities":[{"claim_refs":["claim.ch04.subspace.col-null"],"dimension":2,"id":"entity.ch04.subspace.col-null.v","kind":"vector","label":"v","role":"vector_a","value":[1,2]},{"claim_refs":["claim.ch04.subspace.col-null"],"dimension":2,"id":"entity.ch04.subspace.col-null.result","kind":"vector","label":"result","role":"transformed_a","value":[2,4]}],"relations":[{"claim_refs":["claim.ch04.subspace.col-null"],"id":"relation.ch04.subspace.col-null.maps","kind":"maps_to","parameters":{"scalar":2},"source_ref":"entity.ch04.subspace.col-null.v","target_ref":"entity.ch04.subspace.col-null.result"}],"scene_family":"subspace_region","scene_kind":"2d","stages":[{"caption":"显示线性关系。","expected_invariants":["finite numeric result"],"id":"stage.ch04.subspace.col-null.input","input_entity_refs":["entity.ch04.subspace.col-null.v"],"layout":"sequence","output_entity_refs":["entity.ch04.subspace.col-null.result"],"relation_refs":["relation.ch04.subspace.col-null.maps"],"title":"输入与结果"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch04.subspace.col-null.column_space",
+        "entity.ch04.subspace.col-null.null_space",
+        "entity.ch04.subspace.col-null.input_vector_a",
+        "entity.ch04.subspace.col-null.output_vector_a",
+        "entity.ch04.subspace.col-null.input_vector_b",
+        "entity.ch04.subspace.col-null.output_vector_b",
+        "entity.ch04.subspace.col-null.input_vector_c",
+        "entity.ch04.subspace.col-null.output_vector_c",
+        "entity.ch04.subspace.col-null.kernel_vector",
+        "entity.ch04.subspace.col-null.zero"
+      ],
+      "explanation_refs": [
+        "definition",
+        "worked_examples"
+      ],
+      "formula": "\\boldsymbol A=\\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&0\\end{pmatrix},\\quad \\operatorname{Null}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\quad \\operatorname{Col}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+      "formula_symbols": [
+        "A",
+        "x",
+        "k"
+      ],
+      "id": "claim.ch04.subspace.col-null",
+      "relation_refs": [
+        "relation.ch04.subspace.col-null.projection_a",
+        "relation.ch04.subspace.col-null.projection_b",
+        "relation.ch04.subspace.col-null.projection_c",
+        "relation.ch04.subspace.col-null.collapse"
+      ],
+      "source_refs": [
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间::1::sha256:8ffae19b0fa2ba7d238c1d80d061f36f418e5ef6256b22aefa5f5d9eb0909c61"
+      ],
+      "stage_refs": [
+        "stage.ch04.subspace.col-null.column_space",
+        "stage.ch04.subspace.col-null.null_space"
+      ],
+      "statement": "线性空间 的数学主张由显式对象、关系和不变量支持。"
+    }
+  ],
+  "connections": [
+    {
+      "claim_refs": [
+        "claim.ch04.subspace.col-null"
+      ],
+      "description": "前置的线性表示与几何关系。",
+      "id": "connection.ch04.subspace.col-null.prior",
+      "relation": "prerequisite",
+      "target_topic_id": "ch03.det.oriented-area"
+    }
+  ],
+  "explanation": {
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch04.subspace.col-null"
+          ],
+          "example_ref": "example.ch04.subspace.col-null.column-space",
+          "id": "case.ch04.subspace.col-null.column-space",
+          "purpose": "① 列空间：三支输入，输出都落在这张平面上",
+          "stage_refs": [
+            "stage.ch04.subspace.col-null.column_space"
+          ],
+          "topic_id": "ch04.subspace.col-null"
+        },
+        {
+          "claim_refs": [
+            "claim.ch04.subspace.col-null"
+          ],
+          "example_ref": "example.ch04.subspace.col-null.null-space",
+          "id": "case.ch04.subspace.col-null.null-space",
+          "purpose": "② 零空间：与平面垂直的输入被压成一点",
+          "stage_refs": [
+            "stage.ch04.subspace.col-null.null_space"
+          ],
+          "topic_id": "ch04.subspace.col-null"
+        }
+      ],
+      "default_pane_count": 2
+    },
+    "conclusion": "",
+    "connections": [],
+    "definition": "**（线性空间 / 向量空间）** 一个集合 $V$，如果满足两条核心规则，就称为一个线性空间：\n\n（1）加法封闭：$\\boldsymbol u,\\boldsymbol v\\in V\\Rightarrow\\boldsymbol u+\\boldsymbol v\\in V$。\\n（2）数乘封闭：$\\boldsymbol v\\in V,\\ k\\in R\\Rightarrow k\\boldsymbol v\\in V$。\n\n主例——$R^{n}$：所有 $n$ 维实向量的集合。加法：分量相加；数乘：每个分量乘 $k$。结果仍在 $R^{n}$ 中，$\\therefore R^{n}$ 是线性空间。\n\n其他例子：所有次数 $\\leq2$ 的多项式 $a+bx+cx^{2}$，两个多项式相加还是多项式，乘以常数仍是多项式，构成线性空间。所有 $2\\times2$ 矩阵，矩阵加法、数乘封闭，构成线性空间。\n\n线性空间 $=$ 对加法和数乘“封闭”的集合。核心不是元素是什么（向量、多项式、矩阵都行），而是加法和数乘的自由操作永不“溢出”这个集合。\n\n完整的 $8$ 条公理（供参考，不要求背）：加法四条：交换律 $\\boldsymbol u+\\boldsymbol v=\\boldsymbol v+\\boldsymbol u$、结合律 $(\\boldsymbol u+\\boldsymbol v)+\\boldsymbol w=\\boldsymbol u+(\\boldsymbol v+\\boldsymbol w)$、存在零元 $\\boldsymbol v+\\boldsymbol{0}=\\boldsymbol v$、存在负元 $\\boldsymbol v+(-\\boldsymbol v)=\\boldsymbol{0}$。数乘四条：分配律 $k(\\boldsymbol u+\\boldsymbol v)=k\\boldsymbol u+k\\boldsymbol v$、$(k+l)\\boldsymbol v=k\\boldsymbol v+l\\boldsymbol v$，结合律 $k(l\\boldsymbol v)=(kl)\\boldsymbol v$，单位元 $1\\cdot\\boldsymbol v=\\boldsymbol v$。前两条（加法封闭 $+$ 数乘封闭）是最核心的判定条件，后六条是保证这些运算“行为正常”的底层规则。在 $R^{n}$ 中它们都自然成立。\n\n**线性空间的基本性质**\n\n**（零元素唯一）** 线性空间中的零元素是唯一的。若 $\\boldsymbol{0}_{1}$ 和 $\\boldsymbol{0}_{2}$ 都是零元，则 $\\boldsymbol{0}_{1}=\\boldsymbol{0}_{1}+\\boldsymbol{0}_{2}=\\boldsymbol{0}_{2}+\\boldsymbol{0}_{1}=\\boldsymbol{0}_{2}$。用了加法的交换律和零元的定义。\n\n**（负元素唯一）** 每个向量的负元素是唯一的。若 $(-\\boldsymbol v)_{1}$ 和 $(-\\boldsymbol v)_{2}$ 都是 $\\boldsymbol v$ 的负元，则 $\\boldsymbol v+(-\\boldsymbol v)_{1}=\\boldsymbol{0}=\\boldsymbol v+(-\\boldsymbol v)_{2}$。两边加 $(-\\boldsymbol v)_{1}$，得 $(-\\boldsymbol v)_{1}=(-\\boldsymbol v)_{2}$。\n\n**（$0\\cdot\\boldsymbol v=\\boldsymbol{0}$）** 标量 $0$ 乘任何向量得到零向量。$0\\cdot\\boldsymbol v=(0+0)\\cdot\\boldsymbol v=0\\cdot\\boldsymbol v+0\\cdot\\boldsymbol v$。两边加 $-0\\cdot\\boldsymbol v$，得 $\\boldsymbol{0}=0\\cdot\\boldsymbol v$。\n\n**（$k\\cdot\\boldsymbol{0}=\\boldsymbol{0}$）** 任何标量乘零向量等于零向量。$k\\cdot\\boldsymbol{0}=k\\cdot(\\boldsymbol{0}+\\boldsymbol{0})=k\\cdot\\boldsymbol{0}+k\\cdot\\boldsymbol{0}$。两边加 $-k\\cdot\\boldsymbol{0}$，得 $\\boldsymbol{0}=k\\cdot\\boldsymbol{0}$。\n\n**（$(-1)\\cdot\\boldsymbol v=-\\boldsymbol v$）** 标量 $-1$ 乘向量得到该向量的负元。$\\boldsymbol v+(-1)\\cdot\\boldsymbol v=1\\cdot\\boldsymbol v+(-1)\\cdot\\boldsymbol v=(1+(-1))\\cdot\\boldsymbol v=0\\cdot\\boldsymbol v=\\boldsymbol{0}$，$\\therefore(-1)\\cdot\\boldsymbol v$ 满足负元的定义，由唯一性知 $(-1)\\cdot\\boldsymbol v=-\\boldsymbol v$。\n\n**（子空间）** $V$ 的子集 $H$ 称为子空间，当且仅当满足三条：\\n1. 零向量在 $H$ 中（不含零向量的子集不可能是子空间）。\\n2. 加法封闭：$\\boldsymbol u,\\boldsymbol v\\in H\\Rightarrow\\boldsymbol u+\\boldsymbol v\\in H$。\\n3. 数乘封闭：$\\boldsymbol v\\in H,\\ k\\in R\\Rightarrow k\\boldsymbol v\\in H$。\n\n几何理解：$R^{3}$ 中的子空间只有四种——$\\{\\boldsymbol{0}\\}$（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n\n子空间的基本性质：任何子空间必含零向量；两个子空间的交集仍是子空间；子空间的维数 $\\leq$ 原空间的维数，即 $\\dim(H)\\leq\\dim(V)$。一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n\n**（子空间交集仍是子空间）** 设 $H_{1},H_{2}$ 是 $V$ 的子空间。考虑 $H=H_{1}\\cap H_{2}$。$\\boldsymbol{0}\\in H_{1}$ 且 $\\boldsymbol{0}\\in H_{2}\\Rightarrow\\boldsymbol{0}\\in H$。取 $\\boldsymbol u,\\boldsymbol v\\in H$，则它们同时在 $H_{1}$ 和 $H_{2}$ 中；$H_{1}$、$H_{2}$ 加法封闭，$\\therefore\\boldsymbol u+\\boldsymbol v\\in H$。同理，$k\\boldsymbol u\\in H_{1}$ 且 $k\\boldsymbol u\\in H_{2}\\Rightarrow k\\boldsymbol u\\in H$，$\\therefore H$ 是子空间。注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 $x$ 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n例 $4$（子空间判定——过原点的平面）：$H=\\{(x,y,z)\\mid x+y+z=0\\}$ 是 $R^{3}$ 的子空间。$0+0+0=0$，零向量在 $H$ 中；两组满足条件的坐标相加仍满足和为 $0$；$k(x,y,z)=(kx,ky,kz)$ 且 $kx+ky+kz=k(x+y+z)=0$，数乘封闭。几何上：这是过原点的一个平面。\n\n分层例题：$H=\\{(x,0)\\mid x\\in R\\}$ 是 $R^{2}$ 的子空间：零向量在其中，且对加法、数乘封闭（$x$ 轴）。$H=\\{(x,1)\\mid x\\in R\\}$ 不是：$\\boldsymbol{0}=(0,0)\\notin H$。$H=\\{(x,x^{2})\\mid x\\in R\\}$ 不是：$(1,1),(2,4)\\in H$，但 $(1,1)+(2,4)=(3,5)$，$5\\ne3^{2}=9$，加法不封闭。\n\n**（列空间）** $\\operatorname{Col}(\\boldsymbol A)=\\{\\boldsymbol A\\boldsymbol x\\mid\\boldsymbol x\\in R^{n}\\}=\\boldsymbol A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n\n**（零空间）** $\\operatorname{Null}(\\boldsymbol A)=\\{\\boldsymbol x\\mid\\boldsymbol A\\boldsymbol x=\\boldsymbol{0}\\}=$ 被变换压缩到零的全部输入。零空间也是子空间。\n\n几何直观：$$\\boldsymbol A=\\begin{pmatrix}1&0\\\\0&0\\end{pmatrix}$$（投影到 $x$ 轴）。$\\operatorname{Col}(\\boldsymbol A)=x$ 轴，能输出到的所有地方；$\\operatorname{Null}(\\boldsymbol A)=y$ 轴，被压到零的全部方向。\n\n**（列空间和零空间为子空间）** $\\operatorname{Col}(\\boldsymbol A)$ 含零向量：$\\boldsymbol{0}=\\boldsymbol A\\boldsymbol{0}\\in\\operatorname{Col}(\\boldsymbol A)$。若 $\\boldsymbol A\\boldsymbol x_{1},\\boldsymbol A\\boldsymbol x_{2}\\in\\operatorname{Col}(\\boldsymbol A)$，则 $\\boldsymbol A\\boldsymbol x_{1}+\\boldsymbol A\\boldsymbol x_{2}=\\boldsymbol A(\\boldsymbol x_{1}+\\boldsymbol x_{2})\\in\\operatorname{Col}(\\boldsymbol A)$；$k(\\boldsymbol A\\boldsymbol x)=\\boldsymbol A(k\\boldsymbol x)\\in\\operatorname{Col}(\\boldsymbol A)$。$\\operatorname{Null}(\\boldsymbol A)$ 含零向量：$\\boldsymbol A\\boldsymbol{0}=\\boldsymbol{0}$。若 $\\boldsymbol x_{1},\\boldsymbol x_{2}\\in\\operatorname{Null}(\\boldsymbol A)$，则 $\\boldsymbol A(\\boldsymbol x_{1}+\\boldsymbol x_{2})=\\boldsymbol{0}$；$\\boldsymbol A(k\\boldsymbol x)=k\\boldsymbol A\\boldsymbol x=k\\boldsymbol{0}=\\boldsymbol{0}$。\n\n自检：$R^{2}$ 中不经过原点的直线是子空间吗？为什么？判断 $H=\\{(x,2x)\\mid x\\in R\\}$ 是否为 $R^{2}$ 的子空间。$\\operatorname{Col}(\\boldsymbol A)$ 和 $\\operatorname{Null}(\\boldsymbol A)$ 分别描述变换的什么？它们为什么一定是子空间？",
+    "derivation": [],
+    "formula": "",
+    "geometric_meaning": "",
+    "intuition": "",
+    "invariants": [],
+    "pitfalls": [],
+    "read_guide": [],
+    "searchable_text": [
+      "线性空间",
+      "本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。",
+      "\\boldsymbol A=\\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&0\\end{pmatrix},\\quad \\operatorname{Null}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\quad \\operatorname{Col}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+      "### 4.1 线性空间与子空间\n#### 4.1.1 线性空间\n定义 4.1（线性空间 / 向量空间） 一个集合 V，如果满足两条核心规则，就称为一个线性空间：\n（1）加法封闭：$u, v \\in V \\Rightarrow u+v \\in V$\n（2）数乘封闭：$v \\in V, k \\in R \\Rightarrow kv \\in V$\n主例——$R^{n}$：所有 n 维实向量的集合。加法：分量相加；数乘：每个分量乘 k。结果仍在 $R^{n}$ 中$\\rightarrow R^{n}$ 是线性空间。\n其他例子：\n- 所有次数 $\\leq2$ 的多项式 $a+bx+cx^{2}$：两个多项式相加还是多项式，乘以常数仍是多项式 $\\rightarrow$ 构成线性空间\n- 所有 $2 \\times 2$ 矩阵：矩阵加法、数乘封闭 $\\rightarrow$ 构成线性空间\n线性空间 $=$ 对加法和数乘\"封闭\"的集合。核心不是元素是什么（向量、多项式、矩阵都行），而是加法和数乘的自由操作永不\"溢出\"这个集合。\n完整的 8 条公理（供参考，不要求背）：\n加法四条：交换律 $u+v=v+u$、结合律 $(u+v)+w=u+(v+w)$、存在零元 $v+0=v$、存在负元 $v+(-v)=0$\n数乘四条：分配律1 $k(u+v)=ku+kv$、分配律2 $(k+l)v=kv+lv$、结合律 $k(lv)=(kl)v$、单位元 $1 \\cdot v=v$\n前两条（加法封闭$+$数乘封闭）是最核心的判定条件，后六条是保证这些运算\"行为正常\"的底层规则。在 $R^{n}$ 中它们都自然成立。\n##### 线性空间的基本性质\n性质 1（零元素唯一）: 线性空间中的零元素是唯一的。\n性质 2（负元素唯一）: 每个向量的负元素是唯一的。\n性质 3（$0 \\cdot v = 0$）: 标量 0 乘任何向量得到零向量。\n性质 4（$k \\cdot 0 = 0$）: 任何标量乘零向量等于零向量。\n性质 5（$(-1) \\cdot v = -v$）: 标量 $-1$ 乘向量得到该向量的负元。\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。",
+      "证明: 若 $0_{1}$ 和 $0_{2}$ 都是零元，则 $0_{1} = 0_{1} + 0_{2} = 0_{2} + 0_{1} = 0_{2}$。用了加法的交换律和零元的定义。■\n证明: 若 $(-v)_{1}$ 和 $(-v)_{2}$ 都是 v 的负元，则 $v+(-v)_{1} = 0 = v+(-v)_{2}$。两边加 $(-v)_{1}$：$((-v)_{1}+v)+(-v)_{1} = ((-v)_{1}+v)+(-v)_{2} \\rightarrow (-v)_{1} = (-v)_{2}$。■\n证明: $0 \\cdot v = (0+0) \\cdot v = 0 \\cdot v + 0 \\cdot v$。两边加 $-0 \\cdot v$ 得 0 $= 0 \\cdot v$。■\n证明: $k \\cdot 0 = k \\cdot (0+0) = k \\cdot 0 + k \\cdot 0$。两边加 $-k \\cdot 0$ 得 0 $= k \\cdot 0$。■\n证明: $v + (-1) \\cdot v = 1 \\cdot v + (-1) \\cdot v = (1+(-1)) \\cdot v = 0 \\cdot v = 0 \\rightarrow (-1) \\cdot v$ 满足负元的定义，由唯一性知 $(-1) \\cdot v = -v$。■\n#### 4.1.2 子空间\n##### 性质 2 的证明（子空间交集仍是子空间）\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n##### 补充例题\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。\n#### 4.1.3 两大核心子空间：列空间与零空间\n##### 列空间和零空间为子空间的证明\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；",
+      "几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n几何上：这是过原点的一个平面。\n##### 分层例题\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向",
+      "diag_1_1_0",
+      "kernel_to_zero",
+      "image_xy_plane"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "definition",
+        "text": "",
+        "title": "定义"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "worked_examples",
+        "text": "",
+        "title": "数学案例"
+      }
+    ],
+    "summary": "线性空间是对加法和数乘封闭的集合。",
+    "symbol_roles": {
+      "A": "column_space",
+      "k": "kernel_vector",
+      "x": "input_vector_a"
+    },
+    "title": "线性空间",
+    "worked_examples": [
+      {
+        "calculation": [
+          "$$\\boldsymbol A=\\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&0\\end{pmatrix}$$",
+          "$$\\boldsymbol x_1=\\begin{pmatrix}2\\\\1\\\\3\\end{pmatrix},\\qquad \\boldsymbol x_2=\\begin{pmatrix}-2\\\\1\\\\2\\end{pmatrix},\\qquad \\boldsymbol x_3=\\begin{pmatrix}-1\\\\-2\\\\-2\\end{pmatrix}$$",
+          "$$\\boldsymbol A\\boldsymbol x_1=\\begin{pmatrix}2\\\\1\\\\0\\end{pmatrix},\\qquad \\boldsymbol A\\boldsymbol x_2=\\begin{pmatrix}-2\\\\1\\\\0\\end{pmatrix},\\qquad \\boldsymbol A\\boldsymbol x_3=\\begin{pmatrix}-1\\\\-2\\\\0\\end{pmatrix}$$",
+          "$$\\operatorname{Col}(\\boldsymbol A)=\\{\\boldsymbol A\\boldsymbol x\\mid\\boldsymbol x\\in R^{3}\\}=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)$$"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2.0,
+              1.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "given": [
+          [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            2,
+            1,
+            3
+          ]
+        ],
+        "id": "example.ch04.subspace.col-null.column-space",
+        "kind": "matrix_transform",
+        "result": [
+          2.0,
+          1.0,
+          0.0
+        ],
+        "title": "案例一：列空间——所有可能的输出"
+      },
+      {
+        "calculation": [
+          "$$\\boldsymbol A=\\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&0\\end{pmatrix}$$",
+          "$$\\boldsymbol k=\\begin{pmatrix}0\\\\0\\\\3\\end{pmatrix}$$",
+          "$$\\boldsymbol A\\boldsymbol k=\\begin{pmatrix}0\\\\0\\\\0\\end{pmatrix}$$",
+          "$$\\operatorname{Null}(\\boldsymbol A)=\\{\\boldsymbol x\\mid\\boldsymbol A\\boldsymbol x=\\boldsymbol{0}\\}=\\operatorname{span}(\\boldsymbol e_3)$$"
+        ],
+        "checks": [
+          {
+            "expected": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "given": [
+          [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          [
+            0,
+            0,
+            3
+          ]
+        ],
+        "id": "example.ch04.subspace.col-null.null-space",
+        "kind": "matrix_transform",
+        "result": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "title": "案例二：零空间——与平面垂直的输入被压成一点"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:5634e0482294bff8a14290a8a718764a06324fad5ced78459aa08197f4d01f57",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:3135755426784ce7b031d62cc76696fc1e4c5285a88bfd64e3ae7c387ed61812",
+    "source_hash": "sha256:8ffae19b0fa2ba7d238c1d80d061f36f418e5ef6256b22aefa5f5d9eb0909c61"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 4.1 线性空间与子空间\n\n#### 4.1.1 线性空间\n\n定义 4.1（线性空间 / 向量空间） 一个集合 V，如果满足两条核心规则，就称为一个线性空间：\n（1）加法封闭：$u, v \\in V \\Rightarrow u+v \\in V$\n（2）数乘封闭：$v \\in V, k \\in R \\Rightarrow kv \\in V$\n主例——$R^{n}$：所有 n 维实向量的集合。加法：分量相加；数乘：每个分量乘 k。结果仍在 $R^{n}$ 中$\\rightarrow R^{n}$ 是线性空间。\n其他例子：\n- 所有次数 $\\leq2$ 的多项式 $a+bx+cx^{2}$：两个多项式相加还是多项式，乘以常数仍是多项式 $\\rightarrow$ 构成线性空间\n- 所有 $2 \\times 2$ 矩阵：矩阵加法、数乘封闭 $\\rightarrow$ 构成线性空间\n线性空间 $=$ 对加法和数乘\"封闭\"的集合。核心不是元素是什么（向量、多项式、矩阵都行），而是加法和数乘的自由操作永不\"溢出\"这个集合。\n完整的 8 条公理（供参考，不要求背）：\n加法四条：交换律 $u+v=v+u$、结合律 $(u+v)+w=u+(v+w)$、存在零元 $v+0=v$、存在负元 $v+(-v)=0$\n数乘四条：分配律1 $k(u+v)=ku+kv$、分配律2 $(k+l)v=kv+lv$、结合律 $k(lv)=(kl)v$、单位元 $1 \\cdot v=v$\n前两条（加法封闭$+$数乘封闭）是最核心的判定条件，后六条是保证这些运算\"行为正常\"的底层规则。在 $R^{n}$ 中它们都自然成立。\n\n##### 线性空间的基本性质\n\n性质 1（零元素唯一）: 线性空间中的零元素是唯一的。\n证明: 若 $0_{1}$ 和 $0_{2}$ 都是零元，则 $0_{1} = 0_{1} + 0_{2} = 0_{2} + 0_{1} = 0_{2}$。用了加法的交换律和零元的定义。■\n性质 2（负元素唯一）: 每个向量的负元素是唯一的。\n证明: 若 $(-v)_{1}$ 和 $(-v)_{2}$ 都是 v 的负元，则 $v+(-v)_{1} = 0 = v+(-v)_{2}$。两边加 $(-v)_{1}$：$((-v)_{1}+v)+(-v)_{1} = ((-v)_{1}+v)+(-v)_{2} \\rightarrow (-v)_{1} = (-v)_{2}$。■\n性质 3（$0 \\cdot v = 0$）: 标量 0 乘任何向量得到零向量。\n证明: $0 \\cdot v = (0+0) \\cdot v = 0 \\cdot v + 0 \\cdot v$。两边加 $-0 \\cdot v$ 得 0 $= 0 \\cdot v$。■\n性质 4（$k \\cdot 0 = 0$）: 任何标量乘零向量等于零向量。\n证明: $k \\cdot 0 = k \\cdot (0+0) = k \\cdot 0 + k \\cdot 0$。两边加 $-k \\cdot 0$ 得 0 $= k \\cdot 0$。■\n性质 5（$(-1) \\cdot v = -v$）: 标量 $-1$ 乘向量得到该向量的负元。\n证明: $v + (-1) \\cdot v = 1 \\cdot v + (-1) \\cdot v = (1+(-1)) \\cdot v = 0 \\cdot v = 0 \\rightarrow (-1) \\cdot v$ 满足负元的定义，由唯一性知 $(-1) \\cdot v = -v$。■\n\n#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。\n\n#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。",
+    "heading_level": 3,
+    "heading_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.1 线性空间与子空间"
+    ],
+    "neighboring_titles": [
+      "4.0 前置铺垫：回顾 1-3 章",
+      "4.2 线性组合、线性相关与线性无关"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:8ffae19b0fa2ba7d238c1d80d061f36f418e5ef6256b22aefa5f5d9eb0909c61",
+    "source_path": [
+      "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+      "4.1 线性空间与子空间",
+      "线性空间"
+    ],
+    "spans": [
+      {
+        "end_line": 1257,
+        "fingerprint": "sha256:8ffae19b0fa2ba7d238c1d80d061f36f418e5ef6256b22aefa5f5d9eb0909c61",
+        "heading_path": [
+          "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+          "4.1 线性空间与子空间"
+        ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.1 线性空间与子空间::1::sha256:8ffae19b0fa2ba7d238c1d80d061f36f418e5ef6256b22aefa5f5d9eb0909c61",
+        "start_line": 1160,
+        "text": "### 4.1 线性空间与子空间\n\n#### 4.1.1 线性空间\n\n定义 4.1（线性空间 / 向量空间） 一个集合 V，如果满足两条核心规则，就称为一个线性空间：\n（1）加法封闭：$u, v \\in V \\Rightarrow u+v \\in V$\n（2）数乘封闭：$v \\in V, k \\in R \\Rightarrow kv \\in V$\n主例——$R^{n}$：所有 n 维实向量的集合。加法：分量相加；数乘：每个分量乘 k。结果仍在 $R^{n}$ 中$\\rightarrow R^{n}$ 是线性空间。\n其他例子：\n- 所有次数 $\\leq2$ 的多项式 $a+bx+cx^{2}$：两个多项式相加还是多项式，乘以常数仍是多项式 $\\rightarrow$ 构成线性空间\n- 所有 $2 \\times 2$ 矩阵：矩阵加法、数乘封闭 $\\rightarrow$ 构成线性空间\n线性空间 $=$ 对加法和数乘\"封闭\"的集合。核心不是元素是什么（向量、多项式、矩阵都行），而是加法和数乘的自由操作永不\"溢出\"这个集合。\n完整的 8 条公理（供参考，不要求背）：\n加法四条：交换律 $u+v=v+u$、结合律 $(u+v)+w=u+(v+w)$、存在零元 $v+0=v$、存在负元 $v+(-v)=0$\n数乘四条：分配律1 $k(u+v)=ku+kv$、分配律2 $(k+l)v=kv+lv$、结合律 $k(lv)=(kl)v$、单位元 $1 \\cdot v=v$\n前两条（加法封闭$+$数乘封闭）是最核心的判定条件，后六条是保证这些运算\"行为正常\"的底层规则。在 $R^{n}$ 中它们都自然成立。\n\n##### 线性空间的基本性质\n\n性质 1（零元素唯一）: 线性空间中的零元素是唯一的。\n证明: 若 $0_{1}$ 和 $0_{2}$ 都是零元，则 $0_{1} = 0_{1} + 0_{2} = 0_{2} + 0_{1} = 0_{2}$。用了加法的交换律和零元的定义。■\n性质 2（负元素唯一）: 每个向量的负元素是唯一的。\n证明: 若 $(-v)_{1}$ 和 $(-v)_{2}$ 都是 v 的负元，则 $v+(-v)_{1} = 0 = v+(-v)_{2}$。两边加 $(-v)_{1}$：$((-v)_{1}+v)+(-v)_{1} = ((-v)_{1}+v)+(-v)_{2} \\rightarrow (-v)_{1} = (-v)_{2}$。■\n性质 3（$0 \\cdot v = 0$）: 标量 0 乘任何向量得到零向量。\n证明: $0 \\cdot v = (0+0) \\cdot v = 0 \\cdot v + 0 \\cdot v$。两边加 $-0 \\cdot v$ 得 0 $= 0 \\cdot v$。■\n性质 4（$k \\cdot 0 = 0$）: 任何标量乘零向量等于零向量。\n证明: $k \\cdot 0 = k \\cdot (0+0) = k \\cdot 0 + k \\cdot 0$。两边加 $-k \\cdot 0$ 得 0 $= k \\cdot 0$。■\n性质 5（$(-1) \\cdot v = -v$）: 标量 $-1$ 乘向量得到该向量的负元。\n证明: $v + (-1) \\cdot v = 1 \\cdot v + (-1) \\cdot v = (1+(-1)) \\cdot v = 0 \\cdot v = 0 \\rightarrow (-1) \\cdot v$ 满足负元的定义，由唯一性知 $(-1) \\cdot v = -v$。■\n\n#### 4.1.2 子空间\n\n定义 4.2（子空间） V 的子集 H 称为子空间，当且仅当满足三条：\n1. 零向量在 H 中（不含零向量的子集不可能是子空间）\n2. 加法封闭：$u, v \\in H \\Rightarrow u+v \\in H$\n3. 数乘封闭：$v \\in H, k \\in R \\Rightarrow kv \\in H$\n几何理解：$R^{3}$ 中的子空间只有四种——{0}（原点）、过原点的直线、过原点的平面、整个 $R^{3}$。不经过原点的直线/平面不是子空间（不包含零向量）。\n子空间的基本性质：\n1. 任何子空间必含零向量\n2. 两个子空间的交集仍是子空间\n3. 子空间的维数 $\\leq$ 原空间的维数（$\\dim(H) \\leq \\dim(V)$）\n性质 3 直观：一个平面（$\\dim=2$）的子空间只能是直线（$\\dim=1$）、原点（$\\dim=0$）、或这个平面本身（$\\dim=2$），不可能出现 $\\dim=3$ 的子空间。\n一句话动机：给一组向量，哪些是「骨干」？哪些是「冗余」？线性无关回答：没有一根骨头是多余的。\n本节目标：掌握线性相关/无关的判定方法（拼矩阵解$Ax=0$），理解极大无关组和秩的关系。\n\n##### 性质 2 的证明（子空间交集仍是子空间）\n\n设 $H_{1}, H_{2}$ 是 V 的子空间。考虑 $H = H_{1} \\cap H_{2}$。\n① 零：$0\\in H_{1}$ 且 $0\\in H_{2} \\rightarrow 0\\in H ✓$；\n② 加法：取 $u,v\\in H$，则 u,v 同时在 $H_{1}$ 和 $H_{2}$ 中。$H_{1}$ 加法封闭 $\\rightarrow u+v\\in H_{1}$。$H_{2}$ 加法封闭 $\\rightarrow u+v\\in H_{2}$。故 $u+v\\in H ✓$；\n③ 数乘：同理，$ku \\in H_{1}$ 且 $ku \\in H_{2} \\rightarrow ku\\in H ✓$。$\\rightarrow H$ 是子空间。■\n注：子空间的并集一般不是子空间。例如 $R^{2}$ 中 x 轴 $\\cup y$ 轴，取 $(1,0)+(0,1)=(1,1)$ 不在并集中——加法不封闭。\n\n##### 补充例题\n\n例4（子空间判定 — 过原点的平面）: $H = \\{(x,y,z) \\mid x + y + z = 0\\}$ 是 $R^{3}$ 的子空间吗？\n解: $① 0+0+0=0 \\rightarrow$ 零向量在 H 中 ✓；\n$② (x_{1},y_{1},z_{1})+(x_{2},y_{2},z_{2}) = (x_{1}+x_{2}, y_{1}+y_{2}, z_{1}+z_{2})$，$(x_{1}+x_{2})+(y_{1}+y_{2})+(z_{1}+z_{2}) = (x_{1}+y_{1}+z_{1})+(x_{2}+y_{2}+z_{2}) = 0+0 = 0 \\rightarrow$ 加法封闭 ✓；\n$③ k(x,y,z) = (kx,ky,kz)$，$kx+ky+kz = k(x+y+z) = 0 \\rightarrow$ 数乘封闭 ✓。$\\rightarrow$ 子空间。\n几何上：这是过原点的一个平面。\n\n##### 分层例题\n\n例1：$H = \\{(x,0) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n① 零向量 $(0,0)\\in H ✓$；② $(x_{1},0)+(x_{2},0)=(x_{1}+x_{2},0)\\in H ✓$；③ $k(x,0)=(kx,0)\\in H ✓ \\rightarrow$ 是（x轴）。\n例2：$H = \\{(x,1) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n零向量 $(0,0) \\notin H \\rightarrow$ 不是。（所有$y=1$的点，不含原点）\n例3：$H = \\{(x, x^{2}) \\mid x \\in R\\}$ 是 $R^{2}$ 的子空间吗？\n$(1,1)\\in H, (2,4)\\in H$。但 $(1,1)+(2,4)=(3,5)$，$5\\neq 3^{2}=9 \\rightarrow (3,5)\\notin H \\rightarrow$ 加法不封闭 $\\rightarrow$ 不是子空间。\n\n#### 4.1.3 两大核心子空间：列空间与零空间\n\n定义 4.3（列空间） $\\operatorname{Col}(A) = \\{Ax \\mid x \\in R^{n}\\} = A$ 所有列向量的全部线性组合 $=$ 所有可能的输出。\n列空间是子空间（含零向量 $+$ 加法/数乘封闭）。\n定义 4.4（零空间） $\\operatorname{Null}(A) = \\{x \\mid Ax = 0\\} =$ 被变换压缩到零的全部输入。\n零空间也是子空间。\n几何直观：\n$A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到 x 轴）\n$\\operatorname{Col}(A) = x$ 轴 $\\leftarrow$ 能输出到的所有地方\n$\\operatorname{Null}(A) = y$ 轴 $\\leftarrow$ 被压到零的全部方向\n\n##### 列空间和零空间为子空间的证明\n\nCol(A) 是子空间的证明: $① 0 = A \\cdot 0 \\in \\operatorname{Col}(A)$；\n② 加法：$A \\cdot x_{1}\\in\\operatorname{Col}(A), A \\cdot x_{2}\\in\\operatorname{Col}(A) \\rightarrow A \\cdot x_{1}+A \\cdot x_{2} = A \\cdot (x_{1}+x_{2}) \\in \\operatorname{Col}(A) ✓$；\n③ 数乘：$k \\cdot (A \\cdot x) = A \\cdot (kx) \\in \\operatorname{Col}(A) ✓$。$\\rightarrow \\operatorname{Col}(A)$ 是子空间。\nNull(A) 是子空间的证明: $① A \\cdot 0 = 0 \\rightarrow 0 \\in \\operatorname{Null}(A)$；\n一句话动机：基是「最小的完整尺子组」——少了量不全，多了有冗余。维数是「几把尺子就够」。\n本节目标：理解基的两个条件，掌握坐标的求法，知道维数的含义。\n② 加法：$x_{1},x_{2}\\in\\operatorname{Null}(A) \\rightarrow A \\cdot (x_{1}+x_{2}) = 0 \\rightarrow x_{1}+x_{2}\\in\\operatorname{Null}(A) ✓$；\n③ 数乘：$A \\cdot (kx) = k \\cdot A \\cdot x = k \\cdot 0 = 0 \\rightarrow kx\\in\\operatorname{Null}(A) ✓$。$\\rightarrow \\operatorname{Null}(A)$ 是子空间。"
+      }
+    ]
+  },
+  "status": "draft",
+  "teaching_profile": {
+    "minimum_level": 2,
+    "required_sections": [
+      "definition",
+      "worked_examples"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch04.subspace.col-null",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.column_space",
+        "kind": "subspace",
+        "label": "Col(A)",
+        "role": "column_space",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.null_space",
+        "kind": "subspace",
+        "label": "Null(A)",
+        "role": "null_space",
+        "value": [
+          [
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.input_vector_a",
+        "kind": "vector",
+        "label": "x1",
+        "role": "input_vector_a",
+        "value": [
+          2.0,
+          1.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.output_vector_a",
+        "kind": "vector",
+        "label": "Ax1",
+        "role": "output_vector_a",
+        "value": [
+          2.0,
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.input_vector_b",
+        "kind": "vector",
+        "label": "x2",
+        "role": "input_vector_b",
+        "value": [
+          -2.0,
+          1.0,
+          2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.output_vector_b",
+        "kind": "vector",
+        "label": "Ax2",
+        "role": "output_vector_b",
+        "value": [
+          -2.0,
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.input_vector_c",
+        "kind": "vector",
+        "label": "x3",
+        "role": "input_vector_c",
+        "value": [
+          -1.0,
+          -2.0,
+          -2.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.output_vector_c",
+        "kind": "vector",
+        "label": "Ax3",
+        "role": "output_vector_c",
+        "value": [
+          -1.0,
+          -2.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.kernel_vector",
+        "kind": "vector",
+        "label": "k",
+        "role": "kernel_vector",
+        "value": [
+          0.0,
+          0.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.subspace.col-null.zero",
+        "kind": "point",
+        "label": "0",
+        "role": "zero",
+        "value": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.projection_a",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            2.0,
+            1.0,
+            0.0
+          ],
+          "input_vector": [
+            2.0,
+            1.0,
+            3.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.col-null.input_vector_a",
+        "target_ref": "entity.ch04.subspace.col-null.output_vector_a"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.projection_b",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            -2.0,
+            1.0,
+            0.0
+          ],
+          "input_vector": [
+            -2.0,
+            1.0,
+            2.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.col-null.input_vector_b",
+        "target_ref": "entity.ch04.subspace.col-null.output_vector_b"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.projection_c",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            -1.0,
+            -2.0,
+            0.0
+          ],
+          "input_vector": [
+            -1.0,
+            -2.0,
+            -2.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.col-null.input_vector_c",
+        "target_ref": "entity.ch04.subspace.col-null.output_vector_c"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.subspace.col-null"
+        ],
+        "id": "relation.ch04.subspace.col-null.collapse",
+        "kind": "maps_to",
+        "parameters": {
+          "expected_result": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "input_vector": [
+            0.0,
+            0.0,
+            3.0
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch04.subspace.col-null.kernel_vector",
+        "target_ref": "entity.ch04.subspace.col-null.zero"
+      }
+    ],
+    "scene_family": "subspace_region",
+    "scene_kind": "3d",
+    "stages": [
+      {
+        "caption": "\\boldsymbol A=\\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&0\\end{pmatrix},\\quad \\operatorname{Null}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\quad \\operatorname{Col}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+        "expected_invariants": [
+          "diag_1_1_0",
+          "image_xy_plane"
+        ],
+        "id": "stage.ch04.subspace.col-null.column_space",
+        "input_entity_refs": [
+          "entity.ch04.subspace.col-null.input_vector_a",
+          "entity.ch04.subspace.col-null.input_vector_b",
+          "entity.ch04.subspace.col-null.input_vector_c",
+          "entity.ch04.subspace.col-null.column_space"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.subspace.col-null.output_vector_a",
+          "entity.ch04.subspace.col-null.output_vector_b",
+          "entity.ch04.subspace.col-null.output_vector_c"
+        ],
+        "relation_refs": [
+          "relation.ch04.subspace.col-null.projection_a",
+          "relation.ch04.subspace.col-null.projection_b",
+          "relation.ch04.subspace.col-null.projection_c"
+        ],
+        "title": "列空间：所有可能的输出"
+      },
+      {
+        "caption": "\\boldsymbol A=\\begin{pmatrix}1&0&0\\\\0&1&0\\\\0&0&0\\end{pmatrix},\\quad \\operatorname{Null}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_3),\\quad \\operatorname{Col}(\\boldsymbol A)=\\operatorname{span}(\\boldsymbol e_1,\\boldsymbol e_2)",
+        "expected_invariants": [
+          "kernel_to_zero"
+        ],
+        "id": "stage.ch04.subspace.col-null.null_space",
+        "input_entity_refs": [
+          "entity.ch04.subspace.col-null.column_space",
+          "entity.ch04.subspace.col-null.null_space",
+          "entity.ch04.subspace.col-null.kernel_vector"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [
+          "entity.ch04.subspace.col-null.zero"
+        ],
+        "relation_refs": [
+          "relation.ch04.subspace.col-null.collapse"
+        ],
+        "title": "零空间：与平面垂直的方向被压成一点"
+      }
+    ]
+  }
+}

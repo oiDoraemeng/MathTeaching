@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:81f2b37870f51d4bdcad51df0ccd88bfacfb6bbe5125dad53bf8a027fbc99c16",
+  "artifact_digest": "sha256:0e92b2988c71fc7da34f9a09a26ebe22536fbe5bc81659db7f368bdab6e17bd8",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:edd5d59b52533ff1bc113731a14fbf0c86c7281b63035f954d885f1fc3a25763",
@@ -386,7 +386,7 @@
           -0.4,
           1.45
         ],
-        "text": "A=[[2,0],[0,1]]"
+        "text": "$A=\\left[\\genfrac{}{}{0}{}{2\\quad 0}{0\\quad 1}\\right]$"
       },
       {
         "alias": "sem__mv_grid_rotate__staged",
@@ -426,7 +426,7 @@
           -1.4,
           1.45
         ],
-        "text": "R=[[0,-1],[1,0]]"
+        "text": "$R=\\left[\\genfrac{}{}{0}{}{0\\quad -1}{1\\quad \\ 0}\\right]$"
       },
       {
         "alias": "sem__mv_grid_combo__staged",
@@ -466,7 +466,7 @@
           -1.4,
           2.45
         ],
-        "text": "B=[[0,-1],[2,0]]"
+        "text": "$B=\\left[\\genfrac{}{}{0}{}{0\\quad -1}{2\\quad \\ 0}\\right]$"
       },
       {
         "bounds": [
@@ -483,10 +483,10 @@
     "summary": "拉伸、旋转与缩放的矩阵图像",
     "version": 1
   },
-  "plan_digest": "sha256:c8d35032796a651d9a227938a6395b44e49839905150b972d8dff3a9d9e3379d",
+  "plan_digest": "sha256:50150bc4e91418d6cb029f07d44a53e80354133dcd3efe256df9ae95c9415984",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 19,
+  "revision": 20,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:e75201702eb0c61f55827cf094c28b02e0564fdb0fbc76f72d4fe150317b852c",

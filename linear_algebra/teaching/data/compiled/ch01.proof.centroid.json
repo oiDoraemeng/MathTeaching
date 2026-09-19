@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:7795f59c14cf353cfbc390ca50265a4a540b92ce21c019fd0a568f0a067ffb0b",
+  "artifact_digest": "sha256:8127e65376d0ece255e7ed67de68d6725c13b36cdb2c9f21adc8d9bfe12a543f",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:f1f2e06ef429919736757a5196ae4470701b0fbf672ce407a22ec3097f926118",
@@ -18,7 +18,7 @@
           ],
           [
             4.5,
-            0.0
+            0.6
           ],
           [
             1.5,
@@ -39,7 +39,7 @@
         "alias": "proof__point_B",
         "coordinates": [
           4.5,
-          0.0
+          0.6
         ],
         "name": "B",
         "op": "point.upsert"
@@ -57,7 +57,7 @@
         "alias": "proof__point_D",
         "coordinates": [
           3.0,
-          1.5
+          1.8
         ],
         "name": "D",
         "op": "point.upsert"
@@ -65,8 +65,8 @@
       {
         "alias": "proof__point_E",
         "coordinates": [
-          0.75,
-          1.5
+          2.25,
+          0.3
         ],
         "name": "E",
         "op": "point.upsert"
@@ -74,8 +74,8 @@
       {
         "alias": "proof__point_F",
         "coordinates": [
-          2.25,
-          0.0
+          0.75,
+          1.5
         ],
         "name": "F",
         "op": "point.upsert"
@@ -84,23 +84,33 @@
         "alias": "proof__point_G",
         "coordinates": [
           2.0,
-          1.0
+          1.2
         ],
         "name": "G",
         "op": "point.upsert"
       },
       {
         "alias": "proof__side_a",
-        "color": "#6B7280",
+        "color": "#2F6BFF",
         "end": "proof__point_B",
-        "kind": "segment",
+        "kind": "vector",
         "op": "linear.upsert",
-        "role": "construction",
+        "role": "primary",
         "start": "proof__point_A",
         "style": "solid"
       },
       {
         "alias": "proof__side_b",
+        "color": "#F08A24",
+        "end": "proof__point_C",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_A",
+        "style": "solid"
+      },
+      {
+        "alias": "proof__side_bc",
         "color": "#6B7280",
         "end": "proof__point_C",
         "kind": "segment",
@@ -110,20 +120,10 @@
         "style": "solid"
       },
       {
-        "alias": "proof__side_c",
-        "color": "#6B7280",
-        "end": "proof__point_A",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "role": "construction",
-        "start": "proof__point_C",
-        "style": "solid"
-      },
-      {
         "alias": "proof__median_a",
         "color": "#2A9D8F",
         "end": "proof__point_D",
-        "kind": "segment",
+        "kind": "vector",
         "op": "linear.upsert",
         "role": "primary",
         "start": "proof__point_A",
@@ -133,28 +133,28 @@
         "alias": "proof__median_b",
         "color": "#2A9D8F",
         "end": "proof__point_E",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "proof__point_B",
-        "style": "dashed"
-      },
-      {
-        "alias": "proof__median_c",
-        "color": "#2A9D8F",
-        "end": "proof__point_F",
-        "kind": "segment",
+        "kind": "vector",
         "op": "linear.upsert",
         "role": "primary",
         "start": "proof__point_C",
         "style": "dashed"
       },
       {
+        "alias": "proof__median_c",
+        "color": "#2A9D8F",
+        "end": "proof__point_F",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "proof__point_B",
+        "style": "dashed"
+      },
+      {
         "alias": "proof__note_centroid",
         "op": "annotation.upsert",
         "position": [
-          1.660997,
-          0.428006
+          1.314782,
+          1.208697
         ],
         "text": "AG : GD = 2 : 1"
       },
@@ -176,10 +176,10 @@
     "summary": "三角形重心定理",
     "version": 1
   },
-  "plan_digest": "sha256:5de6421a77a36b5a797f748c0e6d8b522de19ca6bf4431183b80603e000a3b7c",
+  "plan_digest": "sha256:e957d4ef26dc4b21b0a6cfa67b582451e14fd9eb0636d3e4bfcfae683978c3d6",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 19,
+  "revision": 20,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:3b0b668a61fcc041c6bf6b27cc98a127cf2743ab2ec11b5546419b8dc4316c06",
@@ -192,11 +192,23 @@
       "caption": "",
       "id": "stage.case.ch01.proof.centroid.1",
       "layout": "overlay",
-      "title": "案例一：三条中线交于重心",
+      "title": "三角形重心定理",
       "visible_aliases": [
+        "proof__region",
+        "proof__point_A",
+        "proof__point_B",
+        "proof__point_C",
+        "proof__point_D",
+        "proof__point_E",
+        "proof__point_F",
+        "proof__point_G",
         "proof__side_a",
         "proof__side_b",
-        "proof__region"
+        "proof__side_bc",
+        "proof__median_a",
+        "proof__median_b",
+        "proof__median_c",
+        "proof__note_centroid"
       ],
       "visible_refs": [
         "proof_a",

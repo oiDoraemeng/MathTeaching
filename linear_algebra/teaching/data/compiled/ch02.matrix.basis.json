@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:8908a3d12635e131d196eafa319d5574f8f6f3a9a8d2fefdc24c610ba65efecb",
+  "artifact_digest": "sha256:da301e1afbe9f0dc7e3248cd5c6caa403ad4a2e27e40bae15cdccfbe0d4416d0",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:2bff479788502a9884aa81bb6991c08de85d5d3a961c4b98616b1edffc69105c",
@@ -180,7 +180,7 @@
           -1.4,
           1.45
         ],
-        "text": "A=[[0,-1],[1,0]]"
+        "text": "$A=\\left[\\genfrac{}{}{0}{}{0\\quad -1}{1\\quad \\ 0}\\right]$"
       },
       {
         "alias": "sem__mv_basis_grid_b",
@@ -205,7 +205,7 @@
           -5.4,
           3.45
         ],
-        "text": "B=[[-3,-5],[2,3]]"
+        "text": "$B=\\left[\\genfrac{}{}{0}{}{-3\\quad -5}{\\ 2\\quad \\ 3}\\right]$"
       },
       {
         "bounds": [
@@ -222,10 +222,10 @@
     "summary": "矩阵的列与新基坐标",
     "version": 1
   },
-  "plan_digest": "sha256:4825278e2c8287fa5eefcd0f74082f9d6759d7537575f1a1a986b417ff897a20",
+  "plan_digest": "sha256:f47256a7ec2ea5d36f38a034cc3bda634492135520123b96428302391b082e40",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 15,
+  "revision": 16,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:ef6de7167277e0291b976d335c4a9c431c26d6aa51cb06e8d39f993d7806e088",

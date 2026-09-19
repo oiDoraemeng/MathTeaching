@@ -205,12 +205,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:2bd0ec0f55e043e08d040d7897375f7687b20c0ade8395191631836453658bd1",
+    "artifact_digest": "sha256:bb2c6940ed48a0046ab8c4c8ad8141294325a96e4026fa67b872aea4cd220621",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:405afe1b69b55f0e12e9024d62f0c0dfa29d850254e256a8d8dc9ab1847eb334",
+    "raw_reply_digest": "sha256:a088fc9a1ab31e5530b5b76ffa79149b9c5d1cbc3febf7b5ba1b66abe8d6e792",
     "source_hash": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb"
   },
   "revision": 1,
@@ -235,7 +235,7 @@
     ],
     "spans": [
       {
-        "end_line": 1512,
+        "end_line": 1379,
         "fingerprint": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
         "heading_path": [
           "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
@@ -243,7 +243,7 @@
           "4.4.1 线性变换的定义"
         ],
         "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.1 线性变换的定义::1::sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
-        "start_line": 1507,
+        "start_line": 1374,
         "text": "#### 4.4.1 线性变换的定义\n\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。"
       }
     ]
