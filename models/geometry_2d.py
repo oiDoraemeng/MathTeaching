@@ -49,6 +49,10 @@ class Linear2D:
     # It must be part of the persisted model because command transactions
     # construct Linear2D directly from the operation payload.
     label_side: LinearLabelSide = "below"
+    # The text label may be repositioned without changing the underlying
+    # vector or segment.  Offsets are persisted with the geometric object.
+    label_offset_x: float = 0.0
+    label_offset_y: float = 0.0
     agent_alias: str | None = None
 
     def __post_init__(self) -> None:
@@ -61,6 +65,8 @@ class Linear2D:
             raise ValueError(f"Unsupported linear role: {self.role}")
         if self.label_side not in {"above", "below"}:
             raise ValueError(f"Unsupported linear label side: {self.label_side}")
+        self.label_offset_x = float(self.label_offset_x)
+        self.label_offset_y = float(self.label_offset_y)
 
 
 @dataclass

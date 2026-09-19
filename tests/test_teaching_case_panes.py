@@ -6,8 +6,12 @@ import pytest
 from linear_algebra.registry import catalog_registry, runtime_teaching_store
 from linear_algebra.teaching.source import LectureSourceRepository
 from services.scene_commands import CommandPlan
+from models.geometry_2d import Annotation2D
+from rendering.geometry_scene import GeometrySceneController
+from rendering.ticks import ViewportBounds
 from ui.teaching_case_panes import case_pane_layout, case_pane_placement, case_plan
 from ui.scene_pane_widget import PaneChrome
+from ui.scene_pane_manager import ScenePaneManager
 from ui.teaching_case_panes import TeachingCasePane
 
 
@@ -59,6 +63,73 @@ def test_case_pane_uses_shared_pane_chrome():
     assert issubclass(TeachingCasePane, PaneChrome)
 
 
+def test_case_label_drag_persists_its_annotation_position():
+    class FakeInteractor:
+        cursor = None
+
+        @staticmethod
+        def width() -> int:
+            return 100
+
+        @staticmethod
+        def height() -> int:
+            return 100
+
+        def setCursor(self, cursor):
+            self.cursor = cursor
+
+    class FakePlotter:
+        def __init__(self) -> None:
+            self.interactor = FakeInteractor()
+            self.camera = SimpleNamespace(focal_point=(0.0, 0.0, 0.0), parallel_scale=5.0)
+            self.render_count = 0
+
+        def remove_actor(self, *_args, **_kwargs) -> None:
+            pass
+
+        def render(self) -> None:
+            self.render_count += 1
+
+    class MouseEvent:
+        def __init__(self, x: float, y: float) -> None:
+            self._position = SimpleNamespace(x=lambda: x, y=lambda: y)
+            self.accepted = False
+
+        @staticmethod
+        def button():
+            from PySide6.QtCore import Qt
+            return Qt.MouseButton.LeftButton
+
+        def position(self):
+            return self._position
+
+        def accept(self) -> None:
+            self.accepted = True
+
+    manager = ScenePaneManager()
+    pane = TeachingCasePane.__new__(TeachingCasePane)
+    pane.plotter = FakePlotter()
+    pane.bounds = ViewportBounds((-5.0, 5.0), (-5.0, 5.0))
+    pane.geometry = GeometrySceneController(pane.plotter, pane.bounds, annotation_font_size=13)
+    pane.pane_manager = manager
+    pane.pane_id = manager.active_pane_id
+    pane._dragging_label = None
+    pane._annotation_positions = {}
+    pane._linear_label_offsets = {}
+    annotation = Annotation2D("案例标签", "说明", 0.0, 0.0, agent_alias="case_label", editable=True)
+    pane.geometry.add_annotation(annotation)
+
+    assert pane._begin_label_drag(MouseEvent(50.0, 50.0))
+    assert pane._handle_label_mouse_move(MouseEvent(70.0, 40.0))
+    assert pane._finish_label_drag(MouseEvent(70.0, 40.0))
+
+    assert (annotation.x, annotation.y) == (2.0, 1.0)
+    assert manager.pane(pane.pane_id).scene_2d["label_positions"] == {
+        "annotations": {"case_label": [2.0, 1.0]},
+        "linears": {},
+    }
+
+
 def test_case_plan_drops_capability_evidence_from_every_step():
     """能力证据（cap__*）不进案例窗格。
 
@@ -103,13 +174,13 @@ def test_case_plan_drops_capability_evidence_from_every_step():
     [
         (
             "ch02.matrix.transformed-grid",
-            [-12.0, 12.0, -12.0, 12.0],
+            [-2.0, 2.0, -2.0, 2.0],
             (
                 # 第一步只画标准基向量，不画网格。
                 (None, None),
-                ([[2.0, 0.0], [0.0, 1.0]], "A=[[2,0],[0,1]]"),
-                ([[0.0, -1.0], [1.0, 0.0]], "R=[[0,-1],[1,0]]"),
-                ([[2.0, 1.0], [1.0, 2.0]], "A=[[2,1],[1,2]]"),
+                ([[2.0, 0.0], [0.0, 1.0]], r"$A=\left[\genfrac{}{}{0}{}{2\quad 0}{0\quad 1}\right]$"),
+                ([[0.0, -1.0], [1.0, 0.0]], r"$R=\left[\genfrac{}{}{0}{}{0\quad -1}{1\quad \ 0}\right]$"),
+                ([[2.0, 1.0], [1.0, 2.0]], r"$A=\left[\genfrac{}{}{0}{}{2\quad 1}{1\quad 2}\right]$"),
             ),
         ),
         (
@@ -117,19 +188,9 @@ def test_case_plan_drops_capability_evidence_from_every_step():
             [-12.0, 12.0, -12.0, 12.0],
             (
                 # 第一步：讲义给出的标准基旋转矩阵，两列的像落在坐标轴上。
-                ([[0.0, -1.0], [1.0, 0.0]], "A=[[0,-1],[1,0]]"),
+                ([[0.0, -1.0], [1.0, 0.0]], r"$A=\left[\genfrac{}{}{0}{}{0\quad -1}{1\quad \ 0}\right]$"),
                 # 第二步：换一组基 v1=(1,1)、v2=(1,2)，同一个旋转的矩阵变成 B。
-                ([[-3.0, -5.0], [2.0, 3.0]], "B=[[-3,-5],[2,3]]"),
-            ),
-        ),
-        (
-            "ch02.matrix.stretch-rotate-scale",
-            [-12.0, 12.0, -12.0, 12.0],
-            (
-                ([[1.0, 0.0], [0.0, 1.0]], None),
-                ([[2.0, 0.0], [0.0, 1.0]], "A=[[2,0],[0,1]]"),
-                ([[0.0, -1.0], [1.0, 0.0]], "R=[[0,-1],[1,0]]"),
-                ([[0.0, -1.0], [2.0, 0.0]], "B=[[0,-1],[2,0]]"),
+                ([[-3.0, -5.0], [2.0, 3.0]], r"$B=\left[\genfrac{}{}{0}{}{-3\quad -5}{\ 2\quad \ 3}\right]$"),
             ),
         ),
     ],

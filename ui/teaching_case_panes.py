@@ -12,11 +12,13 @@ from dataclasses import dataclass
 from typing import Any
 
 from PySide6.QtCore import QEvent, Qt, Signal
+from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QFrame, QGridLayout, QLabel, QVBoxLayout, QWidget
 from pyvistaqt import QtInteractor
 
 from models.geometry_2d import Annotation2D, Linear2D, Point2D, operation_label
 from models.scene_mode import SceneAppearance
+from rendering import math_labels
 from rendering.geometry_scene import GeometrySceneController
 from rendering.ticks import ViewportBounds, visible_2d_bounds
 from rendering.two_d_scene import TwoDGuides, configure_2d_camera
@@ -32,6 +34,8 @@ PANE_LAYOUTS: dict[int, tuple[int, int]] = {
     3: (2, 2),
     4: (2, 2),
 }
+
+_CASE_LABEL_FONT_SIZE = math_labels.CASE_LABEL_FONT_SIZE
 
 
 def case_pane_layout(count: int) -> tuple[int, int]:
@@ -220,6 +224,9 @@ class TeachingCasePane(PaneChrome):
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self._selected = False
         self.pane_id, self.pane_manager = pane_id, pane_manager
+        self._dragging_label: tuple[str, str] | None = None
+        self._annotation_positions: dict[str, tuple[float, float]] = {}
+        self._linear_label_offsets: dict[str, tuple[float, float]] = {}
 
         layout = QVBoxLayout(content)
         layout.setContentsMargins(6, 6, 6, 6)
@@ -242,7 +249,11 @@ class TeachingCasePane(PaneChrome):
         self.bounds = ViewportBounds((-1.0, 1.0), (-1.0, 1.0))
         self.guides = TwoDGuides(self.plotter)
         self.coordinate_transform = None
-        self.geometry = GeometrySceneController(self.plotter, self.bounds)
+        self.geometry = GeometrySceneController(
+            self.plotter,
+            self.bounds,
+            annotation_font_size=_CASE_LABEL_FONT_SIZE,
+        )
         self._render_case()
 
     def set_selected(self, selected: bool) -> None:
@@ -257,14 +268,160 @@ class TeachingCasePane(PaneChrome):
         self.setFocus(Qt.FocusReason.OtherFocusReason)
 
     def eventFilter(self, watched: object, event: QEvent) -> bool:  # noqa: N802
-        if watched is self.plotter.interactor and event.type() == QEvent.Type.MouseButtonPress:
-            self.focus_pane()
-            self.focused.emit(str(getattr(self.case, "id", "")), self._stage_id())
-        if watched is self.plotter.interactor and event.type() in (
-            QEvent.Type.MouseMove, QEvent.Type.Resize, QEvent.Type.Wheel
-        ):
-            self._sync_viewport_bounds()
+        if watched is self.plotter.interactor:
+            if event.type() == QEvent.Type.MouseButtonPress and isinstance(event, QMouseEvent):
+                self.focus_pane()
+                self.focused.emit(str(getattr(self.case, "id", "")), self._stage_id())
+                if self._begin_label_drag(event):
+                    return True
+            if event.type() == QEvent.Type.MouseMove:
+                self._sync_viewport_bounds()
+                if isinstance(event, QMouseEvent) and self._handle_label_mouse_move(event):
+                    return True
+            if event.type() == QEvent.Type.MouseButtonRelease and isinstance(event, QMouseEvent):
+                if self._finish_label_drag(event):
+                    return True
+            if event.type() == QEvent.Type.Leave:
+                self._clear_label_hover()
+            if event.type() in (QEvent.Type.Resize, QEvent.Type.Wheel):
+                self._sync_viewport_bounds()
         return super().eventFilter(watched, event)
+
+    def _begin_label_drag(self, event: QMouseEvent) -> bool:
+        if event.button() != Qt.MouseButton.LeftButton:
+            return False
+        target = self._label_target_at(event)
+        if target is None:
+            return False
+        self._dragging_label = target
+        self.geometry.set_hover(target[1])
+        self._set_label_cursor(Qt.CursorShape.ClosedHandCursor)
+        self.plotter.render()
+        event.accept()
+        return True
+
+    def _handle_label_mouse_move(self, event: QMouseEvent) -> bool:
+        if self._dragging_label is not None:
+            coordinates = self._viewport_to_world(event)
+            if coordinates is None:
+                return True
+            kind, object_id = self._dragging_label
+            if kind == "annotation":
+                self.geometry.move_annotation(object_id, *coordinates)
+            else:
+                self.geometry.move_linear_label(object_id, *coordinates)
+            self._save_label_positions()
+            self.plotter.render()
+            event.accept()
+            return True
+        target = self._label_target_at(event)
+        target_id = target[1] if target is not None else None
+        if self.geometry.set_hover(target_id):
+            self.plotter.render()
+        self._set_label_cursor(
+            Qt.CursorShape.OpenHandCursor if target is not None else Qt.CursorShape.ArrowCursor
+        )
+        return False
+
+    def _finish_label_drag(self, event: QMouseEvent) -> bool:
+        if self._dragging_label is None:
+            return False
+        self._dragging_label = None
+        target = self._label_target_at(event)
+        target_id = target[1] if target is not None else None
+        if self.geometry.set_hover(target_id):
+            self.plotter.render()
+        self._set_label_cursor(
+            Qt.CursorShape.OpenHandCursor if target is not None else Qt.CursorShape.ArrowCursor
+        )
+        event.accept()
+        return True
+
+    def _clear_label_hover(self) -> None:
+        if self._dragging_label is not None:
+            return
+        if self.geometry.set_hover(None):
+            self.plotter.render()
+        self._set_label_cursor(Qt.CursorShape.ArrowCursor)
+
+    def _label_target_at(self, event: QMouseEvent) -> tuple[str, str] | None:
+        coordinates = self._viewport_to_world(event)
+        if coordinates is None:
+            return None
+        return self.geometry.hit_test_label(
+            *coordinates,
+            self._label_hit_tolerance(),
+            editable_annotations_only=True,
+        )
+
+    def _label_hit_tolerance(self) -> float:
+        return max(self.bounds.x_span, self.bounds.y_span) * 0.025
+
+    def _viewport_to_world(self, event: QMouseEvent) -> tuple[float, float] | None:
+        interactor = getattr(self.plotter, "interactor", None)
+        if interactor is None:
+            return None
+        width = max(1, int(interactor.width()))
+        height = max(1, int(interactor.height()))
+        x = float(event.position().x())
+        y = float(event.position().y())
+        if not 0.0 <= x <= width or not 0.0 <= y <= height:
+            return None
+        bounds = self._current_bounds()
+        return (
+            bounds.x_range[0] + x / width * bounds.x_span,
+            bounds.y_range[1] - y / height * bounds.y_span,
+        )
+
+    def _set_label_cursor(self, cursor: Qt.CursorShape) -> None:
+        interactor = getattr(self.plotter, "interactor", None)
+        set_cursor = getattr(interactor, "setCursor", None)
+        if callable(set_cursor):
+            set_cursor(cursor)
+
+    def _load_label_positions(self, state: Any | None) -> None:
+        self._annotation_positions = {}
+        self._linear_label_offsets = {}
+        stored = getattr(state, "scene_2d", {}).get("label_positions", {})
+        if not isinstance(stored, Mapping):
+            return
+        for key, target in (
+            ("annotations", self._annotation_positions),
+            ("linears", self._linear_label_offsets),
+        ):
+            records = stored.get(key, {})
+            if not isinstance(records, Mapping):
+                continue
+            for alias, position in records.items():
+                try:
+                    x, y = float(position[0]), float(position[1])  # type: ignore[index]
+                except (IndexError, TypeError, ValueError):
+                    continue
+                target[str(alias)] = (x, y)
+
+    def _save_label_positions(self) -> None:
+        for annotation in self.geometry.annotations.values():
+            if annotation.agent_alias:
+                self._annotation_positions[annotation.agent_alias] = (annotation.x, annotation.y)
+        for linear in self.geometry.linears.values():
+            if linear.agent_alias and linear.label:
+                self._linear_label_offsets[linear.agent_alias] = (
+                    linear.label_offset_x,
+                    linear.label_offset_y,
+                )
+        if self.pane_manager is None or self.pane_id is None:
+            return
+        state = self.pane_manager.pane(self.pane_id)
+        state.scene_2d["label_positions"] = {
+            "annotations": {
+                alias: [position[0], position[1]]
+                for alias, position in self._annotation_positions.items()
+            },
+            "linears": {
+                alias: [position[0], position[1]]
+                for alias, position in self._linear_label_offsets.items()
+            },
+        }
 
     def _stage_id(self) -> str:
         refs = tuple(getattr(self.case, "stage_refs", ()))
@@ -287,6 +444,7 @@ class TeachingCasePane(PaneChrome):
         )
         configure_2d_camera(self.plotter)
         state = self.pane_manager.pane(self.pane_id) if self.pane_manager and self.pane_id else None
+        self._load_label_positions(state)
         saved_camera = dict(state.camera_2d) if state is not None else {}
         self.plotter.set_background(SceneAppearance().background_color("light"))
         self.bounds = self._current_bounds()
@@ -322,11 +480,14 @@ class TeachingCasePane(PaneChrome):
                     # 全靠它，否则案例窗格会把虚线画成实线。
                     style=str(operation.get("style", "solid")),
                     label=str(operation.get("label")) if operation.get("label") is not None else None,
+                    label_offset_x=self._linear_label_offsets.get(alias, (0.0, 0.0))[0],
+                    label_offset_y=self._linear_label_offsets.get(alias, (0.0, 0.0))[1],
                     agent_alias=alias,
                 )
                 self.geometry.add_linear(linear)
             elif name == "annotation.upsert":
                 x, y = (float(value) for value in operation["position"])
+                x, y = self._annotation_positions.get(alias, (x, y))
                 self.geometry.add_annotation(
                     Annotation2D(
                         alias,
@@ -337,6 +498,7 @@ class TeachingCasePane(PaneChrome):
                         if operation.get("latex") is not None
                         else None,
                         agent_alias=alias,
+                        editable=True,
                     )
                 )
             elif name == "geometry.polygon":
@@ -407,6 +569,7 @@ class TeachingCasePane(PaneChrome):
                               "operations": [dict(op) for op in plan.operations]}
             state.algebra_model = {"case_id": str(getattr(self.case, "id", ""))}
             state.selected_object_ids = list(getattr(state, "selected_object_ids", []))
+        self._save_label_positions()
         self._sync_viewport_bounds()
         self.plotter.render()
 

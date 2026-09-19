@@ -19,8 +19,8 @@ _ANNOTATION_ACTOR = "geometry:annotations"
 
 _HOVER_HALO_COLOR = "#f0c674"
 _SELECTED_HALO_COLOR = "#8ab4f8"
-# 教学标注字号，同时用于文本排版度量。
-_ANNOTATION_FONT_SIZE = 11
+# 教学标注字号，同时用于文本排版度量；与所有案例标签共用统一入口。
+_ANNOTATION_FONT_SIZE = math_labels.CASE_LABEL_FONT_SIZE
 # 悬浮/选中时线宽的放大量。
 _LINE_HALO_WIDTH = 7.0
 _POINT_SIZE = 11.0
@@ -68,9 +68,16 @@ class GeometrySceneController:
     操作结束后统一 ``plotter.render()``，从而消除拖动点、悬浮或选中时的闪烁。
     """
 
-    def __init__(self, plotter: pv.Plotter, bounds: ViewportBounds) -> None:
+    def __init__(
+        self,
+        plotter: pv.Plotter,
+        bounds: ViewportBounds,
+        *,
+        annotation_font_size: int = _ANNOTATION_FONT_SIZE,
+    ) -> None:
         self.plotter = plotter
         self.bounds = bounds
+        self.annotation_font_size = max(1, int(annotation_font_size))
         self.points: dict[str, Point2D] = {}
         self.linears: dict[str, Linear2D] = {}
         self.annotations: dict[str, Annotation2D] = {}
@@ -199,6 +206,38 @@ class GeometrySceneController:
         annotation.y = float(y)
         self._request_annotations_refresh()
 
+    def linear_label_position(self, linear_id: str) -> tuple[float, float] | None:
+        """Return the current world position of a line or vector's label."""
+        linear = self.linears.get(linear_id)
+        if linear is None or not linear.visible or not linear.label:
+            return None
+        start = self.points.get(linear.start_point_id)
+        end = self.points.get(linear.end_point_id)
+        if start is None or end is None:
+            return None
+        position = self._linear_label_position(
+            start,
+            end,
+            linear.label_side,
+            linear.label_offset_x,
+            linear.label_offset_y,
+        )
+        return position[0], position[1]
+
+    def move_linear_label(self, linear_id: str, x: float, y: float) -> None:
+        """Move a line or vector's label without altering its endpoints."""
+        linear = self.linears.get(linear_id)
+        if linear is None or not linear.label:
+            return
+        start = self.points.get(linear.start_point_id)
+        end = self.points.get(linear.end_point_id)
+        if start is None or end is None:
+            return
+        default = self._linear_label_position(start, end, linear.label_side)
+        linear.label_offset_x = float(x) - default[0]
+        linear.label_offset_y = float(y) - default[1]
+        self._request_annotations_refresh()
+
     def remove_object(self, object_id: str) -> None:
         for name in (
             self.point_actor_name(object_id),
@@ -269,7 +308,12 @@ class GeometrySceneController:
         self._restyle(previous)
         self._restyle(object_id)
         self._request_labels_refresh()
-        if previous in self.annotations or object_id in self.annotations:
+        if (
+            previous in self.annotations
+            or object_id in self.annotations
+            or previous in self.linears
+            or object_id in self.linears
+        ):
             self._request_annotations_refresh()
         return True
 
@@ -336,6 +380,35 @@ class GeometrySceneController:
             if distance <= radius and (best is None or distance < best[0]):
                 best = (distance, annotation.id)
         return best[1] if best is not None else None
+
+    def hit_test_label(
+        self,
+        x: float,
+        y: float,
+        tolerance: float,
+        *,
+        editable_annotations_only: bool = False,
+    ) -> tuple[str, str] | None:
+        """Return the nearest annotation or line-label target within tolerance."""
+        best: tuple[float, str, str] | None = None
+        radius = max(float(tolerance), 1e-9) * 1.5
+        for annotation in self.annotations.values():
+            if not annotation.visible or (editable_annotations_only and not annotation.editable):
+                continue
+            distance = hypot(
+                annotation.x + annotation.offset_x - x,
+                annotation.y + annotation.offset_y - y,
+            )
+            if distance <= radius and (best is None or distance < best[0]):
+                best = (distance, "annotation", annotation.id)
+        for linear in self.linears.values():
+            position = self.linear_label_position(linear.id)
+            if position is None:
+                continue
+            distance = hypot(position[0] - x, position[1] - y)
+            if distance <= radius and (best is None or distance < best[0]):
+                best = (distance, "linear", linear.id)
+        return (best[1], best[2]) if best is not None else None
 
     def set_bounds(self, bounds: ViewportBounds) -> None:
         """更新依赖视口范围的直线、射线、向量箭头、标签和临时预览。"""
@@ -912,7 +985,7 @@ class GeometrySceneController:
         add_labels(
             positions,
             texts,
-            font_size=13,
+            font_size=math_labels.CASE_LABEL_FONT_SIZE,
             text_color="#1f2937",
             shape=None,
             show_points=False,
@@ -953,8 +1026,12 @@ class GeometrySceneController:
             end = self.points.get(linear.end_point_id)
             if start is None or end is None:
                 continue
-            position = self._linear_label_position(start, end, linear.label_side)
-            grouped.setdefault((linear.color, False), []).append((position, linear.label))
+            position = self.linear_label_position(linear.id)
+            if position is None:
+                continue
+            grouped.setdefault((linear.color, linear.id == self._hover_id), []).append(
+                ((position[0], position[1], 0.0), linear.label)
+            )
         for (color, is_hovered), items in grouped.items():
             name = f"{_ANNOTATION_ACTOR}:{color.lstrip('#').lower()}:{'hover' if is_hovered else 'default'}"
             label_style: dict[str, object] = {}
@@ -968,7 +1045,7 @@ class GeometrySceneController:
             add_labels(
                 [position for position, _text in items],
                 [text for _position, text in items],
-                font_size=_ANNOTATION_FONT_SIZE,
+                font_size=self.annotation_font_size,
                 text_color=color,
                 shape=None if not is_hovered else "rounded_rect",
                 show_points=False,
@@ -986,7 +1063,7 @@ class GeometrySceneController:
         return math_labels.display_text(
             annotation.text,
             annotation.latex,
-            font_size=_ANNOTATION_FONT_SIZE,
+            font_size=self.annotation_font_size,
             bold=True,
         )
 
@@ -996,7 +1073,12 @@ class GeometrySceneController:
         return point.name
 
     def _linear_label_position(
-        self, start: Point2D, end: Point2D, side: LinearLabelSide = "below"
+        self,
+        start: Point2D,
+        end: Point2D,
+        side: LinearLabelSide = "below",
+        offset_x: float = 0.0,
+        offset_y: float = 0.0,
     ) -> tuple[float, float, float]:
         """Place a linear label above or below its primitive.
 
@@ -1011,14 +1093,22 @@ class GeometrySceneController:
         # 上方留白略大于下方：向量名紧贴线段，同时避免压到线下的模长标注。
         offset = max(self.bounds.x_span, self.bounds.y_span) * (0.012 if side == "above" else 0.02)
         if length <= 1e-12:
-            return (mid_x, mid_y + (offset if side == "above" else -offset), 0.0)
+            return (
+                mid_x + offset_x,
+                mid_y + (offset if side == "above" else -offset) + offset_y,
+                0.0,
+            )
         normal_x, normal_y = -dy / length, dx / length
         # 两条法线里取指向下方的一条；竖直向量没有“下方”，固定取右侧。
         if normal_y > 0.0 or (normal_y == 0.0 and normal_x < 0.0):
             normal_x, normal_y = -normal_x, -normal_y
         if side == "above":
             normal_x, normal_y = -normal_x, -normal_y
-        return (mid_x + normal_x * offset, mid_y + normal_y * offset, 0.0)
+        return (
+            mid_x + normal_x * offset + offset_x,
+            mid_y + normal_y * offset + offset_y,
+            0.0,
+        )
 
     def _label_offset(self) -> float:
         return min(self.bounds.x_span, self.bounds.y_span) * 0.015

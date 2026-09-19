@@ -48,6 +48,34 @@ def test_delete_repairs_layout_and_active_focus(qapp):
     assert ids[1] not in widget.interactors
 
 
+def test_fullscreen_control_toggles_back_to_the_previous_layout(qapp):
+    manager = ScenePaneManager()
+    widget = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
+    first, second = widget.set_layout(2)
+    chrome = widget._chromes[first]
+    assert chrome.fullscreen_button.toolTip() == "全屏窗格"
+
+    chrome.fullscreen_button.click()
+    assert manager.visible_pane_ids() == (first,)
+    assert chrome.fullscreen_button.toolTip() == "还原窗格"
+
+    chrome.fullscreen_button.click()
+    assert manager.visible_pane_ids() == (first, second)
+    assert chrome.fullscreen_button.toolTip() == "全屏窗格"
+
+
+def test_hiding_the_fullscreen_pane_restores_the_other_panes(qapp):
+    manager = ScenePaneManager()
+    widget = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
+    first, second = widget.set_layout(2)
+
+    widget._chromes[first].fullscreen_button.click()
+    assert manager.visible_pane_ids() == (first,)
+
+    widget._chromes[first].hide_requested.emit()
+    assert manager.visible_pane_ids() == (second,)
+
+
 def test_active_pane_styles_renderer_and_chrome(qapp):
     manager = ScenePaneManager()
     widget = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
@@ -124,6 +152,57 @@ def test_recreated_interactor_invokes_restore_callback(qapp):
     assert renderer_refs[-1] is new
     assert manager.pane(pane_two).scene_2d["objects"] == ["kept"]
     assert restored_content[-1] == ["kept"]
+
+
+def test_pane_viewport_changed_fires_after_geometry_is_assigned(qapp):
+    """窗格拿到真实几何后必须通知所有者，否则屏幕定尺寸图形会沿用默认视口。"""
+    notified = []
+    manager = ScenePaneManager()
+    widget = ScenePaneWidget(
+        manager, interactor_factory=FakeInteractor,
+        on_pane_viewport_changed=notified.append,
+    )
+    first, second = widget.set_layout(2)
+    assert set(notified) == {first, second}
+
+    notified.clear()
+    third = widget.set_layout(3)[2]
+    # 布局变化会重新分配所有可见窗格的几何，已有的窗格也要再次通知。
+    assert set(notified) == {first, second, third}
+
+
+def test_pane_viewport_change_rebuilds_3d_arrow_heads(qapp):
+    """4.1/4.2 三维案例窗格的箭头必须按布局后的真实视口重算头部尺寸。"""
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    case_id = manager.register_case("case")
+    case = manager.pane(case_id)
+    case.scene_mode = "3d"
+    rendered = []
+    case.renderer_3d = SimpleNamespace(render=lambda: rendered.append(True))
+    refreshed = []
+    case.runtime = SimpleNamespace(
+        geometry3d_controller=SimpleNamespace(refresh_vector_heads=lambda: refreshed.append(True))
+    )
+    window._pane_widgets_ready = True
+
+    window._on_pane_viewport_changed(case_id)
+    # 第一遍在回调内同步完成：首帧绘制之前头部就已修正，不再闪烁。
+    assert refreshed == [True]
+    assert rendered == []
+    for _ in range(5):
+        qapp.processEvents()
+    # 延迟的第二遍复测并渲染（真实控制器里数值未变会被跳过）。
+    assert refreshed == [True, True]
+    assert rendered == [True]
+
+    # 刷新挂起期间的重复通知会被合并：延迟遍只调度一次、只渲染一次。
+    rendered.clear()
+    window._on_pane_viewport_changed(case_id)
+    window._on_pane_viewport_changed(case_id)
+    for _ in range(5):
+        qapp.processEvents()
+    assert rendered == [True]
 
 
 def test_designer_restore_callback_defers_until_ready():

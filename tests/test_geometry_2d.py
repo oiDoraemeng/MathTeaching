@@ -2,7 +2,7 @@
 
 import unittest
 
-from models.geometry_2d import Linear2D, Point2D, geometry_latex
+from models.geometry_2d import Annotation2D, Linear2D, Point2D, geometry_latex
 from rendering.geometry_scene import GeometrySceneController, linear_mesh
 from rendering.ticks import ViewportBounds
 
@@ -187,6 +187,39 @@ class Geometry2DTests(unittest.TestCase):
         controller.remove_object(doubled.id)
         self.assertEqual(annotation_actor_names(), {blue_actor})
         self.assertEqual(labels_of(blue_actor), ["a"])
+
+    def test_annotation_and_linear_label_positions_are_independently_movable(self) -> None:
+        class LabelPlotter(FakePlotter):
+            def __init__(self) -> None:
+                super().__init__()
+                self.label_calls: list[dict[str, object]] = []
+
+            def add_point_labels(self, _points, _labels, *, name: str, **kwargs) -> FakeActor:
+                actor = FakeActor()
+                self.actors[name] = actor
+                self.label_calls.append({"name": name, **kwargs})
+                return actor
+
+        plotter = LabelPlotter()
+        controller = GeometrySceneController(plotter, self.bounds, annotation_font_size=13)
+        annotation = Annotation2D("说明", "可移动", 0.0, 0.0, editable=True)
+        linear = Linear2D("a", "vector", self.first.id, self.second.id, label="a")
+        controller.add_point(self.first)
+        controller.add_point(self.second)
+        controller.add_annotation(annotation)
+        controller.add_linear(linear)
+
+        self.assertEqual(controller.hit_test_label(0.0, 0.0, 0.1), ("annotation", annotation.id))
+        self.assertEqual(controller.hit_test_label(0.0, -0.2, 0.2), ("linear", linear.id))
+        controller.move_annotation(annotation.id, 2.0, 3.0)
+        controller.move_linear_label(linear.id, 4.0, 5.0)
+
+        self.assertEqual((annotation.x, annotation.y), (2.0, 3.0))
+        self.assertEqual(controller.linear_label_position(linear.id), (4.0, 5.0))
+        self.assertEqual(plotter.label_calls[-1]["font_size"], 13)
+
+        controller.set_hover(linear.id)
+        self.assertEqual(plotter.label_calls[-1]["shape"], "rounded_rect")
 
     def test_teaching_angle_arc_is_one_polyline_with_all_samples(self) -> None:
         plotter = FakePlotter()
