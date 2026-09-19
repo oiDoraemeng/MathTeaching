@@ -59,7 +59,6 @@ def _topic_relation(topic_id: str, semantic: object, ids: Mapping[str, str], rel
     roles = getattr(semantic, "roles", ("vector_a", "transformed_a"))[:2]
     params: dict[str, object] = {}
     if topic_id == "ch04.subspace.col-null": params.update({"matrix": [[1, 0, 0], [0, 1, 0], [0, 0, 0]], "domain_dimension": 3, "codomain_dimension": 3})
-    if topic_id in {"ch04.nullspace.test", "ch04.rank.collapse", "ch04.rank-nullity"}: params.update({"matrix": [[1, 0], [0, 0]], "rank": 1, "nullity": 1})
     if topic_id == "ch04.linear-map.definition": params.update({"matrix": [[1, 1], [0, 1]], "origin_fixed": 1.0, "additivity": 1.0, "homogeneity": 1.0})
     return {"id": relation_id, "kind": relation, "source_ref": ids[roles[0]], "target_ref": ids[roles[1] if len(roles) > 1 else roles[0]], "parameters": params, "claim_refs": [claim_id]}
 
@@ -109,7 +108,6 @@ def _artifact_payload_generic(topic_id: str, *, status: str = "reviewed") -> dic
     if topic is None:
         raise KeyError(f"unknown chapter 4-8 topic: {topic_id}")
     context = lecture_source_repository().context_for(topic)
-    span = context.spans[0]
     claim_id = f"claim.{topic_id}"
     semantic = semantic_for(topic_id) if topic_id.startswith("ch04.") else None
     semantic_roles = semantic.roles if semantic else ("vector_a", "transformed_a")
@@ -123,23 +121,23 @@ def _artifact_payload_generic(topic_id: str, *, status: str = "reviewed") -> dic
         claim_entity_refs = list(entity_ids.values())
         claim_relation_refs = [relation_id]
         claim_stage_refs = [stage_id]
-    source_span = {
-        "id": span.id, "heading_path": list(span.heading_path), "start_line": span.start_line,
-        "end_line": span.end_line, "fingerprint": span.fingerprint, "text": span.text,
-    }
+    source_spans = [
+        {
+            "id": span.id, "heading_path": list(span.heading_path), "start_line": span.start_line,
+            "end_line": span.end_line, "fingerprint": span.fingerprint, "text": span.text,
+        }
+        for span in context.spans
+    ]
     profile = profile_for(topic_id)
     semantic = semantic_for(topic_id) if topic_id.startswith("ch04.") else None
     formula_by_topic = {
-        "ch04.space.closure": r"u=(1,0),\ v=(0,1),\ u+v=(1,1),\ 2u=(2,0)",
-        "ch04.subspace.col-null": r"A=\operatorname{diag}(1,1,0),\ A(2,-1,3)=(2,-1,0),\ A(0,0,2)=0",
+        "ch04.subspace.col-null": r"\boldsymbol A=\begin{pmatrix}1&0&0\\0&1&0\\0&0&0\end{pmatrix}",
         "ch04.dependence.redundancy": r"2u-v=0\quad (u=(1,1),\ v=(2,2))",
-        "ch04.nullspace.test": r"A(1,-1,0)^T=0,\quad Ax=0",
-        "ch04.rank-nullity": r"\operatorname{rank}(T)+\operatorname{nullity}(T)=\dim V=3",
     }
     formula = semantic.formula if semantic is not None else formula_by_topic.get(topic_id, f"{topic.title}: finite typed semantic evidence")
     claim = {
         "id": claim_id, "statement": f"{topic.title} 的数学主张由显式对象、关系和不变量支持。",
-        "formula": formula, "formula_symbols": list(semantic_roles[:2]), "source_refs": [span.id],
+        "formula": formula, "formula_symbols": list(semantic_roles[:2]), "source_refs": [span["id"] for span in source_spans],
         "explanation_refs": list(profile.required_sections),
         "entity_refs": claim_entity_refs, "relation_refs": claim_relation_refs, "stage_refs": claim_stage_refs,
     }
@@ -148,7 +146,7 @@ def _artifact_payload_generic(topic_id: str, *, status: str = "reviewed") -> dic
         "source": {"source_path": list(context.source_path), "heading_path": list(context.heading_path),
                     "heading_level": context.heading_level, "occurrence": context.occurrence,
                     "excerpt": context.excerpt, "source_hash": context.source_hash,
-                    "spans": [source_span], "neighboring_titles": list(context.neighboring_titles)},
+                    "spans": source_spans, "neighboring_titles": list(context.neighboring_titles)},
         "teaching_profile": {"minimum_level": int(profile.minimum_level), "required_sections": list(profile.required_sections),
                              "requires_analogy_boundary": profile.requires_analogy_boundary},
         "claims": [claim], "connections": [{"id": f"connection.{topic_id}.prior", "target_topic_id": "ch03.det.oriented-area",
@@ -307,11 +305,18 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
     if lecture_content.apply(payload):
         _refresh_digests(payload)
     if topic_id == "ch04.subspace.col-null":
-        # Keep the lecture-grounded wording while supplying the one explicit
-        # 3D case requested for this definition-only subsection.
-        from linear_algebra.teaching.quality import _refine_col_null
+        # 4.1.1–4.1.3 share one lecture-grounded definition and two explicit
+        # 3D case panes for its column-space and null-space readings.
+        from linear_algebra.teaching.quality import _refine_linear_space
 
-        _refine_col_null(payload, payload["explanation"], payload["visual_semantics"])
+        _refine_linear_space(payload, payload["explanation"], payload["visual_semantics"])
+        _refresh_digests(payload)
+    elif topic_id == "ch04.dependence.redundancy":
+        # 4.2.1–4.2.2 的唯一目录项：讲义原文与两个确认的三维对照案例由专属
+        # 适配器一起写入，避免通用路由追加未发布的 4.2.3、4.2.4。
+        from linear_algebra.teaching.quality import _refine_linear_dependence
+
+        _refine_linear_dependence(payload, payload["explanation"], payload["visual_semantics"])
         _refresh_digests(payload)
     elif topic_id == "ch04.basis.definition":
         # 4.3 合并后只剩这一个条目：4.3.1–4.3.3 的讲义原文由适配器逐字搬入，

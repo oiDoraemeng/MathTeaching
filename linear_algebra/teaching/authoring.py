@@ -19,7 +19,8 @@ from linear_algebra.visualizations.snapshots import (
 )
 
 from .quality import refine_payload
-from .source import LectureSourceRepository
+from .model import TeachingArtifact
+from .source import LectureSourceRepository, SourceContext
 from .store import TeachingArtifactStore, artifact_digest
 from .validation import (
     ArtifactValidationError,
@@ -65,7 +66,10 @@ def synchronize_topic(
 
     current = stored.artifact
     try:
+        source_context = source_repository.context_for(topic)
         refined_payload = refiner(current.to_dict())
+        if _source_anchor_changed(current, source_context):
+            _refresh_source_evidence(refined_payload, source_context)
         refined = validate_artifact_payload(refined_payload)
     except (ArtifactValidationError, TypeError, ValueError) as error:
         return AuthoringSyncResult(topic.id, "rejected", current.revision, _error_details(error))
@@ -74,7 +78,6 @@ def synchronize_topic(
         return AuthoringSyncResult(topic.id, "unchanged", current.revision)
 
     try:
-        source_context = source_repository.context_for(topic)
         draft_payload = refined.to_dict()
         draft_payload["status"] = "draft"
         draft_payload["revision"] = 1
@@ -164,6 +167,65 @@ def workspace_authoring_available(*, store: TeachingArtifactStore) -> bool:
         (project_root / ".git").exists()
         and (project_root / ".agents" / "线性代数讲义.md").is_file()
         and store.root == bundled_root.resolve()
+    )
+
+
+def _refresh_source_evidence(
+    payload: dict[str, object], context: SourceContext
+) -> None:
+    """Replace an artifact's source witness when its catalog anchor changes."""
+
+    source = payload.get("source")
+    if not isinstance(source, dict):
+        raise ValueError("artifact payload is missing a source object")
+
+    spans = [
+        {
+            "id": span.id,
+            "heading_path": list(span.heading_path),
+            "start_line": span.start_line,
+            "end_line": span.end_line,
+            "fingerprint": span.fingerprint,
+            "text": span.text,
+        }
+        for span in context.spans
+    ]
+    source.update(
+        {
+            "source_path": list(context.source_path),
+            "heading_path": list(context.heading_path),
+            "heading_level": context.heading_level,
+            "occurrence": context.occurrence,
+            "excerpt": context.excerpt,
+            "source_hash": context.source_hash,
+            "spans": spans,
+            "neighboring_titles": list(context.neighboring_titles),
+        }
+    )
+
+    source_refs = [span.id for span in context.spans]
+    claims = payload.get("claims")
+    if isinstance(claims, list):
+        for claim in claims:
+            if isinstance(claim, dict):
+                claim["source_refs"] = source_refs
+
+    generated = payload.get("generated")
+    if isinstance(generated, dict):
+        generated["source_hash"] = context.source_hash
+
+
+def _source_anchor_changed(
+    artifact: TeachingArtifact, context: SourceContext
+) -> bool:
+    """Return whether a catalog source anchor now identifies a new section."""
+
+    source = artifact.source
+    return (
+        source.source_path != context.source_path
+        or source.heading_path != context.heading_path
+        or source.heading_level != context.heading_level
+        or source.occurrence != context.occurrence
     )
 
 

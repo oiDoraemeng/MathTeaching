@@ -22,7 +22,7 @@ from linear_algebra.teaching.validation import (
 )
 from services.scene_commands import CommandPlan, SceneCommandService
 
-from .common import RenderContext
+from .common import RenderContext, matrix_label_text
 from .contracts import VisualContract, contract_for, validate_contract_semantics
 from .palette import role_color
 from .limits import validate_budget
@@ -45,9 +45,7 @@ _PROOF_TOPICS = frozenset(
 # 否则“全部显示”时各窗格按自身对象缩放，会出现一大一小。
 _MATRIX_VECTOR_CASE_TOPICS = frozenset(
     {
-        "ch02.matrix.row-column",
         "ch02.matrix.transformed-grid",
-        "ch02.matrix.stretch-rotate-scale",
         # 2.7 矩阵与基用两组基各占一个窗格，展示同一个旋转在换基后的矩阵。
         "ch02.matrix.basis",
     }
@@ -69,6 +67,7 @@ _FLOW_VIEW_TOPICS = frozenset(
         "ch01.ops.scalar",
         "ch01.ops.linear-combination",
         "ch01.inner.definitions",
+        "ch01.inner.cauchy-schwarz",
         # 2.2 批量内积沿用 1.3.1 的窗格词汇（u、V 的一列、投影与夹角），
         # 多个案例窗格必须共用同一视角。
         "ch02.batch.inner-products",
@@ -83,6 +82,10 @@ _FLOW_VIEW_TOPICS = frozenset(
 # 一样），而不是在原来坐标系里悬浮一小块网格。案例窗格取景时会把网格演员排除
 # 在外，所以取样范围不会把相机拉远。
 _MATRIX_VECTOR_GRID_BOUNDS: tuple[float, float, float, float] = (-12.0, 12.0, -12.0, 12.0)
+# 2.5 的四个窗格（标准基、拉伸、旋转、两列的像）只用到原点附近的画面，网格取样
+# 4×4 格即可：网格线不用铺满整个窗格，画面才不会被密集网格淹没。取景只看向量
+# 终点，网格由视口裁切，因此缩小取样范围不会改变相机。
+_TRANSFORMED_GRID_GRID_BOUNDS: tuple[float, float, float, float] = (-2.0, 2.0, -2.0, 2.0)
 # 3.1 案例把外接矩形的面积标注写在矩形上边之外，取景与标注位置共用这个边距。
 _DET_BOX_LABEL_MARGIN = 0.45
 # 2.7 的第二个案例把 B 的列写成新基坐标。坐标系命令把 source
@@ -97,6 +100,8 @@ _CH02_BASIS_MATRIX: tuple[tuple[float, float], tuple[float, float]] = (
 def _case_grid_bounds(topic_id: str, fallback: tuple[float, ...]) -> tuple[float, ...]:
     """Return the grid sampling rectangle used by one topic's case pane."""
 
+    if topic_id == "ch02.matrix.transformed-grid":
+        return _TRANSFORMED_GRID_GRID_BOUNDS
     if topic_id not in _MATRIX_VECTOR_CASE_TOPICS and topic_id not in _SUBSPACE_CASE_TOPICS:
         return fallback
     return _MATRIX_VECTOR_GRID_BOUNDS
@@ -104,25 +109,15 @@ def _case_grid_bounds(topic_id: str, fallback: tuple[float, ...]) -> tuple[float
 # 平行四边形与原点相对的顶点，记为 C（不是 A+B）；单一字母标签直接大写，
 # 带系数或正负号的标签不再造点。数乘的两步各自落在一个点上：a 的终点是 A，
 # 缩放后的 2a 终点是 B。2.5 的案例按同一规则给每个向量的终点一个不同的
-# 大写标签（行/列、原像/像用不同字母），点与向量不会重名。
+# 大写标签（原像/像用不同字母），点与向量不会重名。
 _FLOW_POINT_LABELS = {
     "ch01.ops.addition": {"flow_a": "A", "flow_b": "B", "flow_sum": "C"},
     "ch01.ops.scalar": {"a": "A", "two_a": "B"},
-    "ch02.matrix.row-column": {
-        "mv_x": "X", "mv_r1": "R1", "mv_r2": "R2",
-        "mv_c1": "C1", "mv_c2": "C2", "mv_s1": "S1", "mv_s2": "S2", "mv_sum": "Y",
-    },
     "ch02.matrix.transformed-grid": {
         "mv_e1": "E1", "mv_e2": "E2",
         "mv_stretch_e1": "G1", "mv_stretch_e2": "G2",
         "mv_rotate_e1": "H1", "mv_rotate_e2": "H2",
         "mv_ae1": "F1", "mv_ae2": "F2",
-    },
-    "ch02.matrix.stretch-rotate-scale": {
-        "mv_e1": "E1", "mv_e2": "E2",
-        "mv_stretch_e1": "F1", "mv_stretch_e2": "F2",
-        "mv_rotate_e1": "G1", "mv_rotate_e2": "G2",
-        "mv_combo_e1": "H1", "mv_combo_e2": "H2",
     },
     # 2.7 的两个窗格各用一组字母：标准基下旋转的两列记 F1、F2，新基与其像记
     # V1、V2、G1、G2，同一个窗格里的点不会重名。
@@ -274,11 +269,14 @@ class VisualSemanticsCompiler:
             for key, values in proof_aliases.items():
                 aliases.setdefault(key, []).extend(values)
         elif not chapter4_owned and not chapter5_owned and not chapter6_owned and not chapter7_owned and not chapter8_owned:
-            # 投影箭头跟随来源向量配色的修正只服务内积小节（1.3.1 / 2.2）；其余小节保持
+            # 投影箭头跟随来源向量配色的修正只服务内积小节；其余小节保持
             # 原有配色，避免非预期地改动既有 plan digest。
             projection_roles = (
-                _projection_source_roles(semantics)
-                if context.topic_id in _INNER_PRODUCT_TOPICS
+                _projection_source_roles(
+                    semantics,
+                    include_residual=context.topic_id == "ch01.inner.cauchy-schwarz",
+                )
+                if context.topic_id in _PROJECTION_SOURCE_COLOR_TOPICS
                 else {}
             )
             for entity in semantics.entities:
@@ -936,7 +934,7 @@ class VisualSemanticsCompiler:
                 # 该配色修正仅用于内积小节，其余小节保留原通用投影色以免计划摘要漂移。
                 "color": (
                     role_color(source.role)
-                    if context.topic_id in _INNER_PRODUCT_TOPICS
+                    if context.topic_id in _PROJECTION_SOURCE_COLOR_TOPICS
                     else role_color("projection")
                 ),
             }
@@ -992,7 +990,15 @@ class VisualSemanticsCompiler:
         if relation.kind == "orthogonal_to" and semantics.scene_kind == "2d":
             first = _coordinates(source.value, 2)
             second = _coordinates(target.value, 2)
-            operations.append({"op": "geometry.right_angle_marker", "alias": relation_alias, "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "size": 0.3, "color": role_color("neutral")})
+            vertex = [0.0, 0.0]
+            if isinstance(relation.parameters, Mapping):
+                declared_vertex = relation.parameters.get("vertex")
+                if declared_vertex is not None:
+                    try:
+                        vertex = list(_coordinates(declared_vertex, 2))
+                    except (TypeError, ValueError):
+                        pass
+            operations.append({"op": "geometry.right_angle_marker", "alias": relation_alias, "vertex": vertex, "first": list(first), "second": list(second), "size": 0.3, "color": role_color("vector_b") if context.topic_id == "ch01.inner.cauchy-schwarz" else role_color("neutral")})
             return operations, [relation_alias]
         if relation.kind == "spans" and semantics.scene_kind == "2d":
             vertices = relation.parameters.get("vertices") if isinstance(relation.parameters, Mapping) else None
@@ -1064,6 +1070,28 @@ def _compile_proof_figure(
             "proof__point_D", "proof__point_E",
             "proof__side_a", "proof__side_b",
             "proof__side_bc", "proof__midline", "proof__note_midline",
+        ]
+    elif topic_id == "ch01.proof.centroid":
+        # 用户确认：重心定理同样只画一张完整构造图（一个窗格），三角形、
+        # $\boldsymbol a$、$\boldsymbol b$ 两条向量、三个中点、三条中线向量、
+        # 重心与比例标注一次画全。
+        aliases[f"stage.case.{topic_id}.1"] = [
+            "proof__region",
+            "proof__point_A", "proof__point_B", "proof__point_C",
+            "proof__point_D", "proof__point_E", "proof__point_F", "proof__point_G",
+            "proof__side_a", "proof__side_b", "proof__side_bc",
+            "proof__median_a", "proof__median_b", "proof__median_c",
+            "proof__note_centroid",
+        ]
+    elif topic_id == "ch01.proof.parallelogram-diagonals":
+        # 用户确认：平行四边形对角线也只画一张完整构造图（一个窗格），两条
+        # 邻边向量、两条对角线向量、公共中点与结论标注一次画全。
+        aliases[f"stage.case.{topic_id}.1"] = [
+            "proof__region",
+            "proof__point_A", "proof__point_B", "proof__point_C",
+            "proof__point_D", "proof__point_M",
+            "proof__side_a", "proof__side_b", "proof__side_bc", "proof__side_dc",
+            "proof__diagonal_ac", "proof__diagonal_bd",
         ]
     return operations, aliases
 
@@ -1168,9 +1196,11 @@ def _proof_figure_operations(
         formula = ""
         vertices = [origin, vertex_b, vertex_c]
     elif topic_id == "ch01.proof.centroid":
+        # 讲义 1.5.2 补充例题的字母与中线：$D$ 是 $BC$ 边中点，$E$ 是 $AB$ 边
+        # 中点，$F$ 是 $AC$ 边中点（与证明文字逐字对应）。
         midpoint_bc = midpoint(vertex_b, vertex_c)
-        midpoint_ca = midpoint(vertex_c, origin)
         midpoint_ab = midpoint(origin, vertex_b)
+        midpoint_ac = midpoint(vertex_c, origin)
         centre = (
             (origin[0] + vertex_b[0] + vertex_c[0]) / 3.0,
             (origin[1] + vertex_b[1] + vertex_c[1]) / 3.0,
@@ -1179,15 +1209,18 @@ def _proof_figure_operations(
         add_point("proof__point_B", vertex_b, "B")
         add_point("proof__point_C", vertex_c, "C")
         add_point("proof__point_D", midpoint_bc, "D")
-        add_point("proof__point_E", midpoint_ca, "E")
-        add_point("proof__point_F", midpoint_ab, "F")
+        add_point("proof__point_E", midpoint_ab, "E")
+        add_point("proof__point_F", midpoint_ac, "F")
         add_point("proof__point_G", centre, "G")
-        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("construction"), role="construction")
-        add_segment("proof__side_b", "proof__point_B", "proof__point_C", color=role_color("construction"), role="construction")
-        add_segment("proof__side_c", "proof__point_C", "proof__point_A", color=role_color("construction"), role="construction")
-        add_segment("proof__median_a", "proof__point_A", "proof__point_D", color=role_color("projection"), style="dashed")
-        add_segment("proof__median_b", "proof__point_B", "proof__point_E", color=role_color("projection"), style="dashed")
-        add_segment("proof__median_c", "proof__point_C", "proof__point_F", color=role_color("projection"), style="dashed")
+        # 用户确认：这一小节全部按向量画（$\overrightarrow{AB}=\boldsymbol a$、
+        # $\overrightarrow{AC}=\boldsymbol b$ 与证明里的三条中线向量），第三边
+        # $BC$ 只作为灰色辅助线段补全三角形。
+        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("vector_a"), kind="vector")
+        add_segment("proof__side_b", "proof__point_A", "proof__point_C", color=role_color("vector_b"), kind="vector")
+        add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("construction"), role="construction")
+        add_segment("proof__median_a", "proof__point_A", "proof__point_D", color=role_color("projection"), style="dashed", kind="vector")
+        add_segment("proof__median_b", "proof__point_C", "proof__point_E", color=role_color("projection"), style="dashed", kind="vector")
+        add_segment("proof__median_c", "proof__point_B", "proof__point_F", color=role_color("projection"), style="dashed", kind="vector")
         add_note(
             "proof__note_centroid",
             "AG : GD = 2 : 1",
@@ -1196,22 +1229,26 @@ def _proof_figure_operations(
         formula = "AG = (a + b) / 3"
         vertices = [origin, vertex_b, vertex_c]
     elif topic_id == "ch01.proof.parallelogram-diagonals":
-        vertex_d = vertex_b
+        vertex_d = vertex_c
         vertex_c_para = (vertex_b[0] + vertex_c[0], vertex_b[1] + vertex_c[1])
         centre = midpoint(origin, vertex_c_para)
         add_point("proof__point_A", origin, "A")
-        add_point("proof__point_B", vertex_d, "B")
+        add_point("proof__point_B", vertex_b, "B")
         add_point("proof__point_C", vertex_c_para, "C")
-        add_point("proof__point_D", vertex_c, "D")
+        add_point("proof__point_D", vertex_d, "D")
         add_point("proof__point_M", centre, "M")
-        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("vector_a"))
-        add_segment("proof__side_b", "proof__point_A", "proof__point_D", color=role_color("vector_b"))
+        # 用户确认：邻边按向量画（$\overrightarrow{AB}=\boldsymbol a$、
+        # $\overrightarrow{AD}=\boldsymbol b$），两条对角线 $AC$、$BD$ 也画成
+        # 向量（虚线），与证明里的中线点表达式一一对应；另外两边只作灰色
+        # 辅助线段补全平行四边形。
+        add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("vector_a"), kind="vector")
+        add_segment("proof__side_b", "proof__point_A", "proof__point_D", color=role_color("vector_b"), kind="vector")
         add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("construction"), role="construction")
         add_segment("proof__side_dc", "proof__point_D", "proof__point_C", color=role_color("construction"), role="construction")
-        add_segment("proof__diagonal_ac", "proof__point_A", "proof__point_C", color=role_color("transformed_a"), style="dashed")
-        add_segment("proof__diagonal_bd", "proof__point_B", "proof__point_D", color=role_color("transformed_b"), style="dashed")
+        add_segment("proof__diagonal_ac", "proof__point_A", "proof__point_C", color=role_color("transformed_a"), style="dashed", kind="vector")
+        add_segment("proof__diagonal_bd", "proof__point_B", "proof__point_D", color=role_color("transformed_b"), style="dashed", kind="vector")
         formula = "M(AC) = M(BD) = (a + b) / 2"
-        vertices = [origin, vertex_d, vertex_c_para, vertex_c]
+        vertices = [origin, vertex_b, vertex_c_para, vertex_d]
     else:
         raise ValueError(f"unsupported geometry-proof topic: {topic_id}")
 
@@ -1272,7 +1309,9 @@ def _pick_role_entity(entities, role: str, anchor: str):
     return candidates[0]
 
 
-def _projection_source_roles(semantics: VisualSemantics) -> dict[str, str]:
+def _projection_source_roles(
+    semantics: VisualSemantics, *, include_residual: bool = False
+) -> dict[str, str]:
     """Map every ``projection`` entity to the role of the vector it comes from.
 
     A projection arrow pictures one component of the vector being projected, so
@@ -1292,6 +1331,10 @@ def _projection_source_roles(semantics: VisualSemantics) -> dict[str, str]:
         projection = _pick_role_entity(semantics.entities, "projection", target.id)
         if projection is not None:
             color_roles[projection.id] = source.role
+        if include_residual:
+            residual = _pick_role_entity(semantics.entities, "residual", target.id)
+            if residual is not None:
+                color_roles[residual.id] = source.role
     return color_roles
 
 
@@ -1299,6 +1342,10 @@ def _projection_source_roles(semantics: VisualSemantics) -> dict[str, str]:
 # 本身：``a·b = |a|·|p|``。这两个小节在画投影的窗格上标出三段学生可见的长度，并把
 # 向量名移到线上方，给线下方留出模长标注的位置。
 _INNER_PRODUCT_TOPICS = frozenset({"ch01.inner.definitions", "ch02.batch.inner-products"})
+_PROJECTION_SOURCE_COLOR_TOPICS = frozenset({
+    *_INNER_PRODUCT_TOPICS,
+    "ch01.inner.cauchy-schwarz",
+})
 
 
 def _format_radical_length(squared: float) -> str | None:
@@ -1966,12 +2013,26 @@ def _stage_geometry_operations(
         second = _coordinates(entity_by_id[relation.target_ref].value, 2)
         return [{"op": "geometry.angle_arc", "alias": f"sem__orientation__{index + 1}", "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "radius": 0.45, "color": role_color("projection")}]
     if "orthogonal_to" in relation_kinds:
+        if context.topic_id == "ch01.inner.cauchy-schwarz":
+            # The relation compiler already emits the right-angle marker at the
+            # declared projection foot. Re-emitting it per storyboard pane
+            # would duplicate the same marker and make the equality pane show
+            # a construction it does not contain.
+            return []
         relation = _stage_relation(semantics, stage, "orthogonal_to")
         if relation is None:
             return []
         first = _coordinates(entity_by_id[relation.source_ref].value, 2)
         second = _coordinates(entity_by_id[relation.target_ref].value, 2)
-        return [{"op": "geometry.right_angle_marker", "alias": f"sem__orthogonal__{index + 1}", "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "size": 0.3, "color": role_color("neutral")}]
+        vertex = [0.0, 0.0]
+        if isinstance(relation.parameters, Mapping):
+            declared_vertex = relation.parameters.get("vertex")
+            if declared_vertex is not None:
+                try:
+                    vertex = list(_coordinates(declared_vertex, 2))
+                except (TypeError, ValueError):
+                    pass
+        return [{"op": "geometry.right_angle_marker", "alias": f"sem__orthogonal__{index + 1}", "vertex": vertex, "first": list(first), "second": list(second), "size": 0.3, "color": role_color("neutral")}]
     return []
 
 
@@ -1991,16 +2052,6 @@ def _matrix2(value: object) -> list[list[float]] | None:
         return None
     matrix = [[float(item) for item in row] for row in value]
     return matrix if all(math.isfinite(item) for row in matrix for item in row) else None
-
-
-def _matrix_label(name: str, matrix: list[list[float]]) -> str:
-    """Return the scene-friendly matrix label used by the transform tool."""
-
-    return (
-        f"{name}=["
-        f"[{matrix[0][0]:g},{matrix[0][1]:g}],[{matrix[1][0]:g},{matrix[1][1]:g}]"
-        "]"
-    )
 
 
 def _stage_content_corner(
@@ -2088,7 +2139,7 @@ def _emit_matrix_vector_transform(
                     {
                         "op": "annotation.upsert",
                         "alias": label_alias,
-                        "text": _matrix_label(str(entity.label), matrix),
+                        "text": matrix_label_text(str(entity.label), matrix),
                         "position": [position[0], position[1]],
                     }
                 )
@@ -2114,7 +2165,7 @@ def _emit_matrix_vector_transform(
             {
                 "op": "annotation.upsert",
                 "alias": label_alias,
-                "text": _matrix_label(str(entity.label), matrix),
+                "text": matrix_label_text(str(entity.label), matrix),
                 "position": [position[0], position[1]],
             }
         )

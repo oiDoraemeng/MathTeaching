@@ -1,8 +1,8 @@
 from .model import ExplanationContent
 
 _IDS = (
-    "space.closure", "subspace.classification", "subspace.intersection", "subspace.col-null",
-    "span.dimension", "dependence.redundancy", "nullspace.test", "rank.collapse",
+    "subspace.col-null",
+    "dependence.redundancy",
     "basis.definition", "linear-map.definition",
     "linear-map.compare", "linear-map.matrix-columns", "kernel-image", "rank-nullity",
 )

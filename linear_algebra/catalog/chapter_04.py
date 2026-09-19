@@ -4,15 +4,22 @@ from .model import LessonEntry, topic_entry
 from linear_algebra.chapter_04_semantics import semantic_for
 
 CHAPTER = "第4章 线性空间、线性无关与线性变换"
-_IDS = ("space.closure", "subspace.classification", "subspace.intersection", "subspace.col-null", "span.dimension", "dependence.redundancy", "nullspace.test", "rank.collapse", "basis.definition", "linear-map.definition", "linear-map.compare", "linear-map.matrix-columns", "kernel-image", "rank-nullity")
-_PREFIXES = ("4.1.1", "4.1.2", "4.1.2", "4.1.3", "4.2.1", "4.2.2", "4.2.3", "4.2.4", "4.3.1", "4.4.1", "4.4.2", "4.4.3", "4.5.1", "4.5.2")
-# 一个讲义小节可以支撑多个可视化主题（例如 4.1.2 支撑「子空间」与「子空间的交与并」）。
-# 目录里每个主题必须有唯一的显示名，否则同一小节会出现两条同名条目；标题只用于导航，
-# 讲义锚点仍由 heading_path/source_path 逐字给出。
-_DISPLAY_TITLES = {"subspace.intersection": "4.1.2 子空间的交与并", "basis.definition": "基的定义"}
-# 4.3 目录在软件中合并为单一小节「基的定义」，正文逐字取讲义 4.3.1–4.3.3。讲义原文
-# 不改，所以锚点提升到整个 4.3 小节；目录显示名与来源路径是软件侧的展示决策。
-_MERGED_SECTIONS = {"basis.definition": ("4.3 基与维数", "基的定义")}
+_IDS = ("subspace.col-null", "dependence.redundancy", "basis.definition", "linear-map.definition", "linear-map.compare", "linear-map.matrix-columns")
+_PREFIXES = ("4.1 线性空间与子空间", "4.2.2", "4.3.1", "4.4.1", "4.4.2", "4.4.3")
+# 4.1.1–4.1.3 在软件中合并为单一小节「线性空间」；4.2.1–4.2.2、4.3.1–4.3.3 同理。
+# 讲义原文不改，锚点提升到各自的父小节，目录显示名仅是软件侧展示决策。
+_DISPLAY_TITLES = {
+    "subspace.col-null": "线性空间",
+    "dependence.redundancy": "线性相关与线性无关",
+    "basis.definition": "基的定义",
+}
+_MERGED_SECTIONS = {
+    "subspace.col-null": ("4.1 线性空间与子空间", "线性空间"),
+    # 目录只显示一个合并条目；来源仓库再精确合并 4.2.1 与 4.2.2，不能把后续的
+    # 4.2.3、4.2.4 一并纳入。
+    "dependence.redundancy": ("4.2 线性组合、线性相关与线性无关", "线性相关与线性无关", "4.2.1 生成集 Span"),
+    "basis.definition": ("4.3 基与维数", "基的定义"),
+}
 def _records(text, chapter_number=4):
     lines=text.splitlines(); chapter=None; stack=[]; out=[]
     for line in lines:
@@ -37,9 +44,9 @@ def _make() -> tuple[LessonEntry, ...]:
     def entry(item: str, record: tuple[tuple[str, ...], int, str]) -> LessonEntry:
         merged = _MERGED_SECTIONS.get(item)
         if merged is not None:
-            # 合并后的小节锚点覆盖整个 4.3；来源路径仍逐字给出讲义 4.3 标题。
-            heading_path = (record[0][0], merged[0])
-            heading_level = 3
+            # 合并后的小节锚点覆盖整个父小节；来源路径仍逐字给出讲义标题。
+            heading_path = (record[0][0], merged[0], merged[2]) if len(merged) == 3 else (record[0][0], merged[0])
+            heading_level = 4 if len(merged) == 3 else 3
             source_path: tuple[str, str, str] = (record[0][0], merged[0], merged[1])
         else:
             heading_path = record[0]

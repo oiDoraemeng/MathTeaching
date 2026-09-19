@@ -217,17 +217,20 @@ def compile_chapter_04(
     reviewed_payloads: Mapping[str, Mapping[str, object]] | None = None,
     reviewed_root: str | Path | None = None,
 ) -> tuple[CompiledResource, ...]:
-    """Build all fourteen chapter-4 resources and upsert their index rows.
+    """Build all Chapter 4 resources and upsert their index rows.
 
     Compilation of every topic completes before a resource or index is
     touched.  The index update is chapter-scoped: every existing Chapter 4 row
     is replaced by the validated resource set, while rows for all other
     chapters are preserved verbatim.
     """
+    from linear_algebra.catalog.chapter_04 import TOPICS
+
     payloads=reviewed_payloads if reviewed_payloads is not None else load_reviewed_artifacts()
-    topic_ids = tuple(sorted(topic_id for topic_id in payloads if topic_id.startswith("ch04.")))
-    if len(topic_ids) != 14:
-        raise ValueError(f"chapter 4 requires 14 reviewed artifacts, found {len(topic_ids)}")
+    topic_ids = tuple(topic.id for topic in TOPICS)
+    reviewed_topic_ids = {topic_id for topic_id in payloads if topic_id.startswith("ch04.")}
+    if reviewed_topic_ids != set(topic_ids):
+        raise ValueError(f"chapter 4 reviewed artifacts must match the catalog: expected {len(topic_ids)}, found {len(reviewed_topic_ids)}")
     resources = tuple(_compile_reviewed_payload(topic_id,payloads[topic_id]) for topic_id in topic_ids)
     output = compiled_resource_store(output_root)
     if sync_index:
@@ -591,7 +594,7 @@ def main(argv: list[str] | None = None) -> int:
             TeachingArtifactStore(args.artifact_root or Path(__file__).with_name("data")),
             compiled_resource_store(args.output_root),
         )
-        if report.count != 35 or report.errors:
+        if report.count != 33 or report.errors:
             for error in report.errors:
                 print(error)
             return 1

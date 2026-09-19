@@ -15,6 +15,14 @@ _HEADING = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
 _CHAPTER = re.compile(r"^第(\d+)章(?:\s|[^A-Za-z0-9]|$)")
 _SECTION = re.compile(r"^\d+\.\d+(?:\s|$)")
 _EXCLUDED = ("自检", "练习", "挑战", "课后练习", "练习题", "挑战题")
+_MERGED_TOPIC_PATHS: dict[str, tuple[tuple[str, ...], ...]] = {
+    # 4.2 的目录项合并 4.2.1 与 4.2.2，但不能顺手把同一父节后面的 4.2.3、4.2.4
+    # 纳入来源。路径仍是讲义原文标题，供锚点与哈希复核。
+    "ch04.dependence.redundancy": (
+        ("第4章 线性空间、线性无关与线性变换（全书核心枢纽）", "4.2 线性组合、线性相关与线性无关", "4.2.1 生成集 Span"),
+        ("第4章 线性空间、线性无关与线性变换（全书核心枢纽）", "4.2 线性组合、线性相关与线性无关", "4.2.2 线性相关与线性无关"),
+    ),
+}
 
 
 @dataclass(frozen=True)
@@ -184,8 +192,12 @@ class LectureSourceRepository:
     def context_for(self, entry: LessonEntry) -> SourceContext:
         source = self.path.read_text(encoding="utf-8")
         records = parse_heading_sections(source)
-        section = _resolve_anchor(records, entry.source_anchor)
-        excerpt, spans = _bounded_topic_excerpt(section, records, excluded=_EXCLUDED)
+        merged_paths = _MERGED_TOPIC_PATHS.get(entry.id)
+        if merged_paths is None:
+            sections = (_resolve_anchor(records, entry.source_anchor),)
+        else:
+            sections = tuple(_resolve_merged_section(records, path) for path in merged_paths)
+        excerpt, spans = _bounded_topic_excerpt(sections, excluded=_EXCLUDED)
         digest = _fingerprint(excerpt)
         return SourceContext(
             topic_id=entry.id,
@@ -196,7 +208,7 @@ class LectureSourceRepository:
             excerpt=excerpt,
             source_hash=f"sha256:{digest}",
             spans=spans,
-            neighboring_titles=_neighbor_titles(records, section),
+            neighboring_titles=_neighbor_titles(records, sections[0]),
         )
 
 
@@ -212,24 +224,39 @@ def _resolve_anchor(records: tuple[HeadingSection, ...], anchor: SourceAnchor) -
     raise ValueError(f"missing lecture source anchor level {anchor.heading_level}: {anchor_name} (occurrence {anchor.occurrence})")
 
 
+def _resolve_merged_section(
+    records: tuple[HeadingSection, ...], path: tuple[str, ...]
+) -> HeadingSection:
+    """Return one exact source heading used by a reviewed merged catalog topic."""
+
+    for record in records:
+        if record.path == path and record.occurrence == 1:
+            return record
+    raise ValueError(f"missing merged lecture source heading: {' / '.join(path)}")
+
+
 def _bounded_topic_excerpt(
-    section: HeadingSection,
-    records: tuple[HeadingSection, ...],
-    *,
-    excluded: tuple[str, ...],
+    sections: tuple[HeadingSection, ...], *, excluded: tuple[str, ...]
 ) -> tuple[str, tuple[SourceSpan, ...]]:
-    del records  # The anchor's bounded block already includes its descendants.
-    text = _without_excluded_blocks(section.text, excluded)
-    fingerprint = _fingerprint(text)
-    span = SourceSpan(
-        id=_span_id(section.path, section.occurrence, fingerprint),
-        heading_path=section.path,
-        start_line=section.start_line,
-        end_line=section.end_line,
-        fingerprint=f"sha256:{fingerprint}",
-        text=text,
-    )
-    return text, (span,)
+    """Return one or more explicitly selected heading blocks, never their siblings."""
+
+    spans: list[SourceSpan] = []
+    text_parts: list[str] = []
+    for section in sections:
+        text = _without_excluded_blocks(section.text, excluded)
+        fingerprint = _fingerprint(text)
+        spans.append(
+            SourceSpan(
+                id=_span_id(section.path, section.occurrence, fingerprint),
+                heading_path=section.path,
+                start_line=section.start_line,
+                end_line=section.end_line,
+                fingerprint=f"sha256:{fingerprint}",
+                text=text,
+            )
+        )
+        text_parts.append(text)
+    return "\n\n".join(text_parts), tuple(spans)
 
 
 def _without_excluded_blocks(text: str, excluded: tuple[str, ...]) -> str:

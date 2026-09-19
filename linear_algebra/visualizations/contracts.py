@@ -65,7 +65,7 @@ def contract_for(topic_id: str) -> VisualContract:
     }
     extended_family = {
         **{topic: "subspace_region" for topic in (
-            "ch04.space.closure", "ch04.subspace.classification", "ch04.subspace.intersection", "ch04.subspace.col-null", "ch04.span.dimension", "ch04.dependence.redundancy", "ch04.nullspace.test", "ch04.rank.collapse", "ch04.basis.definition", "ch04.linear-map.definition", "ch04.linear-map.compare", "ch04.linear-map.matrix-columns", "ch04.kernel-image", "ch04.rank-nullity")},
+            "ch04.subspace.col-null", "ch04.dependence.redundancy", "ch04.basis.definition", "ch04.linear-map.definition", "ch04.linear-map.compare", "ch04.linear-map.matrix-columns")},
         **{topic: "affine_solution" for topic in ("ch05.homogeneous.solution-space", "ch05.affine.solution-set", "ch05.consistency.geometry", "ch05.gaussian-elimination", "ch05.least-squares.projection", "ch05.fundamental-solution-system", "ch05.elementary-matrix-elimination", "ch05.least-squares-derivation")},
         **{topic: "basis_change" for topic in ("ch06.basis-change.motivation", "ch06.basis-change.coordinates", "ch06.similarity-transform")},
         **{topic: "spectral_orthogonal" for topic in ("ch07.eigen.direction", "ch07.characteristic-polynomial", "ch07.eigenspace", "ch07.diagonalization", "ch07.gram-schmidt", "ch07.orthogonal-transform")},
