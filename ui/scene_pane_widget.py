@@ -13,6 +13,12 @@ from ui.scene_pane_manager import ScenePaneManager
 from services.scene_clipboard import SceneClipboard, rectangle_select
 
 
+# The fullscreen control mirrors the window maximize/restore pair: one glyph
+# while the pane sits in the grid, another once it owns the whole viewport.
+_FULLSCREEN_GLYPH = "□"
+_FULLSCREEN_RESTORE_GLYPH = "⧉"
+
+
 class PaneChrome(QFrame):
     """Reusable pane frame with title and compact window controls."""
 
@@ -24,10 +30,11 @@ class PaneChrome(QFrame):
         super().__init__(parent)
         self.setObjectName("paneChrome")
         self.setProperty("chrome", True)
+        self._fullscreen_active = False
         self.title_label = QLabel(str(title), self)
         self.title_label.setObjectName("paneChromeTitle")
         self.hide_button = QToolButton(self); self.hide_button.setText("—"); self.hide_button.setToolTip("隐藏窗格")
-        self.fullscreen_button = QToolButton(self); self.fullscreen_button.setText("□"); self.fullscreen_button.setToolTip("全屏窗格")
+        self.fullscreen_button = QToolButton(self); self.fullscreen_button.setText(_FULLSCREEN_GLYPH); self.fullscreen_button.setToolTip("全屏窗格"); self.fullscreen_button.setAccessibleName("全屏窗格")
         self.close_button = QToolButton(self); self.close_button.setText("×"); self.close_button.setToolTip("关闭窗格")
         self.close_button.setObjectName("paneChromeClose")
         bar = QHBoxLayout(); bar.setContentsMargins(8, 2, 4, 2); bar.setSpacing(2)
@@ -37,6 +44,20 @@ class PaneChrome(QFrame):
         self.hide_button.clicked.connect(self.hide_requested)
         self.fullscreen_button.clicked.connect(self.fullscreen_requested)
         self.close_button.clicked.connect(self._confirm_close)
+
+    def set_fullscreen_active(self, active: bool) -> None:
+        """Reflect whether this pane currently owns the whole viewport."""
+        active = bool(active)
+        if active == self._fullscreen_active:
+            return
+        self._fullscreen_active = active
+        label = "还原窗格" if active else "全屏窗格"
+        self.fullscreen_button.setText(_FULLSCREEN_RESTORE_GLYPH if active else _FULLSCREEN_GLYPH)
+        self.fullscreen_button.setToolTip(label)
+        self.fullscreen_button.setAccessibleName(label)
+
+    def is_fullscreen_active(self) -> bool:
+        return self._fullscreen_active
 
     def _confirm_close(self) -> None:
         answer = QMessageBox.question(self, "关闭窗格", "确定关闭此窗格？", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
@@ -63,17 +84,26 @@ class ScenePaneWidget(QWidget):
 
     def __init__(self, manager: ScenePaneManager, parent: QWidget | None = None,
                  interactor_factory: Callable[[QWidget], Any] | None = None,
-                 on_interactor_created: Callable[[str, Any], None] | None = None) -> None:
+                 on_interactor_created: Callable[[str, Any], None] | None = None,
+                 on_pane_viewport_changed: Callable[[str], None] | None = None) -> None:
         super().__init__(parent)
         self.manager = manager
         self._factory = interactor_factory or self._default_factory
         self._on_interactor_created = on_interactor_created
+        # Fired after a pane receives its real geometry (first layout, layout
+        # changes, window resizes), so screen-sized decorations built while the
+        # interactor still had its default pre-layout size can be rebuilt.
+        self._on_pane_viewport_changed = on_pane_viewport_changed
         self._interactors: dict[str, Any] = {}
         self._chromes: dict[str, PaneChrome] = {}
         self._retry_attempts: dict[str, int] = {}
         self._retry_timers: dict[str, QTimer] = {}
         self._refresh_callbacks: dict[str, Callable[[str], None]] = {}
         self._refreshing = False
+        # Remember which single pane owns the viewport and the layout it hid, so
+        # the pane's fullscreen control can be a real toggle.
+        self._fullscreen_pane_id: str | None = None
+        self._fullscreen_restore_ids: tuple[str, ...] = ()
         self.clipboard = SceneClipboard()
         manager.active_pane_changed.connect(self._on_active_changed)
         manager.pane_renamed.connect(self._on_pane_renamed)
@@ -82,6 +112,7 @@ class ScenePaneWidget(QWidget):
         self.sync_layout()
 
     def _restore_workspace(self) -> None:
+        self._reset_fullscreen_state()
         for pane_id in tuple(self._interactors):
             self._discard_interactor(pane_id, save_camera=False)
         self.sync_layout()
@@ -118,11 +149,16 @@ class ScenePaneWidget(QWidget):
     def sync_layout(self) -> tuple[str, ...]:
         visible = self.manager.visible_pane_ids()
         visible_set = set(visible)
+        if self._fullscreen_pane_id is not None and self._fullscreen_pane_id not in visible_set:
+            # The pane left the viewport by another route (hide, close, layout
+            # change); forget the expansion instead of restoring it later.
+            self._reset_fullscreen_state()
         for pane_id in set(self._interactors) | set(self._retry_attempts):
             if pane_id not in visible_set:
                 self._clear_retry(pane_id)
                 self._discard_interactor(pane_id)
         self.refresh_visible_panes()
+        self._sync_fullscreen_controls()
         return visible
 
     def _discard_interactor(self, pane_id: str, *, save_camera: bool = True) -> None:
@@ -216,12 +252,46 @@ class ScenePaneWidget(QWidget):
         return widget
 
     def _hide_pane(self, pane_id: str) -> None:
-        visible = [pid for pid in self.manager.visible_pane_ids() if pid != pane_id]
+        if self._fullscreen_pane_id == pane_id:
+            # Hiding the expanded pane must bring the layout it replaced back.
+            candidates = self._fullscreen_restore_ids
+            self._reset_fullscreen_state()
+        else:
+            candidates = self.manager.visible_pane_ids()
+        visible = [pid for pid in candidates if pid != pane_id]
         if visible:
             self.manager.set_visible_panes(visible); self.sync_layout()
 
     def _fullscreen_pane(self, pane_id: str) -> None:
-        self.manager.set_visible_panes([pane_id]); self.sync_layout()
+        """Expand *pane_id* to the whole viewport, or restore the hidden layout."""
+        if self._fullscreen_pane_id == pane_id:
+            self._leave_fullscreen()
+            return
+        visible = tuple(self.manager.visible_pane_ids())
+        if visible == (pane_id,):
+            # Already the only visible pane: nothing to expand, and nothing to
+            # restore later.
+            return
+        self._fullscreen_restore_ids = visible
+        self._fullscreen_pane_id = pane_id
+        self.manager.set_visible_panes([pane_id])
+        self.sync_layout()
+
+    def _leave_fullscreen(self) -> None:
+        restore = self._fullscreen_restore_ids
+        self._reset_fullscreen_state()
+        if restore:
+            self.manager.set_visible_panes(list(restore))
+        self.sync_layout()
+
+    def _reset_fullscreen_state(self) -> None:
+        self._fullscreen_pane_id = None
+        self._fullscreen_restore_ids = ()
+
+    def _sync_fullscreen_controls(self) -> None:
+        for pane_id, chrome in self._chromes.items():
+            if isValid(chrome):
+                chrome.set_fullscreen_active(pane_id == self._fullscreen_pane_id)
 
     @staticmethod
     def _renderer_valid(renderer: Any) -> bool:
@@ -286,6 +356,11 @@ class ScenePaneWidget(QWidget):
             # first instead of treating invisibility as context loss.
             target.show(); widget.show()
             widget.update()
+            if self._on_pane_viewport_changed is not None:
+                try:
+                    self._on_pane_viewport_changed(pane_id)
+                except Exception:
+                    pass
             callback = self._refresh_callbacks.get(pane_id)
             if callback is not None:
                 callback(pane_id)

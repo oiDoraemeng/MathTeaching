@@ -79,6 +79,72 @@ def test_custom_titlebar_has_synchronous_controls_and_theme_state() -> None:
     assert bar.minimize_button.accessibleName() == "最小化"
 
 
+def test_titlebar_minimize_and_maximize_controls_use_distinct_icons() -> None:
+    """The two controls must not collapse onto one glyph."""
+    bar = CustomTitleBar(QWidget())
+    assert bar.minimize_button.icon().cacheKey() != bar.maximize_button.icon().cacheKey()
+
+
+def test_maximize_control_follows_window_state(monkeypatch) -> None:
+    """Maximizing shows a restore glyph/tooltip, restoring returns to the square."""
+    host = QWidget()
+    host.setWindowTitle("Math3D Teaching")
+    bar = CustomTitleBar(host)
+    restored_key = bar.maximize_button.icon().cacheKey()
+    assert bar.maximize_button.toolTip() == "最大化"
+
+    monkeypatch.setattr(host, "isMaximized", lambda: True)
+    QApplication.sendEvent(host, QEvent(QEvent.Type.WindowStateChange))
+    assert bar.maximize_button.toolTip() == "还原"
+    assert bar.maximize_button.accessibleName() == "还原"
+    assert bar.maximize_button.icon().cacheKey() != restored_key
+
+    monkeypatch.setattr(host, "isMaximized", lambda: False)
+    QApplication.sendEvent(host, QEvent(QEvent.Type.WindowStateChange))
+    assert bar.maximize_button.toolTip() == "最大化"
+    assert bar.maximize_button.icon().cacheKey() == restored_key
+
+
+def test_maximize_control_ignores_rapid_repeated_clicks_until_state_is_committed(monkeypatch) -> None:
+    """A second click must not invert a transition that Windows has not applied yet."""
+    host = QWidget()
+    bar = CustomTitleBar(host)
+    commands = []
+    monkeypatch.setattr(host, "isMaximized", lambda: False)
+    monkeypatch.setattr(host, "isFullScreen", lambda: False)
+    monkeypatch.setattr(host, "showMaximized", lambda: commands.append("maximize"))
+
+    bar._toggle_maximized()
+    bar._toggle_maximized()
+
+    assert commands == ["maximize"]
+    assert not bar.maximize_button.isEnabled()
+
+    monkeypatch.setattr(host, "isMaximized", lambda: True)
+    QApplication.sendEvent(host, QEvent(QEvent.Type.WindowStateChange))
+
+    assert bar.maximize_button.isEnabled()
+    assert bar.maximize_button.toolTip() == "还原"
+
+
+def test_minimize_control_is_serialized_with_maximize_transition(monkeypatch) -> None:
+    """Minimize cannot race a maximize command that is still being committed."""
+    host = QWidget()
+    bar = CustomTitleBar(host)
+    commands = []
+    monkeypatch.setattr(host, "isMaximized", lambda: False)
+    monkeypatch.setattr(host, "isFullScreen", lambda: False)
+    monkeypatch.setattr(host, "showMaximized", lambda: commands.append("maximize"))
+    monkeypatch.setattr(host, "showMinimized", lambda: commands.append("minimize"))
+
+    bar._toggle_maximized()
+    bar._request_minimized()
+
+    assert commands == ["maximize"]
+    assert not bar.minimize_button.isEnabled()
+
+
+
 def test_titlebar_tracker_is_idempotent_and_handles_window_events(monkeypatch) -> None:
     app = QApplication.instance() or QApplication([])
     app.setProperty("math3d_effective_theme", "dark")
