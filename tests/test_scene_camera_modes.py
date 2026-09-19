@@ -119,7 +119,7 @@ class SceneCameraModeTests(unittest.TestCase):
         ):
             build_scene(plotter, show_axes=False, base_surface=False)
 
-        self.assertEqual(plotter.camera.position[0], (12.8, -14.4, 11.4))
+        self.assertEqual(plotter.camera.position[0], ((9.6, -10.8, 8.55)))
         self.assertNotIn("reset_camera", plotter.calls)
 
     def test_3d_axis_extent_is_a_fixed_world_value(self) -> None:

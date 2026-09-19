@@ -18,11 +18,10 @@ from rendering.materials import material_preset
 # Keep the initial view far enough away to leave comfortable room around the
 # origin.  The blank 3-D workspace has no geometry for ``reset_camera()`` to
 # fit, so its camera must be positioned explicitly.
-_CAMERA_POSITION = [(12.8, -14.4, 11.4), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
+_CAMERA_POSITION = [(9.6, -10.8, 8.55), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
 
-# Coordinate axes use a fixed world-space extent.  Camera motion changes only
-# the view; it never rebuilds coordinate-system geometry.
-DEFAULT_3D_AXIS_EXTENT = 4.5
+# 每根轴从 -4.5 到 +4.5
+DEFAULT_3D_AXIS_EXTENT = 4.5 # 
 
 
 def configure_3d_camera_interaction(plotter: pv.Plotter) -> None:

@@ -94,7 +94,32 @@ def test_teaching_three_d_vectors_are_rows_in_the_shared_algebra_list() -> None:
     rows = window._three_d_panel_layers()
 
     assert {row.alias for row in rows if isinstance(row, AlgebraVector3D)} == set(scene._agent_geometry3d)
-    assert window._three_d_vector_row("ch04__entity__input_vector_a").latex.startswith(r"\vec{x}_{a}")
+    assert window._three_d_vector_row("ch04__entity__input_vector_a").latex.startswith(r"\boldsymbol{x}_{1}")
+    assert window._three_d_vector_row("ch04__entity__output_vector_a").latex.startswith(r"\boldsymbol{A}\boldsymbol{x}_{1}")
+    assert window._three_d_vector_row("ch04__entity__kernel_vector").latex.startswith(r"\boldsymbol{k}")
+
+
+def test_three_d_command_uses_the_global_tool_style_for_vectors() -> None:
+    window = _three_d_window()
+
+    window._command_upsert_linear3d({
+        "op": "linear3d.upsert",
+        "alias": "lesson-vector",
+        "start": [0.0, 0.0, 0.0],
+        "end": [1.0, 2.0, 3.0],
+        "kind": "vector",
+        "line_width": 2.4,
+    })
+
+    window._pane_scene().geometry3d_controller.add_linear.assert_called_once_with(
+        "lesson-vector",
+        (0.0, 0.0, 0.0),
+        (1.0, 2.0, 3.0),
+        kind="vector",
+        color="#2777b6",
+        role="primary",
+        style="solid",
+    )
 
 
 def test_teaching_points_at_vector_starts_do_not_render_origin_spheres(monkeypatch) -> None:

@@ -6,10 +6,11 @@ import pytest
 from rendering.geometry_3d_scene import (
     _VECTOR_LINE_WIDTH,
     _VECTOR_TIP_LENGTH_PX,
-    _VECTOR_TIP_MAX_VECTOR_RATIO,
     _VECTOR_TIP_RADIUS_PX,
     Geometry3DSceneController,
 )
+from rendering.axis import _AXIS_TIP_LENGTH_RATIO
+from rendering.scene import DEFAULT_3D_AXIS_EXTENT
 
 
 class FakeActor:
@@ -105,7 +106,7 @@ def test_3d_vector_arrow_uses_a_screen_width_shaft_and_cone_head() -> None:
 def test_3d_vector_head_world_size_tracks_the_camera_so_pixels_stay_constant() -> None:
     """头部是实体几何：相机拉远一倍，世界尺寸也要加倍，屏幕上才不变。"""
     camera = FakeCamera(distance=10.0, view_angle=30.0)
-    # 视口取 2000 像素，让头部世界尺寸远小于「不超过向量 30%」的上限。
+    # 高像素视口使计算结果容易精确核对。
     plotter = SizedPlotter(height=2000, camera=camera)
     controller = Geometry3DSceneController(plotter)
 
@@ -127,24 +128,66 @@ def test_3d_vector_head_world_size_tracks_the_camera_so_pixels_stay_constant() -
     assert zoomed_length < near_length
 
 
-def test_3d_vector_head_never_swallows_the_arrow() -> None:
+def test_3d_vectors_use_one_global_tool_style() -> None:
+    camera = FakeCamera(distance=10.0, view_angle=30.0)
+    plotter = SizedPlotter(height=1000, camera=camera)
+    controller = Geometry3DSceneController(plotter)
+
+    controller.add_linear(
+        "lesson-vector",
+        (0, 0, 0),
+        (0, 1, 0),
+        kind="vector",
+        line_width=2.4,
+    )
+
+    expected_scale = 2.0 * 10.0 * math.tan(math.radians(15.0)) / 1000
+    assert controller._arrow_tip_lengths["lesson-vector"] == pytest.approx(_VECTOR_TIP_LENGTH_PX * expected_scale)
+    assert plotter.mesh_kwargs["geometry3d:linear:lesson-vector"]["line_width"] == _VECTOR_LINE_WIDTH
+
+    camera.distance = 20.0
+    assert controller.refresh_vector_heads() is True
+    assert controller._arrow_tip_lengths["lesson-vector"] == pytest.approx(2.0 * _VECTOR_TIP_LENGTH_PX * expected_scale)
+
+
+def test_3d_vector_head_rebuilds_from_the_live_viewport_after_first_paint() -> None:
+    """Lesson vectors created before a Qt viewport is ready do not retain a large fallback head."""
+    plotter = FakePlotter()
+    controller = Geometry3DSceneController(plotter)
+    controller.add_linear("lesson-vector", (0, 0, 0), (0, 1, 0), kind="vector")
+    assert controller._arrow_tip_lengths["lesson-vector"] == pytest.approx(0.14)
+
+    plotter.renderer = SimpleNamespace(GetSize=lambda: (800, 1000))
+    plotter.camera = FakeCamera(distance=10.0, view_angle=30.0)
+
+    assert controller.refresh_vector_heads() is True
+    expected_scale = 2.0 * 10.0 * math.tan(math.radians(15.0)) / 1000
+    assert controller._arrow_tip_lengths["lesson-vector"] == pytest.approx(_VECTOR_TIP_LENGTH_PX * expected_scale)
+
+
+def test_3d_vector_head_size_does_not_depend_on_vector_length() -> None:
     camera = FakeCamera(distance=10.0)
     plotter = SizedPlotter(height=600, camera=camera)
     controller = Geometry3DSceneController(plotter)
 
-    tip_length, tip_radius = controller._arrow_head((0, 0, 0), (0, 0, 0.2))
+    short_head = controller._arrow_head((0, 0, 0), (0, 0.2, 0))
+    long_head = controller._arrow_head((0, 0, 0), (0, 2.0, 0))
 
-    assert tip_length == pytest.approx(0.2 * _VECTOR_TIP_MAX_VECTOR_RATIO, rel=1e-9)
-    assert tip_radius == pytest.approx(
-        tip_length * _VECTOR_TIP_RADIUS_PX / _VECTOR_TIP_LENGTH_PX,
-        rel=1e-9,
-    )
+    expected_scale = 2.0 * 10.0 * math.tan(math.radians(15.0)) / 600
+    assert short_head[0] == pytest.approx(_VECTOR_TIP_LENGTH_PX * expected_scale)
+    assert short_head == pytest.approx(long_head)
 
 
-def test_3d_vector_heads_match_the_compact_toolbar_target() -> None:
-    """Lesson vectors and default toolbar vectors share one compact target."""
-    assert _VECTOR_TIP_LENGTH_PX == 15.0
-    assert _VECTOR_TIP_RADIUS_PX == 4.0
+def test_3d_vector_heads_are_smaller_than_coordinate_axis_heads() -> None:
+    """The default vector head is deliberately more compact than an axis head."""
+    camera = FakeCamera(distance=10.0, view_angle=30.0)
+    controller = Geometry3DSceneController(SizedPlotter(height=600, camera=camera))
+    world_per_pixel = controller._world_per_pixel((0, 0, 0))
+    assert world_per_pixel is not None
+    axis_head_pixels = DEFAULT_3D_AXIS_EXTENT * 2.0 * _AXIS_TIP_LENGTH_RATIO / world_per_pixel
+    assert _VECTOR_TIP_LENGTH_PX == 12.0
+    assert _VECTOR_TIP_RADIUS_PX == 3
+    assert _VECTOR_TIP_LENGTH_PX < axis_head_pixels
 
 
 def test_3d_vectors_at_different_depths_keep_the_same_pixel_head_size() -> None:

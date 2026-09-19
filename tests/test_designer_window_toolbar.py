@@ -84,7 +84,7 @@ def test_loading_new_chapters_preserves_the_mode_specific_toolbar_contract(
             self.interactor.setFocusPolicy(policy)
 
     plans = {
-        "ch04.space.closure": CommandPlan(scene="2d", operations=({"op": "view.fit"},)),
+        "ch04.subspace.col-null": CommandPlan(scene="3d", operations=({"op": "view.fit"},)),
         "ch08.principal-axis": CommandPlan(scene="3d", operations=({"op": "view.fit"},)),
     }
     opened: list[tuple[str, str]] = []

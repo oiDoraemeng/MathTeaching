@@ -434,10 +434,6 @@ def test_chapter_four_real_host_executes_geometry_and_rolls_back(topic):
         scene.geometry3d_controller=Geometry3DSceneController(window._pane_renderer(target))
     service=SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
     service.execute(plan,pane_id=target)
-    if topic=="ch04.kernel-image":
-        assert {f"ch04__kernel_image__bundle__{lane}" for lane in ("domain","kernel","image")} <= set(scene._agent_teaching_2d)
-    elif topic=="ch04.subspace.intersection":
-        assert any(alias.startswith("ch04__relation__") and value.get("op")=="linear3d.upsert" for alias,value in scene._agent_geometry3d.items())
     assert window._pane_scene(untouched).geometry_points==[]
     with window._using_pane(target):
         before=window._capture_scene_command_state()

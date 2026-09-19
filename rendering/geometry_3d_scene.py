@@ -25,13 +25,11 @@ from rendering.line_arrow_3d import line_arrow_mesh
 # 相机与视口都取不到时（无渲染窗口的宿主）退回固定世界尺寸。
 _VECTOR_TIP_LENGTH = 0.14 # 箭头长度（兜底）
 _VECTOR_TIP_RADIUS = 0.025 # 箭头半径，也就是粗细（兜底）
-# Use the same compact visual target as a default toolbar-created vector.
-# The world dimensions are derived from each tip's camera depth, keeping this
-# pixel size consistent for lesson vectors at different depths as well.
-_VECTOR_TIP_LENGTH_PX = 15.0 # 箭头长度，屏幕像素
-_VECTOR_TIP_RADIUS_PX = 4.0 # 箭头半径，也就是粗细，屏幕像素
-# 头部再大也不能吃掉半支箭头：超过这个比例就等比缩小。
-_VECTOR_TIP_MAX_VECTOR_RATIO = 0.3
+# Every vector shares this compact target.  The world dimensions are derived
+# from each tip's camera depth, keeping it consistent at different depths and
+# preventing individual lessons from overriding the head size.
+_VECTOR_TIP_LENGTH_PX = 12.0 # 箭头长度，屏幕像素
+_VECTOR_TIP_RADIUS_PX = 3 # 箭头半径，也就是粗细，屏幕像素
 _VECTOR_LINE_WIDTH = 3.2
 
 
@@ -82,6 +80,9 @@ class Geometry3DSceneController:
             for child_alias in tuple(collection):
                 if child_alias == alias or child_alias.startswith(f"{alias}__"):
                     collection.pop(child_alias, None)
+        for child_alias in tuple(self._arrow_tip_lengths):
+            if child_alias == alias or child_alias.startswith(f"{alias}__"):
+                self._arrow_tip_lengths.pop(child_alias, None)
 
     def set_visible(self, alias: str, visible: bool) -> None:
         """Show or hide all 3D actors belonging to one semantic alias."""
@@ -107,7 +108,11 @@ class Geometry3DSceneController:
         role: str = "primary",
         style: str = "solid",
     ) -> object:
-        model = Linear3D(alias, _v3(start), _v3(end), kind=kind, color=color, line_width=line_width, role=role, style=style)  # type: ignore[arg-type]
+        # Vectors use the same tool style everywhere.  Lesson plans may still
+        # carry historical line widths, but they cannot make a vector look
+        # different from one created by the 3-D vector tool.
+        effective_line_width = _VECTOR_LINE_WIDTH if kind == "vector" else line_width
+        model = Linear3D(alias, _v3(start), _v3(end), kind=kind, color=color, line_width=effective_line_width, role=role, style=style)  # type: ignore[arg-type]
         name = f"geometry3d:linear:{alias}"
         self._remove(name)
         if model.kind == "vector":
@@ -125,6 +130,7 @@ class Geometry3DSceneController:
             mesh = _dashed_segment_mesh(model.start, model.end)
         else:
             mesh = pv.Line(model.start, model.end)
+            self._arrow_tip_lengths.pop(alias, None)
         actor = self._add(
             mesh,
             name=name,
@@ -230,9 +236,12 @@ class Geometry3DSceneController:
             return None
         return visible_height / height
 
-    def _arrow_head(self, start: Vector3, end: Vector3) -> tuple[float, float]:
+    def _arrow_head(
+        self,
+        start: Vector3,
+        end: Vector3,
+    ) -> tuple[float, float]:
         """Return the world-space head (length, radius) for one vector."""
-        length = math.sqrt(sum((float(b) - float(a)) ** 2 for a, b in zip(start, end)))
         world_per_pixel = self._world_per_pixel(end)
         if world_per_pixel is not None:
             self._last_world_per_pixel = world_per_pixel
@@ -244,11 +253,6 @@ class Geometry3DSceneController:
         else:
             tip_length = _VECTOR_TIP_LENGTH_PX * world_per_pixel
             tip_radius = _VECTOR_TIP_RADIUS_PX * world_per_pixel
-        cap = length * _VECTOR_TIP_MAX_VECTOR_RATIO
-        if tip_length > cap > 0.0:
-            shrink = cap / tip_length
-            tip_length *= shrink
-            tip_radius *= shrink
         return tip_length, tip_radius
 
     def add_projection3d(self, alias: str, vector: Vector3, foot: Vector3, residual: Vector3, *, color: str = "#2777b6") -> None:

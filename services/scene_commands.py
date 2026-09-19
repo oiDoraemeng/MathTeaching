@@ -11,7 +11,7 @@ from dataclasses import dataclass
 import json
 import math
 import re
-from typing import Any, Protocol
+from typing import Any, Mapping, Protocol
 
 from .agent_provider import AgentProvider
 
@@ -444,6 +444,7 @@ class SceneCommandService:
                 raise CommandError("linear3d 的起点和终点不能重合。")
             _require_choice_value(operation, "style", _STYLE_VALUES, default="solid")
             _require_choice_value(operation, "role", _ROLE_VALUES, default="primary")
+            _validate_optional_range(operation, "line_width", minimum=1.0, maximum=8.0)
         elif name == "point3d.upsert":
             _require_text(operation, "alias")
             _require_coordinates(operation.get("coordinates"), dimensions=3)
@@ -1233,6 +1234,21 @@ def _validate_opacity(value: Any) -> float:
     if not 0 < opacity <= 1:
         raise CommandError("opacity 必须在 (0, 1] 范围内。")
     return opacity
+
+
+def _validate_optional_range(
+    operation: Mapping[str, Any],
+    field_name: str,
+    *,
+    minimum: float,
+    maximum: float,
+) -> None:
+    """Validate optional visual geometry parameters supplied by teaching plans."""
+    if field_name not in operation:
+        return
+    value = _require_finite_number(operation[field_name], field_name)
+    if not minimum <= value <= maximum:
+        raise CommandError(f"{field_name} 必须在 [{minimum:g}, {maximum:g}] 范围内。")
 
 
 def _require_finite_number(value: Any, field_name: str) -> float:

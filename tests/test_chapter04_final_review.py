@@ -42,17 +42,13 @@ def test_oblique_arrows_grid_and_decomposition_share_matrix_columns():
 
 def test_dependence_draws_every_weighted_term_as_closed_zero_chain():
     compiled=VisualSemanticsCompiler().compile(TeachingArtifact.from_dict(artifact_payload_for("ch04.dependence.redundancy")))
-    terms=[op for op in compiled.plan.operations if "dependent_combination__term_" in op.get("alias","")]
+    terms=[op for op in compiled.plan.operations if op.get("alias", "").startswith("ch04__relation__dependent_combination__term_")]
     assert [op["start"] for op in terms]==[[0,0,0],[1,0,0],[1,1,0]]
     assert [op["end"] for op in terms]==[[1,0,0],[1,1,0],[0,0,0]]
 
 
 @pytest.mark.parametrize("topic,role,value", [
     ("ch04.basis.definition","same_vector",[5,4]),
-    ("ch04.rank-nullity","collapsed",[1,0,0]),
-    ("ch04.rank-nullity","nullity",[[1,0,0]]),
-    ("ch04.rank-nullity","rank",[[1,0,0],[0,0,1]]),
-    ("ch04.rank.collapse","line_image",[[0,1]]),
     ("ch04.linear-map.definition","T_u",[100,100]),
     ("ch04.linear-map.definition","T_v",[100,100]),
 ])
@@ -99,7 +95,7 @@ def test_col_null_scene_draws_each_object_once_on_the_same_origin():
     ]
 
 
-@pytest.mark.parametrize("kind,nth", [("write",1),("write",10),("write",30),("replace",1),("replace",8),("replace",15)])
+@pytest.mark.parametrize("kind,nth", [("write",1),("write",4),("write",7),("replace",1),("replace",4),("replace",7)])
 @pytest.mark.parametrize("existing", [True,False])
 def test_failed_release_restores_every_file_byte_for_byte(tmp_path,monkeypatch,kind,nth,existing):
     output=tmp_path/"compiled"; index=tmp_path/"index.json"
@@ -114,8 +110,8 @@ def test_failed_release_restores_every_file_byte_for_byte(tmp_path,monkeypatch,k
     target=Path if kind=="write" else release.os
     name="write_bytes" if kind=="write" else "replace"
     original=getattr(target,name)
-    # New destinations have no backup writes, hence only 15 stage writes.
-    failure_at=min(nth,15) if not existing and kind=="write" else nth
+    # Six compiled resources plus the index produce seven staged writes.
+    failure_at=min(nth,7) if not existing and kind=="write" else nth
     def fail_once(*args,**kwargs):
         nonlocal calls
         calls+=1
@@ -130,7 +126,7 @@ def test_failed_release_restores_every_file_byte_for_byte(tmp_path,monkeypatch,k
     assert not list(tmp_path.rglob(".ch04-release-*"))
 
 
-@pytest.mark.parametrize("kind,nth", [("write",1),("write",32),("write",58),("replace",1),("replace",20),("replace",29)])
+@pytest.mark.parametrize("kind,nth", [("write",1),("write",7),("write",13),("replace",1),("replace",7),("replace",13)])
 @pytest.mark.parametrize("existing", [True,False])
 def test_entire_script_rolls_back_reviewed_compiled_and_index(tmp_path,monkeypatch,kind,nth,existing):
     from scripts.release_chapter04 import main
@@ -143,7 +139,9 @@ def test_entire_script_rolls_back_reviewed_compiled_and_index(tmp_path,monkeypat
     name="write_bytes" if kind=="write" else "replace"
     original=getattr(target,name)
     calls=0
-    failure_at=min(nth,29) if kind=="write" and not existing else nth
+    # The complete Chapter 4 release has six reviewed artifacts, six
+    # compiled resources, and one aggregate-index write.
+    failure_at=min(nth,13) if kind=="write" and not existing else nth
     def fail_once(*args,**kwargs):
         nonlocal calls
         calls+=1
