@@ -19,6 +19,7 @@ from .model import JsonValue, WorkedExample, WorkedExampleCheck
 SUPPORTED_KINDS = frozenset(
     {
         "vector_addition",
+        "linear_combination",
         "scalar_multiple",
         "cross_product",
         "inner_product",
@@ -97,6 +98,29 @@ def _calculate(kind: str, given: JsonValue) -> _Calculation:
         b = _vector(right, dimension=len(a))
         value = tuple(x + y for x, y in zip(a, b))
         return _named(value, result=value, sum=value, output=value)
+
+    if kind == "linear_combination":
+        if isinstance(given, Mapping):
+            vectors_value = given.get("vectors")
+            coefficients_value = given.get("coefficients")
+            if vectors_value is None or coefficients_value is None:
+                raise ValueError("given mapping is missing vectors or coefficients")
+        else:
+            vectors_value, coefficients_value = _pair(given, "vectors", "coefficients")
+        raw_vectors = _sequence(vectors_value)
+        coefficients = _sequence(coefficients_value)
+        if len(raw_vectors) not in (2, 3) or len(raw_vectors) != len(coefficients):
+            raise ValueError("linear combination requires two or three matching terms")
+        vectors = tuple(_vector(vector) for vector in raw_vectors)
+        dimension = len(vectors[0])
+        if any(len(vector) != dimension for vector in vectors):
+            raise ValueError("linear combination vectors must share a dimension")
+        scalars = tuple(_number(value) for value in coefficients)
+        value = tuple(
+            sum(scalars[index] * vectors[index][coordinate] for index in range(len(vectors)))
+            for coordinate in range(dimension)
+        )
+        return _named(value, result=value, linear_combination=value, output=value)
 
     if kind == "scalar_multiple":
         if isinstance(given, Mapping):

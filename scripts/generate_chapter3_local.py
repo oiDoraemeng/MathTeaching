@@ -44,8 +44,6 @@ _SPEC = {
     "ch03.inverse.formula": {"formula": "A^{-1}=1/(ad-bc)[[d,-b],[-c,a]]", "kind": "determinant", "given": {"matrix": [[3, 1], [2, 4]]}, "result": 10.0, "check": "determinant", "statement": "2×2 求逆公式先交换主对角元、反转副对角元，再除以非零行列式。", "relation": "invariant"},
     "ch03.inverse.examples": {"formula": "det(A)≠0⇔A^{-1}存在", "kind": "matrix_transform", "given": {"matrix": [[2, 0], [0, 1]], "vector": [3, 4]}, "result": [6.0, 4.0], "check": "transformed", "statement": "可逆变换保留全部维度且能撤销；行列式为零的退化变换丢失信息，无法唯一还原。", "relation": "maps_to", "inverse": True, "matrix": True},
     "ch03.det.zero.equivalence": {"formula": "det(A)=0⇔rank(A)<n", "kind": "determinant", "given": {"matrix": [[1, 2], [2, 4]]}, "result": 0.0, "check": "determinant", "statement": "det=0、列线性相关、秩下降和存在非零零空间是同一压扁现象的等价描述。", "relation": "collapses_to"},
-    "ch03.det.high-dimensional-volume": {"formula": "det(A)=\\text{oriented n-volume}", "kind": "oriented_volume", "given": {"a": [1, 0, 0], "b": [0, 2, 0], "c": [0, 0, 3]}, "result": 6.0, "check": "volume", "statement": "n 阶行列式把二维有向面积、三维有向体积推广到 n 维有向体积，并保留同样的乘法与退化规律。", "relation": "same_measure", "scene": "3d", "volume": True, "analogy": True},
-    "ch03.inverse.reverse-order": {"formula": "(AB)^{-1}=B^{-1}A^{-1}", "kind": "matrix_transform", "given": {"matrix": [[2, 0], [0, 1]], "vector": [1, 2]}, "result": [2.0, 2.0], "check": "transformed", "statement": "复合变换的逆必须按相反顺序撤销：先撤销 A，再撤销 B，故 (AB)^{-1}=B^{-1}A^{-1}。", "relation": "composition_order", "inverse": True, "matrix": True},
 }
 
 

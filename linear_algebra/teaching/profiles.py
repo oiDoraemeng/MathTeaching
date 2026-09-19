@@ -72,6 +72,10 @@ _PROJECTION_DEFINITION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "derivation", "worked_examples"),
 )
+_CAUCHY_SCHWARZ = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "derivation", "worked_examples"),
+)
 # 讲义 1.5.2 把中位线定理写成「命题 + 向量证明」两段：命题就是定义块，
 # 证明自带全部公式；这一小节没有独立的「案例」或「几何意义（注意）」内容。
 _PROOF_MIDLINE = TeachingProfile(
@@ -83,6 +87,12 @@ _PROOF_MIDLINE = TeachingProfile(
 # 不要求独立的「公式」或「几何意义」小节。2.7 矩阵与基同样把「旋转 90° 的矩阵」
 # 写在核心认知里，正文只有「定义 2.9（基）」与一组分步数学案例。
 _MATRIX_VECTOR_SUBSECTION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+# 合并后的 4.1 将定义、性质、证明与例题忠实保留在一个「定义」块内；案例仅保留
+# 列空间和零空间的两幅三维图，因此不再要求独立的「公式」或「几何意义」分节。
+_LINEAR_SPACE_DEFINITION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "worked_examples"),
 )
@@ -105,6 +115,12 @@ _DET_GEOMETRY = TeachingProfile(
 _BASIS_DEFINITION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "derivation", "worked_examples"),
+)
+# 4.2.1–4.2.2 合并后，生成集、几何说明、相关/无关定义及其表格都位于同一「定义」
+# 块；讲义没有推导，也不应凭空增加独立的公式或几何意义分节。
+_DEPENDENCE_DEFINITION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
 )
 _BRIDGE = TeachingProfile(
     TeachingLevel.TRANSFER,
@@ -130,18 +146,17 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch01.ops.scalar": _VECTOR_FOUNDATION,
     "ch01.ops.linear-combination": _VECTOR_FOUNDATION,
     "ch01.inner.definitions": _INNER_DEFINITIONS,
-    "ch01.inner.applications": _VECTOR_FOUNDATION,
-    "ch01.inner.cauchy-schwarz": _VECTOR_FOUNDATION,
+    "ch01.inner.cauchy-schwarz": _CAUCHY_SCHWARZ,
     "ch01.projection.definition": _PROJECTION_DEFINITION,
     "ch01.proof.midline": _PROOF_MIDLINE,
-    "ch01.proof.centroid": _VECTOR_FOUNDATION,
-    "ch01.proof.parallelogram-diagonals": _VECTOR_FOUNDATION,
+    # 1.5.2 的两道补充例题（重心定理、平行四边形对角线）与中位线定理同构：
+    # 讲义只写「命题 + 向量证明」两段，没有独立的「案例」或「几何意义」内容。
+    "ch01.proof.centroid": _PROOF_MIDLINE,
+    "ch01.proof.parallelogram-diagonals": _PROOF_MIDLINE,
     "ch02.batch.inner-products": _BATCH_INNER_PRODUCT,
     "ch02.batch.projection": _VECTOR_FOUNDATION,
     "ch02.matrix.additive-distributivity": _VECTOR_FOUNDATION,
-    "ch02.matrix.row-column": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.transformed-grid": _MATRIX_VECTOR_SUBSECTION,
-    "ch02.matrix.stretch-rotate-scale": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.composition": _VECTOR_FOUNDATION,
     "ch02.matrix.basis": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.powers": _VECTOR_FOUNDATION,
@@ -160,8 +175,6 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch03.inverse.formula": _CORE,
     "ch03.inverse.examples": _CORE,
     "ch03.det.zero.equivalence": _BRIDGE,
-    "ch03.det.high-dimensional-volume": _ANALOGY,
-    "ch03.inverse.reverse-order": _BRIDGE,
 }
 _PROFILES["ch02.matrix.composition"] = _BRIDGE
 
@@ -177,13 +190,9 @@ _PROFILES.update({
     for topic in topic_entries()
     if topic.chapter_number in {4, 5, 6, 7, 8}
 })
-# 4.1.3 contains definitions, a proof, and a geometric reading, but no
-# standalone formula/pitfalls/connections headings.  Keep those formulas in
-# the definition and proof blocks so the UI follows the lecture structure.
-_PROFILES["ch04.subspace.col-null"] = TeachingProfile(
-    TeachingLevel.EXPLAIN,
-    ("definition", "derivation", "worked_examples", "geometric_meaning"),
-)
+# 4.1.1–4.1.3 已合并成「线性空间」。
+_PROFILES["ch04.subspace.col-null"] = _LINEAR_SPACE_DEFINITION
+_PROFILES["ch04.dependence.redundancy"] = _DEPENDENCE_DEFINITION
 # 4.3 合并后的「基的定义」：定义、维数与坐标写在同一小节，公式在定义块内，
 # 讲义唯一的证明进「推导」，读数案例由定义自定。
 _PROFILES["ch04.basis.definition"] = _BASIS_DEFINITION

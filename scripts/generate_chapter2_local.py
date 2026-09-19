@@ -66,16 +66,6 @@ _SPEC = {
         "relation": "invariant",
         "matrix": True,
     },
-    "ch02.matrix.row-column": {
-        "formula": "(Ax)_i=\\operatorname{row}_i(A)\\cdot x=\\sum_j x_j A_{:j}",
-        "kind": "matrix_transform",
-        "given": {"matrix": [[1, 2], [3, 4]], "vector": [1, 2]},
-        "result": [5.0, 11.0],
-        "check": "transformed",
-        "statement": "Ax 既可看作每一行与 x 的内积，也可看作矩阵各列按 x 的分量作线性组合；两种视角给出同一输出。",
-        "relation": "compare",
-        "matrix": True,
-    },
     "ch02.matrix.transformed-grid": {
         "formula": "Ax=x_1Ae_1+x_2Ae_2",
         "kind": "matrix_transform",
@@ -86,16 +76,6 @@ _SPEC = {
         "relation": "invariant",
         "matrix": True,
         "grid": True,
-    },
-    "ch02.matrix.stretch-rotate-scale": {
-        "formula": "A(1,2)^T=(5,11)^T",
-        "kind": "matrix_transform",
-        "given": {"matrix": [[2, 0], [0, 1]], "vector": [1, 2]},
-        "result": [2.0, 2.0],
-        "check": "transformed",
-        "statement": "对角矩阵沿坐标轴拉伸，旋转矩阵改变方向；一般矩阵可把这些几何效应组合为线性变换。",
-        "relation": "maps_to",
-        "matrix": True,
     },
     "ch02.matrix.composition": {
         "formula": "(AB)x=A(Bx),\\quad AB\\ne BA",

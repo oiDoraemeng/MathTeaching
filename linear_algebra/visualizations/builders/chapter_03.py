@@ -9,8 +9,6 @@ from .primitives import (
     make_label,
     make_polygon,
     make_vector_2d,
-    make_vector_3d,
-    make_parallelepiped,
     make_view_fit,
 )
 from ..palette import role_color
@@ -177,39 +175,6 @@ def build_det_zero_equivalence(context: RenderContext) -> CommandPlan:
     return CommandPlan(scene="2d", operations=tuple(ops), summary="det=0等价于列向量共线")
 
 
-def build_det_high_dimensional_volume(context: RenderContext) -> CommandPlan:
-    """n 阶行列式与面积、体积类比"""
-    a = [2.0, 0.5, 0.2]
-    b = [0.5, 2.0, 0.4]
-    c = [0.2, 0.4, 1.8]
-
-    ops = []
-    ops.append(make_vector_3d([0, 0, 0], a, "a", role="primary"))
-    ops.append(make_vector_3d([0, 0, 0], b, "b", role="construction"))
-    ops.append(make_vector_3d([0, 0, 0], c, "c", role="result"))
-    ops.append(make_parallelepiped([0, 0, 0], [a, b, c], opacity=0.2))
-    ops.append(make_label("3D → volume", [1.0, 1.0, 0.8]))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="3d", operations=tuple(ops), summary="从2D面积类比到高维体积")
-
-
-def build_inverse_reverse_order(context: RenderContext) -> CommandPlan:
-    """逆矩阵乘积的逆序撤销"""
-    v = [1.0, 1.0]
-    av = [2.0, 1.5]
-    bav = [3.0, 2.8]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], v, "v", role="primary"))
-    ops.extend(make_vector_2d([0, 0], av, "Av", role="secondary"))
-    ops.extend(make_vector_2d([0, 0], bav, "BAv", role="result"))
-    ops.append(make_label("B⁻¹A⁻¹", [2.0, 2.0], offset=[0.3, 0]))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="(AB)⁻¹ = B⁻¹A⁻¹")
-
-
 BUILDERS = {
     "draw.ch03.det.oriented-area": build_oriented_area,
     "draw.ch03.det.row-swap": build_det_row_swap,
@@ -221,6 +186,4 @@ BUILDERS = {
     "draw.ch03.inverse.formula": build_inverse_formula,
     "draw.ch03.inverse.examples": build_inverse_examples,
     "draw.ch03.det.zero.equivalence": build_det_zero_equivalence,
-    "draw.ch03.det.high-dimensional-volume": build_det_high_dimensional_volume,
-    "draw.ch03.inverse.reverse-order": build_inverse_reverse_order,
 }

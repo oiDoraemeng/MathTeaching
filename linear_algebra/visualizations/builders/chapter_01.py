@@ -10,7 +10,6 @@ from .primitives import (
     make_label,
     make_polygon,
     make_projection,
-    make_right_angle_marker,
     make_vector_2d,
     make_view_fit,
 )
@@ -147,31 +146,15 @@ def build_inner_product_definitions(context: RenderContext) -> CommandPlan:
     return CommandPlan(scene="2d", operations=tuple(ops), summary="内积、夹角与投影的关系")
 
 
-def build_inner_product_applications(context: RenderContext) -> CommandPlan:
-    """内积的长度、正交与夹角应用"""
-    a = [2.5, 0.5]
-    b = [-0.5, 2.5]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_right_angle_marker([0, 0], a, b, size=0.3))
-    ops.append(make_label("a", [a[0] / 2, a[1] / 2], offset=[0.2, 0]))
-    ops.append(make_label("b", [b[0] / 2, b[1] / 2], offset=[-0.2, 0.2]))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="内积判断正交")
-
-
 def build_cauchy_schwarz(context: RenderContext) -> CommandPlan:
-    """柯西-施瓦茨不等式的投影界"""
-    a = [2.8, 1.2]
-    b = [1.5, 2.0]
+    """柯西—施瓦茨不等式：投影长度不超过原向量长度。"""
+    a = [3.0, 0.0]
+    b = [2.0, 2.0]
 
     ops = []
     ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
     ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.append(make_projection(a, b))
+    ops.append(make_projection(b, a))
     ops.append(make_label("a", [a[0] / 2, a[1] / 2], offset=[0.2, 0]))
     ops.append(make_label("b", [b[0] / 2, b[1] / 2], offset=[-0.2, 0.2]))
     ops.append(make_view_fit(padding=1.2))
@@ -263,7 +246,6 @@ BUILDERS = {
     "draw.ch01.ops.scalar": build_vector_scalar,
     "draw.ch01.ops.linear-combination": build_linear_combination,
     "draw.ch01.inner.definitions": build_inner_product_definitions,
-    "draw.ch01.inner.applications": build_inner_product_applications,
     "draw.ch01.inner.cauchy-schwarz": build_cauchy_schwarz,
     "draw.ch01.projection.definition": build_projection_definition,
     "draw.ch01.proof.midline": build_midline_theorem,
