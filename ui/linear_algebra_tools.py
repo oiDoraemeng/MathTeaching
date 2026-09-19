@@ -11,6 +11,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 import math
 
+from linear_algebra.visualizations.common import matrix_label_text
 from models.geometry_2d import Linear2D, Point2D
 from rendering.ticks import ViewportBounds
 from services.scene_commands import CommandPlan
@@ -225,7 +226,7 @@ def build_transform_tool_plan(
             {
                 "op": "annotation.formula",
                 "alias": annotation_alias,
-                "text": f"A=[[{matrix[0][0]:g},{matrix[0][1]:g}],[{matrix[1][0]:g},{matrix[1][1]:g}]]",
+                "text": matrix_label_text("A", (matrix[0], matrix[1])),
                 "position": [bounds.x_range[0] + 0.8, bounds.y_range[1] - 0.8],
             },
         ),

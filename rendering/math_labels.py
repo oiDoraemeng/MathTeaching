@@ -1,9 +1,12 @@
 """教学标注的数学排版工具。
 
-VTK 的点标签只能绘制纯文本：既没有 LaTeX 渲染器，也无法控制单行对齐。这里负责三件事：
+VTK 的点标签只能绘制纯文本：既没有 LaTeX 渲染器，也无法控制单行对齐。这里负责四件事：
 
 * 竖线替换：VTK 内置字体绘制 ``|`` 时既不保证可见，又会被标签放置器当成分隔符，
   于是显示层统一换成等宽且能稳定绘制的 ``I``（标注原始文本保持不变）。
+* 下标字形：VTK 标签无法排版 LaTeX 下标，把 ``letter_digits`` 写法（``x_1``、``Ax_2``、
+  ``alpha_n``）统一换成 Unicode 下标字形（``x₁``、``Ax₂``、``alphaₙ``），让 4.1/4.2 节
+  里的向量标签在屏幕上呈现为标准数学排版。
 * 堆叠分数：把 ``\\frac{a}{b}`` 排成“分子 / 分数线 / 分母”三行文本，并用真实字体度量
   计算前导空格，让分子与分母在分数线上居中。
 * 字体选择：内置 Arial 没有中文字形，中文标注会整段绘制不出来，因此优先加载系统中
@@ -17,6 +20,12 @@ import re
 from functools import lru_cache
 
 import vtk
+
+#: 案例标签统一字号：所有 2D/3D 案例窗格里的向量名、结果标注与讲义公式标签都
+#: 引用这一个值。想整体放大或缩小案例标签，只改这一个数字即可；坐标轴标签
+#: （``axis.py``）与刻度（``two_d_scene.py`` 的 tick 标签）不在此列，仍由各自
+#: 模块控制，保持与案例标签的层级差。
+CASE_LABEL_FONT_SIZE = 15
 
 _BAR_SOURCE = "|"
 #: 显示用竖线字形：无衬线 ``I`` 与 ``|`` 等宽，且能稳定绘制。
@@ -32,6 +41,19 @@ _SQRT = "\u221a"
 _FRACTION_COMMAND = "\\frac"
 _SQRT_PATTERN = re.compile(r"\\sqrt\{([^{}]+)\}")
 _LATEX_COMMAND_PATTERN = re.compile(r"\\[a-zA-Z]+")
+#: ``lateral\_0`` → ``lateral₀``：VTK 标签没法做 LaTeX 下标，把
+#: ``letter_digits`` 的写法换成 Unicode 下标字形（0–9 对应 U+2080–U+2089），
+#: 让 ``x_1``、``Ax_2``、``e_3``、``alpha_n`` 等作者写作里的常见下标自动变成排版形式。
+_SUBSCRIPT_DIGITS = str.maketrans("0123456789", "\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089")
+_SUBSCRIPT_PATTERN = re.compile(r"(?<=[A-Za-z])_([0-9]+)")
+#: 可视化层用 ``\genfrac`` 的空定界符形式堆叠矩阵行。
+_GENFRAC_PREFIX = r"\genfrac{}{}{0}{}"
+#: 可视化层在数学模式里用 ``\quad`` 分隔矩阵的列。
+_COLUMN_GAP = r"\quad"
+#: 矩阵数学文本：``$A=\left[...\right]$``。
+_MATRIX_TEXT_PATTERN = re.compile(
+    r"^\$(?P<name>.*?)=\\left\[(?P<body>.*)\\right\]\$$", re.DOTALL
+)
 
 #: 优先使用带中文字形的字体文件。VTK 内置 Arial 缺少 CJK 字形，中文标注（含默认的
 #: “标记”占位文字）会因为量不出字形宽度而整段不显示。
@@ -71,16 +93,117 @@ def normalize_bars(text: str) -> str:
     return text.replace(_BAR_SOURCE, BAR_GLYPH)
 
 
+def normalize_subscripts(text: str) -> str:
+    """把 ``letter_digits`` 形式的纯文本下标换成 Unicode 下标字形。
+
+    只在普通标注里出现：``x_1`` → ``x₁``、``Ax_2`` → ``Ax₂``、``alpha_n`` → ``alphaₙ``。
+    LaTeX 数学文本（``$...$``、``\\frac`` 等）已经在 ``display_text`` 的另一条分支
+    处理，不会经过这里，所以 ``_12`` 这种写法只会被理解为排版下标而不会被误判。
+    """
+    return _SUBSCRIPT_PATTERN.sub(lambda match: match.group(1).translate(_SUBSCRIPT_DIGITS), text)
+
+
 def display_text(text: str, latex: str | None, *, font_size: int, bold: bool) -> str:
     """返回标注最终显示文本。
 
-    带 ``latex`` 且能排成堆叠分数时优先使用排版结果；否则退回 ``text``，只做竖线替换。
+    带 ``latex`` 且能排成堆叠分数时优先使用排版结果；``$...$`` 形式的矩阵文本交给
+    VTK 的数学排版器（渲染器不可用时降级成纯文本）；其余情况退回 ``text``，只做竖线替换。
     """
     if latex:
         stacked = stacked_latex(latex, font_size=font_size, bold=bold)
         if stacked is not None:
             return stacked
-    return normalize_bars(text)
+    if text.startswith("$") and not math_text_available():
+        fallback = fallback_matrix_text(text)
+        if fallback is not None:
+            return fallback
+    # ``x_1`` → ``x₁``；LaTeX 数学文本已在上面分支走完，普通纯文本下标才到这里。
+    return normalize_subscripts(normalize_bars(text))
+
+
+@lru_cache(maxsize=1)
+def math_text_available() -> bool:
+    """VTK 的数学排版器依赖 matplotlib，缺失时 ``$...$`` 会被原样画出来。"""
+    factory = getattr(vtk, "vtkMathTextUtilities", None)
+    if factory is None:
+        return False
+    try:
+        return bool(factory.GetInstance().IsAvailable())
+    except Exception:  # pragma: no cover - 取决于 VTK 构建
+        return False
+
+
+def fallback_matrix_text(text: str) -> str | None:
+    """把矩阵数学文本降级成多行纯文本，供数学排版器不可用时使用。
+
+    只识别可视化层生成的写法 ``$A=\\left[\\genfrac{}{}{0}{}{...}{...}\\right]$``，
+    识别不了就返回 ``None``，由调用方原样显示。各行按列宽右对齐，尽量还原矩阵排版。
+    """
+    match = _MATRIX_TEXT_PATTERN.match(text)
+    if match is None:
+        return None
+    rows = _matrix_rows(match.group("body"))
+    if not rows or not any(rows):
+        return None
+    name = match.group("name")
+    widths = [
+        max((len(row[index]) for row in rows if index < len(row)), default=0)
+        for index in range(max(len(row) for row in rows))
+    ]
+    indent = " " * (len(name) + 1)
+    lines = [
+        (
+            f"{name}=[{_matrix_row_text(row, widths)}]"
+            if position == 0
+            else f"{indent}[{_matrix_row_text(row, widths)}]"
+        )
+        for position, row in enumerate(rows)
+    ]
+    return _LINE_BREAK.join(lines)
+
+
+def _matrix_row_text(row: list[str], widths: list[int]) -> str:
+    """把一行的单元格按列宽右对齐，列间用两个空格分隔。"""
+    return "  ".join(
+        cell.rjust(widths[index]) for index, cell in enumerate(row)
+    )
+
+
+def _matrix_rows(body: str) -> list[list[str]] | None:
+    """展开 ``\\genfrac`` 堆叠，返回每一行的单元格纯文本。"""
+    if not body.startswith(_GENFRAC_PREFIX):
+        cells = _matrix_cells(body)
+        return None if cells is None else [cells]
+    numerator, cursor = _group(body, len(_GENFRAC_PREFIX))
+    denominator, cursor = _group(body, cursor)
+    if numerator is None or denominator is None or body[cursor:].strip():
+        return None
+    upper = _matrix_rows(numerator)
+    lower = _matrix_rows(denominator)
+    if upper is None or lower is None:
+        return None
+    return upper + lower
+
+
+def _matrix_cells(fragment: str) -> list[str] | None:
+    """按列分隔符拆出一行的单元格，遇到无法识别的命令返回 ``None``。"""
+    cells: list[str] = []
+    for part in fragment.split(_COLUMN_GAP):
+        plain = _plain_spacing(part).strip()
+        if _LATEX_COMMAND_PATTERN.search(plain):
+            return None
+        cells.append(plain)
+    return cells
+
+
+def _plain_spacing(fragment: str) -> str:
+    """把数学间距命令换回普通空格。"""
+    return (
+        fragment.replace(r"\quad ", "  ")
+        .replace(r"\quad", "  ")
+        .replace(r"\ ", " ")
+        .replace(r"\,", " ")
+    )
 
 
 def stacked_latex(latex: str, *, font_size: int, bold: bool) -> str | None:
