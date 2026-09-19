@@ -33,11 +33,26 @@ def test_all_catalog_contexts_resolve_in_catalog_order_without_excluded_blocks()
 
     contexts = tuple(repo.context_for(entry) for entry in entries)
 
-    assert len(contexts) == 72
+    assert len(contexts) == 59
     assert tuple(context.topic_id for context in contexts) == tuple(entry.id for entry in entries)
     assert all(context.spans for context in contexts)
     assert all("自检" not in context.excerpt for context in contexts)
     assert all("挑战选做" not in context.excerpt for context in contexts)
+
+
+def test_chapter_four_merged_dependence_context_includes_exactly_4_2_1_and_4_2_2() -> None:
+    entry = next(topic for topic in catalog_registry().topics if topic.id == "ch04.dependence.redundancy")
+    context = LectureSourceRepository(Path(".agents/线性代数讲义.md")).context_for(entry)
+
+    assert [span.heading_path[-1] for span in context.spans] == [
+        "4.2.1 生成集 Span",
+        "4.2.2 线性相关与线性无关",
+    ]
+    assert "定义 4.5（生成集）" in context.excerpt
+    assert "定义 4.6（线性无关）" in context.excerpt
+    assert "定义 4.7（线性相关）" in context.excerpt
+    assert "4.2.3 线性方程组" not in context.excerpt
+    assert "4.2.4 秩-零度定理" not in context.excerpt
 
 
 def test_repeated_heading_occurrences_have_separate_non_overlapping_contexts(tmp_path: Path) -> None:

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import replace
 from pathlib import Path
 
+from linear_algebra.catalog.model import SourceAnchor
 from linear_algebra.registry import bundled_teaching_store, catalog_registry
 from linear_algebra.teaching.authoring import synchronize_topic
 from linear_algebra.teaching.source import LectureSourceRepository
@@ -71,6 +73,36 @@ def test_changed_refinement_publishes_only_one_new_revision(tmp_path: Path) -> N
     assert row["draft_revision"] == 1
     assert row["reviewed_revision"] == 1
     assert (tmp_path / "snapshots" / "ch01" / TOPIC_ID / "r2.json").is_file()
+
+
+def test_changed_source_anchor_refreshes_artifact_evidence(tmp_path: Path) -> None:
+    topic, store, repository = _seed_store(tmp_path)
+    reanchored = replace(
+        topic,
+        source_path=(
+            "第1章 向量与几何测量",
+            "1.2 向量的线性运算",
+            "1.2.2 向量减法",
+        ),
+        source_anchor=SourceAnchor(
+            (
+                "第1章 向量与几何测量",
+                "1.2 向量的线性运算",
+                "1.2.2 向量减法",
+            ),
+            4,
+        ),
+    )
+    context = repository.context_for(reanchored)
+
+    result = synchronize_topic(reanchored, store=store, source_repository=repository)
+
+    assert result.status == "published"
+    assert result.revision == 2
+    published = store.published(TOPIC_ID).artifact
+    assert published.source.source_path == context.source_path
+    assert published.source.source_hash == context.source_hash
+    assert all(claim.source_refs == (context.spans[0].id,) for claim in published.claims)
 
 
 def test_index_write_failure_leaves_new_revision_inactive(

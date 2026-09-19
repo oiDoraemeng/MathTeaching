@@ -5,9 +5,9 @@ from linear_algebra.teaching.content_validation import (
 )
 
 
-def test_chapter_02_has_11_published_artifacts() -> None:
+def test_chapter_02_has_9_published_artifacts() -> None:
     report = validate_chapter_artifacts(2, bundled_teaching_store(), lecture_source_repository())
-    assert (report.topic_count, report.errors) == (11, ())
+    assert (report.topic_count, report.errors) == (9, ())
 
 
 def test_matrix_composition_artifact_has_two_ordered_paths() -> None:

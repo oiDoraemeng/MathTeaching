@@ -14,9 +14,10 @@ from linear_algebra.visualizations.chapter_04 import RECIPES
 from linear_algebra.visualizations.common import RenderContext
 from linear_algebra.chapter_04_semantics import semantic_for
 from services.scene_commands import SceneCommandService
+from ui.teaching_case_panes import case_plan
 
-def test_chapter_four_has_14_complete_topic_recipes_and_validated_plans():
-    assert len(TOPICS) == len(RECIPES) == 14
+def test_chapter_four_has_6_complete_topic_recipes_and_validated_plans():
+    assert len(TOPICS) == len(RECIPES) == 6
     for recipe in RECIPES:
         plan = recipe.builder(RenderContext.default(recipe.id))
         assert SceneCommandService().validate(plan).valid
@@ -44,12 +45,12 @@ def test_chapter_four_compiled_bundles_and_index_are_linked():
     store = compiled_resource_store(root / "compiled")
     reviewed = load_reviewed_artifacts()
     resources = [store.get(topic.id) for topic in TOPICS]
-    assert len(resources) == 14
+    assert len(resources) == 6
     assert {resource.topic_id for resource in resources} == {topic.id for topic in TOPICS}
     index = json.loads((root / "index.json").read_text(encoding="utf-8"))
     topic_ids = [row["topic_id"] for row in index["topics"]]
     assert len(topic_ids) == len(set(topic_ids))
-    assert sum(topic_id.startswith("ch04.") for topic_id in topic_ids) == 14
+    assert sum(topic_id.startswith("ch04.") for topic_id in topic_ids) == 6
     rows = {row["topic_id"]: row for row in index["topics"]}
     assert set(topic.id for topic in TOPICS) <= rows.keys()
     for resource in resources:
@@ -75,9 +76,39 @@ def test_chapter_four_topics_have_explicit_distinct_semantic_mappings():
         assert contract.required_relations == (semantic.relation,)
         compiled = VisualSemanticsCompiler().compile(artifact, contract, RenderContext.default(topic.id))
         plans[topic.id] = tuple(operation["op"] for operation in compiled.plan.operations)
-    assert len(set(plans.values())) >= 8
-    assert plans["ch04.space.closure"] != plans["ch04.basis.definition"]
+    assert len(set(plans.values())) >= 6
+    assert plans["ch04.subspace.col-null"] != plans["ch04.basis.definition"]
     assert plans["ch04.dependence.redundancy"] != plans["ch04.linear-map.compare"]
+
+
+def test_dependence_topic_uses_two_3d_cases_with_uniform_arrowheads_and_source_colours():
+    topic_id = "ch04.dependence.redundancy"
+    artifact = TeachingArtifact.from_dict(load_reviewed_artifacts()[topic_id])
+    compiled = VisualSemanticsCompiler().compile(artifact, contract_for(topic_id), RenderContext.default(topic_id))
+
+    assert [(section.id, section.title) for section in artifact.explanation.sections] == [
+        ("definition", "定义"),
+        ("worked_examples", "数学案例"),
+    ]
+    assert [example.kind for example in artifact.explanation.worked_examples] == ["linear_combination", "linear_combination"]
+    assert [example.result for example in artifact.explanation.worked_examples] == [(2.0, -1.0, 3.0), (0.0, 0.0, 0.0)]
+    assert all(r"\begin{pmatrix}" in "\n".join(example.calculation) for example in artifact.explanation.worked_examples)
+    assert [stage.id for stage in compiled.storyboard] == [
+        "stage.ch04.dependence.redundancy.independent",
+        "stage.ch04.dependence.redundancy.dependent",
+    ]
+
+    operations = {operation["alias"]: operation for operation in compiled.plan.operations if operation.get("alias")}
+    for prefix, symbols in (("independent_set__axis", (r"\boldsymbol{e}_1", r"\boldsymbol{e}_2", r"\boldsymbol{e}_3")), ("dependent_set__generator", (r"\boldsymbol{u}", r"\boldsymbol{v}", r"\boldsymbol{w}"))):
+        vectors = [operations[f"ch04__entity__{prefix}_{index}"] for index in (1, 2, 3)]
+        assert [vector["algebra_symbol"] for vector in vectors] == list(symbols)
+        assert len({vector["color"] for vector in vectors}) == 3
+        assert all("line_width" not in vector for vector in vectors)
+        assert all("arrow_tip_length_px" not in vector and "arrow_tip_radius_px" not in vector for vector in vectors)
+    independent = case_plan(compiled, "stage.ch04.dependence.redundancy.independent")
+    dependent = case_plan(compiled, "stage.ch04.dependence.redundancy.dependent")
+    assert "ch04__entity__dependent_set" not in {operation.get("alias") for operation in independent.operations}
+    assert "ch04__entity__dependent_set" in {operation.get("alias") for operation in dependent.operations}
 
 
 def test_chapter_four_index_upsert_preserves_legacy_rows_and_is_idempotent(tmp_path):
@@ -89,9 +120,9 @@ def test_chapter_four_index_upsert_preserves_legacy_rows_and_is_idempotent(tmp_p
 
     compile_chapter_04(output_root=tmp_path / "compiled", index_path=index_path)
     payload = json.loads(index_path.read_text(encoding="utf-8"))
-    assert payload["topic_count"] == len(payload["topics"]) == 72
-    assert len({row["topic_id"] for row in payload["topics"]}) == 72
-    assert sum(row["topic_id"].startswith("ch04.") for row in payload["topics"]) == 14
+    assert payload["topic_count"] == len(payload["topics"]) == 59
+    assert len({row["topic_id"] for row in payload["topics"]}) == 59
+    assert sum(row["topic_id"].startswith("ch04.") for row in payload["topics"]) == 6
     retained = {row["topic_id"]: row for row in payload["topics"] if not row["topic_id"].startswith("ch04.")}
     assert list(retained.values()) == legacy_rows
     first_bytes = index_path.read_bytes()

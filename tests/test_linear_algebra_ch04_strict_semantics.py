@@ -26,7 +26,7 @@ def _compile(topic: str, payload: dict | None = None):
 
 
 def test_every_topic_declares_exact_typed_graph_contract_and_claim_coverage():
-    assert len(TOPICS)==14
+    assert len(TOPICS)==6
     for topic in TOPICS:
         spec=semantic_for(topic); artifact=_artifact(topic); contract=contract_for(topic); semantics=artifact.visual_semantics
         assert semantics.scene_kind==spec.scene_kind
@@ -66,20 +66,12 @@ def test_removing_any_required_role_relation_stage_invariant_or_parameter_fails(
 
 
 MUTATIONS={
- "ch04.space.closure":("sum",[2,1]),
- "ch04.subspace.classification":("affine_counterexample",[[1,0,0],[0,1,0],[0,0,0]]),
- "ch04.subspace.intersection":("union_sum",[0,2,1]),
  "ch04.subspace.col-null":("kernel_vector",[1,1]),
- "ch04.span.dimension":("span_3d",[[1,0,0],[0,1,0],[1,1,0]]),
- "ch04.dependence.redundancy":("coefficients",[2,1,-1]),
- "ch04.nullspace.test":("null_vector",[2,1,-1]),
- "ch04.rank.collapse":("rank_one",[[1,0],[0,1]]),
+ "ch04.dependence.redundancy":("independent_set",[[1,0,0],[0,1,0],[1,1,0]]),
  "ch04.basis.definition":("oblique_basis",[[1,1],[1,1]]),
  "ch04.linear-map.definition":("T_sum",[4,3]),
  "ch04.linear-map.compare":("square_map",[[-1,2],[0,0],[2,4]]),
  "ch04.linear-map.matrix-columns":("column_2",[0,3]),
- "ch04.kernel-image":("sample_output",[3,0]),
- "ch04.rank-nullity":("map_T",[[1,0,0],[0,1,0],[0,0,1]]),
 }
 
 
@@ -134,7 +126,6 @@ def test_non_identity_topics_do_not_use_identity_or_first_vector_fallbacks():
     expected={
         "ch04.linear-map.definition":[[2.0,1.0],[0.0,1.0]],
         "ch04.linear-map.matrix-columns":[[2.0,-1.0],[1.0,3.0]],
-        "ch04.kernel-image":[[1.0,0.0],[0.0,0.0]],
     }
     for topic,matrix in expected.items():
         matrices=[op["matrix"] for op in _compile(topic).plan.operations if op["op"]=="geometry.transformed_grid"]
@@ -169,10 +160,23 @@ def test_col_null_states_both_definitions_with_one_projection_scene():
     # 轴外输入仍把平面铺开三个方向，输出全部落在平面上。
     inputs={name:ops[f"ch04__entity__input_vector_{name}"]["end"] for name in ("a","b","c")}
     outputs={name:ops[f"ch04__entity__output_vector_{name}"]["end"] for name in ("a","b","c")}
-    assert inputs=={"a":[2,0,3],"b":[-1,2,2],"c":[-1,-2,1]}
-    assert outputs=={"a":[2,0,0],"b":[-1,2,0],"c":[-1,-2,0]}
+    assert inputs=={"a":[2,1,3],"b":[-2,1,2],"c":[-1,-2,-2]}
+    assert outputs=={"a":[2,1,0],"b":[-2,1,0],"c":[-1,-2,0]}
     assert all(end[2]==0 for end in outputs.values())
     assert len({(end[0],end[1]) for end in outputs.values()})==3
+    # 4.1 是紧凑的多向量比较图；线宽在计划中声明，而箭头尺寸由三维渲染器统一固定。
+    vector_symbols={
+        "input_vector_a":r"\boldsymbol{x}_{1}", "output_vector_a":r"\boldsymbol{A}\boldsymbol{x}_{1}",
+        "input_vector_b":r"\boldsymbol{x}_{2}", "output_vector_b":r"\boldsymbol{A}\boldsymbol{x}_{2}",
+        "input_vector_c":r"\boldsymbol{x}_{3}", "output_vector_c":r"\boldsymbol{A}\boldsymbol{x}_{3}",
+        "kernel_vector":r"\boldsymbol{k}",
+    }
+    for role, symbol in vector_symbols.items():
+        vector=ops[f"ch04__entity__{role}"]
+        assert "line_width" not in vector
+        assert "arrow_tip_length_px" not in vector
+        assert "arrow_tip_radius_px" not in vector
+        assert vector["algebra_symbol"]==symbol
     # 每支轴外输入都有一条虚线落差连到自己的输出；派生线跟随源向量取色。
     for name in ("a","b","c"):
         drop=ops[f"ch04__relation__projection_{name}"]
@@ -198,6 +202,20 @@ def test_col_null_states_both_definitions_with_one_projection_scene():
         "ch04__entity__output_vector_a", "ch04__entity__output_vector_b", "ch04__entity__output_vector_c",
         "ch04__relation__projection_a", "ch04__relation__projection_b", "ch04__relation__projection_c",
     } <= column_aliases
+    label_operations = {
+        operation["text"]: operation
+        for operation in column_plan.operations
+        if operation.get("op") == "annotation.formula"
+    }
+    assert {"Col(A)", "x_1", "Ax_1", "x_2", "Ax_2", "x_3", "Ax_3"} <= set(label_operations)
+    # Vector names sit close to their shafts, never at the endpoint marker.
+    for name, endpoint in {
+        "x_1": inputs["a"], "Ax_1": outputs["a"],
+        "x_2": inputs["b"], "Ax_2": outputs["b"],
+        "x_3": inputs["c"], "Ax_3": outputs["c"],
+    }.items():
+        position=label_operations[name]["position"]
+        assert sum((a-b)**2 for a,b in zip(position, endpoint)) > 0.5
     # 零空间窗格只放零空间这条主线的对象：那张平面、一支竖直向量、那条方向虚线、原点。
     # 轴外采样向量一律不出现在这里（它们只在列空间窗格），免得「与平面垂直」被读糊。
     from linear_algebra.visualizations.compiler import storyboard_visibility
@@ -210,6 +228,9 @@ def test_col_null_states_both_definitions_with_one_projection_scene():
         "ch04__entity__input_vector_c","ch04__entity__output_vector_c","ch04__relation__projection_c",
     }
     assert not [alias for alias in null_visible if "input_vector" in alias or "output_vector" in alias]
+    null_plan = case_plan(compiled, "stage.ch04.subspace.col-null.null_space")
+    null_labels = {operation["text"] for operation in null_plan.operations if operation.get("op") == "annotation.formula"}
+    assert {"Col(A)", "Null(A)", "k", "0"} <= null_labels
 
 
 def test_oblique_basis_draws_both_generators_and_readout_components():
@@ -220,21 +241,7 @@ def test_oblique_basis_draws_both_generators_and_readout_components():
     assert components==[[4,4],[5,3]]
 
 
-def test_nullspace_chain_uses_weighted_columns_and_ends_at_computed_zero():
-    topic="ch04.nullspace.test"
-    artifact=_artifact(topic)
-    result=Chapter4FamilyCompiler.compile(topic_id=topic,semantics=artifact.visual_semantics,context=RenderContext.default(topic))
-    terms=[op for op in result.operations if "nontrivial_solution__term_" in op.get("alias", "")]
-    assert [op["start"] for op in terms]==[[0,0,0],[1,0,0],[1,1,0]]
-    assert [op["end"] for op in terms]==[[1,0,0],[1,1,0],[0,0,0]]
-    assert result.evidence["columns"]==[[1,0,0],[0,1,0],[1,1,0]]
-    assert result.evidence["combination_residual"]==[0,0,0]
-
-
 @pytest.mark.parametrize("topic,role,value", [
-    ("ch04.subspace.classification","origin",[1,0,0]),
-    # A nonzero offset lying in the plane still contains the origin.
-    ("ch04.subspace.classification","affine_counterexample",[[1,0,0],[0,1,0],[1,0,0]]),
     ("ch04.subspace.col-null","column_space",[[0,1]]),
     ("ch04.subspace.col-null","output_vector_a",[3,0]),
 ])
@@ -270,9 +277,9 @@ def test_disk_revieweds_are_canonical_and_legacy_index_rows_match_release_baseli
     data=root/"linear_algebra"/"teaching"/"data"
     current=json.loads((data/"index.json").read_text(encoding="utf-8"))
     legacy=lambda payload: [row for row in payload["topics"] if not row["topic_id"].startswith("ch04.")]
-    assert current["topic_count"] == len(current["topics"]) == 72
+    assert current["topic_count"] == len(current["topics"]) == 59
     assert len({row["topic_id"] for row in current["topics"]}) == current["topic_count"]
-    assert len([row for row in current["topics"] if row["topic_id"].startswith("ch04.")]) == 14
+    assert len([row for row in current["topics"] if row["topic_id"].startswith("ch04.")]) == 6
     # 重新发布第四章只允许改动 ch04 行；其余章节的行必须逐字节保持。
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp=Path(tmpdir)

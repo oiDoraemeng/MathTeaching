@@ -22,20 +22,19 @@ LEGACY_PLAN_DIGESTS = {
     "ch01.ops.scalar": "sha256:fda9ff56813c525ddf954c37ac8ed328d2a78423af9040e353a1c1de465cfcb8",
     "ch01.ops.linear-combination": "sha256:423a60449c466f5e1b2dda613d720b0c93d2a231173d73eb31e9902c3fe3cf29",
     "ch01.inner.definitions": "sha256:87727eef228c62cb72f94048a50757360234607f01ffeac3b17df86a349bb9b5",
-    "ch01.inner.applications": "sha256:3aa2fe524cec1f43b368869e8cb46e995dd3ddb19333fb885af528089911afaa",
-    "ch01.inner.cauchy-schwarz": "sha256:264f34bd521f05f03bb0e268e35158e2895bc33227ce999fdfcd9f3a49daeb9e",
+    "ch01.inner.cauchy-schwarz": "sha256:4805679ed745a6c293d59869a6cc8b826fdbb910d54f1c2cc2a06580a7173a02",
     "ch01.projection.definition": "sha256:66450b1edbf36646762a740be7239a41f6439eb97c2398cae640f8eaa8e10711",
     "ch01.proof.midline": "sha256:ef698dd38942fce8724934c6ab59f110933a256d13d16f4c56c4972526f542a9",
-    "ch01.proof.centroid": "sha256:5de6421a77a36b5a797f748c0e6d8b522de19ca6bf4431183b80603e000a3b7c",
-    "ch01.proof.parallelogram-diagonals": "sha256:8f1b8650bb4b211abe3036f0b58ef1f5d7b8f9670668602af8eb07a8b83decc3",
+    # r20：两道证明题改为「命题/公式/向量证明」三分节（无案例、无几何意义），
+    # 图全部按向量画；重心图 E、F 按讲义标注为 AB、AC 边中点。
+    "ch01.proof.centroid": "sha256:e957d4ef26dc4b21b0a6cfa67b582451e14fd9eb0636d3e4bfcfae683978c3d6",
+    "ch01.proof.parallelogram-diagonals": "sha256:00379edf33edb0d6841a24f76402def6790797c9114e26cbae04c523cda45397",
     "ch02.batch.inner-products": "sha256:e7dbeb49e88770e1d6a7a9bc32cae6e8984c938cc9e892af6fee405cba3a6c63",
     "ch02.batch.projection": "sha256:3cfa17678f2a1e8b07f6861e9e3d7b9b863da0bacc76151a834d23ac843117e3",
     "ch02.matrix.additive-distributivity": "sha256:c9740c08c8f0dadaddfb757f7b4927d7f33dae4f6c047335b6c17a048f6dee95",
-    "ch02.matrix.row-column": "sha256:14bf287a1ad72e10340e2f71e69676f56e697e9c22ba2368c7b25de3a3066b87",
-    "ch02.matrix.transformed-grid": "sha256:67c74bebb5afd024f977ff6b907f8838cad32bad2ffcfb061a24016da3829a3c",
-    "ch02.matrix.stretch-rotate-scale": "sha256:c8d35032796a651d9a227938a6395b44e49839905150b972d8dff3a9d9e3379d",
+    "ch02.matrix.transformed-grid": "sha256:8d958082161d4ba266b55e6e587e6116f9fb3e99d781d914cb4ff9ba0fdf4599",
     "ch02.matrix.composition": "sha256:efa1dd269ebe968fdc49db7cf500597b29f8b721d476250857f6192f7c620c41",
-    "ch02.matrix.basis": "sha256:4825278e2c8287fa5eefcd0f74082f9d6759d7537575f1a1a986b417ff897a20",
+    "ch02.matrix.basis": "sha256:f47256a7ec2ea5d36f38a034cc3bda634492135520123b96428302391b082e40",
     "ch02.matrix.powers": "sha256:c78385e0ff98a993de305952ae0ce9ee1be509b3a5a08aa256f0b659a23d34fe",
     # 2.9 只发布讲义 2.9.1「线性无关与线性相关」与 2.9.2「秩」：原零空间、列空间与
     # 与后续章节的关系三节已从目录与数据中移除，冻结的 digest 相应更新。
@@ -53,8 +52,6 @@ LEGACY_PLAN_DIGESTS = {
     "ch03.inverse.formula": "sha256:387c2362561c51b96abc02abb29e8714b00ac5eb646f004bbed09c499bcc361d",
     "ch03.inverse.examples": "sha256:890dcdedc976c2b2c23de474dc5fc1bc5917809751e315cbe36f78036cf0ce79",
     "ch03.det.zero.equivalence": "sha256:e84a87ae9410886a7af8145c2cf5f0f6189cc0458c122d472b17fd9a782178e7",
-    "ch03.det.high-dimensional-volume": "sha256:5744129f7bcfd9e0ae494768d9cc7a05943a23e4d4ab6df1e5a93d06de05ff47",
-    "ch03.inverse.reverse-order": "sha256:d4ef9954671d74564885686c13a75e019650dd7065951ea654e37be5bcc794b8",
 }
 
 
@@ -68,7 +65,7 @@ def test_all_legacy_topic_ids_and_plan_digests_are_frozen(legacy_registry_bundle
     legacy_ids = tuple(topic.id for topic in topic_entries() if topic.chapter_number <= 3)
 
     assert legacy_ids == tuple(LEGACY_PLAN_DIGESTS)
-    assert len(legacy_ids) == 35
+    assert len(legacy_ids) == 30
     for topic_id, expected_digest in LEGACY_PLAN_DIGESTS.items():
         bundle = registry.resolve_bundle(topic_id, artifact_store=store)
         assert bundle.compiled.plan_digest == expected_digest
@@ -83,3 +80,81 @@ def test_every_legacy_topic_keeps_atomic_clear_load_behavior(topic_id: str) -> N
     assert plan.operations[0] == {"op": "scene.clear", "scope": "all"}
     assert plan.operations[-1]["op"] == "view.fit"
     assert SceneCommandService().validate(plan).valid
+
+
+def test_published_source_anchors_match_the_catalog(legacy_registry_bundle) -> None:
+    """目录显示名不得通过改写 ``source_path`` 实现。
+
+    ``source_path`` 同时是已发布 artifact 的来源锚点：``commit_curriculum_bundle``
+    会逐字比对，一旦漂移，该主题在运行时会被 ``bundle_mismatch`` 拒绝。3.1 合并
+    时曾把显示名写进 source_path，目录显示名应改用 ``LessonEntry.display_title``
+    覆盖，而 ``source_path`` 必须与已发布资源保持一致。
+    """
+    _registry, store = legacy_registry_bundle
+    for topic in topic_entries():
+        if topic.chapter_number > 3:
+            continue
+        stored = store.published(topic.id)
+        assert stored is not None, f"{topic.id} has no published artifact"
+        assert tuple(stored.artifact.source.source_path) == tuple(topic.source_path), topic.id
+
+
+def test_cauchy_schwarz_keeps_the_complete_lecture_proof_and_two_cases(
+    legacy_registry_bundle,
+) -> None:
+    registry, store = legacy_registry_bundle
+    topic_id = "ch01.inner.cauchy-schwarz"
+    artifact = store.published(topic_id).artifact
+    explanation = artifact.explanation
+
+    assert registry.get_topic(topic_id).title == "柯西—施瓦茨不等式"
+    assert [section.title for section in explanation.sections] == [
+        "定义",
+        "Cauchy-Schwarz 不等式的证明（2D情形）",
+        "数学案例",
+    ]
+    assert explanation.formula == ""
+    assert "定理 1.5（Cauchy-Schwarz 不等式）" in explanation.definition
+    assert r"\lvert\boldsymbol a\cdot\boldsymbol b\rvert\leq" in explanation.definition
+    assert "投影的长度”不可能超过“原向量的长度”" in explanation.definition
+    assert "Cauchy-Schwarz 不等式的 n 维推广证明" in explanation.derivation[1]
+    assert r"判别式 $\Delta\leq0$" in explanation.derivation[4]
+    assert "(a_{1}b_{2}-a_{2}b_{1})^{2}" in explanation.derivation[-2]
+    assert [example.title for example in explanation.worked_examples] == [
+        "案例一：等号成立",
+        "案例二：严格不等式",
+    ]
+    assert explanation.case_layout is not None
+    assert explanation.case_layout.default_pane_count == 1
+
+    strict_projection = next(
+        relation
+        for relation in artifact.visual_semantics.relations
+        if relation.id == "rel.cauchy-schwarz.strict.projection"
+    )
+    strict_right_angle = next(
+        relation
+        for relation in artifact.visual_semantics.relations
+        if relation.id == "rel.cauchy-schwarz.strict.orthogonal"
+    )
+    assert strict_projection.source_ref == "strict_b"
+    assert strict_projection.target_ref == "strict_a"
+    assert strict_right_angle.parameters["vertex"] == (2, 0)
+
+    compiled = registry.resolve_bundle(topic_id, artifact_store=store).compiled
+    assert compiled.plan.operations[-1] == {
+        "op": "view.fit",
+        "padding": 1.15,
+        "bounds": [0.0, 3.0, 0.0, 2.0],
+    }
+    orange = "#F08A24"
+    colors = {
+        str(operation.get("alias")): operation.get("color")
+        for operation in compiled.plan.operations
+        if operation.get("op") in {"linear.upsert", "geometry.projection", "geometry.right_angle_marker"}
+    }
+    assert colors["sem__strict_b"] == orange
+    assert colors["sem__strict_p"] == orange
+    assert colors["sem__strict_r"] == orange
+    assert colors["sem__rel.cauchy-schwarz.strict.projection"] == orange
+    assert colors["sem__rel.cauchy-schwarz.strict.orthogonal"] == orange

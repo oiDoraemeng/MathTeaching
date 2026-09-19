@@ -4,7 +4,7 @@ from linear_algebra.teaching.load_states import LoadPhase, LoadTransaction
 
 
 def test_commit_requires_staged_payload():
-    transaction = LoadTransaction("ch04.space.closure")
+    transaction = LoadTransaction("ch04.subspace.col-null")
     transaction.advance(LoadPhase.RESOLVING)
     with pytest.raises(ValueError, match="staged"):
         transaction.advance(LoadPhase.COMMITTED)

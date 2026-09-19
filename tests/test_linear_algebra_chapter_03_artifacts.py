@@ -5,9 +5,9 @@ from linear_algebra.teaching.content_validation import (
 )
 
 
-def test_chapter_03_has_12_published_artifacts() -> None:
+def test_chapter_03_has_10_published_artifacts() -> None:
     report = validate_chapter_artifacts(3, bundled_teaching_store(), lecture_source_repository())
-    assert (report.topic_count, report.errors) == (12, ())
+    assert (report.topic_count, report.errors) == (10, ())
 
 
 def test_determinant_multiplicativity_has_three_area_stages() -> None:

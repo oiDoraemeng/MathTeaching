@@ -39,7 +39,7 @@ def test_linear_algebra_toolbar_context_tracks_loaded_topic() -> None:
     window._active_linear_algebra_topic_id = "ch01.ops.addition"
     assert window._is_linear_algebra_context() is True
 
-    window._active_linear_algebra_topic_id = "ch03.det.high-dimensional-volume"
+    window._active_linear_algebra_topic_id = "ch04.subspace.col-null"
     assert window._is_linear_algebra_context() is False
 
     window._active_linear_algebra_topic_id = None
@@ -50,7 +50,7 @@ def test_opening_linear_algebra_enters_2d_workspace_and_reveals_tools() -> None:
     window = MainWindow.__new__(MainWindow)
     window.pane_manager = ScenePaneManager()
     window._pane_scene().scene_mode = SceneMode.THREE_D
-    window._active_linear_algebra_topic_id = "ch03.det.high-dimensional-volume"
+    window._active_linear_algebra_topic_id = "ch04.subspace.col-null"
     window.algebra_panel = SimpleNamespace(
         set_status=MagicMock(),
     )
@@ -83,6 +83,39 @@ def test_loading_a_2d_topic_activates_the_visible_select_tool() -> None:
         "select",
         emit_signal=False,
     )
+
+
+def test_live_window_defers_scene_materialization_after_explanation_preview(monkeypatch) -> None:
+    window = MainWindow.__new__(MainWindow)
+    window.window = object()
+    window.agent_panel = object()
+    window._linear_algebra_load_generation = 3
+    previewed = []
+    continued = []
+    window._publish_linear_algebra_explanation_preview = lambda *args: previewed.append(args)
+    window._continue_linear_algebra_topic_load = lambda request: continued.append(request)
+
+    assert window._can_defer_linear_algebra_scene_load() is False
+
+    monkeypatch.setattr("ui.designer_window.QApplication.instance", lambda: object())
+    monkeypatch.setattr("ui.designer_window.QWidget", object)
+    assert window._can_defer_linear_algebra_scene_load() is True
+
+
+def test_only_the_current_explanation_preview_can_start_scene_materialization() -> None:
+    window = MainWindow.__new__(MainWindow)
+    window._linear_algebra_load_generation = 8
+    request = {"generation": 8, "topic": SimpleNamespace(id="ch01.ops.addition")}
+    window._pending_linear_algebra_scene_request = request
+    continued = []
+    window._continue_linear_algebra_topic_load = continued.append
+
+    window._start_deferred_linear_algebra_scene_load("ch01.ops.addition", "7")
+    assert continued == []
+
+    window._start_deferred_linear_algebra_scene_load("ch01.ops.addition", "8")
+    assert continued == [request]
+    assert window._pending_linear_algebra_scene_request is None
 
 
 def test_opening_lecture_retains_user_content_and_shows_the_whole_case_flow():
@@ -221,13 +254,13 @@ def test_extended_case_panes_still_follow_the_selected_stage() -> None:
     """绑定多个步骤的案例窗格仍随选中阶段切换（4–8 章的逐步讲解）。"""
 
     window = MainWindow.__new__(MainWindow)
-    window._active_linear_algebra_topic_id = "ch04.space.closure"
+    window._active_linear_algebra_topic_id = "ch04.subspace.col-null"
     window.pane_manager = ScenePaneManager()
     pane_id = window.pane_manager.register_case("case.closure", name="案例")
     window._teaching_case_pane_ids = [pane_id]
     window._teaching_case_stage_refs = {pane_id: ("stage.closure.one", "stage.closure.two")}
     window._active_linear_algebra_compiled = SimpleNamespace(
-        topic_id="ch04.space.closure",
+        topic_id="ch04.subspace.col-null",
         storyboard=(
             SimpleNamespace(id="stage.closure.one", visible_aliases=("sem__one",)),
             SimpleNamespace(id="stage.closure.two", visible_aliases=("sem__one", "sem__two")),
@@ -245,7 +278,7 @@ def test_extended_case_panes_still_follow_the_selected_stage() -> None:
         _vector_additions=(),
     )
 
-    window._select_linear_algebra_stage("ch04.space.closure", "stage.closure.two")
+    window._select_linear_algebra_stage("ch04.subspace.col-null", "stage.closure.two")
 
     assert ("sem__one", True) in calls
     assert ("sem__two", True) in calls

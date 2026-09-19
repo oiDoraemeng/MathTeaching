@@ -1,7 +1,7 @@
 from pathlib import Path
 import math
 
-from linear_algebra.registry import runtime_teaching_store
+from linear_algebra.registry import catalog_registry, runtime_teaching_store
 from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
 from linear_algebra.visualizations.common import RenderContext
 from ui.teaching_case_panes import case_plan
@@ -71,41 +71,29 @@ def test_vector_addition_published_content_omits_unjustified_layers() -> None:
     assert explanation.case_layout.default_pane_count == 2
 
 
-def test_matrix_vector_subsections_publish_the_lecture_verbatim() -> None:
-    """2.5 的三个小节与 2.7 按讲义原文给出定义/定理/例题，不概括、不单列「公式」分节。"""
+def test_matrix_transform_merges_the_confirmed_2_5_scope() -> None:
+    """2.5.1 与 2.5.2 合并为「矩阵变换」，只保留既有网格变形案例。"""
 
     store = runtime_teaching_store()
-
-    row_column = store.published("ch02.matrix.row-column").artifact.explanation
-    assert [(section.id, section.title) for section in row_column.sections] == [
+    transformed = store.published("ch02.matrix.transformed-grid").artifact.explanation
+    assert transformed.title == "矩阵变换"
+    assert [(section.id, section.title) for section in transformed.sections] == [
         ("definition", "定义"),
         ("worked_examples", "数学案例"),
     ]
     for required in (
-        "设 $\\boldsymbol A$ 是 $m \\times n$ 矩阵",
         "算法一（行视角 — 内积法）",
         "算法二（列视角 — 线性组合法）",
-        "把矩阵各列取出来",
-    ):
-        assert required in row_column.definition
-    assert row_column.formula == ""
-    assert row_column.geometric_meaning == ""
-    assert [case.purpose for case in row_column.case_layout.cases] == [
-        "第一步：行视角（内积法）",
-        "第二步：列视角（线性组合法）",
-    ]
-    assert row_column.case_layout.default_pane_count == 2
-
-    transformed = store.published("ch02.matrix.transformed-grid").artifact.explanation
-    # 讲义把这一小节写成「定理 2.2 + 直觉总结」：标题听命讲义，正文逐字保留。
-    assert [section.title for section in transformed.sections] == ["定理", "数学案例"]
-    for required in (
-        "定理 2.2（矩阵变换的基向量解释）",
+        "**（矩阵变换的基向量解释）**",
         "标准基向量 $\\boldsymbol e_{1}$ 被 $\\boldsymbol A$ 送到的新位置",
         "直觉总结",
         "整个坐标网格被 $\\boldsymbol A$ 拉伸、旋转、压扁",
+        "\\begin{pmatrix}",
     ):
         assert required in transformed.definition
+    assert "例1：" not in transformed.definition
+    assert transformed.formula == ""
+    assert transformed.geometric_meaning == ""
     assert [case.purpose for case in transformed.case_layout.cases] == [
         "第一步：标准基向量",
         "第二步：横向拉伸",
@@ -113,20 +101,8 @@ def test_matrix_vector_subsections_publish_the_lecture_verbatim() -> None:
         "第四步：两列的像与网格变形",
     ]
     assert transformed.case_layout.default_pane_count == 4
-
-    stretch = store.published("ch02.matrix.stretch-rotate-scale").artifact.explanation
-    assert [section.title for section in stretch.sections] == ["分层例题", "数学案例"]
-    for required in ("**【理解层】**", "例1：", "例2：", "**【计算层】**", "例3：", "**【应用层】**"):
-        assert required in stretch.definition
-    # 用户确认：例4 不进窗格，也从正文删去。
-    assert "例4" not in stretch.definition
-    assert [case.purpose for case in stretch.case_layout.cases] == [
-        "第一步：未变换的标准网格",
-        "第二步：例1 横向拉伸",
-        "第三步：例2 逆时针旋转",
-        "第四步：拉伸与旋转同时存在",
-    ]
-    assert stretch.case_layout.default_pane_count == 4
+    topic_ids = {topic.id for topic in catalog_registry().topics}
+    assert {"ch02.matrix.row-column", "ch02.matrix.stretch-rotate-scale"}.isdisjoint(topic_ids)
 
     basis = store.published("ch02.matrix.basis").artifact.explanation
     # 讲义 2.7 只有「定义 2.9（基）」与核心认知，标题听命讲义，正文逐字保留。
@@ -148,11 +124,10 @@ def test_matrix_vector_subsections_publish_the_lecture_verbatim() -> None:
 
 
 def test_matrix_vector_case_data_avoids_the_coordinate_axes() -> None:
-    """2.5.1、2.5.2 与 2.7 的自定案例取值避开坐标轴（标准基向量由讲义固定，不在此列）。"""
+    """2.5 与 2.7 的自定案例取值避开坐标轴（标准基向量由讲义固定，不在此列）。"""
 
     store = runtime_teaching_store()
     for topic_id in (
-        "ch02.matrix.row-column",
         "ch02.matrix.transformed-grid",
         "ch02.matrix.basis",
     ):
@@ -419,9 +394,7 @@ def test_matrix_vector_case_panes_share_one_fixed_view() -> None:
     store = runtime_teaching_store()
     compiler = VisualSemanticsCompiler()
     for topic_id, pane_count in (
-        ("ch02.matrix.row-column", 2),
         ("ch02.matrix.transformed-grid", 4),
-        ("ch02.matrix.stretch-rotate-scale", 4),
         ("ch02.matrix.basis", 2),
     ):
         artifact = store.published(topic_id).artifact

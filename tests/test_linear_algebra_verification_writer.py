@@ -28,15 +28,15 @@ def test_writer_stops_on_failed_check_and_does_not_claim_success(tmp_path: Path)
 
 def test_writer_records_success_output_and_sorted_digests(tmp_path: Path) -> None:
     def runner(check: VerificationCheck) -> VerificationResult:
-        return VerificationResult(check.name, check.command, 0, "35 topics validated")
+        return VerificationResult(check.name, check.command, 0, "30 topics validated")
 
     digests = tuple(
         {"topic_id": topic_id, "revision": 1, "source_hash": "sha256:source", "artifact_digest": "sha256:artifact", "compiler_version": "visual-compiler-v1", "plan_digest": f"sha256:{topic_id}"}
-        for topic_id in reversed([f"ch01.topic-{index:02d}" for index in range(35)])
+        for topic_id in reversed([f"ch01.topic-{index:02d}" for index in range(30)])
     )
     run_verification(runner, tmp_path, checks=_checks(), digest_loader=lambda: digests)
     report = (tmp_path / "automated-validation.md").read_text(encoding="utf-8")
-    assert "35 topics validated" in report
+    assert "30 topics validated" in report
     assert "exit code: 0" in report
     saved = json.loads((tmp_path / "topic-digests.json").read_text(encoding="utf-8"))
     assert [item["topic_id"] for item in saved] == sorted(item["topic_id"] for item in saved)
@@ -56,7 +56,7 @@ def test_writer_redacts_provider_tokens_from_persisted_output(tmp_path: Path) ->
 
     digests = tuple(
         {"topic_id": f"ch01.topic-{index:02d}", "revision": 1, "source_hash": "s", "artifact_digest": "a", "compiler_version": "c", "plan_digest": "p"}
-        for index in range(35)
+        for index in range(30)
     )
     run_verification(runner, tmp_path, checks=_checks(), digest_loader=lambda: digests)
     report = (tmp_path / "automated-validation.md").read_text(encoding="utf-8")

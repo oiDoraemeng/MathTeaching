@@ -22,13 +22,13 @@ def test_projection_contract_rejects_missing_residual() -> None:
 
 def test_all_catalog_topics_resolve_explicit_contracts() -> None:
     contracts = tuple(contract_for(topic.id) for topic in topic_entries())
-    assert len(contracts) == 72
+    assert len(contracts) == 59
     assert {contract.topic_id for contract in contracts} == {topic.id for topic in topic_entries()}
 
 
 def test_all_new_topics_have_explicit_family_contracts():
     topics = [topic for topic in topic_entries() if 4 <= topic.chapter_number <= 8]
-    assert len(topics) == 37
+    assert len(topics) == 29
     for topic in topics:
         contract = contract_for(topic.id)
         assert contract.topic_id == topic.id
@@ -42,9 +42,9 @@ def test_unknown_family_is_rejected_without_generic_fallback():
 
 
 def test_extended_contract_accepts_registered_scene_family_as_primitive():
-    contract = contract_for("ch04.space.closure")
+    contract = contract_for("ch04.subspace.col-null")
     semantics = VisualSemantics(
-        scene_kind="2d", scene_family="subspace_region", entities=(), relations=(), stages=()
+        scene_kind="3d", scene_family="subspace_region", entities=(), relations=(), stages=()
     )
     issues = validate_contract_semantics(semantics, contract)
     assert {issue.code for issue in issues} == {"missing_entity_role", "missing_relation", "insufficient_stages", "missing_invariant"}
