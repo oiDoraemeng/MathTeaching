@@ -54,11 +54,54 @@ def test_display_text_stacks_latex_fraction_into_three_lines() -> None:
         bold=True,
     )
 
+    if math_labels.math_text_available():
+        assert rendered == r"$\vert{}p\vert{} = \frac{4}{\sqrt{5}}$"
+        return
     lines = rendered.split("\n")
     assert len(lines) == 3
     assert lines[0].strip() == "4"
     assert lines[1].startswith("IpI = ") and "—" in lines[1]
     assert lines[2].strip() == "√5"
+
+
+def test_display_text_wraps_supported_latex_for_vtk_mathtext() -> None:
+    rendered = math_labels.display_text(
+        "rho gh, x1",
+        r"p=\rho gh,\quad x_1=\frac{1}{\sqrt{2}}",
+        font_size=_FONT_SIZE,
+        bold=True,
+    )
+
+    if math_labels.math_text_available():
+        assert rendered == r"$p=\rho gh,\quad x_1=\frac{1}{\sqrt{2}}$"
+    else:
+        assert rendered == "rho gh, x1"
+
+
+def test_display_text_normalizes_display_math_delimiters() -> None:
+    rendered = math_labels.display_text(
+        "x squared",
+        r"$$x^2$$",
+        font_size=_FONT_SIZE,
+        bold=True,
+    )
+
+    if math_labels.math_text_available():
+        assert rendered == r"$x^2$"
+    else:
+        assert rendered == "x squared"
+
+
+def test_display_text_keeps_cjk_latex_on_plain_text_path() -> None:
+    assert (
+        math_labels.display_text(
+            "中文 English 标记",
+            r"\text{中文 English 标记}",
+            font_size=_FONT_SIZE,
+            bold=True,
+        )
+        == "中文 English 标记"
+    )
 
 
 def test_stacked_latex_rejects_unsupported_commands() -> None:

@@ -1,17 +1,4 @@
-"""教学标注的数学排版工具。
-
-VTK 的点标签只能绘制纯文本：既没有 LaTeX 渲染器，也无法控制单行对齐。这里负责四件事：
-
-* 竖线替换：VTK 内置字体绘制 ``|`` 时既不保证可见，又会被标签放置器当成分隔符，
-  于是显示层统一换成等宽且能稳定绘制的 ``I``（标注原始文本保持不变）。
-* 下标字形：VTK 标签无法排版 LaTeX 下标，把 ``letter_digits`` 写法（``x_1``、``Ax_2``、
-  ``alpha_n``）统一换成 Unicode 下标字形（``x₁``、``Ax₂``、``alphaₙ``），让 4.1/4.2 节
-  里的向量标签在屏幕上呈现为标准数学排版。
-* 堆叠分数：把 ``\\frac{a}{b}`` 排成“分子 / 分数线 / 分母”三行文本，并用真实字体度量
-  计算前导空格，让分子与分母在分数线上居中。
-* 字体选择：内置 Arial 没有中文字形，中文标注会整段绘制不出来，因此优先加载系统中
-  带 CJK 字形的字体文件。
-"""
+"""处理 VTK 教学标注的数学排版与中文字体降级。"""
 
 from __future__ import annotations
 
@@ -21,10 +8,7 @@ from functools import lru_cache
 
 import vtk
 
-#: 案例标签统一字号：所有 2D/3D 案例窗格里的向量名、结果标注与讲义公式标签都
-#: 引用这一个值。想整体放大或缩小案例标签，只改这一个数字即可；坐标轴标签
-#: （``axis.py``）与刻度（``two_d_scene.py`` 的 tick 标签）不在此列，仍由各自
-#: 模块控制，保持与案例标签的层级差。
+#: 案例窗格中的向量名、结果和公式统一使用此字号。
 CASE_LABEL_FONT_SIZE = 15
 
 _BAR_SOURCE = "|"
@@ -41,9 +25,8 @@ _SQRT = "\u221a"
 _FRACTION_COMMAND = "\\frac"
 _SQRT_PATTERN = re.compile(r"\\sqrt\{([^{}]+)\}")
 _LATEX_COMMAND_PATTERN = re.compile(r"\\[a-zA-Z]+")
-#: ``lateral\_0`` → ``lateral₀``：VTK 标签没法做 LaTeX 下标，把
-#: ``letter_digits`` 的写法换成 Unicode 下标字形（0–9 对应 U+2080–U+2089），
-#: 让 ``x_1``、``Ax_2``、``e_3``、``alpha_n`` 等作者写作里的常见下标自动变成排版形式。
+_CJK_PATTERN = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
+#: 将 ``x_1`` 等纯文本下标转换为 Unicode 字形。
 _SUBSCRIPT_DIGITS = str.maketrans("0123456789", "\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089")
 _SUBSCRIPT_PATTERN = re.compile(r"(?<=[A-Za-z])_([0-9]+)")
 #: 可视化层用 ``\genfrac`` 的空定界符形式堆叠矩阵行。
@@ -55,20 +38,19 @@ _MATRIX_TEXT_PATTERN = re.compile(
     r"^\$(?P<name>.*?)=\\left\[(?P<body>.*)\\right\]\$$", re.DOTALL
 )
 
-#: 优先使用带中文字形的字体文件。VTK 内置 Arial 缺少 CJK 字形，中文标注（含默认的
-#: “标记”占位文字）会因为量不出字形宽度而整段不显示。
+#: VTK 内置字体缺少中文字形，优先选用系统中文字体。
 _LABEL_FONT_CANDIDATES = (
-    # Windows
+    # Windows 字体
     r"C:\Windows\Fonts\simhei.ttf",
     r"C:\Windows\Fonts\msyh.ttc",
     r"C:\Windows\Fonts\msyh.ttf",
     r"C:\Windows\Fonts\simsun.ttc",
     r"C:\Windows\Fonts\Deng.ttf",
-    # macOS
+    # macOS 字体
     "/System/Library/Fonts/PingFang.ttc",
     "/System/Library/Fonts/Hiragino Sans GB.ttc",
     "/Library/Fonts/Arial Unicode.ttf",
-    # Linux
+    # Linux 字体
     "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
     "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
     "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
@@ -94,22 +76,16 @@ def normalize_bars(text: str) -> str:
 
 
 def normalize_subscripts(text: str) -> str:
-    """把 ``letter_digits`` 形式的纯文本下标换成 Unicode 下标字形。
-
-    只在普通标注里出现：``x_1`` → ``x₁``、``Ax_2`` → ``Ax₂``、``alpha_n`` → ``alphaₙ``。
-    LaTeX 数学文本（``$...$``、``\\frac`` 等）已经在 ``display_text`` 的另一条分支
-    处理，不会经过这里，所以 ``_12`` 这种写法只会被理解为排版下标而不会被误判。
-    """
+    """把纯文本数字下标转换为 Unicode 字形。"""
     return _SUBSCRIPT_PATTERN.sub(lambda match: match.group(1).translate(_SUBSCRIPT_DIGITS), text)
 
 
 def display_text(text: str, latex: str | None, *, font_size: int, bold: bool) -> str:
-    """返回标注最终显示文本。
-
-    带 ``latex`` 且能排成堆叠分数时优先使用排版结果；``$...$`` 形式的矩阵文本交给
-    VTK 的数学排版器（渲染器不可用时降级成纯文本）；其余情况退回 ``text``，只做竖线替换。
-    """
+    """优先使用 MathText，失败时降级为堆叠分数或纯文本。"""
     if latex:
+        rendered = vtk_math_text(latex, font_size=font_size, bold=bold)
+        if rendered is not None:
+            return rendered
         stacked = stacked_latex(latex, font_size=font_size, bold=bold)
         if stacked is not None:
             return stacked
@@ -117,7 +93,7 @@ def display_text(text: str, latex: str | None, *, font_size: int, bold: bool) ->
         fallback = fallback_matrix_text(text)
         if fallback is not None:
             return fallback
-    # ``x_1`` → ``x₁``；LaTeX 数学文本已在上面分支走完，普通纯文本下标才到这里。
+    # 此处只处理未进入数学排版分支的纯文本。
     return normalize_subscripts(normalize_bars(text))
 
 
@@ -130,6 +106,43 @@ def math_text_available() -> bool:
     try:
         return bool(factory.GetInstance().IsAvailable())
     except Exception:  # pragma: no cover - 取决于 VTK 构建
+        return False
+
+
+def vtk_math_text(latex: str, *, font_size: int, bold: bool) -> str | None:
+    """返回可安全渲染的 VTK MathText 文本。"""
+    source = latex.strip()
+    if not source or _CJK_PATTERN.search(source) or not math_text_available():
+        return None
+    candidate = _math_text_candidate(source)
+    return candidate if _math_text_renders(candidate, font_size, bold) else None
+
+
+def _math_text_candidate(source: str) -> str:
+    """将公式规范为 VTK MathText 格式。"""
+    # MathText 会把竖线当作表格分隔符，改用等价命令。
+    source = source.replace(r"\lvert", r"\vert").replace(r"\rvert", r"\vert")
+    source = source.replace("|", r"\vert{}")
+    if source.startswith("$$") and source.endswith("$$") and len(source) >= 4:
+        return f"${source[2:-2].strip()}$"
+    if "$" in source:
+        return source
+    return f"${source}$"
+
+
+@lru_cache(maxsize=512)
+def _math_text_renders(candidate: str, font_size: int, bold: bool) -> bool:
+    """检查 VTK MathText 是否接受该表达式。"""
+    factory = getattr(vtk, "vtkMathTextUtilities", None)
+    if factory is None:
+        return False
+    try:
+        text_property = vtk.vtkTextProperty()
+        text_property.SetFontSize(font_size)
+        text_property.SetBold(bold)
+        bounds = [0, 0, 0, 0]
+        return bool(factory.GetInstance().GetBoundingBox(text_property, candidate, 72, bounds))
+    except Exception:  # pragma: no cover - depends on the VTK/Matplotlib build
         return False
 
 
