@@ -19,7 +19,7 @@ from PySide6.QtCore import QEasingCurve, QEvent, QFile, QIODevice, QObject, QPoi
 from PySide6.QtGui import QWindowStateChangeEvent
 from PySide6.QtGui import QKeyEvent, QKeySequence, QMouseEvent, QShortcut, QWheelEvent
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QInputDialog, QLineEdit, QRubberBand, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QRubberBand, QToolButton, QVBoxLayout, QWidget
 from shiboken6 import isValid
 from pyvistaqt import QtInteractor
 
@@ -80,8 +80,8 @@ from ui.three_d_tools import ThreeDGeometryToolbar
 from ui.two_d_tools import ToolKind, TwoDGeometryToolbar
 from ui.web_surface import rebuild_web_surface
 from ui.linear_algebra_tools import (
+    build_matrix_grid_tool_plan,
     build_polygon_tool_plan,
-    build_transform_tool_plan,
     build_vector_tool_plan,
     parse_matrix,
 )
@@ -110,8 +110,7 @@ from agent.context_broker import AttachmentInput, ContextBroker
 from agent.providers import ModelProvider
 
 
-# 辅助线在视口四周额外绘制此比例；小幅平移和缩放仍落在既有区域内，
-# 因而无需立刻重建辅助线和曲线采样。
+# 辅助线预绘到视口外，减少平移和缩放时的重建。
 _GUIDE_MARGIN = 2.5
 
 _ANNOTATION_TEXT_COMMAND = re.compile(r"\\(?:text|mathrm|operatorname)\{([^{}]*)\}")
@@ -238,8 +237,7 @@ class _SceneCommandBridge(QObject):
         try:
             request.result = getattr(self._host, request.method)(*request.args)
         except Exception as error:
-            # BlockingQueuedConnection does not propagate Python exceptions from
-            # a slot, so carry it back explicitly for SceneCommandService.
+            # BlockingQueuedConnection 不会传播槽函数异常，需显式返回。
             request.error = error
 
 
@@ -346,11 +344,17 @@ class _WindowRestoreFilter(QObject):
         self._restore_timer.timeout.connect(callback)
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        # 显示和恢复时同步 Qt 窗口映射状态，避免渲染停滞。
+        if event.type() == QEvent.Type.Show:
+            if isinstance(watched, QWidget):
+                watched.setAttribute(Qt.WidgetAttribute.WA_Mapped)
+
         if event.type() == QEvent.Type.WindowStateChange and isinstance(event, QWindowStateChangeEvent):
-            # 检查是否从最小化状态恢复（oldState 包含 Minimized 标志）
             if (event.oldState() & Qt.WindowState.WindowMinimized) and not watched.isMinimized():
-                # 连续恢复事件只保留最后一次，避免叠加昂贵的 VTK/WebEngine 重绘。
-                self._restore_timer.start(300)
+                if isinstance(watched, QWidget):
+                    watched.setAttribute(Qt.WidgetAttribute.WA_Mapped)
+                # 合并连续恢复事件，避免重复重绘。
+                self._restore_timer.start(150)
         return False
 
 
@@ -362,7 +366,7 @@ class _GeometryInputFilter(QObject):
         self.owner = owner
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
-        # Route every viewport interaction to the pane that received it first.
+        # 视口交互始终路由到最先接收事件的窗格。
         container = getattr(self.owner, "scene_pane_widget", None)
         if container is not None and event.type() in (
             QEvent.Type.MouseButtonPress,
@@ -489,6 +493,11 @@ class _PaneSceneRuntime:
         self._two_d_show_transformed_coordinate_system = pane.scene_2d.get(
             "show_transformed_coordinate_system", True
         ) is not False
+        try:
+            stored_grid_range = float(pane.scene_2d.get("matrix_transform_grid_range", 5.0))
+        except (TypeError, ValueError):
+            stored_grid_range = 5.0
+        self._matrix_transform_grid_range = max(1.0, min(stored_grid_range, 100.0))
         self._two_d_original_guides: TwoDGuides | None = None
         self._three_d_axes: ThreeDAxes | None = None
         self._three_d_spacing: float | None = None
@@ -648,6 +657,7 @@ class MainWindow:
         self._pending_curriculum_finalized = False
         self._linear_algebra_load_generation = 0
         self._pending_linear_algebra_scene_request: dict[str, object] | None = None
+        self._linear_algebra_source_repository_instance: LectureSourceRepository | None = None
         self._hidden_linear_algebra_aliases: set[str] = set()
         self._teaching_case_pane_grid: TeachingCasePaneGrid | None = None
         self._scene_settings_closing = False
@@ -811,7 +821,7 @@ class MainWindow:
                 try:
                     self._render_scene()
                 except Exception:
-                    # Lightweight hosts without a container retain one pane.
+                    # 无容器的轻量宿主保留一个窗格。
                     pass
             try:
                 self._apply_linear_algebra_storyboard_visibility()
@@ -827,8 +837,7 @@ class MainWindow:
             case_grid.updateGeometry()
             case_grid.update()
 
-        # 重建子控件的合成表面，不改变顶层窗口几何；移动最大化窗口会让
-        # Windows 的实际尺寸和标题栏状态短暂失步。
+        # 仅重建子控件表面，避免最大化窗口的尺寸和标题栏短暂失步。
 
         algebra_panel = getattr(self, "algebra_panel", None)
         if algebra_panel is not None:
@@ -850,7 +859,8 @@ class MainWindow:
         window.update()
         QTimer.singleShot(120, self._deferred_render_surfaces)
 
-    _WEB_SURFACE_RETRY_MS = 400
+    _WEB_SURFACE_RETRY_MS = 600
+    _WEB_SURFACE_RETRY_COUNT = 1  # 映射状态已同步，只保留一次兜底重试。
 
     def _deferred_render_surfaces(self) -> None:
         """在窗口合成器完成恢复后再补一次轻量刷新。"""
@@ -866,9 +876,21 @@ class MainWindow:
                 plotter.render()
             except Exception:
                 pass
+        # 延迟检查一次，兼容 Windows 恢复动画。
+        self._schedule_web_surface_retries(retry_count=self._WEB_SURFACE_RETRY_COUNT)
+
+    def _schedule_web_surface_retries(self, retry_count: int) -> None:
+        """调度 WebEngine 表面重建重试。"""
+        if retry_count <= 0:
+            return
+        delay_ms = self._WEB_SURFACE_RETRY_MS * (self._WEB_SURFACE_RETRY_COUNT - retry_count + 1)
+        QTimer.singleShot(delay_ms, lambda: self._retry_web_render_surfaces(retry_count - 1))
+
+    def _retry_web_render_surfaces(self, remaining_retries: int) -> None:
+        """重建 WebEngine 表面并继续剩余重试。"""
         self._rebuild_web_render_surfaces()
-        # Windows 的恢复动画可能尚未结束，稍后再补一次表面重建。
-        QTimer.singleShot(self._WEB_SURFACE_RETRY_MS, self._rebuild_web_render_surfaces)
+        if remaining_retries > 0:
+            self._schedule_web_surface_retries(remaining_retries)
 
     def _rebuild_web_render_surfaces(self) -> None:
         """重新分配两侧 WebEngine 面板的合成表面，不重载文档。
@@ -1180,8 +1202,7 @@ class MainWindow:
             if turn.execution_status not in {"approval_required", "plan_pending", "undone"}:
                 raise ValueError("stale_approval")
             if not self._agent_runtime.consume_approval(session_id, turn_id):
-                # Approval tickets live in the runtime, while the turn state is
-                # persisted. Rehydrate a one-shot ticket after a runtime restart.
+                # 运行时重启后按持久化轮次恢复一次性审批票据。
                 self._agent_runtime.register_approval(session_id, turn_id)
                 if not self._agent_runtime.consume_approval(session_id, turn_id):
                     raise ValueError("stale_approval")
@@ -1413,7 +1434,7 @@ class MainWindow:
         self._redo_2d_shortcut.activated.connect(self._redo_2d_geometry)
         self._copy_2d_shortcut.activated.connect(self.copy_selected_scene_objects)
         self._paste_2d_shortcut.activated.connect(self.paste_scene_objects)
-        # Text fields and the Agent/WebEngine editor keep their own clipboard.
+        # 文本输入框和 WebEngine 编辑器使用各自的剪贴板。
         for shortcut in (self._copy_2d_shortcut, self._paste_2d_shortcut):
             shortcut.setParent(getattr(self, "viewport_host", self.window))
             shortcut.setContext(Qt.ShortcutContext.WidgetWithChildrenShortcut)
@@ -1477,8 +1498,7 @@ class MainWindow:
 
     def _on_viewport_interaction_finished(self, *_args: object) -> None:
         if self._pane_scene().scene_mode is not SceneMode.TWO_D:
-            # Usually unchanged after the per-frame update; also covers a
-            # backend which only reports the final camera state here.
+            # 兼容只在此处上报最终相机状态的后端。
             self._refresh_3d_arrows_for_camera()
             self._save_current_view_state()
             return
@@ -1504,9 +1524,7 @@ class MainWindow:
         if self._pane_scene()._viewport_refreshing:
             return
         if self._pane_scene().scene_mode is not SceneMode.TWO_D:
-            # The shaft line width is already a VTK screen-space property.
-            # Update only the cone mesh so the arrow head is also stable in
-            # pixels, without rebuilding coordinate axes or actors.
+            # 箭杆已按屏幕像素计宽，只需更新箭头锥体。
             self._refresh_3d_arrows_for_camera()
             return
         try:
@@ -1551,9 +1569,7 @@ class MainWindow:
             self._refresh_2d_viewport(resample=True, render=True)
 
     def _queue_viewport_refresh(self) -> None:
-        # 采用去抖（debounce）而非节流：每次交互事件都重启定时器，
-        # 只有用户停止缩放/旋转后才触发一次重采样。这样缩放过程中曲面
-        # 不会中途重建，避免卡顿与网格密度突变导致的视觉跳跃。
+        # 停止缩放或旋转后再重采样，避免交互中频繁重建曲面。
         if self._pane_scene()._viewport_refreshing or self._pane_scene()._viewport_refresh_timer is None:
             return
         self._pane_scene()._viewport_refresh_pending = True
@@ -1598,7 +1614,7 @@ class MainWindow:
 
     def _bind_algebra_panel(self) -> None:
         panel = self.algebra_panel
-        # Keep the editable algebra tab synchronized with the scene pane focus.
+        # 可编辑代数标签跟随场景焦点。
         manager = getattr(self, "pane_manager", None)
         if manager is not None:
             panel.set_pane_manager(manager)
@@ -1613,6 +1629,7 @@ class MainWindow:
         panel.linear_algebra_opened.connect(self._enter_linear_algebra_workspace)
         panel.linear_algebra_requested.connect(self._load_linear_algebra_topic)
         panel.matrix_transform_requested.connect(self._apply_matrix_transform_from_tab)
+        panel.matrix_transform_settings_requested.connect(self._apply_matrix_transform_from_tab)
         panel.matrix_transform_visibility_requested.connect(self._set_matrix_coordinate_system_visibility)
         panel.builtin_requested.connect(self._add_builtin_surface)
         panel.lighting_requested.connect(self._show_lighting_dialog)
@@ -1652,17 +1669,14 @@ class MainWindow:
             )
         self._sync_scene_controls()
 
-    # ------------------------------------------------------------------
     # AI 场景命令适配层
-    # ------------------------------------------------------------------
 
     def _request_agent_plan(self, prompt: str, *, session_id: str | None = None) -> None:
         if self._agent_thread is not None and self._agent_thread.isRunning():
             return
         active_session_id = session_id or self.agent_panel.active_session_id
         turn_id = uuid4().hex
-        # Lock the target pane for the entire Agent turn; subsequent UI focus
-        # changes must not redirect commands to another pane.
+        # 整轮命令锁定目标窗格，不受后续焦点变化影响。
         locked_pane_id = self.pane_manager.active_pane_id
         self.agent_panel.set_active_session(active_session_id)
         self.agent_panel.bridge.emit_event({
@@ -1744,8 +1758,7 @@ class MainWindow:
             scene._agent_points3d_render_pending = False
             scene._scene_geometry_batch_controller = None
             self._ensure_scene_geometry_batch()
-            # Keep bookkeeping reachable if the manager deletes this pane
-            # before the transaction can finish or roll back.
+            # 即使窗格提前删除，也要保留事务记录供提交或回滚。
             self._transaction_scene = scene
             self._transaction_pane_id = self._pane().pane_id
 
@@ -1761,9 +1774,7 @@ class MainWindow:
                 return
             after = self._capture_scene_command_state()
             self._end_scene_geometry_batch(scene)
-            # Publish the transaction before flushing deferred aggregate
-            # actors. Their render helpers intentionally no-op while a command
-            # transaction is active.
+            # 先发布事务，再刷新事务期间延迟的聚合演员。
             scene._scene_command_active = False
             if getattr(scene, "_agent_areas_render_pending", False):
                 scene._agent_areas_render_pending = False
@@ -1775,10 +1786,7 @@ class MainWindow:
             renderer = self._pane_renderer()
             renderer.render()
             if scene.scene_mode is SceneMode.THREE_D:
-                # Teaching cases are often populated before their Qt/VTK pane
-                # has completed its first paint.  Rebuild vector heads only
-                # after that paint so they use the live camera and viewport,
-                # rather than the temporary world-space fallback.
+                # 首帧后再重建箭头，使其使用真实相机和视口尺寸。
                 self._refresh_3d_arrows_for_camera()
                 renderer.render()
             self._sync_pane_state()
@@ -1793,8 +1801,7 @@ class MainWindow:
     def rollback_scene_command_transaction(self, pane_id: str | None = None) -> None:
         transaction_pane = getattr(self, "_transaction_pane_id", None)
         if transaction_pane is not None and pane_id is not None and pane_id != transaction_pane:
-            # A caller targeting another pane has not requested this
-            # transaction's rollback. Preserve its snapshot and lock.
+            # 目标窗格不匹配时保留当前事务及其快照。
             raise CommandError("场景命令不能跨越当前事务的目标窗格。")
         scene = getattr(self, "_transaction_scene", None)
         try:
@@ -1806,8 +1813,7 @@ class MainWindow:
                     self._restore_scene_command_state(snapshot)
                 self._sync_pane_state()
         finally:
-            # Resolution itself can fail after pane deletion. Cleanup must
-            # therefore surround resolution as well as scene restoration.
+            # 窗格删除后解析也可能失败，清理逻辑需覆盖整个恢复过程。
             if scene is not None:
                 self._end_scene_geometry_batch(scene)
                 scene._scene_command_snapshot = None
@@ -1868,8 +1874,7 @@ class MainWindow:
     @staticmethod
     def _snapshot_record(value: object, *, object_type: str | None = None) -> dict[str, object]:
         record = asdict(value)
-        # Point2D exposes an init=False ``kind`` marker; constructors restore
-        # that marker themselves, while Linear2D uses its kind as data.
+        # Point2D 的 `kind` 由构造器恢复，Linear2D 则把它作为数据。
         if isinstance(value, Point2D):
             record.pop("kind", None)
         if object_type:
@@ -2027,7 +2032,7 @@ class MainWindow:
                 pane = ScenePaneState.from_snapshot(record["state"])
                 scene_snapshot = self._snapshot_from_pane_data(pane.to_snapshot())
             else:
-                # Older multi-pane turns stored only the per-pane legacy view.
+                # 兼容仅保存旧窗格视图的历史轮次。
                 scene_snapshot = SceneSnapshot.from_dict(record["snapshot"])
                 pane = ScenePaneState(record["pane_id"], record.get("name", record["pane_id"]),
                                       source=record.get("source", "user"), source_id=record.get("source_id"),
@@ -2084,10 +2089,7 @@ class MainWindow:
             }
             topic_id = teaching.get("topic_id")
             self._active_linear_algebra_topic_id = topic_id if isinstance(topic_id, str) and topic_id else None
-            # A snapshot captures the lecture identity, not compiled Python
-            # objects.  Never retain a compiled visualization from the
-            # workspace that happened to be open when restore was requested:
-            # its topic may differ and would make stage routing a silent no-op.
+            # 快照只记录讲义身份，不能复用恢复前可能属于其他主题的编译对象。
             self._active_linear_algebra_compiled = (
                 self._resolve_linear_algebra_compiled(self._active_linear_algebra_topic_id)
                 if self._active_linear_algebra_topic_id else None
@@ -2102,12 +2104,10 @@ class MainWindow:
                     )
                     self._hidden_linear_algebra_aliases = set(all_aliases) - set(visible_aliases)
                 except ValueError:
-                    # Preserve the restored panes even if an old snapshot
-                    # references a removed storyboard stage.
+                    # 旧快照引用已删除阶段时仍保留已恢复窗格。
                     self._active_linear_algebra_stage_id = None
         else:
-            # An Agent restore can move back to an ordinary workspace.  Do not
-            # leave stale case IDs pointing into the restored pane collection.
+            # 恢复普通工作区时清除失效的案例标识。
             self._teaching_case_pane_ids = []
             self._teaching_case_stage_refs = {}
             self._active_linear_algebra_topic_id = None
@@ -2157,8 +2157,7 @@ class MainWindow:
         self._pane_scene()._drag_start_3d_annotation_state = None
         self._pane_scene()._hovered_3d_annotation_alias = None
         if self._pane_scene().scene_mode is not state.scene_mode:
-            # Hidden panes do not own a renderer yet.  Restore their serializable
-            # state directly and let pane creation render it later.
+            # 隐藏窗格尚无渲染器，只恢复状态，待创建时再渲染。
             pane = self._pane()
             renderer = pane.renderer_2d if state.scene_mode is SceneMode.TWO_D else pane.renderer_3d
             if renderer is None:
@@ -2174,9 +2173,7 @@ class MainWindow:
         if renderer is not None:
             self._render_scene()
         elif self._pane_scene().scene_mode is SceneMode.TWO_D:
-            # A lightweight/headless pane may retain controllers while its
-            # renderer is temporarily unavailable.  Keep models authoritative;
-            # controllers will be rebuilt when the pane becomes visible.
+            # 无渲染器时以模型为准，窗格显示后再重建控制器。
             return
 
     def _rebuild_2d_controllers(self) -> None:
@@ -2224,13 +2221,9 @@ class MainWindow:
             self._pane_renderer()
             self._apply_scene_command(operation)
             if getattr(self._pane_scene(), "_scene_command_active", False):
-                # A scene.set_mode command can replace the controller during
-                # the transaction. Rebind the batch to the new controller.
+                # `scene.set_mode` 可能替换控制器，需重新绑定批处理。
                 self._ensure_scene_geometry_batch()
-            # A command plan already owns one transaction snapshot and commits
-            # the serialized pane state once at the end. Rebuilding that full
-            # snapshot after every operation makes large teaching plans scale
-            # quadratically with their object count.
+            # 命令计划只在事务结束时写一次快照，避免随对象数平方增长。
             if not getattr(self._pane_scene(), "_scene_command_active", False):
                 self._sync_pane_state()
 
@@ -2264,8 +2257,7 @@ class MainWindow:
             pane.scene_2d["coordinate_transform"] = [list(matrix[0]), list(matrix[1])]
             pane.scene_2d["show_original_coordinate_system"] = runtime._two_d_show_original_coordinate_system
             pane.scene_2d["show_transformed_coordinate_system"] = runtime._two_d_show_transformed_coordinate_system
-            # Rebuild the same guide/curve pipeline used by the matrix editor;
-            # this is a coordinate-system transform, not a teaching-grid overlay.
+            # 坐标变换复用矩阵编辑器管线，不额外叠加教学网格。
             self._render_2d_scene()
             return
         if name == "point3d.upsert":
@@ -2380,6 +2372,11 @@ class MainWindow:
             if kind != "vector" and "line_width" in operation
             else {}
         )
+        arrow_kwargs = (
+            {"arrow_head_scale": float(operation["arrow_head_scale"])}
+            if kind == "vector" and "arrow_head_scale" in operation
+            else {}
+        )
         self._pane_scene().geometry3d_controller.add_linear(
             alias,
             tuple(float(value) for value in operation["start"]),  # type: ignore[arg-type]
@@ -2390,6 +2387,7 @@ class MainWindow:
             # 计划里声明的虚线必须传下去：被压到零的方向、投影连线等辅助构造全靠它。
             style=str(operation.get("style", "solid")),
             **style_kwargs,
+            **arrow_kwargs,
         )
         if operation.get("visible") is False:
             self._pane_scene().geometry3d_controller.set_visible(alias, False)
@@ -2430,13 +2428,19 @@ class MainWindow:
 
     def _command_formula_annotation(self, operation: dict[str, object]) -> None:
         position = tuple(float(value) for value in operation["position"])  # type: ignore[arg-type]
+        latex_value = operation.get("latex")
+        formula_source = (
+            latex_value
+            if isinstance(latex_value, str) and latex_value.strip()
+            else str(operation.get("text", ""))
+        )
         if self._pane_scene().scene_mode is SceneMode.TWO_D:
             self._command_upsert_annotation({
                 "op": "annotation.upsert",
                 "alias": operation["alias"],
                 "text": operation["text"],
                 "position": position,
-                "latex": operation.get("latex"),
+                "latex": formula_source,
             })
             return
         if len(position) != 3:
@@ -2449,12 +2453,15 @@ class MainWindow:
             remove_actor = getattr(self._pane_renderer(), "remove_actor", None)
             if callable(remove_actor):
                 remove_actor(name, render=False)
+            controller = getattr(self._pane_scene(), "geometry3d_controller", None)
+            controller_actors = getattr(controller, "actors", None)
+            if isinstance(controller_actors, dict):
+                controller_actors.pop(name, None)
             if operation.get("visible") is False:
                 return
-            latex_value = operation.get("latex")
             text = math_labels.display_text(
                 _annotation_display_text(str(operation.get("text", ""))),
-                latex_value if isinstance(latex_value, str) else None,
+                formula_source,
                 font_size=math_labels.CASE_LABEL_FONT_SIZE,
                 bold=True,
             )
@@ -2478,7 +2485,7 @@ class MainWindow:
                     "shape_opacity": 1.0,
                     "margin": 6,
                 }
-            add_labels(
+            actor = add_labels(
                 [position], [text], name=name,
                 shape=None if not is_hovered else "rounded_rect", show_points=False,
                 font_size=math_labels.CASE_LABEL_FONT_SIZE, text_color=color, always_visible=True,
@@ -2486,6 +2493,11 @@ class MainWindow:
                 render_points_as_spheres=False,
                 **label_style,
             )
+            # Stage masks operate through Geometry3DSceneController. Register
+            # formula-label actors there as well, otherwise labels from sibling
+            # case panes remain visible after their vectors are hidden.
+            if isinstance(controller_actors, dict) and actor is not None:
+                controller_actors[name] = actor
 
     def _command_teaching_geometry(self, operation: dict[str, object]) -> None:
         if self._pane_scene().scene_mode is not SceneMode.TWO_D or self._pane_scene().geometry_controller is None:
@@ -2506,7 +2518,7 @@ class MainWindow:
             self._pane_scene().geometry_controller.add_teaching_projection(tuple(float(v) for v in operation["vector"]), tuple(float(v) for v in operation["direction"]), result_alias=str(operation["result_alias"]), foot_alias=str(operation["foot_alias"]), residual_alias=str(operation["residual_alias"]), alias=str(operation["alias"]) if operation.get("alias") else None, origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#2777b6")), style=str(operation.get("style", "solid")))  # type: ignore[arg-type]
         elif name == "geometry.transformed_grid":
             matrix = tuple(tuple(float(v) for v in row) for row in operation["matrix"])  # type: ignore[index]
-            self._pane_scene().geometry_controller.add_teaching_transformed_grid(matrix, tuple(float(v) for v in operation["bounds"]), step=float(operation.get("step", 1.0)), alias=str(operation["alias"]) if operation.get("alias") else None, color=str(operation.get("color", "#5b8def")), origin=tuple(float(v) for v in operation.get("origin",(0.0,0.0))))  # type: ignore[arg-type]
+            self._pane_scene().geometry_controller.add_teaching_transformed_grid(matrix, tuple(float(v) for v in operation["bounds"]), step=float(operation.get("step", 1.0)), alias=str(operation["alias"]) if operation.get("alias") else None, color=str(operation.get("color", "#5b8def")), origin=tuple(float(v) for v in operation.get("origin",(0.0,0.0))), show_source_grid=bool(operation.get("show_source_grid", True)), show_basis=bool(operation.get("show_basis", False)))  # type: ignore[arg-type]
         elif name == "geometry.subspace_region":
             basis = tuple(tuple(float(v) for v in row) for row in operation["basis"])  # type: ignore[index]
             self._pane_scene().geometry_controller.add_teaching_subspace_region(basis, tuple(float(v) for v in operation["bounds"]), alias=str(operation["alias"]) if operation.get("alias") else None, origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#4c9f70")), opacity=float(operation.get("opacity", 0.2)))  # type: ignore[arg-type]
@@ -2842,7 +2854,7 @@ class MainWindow:
                     render=False,
                 )
             except Exception:
-                # 曲线本身仍由 CurveSceneController 渲染；面积失败不会破坏事务。
+                # 面积计算失败不影响曲线事务。
                 continue
         if render:
             self._pane_renderer().render()
@@ -2864,9 +2876,7 @@ class MainWindow:
         """Update presentation metadata without regenerating a teaching case."""
 
         self._active_linear_algebra_stage_metadata = selection
-        # The Qt lecture dialog is presentation-only and may not be materialized
-        # in headless hosts.  Dynamic dispatch keeps this hook compatible with
-        # both the structured content view and older dialogs.
+        # 动态分派兼容无 Qt 对话框的宿主和旧版内容视图。
         candidates = [getattr(self, "linear_algebra_content_view", None)]
         panel = getattr(self, "algebra_panel", None)
         popup = getattr(panel, "linear_algebra_popup", None)
@@ -2968,7 +2978,7 @@ class MainWindow:
         if interactor is not None:
             try:
                 interactor.setMouseTracking(True)
-                # Every recreated pane receives the same input routing filter.
+                # 重建的窗格统一安装输入路由过滤器。
                 interactor.installEventFilter(_GeometryInputFilter(self, interactor))
             except (AttributeError, RuntimeError):
                 pass
@@ -3020,20 +3030,13 @@ class MainWindow:
                                 self._clear_pending_curriculum_plans()
                                 self._pending_curriculum_transaction = None
                                 return
-                        # No topic transaction to commit here: either this chapter
-                        # has none, or the pane that materialized first already
-                        # committed it.  Either way this pane owns its own actors,
-                        # so its staged plan must run in this runtime — a case
-                        # layout with more than one visible pane (4.1.3 is the
-                        # first) would otherwise stay completely empty.
+                        # 每个窗格拥有独立演员，仍需在本运行时执行阶段计划。
                         result = self.scene_command_service.execute(
                             CommandPlan.from_dict(pending), pane_id=pane_id, activate_pane=False,
                         )
                         if not result.valid:
                             raise CommandError("；".join(result.messages))
-                        # Staged plans carry every stage of the topic; the mask
-                        # reduces this pane to the step its case binds.  Nothing
-                        # happens for topics without a compiled storyboard.
+                        # 阶段掩码只保留当前窗格绑定的步骤。
                         self._apply_linear_algebra_storyboard_visibility()
                     except Exception:
                         data = pane.scene_2d if pane.scene_mode == "2d" else pane.scene_3d
@@ -3041,20 +3044,15 @@ class MainWindow:
                         raise
 
     def _on_pane_viewport_changed(self, pane_id: str) -> None:
-        """Rebuild screen-sized 3-D arrow heads after a pane gets real geometry.
+        """Refit 2-D cases and rebuild 3-D arrow heads after layout changes.
 
         Case panes materialize their interactor before Qt assigns the final
-        geometry, so vector heads sized against the pre-layout viewport (the
-        QtInteractor default) come out oversized in the tall lecture layouts
-        (4.1/4.2 side-by-side case panes).  This callback runs after
-        ``setGeometry`` but before the first paint:  Qt has already updated the
-        widget's geometry, while the VTK render window only catches up once
-        its resize event is delivered.
+        geometry.  A 2-D ``view.fit`` computed against the pre-layout viewport
+        can therefore crop wide vectors once two tall panes are shown, while
+        3-D vector heads can come out oversized.  This callback runs after
+        ``setGeometry`` and repeats once on the next event-loop turn.
         """
-        # First pass synchronously: the size candidates skip the still-empty
-        # VTK window and fall through to the already-correct interactor
-        # height, so the very first paint shows correctly-sized heads instead
-        # of flashing oversized arrows that shrink a frame later.
+        self._refresh_case_pane_2d_view_fit(pane_id)
         self._refresh_case_pane_3d_arrow_heads(pane_id)
 
         pending = getattr(self, "_pane_viewport_refresh_pending", None)
@@ -3066,12 +3064,39 @@ class MainWindow:
 
         def refresh() -> None:
             self._pane_viewport_refresh_pending.discard(pane_id)
-            # Second pass one event-loop turn later, once the resize/show has
-            # reached the VTK render window: re-measure and render, covering
-            # cases where the VTK size lagged behind the Qt geometry.
+            self._refresh_case_pane_2d_view_fit(pane_id, render=True)
             self._refresh_case_pane_3d_arrow_heads(pane_id, render=True)
 
         QTimer.singleShot(0, refresh)
+
+    def _refresh_case_pane_2d_view_fit(self, pane_id: str, *, render: bool = False) -> bool:
+        """Reapply a teaching pane's last 2-D fit using its assigned rectangle."""
+        manager = getattr(self, "pane_manager", None)
+        if manager is None or pane_id not in manager.panes:
+            return False
+        pane = manager.pane(pane_id)
+        if pane.source != "case" or pane.scene_mode != "2d" or pane.renderer_2d is None:
+            return False
+        view_fit = pane.scene_2d.get("view_fit")
+        if not isinstance(view_fit, dict):
+            return False
+        container = getattr(self, "scene_pane_widget", None)
+        rect = container.pane_rect(pane_id) if container is not None else None
+        width = float(rect.width()) if rect is not None else 0.0
+        height = float(rect.height()) if rect is not None else 0.0
+        if width <= 0.0 or height <= 0.0:
+            return False
+        with self._using_pane(pane_id):
+            self._fit_2d_to_command_objects(
+                float(view_fit.get("padding", 1.15)),
+                view_fit.get("bounds"),
+                viewport_aspect=width / height,
+            )
+            if render:
+                render_fn = getattr(self._pane_renderer(required=False), "render", None)
+                if callable(render_fn):
+                    render_fn()
+        return True
 
     def _refresh_case_pane_3d_arrow_heads(self, pane_id: str, *, render: bool = False) -> None:
         """Re-measure the pane's vector heads; ``render`` also repaints it."""
@@ -3134,9 +3159,7 @@ class MainWindow:
         self._teaching_case_pane_ids = []
         self._teaching_case_stage_refs = {}
         for case_id, name, refs in descriptors:
-            # 每次载入都以当前产物为准。案例窗格是保留的：上一次载入留下的图形
-            # 存在窗格状态里，会被重放出来（旧舞台、旧配色），于是改过产物后重开
-            # 主题看不到任何变化。旧窗格先丢弃，再按新计划重新物化。
+            # 丢弃旧案例窗格，避免重放旧阶段和旧配色。
             try:
                 self.pane_manager.close_case(case_id)
             except (AttributeError, RuntimeError, ValueError):
@@ -3166,8 +3189,7 @@ class MainWindow:
         if not live_case_ids:
             return
         self.pane_manager.enter_lecture(live_case_ids[0], live_case_ids)
-        # 首屏显示几个窗格由 case_layout 的 default_pane_count 决定：数学案例
-        # 流程默认“全部显示”，两个步骤并排且共用同一视角。
+        # 首屏窗格数由 `default_pane_count` 决定。
         if int(getattr(layout, "default_pane_count", 1) or 1) > 1 and len(live_case_ids) > 1:
             self.pane_manager.show_all_cases()
         panel = getattr(self, "algebra_panel", None)
@@ -3214,8 +3236,7 @@ class MainWindow:
         if not isinstance(stage_id, str) or not stage_id:
             return
         controller = StoryboardVisibilityController(compiled)
-        # Resolve before touching any runtime.  Restore/redraw paths can carry
-        # an old stage ID; rejecting it here leaves every current actor alone.
+        # 修改运行时前先解析阶段，旧阶段无效时保留现有演员。
         selected = selection or controller.select(stage_id)
         pane_manager = getattr(self, "pane_manager", None)
         if pane_manager is None:
@@ -3227,9 +3248,7 @@ class MainWindow:
             runtime = getattr(pane, "runtime", None)
             if runtime is None:
                 continue
-            # 数学案例流程的每个窗格只显示自己那一步：案例恰好绑定一个步骤时用
-            # 该步骤的掩码；只有绑定多个步骤（在同一窗格内逐步切换）的案例才跟随
-            # 当前选中的阶段。否则点某一步会把所有窗格刷成同一张图。
+            # 单步骤窗格固定使用自身掩码，多步骤窗格才跟随当前阶段。
             refs = tuple(
                 str(ref) for ref in getattr(self, "_teaching_case_stage_refs", {}).get(pane_id, ()) if ref
             )
@@ -3240,12 +3259,163 @@ class MainWindow:
                 except ValueError:
                     pane_selection = selected
             controller.apply(runtime, pane_selection.stage_id, render=False)
+            self._sync_teaching_basis_matrix(pane_id, pane_selection)
             for relation in tuple(getattr(runtime, "_vector_additions", ())):
                 self._refresh_vector_addition(relation, create_missing=True)
             renderer = pane.renderer_2d if pane.scene_mode == "2d" else pane.renderer_3d
             render = getattr(renderer, "render", None)
             if callable(render):
                 render()
+
+        # 阶段切换只改变场景演员不会自动重建代数列表；当前焦点若是讲案例窗格，
+        # 立即用同一阶段掩码刷新列表，避免隐藏向量继续出现在代数区。
+        panel = getattr(self, "algebra_panel", None)
+        active_pane_id = getattr(pane_manager, "active_pane_id", None)
+        if panel is not None and active_pane_id in tuple(getattr(self, "_teaching_case_pane_ids", ())):
+            with self._using_pane(active_pane_id):
+                mode = self._pane_scene().scene_mode
+                panel.set_layers(
+                    self._two_d_panel_layers() if mode is SceneMode.TWO_D else self._three_d_panel_layers()
+                )
+
+    @staticmethod
+    def _basis_matrix_latex(matrix: object) -> str | None:
+        """Format a finite square matrix for the shared MathLive matrix row."""
+        if not isinstance(matrix, (list, tuple)) or not matrix:
+            return None
+        size = len(matrix)
+        rows: list[str] = []
+        for row in matrix:
+            if not isinstance(row, (list, tuple)) or len(row) != size:
+                return None
+            try:
+                values = tuple(float(value) for value in row)
+            except (TypeError, ValueError):
+                return None
+            if not all(isfinite(value) for value in values):
+                return None
+            rows.append("&".join(format_number(value) for value in values))
+        return r"\begin{pmatrix}" + r"\\".join(rows) + r"\end{pmatrix}"
+
+    def _sync_teaching_basis_matrix(
+        self,
+        pane_id: str,
+        selection: StoryboardVisibility,
+    ) -> None:
+        """Show the matrix belonging to the visible basis grid in its algebra tab."""
+        panel = getattr(self, "algebra_panel", None)
+        manager = getattr(self, "pane_manager", None)
+        if panel is None or manager is None or pane_id not in manager.panes:
+            return
+        selected = self._visible_teaching_basis_grid(pane_id, selection)
+        if selected is None:
+            return
+        _runtime, _alias, grid = selected
+        latex = self._basis_matrix_latex(grid.get("basis_matrix"))
+        if latex is None:
+            return
+        pane = manager.pane(pane_id)
+        model = panel.add_matrix_transform_tab(
+            pane_id,
+            pane.name,
+            editable=False,
+            activate=False,
+        )
+        model.set_matrix_transform_value(latex)
+        bounds = grid.get("bounds")
+        if isinstance(bounds, (list, tuple)) and bounds:
+            try:
+                extent = max(abs(float(value)) for value in bounds)
+            except (TypeError, ValueError):
+                extent = 5.0
+            model.set_matrix_transform_grid_range(extent)
+
+    def _visible_teaching_basis_grid(
+        self,
+        pane_id: str,
+        selection: StoryboardVisibility | None = None,
+    ) -> tuple[object, str, dict[str, object]] | None:
+        """Return the basis-grid operation selected for one teaching pane."""
+        manager = getattr(self, "pane_manager", None)
+        if (
+            manager is None
+            or pane_id not in manager.panes
+            or pane_id not in tuple(getattr(self, "_teaching_case_pane_ids", ()))
+        ):
+            return None
+        runtime = getattr(manager.pane(pane_id), "runtime", None)
+        compiled = getattr(self, "_active_linear_algebra_compiled", None)
+        if runtime is None or compiled is None:
+            return None
+        if selection is None:
+            refs = tuple(
+                str(ref)
+                for ref in getattr(self, "_teaching_case_stage_refs", {}).get(pane_id, ())
+                if ref
+            )
+            stage_id = refs[0] if len(refs) == 1 else getattr(
+                self, "_active_linear_algebra_stage_id", None
+            )
+            if not isinstance(stage_id, str) or not stage_id:
+                return None
+            try:
+                selection = StoryboardVisibilityController(compiled).select(stage_id)
+            except ValueError:
+                return None
+        visible = set(selection.visible_aliases)
+        operations = getattr(runtime, "_agent_teaching_2d", {})
+        for alias, operation in operations.items():
+            if (
+                alias in visible
+                and isinstance(operation, dict)
+                and operation.get("op") == "geometry.basis_grid"
+            ):
+                return runtime, str(alias), operation
+        return None
+
+    def _apply_teaching_basis_grid_settings(
+        self,
+        pane_id: str,
+        matrix: CoordinateTransform,
+        extent: float,
+    ) -> bool:
+        """Resize a teaching basis grid without replacing the lesson scene."""
+        selected = self._visible_teaching_basis_grid(pane_id)
+        if selected is None:
+            return False
+        runtime, alias, operation = selected
+        try:
+            basis = tuple(
+                tuple(float(value) for value in row)
+                for row in operation["basis_matrix"]  # type: ignore[index]
+            )
+        except (KeyError, TypeError, ValueError):
+            return False
+        panel = getattr(self, "algebra_panel", None)
+        if basis != matrix:
+            if panel is not None:
+                panel.set_status("教学案例中的基矩阵为只读内容", is_error=True)
+            return True
+        bounds = (-extent, extent, -extent, extent)
+        operation["bounds"] = list(bounds)
+        runtime._matrix_transform_grid_range = extent
+        pane = self.pane_manager.pane(pane_id)
+        pane.scene_2d["matrix_transform_grid_range"] = extent
+        controller = getattr(runtime, "geometry_controller", None)
+        if controller is not None:
+            controller.add_teaching_basis_grid(
+                basis,
+                bounds,
+                alias=alias,
+                color=str(operation.get("color", "#5b8def")),
+            )
+        renderer = pane.renderer_2d
+        render = getattr(renderer, "render", None)
+        if callable(render):
+            render()
+        if panel is not None:
+            panel.set_status(f"已将当前案例的矩阵网格范围调整为 ±{extent:g}")
+        return True
 
     def _command_upsert_point3d(self, operation: dict[str, object]) -> None:
         """在 3D 视口中用一个受控球体表示点。
@@ -3275,8 +3445,24 @@ class MainWindow:
             return
         import pyvista as pv
 
-        for alias in getattr(self._pane_scene(), "_agent_points3d", {}):
-            self._pane_renderer().remove_actor(f"agent-point:{alias}", render=False)
+        controller = getattr(self._pane_scene(), "geometry3d_controller", None)
+        controller_actors = getattr(controller, "actors", None)
+        point_visibility: dict[str, bool] = {}
+        if isinstance(controller_actors, dict):
+            for name, actor in tuple(controller_actors.items()):
+                if not name.startswith("agent-point:"):
+                    continue
+                alias = name.removeprefix("agent-point:")
+                getter = getattr(actor, "GetVisibility", None)
+                if callable(getter):
+                    point_visibility[alias] = bool(getter())
+                else:
+                    point_visibility[alias] = bool(getattr(actor, "visibility", True))
+                self._pane_renderer().remove_actor(name, render=False)
+                controller_actors.pop(name, None)
+        else:
+            for alias in getattr(self._pane_scene(), "_agent_points3d", {}):
+                self._pane_renderer().remove_actor(f"agent-point:{alias}", render=False)
         vector_starts = tuple(
             tuple(float(value) for value in operation.get("start", ()))
             for operation in getattr(self._pane_scene(), "_agent_geometry3d", {}).values()
@@ -3286,8 +3472,7 @@ class MainWindow:
             and len(operation.get("start", ())) == 3
         )
         for alias, coordinates in getattr(self._pane_scene(), "_agent_points3d", {}).items():
-            # 教学向量已经用箭杆表达方向；与其起点重合的教学点不再叠加球体，
-            # 否则 4.1.3 的多个向量都会在原点形成一个无意义的大球。
+            # 向量起点不叠加球体，避免多个原点标记重合。
             is_teaching_point = not str(alias).startswith("manual_")
             if is_teaching_point and any(
                 all(abs(float(point) - float(start)) <= 1e-9 for point, start in zip(coordinates, vector_start))
@@ -3295,7 +3480,16 @@ class MainWindow:
             ):
                 continue
             mesh = pv.Sphere(radius=0.08, center=coordinates, theta_resolution=16, phi_resolution=8)
-            self._pane_renderer().add_mesh(mesh, name=f"agent-point:{alias}", color="#d64545", render=False)
+            name = f"agent-point:{alias}"
+            actor = self._pane_renderer().add_mesh(mesh, name=name, color="#d64545", render=False)
+            if isinstance(controller_actors, dict) and actor is not None:
+                controller_actors[name] = actor
+                if point_visibility.get(str(alias)) is False:
+                    setter = getattr(actor, "SetVisibility", None)
+                    if callable(setter):
+                        setter(False)
+                    elif hasattr(actor, "visibility"):
+                        actor.visibility = False
         if render:
             self._pane_renderer().render()
 
@@ -3377,7 +3571,7 @@ class MainWindow:
         if alias in teaching:
             teaching.pop(alias, None)
             if self._pane_scene().geometry_controller is not None:
-                # The controller uses stable prefixes for every teaching actor.
+                # 教学演员使用稳定前缀。
                 for prefix in ("polygon", "arc", "right-angle", "oriented-area", "projection"):
                     self._pane_renderer().remove_actor(f"geometry:teaching:{prefix}:{alias}", render=False)
             self._pane_renderer().render()
@@ -3453,7 +3647,13 @@ class MainWindow:
         self._render_agent_points3d()
         self._pane_renderer().render()
 
-    def _fit_2d_to_command_objects(self, padding: float, bounds: object = None) -> None:
+    def _fit_2d_to_command_objects(
+        self,
+        padding: float,
+        bounds: object = None,
+        *,
+        viewport_aspect: float | None = None,
+    ) -> None:
         if self._pane_scene().scene_mode is SceneMode.THREE_D:
             self._pane_renderer().reset_camera() # 把预设的相机位置覆盖掉
             self._pane_renderer().render()
@@ -3471,13 +3671,18 @@ class MainWindow:
             min_x, max_x, min_y, max_y = explicit
         width = max(max_x - min_x, 1.0)
         height = max(max_y - min_y, 1.0)
-        # 以窗格实际宽高比取景：只按较大跨度取平行缩放会在窄窗格里裁掉宽图，
-        # 取景以图像为准（以边界中心为焦点，不强制把原点放在正中）。
-        aspect = self._pane_viewport_aspect()
+        # 按窗格宽高比和图形边界取景，不强制以原点居中。
+        aspect = self._pane_viewport_aspect() if viewport_aspect is None else viewport_aspect
         span = max(height, width / aspect if aspect > 0 else width, 1.0) * max(1.0, padding)
         self._pane_renderer().camera.focal_point = ((min_x + max_x) / 2, (min_y + max_y) / 2, 0.0)
         self._pane_renderer().camera.position = (self._pane_renderer().camera.focal_point[0], self._pane_renderer().camera.focal_point[1], 20.0)
         self._pane_renderer().camera.parallel_scale = span / 2
+        pane = self._pane()
+        if pane.source == "case":
+            pane.scene_2d["view_fit"] = {
+                "padding": float(padding),
+                "bounds": list(explicit) if explicit is not None else None,
+            }
         self._refresh_2d_viewport(resample=True, render=False)
 
     def _pane_viewport_aspect(self) -> float:
@@ -3563,7 +3768,7 @@ class MainWindow:
         configure_3d_camera_interaction(self._pane_renderer())
         # build_scene 内部会调用 plotter.clear() 清除全部 actor，因此坐标轴需要重新创建。
         self._pane_scene()._three_d_axes = ThreeDAxes(self._pane_renderer())
-        # Axes remain fixed world-space geometry while the camera moves.
+        # 相机移动时坐标轴仍固定在世界坐标中。
         extent = DEFAULT_3D_AXIS_EXTENT
         # 切换场景会重新创建坐标轴；沿用上次三维间距，避免同一视角重建后跳到另一档刻度。
         previous_spacing = self._pane_scene()._three_d_spacing
@@ -3723,14 +3928,7 @@ class MainWindow:
         self._pane_renderer().render()
 
     def _restore_2d_camera(self) -> None:
-        # 2D 场景使用并行投影（parallel projection），这里的 parallel_scale 相当于
-        # "视口的世界单位 zoom"：数值越大，视口显示的世界范围越大，图像越小；
-        # 数值越小，视口显示的范围越小，图像越放大。
-        #
-        # 这个值会直接影响 _current_2d_bounds() 中的 visible_2d_bounds() 计算：
-        #   half_height = parallel_scale
-        #   half_width = half_height * aspect_ratio
-        # 因此它决定了当前可见窗口的 x/y 范围，进而影响网格、刻度和采样区域。
+        # 并行投影比例决定可见世界范围及网格、刻度和采样区域。
         if self._pane_scene()._two_d_camera_position is not None:
             self._pane_renderer().camera_position = self._pane_scene()._two_d_camera_position
         else:
@@ -3753,9 +3951,7 @@ class MainWindow:
         return visible_2d_bounds(focal, float(self._pane_renderer().camera.parallel_scale), width / height)
 
     def _curve_sampling_domain(self, bounds: ViewportBounds) -> Plot2DDomain:
-        # 采样域为可视区域外扩 _GUIDE_MARGIN 得到（约 6 倍视口跨度）。若固定分辨率，
-        # 采样点会被稀释到整个外扩域，可视区域内密度不足而出现锯齿。这里按外扩比例
-        # 放大分辨率，保证可视区域内采样密度恒定，同时设上限避免性能问题。
+        # 分辨率随外扩采样域增加，并设上限控制成本。
         span_ratio = 1.0 + 2.0 * _GUIDE_MARGIN
         curve_resolution = min(
             8000, max(self._pane_scene().curve_domain.curve_resolution, int(self._pane_scene().curve_domain.curve_resolution * span_ratio))
@@ -3775,8 +3971,7 @@ class MainWindow:
         self, *, resample: bool = True, render: bool = True, force: bool = False
     ) -> None:
         visible = self._current_2d_bounds()
-        # Guide and curve sampling use hysteresis; geometry must follow the
-        # actual visible viewport on every camera interaction.
+        # 辅助线和曲线采样带滞后，但几何需跟随实际视口。
         geometry_controller = getattr(self._pane_scene(), "geometry_controller", None)
         if geometry_controller is not None:
             geometry_controller.set_bounds(visible)
@@ -3845,11 +4040,7 @@ class MainWindow:
         self._pane_scene()._two_d_guide_spacing = spacing
         self._pane_scene()._two_d_guide_bounds = sampling_bounds
         if resample and self._pane_scene().curve_controller is not None:
-            # contains() 只能识别平移或缩小（可见区域超出已采样范围）；放大时较小的
-            # 可见区域仍被旧的大采样范围包含，若不重采样就会沿用稀疏网格，放大后
-            # 曲线出现折线状的不连续。这里额外判断放大幅度：采样范围由可见范围
-            # expanded(_GUIDE_MARGIN) 得到，反推出采样时的可见跨度，一旦当前可见
-            # 跨度明显小于它（放大约 1.4 倍以上）便按当前视口重采样，恢复精细分辨率。
+            # 放大后旧范围虽仍包含视口，但采样已过稀，需按跨度变化重采样。
             needs_resample = force or needs_prefetch or self._pane_scene()._two_d_sample_bounds is None or (
                 not self._pane_scene()._two_d_sample_bounds.contains(visible)
             )
@@ -3914,9 +4105,7 @@ class MainWindow:
                 previous_spacing=None,
             )
 
-        # A Qt resize changes world-units-per-pixel without emitting a VTK
-        # camera interaction.  Recompute only cone geometry here; the axes
-        # remain fixed world-space actors and are not rebuilt.
+        # Qt 缩放不触发 VTK 相机事件，此处只重算箭头锥体。
         self._refresh_3d_arrows_for_camera()
 
         if render:
@@ -4269,14 +4458,18 @@ class MainWindow:
             operations=({"op": "scene.clear", "scope": "all"}, *lesson_plan.operations),
         )
 
-    @staticmethod
-    def _linear_algebra_source_repository() -> LectureSourceRepository:
-        return LectureSourceRepository(Path(__file__).resolve().parents[1] / ".agents" / "线性代数讲义.md")
+    def _linear_algebra_source_repository(self) -> LectureSourceRepository:
+        """切换主题时复用讲义索引。"""
+
+        source_path = Path(__file__).resolve().parents[1] / ".agents" / "线性代数讲义.md"
+        repository = getattr(self, "_linear_algebra_source_repository_instance", None)
+        if repository is None or repository.path != source_path:
+            repository = LectureSourceRepository(source_path)
+            self._linear_algebra_source_repository_instance = repository
+        return repository
 
     def _load_linear_algebra_topic(self, topic_id: str) -> None:
-        # Rendering a case pane can allocate a VTK surface and run an entire
-        # lesson plan.  Advance this token before any work so a newer directory
-        # choice can invalidate a queued scene materialization.
+        # 开始渲染前更新令牌，使新选择可取消排队中的场景创建。
         generation = int(getattr(self, "_linear_algebra_load_generation", 0)) + 1
         self._linear_algebra_load_generation = generation
         self._pending_linear_algebra_scene_request = None
@@ -4304,8 +4497,7 @@ class MainWindow:
         try:
             previous_scene_snapshot = self._scene_snapshot_from_current_state()
         except Exception as error:
-            # A missing pre-load snapshot makes rollback impossible.  Refuse
-            # the load before closing panes or publishing a new explanation.
+            # 缺少载入前快照时无法回滚，应在修改界面前拒绝载入。
             self.algebra_panel.set_status(
                 f"无法建立线性代数场景回滚快照: {error}", is_error=True,
             )
@@ -4345,8 +4537,7 @@ class MainWindow:
             "authoring_sync": authoring_sync,
         }
         if self._can_defer_linear_algebra_scene_load():
-            # QWebEngine confirms its first rendered explanation before VTK
-            # creates/recreates case renderers on the Qt thread.
+            # QWebEngine 首帧确认后再由 Qt 线程创建 VTK 案例渲染器。
             self._pending_linear_algebra_scene_request = request
             self._publish_linear_algebra_explanation_preview(
                 topic, bundle, explanation_case, lesson_plan, preview_token=str(generation),
@@ -4428,8 +4619,7 @@ class MainWindow:
                 from types import SimpleNamespace
                 compiled = SimpleNamespace(topic_id=topic.id, plan=lesson_plan, storyboard=())
             extended = getattr(bundle.topic, "chapter_number", 0) >= 4
-            # 每次载入都必须重置交接标记：上一章留下的 True 会让这一章的案例窗格
-            # 以为主题事务已经提交过，于是不再物化自己的计划，留下一个空窗格。
+            # 每次载入重置交接标记，避免新案例误判事务已提交。
             self._pending_curriculum_host_executed = False
             self._pending_curriculum_finalized = False
             if extended:
@@ -4464,10 +4654,7 @@ class MainWindow:
             else:
                 self._finalize_linear_algebra_topic_load(topic, bundle, explanation_case, lesson_plan)
         except Exception as error:
-            # Detach the hand-off token before rebuilding/closing panes.  Qt may
-            # synchronously emit another interactor-created callback while the
-            # old layout is being torn down; a rejected transaction must never
-            # be retried from that callback.
+            # 重建前解除交接令牌，避免旧布局回调重试已拒绝的事务。
             host_executed = bool(getattr(self, "_pending_curriculum_host_executed", False))
             self._pending_curriculum_transaction = None
             self._close_teaching_case_panes()
@@ -4613,8 +4800,7 @@ class MainWindow:
                     if isinstance(linear.agent_alias, str)
                 }
                 if topic_id == "ch01.ops.addition":
-                    # 数学案例流程的第一步窗格只画 a、b，没有和向量；这里不能替它
-                    # 补出和向量与平行四边形，否则两个窗格会变得一模一样。
+                    # 第一步只显示输入向量，不补和向量及平行四边形。
                     if "sem__flow_sum" not in aliases:
                         continue
                     self._command_register_vector_addition(
@@ -5259,7 +5445,7 @@ class MainWindow:
             "subspace": "子空间",
             "area": "有向面积",
         }
-        # Map the basic tools to the existing 2D geometry infrastructure.
+        # 基础工具复用现有二维几何设施。
         tool_mapping = {
             "select": "select",
             "point": "point",
@@ -5271,8 +5457,7 @@ class MainWindow:
             self._set_2d_geometry_tool(mapped_tool)
         else:
             self._set_2d_geometry_tool(None)
-            # `_set_2d_geometry_tool` also synchronizes the shared toolbar;
-            # restore the specialized selection after clearing the basic tool.
+            # 清除基础工具后恢复专用选择状态。
             if hasattr(self, "two_d_geometry_toolbar"):
                 self.two_d_geometry_toolbar.set_active_tool(tool)
             self._pane_scene()._active_linear_algebra_tool = tool
@@ -5290,42 +5475,42 @@ class MainWindow:
             elif tool == "addition":
                 self.algebra_panel.set_status("加法工具：依次单击两条向量")
             elif tool == "transform":
-                self.algebra_panel.set_status("矩阵变换工具：请在代数 tab 中输入矩阵")
+                self.algebra_panel.set_status("矩阵变换工具：请在代数区列表中输入矩阵")
             else:
                 self.algebra_panel.set_status(f"{tool_labels.get(tool, tool)}工具：单击第一个向量")
 
     def _open_matrix_transform_workspace(self) -> str | None:
-        """Create a visible 2-D pane and place its editor in the algebra tab."""
+        """Open the matrix editor for the active pane without changing layout."""
         manager = getattr(self, "pane_manager", None)
         panel = getattr(self, "algebra_panel", None)
         if manager is None or panel is None:
             return None
 
-        pane_id = manager.create_pane(name="矩阵变换")
+        pane_id = str(getattr(manager, "active_pane_id", ""))
+        if not pane_id or pane_id not in manager.panes:
+            return None
         pane = manager.pane(pane_id)
-        pane.scene_mode = SceneMode.TWO_D
-        visible = list(manager.visible_pane_ids())
-        if len(visible) < manager.MAX_PANES:
-            visible.append(pane_id)
-        else:
-            visible[-1] = pane_id
-        manager.set_visible_panes(visible)
-        container = getattr(self, "scene_pane_widget", None)
-        if container is not None:
-            container.sync_layout()
         try:
             manager.focus_pane(pane_id)
         except (AttributeError, ValueError):
             return None
+        with self._using_pane(pane_id):
+            if self._pane_scene().scene_mode is not SceneMode.TWO_D:
+                self._set_scene_mode(SceneMode.TWO_D)
+            runtime = self._pane_scene()
+            if runtime._two_d_coordinate_transform is not None:
+                runtime._two_d_coordinate_transform = None
+                runtime._two_d_show_original_coordinate_system = True
+                runtime._two_d_show_transformed_coordinate_system = True
+                self._pane().scene_2d.pop("coordinate_transform", None)
+                if self._pane_renderer(required=False) is not None:
+                    self._render_2d_scene()
 
         model = panel.add_matrix_transform_tab(pane_id, pane.name)
         runtime = self._pane_scene(pane_id)
-        model.set_matrix_transform_visibility(
-            runtime._two_d_show_original_coordinate_system,
-            runtime._two_d_show_transformed_coordinate_system,
-        )
+        model.set_matrix_transform_grid_range(runtime._matrix_transform_grid_range)
         model.setFocus()
-        panel.set_status("请输入 2×2 矩阵，然后点击“应用”")
+        panel.set_status("请在代数列表中编辑 2×2 矩阵；网格大小可在行尾设置中调整")
         toolbar = getattr(self, "two_d_geometry_toolbar", None)
         if toolbar is not None:
             toolbar.set_active_tool(None, emit_signal=False)
@@ -5333,8 +5518,10 @@ class MainWindow:
         self._pane_scene(pane_id)._active_linear_algebra_tool = None
         return pane_id
 
-    def _apply_matrix_transform_from_tab(self, pane_id: str, text: str) -> None:
-        """Apply a matrix submitted from the matching algebra tab."""
+    def _apply_matrix_transform_from_tab(
+        self, pane_id: str, text: str, grid_range: int | float = 5
+    ) -> None:
+        """Draw a transformed grid in the current pane's original coordinates."""
         manager = getattr(self, "pane_manager", None)
         panel = getattr(self, "algebra_panel", None)
         if manager is None or panel is None or pane_id not in manager.panes:
@@ -5343,37 +5530,44 @@ class MainWindow:
         if matrix is None:
             panel.set_status("矩阵格式无效，请输入两行两列数值", is_error=True)
             return
-        determinant = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
-        if abs(determinant) <= 1e-12:
-            panel.set_status("矩阵不可逆，无法直接替换坐标系", is_error=True)
-            return
         try:
-            manager.reveal_pane(pane_id)
-        except (AttributeError, ValueError):
+            extent = max(1.0, min(float(grid_range), 100.0))
+        except (TypeError, ValueError):
+            panel.set_status("网格范围必须是 1 到 100 的数值", is_error=True)
             return
-        container = getattr(self, "scene_pane_widget", None)
-        if container is not None:
-            container.sync_layout()
+        if self._apply_teaching_basis_grid_settings(pane_id, matrix, extent):
+            return
         with self._using_pane(pane_id):
             if self._pane_scene().scene_mode is not SceneMode.TWO_D:
                 self._pane_scene().scene_mode = SceneMode.TWO_D
             if self._pane_renderer(required=False) is None:
-                panel.set_status("变换窗格尚未准备好，请稍后再试", is_error=True)
+                panel.set_status("当前二维窗格尚未准备好，请稍后再试", is_error=True)
                 return
             self._clear_linear_algebra_tool_overlays()
             runtime = self._pane_scene()
-            # Matrix transforms replace the pane's primary coordinate system.
-            # Do not create a teaching overlay: the next guide render maps the
-            # grid, axes, ticks, and labels through this matrix directly.
+            # The toolbar tool owns an overlay grid.  Clear any state left by
+            # the former coordinate-system replacement behavior first.
             runtime._linear_algebra_tool_preclear_state = None
-            runtime._two_d_coordinate_transform = matrix
+            runtime._two_d_coordinate_transform = None
+            runtime._two_d_show_original_coordinate_system = True
+            runtime._two_d_show_transformed_coordinate_system = True
             pane = self._pane()
-            pane.scene_2d["coordinate_transform"] = [list(matrix[0]), list(matrix[1])]
-            self._render_2d_scene()
+            pane.scene_2d.pop("coordinate_transform", None)
+            pane.scene_2d["matrix_transform_grid_range"] = extent
+            runtime._matrix_transform_grid_range = extent
+            # Rebuild the guides immediately when a pane still carries state
+            # from the former coordinate-system replacement behavior.
+            render_2d = getattr(self, "_render_2d_scene", None)
+            if callable(render_2d):
+                render_2d()
+            alias = "la_tool_transform"
+            plan = build_matrix_grid_tool_plan(matrix, extent, alias)
+            if not self._apply_linear_algebra_tool_plan(plan):
+                return
             sync_state = getattr(self, "_sync_pane_state", None)
             if callable(sync_state):
                 sync_state()
-            panel.set_status("已应用矩阵变换，可切换原坐标系和变换后坐标系显示")
+            panel.set_status(f"已在当前窗格绘制矩阵网格，范围 ±{extent:g}（默认 5×5）")
 
     def _set_matrix_coordinate_system_visibility(
         self, pane_id: str, show_original: bool, show_transformed: bool
@@ -5412,7 +5606,7 @@ class MainWindow:
                 try:
                     self._pane_scene()._linear_algebra_tool_preclear_state = capture()
                 except AttributeError:
-                    # Lightweight test hosts do not carry the full scene state.
+                    # 轻量测试宿主不含完整场景状态。
                     self._pane_scene()._linear_algebra_tool_preclear_state = None
         controller = getattr(self._pane_scene(), "geometry_controller", None)
         if controller is not None and hasattr(controller, "clear_teaching_prefix"):
@@ -5601,10 +5795,7 @@ class MainWindow:
         polygon_aliases = relation.get("polygon_aliases")
         if isinstance(polygon_aliases, (list, tuple)):
             polygon_aliases = list(polygon_aliases)
-            # Capability fallbacks may emit a second, generic polygon alias
-            # (currently ``cap__polygon``).  Bind existing polygons to the
-            # live relation so a drag cannot leave a stale duplicate behind;
-            # do not add aliases that are absent from this pane.
+            # 将已有能力多边形绑定到实时关系，避免拖动后残留副本。
             for polygon_alias in getattr(self._pane_scene(), "_agent_teaching_2d", {}):
                 if polygon_alias == "cap__polygon" and polygon_alias not in polygon_aliases:
                     polygon_aliases.append(polygon_alias)
@@ -5744,9 +5935,7 @@ class MainWindow:
         try:
             self._move_addition_point(result_start, anchor)
             self._move_addition_point(result_end, result_end_coordinates)
-            # Keep a shared input endpoint (usually the common origin) visible
-            # even when the derived result vector is hidden by a storyboard
-            # stage.  Hiding the result must not hide the input vectors' anchor.
+            # 隐藏结果向量时仍保留输入向量共用端点。
             sync_visibility(result_start, derived_visible or result_start.id in input_point_ids)
             sync_visibility(result_end, derived_visible or result_end.id in input_point_ids)
             sync_visibility(result, derived_visible)
@@ -5963,9 +6152,7 @@ class MainWindow:
             return False
         self._pane_scene()._linear_algebra_tool_preclear_state = None
         if preclear_state is not None and getattr(self._pane_scene(), "_scene_command_undo_stack", None):
-            # The interactive overlay replacement happened just before the
-            # command service opened its transaction.  Point the new undo entry
-            # at the true pre-replacement scene so undo restores the old tool.
+            # 撤销项应指向替换交互层前的场景。
             self._pane_scene()._scene_command_undo_stack[-1] = preclear_state
         self._pane_renderer().render()
         return True
@@ -6044,8 +6231,7 @@ class MainWindow:
     def _handle_linear_algebra_transform(self) -> bool:
         panel = getattr(self, "algebra_panel", None)
         if callable(getattr(panel, "add_matrix_transform_tab", None)):
-            # Compatibility for restored/legacy tool state: production UI
-            # always routes matrix input through the algebra WebEngine area.
+            # 兼容恢复的旧工具状态；正式界面由代数输入区接收矩阵。
             pane_id = getattr(self.pane_manager, "active_pane_id", None)
             has_editor = (
                 pane_id is not None
@@ -6055,29 +6241,9 @@ class MainWindow:
             if not has_editor:
                 self._open_matrix_transform_workspace()
             else:
-                panel.set_status("矩阵变换工具：请在代数 tab 中输入矩阵")
+                panel.set_status("矩阵变换工具：请在代数区列表中输入矩阵")
             return True
-        parent = getattr(self, "window", None)
-        text, accepted = QInputDialog.getText(
-            parent,
-            "矩阵变换",
-            "输入 2×2 矩阵（例如 1,0;0,1）：",
-            QLineEdit.EchoMode.Normal,
-            "1,0;0,1",
-        )
-        if not accepted:
-            return True
-        matrix = self._parse_linear_algebra_matrix(text)
-        if matrix is None:
-            self.algebra_panel.set_status("矩阵格式无效，请使用 a,b;c,d", is_error=True)
-            return True
-        self._clear_linear_algebra_tool_overlays()
-        alias = self._next_linear_algebra_tool_alias("transform")
-        points = [(point.x, point.y) for point in self._pane_scene().geometry_points] or [(1.0, 0.0), (0.0, 1.0), (1.0, 1.0)]
-        bounds = self._current_2d_bounds()
-        plan = build_transform_tool_plan(matrix, points, bounds, alias)
-        if self._apply_linear_algebra_tool_plan(plan):
-            self.algebra_panel.set_status("已应用矩阵变换")
+        self.algebra_panel.set_status("矩阵变换需要在代数区列表中输入矩阵", is_error=True)
         return True
 
     def _set_snap_to_grid(self, enabled: bool) -> None:
@@ -7343,6 +7509,17 @@ class MainWindow:
         self.algebra_panel.sync_layer(layer_id, self._curve_layer(layer_id))
 
     def _two_d_panel_layers(self) -> list[CurveLayer | GeometryObject | Annotation2D]:
+        alias_filter = self._teaching_case_alias_filter()
+
+        def include(item: CurveLayer | GeometryObject | Annotation2D) -> bool:
+            if alias_filter is None:
+                return True
+            alias = getattr(item, "agent_alias", None)
+            if not isinstance(alias, str):
+                return True
+            controlled, visible = alias_filter
+            return alias not in controlled or alias in visible
+
         objects: dict[str, CurveLayer | GeometryObject | Annotation2D] = {
             layer.id: layer for layer in self._pane_scene().curve_layers
         }
@@ -7355,7 +7532,7 @@ class MainWindow:
         return [
             objects[object_id]
             for object_id in self._pane_scene()._two_d_object_order
-            if object_id in objects
+            if object_id in objects and include(objects[object_id])
         ]
 
     def _three_d_vector_row(self, alias: str) -> AlgebraVector3D | None:
@@ -7364,6 +7541,7 @@ class MainWindow:
             not isinstance(operation, dict)
             or operation.get("op") != "linear3d.upsert"
             or operation.get("kind") != "vector"
+            or operation.get("algebra_visible") is False
         ):
             return None
         try:
@@ -7389,13 +7567,13 @@ class MainWindow:
         prefix = "ch04__entity__input_vector_"
         if alias.startswith(prefix):
             index = {"a": "1", "b": "2", "c": "3"}.get(alias.removeprefix(prefix))
-            return rf"\boldsymbol{{x}}_{{{index}}}" if index is not None else None
+            return rf"x_{{{index}}}" if index is not None else None
         prefix = "ch04__entity__output_vector_"
         if alias.startswith(prefix):
             index = {"a": "1", "b": "2", "c": "3"}.get(alias.removeprefix(prefix))
-            return rf"\boldsymbol{{A}}\boldsymbol{{x}}_{{{index}}}" if index is not None else None
+            return rf"Ax_{{{index}}}" if index is not None else None
         if alias == "ch04__entity__kernel_vector":
-            return r"\boldsymbol{k}"
+            return r"k"
         return None
 
     def _three_d_plane_row(self, alias: str) -> AlgebraPlane3D | None:
@@ -7446,20 +7624,53 @@ class MainWindow:
             color=str(operation.get("color", "#263241")),
         )
 
+    def _teaching_case_alias_filter(self) -> tuple[set[str], set[str]] | None:
+        """返回当前教学案例窗格受阶段控制及实际可见的别名。"""
+        pane_id = self._pane().pane_id
+        if pane_id not in tuple(getattr(self, "_teaching_case_pane_ids", ())):
+            return None
+        compiled = getattr(self, "_active_linear_algebra_compiled", None)
+        if compiled is None:
+            return None
+        refs = tuple(
+            str(ref)
+            for ref in getattr(self, "_teaching_case_stage_refs", {}).get(pane_id, ())
+            if ref
+        )
+        stage_id = refs[0] if len(refs) == 1 else getattr(self, "_active_linear_algebra_stage_id", None)
+        if not isinstance(stage_id, str) or not stage_id:
+            return None
+        try:
+            controlled, visible = storyboard_visibility(compiled, stage_id)
+        except ValueError:
+            return None
+        return set(controlled), set(visible)
+
     def _three_d_panel_layers(self) -> list[SurfaceLayer | AlgebraVector3D | AlgebraPlane3D | AlgebraAnnotation3D]:
+        alias_filter = self._teaching_case_alias_filter()
+
+        def include(alias: str) -> bool:
+            if alias_filter is None:
+                return True
+            controlled, visible = alias_filter
+            return alias not in controlled or alias in visible
+
         vector_rows = [
             row
             for alias in getattr(self._pane_scene(), "_agent_geometry3d", {})
+            if include(str(alias))
             if (row := self._three_d_vector_row(alias)) is not None
         ]
         plane_rows = [
             row
             for alias in getattr(self._pane_scene(), "_agent_geometry3d", {})
+            if include(str(alias))
             if (row := self._three_d_plane_row(alias)) is not None
         ]
         annotation_rows = [
             row
             for alias in getattr(self._pane_scene(), "_agent_geometry3d", {})
+            if include(str(alias))
             if str(alias).startswith("annotation:")
             and (row := self._three_d_annotation_row(str(alias).removeprefix("annotation:"))) is not None
         ]
@@ -7525,7 +7736,7 @@ class MainWindow:
         ):
             if widget is not None:
                 apply_drop_shadow(widget, "overlay", effective_theme)
-                # QSS cannot restyle a QIcon, so icons need an explicit repaint.
+                # QSS 无法重绘 QIcon，主题切换时需显式刷新。
                 retint_icons(widget, effective_theme)
         status_bar = getattr(self, "status_bar", None)
         if status_bar is not None and hasattr(status_bar, "set_theme"):
@@ -7567,8 +7778,7 @@ class MainWindow:
             self._apply_style()
         if hasattr(self, "status_bar"):
             self.status_bar.set_theme_mode(mode)
-        # Theme-aware surfaces are optional so this remains compatible with
-        # lightweight test doubles and older embedded hosts.
+        # 主题表面可选，以兼容测试替身和旧嵌入宿主。
         for surface in (
             getattr(self, "agent_panel", None),
             getattr(self, "agent_sidebar", None),

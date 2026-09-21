@@ -185,12 +185,12 @@ def test_case_plan_drops_capability_evidence_from_every_step():
         ),
         (
             "ch02.matrix.basis",
-            [-12.0, 12.0, -12.0, 12.0],
+            [-4.0, 4.0, -4.0, 4.0],
             (
-                # 第一步：讲义给出的标准基旋转矩阵，两列的像落在坐标轴上。
+                # 第一步：标准基下的旋转与同一输入向量。
                 ([[0.0, -1.0], [1.0, 0.0]], r"$A=\left[\genfrac{}{}{0}{}{0\quad -1}{1\quad \ 0}\right]$"),
-                # 第二步：换一组基 v1=(1,1)、v2=(1,2)，同一个旋转的矩阵变成 B。
-                ([[-3.0, -5.0], [2.0, 3.0]], r"$B=\left[\genfrac{}{}{0}{}{-3\quad -5}{\ 2\quad \ 3}\right]$"),
+                # 第二步：换一组基 b1=(1,0)、b2=(1,1)，同一个旋转的矩阵变成 B。
+                ([[-1.0, -2.0], [1.0, 1.0]], r"$B=\left[\genfrac{}{}{0}{}{-1\quad -2}{\ 1\quad \ 1}\right]$"),
             ),
         ),
     ],
@@ -214,12 +214,12 @@ def test_matrix_vector_case_panes_use_the_matrix_transform_feature(topic_id, gri
         if topic_id == "ch02.matrix.basis":
             # 2.7 uses the actual coordinate-system transform: the first
             # pane stays on the standard basis, while the second pane
-            # changes its basis to S=[v1 v2] instead of drawing a second
+                # changes its basis to S=[b1 b2] instead of drawing a second
             # teaching-grid overlay.
             if stage is compiled.storyboard[0]:
                 assert not coordinate_ops
             else:
-                assert [op["matrix"] for op in coordinate_ops] == [[[1.0, 1.0], [1.0, 2.0]]]
+                assert [op["matrix"] for op in coordinate_ops] == [[[1.0, 1.0], [0.0, 1.0]]]
                 assert coordinate_ops[0]["show_original"] is False
                 assert coordinate_ops[0]["show_transformed"] is True
             assert not grid_ops

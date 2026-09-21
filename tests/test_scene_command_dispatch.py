@@ -155,6 +155,90 @@ def _drawing_plan() -> CommandPlan:
     ))
 
 
+def test_formula_annotation_uses_text_as_default_latex_source() -> None:
+    window = _pane_window()
+    target = window.pane_manager.visible_pane_ids()[0]
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+
+    result = service.execute(
+        CommandPlan(
+            scene="2d",
+            operations=(
+                {
+                    "op": "annotation.formula",
+                    "alias": "pythagoras",
+                    "text": r"c^2=a^2+b^2",
+                    "position": [1.0, 2.0],
+                },
+            ),
+        ),
+        pane_id=target,
+    )
+
+    annotation = window._pane_scene(target).annotations[0]
+    assert result.valid
+    assert annotation.text == r"c^2=a^2+b^2"
+    assert annotation.latex == r"c^2=a^2+b^2"
+
+
+def test_formula_annotation_prefers_explicit_latex_source() -> None:
+    window = _pane_window()
+    target = window.pane_manager.visible_pane_ids()[0]
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+
+    result = service.execute(
+        CommandPlan(
+            scene="2d",
+            operations=(
+                {
+                    "op": "annotation.formula",
+                    "alias": "density",
+                    "text": "density",
+                    "latex": r"\rho=\frac{m}{V}",
+                    "position": [0.0, 0.0],
+                },
+            ),
+        ),
+        pane_id=target,
+    )
+
+    annotation = window._pane_scene(target).annotations[0]
+    assert result.valid
+    assert annotation.text == "density"
+    assert annotation.latex == r"\rho=\frac{m}{V}"
+
+
+def test_three_d_formula_annotation_sends_mathtext_to_vtk_labels() -> None:
+    from models.scene_mode import SceneMode
+
+    window = _pane_window()
+    target = window.pane_manager.visible_pane_ids()[0]
+    scene = window._pane_scene(target)
+    scene.scene_mode = SceneMode.THREE_D
+    scene.geometry3d_controller = SimpleNamespace(actors={})
+    renderer = window._pane_renderer(target)
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+
+    result = service.execute(
+        CommandPlan(
+            scene="3d",
+            operations=(
+                {
+                    "op": "annotation.formula",
+                    "alias": "pressure",
+                    "text": r"p=\rho gh",
+                    "position": [0.0, 0.0, 1.0],
+                },
+            ),
+        ),
+        pane_id=target,
+    )
+
+    assert result.valid
+    assert renderer.add_point_labels.call_args.args[1] == [r"$p=\rho gh$"]
+    assert scene.geometry3d_controller.actors["geometry3d:annotation:pressure"] is renderer.add_point_labels.return_value
+
+
 def test_matrix_case_plan_replays_all_primitives_without_rolling_back() -> None:
     """A real chapter-2 case must leave its transformed grid and vectors visible.
 
@@ -193,6 +277,80 @@ def test_matrix_case_plan_replays_all_primitives_without_rolling_back() -> None:
     }
     assert grid_aliases & set(scene._agent_teaching_2d)
     assert window._pane_renderer(pane_id).add_mesh.call_count > 0
+
+
+def test_basis_case_syncs_each_visible_grid_matrix_to_its_algebra_tab() -> None:
+    compiled = catalog_registry().resolve_bundle(
+        "ch04.basis.definition",
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    for pane_id in (first, second):
+        result = service.execute(compiled.plan, pane_id=pane_id)
+        assert result.valid
+
+    models = {first: MagicMock(), second: MagicMock()}
+    window.algebra_panel.add_matrix_transform_tab.side_effect = (
+        lambda pane_id, *_args, **_kwargs: models[pane_id]
+    )
+    standard = "stage.ch04.basis.definition.standard"
+    oblique = "stage.ch04.basis.definition.oblique"
+    window._active_linear_algebra_compiled = compiled
+    window._active_linear_algebra_stage_id = standard
+    window._teaching_case_pane_ids = [first, second]
+    window._teaching_case_stage_refs = {first: (standard,), second: (oblique,)}
+    window.pane_manager.focus_pane(first)
+
+    window._apply_linear_algebra_storyboard_visibility()
+
+    models[first].set_matrix_transform_value.assert_called_once_with(
+        r"\begin{pmatrix}1&0\\0&1\end{pmatrix}"
+    )
+    models[second].set_matrix_transform_value.assert_called_once_with(
+        r"\begin{pmatrix}1&1\\1&-1\end{pmatrix}"
+    )
+    models[first].set_matrix_transform_grid_range.assert_called_once_with(5)
+    models[second].set_matrix_transform_grid_range.assert_called_once_with(5)
+    assert all(
+        call.kwargs == {"editable": False, "activate": False}
+        for call in window.algebra_panel.add_matrix_transform_tab.call_args_list
+    )
+    first_linears = {
+        linear.agent_alias: linear
+        for linear in window._pane_scene(first).linear_objects
+    }
+    second_linears = {
+        linear.agent_alias: linear
+        for linear in window._pane_scene(second).linear_objects
+    }
+    assert first_linears["ch04__entity__standard_basis__generator_1"].visible
+    assert not first_linears["ch04__entity__oblique_basis__generator_1"].visible
+    assert second_linears["ch04__entity__oblique_basis__generator_1"].visible
+    assert not second_linears["ch04__entity__standard_basis__generator_1"].visible
+
+    panel_aliases = {
+        layer.agent_alias
+        for layer in window.algebra_panel.set_layers.call_args.args[0]
+        if getattr(layer, "agent_alias", None)
+    }
+    assert "ch04__entity__standard_basis__generator_1" in panel_aliases
+    assert "ch04__entity__oblique_basis__generator_1" not in panel_aliases
+
+    window._clear_linear_algebra_tool_overlays = MagicMock()
+    window._apply_matrix_transform_from_tab(
+        first,
+        r"\begin{pmatrix}1&0\\0&1\end{pmatrix}",
+        8,
+    )
+
+    standard_grid = window._pane_scene(first)._agent_teaching_2d[
+        "ch04__relation__standard_readout__grid"
+    ]
+    assert standard_grid["bounds"] == [-8.0, 8.0, -8.0, 8.0]
+    assert window._pane_scene(first)._matrix_transform_grid_range == 8
+    window._clear_linear_algebra_tool_overlays.assert_not_called()
 
 
 def test_transformed_grid_origin_reaches_real_host_mesh():

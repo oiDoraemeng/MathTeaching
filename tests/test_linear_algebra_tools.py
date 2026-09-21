@@ -3,6 +3,7 @@ from rendering.geometry_scene import GeometrySceneController
 from rendering.ticks import ViewportBounds
 from services.scene_commands import SceneCommandService
 from ui.linear_algebra_tools import (
+    build_matrix_grid_tool_plan,
     build_polygon_tool_plan,
     build_transform_tool_plan,
     build_vector_tool_plan,
@@ -14,18 +15,29 @@ class _FakePlotter:
     def __init__(self) -> None:
         self.actors: dict[str, object] = {}
         self.meshes: dict[str, object] = {}
+        self.styles: dict[str, dict[str, object]] = {}
+        self.labels: dict[str, tuple[tuple[object, ...], tuple[str, ...], dict[str, object]]] = {}
         self.removed: list[str] = []
 
-    def add_mesh(self, mesh, *, name: str, **_kwargs):
+    def add_mesh(self, mesh, *, name: str, **kwargs):
         actor = object()
         self.actors[name] = actor
         self.meshes[name] = mesh
+        self.styles[name] = dict(kwargs)
+        return actor
+
+    def add_point_labels(self, points, labels, *, name: str, **kwargs):
+        actor = object()
+        self.actors[name] = actor
+        self.labels[name] = (tuple(points), tuple(labels), dict(kwargs))
         return actor
 
     def remove_actor(self, name: str, **_kwargs) -> None:
         self.removed.append(name)
         self.actors.pop(name, None)
         self.meshes.pop(name, None)
+        self.styles.pop(name, None)
+        self.labels.pop(name, None)
 
 
 def _vectors() -> tuple[tuple[Linear2D, Linear2D], dict[str, Point2D]]:
@@ -43,6 +55,12 @@ def _vectors() -> tuple[tuple[Linear2D, Linear2D], dict[str, Point2D]]:
 def test_parse_matrix_accepts_common_forms_and_rejects_invalid_input() -> None:
     assert parse_matrix("1,0;0,2") == ((1.0, 0.0), (0.0, 2.0))
     assert parse_matrix("[1 0; 0 2]") == ((1.0, 0.0), (0.0, 2.0))
+    assert parse_matrix(
+        r"\begin{pmatrix}1&0\\0&2\end{pmatrix}"
+    ) == ((1.0, 0.0), (0.0, 2.0))
+    assert parse_matrix(
+        r"\begin{bmatrix}\frac{1}{2}&-1\\0&2.5\end{bmatrix}"
+    ) == ((0.5, -1.0), (0.0, 2.5))
     assert parse_matrix("1,0,0;0,1,0") is None
     assert parse_matrix("1,0;bad,1") is None
 
@@ -112,6 +130,44 @@ def test_transform_plan_uses_distinct_aliases_for_grid_and_stages() -> None:
     ]
     assert plan.operations[0]["alias"] == "la_tool_transform_1_grid"
     assert plan.operations[1]["alias"] == "la_tool_transform_1_staged"
+
+
+def test_matrix_grid_tool_plan_stays_in_the_current_coordinate_plane() -> None:
+    plan = build_matrix_grid_tool_plan(
+        ((2.0, 1.0), (0.0, 1.0)), 5.0, "la_tool_transform"
+    )
+
+    assert [operation["op"] for operation in plan.operations] == [
+        "geometry.transformed_grid"
+    ]
+    operation = plan.operations[0]
+    assert operation["bounds"] == [-5.0, 5.0, -5.0, 5.0]
+    assert operation["show_source_grid"] is False
+    assert operation["show_basis"] is True
+
+
+def test_matrix_grid_marks_the_transformed_basis_in_distinct_colors() -> None:
+    plotter = _FakePlotter()
+    controller = GeometrySceneController(plotter, ViewportBounds((-3, 3), (-3, 3)))
+
+    controller.add_teaching_transformed_grid(
+        ((2.0, 1.0), (0.5, 3.0)),
+        (-2, 2, -2, 2),
+        alias="la_tool_transform_grid",
+        color="#2f7ebd",
+        show_source_grid=False,
+        show_basis=True,
+    )
+
+    grid_name = "geometry:teaching:grid:la_tool_transform_grid:transformed"
+    e1_name = "geometry:teaching:grid:la_tool_transform_grid:basis:e1"
+    e2_name = "geometry:teaching:grid:la_tool_transform_grid:basis:e2"
+    assert plotter.styles[e1_name]["color"] != plotter.styles[grid_name]["color"]
+    assert plotter.styles[e2_name]["color"] != plotter.styles[grid_name]["color"]
+    assert plotter.styles[e1_name]["color"] != plotter.styles[e2_name]["color"]
+    assert tuple(plotter.meshes[e1_name].points[2][:2]) == (2.0, 0.5)
+    assert tuple(plotter.meshes[e2_name].points[2][:2]) == (1.0, 3.0)
+    assert set(plotter.labels) == {f"{e1_name}:label", f"{e2_name}:label"}
 
 
 def test_transformed_grid_can_skip_the_source_grid_overlay() -> None:

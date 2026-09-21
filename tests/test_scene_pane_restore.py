@@ -10,11 +10,11 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 import pytest
 import shiboken6
 from PySide6.QtCore import QEvent, QPointF, Qt
-from PySide6.QtGui import QMouseEvent
+from PySide6.QtGui import QMouseEvent, QWindowStateChangeEvent
 from PySide6.QtWidgets import QApplication, QWidget
 
 from services.scene_commands import CommandPlan, SceneCommandService
-from ui.designer_window import MainWindow, _GeometryInputFilter, _SceneCommandBridge, _SceneCommandHostProxy
+from ui.designer_window import MainWindow, _GeometryInputFilter, _SceneCommandBridge, _SceneCommandHostProxy, _WindowRestoreFilter
 from ui.scene_pane_manager import ScenePaneManager
 from ui.scene_pane_widget import ScenePaneWidget
 
@@ -112,6 +112,21 @@ def test_restore_redraws_every_visible_pane_without_changing_focus(container, mo
     window.algebra_panel.rebuild_render_surface.assert_called_once_with()
     window.agent_panel.rebuild_render_surface.assert_called_once_with()
     window.window.close()
+
+
+def test_window_restore_filter_coalesces_rapid_restore_events(qapp):
+    host = QWidget()
+    restored = []
+    restore_filter = _WindowRestoreFilter(lambda: restored.append(True), host)
+    restored_from_minimized = QWindowStateChangeEvent(Qt.WindowState.WindowMinimized)
+
+    restore_filter.eventFilter(host, restored_from_minimized)
+    restore_filter.eventFilter(host, restored_from_minimized)
+
+    assert restore_filter._restore_timer.isActive()
+    restore_filter._restore_timer.timeout.emit()
+    assert restored == [True]
+
 
 
 @pytest.mark.parametrize("invalidity", ["deleted", "missing_window"])

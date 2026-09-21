@@ -318,7 +318,7 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertEqual(events, ["ch01.vector.magnitude"])
         self.assertEqual(panel.linear_algebra_button.text(), "线性代数")
 
-    def test_linear_algebra_button_announces_workspace_before_opening_catalog(self) -> None:
+    def test_linear_algebra_button_opens_catalog_before_announcing_workspace(self) -> None:
         panel = AlgebraPanel()
         events: list[tuple[str, bool]] = []
         panel.linear_algebra_opened.connect(
@@ -327,8 +327,10 @@ class AlgebraPanelTests(unittest.TestCase):
 
         panel.linear_algebra_button.click()
 
-        self.assertEqual(events, [("opened", False)])
         self.assertTrue(panel.linear_algebra_popup.isVisible())
+        self.assertEqual(events, [])
+        QApplication.processEvents()
+        self.assertEqual(events, [("opened", True)])
 
     def test_linear_algebra_button_toggles_popup_without_reopen_race(self) -> None:
         panel = AlgebraPanel()
@@ -472,6 +474,47 @@ class AlgebraPanelTests(unittest.TestCase):
         widget._run_javascript.assert_called_once_with(
             "if (window.formulaListReady) window.formulaList.commitActiveMark();"
         )
+
+    def test_matrix_transform_uses_one_standard_matrix_row_with_ellipsis_settings(self) -> None:
+        html = Path(__file__).parents[1] / "MathInputWidget" / "formula_list.html"
+        source = html.read_text(encoding="utf-8")
+
+        self.assertIn("layer-row matrix-transform-editor", source)
+        self.assertIn(r"\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}", source)
+        self.assertIn("bridge.matrixSettingsRequested", source)
+        self.assertNotIn("matrix-transform-grid", source)
+        self.assertNotIn("matrix-transform-range", source)
+
+    def test_matrix_transform_row_can_be_display_only_for_teaching_cases(self) -> None:
+        widget = FormulaListWidget()
+        widget._page_ready = True
+        widget._run_javascript = MagicMock()
+
+        widget.set_matrix_transform_editor(True, editable=False)
+
+        scripts = [call.args[0] for call in widget._run_javascript.call_args_list]
+        self.assertTrue(widget._matrix_transform_enabled)
+        self.assertFalse(widget._matrix_transform_editable)
+        self.assertTrue(any("setMatrixTransformEditable(false)" in script for script in scripts))
+        html = Path(__file__).parents[1] / "MathInputWidget" / "formula_list.html"
+        source = html.read_text(encoding="utf-8")
+        self.assertIn("if (!matrixTransformEditable", source)
+        self.assertNotIn("settings.hidden = !matrixTransformEditable", source)
+        self.assertIn("bridge.matrixSettingsRequested", source)
+
+    def test_matrix_ellipsis_settings_reapply_current_matrix_with_new_grid_size(self) -> None:
+        panel = AlgebraPanel()
+        model = panel.add_matrix_transform_tab("pane-1")
+        events: list[tuple[str, str, int]] = []
+        panel.matrix_transform_settings_requested.connect(
+            lambda pane_id, text, size: events.append((pane_id, text, size))
+        )
+
+        model.matrix_settings_requested.emit(None)
+        panel.matrix_settings_popup.grid_size_spin.setValue(8)
+
+        self.assertTrue(panel.matrix_settings_popup.isVisible())
+        self.assertEqual(events, [("pane-1", model._matrix_transform_text, 8)])
 
     def test_geometry_objects_use_the_geometry_delete_menu(self) -> None:
         first = Point2D("A", 1.0, 2.0)

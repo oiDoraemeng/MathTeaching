@@ -96,8 +96,7 @@ class GeometrySceneController:
         self._actors: dict[str, object] = {}
         self._teaching_actors: dict[str, object] = {}
         self._teaching_meshes: dict[str, pv.PolyData] = {}
-        # Label actors are relatively expensive in VTK. Defer them while a
-        # scene command is adding or updating a group of objects.
+        # 批量更新期间延迟创建开销较大的标签演员。
         self._batch_depth = 0
         self._labels_dirty = False
         self._annotations_dirty = False
@@ -554,11 +553,11 @@ class GeometrySceneController:
             f"geometry:teaching:projection:{result_alias}", projection, color=color, line_width=3.0
         )
         self._replace_teaching_actor(
-            f"geometry:teaching:projection:{residual_alias}", residual, color="#d97845", line_width=2.0
+            f"geometry:teaching:projection:{residual_alias}", residual, color=color, line_width=2.0
         )
         foot_mesh = _point_mesh(*foot)
         self._replace_teaching_actor(
-            f"geometry:teaching:projection:{foot_alias}", foot_mesh, color="#d97845", point_size=10.0, render_points_as_spheres=True
+            f"geometry:teaching:projection:{foot_alias}", foot_mesh, color=color, point_size=10.0, render_points_as_spheres=True
         )
         endpoint = _point_mesh(*endpoint_xy)
         endpoint_name = (
@@ -567,7 +566,7 @@ class GeometrySceneController:
             else "geometry:teaching:projection:endpoint"
         )
         self._replace_teaching_actor(
-            endpoint_name, endpoint, color="#2777b6", point_size=10.0, render_points_as_spheres=True
+            endpoint_name, endpoint, color=color, point_size=10.0, render_points_as_spheres=True
         )
 
     def add_teaching_transformed_grid(
@@ -580,13 +579,15 @@ class GeometrySceneController:
         color: str = "#5b8def",
         origin: tuple[float, float] = (0.0, 0.0),
         show_source_grid: bool = True,
+        show_basis: bool = False,
     ) -> None:
-        """Draw a grid and its linear image.
+        """Draw a grid, its linear image, and optionally the image basis.
 
         ``show_source_grid=False`` draws only the transformed grid, for views
         that already carry their own source coordinate system (the lecture case
         panes): the extra grey source grid would otherwise float on top of the
-        original axes.  The default keeps the matrix-transform tool unchanged.
+        original axes.  ``show_basis=True`` marks the matrix columns as e1 and
+        e2 with colors distinct from the transformed grid.
         """
 
         transformed = _grid_mesh(bounds, step, matrix=matrix)
@@ -602,6 +603,72 @@ class GeometrySceneController:
         else:
             self._drop_actor(source_name)
         self._replace_teaching_actor(f"geometry:teaching:grid{suffix}:transformed", transformed, color=color, line_width=2.0)
+        self._sync_transformed_basis(
+            matrix,
+            origin,
+            suffix=suffix,
+            visible=show_basis,
+        )
+
+    def _sync_transformed_basis(
+        self,
+        matrix: tuple[tuple[float, float], tuple[float, float]],
+        origin: tuple[float, float],
+        *,
+        suffix: str,
+        visible: bool,
+    ) -> None:
+        basis = (
+            (float(matrix[0][0]), float(matrix[1][0])),
+            (float(matrix[0][1]), float(matrix[1][1])),
+        )
+        colors = ("#d65f3d", "#2f9e5b")
+        root = f"geometry:teaching:grid{suffix}:basis"
+        offset = max(0.05, min(self.bounds.x_span, self.bounds.y_span) * 0.025)
+        for index, (vector, basis_color) in enumerate(zip(basis, colors), start=1):
+            vector_name = f"{root}:e{index}"
+            label_name = f"{vector_name}:label"
+            if not visible:
+                self._drop_actor(vector_name)
+                self._drop_actor(label_name)
+                continue
+            endpoint = (origin[0] + vector[0], origin[1] + vector[1])
+            mesh = _vector_mesh(origin, endpoint, self.bounds)
+            if mesh.n_points:
+                self._replace_teaching_actor(
+                    vector_name,
+                    mesh,
+                    color=basis_color,
+                    line_width=4.0,
+                )
+            else:
+                self._drop_actor(vector_name)
+            length = hypot(*vector)
+            if length > 1e-12:
+                unit = (vector[0] / length, vector[1] / length)
+                normal = (-unit[1], unit[0])
+                side = 1.0 if index == 1 else -1.0
+                label_position = (
+                    endpoint[0] + unit[0] * offset * 0.35 + normal[0] * offset * side,
+                    endpoint[1] + unit[1] * offset * 0.35 + normal[1] * offset * side,
+                )
+            else:
+                label_position = (
+                    origin[0] + offset * index,
+                    origin[1] + offset * (1.5 - index),
+                )
+            label = math_labels.display_text(
+                f"e_{index}",
+                f"e_{index}",
+                font_size=math_labels.CASE_LABEL_FONT_SIZE,
+                bold=True,
+            )
+            self._replace_teaching_label(
+                label_name,
+                label_position,
+                label,
+                basis_color,
+            )
 
     def add_teaching_basis_grid(
         self,
@@ -716,7 +783,7 @@ class GeometrySceneController:
             self._replace_teaching_actor(
                 stage_name, mesh, color=color, point_size=10.0, render_points_as_spheres=True
             )
-        # Keep aliases meaningful in exported actor metadata without affecting hit testing.
+        # 导出时保留别名，命中检测仍使用主名称。
         for point_alias, point in zip(aliases, stage_points):
             mesh = _point_mesh(*point)
             point_name = (
@@ -755,14 +822,39 @@ class GeometrySceneController:
             show_edges=True,
         )
 
+    def _replace_teaching_label(
+        self,
+        name: str,
+        position: tuple[float, float],
+        text: str,
+        color: str,
+    ) -> None:
+        self._drop_actor(name)
+        add_labels = getattr(self.plotter, "add_point_labels", None)
+        if not callable(add_labels):
+            return
+        actor = add_labels(
+            [(position[0], position[1], 0.0)],
+            [text],
+            name=name,
+            font_size=math_labels.CASE_LABEL_FONT_SIZE,
+            text_color=color,
+            shape=None,
+            show_points=False,
+            always_visible=True,
+            font_file=math_labels.label_font_file(),
+            render=False,
+            render_points_as_spheres=False,
+        )
+        if actor is not None:
+            self._teaching_actors[name] = actor
+
     def _replace_teaching_actor(self, name: str, mesh: pv.PolyData, **kwargs: object) -> object:
         old = self._teaching_actors.get(name)
         if old is not None:
             stored = self._teaching_meshes.get(name)
             if stored is not None:
-                # Teaching overlays such as the vector-addition polygon are
-                # updated on every drag. Keep the VTK actor and replace only
-                # its data to avoid remove/add churn in the render window.
+                # 拖动时只替换演员数据，避免反复增删渲染对象。
                 stored.copy_from(mesh)
                 _set_prop(old, **kwargs)
                 return old
@@ -797,9 +889,7 @@ class GeometrySceneController:
         elif object_id in self.linears:
             self._sync_linear(self.linears[object_id])
 
-    # ------------------------------------------------------------------
     # 持久化演员辅助方法
-    # ------------------------------------------------------------------
 
     def _get_or_create_point_actor(
         self,
@@ -1030,7 +1120,7 @@ class GeometrySceneController:
             if position is None:
                 continue
             grouped.setdefault((linear.color, linear.id == self._hover_id), []).append(
-                ((position[0], position[1], 0.0), linear.label)
+                ((position[0], position[1], 0.0), self._marker_text(linear.label))
             )
         for (color, is_hovered), items in grouped.items():
             name = f"{_ANNOTATION_ACTOR}:{color.lstrip('#').lower()}:{'hover' if is_hovered else 'default'}"
@@ -1067,10 +1157,23 @@ class GeometrySceneController:
             bold=True,
         )
 
+    def _marker_text(self, text: str) -> str:
+        """Render formula-like point and vector markers with real subscripts."""
+        if "_" not in text and "\\" not in text and "$" not in text:
+            return text
+        return math_labels.display_text(
+            text,
+            text,
+            font_size=self.annotation_font_size,
+            bold=True,
+        )
+
     def _point_label_text(self, point: Point2D) -> str:
         if point.id in {self._selected_id, self._hover_id}:
-            return f"{point.name} = ({format_number(point.x)}, {format_number(point.y)})"
-        return point.name
+            return self._marker_text(
+                f"{point.name} = ({format_number(point.x)}, {format_number(point.y)})"
+            )
+        return self._marker_text(point.name)
 
     def _linear_label_position(
         self,

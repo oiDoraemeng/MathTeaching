@@ -134,12 +134,11 @@ class StoryboardVisibilityController:
     def select(self, stage_id: str) -> StoryboardVisibility:
         from linear_algebra.visualizations.compiler import storyboard_visibility
 
-        # Resolve the immutable compiled stage first.  This is the atomic
-        # rejection boundary used by both headless tests and the Qt host.
+        # 先解析不可变阶段，失败时不触碰当前场景。
         stage = next((item for item in tuple(getattr(self.compiled, "storyboard", ()))
                       if str(getattr(item, "id", "")) == str(stage_id)), None)
         if stage is None:
-            # Keep the canonical diagnostic from the compiler API.
+            # 保留编译器返回的标准诊断。
             storyboard_visibility(self.compiled, str(stage_id))
             raise ValueError(f"unknown storyboard stage: {stage_id}")
         controlled, visible = storyboard_visibility(self.compiled, str(stage_id))
@@ -163,8 +162,7 @@ class StoryboardVisibilityController:
         visible = set(selection.visible_aliases)
         geometry = getattr(runtime, "geometry_controller", None)
         geometry3d = getattr(runtime, "geometry3d_controller", None)
-        # All calls happen only after ``select`` succeeds, preserving current
-        # visibility when callers pass an unknown stage ID.
+        # 阶段选择成功后才修改可见性。
         for alias in selection.controlled_aliases:
             is_visible = alias in visible
             if geometry is not None:
@@ -244,8 +242,7 @@ class TeachingCasePane(PaneChrome):
             add_observer("EndInteractionEvent", lambda *_args: self._sync_viewport_bounds())
         layout.addWidget(self.plotter.interactor, 1)
 
-        # Bounds are initialized before the renderer has a valid size, then
-        # replaced from the camera immediately during the first render.
+        # 首次渲染时再用有效相机范围替换初值。
         self.bounds = ViewportBounds((-1.0, 1.0), (-1.0, 1.0))
         self.guides = TwoDGuides(self.plotter)
         self.coordinate_transform = None
@@ -509,6 +506,20 @@ class TeachingCasePane(PaneChrome):
                     color=str(operation.get("color", "#5b8def")),
                     opacity=float(operation.get("opacity", 0.24)),
                     outline=bool(operation.get("outline", True)),
+                )
+            elif name == "geometry.projection":
+                # 案例窗格也要执行投影图元；否则编译计划中的投影线、垂线和垂足
+                # 只会出现在主画布，数学案例自己的二维窗格会只剩输入向量。
+                self.geometry.add_teaching_projection(
+                    tuple(float(value) for value in operation["vector"]),  # type: ignore[arg-type]
+                    tuple(float(value) for value in operation["direction"]),  # type: ignore[arg-type]
+                    result_alias=str(operation["result_alias"]),
+                    foot_alias=str(operation["foot_alias"]),
+                    residual_alias=str(operation["residual_alias"]),
+                    alias=alias or None,
+                    origin=tuple(float(value) for value in operation.get("origin", (0.0, 0.0))),  # type: ignore[arg-type]
+                    color=str(operation.get("color", "#2777b6")),
+                    style=str(operation.get("style", "solid")),
                 )
             elif name == "geometry.transformed_grid":
                 # 矩阵案例窗格用已有的线性变换图元：同一条命令在这里只画该步

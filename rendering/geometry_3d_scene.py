@@ -25,9 +25,7 @@ from rendering.line_arrow_3d import line_arrow_mesh
 # 相机与视口都取不到时（无渲染窗口的宿主）退回固定世界尺寸。
 _VECTOR_TIP_LENGTH = 0.14 # 箭头长度（兜底）
 _VECTOR_TIP_RADIUS = 0.025 # 箭头半径，也就是粗细（兜底）
-# Every vector shares this compact target.  The world dimensions are derived
-# from each tip's camera depth, keeping it consistent at different depths and
-# preventing individual lessons from overriding the head size.
+# 所有向量共用屏幕箭头尺寸，世界尺寸按箭头深度换算。
 _VECTOR_TIP_LENGTH_PX = 12.0 # 箭头长度，屏幕像素
 _VECTOR_TIP_RADIUS_PX = 3 # 箭头半径，也就是粗细，屏幕像素
 _VECTOR_LINE_WIDTH = 3.2
@@ -49,6 +47,7 @@ class Geometry3DSceneController:
         self.solids: dict[str, Parallelogram3D | Parallelepiped3D] = {}
         # 每个向量头上一次使用的世界尺寸，用来跳过无意义的重复重建。
         self._arrow_tip_lengths: dict[str, float] = {}
+        self._arrow_head_scales: dict[str, float] = {}
         self._last_world_per_pixel: float | None = None
 
     def clear(self) -> None:
@@ -58,6 +57,7 @@ class Geometry3DSceneController:
         self.planes.clear()
         self.solids.clear()
         self._arrow_tip_lengths.clear()
+        self._arrow_head_scales.clear()
 
     def remove_alias(self, alias: str) -> None:
         """Remove every actor owned by one lesson alias."""
@@ -67,6 +67,7 @@ class Geometry3DSceneController:
             f"geometry3d:solid:{alias}",
             f"geometry3d:annotation:{alias}",
             f"geometry3d:quadratic:{alias}",
+            f"agent-point:{alias}",
         )
         for name in tuple(self.actors):
             if any(
@@ -83,6 +84,7 @@ class Geometry3DSceneController:
         for child_alias in tuple(self._arrow_tip_lengths):
             if child_alias == alias or child_alias.startswith(f"{alias}__"):
                 self._arrow_tip_lengths.pop(child_alias, None)
+                self._arrow_head_scales.pop(child_alias, None)
 
     def set_visible(self, alias: str, visible: bool) -> None:
         """Show or hide all 3D actors belonging to one semantic alias."""
@@ -107,16 +109,18 @@ class Geometry3DSceneController:
         line_width: float = _VECTOR_LINE_WIDTH,
         role: str = "primary",
         style: str = "solid",
+        arrow_head_scale: float = 1.0,
     ) -> object:
-        # Vectors use the same tool style everywhere.  Lesson plans may still
-        # carry historical line widths, but they cannot make a vector look
-        # different from one created by the 3-D vector tool.
+        # 教学计划中的旧线宽不能覆盖统一的三维向量样式。
         effective_line_width = _VECTOR_LINE_WIDTH if kind == "vector" else line_width
         model = Linear3D(alias, _v3(start), _v3(end), kind=kind, color=color, line_width=effective_line_width, role=role, style=style)  # type: ignore[arg-type]
         name = f"geometry3d:linear:{alias}"
         self._remove(name)
         if model.kind == "vector":
-            tip_length, tip_radius = self._arrow_head(model.start, model.end)
+            scale = float(arrow_head_scale)
+            if not math.isfinite(scale) or scale <= 0.0:
+                scale = 1.0
+            tip_length, tip_radius = self._arrow_head(model.start, model.end, scale=scale)
             mesh = line_arrow_mesh(
                 model.start,
                 model.end,
@@ -124,6 +128,7 @@ class Geometry3DSceneController:
                 tip_radius=tip_radius,
             )
             self._arrow_tip_lengths[alias] = tip_length
+            self._arrow_head_scales[alias] = scale
         elif model.style == "dashed":
             # 被压到零的方向、投影连线等辅助构造按虚线画；用固定段数的短划线而不是
             # VTK line stipple，跨平台输出一致（与二维渲染器同一策略）。
@@ -131,6 +136,7 @@ class Geometry3DSceneController:
         else:
             mesh = pv.Line(model.start, model.end)
             self._arrow_tip_lengths.pop(alias, None)
+            self._arrow_head_scales.pop(alias, None)
         actor = self._add(
             mesh,
             name=name,
@@ -162,7 +168,11 @@ class Geometry3DSceneController:
             mapper = getattr(actor, "mapper", None)
             if mapper is None:
                 continue
-            tip_length, tip_radius = self._arrow_head(model.start, model.end)
+            tip_length, tip_radius = self._arrow_head(
+                model.start,
+                model.end,
+                scale=self._arrow_head_scales.get(alias, 1.0),
+            )
             previous = self._arrow_tip_lengths.get(alias)
             if previous is not None and abs(tip_length - previous) <= max(1e-6, previous * 5e-3):
                 continue
@@ -222,9 +232,7 @@ class Geometry3DSceneController:
                 if not math.isfinite(distance) or distance <= 1e-9:
                     return None
                 if point is not None:
-                    # Perspective projection scales with view-axis depth, not
-                    # Euclidean distance.  Use the head tip so vectors that
-                    # point toward or away from the camera stay equal in pixels.
+                    # 透视缩放取决于视轴深度，因此用箭头尖端计算屏幕尺寸。
                     candidate = float(np.dot(np.asarray(point, dtype=float) - position, direction / distance))
                     if math.isfinite(candidate) and candidate > 1e-9:
                         distance = candidate
@@ -240,6 +248,8 @@ class Geometry3DSceneController:
         self,
         start: Vector3,
         end: Vector3,
+        *,
+        scale: float = 1.0,
     ) -> tuple[float, float]:
         """Return the world-space head (length, radius) for one vector."""
         world_per_pixel = self._world_per_pixel(end)
@@ -253,7 +263,7 @@ class Geometry3DSceneController:
         else:
             tip_length = _VECTOR_TIP_LENGTH_PX * world_per_pixel
             tip_radius = _VECTOR_TIP_RADIUS_PX * world_per_pixel
-        return tip_length, tip_radius
+        return tip_length * scale, tip_radius * scale
 
     def add_projection3d(self, alias: str, vector: Vector3, foot: Vector3, residual: Vector3, *, color: str = "#2777b6") -> None:
         """Render bounded projection foot/residual geometry with stable aliases."""

@@ -47,6 +47,8 @@ class _FormulaListBridge(QObject):
     visibility_changed = Signal(str, bool)
     settings_requested = Signal(str, int, int)
     matrix_submitted = Signal(str)
+    matrix_settings_submitted = Signal(str, int)
+    matrix_settings_requested = Signal(int, int)
     coordinate_system_visibility_changed = Signal(bool, bool)
 
     @Slot(str)
@@ -73,6 +75,14 @@ class _FormulaListBridge(QObject):
     def matrixSubmitted(self, text: str) -> None:
         self.matrix_submitted.emit(text)
 
+    @Slot(str, int)
+    def matrixSettingsSubmitted(self, text: str, grid_range: int) -> None:
+        self.matrix_settings_submitted.emit(text, int(grid_range))
+
+    @Slot(int, int)
+    def matrixSettingsRequested(self, top: int, height: int) -> None:
+        self.matrix_settings_requested.emit(top, height)
+
     @Slot(bool, bool)
     def coordinateSystemVisibilityChanged(self, show_original: bool, show_transformed: bool) -> None:
         self.coordinate_system_visibility_changed.emit(bool(show_original), bool(show_transformed))
@@ -87,6 +97,8 @@ class FormulaListWidget(QWidget):
     visibility_changed = Signal(str, bool)
     settings_requested = Signal(str, object)
     matrix_submitted = Signal(str)
+    matrix_settings_submitted = Signal(str, int)
+    matrix_settings_requested = Signal(object)
     coordinate_system_visibility_changed = Signal(bool, bool)
 
     def __init__(self, parent: QWidget | None = None, initial_theme: str = "light") -> None:
@@ -96,6 +108,9 @@ class FormulaListWidget(QWidget):
         self._active_layer_id: str | None = None
         self._pending_edit_id: str | None = None
         self._matrix_transform_enabled = False
+        self._matrix_transform_editable = True
+        self._matrix_transform_text = r"\begin{pmatrix}1&0\\0&1\end{pmatrix}"
+        self._matrix_transform_grid_range = 5
         self._show_original_coordinate_system = True
         self._show_transformed_coordinate_system = True
 
@@ -127,6 +142,8 @@ class FormulaListWidget(QWidget):
         self._bridge.visibility_changed.connect(self.visibility_changed)
         self._bridge.settings_requested.connect(self._on_settings_requested)
         self._bridge.matrix_submitted.connect(self.matrix_submitted)
+        self._bridge.matrix_settings_submitted.connect(self._on_matrix_settings_submitted)
+        self._bridge.matrix_settings_requested.connect(self._on_matrix_settings_requested)
         self._bridge.coordinate_system_visibility_changed.connect(self._on_coordinate_system_visibility_changed)
 
     def showEvent(self, event: QShowEvent) -> None:
@@ -172,14 +189,20 @@ class FormulaListWidget(QWidget):
         self._send_layers()
         self._start_pending_edit()
 
-    def set_matrix_transform_editor(self, enabled: bool = True) -> None:
+    def set_matrix_transform_editor(self, enabled: bool = True, *, editable: bool = True) -> None:
         """Render the matrix editor inside the shared algebra WebEngine area."""
         self._matrix_transform_enabled = bool(enabled)
+        self._matrix_transform_editable = bool(editable)
         if not self._page_ready:
             return
         payload = "true" if self._matrix_transform_enabled else "false"
+        editable_payload = "true" if self._matrix_transform_editable else "false"
         self._run_javascript(
             f"if (window.formulaListReady) window.formulaList.setMatrixTransform({payload});"
+        )
+        self._run_javascript(
+            "if (window.formulaListReady) "
+            f"window.formulaList.setMatrixTransformEditable({editable_payload});"
         )
         self.set_matrix_transform_visibility(
             self._show_original_coordinate_system,
@@ -197,6 +220,39 @@ class FormulaListWidget(QWidget):
             f"window.formulaList.setMatrixTransformVisibility({str(self._show_original_coordinate_system).lower()}, "
             f"{str(self._show_transformed_coordinate_system).lower()});"
         )
+
+    def set_matrix_transform_grid_range(self, grid_range: float) -> None:
+        """Set the matrix-grid size shown in the row settings."""
+        value = max(1, min(100, int(round(float(grid_range)))))
+        self._matrix_transform_grid_range = value
+        if not self._page_ready:
+            return
+        self._run_javascript(
+            f"if (window.formulaListReady) window.formulaList.setMatrixTransformGridRange({value});"
+        )
+
+    def set_matrix_transform_value(self, text: str) -> None:
+        """Keep the standard matrix field in sync with the current transform."""
+        value = str(text).strip()
+        if not value:
+            return
+        self._matrix_transform_text = value
+        if not self._page_ready:
+            return
+        payload = json.dumps(value)
+        self._run_javascript(
+            f"if (window.formulaListReady) window.formulaList.setMatrixTransformValue({payload});"
+        )
+
+    def submit_matrix_transform(self) -> None:
+        """Reapply the current matrix after a settings-only change."""
+        self.matrix_settings_submitted.emit(
+            self._matrix_transform_text,
+            self._matrix_transform_grid_range,
+        )
+
+    def matrix_transform_grid_range(self) -> int:
+        return self._matrix_transform_grid_range
 
     def sync_layer(self, layer_id: str, layer: Layer | None) -> None:
         if layer is None:
@@ -233,9 +289,7 @@ class FormulaListWidget(QWidget):
         )
 
     def accept_edit(self) -> None:
-        # Mark rows can submit before the asynchronous edit-request callback
-        # reaches Python. Always forward the close request to the page so the
-        # MathLive caret cannot remain active after Enter.
+        # 标记行可能先于异步编辑回调提交，关闭请求仍需转发到页面。
         self._run_javascript(
             "if (window.formulaListReady) window.formulaList.acceptEdit();"
         )
@@ -277,6 +331,13 @@ class FormulaListWidget(QWidget):
             self._run_javascript(
                 "if (window.formulaListReady) window.formulaList.setMatrixTransform(true);"
             )
+            editable_payload = "true" if self._matrix_transform_editable else "false"
+            self._run_javascript(
+                "if (window.formulaListReady) "
+                f"window.formulaList.setMatrixTransformEditable({editable_payload});"
+            )
+            self.set_matrix_transform_value(self._matrix_transform_text)
+            self.set_matrix_transform_grid_range(self._matrix_transform_grid_range)
             self.set_matrix_transform_visibility(
                 self._show_original_coordinate_system,
                 self._show_transformed_coordinate_system,
@@ -383,6 +444,22 @@ class FormulaListWidget(QWidget):
             QPoint(max(0, self.width() - 8), max(0, top + height + 4))
         )
         self.settings_requested.emit(layer_id, anchor)
+
+    def _on_matrix_settings_submitted(self, text: str, grid_range: int) -> None:
+        value = str(text).strip()
+        if value:
+            self._matrix_transform_text = value
+        self._matrix_transform_grid_range = max(1, min(100, int(grid_range)))
+        self.matrix_settings_submitted.emit(
+            self._matrix_transform_text,
+            self._matrix_transform_grid_range,
+        )
+
+    def _on_matrix_settings_requested(self, top: int, height: int) -> None:
+        anchor = self.web_view.mapToGlobal(
+            QPoint(max(0, self.width() - 8), max(0, top + height + 4))
+        )
+        self.matrix_settings_requested.emit(anchor)
 
     def _on_coordinate_system_visibility_changed(self, show_original: bool, show_transformed: bool) -> None:
         self._show_original_coordinate_system = bool(show_original)

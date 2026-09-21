@@ -307,16 +307,14 @@ class SceneCommandService:
             try:
                 _validate_scene_scope(plan.scene, operation)
                 produced = self._validate_operation(operation)
-                # 宏命令展开后再次通过原子白名单校验，保证最终交给宿主的每个
-                # operation 都有完整字段约束，而不是只验证外层宏名称。
+                # 宏展开后再次校验每个原子操作。
                 for generated in produced:
                     _validate_scene_scope(plan.scene, generated)
                     expanded.extend(self._validate_operation(generated))
             except CommandError as error:
                 messages.append(f"操作 {index + 1}: {error}")
         if not messages and plan.scene in _SCENE_VALUES:
-            # The command host must never infer a target workspace. Normalize
-            # all redundant macro/user mode operations to one leading action.
+            # 宿主不能推断目标工作区，重复模式操作合并为首个操作。
             expanded = [operation for operation in expanded if operation.get("op") != "scene.set_mode"]
             expanded.insert(0, {"op": "scene.set_mode", "mode": plan.scene})
         return CommandValidation(not messages, tuple(messages), tuple(expanded))
@@ -334,14 +332,11 @@ class SceneCommandService:
         host = self.host
         bind_pane = getattr(host, "for_pane", None)
         if callable(bind_pane):
-            # Resolve focus once, before the first mutation, on the host's GUI
-            # thread. Every operation and rollback uses that same pane.
+            # 首次修改前在 GUI 线程解析焦点，整笔事务固定使用该窗格。
             host = bind_pane(pane_id)
         elif pane_id is not None:
             raise CommandError("当前场景宿主不支持 pane_id 路由。")
-        # A user tool must never switch a focused pane's mode implicitly.  If
-        # the destination pane is in another mode, return a structured
-        # unsupported result before opening a transaction or mutating state.
+        # 用户工具不能隐式切换窗格模式，模式不符时在事务前返回错误。
         current_mode = getattr(host, "scene_mode", None)
         if current_mode is None:
             current_mode = getattr(host, "mode", None)
@@ -356,8 +351,7 @@ class SceneCommandService:
         check_fingerprint = getattr(host, "check_scene_fingerprint", None)
         if expected_scene_fingerprint is not None and callable(check_fingerprint) and not check_fingerprint(expected_scene_fingerprint):
             raise CommandError("scene_changed_since_plan")
-        # User tools select their explicit destination before mutation. Agent
-        # callers can keep a pinned destination without moving user focus.
+        # 用户工具先选择目标，Agent 可锁定目标而不移动用户焦点。
         activate = getattr(host, "activate_for_tool", None)
         if activate_pane and pane_id is not None and callable(activate):
             activate()
@@ -445,6 +439,7 @@ class SceneCommandService:
             _require_choice_value(operation, "style", _STYLE_VALUES, default="solid")
             _require_choice_value(operation, "role", _ROLE_VALUES, default="primary")
             _validate_optional_range(operation, "line_width", minimum=1.0, maximum=8.0)
+            _validate_optional_range(operation, "arrow_head_scale", minimum=0.25, maximum=2.0)
         elif name == "point3d.upsert":
             _require_text(operation, "alias")
             _require_coordinates(operation.get("coordinates"), dimensions=3)
@@ -552,6 +547,10 @@ class SceneCommandService:
             _validate_bounds(operation.get("bounds"))
             if "origin" in operation:
                 _require_coordinates(operation["origin"], dimensions=2)
+            if "show_source_grid" in operation and not isinstance(operation["show_source_grid"], bool):
+                raise CommandError("show_source_grid 必须是布尔值。")
+            if "show_basis" in operation and not isinstance(operation["show_basis"], bool):
+                raise CommandError("show_basis 必须是布尔值。")
             step = _require_finite_number(operation.get("step", 1.0), "step")
             if step <= 0:
                 raise CommandError("step 必须为正数。")
@@ -1290,9 +1289,7 @@ class RuleBasedAgentProvider:
         if match is not None and ("向量" in prompt or "vector" in prompt.lower()):
             values = tuple(float(value) for value in match.groups())
         elif is_vector_addition:
-            # Keep the no-parameter teaching request useful and deterministic.
-            # These are the documented classroom defaults; explicit coordinates
-            # still take precedence above.
+            # 无参数教学请求使用固定课堂默认值，显式坐标优先。
             values = (2.0, 1.0, 1.0, 3.0)
         else:
             values = None

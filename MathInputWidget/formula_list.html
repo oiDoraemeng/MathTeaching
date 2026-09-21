@@ -169,91 +169,13 @@
     }
     .formula-cell::-webkit-scrollbar { display: none; }
     .matrix-transform-editor {
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 100%;
-      padding: 10px;
-      background: var(--mi-row-bg, #f9fafb);
-      border: 1px solid var(--mi-border, #cfd8e1);
-      border-radius: 8px;
+      --layer-color: #2f7ebd;
     }
-    .matrix-transform-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 8px;
+    .matrix-transform-editor .formula-cell {
+      min-height: 44px;
     }
-    .matrix-transform-title {
-      color: var(--mi-text-primary, #1f2937);
-      font-size: 14px;
-      font-weight: 600;
-    }
-    .matrix-transform-hint {
-      color: var(--mi-text-primary, #667085);
-      font-size: 12px;
-    }
-    .matrix-transform-controls {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .matrix-transform-bracket {
-      color: var(--mi-text-primary, #667085);
-      font-size: 24px;
-      line-height: 1;
-    }
-    .matrix-transform-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(48px, 1fr));
-      gap: 4px;
-      flex: 0 1 140px;
-    }
-    .matrix-transform-grid math-field {
-      box-sizing: border-box;
-      min-width: 48px;
-      min-height: 30px;
-      padding: 1px 4px;
-      border: 1px solid var(--mi-border, #cfd8e1);
-      border-radius: 5px;
-      background: var(--mi-bg-panel, #ffffff);
-      font-size: 16px;
-      text-align: center;
-    }
-    .matrix-transform-grid math-field:focus-within {
-      border-color: var(--mi-focus, #2f7ebd);
-    }
-    .matrix-transform-apply {
-      flex: 0 0 auto;
-      min-height: 30px;
-      padding: 4px 10px;
-      color: var(--mi-bg-panel, #ffffff);
-      background: var(--mi-focus, #2f7ebd);
-      border: 0;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .matrix-transform-apply:hover {
-      filter: brightness(0.95);
-    }
-    .matrix-transform-visibility {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--mi-text-primary, #667085);
-      font-size: 12px;
-    }
-    .matrix-transform-visibility label {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .matrix-transform-visibility input {
-      accent-color: var(--mi-focus, #2f7ebd);
+    .matrix-transform-editor math-field {
+      font-size: 20px;
     }
     math-field {
       box-sizing: border-box;
@@ -341,8 +263,11 @@
         const bridge = channel.objects.bridge;
         let layers = new Map();
         let active = null;
+        let matrixActive = null;
         let matrixTransformEnabled = false;
-        let matrixTransformValue = ['1', '0', '0', '1'];
+        let matrixTransformEditable = true;
+        let matrixTransformValue = '\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}';
+        let matrixTransformGridRange = 5;
         let showOriginalCoordinateSystem = true;
         let showTransformedCoordinateSystem = true;
         const eyeIcon = () =>
@@ -354,13 +279,11 @@
           '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>';
 
         const matrixEditorFor = () => list.querySelector('.matrix-transform-editor');
-        const matrixFields = () => Array.from(
-          list.querySelectorAll('.matrix-transform-grid math-field'),
-        );
+        const matrixField = () => matrixEditorFor()?.querySelector('math-field');
         const matrixText = () => {
-          const values = matrixFields().map((field) => field.getValue('latex').trim());
-          matrixTransformValue = values.map((value, index) => value || matrixTransformValue[index]);
-          return `${matrixTransformValue[0]},${matrixTransformValue[1]};${matrixTransformValue[2]},${matrixTransformValue[3]}`;
+          const value = matrixField()?.getValue('latex').trim();
+          if (value) matrixTransformValue = value;
+          return matrixTransformValue;
         };
         const renderMatrixTransformEditor = () => {
           const current = matrixEditorFor();
@@ -370,58 +293,47 @@
           }
           if (current) return;
           const editor = document.createElement('section');
-          editor.className = 'matrix-transform-editor';
-          editor.innerHTML = `
-            <div class="matrix-transform-header">
-              <span class="matrix-transform-title">矩阵变换</span>
-              <span class="matrix-transform-hint">在代数编辑区输入 2×2 矩阵</span>
-            </div>
-            <div class="matrix-transform-controls">
-              <span class="matrix-transform-bracket">[</span>
-              <div class="matrix-transform-grid">
-                <math-field aria-label="矩阵第一行第一列">${matrixTransformValue[0]}</math-field>
-                <math-field aria-label="矩阵第一行第二列">${matrixTransformValue[1]}</math-field>
-                <math-field aria-label="矩阵第二行第一列">${matrixTransformValue[2]}</math-field>
-                <math-field aria-label="矩阵第二行第二列">${matrixTransformValue[3]}</math-field>
-              </div>
-              <span class="matrix-transform-bracket">]</span>
-              <button type="button" class="matrix-transform-apply">应用</button>
-            </div>`;
-          const visibility = document.createElement('div');
-          visibility.className = 'matrix-transform-visibility';
-          visibility.innerHTML = `
-            <label><input type="checkbox" data-coordinate-system="original" ${showOriginalCoordinateSystem ? 'checked' : ''}>显示原坐标系</label>
-            <label><input type="checkbox" data-coordinate-system="transformed" ${showTransformedCoordinateSystem ? 'checked' : ''}>显示变换后坐标系</label>`;
-          editor.append(visibility);
+          editor.className = 'layer-row matrix-transform-editor';
+          const cell = document.createElement('div');
+          cell.className = 'formula-cell';
+          const field = document.createElement('math-field');
+          field.setAttribute('aria-label', '变换矩阵');
+          field.mathVirtualKeyboardPolicy = 'manual';
+          field.setValue(matrixTransformValue, { silenceNotifications: true });
+          const settings = document.createElement('button');
+          settings.className = 'settings-button';
+          settings.type = 'button';
+          settings.innerHTML = settingsIcon();
+          settings.title = '矩阵网格设置';
+          cell.append(field);
+          editor.append(cell, settings);
           list.prepend(editor);
-          const fields = matrixFields();
-          fields.forEach((field) => {
-            field.addEventListener('input', () => {
-              const index = fields.indexOf(field);
-              if (index >= 0) matrixTransformValue[index] = field.getValue('latex').trim();
-            });
-            field.addEventListener('keydown', (event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                bridge.matrixSubmitted(matrixText());
-              }
-            });
+          setReadOnly(field, true);
+          watchField(editor, field);
+          field.addEventListener('pointerdown', (event) => {
+            event.stopPropagation();
+            startMatrixEdit();
           });
-          editor.querySelector('.matrix-transform-apply').addEventListener('click', () => {
-            bridge.matrixSubmitted(matrixText());
+          field.addEventListener('input', () => {
+            const value = field.getValue('latex').trim();
+            if (value) matrixTransformValue = value;
+            syncRowHeight(editor, field);
           });
-          visibility.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
-            checkbox.addEventListener('change', () => {
-              if (checkbox.dataset.coordinateSystem === 'original') {
-                showOriginalCoordinateSystem = checkbox.checked;
-              } else {
-                showTransformedCoordinateSystem = checkbox.checked;
-              }
-              bridge.coordinateSystemVisibilityChanged(
-                showOriginalCoordinateSystem,
-                showTransformedCoordinateSystem,
-              );
-            });
+          field.addEventListener('change', commitMatrixEdit);
+          field.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+              event.preventDefault();
+              commitMatrixEdit();
+            } else if (event.key === 'Escape') {
+              event.preventDefault();
+              finishMatrixEdit(true);
+            }
+          });
+          settings.addEventListener('click', (event) => {
+            event.stopPropagation();
+            commitMatrixEdit();
+            const rect = editor.getBoundingClientRect();
+            bridge.matrixSettingsRequested(Math.round(rect.top), Math.round(rect.height));
           });
         };
 
@@ -470,6 +382,42 @@
             field.readOnly = false;
           }
         };
+        const finishMatrixEdit = (restore) => {
+          if (!matrixActive) return;
+          const {field, savedLatex} = matrixActive;
+          if (restore) {
+            matrixTransformValue = savedLatex;
+            field.setValue(savedLatex, { silenceNotifications: true });
+          }
+          setReadOnly(field, true);
+          field.classList.remove('editing');
+          hideKeyboard();
+          matrixActive = null;
+        };
+        const commitMatrixEdit = () => {
+          if (!matrixActive) return;
+          const value = matrixText();
+          if (!value) {
+            finishMatrixEdit(true);
+            return;
+          }
+          bridge.matrixSettingsSubmitted(value, matrixTransformGridRange);
+          finishMatrixEdit(false);
+        };
+        const startMatrixEdit = () => {
+          const field = matrixField();
+          if (!matrixTransformEditable || !field || matrixActive?.field === field) return;
+          if (active) cancel();
+          matrixActive = {
+            field,
+            savedLatex: field.getValue('latex'),
+          };
+          setReadOnly(field, false);
+          field.classList.add('editing');
+          const installToolbar = installFieldToolbar(field);
+          installToolbar();
+          field.focus();
+        };
         const finishEdit = (restore) => {
           if (!active) return;
           const field = active.field;
@@ -506,6 +454,7 @@
           const field = fieldFor(layerId);
           const row = rowFor(layerId);
           if (!field || !row) return;
+          if (matrixActive) commitMatrixEdit();
           if (active && active.layerId !== layerId) {
             cancel();
           }
@@ -568,6 +517,9 @@
           if (active) {
             finishEdit(true);
           }
+          if (matrixActive) {
+            finishMatrixEdit(true);
+          }
           layers = new Map(nextLayers.map((layer) => [layer.id, {...layer}]));
           list.replaceChildren();
           for (const layer of layers.values()) {
@@ -601,7 +553,29 @@
 
         const setMatrixTransform = (enabled) => {
           matrixTransformEnabled = Boolean(enabled);
+          if (!matrixTransformEnabled && matrixActive) {
+            finishMatrixEdit(true);
+          }
           renderMatrixTransformEditor();
+        };
+        const setMatrixTransformEditable = (editable) => {
+          matrixTransformEditable = Boolean(editable);
+          if (!matrixTransformEditable && matrixActive) {
+            finishMatrixEdit(true);
+          }
+          const editor = matrixEditorFor();
+          const field = matrixField();
+          if (field) field.style.cursor = matrixTransformEditable ? 'text' : 'default';
+        };
+        const setMatrixTransformValue = (value) => {
+          const nextValue = String(value || '').trim();
+          if (!nextValue) return;
+          matrixTransformValue = nextValue;
+          const field = matrixField();
+          if (field && matrixActive?.field !== field) {
+            field.setValue(matrixTransformValue, { silenceNotifications: true });
+            syncRowHeight(matrixEditorFor(), field);
+          }
         };
         const setMatrixTransformVisibility = (showOriginal, showTransformed) => {
           showOriginalCoordinateSystem = Boolean(showOriginal);
@@ -612,6 +586,12 @@
           const transformed = editor.querySelector('[data-coordinate-system="transformed"]');
           if (original) original.checked = showOriginalCoordinateSystem;
           if (transformed) transformed.checked = showTransformedCoordinateSystem;
+        };
+        const setMatrixTransformGridRange = (value) => {
+          const parsed = Number.parseInt(value, 10);
+          if (Number.isFinite(parsed)) {
+            matrixTransformGridRange = Math.max(1, Math.min(100, parsed));
+          }
         };
         const updateLayer = (layer) => {
           layers.set(layer.id, {...layer});
@@ -628,6 +608,12 @@
           syncRowHeight(row, field);
         };
         document.addEventListener('pointerdown', (event) => {
+          if (
+            matrixActive
+            && !event.target.closest('.matrix-transform-editor math-field, .MLK__plate, .MLK__backdrop')
+          ) {
+            commitMatrixEdit();
+          }
           if (!active) return;
           if (event.target.closest('math-field, .MLK__plate, .MLK__backdrop')) return;
           if (active.field.getValue('latex') !== active.savedLatex) {
@@ -657,10 +643,14 @@
           setSelected,
           beginEdit,
           setMatrixTransform,
+          setMatrixTransformEditable,
+          setMatrixTransformValue,
           setMatrixTransformVisibility,
+          setMatrixTransformGridRange,
           acceptEdit: () => finishEdit(false),
           cancelEdit: () => finishEdit(true),
           commitActiveMark: () => {
+            if (matrixActive) commitMatrixEdit();
             if (active?.commitImmediately) commit();
           },
         };

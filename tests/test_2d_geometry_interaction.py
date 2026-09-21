@@ -1,7 +1,7 @@
 """二维画布点线工具的坐标和对象生命周期测试。"""
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from PySide6.QtCore import Qt
 
@@ -633,20 +633,19 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         self.assertEqual(plan.operations[0]["op"], "geometry.polygon")
         self.assertEqual(window._pane_scene()._linear_algebra_polygon_point_ids, [])
 
-    def test_linear_algebra_transform_uses_matrix_dialog_and_separate_overlays(self) -> None:
+    def test_linear_algebra_transform_draws_one_grid_in_the_current_pane(self) -> None:
         window = _make_window()
-        window._pane_scene()._active_linear_algebra_tool = "transform"
-        with patch("ui.designer_window.QInputDialog.getText", return_value=("1,0;0,2", True)):
-            event = FakeMouseEvent(50, 50)
-            self.assertTrue(window._handle_geometry_mouse_press(event))
+        pane_id = window.pane_manager.active_pane_id
+        window._render_2d_scene = MagicMock()
+        window._apply_matrix_transform_from_tab(pane_id, "1,0;0,2", 5)
 
         plan = window.scene_command_service.execute.call_args.args[0]
         self.assertEqual(
             [operation["op"] for operation in plan.operations],
-            ["geometry.transformed_grid", "geometry.staged_transform", "annotation.formula"],
+            ["geometry.transformed_grid"],
         )
-        self.assertNotEqual(plan.operations[0]["alias"], plan.operations[1]["alias"])
-        self.assertEqual(plan.operations[1]["matrices"], [[[1.0, 0.0], [0.0, 2.0]]])
+        self.assertEqual(plan.operations[0]["bounds"], [-5.0, 5.0, -5.0, 5.0])
+        self.assertFalse(plan.operations[0]["show_source_grid"])
 
     def test_escape_cancels_linear_algebra_tool(self) -> None:
         window = _make_window()

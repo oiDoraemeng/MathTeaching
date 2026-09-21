@@ -89,6 +89,34 @@ def test_controller_tracks_3d_linear_and_solid_actors() -> None:
     assert plotter.actors == {}
 
 
+def test_controller_stage_mask_controls_registered_formula_label() -> None:
+    plotter = FakePlotter()
+    controller = Geometry3DSceneController(plotter)
+    alias = "ch04__annotation__column_space__input_a"
+    name = f"geometry3d:annotation:{alias}"
+    actor = FakeActor()
+    controller.actors[name] = actor
+
+    controller.set_visible(alias, False)
+
+    assert actor.visibility is False
+
+
+def test_controller_removes_registered_point_actor_by_semantic_alias() -> None:
+    plotter = FakePlotter()
+    controller = Geometry3DSceneController(plotter)
+    alias = "ch04__relation__line_combination"
+    name = f"agent-point:{alias}"
+    actor = FakeActor()
+    plotter.actors[name] = actor
+    controller.actors[name] = actor
+
+    controller.remove_alias(alias)
+
+    assert name not in plotter.actors
+    assert name not in controller.actors
+
+
 def test_3d_vector_arrow_uses_a_screen_width_shaft_and_cone_head() -> None:
     plotter = FakePlotter()
     controller = Geometry3DSceneController(plotter)
@@ -148,6 +176,26 @@ def test_3d_vectors_use_one_global_tool_style() -> None:
     camera.distance = 20.0
     assert controller.refresh_vector_heads() is True
     assert controller._arrow_tip_lengths["lesson-vector"] == pytest.approx(2.0 * _VECTOR_TIP_LENGTH_PX * expected_scale)
+
+
+def test_3d_vector_can_scale_only_its_arrow_head() -> None:
+    camera = FakeCamera(distance=10.0, view_angle=30.0)
+    plotter = SizedPlotter(height=1000, camera=camera)
+    controller = Geometry3DSceneController(plotter)
+
+    controller.add_linear(
+        "compact-vector",
+        (0, 0, 0),
+        (1, 0, 0),
+        kind="vector",
+        arrow_head_scale=2.0 / 3.0,
+    )
+
+    expected_scale = 2.0 * 10.0 * math.tan(math.radians(15.0)) / 1000
+    assert controller._arrow_tip_lengths["compact-vector"] == pytest.approx(
+        (2.0 / 3.0) * _VECTOR_TIP_LENGTH_PX * expected_scale
+    )
+    assert plotter.mesh_kwargs["geometry3d:linear:compact-vector"]["line_width"] == _VECTOR_LINE_WIDTH
 
 
 def test_3d_vector_head_rebuilds_from_the_live_viewport_after_first_paint() -> None:

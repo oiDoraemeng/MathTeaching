@@ -12,8 +12,14 @@ import pytest
 from PySide6.QtWidgets import QApplication, QBoxLayout, QWidget
 from PySide6.QtCore import Qt
 
+from linear_algebra.teaching.chapter_artifacts import artifact_payload_for
+from linear_algebra.teaching.model import TeachingArtifact
+from linear_algebra.visualizations.common import RenderContext
+from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
+from linear_algebra.visualizations.contracts import contract_for
 from models.geometry_3d import AlgebraAnnotation3D, AlgebraPlane3D, AlgebraVector3D
 from models.scene_mode import SceneMode
+from rendering.geometry_3d_scene import Geometry3DSceneController
 from ui.algebra_panel import AlgebraPanel
 from ui.designer_window import MainWindow, parse_3d_vector_endpoint
 from ui.scene_pane_manager import ScenePaneManager
@@ -94,9 +100,70 @@ def test_teaching_three_d_vectors_are_rows_in_the_shared_algebra_list() -> None:
     rows = window._three_d_panel_layers()
 
     assert {row.alias for row in rows if isinstance(row, AlgebraVector3D)} == set(scene._agent_geometry3d)
-    assert window._three_d_vector_row("ch04__entity__input_vector_a").latex.startswith(r"\boldsymbol{x}_{1}")
-    assert window._three_d_vector_row("ch04__entity__output_vector_a").latex.startswith(r"\boldsymbol{A}\boldsymbol{x}_{1}")
-    assert window._three_d_vector_row("ch04__entity__kernel_vector").latex.startswith(r"\boldsymbol{k}")
+    assert window._three_d_vector_row("ch04__entity__input_vector_a").latex.startswith(r"x_{1}")
+    assert window._three_d_vector_row("ch04__entity__output_vector_a").latex.startswith(r"Ax_{1}")
+    assert window._three_d_vector_row("ch04__entity__kernel_vector").latex.startswith("k")
+
+
+def test_teaching_case_algebra_rows_follow_the_selected_stage() -> None:
+    window = _three_d_window()
+    topic = "ch04.subspace.col-null"
+    compiled = VisualSemanticsCompiler().compile(
+        TeachingArtifact.from_dict(artifact_payload_for(topic)),
+        contract_for(topic),
+        RenderContext.default(topic),
+    )
+    scene = window._pane_scene()
+    scene._agent_geometry3d = {
+        str(operation["alias"]): dict(operation)
+        for operation in compiled.plan.operations
+        if operation.get("alias")
+    }
+    pane_id = window._pane().pane_id
+    window._teaching_case_pane_ids = [pane_id]
+    window._teaching_case_stage_refs = {
+        pane_id: ("stage.ch04.subspace.col-null.null_space",),
+    }
+    window._active_linear_algebra_compiled = compiled
+
+    rows = window._three_d_panel_layers()
+    row_aliases = {row.alias for row in rows if isinstance(row, (AlgebraPlane3D, AlgebraVector3D))}
+
+    assert row_aliases == {
+        "ch04__entity__column_space",
+        "ch04__entity__kernel_vector",
+    }
+
+
+def test_dependence_relation_terms_stay_out_of_the_algebra_panel() -> None:
+    window = _three_d_window()
+    topic = "ch04.dependence.redundancy"
+    compiled = VisualSemanticsCompiler().compile(
+        TeachingArtifact.from_dict(artifact_payload_for(topic)),
+        contract_for(topic),
+        RenderContext.default(topic),
+    )
+    scene = window._pane_scene()
+    scene._agent_geometry3d = {
+        str(operation["alias"]): dict(operation)
+        for operation in compiled.plan.operations
+        if operation.get("alias")
+    }
+    pane_id = window._pane().pane_id
+    window._teaching_case_pane_ids = [pane_id]
+    window._teaching_case_stage_refs = {
+        pane_id: ("stage.ch04.dependence.redundancy.line",),
+    }
+    window._active_linear_algebra_compiled = compiled
+
+    vector_aliases = {
+        row.alias
+        for row in window._three_d_panel_layers()
+        if isinstance(row, AlgebraVector3D)
+    }
+
+    assert vector_aliases == {"ch04__entity__span_line__generator_1"}
+    assert not any("__relation__" in alias for alias in vector_aliases)
 
 
 def test_three_d_command_uses_the_global_tool_style_for_vectors() -> None:
@@ -145,6 +212,26 @@ def test_teaching_points_at_vector_starts_do_not_render_origin_spheres(monkeypat
     assert [call.kwargs["name"] for call in renderer.add_mesh.call_args_list] == [
         "agent-point:ch04__entity__other"
     ]
+
+
+def test_teaching_point_spheres_follow_storyboard_visibility_after_rerender(monkeypatch) -> None:
+    window = _three_d_window()
+    scene = window._pane_scene()
+    renderer = window._pane().renderer_3d
+    renderer.remove_actor = MagicMock()
+    first_actor = SimpleNamespace(visibility=True)
+    second_actor = SimpleNamespace(visibility=True)
+    renderer.add_mesh = MagicMock(side_effect=(first_actor, second_actor))
+    scene.geometry3d_controller = Geometry3DSceneController(renderer)
+    scene._agent_points3d = {"case_result": (2.0, -1.0, 0.0)}
+    monkeypatch.setattr("pyvista.Sphere", lambda **kwargs: kwargs)
+
+    window._render_agent_points3d(render=False)
+    scene.geometry3d_controller.set_visible("case_result", False)
+    window._render_agent_points3d(render=False)
+
+    assert scene.geometry3d_controller.actors["agent-point:case_result"] is second_actor
+    assert second_actor.visibility is False
 
 
 def test_three_d_annotation_is_an_editable_row_in_the_shared_algebra_list() -> None:

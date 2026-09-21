@@ -19,14 +19,26 @@ def rebuild_web_surface(view: QWidget | None) -> bool:
     原有的降级行为。
     """
     if view is None:
-        print(f"[DEBUG] rebuild_web_surface: view is None")
         return False
-    is_visible = view.isVisible()
-    print(f"[DEBUG] rebuild_web_surface: view={view.__class__.__name__}, isVisible={is_visible}")
-    if not is_visible:
+    if not view.isVisible():
         return False
-    view.setVisible(False)
-    view.setVisible(True)
+
+    from PySide6.QtCore import QCoreApplication, Qt
+
+    # 先同步映射状态，避免 hide/show 引起闪烁。
+    view.setAttribute(Qt.WidgetAttribute.WA_Mapped)
     view.update()
-    print(f"[DEBUG] rebuild_web_surface: executed setVisible cycle")
+    QCoreApplication.processEvents()
+
+    # 必要时再执行完整重建。
+    parent = view.parentWidget()
+    needs_full_rebuild = False
+
+    if needs_full_rebuild and parent is not None and parent.isVisible():
+        view.hide()
+        QCoreApplication.processEvents()
+        view.show()
+        view.update()
+        return True
+
     return True

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 import math
+import re
 
 from linear_algebra.visualizations.common import matrix_label_text
 from models.geometry_2d import Linear2D, Point2D
@@ -153,20 +154,45 @@ def build_vector_tool_plan(
 
 
 def parse_matrix(text: str) -> tuple[tuple[float, float], tuple[float, float]] | None:
-    """Parse ``a,b;c,d`` (also accepting whitespace and square brackets)."""
-    rows = [row.strip() for row in text.replace("[", "").replace("]", "").split(";") if row.strip()]
+    """Parse a 2x2 matrix from plain text or MathLive matrix LaTeX."""
+    source = str(text).strip()
+    if not source:
+        return None
+    source = source.replace(r"\left", "").replace(r"\right", "")
+    source = re.sub(r"\\begin\{[pbBvV]?matrix\}", "", source)
+    source = re.sub(r"\\end\{[pbBvV]?matrix\}", "", source)
+    source = re.sub(r"\\begin\{array\}\{[^{}]*\}", "", source)
+    source = source.replace(r"\end{array}", "")
+    source = source.strip("()[] ")
+    if r"\\" in source or "&" in source:
+        row_sources = re.split(r"\\\\", source)
+        rows = [" ".join(cell.strip() for cell in row.split("&")) for row in row_sources]
+    else:
+        rows = [row.strip() for row in source.split(";") if row.strip()]
     if len(rows) != 2:
         return None
     parsed: list[tuple[float, float]] = []
     try:
         for row in rows:
-            values = [float(value) for value in row.replace(",", " ").split()]
+            values = [_parse_matrix_scalar(value) for value in row.replace(",", " ").split()]
             if len(values) != 2 or not all(math.isfinite(value) for value in values):
                 return None
             parsed.append((values[0], values[1]))
-    except ValueError:
+    except (ValueError, ZeroDivisionError):
         return None
     return parsed[0], parsed[1]
+
+
+def _parse_matrix_scalar(source: str) -> float:
+    """Parse the numeric LaTeX forms MathLive commonly emits in matrix cells."""
+    value = source.strip().replace("−", "-").replace(r"\,", "")
+    fraction = re.fullmatch(r"([+-]?)\\(?:d?frac)\{([^{}]+)\}\{([^{}]+)\}", value)
+    if fraction is not None:
+        sign = -1.0 if fraction.group(1) == "-" else 1.0
+        return sign * _parse_matrix_scalar(fraction.group(2)) / _parse_matrix_scalar(
+            fraction.group(3)
+        )
+    return float(value)
 
 
 def build_polygon_tool_plan(points: Sequence[Point2D], alias: str) -> CommandPlan:
@@ -231,4 +257,34 @@ def build_transform_tool_plan(
             },
         ),
         summary="线性代数工具：transform",
+    )
+
+
+def build_matrix_grid_tool_plan(
+    matrix: tuple[tuple[float, float], tuple[float, float]],
+    grid_range: float,
+    alias: str,
+) -> CommandPlan:
+    """Build the toolbar matrix preview inside the current coordinate plane.
+
+    The regular 2-D guides remain the source grid.  This operation contributes
+    only the matrix image, so the tool never replaces the pane's coordinate
+    system or opens another pane.
+    """
+    extent = max(1.0, min(float(grid_range), 100.0))
+    return CommandPlan(
+        scene="2d",
+        operations=(
+            {
+                "op": "geometry.transformed_grid",
+                "alias": f"{alias}_grid",
+                "matrix": [list(matrix[0]), list(matrix[1])],
+                "bounds": [-extent, extent, -extent, extent],
+                "step": 1.0,
+                "show_source_grid": False,
+                "show_basis": True,
+                "color": "#2f7ebd",
+            },
+        ),
+        summary="线性代数工具：矩阵网格",
     )
