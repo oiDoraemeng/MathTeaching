@@ -69,9 +69,7 @@ class MathTeacherAgent:
         request = next((item.content for item in reversed(message_list) if item.role == "user"), "")
         selected_prompts = self.prompts.select(request)
         local_result = self.skill_manager.create_plan_for_request(request, scene_context)
-        # Local skills are used by the explicit local/demo provider only. A
-        # selected remote model must be configured before any request is sent,
-        # including requests that happen to match a deterministic skill.
+        # 本地技能仅供本地或演示提供方使用，远程模型必须先完成配置。
         if local_result is not None and isinstance(self.provider, (RuleBasedAgentProvider, LocalModelProvider)):
             manifest, plan = local_result
             self.memory.remember_topic(manifest.name)
@@ -87,9 +85,7 @@ class MathTeacherAgent:
             *message_list,
         ]
         response = self.provider.create_plan(tuple(enriched), scene_context or SceneContext())
-        # A remote model may provide a useful explanation without following
-        # the JSON-plan protocol. For a recognized deterministic skill, keep
-        # that explanation and attach the locally validated drawing plan.
+        # 远程回复未遵循计划协议时，可附加本地校验过的确定性绘图计划。
         if response.plan is None and local_result is not None:
             manifest, plan = local_result
             self.memory.remember_topic(manifest.name)
@@ -174,10 +170,7 @@ class MathTeacherAgent:
         try:
             plan = parse_plan_response(content)
         except ValueError:
-            # Remote models often stream a natural-language explanation instead
-            # of the JSON plan. Keep that explanation, but attach the matching
-            # deterministic Skill plan so a recognized visualization still
-            # reaches validation and SceneCommandService.
+            # 流式回复为自然语言时，附加匹配的确定性技能计划供后续校验。
             if local_result is not None:
                 manifest, plan = local_result
                 self.memory.remember_topic(manifest.name)

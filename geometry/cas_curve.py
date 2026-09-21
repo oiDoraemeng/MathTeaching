@@ -258,9 +258,7 @@ def _build_explicit_curve(expression: CurveExpression, parameters: dict[str, flo
         x_values, y_values = independent_values, dependent_values
     else:
         x_values, y_values = dependent_values, independent_values
-    # 仅以 NaN/inf 判定“未定义”；不因超出 y 范围而截断，否则像 ln(x) 这类
-    # 趋于 ±∞ 的曲线会在到达视口边缘前提前断开，留下可见空隙。超出视口的点
-    # 保留用于把曲线连到边缘，真正的渐近线由跳变检测（split）单独分段。
+    # 仅以 NaN/inf 判定未定义，越界点保留到后续裁剪和跳变分段。
     dependent_range = domain.y_range if dependent_axis == "y" else domain.x_range
     view_span = abs(dependent_range[1] - dependent_range[0])
     y_values = _clamp_offscreen(y_values, dependent_range, view_span) if dependent_axis == "y" else y_values
@@ -363,8 +361,7 @@ def _split_valid_segments(
             # 在无定义点处分段，避免把渐近线两侧错误地连接起来。
             flush(index)
         elif is_valid and start is not None and jump_threshold is not None and index > 0:
-            # 相邻采样点因变量跳变超过阈值，判定为渐近线间断，就地分段，
-            # 避免竖直长线把 +∞ 一侧与 -∞ 一侧错误连接（如 tan(x)、1/x）。
+            # 因变量跳变超过阈值时分段，避免跨渐近线错误连线。
             dy = abs(float(y_values[index]) - float(y_values[index - 1]))
             dx = abs(float(x_values[index]) - float(x_values[index - 1]))
             if max(dy, dx) > jump_threshold:
@@ -385,8 +382,7 @@ def _segments_to_mesh(segments: list[np.ndarray]) -> pv.PolyData:
     for segment in segments:
         cells.extend((len(segment), *range(offset, offset + len(segment))))
         offset += len(segment)
-    # 直接用 points 初始化会自动创建 vertex cell，导致采样点以圆点形式显示；
-    # 先创建空网格，再只写入 lines，保留采样数据但不生成独立顶点单元。
+    # 空网格只写入线单元，避免采样点被显示为独立圆点。
     mesh = pv.PolyData()
     mesh.points = points
     mesh.lines = np.asarray(cells, dtype=np.int64)

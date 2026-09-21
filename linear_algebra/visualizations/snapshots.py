@@ -89,9 +89,7 @@ def contract_digest_for(contract: VisualContract) -> str:
         "required_invariants": contract.required_invariants,
         "distinguishable_role_groups": contract.distinguishable_role_groups,
     }
-    # Extended typed contract fields are included only when populated so the
-    # established Chapter 1--3 digests remain stable while Chapter 4's digest
-    # covers its exact roles, endpoints, parameters, and operation witnesses.
+    # 仅序列化有值的扩展字段，保持第 1 至 3 章摘要稳定。
     for name in (
         "required_role_types",
         "required_relation_endpoints",

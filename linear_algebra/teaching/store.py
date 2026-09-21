@@ -226,11 +226,7 @@ class TeachingArtifactStore:
                 try:
                     return self.get(topic_id, revision, "published")
                 except FileNotFoundError:
-                    # Some extended chapter releases intentionally keep their
-                    # reviewed artifact outside this store and use the index as
-                    # a compiled-resource witness.  Callers can then use their
-                    # established reviewed fallback, but must never select an
-                    # unindexed rN file instead.
+                    # 部分章节以索引作为编译凭据，可回退审核产物但不能读取未索引修订。
                     return None
             return None
         revisions = self.list_revisions(topic_id, "published")
@@ -410,8 +406,7 @@ class TeachingArtifactStore:
             raise TypeError("raw_reply must be text")
         normalized = replace(artifact, status=state)
         revision = self._next_revision(state, normalized.topic_id)
-        # The on-disk revision is the artifact revision exposed to readers.
-        # Keeping these values identical prevents rN files from masquerading as r1.
+        # 对外修订号必须与磁盘文件一致。
         normalized = replace(normalized, revision=revision)
         receipt = normalized.generated
         if raw_reply is not None and (
@@ -458,10 +453,7 @@ class TeachingArtifactStore:
 
     def _topic_directory(self, state: StoreState, topic_id: str) -> Path:
         chapter = topic_id.split(".", 1)[0]
-        # ``published`` is already a natural collection name.  Keep the
-        # historical plural directories for drafts/reviews for compatibility,
-        # while avoiding the accidental ``publisheds`` path that made runtime
-        # audits unable to discover released artifacts.
+        # 草稿和审核目录保留复数旧名，发布目录固定为 `published`。
         directory_name = "published" if state == "published" else f"{state}s"
         return self.root / directory_name / chapter / topic_id
 

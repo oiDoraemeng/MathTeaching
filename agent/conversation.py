@@ -82,8 +82,7 @@ class ConversationService:
             execution_mode=source.execution_mode,
             parent_session_id=source.id,
         )
-        # Copy only the selected history prefix. The new session starts at the
-        # selected snapshot and can diverge without mutating the source rows.
+        # 仅复制选中位置之前的历史，新会话可独立分支。
         for prior in self.store.list_turns(source.id):
             if prior.turn_index > turn.turn_index:
                 break

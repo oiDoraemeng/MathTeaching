@@ -46,9 +46,7 @@ class ThreeDAxes:
         previous_spacing: float | None = None,
     ) -> float:
         """按给定范围更新坐标轴几何，并返回最终采用的刻度间距。"""
-        # Do not impose a visible-world lower bound here.  The pane renderer
-        # may shrink the compensated extent below 0.5 during deep zoom; a
-        # large clamp would make the axes grow on screen again.
+        # 深度缩放时不限制世界范围下限，否则坐标轴会在屏幕上反向变粗。
         extent = max(1e-6, float(extent))
         default_color = contrast_color or AXIS_COLOR
         label_color = contrast_color or AXIS_LABEL_COLOR
@@ -99,9 +97,7 @@ class ThreeDAxes:
         self._tick_actor = None
         self._has_labels.clear()
 
-    # ------------------------------------------------------------------ #
     # 内部更新逻辑
-    # ------------------------------------------------------------------ #
 
     def _set_arrow(self, key: str, mesh: pv.PolyData, color: str) -> None:
         actor = self._arrow_actors.get(key)
@@ -249,9 +245,7 @@ def _segments_to_polydata(
     return poly
 
 
-# ---------------------------------------------------------------------- #
 # 兼容 build_scene 在清空绘图器后的单次创建入口
-# ---------------------------------------------------------------------- #
 
 def add_cartesian_axes(
     plotter: pv.Plotter,

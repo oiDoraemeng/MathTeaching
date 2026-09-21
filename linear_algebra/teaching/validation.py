@@ -269,10 +269,7 @@ def validate_claim_bindings(artifact: TeachingArtifact) -> tuple[ValidationIssue
                         )
                     )
 
-        # A declared visual role is meaningful only when the claim actually
-        # references a matching entity.  This catches, for example, a
-        # projection formula that mentions a residual while the residual entity
-        # was omitted from the storyboard.
+        # 声明的视觉角色必须对应实际引用的实体。
         referenced_entities = set(claim.entity_refs) & entity_ids
         for symbol in claim.formula_symbols:
             role = artifact.explanation.symbol_roles.get(symbol)
@@ -387,10 +384,7 @@ def validate_teaching_depth(artifact: TeachingArtifact) -> tuple[ValidationIssue
     return tuple(_sorted_issues(issues))
 
 
-#: Sentence fragments the deterministic fixture payload uses as stand-ins for
-#: real lecture prose.  They are grammatically valid but carry no content, so a
-#: shipped artifact containing any of them is treated as a regression to the
-#: "few sentences of boilerplate" the walkthrough rejected.
+#: 确定性夹具使用的占位句；发布产物中出现时视为内容退化。
 _PLACEHOLDER_MARKERS: tuple[str, ...] = (
     "的确定性数学语义 artifact。",
     "的对象和定义。",

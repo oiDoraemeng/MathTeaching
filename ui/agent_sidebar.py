@@ -89,13 +89,12 @@ class AgentSidebar(QWidget):
         self.set_panel_width(self.DEFAULT_WIDTH)
         self.hide()
 
-        # 连接信号
+        # 连接界面信号。
         self.expanded_panel.bridge.event_json.connect(self._handle_web_event)
         self.select_tab("agent")
 
     def _handle_web_event(self, raw: str) -> None:
-        # UI intents are dispatched by the host owner; this hook is reserved for
-        # sidebar-level navigation events emitted by the local document.
+        # 界面指令由宿主分派，此处只处理文档发出的侧栏导航事件。
         return None
 
     def _build_history_page(self) -> QWidget:

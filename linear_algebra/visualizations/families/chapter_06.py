@@ -49,7 +49,7 @@ def _validate(topic, semantics):
     values = {role: np.asarray(entity.value, dtype=float) for role, entity in entities.items()}
     p, inverse = values['basis_matrix'], values['inverse_basis']
     x, c = values['standard_vector'], values['alternate_coordinates']
-    # Reuse the shared solver; singular bases fail here before any plan exists.
+    # 复用共享求解器，奇异基在生成计划前失败。
     coordinate = CoordinateFamilyCompiler.compile({'basis_matrix': p.tolist(), 'standard_vector': x.tolist()})['evidence']
     _equal(values['standard_basis'], np.eye(2), 'standard basis')
     _equal(inverse, np.linalg.inv(p), 'inverse basis')
@@ -137,7 +137,7 @@ def compile_chapter_06(topic, semantics, context=None):
             alias = f'{topic}__entity__{role}'
             if role in ('standard_basis', 'basis_matrix'):
                 scene.coordinates(entity.id, values[role], values['standard_vector'], alias, 'geometry.basis_grid')
-                # Separate translated grids make the two bases visibly distinct.
+                # 平移两套网格以直观区分两组基。
                 scene.add(entity.id, {'op': 'geometry.transformed_grid', 'alias': alias+'__lane', 'matrix': values[role].tolist(),
                                       'origin': [-10., 0.] if role == 'standard_basis' else [10., 0.], 'bounds': [-3., 3., -3., 3.], 'step': 1.})
                 scene.vector(entity.id, values['standard_vector'], alias+'__same_vector', (-10., 0.) if role == 'standard_basis' else (10., 0.))
@@ -154,7 +154,7 @@ def compile_chapter_06(topic, semantics, context=None):
                 params = relation.parameters
                 scene.transform(relation.id, (params['matrix'],), params['input'], alias)
                 if descriptor.name in ('forward', 'backward', 'change_basis', 'change_basis_back'):
-                    # P maps c to x; inverse readout solves P c = x, in both directions.
+                    # P 将坐标 c 映射为 x，逆读数求解 P c = x。
                     out = values['standard_output'] if descriptor.name == 'change_basis_back' else values['standard_vector']
                     scene.coordinates(relation.id, values['basis_matrix'], out, alias+'__readout', 'geometry.coordinate_readout')
         stage_evidence = {}

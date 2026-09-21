@@ -26,7 +26,7 @@ class RenderContext:
 
     @classmethod
     def default(cls, topic_id: str) -> "RenderContext":
-        # A stable seed is useful when a future lesson adds parameterized samples.
+        # 固定种子保证未来参数化样本可复现。
         return cls(topic_id=topic_id, seed=17)
 
 
@@ -42,11 +42,11 @@ def recipe_for_entry(entry: LessonEntry) -> VisualizationRecipe:
     """Create visualization recipe from lesson entry using topic-specific builders."""
     from .builders import get_builder_for
 
-    # Get topic-specific builder
+    # 获取主题专用构建器。
     builder_func = get_builder_for(entry.visualization_id)
 
     if builder_func is None:
-        # All catalog topics must have builders - no fallback
+        # 目录中的每个主题都必须有构建器。
         raise ValueError(
             f"No builder found for {entry.visualization_id}. "
             f"All topics must have a specific builder."

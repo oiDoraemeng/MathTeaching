@@ -17,7 +17,7 @@ def register_builders(builders: dict[str, Callable]) -> None:
     _ALL_BUILDERS.update(builders)
 
 
-# Import and register all chapter builders
+# 导入并注册全部章节构建器。
 from .chapter_01 import BUILDERS as CHAPTER_01_BUILDERS
 from .chapter_02 import BUILDERS as CHAPTER_02_BUILDERS
 from .chapter_03 import BUILDERS as CHAPTER_03_BUILDERS

@@ -45,12 +45,9 @@ class Linear2D:
     style: LinearStyle = "solid"
     role: LinearRole = "primary"
     label: str | None = None
-    # Teaching plans carry the requested side for a vector/segment label.
-    # It must be part of the persisted model because command transactions
-    # construct Linear2D directly from the operation payload.
+    # 标签方位需随几何对象持久化。
     label_side: LinearLabelSide = "below"
-    # The text label may be repositioned without changing the underlying
-    # vector or segment.  Offsets are persisted with the geometric object.
+    # 标签偏移独立于线段端点。
     label_offset_x: float = 0.0
     label_offset_y: float = 0.0
     agent_alias: str | None = None
@@ -84,8 +81,7 @@ class Annotation2D:
     offset_y: float = 0.0
     id: str = field(default_factory=lambda: uuid4().hex)
     agent_alias: str | None = None
-    # Teacher-generated annotations remain read-only. Marks placed from the
-    # viewport opt in so the shared algebra row can edit their content.
+    # 教学标注只读，用户在视口中创建的标记可编辑。
     editable: bool = False
 
 

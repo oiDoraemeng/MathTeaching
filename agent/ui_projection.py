@@ -163,8 +163,7 @@ def build_session_snapshot(
     model_status: Mapping[str, Any] | None = None,
     settings_state: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    # Keep closed session metadata in the snapshot for persistence/history.
-    # The Web UI filters closed records from the live tab strip.
+    # 快照保留已关闭会话，实时标签由 Web UI 过滤。
     sessions = store.list_sessions(include_closed=True)
     history_sessions = store.list_sessions(include_closed=True)
     hidden_sessions = store.list_hidden_sessions(include_closed=True)

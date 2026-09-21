@@ -73,8 +73,7 @@ def parse_agent_reply(raw_reply: str, expected_topic_id: str) -> TeachingArtifac
             issues=tuple(error.issues),
         ) from error
     except (TypeError, ValueError) as error:
-        # Keep the public parser contract stable if a future validator raises a
-        # plain model error instead of ArtifactValidationError.
+        # 将普通模型错误统一为公开解析异常。
         raise AgentReplyError("artifact_invalid", str(error)) from error
 
     if artifact.topic_id != expected_topic_id:

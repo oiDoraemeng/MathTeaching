@@ -63,9 +63,7 @@ class FormulaEditorPopup(QDialog):
         self.setMinimumSize(self._MINIMUM_WIDTH, self._MINIMUM_HEIGHT)
         self.show()
         self._move_to_anchor()
-        # Desktop input should not open MathLive's virtual keyboard on every
-        # new formula. It causes a large animated resize and repeated layout
-        # work; the explicit API remains available when needed.
+        # 桌面输入默认不弹虚拟键盘，避免动画缩放和重复布局。
         QTimer.singleShot(0, self.editor.focus_editor)
 
     def current_kind(self) -> str:

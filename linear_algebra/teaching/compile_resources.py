@@ -239,9 +239,7 @@ def compile_chapter_04(
             if index_path is not None
             else (Path(output_root).parent / "index.json" if output_root is not None else Path(__file__).with_name("data") / "index.json")
         )
-        # Validate the complete chapter replacement before writing resources or
-        # the aggregate index.  A malformed baseline therefore leaves files
-        # untouched rather than producing a partial release.
+        # 写入前校验完整章节，失败时不产生部分发布。
         index_payload = _merged_chapter_index_payload(resources, chapter=4, output_path=destination)
     else:
         destination = None
@@ -386,9 +384,7 @@ def validate_compiled_resources(
     errors: list[str] = []
     count = 0
     for topic in topic_entries():
-        # Release validation is publication-scoped.  Reviewed chapter bundles
-        # (notably ch04 during its release gate) are validated by their
-        # chapter-scoped helper and must not make the published registry fail.
+        # 发布校验只检查已发布内容，审核包由章节级流程校验。
         if artifact_store.published(topic.id) is None:
             continue
         try:

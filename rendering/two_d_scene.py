@@ -19,9 +19,7 @@ _AXIS_Y_KEY = "axis_Y"
 _TICK_KEY = "tick_marks"
 _LABEL_KEY = "tick_labels"
 
-# A 2 x 2 matrix maps coordinates from the source basis into the displayed
-# world coordinates.  Keeping this as a small tuple (rather than a numpy
-# matrix) makes it safe to carry in a pane snapshot.
+# 使用元组保存二维基变换，便于写入窗格快照。
 CoordinateTransform = tuple[tuple[float, float], tuple[float, float]]
 
 
@@ -171,12 +169,7 @@ class TwoDGuides:
             )
         x_ticks = tick_values(source_bounds.x_range, spacing)
         y_ticks = tick_values(source_bounds.y_range, spacing)
-        # Extend guide geometry beyond the visible viewport.  VTK clips actors
-        # to the viewport, so terminating lines exactly at the current bounds
-        # creates a faint artificial frame when zooming or panning.  Keeping
-        # the sampled ticks tied to ``bounds`` while overscanning line
-        # endpoints preserves pointer anchored camera interaction and lets the
-        # viewport provide the only clipping boundary.
+        # 辅助线略超出视口，避免缩放或平移时边界形成假框线。
         draw_bounds = _overscan_bounds(source_bounds)
 
         if muted:
@@ -310,8 +303,7 @@ class TwoDGuides:
     def _set_labels(
         self, points: list[tuple[float, float, float]], labels: list[str], color: str
     ) -> None:
-        # 点标签演员无法像网格一样就地调整，只能重建；调用方已在可见范围不变时
-        # 跳过刷新，因此不会在每一帧都重复创建标签。
+        # 点标签无法原位更新，仅在可见范围变化时重建。
         if self._has_labels:
             self.plotter.remove_actor(self._actor_key(_LABEL_KEY), render=False)
             self._has_labels = False

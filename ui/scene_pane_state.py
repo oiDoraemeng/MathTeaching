@@ -50,7 +50,7 @@ class ScenePaneState:
     camera_3d: dict[str, Any] = field(default_factory=dict)
     selected_object_ids: list[str] = field(default_factory=list)
     algebra_model: dict[str, Any] = field(default_factory=dict)
-    # Runtime-only references.  They are intentionally omitted from snapshots.
+    # 运行时引用不写入快照。
     renderer_2d: Any = field(default=None, repr=False, compare=False)
     renderer_3d: Any = field(default=None, repr=False, compare=False)
     runtime: Any = field(default=None, repr=False, compare=False)
@@ -72,8 +72,7 @@ class ScenePaneState:
         if self.source_id is not None and not isinstance(self.source_id, str):
             raise ValueError("source_id must be a string or None")
         if not isinstance(self.scene_mode, str) or self.scene_mode not in {"2d", "3d"}:
-            # StrEnum values compare equal to their string values, so this also
-            # accepts models.scene_mode.SceneMode without importing it here.
+            # StrEnum 可直接与字符串比较，无需导入 SceneMode。
             raise ValueError("scene_mode must be 2d or 3d")
         for field_name in ("scene_2d", "scene_3d", "camera_2d", "camera_3d", "algebra_model"):
             value = getattr(self, field_name)
@@ -114,8 +113,7 @@ class ScenePaneState:
             raise ValueError("scene pane snapshot version must be an integer")
         if version != cls.SNAPSHOT_VERSION:
             raise ValueError(f"unsupported scene pane snapshot version: {version}")
-        # Validate the complete input before extracting fields, including any
-        # nested values that might otherwise hide a Qt/PyVista object.
+        # 提取字段前递归校验，防止嵌套 Qt/PyVista 对象进入快照。
         payload = _json_copy(dict(snapshot), "scene pane snapshot")
         required = ("pane_id", "name", "scene_mode", "scene_2d", "scene_3d", "camera_2d", "camera_3d", "selected_object_ids", "algebra_model")
         missing = [key for key in required if key not in payload]

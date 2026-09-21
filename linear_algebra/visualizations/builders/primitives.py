@@ -11,8 +11,7 @@ _ROLE_ALIASES = {
     "primary": "primary",
     "construction": "construction",
     "result": "result",
-    # The redesign plan used these presentation names, but the scene
-    # protocol deliberately exposes only three semantic roles.
+    # 将设计稿中的展示名称收敛到场景协议的三种语义角色。
     "secondary": "construction",
     "auxiliary": "construction",
 }
@@ -74,8 +73,7 @@ def make_label(
 
     safe_alias = alias or f"label_{text.replace(' ', '_').replace('+', 'plus').replace('-', 'minus')}"
     return {
-        # Labels use the existing formula annotation command so they follow
-        # the same validation and rendering path as mathematical annotations.
+        # 标签复用公式标注命令及其校验、渲染路径。
         "op": "annotation.formula",
         "alias": safe_alias,
         "text": text,

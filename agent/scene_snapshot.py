@@ -46,7 +46,7 @@ class SceneSnapshot:
     annotations: tuple[dict[str, Any], ...] = ()
     camera: dict[str, Any] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
-    # Multi-pane extension. Legacy fields above remain the active-pane view.
+    # 多窗格扩展；旧字段仍表示活动窗格。
     panes: tuple[dict[str, Any], ...] = ()
     active_pane_id: str | None = None
 
@@ -63,7 +63,7 @@ class SceneSnapshot:
             raise ValueError("camera and metadata must be objects")
         if self.active_pane_id is not None and (not isinstance(self.active_pane_id, str) or not self.active_pane_id.strip()):
             raise ValueError("active_pane_id must be a non-empty string or None")
-        # Validate and detach mutable nested data at construction time.
+        # 构造时校验并复制可变嵌套数据。
         object.__setattr__(self, "curves", _tuple_records(self.curves, "curves"))
         object.__setattr__(self, "geometry", _tuple_records(self.geometry, "geometry"))
         object.__setattr__(self, "layers", _tuple_records(self.layers, "layers"))
@@ -103,7 +103,7 @@ class SceneSnapshot:
         if pane is None:
             raise ValueError(f"unknown snapshot pane: {pane_id}")
         scene = pane.get("snapshot", {})
-        # Camera movement and selection are view interactions, not scene edits.
+        # 相机移动和选择属于视图交互，不计入场景编辑。
         payload = {key: scene.get(key) for key in
                    ("scene_mode", "curves", "geometry", "layers", "annotations", "metadata")}
         encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True)

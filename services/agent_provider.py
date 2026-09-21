@@ -45,8 +45,7 @@ class AgentSettings:
     model: str = ""
     timeout_seconds: float = 60.0
     provider: str = "openai"
-    # Keep direct programmatic construction backward-compatible; the settings
-    # dialog explicitly defaults persisted UI configuration to Responses.
+    # 直接构造保持兼容，持久化界面配置默认使用 Responses。
     protocol: str = "chat_completions"
 
     @property

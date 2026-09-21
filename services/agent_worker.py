@@ -108,9 +108,7 @@ class RuntimeTurnWorker(QObject):
                 **({"pane_id": self.pane_id} if self.pane_id is not None else {}),
             )
             flush_stream()
-            # Runtime persistence allocates the durable turn id after provider
-            # work completes. Attach it to every streamed event before the
-            # browser projection sees the batch so one prompt stays one card.
+            # 持久化后将轮次标识补到流事件，保证同一提示词只生成一张卡片。
             for event in result.events:
                 if id(event) in streamed_ids:
                     # 已实时转发过的事件不再重复发出。

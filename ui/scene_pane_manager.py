@@ -24,11 +24,9 @@ class ScenePaneManager(QObject):
     """Own runtime pane states and the visible layout without owning widgets."""
 
     active_pane_changed = Signal(str)
-    # A descriptive alias for consumers which prefer signal names that mirror
-    # the property they observe.
+    # 为旧调用方保留与属性同名的信号别名。
     active_pane_id_changed = Signal(str)
-    # Emitted after a pane is permanently removed.  UI hosts use this to
-    # discard associated tabs/widgets without duplicating deletion logic.
+    # 窗格永久删除后通知宿主清理关联控件。
     pane_deleted = Signal(str)
     pane_renamed = Signal(str, str)
     workspace_restored = Signal()
@@ -147,7 +145,7 @@ class ScenePaneManager(QObject):
         self._next_pane_id_number = max([self._next_pane_id_number, *(number + 1 for number in used_numbers)])
         self._lecture_user_visible = lecture_user_visible
         self._lecture_case_ids = lecture_case_ids
-        # Existing callbacks refer to the pre-restore scene history.
+        # 旧回调引用恢复前的场景历史。
         self._undo_stack.clear()
         self._redo_stack.clear()
         for pid in old.keys() - self._panes.keys():
@@ -176,11 +174,7 @@ class ScenePaneManager(QObject):
                 break
             if pid not in self._visible_ids:
                 self._visible_ids.append(pid)
-        # Keep the pane receiving input on screen when a layout is reduced.
-        # Retained panes are deliberately allowed to be hidden, but changing
-        # the layout must not silently redirect subsequent tool operations to
-        # the first pane.  Preserve the existing order where possible and
-        # replace the last retained slot with the active pane when necessary.
+        # 缩减布局时优先保留活动窗格，避免后续操作被重定向。
         visible_ids = self._visible_ids[:count]
         if self._active_pane_id in self._visible_ids and self._active_pane_id not in visible_ids:
             visible_ids[-1] = self._active_pane_id
@@ -204,9 +198,7 @@ class ScenePaneManager(QObject):
             raise ValueError("visible pane count cannot exceed four")
         if any(pid not in self._panes for pid in ids):
             raise ValueError("unknown pane ID")
-        # Keep at least one visible pane whenever retained states exist.  A
-        # transient empty set (for example while closing the last visible
-        # pane) leaves layout and active-focus consumers without a target.
+        # 有保留状态时至少显示一个窗格，保证布局和焦点始终有目标。
         if not ids and self._pane_order:
             ids = [self._pane_order[0]]
         self._visible_ids = ids
@@ -229,8 +221,7 @@ class ScenePaneManager(QObject):
     def leave_lecture(self) -> tuple[str, ...]:
         restored = self._lecture_user_visible
         if restored is None:
-            # A defensive fallback for callers that leave without entering:
-            # retain the current layout's first user pane only.
+            # 未进入上下文时仅保留当前布局的第一个用户窗格。
             restored = tuple(self.user_visible_pane_ids[:1])
         self._lecture_user_visible = None
         self._lecture_case_ids = ()
@@ -252,7 +243,7 @@ class ScenePaneManager(QObject):
             return existing
         return self.create_pane(source="case", source_id=case_id, name=name or case_id)
 
-    # Callback-friendly aliases used by the teaching-case host.
+    # 教学案例宿主使用的回调别名。
     open_case = register_case
 
     def close_case(self, case_id: str) -> None:
@@ -336,8 +327,7 @@ class ScenePaneManager(QObject):
         self._lecture_case_ids = tuple(pid for pid in self._lecture_case_ids if pid != pane_id)
         if self._lecture_user_visible is not None:
             self._lecture_user_visible = tuple(pid for pid in self._lecture_user_visible if pid != pane_id)
-        # A deleted pane's callbacks may close over state that no longer
-        # exists.  They cannot safely be replayed by global history.
+        # 已删除窗格的回调可能引用失效状态，不能进入全局历史。
         self._undo_stack = [entry for entry in self._undo_stack if entry.pane_id != pane_id]
         self._redo_stack = [entry for entry in self._redo_stack if entry.pane_id != pane_id]
         self._layout_count = max(1, min(self._layout_count, len(self._visible_ids) or len(self._pane_order)))

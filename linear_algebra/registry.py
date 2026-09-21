@@ -30,8 +30,7 @@ if TYPE_CHECKING:
 CAPABILITIES: Mapping[str, str] = MappingProxyType({
     "vector_2d": "linear.upsert",
     "vector_3d": "linear3d.upsert",
-    # 第 4 章的三维小节直接以图元命名自己声明的能力：子空间的平面与直线分别由
-    # plane3d / linear3d 画出，能力名与操作名在这里显式对应。
+    # 第 4 章的三维能力名在此映射到对应图元。
     "linear3d": "linear3d.upsert",
     "plane3d": "plane3d.upsert",
     "annotation_formula": "annotation.formula",
@@ -149,11 +148,7 @@ class CurriculumRegistry:
                         artifact = stored.artifact
                 except (ValueError, OSError, KeyError) as error:
                     bundle_diagnostic = ("artifact_invalid", "artifact", str(error))
-        # Chapter 4–8 release scripts keep their reviewed payload and the
-        # compiled resource/index as the checked-in release unit.  Materialise
-        # that immutable payload as the runtime's published view when a
-        # filesystem ``published`` directory is absent; this keeps runtime
-        # lookup one-to-one without making the UI understand release layout.
+        # 缺少发布目录时，以已审核的编译资源构造只读发布视图。
         if artifact is None and topic.chapter_number >= 4:
             try:
                 from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts
@@ -188,16 +183,12 @@ class CurriculumRegistry:
                         bundle_diagnostic = ("snapshot_mismatch", "snapshot", "published snapshot differs from compiled output")
                 else:
                     snapshot = expected_snapshot
-                # The checked-in compiled resource is the release witness for
-                # chapter 4–8 when no separate snapshot store is configured.
+                # 未配置快照库时，编译资源就是第 4 至 8 章的发布凭据。
                 if topic.chapter_number >= 4 and artifact_store is not None:
                     from linear_algebra.teaching.compile_resources import compiled_resource_store
                     try:
                         resource = compiled_resource_store(Path(artifact_store.root) / "compiled").get(topic_id)
-                        # Release resources are compiled from the reviewed
-                        # payload.  The runtime fallback exposes that same
-                        # payload as a published view, so calculate its
-                        # witness digest before changing the status field.
+                        # 状态变化前按审核内容计算发布摘要。
                         witness_artifact = (
                             replace(artifact, status="reviewed")
                             if artifact_from_reviewed_fallback else artifact
@@ -253,8 +244,7 @@ class CurriculumRegistry:
                     "snapshot_invalid", "snapshot.topic_id",
                     f"expected {topic.id!r}, got {snapshot.topic_id!r}",
                 )
-        # Preserve a diagnostic-bearing bundle so the loader can reject it
-        # without mutating a host or throwing an unstructured exception.
+        # 保留诊断信息，让加载器在不修改宿主的情况下拒绝该包。
         return CurriculumBundle(topic, artifact, contract, recipe, compiled, snapshot, source_context, source_diagnostic, bundle_diagnostic)
 
     def commit_curriculum_bundle(
@@ -288,9 +278,7 @@ class CurriculumRegistry:
             return transaction
 
         transaction.advance(LoadPhase.SOURCE_CHECKED)
-        # A stale lecture source is the primary diagnostic.  Do not mask it
-        # with a downstream compiled/snapshot mismatch caused by the same
-        # source drift.
+        # 优先报告讲义过期，避免被其引发的摘要不一致掩盖。
         if bundle.source_diagnostic is not None:
             return reject("source_stale", "source_hash", "published source hash no longer matches the lecture")
         if bundle.bundle_diagnostic is not None:

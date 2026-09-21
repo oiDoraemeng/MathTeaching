@@ -13,8 +13,7 @@ from ui.icons import apply_icon, icon_color, retint_icons
 
 DWMWA_USE_IMMERSIVE_DARK_MODE = 20
 
-# The maximize control mirrors the native Windows chrome: a single square while
-# the window is restored, and a "restore down" glyph once it is maximized.
+# 最大化按钮随窗口状态切换为 Windows 风格的还原图标。
 _MAXIMIZE_ICON = "square"
 _RESTORE_ICON = "copy"
 
@@ -128,10 +127,7 @@ class CustomTitleBar(QFrame):
         self._host.showMinimized()
 
     def _toggle_maximized(self) -> None:
-        # QWidget's showMaximized/showNormal state is committed by the window
-        # manager later.  Do not issue an opposite command based on stale
-        # state when users click quickly; WindowStateChange is the sole source
-        # of truth for the icon.
+        # 窗口状态提交有延迟，图标只以 WindowStateChange 为准。
         target_maximized = not (self._host.isMaximized() or self._host.isFullScreen())
         if not self._begin_window_state_transition(target_maximized):
             return
@@ -184,7 +180,7 @@ def apply_native_titlebar_theme(window: QWidget, effective_theme: str) -> bool:
             )
             set_window_attribute.restype = ctypes.c_long
         except (AttributeError, TypeError):
-            # Python test doubles do not expose ctypes function metadata.
+            # Python 测试替身没有 ctypes 函数元数据。
             pass
         result = set_window_attribute(
             ctypes.c_void_p(int(window.winId())),

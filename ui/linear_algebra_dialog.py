@@ -103,8 +103,7 @@ class LinearAlgebraDialog(QDialog):
         if not topic_id:
             item.setExpanded(not item.isExpanded())
             return
-        # The catalog only selects a topic. The main window publishes its
-        # explanation after the corresponding scene has loaded successfully.
+        # 目录只选择主题，主窗口在场景加载成功后发布讲解。
         self.content_scroll.hide()
         self.show()
         self.raise_()

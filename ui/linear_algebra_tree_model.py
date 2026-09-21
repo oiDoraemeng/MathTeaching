@@ -63,9 +63,7 @@ class LinearAlgebraTreeModel:
         self._expanded_node_ids = set()
         for node_id, item in self._items.items():
             node = self._nodes[node_id]
-            # Keep the catalog scannable on first open: chapters are the first
-            # level and remain open so their sections (the second level) are
-            # visible, while topic leaves stay collapsed until requested.
+            # 首次打开时展开章节、折叠主题，便于浏览目录层级。
             item.setExpanded(node.kind == "chapter")
             if node.kind == "chapter" and item.childCount():
                 self._expanded_node_ids.add(node_id)

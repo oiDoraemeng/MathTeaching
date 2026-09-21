@@ -24,9 +24,7 @@ class TwoDGeometryToolbar(QFrame):
         super().__init__(parent)
         self._active_tool: ToolKind | None = None
         self._theme: ThemeName = theme
-        # The toolbar always contains the complete set of geometry and
-        # linear-algebra tools.  There is no second toolbar or mode switch in
-        # the user interface.
+        # 几何与线性代数工具共用一个完整工具栏。
         self._linear_algebra_mode = True
         self.setObjectName("twoDGeometryToolbar")
         self.setAttribute(Qt.WidgetAttribute.WA_Hover)
@@ -64,7 +62,7 @@ class TwoDGeometryToolbar(QFrame):
             "segment": self._button("minus", "线段", "segmentToolButton"),
             "dashed_segment": self._button("minus-dashed", "虚线段", "dashedSegmentToolButton"),
             "ray": self._button("arrow-up-right", "射线", "rayToolButton"),
-            # "vector" removed - now a separate top-level tool in linear algebra mode
+            # 向量工具已提升为线性代数模式的一级入口。
         }
         for button in self.line_buttons.values():
             flyout_layout.addWidget(button)
@@ -146,9 +144,7 @@ class TwoDGeometryToolbar(QFrame):
     def set_linear_algebra_mode(self, _enabled: bool = True) -> None:
         """Compatibility hook; the visible toolbar is always fully expanded."""
         self._linear_algebra_mode = True
-        # The shared geometry toolbar remains vertical in every scene mode.
-        # `_enabled` is retained only for integrations that call the former
-        # mode-specific API.
+        # 工具栏始终纵向显示；保留 `_enabled` 以兼容旧接口。
         self._layout.setDirection(QBoxLayout.Direction.TopToBottom)
         self.vector_button.setVisible(self._linear_algebra_mode)
         for button in self._linear_algebra_buttons[1:]:
@@ -268,8 +264,7 @@ class TwoDGeometryToolbar(QFrame):
         parent = self.parentWidget()
         if parent is None:
             return
-        # The toolbar is vertical, so open the concrete line choices to its
-        # right and align them with the line button rather than below it.
+        # 线型菜单在纵向工具栏右侧对齐展开。
         origin = self.mapTo(parent, QPoint(self.width() + 8, self.line_button.y()))
         x = min(max(8, origin.x()), max(8, parent.width() - self.line_flyout.width() - 8))
         y = min(max(8, origin.y()), max(8, parent.height() - self.line_flyout.height() - 8))

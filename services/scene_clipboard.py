@@ -132,15 +132,12 @@ def rectangle_select(objects, rect):
     for o in objects:
         if hasattr(o, "x") and lo_x <= o.x <= hi_x and lo_y <= o.y <= hi_y:
             selected.append(o); continue
-        # Linear objects are selected when either endpoint, or the segment
-        # bounding box, intersects the marquee.
+        # 端点或线段包围盒与框选区域相交时选中线对象。
         if hasattr(o, "start_point_id"):
             a, b = ids.get(o.start_point_id), ids.get(o.end_point_id)
             if a and b and not (max(a.x,b.x) < lo_x or min(a.x,b.x) > hi_x or max(a.y,b.y) < lo_y or min(a.y,b.y) > hi_y):
                 selected.append(o); continue
-        # Curves/functions span the plot domain; treat a marquee intersecting
-        # the default domain as selecting the curve.  Objects may optionally
-        # expose a finite bounding box for more precise hit testing.
+        # 曲线默认覆盖绘图区，也可提供有限包围盒以精确命中。
         if hasattr(o, "expression"):
             bounds = getattr(o, "bounds", (-10.0, -10.0, 10.0, 10.0))
             bx1, by1, bx2, by2 = bounds

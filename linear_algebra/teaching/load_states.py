@@ -166,8 +166,7 @@ class LoadTransaction:
                 expected_scene_fingerprint=expected_scene_fingerprint,
             )
         except Exception as error:
-            # SceneCommandService owns the host rollback.  We only preserve a
-            # structured diagnostic and leave the transaction rejected.
+            # 宿主回滚由 SceneCommandService 负责，此处只保留结构化诊断。
             self.reject("host_failure", LoadPhase.STAGED, "scene", str(error))
             raise
         if getattr(result, "valid", True) is not True:

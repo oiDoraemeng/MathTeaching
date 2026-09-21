@@ -111,7 +111,6 @@ class ToolRegistry:
         )
 
     def _create_determinant_demo(self, a: list[float] | tuple[float, float], b: list[float] | tuple[float, float], **_: Any) -> ToolResult:
-        # This historical teaching macro has no one-to-one capability yet, but
-        # remains constrained by the shared command validator.
+        # 旧教学宏尚无对应能力，仍由共享命令校验器约束。
         plan = CommandPlan(summary="演示行列式面积", operations=({"op": "linear_algebra.determinant_area", "a": list(a), "b": list(b)},))
         return self._validated(plan, canonical_name="scene.edit")

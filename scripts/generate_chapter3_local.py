@@ -106,9 +106,7 @@ def _normalize_visual(payload: dict, topic_id: str) -> None:
     elif spec["kind"] == "determinant":
         matrix = spec["given"]["matrix"]
         columns = [[matrix[0][0], matrix[1][0]], [matrix[0][1], matrix[1][1]]]
-        # Keep the matrix and its two column vectors visible.  The vectors
-        # provide the sides for both the oriented-area and polygon primitives,
-        # while the matrix preserves the algebraic object in the explanation.
+        # 同时保留矩阵和两列向量，供面积图元及讲解使用。
         entities[:] = [
             _entity("A", "matrix", 2, matrix, "matrix_a", claim_id, "A"),
             _entity("a", "vector", 2, columns[0], "vector_a", claim_id, "column a"),
@@ -126,9 +124,7 @@ def _normalize_visual(payload: dict, topic_id: str) -> None:
         ]
         claim["stage_refs"] = [item["id"] for item in stages]
 
-        # The determinant-property topics explicitly require a staged transform
-        # capability.  A typed matrix list lets the compiler emit the bounded
-        # staged-transform primitive without embedding renderer operations here.
+        # 类型化矩阵列表由编译器生成有界的分阶段变换。
         if "staged_transform" in topic_required_capabilities(topic_id):
             relations.append(_relation("det_stage", "composition_order", "a", "b", claim_id, {"matrix": matrix}))
             stages.append(_stage("stage.det.transform", "变换阶段", "比较变换前后的两条列向量，观察有向面积如何变化。", ["a", "b"], ["area"], ["det_stage"], "staged transform"))

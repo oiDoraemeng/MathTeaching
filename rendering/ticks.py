@@ -57,7 +57,7 @@ def visible_2d_bounds(
         raise ValueError("Parallel scale must be a finite positive value.")
     if not isfinite(aspect_ratio) or aspect_ratio <= 0:
         raise ValueError("Viewport aspect ratio must be a finite positive value.")
-    # parallel_scale 已经是半高度，直接使用
+    # `parallel_scale` 已是半高度。
     half_height = parallel_scale
     half_width = half_height * aspect_ratio
     return ViewportBounds(
@@ -83,11 +83,7 @@ def automatic_tick_spacing(span: float, *, target_intervals: int = 16) -> float:
     return min(candidates, key=lambda candidate: abs(log10(candidate / ideal)))
 
 
-# 目标区间数与滞后区间必须相互兼容：把理想间距取整到 1-2-5 阶梯，最多会让
-# 区间数偏移 10**0.199 ≈ 1.58 倍，因此按 TARGET 重算得到的区间数必然落在
-# [TARGET / 1.58, TARGET * 1.58] = [6.3, 15.8] 内，也就是完全位于滞后区间
-# [MIN, MAX] 之中。若二者不兼容，新算出的间距会立刻越界，导致每帧重算并且
-# 放大与缩小走不同的阶梯（例如放大时从 1 直接跳到 0.2）。
+# 滞后区间需覆盖 1-2-5 取整造成的最大 1.58 倍区间数偏差。
 _TARGET_INTERVALS = 10
 _MIN_INTERVALS = 5
 _MAX_INTERVALS = 16

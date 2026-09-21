@@ -250,8 +250,7 @@ class AgentRuntime:
             scene_before.fingerprint_for_pane(pane_id) if pane_id and scene_before and scene_before.panes
             else scene_before.fingerprint() if scene_before is not None else None
         )
-        # 预分配 turn_id，让流式事件（message_delta）在 UI 上始终归属到
-        # 同一个 turn 卡片，避免实时转发时因 turn_id 缺失而拆成两个卡片。
+        # 预分配轮次标识，避免流事件被拆成多张卡片。
         turn_id = str(turn_id or uuid4().hex)
         events: list[AgentEvent] = [AgentEvent("session_started", {"mode": mode, "execution_mode": execution_mode}, session_id=session_id, turn_id=turn_id)]
 
@@ -328,10 +327,7 @@ class AgentRuntime:
                         emit=emit_native,
                     )
                 except Exception as error:
-                    # Native tool calling is an optional transport feature. Carry
-                    # the real provider error into the timeline instead of a fixed
-                    # label, and keep the retry streaming so a transport failure
-                    # never silently degrades the turn to one-shot text.
+                    # 原生工具调用失败时保留真实错误，并继续以流式方式重试。
                     emit(AgentEvent("capability_fallback", {"reason": str(error)[:512]}, session_id=session_id))
                     runtime_response = stream_fallback(scene_context)
                     response = runtime_response.response
@@ -356,9 +352,7 @@ class AgentRuntime:
             if not self._uses_native_tools():
                 stream_response = getattr(self.agent, "respond_stream", None)
                 if callable(stream_response) and getattr(self.agent.provider, "stream", None):
-                    # Give the Web UI immediate feedback while the first model
-                    # token is still in flight. Provider reasoning/content deltas
-                    # follow this card and are merged by the frontend reducer.
+                    # 首个模型增量到达前先创建卡片，后续增量由前端合并。
                     emit(
                         AgentEvent(
                             "message_delta",

@@ -228,7 +228,7 @@ def compile_chapter_05(topic, semantics):
         alias = f'{topic}__relation'
         if spec.operation == 'geometry.affine_solution':
             scene.affine(relation.id, p['nullspace_basis'], p['particular'], alias)
-            # Executable domain/image/kernel witnesses use separate operations.
+            # 定义域、像和核分别使用可执行操作作为证据。
             for name in ('domain', 'image', 'kernel'):
                 scene.affine(relation.id, evidence[name], [0., 0.], f'{alias}__{name}')
         elif topic == 'ch05.consistency.geometry':

@@ -13,8 +13,7 @@ from ui.scene_pane_manager import ScenePaneManager
 from services.scene_clipboard import SceneClipboard, rectangle_select
 
 
-# The fullscreen control mirrors the window maximize/restore pair: one glyph
-# while the pane sits in the grid, another once it owns the whole viewport.
+# 窗格全屏前后分别使用最大化和还原图标。
 _FULLSCREEN_GLYPH = "□"
 _FULLSCREEN_RESTORE_GLYPH = "⧉"
 
@@ -90,9 +89,7 @@ class ScenePaneWidget(QWidget):
         self.manager = manager
         self._factory = interactor_factory or self._default_factory
         self._on_interactor_created = on_interactor_created
-        # Fired after a pane receives its real geometry (first layout, layout
-        # changes, window resizes), so screen-sized decorations built while the
-        # interactor still had its default pre-layout size can be rebuilt.
+        # 窗格获得真实尺寸后通知渲染层重建屏幕尺寸相关装饰。
         self._on_pane_viewport_changed = on_pane_viewport_changed
         self._interactors: dict[str, Any] = {}
         self._chromes: dict[str, PaneChrome] = {}
@@ -100,8 +97,7 @@ class ScenePaneWidget(QWidget):
         self._retry_timers: dict[str, QTimer] = {}
         self._refresh_callbacks: dict[str, Callable[[str], None]] = {}
         self._refreshing = False
-        # Remember which single pane owns the viewport and the layout it hid, so
-        # the pane's fullscreen control can be a real toggle.
+        # 记录全屏窗格及被隐藏布局，使按钮可恢复原布局。
         self._fullscreen_pane_id: str | None = None
         self._fullscreen_restore_ids: tuple[str, ...] = ()
         self.clipboard = SceneClipboard()
@@ -150,8 +146,7 @@ class ScenePaneWidget(QWidget):
         visible = self.manager.visible_pane_ids()
         visible_set = set(visible)
         if self._fullscreen_pane_id is not None and self._fullscreen_pane_id not in visible_set:
-            # The pane left the viewport by another route (hide, close, layout
-            # change); forget the expansion instead of restoring it later.
+            # 窗格通过隐藏、关闭或换布局离开时取消全屏记录。
             self._reset_fullscreen_state()
         for pane_id in set(self._interactors) | set(self._retry_attempts):
             if pane_id not in visible_set:
@@ -188,8 +183,7 @@ class ScenePaneWidget(QWidget):
                     pass
             state.renderer_2d = state.renderer_3d = None
         if widget is not None and isValid(widget):
-            # Finalize the VTK render window before materializing replacements;
-            # deferred Qt deletion alone can keep more than four contexts live.
+            # 创建替代窗格前先释放 VTK 窗口，避免图形上下文堆积。
             widget.close()
         if chrome is not None and isValid(chrome):
             chrome.hide(); chrome.setParent(None); chrome.deleteLater()
@@ -253,7 +247,7 @@ class ScenePaneWidget(QWidget):
 
     def _hide_pane(self, pane_id: str) -> None:
         if self._fullscreen_pane_id == pane_id:
-            # Hiding the expanded pane must bring the layout it replaced back.
+            # 隐藏全屏窗格时恢复原布局。
             candidates = self._fullscreen_restore_ids
             self._reset_fullscreen_state()
         else:
@@ -269,8 +263,7 @@ class ScenePaneWidget(QWidget):
             return
         visible = tuple(self.manager.visible_pane_ids())
         if visible == (pane_id,):
-            # Already the only visible pane: nothing to expand, and nothing to
-            # restore later.
+            # 已是唯一可见窗格时无需进入全屏状态。
             return
         self._fullscreen_restore_ids = visible
         self._fullscreen_pane_id = pane_id
@@ -302,8 +295,7 @@ class ScenePaneWidget(QWidget):
                 return False
             if getattr(renderer, "_closed", False) or getattr(renderer, "_deleted", False):
                 return False
-            # Plain QWidget test renderers need no VTK surface. For real
-            # interactors a missing underlying surface means it was finalized.
+            # 普通 QWidget 测试替身不需要 VTK 表面。
             missing = object()
             for name in ("interactor", "render_window", "ren_win"):
                 owner = getattr(renderer, name, missing)
@@ -333,7 +325,7 @@ class ScenePaneWidget(QWidget):
                 if on_refresh is not None:
                     self._refresh_callbacks[pane_id] = on_refresh
                 if pane_id not in self._retry_timers:
-                    # A later show/resize/restore can start a fresh bounded cycle.
+                    # 后续显示、缩放或恢复可重新开始有限重试。
                     self._retry_attempts.pop(pane_id, None)
                     self._refresh_pane(pane_id)
             self._update_highlight()
@@ -352,8 +344,7 @@ class ScenePaneWidget(QWidget):
             chrome = self._chromes.get(pane_id)
             target = chrome or widget
             target.setGeometry(self.manager.layout_rects(self.size())[pane_id])
-            # Hidden/unmapped is expected during minimization; show then render
-            # first instead of treating invisibility as context loss.
+            # 最小化时未映射属正常状态，恢复显示后再渲染。
             target.show(); widget.show()
             widget.update()
             if self._on_pane_viewport_changed is not None:
@@ -418,8 +409,7 @@ class ScenePaneWidget(QWidget):
             if not isValid(widget):
                 continue
             is_active = pane_id == active
-            # The visible border is drawn by PaneChrome; keep the renderer
-            # property too for backwards-compatible styling and tests.
+            # 边框由 PaneChrome 绘制，同时保留渲染器属性以兼容旧样式。
             for target in (widget, self._chromes.get(pane_id)):
                 if target is None or not isValid(target):
                     continue

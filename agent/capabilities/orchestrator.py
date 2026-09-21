@@ -76,8 +76,7 @@ class CapabilitySession:
         if len(json.dumps(result.to_dict(), ensure_ascii=False).encode("utf-8")) > MAX_TOOL_RESULT_BYTES:
             return self._terminate(call, "tool_result_limit", "工具结果超过 32 KiB 限制")
         self.results.append(result)
-        # Handler/schema errors are model-visible outcomes. They do not alter
-        # staged state and allow a provider continuation to correct the call.
+        # 处理器和模式错误反馈给模型，但不修改暂存状态。
         if result.status == "error" or result.plan is None:
             return result
         plan = CommandPlan.from_dict(result.plan)

@@ -325,7 +325,7 @@ class AgentSidebarWeb(QWidget):
         """强制 WebEngine 在窗口显示时重绘，修复最小化后空白问题。"""
         super().showEvent(event)
         if hasattr(self, "view") and self.view is not None:
-            # 触发 WebEngine 重新渲染，不使用 Reload 避免丢失状态
+            # 触发重绘但不重新加载，避免状态丢失。
             self.view.update()
 
     def restore_render_surface(self) -> None:
@@ -409,14 +409,11 @@ class AgentSidebarWeb(QWidget):
         }
         topic_id = str(case_id or getattr(case, "topic_id", getattr(case, "id", "")))[:128]
         source = _source_payload(case, source_diagnostic)
-        # This public envelope is intentionally semantic-only. Compiled plans
-        # and renderer objects never cross the explanation boundary.
+        # 公开载荷只含语义数据，不传递编译计划和渲染对象。
         explanation_payload = {
             "claims": [_claim_payload(claim) for claim in claims[:24]],
             "formula": formula_text[:512],
-            # One lecture-proof paragraph can be a few hundred characters long;
-            # never cut it mid-formula, because the KaTeX tail then renders as a
-            # broken expression.
+            # 讲义证明可能很长，不能在公式中间截断。
             "derivation": [str(step)[:4096] for step in derivation_values[:16]],
             "numeric_example": structured["worked_examples"],
             "symbol_roles": dict(getattr(explanation, "symbol_roles", {})),
@@ -436,14 +433,10 @@ class AgentSidebarWeb(QWidget):
             "steps": [str(step)[:4096] for step in derivation_values[:12]] or [str(step)[:4096] for step in tuple(getattr(case, "steps", ()))[:12]],
             "conclusion": conclusion_text[:1024] or str(getattr(case, "conclusion", ""))[:1024],
             "summary": str(getattr(explanation, "summary", getattr(case, "summary", "")))[:512],
-            # Keep the lecture excerpt available to the document renderer.  It
-            # is source-grounded prose, not a renderer instruction, and lets
-            # the reader see the definitions, derivations and examples that
-            # motivated the bounded artifact.
+            # 向文档渲染器提供讲义节选，展示产物依据的定义、推导和例题。
             "source_excerpt": str(getattr(getattr(case, "source", None), "excerpt", ""))[:20000],
             "scene_mode": scene_mode if scene_mode in {"2d", "3d"} else "2d",
-            # A preview is readable immediately but must not send stage/pane
-            # intents until native VTK panes have been replaced for this topic.
+            # VTK 窗格替换完成前，预览不得发送阶段或窗格指令。
             "scene_ready": bool(scene_ready),
             "preview_token": str(preview_token)[:128] if preview_token else None,
             "artifact_revision": getattr(case, "revision", None),

@@ -15,12 +15,10 @@ from rendering.helper import add_teaching_helpers
 from rendering.lighting import LightSettings, setup_three_point_lighting
 from rendering.materials import material_preset
 
-# Keep the initial view far enough away to leave comfortable room around the
-# origin.  The blank 3-D workspace has no geometry for ``reset_camera()`` to
-# fit, so its camera must be positioned explicitly.
+# 空白三维场景没有可供自动取景的几何体，需显式设置初始相机。
 _CAMERA_POSITION = [(9.6, -10.8, 8.55), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
 
-# 每根轴从 -4.5 到 +4.5
+# 坐标轴范围为 -4.5 至 4.5。
 DEFAULT_3D_AXIS_EXTENT = 4.5 # 
 
 
@@ -118,10 +116,7 @@ def build_scene(
         plotter.enable_anti_aliasing("ssaa" if high_quality else "msaa")
         if camera_position is None:
             plotter.camera_position = _CAMERA_POSITION
-            # ``show_axes=False`` is used by the pane renderer, which adds its
-            # persistent axes immediately afterwards.  Resetting an empty
-            # plotter here collapses the camera onto the origin and makes the
-            # initial view appear too close.
+            # 窗格稍后会补坐标轴，空场景不能调用自动取景。
             if show_axes:
                 plotter.reset_camera()
             else:

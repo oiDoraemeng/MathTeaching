@@ -13,9 +13,7 @@ RELATION_KINDS = frozenset(
         "orthogonal_to", "collapses_to", "composition_order", "compare", "orientation",
         "decomposes_into", "has_foot", "has_residual", "batch_maps_to", "endpoint_diff",
         "same_measure", "invariant", "contains", "affine_translation", "constraint_state", "row_operation", "coordinate_equivalence", "eigen_binding", "principal_axis", "classification",
-        # Chapter-4 mathematical bindings.  These names distinguish a true
-        # intersection, kernel/image/rank fact, and linearity test from a
-        # generic arrow or display annotation.
+        # 第 4 章绑定名称用于区分数学关系和普通展示标注。
         "intersects_in", "union_counterexample", "kernel_of", "image_of",
         "dimension_of", "linear_combination", "null_solution", "rank_of",
         "nullity_of", "basis_of", "linear_dependence", "additivity",
@@ -23,7 +21,7 @@ RELATION_KINDS = frozenset(
     }
 )
 LAYOUTS = frozenset({"overlay", "side_by_side", "sequence"})
-# Line style for a relation's drawn construction (e.g. an auxiliary projection).
+# 关系构造线的样式，例如投影辅助线。
 RELATION_STYLES = frozenset({"solid", "dashed"})
 
 VECTOR_DIMENSIONS = frozenset({2, 3})
@@ -104,9 +102,7 @@ def validate_semantic_value(value: object, path: str) -> tuple[SemanticIssue, ..
 
 
 def _validate_semantic_value(value: object, path: str) -> None:
-    # A staged composition carries a bounded sequence of matrices.  Keep this
-    # exception explicit and path-scoped so arbitrary nested payloads remain
-    # rejected by the normal semantic vocabulary.
+    # 分阶段复合只允许有界矩阵序列，其余嵌套载荷仍按普通词汇表拒绝。
     if path.endswith((".matrices", ".elementary_matrices")):
         _validate_matrix_sequence(value, path)
         return

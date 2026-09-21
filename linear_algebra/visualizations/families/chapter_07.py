@@ -229,7 +229,7 @@ def compile_chapter_07(topic, semantics, context=None):
                 for name in d.relation_names:
                     relation_ops(name, stage.id, f'{topic}__stage__{d.name}__{name}')
         evidence.pop('orthogonalization', None)
-        # Disk and freshly compiled operations use the same JSON representation.
+        # 磁盘数据与即时编译操作使用同一 JSON 表示。
         return json.loads(json.dumps({'operations': scene.operations, 'aliases': scene.aliases, 'evidence': evidence}))
     except (ValueError, TypeError, KeyError, np.linalg.LinAlgError) as error:
         raise VisualCompileError((CompileIssue('invalid_chapter_07_semantics', '$.visual_semantics', str(error)),)) from error
