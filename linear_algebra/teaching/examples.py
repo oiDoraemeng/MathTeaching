@@ -24,6 +24,7 @@ SUPPORTED_KINDS = frozenset(
         "cross_product",
         "inner_product",
         "projection",
+        "batch_projection",
         "matrix_transform",
         "determinant",
         "oriented_area",
@@ -31,9 +32,7 @@ SUPPORTED_KINDS = frozenset(
     }
 )
 
-# The check-level tolerance is used for both absolute and relative error.  A
-# non-zero default keeps ordinary decimal examples stable while still making
-# exact integer examples compare exactly enough for teaching content.
+# 校验统一使用绝对和相对容差，兼顾小数稳定性与整数精度。
 DEFAULT_TOLERANCE = 1e-9
 MAX_DIMENSION = 3
 
@@ -173,6 +172,33 @@ def _calculate(kind: str, given: JsonValue) -> _Calculation:
             residual=residual,
         )
 
+    if kind == "batch_projection":
+        if isinstance(given, Mapping):
+            vectors_value = given.get("vectors")
+            direction_value = given.get("direction")
+            if vectors_value is None or direction_value is None:
+                raise ValueError("given mapping is missing vectors/direction operands")
+        else:
+            vectors_value, direction_value = _pair(given, "vectors", "direction")
+        vectors = tuple(_vector(value) for value in _sequence(vectors_value))
+        if not vectors or len(vectors) > 4:
+            raise ValueError("batch projection requires one to four vectors")
+        dimension = len(vectors[0])
+        if any(len(vector) != dimension for vector in vectors):
+            raise ValueError("batch projection vectors must share a dimension")
+        direction = _vector(direction_value, dimension=dimension)
+        denominator = sum(item * item for item in direction)
+        if math.isclose(denominator, 0.0, abs_tol=0.0, rel_tol=0.0):
+            raise ValueError("projection direction must be non-zero")
+        value = tuple(
+            tuple(
+                sum(x * y for x, y in zip(vector, direction)) / denominator * item
+                for item in direction
+            )
+            for vector in vectors
+        )
+        return _named(value, result=value, projection=value, projections=value)
+
     if kind == "matrix_transform":
         matrix_value, vector_value = _pair(given, "matrix", "vector")
         matrix = _matrix(matrix_value)
@@ -265,8 +291,7 @@ def _normalise(value: JsonValue) -> JsonValue:
 def _pair(value: JsonValue, first_key: str, second_key: str) -> tuple[JsonValue, JsonValue]:
     if isinstance(value, Mapping):
         if first_key not in value or second_key not in value:
-            # Accept common descriptive aliases without accepting arbitrary
-            # expressions or executable payloads.
+            # 接受常用描述别名，但拒绝任意表达式和可执行载荷。
             aliases = {
                 ("vector", "direction"): ("v", "u"),
                 ("matrix", "vector"): ("A", "x"),

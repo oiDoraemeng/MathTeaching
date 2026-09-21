@@ -2,85 +2,87 @@
   "claims": [
     {
       "entity_refs": [
-        "entity.ch04.linear-map.definition.map_T",
-        "entity.ch04.linear-map.definition.u",
-        "entity.ch04.linear-map.definition.v",
-        "entity.ch04.linear-map.definition.sum_test",
-        "entity.ch04.linear-map.definition.T_u",
-        "entity.ch04.linear-map.definition.T_v",
-        "entity.ch04.linear-map.definition.T_sum",
-        "entity.ch04.linear-map.definition.homogeneity_test",
-        "entity.ch04.linear-map.definition.T_scaled",
-        "entity.ch04.linear-map.definition.origin"
+        "entity.ch04.linear-map.definition.stretch_map",
+        "entity.ch04.linear-map.definition.stretch_result",
+        "entity.ch04.linear-map.definition.translation_shift",
+        "entity.ch04.linear-map.definition.translation_result"
       ],
       "explanation_refs": [
         "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
+        "worked_examples"
       ],
-      "formula": "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
+      "formula": "T(u+v)=T(u)+T(v),\\quad T(kv)=k\\cdot T(v)",
       "formula_symbols": [
-        "map_T",
-        "u"
+        "T",
+        "u",
+        "v"
       ],
       "id": "claim.ch04.linear-map.definition",
       "relation_refs": [
-        "relation.ch04.linear-map.definition.map_u",
-        "relation.ch04.linear-map.definition.map_v",
-        "relation.ch04.linear-map.definition.input_sum",
-        "relation.ch04.linear-map.definition.additivity_test",
-        "relation.ch04.linear-map.definition.input_scaling",
-        "relation.ch04.linear-map.definition.homogeneity_test",
-        "relation.ch04.linear-map.definition.origin_test"
+        "relation.ch04.linear-map.definition.stretch_case",
+        "relation.ch04.linear-map.definition.translation_case"
       ],
       "source_refs": [
-        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.1 线性变换的定义::1::sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb"
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.1 线性变换的定义::1::sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
+        "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.2 是 vs 不是线性变换::1::sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47"
       ],
       "stage_refs": [
-        "stage.ch04.linear-map.definition.origin",
-        "stage.ch04.linear-map.definition.additivity",
-        "stage.ch04.linear-map.definition.homogeneity"
+        "stage.ch04.linear-map.definition.stretch",
+        "stage.ch04.linear-map.definition.translation"
       ],
-      "statement": "4.4.1 线性变换的定义 的数学主张由显式对象、关系和不变量支持。"
+      "statement": "映射 T 是线性变换，当且仅当它满足加性与齐性。"
     }
   ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch04.linear-map.definition"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch04.linear-map.definition.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.oriented-area"
-    }
-  ],
+  "connections": [],
   "explanation": {
+    "analogy_boundary": "",
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch04.linear-map.definition"
+          ],
+          "example_ref": "example.ch04.linear-map.definition.stretch",
+          "id": "case.ch04.linear-map.definition.stretch",
+          "purpose": "拉伸（是）",
+          "stage_refs": [
+            "stage.ch04.linear-map.definition.stretch"
+          ],
+          "topic_id": "ch04.linear-map.definition"
+        },
+        {
+          "claim_refs": [
+            "claim.ch04.linear-map.definition"
+          ],
+          "example_ref": "example.ch04.linear-map.definition.translation",
+          "id": "case.ch04.linear-map.definition.translation",
+          "purpose": "平移（不是）",
+          "stage_refs": [
+            "stage.ch04.linear-map.definition.translation"
+          ],
+          "topic_id": "ch04.linear-map.definition"
+        }
+      ],
+      "default_pane_count": 2
+    },
     "conclusion": "",
     "connections": [],
-    "definition": "#### 4.4.1 线性变换的定义\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。",
+    "definition": "定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。\n\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 旋转 | $T(x,y)=(xcos\\theta-ysin\\theta, xsin\\theta+ycos\\theta)$ | 平移 | $T(x,y)=(x+1, y)$ |\n| 拉伸 | $T(x,y)=(ax, by)$ | 平方 | $T(x)=x^{2}$ |\n| 投影 | $T(v)=\\operatorname{Proj}(v)$ | 加常数 | $T(v)=v+b (b\\neq0)$ |\n\n判断平移：$T(v_{1}+v_{2})=(v_{11}+v_{21}+1, v_{12}+v_{22})$，但 $T(v_{1})+T(v_{2})=(v_{11}+1+v_{21}+1, ... ) \\rightarrow$ 加性不成立。",
     "derivation": [],
-    "formula": "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
+    "formula": "",
     "geometric_meaning": "",
     "intuition": "",
-    "invariants": [
-      "origin_fixed",
-      "additivity",
-      "homogeneity"
-    ],
+    "invariants": [],
     "pitfalls": [],
     "read_guide": [],
     "searchable_text": [
+      "线性变换的定义",
       "4.4.1 线性变换的定义",
-      "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
-      "#### 4.4.1 线性变换的定义\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。",
-      "origin_fixed",
-      "additivity",
-      "homogeneity"
+      "T(\\boldsymbol u+\\boldsymbol v)=T(\\boldsymbol u)+T(\\boldsymbol v),\\quad T(k\\boldsymbol v)=kT(\\boldsymbol v)",
+      "#### 4.4.1 线性变换的定义\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。\n#### 4.4.2 是 vs 不是线性变换\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 旋转 | $T(x,y)=(xcos\\theta-ysin\\theta, xsin\\theta+ycos\\theta)$ | 平移 | $T(x,y)=(x+1, y)$ |\n| 拉伸 | $T(x,y)=(ax, by)$ | 平方 | $T(x)=x^{2}$ |\n| 投影 | $T(v)=\\operatorname{Proj}(v)$ | 加常数 | $T(v)=v+b (b\\neq0)$ |\n判断平移：$T(v_{1}+v_{2})=(v_{11}+v_{21}+1, v_{12}+v_{22})$，但 $T(v_{1})+T(v_{2})=(v_{11}+1+v_{21}+1, ... ) \\rightarrow$ 加性不成立。",
+      "stretch_additivity",
+      "stretch_homogeneity",
+      "translation_not_additive"
     ],
     "sections": [
       {
@@ -88,88 +90,39 @@
           "claim.ch04.linear-map.definition"
         ],
         "id": "definition",
-        "text": "#### 4.4.1 线性变换的定义\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "formula",
-        "text": "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
-        "title": "formula"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "derivation",
-        "text": "derivation: 4.4.1 线性变换的定义。",
-        "title": "derivation"
+        "text": "",
+        "title": "定义"
       },
       {
         "claim_refs": [
           "claim.ch04.linear-map.definition"
         ],
         "id": "worked_examples",
-        "text": "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "geometric_meaning",
-        "text": "geometric_meaning: 4.4.1 线性变换的定义。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 4.4.1 线性变换的定义。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "connections",
-        "text": "connections: 4.4.1 线性变换的定义。",
-        "title": "connections"
-      },
-      {
-        "claim_refs": [],
-        "id": "invariants",
-        "text": "origin_fixed\nadditivity\nhomogeneity",
-        "title": "invariants"
+        "text": "",
+        "title": "数学案例"
       }
     ],
-    "summary": "4.4.1 线性变换的定义",
+    "summary": "",
     "symbol_roles": {
-      "T_scaled": "T_scaled",
-      "T_sum": "T_sum",
-      "T_u": "T_u",
-      "T_v": "T_v",
-      "homogeneity_test": "homogeneity_test",
-      "map_T": "map_T",
-      "origin": "origin",
-      "sum_test": "sum_test",
-      "u": "u",
-      "v": "v"
+      "T": "stretch_map",
+      "u": "stretch_result",
+      "v": "translation_result"
     },
-    "title": "4.4.1 线性变换的定义",
+    "title": "线性变换的定义",
+    "transfer_note": "",
     "worked_examples": [
       {
         "calculation": [
-          "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0"
+          "$$\\boldsymbol u=(1,0),\\qquad \\boldsymbol v=(0,1),\\qquad k=2$$",
+          "$$T(x,y)=(2x,y)$$",
+          "$$T(\\boldsymbol u+\\boldsymbol v)=T(\\boldsymbol u)+T(\\boldsymbol v)=(2,1)$$",
+          "$$T(2\\boldsymbol u)=2T(\\boldsymbol u)=(4,0)$$"
         ],
         "checks": [
           {
             "expected": [
-              4.0,
-              2.0
+              2.0,
+              1.0
             ],
             "name": "result",
             "tolerance": 1e-09
@@ -181,42 +134,80 @@
         "given": [
           [
             [
-              2.0,
-              1.0
+              2,
+              0
             ],
             [
-              0.0,
-              1.0
+              0,
+              1
             ]
           ],
           [
-            1.0,
-            2.0
+            1,
+            1
           ]
         ],
-        "id": "example.ch04.linear-map.definition",
+        "id": "example.ch04.linear-map.definition.stretch",
         "kind": "matrix_transform",
         "result": [
-          4.0,
-          2.0
+          2.0,
+          1.0
         ],
-        "title": "主题数值例"
+        "title": "拉伸（是）"
+      },
+      {
+        "calculation": [
+          "$$\\boldsymbol u=(1,0),\\qquad \\boldsymbol v=(0,1)$$",
+          "$$T(x,y)=(x+1,y)$$",
+          "$$T(\\boldsymbol u+\\boldsymbol v)=(2,1)$$",
+          "$$T(\\boldsymbol u)+T(\\boldsymbol v)=(3,1)$$"
+        ],
+        "checks": [
+          {
+            "expected": [
+              3.0,
+              1.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ],
+        "given": [
+          [
+            2,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "id": "example.ch04.linear-map.definition.translation",
+        "kind": "vector_addition",
+        "result": [
+          3.0,
+          1.0
+        ],
+        "title": "平移（不是）"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:bb2c6940ed48a0046ab8c4c8ad8141294325a96e4026fa67b872aea4cd220621",
+    "artifact_digest": "sha256:064c352b1d75083dc2e303fe3cb0ee8fe5f144b8271d7ade5d95b3c9d9a153b4",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:a088fc9a1ab31e5530b5b76ffa79149b9c5d1cbc3febf7b5ba1b66abe8d6e792",
-    "source_hash": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb"
+    "raw_reply_digest": "sha256:a180f0997f2b1deee65a18715fecf21e0d4710af299f971709207272e9d37d9a",
+    "source_hash": "sha256:fe48fd57c8810a6f58de0ad63908fabf577f00acadc6d04c6f9b789d950f77eb"
   },
   "revision": 1,
   "schema_version": 1,
   "source": {
-    "excerpt": "#### 4.4.1 线性变换的定义\n\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。",
+    "excerpt": "#### 4.4.1 线性变换的定义\n\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。\n\n#### 4.4.2 是 vs 不是线性变换\n\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 旋转 | $T(x,y)=(xcos\\theta-ysin\\theta, xsin\\theta+ycos\\theta)$ | 平移 | $T(x,y)=(x+1, y)$ |\n| 拉伸 | $T(x,y)=(ax, by)$ | 平方 | $T(x)=x^{2}$ |\n| 投影 | $T(v)=\\operatorname{Proj}(v)$ | 加常数 | $T(v)=v+b (b\\neq0)$ |\n\n判断平移：$T(v_{1}+v_{2})=(v_{11}+v_{21}+1, v_{12}+v_{22})$，但 $T(v_{1})+T(v_{2})=(v_{11}+1+v_{21}+1, ... ) \\rightarrow$ 加性不成立。",
     "heading_level": 4,
     "heading_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
@@ -227,11 +218,11 @@
       "4.4.2 是 vs 不是线性变换"
     ],
     "occurrence": 1,
-    "source_hash": "sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
+    "source_hash": "sha256:fe48fd57c8810a6f58de0ad63908fabf577f00acadc6d04c6f9b789d950f77eb",
     "source_path": [
       "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
       "4.4 线性变换",
-      "4.4.1 线性变换的定义"
+      "线性变换的定义"
     ],
     "spans": [
       {
@@ -245,6 +236,18 @@
         "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.1 线性变换的定义::1::sha256:d6198e0544e908b18b6eadda434fe9d02f1f8d6f2e83925df13bc489e50e1ccb",
         "start_line": 1374,
         "text": "#### 4.4.1 线性变换的定义\n\n定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。"
+      },
+      {
+        "end_line": 1389,
+        "fingerprint": "sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
+        "heading_path": [
+          "第4章 线性空间、线性无关与线性变换（全书核心枢纽）",
+          "4.4 线性变换",
+          "4.4.2 是 vs 不是线性变换"
+        ],
+        "id": "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.4 线性变换 / 4.4.2 是 vs 不是线性变换::1::sha256:5e2be593d3c015e8b8152d6103b786f196e5d969cac9b9b21555d996fc192c47",
+        "start_line": 1380,
+        "text": "#### 4.4.2 是 vs 不是线性变换\n\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 旋转 | $T(x,y)=(xcos\\theta-ysin\\theta, xsin\\theta+ycos\\theta)$ | 平移 | $T(x,y)=(x+1, y)$ |\n| 拉伸 | $T(x,y)=(ax, by)$ | 平方 | $T(x)=x^{2}$ |\n| 投影 | $T(v)=\\operatorname{Proj}(v)$ | 加常数 | $T(v)=v+b (b\\neq0)$ |\n\n判断平移：$T(v_{1}+v_{2})=(v_{11}+v_{21}+1, v_{12}+v_{22})$，但 $T(v_{1})+T(v_{2})=(v_{11}+1+v_{21}+1, ... ) \\rightarrow$ 加性不成立。"
       }
     ]
   },
@@ -270,14 +273,14 @@
           "claim.ch04.linear-map.definition"
         ],
         "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.map_T",
+        "id": "entity.ch04.linear-map.definition.stretch_map",
         "kind": "matrix",
-        "label": "map_T",
-        "role": "map_T",
+        "label": "T",
+        "role": "stretch_map",
         "value": [
           [
             2.0,
-            1.0
+            0.0
           ],
           [
             0.0,
@@ -290,125 +293,41 @@
           "claim.ch04.linear-map.definition"
         ],
         "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.u",
-        "kind": "vector",
-        "label": "u",
-        "role": "u",
+        "id": "entity.ch04.linear-map.definition.stretch_result",
+        "kind": "point",
+        "label": "T(u+v)",
+        "role": "stretch_result",
+        "value": [
+          2.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.linear-map.definition.translation_shift",
+        "kind": "affine_set",
+        "label": "T",
+        "role": "translation_shift",
         "value": [
           1.0,
-          2.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.v",
-        "kind": "vector",
-        "label": "v",
-        "role": "v",
-        "value": [
-          -1.0,
-          1.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.sum_test",
-        "kind": "vector",
-        "label": "u+v",
-        "role": "sum_test",
-        "value": [
-          0.0,
-          3.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.T_u",
-        "kind": "vector",
-        "label": "T(u)",
-        "role": "T_u",
-        "value": [
-          4.0,
-          2.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.T_v",
-        "kind": "vector",
-        "label": "T(v)",
-        "role": "T_v",
-        "value": [
-          -1.0,
-          1.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.T_sum",
-        "kind": "vector",
-        "label": "T(u+v)",
-        "role": "T_sum",
-        "value": [
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.homogeneity_test",
-        "kind": "vector",
-        "label": "3u",
-        "role": "homogeneity_test",
-        "value": [
-          3.0,
-          6.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.T_scaled",
-        "kind": "vector",
-        "label": "3T(u)",
-        "role": "T_scaled",
-        "value": [
-          12.0,
-          6.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "dimension": 2,
-        "id": "entity.ch04.linear-map.definition.origin",
-        "kind": "point",
-        "label": "O",
-        "role": "origin",
-        "value": [
-          0.0,
           0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ],
+        "dimension": 2,
+        "id": "entity.ch04.linear-map.definition.translation_result",
+        "kind": "point",
+        "label": "T(u+v)",
+        "role": "translation_result",
+        "value": [
+          2.0,
+          1.0
         ]
       }
     ],
@@ -417,231 +336,127 @@
         "claim_refs": [
           "claim.ch04.linear-map.definition"
         ],
-        "id": "relation.ch04.linear-map.definition.map_u",
-        "kind": "maps_to",
+        "id": "relation.ch04.linear-map.definition.stretch_case",
+        "kind": "classification",
         "parameters": {
-          "expected_result": [
-            4.0,
-            2.0
-          ],
-          "matrix": [
-            [
-              2.0,
-              1.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ]
-        },
-        "source_ref": "entity.ch04.linear-map.definition.u",
-        "target_ref": "entity.ch04.linear-map.definition.T_u"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "relation.ch04.linear-map.definition.map_v",
-        "kind": "maps_to",
-        "parameters": {
-          "expected_result": [
-            -1.0,
-            1.0
-          ],
-          "matrix": [
-            [
-              2.0,
-              1.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ]
-        },
-        "source_ref": "entity.ch04.linear-map.definition.v",
-        "target_ref": "entity.ch04.linear-map.definition.T_v"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "relation.ch04.linear-map.definition.input_sum",
-        "kind": "sum",
-        "parameters": {
-          "expected_result": [
-            0.0,
-            3.0
-          ],
-          "other_vector": [
-            -1.0,
-            1.0
-          ]
-        },
-        "source_ref": "entity.ch04.linear-map.definition.u",
-        "target_ref": "entity.ch04.linear-map.definition.sum_test"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "relation.ch04.linear-map.definition.additivity_test",
-        "kind": "additivity",
-        "parameters": {
-          "expected_result": [
-            3.0,
-            3.0
-          ],
-          "matrix": [
-            [
-              2.0,
-              1.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ]
-        },
-        "source_ref": "entity.ch04.linear-map.definition.sum_test",
-        "target_ref": "entity.ch04.linear-map.definition.T_sum"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "relation.ch04.linear-map.definition.input_scaling",
-        "kind": "scalar_multiple",
-        "parameters": {
-          "expected_result": [
-            3.0,
-            6.0
-          ],
-          "scalar": 3.0
-        },
-        "source_ref": "entity.ch04.linear-map.definition.u",
-        "target_ref": "entity.ch04.linear-map.definition.homogeneity_test"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "relation.ch04.linear-map.definition.homogeneity_test",
-        "kind": "homogeneity",
-        "parameters": {
-          "expected_result": [
-            12.0,
-            6.0
-          ],
-          "matrix": [
-            [
-              2.0,
-              1.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ],
-          "scalar": 3.0
-        },
-        "source_ref": "entity.ch04.linear-map.definition.homogeneity_test",
-        "target_ref": "entity.ch04.linear-map.definition.T_scaled"
-      },
-      {
-        "claim_refs": [
-          "claim.ch04.linear-map.definition"
-        ],
-        "id": "relation.ch04.linear-map.definition.origin_test",
-        "kind": "maps_to",
-        "parameters": {
-          "expected_result": [
-            0.0,
+          "image_u": [
+            2.0,
             0.0
           ],
+          "image_v": [
+            0.0,
+            1.0
+          ],
           "matrix": [
             [
               2.0,
-              1.0
+              0.0
             ],
             [
               0.0,
               1.0
             ]
+          ],
+          "scalar": 2.0,
+          "scaled_image": [
+            4.0,
+            0.0
+          ],
+          "scaled_output": [
+            4.0,
+            0.0
+          ],
+          "sum_image": [
+            2.0,
+            1.0
+          ],
+          "sum_of_images": [
+            2.0,
+            1.0
+          ],
+          "u": [
+            1.0,
+            0.0
+          ],
+          "v": [
+            0.0,
+            1.0
           ]
         },
-        "source_ref": "entity.ch04.linear-map.definition.origin",
-        "target_ref": "entity.ch04.linear-map.definition.origin"
+        "source_ref": "entity.ch04.linear-map.definition.stretch_map",
+        "target_ref": "entity.ch04.linear-map.definition.stretch_result"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.linear-map.definition"
+        ],
+        "id": "relation.ch04.linear-map.definition.translation_case",
+        "kind": "not_linear",
+        "parameters": {
+          "image_u": [
+            2.0,
+            0.0
+          ],
+          "image_v": [
+            1.0,
+            1.0
+          ],
+          "shift": [
+            1.0,
+            0.0
+          ],
+          "sum_image": [
+            2.0,
+            1.0
+          ],
+          "sum_of_images": [
+            3.0,
+            1.0
+          ],
+          "u": [
+            1.0,
+            0.0
+          ],
+          "v": [
+            0.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch04.linear-map.definition.translation_shift",
+        "target_ref": "entity.ch04.linear-map.definition.translation_result"
       }
     ],
     "scene_family": "basis_change",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
+        "caption": "T(\\boldsymbol u+\\boldsymbol v)=T(\\boldsymbol u)+T(\\boldsymbol v)=(2,1),\\quad T(2\\boldsymbol u)=2T(\\boldsymbol u)=(4,0)",
         "expected_invariants": [
-          "origin_fixed"
+          "stretch_additivity",
+          "stretch_homogeneity"
         ],
-        "id": "stage.ch04.linear-map.definition.origin",
-        "input_entity_refs": [
-          "entity.ch04.linear-map.definition.map_T",
-          "entity.ch04.linear-map.definition.origin"
-        ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch04.linear-map.definition.origin"
-        ],
+        "id": "stage.ch04.linear-map.definition.stretch",
+        "input_entity_refs": [],
+        "layout": "side_by_side",
+        "output_entity_refs": [],
         "relation_refs": [
-          "relation.ch04.linear-map.definition.origin_test"
+          "relation.ch04.linear-map.definition.stretch_case"
         ],
-        "title": "原点固定"
+        "title": "拉伸（是）"
       },
       {
-        "caption": "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
+        "caption": "T(\\boldsymbol u+\\boldsymbol v)=(2,1)\\ne(3,1)=T(\\boldsymbol u)+T(\\boldsymbol v)",
         "expected_invariants": [
-          "additivity"
+          "translation_not_additive"
         ],
-        "id": "stage.ch04.linear-map.definition.additivity",
-        "input_entity_refs": [
-          "entity.ch04.linear-map.definition.u",
-          "entity.ch04.linear-map.definition.v",
-          "entity.ch04.linear-map.definition.sum_test"
-        ],
-        "layout": "overlay",
-        "output_entity_refs": [
-          "entity.ch04.linear-map.definition.T_u",
-          "entity.ch04.linear-map.definition.T_v",
-          "entity.ch04.linear-map.definition.T_sum"
-        ],
+        "id": "stage.ch04.linear-map.definition.translation",
+        "input_entity_refs": [],
+        "layout": "side_by_side",
+        "output_entity_refs": [],
         "relation_refs": [
-          "relation.ch04.linear-map.definition.map_u",
-          "relation.ch04.linear-map.definition.map_v",
-          "relation.ch04.linear-map.definition.input_sum",
-          "relation.ch04.linear-map.definition.additivity_test"
+          "relation.ch04.linear-map.definition.translation_case"
         ],
-        "title": "可加性"
-      },
-      {
-        "caption": "T(u+v)=T(u)+T(v),\\ T(3u)=3T(u),\\ T(0)=0",
-        "expected_invariants": [
-          "homogeneity"
-        ],
-        "id": "stage.ch04.linear-map.definition.homogeneity",
-        "input_entity_refs": [
-          "entity.ch04.linear-map.definition.u",
-          "entity.ch04.linear-map.definition.homogeneity_test"
-        ],
-        "layout": "overlay",
-        "output_entity_refs": [
-          "entity.ch04.linear-map.definition.T_u",
-          "entity.ch04.linear-map.definition.T_scaled"
-        ],
-        "relation_refs": [
-          "relation.ch04.linear-map.definition.input_scaling",
-          "relation.ch04.linear-map.definition.homogeneity_test"
-        ],
-        "title": "齐次性"
+        "title": "平移（不是）"
       }
     ]
   }

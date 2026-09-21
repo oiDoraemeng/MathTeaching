@@ -26,7 +26,7 @@ def _compile(topic: str, payload: dict | None = None):
 
 
 def test_every_topic_declares_exact_typed_graph_contract_and_claim_coverage():
-    assert len(TOPICS)==6
+    assert len(TOPICS)==4
     for topic in TOPICS:
         spec=semantic_for(topic); artifact=_artifact(topic); contract=contract_for(topic); semantics=artifact.visual_semantics
         assert semantics.scene_kind==spec.scene_kind
@@ -69,9 +69,7 @@ MUTATIONS={
  "ch04.subspace.col-null":("kernel_vector",[1,1]),
  "ch04.dependence.redundancy":("independent_set",[[1,0,0],[0,1,0],[1,1,0]]),
  "ch04.basis.definition":("oblique_basis",[[1,1],[1,1]]),
- "ch04.linear-map.definition":("T_sum",[4,3]),
- "ch04.linear-map.compare":("square_map",[[-1,2],[0,0],[2,4]]),
- "ch04.linear-map.matrix-columns":("column_2",[0,3]),
+ "ch04.linear-map.definition":("translation_result",[3,1]),
 }
 
 
@@ -124,8 +122,7 @@ def test_all_plans_validate_and_execute_transactionally(topic):
 
 def test_non_identity_topics_do_not_use_identity_or_first_vector_fallbacks():
     expected={
-        "ch04.linear-map.definition":[[2.0,1.0],[0.0,1.0]],
-        "ch04.linear-map.matrix-columns":[[2.0,-1.0],[1.0,3.0]],
+        "ch04.linear-map.definition":[[2.0,0.0],[0.0,1.0]],
     }
     for topic,matrix in expected.items():
         matrices=[op["matrix"] for op in _compile(topic).plan.operations if op["op"]=="geometry.transformed_grid"]
@@ -166,10 +163,10 @@ def test_col_null_states_both_definitions_with_one_projection_scene():
     assert len({(end[0],end[1]) for end in outputs.values()})==3
     # 4.1 是紧凑的多向量比较图；线宽在计划中声明，而箭头尺寸由三维渲染器统一固定。
     vector_symbols={
-        "input_vector_a":r"\boldsymbol{x}_{1}", "output_vector_a":r"\boldsymbol{A}\boldsymbol{x}_{1}",
-        "input_vector_b":r"\boldsymbol{x}_{2}", "output_vector_b":r"\boldsymbol{A}\boldsymbol{x}_{2}",
-        "input_vector_c":r"\boldsymbol{x}_{3}", "output_vector_c":r"\boldsymbol{A}\boldsymbol{x}_{3}",
-        "kernel_vector":r"\boldsymbol{k}",
+        "input_vector_a":r"x_{1}", "output_vector_a":r"Ax_{1}",
+        "input_vector_b":r"x_{2}", "output_vector_b":r"Ax_{2}",
+        "input_vector_c":r"x_{3}", "output_vector_c":r"Ax_{3}",
+        "kernel_vector":r"k",
     }
     for role, symbol in vector_symbols.items():
         vector=ops[f"ch04__entity__{role}"]
@@ -254,16 +251,16 @@ def test_final_review_corruption_fails_actual_math_not_only_fixture_equality(top
         _mathematical_evidence(topic,{e.role:e for e in semantics.entities},semantics.relations)
 
 
-def test_square_failure_is_computed_from_relation_inputs():
+def test_translation_failure_is_computed_from_relation_inputs():
     from dataclasses import replace
     from linear_algebra.visualizations.families.chapter_04 import _mathematical_evidence
-    topic="ch04.linear-map.compare"; semantics=_artifact(topic).visual_semantics
-    relations=tuple(replace(r,parameters={"inputs":[2,3],"separate_sum":13.0,"sum_image":25.0}) if r.id.endswith("square_failure") else r for r in semantics.relations)
-    evidence=_mathematical_evidence(topic,{e.role:e for e in semantics.entities},relations)
-    assert evidence["square_sum_image"]==25
-    assert evidence["square_separate_sum"]==13
-    relations=tuple(replace(r,parameters={"inputs":[0,3],"separate_sum":9.0,"sum_image":9.0}) if r.id.endswith("square_failure") else r for r in relations)
-    with pytest.raises(VisualCompileError):
+    topic="ch04.linear-map.definition"; semantics=_artifact(topic).visual_semantics
+    relations=tuple(
+        replace(r,parameters={**r.parameters,"sum_of_images":[2,1]})
+        if r.id.endswith("translation_case") else r
+        for r in semantics.relations
+    )
+    with pytest.raises(VisualCompileError,match="translation_not_additive"):
         _mathematical_evidence(topic,{e.role:e for e in semantics.entities},relations)
 
 
@@ -277,9 +274,9 @@ def test_disk_revieweds_are_canonical_and_legacy_index_rows_match_release_baseli
     data=root/"linear_algebra"/"teaching"/"data"
     current=json.loads((data/"index.json").read_text(encoding="utf-8"))
     legacy=lambda payload: [row for row in payload["topics"] if not row["topic_id"].startswith("ch04.")]
-    assert current["topic_count"] == len(current["topics"]) == 59
+    assert current["topic_count"] == len(current["topics"]) == 57
     assert len({row["topic_id"] for row in current["topics"]}) == current["topic_count"]
-    assert len([row for row in current["topics"] if row["topic_id"].startswith("ch04.")]) == 6
+    assert len([row for row in current["topics"] if row["topic_id"].startswith("ch04.")]) == 4
     # 重新发布第四章只允许改动 ch04 行；其余章节的行必须逐字节保持。
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp=Path(tmpdir)

@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:da301e1afbe9f0dc7e3248cd5c6caa403ad4a2e27e40bae15cdccfbe0d4416d0",
+  "artifact_digest": "sha256:31321aea6a137285c249787472ce81980bd2c91df6b21d75a83aa08c8a71a5e4",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:2bff479788502a9884aa81bb6991c08de85d5d3a961c4b98616b1edffc69105c",
   "plan": {
     "operations": [
       {
-        "alias": "sem__mv_basis_ae1__origin",
+        "alias": "sem__mv_basis_e1__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,26 +15,54 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__mv_basis_ae1__end",
+        "alias": "sem__mv_basis_e1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "E1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_e1",
+        "color": "#2A9D8F",
+        "end": "sem__mv_basis_e1__end",
+        "kind": "vector",
+        "label": "e1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_basis_e1__origin"
+      },
+      {
+        "alias": "sem__mv_basis_e2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_e2__end",
         "coordinates": [
           0.0,
           1.0
         ],
-        "name": "F1",
+        "name": "E2",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__mv_basis_ae1",
-        "color": "#2F6BFF",
-        "end": "sem__mv_basis_ae1__end",
+        "alias": "sem__mv_basis_e2",
+        "color": "#7B61FF",
+        "end": "sem__mv_basis_e2__end",
         "kind": "vector",
-        "label": "Ae1",
+        "label": "e2",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__mv_basis_ae1__origin"
+        "start": "sem__mv_basis_e2__origin"
       },
       {
-        "alias": "sem__mv_basis_ae2__origin",
+        "alias": "sem__mv_basis_x_a__origin",
         "coordinates": [
           0.0,
           0.0
@@ -43,82 +71,54 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__mv_basis_ae2__end",
+        "alias": "sem__mv_basis_x_a__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "X",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_x_a",
+        "color": "#2F6BFF",
+        "end": "sem__mv_basis_x_a__end",
+        "kind": "vector",
+        "label": "x",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_basis_x_a__origin"
+      },
+      {
+        "alias": "sem__mv_basis_rx_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_rx_a__end",
         "coordinates": [
           -1.0,
-          0.0
-        ],
-        "name": "F2",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__mv_basis_ae2",
-        "color": "#F08A24",
-        "end": "sem__mv_basis_ae2__end",
-        "kind": "vector",
-        "label": "Ae2",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__mv_basis_ae2__origin"
-      },
-      {
-        "alias": "sem__mv_basis_v1__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__mv_basis_v1__end",
-        "coordinates": [
-          1.0,
-          1.0
-        ],
-        "name": "V1",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__mv_basis_v1",
-        "color": "#2F6BFF",
-        "end": "sem__mv_basis_v1__end",
-        "kind": "vector",
-        "label": "v1",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__mv_basis_v1__origin"
-      },
-      {
-        "alias": "sem__mv_basis_v2__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__mv_basis_v2__end",
-        "coordinates": [
-          1.0,
           2.0
         ],
-        "name": "V2",
+        "name": "Y",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__mv_basis_v2",
+        "alias": "sem__mv_basis_rx_a",
         "color": "#F08A24",
-        "end": "sem__mv_basis_v2__end",
+        "end": "sem__mv_basis_rx_a__end",
         "kind": "vector",
-        "label": "v2",
+        "label": "Rx",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__mv_basis_v2__origin"
+        "start": "sem__mv_basis_rx_a__origin"
       },
       {
-        "alias": "sem__mv_basis_bv1__origin",
+        "alias": "sem__mv_basis_b1__origin",
         "coordinates": [
           0.0,
           0.0
@@ -127,58 +127,114 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__mv_basis_bv1__end",
+        "alias": "sem__mv_basis_b1__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "B1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_b1",
+        "color": "#2A9D8F",
+        "end": "sem__mv_basis_b1__end",
+        "kind": "vector",
+        "label": "b1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_basis_b1__origin"
+      },
+      {
+        "alias": "sem__mv_basis_b2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_b2__end",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "B2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_b2",
+        "color": "#7B61FF",
+        "end": "sem__mv_basis_b2__end",
+        "kind": "vector",
+        "label": "b2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_basis_b2__origin"
+      },
+      {
+        "alias": "sem__mv_basis_x_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_x_b__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "X",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_x_b",
+        "color": "#2F6BFF",
+        "end": "sem__mv_basis_x_b__end",
+        "kind": "vector",
+        "label": "x",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_basis_x_b__origin"
+      },
+      {
+        "alias": "sem__mv_basis_rx_b__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_basis_rx_b__end",
         "coordinates": [
           -1.0,
-          1.0
+          2.0
         ],
-        "name": "G1",
+        "name": "Y",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__mv_basis_bv1",
-        "color": "#2F6BFF",
-        "end": "sem__mv_basis_bv1__end",
-        "kind": "vector",
-        "label": "Bv1",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__mv_basis_bv1__origin"
-      },
-      {
-        "alias": "sem__mv_basis_bv2__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__mv_basis_bv2__end",
-        "coordinates": [
-          -2.0,
-          1.0
-        ],
-        "name": "G2",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__mv_basis_bv2",
+        "alias": "sem__mv_basis_rx_b",
         "color": "#F08A24",
-        "end": "sem__mv_basis_bv2__end",
+        "end": "sem__mv_basis_rx_b__end",
         "kind": "vector",
-        "label": "Bv2",
+        "label": "Rx",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__mv_basis_bv2__origin"
+        "start": "sem__mv_basis_rx_b__origin"
       },
       {
         "alias": "sem__mv_basis_grid_a__label",
         "op": "annotation.upsert",
         "position": [
           -1.4,
-          1.45
+          2.45
         ],
         "text": "$A=\\left[\\genfrac{}{}{0}{}{0\\quad -1}{1\\quad \\ 0}\\right]$"
       },
@@ -190,8 +246,8 @@
             1.0
           ],
           [
-            1.0,
-            2.0
+            0.0,
+            1.0
           ]
         ],
         "op": "linear_algebra.coordinate_transform",
@@ -202,30 +258,30 @@
         "alias": "sem__mv_basis_grid_b__label",
         "op": "annotation.upsert",
         "position": [
-          -5.4,
-          3.45
+          -1.4,
+          2.45
         ],
-        "text": "$B=\\left[\\genfrac{}{}{0}{}{-3\\quad -5}{\\ 2\\quad \\ 3}\\right]$"
+        "text": "$B=\\left[\\genfrac{}{}{0}{}{-1\\quad -2}{\\ 1\\quad \\ 1}\\right]$"
       },
       {
         "bounds": [
-          -5.0,
-          1.0,
+          -1.0,
+          2.0,
           0.0,
-          3.0
+          2.0
         ],
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "2d",
-    "summary": "矩阵的列与新基坐标",
+    "summary": "基",
     "version": 1
   },
-  "plan_digest": "sha256:f47256a7ec2ea5d36f38a034cc3bda634492135520123b96428302391b082e40",
+  "plan_digest": "sha256:739f6934b0fabaf3644295c38db462cc06e95051ff83d5814117023f26cf81ad",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 16,
+  "revision": 19,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:ef6de7167277e0291b976d335c4a9c431c26d6aa51cb06e8d39f993d7806e088",
@@ -238,21 +294,29 @@
       "caption": "",
       "id": "stage.case.ch02.matrix.basis.1",
       "layout": "overlay",
-      "title": "第一步：标准基下的旋转",
+      "title": "第一步：标准基描述",
       "visible_aliases": [
         "sem__mv_basis_grid_a",
         "sem__mv_basis_grid_a__label",
-        "sem__mv_basis_ae1",
-        "sem__mv_basis_ae1__end",
-        "sem__mv_basis_ae1__origin",
-        "sem__mv_basis_ae2",
-        "sem__mv_basis_ae2__end",
-        "sem__mv_basis_ae2__origin"
+        "sem__mv_basis_e1",
+        "sem__mv_basis_e1__end",
+        "sem__mv_basis_e1__origin",
+        "sem__mv_basis_e2",
+        "sem__mv_basis_e2__end",
+        "sem__mv_basis_e2__origin",
+        "sem__mv_basis_x_a",
+        "sem__mv_basis_x_a__end",
+        "sem__mv_basis_x_a__origin",
+        "sem__mv_basis_rx_a",
+        "sem__mv_basis_rx_a__end",
+        "sem__mv_basis_rx_a__origin"
       ],
       "visible_refs": [
         "mv_basis_grid_a",
-        "mv_basis_ae1",
-        "mv_basis_ae2"
+        "mv_basis_e1",
+        "mv_basis_e2",
+        "mv_basis_x_a",
+        "mv_basis_rx_a"
       ]
     },
     {
@@ -267,26 +331,26 @@
       "visible_aliases": [
         "sem__mv_basis_grid_b",
         "sem__mv_basis_grid_b__label",
-        "sem__mv_basis_v1",
-        "sem__mv_basis_v1__end",
-        "sem__mv_basis_v1__origin",
-        "sem__mv_basis_v2",
-        "sem__mv_basis_v2__end",
-        "sem__mv_basis_v2__origin",
-        "sem__mv_basis_bv1",
-        "sem__mv_basis_bv1__end",
-        "sem__mv_basis_bv1__origin",
-        "sem__mv_basis_bv2",
-        "sem__mv_basis_bv2__end",
-        "sem__mv_basis_bv2__origin",
+        "sem__mv_basis_b1",
+        "sem__mv_basis_b1__end",
+        "sem__mv_basis_b1__origin",
+        "sem__mv_basis_b2",
+        "sem__mv_basis_b2__end",
+        "sem__mv_basis_b2__origin",
+        "sem__mv_basis_x_b",
+        "sem__mv_basis_x_b__end",
+        "sem__mv_basis_x_b__origin",
+        "sem__mv_basis_rx_b",
+        "sem__mv_basis_rx_b__end",
+        "sem__mv_basis_rx_b__origin",
         "sem__rel.case.ch02.matrix.basis.change"
       ],
       "visible_refs": [
         "mv_basis_grid_b",
-        "mv_basis_v1",
-        "mv_basis_v2",
-        "mv_basis_bv1",
-        "mv_basis_bv2",
+        "mv_basis_b1",
+        "mv_basis_b2",
+        "mv_basis_x_b",
+        "mv_basis_rx_b",
         "rel.case.ch02.matrix.basis.change"
       ]
     }

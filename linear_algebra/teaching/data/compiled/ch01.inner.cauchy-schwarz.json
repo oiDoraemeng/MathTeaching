@@ -1,38 +1,10 @@
 {
-  "artifact_digest": "sha256:fef343a3d3465b0002232eedfe2065841c3d0ed599cfa0429d4ddbe7a6dfe402",
+  "artifact_digest": "sha256:20799277a6b67c990bf0d9a3b9542ade2495cbe14a7905a15a76ac8882967b96",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:db082a9fd18302bad307dfb5c8c1d4ec13eb0637a40a25a1116fe0c98d0cf8af",
   "plan": {
     "operations": [
-      {
-        "alias": "sem__equality_a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__equality_a__end",
-        "coordinates": [
-          3.0,
-          0.0
-        ],
-        "name": "A",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__equality_a",
-        "color": "#2F6BFF",
-        "end": "sem__equality_a__end",
-        "kind": "vector",
-        "label": "a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__equality_a__origin"
-      },
       {
         "alias": "sem__equality_b__origin",
         "coordinates": [
@@ -45,7 +17,7 @@
       {
         "alias": "sem__equality_b__end",
         "coordinates": [
-          2.0,
+          5.0,
           0.0
         ],
         "name": "B",
@@ -62,6 +34,34 @@
         "start": "sem__equality_b__origin"
       },
       {
+        "alias": "sem__equality_a__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__equality_a__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "A",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__equality_a",
+        "color": "#2F6BFF",
+        "end": "sem__equality_a__end",
+        "kind": "vector",
+        "label": "a",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__equality_a__origin"
+      },
+      {
         "alias": "sem__strict_a__origin",
         "coordinates": [
           0.0,
@@ -73,7 +73,7 @@
       {
         "alias": "sem__strict_a__end",
         "coordinates": [
-          3.0,
+          1.0,
           0.0
         ],
         "name": "A",
@@ -101,8 +101,8 @@
       {
         "alias": "sem__strict_b__end",
         "coordinates": [
-          2.0,
-          2.0
+          3.0,
+          4.0
         ],
         "name": "B",
         "op": "point.upsert"
@@ -129,7 +129,7 @@
       {
         "alias": "sem__strict_p__end",
         "coordinates": [
-          2.0,
+          3.0,
           0.0
         ],
         "name": "P",
@@ -146,15 +146,6 @@
         "start": "sem__strict_p__origin"
       },
       {
-        "alias": "sem__strict_H",
-        "coordinates": [
-          2.0,
-          0.0
-        ],
-        "name": "H",
-        "op": "point.upsert"
-      },
-      {
         "alias": "sem__strict_r__origin",
         "coordinates": [
           0.0,
@@ -167,7 +158,7 @@
         "alias": "sem__strict_r__end",
         "coordinates": [
           0.0,
-          2.0
+          4.0
         ],
         "name": "R",
         "op": "point.upsert"
@@ -186,35 +177,17 @@
         "alias": "sem__rel.cauchy-schwarz.strict.projection",
         "color": "#F08A24",
         "direction": [
-          3.0,
+          1.0,
           0.0
         ],
-        "foot_alias": "sem__strict_H",
+        "foot_alias": "sem__rel.cauchy-schwarz.strict.projection__foot",
         "op": "geometry.projection",
         "residual_alias": "sem__strict_r",
         "result_alias": "sem__strict_a",
         "style": "dashed",
         "vector": [
-          2.0,
-          2.0
-        ]
-      },
-      {
-        "alias": "sem__rel.cauchy-schwarz.strict.orthogonal",
-        "color": "#F08A24",
-        "first": [
-          0.0,
-          2.0
-        ],
-        "op": "geometry.right_angle_marker",
-        "second": [
           3.0,
-          0.0
-        ],
-        "size": 0.3,
-        "vertex": [
-          2.0,
-          0.0
+          4.0
         ]
       },
       {
@@ -229,43 +202,25 @@
             0.0
           ],
           [
-            3.0,
+            5.0,
             0.0
           ],
           [
-            3.0,
-            3.0
+            5.0,
+            5.0
           ],
           [
             -0.0,
-            3.0
+            5.0
           ]
         ]
       },
       {
-        "alias": "sem__stage.cauchy-schwarz.equality__title",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          2.65
-        ],
-        "text": "案例一：等号成立"
-      },
-      {
-        "alias": "sem__stage.cauchy-schwarz.strict__title",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          2.65
-        ],
-        "text": "案例二：严格不等式"
-      },
-      {
         "bounds": [
           0.0,
-          3.0,
+          5.0,
           0.0,
-          2.0
+          4.0
         ],
         "op": "view.fit",
         "padding": 1.15
@@ -275,10 +230,10 @@
     "summary": "柯西—施瓦茨不等式",
     "version": 1
   },
-  "plan_digest": "sha256:4805679ed745a6c293d59869a6cc8b826fdbb910d54f1c2cc2a06580a7173a02",
+  "plan_digest": "sha256:032d7e836cc4cb664a89a089514f814e29b402082b033e3412f1f91da29c1868",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 21,
+  "revision": 23,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:acb3755ccad90340b78463bcebf6fa74e07877c6addc4a61067e5e05d4ec5de0",
@@ -288,34 +243,10 @@
         0.0,
         2.65
       ],
-      "caption": "$\\boldsymbol a=(3,0)$ 与 $\\boldsymbol b=(2,0)$ 共线，$\\lvert\\boldsymbol a\\cdot\\boldsymbol b\\rvert=\\lvert\\boldsymbol a\\rvert\\lvert\\boldsymbol b\\rvert$。",
-      "id": "stage.cauchy-schwarz.equality",
-      "layout": "overlay",
-      "title": "案例一：等号成立",
-      "visible_aliases": [
-        "sem__equality_a",
-        "sem__equality_a__end",
-        "sem__equality_a__origin",
-        "sem__equality_b",
-        "sem__equality_b__end",
-        "sem__equality_b__origin",
-        "sem__stage.cauchy-schwarz.equality__title",
-        "sem__orthogonal__1"
-      ],
-      "visible_refs": [
-        "equality_a",
-        "equality_b"
-      ]
-    },
-    {
-      "anchor": [
-        0.0,
-        2.65
-      ],
-      "caption": "$\\boldsymbol p=(2,0)$ 是 $\\boldsymbol b$ 在 $\\boldsymbol a$ 方向上的投影，$\\boldsymbol r=(0,2)$ 与 $\\boldsymbol a$ 正交。",
+      "caption": "$\\boldsymbol p=(3,0)$ 是 $\\boldsymbol b$ 在 $\\boldsymbol a$ 方向上的投影，$\\boldsymbol r=(0,4)$ 与 $\\boldsymbol a$ 正交。",
       "id": "stage.cauchy-schwarz.strict",
       "layout": "overlay",
-      "title": "案例二：严格不等式",
+      "title": "案例一：严格不等式",
       "visible_aliases": [
         "sem__strict_a",
         "sem__strict_a__end",
@@ -329,20 +260,36 @@
         "sem__strict_r",
         "sem__strict_r__end",
         "sem__strict_r__origin",
-        "sem__strict_H",
-        "sem__rel.cauchy-schwarz.strict.projection",
-        "sem__rel.cauchy-schwarz.strict.orthogonal",
-        "sem__stage.cauchy-schwarz.strict__title",
-        "sem__orthogonal__2"
+        "sem__rel.cauchy-schwarz.strict.projection"
       ],
       "visible_refs": [
         "strict_a",
         "strict_b",
         "strict_p",
         "strict_r",
-        "strict_H",
-        "rel.cauchy-schwarz.strict.projection",
-        "rel.cauchy-schwarz.strict.orthogonal"
+        "rel.cauchy-schwarz.strict.projection"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "$\\boldsymbol a=(1,0)$ 与 $\\boldsymbol b=(5,0)$ 共线，$\\lvert\\boldsymbol a\\cdot\\boldsymbol b\\rvert=\\lvert\\boldsymbol a\\rvert\\lvert\\boldsymbol b\\rvert$。",
+      "id": "stage.cauchy-schwarz.equality",
+      "layout": "overlay",
+      "title": "案例二：等号成立",
+      "visible_aliases": [
+        "sem__equality_a",
+        "sem__equality_a__end",
+        "sem__equality_a__origin",
+        "sem__equality_b",
+        "sem__equality_b__end",
+        "sem__equality_b__origin"
+      ],
+      "visible_refs": [
+        "equality_a",
+        "equality_b"
       ]
     }
   ],

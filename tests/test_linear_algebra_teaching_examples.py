@@ -30,6 +30,20 @@ def test_matrix_transform_example_is_recomputed() -> None:
     assert result.checks[0].actual == (-2.0, 1.0)
 
 
+def test_batch_projection_example_recomputes_every_vector() -> None:
+    example = _example(
+        "batch_projection",
+        ([[3, 2], [-2, 3], [1, -3]], [1, 0]),
+        ((3.0, 0.0), (-2.0, 0.0), (1.0, 0.0)),
+        name="projections",
+    )
+
+    result = verify_worked_example(example)
+
+    assert result.valid is True
+    assert result.checks[0].actual == ((3.0, 0.0), (-2.0, 0.0), (1.0, 0.0))
+
+
 def test_wrong_determinant_is_rejected() -> None:
     example = _example("determinant", [[1, 2], [3, 4]], 6.0, name="determinant")
 

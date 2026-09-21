@@ -105,7 +105,7 @@ export interface CaseProjection {
   steps: string[];
   conclusion: string;
   summary?: string;
-  /** Lecture-grounded prose kept with the artifact for the continuous note view. */
+  /** 随产物保存的讲义原文，用于连续讲义视图。 */
   sourceExcerpt?: string;
   sceneMode?: "2d" | "3d";
   sceneReady?: boolean;

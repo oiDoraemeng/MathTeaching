@@ -145,7 +145,7 @@ describe("MathCaseView structured artifact", () => {
           formula: "\\lvert\\boldsymbol v\\rvert=\\sqrt{x^2+y^2}",
           steps: [],
           conclusion: "",
-          definition: "向量从原点出发。",
+          definition: "向量从原点出发。\n\n$$\\lvert\\boldsymbol v\\rvert=\\sqrt{x^2+y^2}$$",
           geometricMeaning: "箭头长度是模。",
           workedExamples: [
             { id: "example.nonzero", title: "案例一：非零向量的长度", calculation: ["$$\\boldsymbol v=(3,4)$$", "$$\\lvert\\boldsymbol v\\rvert=5$$"], result: 25, checks: [{ name: "result", expected: 25 }] },
@@ -168,7 +168,7 @@ describe("MathCaseView structured artifact", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { name: "案例", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "数学案例", level: 2 })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "案例一：非零向量的长度", level: 3 })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "案例二：零向量", level: 3 })).not.toBeInTheDocument();
     expect(screen.queryByRole("region", { name: "几何图形例子" })).not.toBeInTheDocument();
@@ -179,6 +179,127 @@ describe("MathCaseView structured artifact", () => {
     expect(onSelectStage).toHaveBeenCalledWith("stage.zero");
     fireEvent.click(screen.getByRole("button", { name: "全部显示" }));
     expect(onSetCasePaneCount).toHaveBeenCalledWith(2);
+  });
+
+  it("renders 1.1.1 as one complete definition block without changing its case", () => {
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id: "ch01.vector.magnitude",
+          category: "向量与几何测量",
+          name: "什么是向量",
+          summary:
+            "我们从一个最简单的物理场景出发：\n"
+            + "从宿舍到食堂，\"向北走300米，再向东走400米\"。\n"
+            + "这和\"向东走400米，再向北走300米\"的目标位置完全相同。",
+          formula: "|\\boldsymbol v| = \\sqrt{x^{2} + y^{2}}",
+          steps: [],
+          conclusion: "",
+          definition:
+            "**（向量）** 在平面直角坐标系中，一个向量是一个有向线段。\n\n"
+            + "**（零向量）** 长度为零的向量称为零向量。\n\n"
+            + "**（向量的模）** 向量 $\\boldsymbol v=(x,y)$ 的长度称为模。\n\n"
+            + "$$|\\boldsymbol v|=\\sqrt{x^{2}+y^{2}}$$\n\n"
+            + "例如，$(3,4)$ 的模为 $\\sqrt{9+16}=5$。",
+          sections: [
+            { id: "definition", title: "定义" },
+            { id: "worked_examples", title: "数学案例" },
+          ],
+          workedExamples: [
+            {
+              id: "example.magnitude.nonzero",
+              title: "案例一：$\\boldsymbol v=(3,4)$ 的模",
+              calculation: ["$$|\\boldsymbol v|=\\sqrt{3^2+4^2}=5$$"],
+              result: 25,
+              checks: [],
+            },
+          ],
+          caseLayout: {
+            defaultPaneCount: 1,
+            cases: [
+              {
+                id: "case.magnitude.nonzero",
+                topicId: "ch01.vector.magnitude",
+                exampleRef: "example.magnitude.nonzero",
+                claimRefs: [],
+                stageRefs: ["stage.magnitude.nonzero"],
+                purpose: "案例一：$\\boldsymbol v=(3,4)$ 的模",
+              },
+            ],
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(container.querySelector(".math-case-formula")).toBeNull();
+    expect(container.querySelector(".math-case-section .katex-display")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "数学案例", level: 2 })).toBeInTheDocument();
+  });
+
+  it("renders 2.3 projection matrix as one definition and one batch case", () => {
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id: "ch02.batch.projection",
+          category: "批量投影",
+          name: "投影矩阵",
+          summary: "投影也能批处理——矩阵乘法的雏形已经萌芽。",
+          formula: "",
+          steps: [],
+          conclusion: "",
+          definition:
+            "**（投影矩阵）** 设 $\\boldsymbol u$ 是单位向量（$\\lvert\\boldsymbol u\\rvert=1$）。"
+            + "矩阵 $\\boldsymbol P=\\boldsymbol u\\boldsymbol u^{\\mathsf T}$ 称为沿 $\\boldsymbol u$ 方向的投影矩阵。\n\n"
+            + "$$\\boldsymbol P\\boldsymbol v=(\\boldsymbol u\\cdot\\boldsymbol v)\\boldsymbol u=\\operatorname{Proj}_{\\boldsymbol u}(\\boldsymbol v)$$\n\n"
+            + "例如：投影到 $x$ 轴的投影矩阵 $=\\begin{pmatrix}1&0\\\\0&0\\end{pmatrix}$。",
+          sections: [
+            { id: "definition", title: "定义" },
+            { id: "worked_examples", title: "数学案例" },
+          ],
+          workedExamples: [
+            {
+              id: "example.ch02.batch.projection.batch",
+              title: "案例一：三个向量投影到横轴",
+              calculation: [
+                "$$\\boldsymbol u=(1,0),\\qquad \\boldsymbol P=\\begin{pmatrix}1&0\\\\0&0\\end{pmatrix}$$",
+                "取三个向量：",
+                "$$\\boldsymbol v_1=(3,2),\\qquad \\boldsymbol v_2=(-2,3),\\qquad \\boldsymbol v_3=(1,-3)$$",
+                "$$\\boldsymbol P\\boldsymbol v_1=(3,0),\\qquad \\boldsymbol P\\boldsymbol v_2=(-2,0),\\qquad \\boldsymbol P\\boldsymbol v_3=(1,0)$$",
+              ],
+              result: [[3, 0], [-2, 0], [1, 0]],
+              checks: [],
+            },
+          ],
+          storyboard: [
+            { id: "stage.case.ch02.batch.projection.1", title: "三个向量同时投影到横轴", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+          ],
+          caseLayout: {
+            defaultPaneCount: 1,
+            cases: [
+              {
+                id: "case.ch02.batch.projection.1",
+                topicId: "ch02.batch.projection",
+                exampleRef: "example.ch02.batch.projection.batch",
+                claimRefs: [],
+                stageRefs: ["stage.case.ch02.batch.projection.1"],
+                purpose: "案例一：三个向量投影到横轴",
+              },
+            ],
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "数学案例", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(screen.queryByRole("list", { name: "二维案例选择" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "全部显示" })).not.toBeInTheDocument();
+    expect(screen.queryByText(/自检/)).not.toBeInTheDocument();
+    expect(container.querySelector(".math-case-structured .katex-html .mtable")).toBeTruthy();
+    expect(container.querySelectorAll(".math-case-structured .katex-html").length).toBeGreaterThan(4);
   });
 
   it("renders 1.2.2 vector subtraction as definition, geometry below it and one math flow", () => {
@@ -472,6 +593,62 @@ describe("MathCaseView structured artifact", () => {
     expect(screen.getByRole("button", { name: "第一步：行视角（内积法）" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "第二步：列视角（线性组合法）" })).toBeInTheDocument();
     expect(screen.queryByRole("region", { name: "几何图形例子" })).not.toBeInTheDocument();
+  });
+
+  it("renders Cauchy-Schwarz with the formula inside definition and switches its two cases", () => {
+    const onSelectStage = vi.fn();
+    const onSetCasePaneCount = vi.fn();
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id: "ch01.inner.cauchy-schwarz",
+          topicId: "ch01.inner.cauchy-schwarz",
+          category: "内积",
+          name: "柯西—施瓦茨不等式",
+          formula: "",
+          steps: [
+            "对任意实数 $t$，考虑 $\\lvert\\boldsymbol a-t\\boldsymbol b\\rvert^2\\geq0$。",
+            "判别式 $\\Delta\\leq0$，得到柯西—施瓦茨不等式。",
+          ],
+          conclusion: "",
+          definition: "对任意两个向量 $\\boldsymbol a,\\boldsymbol b$，有：\n\n$$\\lvert\\boldsymbol a\\cdot\\boldsymbol b\\rvert\\leq\\lvert\\boldsymbol a\\rvert\\cdot\\lvert\\boldsymbol b\\rvert$$",
+          sections: [
+            { id: "definition", title: "定义" },
+            { id: "derivation", title: "Cauchy-Schwarz 不等式的证明（2D情形）" },
+            { id: "worked_examples", title: "数学案例" },
+          ],
+          workedExamples: [
+            { id: "strict", title: "案例一：严格不等式", calculation: ["$$\\lvert\\boldsymbol a\\cdot\\boldsymbol b\\rvert=3<5$$"], result: 3, checks: [] },
+            { id: "equality", title: "案例二：等号成立", calculation: ["$$\\lvert\\boldsymbol a\\cdot\\boldsymbol b\\rvert=5$$"], result: 5, checks: [] },
+          ],
+          storyboard: [
+            { id: "stage.cauchy-schwarz.strict", title: "案例一：严格不等式", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+            { id: "stage.cauchy-schwarz.equality", title: "案例二：等号成立", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+          ],
+          caseLayout: {
+            defaultPaneCount: 1,
+            cases: [
+              { id: "case.cauchy-schwarz.strict", topicId: "ch01.inner.cauchy-schwarz", exampleRef: "strict", claimRefs: [], stageRefs: ["stage.cauchy-schwarz.strict"], purpose: "案例一：严格不等式" },
+              { id: "case.cauchy-schwarz.equality", topicId: "ch01.inner.cauchy-schwarz", exampleRef: "equality", claimRefs: [], stageRefs: ["stage.cauchy-schwarz.equality"], purpose: "案例二：等号成立" },
+            ],
+          },
+        }}
+        onSelectStage={onSelectStage}
+        onSetCasePaneCount={onSetCasePaneCount}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    const visibleFormula = container.querySelector(".math-case-section .katex-html");
+    expect(visibleFormula).toBeTruthy();
+    expect(visibleFormula?.textContent).not.toContain("\\lvert");
+    expect(screen.getByRole("button", { name: "案例一：严格不等式" })).toHaveAttribute("aria-current", "true");
+
+    fireEvent.click(screen.getByRole("button", { name: "案例二：等号成立" }));
+    expect(onSelectStage).toHaveBeenCalledWith("stage.cauchy-schwarz.equality");
+    fireEvent.click(screen.getByRole("button", { name: "全部显示" }));
+    expect(onSetCasePaneCount).toHaveBeenCalledWith(2);
   });
 
   it("uses the lecture excerpt as a continuous note instead of section cards", () => {

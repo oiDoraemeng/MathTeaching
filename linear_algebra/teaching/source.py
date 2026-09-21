@@ -22,6 +22,10 @@ _MERGED_TOPIC_PATHS: dict[str, tuple[tuple[str, ...], ...]] = {
         ("第4章 线性空间、线性无关与线性变换（全书核心枢纽）", "4.2 线性组合、线性相关与线性无关", "4.2.1 生成集 Span"),
         ("第4章 线性空间、线性无关与线性变换（全书核心枢纽）", "4.2 线性组合、线性相关与线性无关", "4.2.2 线性相关与线性无关"),
     ),
+    "ch04.linear-map.definition": (
+        ("第4章 线性空间、线性无关与线性变换（全书核心枢纽）", "4.4 线性变换", "4.4.1 线性变换的定义"),
+        ("第4章 线性空间、线性无关与线性变换（全书核心枢纽）", "4.4 线性变换", "4.4.2 是 vs 不是线性变换"),
+    ),
 }
 
 
@@ -188,10 +192,15 @@ class LectureSourceRepository:
 
     def __init__(self, path: Path) -> None:
         self.path = path
+        self._source_signature: tuple[int, int] | None = None
+        self._records: tuple[HeadingSection, ...] | None = None
+        self._contexts: dict[str, SourceContext] = {}
 
     def context_for(self, entry: LessonEntry) -> SourceContext:
-        source = self.path.read_text(encoding="utf-8")
-        records = parse_heading_sections(source)
+        records = self._records_for_current_source()
+        cached = self._contexts.get(entry.id)
+        if cached is not None:
+            return cached
         merged_paths = _MERGED_TOPIC_PATHS.get(entry.id)
         if merged_paths is None:
             sections = (_resolve_anchor(records, entry.source_anchor),)
@@ -199,7 +208,7 @@ class LectureSourceRepository:
             sections = tuple(_resolve_merged_section(records, path) for path in merged_paths)
         excerpt, spans = _bounded_topic_excerpt(sections, excluded=_EXCLUDED)
         digest = _fingerprint(excerpt)
-        return SourceContext(
+        context = SourceContext(
             topic_id=entry.id,
             source_path=entry.source_path,
             heading_path=entry.source_anchor.heading_path,
@@ -210,6 +219,21 @@ class LectureSourceRepository:
             spans=spans,
             neighboring_titles=_neighbor_titles(records, sections[0]),
         )
+        self._contexts[entry.id] = context
+        return context
+
+    def _records_for_current_source(self) -> tuple[HeadingSection, ...]:
+        """源文件未变化时复用解析结果。"""
+
+        stat = self.path.stat()
+        signature = (stat.st_mtime_ns, stat.st_size)
+        if self._source_signature == signature and self._records is not None:
+            return self._records
+        source = self.path.read_text(encoding="utf-8")
+        self._records = parse_heading_sections(source)
+        self._source_signature = signature
+        self._contexts.clear()
+        return self._records
 
 
 def _resolve_anchor(records: tuple[HeadingSection, ...], anchor: SourceAnchor) -> HeadingSection:

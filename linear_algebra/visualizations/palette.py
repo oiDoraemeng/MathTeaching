@@ -7,6 +7,9 @@ ROLE_COLORS: dict[str, str] = {
     "vector_b": "#F08A24",
     "basis_e1": "#2F6BFF",
     "basis_e2": "#F08A24",
+    # 2.7 的两组基使用固定的青绿/紫色，跨窗格保持同一方向同一颜色。
+    "basis_primary": "#2A9D8F",
+    "basis_secondary": "#7B61FF",
     "transformed_a": "#7B61FF",
     "transformed_b": "#D64550",
     "combination": "#2A9D8F",

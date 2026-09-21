@@ -132,14 +132,14 @@
     "topic_id": "ch02.batch.inner-products"
   },
   {
-    "artifact_digest": "sha256:f9e55252f2ba443d2a6874b2889259b18b90c1661af60626126928cf01520bef",
+    "artifact_digest": "sha256:102113da61204eb44c28fc80a2e981f21617e0a91cf4314c84c3e2a1bbfa3998",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
-    "plan_digest": "sha256:3cfa17678f2a1e8b07f6861e9e3d7b9b863da0bacc76151a834d23ac843117e3",
+    "plan_digest": "sha256:c9267766e9de66b5ef542c09732dd8827470cc7e367610d2649e9d2fd27aeb57",
     "render_profile": "lecture-v1",
-    "revision": 18,
+    "revision": 20,
     "source_hash": "sha256:18e7642a880b874828bfee6824477b44b80aaac5b2c703abc508923f1d009780",
-    "stage_count": 3,
+    "stage_count": 1,
     "topic_id": "ch02.batch.projection"
   },
   {

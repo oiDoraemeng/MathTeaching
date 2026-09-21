@@ -89,12 +89,12 @@ _SPEC = {
         "composition": True,
     },
     "ch02.matrix.basis": {
-        "formula": "[T]_\\mathcal B= S^{-1}AS",
+        "formula": "A=\\begin{pmatrix}0&-1\\\\1&0\\end{pmatrix}",
         "kind": "matrix_transform",
-        "given": {"matrix": [[1, 1], [0, 1]], "vector": [2, 3]},
-        "result": [5.0, 3.0],
+        "given": {"matrix": [[0, -1], [1, 0]], "vector": [2, 1]},
+        "result": [-1.0, 2.0],
         "check": "transformed",
-        "statement": "同一变换在不同基底下有不同矩阵；矩阵的列是新基向量的像，坐标描述随测量尺改变。",
+        "statement": "同一个变换，用不同的基描述，矩阵就不同。",
         "relation": "maps_to",
         "matrix": True,
     },
@@ -165,10 +165,7 @@ def _add_contract_semantics(payload: dict, topic_id: str) -> None:
         claim["stage_refs"].extend(["stage.grid_input", "stage.grid_output"])
 
     elif topic_id == "ch02.matrix.composition":
-        # The concise quality refinement already supplies both ordered paths,
-        # their distinct endpoints, and the five contract stages.  Do not add
-        # a second copy of the same entities when this local batch generator
-        # performs its contract pass.
+        # 质量适配器已生成路径、端点和阶段，避免重复添加实体。
         if {
             "z",
         } <= {str(entity.get("id", "")) for entity in entities} and {

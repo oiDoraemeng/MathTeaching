@@ -28,8 +28,7 @@ class VisualContract:
     distinguishable_role_groups: tuple[tuple[str, ...], ...] = ()
     required_role_types: tuple[tuple[str, str, int], ...] = ()
     required_relation_endpoints: tuple[tuple[str, str, str, str], ...] = ()
-    # Compatibility keeps ``required_relations`` as the historical first
-    # relation kind; this complete set is the strict Chapter-4 gate.
+    # 保留旧首关系字段，并以完整集合执行第 4 章严格校验。
     required_relation_kinds: tuple[str, ...] = ()
     required_parameters: tuple[tuple[str, tuple[str, ...]], ...] = ()
     expected_operations: tuple[str, ...] = ()
@@ -65,7 +64,7 @@ def contract_for(topic_id: str) -> VisualContract:
     }
     extended_family = {
         **{topic: "subspace_region" for topic in (
-            "ch04.subspace.col-null", "ch04.dependence.redundancy", "ch04.basis.definition", "ch04.linear-map.definition", "ch04.linear-map.compare", "ch04.linear-map.matrix-columns")},
+            "ch04.subspace.col-null", "ch04.dependence.redundancy", "ch04.basis.definition", "ch04.linear-map.definition")},
         **{topic: "affine_solution" for topic in ("ch05.homogeneous.solution-space", "ch05.affine.solution-set", "ch05.consistency.geometry", "ch05.gaussian-elimination", "ch05.least-squares.projection", "ch05.fundamental-solution-system", "ch05.elementary-matrix-elimination", "ch05.least-squares-derivation")},
         **{topic: "basis_change" for topic in ("ch06.basis-change.motivation", "ch06.basis-change.coordinates", "ch06.similarity-transform")},
         **{topic: "spectral_orthogonal" for topic in ("ch07.eigen.direction", "ch07.characteristic-polynomial", "ch07.eigenspace", "ch07.diagonalization", "ch07.gram-schmidt", "ch07.orthogonal-transform")},
@@ -174,9 +173,7 @@ def validate_contract_semantics(
     for relation in contract.required_relation_kinds:
         if relation not in relations:
             issues.append(ContractIssue("missing_relation", contract.topic_id, relation))
-    # Chapter 4's family gate checks the complete typed graph and operation
-    # witness set.  Keep the legacy primitive check for other chapters while
-    # avoiding a redundant generic error for an intentionally empty Ch4 graph.
+    # 第 4 章校验完整类型图，其余章节仍使用旧图元校验。
     if not contract.topic_id.startswith(("ch04.", "ch05.", "ch06.")):
         for primitive in contract.required_primitives:
             if primitive not in primitives:

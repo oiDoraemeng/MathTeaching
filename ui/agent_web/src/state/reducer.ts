@@ -78,9 +78,7 @@ function sessionWithEvent(session: SessionProjection, event: TimelineEvent): Ses
   let turnId = event.turn_id ?? `turn-${event.sequence ?? Date.now()}`;
   let turn = session.turns.find((item) => item.id === turnId);
   const hidden = event.payload.ui_hidden === true || HIDDEN_TIMELINE_EVENTS.has(event.type);
-  // Some QWebChannel/native builds omit turn_id on high-frequency deltas.
-  // Keep those deltas on the latest open turn instead of creating one card
-  // per token.
+  // 缺少 turn_id 的高频增量归入最近的未结束轮次。
   if (!turn && event.type === "message_delta" && !event.turn_id) {
     const openTurn = [...session.turns].reverse().find((item) => item.status === "running");
     if (openTurn) {
@@ -192,11 +190,7 @@ function caseFromEvent(event: TimelineEvent): CaseProjection | null {
   const formula = typeof payload.formula === "string" ? payload.formula : "";
   const conclusion = typeof payload.conclusion === "string" ? payload.conclusion : "";
   const steps = Array.isArray(payload.steps) ? payload.steps.filter((value): value is string => typeof value === "string").slice(0, 12) : [];
-  // The case id is the only required identity.  Lecture sections such as
-  // 1.3.1（内积的两种定义）and 1.4.1（投影的定义）write the formulas inside the
-  // definition prose and artifact sections, so an empty standalone formula
-  // must not drop the whole case.  Derivation steps and conclusion are
-  // optional as well; the view omits those blocks when empty.
+  // 仅案例标识必填；公式、推导和结论均可随讲义结构省略。
   if (!id) return null;
   const list = (key: string, limit = 16) => Array.isArray(payload[key]) ? payload[key].filter((value): value is string => typeof value === "string").slice(0, limit) : undefined;
   const object = (key: string) => payload[key] && typeof payload[key] === "object" && !Array.isArray(payload[key]) ? payload[key] as Record<string, string> : undefined;

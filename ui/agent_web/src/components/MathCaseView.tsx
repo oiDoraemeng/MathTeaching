@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { MarkdownContent } from "./MarkdownContent";
 import type { CaseProjection } from "../types";
 
-/** Keep source-grounded explanations readable as one continuous lecture note. */
+/** 将来源明确的解释组织为连续讲义。 */
 export function MathCaseView({
   caseData,
   onSelectStage,
@@ -68,9 +68,7 @@ export function MathCaseView({
 
   useEffect(() => {
     if (sceneReady || !caseData.previewToken) return;
-    // A double frame boundary guarantees the DOM has painted before native VTK
-    // work can occupy the Qt GUI thread.  The cleanup also drops a preview
-    // acknowledgement when the reader chooses another directory immediately.
+    // 等待两帧确保 DOM 已绘制，再让原生 VTK 占用 Qt GUI 线程。
     let secondFrame = 0;
     const firstFrame = requestAnimationFrame(() => {
       secondFrame = requestAnimationFrame(() => onPreviewReady?.(caseData.previewToken!));
@@ -332,7 +330,9 @@ function sectionComesBefore(caseData: CaseProjection, first: string, second: str
 
 /** 讲义把公式写在定义（或定理、例题）块内的同构小节：定义块自带公式，不再单列「公式」分节。 */
 function lectureDefinitionOwnsFormula(topicId: string): boolean {
-  return topicId === "ch01.ops.addition"
+  // 讲义 1.1.1 的三个定义、模长公式和数值例都属于同一个「定义」块。
+  return topicId === "ch01.vector.magnitude"
+    || topicId === "ch01.ops.addition"
     || topicId === "ch01.ops.subtraction"
     || topicId === "ch01.ops.scalar"
     || topicId === "ch01.ops.linear-combination"
@@ -345,6 +345,8 @@ function lectureDefinitionOwnsFormula(topicId: string): boolean {
     || topicId === "ch02.matrix.basis"
     // 讲义 2.2 批量内积：公式写在定义 2.4 之内，定义块自带公式，案例区叫「数学案例」。
     || topicId === "ch02.batch.inner-products"
+    // 讲义 2.3 投影矩阵：单位条件、矩阵公式和 x 轴说明都写在定义 2.5 之内。
+    || topicId === "ch02.batch.projection"
     // 讲义 4.1.3 的 Col(A)、Null(A) 就写在定义 4.3、4.4 之内：定义块自带公式，
     // 分节名按讲义原文作「定义」，不再拼成「定义与公式」。
     || topicId === "ch04.subspace.col-null"
@@ -352,7 +354,9 @@ function lectureDefinitionOwnsFormula(topicId: string): boolean {
     || topicId === "ch04.dependence.redundancy"
     // 讲义 4.3 合并后的「基的定义」：定义 4.10、定理 4.1 与坐标公式都写在定义块内，
     // 定义块自带公式，案例区叫「数学案例」。
-    || topicId === "ch04.basis.definition";
+    || topicId === "ch04.basis.definition"
+    // 讲义 4.4.1 与 4.4.2 合并后，定义、公式和判断表都属于同一个「定义」块。
+    || topicId === "ch04.linear-map.definition";
 }
 
 /** 讲义 1.5 的三个几何证明小节按讲义正文排版（没有案例窗格，字号仍按讲义层级）。 */

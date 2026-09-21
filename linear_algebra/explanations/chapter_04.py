@@ -3,8 +3,8 @@ from .model import ExplanationContent
 _IDS = (
     "subspace.col-null",
     "dependence.redundancy",
-    "basis.definition", "linear-map.definition",
-    "linear-map.compare", "linear-map.matrix-columns", "kernel-image", "rank-nullity",
+    "basis.definition",
+    "linear-map.definition",
 )
 
 

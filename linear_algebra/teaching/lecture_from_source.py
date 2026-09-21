@@ -28,42 +28,35 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping
 
-# The one-line placeholders emitted by the deterministic generator.
+# 确定性生成器产生的单行占位内容。
 _TEMPLATE_DEFINITION = re.compile(r"^.+ 的对象和定义。$")
 _TEMPLATE_SUMMARY = re.compile(r"^.+ 的确定性数学语义 artifact。$")
 
-# 2.5 矩阵 × 向量（核心节）合并为「矩阵变换」主题，由本地质量适配器逐字搬入
-# 2.5.1 与 2.5.2，并自带数学案例。若再让本模块追加，同一段原文会出现两遍，
-# 所以这里直接跳过该主题。
+# 已由质量适配器完整处理的主题不再重复追加讲义正文。
 _VERBATIM_TOPICS = frozenset(
     {
         "ch02.matrix.transformed-grid",
-        # 2.2 批量内积同样由质量适配器逐字搬入讲义原文（定义 2.4、一句话总结与
-        # 分层例题例 1），再按标记切分追加会让同一段原文出现两遍。
+        # 2.4 已由质量适配器处理（定义 2.6/2.7 + 分配律两路线案例）。
+        "ch02.matrix.additive-distributivity",
+        # 2.2 已由质量适配器处理。
         "ch02.batch.inner-products",
-        # 2.7 矩阵与基由质量适配器逐字搬入定义 2.9（基）与核心认知，并自带
-        # 分节标题与数学案例，同样不能再按标记切分追加。
+        # 2.3 已由质量适配器完整保留定义并加入用户确认的单一批量案例。
+        "ch02.batch.projection",
+        # 2.7 已由质量适配器处理。
         "ch02.matrix.basis",
-        # 3.1 合并后的单一小节由质量适配器逐字搬入讲义 3.1.1–3.1.3（定义 3.1、
-        # 定理 3.1、几何意义速查）并自带单窗格数学案例；锚点覆盖整个 3.1 小节，
-        # 再按标记切分会把未发布的 3.1.4 分层例题一并追加。
+        # 3.1 已由质量适配器处理，避免误收未发布的 3.1.4。
         "ch03.det.oriented-area",
-        # 4.3 合并后的单一小节由质量适配器逐字搬入讲义 4.3.1–4.3.3（定义 4.10、定理 4.1、
-        # 维数性质与证明、坐标），并自带两窗格读数案例；锚点覆盖整个 4.3 小节，再按标记
-        # 切分会把未发布的分层例题与自检一并追加。
+        # 4.3 已由质量适配器处理，避免误收未发布内容。
         "ch04.basis.definition",
-        # 4.2 合并主题只发布 4.2.1、4.2.2。来源上下文包含这两个精确的 span，正文则由
-        # 专属适配器保留其原有顺序，不能让通用路由重新归类或改变分节标题。
+        # 4.2 由专用适配器保留 4.2.1、4.2.2 的顺序和标题。
         "ch04.dependence.redundancy",
-        # 2.9 的两个小节由质量适配器逐字搬入讲义 2.9.1（定义 2.10、定义 2.11、几何理解
-        # 表与口诀）与 2.9.2（定义 2.12、几何理解、矩阵表与定理 2.6），并各自自带分步
-        # 数学案例；再按标记切分会把同一段原文追加两遍。
+        # 2.9 已由质量适配器处理。
         "ch02.subspace.independence",
         "ch02.subspace.rank",
     }
 )
 
-# Boilerplate body lines that carry no lecture content.
+# 不含讲义信息的模板行。
 _FILLERS = frozenset({
     "与前置线性表示相连。",
     "向量在有限维空间中的方向和尺度保持可读。",
@@ -74,7 +67,7 @@ _FILLERS = frozenset({
     "不要混淆对象和坐标。",
 })
 
-# Structured placeholders produced from relation parameters.
+# 由关系参数生成的结构化占位内容。
 _FILLER_PATTERNS = (
     re.compile(r"^代入 v=\([\d,\s\.\-]+\)。$"),
     re.compile(r"^计算得到 result=.*。$"),
@@ -92,7 +85,7 @@ CONNECTIONS = "connections"
 CONCLUSION = "conclusion"
 READ_GUIDE = "read_guide"
 
-# Lecture markers, most specific first, mapped to their explanation bucket.
+# 讲义标记按具体程度排序并映射到解释分组。
 _KEYWORD_RULES: tuple[tuple[tuple[str, ...], str], ...] = (
     (("证明", "证毕"), DERIVATION),
     (("一句话动机", "动机"), INTUITION),
@@ -192,14 +185,13 @@ def route_excerpt(excerpt: str) -> tuple[str, dict[str, list[str]]]:
             current = bucket
         buckets.setdefault(current, []).append(line.rstrip())
 
-    # A ``本章小结`` without body text is really a definition header.
+    # 无正文的"本章小结"按定义标题处理。
     conclusion_lines = buckets.get(CONCLUSION, [])
     if conclusion_lines and not _body_only(conclusion_lines):
         buckets[DEFINITION] = buckets.get(DEFINITION, []) + conclusion_lines
         del buckets[CONCLUSION]
 
-    # ``本节目标：…`` / ``一句话动机：…`` keep only the marker line; the rest
-    # of the block is real lecture body text that belongs to the definition.
+    # "本节目标"和"一句话动机"仅剥离标记行，其余正文归入定义。
     for bucket in (SUMMARY, INTUITION):
         header_lines = buckets.get(bucket, [])
         if len(header_lines) > 1:

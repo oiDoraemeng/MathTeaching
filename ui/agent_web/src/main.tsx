@@ -3,9 +3,7 @@ import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import "./styles.css";
 
-// QtWebEngine versions shipped with some desktop environments expose Web Crypto
-// but omit randomUUID. Request IDs are transport correlation IDs, so a local
-// fallback keeps the UI functional without weakening command validation.
+// 部分 QtWebEngine 缺少 randomUUID，使用本地请求标识作为兼容方案。
 const cryptoApi = globalThis.crypto as Crypto & { randomUUID?: () => string };
 if (cryptoApi && typeof cryptoApi.randomUUID !== "function") {
   Object.defineProperty(cryptoApi, "randomUUID", {

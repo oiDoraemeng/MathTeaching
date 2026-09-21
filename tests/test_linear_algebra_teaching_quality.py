@@ -1,7 +1,88 @@
 from __future__ import annotations
 
+from linear_algebra.teaching.model import TeachingArtifact
 from linear_algebra.teaching.quality import refine_payload
+from linear_algebra.catalog.manifest import lecture_manifest
+from linear_algebra.visualizations.common import RenderContext
+from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
+from linear_algebra.visualizations.contracts import contract_for
 from tests.teaching_fixtures import composition_artifact_payload
+from ui.teaching_case_panes import case_plan
+
+
+def test_batch_projection_keeps_the_lecture_definition_and_one_confirmed_case() -> None:
+    payload = composition_artifact_payload()
+    payload["topic_id"] = "ch02.batch.projection"
+    payload["claims"][0]["id"] = "claim.ch02.batch.projection"  # type: ignore[index]
+
+    refined = refine_payload(payload)
+
+    explanation = refined["explanation"]
+    assert explanation["title"] == "投影矩阵"
+    nodes = {node.id: node for node in lecture_manifest()}
+    assert nodes["ch02.s23"].title == "批量投影"
+    assert nodes["ch02.batch.projection"].title == "投影矩阵"
+    assert explanation["summary"] == "投影也能批处理——矩阵乘法的雏形已经萌芽。"
+    assert "**（投影矩阵）**" in explanation["definition"]
+    assert r"$\lvert\boldsymbol u\rvert=1$" in explanation["definition"]
+    assert r"\operatorname{Proj}_{\boldsymbol u}(\boldsymbol v)" in explanation["definition"]
+    assert "乘任何向量" in explanation["definition"]
+    assert "自检" not in explanation["definition"]
+    assert explanation["formula"] == ""
+    assert explanation["derivation"] == []
+    assert explanation["geometric_meaning"] == ""
+    assert [section["title"] for section in explanation["sections"]] == ["定义", "数学案例"]
+    assert len(explanation["worked_examples"]) == 1
+    example = explanation["worked_examples"][0]
+    assert example["kind"] == "batch_projection"
+    assert example["result"] == [[3.0, 0.0], [-2.0, 0.0], [1.0, 0.0]]
+    assert explanation["case_layout"]["default_pane_count"] == 1
+    assert len(explanation["case_layout"]["cases"]) == 1
+
+    visual = refined["visual_semantics"]
+    entities = {item["id"]: item for item in visual["entities"]}
+    assert [entities[f"batch{index}_v"]["role"] for index in range(1, 4)] == [
+        "vector_a", "vector_b", "transformed_a"
+    ]
+    assert [entities[f"batch{index}_p"]["value"] for index in range(1, 4)] == [
+        [3.0, 0.0], [-2.0, 0.0], [1.0, 0.0]
+    ]
+    assert len(visual["stages"]) == 1
+    assert visual["stages"][0]["relation_refs"] == [
+        "rel.batch-projection.1",
+        "rel.batch-projection.2",
+        "rel.batch-projection.3",
+    ]
+
+    artifact = TeachingArtifact.from_dict(refined)
+    compiled = VisualSemanticsCompiler().compile(
+        artifact,
+        contract_for("ch02.batch.projection"),
+        RenderContext.default("ch02.batch.projection"),
+    )
+    operations = {
+        str(operation.get("alias")): operation
+        for operation in compiled.plan.operations
+        if operation.get("op") in {"linear.upsert", "geometry.projection"}
+    }
+    expected_colors = ("#2F6BFF", "#F08A24", "#7B61FF")
+    for index, color in enumerate(expected_colors, start=1):
+        assert operations[f"sem__batch{index}_v"]["color"] == color
+        assert operations[f"sem__batch{index}_p"]["color"] == color
+        assert operations[f"sem__rel.batch-projection.{index}"]["color"] == color
+    assert not any(
+        operation.get("op") == "geometry.transformed_grid"
+        for operation in compiled.plan.operations
+    )
+    pane_plan = case_plan(compiled, "stage.case.ch02.batch.projection.1")
+    assert sum(
+        operation.get("op") == "geometry.projection"
+        for operation in pane_plan.operations
+    ) == 3
+    assert not any(
+        operation.get("alias") == "sem__u"
+        for operation in pane_plan.operations
+    )
 
 
 def test_vector_addition_refinement_keeps_the_lecture_parallelogram_reading() -> None:

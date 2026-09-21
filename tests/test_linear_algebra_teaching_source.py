@@ -33,11 +33,32 @@ def test_all_catalog_contexts_resolve_in_catalog_order_without_excluded_blocks()
 
     contexts = tuple(repo.context_for(entry) for entry in entries)
 
-    assert len(contexts) == 59
+    assert len(contexts) == 57
     assert tuple(context.topic_id for context in contexts) == tuple(entry.id for entry in entries)
     assert all(context.spans for context in contexts)
     assert all("自检" not in context.excerpt for context in contexts)
     assert all("挑战选做" not in context.excerpt for context in contexts)
+
+
+def test_contexts_reuse_the_current_lecture_parse(monkeypatch) -> None:
+    entries = catalog_registry().topics[:2]
+    repository = LectureSourceRepository(Path(".agents/线性代数讲义.md"))
+    source_module = __import__("linear_algebra.teaching.source", fromlist=["parse_heading_sections"])
+    calls = 0
+    original = source_module.parse_heading_sections
+
+    def counted(source: str):
+        nonlocal calls
+        calls += 1
+        return original(source)
+
+    monkeypatch.setattr(source_module, "parse_heading_sections", counted)
+
+    repository.context_for(entries[0])
+    repository.context_for(entries[1])
+    repository.context_for(entries[0])
+
+    assert calls == 1
 
 
 def test_chapter_four_merged_dependence_context_includes_exactly_4_2_1_and_4_2_2() -> None:
@@ -53,6 +74,19 @@ def test_chapter_four_merged_dependence_context_includes_exactly_4_2_1_and_4_2_2
     assert "定义 4.7（线性相关）" in context.excerpt
     assert "4.2.3 线性方程组" not in context.excerpt
     assert "4.2.4 秩-零度定理" not in context.excerpt
+
+
+def test_chapter_four_merged_linear_map_context_includes_exactly_4_4_1_and_4_4_2() -> None:
+    entry = next(topic for topic in catalog_registry().topics if topic.id == "ch04.linear-map.definition")
+    context = LectureSourceRepository(Path(".agents/线性代数讲义.md")).context_for(entry)
+
+    assert [span.heading_path[-1] for span in context.spans] == [
+        "4.4.1 线性变换的定义",
+        "4.4.2 是 vs 不是线性变换",
+    ]
+    assert "定义 4.11（线性变换）" in context.excerpt
+    assert "判断平移" in context.excerpt
+    assert "4.4.3 线性变换的矩阵表示" not in context.excerpt
 
 
 def test_repeated_heading_occurrences_have_separate_non_overlapping_contexts(tmp_path: Path) -> None:

@@ -22,13 +22,13 @@ def test_projection_contract_rejects_missing_residual() -> None:
 
 def test_all_catalog_topics_resolve_explicit_contracts() -> None:
     contracts = tuple(contract_for(topic.id) for topic in topic_entries())
-    assert len(contracts) == 59
+    assert len(contracts) == 57
     assert {contract.topic_id for contract in contracts} == {topic.id for topic in topic_entries()}
 
 
 def test_all_new_topics_have_explicit_family_contracts():
     topics = [topic for topic in topic_entries() if 4 <= topic.chapter_number <= 8]
-    assert len(topics) == 29
+    assert len(topics) == 27
     for topic in topics:
         contract = contract_for(topic.id)
         assert contract.topic_id == topic.id

@@ -43,17 +43,17 @@
 .math-case-structured .markdown-content th, .math-case-structured .markdown-content td { padding: 8px 10px; border: 1px solid var(--agent-border); overflow-wrap: anywhere; text-align: left; vertical-align: middle; }
 .math-case-lecture .markdown-content th, .math-case-structured .markdown-content th { color: var(--agent-text); background: var(--agent-elevated); font-weight: 600; }
 .math-case-view .markdown-content, .math-case-view .markdown-content p, .math-case-view .markdown-content li, .math-case-view .markdown-content blockquote, .math-case-view .markdown-content h1, .math-case-view .markdown-content h2, .math-case-view .markdown-content h3, .math-case-view .markdown-content h4 { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
-/* KaTeX defaults to a non-wrapping line.  Preserve each atom but let a long
-   display expression break between atoms instead of widening the whole panel. */
+/* 长公式允许在原子之间换行，避免撑宽面板。 */
 .math-case-view .katex-display, .math-case-view .katex-display > .katex { max-width: 100%; white-space: normal; }
 .math-case-view .katex .base { white-space: nowrap; }
 .math-case-view .katex .text { white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
 .math-case-section { margin: 25px 0; padding: 0 0 18px; border-bottom: 1px solid var(--agent-border-subtle); }
+.math-case-structured > .math-case-section:last-of-type { border-bottom: 0; padding-bottom: 0; }
 .math-case-section h2, .math-case-evidence-section h2, .math-case-storyboard h2, .math-case-conclusion h2 { margin: 0 0 8px; font-size: 14px; }
 .math-case-steps { margin: 11px 0; padding-left: 25px; color: var(--agent-text); }
 .math-case-steps li { margin: 12px 0; padding-left: 5px; }
 .math-case-steps li::marker { color: var(--agent-accent); font-weight: 600; }
-/* 只有一段证明时它是一段连贯的讲义正文，不显示“1.”列表编号。 */
+
 .math-case-steps--single { padding-left: 0; list-style: none; }
 .math-case-steps--single li { padding-left: 0; }
 .math-case-section h3 { margin: 0 0 6px; font-size: 12px; }
@@ -61,7 +61,8 @@
 .math-case-example:first-of-type, .math-case-claim:first-of-type { border-top: 0; padding-top: 0; }
 .math-case-example p { margin: 6px 0; }
 .math-case-example small { display: block; color: var(--agent-muted); }
-.math-case-evidence-section, .math-case-storyboard, .math-case-conclusion { max-width: 720px; margin: 25px auto 0; padding-top: 18px; border-top: 1px solid var(--agent-border-subtle); }
+.math-case-evidence-section, .math-case-conclusion { max-width: 720px; margin: 25px auto 0; padding-top: 18px; border-top: 1px solid var(--agent-border-subtle); }
+.math-case-storyboard { max-width: 720px; margin: 25px auto 0; padding-top: 18px; }
 .math-case-section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 .math-case-section-heading > span { color: var(--agent-muted); font-size: 11px; }
 .math-case-evidence { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }

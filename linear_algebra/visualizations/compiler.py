@@ -30,10 +30,7 @@ from .limits import validate_budget
 
 COMPILER_VERSION = "visual-compiler-v1"
 _SAFE_ALIAS = re.compile(r"[^A-Za-z0-9_.:-]+")
-# Section 1.5 (geometry proofs) draws a constructed figure rather than a pair
-# of free vectors.  Its entity graph declares the two lecture inputs ``a`` and
-# ``b``; the figure below derives every midpoint, third side and diagonal from
-# those values so the picture and the worked numbers cannot drift apart.
+# 1.5 的构造图全部由讲义输入 `a`、`b` 推导，保证图形与数值一致。
 _PROOF_TOPICS = frozenset(
     {
         "ch01.proof.midline",
@@ -41,8 +38,7 @@ _PROOF_TOPICS = frozenset(
         "ch01.proof.parallelogram-diagonals",
     }
 )
-# 采用“数学案例流程”并排展示的小节：多个案例窗格必须共用一个固定视角，
-# 否则“全部显示”时各窗格按自身对象缩放，会出现一大一小。
+# 流程案例共用固定视角，避免并排窗格缩放不一致。
 _MATRIX_VECTOR_CASE_TOPICS = frozenset(
     {
         "ch02.matrix.transformed-grid",
@@ -50,10 +46,7 @@ _MATRIX_VECTOR_CASE_TOPICS = frozenset(
         "ch02.matrix.basis",
     }
 )
-# 2.9 的两个小节（线性无关与线性相关、秩）也是按步骤的数学案例，但窗格的主角是
-# 「变换后的网格」而不是若干向量：取景若沿用向量的端点，原点会落到窗格角上、
-# 被压成的那条线会贴着边缘。它们改为以默认视野为基准共用同一相机，网格仍用大
-# 取样范围由视口裁切。
+# 2.9 以变换网格为主体，使用默认视野和共享相机。
 _SUBSPACE_CASE_TOPICS = frozenset(
     {
         "ch02.subspace.independence",
@@ -77,23 +70,18 @@ _FLOW_VIEW_TOPICS = frozenset(
         *_MATRIX_VECTOR_CASE_TOPICS,
     }
 )
-# 2.5 的矩阵案例用软件已有的矩阵变换功能画网格：取样范围取得比窗格视野大得多，
-# 于是变形网格铺满整个窗格、由视口负责裁切（与工具箱“矩阵变换”取当前视口范围
-# 一样），而不是在原来坐标系里悬浮一小块网格。案例窗格取景时会把网格演员排除
-# 在外，所以取样范围不会把相机拉远。
+# 2.5 的变形网格由视口裁切，取景时排除网格演员。
 _MATRIX_VECTOR_GRID_BOUNDS: tuple[float, float, float, float] = (-12.0, 12.0, -12.0, 12.0)
-# 2.5 的四个窗格（标准基、拉伸、旋转、两列的像）只用到原点附近的画面，网格取样
-# 4×4 格即可：网格线不用铺满整个窗格，画面才不会被密集网格淹没。取景只看向量
-# 终点，网格由视口裁切，因此缩小取样范围不会改变相机。
+# 2.7 的两个坐标系只需展示案例对象附近的网格；其他矩阵案例保持原有取景。
+_BASIS_GRID_BOUNDS: tuple[float, float, float, float] = (-4.0, 4.0, -4.0, 4.0)
+# 2.5 仅采样原点附近的 4×4 网格，避免画面过密。
 _TRANSFORMED_GRID_GRID_BOUNDS: tuple[float, float, float, float] = (-2.0, 2.0, -2.0, 2.0)
 # 3.1 案例把外接矩形的面积标注写在矩形上边之外，取景与标注位置共用这个边距。
 _DET_BOX_LABEL_MARGIN = 0.45
-# 2.7 的第二个案例把 B 的列写成新基坐标。坐标系命令把 source
-# coordinates 映射到显示世界；案例中的 Bv1/Bv2 因而要先换回实际位置，
-# 否则它们会被误画在 (-3,2)、(-5,3) 的标准坐标位置。
+# 2.7 的 B 列为新基坐标，绘制前需换算到显示世界。
 _CH02_BASIS_MATRIX: tuple[tuple[float, float], tuple[float, float]] = (
     (1.0, 1.0),
-    (1.0, 2.0),
+    (0.0, 1.0),
 )
 
 
@@ -102,14 +90,12 @@ def _case_grid_bounds(topic_id: str, fallback: tuple[float, ...]) -> tuple[float
 
     if topic_id == "ch02.matrix.transformed-grid":
         return _TRANSFORMED_GRID_GRID_BOUNDS
+    if topic_id == "ch02.matrix.basis":
+        return _BASIS_GRID_BOUNDS
     if topic_id not in _MATRIX_VECTOR_CASE_TOPICS and topic_id not in _SUBSPACE_CASE_TOPICS:
         return fallback
     return _MATRIX_VECTOR_GRID_BOUNDS
-# 流程里向量用小写标注；向量的终点是“点”，用大写标注以区别。a+b 的终点是
-# 平行四边形与原点相对的顶点，记为 C（不是 A+B）；单一字母标签直接大写，
-# 带系数或正负号的标签不再造点。数乘的两步各自落在一个点上：a 的终点是 A，
-# 缩放后的 2a 终点是 B。2.5 的案例按同一规则给每个向量的终点一个不同的
-# 大写标签（原像/像用不同字母），点与向量不会重名。
+# 流程中向量用小写，端点用大写；复合表达式不再创建端点标签。
 _FLOW_POINT_LABELS = {
     "ch01.ops.addition": {"flow_a": "A", "flow_b": "B", "flow_sum": "C"},
     "ch01.ops.scalar": {"a": "A", "two_a": "B"},
@@ -119,12 +105,13 @@ _FLOW_POINT_LABELS = {
         "mv_rotate_e1": "H1", "mv_rotate_e2": "H2",
         "mv_ae1": "F1", "mv_ae2": "F2",
     },
-    # 2.7 的两个窗格各用一组字母：标准基下旋转的两列记 F1、F2，新基与其像记
-    # V1、V2、G1、G2，同一个窗格里的点不会重名。
+    # 2.7 的两个窗格使用同一组端点字母：物理输入/输出跨窗格保持同名，
+    # 两组基则分别标为 E1/E2 与 B1/B2。
     "ch02.matrix.basis": {
-        "mv_basis_ae1": "F1", "mv_basis_ae2": "F2",
-        "mv_basis_v1": "V1", "mv_basis_v2": "V2",
-        "mv_basis_bv1": "G1", "mv_basis_bv2": "G2",
+        "mv_basis_e1": "E1", "mv_basis_e2": "E2",
+        "mv_basis_x_a": "X", "mv_basis_rx_a": "Y",
+        "mv_basis_b1": "B1", "mv_basis_b2": "B2",
+        "mv_basis_x_b": "X", "mv_basis_rx_b": "Y",
     },
 }
 
@@ -206,7 +193,7 @@ class VisualSemanticsCompiler:
 
         operations: list[dict[str, Any]] = []
         aliases: dict[str, list[str]] = {}
-        # Family compilers are the semantic source of truth for chapter 4.
+        # 第 4 章以族编译器语义为准。
         from .families import family_compiler_for
         family_result = None
         family_evidence = None
@@ -269,8 +256,8 @@ class VisualSemanticsCompiler:
             for key, values in proof_aliases.items():
                 aliases.setdefault(key, []).extend(values)
         elif not chapter4_owned and not chapter5_owned and not chapter6_owned and not chapter7_owned and not chapter8_owned:
-            # 投影箭头跟随来源向量配色的修正只服务内积小节；其余小节保持
-            # 原有配色，避免非预期地改动既有 plan digest。
+            # 需要同时区分多组投影的主题，让投影箭头跟随各自的来源向量配色；
+            # 其余小节保持原有配色，避免非预期地改动既有 plan digest。
             projection_roles = (
                 _projection_source_roles(
                     semantics,
@@ -330,13 +317,7 @@ class VisualSemanticsCompiler:
             if missing_operations:
                 raise VisualCompileError(tuple(CompileIssue("missing_expected_operation", "$.operations", name) for name in sorted(missing_operations)))
 
-        # Formula annotations are a declared catalog capability rather than
-        # executable model output.  Emit them only for topics that explicitly
-        # request the capability; this preserves the compact plan shape for
-        # topics whose contract does not include a formula label.
-        # Section 1.5 figures already carry a student-readable formula label
-        # bound to the drawn construction, so they must not also receive the
-        # generic raw-source annotation at a fixed off-figure position.
+        # 仅为声明公式能力且未自带公式标注的主题补通用标注。
         if (
             artifact is not None
             and resolved_topic not in _PROOF_TOPICS
@@ -357,10 +338,7 @@ class VisualSemanticsCompiler:
             "padding": 1.45 if resolved_topic in _PROOF_TOPICS else 1.15,
         }
         if resolved_topic in _FLOW_VIEW_TOPICS:
-            # 流程主题的多个案例窗格必须共享同一视角：若各自按本窗格对象
-            # 自适应缩放，“全部显示”时会出现一大一小。这里给出覆盖所有
-            # 向量终点（含原点）的固定边界，让每个窗格使用同一相机；网格
-            # 由视口裁切，因此不参与取景。
+            # 以全部端点计算共享边界，网格不参与取景。
             try:
                 endpoints = [
                     _coordinates(entity.value, 2)
@@ -370,32 +348,26 @@ class VisualSemanticsCompiler:
             except (TypeError, ValueError):
                 endpoints = []
             if resolved_topic in _INNER_PRODUCT_TOPICS:
-                # a·b 用 OA 的延长线段表示，可能长过所有向量；取景必须把它
-                # 算进去，否则延长段会被窗格裁掉。
+                # 内积延长线可能超出向量端点，需纳入取景范围。
                 extension = _inner_product_extension_endpoint(semantics)
                 if extension is not None:
                     endpoints.append(extension)
             if resolved_topic == "ch03.det.oriented-area":
-                # 3.1 的案例把两列放进外接矩形，并在矩形上方标出矩形面积；
-                # 取景必须覆盖矩形对角与标注位置，否则“全部显示”时会被裁掉。
+                # 3.1 的取景需覆盖外接矩形和上方面积标注。
                 endpoints.extend(_det_geometry_view_endpoints(semantics))
             if endpoints:
                 xs = [0.0, *(point[0] for point in endpoints)]
                 ys = [0.0, *(point[1] for point in endpoints)]
                 min_x, max_x = min(xs), max(xs)
                 min_y, max_y = min(ys), max(ys)
-                # 共线向量（例如数乘的 a 与 2a）只占一条轴，退化边界会被
-                # 渲染层忽略；补出最小跨度，保证所有窗格仍共用一个视角。
+                # 共线向量需补最小跨度，避免共享边界退化。
                 if max_x <= min_x:
                     min_x, max_x = min_x - 0.5, max_x + 0.5
                 if max_y <= min_y:
                     min_y, max_y = min_y - 0.5, max_y + 0.5
                 view_fit["bounds"] = [min_x, max_x, min_y, max_y]
         elif resolved_topic in _SUBSPACE_CASE_TOPICS:
-            # 2.9 的案例主角是「变换后的网格」：以默认视野为基准（原点保持在
-            # 窗格中部，网格由视口裁切），只在案例向量超出视野时才把端点并进来
-            # —— 例如讲义表格里两列共线的矩阵 $\begin{pmatrix}1&2\\2&4\end{pmatrix}$
-            # 的列 (2, 4)。这样“全部显示”时每个窗格仍然共用同一张图。
+            # 2.9 默认以网格视野取景，仅在向量越界时扩展边界。
             try:
                 endpoints = [
                     _coordinates(entity.value, 2)
@@ -560,8 +532,7 @@ class VisualSemanticsCompiler:
                 continue
             visible_refs = tuple(dict.fromkeys((*stage.input_entity_refs, *stage.output_entity_refs, *stage.relation_refs)))
             visible_aliases_list = []
-            # Chapter-owned stages have executable frame-specific witnesses.
-            # Include them in visibility instead of losing their alias mapping.
+            # 章节自有阶段需保留帧级凭据及别名可见性。
             visible_aliases_list.extend(aliases.get(stage.id, ()))
             for ref in visible_refs:
                 for alias in aliases.get(ref, ()):
@@ -577,6 +548,7 @@ class VisualSemanticsCompiler:
                 or stage.id.startswith("stage.subtraction.")
                 or stage.id.startswith("stage.scalar.")
                 or stage.id.startswith("stage.linear-combination.")
+                or stage.id.startswith("stage.cauchy-schwarz.")
                 or stage.id.startswith("stage.velocity.")
                 or stage.id.startswith("stage.cross-product.")
                 or stage.id.startswith("stage.scalar-triple.")
@@ -713,38 +685,20 @@ class VisualSemanticsCompiler:
             aliases.append(prefix)
         elif entity.kind == "vector":
             coordinates = _coordinates(entity.value, entity.dimension)
-            if context.topic_id == "ch02.matrix.basis" and entity.id in {
-                "mv_basis_bv1", "mv_basis_bv2"
-            }:
-                # These two values are the columns of B in the alternate
-                # basis.  Render their physical images in the world selected
-                # by S=[v1 v2], while preserving the semantic values for the
-                # explanation and evidence layers.
-                coordinates = (
-                    _CH02_BASIS_MATRIX[0][0] * coordinates[0]
-                    + _CH02_BASIS_MATRIX[0][1] * coordinates[1],
-                    _CH02_BASIS_MATRIX[1][0] * coordinates[0]
-                    + _CH02_BASIS_MATRIX[1][1] * coordinates[1],
-                )
             origin = f"{prefix}__origin"
             end = f"{prefix}__end"
             aliases.extend((prefix, end))
             if scene == "2d":
                 is_magnitude_topic = context.topic_id == "ch01.vector.magnitude"
-                # 2.9 的案例向量标签本身就是 v1、a1 这类多字符标签，按流程主题的
-                # 规则不再在终点重复一个同名点标；2.9 的取景另有 _SUBSPACE_CASE_TOPICS
-                # 的分支，所以这里单独把它们并入“标签去重”的判断。
+                # 2.9 的多字符向量名不在端点重复标注。
                 is_flow_topic = (
                     context.topic_id in _FLOW_VIEW_TOPICS
                     or context.topic_id in _SUBSPACE_CASE_TOPICS
                 )
                 is_zero_vector = not any(abs(value) > 1e-12 for value in coordinates)
-                # The vector label is placed once on the segment; repeating it
-                # at the endpoint makes the magnitude example look cluttered.
-                # A zero vector has no segment, so retain its point label.
+                # 非零向量在线段上标一次，零向量保留点标签。
                 end_name = entity.label if (is_zero_vector or not is_magnitude_topic) else ""
-                # 流程里向量用小写 a、b 标注；向量终点是一个“点”，改用大写
-                # A、B、C 与向量区分，避免点与向量看起来完全一样。
+                # 向量用小写，端点改用大写以示区分。
                 if is_flow_topic:
                     explicit = _FLOW_POINT_LABELS.get(context.topic_id, {})
                     if entity.id in explicit:
@@ -820,10 +774,7 @@ class VisualSemanticsCompiler:
                     "vectors": [list(vector) for vector in vectors],
                     "color": role_color(entity.role),
                 }
-                # A volume carries both the signed-measure primitive and the
-                # filled parallelepiped primitive when the topic declares the
-                # latter capability.  Both are derived from the same typed
-                # semantic value and remain renderer-free at this boundary.
+                # 体积与实心平行六面体共用同一类型化语义值。
                 operations.append({"op": "geometry.oriented_volume", **volume_payload})
                 if _topic_requires_capability(context.topic_id, "parallelepiped_3d"):
                     operations.append({"op": "geometry.parallelepiped", **volume_payload, "opacity": 0.24})
@@ -843,41 +794,29 @@ class VisualSemanticsCompiler:
         operations: list[dict[str, Any]] = []
         relation_alias = _alias(relation.id)
         if relation.kind == "sum" and relation.id.startswith("rel.addition."):
-            # Vector-addition cases already render their input and result
-            # vectors.  A generic source-to-target annotation is misleading
-            # because the target is the second addend, not the sum vector.
+            # 向量加法已显示输入和结果，不再标注易误解的源目标关系。
             return operations, [relation_alias]
         if relation.id.startswith("rel.magnitude."):
-            # The magnitude case is self-contained in the vector and point
-            # labels.  Do not expose the compiler's internal relation kind or
-            # its source/target labels in the student-facing 2D plot.
+            # 模长案例不向学生暴露编译器内部关系标签。
             return operations, [relation_alias]
         if relation.id.startswith("rel.point-distinction."):
-            # The first pane needs only the position label.  In the second
-            # pane, retain the standard-basis decomposition as a native 2D
-            # text label: this renderer cannot interpret KaTeX source, so a
-            # Unicode subscript label is the stable student-facing form.
+            # 第二窗格用 Unicode 下标显示标准基分解，二维渲染器不解析 KaTeX。
             if relation.id == "rel.point-distinction.basis":
                 operations.append(
                     {
                         "op": "annotation.upsert",
                         "alias": relation_alias,
                         "text": "v = 3e₁ + 4e₂",
-                        # Keep the formula away from the origin-to-(3,4)
-                        # arrow, which occupies the first quadrant.
+                        # 公式避开第一象限中的向量箭头。
                         "position": [context.bounds[0] + 0.35, context.bounds[2] + 0.55],
                     }
                 )
             return operations, [relation_alias]
         if relation.id.startswith("rel.direction-examples."):
-            # Direction panes use only the student-facing vector labels.  Do
-            # not surface the semantic comparison edge as raw implementation
-            # text such as "compare: v→v".
+            # 方向窗格不显示内部比较关系文本。
             return operations, [relation_alias]
         if relation.id.startswith("rel.subtraction.") and semantics.scene_kind == "2d":
-            # A difference vector joins the two endpoints.  Semantic vectors
-            # are normally drawn from the origin, so this explicit relation
-            # operation preserves the lecture's endpoint geometry.
+            # 差向量连接两个端点，不能按普通语义向量从原点绘制。
             operations.append(
                 {
                     "op": "linear.upsert",
@@ -892,17 +831,13 @@ class VisualSemanticsCompiler:
             )
             return operations, [relation_alias]
         if relation.id.startswith("rel.scalar."):
-            # The two scalar-multiple vectors are the student-facing evidence;
-            # the relation itself carries no additional annotation.
+            # 数乘关系已由两条向量表达，无需额外标注。
             return operations, [relation_alias]
         if relation.id.startswith(("rel.linear-combination.", "rel.velocity.", "rel.cross-product.", "rel.scalar-triple.")):
-            # The formula and typed entities are the student-facing evidence;
-            # these bookkeeping edges do not need a raw relation annotation.
+            # 公式和类型化实体已足够，不显示记账关系。
             return operations, [relation_alias]
         if relation.id.startswith("rel.case.") and relation.kind != "projects_to":
-            # Case panes already display their source/result vectors.  A
-            # compiler-internal relation label would repeat the case title and
-            # expose implementation vocabulary such as “compare”.
+            # 案例窗格不重复显示编译器内部关系标签。
             return operations, [relation_alias]
         if (
             relation.kind == "decomposes_into"
@@ -916,8 +851,9 @@ class VisualSemanticsCompiler:
         if relation.kind == "projects_to" and semantics.scene_kind == "2d":
             source_coordinates = _coordinates(source.value, 2)
             direction_coordinates = _coordinates(target.value, 2)
-            foot = _pick_role_entity(semantics.entities, "foot", target.id)
-            residual = _pick_role_entity(semantics.entities, "residual", target.id)
+            projection_entity = _pick_role_entity(semantics.entities, "projection", source.id)
+            foot = _pick_role_entity(semantics.entities, "foot", source.id)
+            residual = _pick_role_entity(semantics.entities, "residual", source.id)
             # 投影与垂足连线属于辅助构造，按讲义约定一律画成虚线。
             # VisualRelation.style 的默认值 "solid" 无法与「未指定」区分，故此处不读取。
             projection: dict[str, Any] = {
@@ -925,13 +861,16 @@ class VisualSemanticsCompiler:
                 "alias": relation_alias,
                 "vector": list(source_coordinates),
                 "direction": list(direction_coordinates),
-                "result_alias": _alias(target.id),
+                "result_alias": (
+                    _alias(projection_entity.id)
+                    if context.topic_id == "ch02.batch.projection" and projection_entity
+                    else _alias(target.id)
+                ),
                 "foot_alias": _alias(foot.id) if foot else f"{relation_alias}__foot",
                 "residual_alias": _alias(residual.id) if residual else f"{relation_alias}__residual",
                 "style": "dashed",
-                # 投影线跟随被投影向量的颜色：2.2 的两列本就不同色，学生正在
-                # 看的那一列与它的投影必须同色，否则两条投影线共用一个通用色。
-                # 该配色修正仅用于内积小节，其余小节保留原通用投影色以免计划摘要漂移。
+                # 投影线跟随被投影向量的颜色：同一窗格出现多组投影时，学生正在
+                # 看的向量与它的投影必须同色，否则辅助线会混在一起。
                 "color": (
                     role_color(source.role)
                     if context.topic_id in _PROJECTION_SOURCE_COLOR_TOPICS
@@ -941,7 +880,6 @@ class VisualSemanticsCompiler:
             operations.append(projection)
             aliases = [relation_alias]
             if context.topic_id in _INNER_PRODUCT_TOPICS:
-                projection_entity = _pick_role_entity(semantics.entities, "projection", target.id)
                 annotations, length_aliases = _inner_product_length_annotations(
                     context,
                     relation_alias,
@@ -971,9 +909,7 @@ class VisualSemanticsCompiler:
             operations.append({"op": "geometry.transformed_grid", "alias": relation_alias, "matrix": matrix, "bounds": list(context.bounds), "step": 1.0, "color": role_color("transformed_a")})
             return operations, [relation_alias]
         matrices = relation.parameters.get("matrices") if isinstance(relation.parameters, Mapping) else None
-        # A semantic relation parameter is intentionally bounded to one scalar,
-        # vector, or matrix.  Accept a single ``matrix`` as the compact
-        # one-stage form and normalize it for the staged-transform primitive.
+        # 单个矩阵参数视为单阶段变换并规范化。
         if not _matrix_sequence(matrices) and isinstance(relation.parameters, Mapping):
             single_matrix = relation.parameters.get("matrix")
             if _matrix2(single_matrix) is not None:
@@ -1016,9 +952,7 @@ class VisualSemanticsCompiler:
                         }
                     )
                     return operations, [relation_alias]
-        # Semantic relations without a dedicated primitive remain visible as
-        # bounded 2D annotations.  3D storyboard metadata carries the label,
-        # because the current command protocol has no 3D annotation primitive.
+        # 无专用图元的关系降级为二维标注；三维仅在分镜元数据中保留标签。
         position = _annotation_position(len(operations), context.bounds, semantics.scene_kind)
         if semantics.scene_kind == "3d":
             return operations, [relation_alias]
@@ -1062,8 +996,7 @@ def _compile_proof_figure(
     for relation in semantics.relations:
         aliases[relation.id] = ["proof__region"]
     if topic_id == "ch01.proof.midline":
-        # 用户确认：中位线定理只画一张完整构造图（一个窗格），三角形、两腰、
-        # 两个中点、中位线、第三边与结论标注一次画全，不再按步骤拆成多张。
+        # 中位线定理在一个窗格中显示完整构造。
         aliases[f"stage.case.{topic_id}.1"] = [
             "proof__region",
             "proof__point_A", "proof__point_B", "proof__point_C",
@@ -1072,9 +1005,7 @@ def _compile_proof_figure(
             "proof__side_bc", "proof__midline", "proof__note_midline",
         ]
     elif topic_id == "ch01.proof.centroid":
-        # 用户确认：重心定理同样只画一张完整构造图（一个窗格），三角形、
-        # $\boldsymbol a$、$\boldsymbol b$ 两条向量、三个中点、三条中线向量、
-        # 重心与比例标注一次画全。
+        # 重心定理在一个窗格中显示完整构造。
         aliases[f"stage.case.{topic_id}.1"] = [
             "proof__region",
             "proof__point_A", "proof__point_B", "proof__point_C",
@@ -1084,8 +1015,7 @@ def _compile_proof_figure(
             "proof__note_centroid",
         ]
     elif topic_id == "ch01.proof.parallelogram-diagonals":
-        # 用户确认：平行四边形对角线也只画一张完整构造图（一个窗格），两条
-        # 邻边向量、两条对角线向量、公共中点与结论标注一次画全。
+        # 平行四边形对角线在一个窗格中显示完整构造。
         aliases[f"stage.case.{topic_id}.1"] = [
             "proof__region",
             "proof__point_A", "proof__point_B", "proof__point_C",
@@ -1181,8 +1111,7 @@ def _proof_figure_operations(
         add_point("proof__point_C", vertex_c, "C")
         add_point("proof__point_D", midpoint_d, "D")
         add_point("proof__point_E", midpoint_e, "E")
-        # 用户确认：这一小节全部按向量画（$\overrightarrow{AB}=\boldsymbol a$ 等），
-        # 不画成普通线段；图中也不再重复显示结论公式 DE = ½ BC。
+        # 本节使用向量图元，结论公式不在图中重复显示。
         add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("vector_a"), kind="vector")
         add_segment("proof__side_b", "proof__point_A", "proof__point_C", color=role_color("vector_b"), kind="vector")
         add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("vector_a"), kind="vector")
@@ -1196,8 +1125,7 @@ def _proof_figure_operations(
         formula = ""
         vertices = [origin, vertex_b, vertex_c]
     elif topic_id == "ch01.proof.centroid":
-        # 讲义 1.5.2 补充例题的字母与中线：$D$ 是 $BC$ 边中点，$E$ 是 $AB$ 边
-        # 中点，$F$ 是 $AC$ 边中点（与证明文字逐字对应）。
+        # D、E、F 分别为 BC、AB、AC 的中点。
         midpoint_bc = midpoint(vertex_b, vertex_c)
         midpoint_ab = midpoint(origin, vertex_b)
         midpoint_ac = midpoint(vertex_c, origin)
@@ -1212,9 +1140,7 @@ def _proof_figure_operations(
         add_point("proof__point_E", midpoint_ab, "E")
         add_point("proof__point_F", midpoint_ac, "F")
         add_point("proof__point_G", centre, "G")
-        # 用户确认：这一小节全部按向量画（$\overrightarrow{AB}=\boldsymbol a$、
-        # $\overrightarrow{AC}=\boldsymbol b$ 与证明里的三条中线向量），第三边
-        # $BC$ 只作为灰色辅助线段补全三角形。
+        # 两腰和三条中线使用向量，第三边仅作辅助线段。
         add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("vector_a"), kind="vector")
         add_segment("proof__side_b", "proof__point_A", "proof__point_C", color=role_color("vector_b"), kind="vector")
         add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("construction"), role="construction")
@@ -1237,10 +1163,7 @@ def _proof_figure_operations(
         add_point("proof__point_C", vertex_c_para, "C")
         add_point("proof__point_D", vertex_d, "D")
         add_point("proof__point_M", centre, "M")
-        # 用户确认：邻边按向量画（$\overrightarrow{AB}=\boldsymbol a$、
-        # $\overrightarrow{AD}=\boldsymbol b$），两条对角线 $AC$、$BD$ 也画成
-        # 向量（虚线），与证明里的中线点表达式一一对应；另外两边只作灰色
-        # 辅助线段补全平行四边形。
+        # 邻边和对角线使用向量，其余两边仅作辅助线段。
         add_segment("proof__side_a", "proof__point_A", "proof__point_B", color=role_color("vector_a"), kind="vector")
         add_segment("proof__side_b", "proof__point_A", "proof__point_D", color=role_color("vector_b"), kind="vector")
         add_segment("proof__side_bc", "proof__point_B", "proof__point_C", color=role_color("construction"), role="construction")
@@ -1257,8 +1180,7 @@ def _proof_figure_operations(
     left, right = min(x_values), max(x_values)
     bottom, top = min(y_values), max(y_values)
     margin_y = max((top - bottom) * 0.08, 0.10)
-    # A long student-readable label is centred under the construction so the
-    # fitted pane never clips it against a figure edge.
+    # 长标签置于构造图下方中央，避免取景裁切。
     formula_position = ((left + right) / 2.0, bottom - margin_y)
 
     operations: list[dict[str, Any]] = [
@@ -1315,9 +1237,9 @@ def _projection_source_roles(
     """Map every ``projection`` entity to the role of the vector it comes from.
 
     A projection arrow pictures one component of the vector being projected, so
-    the two are drawn in the same color.  Without this mapping the arrow keeps the
-    generic ``projection`` swatch and stops matching its own vector — most
-    visibly in 2.2, where the two matrix columns already carry distinct colors.
+    the two are drawn in the same color. Without this mapping the arrow keeps the
+    generic ``projection`` swatch and stops matching its own vector in the 2.2
+    batch-inner-product and 2.3 batch-projection panes.
     """
     entities = {entity.id: entity for entity in semantics.entities}
     color_roles: dict[str, str] = {}
@@ -1328,11 +1250,11 @@ def _projection_source_roles(
         target = entities.get(relation.target_ref)
         if source is None or target is None:
             continue
-        projection = _pick_role_entity(semantics.entities, "projection", target.id)
+        projection = _pick_role_entity(semantics.entities, "projection", source.id)
         if projection is not None:
             color_roles[projection.id] = source.role
         if include_residual:
-            residual = _pick_role_entity(semantics.entities, "residual", target.id)
+            residual = _pick_role_entity(semantics.entities, "residual", source.id)
             if residual is not None:
                 color_roles[residual.id] = source.role
     return color_roles
@@ -1345,6 +1267,7 @@ _INNER_PRODUCT_TOPICS = frozenset({"ch01.inner.definitions", "ch02.batch.inner-p
 _PROJECTION_SOURCE_COLOR_TOPICS = frozenset({
     *_INNER_PRODUCT_TOPICS,
     "ch01.inner.cauchy-schwarz",
+    "ch02.batch.projection",
 })
 
 
@@ -1583,8 +1506,7 @@ def _vector_addition_operation(
             None,
         )
         if result is None:
-            # Some family semantics use ``target`` for the result and carry
-            # the second addend as a numeric relation parameter.
+            # 部分族语义以 `target` 表示结果，第二加数放在关系参数中。
             result = target
             other = next(
                 (
@@ -1978,11 +1900,7 @@ def _stage_geometry_operations(
         )
         if matrix is None:
             return []
-        # A stage that already draws a grid or matrix entity owns its grid
-        # geometry.  Adding the automatic transformed grid on top would stack
-        # two grids in the same pane (the "floating duplicate grid" the
-        # walkthrough reported) and would show the transformed grid even in the
-        # stage that is supposed to display the *standard* grid.
+        # 阶段已有网格或矩阵实体时，不再叠加自动变换网格。
         stage_refs = tuple(getattr(stage, "input_entity_refs", ()) or ()) + tuple(
             getattr(stage, "output_entity_refs", ()) or ()
         )
@@ -2014,10 +1932,7 @@ def _stage_geometry_operations(
         return [{"op": "geometry.angle_arc", "alias": f"sem__orientation__{index + 1}", "vertex": [0.0, 0.0], "first": list(first), "second": list(second), "radius": 0.45, "color": role_color("projection")}]
     if "orthogonal_to" in relation_kinds:
         if context.topic_id == "ch01.inner.cauchy-schwarz":
-            # The relation compiler already emits the right-angle marker at the
-            # declared projection foot. Re-emitting it per storyboard pane
-            # would duplicate the same marker and make the equality pane show
-            # a construction it does not contain.
+            # 直角标记已由关系编译器生成，分镜不能重复补画。
             return []
         relation = _stage_relation(semantics, stage, "orthogonal_to")
         if relation is None:
@@ -2116,10 +2031,10 @@ def _emit_matrix_vector_transform(
         label_alias = f"{prefix}__label"
         if topic_id == "ch02.matrix.basis":
             # 2.7 的第二窗格不是独立生成一层 teaching grid，而是复用工具箱的
-            # “矩阵变换”坐标系：S 的两列就是新基 v1、v2。第一窗格不设置
+            # “矩阵变换”坐标系：S 的两列就是新基 b1、b2。第一窗格不设置
             # 变换，保留软件默认的标准基坐标系。
             if entity.id == "mv_basis_grid_b":
-                if "mv_basis_v1" in entity_by_id and "mv_basis_v2" in entity_by_id:
+                if "mv_basis_b1" in entity_by_id and "mv_basis_b2" in entity_by_id:
                     coordinate_alias = prefix
                     operations.append(
                         {
@@ -2232,8 +2147,7 @@ def _annotation_position(index: int, bounds: tuple[float, float, float, float], 
     left, right, bottom, top = bounds
     x = left + 0.35 + (index % 3) * 0.8
     y = top - 0.35 - (index // 3) * 0.35
-    # annotation.upsert is a 2D protocol primitive even in a 3D plan; the
-    # scene host projects this label into its overlay layer.
+    # 三维计划中的二维标注由场景宿主投影到叠加层。
     return [x, y]
 
 
@@ -2275,9 +2189,7 @@ def storyboard_visibility(compiled: CompiledVisualization, stage_id: str) -> tup
         controlled.extend(item.visible_aliases)
     for _semantic_id, values in getattr(compiled, "aliases", ()) or ():
         controlled.extend(str(value) for value in values)
-    # A vector entity binds its ``__end`` alias but not the co-located
-    # ``__origin`` point; the storyboard adds that origin only where the end is
-    # visible.  Mirror the rule so the shared origin is masked like its vector.
+    # 向量端点可见时才显示对应共用原点。
     for alias in tuple(controlled):
         if alias.endswith("__end"):
             controlled.append(f"{alias[:-5]}__origin")

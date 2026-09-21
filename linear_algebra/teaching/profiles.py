@@ -59,15 +59,17 @@ _VECTOR_FOUNDATION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "formula", "worked_examples", "geometric_meaning"),
 )
-# 讲义 1.3.1 的两种定义把公式直接写在定义块内，正文只有「定义」「内积的
-# 基本性质」与一组数值案例：不要求独立的「公式」或「几何意义」小节。
+# 1.1.1 没有“几何意义”小节，因此不强制该字段。
+_VECTOR_DEFINITION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "formula", "worked_examples"),
+)
+# 1.3.1 的公式已写入定义块，不要求独立公式和几何意义。
 _INNER_DEFINITIONS = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "worked_examples", "invariants"),
 )
-# 讲义 1.4.1 的投影公式（定理 1.6）与「从 v 的终点向 u 所在直线作垂线，垂足
-# 对应的向量」都写在定义 1.13 之内，正文只有「定义」「定理 1.6（投影公式）的
-# 推导」与一组数值案例：同样不要求独立的「公式」或「几何意义」小节。
+# 1.4.1 的投影公式和几何说明已写入定义块。
 _PROJECTION_DEFINITION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "derivation", "worked_examples"),
@@ -76,48 +78,42 @@ _CAUCHY_SCHWARZ = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "derivation", "worked_examples"),
 )
-# 讲义 1.5.2 把中位线定理写成「命题 + 向量证明」两段：命题就是定义块，
-# 证明自带全部公式；这一小节没有独立的「案例」或「几何意义（注意）」内容。
+# 1.5.2 仅要求命题和向量证明。
 _PROOF_MIDLINE = TeachingProfile(
     TeachingLevel.READ,
     ("definition", "formula", "derivation"),
 )
-# 2.5 矩阵 × 向量（核心节）的三个小节把公式写在定义（2.5.1）、定理（2.5.2）或
-# 例题（2.5.3）之内，正文只有「定义 / 定理 / 分层例题」与一组分步数学案例：
-# 不要求独立的「公式」或「几何意义」小节。2.7 矩阵与基同样把「旋转 90° 的矩阵」
-# 写在核心认知里，正文只有「定义 2.9（基）」与一组分步数学案例。
+# 2.5 和 2.7 的公式随定义、定理或例题展示，不另设公式分节。
 _MATRIX_VECTOR_SUBSECTION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "worked_examples"),
 )
-# 合并后的 4.1 将定义、性质、证明与例题忠实保留在一个「定义」块内；案例仅保留
-# 列空间和零空间的两幅三维图，因此不再要求独立的「公式」或「几何意义」分节。
+# 4.1 的文字合并到定义块，案例只保留列空间和零空间图。
 _LINEAR_SPACE_DEFINITION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "worked_examples"),
 )
-# 讲义 2.2 的批量内积把「定义 2.4」与一句话总结连写，公式就在定义块内，正文
-# 只有「定义」与一组分层例题（例 1 单位阵）：同样不要求独立的「公式」或
-# 「几何意义」小节。
+# 2.2 的公式位于定义块，不要求独立公式和几何意义。
 _BATCH_INNER_PRODUCT = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "worked_examples"),
 )
-# 讲义 3.1 的几何定义把行列式公式（定理 3.1）写在定义块内，正文随后是
-# 「几何意义速查」表与一组数值案例：不要求独立的「公式」或「推导」小节。
+# 2.3 的公式和讲义给出的 x 轴说明都位于定义块；不另造公式、推导或几何意义分节。
+_PROJECTION_MATRIX = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+# 3.1 的行列式公式位于定义块，不要求独立公式和推导。
 _DET_GEOMETRY = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "geometric_meaning", "worked_examples"),
 )
-# 讲义 4.3 的三小节合并成一个小节：定义 4.10 与定理 4.1 连写（公式就在定义块内），
-# 4.3.2 只有一段「性质 4 的证明」进「推导」，读数案例由定义自定；不要求独立的
-# 「公式」或「几何意义」小节。
+# 4.3 合并后只要求定义、性质证明和读数案例。
 _BASIS_DEFINITION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "derivation", "worked_examples"),
 )
-# 4.2.1–4.2.2 合并后，生成集、几何说明、相关/无关定义及其表格都位于同一「定义」
-# 块；讲义没有推导，也不应凭空增加独立的公式或几何意义分节。
+# 4.2 的内容合并到定义块，不补讲义中没有的分节。
 _DEPENDENCE_DEFINITION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "worked_examples"),
@@ -133,14 +129,10 @@ _ANALOGY = TeachingProfile(
 )
 
 
-# This remains a literal topic-ID mapping so catalog title or source changes cannot
-# silently change the minimum teaching depth.
+# 以固定主题标识映射，避免标题或来源变化影响最低教学深度。
 _PROFILES: dict[str, TeachingProfile] = {
-    "ch01.vector.magnitude": _VECTOR_FOUNDATION,
-    # Chapters 1--2 are presented as concise lecture notes: definition and
-    # formula, an actual derivation only where the lecture gives one, geometric
-    # meaning, and checked cases.  Do not force generic "intuition", pitfalls,
-    # or cross-topic transfer copy into every small subsection.
+    "ch01.vector.magnitude": _VECTOR_DEFINITION,
+    # 第 1、2 章按讲义实际内容要求分节，不强加通用模板文案。
     "ch01.ops.addition": _VECTOR_ADDITION,
     "ch01.ops.subtraction": _VECTOR_FOUNDATION,
     "ch01.ops.scalar": _VECTOR_FOUNDATION,
@@ -149,20 +141,17 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch01.inner.cauchy-schwarz": _CAUCHY_SCHWARZ,
     "ch01.projection.definition": _PROJECTION_DEFINITION,
     "ch01.proof.midline": _PROOF_MIDLINE,
-    # 1.5.2 的两道补充例题（重心定理、平行四边形对角线）与中位线定理同构：
-    # 讲义只写「命题 + 向量证明」两段，没有独立的「案例」或「几何意义」内容。
+    # 1.5.2 的补充例题同样只要求命题和向量证明。
     "ch01.proof.centroid": _PROOF_MIDLINE,
     "ch01.proof.parallelogram-diagonals": _PROOF_MIDLINE,
     "ch02.batch.inner-products": _BATCH_INNER_PRODUCT,
-    "ch02.batch.projection": _VECTOR_FOUNDATION,
-    "ch02.matrix.additive-distributivity": _VECTOR_FOUNDATION,
+    "ch02.batch.projection": _PROJECTION_MATRIX,
+    "ch02.matrix.additive-distributivity": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.transformed-grid": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.composition": _VECTOR_FOUNDATION,
     "ch02.matrix.basis": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.powers": _VECTOR_FOUNDATION,
-    # 2.9 只剩讲义 2.9.1「线性无关与线性相关」与 2.9.2「秩」两小节：定义与公式
-    # 连写（公式就在定义块内），正文只有「定义」与一组分步数学案例，因此沿用
-    # 2.5 小节的 profile，不要求独立的「公式」或「几何意义」小节。
+    # 2.9 沿用 2.5 配置，仅要求定义和分步案例。
     "ch02.subspace.independence": _MATRIX_VECTOR_SUBSECTION,
     "ch02.subspace.rank": _MATRIX_VECTOR_SUBSECTION,
     "ch03.det.oriented-area": _DET_GEOMETRY,
@@ -178,9 +167,7 @@ _PROFILES: dict[str, TeachingProfile] = {
 }
 _PROFILES["ch02.matrix.composition"] = _BRIDGE
 
-# Chapter 4–8 entries share the explicit core policy until chapter-specific
-# editorial profiles are authored; the mapping is still materialized per stable
-# topic ID so coverage cannot silently drift with the catalog.
+# 第 4 至 8 章暂用统一策略，并按稳定主题标识显式登记。
 _CHAPTER_4_8_PROFILE = TeachingProfile(
     TeachingLevel.EXPLAIN,
     ("definition", "formula", "derivation", "worked_examples", "geometric_meaning", "pitfalls", "connections"),

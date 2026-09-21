@@ -4,7 +4,7 @@ from linear_algebra.explanations import explanation_for
 
 def test_all_chapter_4_to_8_topics_have_grounded_explanations():
     topics = [topic for topic in topic_entries() if 4 <= topic.chapter_number <= 8]
-    assert len(topics) == 29
+    assert len(topics) == 27
     for topic in topics:
         content = explanation_for(topic.id)
         assert content.id == f"explain.{topic.id}"

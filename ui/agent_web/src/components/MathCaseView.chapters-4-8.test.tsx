@@ -59,4 +59,89 @@ describe("MathCaseView chapters 4-8 payload", () => {
     expect(headings.indexOf("几何直观")).toBeLessThan(headings.indexOf("列空间和零空间为子空间的证明"));
     expect(screen.getByRole("button", { name: "全部显示" })).toBeInTheDocument();
   });
+
+  it("4.2 uses the definition heading and exposes all four confirmed cases", () => {
+    const cases = [
+      "① 一根向量：张成直线",
+      "② 两根不共线向量：张成平面",
+      "③ 加入平面外方向：张成整个三维空间",
+      "④ 加入冗余方向：仍只张成原平面",
+    ];
+    render(<MathCaseView caseData={{
+      id: "ch04.dependence.redundancy",
+      topicId: "ch04.dependence.redundancy",
+      category: "线性空间与子空间",
+      name: "4.2 线性组合、线性相关与线性无关",
+      formula: "",
+      steps: [],
+      conclusion: "",
+      definition: "**（生成集）** $\\operatorname{Span}\\{\\boldsymbol u\\}$ 是所有线性组合。",
+      workedExamples: cases.map((purpose, index) => ({
+        id: `example-${index + 1}`,
+        title: `案例${index + 1}`,
+        calculation: [purpose],
+      })),
+      sections: [
+        { id: "definition", title: "定义" },
+        { id: "worked_examples", title: "数学案例" },
+      ],
+      caseLayout: {
+        defaultPaneCount: 4,
+        cases: cases.map((purpose, index) => ({
+          id: `case-${index + 1}`,
+          topicId: "ch04.dependence.redundancy",
+          exampleRef: `example-${index + 1}`,
+          claimRefs: [],
+          stageRefs: [`stage-${index + 1}`],
+          purpose,
+        })),
+      },
+    }} />);
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    cases.forEach((name) => expect(screen.getByRole("button", { name })).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "全部显示" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("4.4 merges the lecture into Definition and exposes both cases by default", () => {
+    const { container } = render(<MathCaseView caseData={{
+      id: "ch04.linear-map.definition",
+      topicId: "ch04.linear-map.definition",
+      category: "线性变换",
+      name: "线性变换的定义",
+      formula: "",
+      steps: [],
+      conclusion: "",
+      definition: "定义 4.11（线性变换）\n\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 拉伸 | $T(x,y)=(ax,by)$ | 平移 | $T(x,y)=(x+1,y)$ |",
+      workedExamples: [
+        { id: "stretch", title: "拉伸（是）", calculation: ["$$T(\\boldsymbol u+\\boldsymbol v)=(2,1)$$"] },
+        { id: "translation", title: "平移（不是）", calculation: ["$$T(\\boldsymbol u)+T(\\boldsymbol v)=(3,1)$$"] },
+      ],
+      sections: [
+        { id: "definition", title: "定义" },
+        { id: "worked_examples", title: "数学案例" },
+      ],
+      caseLayout: {
+        defaultPaneCount: 2,
+        cases: [
+          { id: "stretch-case", topicId: "ch04.linear-map.definition", exampleRef: "stretch", claimRefs: [], stageRefs: ["stretch-stage"], purpose: "拉伸（是）" },
+          { id: "translation-case", topicId: "ch04.linear-map.definition", exampleRef: "translation", claimRefs: [], stageRefs: ["translation-stage"], purpose: "平移（不是）" },
+        ],
+      },
+    }} />);
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "拉伸（是）" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "平移（不是）" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "全部显示" })).toHaveAttribute("aria-pressed", "true");
+    expect(container.querySelector("table")).toBeInTheDocument();
+    expect(container.querySelectorAll(".katex-html").length).toBeGreaterThan(0);
+    const visibleMath = Array.from(container.querySelectorAll(".katex-html"))
+      .map((node) => node.textContent ?? "")
+      .join(" ");
+    expect(visibleMath).not.toContain("\\boldsymbol");
+    expect(visibleMath).not.toContain("\\n");
+  });
 });

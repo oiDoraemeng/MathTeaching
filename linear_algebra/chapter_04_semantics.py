@@ -123,17 +123,23 @@ _MAPPING: dict[str, Chapter4Semantic] = {
   S("null_space","零空间：与平面垂直的方向被压成一点",("column_space","null_space","kernel_vector"),("zero",),("collapse",),("kernel_to_zero",),"side_by_side")),
  ("diag_1_1_0","kernel_to_zero","image_xy_plane"), ("plane3d.upsert","linear3d.upsert","point3d.upsert"), r"\boldsymbol A=\begin{pmatrix}1&0&0\\0&1&0\\0&0&0\end{pmatrix},\quad \operatorname{Null}(\boldsymbol A)=\operatorname{span}(\boldsymbol e_3),\quad \operatorname{Col}(\boldsymbol A)=\operatorname{span}(\boldsymbol e_1,\boldsymbol e_2)", "matrix_transform", (M(V(1,0,0),V(0,1,0),V(0,0,0)),V(2,1,3)), V(2,1,0), "kernel_vector"),
 "ch04.dependence.redundancy": Chapter4Semantic(
- # 4.2.1 与 4.2.2 合并后的两幅 3D 对照图：前者用三个互不共面的方向张成 R³，
- # 后者把三根向量放在同一平面，并让 u+v-w 回到原点。两个关系都直接用向量的
- # 线性组合复算；没有引入 4.2.3 的 Ax=0 判定法。
+ # 4.2.1 与 4.2.2 合并后的四幅 3D 图按维数递增：一根向量张成直线、两根
+ # 不共线向量张成平面、加入平面外方向张成 R³，最后加入冗余向量作相关对照。
+ # 全部关系只复算定义中的线性组合，不引入 4.2.3 的 Ax=0 判定法。
  "3d", "subspace_region", ("vector_3d","subspace_region","linear3d","plane3d"),
- (E("independent_set","basis",3,I3,"independent"), E("independent_sample","point",3,V(2,-1,3),"x"),
-  E("dependent_set","basis",3,M(V(1,0,0),V(0,1,0),V(1,1,0)),"dependent"), E("zero_combination","point",3,V(0,0,0),"0")),
- (R("independent_combination","linear_combination","independent_set","independent_sample",coefficients=V(2,-1,3),expected_result=V(2,-1,3)),
-  R("dependent_combination","linear_combination","dependent_set","zero_combination",coefficients=V(1,1,-1),expected_result=V(0,0,0))),
-    (S("independent","三个不共面的向量张成整个三维空间",("independent_set",),("independent_sample",),("independent_combination",),("independent_only_zero_solution","independent_span_r3"),"side_by_side",r"\boldsymbol{x}=2\boldsymbol{e}_1-\boldsymbol{e}_2+3\boldsymbol{e}_3=\begin{pmatrix}2\\-1\\3\end{pmatrix}"),
-  S("dependent","三个共面的向量含有冗余",("dependent_set",),("zero_combination",),("dependent_combination",),("dependent_nonzero_combination_zero","dependent_coplanar"),"side_by_side",r"\boldsymbol{u}+\boldsymbol{v}-\boldsymbol{w}=\begin{pmatrix}0\\0\\0\end{pmatrix}")),
- ("independent_only_zero_solution","independent_span_r3","dependent_nonzero_combination_zero","dependent_coplanar"), ("plane3d.upsert","linear3d.upsert","point3d.upsert"), r"\operatorname{Span}\{\boldsymbol v_1,\ldots,\boldsymbol v_k\}=\{\text{这些向量的所有线性组合}\}", "linear_combination", (M(V(1,0,0),V(0,1,0),V(0,0,1)),V(2,-1,3)), V(2,-1,3), "independent_set"),
+ (E("span_line","basis",3,M(V(1,0,0)),"Span(u)"), E("line_sample","point",3,V(2,0,0),"2u"),
+   E("span_plane","basis",3,M(V(1,0,0),V(0,1,0)),"Span(u,v)"), E("plane_sample","point",3,V(2,-1,0),"x"),
+   E("independent_set","basis",3,I3,"independent"), E("independent_sample","point",3,V(1,1,1),"x"),
+   E("dependent_set","basis",3,M(V(1,0,0),V(0,1,0),V(1,1,0)),"dependent"), E("zero_combination","point",3,V(0,0,0),"0")),
+ (R("line_combination","linear_combination","span_line","line_sample",coefficient=2.0,expected_result=V(2,0,0)),
+   R("plane_combination","linear_combination","span_plane","plane_sample",coefficients=V(2,-1),expected_result=V(2,-1,0)),
+   R("independent_combination","linear_combination","independent_set","independent_sample",coefficients=V(1,1,1),expected_result=V(1,1,1)),
+   R("dependent_combination","linear_combination","dependent_set","zero_combination",coefficients=V(1,1,-1),expected_result=V(0,0,0))),
+  (S("line","一根向量张成过原点的直线",("span_line",),(),("line_combination",),("line_span_1d",),"side_by_side",r"\operatorname{Span}\{\boldsymbol u\}=\{t\boldsymbol u\mid t\in R\}"),
+   S("plane","两根不共线向量张成过原点的平面",("span_plane",),(),("plane_combination",),("plane_span_2d",),"side_by_side",r"a\boldsymbol u+b\boldsymbol v=\begin{pmatrix}a\\b\\0\end{pmatrix}"),
+   S("space","加入平面外方向后张成整个三维空间",("independent_set",),(),("independent_combination",),("independent_only_zero_solution","independent_span_r3"),"side_by_side",r"\boldsymbol x=\begin{pmatrix}a\\b\\c\end{pmatrix}=a\boldsymbol u+b\boldsymbol v+c\boldsymbol w"),
+   S("dependent","加入冗余方向后仍只张成原平面",("dependent_set",),(),("dependent_combination",),("dependent_nonzero_combination_zero","dependent_coplanar"),"side_by_side",r"\boldsymbol u+\boldsymbol v-\boldsymbol w=\begin{pmatrix}0\\0\\0\end{pmatrix}")),
+ ("line_span_1d","plane_span_2d","independent_only_zero_solution","independent_span_r3","dependent_nonzero_combination_zero","dependent_coplanar"), ("plane3d.upsert","linear3d.upsert","point3d.upsert"), r"\operatorname{Span}\{\boldsymbol v_1,\ldots,\boldsymbol v_k\}=\{\text{这些向量的所有线性组合}\}", "linear_combination", (M(V(1,0,0),V(0,1,0),V(0,0,1)),V(1,1,1)), V(1,1,1), "independent_set"),
 
 "ch04.basis.definition": Chapter4Semantic(
  # 4.3 合并后的唯一条目：定义（4.3.1 定义 4.10 与维数）、维数（4.3.2）、坐标（4.3.3）
@@ -151,24 +157,28 @@ _MAPPING: dict[str, Chapter4Semantic] = {
  ("basis_independent_and_spanning","standard_reconstruction","coordinate_reconstruction"), ("geometry.coordinate_readout","geometry.subspace_region","linear.upsert"), r"\boldsymbol x=5\boldsymbol e_1+3\boldsymbol e_2=\begin{pmatrix}1&1\\1&-1\end{pmatrix}\begin{pmatrix}4\\1\end{pmatrix}=(5,3)", "matrix_transform", (M(V(1,1),V(1,-1)),V(4,1)), V(5,3), "oblique_basis"),
 
 "ch04.linear-map.definition": Chapter4Semantic(
- "2d", "basis_change", ("transformed_grid","staged_transform","vector_2d"),
- (E("map_T","matrix",2,M(V(2,1),V(0,1))), E("u","vector",2,V(1,2)), E("v","vector",2,V(-1,1)), E("sum_test","vector",2,V(0,3),"u+v"), E("T_u","vector",2,V(4,2),"T(u)"), E("T_v","vector",2,V(-1,1),"T(v)"), E("T_sum","vector",2,V(3,3),"T(u+v)"), E("homogeneity_test","vector",2,V(3,6),"3u"), E("T_scaled","vector",2,V(12,6),"3T(u)"), E("origin","point",2,V(0,0),"O")),
- (R("map_u","maps_to","u","T_u",matrix=M(V(2,1),V(0,1)),expected_result=V(4,2)), R("map_v","maps_to","v","T_v",matrix=M(V(2,1),V(0,1)),expected_result=V(-1,1)), R("input_sum","sum","u","sum_test",other_vector=V(-1,1),expected_result=V(0,3)), R("additivity_test","additivity","sum_test","T_sum",matrix=M(V(2,1),V(0,1)),expected_result=V(3,3)), R("input_scaling","scalar_multiple","u","homogeneity_test",scalar=3.0,expected_result=V(3,6)), R("homogeneity_test","homogeneity","homogeneity_test","T_scaled",matrix=M(V(2,1),V(0,1)),scalar=3.0,expected_result=V(12,6)), R("origin_test","maps_to","origin","origin",matrix=M(V(2,1),V(0,1)),expected_result=V(0,0))),
- (S("origin","原点固定",("map_T","origin"),("origin",),("origin_test",),("origin_fixed",)), S("additivity","可加性",("u","v","sum_test"),("T_u","T_v","T_sum"),("map_u","map_v","input_sum","additivity_test"),("additivity",),"overlay"), S("homogeneity","齐次性",("u","homogeneity_test"),("T_u","T_scaled"),("input_scaling","homogeneity_test"),("homogeneity",),"overlay")),
- ("origin_fixed","additivity","homogeneity"), ("geometry.transformed_grid","geometry.polygon","linear.upsert","point.upsert"), r"T(u+v)=T(u)+T(v),\ T(3u)=3T(u),\ T(0)=0", "matrix_transform", (M(V(2,1),V(0,1)),V(1,2)), V(4,2), "T_sum"),
-"ch04.linear-map.compare": Chapter4Semantic(
- "2d", "basis_change", ("transformed_grid","vector_2d"),
- (E("rotation","matrix",2,M(V(0,-1),V(1,0))), E("stretch","matrix",2,M(V(2,0),V(0,.5))), E("projection","matrix",2,A10), E("translation","affine_set",2,V(1,1)), E("square_map","constraint",2,M(V(-1,1),V(0,0),V(2,4))), E("constant_shift","affine_set",2,V(0,2)), E("origin","point",2,V(0,0),"O")),
- (R("rotation_linear","classification","rotation","origin",is_linear=1.0,origin_image=V(0,0),u=V(1,2),v=V(-1,1),scalar=3.0,image_u=V(-2,1),image_v=V(-1,-1),sum_image=V(-3,0),scaled_image=V(-6,3)), R("stretch_linear","classification","stretch","origin",is_linear=1.0,origin_image=V(0,0),u=V(1,2),v=V(-1,1),scalar=3.0,image_u=V(2,1),image_v=V(-2,.5),sum_image=V(0,1.5),scaled_image=V(6,3)), R("projection_linear","classification","projection","origin",is_linear=1.0,origin_image=V(0,0),u=V(1,2),v=V(-1,1),scalar=3.0,image_u=V(1,0),image_v=V(-1,0),sum_image=V(0,0),scaled_image=V(3,0)), R("translation_failure","not_linear","translation","origin",origin_image=V(1,1),expected_origin=V(0,0)), R("square_failure","not_linear","square_map","origin",inputs=V(1,2),separate_sum=5.0,sum_image=9.0), R("constant_failure","not_linear","constant_shift","origin",origin_image=V(0,2),expected_origin=V(0,0))),
- (S("linear","三个线性例",("origin",),("rotation","stretch","projection"),("rotation_linear","stretch_linear","projection_linear"),("linear_examples_pass_axioms",),"side_by_side"), S("nonlinear","三个失败诊断",("origin",),("translation","square_map","constant_shift"),("translation_failure","square_failure","constant_failure"),("nonlinear_diagnostics",),"side_by_side")),
- ("linear_examples_pass_axioms","nonlinear_diagnostics"), ("geometry.transformed_grid","curve.create","linear.upsert"), r"R,S,P\text{线性};\ \tau(0)\ne0,\ f(1+2)=9\ne5,\ (Ax+c)(0)\ne0", "matrix_transform", (M(V(0,-1),V(1,0)),V(1,0)), V(0,1), "square_map"),
-
-"ch04.linear-map.matrix-columns": Chapter4Semantic(
+ # 4.4.1 与 4.4.2 合并后的两个并排案例。拉伸同时验证加性与齐性；平移用同一组
+ # u、v 直接展示加性两边落在不同位置。两个窗格共用范围，图形数据与案例公式一致。
  "2d", "basis_change", ("transformed_grid","vector_2d","polygon_2d"),
- (E("map_T","matrix",2,M(V(2,-1),V(1,3))), E("standard_e1","vector",2,V(1,0),"e₁"), E("standard_e2","vector",2,V(0,1),"e₂"), E("column_1","vector",2,V(2,1),"a₁"), E("column_2","vector",2,V(-1,3),"a₂")),
- (R("first_column","column_image","standard_e1","column_1",matrix=M(V(2,-1),V(1,3)),column_index=1.0,expected_result=V(2,1)), R("second_column","column_image","standard_e2","column_2",matrix=M(V(2,-1),V(1,3)),column_index=2.0,expected_result=V(-1,3)), R("grid_binding","image_of","map_T","column_1",expected_basis=M(V(2,1),V(-1,3)))),
- (S("columns","基向量映到矩阵列",("map_T","standard_e1","standard_e2"),("column_1","column_2"),("first_column","second_column"),("Tej_equals_column_j",),"overlay"), S("grid","矩阵列决定网格",("column_1","column_2"),("map_T",),("grid_binding",),("columns_determine_grid",),"overlay")),
- ("Tej_equals_column_j","columns_determine_grid"), ("geometry.transformed_grid","linear.upsert","geometry.polygon"), r"T(e_1)=(2,1)=a_1,\ T(e_2)=(-1,3)=a_2", "matrix_transform", (M(V(2,-1),V(1,3)),V(0,1)), V(-1,3), "column_2"),
+ (E("stretch_map","matrix",2,M(V(2,0),V(0,1)),"T"),
+  E("stretch_result","point",2,V(2,1),"T(u+v)"),
+  E("translation_shift","affine_set",2,V(1,0),"T"),
+  E("translation_result","point",2,V(2,1),"T(u+v)")),
+ (R("stretch_case","classification","stretch_map","stretch_result",
+    matrix=M(V(2,0),V(0,1)),u=V(1,0),v=V(0,1),scalar=2.0,
+    image_u=V(2,0),image_v=V(0,1),sum_image=V(2,1),sum_of_images=V(2,1),
+    scaled_image=V(4,0),scaled_output=V(4,0)),
+  R("translation_case","not_linear","translation_shift","translation_result",
+    shift=V(1,0),u=V(1,0),v=V(0,1),image_u=V(2,0),image_v=V(1,1),
+    sum_image=V(2,1),sum_of_images=V(3,1))),
+ (S("stretch","拉伸（是）",(),(),("stretch_case",),("stretch_additivity","stretch_homogeneity"),"side_by_side",
+    r"T(\boldsymbol u+\boldsymbol v)=T(\boldsymbol u)+T(\boldsymbol v)=(2,1),\quad T(2\boldsymbol u)=2T(\boldsymbol u)=(4,0)"),
+  S("translation","平移（不是）",(),(),("translation_case",),("translation_not_additive",),"side_by_side",
+    r"T(\boldsymbol u+\boldsymbol v)=(2,1)\ne(3,1)=T(\boldsymbol u)+T(\boldsymbol v)")),
+ ("stretch_additivity","stretch_homogeneity","translation_not_additive"),
+ ("geometry.transformed_grid","geometry.polygon","linear.upsert","point.upsert"),
+ r"T(\boldsymbol u+\boldsymbol v)=T(\boldsymbol u)+T(\boldsymbol v),\quad T(k\boldsymbol v)=kT(\boldsymbol v)",
+ "matrix_transform", (M(V(2,0),V(0,1)),V(1,1)), V(2,1), "translation_result"),
 
 }
 

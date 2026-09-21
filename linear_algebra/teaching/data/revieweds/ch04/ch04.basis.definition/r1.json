@@ -46,7 +46,7 @@
     }
   ],
   "explanation": {
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "analogy_boundary": "",
     "case_layout": {
       "cases": [
         {
@@ -76,7 +76,7 @@
       ],
       "default_pane_count": 2
     },
-    "conclusion": "数值关系与讲义定义一致。",
+    "conclusion": "",
     "connections": [],
     "definition": "**（基）** $V$ 的一组基满足两个条件：\n\n1. 线性无关 —— 没有冗余\n2. 生成整个空间 —— 任何向量都能写成基的线性组合\n\n基 $=$ \"最小的完整尺子组\"——少了量不全，多了有冗余。\n\n标准基 $e_{1},...,e_{n}$ 是 $R^{n}$ 最常见的一组基。\n\n**（维数唯一性）** 同一空间任何基的向量个数相等。这个个数 $=$ 空间的维数 $\\dim(V)$。\n$R^{2}$ 的维数 $= 2$，$R^{3}$ 的维数 $= 3$。\n维数的关键性质：\n1. 若 $H$ 是 $V$ 的子空间，则 $\\dim(H) \\leq \\dim(V)$\n2. $\\dim(R^{n}) = n$\n3. 一组基恰好含有 $\\dim(V)$ 个向量——不能多（多了必相关），不能少（少了张不满整个空间）\n4. 若一组线性无关向量个数 $= \\dim(V)$，则它自动构成一组基（不需要再验证\"生成\"条件）\n\n**（坐标）** 给定基 $B=\\{v_{1},...,v_{n}\\}$，任何向量 $x$ 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 $x$ 在基 $B$ 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。",
     "derivation": [
@@ -132,7 +132,7 @@
       "x": "same_vector"
     },
     "title": "基的定义",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "transfer_note": "",
     "worked_examples": [
       {
         "calculation": [
@@ -230,12 +230,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:8af9356696f195e4be8d054d3f39d3d8b8e7a960009445e6f9d8671f3542e42e",
+    "artifact_digest": "sha256:a9d1a840d8ea30cb90d6127c5732f8f2edb4591fe2d9d4aeee9ee3472decdfbe",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:7e57d8df8103b9830e544902483970fae6cfcbb0298e9965cdfd09331742a32c",
+    "raw_reply_digest": "sha256:a9f49552b0977d088cebe2372c7d8d13434e67f44268bd0dd3ff2ac858196d59",
     "source_hash": "sha256:673e2bba22d2d77b10624b8aabf9b10e61619c2f9736345c9c6ecdf17b9d82e0"
   },
   "revision": 1,

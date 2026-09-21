@@ -221,7 +221,7 @@ def _course_paths(root: Path) -> tuple[Path, Path]:
     source = root / ".agents" / "线性代数讲义.md"
     if source.is_file():
         return root, source
-    # Accept ``linear_algebra/teaching/data`` as a convenient fixture root.
+    # 允许直接传入教学数据目录作为夹具根目录。
     if root.name == "data" and root.parent.name == "teaching":
         project = root.parents[2]
         return project, project / ".agents" / "线性代数讲义.md"
@@ -262,10 +262,10 @@ def validate_all_topics(
     snapshot_store = CompiledSnapshotStore(snapshot_root) if snapshot_root is not None else None
     issues: list[TopicValidationIssue] = []
     records: list[TopicValidationRecord] = []
-    expected_counts = {1: 11, 2: 9, 3: 10, 4: 6, 5: 8, 6: 3, 7: 6, 8: 6}
+    expected_counts = {1: 11, 2: 9, 3: 10, 4: 4, 5: 8, 6: 3, 7: 6, 8: 6}
     counts = Counter(topic.chapter_number for topic in registry.topics)
     if counts != Counter(expected_counts):
-        # Keep the issue topic-neutral so consumers can still render all rows.
+        # 问题不绑定主题，便于调用方继续展示全部条目。
         issues.append(TopicValidationIssue(0, "", "catalog", "chapter_counts", "chapter_count_mismatch", f"expected {expected_counts}, got {dict(sorted(counts.items()))}"))
     ids = [topic.id for topic in registry.topics]
     for duplicate in sorted({topic_id for topic_id in ids if ids.count(topic_id) > 1}):
@@ -302,8 +302,7 @@ def validate_all_topics(
         if row is None:
             _issue(issues, topic, "published", "index.json", "missing_index_entry", "topic is absent from the published index")
         else:
-            # Legacy rows use ``revision`` while chapter 4--8 release rows
-            # expose the explicit ``published_revision`` witness.
+            # 旧条目使用 `revision`，新版发布条目使用 `published_revision`。
             revision_field = "published_revision" if "published_revision" in row else "revision"
             value = row.get(revision_field)
             if isinstance(value, bool) or not isinstance(value, int) or value < 1:
@@ -336,8 +335,7 @@ def validate_all_topics(
             _issue(issues, topic, "artifact", "topic_id", "topic_id_mismatch", f"expected {topic.id!r}, got {artifact.topic_id!r}")
         if artifact.status not in {"published", "reviewed"}:
             _issue(issues, topic, "artifact", "status", "invalid_status", f"unsupported artifact status {artifact.status!r}")
-        # The legacy index is intentionally frozen at its original revision;
-        # only an explicit extended ``published_revision`` is authoritative.
+        # 旧索引修订号固定，仅显式的 `published_revision` 具有发布效力。
         if published_revision is not None and artifact.revision != published_revision and row is not None and "published_revision" in row:
             _issue(issues, topic, "published", "published_revision", "revision_mismatch", f"index={published_revision}, artifact={artifact.revision}")
         if row is not None and row.get("source_hash") not in (None, artifact.source.source_hash):
@@ -455,11 +453,7 @@ def validate_capability_plan(
     errors: list[str] = []
     declarative_skips = {
         "vector_3d": "topic storyboard is 2d; 3d analogy is retained in explanation semantics",
-        # The n-dimensional determinant topic is rendered as a 3D volume.
-        # Its catalog also names the 2D oriented-area primitive to preserve the
-        # area -> volume analogy, but a 2D command cannot be placed in a 3D
-        # CommandPlan.  The signed-area bridge remains in the artifact prose
-        # and typed 3D volume evidence.
+        # n 维行列式以三维体积绘制，二维有向面积类比只保留在文案和类型证据中。
         "oriented_area_2d": "topic storyboard is 3d; 2d area is retained as the explanation analogy",
         "transformed_grid": "topic storyboard is 3d; transformed grid is retained as the explanation analogy",
         "subspace_region": "topic storyboard is 3d; subspace region is retained as the explanation analogy",
@@ -572,7 +566,7 @@ def validate_registry(registry: CurriculumRegistry) -> tuple[str, ...]:
     topic_ids = [topic.id for topic in registry.topics]
     if len(topic_ids) != len(set(topic_ids)):
         errors.append("catalog: duplicate topic IDs")
-    expected_counts = Counter({1: 11, 2: 9, 3: 10, 4: 6, 5: 8, 6: 3, 7: 6, 8: 6})
+    expected_counts = Counter({1: 11, 2: 9, 3: 10, 4: 4, 5: 8, 6: 3, 7: 6, 8: 6})
     if Counter(topic.chapter_number for topic in registry.topics) != expected_counts:
         errors.append("catalog: expected chapter topic counts 11/9/10/6/8/3/6/6")
     node_ids = [node.id for node in registry.nodes]
@@ -653,9 +647,7 @@ def _heading_records(source: str) -> tuple[HeadingRecord, ...]:
         title = match.group(2).strip()
         if _CHAPTER.match(title):
             active_chapter = title
-            # The source occasionally uses a second-level heading for a section.
-            # Keep the active chapter at a synthetic root level so those headings
-            # remain children of the chapter in the conceptual curriculum path.
+            # 以合成根节点容纳偶尔使用二级标题的小节。
             stack = [(1, title)]
         elif active_chapter is None:
             continue

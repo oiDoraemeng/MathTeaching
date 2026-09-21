@@ -85,6 +85,15 @@ def test_loading_a_2d_topic_activates_the_visible_select_tool() -> None:
     )
 
 
+def test_linear_algebra_source_repository_is_reused_for_topic_switches() -> None:
+    window = MainWindow.__new__(MainWindow)
+
+    first = window._linear_algebra_source_repository()
+    second = window._linear_algebra_source_repository()
+
+    assert first is second
+
+
 def test_live_window_defers_scene_materialization_after_explanation_preview(monkeypatch) -> None:
     window = MainWindow.__new__(MainWindow)
     window.window = object()

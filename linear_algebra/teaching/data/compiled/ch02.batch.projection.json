@@ -1,38 +1,10 @@
 {
-  "artifact_digest": "sha256:f9e55252f2ba443d2a6874b2889259b18b90c1661af60626126928cf01520bef",
+  "artifact_digest": "sha256:102113da61204eb44c28fc80a2e981f21617e0a91cf4314c84c3e2a1bbfa3998",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:8193f209d2698fd1d7e273d1240a4674dfa631c2d77bad0b76b6351925e3ec11",
   "plan": {
     "operations": [
-      {
-        "alias": "sem__v__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__v__end",
-        "coordinates": [
-          3.0,
-          4.0
-        ],
-        "name": "v",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__v",
-        "color": "#2F6BFF",
-        "end": "sem__v__end",
-        "kind": "vector",
-        "label": "v",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__v__origin"
-      },
       {
         "alias": "sem__u__origin",
         "coordinates": [
@@ -62,7 +34,7 @@
         "start": "sem__u__origin"
       },
       {
-        "alias": "sem__p__origin",
+        "alias": "sem__batch1_v__origin",
         "coordinates": [
           0.0,
           0.0
@@ -71,35 +43,26 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__p__end",
+        "alias": "sem__batch1_v__end",
         "coordinates": [
           3.0,
-          0.0
+          2.0
         ],
-        "name": "p",
+        "name": "v1",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__p",
-        "color": "#2A9D8F",
-        "end": "sem__p__end",
+        "alias": "sem__batch1_v",
+        "color": "#2F6BFF",
+        "end": "sem__batch1_v__end",
         "kind": "vector",
-        "label": "p",
+        "label": "v1",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__p__origin"
+        "start": "sem__batch1_v__origin"
       },
       {
-        "alias": "sem__H",
-        "coordinates": [
-          3.0,
-          0.0
-        ],
-        "name": "H",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__r__origin",
+        "alias": "sem__batch1_p__origin",
         "coordinates": [
           0.0,
           0.0
@@ -108,133 +71,186 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__r__end",
+        "alias": "sem__batch1_p__end",
         "coordinates": [
-          0.0,
-          4.0
+          3.0,
+          0.0
         ],
-        "name": "r",
+        "name": "p1",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__r",
-        "color": "#E76F51",
-        "end": "sem__r__end",
+        "alias": "sem__batch1_p",
+        "color": "#2F6BFF",
+        "end": "sem__batch1_p__end",
         "kind": "vector",
-        "label": "r",
+        "label": "p1",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__r__origin"
+        "start": "sem__batch1_p__origin"
       },
       {
-        "alias": "sem__v_projects_to_u",
-        "color": "#2A9D8F",
+        "alias": "sem__batch2_v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__batch2_v__end",
+        "coordinates": [
+          -2.0,
+          3.0
+        ],
+        "name": "v2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__batch2_v",
+        "color": "#F08A24",
+        "end": "sem__batch2_v__end",
+        "kind": "vector",
+        "label": "v2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__batch2_v__origin"
+      },
+      {
+        "alias": "sem__batch2_p__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__batch2_p__end",
+        "coordinates": [
+          -2.0,
+          0.0
+        ],
+        "name": "p2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__batch2_p",
+        "color": "#F08A24",
+        "end": "sem__batch2_p__end",
+        "kind": "vector",
+        "label": "p2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__batch2_p__origin"
+      },
+      {
+        "alias": "sem__batch3_v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__batch3_v__end",
+        "coordinates": [
+          1.0,
+          -3.0
+        ],
+        "name": "v3",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__batch3_v",
+        "color": "#7B61FF",
+        "end": "sem__batch3_v__end",
+        "kind": "vector",
+        "label": "v3",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__batch3_v__origin"
+      },
+      {
+        "alias": "sem__batch3_p__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__batch3_p__end",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "p3",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__batch3_p",
+        "color": "#7B61FF",
+        "end": "sem__batch3_p__end",
+        "kind": "vector",
+        "label": "p3",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__batch3_p__origin"
+      },
+      {
+        "alias": "sem__rel.batch-projection.1",
+        "color": "#2F6BFF",
         "direction": [
           1.0,
           0.0
         ],
-        "foot_alias": "sem__H",
+        "foot_alias": "sem__rel.batch-projection.1__foot",
         "op": "geometry.projection",
-        "residual_alias": "sem__r",
-        "result_alias": "sem__u",
+        "residual_alias": "sem__rel.batch-projection.1__residual",
+        "result_alias": "sem__batch1_p",
         "style": "dashed",
         "vector": [
           3.0,
-          4.0
+          2.0
         ]
       },
       {
-        "alias": "sem__v_decomposes_p_r",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "decomposes_into: v → p"
-      },
-      {
-        "alias": "sem__r_orthogonal_u",
-        "color": "#6B7280",
-        "first": [
-          0.0,
-          4.0
-        ],
-        "op": "geometry.right_angle_marker",
-        "second": [
+        "alias": "sem__rel.batch-projection.2",
+        "color": "#F08A24",
+        "direction": [
           1.0,
           0.0
         ],
-        "size": 0.3,
-        "vertex": [
-          0.0,
-          0.0
-        ]
-      },
-      {
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
+        "foot_alias": "sem__rel.batch-projection.2__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__rel.batch-projection.2__residual",
+        "result_alias": "sem__batch2_p",
+        "style": "dashed",
+        "vector": [
+          -2.0,
           3.0
-        ],
-        "color": "#7B61FF",
-        "matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
-      },
-      {
-        "alias": "sem__stage.input__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "输入向量"
-      },
-      {
-        "alias": "sem__stage.projection__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "投影分量"
-      },
-      {
-        "alias": "sem__orthogonal__3",
-        "color": "#6B7280",
-        "first": [
-          0.0,
-          4.0
-        ],
-        "op": "geometry.right_angle_marker",
-        "second": [
-          1.0,
-          0.0
-        ],
-        "size": 0.3,
-        "vertex": [
-          0.0,
-          0.0
         ]
       },
       {
-        "alias": "sem__stage.residual__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          1.69
+        "alias": "sem__rel.batch-projection.3",
+        "color": "#7B61FF",
+        "direction": [
+          1.0,
+          0.0
         ],
-        "text": "正交残差"
+        "foot_alias": "sem__rel.batch-projection.3__foot",
+        "op": "geometry.projection",
+        "residual_alias": "sem__rel.batch-projection.3__residual",
+        "result_alias": "sem__batch3_p",
+        "style": "dashed",
+        "vector": [
+          1.0,
+          -3.0
+        ]
       },
       {
         "op": "view.fit",
@@ -242,105 +258,59 @@
       }
     ],
     "scene": "2d",
-    "summary": "投影矩阵把一批向量压到方向上",
+    "summary": "投影矩阵",
     "version": 1
   },
-  "plan_digest": "sha256:3cfa17678f2a1e8b07f6861e9e3d7b9b863da0bacc76151a834d23ac843117e3",
+  "plan_digest": "sha256:c9267766e9de66b5ef542c09732dd8827470cc7e367610d2649e9d2fd27aeb57",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 18,
+  "revision": 20,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:18e7642a880b874828bfee6824477b44b80aaac5b2c703abc508923f1d009780",
   "stages": [
     {
       "anchor": [
-        -2.65,
+        0.0,
         2.65
       ],
-      "caption": "先观察 v 和目标方向 u。",
-      "id": "stage.input",
-      "layout": "sequence",
-      "title": "输入向量",
+      "caption": "沿着方向线读出投影分量。",
+      "id": "stage.case.ch02.batch.projection.1",
+      "layout": "overlay",
+      "title": "三个向量同时投影到横轴",
       "visible_aliases": [
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__u",
-        "sem__u__end",
-        "sem__u__origin",
-        "sem__v_projects_to_u",
-        "sem__stage.input__title"
+        "sem__batch1_v",
+        "sem__batch1_v__end",
+        "sem__batch1_v__origin",
+        "sem__batch2_v",
+        "sem__batch2_v__end",
+        "sem__batch2_v__origin",
+        "sem__batch3_v",
+        "sem__batch3_v__end",
+        "sem__batch3_v__origin",
+        "sem__batch1_p",
+        "sem__batch1_p__end",
+        "sem__batch1_p__origin",
+        "sem__batch2_p",
+        "sem__batch2_p__end",
+        "sem__batch2_p__origin",
+        "sem__batch3_p",
+        "sem__batch3_p__end",
+        "sem__batch3_p__origin",
+        "sem__rel.batch-projection.1",
+        "sem__rel.batch-projection.2",
+        "sem__rel.batch-projection.3"
       ],
       "visible_refs": [
-        "v",
-        "u",
-        "v_projects_to_u"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "垂足 H 给出沿 u 的投影 p。",
-      "id": "stage.projection",
-      "layout": "sequence",
-      "title": "投影分量",
-      "visible_aliases": [
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__u",
-        "sem__u__end",
-        "sem__u__origin",
-        "sem__p",
-        "sem__p__end",
-        "sem__p__origin",
-        "sem__H",
-        "sem__v_projects_to_u",
-        "sem__v_decomposes_p_r",
-        "sem__stage.projection__title"
-      ],
-      "visible_refs": [
-        "v",
-        "u",
-        "p",
-        "H",
-        "v_projects_to_u",
-        "v_decomposes_p_r"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        1.69
-      ],
-      "caption": "残差 r 与 u 垂直，且 v=p+r。",
-      "id": "stage.residual",
-      "layout": "sequence",
-      "title": "正交残差",
-      "visible_aliases": [
-        "sem__p",
-        "sem__p__end",
-        "sem__p__origin",
-        "sem__r",
-        "sem__r__end",
-        "sem__r__origin",
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__v_decomposes_p_r",
-        "sem__r_orthogonal_u",
-        "sem__stage.residual__title",
-        "sem__orthogonal__3"
-      ],
-      "visible_refs": [
-        "p",
-        "r",
-        "v",
-        "v_decomposes_p_r",
-        "r_orthogonal_u"
+        "batch1_v",
+        "batch2_v",
+        "batch3_v",
+        "batch1_p",
+        "batch2_p",
+        "batch3_p",
+        "rel.batch-projection.1",
+        "rel.batch-projection.2",
+        "rel.batch-projection.3"
       ]
     }
   ],

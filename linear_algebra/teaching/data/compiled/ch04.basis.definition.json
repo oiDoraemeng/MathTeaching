@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:71a7b3b2fb4300803520d6b004781d5d5e8a39353f4628c54c6f044c802eb26d",
+  "artifact_digest": "sha256:38f0227ab0de64e6f584f5cfedf7086dc5ba997fdab4817fbb6802f53f32ae4a",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:6585a2444ed2e4a5a938dbf36afb01c18a5bf9ee3332f6590641b6acf337dba6",
@@ -41,7 +41,7 @@
           1.0,
           0.0
         ],
-        "name": "e₁",
+        "name": "e_1",
         "op": "point.upsert"
       },
       {
@@ -68,7 +68,7 @@
           0.0,
           1.0
         ],
-        "name": "e₂",
+        "name": "e_2",
         "op": "point.upsert"
       },
       {
@@ -116,7 +116,7 @@
           1.0,
           1.0
         ],
-        "name": "b₁",
+        "name": "b_1",
         "op": "point.upsert"
       },
       {
@@ -143,7 +143,7 @@
           1.0,
           -1.0
         ],
-        "name": "b₂",
+        "name": "b_2",
         "op": "point.upsert"
       },
       {
@@ -201,10 +201,10 @@
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -5.0,
+          5.0,
+          -5.0,
+          5.0
         ],
         "color": "#2F6BFF",
         "entity_count": 4,
@@ -272,7 +272,7 @@
         "color": "#2F6BFF",
         "end": "ch04__relation__standard_readout__component_1__end",
         "kind": "vector",
-        "label": "5e₁",
+        "label": "5e_1",
         "op": "linear.upsert",
         "role": "result",
         "start": "ch04__relation__standard_readout__component_1__start"
@@ -298,7 +298,7 @@
         "color": "#F08A24",
         "end": "ch04__relation__standard_readout__component_2__end",
         "kind": "vector",
-        "label": "3e₂",
+        "label": "3e_2",
         "op": "linear.upsert",
         "role": "result",
         "start": "ch04__relation__standard_readout__component_2__start"
@@ -322,10 +322,10 @@
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -5.0,
+          5.0,
+          -5.0,
+          5.0
         ],
         "color": "#7B61FF",
         "entity_count": 4,
@@ -393,7 +393,7 @@
         "color": "#7B61FF",
         "end": "ch04__relation__oblique_readout__component_1__end",
         "kind": "vector",
-        "label": "4b₁",
+        "label": "4b_1",
         "op": "linear.upsert",
         "role": "result",
         "start": "ch04__relation__oblique_readout__component_1__start"
@@ -419,7 +419,7 @@
         "color": "#D64550",
         "end": "ch04__relation__oblique_readout__component_2__end",
         "kind": "vector",
-        "label": "1b₂",
+        "label": "1b_2",
         "op": "linear.upsert",
         "role": "result",
         "start": "ch04__relation__oblique_readout__component_2__start"
@@ -451,7 +451,7 @@
     "summary": "基的定义",
     "version": 1
   },
-  "plan_digest": "sha256:3571f709c3dbc110e013ef6a5833a90867152908f0f80613761d17feba460f84",
+  "plan_digest": "sha256:b4463de31ab463dca86b432b4d4adc65d1548285be2a0eee321737367556dc14",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
@@ -470,6 +470,14 @@
       "title": "标准基下的读数",
       "visible_aliases": [
         "ch04__entity__standard_basis",
+        "ch04__entity__standard_basis__generator_1__origin",
+        "ch04__entity__standard_basis__generator_1__end",
+        "ch04__entity__standard_basis__generator_1",
+        "ch04__entity__standard_basis__generator_2__origin",
+        "ch04__entity__standard_basis__generator_2__end",
+        "ch04__entity__standard_basis__generator_2",
+        "ch04__entity__same_vector__origin",
+        "ch04__entity__same_vector__end",
         "ch04__entity__same_vector",
         "ch04__relation__standard_readout__grid",
         "ch04__relation__standard_readout",
@@ -500,6 +508,14 @@
       "title": "新基下的读数",
       "visible_aliases": [
         "ch04__entity__oblique_basis",
+        "ch04__entity__oblique_basis__generator_1__origin",
+        "ch04__entity__oblique_basis__generator_1__end",
+        "ch04__entity__oblique_basis__generator_1",
+        "ch04__entity__oblique_basis__generator_2__origin",
+        "ch04__entity__oblique_basis__generator_2__end",
+        "ch04__entity__oblique_basis__generator_2",
+        "ch04__entity__same_vector__origin",
+        "ch04__entity__same_vector__end",
         "ch04__entity__same_vector",
         "ch04__relation__oblique_readout__grid",
         "ch04__relation__oblique_readout",

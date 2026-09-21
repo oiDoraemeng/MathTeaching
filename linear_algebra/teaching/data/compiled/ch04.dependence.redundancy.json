@@ -1,13 +1,32 @@
 {
-  "artifact_digest": "sha256:f7707e1feec4753b94b696c0ada6d667b51134c9d0aad6157522166d09699e47",
+  "artifact_digest": "sha256:1e82b6c6ab3483709d01cd088ea521d3cb416a3b7df11ab6d4c183f3b06d281c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:52668aee089956191c1ceb20ef02cee982e2e87a05ded077aa5b0211a320682c",
+  "contract_digest": "sha256:f17ecf11476143d0d0d7dcbd277fb60df8ea99e8b7dccddedaeaf2a32271c0d1",
   "plan": {
     "operations": [
       {
-        "algebra_symbol": "\\boldsymbol{e}_1",
-        "alias": "ch04__entity__independent_set__axis_1",
+        "alias": "ch04__entity__span_line",
+        "color": "#2A9D8F",
+        "end": [
+          2.0,
+          0.0,
+          0.0
+        ],
+        "kind": "segment",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          -2.0,
+          -0.0,
+          -0.0
+        ]
+      },
+      {
+        "algebra_symbol": "\\boldsymbol{u}",
+        "algebra_visible": true,
+        "alias": "ch04__entity__span_line__generator_1",
+        "arrow_head_scale": 0.6666666666666666,
         "color": "#2F6BFF",
         "end": [
           1.0,
@@ -24,8 +43,57 @@
         ]
       },
       {
-        "algebra_symbol": "\\boldsymbol{e}_2",
-        "alias": "ch04__entity__independent_set__axis_2",
+        "alias": "ch04__entity__line_sample",
+        "coordinates": [
+          2.0,
+          0.0,
+          0.0
+        ],
+        "name": "2u",
+        "op": "point3d.upsert"
+      },
+      {
+        "alias": "ch04__entity__span_plane",
+        "color": "#E09F3E",
+        "normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "op": "plane3d.upsert",
+        "opacity": 0.2,
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "size": 2.5
+      },
+      {
+        "algebra_symbol": "\\boldsymbol{u}",
+        "algebra_visible": true,
+        "alias": "ch04__entity__span_plane__generator_1",
+        "arrow_head_scale": 0.6666666666666666,
+        "color": "#2F6BFF",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "algebra_symbol": "\\boldsymbol{v}",
+        "algebra_visible": true,
+        "alias": "ch04__entity__span_plane__generator_2",
+        "arrow_head_scale": 0.6666666666666666,
         "color": "#F08A24",
         "end": [
           0.0,
@@ -42,8 +110,60 @@
         ]
       },
       {
-        "algebra_symbol": "\\boldsymbol{e}_3",
+        "alias": "ch04__entity__plane_sample",
+        "coordinates": [
+          2.0,
+          -1.0,
+          0.0
+        ],
+        "name": "x",
+        "op": "point3d.upsert"
+      },
+      {
+        "algebra_symbol": "\\boldsymbol{u}",
+        "algebra_visible": true,
+        "alias": "ch04__entity__independent_set__axis_1",
+        "arrow_head_scale": 0.6666666666666666,
+        "color": "#2F6BFF",
+        "end": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "algebra_symbol": "\\boldsymbol{v}",
+        "algebra_visible": true,
+        "alias": "ch04__entity__independent_set__axis_2",
+        "arrow_head_scale": 0.6666666666666666,
+        "color": "#F08A24",
+        "end": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "kind": "vector",
+        "op": "linear3d.upsert",
+        "role": "primary",
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "algebra_symbol": "\\boldsymbol{w}",
+        "algebra_visible": true,
         "alias": "ch04__entity__independent_set__axis_3",
+        "arrow_head_scale": 0.6666666666666666,
         "color": "#7B61FF",
         "end": [
           0.0,
@@ -62,9 +182,9 @@
       {
         "alias": "ch04__entity__independent_sample",
         "coordinates": [
-          2.0,
-          -1.0,
-          3.0
+          1.0,
+          1.0,
+          1.0
         ],
         "name": "x",
         "op": "point3d.upsert"
@@ -88,7 +208,9 @@
       },
       {
         "algebra_symbol": "\\boldsymbol{u}",
+        "algebra_visible": true,
         "alias": "ch04__entity__dependent_set__generator_1",
+        "arrow_head_scale": 0.6666666666666666,
         "color": "#2F6BFF",
         "end": [
           1.0,
@@ -106,7 +228,9 @@
       },
       {
         "algebra_symbol": "\\boldsymbol{v}",
+        "algebra_visible": true,
         "alias": "ch04__entity__dependent_set__generator_2",
+        "arrow_head_scale": 0.6666666666666666,
         "color": "#F08A24",
         "end": [
           0.0,
@@ -124,7 +248,9 @@
       },
       {
         "algebra_symbol": "\\boldsymbol{w}",
+        "algebra_visible": true,
         "alias": "ch04__entity__dependent_set__generator_3",
+        "arrow_head_scale": 0.6666666666666666,
         "color": "#7B61FF",
         "end": [
           1.0,
@@ -166,123 +292,41 @@
             0.0
           ],
           [
-            0.0,
             1.0,
+            0.0,
             0.0
           ]
         ]
       },
       {
-        "alias": "ch04__relation__independent_combination__term_1",
-        "color": "#2F6BFF",
-        "end": [
+        "alias": "ch04__relation__line_combination",
+        "coordinates": [
           2.0,
           0.0,
           0.0
         ],
-        "kind": "vector",
-        "op": "linear3d.upsert",
-        "role": "result",
-        "start": [
-          0.0,
-          0.0,
-          0.0
-        ]
+        "name": "2u",
+        "op": "point3d.upsert"
       },
       {
-        "alias": "ch04__relation__independent_combination__term_2",
-        "color": "#F08A24",
-        "end": [
-          2.0,
-          -1.0,
-          0.0
-        ],
-        "kind": "vector",
-        "op": "linear3d.upsert",
-        "role": "result",
-        "start": [
-          2.0,
-          0.0,
-          0.0
-        ]
-      },
-      {
-        "alias": "ch04__relation__independent_combination__term_3",
-        "color": "#7B61FF",
-        "end": [
-          2.0,
-          -1.0,
-          3.0
-        ],
-        "kind": "vector",
-        "op": "linear3d.upsert",
-        "role": "result",
-        "start": [
-          2.0,
-          -1.0,
-          0.0
-        ]
-      },
-      {
-        "alias": "ch04__relation__independent_combination",
+        "alias": "ch04__relation__plane_combination",
         "coordinates": [
           2.0,
           -1.0,
-          3.0
+          0.0
         ],
         "name": "x",
         "op": "point3d.upsert"
       },
       {
-        "alias": "ch04__relation__dependent_combination__term_1",
-        "color": "#2F6BFF",
-        "end": [
+        "alias": "ch04__relation__independent_combination",
+        "coordinates": [
           1.0,
-          0.0,
-          0.0
+          1.0,
+          1.0
         ],
-        "kind": "vector",
-        "op": "linear3d.upsert",
-        "role": "result",
-        "start": [
-          0.0,
-          0.0,
-          0.0
-        ]
-      },
-      {
-        "alias": "ch04__relation__dependent_combination__term_2",
-        "color": "#F08A24",
-        "end": [
-          1.0,
-          1.0,
-          0.0
-        ],
-        "kind": "vector",
-        "op": "linear3d.upsert",
-        "role": "result",
-        "start": [
-          1.0,
-          0.0,
-          0.0
-        ]
-      },
-      {
-        "alias": "ch04__relation__dependent_combination__term_3",
-        "color": "#7B61FF",
-        "end": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "kind": "vector",
-        "op": "linear3d.upsert",
-        "role": "result",
-        "start": [
-          1.0,
-          1.0,
-          0.0
-        ]
+        "name": "x",
+        "op": "point3d.upsert"
       },
       {
         "alias": "ch04__relation__dependent_combination",
@@ -303,7 +347,7 @@
     "summary": "线性相关与线性无关",
     "version": 1
   },
-  "plan_digest": "sha256:bc69dd268168f29dd693b36f77d1b0675d5dcb2dd5e55d4238cc87ff84b83aff",
+  "plan_digest": "sha256:e3602583d2c080a7e81bcf9e633c6ee53eaa0cc4631e15c891aa3b5633d25c3d",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
@@ -313,54 +357,85 @@
   "stages": [
     {
       "anchor": [
-        -1.5,
+        -2.25,
         2.65
       ],
-      "caption": "\\boldsymbol{x}=2\\boldsymbol{e}_1-\\boldsymbol{e}_2+3\\boldsymbol{e}_3=\\begin{pmatrix}2\\\\-1\\\\3\\end{pmatrix}",
-      "id": "stage.ch04.dependence.redundancy.independent",
+      "caption": "\\operatorname{Span}\\{\\boldsymbol u\\}=\\{t\\boldsymbol u\\mid t\\in R\\}",
+      "id": "stage.ch04.dependence.redundancy.line",
       "layout": "side_by_side",
-      "title": "三个不共面的向量张成整个三维空间",
+      "title": "一根向量张成过原点的直线",
+      "visible_aliases": [
+        "ch04__entity__span_line",
+        "ch04__entity__span_line__generator_1",
+        "ch04__relation__line_combination",
+        "sem__stage.ch04.dependence.redundancy.line__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.dependence.redundancy.span_line",
+        "relation.ch04.dependence.redundancy.line_combination"
+      ]
+    },
+    {
+      "anchor": [
+        -0.75,
+        2.65
+      ],
+      "caption": "a\\boldsymbol u+b\\boldsymbol v=\\begin{pmatrix}a\\\\b\\\\0\\end{pmatrix}",
+      "id": "stage.ch04.dependence.redundancy.plane",
+      "layout": "side_by_side",
+      "title": "两根不共线向量张成过原点的平面",
+      "visible_aliases": [
+        "ch04__entity__span_plane",
+        "ch04__entity__span_plane__generator_1",
+        "ch04__entity__span_plane__generator_2",
+        "ch04__relation__plane_combination",
+        "sem__stage.ch04.dependence.redundancy.plane__title"
+      ],
+      "visible_refs": [
+        "entity.ch04.dependence.redundancy.span_plane",
+        "relation.ch04.dependence.redundancy.plane_combination"
+      ]
+    },
+    {
+      "anchor": [
+        0.75,
+        2.65
+      ],
+      "caption": "\\boldsymbol x=\\begin{pmatrix}a\\\\b\\\\c\\end{pmatrix}=a\\boldsymbol u+b\\boldsymbol v+c\\boldsymbol w",
+      "id": "stage.ch04.dependence.redundancy.space",
+      "layout": "side_by_side",
+      "title": "加入平面外方向后张成整个三维空间",
       "visible_aliases": [
         "ch04__entity__independent_set__axis_1",
         "ch04__entity__independent_set__axis_2",
         "ch04__entity__independent_set__axis_3",
-        "ch04__entity__independent_sample",
-        "ch04__relation__independent_combination__term_1",
-        "ch04__relation__independent_combination__term_2",
-        "ch04__relation__independent_combination__term_3",
         "ch04__relation__independent_combination",
-        "sem__stage.ch04.dependence.redundancy.independent__title"
+        "sem__stage.ch04.dependence.redundancy.space__title"
       ],
       "visible_refs": [
         "entity.ch04.dependence.redundancy.independent_set",
-        "entity.ch04.dependence.redundancy.independent_sample",
         "relation.ch04.dependence.redundancy.independent_combination"
       ]
     },
     {
       "anchor": [
-        1.5,
+        2.25,
         2.65
       ],
-      "caption": "\\boldsymbol{u}+\\boldsymbol{v}-\\boldsymbol{w}=\\begin{pmatrix}0\\\\0\\\\0\\end{pmatrix}",
+      "caption": "\\boldsymbol u+\\boldsymbol v-\\boldsymbol w=\\begin{pmatrix}0\\\\0\\\\0\\end{pmatrix}",
       "id": "stage.ch04.dependence.redundancy.dependent",
       "layout": "side_by_side",
-      "title": "三个共面的向量含有冗余",
+      "title": "加入冗余方向后仍只张成原平面",
       "visible_aliases": [
         "ch04__entity__dependent_set",
         "ch04__entity__dependent_set__generator_1",
         "ch04__entity__dependent_set__generator_2",
         "ch04__entity__dependent_set__generator_3",
-        "ch04__entity__zero_combination",
-        "ch04__relation__dependent_combination__term_1",
-        "ch04__relation__dependent_combination__term_2",
-        "ch04__relation__dependent_combination__term_3",
         "ch04__relation__dependent_combination",
         "sem__stage.ch04.dependence.redundancy.dependent__title"
       ],
       "visible_refs": [
         "entity.ch04.dependence.redundancy.dependent_set",
-        "entity.ch04.dependence.redundancy.zero_combination",
         "relation.ch04.dependence.redundancy.dependent_combination"
       ]
     }

@@ -61,7 +61,7 @@
         "style": "dashed"
       },
       {
-        "algebra_symbol": "\\boldsymbol{x}_{1}",
+        "algebra_symbol": "x_{1}",
         "alias": "ch04__entity__input_vector_a",
         "color": "#7B61FF",
         "end": [
@@ -79,7 +79,7 @@
         ]
       },
       {
-        "algebra_symbol": "\\boldsymbol{A}\\boldsymbol{x}_{1}",
+        "algebra_symbol": "Ax_{1}",
         "alias": "ch04__entity__output_vector_a",
         "color": "#2A9D8F",
         "end": [
@@ -97,7 +97,7 @@
         ]
       },
       {
-        "algebra_symbol": "\\boldsymbol{x}_{2}",
+        "algebra_symbol": "x_{2}",
         "alias": "ch04__entity__input_vector_b",
         "color": "#7B61FF",
         "end": [
@@ -115,7 +115,7 @@
         ]
       },
       {
-        "algebra_symbol": "\\boldsymbol{A}\\boldsymbol{x}_{2}",
+        "algebra_symbol": "Ax_{2}",
         "alias": "ch04__entity__output_vector_b",
         "color": "#2A9D8F",
         "end": [
@@ -133,7 +133,7 @@
         ]
       },
       {
-        "algebra_symbol": "\\boldsymbol{x}_{3}",
+        "algebra_symbol": "x_{3}",
         "alias": "ch04__entity__input_vector_c",
         "color": "#7B61FF",
         "end": [
@@ -151,7 +151,7 @@
         ]
       },
       {
-        "algebra_symbol": "\\boldsymbol{A}\\boldsymbol{x}_{3}",
+        "algebra_symbol": "Ax_{3}",
         "alias": "ch04__entity__output_vector_c",
         "color": "#2A9D8F",
         "end": [
@@ -169,7 +169,7 @@
         ]
       },
       {
-        "algebra_symbol": "\\boldsymbol{k}",
+        "algebra_symbol": "k",
         "alias": "ch04__entity__kernel_vector",
         "color": "#E63946",
         "end": [
@@ -412,7 +412,7 @@
     "summary": "线性空间",
     "version": 1
   },
-  "plan_digest": "sha256:466c7ee0443d24d6d8a8082b3ddf11393e2cb6668670cfdd79356441617f3ea8",
+  "plan_digest": "sha256:7da77b0156bf9421c0a1ce4120442b4c3b15543788fb7b19afdcd096ebbaf27a",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

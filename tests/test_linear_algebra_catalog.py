@@ -33,9 +33,9 @@ REMOVED_CHAPTER_FOUR_TOPICS = {"ch04.nullspace.test", "ch04.rank.collapse", "ch0
 
 def test_manifest_has_exact_chapter_counts_and_three_levels() -> None:
     topics = topic_entries()
-    assert len(topics) == 59
-    assert Counter(item.chapter_number for item in topics) == Counter({1: 11, 2: 9, 3: 10, 4: 6, 5: 8, 6: 3, 7: 6, 8: 6})
-    assert len({item.id for item in topics}) == 59
+    assert len(topics) == 57
+    assert Counter(item.chapter_number for item in topics) == Counter({1: 11, 2: 9, 3: 10, 4: 4, 5: 8, 6: 3, 7: 6, 8: 6})
+    assert len({item.id for item in topics}) == 57
     assert REMOVED_CHAPTER_ONE_TOPICS.isdisjoint({item.id for item in topics})
     assert REMOVED_CHAPTER_THREE_TOPICS.isdisjoint({item.id for item in topics})
     assert REMOVED_CHAPTER_FOUR_TOPICS.isdisjoint({item.id for item in topics})
@@ -148,3 +148,17 @@ def test_chapter_four_section_4_2_merges_only_the_two_requested_lecture_topics()
     assert topic.source_anchor.heading_path[-1] == "4.2.1 生成集 Span"
     assert "ch04.span.dimension" not in {entry.id for entry in entries}
     assert REMOVED_CHAPTER_FOUR_TOPICS.isdisjoint({entry.id for entry in entries})
+
+
+def test_chapter_four_section_4_4_has_one_merged_definition_topic() -> None:
+    entries = topic_entries()
+    section = next(node for node in lecture_manifest() if node.id == "ch04.s44")
+
+    assert section.title == "4.4 线性变换"
+    assert section.children == ("ch04.linear-map.definition",)
+    topic = next(entry for entry in entries if entry.id == "ch04.linear-map.definition")
+    assert topic.title == "线性变换的定义"
+    assert topic.source_anchor.heading_path[-1] == "4.4.1 线性变换的定义"
+    assert {"ch04.linear-map.compare", "ch04.linear-map.matrix-columns"}.isdisjoint(
+        {entry.id for entry in entries}
+    )

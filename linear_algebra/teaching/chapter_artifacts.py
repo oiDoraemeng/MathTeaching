@@ -306,13 +306,13 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         _refresh_digests(payload)
     if topic_id == "ch04.subspace.col-null":
         # 4.1.1–4.1.3 share one lecture-grounded definition and two explicit
-        # 3D case panes for its column-space and null-space readings.
+        # 三维案例窗格分别展示列空间和零空间。
         from linear_algebra.teaching.quality import _refine_linear_space
 
         _refine_linear_space(payload, payload["explanation"], payload["visual_semantics"])
         _refresh_digests(payload)
     elif topic_id == "ch04.dependence.redundancy":
-        # 4.2.1–4.2.2 的唯一目录项：讲义原文与两个确认的三维对照案例由专属
+        # 4.2.1–4.2.2 的唯一目录项：讲义原文与四个确认的三维递进案例由专属
         # 适配器一起写入，避免通用路由追加未发布的 4.2.3、4.2.4。
         from linear_algebra.teaching.quality import _refine_linear_dependence
 
@@ -324,6 +324,12 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         from linear_algebra.teaching.quality import _refine_basis_definition
 
         _refine_basis_definition(payload, payload["explanation"], payload["visual_semantics"])
+        _refresh_digests(payload)
+    elif topic_id == "ch04.linear-map.definition":
+        # 4.4 仅发布 4.4.1 与 4.4.2 的合并正文，以及确认后的拉伸/平移双窗格案例。
+        from linear_algebra.teaching.quality import _refine_linear_map_definition
+
+        _refine_linear_map_definition(payload, payload["explanation"], payload["visual_semantics"])
         _refresh_digests(payload)
     return payload
 

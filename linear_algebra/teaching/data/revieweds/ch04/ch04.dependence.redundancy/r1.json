@@ -2,6 +2,10 @@
   "claims": [
     {
       "entity_refs": [
+        "entity.ch04.dependence.redundancy.span_line",
+        "entity.ch04.dependence.redundancy.line_sample",
+        "entity.ch04.dependence.redundancy.span_plane",
+        "entity.ch04.dependence.redundancy.plane_sample",
         "entity.ch04.dependence.redundancy.independent_set",
         "entity.ch04.dependence.redundancy.independent_sample",
         "entity.ch04.dependence.redundancy.dependent_set",
@@ -11,10 +15,12 @@
         "definition",
         "worked_examples"
       ],
-      "formula": "\\boldsymbol u+\\boldsymbol v-\\boldsymbol w=\\begin{pmatrix}0\\\\0\\\\0\\end{pmatrix}",
+      "formula": "\\operatorname{Span}\\{\\boldsymbol v_1,\\ldots,\\boldsymbol v_k\\}=\\{\\text{这些向量的所有线性组合}\\}",
       "formula_symbols": [],
       "id": "claim.ch04.dependence.redundancy",
       "relation_refs": [
+        "relation.ch04.dependence.redundancy.line_combination",
+        "relation.ch04.dependence.redundancy.plane_combination",
         "relation.ch04.dependence.redundancy.independent_combination",
         "relation.ch04.dependence.redundancy.dependent_combination"
       ],
@@ -23,7 +29,9 @@
         "第4章 线性空间、线性无关与线性变换（全书核心枢纽） / 4.2 线性组合、线性相关与线性无关 / 4.2.2 线性相关与线性无关::1::sha256:0aa457792299b55ddae11cf55cdc2b26d2f1cfcfff8bc8a040c9268ec57b323c"
       ],
       "stage_refs": [
-        "stage.ch04.dependence.redundancy.independent",
+        "stage.ch04.dependence.redundancy.line",
+        "stage.ch04.dependence.redundancy.plane",
+        "stage.ch04.dependence.redundancy.space",
         "stage.ch04.dependence.redundancy.dependent"
       ],
       "statement": "线性相关与线性无关 的数学主张由显式对象、关系和不变量支持。"
@@ -41,18 +49,42 @@
     }
   ],
   "explanation": {
-    "analogy_boundary": "二维示意推广到有限维时保留代数关系。",
+    "analogy_boundary": "",
     "case_layout": {
       "cases": [
         {
           "claim_refs": [
             "claim.ch04.dependence.redundancy"
           ],
+          "example_ref": "example.ch04.dependence.redundancy.line",
+          "id": "case.ch04.dependence.redundancy.line",
+          "purpose": "① 一根向量：张成直线",
+          "stage_refs": [
+            "stage.ch04.dependence.redundancy.line"
+          ],
+          "topic_id": "ch04.dependence.redundancy"
+        },
+        {
+          "claim_refs": [
+            "claim.ch04.dependence.redundancy"
+          ],
+          "example_ref": "example.ch04.dependence.redundancy.plane",
+          "id": "case.ch04.dependence.redundancy.plane",
+          "purpose": "② 两根不共线向量：张成平面",
+          "stage_refs": [
+            "stage.ch04.dependence.redundancy.plane"
+          ],
+          "topic_id": "ch04.dependence.redundancy"
+        },
+        {
+          "claim_refs": [
+            "claim.ch04.dependence.redundancy"
+          ],
           "example_ref": "example.ch04.dependence.redundancy.independent",
           "id": "case.ch04.dependence.redundancy.independent",
-          "purpose": "① 不共面：三根向量张成整个三维空间",
+          "purpose": "③ 加入平面外方向：张成整个三维空间",
           "stage_refs": [
-            "stage.ch04.dependence.redundancy.independent"
+            "stage.ch04.dependence.redundancy.space"
           ],
           "topic_id": "ch04.dependence.redundancy"
         },
@@ -62,18 +94,18 @@
           ],
           "example_ref": "example.ch04.dependence.redundancy.dependent",
           "id": "case.ch04.dependence.redundancy.dependent",
-          "purpose": "② 共面：第三根向量是冗余的",
+          "purpose": "④ 加入冗余方向：仍只张成原平面",
           "stage_refs": [
             "stage.ch04.dependence.redundancy.dependent"
           ],
           "topic_id": "ch04.dependence.redundancy"
         }
       ],
-      "default_pane_count": 2
+      "default_pane_count": 4
     },
-    "conclusion": "数值关系与讲义定义一致。",
+    "conclusion": "",
     "connections": [],
-    "definition": "**（生成集）** $\\operatorname{Span}\\{v_{1},...,v_{k}\\} = \\{$ 这些向量的所有线性组合 $\\}$。\n\n几何：$\\operatorname{Span}\\{v\\} =$ 过原点的直线；$\\operatorname{Span}\\{u,v\\}$（不共线）$=$ 过原点的平面；$\\operatorname{Span}\\{u,v,w\\}$（不共面）$=$ 整个 $R^{3}$。\n\n**（线性无关）** $v_{1},...,v_{k}$ 线性无关 $\\Leftrightarrow c_{1}v_{1}+...+c_{k}v_{k}=0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n\n**（线性相关）** 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\\\"冗余\\\"的。\n\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |",
+    "definition": "**（生成集）** $\\operatorname{Span}\\{\\boldsymbol v_{1},...,\\boldsymbol v_{k}\\} = \\{$ 这些向量的所有线性组合 $\\}$。\n\n几何：$\\operatorname{Span}\\{\\boldsymbol v\\} =$ 过原点的直线；$\\operatorname{Span}\\{\\boldsymbol u,\\boldsymbol v\\}$（不共线）$=$ 过原点的平面；$\\operatorname{Span}\\{\\boldsymbol u,\\boldsymbol v,\\boldsymbol w\\}$（不共面）$=$ 整个 $R^{3}$。\n\n**（线性无关）** $\\boldsymbol v_{1},...,\\boldsymbol v_{k}$ 线性无关 $\\Leftrightarrow c_{1}\\boldsymbol v_{1}+...+c_{k}\\boldsymbol v_{k}=\\boldsymbol 0$ 只有全零解 $c_{1}=...=c_{k}=0$。\n\n**（线性相关）** 存在不全为零的系数使组合为零 $\\Leftrightarrow$ 有向量是\\\"冗余\\\"的。\n\n| 情况 | 无关 | 相关 |\n| --- | --- | --- |\n| 2个在$R^{2}$ | 不共线 | 共线 |\n| 3个在$R^{2}$ | 不可能 | 必相关 |\n| 3个在$R^{3}$ | 不共面 | 共面 |",
     "derivation": [],
     "formula": "",
     "geometric_meaning": "",
@@ -104,31 +136,115 @@
         "title": "数学案例"
       }
     ],
-    "summary": "**（生成集）** $\\operatorname{Span}\\{v_{1},...,v_{k}\\} = \\{$ 这些向量的所有线性组合 $\\}$。",
+    "summary": "",
     "symbol_roles": {
-      "e_1": "independent_set",
-      "e_2": "independent_set",
-      "e_3": "independent_set",
-      "u": "dependent_set",
-      "v": "dependent_set",
-      "w": "dependent_set"
+      "u": "vector_a",
+      "v": "vector_b",
+      "w": "transformed_a"
     },
     "title": "线性相关与线性无关",
-    "transfer_note": "先识别对象，再核对公式和不变量。",
+    "transfer_note": "",
     "worked_examples": [
       {
         "calculation": [
-          "$$\\boldsymbol e_1=\\begin{pmatrix}1\\\\0\\\\0\\end{pmatrix},\\qquad \\boldsymbol e_2=\\begin{pmatrix}0\\\\1\\\\0\\end{pmatrix},\\qquad \\boldsymbol e_3=\\begin{pmatrix}0\\\\0\\\\1\\end{pmatrix}$$",
-          "$$\\boldsymbol x=2\\boldsymbol e_1-\\boldsymbol e_2+3\\boldsymbol e_3=\\begin{pmatrix}2\\\\-1\\\\3\\end{pmatrix}$$",
-          "三根向量不共面，按讲义中的几何描述，它们张成整个 $R^{3}$。",
-          "若 $c_1\\boldsymbol e_1+c_2\\boldsymbol e_2+c_3\\boldsymbol e_3=\\boldsymbol 0$，则只有 $c_1=c_2=c_3=0$。"
+          "$$\\boldsymbol u=\\begin{pmatrix}1\\\\0\\\\0\\end{pmatrix}$$",
+          "$$\\operatorname{Span}\\{\\boldsymbol u\\}=\\{t\\boldsymbol u\\mid t\\in R\\}=\\left\\{\\begin{pmatrix}t\\\\0\\\\0\\end{pmatrix}\\middle|t\\in R\\right\\}$$",
+          "当 $t$ 取遍 $R$，所有线性组合都落在经过原点、沿着 $\\boldsymbol u$ 方向的直线上。",
+          "图中取 $t=2$，得到 $2\\boldsymbol u=\\begin{pmatrix}2\\\\0\\\\0\\end{pmatrix}$。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              2.0,
+              0.0,
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "given": [
+          2,
+          [
+            1,
+            0,
+            0
+          ]
+        ],
+        "id": "example.ch04.dependence.redundancy.line",
+        "kind": "scalar_multiple",
+        "result": [
+          2.0,
+          0.0,
+          0.0
+        ],
+        "title": "案例一：一根向量张成直线"
+      },
+      {
+        "calculation": [
+          "$$\\boldsymbol u=\\begin{pmatrix}1\\\\0\\\\0\\end{pmatrix},\\qquad \\boldsymbol v=\\begin{pmatrix}0\\\\1\\\\0\\end{pmatrix}$$",
+          "$$a\\boldsymbol u+b\\boldsymbol v=\\begin{pmatrix}a\\\\b\\\\0\\end{pmatrix},\\qquad a,b\\in R$$",
+          "$\\boldsymbol u$ 与 $\\boldsymbol v$ 不共线；它们的所有线性组合第三个分量都为 $0$，恰好铺满经过原点的平面。",
+          "图中取 $a=2,b=-1$，得到 $2\\boldsymbol u-\\boldsymbol v=\\begin{pmatrix}2\\\\-1\\\\0\\end{pmatrix}$。"
         ],
         "checks": [
           {
             "expected": [
               2.0,
               -1.0,
-              3.0
+              0.0
+            ],
+            "name": "result",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "given": [
+          [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          [
+            2,
+            -1
+          ]
+        ],
+        "id": "example.ch04.dependence.redundancy.plane",
+        "kind": "linear_combination",
+        "result": [
+          2.0,
+          -1.0,
+          0.0
+        ],
+        "title": "案例二：两根不共线向量张成平面"
+      },
+      {
+        "calculation": [
+          "$$\\boldsymbol u=\\begin{pmatrix}1\\\\0\\\\0\\end{pmatrix},\\qquad \\boldsymbol v=\\begin{pmatrix}0\\\\1\\\\0\\end{pmatrix},\\qquad \\boldsymbol w=\\begin{pmatrix}0\\\\0\\\\1\\end{pmatrix}$$",
+          "$$\\boldsymbol x=\\begin{pmatrix}a\\\\b\\\\c\\end{pmatrix}=a\\boldsymbol u+b\\boldsymbol v+c\\boldsymbol w$$",
+          "任意 $\\boldsymbol x\\in R^{3}$ 都能写成这三根不共面向量的线性组合，所以它们张成整个 $R^{3}$。图中取 $a=b=c=1$ 显示一个组合。",
+          "$$c_1\\boldsymbol u+c_2\\boldsymbol v+c_3\\boldsymbol w=\\boldsymbol 0\\ \\Longrightarrow\\ \\begin{pmatrix}c_1\\\\c_2\\\\c_3\\end{pmatrix}=\\begin{pmatrix}0\\\\0\\\\0\\end{pmatrix}$$",
+          "这个组合只有全零解，因此 $\\boldsymbol u,\\boldsymbol v,\\boldsymbol w$ 线性无关。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              1.0,
+              1.0,
+              1.0
             ],
             "name": "result",
             "tolerance": 1e-09
@@ -156,19 +272,19 @@
             ]
           ],
           [
-            2,
-            -1,
-            3
+            1,
+            1,
+            1
           ]
         ],
         "id": "example.ch04.dependence.redundancy.independent",
         "kind": "linear_combination",
         "result": [
-          2.0,
-          -1.0,
-          3.0
+          1.0,
+          1.0,
+          1.0
         ],
-        "title": "案例一：三个不共面的向量"
+        "title": "案例三：加入平面外方向后张成整个三维空间"
       },
       {
         "calculation": [
@@ -222,17 +338,17 @@
           0.0,
           0.0
         ],
-        "title": "案例二：第三根向量由前两根得到"
+        "title": "案例四：加入冗余方向后仍只张成原平面"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:f9c5bea8baa8498f523f78cd42107b7a69a7e43b94a1488307f82b9512934deb",
+    "artifact_digest": "sha256:d10aa86848c423babaf031d6a2c30f0b35de80b3ac67f2145824b8d8968c3c92",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:9f8abbfd737039ad247b448c83aaea57e25d0749180283167046fffcade33292",
+    "raw_reply_digest": "sha256:156d6fcceef5443a9590b2bbe3f91e328b721fff75a824570b9ba10c87301691",
     "source_hash": "sha256:5e1f1eeb8a6e878275c16997f7f5a94332e59c48cc847b3dda235d78907f8db7"
   },
   "revision": 1,
@@ -299,6 +415,75 @@
           "claim.ch04.dependence.redundancy"
         ],
         "dimension": 3,
+        "id": "entity.ch04.dependence.redundancy.span_line",
+        "kind": "basis",
+        "label": "Span(u)",
+        "role": "span_line",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.dependence.redundancy.line_sample",
+        "kind": "point",
+        "label": "2u",
+        "role": "line_sample",
+        "value": [
+          2.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.dependence.redundancy.span_plane",
+        "kind": "basis",
+        "label": "Span(u,v)",
+        "role": "span_plane",
+        "value": [
+          [
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 3,
+        "id": "entity.ch04.dependence.redundancy.plane_sample",
+        "kind": "point",
+        "label": "x",
+        "role": "plane_sample",
+        "value": [
+          2.0,
+          -1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "dimension": 3,
         "id": "entity.ch04.dependence.redundancy.independent_set",
         "kind": "basis",
         "label": "independent",
@@ -331,9 +516,9 @@
         "label": "x",
         "role": "independent_sample",
         "value": [
-          2.0,
-          -1.0,
-          3.0
+          1.0,
+          1.0,
+          1.0
         ]
       },
       {
@@ -384,18 +569,55 @@
         "claim_refs": [
           "claim.ch04.dependence.redundancy"
         ],
-        "id": "relation.ch04.dependence.redundancy.independent_combination",
+        "id": "relation.ch04.dependence.redundancy.line_combination",
+        "kind": "linear_combination",
+        "parameters": {
+          "coefficient": 2.0,
+          "expected_result": [
+            2.0,
+            0.0,
+            0.0
+          ]
+        },
+        "source_ref": "entity.ch04.dependence.redundancy.span_line",
+        "target_ref": "entity.ch04.dependence.redundancy.line_sample"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "relation.ch04.dependence.redundancy.plane_combination",
         "kind": "linear_combination",
         "parameters": {
           "coefficients": [
             2.0,
-            -1.0,
-            3.0
+            -1.0
           ],
           "expected_result": [
             2.0,
             -1.0,
-            3.0
+            0.0
+          ]
+        },
+        "source_ref": "entity.ch04.dependence.redundancy.span_plane",
+        "target_ref": "entity.ch04.dependence.redundancy.plane_sample"
+      },
+      {
+        "claim_refs": [
+          "claim.ch04.dependence.redundancy"
+        ],
+        "id": "relation.ch04.dependence.redundancy.independent_combination",
+        "kind": "linear_combination",
+        "parameters": {
+          "coefficients": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "expected_result": [
+            1.0,
+            1.0,
+            1.0
           ]
         },
         "source_ref": "entity.ch04.dependence.redundancy.independent_set",
@@ -427,26 +649,56 @@
     "scene_kind": "3d",
     "stages": [
       {
-        "caption": "\\boldsymbol{x}=2\\boldsymbol{e}_1-\\boldsymbol{e}_2+3\\boldsymbol{e}_3=\\begin{pmatrix}2\\\\-1\\\\3\\end{pmatrix}",
+        "caption": "\\operatorname{Span}\\{\\boldsymbol u\\}=\\{t\\boldsymbol u\\mid t\\in R\\}",
+        "expected_invariants": [
+          "line_span_1d"
+        ],
+        "id": "stage.ch04.dependence.redundancy.line",
+        "input_entity_refs": [
+          "entity.ch04.dependence.redundancy.span_line"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [],
+        "relation_refs": [
+          "relation.ch04.dependence.redundancy.line_combination"
+        ],
+        "title": "一根向量张成过原点的直线"
+      },
+      {
+        "caption": "a\\boldsymbol u+b\\boldsymbol v=\\begin{pmatrix}a\\\\b\\\\0\\end{pmatrix}",
+        "expected_invariants": [
+          "plane_span_2d"
+        ],
+        "id": "stage.ch04.dependence.redundancy.plane",
+        "input_entity_refs": [
+          "entity.ch04.dependence.redundancy.span_plane"
+        ],
+        "layout": "side_by_side",
+        "output_entity_refs": [],
+        "relation_refs": [
+          "relation.ch04.dependence.redundancy.plane_combination"
+        ],
+        "title": "两根不共线向量张成过原点的平面"
+      },
+      {
+        "caption": "\\boldsymbol x=\\begin{pmatrix}a\\\\b\\\\c\\end{pmatrix}=a\\boldsymbol u+b\\boldsymbol v+c\\boldsymbol w",
         "expected_invariants": [
           "independent_only_zero_solution",
           "independent_span_r3"
         ],
-        "id": "stage.ch04.dependence.redundancy.independent",
+        "id": "stage.ch04.dependence.redundancy.space",
         "input_entity_refs": [
           "entity.ch04.dependence.redundancy.independent_set"
         ],
         "layout": "side_by_side",
-        "output_entity_refs": [
-          "entity.ch04.dependence.redundancy.independent_sample"
-        ],
+        "output_entity_refs": [],
         "relation_refs": [
           "relation.ch04.dependence.redundancy.independent_combination"
         ],
-        "title": "三个不共面的向量张成整个三维空间"
+        "title": "加入平面外方向后张成整个三维空间"
       },
       {
-        "caption": "\\boldsymbol{u}+\\boldsymbol{v}-\\boldsymbol{w}=\\begin{pmatrix}0\\\\0\\\\0\\end{pmatrix}",
+        "caption": "\\boldsymbol u+\\boldsymbol v-\\boldsymbol w=\\begin{pmatrix}0\\\\0\\\\0\\end{pmatrix}",
         "expected_invariants": [
           "dependent_nonzero_combination_zero",
           "dependent_coplanar"
@@ -456,13 +708,11 @@
           "entity.ch04.dependence.redundancy.dependent_set"
         ],
         "layout": "side_by_side",
-        "output_entity_refs": [
-          "entity.ch04.dependence.redundancy.zero_combination"
-        ],
+        "output_entity_refs": [],
         "relation_refs": [
           "relation.ch04.dependence.redundancy.dependent_combination"
         ],
-        "title": "三个共面的向量含有冗余"
+        "title": "加入冗余方向后仍只张成原平面"
       }
     ]
   }

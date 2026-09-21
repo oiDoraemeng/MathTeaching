@@ -4,14 +4,16 @@ from .model import LessonEntry, topic_entry
 from linear_algebra.chapter_04_semantics import semantic_for
 
 CHAPTER = "第4章 线性空间、线性无关与线性变换"
-_IDS = ("subspace.col-null", "dependence.redundancy", "basis.definition", "linear-map.definition", "linear-map.compare", "linear-map.matrix-columns")
-_PREFIXES = ("4.1 线性空间与子空间", "4.2.2", "4.3.1", "4.4.1", "4.4.2", "4.4.3")
-# 4.1.1–4.1.3 在软件中合并为单一小节「线性空间」；4.2.1–4.2.2、4.3.1–4.3.3 同理。
+_IDS = ("subspace.col-null", "dependence.redundancy", "basis.definition", "linear-map.definition")
+_PREFIXES = ("4.1 线性空间与子空间", "4.2.2", "4.3.1", "4.4.1")
+# 4.1.1–4.1.3 在软件中合并为单一小节「线性空间」；4.2.1–4.2.2、
+# 4.3.1–4.3.3、4.4.1–4.4.2 同理。
 # 讲义原文不改，锚点提升到各自的父小节，目录显示名仅是软件侧展示决策。
 _DISPLAY_TITLES = {
     "subspace.col-null": "线性空间",
     "dependence.redundancy": "线性相关与线性无关",
     "basis.definition": "基的定义",
+    "linear-map.definition": "线性变换的定义",
 }
 _MERGED_SECTIONS = {
     "subspace.col-null": ("4.1 线性空间与子空间", "线性空间"),
@@ -19,6 +21,8 @@ _MERGED_SECTIONS = {
     # 4.2.3、4.2.4 一并纳入。
     "dependence.redundancy": ("4.2 线性组合、线性相关与线性无关", "线性相关与线性无关", "4.2.1 生成集 Span"),
     "basis.definition": ("4.3 基与维数", "基的定义"),
+    # 目录只显示一个合并条目；来源仓库精确拼接 4.4.1 与 4.4.2，不纳入 4.4.3。
+    "linear-map.definition": ("4.4 线性变换", "线性变换的定义", "4.4.1 线性变换的定义"),
 }
 def _records(text, chapter_number=4):
     lines=text.splitlines(); chapter=None; stack=[]; out=[]
@@ -35,9 +39,7 @@ def _make() -> tuple[LessonEntry, ...]:
     records = _records(source.read_text(encoding="utf-8"))
     chosen = [next(item for item in records if item[2].startswith(prefix)) for prefix in _PREFIXES]
     def section_id(record: tuple[tuple[str, ...], int, str]) -> str:
-        # Several visual topics live below one lecture section (for example
-        # 4.1.1--4.1.3).  The tree must group them under that shared parent,
-        # rather than creating one duplicate section node per topic.
+        # 同一讲义小节下的可视化主题共用一个父节点。
         major = record[0][1].split(" ", 1)[0].replace(".", "")
         return f"ch04.s{major}"
 

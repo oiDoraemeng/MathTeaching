@@ -17,8 +17,8 @@ from ..palette import role_color
 
 
 def build_vector_magnitude(context: RenderContext) -> CommandPlan:
-    """向量的几何量：方向、长度与零向量"""
-    v = [2.5, 1.8]
+    """什么是向量：原点出发的有向线段，长度由勾股定理给出。"""
+    v = [3.0, 4.0]
 
     ops = []
     ops.extend(make_vector_2d([0, 0], v, "v", role="primary"))
@@ -27,7 +27,7 @@ def build_vector_magnitude(context: RenderContext) -> CommandPlan:
     ops.append(make_view_fit(padding=1.2))
 
     return CommandPlan(
-        scene="2d", operations=tuple(ops), summary="向量的方向、长度与零向量"
+        scene="2d", operations=tuple(ops), summary="什么是向量：从原点出发的有向线段"
     )
 
 
@@ -148,8 +148,8 @@ def build_inner_product_definitions(context: RenderContext) -> CommandPlan:
 
 def build_cauchy_schwarz(context: RenderContext) -> CommandPlan:
     """柯西—施瓦茨不等式：投影长度不超过原向量长度。"""
-    a = [3.0, 0.0]
-    b = [2.0, 2.0]
+    a = [1.0, 0.0]
+    b = [3.0, 4.0]
 
     ops = []
     ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
@@ -238,7 +238,7 @@ def build_parallelogram_diagonals(context: RenderContext) -> CommandPlan:
     return CommandPlan(scene="2d", operations=tuple(ops), summary="对角线共同中点")
 
 
-# Builder registry for Chapter 1
+# 第 1 章构建器注册表。
 BUILDERS = {
     "draw.ch01.vector.magnitude": build_vector_magnitude,
     "draw.ch01.ops.addition": build_vector_addition,

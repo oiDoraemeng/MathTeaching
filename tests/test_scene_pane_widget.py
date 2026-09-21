@@ -1,6 +1,8 @@
 import pytest
+from contextlib import nullcontext
 from types import SimpleNamespace
 from unittest.mock import MagicMock
+from PySide6.QtCore import QRect
 from PySide6.QtWidgets import QApplication, QRubberBand, QWidget
 
 from ui.scene_pane_widget import ScenePaneWidget
@@ -205,6 +207,31 @@ def test_pane_viewport_change_rebuilds_3d_arrow_heads(qapp):
     assert rendered == [True]
 
 
+def test_case_pane_viewport_change_refits_2d_scene_to_assigned_aspect(qapp):
+    """双窗格变窄后应按新宽高比重做 view.fit，避免横向向量被裁切。"""
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    case_id = manager.register_case("case")
+    case = manager.pane(case_id)
+    case.scene_mode = "2d"
+    case.renderer_2d = SimpleNamespace(render=lambda: None)
+    case.scene_2d["view_fit"] = {
+        "padding": 1.2,
+        "bounds": [0.0, 5.0, 0.0, 4.0],
+    }
+    window.scene_pane_widget = SimpleNamespace(
+        pane_rect=lambda _pane_id: QRect(0, 0, 360, 800),
+    )
+    captured = []
+    window._using_pane = lambda _pane_id: nullcontext()
+    window._fit_2d_to_command_objects = lambda padding, bounds, **kwargs: captured.append(
+        (padding, bounds, kwargs["viewport_aspect"])
+    )
+
+    assert window._refresh_case_pane_2d_view_fit(case_id)
+    assert captured == [(1.2, [0.0, 5.0, 0.0, 4.0], 0.45)]
+
+
 def test_designer_restore_callback_defers_until_ready():
     window = MainWindow.__new__(MainWindow)
     window._pane_widgets_ready = False
@@ -277,6 +304,40 @@ def test_opening_case_group_at_retained_limit_keeps_first_case_and_ten_panes() -
     pane_id = window._teaching_case_pane_ids[0]
     assert manager.pane(pane_id).source_id == "case-0"
     assert manager.visible_pane_ids() == (pane_id,)
+
+
+def test_dependence_opens_four_shared_plan_panes_by_default() -> None:
+    from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts
+    from linear_algebra.teaching.model import TeachingArtifact
+    from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
+
+    artifact = TeachingArtifact.from_dict(
+        load_reviewed_artifacts()["ch04.dependence.redundancy"]
+    )
+    compiled = VisualSemanticsCompiler().compile(artifact)
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    window._close_teaching_case_panes = lambda: None
+    window._sync_layout_buttons = lambda: None
+    window.algebra_panel = SimpleNamespace(sync_pane_tabs=lambda: None)
+    window.scene_pane_widget = None
+
+    window._open_teaching_case_panes_impl(
+        artifact.explanation, compiled, defer_render=True
+    )
+
+    pane_ids = tuple(window._teaching_case_pane_ids)
+    assert len(pane_ids) == 4
+    assert manager.visible_pane_ids() == pane_ids
+    assert all(manager.pane(pane_id).scene_mode == "3d" for pane_id in pane_ids)
+    plans = [manager.pane(pane_id).scene_3d["pending_plan"] for pane_id in pane_ids]
+    assert all(plan == plans[0] for plan in plans[1:])
+    assert tuple(window._teaching_case_stage_refs[pane_id][0] for pane_id in pane_ids) == (
+        "stage.ch04.dependence.redundancy.line",
+        "stage.ch04.dependence.redundancy.plane",
+        "stage.ch04.dependence.redundancy.space",
+        "stage.ch04.dependence.redundancy.dependent",
+    )
 
 
 def test_clear_pending_plans_keeps_the_token_of_panes_without_a_renderer() -> None:

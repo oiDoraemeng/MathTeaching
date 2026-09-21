@@ -105,11 +105,11 @@ def test_matrix_transform_merges_the_confirmed_2_5_scope() -> None:
     assert {"ch02.matrix.row-column", "ch02.matrix.stretch-rotate-scale"}.isdisjoint(topic_ids)
 
     basis = store.published("ch02.matrix.basis").artifact.explanation
-    # 讲义 2.7 只有「定义 2.9（基）」与核心认知，标题听命讲义，正文逐字保留。
+    # 讲义 2.7 只有“基”的定义与核心认知，正文保留讲义内容。
     assert [section.title for section in basis.sections] == ["定义", "数学案例"]
     for required in (
         "一句话动机：同一个变换，用不同的基描述，矩阵就不同",
-        "定义 2.9（基）",
+        "**（基）**",
         "$R^{n}$ 中 $n$ 个线性无关的向量组成的一组有序向量",
         "它是标准基，但不是唯一的基",
         "核心认知：变换本身是客观的",
@@ -117,7 +117,7 @@ def test_matrix_transform_merges_the_confirmed_2_5_scope() -> None:
     ):
         assert required in basis.definition
     assert [case.purpose for case in basis.case_layout.cases] == [
-        "第一步：标准基下的旋转",
+        "第一步：标准基描述",
         "第二步：换一组基，矩阵改变",
     ]
     assert basis.case_layout.default_pane_count == 2
@@ -132,13 +132,12 @@ def test_matrix_vector_case_data_avoids_the_coordinate_axes() -> None:
         "ch02.matrix.basis",
     ):
         artifact = store.published(topic_id).artifact
-        # 标准基向量及其像（拉伸/旋转矩阵的两列）由讲义固定，本身就落在坐标轴上。
+        # 2.7 的基向量由案例定义，其中 b1 与标准基 e1 重合是有意保留的对照。
         fixed = {
             "mv_e1", "mv_e2",
             "mv_stretch_e1", "mv_stretch_e2",
             "mv_rotate_e1", "mv_rotate_e2",
-            # 2.7 第一个窗格就是讲义的标准基旋转：两列 (0,1)、(-1,0) 由讲义固定。
-            "mv_basis_ae1", "mv_basis_ae2",
+            "mv_basis_e1", "mv_basis_e2", "mv_basis_b1", "mv_basis_b2",
         }
         for entity in artifact.visual_semantics.entities:
             if entity.kind != "vector" or entity.id in fixed:
