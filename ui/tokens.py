@@ -6,7 +6,7 @@ from typing import Literal
 from collections.abc import Mapping
 
 from PySide6.QtCore import QEvent, QObject, Qt
-from PySide6.QtGui import QColor, QPainterPath, QRegion
+from PySide6.QtGui import QColor, QPainterPath, QPalette, QRegion
 from PySide6.QtWidgets import QGraphicsDropShadowEffect, QWidget
 
 ThemeName = Literal["light", "dark"]
@@ -178,18 +178,40 @@ class _RoundedMaskFilter(QObject):
 
 
 def apply_rounded_overlay(
-    widget: QWidget, level: RadiusLevel = "md", theme: ThemeName = "light"
+    widget: QWidget,
+    level: RadiusLevel = "md",
+    theme: ThemeName = "light",
+    *,
+    opaque: bool = False,
 ) -> None:
     """Make a widget's token radius render as real rounded corners.
 
     Top-level frameless chrome opts into ``WA_TranslucentBackground`` so Qt
     composites the rounded QSS background over a transparent surface, which
-    keeps the corners antialiased. Child overlays have no window of their own,
-    so translucency does not apply to them; they get a resize-tracking mask
-    instead, which is the only way to clip a natively promoted child.
+    keeps the corners antialiased. Small settings popups can request
+    ``opaque=True``: they remain rounded and themed, but their backing surface
+    is explicitly filled so the panel never shows the content underneath.
+    Child overlays have no window of their own, so translucency does not apply
+    to them; they get a resize-tracking mask instead, which is the only way to
+    clip a natively promoted child.
     """
     if widget.isWindow():
-        widget.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+        widget.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, not opaque)
+        if opaque:
+            widget.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+            widget.setAutoFillBackground(True)
+            palette = widget.palette()
+            palette.setColor(QPalette.ColorRole.Window, QColor(str(flatten_theme(theme)["bg_overlay"])))
+            widget.setPalette(palette)
+            # A non-translucent frameless window still owns a rectangular native
+            # backing surface.  QSS border-radius only rounds the paint, so the
+            # unpainted corner pixels can expose the platform's black surface.
+            # Clip the native surface as well; the filter reapplies the mask on
+            # every resize/show event.
+            existing = widget.findChild(_RoundedMaskFilter)
+            if existing is not None:
+                existing.deleteLater()
+            _RoundedMaskFilter(widget, radius(level, theme))
         return
     existing = widget.findChild(_RoundedMaskFilter)
     if existing is not None:

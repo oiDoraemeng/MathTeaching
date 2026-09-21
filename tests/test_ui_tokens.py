@@ -8,6 +8,7 @@ import pytest
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+from PySide6.QtGui import QPalette
 from PySide6.QtWidgets import QApplication, QGraphicsDropShadowEffect, QHBoxLayout, QWidget
 from PySide6.QtCore import Qt
 from unittest.mock import MagicMock
@@ -203,6 +204,27 @@ def test_algebra_panel_popups_sync_overlay_theme() -> None:
     panel.sync_overlay_theme("dark")
     for popup, _object_name in popup_widgets:
         _assert_shadow(popup, "overlay", "dark")
+
+
+def test_algebra_settings_popups_use_opaque_surfaces() -> None:
+    panel = AlgebraPanel()
+    for popup in (
+        panel.settings_popup,
+        panel.matrix_settings_popup,
+        panel.geometry_settings_popup,
+    ):
+        popup.resize(300, 180)
+        popup.show()
+        QApplication.processEvents()
+        assert not popup.testAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        assert popup.testAttribute(Qt.WidgetAttribute.WA_StyledBackground)
+        assert popup.autoFillBackground()
+        assert not popup.mask().isEmpty()
+        popup.hide()
+
+    panel.sync_overlay_theme("dark")
+    dark_background = panel.settings_popup.palette().color(QPalette.ColorRole.Window)
+    assert dark_background.name() == flatten_theme("dark")["bg_overlay"]
 
 
 def test_main_window_apply_style_has_no_inline_qss() -> None:
