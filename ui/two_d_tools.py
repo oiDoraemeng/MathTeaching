@@ -16,6 +16,7 @@ class TwoDGeometryToolbar(QFrame):
     """统一的二维/线性代数工具栏，固定在视口左侧中部，不随焦点窗格移动。"""
 
     tool_selected = Signal(object)
+    function_requested = Signal(object)
     snap_toggled = Signal(bool)
     undo_requested = Signal()
     redo_requested = Signal()
@@ -36,16 +37,39 @@ class TwoDGeometryToolbar(QFrame):
         layout.setSpacing(4)
 
         self.select_button = self._button("move", "选择/移动", "selectToolButton")
-        self.point_button = self._button("circle-dot", "点", "pointToolButton")
+        self.function_button = self._action_button("function", "函数目录", "functionToolButton")
+        self.point_button = self._button("circle-dot", "点工具", "pointToolButton")
         self.annotation_button = self._button("type", "标记", "annotationToolButton")
         self.line_button = self._button("pen-line", "线工具", "lineToolButton")
         self.vector_button = self._button("vector", "向量", "linearVectorToolButton")
         self.addition_button = self._button("plus", "加法", "vectorAdditionToolButton")
         layout.addWidget(self.select_button)
+        layout.addWidget(self.function_button)
         layout.addWidget(self.point_button)
         layout.addWidget(self.annotation_button)
         layout.addWidget(self.line_button)
         layout.addWidget(self.vector_button)
+
+        self.point_flyout = QFrame(parent)
+        self.point_flyout.setObjectName("twoDPointFlyout")
+        apply_drop_shadow(self.point_flyout, "overlay")
+        apply_rounded_overlay(self.point_flyout, "md")
+        self._point_flyout_animation = QPropertyAnimation(self.point_flyout, b"windowOpacity", self)
+        self._point_flyout_animation.setDuration(150)
+        self._point_flyout_animation.setEasingCurve(QEasingCurve.Type.OutCubic)
+        point_flyout_layout = QVBoxLayout(self.point_flyout)
+        point_flyout_layout.setContentsMargins(4, 4, 4, 4)
+        point_flyout_layout.setSpacing(4)
+        self.point_buttons: dict[str, QToolButton] = {
+            "point": self._button("circle-dot", "点", "plainPointToolButton"),
+            "midpoint": self._button("between-horizontal-start", "中点", "midpointToolButton"),
+            "intersection": self._button("badge-x", "交点", "intersectionPointToolButton"),
+        }
+        for button in self.point_buttons.values():
+            point_flyout_layout.addWidget(button)
+            button.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            button.installEventFilter(self)
+        self.point_flyout.hide()
 
         self.line_flyout = QFrame(parent)
         self.line_flyout.setObjectName("twoDLineFlyout")
@@ -100,7 +124,12 @@ class TwoDGeometryToolbar(QFrame):
         layout.addWidget(self.redo_button)
 
         self.select_button.clicked.connect(lambda: self._toggle_tool("select"))
-        self.point_button.clicked.connect(lambda: self._toggle_tool("point"))
+        self.function_button.clicked.connect(
+            lambda: self.function_requested.emit(
+                self.function_button.mapToGlobal(QPoint(self.function_button.width() + 8, 0))
+            )
+        )
+        self.point_button.clicked.connect(self._toggle_point_flyout)
         self.annotation_button.clicked.connect(lambda: self._toggle_tool("annotation"))
         self.line_button.clicked.connect(self._toggle_line_flyout)
         self.vector_button.clicked.connect(lambda: self._toggle_tool("vector"))
@@ -113,19 +142,24 @@ class TwoDGeometryToolbar(QFrame):
         self.area_button.clicked.connect(lambda: self._select_tool("area"))
         for kind, button in self.line_buttons.items():
             button.clicked.connect(lambda _checked=False, value=kind: self._select_tool(value))
+        for kind, button in self.point_buttons.items():
+            button.clicked.connect(lambda _checked=False, value=kind: self._select_tool(value))
         self.snap_button.toggled.connect(self.snap_toggled)
         self.undo_button.clicked.connect(self.undo_requested)
         self.redo_button.clicked.connect(self.redo_requested)
         self.line_button.installEventFilter(self)
         self.line_flyout.installEventFilter(self)
+        self.point_button.installEventFilter(self)
+        self.point_flyout.installEventFilter(self)
         self.adjustSize()
         self.line_flyout.adjustSize()
+        self.point_flyout.adjustSize()
         self.set_history_state(can_undo=False, can_redo=False)
 
     def set_active_tool(self, tool: ToolKind | None, *, emit_signal: bool = False) -> None:
         self._active_tool = tool
         self.select_button.setChecked(tool == "select")
-        self.point_button.setChecked(tool == "point")
+        self.point_button.setChecked(tool in self.point_buttons)
         self.annotation_button.setChecked(tool == "annotation")
         self.line_button.setChecked(tool in self.line_buttons)
         self.vector_button.setChecked(tool == "vector")
@@ -137,6 +171,8 @@ class TwoDGeometryToolbar(QFrame):
         self.subspace_button.setChecked(tool == "subspace")
         self.area_button.setChecked(tool == "area")
         for kind, button in self.line_buttons.items():
+            button.setChecked(tool == kind)
+        for kind, button in self.point_buttons.items():
             button.setChecked(tool == kind)
         if emit_signal:
             self.tool_selected.emit(tool)
@@ -157,6 +193,7 @@ class TwoDGeometryToolbar(QFrame):
             )
         self.adjustSize()
         self.line_flyout.hide()
+        self.point_flyout.hide()
 
     def is_snap_enabled(self) -> bool:
         return self.snap_button.isChecked()
@@ -169,8 +206,10 @@ class TwoDGeometryToolbar(QFrame):
         self._theme = theme
         apply_drop_shadow(self, "overlay", theme)
         apply_drop_shadow(self.line_flyout, "overlay", theme)
+        apply_drop_shadow(self.point_flyout, "overlay", theme)
         retint_icons(self, theme)
         retint_icons(self.line_flyout, theme)
+        retint_icons(self.point_flyout, theme)
 
     def set_history_state(self, *, can_undo: bool, can_redo: bool) -> None:
         self.undo_button.setEnabled(can_undo)
@@ -193,9 +232,37 @@ class TwoDGeometryToolbar(QFrame):
         )
         if self.line_flyout.isVisible():
             self._position_flyout()
+        if self.point_flyout.isVisible():
+            self._position_point_flyout()
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
-        if watched is self.line_button or watched is self.line_flyout or watched in self.line_buttons.values():
+        if watched is self.point_button or watched is self.point_flyout or watched in self.point_buttons.values():
+            if event.type() == QEvent.Type.Enter:
+                self._show_point_flyout()
+            elif event.type() == QEvent.Type.Leave:
+                QTimer.singleShot(90, self._hide_point_flyout_if_unhovered)
+            elif watched in self.point_buttons.values() and event.type() == QEvent.Type.KeyPress:
+                buttons = list(self.point_buttons.values())
+                index = buttons.index(watched)
+                key = event.key()
+                if key in (Qt.Key.Key_Up, Qt.Key.Key_Left, Qt.Key.Key_Down, Qt.Key.Key_Right):
+                    delta = -1 if key in (Qt.Key.Key_Up, Qt.Key.Key_Left) else 1
+                    self._focus_point_button((index + delta) % len(buttons))
+                    return True
+                if key in (Qt.Key.Key_Return, Qt.Key.Key_Enter, Qt.Key.Key_Space):
+                    buttons[index].click()
+                    return True
+                if key == Qt.Key.Key_Escape:
+                    self._close_point_flyout()
+                    return True
+        if (
+            hasattr(self, "line_flyout")
+            and (
+                watched is self.line_button
+                or watched is self.line_flyout
+                or watched in self.line_buttons.values()
+            )
+        ):
             if event.type() == QEvent.Type.Enter:
                 self._show_line_flyout()
             elif event.type() == QEvent.Type.Leave:
@@ -228,17 +295,37 @@ class TwoDGeometryToolbar(QFrame):
         self._show_line_flyout()
         self._focus_line_button(0)
 
+    def _toggle_point_flyout(self) -> None:
+        """Toggle the point-tool menu without selecting an abstract tool."""
+        if self.point_flyout.isVisible():
+            self._close_point_flyout()
+            return
+        self.point_button.setChecked(self._active_tool in self.point_buttons)
+        self._show_point_flyout()
+        self._focus_point_button(0)
+
     def _focus_line_button(self, index: int) -> None:
         buttons = list(self.line_buttons.values())
         if not buttons:
             return
         buttons[index % len(buttons)].setFocus(Qt.FocusReason.OtherFocusReason)
 
+    def _focus_point_button(self, index: int) -> None:
+        buttons = list(self.point_buttons.values())
+        if buttons:
+            buttons[index % len(buttons)].setFocus(Qt.FocusReason.OtherFocusReason)
+
     def _close_line_flyout(self, return_focus: bool = True) -> None:
         self._flyout_animation.stop()
         self.line_flyout.hide()
         if return_focus:
             self.line_button.setFocus(Qt.FocusReason.OtherFocusReason)
+
+    def _close_point_flyout(self, return_focus: bool = True) -> None:
+        self._point_flyout_animation.stop()
+        self.point_flyout.hide()
+        if return_focus:
+            self.point_button.setFocus(Qt.FocusReason.OtherFocusReason)
 
     def _select_tool(self, tool: ToolKind | None) -> None:
         if tool is not None and tool == self._active_tool:
@@ -247,10 +334,12 @@ class TwoDGeometryToolbar(QFrame):
         self.tool_selected.emit(tool)
         if tool is not None:
             self.line_flyout.hide()
+            self.point_flyout.hide()
 
     def _show_line_flyout(self) -> None:
         if not self.isVisible():
             return
+        self.point_flyout.hide()
         self._position_flyout()
         self.line_flyout.setWindowOpacity(0.0)
         self.line_flyout.show()
@@ -270,6 +359,29 @@ class TwoDGeometryToolbar(QFrame):
         y = min(max(8, origin.y()), max(8, parent.height() - self.line_flyout.height() - 8))
         self.line_flyout.move(x, y)
 
+    def _show_point_flyout(self) -> None:
+        if not self.isVisible():
+            return
+        if hasattr(self, "line_flyout"):
+            self.line_flyout.hide()
+        self._position_point_flyout()
+        self.point_flyout.setWindowOpacity(0.0)
+        self.point_flyout.show()
+        self._point_flyout_animation.stop()
+        self._point_flyout_animation.setStartValue(0.0)
+        self._point_flyout_animation.setEndValue(1.0)
+        self._point_flyout_animation.start()
+        self.point_flyout.raise_()
+
+    def _position_point_flyout(self) -> None:
+        parent = self.parentWidget()
+        if parent is None:
+            return
+        origin = self.mapTo(parent, QPoint(self.width() + 8, self.point_button.y()))
+        x = min(max(8, origin.x()), max(8, parent.width() - self.point_flyout.width() - 8))
+        y = min(max(8, origin.y()), max(8, parent.height() - self.point_flyout.height() - 8))
+        self.point_flyout.move(x, y)
+
     def _hide_flyout_if_unhovered(self) -> None:
         concrete_focused = any(button.hasFocus() for button in self.line_buttons.values())
         if (
@@ -279,6 +391,16 @@ class TwoDGeometryToolbar(QFrame):
             and not concrete_focused
         ):
             self._close_line_flyout(return_focus=False)
+
+    def _hide_point_flyout_if_unhovered(self) -> None:
+        concrete_focused = any(button.hasFocus() for button in self.point_buttons.values())
+        if (
+            not self.point_button.underMouse()
+            and not self.point_flyout.underMouse()
+            and not self.point_button.hasFocus()
+            and not concrete_focused
+        ):
+            self._close_point_flyout(return_focus=False)
 
     def _button(self, icon_name: str, tooltip: str, object_name: str) -> QToolButton:
         button = QToolButton()

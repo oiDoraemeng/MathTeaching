@@ -56,6 +56,12 @@ class SceneCommandTests(unittest.TestCase):
             ),
             "a+b=(3, 4)",
         )
+        result_vector = next(
+            operation
+            for operation in validation.expanded_operations
+            if operation.get("op") == "linear.upsert" and operation.get("role") == "result"
+        )
+        self.assertEqual(result_vector["label"], "a+b")
 
     def test_vector_macro_contains_dashed_parallelogram_and_triangle_rule(self) -> None:
         plan = CommandPlan(

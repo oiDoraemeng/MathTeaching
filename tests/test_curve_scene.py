@@ -2,6 +2,8 @@
 
 import unittest
 
+import pyvista as pv
+
 from models.curve_layer import CurveLayer, Plot2DDomain
 from rendering.curve_scene import CurveSceneController
 
@@ -79,6 +81,32 @@ class CurveSceneControllerTests(unittest.TestCase):
         self.assertAlmostEqual(float(mesh.points[0, 1]), 0.25)
         self.assertAlmostEqual(float(mesh.points[-1, 0]), 2.0)
         self.assertAlmostEqual(float(mesh.points[-1, 1]), 0.25)
+
+    def test_curve_can_be_hit_tested_and_highlighted_as_the_selected_object(self) -> None:
+        self.controller.add_layer(self.layer)
+
+        hit_id = self.controller.hit_test(0.0, 0.0, 0.1)
+        changed = self.controller.set_selected(hit_id)
+
+        self.assertEqual(hit_id, self.layer.id)
+        self.assertTrue(changed)
+        self.assertEqual(self.controller.selected_id, self.layer.id)
+        selection_name = self.controller.selection_actor_name(self.layer.id)
+        self.assertIn(selection_name, self.plotter.actors)
+        self.assertEqual(self.plotter.mesh_kwargs[selection_name]["color"], "#e59b00")
+
+        self.controller.set_selected(None)
+        self.assertNotIn(selection_name, self.plotter.actors)
+
+    def test_selected_curve_highlight_is_removed_when_curve_has_no_visible_mesh(self) -> None:
+        self.controller.add_layer(self.layer)
+        self.controller.set_selected(self.layer.id)
+        selection_name = self.controller.selection_actor_name(self.layer.id)
+
+        self.controller.meshes[self.layer.id] = pv.PolyData()
+        self.controller._replace_actor_if_present(self.layer)
+
+        self.assertNotIn(selection_name, self.plotter.actors)
 
 
 if __name__ == "__main__":

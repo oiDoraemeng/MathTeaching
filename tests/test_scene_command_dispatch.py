@@ -279,6 +279,142 @@ def test_matrix_case_plan_replays_all_primitives_without_rolling_back() -> None:
     assert window._pane_renderer(pane_id).add_mesh.call_count > 0
 
 
+def test_transformed_grid_case_uses_one_toolbar_matrix_row_in_algebra_panel() -> None:
+    compiled = catalog_registry().resolve_bundle(
+        "ch02.matrix.transformed-grid",
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    stage = compiled.storyboard[1]
+    window = _pane_window()
+    pane_id = window.pane_manager.visible_pane_ids()[0]
+    plan = case_plan(compiled, stage.id)
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    assert service.execute(plan, pane_id=pane_id).valid
+
+    matrix_model = MagicMock()
+    window.algebra_panel.add_matrix_transform_tab.return_value = matrix_model
+    window._active_linear_algebra_compiled = compiled
+    window._active_linear_algebra_stage_id = stage.id
+    window._teaching_case_pane_ids = [pane_id]
+    window._teaching_case_stage_refs = {pane_id: (stage.id,)}
+    window.pane_manager.focus_pane(pane_id)
+
+    window._apply_linear_algebra_storyboard_visibility()
+
+    matrix_model.set_matrix_transform_value.assert_called_once_with(
+        r"A=\begin{pmatrix}2&0\\0&1\end{pmatrix}"
+    )
+    window.algebra_panel.add_matrix_transform_tab.assert_called_once_with(
+        pane_id,
+        window.pane_manager.pane(pane_id).name,
+        editable=False,
+        activate=False,
+    )
+    assert any(
+        getattr(annotation, "agent_alias", None) == "sem__mv_grid_stretch__label"
+        for annotation in window._pane_scene(pane_id).annotations
+    )
+    algebra_aliases = {
+        getattr(layer, "agent_alias", None)
+        for layer in window.algebra_panel.set_layers.call_args.args[0]
+    }
+    assert "sem__mv_grid_stretch__label" not in algebra_aliases
+
+
+@pytest.mark.parametrize(
+    "topic_id, stage_index, expected_latex, expected_extent, label_alias",
+    [
+        (
+            "ch02.matrix.additive-distributivity",
+            0,
+            r"A=\begin{pmatrix}3&0\\0&3\end{pmatrix}",
+            3,
+            None,
+        ),
+        (
+            "ch02.matrix.composition",
+            0,
+            r"A=\begin{pmatrix}1&0\\0&1\end{pmatrix}",
+            3,
+            None,
+        ),
+        (
+            "ch02.matrix.composition",
+            1,
+            r"A=\begin{pmatrix}0&-2\\1&0\end{pmatrix}",
+            3,
+            None,
+        ),
+        (
+            "ch02.matrix.composition",
+            2,
+            r"A=\begin{pmatrix}0&-1\\2&0\end{pmatrix}",
+            3,
+            None,
+        ),
+        (
+            "ch02.matrix.powers",
+            0,
+            r"A=\begin{pmatrix}1&2\\3&4\end{pmatrix}",
+            1,
+            "sem__grid_a__label",
+        ),
+        (
+            "ch02.matrix.powers",
+            1,
+            r"A=\begin{pmatrix}7&10\\15&22\end{pmatrix}",
+            1,
+            "sem__grid_a2__label",
+        ),
+    ],
+)
+def test_other_chapter_two_matrix_cases_use_one_toolbar_matrix_row(
+    topic_id: str,
+    stage_index: int,
+    expected_latex: str,
+    expected_extent: int,
+    label_alias: str | None,
+) -> None:
+    compiled = catalog_registry().resolve_bundle(
+        topic_id,
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    stage = compiled.storyboard[stage_index]
+    window = _pane_window()
+    pane_id = window.pane_manager.visible_pane_ids()[0]
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    assert service.execute(case_plan(compiled, stage.id), pane_id=pane_id).valid
+
+    matrix_model = MagicMock()
+    window.algebra_panel.add_matrix_transform_tab.return_value = matrix_model
+    window._active_linear_algebra_compiled = compiled
+    window._active_linear_algebra_stage_id = stage.id
+    window._teaching_case_pane_ids = [pane_id]
+    window._teaching_case_stage_refs = {pane_id: (stage.id,)}
+    window.pane_manager.focus_pane(pane_id)
+
+    window._apply_linear_algebra_storyboard_visibility()
+
+    matrix_model.set_matrix_transform_value.assert_called_once_with(expected_latex)
+    matrix_model.set_matrix_transform_grid_range.assert_called_once_with(expected_extent)
+    window.algebra_panel.add_matrix_transform_tab.assert_called_once_with(
+        pane_id,
+        window.pane_manager.pane(pane_id).name,
+        editable=False,
+        activate=False,
+    )
+    if label_alias is not None:
+        assert any(
+            getattr(annotation, "agent_alias", None) == label_alias
+            for annotation in window._pane_scene(pane_id).annotations
+        )
+        algebra_aliases = {
+            getattr(layer, "agent_alias", None)
+            for layer in window.algebra_panel.set_layers.call_args.args[0]
+        }
+        assert label_alias not in algebra_aliases
+
+
 def test_basis_case_syncs_each_visible_grid_matrix_to_its_algebra_tab() -> None:
     compiled = catalog_registry().resolve_bundle(
         "ch04.basis.definition",
@@ -341,7 +477,7 @@ def test_basis_case_syncs_each_visible_grid_matrix_to_its_algebra_tab() -> None:
     window._clear_linear_algebra_tool_overlays = MagicMock()
     window._apply_matrix_transform_from_tab(
         first,
-        r"\begin{pmatrix}1&0\\0&1\end{pmatrix}",
+        r"A=\begin{pmatrix}1&0\\0&1\end{pmatrix}",
         8,
     )
 
@@ -351,6 +487,213 @@ def test_basis_case_syncs_each_visible_grid_matrix_to_its_algebra_tab() -> None:
     assert standard_grid["bounds"] == [-8.0, 8.0, -8.0, 8.0]
     assert window._pane_scene(first)._matrix_transform_grid_range == 8
     window._clear_linear_algebra_tool_overlays.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "topic_id, expected_matrices, expected_latex",
+    (
+        (
+            "ch03.det.basic-properties",
+            (
+                [[2.0, 1.0], [1.0, 2.0]],
+                [[1.0, 2.0], [2.0, 1.0]],
+            ),
+            (
+                r"A=\begin{pmatrix}2&1\\1&2\end{pmatrix}",
+                r"A=\begin{pmatrix}1&2\\2&1\end{pmatrix}",
+            ),
+        ),
+        (
+            "ch03.det.multiplicativity",
+            (
+                [[1.0, 0.0], [0.0, 1.0]],
+                [[1.0, 0.0], [0.0, 3.0]],
+            ),
+            (
+                r"A=\begin{pmatrix}1&0\\0&1\end{pmatrix}",
+                r"A=\begin{pmatrix}1&0\\0&3\end{pmatrix}",
+            ),
+        ),
+        (
+            "ch03.det.transpose",
+            (
+                [[2.0, 2.0], [1.0, 3.0]],
+                [[2.0, 1.0], [2.0, 3.0]],
+            ),
+            (
+                r"A=\begin{pmatrix}2&2\\1&3\end{pmatrix}",
+                r"A=\begin{pmatrix}2&1\\2&3\end{pmatrix}",
+            ),
+        ),
+    ),
+)
+def test_fixed_determinant_cases_sync_matrices_without_an_active_global_stage(
+    topic_id: str,
+    expected_matrices: tuple[list[list[float]], list[list[float]]],
+    expected_latex: tuple[str, str],
+) -> None:
+    compiled = catalog_registry().resolve_bundle(
+        topic_id,
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    stages = tuple(compiled.storyboard[:2])
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    window.scene_command_service = service
+    window._render_2d_scene = MagicMock()
+    window._sync_pane_state = MagicMock()
+    for pane_id, stage in zip((first, second), stages):
+        result = service.execute(case_plan(compiled, stage.id), pane_id=pane_id)
+        assert result.valid
+
+    models = {first: MagicMock(), second: MagicMock()}
+    window.algebra_panel.add_matrix_transform_tab.side_effect = (
+        lambda pane_id, *_args, **_kwargs: models[pane_id]
+    )
+    window.algebra_panel.matrix_transform_editor.side_effect = (
+        lambda pane_id: models[pane_id]
+    )
+    window._active_linear_algebra_compiled = compiled
+    window._active_linear_algebra_stage_id = None
+    window._teaching_case_pane_ids = [first, second]
+    window._teaching_case_stage_refs = {
+        first: (stages[0].id,),
+        second: (stages[1].id,),
+    }
+
+    window._apply_linear_algebra_storyboard_visibility()
+
+    models[first].set_matrix_transform_value.assert_called_once_with(
+        expected_latex[0], ""
+    )
+    models[second].set_matrix_transform_value.assert_called_once_with(
+        expected_latex[1], ""
+    )
+    models[first].set_matrix_transform_grid_range.assert_called_once_with(5)
+    models[second].set_matrix_transform_grid_range.assert_called_once_with(5)
+    assert all(
+        call.kwargs == {"editable": False, "activate": False}
+        for call in window.algebra_panel.add_matrix_transform_tab.call_args_list
+    )
+    first_grid = window._pane_scene(first)._agent_teaching_2d["la_tool_transform_grid"]
+    second_grid = window._pane_scene(second)._agent_teaching_2d["la_tool_transform_grid"]
+    assert first_grid["matrix"] == expected_matrices[0]
+    assert second_grid["matrix"] == expected_matrices[1]
+    assert first_grid["bounds"] == second_grid["bounds"] == [-5.0, 5.0, -5.0, 5.0]
+
+    window._apply_matrix_transform_from_tab(
+        first,
+        expected_latex[0],
+        8,
+    )
+
+    resized = window._pane_scene(first)._agent_teaching_2d["la_tool_transform_grid"]
+    assert resized["bounds"] == [-8.0, 8.0, -8.0, 8.0]
+
+
+def test_determinant_matrix_sync_does_not_reenter_during_2d_rebuild() -> None:
+    """The toolbar grid setup must not recurse through scene visibility sync."""
+    compiled = catalog_registry().resolve_bundle(
+        "ch03.det.basic-properties",
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    window.scene_command_service = service
+    for pane_id, stage in zip((first, second), compiled.storyboard[:2]):
+        assert service.execute(case_plan(compiled, stage.id), pane_id=pane_id).valid
+
+    models = {first: MagicMock(), second: MagicMock()}
+    window.algebra_panel.add_matrix_transform_tab.side_effect = (
+        lambda pane_id, *_args, **_kwargs: models[pane_id]
+    )
+    window.algebra_panel.matrix_transform_editor.side_effect = (
+        lambda pane_id: models[pane_id]
+    )
+    window._active_linear_algebra_compiled = compiled
+    window._active_linear_algebra_topic_id = "ch03.det.basic-properties"
+    window._teaching_case_pane_ids = [first, second]
+    window._teaching_case_stage_refs = {
+        first: (compiled.storyboard[0].id,),
+        second: (compiled.storyboard[1].id,),
+    }
+
+    # The real 2-D rebuild invokes visibility sync at its tail.  Reproduce that
+    # callback without creating another native render window in this test.
+    window._render_2d_scene = lambda: window._apply_linear_algebra_storyboard_visibility()
+
+    window._apply_linear_algebra_storyboard_visibility()
+
+    assert window._pane_scene(first)._agent_teaching_2d["la_tool_transform_grid"]["matrix"] == [
+        [2.0, 1.0],
+        [1.0, 2.0],
+    ]
+    assert window._pane_scene(second)._agent_teaching_2d["la_tool_transform_grid"]["matrix"] == [
+        [1.0, 2.0],
+        [2.0, 1.0],
+    ]
+
+
+def test_chapter_two_basis_uses_actual_a_and_b_matrices_in_algebra_tabs() -> None:
+    compiled = catalog_registry().resolve_bundle(
+        "ch02.matrix.basis",
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    stages = tuple(compiled.storyboard)
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    for pane_id, stage in zip((first, second), stages):
+        result = service.execute(case_plan(compiled, stage.id), pane_id=pane_id)
+        assert result.valid
+
+    models = {first: MagicMock(), second: MagicMock()}
+    window.algebra_panel.add_matrix_transform_tab.side_effect = (
+        lambda pane_id, *_args, **_kwargs: models[pane_id]
+    )
+    window._active_linear_algebra_compiled = compiled
+    window._active_linear_algebra_stage_id = stages[0].id
+    window._teaching_case_pane_ids = [first, second]
+    window._teaching_case_stage_refs = {
+        first: (stages[0].id,),
+        second: (stages[1].id,),
+    }
+
+    window._apply_linear_algebra_storyboard_visibility()
+
+    models[first].set_matrix_transform_value.assert_called_once_with(
+        r"A=\begin{pmatrix}0&-1\\1&0\end{pmatrix}"
+    )
+    models[second].set_matrix_transform_value.assert_called_once_with(
+        r"A=\begin{pmatrix}-1&-2\\1&1\end{pmatrix}"
+    )
+    models[first].set_matrix_transform_grid_range.assert_called_once_with(5)
+    models[second].set_matrix_transform_grid_range.assert_called_once_with(5)
+    assert all(
+        call.kwargs == {"editable": False, "activate": False}
+        for call in window.algebra_panel.add_matrix_transform_tab.call_args_list
+    )
+    expected_labels = {
+        first: "sem__mv_basis_grid_a__label",
+        second: "sem__mv_basis_grid_b__label",
+    }
+    for pane_id, label_alias in expected_labels.items():
+        assert any(
+            getattr(annotation, "agent_alias", None) == label_alias
+            for annotation in window._pane_scene(pane_id).annotations
+        )
+        with window._using_pane(pane_id):
+            algebra_aliases = {
+                getattr(layer, "agent_alias", None)
+                for layer in window._two_d_panel_layers()
+            }
+        assert label_alias not in algebra_aliases
+    assert not any(
+        operation.get("op") == "linear_algebra.coordinate_transform"
+        for operation in compiled.plan.operations
+    )
 
 
 def test_transformed_grid_origin_reaches_real_host_mesh():

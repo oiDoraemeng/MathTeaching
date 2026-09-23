@@ -28,6 +28,7 @@ class CurveSceneController:
         self.coordinate_transform = coordinate_transform
         self.layers: dict[str, CurveLayer] = {}
         self.meshes: dict[str, pv.PolyData] = {}
+        self._selected_id: str | None = None
 
     @staticmethod
     def actor_name(layer_id: str) -> str:
@@ -51,8 +52,46 @@ class CurveSceneController:
 
     def remove_layer(self, layer_id: str) -> None:
         self.plotter.remove_actor(self.actor_name(layer_id), render=False)
+        self.plotter.remove_actor(self.selection_actor_name(layer_id), render=False)
         self.layers.pop(layer_id, None)
         self.meshes.pop(layer_id, None)
+        if self._selected_id == layer_id:
+            self._selected_id = None
+
+    @staticmethod
+    def selection_actor_name(layer_id: str) -> str:
+        return f"curve:{layer_id}:selection"
+
+    def hit_test(self, x: float, y: float, tolerance: float) -> str | None:
+        """Return the nearest visible curve sampled within a world-space tolerance."""
+        best: tuple[float, str] | None = None
+        for layer_id, layer in self.layers.items():
+            mesh = self.meshes.get(layer_id)
+            if not layer.visible or mesh is None or mesh.n_points == 0:
+                continue
+            points = np.asarray(mesh.points, dtype=float)
+            distances = np.hypot(points[:, 0] - float(x), points[:, 1] - float(y))
+            distance = float(np.min(distances))
+            if distance <= tolerance and (best is None or distance < best[0]):
+                best = (distance, layer_id)
+        return best[1] if best is not None else None
+
+    def set_selected(self, layer_id: str | None) -> bool:
+        """Highlight one curve as the current selectable 2-D object."""
+        if layer_id not in self.layers:
+            layer_id = None
+        if layer_id == self._selected_id:
+            return False
+        previous = self._selected_id
+        self._selected_id = layer_id
+        for candidate in (previous, layer_id):
+            if candidate is not None and candidate in self.layers:
+                self._replace_actor_if_present(self.layers[candidate])
+        return True
+
+    @property
+    def selected_id(self) -> str | None:
+        return self._selected_id
 
     def set_visible(self, layer_id: str, visible: bool) -> None:
         layer = self._layer(layer_id)
@@ -62,6 +101,9 @@ class CurveSceneController:
         except KeyError:
             # 完全在当前视口外的曲线没有演员；重新进入视口后会在重采样时创建。
             pass
+        selection = self._actors().get(self.selection_actor_name(layer_id))
+        if selection is not None:
+            selection.visibility = visible and layer_id == self._selected_id
 
     def set_color(self, layer_id: str, color: str) -> None:
         layer = self._layer(layer_id)
@@ -94,6 +136,7 @@ class CurveSceneController:
             mesh = self.meshes[layer_id]
             if mesh.n_points == 0 or mesh.n_cells == 0:
                 self.plotter.remove_actor(self.actor_name(layer_id), render=False)
+                self.plotter.remove_actor(self.selection_actor_name(layer_id), render=False)
                 continue
             self._replace_actor(layer, mesh)
 
@@ -125,6 +168,7 @@ class CurveSceneController:
 
     def _replace_actor(self, layer: CurveLayer, mesh: pv.PolyData) -> None:
         self.plotter.remove_actor(self.actor_name(layer.id), render=False)
+        self.plotter.remove_actor(self.selection_actor_name(layer.id), render=False)
         actor = self.plotter.add_mesh(
             mesh,
             name=self.actor_name(layer.id),
@@ -136,11 +180,24 @@ class CurveSceneController:
             lighting=False,
         )
         actor.visibility = layer.visible
+        if layer.id == self._selected_id:
+            halo = self.plotter.add_mesh(
+                mesh,
+                name=self.selection_actor_name(layer.id),
+                color="#e59b00",
+                line_width=layer.line_width + 4.0,
+                opacity=0.42,
+                render_lines_as_tubes=False,
+                show_vertices=False,
+                lighting=False,
+            )
+            halo.visibility = layer.visible
 
     def _replace_actor_if_present(self, layer: CurveLayer) -> None:
         mesh = self.meshes[layer.id]
         if mesh.n_points == 0 or mesh.n_cells == 0:
             self.plotter.remove_actor(self.actor_name(layer.id), render=False)
+            self.plotter.remove_actor(self.selection_actor_name(layer.id), render=False)
             return
         self._replace_actor(layer, mesh)
 
@@ -149,6 +206,10 @@ class CurveSceneController:
             return self.plotter.renderer.actors[self.actor_name(layer_id)]
         except (AttributeError, KeyError):
             return self.plotter.actors[self.actor_name(layer_id)]
+
+    def _actors(self) -> dict:
+        renderer = getattr(self.plotter, "renderer", None)
+        return renderer.actors if renderer is not None else self.plotter.actors
 
     def _layer(self, layer_id: str) -> CurveLayer:
         try:

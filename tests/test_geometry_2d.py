@@ -60,6 +60,13 @@ class Geometry2DTests(unittest.TestCase):
         self.assertGreater(dashed.n_lines, 1)
         self.assertEqual(dashed.n_faces, 0)
 
+    def test_dashed_vector_has_a_dashed_stem_and_a_filled_arrowhead(self) -> None:
+        dashed = linear_mesh("vector", self.first, self.second, self.bounds, style="dashed")
+
+        self.assertGreater(dashed.n_lines, 1)
+        self.assertEqual(dashed.n_faces, 1)
+        self.assertIn((1.0, 1.0), {tuple(point[:2]) for point in dashed.points})
+
     def test_geometry_controller_updates_actor_visibility_and_bounds(self) -> None:
         plotter = FakePlotter()
         controller = GeometrySceneController(plotter, self.bounds)
@@ -188,6 +195,17 @@ class Geometry2DTests(unittest.TestCase):
         self.assertEqual(annotation_actor_names(), {blue_actor})
         self.assertEqual(labels_of(blue_actor), ["a"])
 
+    def test_vector_endpoint_never_expands_to_a_coordinate_label(self) -> None:
+        plotter = FakePlotter()
+        controller = GeometrySceneController(plotter, self.bounds)
+        controller.add_point(self.first)
+        controller.add_point(self.second)
+        controller.add_linear(Linear2D("a", "vector", self.first.id, self.second.id, label="a"))
+
+        controller.set_hover(self.first.id)
+
+        self.assertEqual(controller._point_label_text(self.first), "A")
+
     def test_annotation_and_linear_label_positions_are_independently_movable(self) -> None:
         class LabelPlotter(FakePlotter):
             def __init__(self) -> None:
@@ -243,6 +261,133 @@ class Geometry2DTests(unittest.TestCase):
             r"s_1=\overline{AB}",
         )
         self.assertIn("a:", geometry_latex(line, {self.first.id: self.first, self.second.id: self.second}))
+
+    def test_vector_addition_result_uses_visible_endpoint_names(self) -> None:
+        origin = Point2D("A", 0.0, 0.0)
+        generated_origin = Point2D("", 0.0, 0.0)
+        endpoint = Point2D("D", 3.0, 2.0)
+        result = Linear2D(
+            "sum",
+            "vector",
+            generated_origin.id,
+            endpoint.id,
+            role="result",
+            label="a+b",
+            display_start_name="A",
+            display_end_name="D",
+        )
+
+        self.assertEqual(
+            geometry_latex(
+                result,
+                {endpoint.id: endpoint},
+            ),
+            r"\vec{a}+\vec{b}=\overrightarrow{AD}",
+        )
+
+    def test_geometry_latex_never_exposes_missing_endpoint_ids(self) -> None:
+        vector = Linear2D("a", "vector", "internal-start-id", "internal-end-id", label="a")
+
+        self.assertEqual(geometry_latex(vector, {}), r"\vec{a}")
+
+    def test_vector_expression_keeps_scalar_terms_as_separate_vectors(self) -> None:
+        result = Linear2D(
+            "combination",
+            "vector",
+            self.first.id,
+            self.second.id,
+            label="2a-b",
+        )
+
+        self.assertEqual(
+            geometry_latex(result, {self.first.id: self.first, self.second.id: self.second}),
+            r"2\vec{a}-\vec{b}=\overrightarrow{AB}",
+        )
+
+    def test_vector_labels_keep_matrix_factors_outside_vector_glyphs(self) -> None:
+        cases = {
+            "Ax": r"A\vec{x}=\overrightarrow{AB}",
+            "ABx": r"AB\vec{x}=\overrightarrow{AB}",
+            "(A+B)x": r"(A+B)\vec{x}=\overrightarrow{AB}",
+            "Ax+Bx": r"A\vec{x}+B\vec{x}=\overrightarrow{AB}",
+        }
+
+        for label, expected in cases.items():
+            with self.subTest(label=label):
+                vector = Linear2D(
+                    label,
+                    "vector",
+                    self.first.id,
+                    self.second.id,
+                    label=label,
+                )
+                self.assertEqual(
+                    geometry_latex(
+                        vector,
+                        {self.first.id: self.first, self.second.id: self.second},
+                    ),
+                    expected,
+                )
+
+    def test_numbered_vector_labels_use_subscripts(self) -> None:
+        vector = Linear2D(
+            "e1",
+            "vector",
+            self.first.id,
+            self.second.id,
+            label="e1",
+        )
+
+        self.assertEqual(
+            geometry_latex(vector, {self.first.id: self.first, self.second.id: self.second}),
+            r"\vec{e}_{1}=\overrightarrow{AB}",
+        )
+
+    def test_unlabeled_vector_uses_endpoint_not_empty_vector_equation(self) -> None:
+        result = Linear2D(
+            "",
+            "vector",
+            self.first.id,
+            self.second.id,
+        )
+
+        self.assertEqual(
+            geometry_latex(result, {self.first.id: self.first, self.second.id: self.second}),
+            r"\overrightarrow{AB}",
+        )
+
+    def test_missing_segment_endpoint_never_emits_question_mark_placeholder(self) -> None:
+        segment = Linear2D("", "segment", self.first.id, "missing-end")
+
+        self.assertEqual(geometry_latex(segment, {self.first.id: self.first}), "")
+
+    def test_vector_sum_labels_are_rendered_as_two_vectors(self) -> None:
+        result = Linear2D(
+            "sum",
+            "vector",
+            self.first.id,
+            self.second.id,
+            label="u+v",
+        )
+
+        self.assertEqual(
+            geometry_latex(result, {self.first.id: self.first, self.second.id: self.second}),
+            r"\vec{u}+\vec{v}=\overrightarrow{AB}",
+        )
+
+    def test_legacy_vector_sum_label_with_coordinates_is_normalized(self) -> None:
+        result = Linear2D(
+            "sum",
+            "vector",
+            self.first.id,
+            self.second.id,
+            label="a+b=(3,4)",
+        )
+
+        self.assertEqual(
+            geometry_latex(result, {self.first.id: self.first, self.second.id: self.second}),
+            r"\vec{a}+\vec{b}=\overrightarrow{AB}",
+        )
 
 
 if __name__ == "__main__":

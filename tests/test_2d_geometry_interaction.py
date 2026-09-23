@@ -5,10 +5,11 @@ from unittest.mock import MagicMock
 
 from PySide6.QtCore import Qt
 
-from models.curve_layer import CurveLayer
-from models.geometry_2d import Annotation2D, Point2D
+from models.curve_layer import CurveLayer, Plot2DDomain
+from models.geometry_2d import Annotation2D, Linear2D, Point2D, geometry_latex
 from models.scene_mode import SceneMode
 from rendering.geometry_scene import GeometrySceneController
+from rendering.curve_scene import CurveSceneController
 from ui.scene_pane_manager import ScenePaneManager
 from ui.designer_window import MainWindow
 
@@ -72,6 +73,7 @@ class FakeAlgebraPanel:
         self.layers: list[object] = []
         self.statuses: list[tuple[str, bool]] = []
         self.annotation_commit_count = 0
+        self.removed_matrix_panes: list[str] = []
 
     def set_layers(self, layers) -> None:
         self.layers = list(layers)
@@ -79,7 +81,7 @@ class FakeAlgebraPanel:
     def set_status(self, text: str, is_error: bool = False) -> None:
         self.statuses.append((text, is_error))
 
-    def sync_layer(self, _layer_id: str, _layer: object) -> None:
+    def sync_layer(self, _layer_id: str, _layer: object, **_kwargs: object) -> None:
         pass
 
     def set_selected_layer(self, layer_id: str | None) -> None:
@@ -96,6 +98,9 @@ class FakeAlgebraPanel:
 
     def finish_edit(self) -> None:
         pass
+
+    def remove_matrix_transform_tab(self, pane_id: str) -> None:
+        self.removed_matrix_panes.append(pane_id)
 
 
 class FakePosition:
@@ -175,13 +180,50 @@ def _make_window() -> MainWindow:
 
 
 class TwoDGeometryInteractionTests(unittest.TestCase):
+    def test_parameter_change_rebuilds_curve_and_shows_the_numeric_formula(self) -> None:
+        window = _make_window()
+        layer = CurveLayer(
+            "line",
+            "explicit",
+            "y = a*x + b",
+            parameters={"a": 1.0, "b": 0.0},
+            latex="y=x",
+        )
+        controller = CurveSceneController(window._pane_renderer(), Plot2DDomain())
+        controller.add_layer(layer)
+        window._pane_scene().curve_controller = controller
+        window._pane_scene().curve_layers = [layer]
+
+        window._set_layer_parameter(layer.id, "b", 1.0)
+
+        updated = window._pane_scene().curve_layers[0]
+        self.assertEqual(updated.parameters, {"a": 1.0, "b": 1.0})
+        self.assertEqual(updated.latex, "y=x + 1")
+        self.assertNotIn("a", updated.latex)
+        self.assertNotIn("b", updated.latex)
+
+    def test_select_tool_can_select_a_rendered_curve(self) -> None:
+        window = _make_window()
+        layer = CurveLayer("axis", "explicit", "y = 0")
+        controller = CurveSceneController(window._pane_renderer(), Plot2DDomain())
+        controller.add_layer(layer)
+        window._pane_scene().curve_controller = controller
+        window._pane_scene().curve_layers = [layer]
+
+        self.assertTrue(window._begin_select_or_drag(0.0, 0.0))
+
+        self.assertEqual(controller.selected_id, layer.id)
+        self.assertEqual(window._pane().selected_object_ids, [layer.id])
+        self.assertEqual(window.algebra_panel.selected_layer_id, layer.id)
+
     def test_vector_addition_relation_tracks_input_drag_and_result_drag(self) -> None:
         window = _make_window()
         for operation in (
-            {"op": "point.upsert", "alias": "O", "coordinates": [0, 0]},
-            {"op": "point.upsert", "alias": "A", "coordinates": [2, 1]},
-            {"op": "point.upsert", "alias": "B0", "coordinates": [4, 4]},
-            {"op": "point.upsert", "alias": "B", "coordinates": [5, 6]},
+            {"op": "point.upsert", "alias": "O", "name": "O", "coordinates": [0, 0]},
+            {"op": "point.upsert", "alias": "A", "name": "A", "coordinates": [2, 1]},
+            {"op": "point.upsert", "alias": "B0", "name": "B", "coordinates": [4, 4]},
+            # 用户已有 C 时，结果端点不能再取相同名称。
+            {"op": "point.upsert", "alias": "B", "name": "C", "coordinates": [5, 6]},
         ):
             window._command_upsert_point(operation)
         window._command_upsert_linear(
@@ -193,7 +235,7 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         window._command_register_vector_addition(
             {
                 "op": "geometry.vector_addition",
-                "alias": "rel",
+                "alias": "la_addition_1",
                 "vector_a": "a",
                 "vector_b": "b",
                 "result_vector": "sum",
@@ -210,8 +252,48 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         second = next(item for item in scene.linear_objects if item.agent_alias == "b")
         second_start = window._geometry_point_ref(second.start_point_id)
         assert second_start is not None
-        self.assertEqual((second_start.x, second_start.y), (0.0, 0.0))
+        # 向量加法只画独立的平移副本，不能改写第二条输入向量。
+        self.assertEqual((second_start.x, second_start.y), (4.0, 4.0))
         first = next(item for item in scene.linear_objects if item.agent_alias == "a")
+        result = window._geometry_linear_ref("sum")
+        assert result is not None
+        self.assertEqual(result.label, "a+b")
+        self.assertTrue(
+            {result.start_point_id, result.end_point_id}.isdisjoint(
+                {
+                    first.start_point_id,
+                    first.end_point_id,
+                    second.start_point_id,
+                    second.end_point_id,
+                }
+            )
+        )
+        result_end_point = window._geometry_point_ref(result.end_point_id)
+        assert result_end_point is not None
+        self.assertEqual(result_end_point.name, "D")
+        self.assertEqual(first.label, "a")
+        self.assertEqual(second.label, "b")
+        self.assertEqual(
+            geometry_latex(result, {point.id: point for point in scene.geometry_points}),
+            r"\vec{a}+\vec{b}=\overrightarrow{OD}",
+        )
+        self.assertEqual(result.display_start_name, "O")
+        self.assertEqual(result.display_end_name, "D")
+        # 新建关系会立即刷新代数区：辅助点与辅助虚线不应显示为内部对象。
+        panel_layers = window.algebra_panel.layers
+        self.assertTrue(panel_layers)
+        self.assertFalse(any(isinstance(item, Point2D) and not item.name for item in panel_layers))
+        self.assertFalse(
+            any(
+                isinstance(item, Linear2D)
+                and item.agent_alias in {"translated_b", "construction_b", "construction_a"}
+                for item in panel_layers
+            )
+        )
+        # 窗格恢复时会再次刷新关系，结果端点的已分配名称必须保持稳定。
+        window._refresh_vector_addition(scene._vector_additions[0], create_missing=True)
+        self.assertEqual(result_end_point.name, "D")
+        self.assertFalse(any(item.agent_alias == "formula" for item in scene.annotations))
         first_end = window._geometry_point_ref(first.end_point_id)
         assert first_end is not None
         window._move_addition_point(first_end, (3.0, 2.0))
@@ -220,6 +302,11 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         result_end = window._geometry_point_ref("sum_end")
         assert result_end is not None
         self.assertEqual((result_end.x, result_end.y), (4.0, 4.0))
+        algebra_result = next(item for item in window.algebra_panel.layers if getattr(item, "agent_alias", None) == "sum")
+        self.assertEqual(
+            geometry_latex(algebra_result, {point.id: point for point in scene.geometry_points}),
+            r"\vec{a}+\vec{b}=\overrightarrow{OD}",
+        )
         polygon = scene._agent_teaching_2d["parallelogram"]
         self.assertEqual(polygon["vertices"], [[0.0, 0.0], [3.0, 2.0], [4.0, 4.0], [1.0, 2.0]])
         translated = next(item for item in scene.linear_objects if item.agent_alias == "translated_b")
@@ -233,8 +320,12 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         window._move_addition_point(result_end, (10.0, 10.0))
         window._update_vector_additions_for_point(result_end.id)
         second_end = window._geometry_point_ref(second.end_point_id)
-        assert second_end is not None
-        self.assertEqual((second_end.x, second_end.y), (7.0, 8.0))
+        second_start = window._geometry_point_ref(second.start_point_id)
+        assert second_end is not None and second_start is not None
+        self.assertEqual(
+            (second_end.x - second_start.x, second_end.y - second_start.y),
+            (7.0, 8.0),
+        )
         self.assertEqual((result_end.x, result_end.y), (10.0, 10.0))
 
         window._hidden_linear_algebra_aliases = {"sum"}
@@ -436,6 +527,21 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         layers = window._two_d_panel_layers()
         assert annotation in layers
 
+    def test_algebra_layers_deduplicate_same_named_point_at_same_coordinates(self) -> None:
+        window = _make_window()
+        first_origin = Point2D("O", 0.0, 0.0)
+        second_origin = Point2D("O", 0.0, 0.0)
+        window._pane_scene().geometry_points = [first_origin, second_origin]
+
+        layers = window._two_d_panel_layers()
+
+        origins = [
+            layer
+            for layer in layers
+            if isinstance(layer, Point2D) and layer.name == "O"
+        ]
+        assert origins == [first_origin]
+
     def test_keyboard_shortcuts_route_to_undo_and_redo(self) -> None:
         window = _make_window()
         point, _created = window._get_or_create_geometry_point(-2.0, 1.0)
@@ -604,6 +710,223 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         self.assertEqual(first.kind, "vector")
         self.assertEqual(second.kind, "vector")
 
+    def test_angle_and_projection_use_a_translated_copy_without_moving_inputs(self) -> None:
+        for tool in ("angle", "projection"):
+            window = _make_window()
+            points = [
+                Point2D("O", 0, 0),
+                Point2D("A", 8, 0),
+                Point2D("B0", 8, -8),
+                Point2D("B", 8, 0),
+            ]
+            window._pane_scene().geometry_points = points
+            for point in points:
+                window._pane_scene().geometry_controller.add_point(point)
+            first = window._create_linear_geometry("vector", points[0], points[1])
+            second = window._create_linear_geometry("vector", points[2], points[3])
+            window._pane_scene()._active_linear_algebra_tool = tool
+
+            self.assertTrue(window._handle_linear_algebra_vector_click(4, 0))
+            self.assertTrue(window._handle_linear_algebra_vector_click(8, -4))
+
+            second_start = window._geometry_point_ref(second.start_point_id)
+            second_end = window._geometry_point_ref(second.end_point_id)
+            assert second_start is not None and second_end is not None
+            self.assertEqual((second_start.x, second_start.y), (8.0, -8.0))
+            self.assertEqual((second_end.x, second_end.y), (8.0, 0.0))
+            plan = window.scene_command_service.execute.call_args.args[0]
+            overlay = plan.operations[0]
+            self.assertEqual(overlay["source_vector_id"], first.id)
+            self.assertEqual(overlay["direction_vector_id"], second.id)
+            window._apply_scene_command(dict(overlay))
+            copy_name = f"geometry:teaching:translated-vector:{overlay['alias']}"
+            self.assertIn(copy_name, window._pane_scene().geometry_controller._teaching_meshes)
+
+    def test_live_angle_and_projection_follow_vector_endpoint_changes(self) -> None:
+        from ui.linear_algebra_tools import build_vector_tool_plan
+
+        window = _make_window()
+        points = [Point2D("O", 0, 0), Point2D("A", 3, 4), Point2D("B", 2, 0)]
+        window._pane_scene().geometry_points = points
+        for point in points:
+            window._pane_scene().geometry_controller.add_point(point)
+        first = window._create_linear_geometry("vector", points[0], points[1])
+        second = window._create_linear_geometry("vector", points[0], points[2])
+        point_map = {point.id: point for point in points}
+
+        projection_plan = build_vector_tool_plan(
+            "projection",
+            (first, second),
+            point_map,
+            window._current_2d_bounds(),
+            "la_tool_projection_test",
+        )
+        assert projection_plan is not None
+        for operation in projection_plan.operations:
+            window._apply_scene_command(dict(operation))
+        projection = window._pane_scene()._agent_teaching_2d["la_tool_projection_test"]
+        self.assertEqual(projection["style"], "dashed")
+        projection_label = next(
+            item for item in window._pane_scene().annotations
+            if item.agent_alias == "la_tool_projection_test_label"
+        )
+        self.assertEqual(projection_label.text, "proj_b(a)=(3, 0)")
+
+        points[1].x, points[1].y = 4.0, 2.0
+        window._pane_scene().geometry_controller.move_point(points[1].id, 4.0, 2.0)
+        window._update_vector_additions_for_point(points[1].id)
+        projection = window._pane_scene()._agent_teaching_2d["la_tool_projection_test"]
+        self.assertEqual(projection["vector"], [4.0, 2.0])
+        self.assertEqual(projection_label.text, "proj_b(a)=(4, 0)")
+
+        window._pane_scene().geometry_controller.clear_teaching_prefix("la_tool_projection_test")
+        window._pane_scene()._agent_teaching_2d.pop("la_tool_projection_test")
+        angle_plan = build_vector_tool_plan(
+            "angle",
+            (first, second),
+            point_map,
+            window._current_2d_bounds(),
+            "la_tool_angle_test",
+        )
+        assert angle_plan is not None
+        for operation in angle_plan.operations:
+            window._apply_scene_command(dict(operation))
+        angle_label = next(
+            item for item in window._pane_scene().annotations
+            if item.agent_alias == "la_tool_angle_test_label"
+        )
+
+        points[2].x, points[2].y = 2.0, 2.0
+        window._pane_scene().geometry_controller.move_point(points[2].id, 2.0, 2.0)
+        window._update_vector_additions_for_point(points[2].id)
+        angle = window._pane_scene()._agent_teaching_2d["la_tool_angle_test"]
+        self.assertEqual(angle["second"], [2.0, 2.0])
+        self.assertEqual(angle_label.text, "θ=18.4°")
+
+    def test_vector_addition_keeps_dashed_copy_and_refreshes_live_tools(self) -> None:
+        from ui.linear_algebra_tools import build_vector_tool_plan
+
+        for tool in ("angle", "projection"):
+            window = _make_window()
+            points = [
+                Point2D("O", 0, 0),
+                Point2D("A", 3, 0),
+                Point2D("B", 0, 0),
+                Point2D("C", 0, 4),
+            ]
+            window._pane_scene().geometry_points = points
+            for point in points:
+                window._pane_scene().geometry_controller.add_point(point)
+            first = window._create_linear_geometry("vector", points[0], points[1])
+            second = window._create_linear_geometry("vector", points[2], points[3])
+
+            plan = build_vector_tool_plan(
+                tool,
+                (first, second),
+                {point.id: point for point in points},
+                window._current_2d_bounds(),
+                f"la_tool_{tool}_addition",
+            )
+            assert plan is not None
+            for operation in plan.operations:
+                window._apply_scene_command(dict(operation))
+
+            self.assertTrue(window._create_vector_addition_relation(first, second))
+            relation = window._pane_scene()._vector_additions[-1]
+            translated = window._geometry_linear_ref(relation["translated_vector"])
+            assert translated is not None
+            self.assertEqual(translated.style, "dashed")
+            self.assertTrue(translated.visible)
+            actor_name = window._pane_scene().geometry_controller.linear_actor_name(translated.id)
+            self.assertTrue(window._pane_renderer().actors[actor_name].visibility)
+
+            result = window._geometry_linear_ref(relation["result_vector"])
+            assert result is not None
+            result_end = window._geometry_point_ref(result.end_point_id)
+            assert result_end is not None
+            window._move_addition_point(result_end, (4, 4))
+            window._update_vector_additions_for_point(result_end.id)
+
+            live_operation = window._pane_scene()._agent_teaching_2d[f"la_tool_{tool}_addition"]
+            self.assertEqual(live_operation["second" if tool == "angle" else "direction"], [1.0, 4.0])
+
+    def test_midpoint_tool_creates_and_attaches_live_points(self) -> None:
+        window = _make_window()
+        points = [
+            Point2D("A", -4, 0),
+            Point2D("B", 4, 0),
+            Point2D("P", 0, 6),
+        ]
+        window._pane_scene().geometry_points = points
+        for point in points:
+            window._pane_scene().geometry_controller.add_point(point)
+        segment = window._create_linear_geometry("segment", points[0], points[1])
+
+        self.assertTrue(window._handle_midpoint_tool_click(0, 0))
+        midpoint = next(
+            point for point in window._pane_scene().geometry_points
+            if point.constraint_kind == "midpoint" and point.id != points[2].id
+        )
+        self.assertEqual((midpoint.x, midpoint.y), (0.0, 0.0))
+        self.assertEqual(midpoint.constraint_refs, (segment.id,))
+        self.assertTrue(midpoint.constraint_owned)
+
+        self.assertTrue(window._handle_midpoint_tool_click(points[2].x, points[2].y))
+        self.assertEqual(window._pane_scene()._pending_point_tool_point_id, points[2].id)
+        self.assertTrue(window._handle_midpoint_tool_click(2, 0))
+        self.assertEqual((points[2].x, points[2].y), (0.0, 0.0))
+        self.assertEqual(points[2].constraint_refs, (segment.id,))
+        self.assertFalse(points[2].constraint_owned)
+
+        window._move_addition_point(points[1], (8, 4))
+        window._update_vector_additions_for_point(points[1].id)
+        self.assertEqual((midpoint.x, midpoint.y), (2.0, 2.0))
+        self.assertEqual((points[2].x, points[2].y), (2.0, 2.0))
+
+        window._remove_geometry_object(segment.id)
+        self.assertIsNone(window._point_2d(midpoint.id))
+        self.assertIsNotNone(window._point_2d(points[2].id))
+        self.assertIsNone(points[2].constraint_kind)
+
+    def test_intersection_tool_supports_direct_and_two_object_selection(self) -> None:
+        window = _make_window()
+        points = [
+            Point2D("A", -4, 0),
+            Point2D("B", 4, 0),
+            Point2D("C", 0, -4),
+            Point2D("D", 0, 4),
+        ]
+        window._pane_scene().geometry_points = points
+        for point in points:
+            window._pane_scene().geometry_controller.add_point(point)
+        horizontal = window._create_linear_geometry("segment", points[0], points[1])
+        vertical = window._create_linear_geometry("segment", points[2], points[3])
+
+        self.assertTrue(window._handle_intersection_tool_click(0, 0))
+        intersection = next(
+            point for point in window._pane_scene().geometry_points
+            if point.constraint_kind == "intersection"
+        )
+        self.assertEqual((intersection.x, intersection.y), (0.0, 0.0))
+        self.assertEqual(set(intersection.constraint_refs), {horizontal.id, vertical.id})
+
+        window._move_addition_point(points[2], (2, -4))
+        window._move_addition_point(points[3], (2, 4))
+        window._update_vector_additions_for_point(points[3].id)
+        self.assertEqual((intersection.x, intersection.y), (2.0, 0.0))
+
+        intersection.constraint_kind = None
+        intersection.constraint_refs = ()
+        self.assertTrue(window._handle_intersection_tool_click(-3.5, 0))
+        self.assertEqual(window._pane_scene()._pending_point_tool_linear_id, horizontal.id)
+        self.assertTrue(window._handle_intersection_tool_click(2, -3.5))
+        constrained = [
+            point for point in window._pane_scene().geometry_points
+            if point.constraint_kind == "intersection"
+        ]
+        self.assertEqual(len(constrained), 1)
+        self.assertEqual((constrained[0].x, constrained[0].y), (2.0, 0.0))
+
     def test_linear_algebra_polygon_finishes_on_double_click(self) -> None:
         window = _make_window()
         window._pane_scene()._active_linear_algebra_tool = "polygon"
@@ -637,7 +960,11 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         window = _make_window()
         pane_id = window.pane_manager.active_pane_id
         window._render_2d_scene = MagicMock()
-        window._apply_matrix_transform_from_tab(pane_id, "1,0;0,2", 5)
+        window._apply_matrix_transform_from_tab(
+            pane_id,
+            r"A=\begin{pmatrix}1&0\\0&2\end{pmatrix}",
+            5,
+        )
 
         plan = window.scene_command_service.execute.call_args.args[0]
         self.assertEqual(
@@ -646,6 +973,99 @@ class TwoDGeometryInteractionTests(unittest.TestCase):
         )
         self.assertEqual(plan.operations[0]["bounds"], [-5.0, 5.0, -5.0, 5.0])
         self.assertFalse(plan.operations[0]["show_source_grid"])
+
+    def test_matrix_transform_settings_can_delete_the_current_grid(self) -> None:
+        window = _make_window()
+        pane_id = window.pane_manager.active_pane_id
+        window._render_2d_scene = MagicMock()
+        window._sync_pane_state = MagicMock()
+        window._pane_scene()._agent_teaching_2d["la_tool_transform_grid"] = {
+            "op": "geometry.transformed_grid",
+            "alias": "la_tool_transform_grid",
+            "matrix": [[2.0, 1.0], [1.0, 2.0]],
+            "bounds": [-8.0, 8.0, -8.0, 8.0],
+        }
+        window._pane_scene().geometry_controller.add_teaching_transformed_grid(
+            ((2.0, 1.0), (1.0, 2.0)),
+            (-8.0, 8.0, -8.0, 8.0),
+            alias="la_tool_transform_grid",
+        )
+
+        window._delete_matrix_transform_grid(pane_id)
+
+        self.assertNotIn(
+            "la_tool_transform_grid",
+            window._pane_scene()._agent_teaching_2d,
+        )
+        self.assertEqual(window._pane_scene()._matrix_transform_grid_range, 5.0)
+        self.assertTrue(window._pane().scene_2d["matrix_transform_grid_deleted"])
+        self.assertEqual(window.algebra_panel.removed_matrix_panes, [pane_id])
+
+    def test_matrix_transform_multiplies_standard_latex_chain_before_dispatch(self) -> None:
+        window = _make_window()
+        pane_id = window.pane_manager.active_pane_id
+        window._render_2d_scene = MagicMock()
+        editor = MagicMock()
+        window.algebra_panel.matrix_transform_editor = MagicMock(return_value=editor)
+
+        window._apply_matrix_transform_from_tab(
+            pane_id,
+            r"A=\begin{pmatrix}1&2\\0&1\end{pmatrix}"
+            r"\cdot\begin{pmatrix}2&0\\0&3\end{pmatrix}",
+            5,
+        )
+
+        plan = window.scene_command_service.execute.call_args.args[0]
+        self.assertEqual(plan.operations[0]["matrix"], [[2.0, 6.0], [0.0, 3.0]])
+        editor.set_matrix_transform_value.assert_called_once_with(
+            r"A=\begin{pmatrix}1&2\\0&1\end{pmatrix}"
+            r"\cdot\begin{pmatrix}2&0\\0&3\end{pmatrix}",
+            r"\begin{pmatrix}2&6\\0&3\end{pmatrix}",
+        )
+
+    def test_matrix_transform_recomputes_after_an_operand_is_edited(self) -> None:
+        window = _make_window()
+        pane_id = window.pane_manager.active_pane_id
+        window._render_2d_scene = MagicMock()
+        editor = MagicMock()
+        window.algebra_panel.matrix_transform_editor = MagicMock(return_value=editor)
+
+        window._apply_matrix_transform_from_tab(
+            pane_id,
+            r"A=\begin{pmatrix}1&2\\0&1\end{pmatrix}"
+            r"\cdot\begin{pmatrix}2&0\\0&3\end{pmatrix}"
+            r"=\begin{pmatrix}2&6\\0&3\end{pmatrix}",
+            5,
+        )
+        window._apply_matrix_transform_from_tab(
+            pane_id,
+            r"A=\begin{pmatrix}2&2\\0&1\end{pmatrix}"
+            r"\cdot\begin{pmatrix}2&0\\0&3\end{pmatrix}"
+            r"=\begin{pmatrix}2&6\\0&3\end{pmatrix}",
+            5,
+        )
+
+        latest_plan = window.scene_command_service.execute.call_args.args[0]
+        self.assertEqual(latest_plan.operations[0]["matrix"], [[4.0, 6.0], [0.0, 3.0]])
+        editor.set_matrix_transform_value.assert_called_with(
+            r"A=\begin{pmatrix}2&2\\0&1\end{pmatrix}"
+            r"\cdot\begin{pmatrix}2&0\\0&3\end{pmatrix}",
+            r"\begin{pmatrix}4&6\\0&3\end{pmatrix}",
+        )
+
+    def test_invalid_matrix_expression_does_not_dispatch_or_change_scene(self) -> None:
+        window = _make_window()
+        pane_id = window.pane_manager.active_pane_id
+
+        window._apply_matrix_transform_from_tab(
+            pane_id,
+            r"A=\begin{pmatrix}1&0\\0&1\end{pmatrix}"
+            r"\times\begin{pmatrix}1&0\\0&1\end{pmatrix}",
+            5,
+        )
+
+        window.scene_command_service.execute.assert_not_called()
+        self.assertTrue(window.algebra_panel.statuses[-1][1])
 
     def test_escape_cancels_linear_algebra_tool(self) -> None:
         window = _make_window()

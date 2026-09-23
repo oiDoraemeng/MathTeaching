@@ -2,7 +2,12 @@
 
 import unittest
 
-from geometry.standard_surfaces import BUILTIN_SURFACE_IDS, DEFAULT_BUILTIN_ID, create_builtin_layer
+from geometry.standard_surfaces import (
+    BUILTIN_SURFACES,
+    BUILTIN_SURFACE_IDS,
+    DEFAULT_BUILTIN_ID,
+    create_builtin_layer,
+)
 
 
 class BuiltinSurfaceTests(unittest.TestCase):
@@ -24,12 +29,15 @@ class BuiltinSurfaceTests(unittest.TestCase):
         layer = create_builtin_layer(DEFAULT_BUILTIN_ID)
 
         self.assertEqual(layer.builtin_id, DEFAULT_BUILTIN_ID)
-        self.assertEqual(
-            layer.latex,
-            r"\frac{x^{2}}{a^{2}} + \frac{y^{2}}{b^{2}} - \frac{z^{2}}{c^{2}} = -1",
-        )
+        self.assertEqual(layer.latex, r"x^{2} + y^{2} - z^{2}=-1")
+        self.assertFalse({"a", "b", "c"}.intersection(layer.latex))
         self.assertTrue(layer.visible)
         self.assertTrue(layer.intersections_visible)
+
+    def test_builtin_examples_start_with_integer_parameter_values(self) -> None:
+        self.assertTrue(
+            all(float(value).is_integer() for surface in BUILTIN_SURFACES for value in surface.parameters.values())
+        )
 
 
 if __name__ == "__main__":

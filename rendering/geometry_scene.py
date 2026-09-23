@@ -55,7 +55,7 @@ def linear_mesh(
         segment = _ray_extent(start_xy, end_xy, bounds)
         return _styled_segment_mesh(segment, style, dash_length=dash_length)
     if kind == "vector":
-        return _vector_mesh(start_xy, end_xy, bounds)
+        return _vector_mesh(start_xy, end_xy, bounds, style=style)
     return _styled_segment_mesh((start_xy, end_xy), style, dash_length=dash_length)
 
 
@@ -174,6 +174,9 @@ class GeometrySceneController:
         if linear.id not in self.order:
             self.order.append(linear.id)
         self._sync_linear(linear)
+        # A point that becomes a vector endpoint must no longer expose its raw
+        # coordinates when it is selected or hovered.
+        self._request_labels_refresh()
         self._request_annotations_refresh()
 
     def add_annotation(self, annotation: Annotation2D) -> None:
@@ -265,6 +268,7 @@ class GeometrySceneController:
         if object_id in self.linears:
             self.linears[object_id].visible = visible
             self._sync_linear(self.linears[object_id])
+            self._request_labels_refresh()
             # 向量标签属于线对象：隐藏向量时它的标签必须一起消失。
             self._request_annotations_refresh()
         if object_id in self.annotations:
@@ -357,6 +361,39 @@ class GeometrySceneController:
         if best_linear is not None:
             return best_linear[1]
         return self.hit_test_annotation(x, y, tolerance)
+
+    def hit_test_linear(
+        self,
+        x: float,
+        y: float,
+        tolerance: float,
+        *,
+        kinds: set[LinearKind] | None = None,
+        exclude: set[str] | None = None,
+    ) -> str | None:
+        """Return the nearest visible linear primitive, ignoring point priority."""
+        best: tuple[float, str] | None = None
+        excluded = exclude or set()
+        for linear in self.linears.values():
+            if (
+                not linear.visible
+                or linear.id in excluded
+                or (kinds is not None and linear.kind not in kinds)
+            ):
+                continue
+            start = self.points.get(linear.start_point_id)
+            end = self.points.get(linear.end_point_id)
+            if start is None or end is None:
+                continue
+            distance = _distance_to_linear(
+                linear.kind,
+                (start.x, start.y),
+                (end.x, end.y),
+                (x, y),
+            )
+            if distance <= tolerance and (best is None or distance < best[0]):
+                best = (distance, linear.id)
+        return best[1] if best is not None else None
 
     def hit_test_annotation(
         self,
@@ -506,6 +543,24 @@ class GeometrySceneController:
     ) -> None:
         mesh = _angle_arc_mesh(vertex, first, second, radius)
         name = f"geometry:teaching:arc:{alias}"
+        self._replace_teaching_actor(name, mesh, color=color, line_width=3.0)
+
+    def set_teaching_translated_vector(
+        self,
+        alias: str,
+        origin: tuple[float, float],
+        vector: tuple[float, float],
+        *,
+        visible: bool,
+        color: str = "#2f9e5b",
+    ) -> None:
+        """Show a dashed, translated vector copy owned by a toolbar overlay."""
+        name = f"geometry:teaching:translated-vector:{alias}"
+        if not visible:
+            self._drop_actor(name)
+            return
+        endpoint = (origin[0] + vector[0], origin[1] + vector[1])
+        mesh = _vector_mesh(origin, endpoint, self.bounds, style="dashed")
         self._replace_teaching_actor(name, mesh, color=color, line_width=3.0)
 
     def add_teaching_right_angle_marker(
@@ -1169,7 +1224,13 @@ class GeometrySceneController:
         )
 
     def _point_label_text(self, point: Point2D) -> str:
-        if point.id in {self._selected_id, self._hover_id}:
+        is_vector_endpoint = any(
+            linear.visible
+            and linear.kind == "vector"
+            and point.id in {linear.start_point_id, linear.end_point_id}
+            for linear in self.linears.values()
+        )
+        if point.id in {self._selected_id, self._hover_id} and not is_vector_endpoint:
             return self._marker_text(
                 f"{point.name} = ({format_number(point.x)}, {format_number(point.y)})"
             )
@@ -1313,6 +1374,8 @@ def _vector_mesh(
     start: tuple[float, float],
     end: tuple[float, float],
     bounds: ViewportBounds, # 视口边界对象
+    *,
+    style: str = "solid",
 ) -> pv.PolyData:
     """向量网格：一条线段作为杆，加一个填充三角形作为箭头。"""
     direction = (end[0] - start[0], end[1] - start[1]) 
@@ -1330,15 +1393,37 @@ def _vector_mesh(
     left = (base[0] + normal[0] * half, base[1] + normal[1] * half)
     right = (base[0] - normal[0] * half, base[1] - normal[1] * half)
     # 杆延伸到箭头根部，避免线宽在尖端外露。
-    points = np.array(
+    arrow_points = np.array(
         [
-            [start[0], start[1], 0.0],
-            [base[0], base[1], 0.0],
             [end[0], end[1], 0.0],
             [left[0], left[1], 0.0],
             [right[0], right[1], 0.0],
         ],
         dtype=float,
+    )
+    if style == "dashed":
+        # VTK 的 line stipple 在不同平台上不一致，故箭杆沿用普通虚线段的
+        # 网格实现；箭头仍是实心三角形，保持向量方向清晰可读。
+        shaft = _styled_segment_mesh(
+            (start, base), "dashed", dash_length=dashed_length_for(bounds)
+        )
+        mesh = pv.PolyData()
+        shaft_points = np.asarray(shaft.points, dtype=float)
+        mesh.points = np.vstack((shaft_points, arrow_points))
+        mesh.lines = np.asarray(shaft.lines, dtype=np.int64)
+        arrow_offset = len(shaft_points)
+        mesh.faces = np.array(
+            [3, arrow_offset, arrow_offset + 1, arrow_offset + 2], dtype=np.int64
+        )
+        return mesh
+
+    points = np.vstack(
+        (
+            np.asarray(
+                [[start[0], start[1], 0.0], [base[0], base[1], 0.0]], dtype=float
+            ),
+            arrow_points,
+        )
     )
     mesh = pv.PolyData()
     mesh.points = points

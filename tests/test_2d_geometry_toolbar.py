@@ -50,6 +50,27 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
         self.assertEqual(events, ["ray", None])
         self.assertFalse(toolbar.line_button.isChecked())
 
+    def test_point_hover_flyout_exposes_point_midpoint_and_intersection(self) -> None:
+        host = QWidget()
+        host.resize(800, 600)
+        toolbar = TwoDGeometryToolbar(host)
+        host.show()
+        toolbar.show()
+        toolbar.position_in_host()
+        QApplication.processEvents()
+        events: list[object] = []
+        toolbar.tool_selected.connect(events.append)
+
+        QApplication.sendEvent(toolbar.point_button, QEvent(QEvent.Type.Enter))
+        QApplication.processEvents()
+
+        self.assertTrue(toolbar.point_flyout.isVisible())
+        self.assertEqual(set(toolbar.point_buttons), {"point", "midpoint", "intersection"})
+        toolbar.point_buttons["midpoint"].click()
+        self.assertEqual(events, ["midpoint"])
+        self.assertTrue(toolbar.point_button.isChecked())
+        self.assertTrue(toolbar.point_buttons["midpoint"].isChecked())
+
     def test_dashed_segment_tool_is_available_in_the_line_flyout(self) -> None:
         host = QWidget()
         toolbar = TwoDGeometryToolbar(host)
@@ -132,6 +153,17 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
 
         self.assertFalse(toolbar.snap_button.isChecked())
 
+    def test_function_catalog_is_opened_from_the_2d_toolbar(self) -> None:
+        host = QWidget()
+        toolbar = TwoDGeometryToolbar(host)
+        anchors: list[object] = []
+        toolbar.function_requested.connect(anchors.append)
+
+        toolbar.function_button.click()
+
+        self.assertEqual(len(anchors), 1)
+        self.assertFalse(toolbar.function_button.isCheckable())
+
     def test_linear_algebra_mode_reuses_the_vertical_left_middle_toolbar(self) -> None:
         host = QWidget()
         host.resize(900, 600)
@@ -160,6 +192,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
 
         controls = (
             toolbar.select_button,
+            toolbar.function_button,
             toolbar.point_button,
             toolbar.annotation_button,
             toolbar.line_button,
@@ -175,6 +208,7 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
             toolbar.undo_button,
             toolbar.redo_button,
             *toolbar.line_buttons.values(),
+            *toolbar.point_buttons.values(),
         )
         for button in controls:
             self.assertEqual(button.text(), "")
@@ -195,6 +229,8 @@ class TwoDGeometryToolbarTests(unittest.TestCase):
             icon_name(toolbar.angle_button),
             icon_name(toolbar.projection_button),
             *(icon_name(button) for button in toolbar.line_buttons.values()),
+            icon_name(toolbar.point_buttons["midpoint"]),
+            icon_name(toolbar.point_buttons["intersection"]),
         ]
         self.assertEqual(len(names), len(set(names)))
 
