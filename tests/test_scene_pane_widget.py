@@ -306,6 +306,35 @@ def test_opening_case_group_at_retained_limit_keeps_first_case_and_ten_panes() -
     assert manager.visible_pane_ids() == (pane_id,)
 
 
+def test_case_tab_title_normalizes_inline_vector_markup() -> None:
+    from services.scene_commands import CommandPlan
+
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    case = SimpleNamespace(
+        id="case-magnitude",
+        purpose=r"案例一：$\boldsymbol v_1=(3,4)$ 的模",
+        stage_refs=(),
+    )
+    explanation = SimpleNamespace(
+        case_layout=SimpleNamespace(cases=(case,), default_pane_count=1)
+    )
+    compiled = SimpleNamespace(
+        topic_id="ch01.vector.magnitude",
+        plan=CommandPlan(scene="2d", operations=()),
+        storyboard=(),
+    )
+    window._close_teaching_case_panes = lambda: None
+    window._sync_layout_buttons = lambda: None
+    window.algebra_panel = SimpleNamespace(sync_pane_tabs=lambda: None)
+    window.scene_pane_widget = None
+
+    window._open_teaching_case_panes_impl(explanation, compiled, defer_render=True)
+
+    pane = manager.pane(window._teaching_case_pane_ids[0])
+    assert pane.name == "案例一：v₁=(3,4) 的模"
+
+
 def test_dependence_opens_four_shared_plan_panes_by_default() -> None:
     from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts
     from linear_algebra.teaching.model import TeachingArtifact

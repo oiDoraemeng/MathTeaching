@@ -5,7 +5,7 @@ from __future__ import annotations
 import ctypes
 import sys
 
-from PySide6.QtCore import QEvent, QObject, QPoint, Qt, QTimer
+from PySide6.QtCore import QEvent, QObject, QPoint, Qt, QTimer, Signal
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QApplication, QFrame, QHBoxLayout, QLabel, QSizePolicy, QToolButton, QWidget
 
@@ -35,6 +35,8 @@ class _HostStateSync(QObject):
 class CustomTitleBar(QFrame):
     """Synchronous, theme-aware title bar for the frameless main window."""
 
+    right_panel_toggle_requested = Signal()
+
     def __init__(self, host: QWidget) -> None:
         super().__init__(host)
         self.setObjectName("appTitleBar")
@@ -55,11 +57,17 @@ class CustomTitleBar(QFrame):
         self.title.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
         layout.addWidget(self.title)
         layout.addStretch(1)
+        self.right_panel_button = self._window_button(
+            "titleBarRightPanel",
+            "展开右侧面板",
+            "panel-right-open",
+        )
         self.minimize_button = self._window_button("titleBarMinimize", "最小化", "minus")
         self.maximize_button = self._window_button("titleBarMaximize", "最大化", _MAXIMIZE_ICON)
         self.close_button = self._window_button("titleBarClose", "关闭", "x")
-        for button in (self.minimize_button, self.maximize_button, self.close_button):
+        for button in (self.right_panel_button, self.minimize_button, self.maximize_button, self.close_button):
             layout.addWidget(button)
+        self.right_panel_button.clicked.connect(self.right_panel_toggle_requested)
         self.minimize_button.clicked.connect(self._request_minimized)
         self.maximize_button.clicked.connect(self._toggle_maximized)
         self.close_button.clicked.connect(host.close)
@@ -81,6 +89,15 @@ class CustomTitleBar(QFrame):
         retint_icons(self, self._theme)
         self._sync_maximize_button(force=True)
         self.title.setText(self._host.windowTitle() or "Math3D Teaching")
+
+    def set_right_panel_expanded(self, expanded: bool) -> None:
+        """Reflect the right sidebar state with a VS Code-like title-bar glyph."""
+        is_expanded = bool(expanded)
+        label = "折叠右侧面板" if is_expanded else "展开右侧面板"
+        icon_name = "panel-right-close" if is_expanded else "panel-right-open"
+        self.right_panel_button.setToolTip(label)
+        self.right_panel_button.setAccessibleName(label)
+        apply_icon(self.right_panel_button, icon_name, icon_color(self._theme), icon_size=14, hit_size=32)
 
     def _sync_maximize_button(self, *, force: bool = False) -> None:
         """Mirror the maximize control's glyph and tooltip to the window state."""

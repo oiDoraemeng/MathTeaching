@@ -36,7 +36,8 @@ def test_open_sidebar_has_fixed_width_and_close_hides_it() -> None:
 def test_agent_panel_toggle_shows_and_hides_its_resize_handle() -> None:
     window = object.__new__(MainWindow)
     window.scene_settings_panel = type("Panel", (), {"isVisible": lambda self: False})()
-    window.agent_button = type("Button", (), {"setChecked": lambda self, _checked: None})()
+    states: list[bool] = []
+    window.title_bar = type("TitleBar", (), {"set_right_panel_expanded": lambda self, expanded: states.append(expanded)})()
     window.agent_sidebar = AgentSidebar()
     window.agent_resize_handle = type("Handle", (), {"visible": False, "show": lambda self: setattr(self, "visible", True), "hide": lambda self: setattr(self, "visible", False)})()
     window._root_layout = type("Layout", (), {"activate": lambda self: None})()
@@ -46,3 +47,4 @@ def test_agent_panel_toggle_shows_and_hides_its_resize_handle() -> None:
     assert window.agent_resize_handle.visible
     MainWindow._close_agent_panel(window)
     assert not window.agent_resize_handle.visible
+    assert states == [True, False]

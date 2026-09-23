@@ -10,11 +10,12 @@ def test_status_bar_contract() -> None:
     bar = AppStatusBar()
     assert bar.height() == 30
     assert bar.theme_button.width() == 28
-    assert bar.agent_button.accessibleName() == "AI 教学助手状态"
-    calls: list[bool] = []
-    bar.agent_toggle_requested.connect(lambda: calls.append(True))
-    bar.agent_button.click()
-    assert calls == [True]
+    assert bar.render_label.isHidden()
+    bar.set_render_status("二维场景已准备好")
+    assert bar.render_label.text() == "二维场景已准备好"
+    assert not bar.render_label.isHidden()
+    bar.set_render_status(r"正在比较 $\boldsymbol v_1$ 与 $\boldsymbol v_2$")
+    assert bar.render_label.text() == "正在比较 v₁ 与 v₂"
 
     assert bar.theme_mode == "system"
     assert bar.theme_button.accessibleName() == "系统主题"

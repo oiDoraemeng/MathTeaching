@@ -25,6 +25,7 @@ from rendering.two_d_scene import TwoDGuides, configure_2d_camera
 from services.scene_commands import CommandPlan, SceneCommandService
 from ui.scene_pane_widget import PaneChrome
 from ui.scene_pane_manager import ScenePaneManager
+from ui.linear_algebra_tools import build_matrix_grid_tool_plan
 
 
 PANE_COUNTS = (1, 2, 3, 4)
@@ -36,6 +37,22 @@ PANE_LAYOUTS: dict[int, tuple[int, int]] = {
 }
 
 _CASE_LABEL_FONT_SIZE = math_labels.CASE_LABEL_FONT_SIZE
+_MATRIX_TOOL_CASE_TOPICS = frozenset(
+    {
+        "ch02.matrix.additive-distributivity",
+        "ch02.matrix.transformed-grid",
+        "ch02.matrix.composition",
+        "ch02.matrix.basis",
+        "ch02.matrix.powers",
+    }
+)
+_MATRIX_WORKSPACE_CASE_TOPICS = frozenset(
+    {
+        "ch03.det.basic-properties",
+        "ch03.det.multiplicativity",
+        "ch03.det.transpose",
+    }
+)
 
 
 def case_pane_layout(count: int) -> tuple[int, int]:
@@ -95,6 +112,54 @@ def _operation_visible(operation: Mapping[str, Any], controlled: set[str], visib
     if not isinstance(alias, str):
         return True
     return alias not in controlled or alias in visible
+
+
+def _toolbar_matrix_grid(
+    operation: Mapping[str, Any], *, preserve_color: bool = False
+) -> dict[str, Any]:
+    """Rebuild one lesson grid through the same plan factory as the 2-D toolbar."""
+
+    matrix = tuple(
+        tuple(float(value) for value in row)
+        for row in operation.get("matrix", ())
+    )
+    bounds = tuple(float(value) for value in operation.get("bounds", ()))
+    extent = max((abs(value) for value in bounds), default=5.0)
+    alias = str(operation.get("alias", "teaching_matrix"))
+    tool_operation = dict(
+        build_matrix_grid_tool_plan(matrix, extent, alias).operations[0]  # type: ignore[arg-type]
+    )
+    # Storyboard visibility is keyed by the compiler's semantic alias.
+    tool_operation["alias"] = alias
+    if preserve_color and operation.get("color") is not None:
+        tool_operation["color"] = str(operation["color"])
+    return tool_operation
+
+
+def _matrix_case_view_bounds(compiled: Any) -> list[float] | None:
+    """Return one shared viewport from toolbar grid ranges and lesson points."""
+
+    coordinates: list[tuple[float, float]] = []
+    for operation in compiled.plan.operations:
+        if operation.get("op") == "geometry.transformed_grid":
+            try:
+                left, right, bottom, top = (
+                    float(value) for value in operation["bounds"]
+                )
+            except (KeyError, TypeError, ValueError):
+                continue
+            coordinates.extend(((left, bottom), (right, top)))
+        elif operation.get("op") == "point.upsert":
+            try:
+                x, y = (float(value) for value in operation["coordinates"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            coordinates.append((x, y))
+    if not coordinates:
+        return None
+    xs = [point[0] for point in coordinates]
+    ys = [point[1] for point in coordinates]
+    return [min(xs), max(xs), min(ys), max(ys)]
 
 
 @dataclass(frozen=True)
@@ -192,20 +257,88 @@ def case_plan(compiled: Any, stage_id: str) -> CommandPlan:
     controlled_aliases, visible_aliases = storyboard_visibility(compiled, stage_id)
     controlled = set(controlled_aliases)
     visible = set(visible_aliases)
-    operations = tuple(
+    operations = [
         dict(operation)
         for operation in compiled.plan.operations
         if _operation_visible(operation, controlled, visible)
-    )
+    ]
+    topic_id = str(getattr(compiled, "topic_id", ""))
+    if topic_id == "ch01.ops.addition" and str(stage_id) == "stage.flow.objects":
+        # 第一窗格只展示两个输入向量。即使完整计划中带有合成向量或平行四边形
+        # 的关系操作，也不能让第二步的图元泄漏到第一步。
+        allowed_aliases = {
+            "sem__flow_a__origin",
+            "sem__flow_a__end",
+            "sem__flow_a",
+            "sem__flow_b__origin",
+            "sem__flow_b__end",
+            "sem__flow_b",
+        }
+        operations = [
+            operation
+            for operation in operations
+            if operation.get("op") in {"scene.set_mode", "view.fit"}
+            or operation.get("alias") in allowed_aliases
+        ]
+    if topic_id in _MATRIX_WORKSPACE_CASE_TOPICS:
+        # 这些案例的网格由宿主现有的矩阵变换工具创建。阶段计划
+        # 只保留本节数学对象与取景，避免先画一层教学网格再叠加工具网格。
+        operations = [
+            operation
+            for operation in operations
+            if operation.get("op") != "geometry.transformed_grid"
+        ]
+    if topic_id in _MATRIX_TOOL_CASE_TOPICS:
+        operations = [
+            _toolbar_matrix_grid(
+                operation,
+                preserve_color=topic_id == "ch02.matrix.powers",
+            )
+            if operation.get("op") == "geometry.transformed_grid"
+            else operation
+            for operation in operations
+        ]
+        bounds = _matrix_case_view_bounds(compiled) if topic_id != "ch02.matrix.powers" else None
+        if bounds is not None:
+            fit = {"op": "view.fit", "padding": 1.15, "bounds": bounds}
+            operations = [
+                fit if operation.get("op") == "view.fit" else operation
+                for operation in operations
+            ]
+            if not any(operation.get("op") == "view.fit" for operation in operations):
+                operations.append(fit)
     plan = CommandPlan(
         scene=compiled.plan.scene,
         summary=compiled.plan.summary,
-        operations=operations,
+        operations=tuple(operations),
     )
     validation = SceneCommandService().validate(plan)
     if not validation.valid:
         raise ValueError("；".join(validation.messages))
     return CommandPlan(scene=plan.scene, summary=plan.summary, operations=validation.expanded_operations)
+
+
+def _apply_planned_view_fit(plotter: Any, operations: Iterable[Mapping[str, Any]]) -> bool:
+    """Apply an explicit 2D ``view.fit`` using the pane's real aspect ratio."""
+
+    fit = next((operation for operation in operations if operation.get("op") == "view.fit"), None)
+    if fit is None or len(fit.get("bounds", ())) != 4:
+        return False
+    try:
+        left, right, bottom, top = (float(value) for value in fit["bounds"])
+        padding = float(fit.get("padding", 1.15))
+    except (TypeError, ValueError):
+        return False
+    if right <= left or top <= bottom or padding <= 0.0:
+        return False
+    interactor = plotter.interactor
+    aspect = max(1, int(interactor.width())) / max(1, int(interactor.height()))
+    plotter.camera.focal_point = ((left + right) / 2, (bottom + top) / 2, 0.0)
+    plotter.camera.parallel_scale = max(
+        (top - bottom) / 2,
+        (right - left) / (2 * aspect),
+    ) * padding
+    return True
 
 
 class TeachingCasePane(PaneChrome):
@@ -562,7 +695,14 @@ class TeachingCasePane(PaneChrome):
             self.geometry.set_teaching_visible(grid_alias, False)
         self.plotter.reset_camera()
         configure_2d_camera(self.plotter)
-        self.plotter.camera.parallel_scale = max(6.5, float(self.plotter.camera.parallel_scale))
+        topic_id = str(getattr(self.compiled, "topic_id", ""))
+        if topic_id in {"ch01.ops.addition", "ch02.matrix.powers"}:
+            _apply_planned_view_fit(self.plotter, plan.operations)
+        else:
+            self.plotter.camera.parallel_scale = max(
+                6.5,
+                float(self.plotter.camera.parallel_scale),
+            )
         for grid_alias in grid_aliases:
             self.geometry.set_teaching_visible(grid_alias, True)
         if saved_camera:

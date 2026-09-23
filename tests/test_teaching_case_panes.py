@@ -2,6 +2,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import ui.teaching_case_panes as teaching_case_panes
 
 from linear_algebra.registry import catalog_registry, runtime_teaching_store
 from linear_algebra.teaching.source import LectureSourceRepository
@@ -9,7 +10,12 @@ from services.scene_commands import CommandPlan
 from models.geometry_2d import Annotation2D
 from rendering.geometry_scene import GeometrySceneController
 from rendering.ticks import ViewportBounds
-from ui.teaching_case_panes import case_pane_layout, case_pane_placement, case_plan
+from ui.teaching_case_panes import (
+    _apply_planned_view_fit,
+    case_pane_layout,
+    case_pane_placement,
+    case_plan,
+)
 from ui.scene_pane_widget import PaneChrome
 from ui.scene_pane_manager import ScenePaneManager
 from ui.teaching_case_panes import TeachingCasePane
@@ -23,6 +29,73 @@ def test_case_pane_layout_is_bounded(count, expected):
 def test_case_pane_layout_rejects_other_counts():
     with pytest.raises(ValueError):
         case_pane_layout(5)
+
+
+def test_vector_addition_uses_shared_plan_bounds_at_the_pane_aspect_ratio():
+    plotter = SimpleNamespace(
+        interactor=SimpleNamespace(width=lambda: 400, height=lambda: 600),
+        camera=SimpleNamespace(focal_point=(0.0, 0.0, 0.0), parallel_scale=6.5),
+    )
+
+    applied = _apply_planned_view_fit(
+        plotter,
+        ({"op": "view.fit", "padding": 1.15, "bounds": [0.0, 4.0, 0.0, 3.0]},),
+    )
+
+    assert applied is True
+    assert plotter.camera.focal_point == (2.0, 1.5, 0.0)
+    assert plotter.camera.parallel_scale == pytest.approx(3.45)
+
+
+def test_vector_addition_first_pane_uses_the_same_bounds_without_sum_geometry():
+    compiled = catalog_registry().resolve_bundle(
+        "ch01.ops.addition",
+        artifact_store=runtime_teaching_store(),
+        source_repository=LectureSourceRepository(Path(".agents") / "线性代数讲义.md"),
+    ).compiled
+
+    first = case_plan(compiled, "stage.flow.objects")
+    second = case_plan(compiled, "stage.flow.parallelogram")
+    first_fit = next(operation for operation in first.operations if operation.get("op") == "view.fit")
+    second_fit = next(operation for operation in second.operations if operation.get("op") == "view.fit")
+
+    assert first_fit == second_fit == {
+        "op": "view.fit",
+        "padding": 1.15,
+        "bounds": [0.0, 4.0, 0.0, 3.0],
+    }
+    first_aliases = {
+        str(operation["alias"])
+        for operation in first.operations
+        if operation.get("alias")
+    }
+    assert first_aliases == {
+        "sem__flow_a__origin",
+        "sem__flow_a__end",
+        "sem__flow_a",
+        "sem__flow_b__origin",
+        "sem__flow_b__end",
+        "sem__flow_b",
+    }
+    assert [operation.get("op") for operation in first.operations] == [
+        "scene.set_mode",
+        "point.upsert",
+        "point.upsert",
+        "linear.upsert",
+        "point.upsert",
+        "point.upsert",
+        "linear.upsert",
+        "view.fit",
+    ]
+    assert not any(
+        operation.get("op") in {"geometry.polygon", "geometry.vector_addition"}
+        for operation in first.operations
+    )
+    assert not any(
+        "flow_sum" in str(operation.get("alias", ""))
+        or "addition" in str(operation.get("alias", ""))
+        for operation in first.operations
+    )
 
 
 def test_three_case_panes_use_one_left_pane_and_two_stacked_right_panes():
@@ -185,7 +258,7 @@ def test_case_plan_drops_capability_evidence_from_every_step():
         ),
         (
             "ch02.matrix.basis",
-            [-4.0, 4.0, -4.0, 4.0],
+            [-5.0, 5.0, -5.0, 5.0],
             (
                 # 第一步：标准基下的旋转与同一输入向量。
                 ([[0.0, -1.0], [1.0, 0.0]], r"$A=\left[\genfrac{}{}{0}{}{0\quad -1}{1\quad \ 0}\right]$"),
@@ -212,18 +285,12 @@ def test_matrix_vector_case_panes_use_the_matrix_transform_feature(topic_id, gri
         staged_ops = [op for op in operations if op.get("op") == "geometry.staged_transform"]
         label_ops = [op for op in operations if op.get("op") == "annotation.upsert"]
         if topic_id == "ch02.matrix.basis":
-            # 2.7 uses the actual coordinate-system transform: the first
-            # pane stays on the standard basis, while the second pane
-                # changes its basis to S=[b1 b2] instead of drawing a second
-            # teaching-grid overlay.
-            if stage is compiled.storyboard[0]:
-                assert not coordinate_ops
-            else:
-                assert [op["matrix"] for op in coordinate_ops] == [[[1.0, 1.0], [0.0, 1.0]]]
-                assert coordinate_ops[0]["show_original"] is False
-                assert coordinate_ops[0]["show_transformed"] is True
-            assert not grid_ops
+            assert not coordinate_ops
             assert not staged_ops
+            assert [op["matrix"] for op in grid_ops] == [matrix]
+            assert [op["bounds"] for op in grid_ops] == [grid_bounds]
+            assert grid_ops[0]["show_source_grid"] is False
+            assert grid_ops[0]["show_basis"] is True
             assert [op["text"] for op in label_ops] == [label]
             continue
         if matrix is None:
@@ -236,3 +303,120 @@ def test_matrix_vector_case_panes_use_the_matrix_transform_feature(topic_id, gri
         assert [op["matrices"] for op in staged_ops] == [[matrix]]
         assert [op["points"] for op in staged_ops] == [[[1.0, 0.0], [0.0, 1.0]]]
         assert [op["text"] for op in label_ops] == ([] if label is None else [label])
+
+
+def test_matrix_powers_case_panes_reuse_toolbar_grids_with_one_shared_scale() -> None:
+    compiled = catalog_registry().resolve_bundle(
+        "ch02.matrix.powers",
+        artifact_store=runtime_teaching_store(),
+        source_repository=LectureSourceRepository(Path(".agents") / "线性代数讲义.md"),
+    ).compiled
+    expected = (
+        (
+            [[1.0, 2.0], [3.0, 4.0]],
+            "#2F6BFF",
+            r"$A=\left[\genfrac{}{}{0}{}{1\quad 2}{3\quad 4}\right]$",
+        ),
+        (
+            [[7.0, 10.0], [15.0, 22.0]],
+            "#F08A24",
+            r"$A^{2}=\left[\genfrac{}{}{0}{}{\ 7\quad 10}{15\quad 22}\right]$",
+        ),
+    )
+
+    assert len(compiled.storyboard) == 2
+    for stage, (matrix, color, label) in zip(compiled.storyboard, expected):
+        operations = case_plan(compiled, stage.id).operations
+        grids = [op for op in operations if op.get("op") == "geometry.transformed_grid"]
+        labels = [op for op in operations if op.get("op") == "annotation.upsert"]
+        fits = [op for op in operations if op.get("op") == "view.fit"]
+
+        assert len(grids) == 1
+        assert grids[0]["matrix"] == matrix
+        assert grids[0]["bounds"] == [-1.0, 1.0, -1.0, 1.0]
+        assert grids[0]["show_source_grid"] is False
+        assert grids[0]["show_basis"] is True
+        assert grids[0]["color"] == color
+        assert [op["text"] for op in labels] == [label]
+        assert fits == [
+            {"op": "view.fit", "padding": 1.15, "bounds": [-18.0, 18.0, -38.0, 38.0]}
+        ]
+        assert not any("invariant:" in str(op.get("text", "")) for op in operations)
+
+
+@pytest.mark.parametrize(
+    "topic_id",
+    (
+        "ch03.det.basic-properties",
+        "ch03.det.multiplicativity",
+        "ch03.det.transpose",
+    ),
+)
+def test_determinant_core_defers_grids_to_the_matrix_workspace(
+    monkeypatch,
+    topic_id: str,
+) -> None:
+    compiled = catalog_registry().resolve_bundle(
+        topic_id,
+        artifact_store=runtime_teaching_store(),
+        source_repository=LectureSourceRepository(Path(".agents") / "线性代数讲义.md"),
+    ).compiled
+    calls: list[tuple[object, float, str]] = []
+    original = teaching_case_panes.build_matrix_grid_tool_plan
+
+    def capture(matrix, grid_range, alias):
+        calls.append((matrix, grid_range, alias))
+        return original(matrix, grid_range, alias)
+
+    monkeypatch.setattr(teaching_case_panes, "build_matrix_grid_tool_plan", capture)
+    for stage in compiled.storyboard:
+        operations = case_plan(compiled, stage.id).operations
+        assert not any(
+            operation.get("op") == "geometry.transformed_grid"
+            for operation in operations
+        )
+        assert any(operation.get("op") == "view.fit" for operation in operations)
+
+    assert calls == []
+
+
+@pytest.mark.parametrize(
+    "topic_id, expected_bounds",
+    [
+        ("ch02.matrix.additive-distributivity", [-3.0, 3.0, -3.0, 3.0]),
+        ("ch02.matrix.transformed-grid", [-2.0, 2.0, -2.0, 2.0]),
+        ("ch02.matrix.composition", [-3.0, 3.0, -3.0, 3.0]),
+        ("ch02.matrix.basis", [-5.0, 5.0, -5.0, 5.0]),
+    ],
+)
+def test_chapter_two_matrix_cases_share_toolbar_grid_contract(
+    topic_id: str,
+    expected_bounds: list[float],
+) -> None:
+    compiled = catalog_registry().resolve_bundle(
+        topic_id,
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    grids = []
+    fits = []
+    for stage in compiled.storyboard:
+        operations = case_plan(compiled, stage.id).operations
+        grids.extend(
+            operation
+            for operation in operations
+            if operation.get("op") == "geometry.transformed_grid"
+        )
+        fits.extend(
+            operation
+            for operation in operations
+            if operation.get("op") == "view.fit"
+        )
+
+    assert grids
+    assert all(operation["show_source_grid"] is False for operation in grids)
+    assert all(operation["show_basis"] is True for operation in grids)
+    assert all(operation["color"] == "#2f7ebd" for operation in grids)
+    assert all(operation["bounds"] == expected_bounds for operation in grids)
+    assert fits
+    assert all(operation["bounds"] == expected_bounds for operation in fits)
+    assert all(operation["padding"] == 1.15 for operation in fits)

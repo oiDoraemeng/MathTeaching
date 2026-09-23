@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import QRect, Qt, Signal
+from PySide6.QtCore import QPoint, QRect, Qt, Signal
 from PySide6.QtWidgets import QBoxLayout, QFrame, QToolButton, QWidget
 
 from ui.icons import apply_icon, icon_color, retint_icons
@@ -17,6 +17,7 @@ class ThreeDGeometryToolbar(QFrame):
     """
 
     vector_requested = Signal()
+    function_requested = Signal(object)
     annotation_requested = Signal()
     undo_requested = Signal()
     redo_requested = Signal()
@@ -34,15 +35,22 @@ class ThreeDGeometryToolbar(QFrame):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
 
+        self.function_button = self._button("function", "函数目录", "threeDFunctionToolButton")
         self.vector_button = self._button("vector", "添加向量", "threeDVectorToolButton", checkable=True)
         self.annotation_button = self._button("type", "标记", "threeDAnnotationToolButton", checkable=True)
         self.undo_button = self._button("undo-2", "撤销", "threeDUndoToolButton")
         self.redo_button = self._button("redo-2", "恢复", "threeDRedoToolButton")
+        layout.addWidget(self.function_button)
         layout.addWidget(self.vector_button)
         layout.addWidget(self.annotation_button)
         layout.addWidget(self.undo_button)
         layout.addWidget(self.redo_button)
 
+        self.function_button.clicked.connect(
+            lambda: self.function_requested.emit(
+                self.function_button.mapToGlobal(QPoint(self.function_button.width() + 8, 0))
+            )
+        )
         self.vector_button.clicked.connect(self.vector_requested)
         self.annotation_button.clicked.connect(self.annotation_requested)
         self.undo_button.clicked.connect(self.undo_requested)

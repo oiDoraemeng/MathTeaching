@@ -85,7 +85,7 @@ QGroupBox::title {
   color: #b3b8c0;
   background: #24262a;
 }
-#viewportToolbar, #twoDGeometryToolbar, #threeDGeometryToolbar, #twoDLineFlyout, #sceneSettingsPanel {
+#viewportToolbar, #twoDGeometryToolbar, #threeDGeometryToolbar, #twoDLineFlyout, #twoDPointFlyout, #sceneSettingsPanel {
   background: #24262a; border: 1px solid #33363b; border-radius: 8px;
 }
 #layerSettingsPopup, #geometrySettingsPopup, #intersectionPopup, #functionCatalogPopup, #formulaEditorPopup,
@@ -94,10 +94,10 @@ QGroupBox::title {
 }
 #settingsPopupTitle { color: #e8eaed; font-size: 13px; font-weight: 600; }
 #sceneModeButton { font-size: 15px; font-weight: 700; }
-#viewportToolbar QToolButton:hover, #twoDGeometryToolbar QToolButton:hover, #threeDGeometryToolbar QToolButton:hover, #twoDLineFlyout QToolButton:hover {
+#viewportToolbar QToolButton:hover, #twoDGeometryToolbar QToolButton:hover, #threeDGeometryToolbar QToolButton:hover, #twoDLineFlyout QToolButton:hover, #twoDPointFlyout QToolButton:hover {
   background: rgba(76,158,232,.16); border-color: #33363b; color: #4c9ee8;
 }
-#agentButton:checked, #viewportToolbar QToolButton:checked, #twoDGeometryToolbar QToolButton:checked, #threeDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked {
+#agentButton:checked, #viewportToolbar QToolButton:checked, #twoDGeometryToolbar QToolButton:checked, #threeDGeometryToolbar QToolButton:checked, #twoDLineFlyout QToolButton:checked, #twoDPointFlyout QToolButton:checked {
   background: rgba(76,158,232,.16); border-color: #4c9ee8; color: #4c9ee8;
 }
 #teachingCasePaneHost { background: #1a1b1e; }

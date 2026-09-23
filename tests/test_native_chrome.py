@@ -77,6 +77,15 @@ def test_custom_titlebar_has_synchronous_controls_and_theme_state() -> None:
     assert bar.title.text() == "Math3D Teaching"
     assert bar.close_button.accessibleName() == "关闭"
     assert bar.minimize_button.accessibleName() == "最小化"
+    assert bar.right_panel_button.accessibleName() == "展开右侧面板"
+
+
+def test_titlebar_right_panel_button_reflects_sidebar_state() -> None:
+    bar = CustomTitleBar(QWidget())
+    collapsed_key = bar.right_panel_button.icon().cacheKey()
+    bar.set_right_panel_expanded(True)
+    assert bar.right_panel_button.accessibleName() == "折叠右侧面板"
+    assert bar.right_panel_button.icon().cacheKey() != collapsed_key
 
 
 def test_titlebar_minimize_and_maximize_controls_use_distinct_icons() -> None:

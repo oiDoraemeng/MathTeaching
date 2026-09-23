@@ -9,11 +9,12 @@ change its explanation without editing Qt event plumbing.
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 import math
 import re
 
 from linear_algebra.visualizations.common import matrix_label_text
-from models.geometry_2d import Linear2D, Point2D
+from models.geometry_2d import Linear2D, Point2D, format_number
 from rendering.ticks import ViewportBounds
 from services.scene_commands import CommandPlan
 
@@ -56,23 +57,36 @@ def build_vector_tool_plan(
         endpoint_2 = [vertex[0] + v2[0], vertex[1] + v2[1]]
         cosine = (v1[0] * v2[0] + v1[1] * v2[1]) / (first_length * second_length)
         angle = math.degrees(math.acos(max(-1.0, min(1.0, cosine))))
+        radius = max(0.25, min(0.8, min(first_length, second_length) * 0.22))
+        bisector = (
+            v1[0] / first_length + v2[0] / second_length,
+            v1[1] / first_length + v2[1] / second_length,
+        )
+        bisector_length = math.hypot(*bisector)
+        if bisector_length <= 1e-12:
+            bisector = (-v1[1] / first_length, v1[0] / first_length)
+        else:
+            bisector = (bisector[0] / bisector_length, bisector[1] / bisector_length)
         operations.extend(
             [
                 {
                     "op": "geometry.angle_arc",
                     "alias": alias,
+                    "source_vector_id": vectors[0].id,
+                    "direction_vector_id": vectors[1].id,
+                    "annotation_alias": annotation_alias,
                     "vertex": list(vertex),
                     "first": endpoint_1,
                     "second": endpoint_2,
-                    "radius": max(0.25, min(0.8, min(first_length, second_length) * 0.22)),
+                    "radius": radius,
                 },
                 {
                     "op": "annotation.formula",
                     "alias": annotation_alias,
                     "text": f"θ={angle:.1f}°",
                     "position": [
-                        vertex[0] + 0.55 * (v1[0] + v2[0]),
-                        vertex[1] + 0.55 * (v1[1] + v2[1]),
+                        vertex[0] + bisector[0] * (radius + 0.28),
+                        vertex[1] + bisector[1] * (radius + 0.28),
                     ],
                 },
             ]
@@ -82,23 +96,47 @@ def build_vector_tool_plan(
         if denominator <= 1e-12:
             return None
         scale = (v1[0] * v2[0] + v1[1] * v2[1]) / denominator
+        projection = (scale * v2[0], scale * v2[1])
+        projection_text = (
+            f"proj_b(a)=({format_number(projection[0])},"
+            f" {format_number(projection[1])})"
+        )
+        projection_latex = (
+            r"\operatorname{proj}_{b}(a)="
+            rf"\left({format_number(projection[0])},"
+            rf"{format_number(projection[1])}\right)"
+        )
         operations.extend(
             [
                 {
                     "op": "geometry.projection",
                     "alias": alias,
+                    # Keep the toolbar construction attached to the two
+                    # source vectors.  The scene can then recompute the
+                    # projection when either vector endpoint is moved.
+                    "source_vector_id": vectors[0].id,
+                    "direction_vector_id": vectors[1].id,
                     "vector": list(v1),
                     "direction": list(v2),
                     "origin": list(vertex),
                     "result_alias": f"{alias}_result",
                     "foot_alias": f"{alias}_foot",
                     "residual_alias": f"{alias}_residual",
+                    "annotation_alias": annotation_alias,
+                    # Projection guides are auxiliary constructions, not
+                    # primary vectors, so the toolbar always renders them
+                    # with the shared dashed-line treatment.
+                    "style": "dashed",
                 },
                 {
                     "op": "annotation.formula",
                     "alias": annotation_alias,
-                    "text": f"投影系数={scale:.2f}",
-                    "position": [vertex[0] + 0.5 * v1[0], vertex[1] + 0.5 * v1[1]],
+                    "text": projection_text,
+                    "latex": projection_latex,
+                    "position": [
+                        vertex[0] + 0.5 * projection[0],
+                        vertex[1] + 0.5 * projection[1],
+                    ],
                 },
             ]
         )
@@ -181,6 +219,117 @@ def parse_matrix(text: str) -> tuple[tuple[float, float], tuple[float, float]] |
     except (ValueError, ZeroDivisionError):
         return None
     return parsed[0], parsed[1]
+
+
+Matrix2 = tuple[tuple[float, float], tuple[float, float]]
+
+
+@dataclass(frozen=True)
+class MatrixExpression:
+    """A standard 2-D matrix expression and its evaluated product."""
+
+    operands: tuple[Matrix2, ...]
+    result: Matrix2
+    input_latex: str
+    result_latex: str
+    display_latex: str
+
+
+_STANDARD_MATRIX_BLOCK = re.compile(
+    r"\\begin\{(?P<environment>(?:p|b|B|v|V)?matrix)\}"
+    r"(?P<body>.*?)"
+    r"\\end\{(?P=environment)\}",
+    re.DOTALL,
+)
+
+
+def _matrix_to_latex(matrix: Matrix2) -> str:
+    """Serialize one evaluated 2x2 matrix in the editor's standard format."""
+    rows = "\\\\".join(
+        "&".join(format_number(float(value)) for value in row)
+        for row in matrix
+    )
+    return rf"\begin{{pmatrix}}{rows}\end{{pmatrix}}"
+
+
+def _multiply_matrix2(left: Matrix2, right: Matrix2) -> Matrix2:
+    return (
+        (
+            left[0][0] * right[0][0] + left[0][1] * right[1][0],
+            left[0][0] * right[0][1] + left[0][1] * right[1][1],
+        ),
+        (
+            left[1][0] * right[0][0] + left[1][1] * right[1][0],
+            left[1][0] * right[0][1] + left[1][1] * right[1][1],
+        ),
+    )
+
+
+def parse_matrix_expression(text: str) -> MatrixExpression | None:
+    """Parse ``A=matrix`` or ``A=matrix\\cdot matrix...``.
+
+    The matrix-transform editor intentionally accepts only standard LaTeX
+    matrix environments.  A trailing ``= matrix`` is treated as an old
+    displayed result and is always replaced by the locally evaluated product;
+    ``\\times`` and plain-text matrix forms are not accepted here.
+    """
+    source = str(text).strip()
+    if not source or r"\times" in source or "*" in source:
+        return None
+    source = source.replace(r"\left", "").replace(r"\right", "")
+    source = source.strip().strip("$ ")
+    if source.startswith(r"\(") and source.endswith(r"\)"):
+        source = source[2:-2].strip()
+    blocks = list(_STANDARD_MATRIX_BLOCK.finditer(source))
+    if not blocks:
+        return None
+    prefix = source[: blocks[0].start()].strip()
+    if not re.fullmatch(r"(?:\\boldsymbol\s*)?A\s*=", prefix):
+        return None
+    if blocks[-1].end() != len(source):
+        return None
+
+    separators: list[str] = []
+    for previous, current in zip(blocks, blocks[1:]):
+        separator = source[previous.end() : current.start()].strip()
+        if separator not in {r"\cdot", "="}:
+            return None
+        separators.append(separator)
+    if separators.count("=") > 1 or "=" in separators and separators[-1] != "=":
+        return None
+
+    result_block_present = bool(separators and separators[-1] == "=")
+    operand_blocks = blocks[:-1] if result_block_present else blocks
+    if any(separator != r"\cdot" for separator in separators[: len(operand_blocks) - 1]):
+        return None
+    operands: list[Matrix2] = []
+    for block in operand_blocks:
+        matrix = parse_matrix(
+            rf"\begin{{{block.group('environment')}}}{block.group('body')}"
+            rf"\end{{{block.group('environment')}}}"
+        )
+        if matrix is None:
+            return None
+        operands.append(matrix)
+    if not operands:
+        return None
+
+    result = operands[0]
+    for operand in operands[1:]:
+        result = _multiply_matrix2(result, operand)
+
+    process = source[: operand_blocks[-1].end()].strip()
+    result_latex = _matrix_to_latex(result) if len(operands) > 1 else ""
+    display = process
+    if result_latex:
+        display = f"{process} = {result_latex}"
+    return MatrixExpression(
+        operands=tuple(operands),
+        result=result,
+        input_latex=process,
+        result_latex=result_latex,
+        display_latex=display,
+    )
 
 
 def _parse_matrix_scalar(source: str) -> float:

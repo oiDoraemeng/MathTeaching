@@ -41,11 +41,13 @@ def test_three_d_toolbar_is_vertical_left_middle_and_emits_its_actions() -> None
     QApplication.processEvents()
 
     actions: list[str] = []
+    toolbar.function_requested.connect(lambda _anchor: actions.append("function"))
     toolbar.vector_requested.connect(lambda: actions.append("vector"))
     toolbar.annotation_requested.connect(lambda: actions.append("annotation"))
     toolbar.undo_requested.connect(lambda: actions.append("undo"))
     toolbar.redo_requested.connect(lambda: actions.append("redo"))
     toolbar.set_history_state(can_undo=True, can_redo=True)
+    toolbar.function_button.click()
     toolbar.vector_button.click()
     toolbar.annotation_button.click()
     toolbar.undo_button.click()
@@ -55,7 +57,7 @@ def test_three_d_toolbar_is_vertical_left_middle_and_emits_its_actions() -> None
     assert toolbar.x() == 12
     assert toolbar.y() == (host.height() - toolbar.height()) // 2
     assert toolbar.annotation_button.property("_kiro_icon_state")[0] == "type"
-    assert actions == ["vector", "annotation", "undo", "redo"]
+    assert actions == ["function", "vector", "annotation", "undo", "redo"]
 
 
 def test_three_d_vector_is_an_editable_row_in_the_shared_algebra_list() -> None:

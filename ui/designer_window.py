@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager, nullcontext
 from dataclasses import asdict, dataclass, replace
-from math import isfinite
+from math import acos, degrees, hypot, isfinite
 import re
 import time
 from uuid import uuid4
@@ -26,6 +26,7 @@ from pyvistaqt import QtInteractor
 from MathInputWidget import LatexParseError, LatexParser
 from geometry.cas_curve import CurveExpressionError, parse_curve_expression
 from geometry.cas_surface import ExpressionError, parse_surface_expression
+from geometry.parameter_display import format_parameterized_latex
 from geometry.standard_surfaces import BUILTIN_SURFACES, create_builtin_layer
 from models.curve_layer import CurveLayer, Plot2DDomain
 from models.geometry_2d import (
@@ -83,6 +84,7 @@ from ui.linear_algebra_tools import (
     build_matrix_grid_tool_plan,
     build_polygon_tool_plan,
     build_vector_tool_plan,
+    parse_matrix_expression,
     parse_matrix,
 )
 from ui.teaching_case_panes import (
@@ -112,6 +114,23 @@ from agent.providers import ModelProvider
 
 # 辅助线预绘到视口外，减少平移和缩放时的重建。
 _GUIDE_MARGIN = 2.5
+
+_CHAPTER_TWO_MATRIX_TOOL_TOPICS = frozenset(
+    {
+        "ch02.matrix.additive-distributivity",
+        "ch02.matrix.transformed-grid",
+        "ch02.matrix.composition",
+        "ch02.matrix.basis",
+        "ch02.matrix.powers",
+    }
+)
+_DETERMINANT_MATRIX_TOOL_TOPICS = frozenset(
+    {
+        "ch03.det.basic-properties",
+        "ch03.det.multiplicativity",
+        "ch03.det.transpose",
+    }
+)
 
 _ANNOTATION_TEXT_COMMAND = re.compile(r"\\(?:text|mathrm|operatorname)\{([^{}]*)\}")
 
@@ -516,6 +535,8 @@ class _PaneSceneRuntime:
         self._linear_algebra_tool_sequence = 0
         self._linear_algebra_tool_preclear_state: _SceneCommandState | None = None
         self._pending_geometry_point_id: str | None = None
+        self._pending_point_tool_point_id: str | None = None
+        self._pending_point_tool_linear_id: str | None = None
         self._snap_to_grid = False
         self._dragging_point_id: str | None = None
         self._dragging_annotation_id: str | None = None
@@ -932,6 +953,7 @@ class MainWindow:
         if central is None or not isinstance(layout, QVBoxLayout):
             raise RuntimeError("Designer form must provide a vertical central layout")
         self.title_bar = CustomTitleBar(self.window)
+        self.title_bar.right_panel_toggle_requested.connect(self._toggle_agent_panel)
         layout.insertWidget(0, self.title_bar)
 
     def _install_algebra_panel(self) -> None:
@@ -944,6 +966,9 @@ class MainWindow:
             legacy_sidebar.deleteLater()
         self.algebra_panel = AlgebraPanel(self.window)
         root_layout.insertWidget(0, self.algebra_panel)
+        viewport_host = self.window.findChild(QWidget, "viewportHost")
+        if viewport_host is not None:
+            self.algebra_panel.set_floating_keyboard_anchor(viewport_host)
         self.algebra_resize_handle = _PanelResizeHandle(
             PanelResizeSpec(
                 self.algebra_panel.MIN_WIDTH,
@@ -990,10 +1015,8 @@ class MainWindow:
         )
         self.agent_panel.set_scene_mode(self._pane_scene().scene_mode is SceneMode.TWO_D)
         self.status_bar = AppStatusBar(self.window)
-        self.status_bar.agent_toggle_requested.connect(self._toggle_agent_panel)
         self.status_bar.theme_cycle_requested.connect(self.cycle_theme_mode)
         self.status_bar.set_scene_mode(self._pane_scene().scene_mode)
-        self.status_bar.set_agent_status("就绪" if self._using_remote_agent() else "未配置")
         central = self.window.centralWidget()
         if central is not None:
             central_layout = central.layout()
@@ -1338,12 +1361,19 @@ class MainWindow:
         self.scene_mode_button.setToolTip("切换二维和三维场景")
         self.scene_mode_button.setAccessibleName("切换二维和三维场景")
         self.scene_mode_button.setFixedSize(36, 36)
+        # 视口工具栏的 AI 快捷入口与标题栏开关并存，均切换同一个右侧面板。
         self.agent_button = QToolButton(self.viewport_toolbar)
         self.agent_button.setObjectName("agentButton")
         self.agent_button.setToolTip("AI 教学助手")
         self.agent_button.setAccessibleName("AI 教学助手")
         self.agent_button.setCheckable(True)
-        apply_icon(self.agent_button, "sparkles", icon_color(getattr(self, "effective_theme", "light")), icon_size=16, hit_size=36)
+        apply_icon(
+            self.agent_button,
+            "sparkles",
+            icon_color(getattr(self, "effective_theme", "light")),
+            icon_size=16,
+            hit_size=36,
+        )
         self._install_layout_buttons(toolbar_layout)
         toolbar_layout.addWidget(self.scene_settings_button)
         toolbar_layout.addWidget(self.scene_mode_button)
@@ -1372,10 +1402,12 @@ class MainWindow:
         self.scene_mode_button.clicked.connect(self._toggle_scene_mode)
         self.agent_button.clicked.connect(self._toggle_agent_panel)
         self.two_d_geometry_toolbar.tool_selected.connect(self._on_unified_2d_tool_selected)
+        self.two_d_geometry_toolbar.function_requested.connect(self._open_function_catalog)
         self.two_d_geometry_toolbar.snap_toggled.connect(self._set_snap_to_grid)
         self.two_d_geometry_toolbar.undo_requested.connect(self._undo_2d_geometry)
         self.two_d_geometry_toolbar.redo_requested.connect(self._redo_2d_geometry)
         self.three_d_geometry_toolbar.vector_requested.connect(self._on_3d_vector_requested)
+        self.three_d_geometry_toolbar.function_requested.connect(self._open_function_catalog)
         self.three_d_geometry_toolbar.annotation_requested.connect(self._on_3d_annotation_requested)
         self.three_d_geometry_toolbar.undo_requested.connect(self._undo_2d_geometry)
         self.three_d_geometry_toolbar.redo_requested.connect(self._redo_2d_geometry)
@@ -1631,6 +1663,7 @@ class MainWindow:
         panel.matrix_transform_requested.connect(self._apply_matrix_transform_from_tab)
         panel.matrix_transform_settings_requested.connect(self._apply_matrix_transform_from_tab)
         panel.matrix_transform_visibility_requested.connect(self._set_matrix_coordinate_system_visibility)
+        panel.matrix_transform_delete_requested.connect(self._delete_matrix_transform_grid)
         panel.builtin_requested.connect(self._add_builtin_surface)
         panel.lighting_requested.connect(self._show_lighting_dialog)
         panel.pane_update_requested.connect(self._update_formula_for_scene)
@@ -1645,9 +1678,23 @@ class MainWindow:
         panel.opacity_changed.connect(self._set_surface_opacity)
         panel.line_width_changed.connect(self._set_curve_line_width)
         panel.range_changed.connect(self._set_layer_range)
+        panel.parameter_changed.connect(self._set_layer_parameter)
+        panel.status_changed.connect(self._show_status_message)
         # 扩展程序仍可能连接旧信号；界面中已不再提供对应的工具栏操作。
         panel.auto_intersections_changed.connect(self._set_auto_intersections)
         panel.manual_intersection_requested.connect(self._add_manual_intersection)
+
+    def _show_status_message(self, message: str, _is_error: bool = False) -> None:
+        """Render every scene/action description in the single bottom status area."""
+        status_bar = getattr(self, "status_bar", None)
+        if status_bar is not None:
+            status_bar.set_render_status(message)
+
+    def _open_function_catalog(self, anchor: QPoint | None = None) -> None:
+        """Open the function catalog for the active 2-D or 3-D scene."""
+        self.pane_manager.activate_for_tool()
+        self.algebra_panel.set_catalog_entries(catalog_entries(self._pane_scene().scene_mode))
+        self.algebra_panel.open_function_catalog(anchor)
 
     def _on_algebra_pane_focus_changed(self, pane_id: str) -> None:
         panel = getattr(self, "algebra_panel", None)
@@ -1663,6 +1710,40 @@ class MainWindow:
         panel.set_pane_id(pane_id, title)
         with self._using_pane(pane_id):
             mode = self._pane_scene().scene_mode
+            # The 2-D toolbar is shared by all visible panes, while the
+            # concrete mouse-tool state lives on each pane runtime.  A case
+            # pane that was materialized after the first pane therefore used
+            # to have no active tool at all: clicking its point C (or any
+            # other point) was passed through to PyVista instead of the
+            # selection/drag handler.  Mirror the shared toolbar selection
+            # into the newly focused pane before routing the click.
+            if mode is SceneMode.TWO_D:
+                runtime = self._pane_scene()
+                toolbar = getattr(self, "two_d_geometry_toolbar", None)
+                shared_tool = getattr(toolbar, "_active_tool", None)
+                linear_tools = {
+                    "addition", "angle", "projection", "polygon",
+                    "transform", "subspace", "area",
+                }
+                basic_tools = {
+                    "select", "point", "annotation", "line", "segment",
+                    "dashed_segment", "ray", "vector",
+                }
+                if shared_tool in linear_tools:
+                    runtime._active_2d_tool = None
+                    runtime._active_linear_algebra_tool = shared_tool
+                elif shared_tool in basic_tools:
+                    runtime._active_2d_tool = shared_tool
+                    runtime._active_linear_algebra_tool = None
+                elif (
+                    runtime._active_2d_tool is None
+                    and runtime._active_linear_algebra_tool is None
+                    and getattr(self._pane(pane_id), "source", "user") == "case"
+                ):
+                    # Case panes open in the same editable/selectable state as
+                    # the first pane, even when the toolbar has no explicit
+                    # selection (for example after a pane was restored).
+                    runtime._active_2d_tool = "select"
             panel.set_scene_mode(mode)
             panel.set_layers(
                 self._two_d_panel_layers() if mode is SceneMode.TWO_D else self._three_d_panel_layers()
@@ -1689,7 +1770,7 @@ class MainWindow:
         })
         self.agent_sidebar.set_busy(True)
         if hasattr(self, "status_bar"):
-            self.status_bar.set_agent_status("生成中")
+            self.status_bar.set_render_status("AI 助手正在生成…")
         thread = QThread(self.window)
         session = self._agent_session_store.get_session(active_session_id)
         worker = RuntimeTurnWorker(
@@ -1728,7 +1809,7 @@ class MainWindow:
     def _receive_runtime_result(self, result) -> None:
         self.agent_sidebar.set_busy(False)
         if hasattr(self, "status_bar"):
-            self.status_bar.set_agent_status("就绪")
+            self.status_bar.set_render_status("AI 助手已完成响应")
         if result.turn_id and result.status == "completed":
             self._agent_session_store.update_turn_scene_snapshots(
                 result.turn_id,
@@ -1739,7 +1820,7 @@ class MainWindow:
     def _receive_runtime_error(self, message: str) -> None:
         self.agent_sidebar.set_busy(False)
         if hasattr(self, "status_bar"):
-            self.status_bar.set_agent_status("就绪")
+            self.status_bar.set_render_status("AI 助手响应失败")
         self.agent_panel.show_error(message)
 
     def _agent_finished(self) -> None:
@@ -2152,6 +2233,8 @@ class MainWindow:
         self._pane_scene()._agent_teaching_2d = {alias: dict(operation) for alias, operation in state.teaching_2d}
         self._pane_scene()._agent_geometry3d = {alias: dict(operation) for alias, operation in state.geometry_3d}
         self._pane_scene()._vector_additions = [dict(relation) for relation in state.vector_additions]
+        self._pane_scene()._pending_point_tool_point_id = None
+        self._pane_scene()._pending_point_tool_linear_id = None
         self._pane_scene()._dragging_3d_annotation_alias = None
         self._pane_scene()._dragging_3d_annotation_moved = False
         self._pane_scene()._drag_start_3d_annotation_state = None
@@ -2512,10 +2595,22 @@ class MainWindow:
             self._pane_scene().geometry_controller.add_teaching_polygon(alias, tuple(tuple(float(v) for v in p) for p in operation["vertices"]), color=str(operation.get("color", "#5b8def")), opacity=float(operation.get("opacity", 0.24)), outline=bool(operation.get("outline", True)))  # type: ignore[index]
         elif name == "geometry.angle_arc":
             self._pane_scene().geometry_controller.add_teaching_angle_arc(alias, tuple(float(v) for v in operation["vertex"]), tuple(float(v) for v in operation["first"]), tuple(float(v) for v in operation["second"]), radius=float(operation["radius"]), color=str(operation.get("color", "#d97845")))  # type: ignore[arg-type]
+            self._sync_vector_tool_direction_copy(operation)
         elif name == "geometry.right_angle_marker":
             self._pane_scene().geometry_controller.add_teaching_right_angle_marker(alias, tuple(float(v) for v in operation["vertex"]), tuple(float(v) for v in operation["first"]), tuple(float(v) for v in operation["second"]), size=float(operation["size"]), color=str(operation.get("color", "#d97845")))  # type: ignore[arg-type]
         elif name == "geometry.projection":
-            self._pane_scene().geometry_controller.add_teaching_projection(tuple(float(v) for v in operation["vector"]), tuple(float(v) for v in operation["direction"]), result_alias=str(operation["result_alias"]), foot_alias=str(operation["foot_alias"]), residual_alias=str(operation["residual_alias"]), alias=str(operation["alias"]) if operation.get("alias") else None, origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#2777b6")), style=str(operation.get("style", "solid")))  # type: ignore[arg-type]
+            # Toolbar projections are always auxiliary dashed guides.  Keep
+            # the ordinary solid default for lecture-authored projections.
+            projection_style = str(
+                operation.get(
+                    "style",
+                    "dashed" if alias.startswith("la_tool_projection") else "solid",
+                )
+            )
+            operation["style"] = projection_style
+            self._pane_scene()._agent_teaching_2d[alias]["style"] = projection_style
+            self._pane_scene().geometry_controller.add_teaching_projection(tuple(float(v) for v in operation["vector"]), tuple(float(v) for v in operation["direction"]), result_alias=str(operation["result_alias"]), foot_alias=str(operation["foot_alias"]), residual_alias=str(operation["residual_alias"]), alias=str(operation["alias"]) if operation.get("alias") else None, origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#2777b6")), style=projection_style)  # type: ignore[arg-type]
+            self._sync_vector_tool_direction_copy(operation)
         elif name == "geometry.transformed_grid":
             matrix = tuple(tuple(float(v) for v in row) for row in operation["matrix"])  # type: ignore[index]
             self._pane_scene().geometry_controller.add_teaching_transformed_grid(matrix, tuple(float(v) for v in operation["bounds"]), step=float(operation.get("step", 1.0)), alias=str(operation["alias"]) if operation.get("alias") else None, color=str(operation.get("color", "#5b8def")), origin=tuple(float(v) for v in operation.get("origin",(0.0,0.0))), show_source_grid=bool(operation.get("show_source_grid", True)), show_basis=bool(operation.get("show_basis", False)))  # type: ignore[arg-type]
@@ -2538,7 +2633,7 @@ class MainWindow:
             self._pane_scene().geometry_controller.add_teaching_oriented_area(vectors, alias=str(operation.get("alias", "oriented-area")), origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#d97845")), opacity=float(operation.get("opacity", 0.28)))  # type: ignore[arg-type]
         elif name == "geometry.quadratic_level_set":
             controller = self._pane_scene().geometry_controller
-            controller.add_teaching_quadratic_contour(operation.get("contour_vertices", ()), segments=operation.get("contour_segments", ()), alias=str(operation.get("alias", "quadratic")))
+            controller.add_teaching_quadratic_contour(operation.get("contour_vertices", ()), segments=operation.get("contour_segments", ()), alias=str(operation.get("alias", "quadratic")), color=str(operation.get("color", "#4c9f70")))
             controller.add_teaching_quadratic_axes(operation.get("axis_segments", ()), alias=str(operation.get("alias", "quadratic")))
         else:
             raise CommandError(f"宿主不支持操作: {name}")
@@ -2668,13 +2763,14 @@ class MainWindow:
         coordinates = tuple(float(value) for value in operation["coordinates"])  # type: ignore[index]
         point = next((item for item in self._pane_scene().geometry_points if item.agent_alias == alias), None)
         if point is None:
-            point = Point2D(operation_label(operation), *coordinates, agent_alias=alias)
+            point = Point2D(operation_label(operation), *coordinates, color=str(operation.get("color", "#d64545")), agent_alias=alias)
             self._pane_scene().geometry_points.append(point)
             self._pane_scene()._two_d_object_order.append(point.id)
             if self._pane_scene().geometry_controller is not None:
                 self._pane_scene().geometry_controller.add_point(point)
         else:
             point.x, point.y = coordinates
+            point.color = str(operation.get("color", point.color))
             if self._pane_scene().geometry_controller is not None:
                 self._pane_scene().geometry_controller.move_point(point.id, *coordinates)
         self._update_vector_additions_for_point(point.id)
@@ -2917,6 +3013,7 @@ class MainWindow:
                 self.pane_manager.delete_pane(pane_id)
         self._teaching_case_pane_ids = []
         self._teaching_case_stage_refs = {}
+        self._pending_determinant_matrix_sync = set()
         if hasattr(self, "teaching_case_pane_host"):
             self.teaching_case_pane_host.hide()
         container = getattr(self, "scene_pane_widget", None)
@@ -3036,8 +3133,13 @@ class MainWindow:
                         )
                         if not result.valid:
                             raise CommandError("；".join(result.messages))
-                        # 阶段掩码只保留当前窗格绑定的步骤。
-                        self._apply_linear_algebra_storyboard_visibility()
+                        # 阶段掩码只保留当前窗格绑定的步骤。矩阵工具初始化
+                        # 会触碰 WebEngine 与 VTK，必须等当前原生回调返回后再做。
+                        self._teaching_case_materializing = True
+                        try:
+                            self._apply_linear_algebra_storyboard_visibility()
+                        finally:
+                            self._teaching_case_materializing = False
                     except Exception:
                         data = pane.scene_2d if pane.scene_mode == "2d" else pane.scene_3d
                         data["pending_plan"] = pending
@@ -3145,7 +3247,16 @@ class MainWindow:
         explanation = getattr(explanation_case, "explanation", explanation_case)
         layout = getattr(explanation, "case_layout", None)
         cases = tuple(getattr(layout, "cases", ())) if layout is not None else ()
-        descriptors = [(str(case.id), str(getattr(case, "purpose", "案例")), tuple(getattr(case, "stage_refs", ()))) for case in cases]
+        from linear_algebra.catalog.model import display_math_text
+
+        descriptors = [
+            (
+                str(case.id),
+                display_math_text(str(getattr(case, "purpose", "案例"))),
+                tuple(getattr(case, "stage_refs", ())),
+            )
+            for case in cases
+        ]
         if not descriptors:
             descriptors = [(str(compiled.topic_id), "案例", ())]
         user_pane_count = sum(
@@ -3229,15 +3340,26 @@ class MainWindow:
         by the explicit lecture-pane ID list.
         """
 
+        # Rebuilding the 2-D scene is part of the first matrix-tool sync.  The
+        # rebuild calls this method from its tail; the outer sync will finish
+        # the visibility pass, so the nested invocation must be a no-op.
+        if (
+            getattr(self, "_determinant_matrix_sync_in_progress", False)
+            or getattr(self, "_matrix_transform_apply_in_progress", False)
+        ):
+            return
+
         compiled = getattr(self, "_active_linear_algebra_compiled", None)
         if compiled is None:
             return
         stage_id = getattr(self, "_active_linear_algebra_stage_id", None)
-        if not isinstance(stage_id, str) or not stage_id:
-            return
         controller = StoryboardVisibilityController(compiled)
-        # 修改运行时前先解析阶段，旧阶段无效时保留现有演员。
-        selected = selection or controller.select(stage_id)
+        # 1–3 章的流程案例没有全局活动阶段，但每个独立窗格仍绑定了
+        # 自己的唯一阶段。这些窗格也必须继续同步代数区的矩阵行。
+        selected = selection
+        if selected is None and isinstance(stage_id, str) and stage_id:
+            # 修改运行时前先解析阶段，旧阶段无效时保留现有演员。
+            selected = controller.select(stage_id)
         pane_manager = getattr(self, "pane_manager", None)
         if pane_manager is None:
             return
@@ -3258,20 +3380,34 @@ class MainWindow:
                     pane_selection = controller.select(refs[0])
                 except ValueError:
                     pane_selection = selected
-            controller.apply(runtime, pane_selection.stage_id, render=False)
-            self._sync_teaching_basis_matrix(pane_id, pane_selection)
-            for relation in tuple(getattr(runtime, "_vector_additions", ())):
-                self._refresh_vector_addition(relation, create_missing=True)
-            renderer = pane.renderer_2d if pane.scene_mode == "2d" else pane.renderer_3d
-            render = getattr(renderer, "render", None)
-            if callable(render):
-                render()
+            if pane_selection is None:
+                continue
+            # Relation refreshes use the host's current pane implicitly.  Pin
+            # every per-pane synchronization so derived geometry from a later
+            # step cannot be written into the active earlier-step pane.
+            with self._using_pane(pane_id):
+                # 固定步骤窗格的 pending plan 已按各自阶段过滤。没有全局阶段时
+                # 只同步矩阵工具与代数区，不再对占位渲染器重放阶段可见性。
+                if selected is not None:
+                    controller.apply(runtime, pane_selection.stage_id, render=False)
+                self._sync_teaching_matrix_grid(pane_id, pane_selection)
+                for relation in tuple(getattr(runtime, "_vector_additions", ())):
+                    self._refresh_vector_addition(relation, create_missing=True)
+                if selected is not None:
+                    renderer = pane.renderer_2d if pane.scene_mode == "2d" else pane.renderer_3d
+                    render = getattr(renderer, "render", None)
+                    if callable(render):
+                        render()
 
         # 阶段切换只改变场景演员不会自动重建代数列表；当前焦点若是讲案例窗格，
         # 立即用同一阶段掩码刷新列表，避免隐藏向量继续出现在代数区。
         panel = getattr(self, "algebra_panel", None)
         active_pane_id = getattr(pane_manager, "active_pane_id", None)
-        if panel is not None and active_pane_id in tuple(getattr(self, "_teaching_case_pane_ids", ())):
+        if (
+            panel is not None
+            and callable(getattr(panel, "set_layers", None))
+            and active_pane_id in tuple(getattr(self, "_teaching_case_pane_ids", ()))
+        ):
             with self._using_pane(active_pane_id):
                 mode = self._pane_scene().scene_mode
                 panel.set_layers(
@@ -3297,23 +3433,37 @@ class MainWindow:
             rows.append("&".join(format_number(value) for value in values))
         return r"\begin{pmatrix}" + r"\\".join(rows) + r"\end{pmatrix}"
 
-    def _sync_teaching_basis_matrix(
+    def _sync_teaching_matrix_grid(
         self,
         pane_id: str,
         selection: StoryboardVisibility,
     ) -> None:
-        """Show the matrix belonging to the visible basis grid in its algebra tab."""
+        """Show the matrix belonging to the visible teaching grid in its algebra tab."""
         panel = getattr(self, "algebra_panel", None)
         manager = getattr(self, "pane_manager", None)
         if panel is None or manager is None or pane_id not in manager.panes:
             return
-        selected = self._visible_teaching_basis_grid(pane_id, selection)
+        compiled = getattr(self, "_active_linear_algebra_compiled", None)
+        topic_id = str(getattr(compiled, "topic_id", ""))
+        if topic_id in _DETERMINANT_MATRIX_TOOL_TOPICS:
+            self._sync_determinant_matrix_transform_tool(pane_id, selection)
+            return
+        selected = self._visible_teaching_matrix_grid(pane_id, selection)
         if selected is None:
             return
         _runtime, _alias, grid = selected
-        latex = self._basis_matrix_latex(grid.get("basis_matrix"))
+        matrix_value = (
+            grid.get("basis_matrix")
+            if grid.get("op") == "geometry.basis_grid"
+            else grid.get("matrix")
+        )
+        latex = self._basis_matrix_latex(matrix_value)
         if latex is None:
             return
+        if topic_id in _CHAPTER_TWO_MATRIX_TOOL_TOPICS:
+            # 第二章矩阵案例使用工具栏“矩阵变换”的标准代数表达式；画布上的
+            # 矩阵标注只负责就地说明，不再充当第二条代数记录。
+            latex = f"A={latex}"
         pane = manager.pane(pane_id)
         model = panel.add_matrix_transform_tab(
             pane_id,
@@ -3330,12 +3480,118 @@ class MainWindow:
                 extent = 5.0
             model.set_matrix_transform_grid_range(extent)
 
-    def _visible_teaching_basis_grid(
+    def _sync_determinant_matrix_transform_tool(
+        self,
+        pane_id: str,
+        selection: StoryboardVisibility,
+    ) -> None:
+        """Pass one 3.2 matrix to the existing toolbar matrix workflow.
+
+        Pane materialization is called from a native VTK callback.  Defer the
+        WebEngine/tool-plan work until that callback has returned; doing it
+        synchronously can re-enter rendering and terminate the process without
+        a Python traceback on Windows.
+        """
+
+        # ``_apply_matrix_transform_from_tab`` rebuilds the 2-D scene.  That
+        # rebuild normally calls storyboard visibility again, so do not start
+        # a second matrix-tool synchronization while the first one is active.
+        if (
+            getattr(self, "_determinant_matrix_sync_in_progress", False)
+            or getattr(self, "_matrix_transform_apply_in_progress", False)
+        ):
+            return
+
+        if getattr(self, "_teaching_case_materializing", False):
+            pending = getattr(self, "_pending_determinant_matrix_sync", None)
+            if pending is None:
+                pending = self._pending_determinant_matrix_sync = set()
+            if pane_id in pending:
+                return
+            pending.add(pane_id)
+
+            def sync_later() -> None:
+                pending.discard(pane_id)
+                manager = getattr(self, "pane_manager", None)
+                if (
+                    manager is None
+                    or pane_id not in manager.panes
+                    or str(getattr(self, "_active_linear_algebra_topic_id", ""))
+                    not in _DETERMINANT_MATRIX_TOOL_TOPICS
+                ):
+                    return
+                self._sync_determinant_matrix_transform_tool_now(pane_id, selection)
+
+            # Let all case panes finish their native renderer/layout callbacks
+            # before touching the shared WebEngine algebra surface or drawing
+            # the toolbar-owned VTK overlay.
+            QTimer.singleShot(150, sync_later)
+            return
+
+        self._sync_determinant_matrix_transform_tool_now(pane_id, selection)
+
+    def _sync_determinant_matrix_transform_tool_now(
+        self,
+        pane_id: str,
+        selection: StoryboardVisibility,
+    ) -> None:
+        """Execute the deferred 3.2 matrix-toolbar synchronization."""
+
+        panel = self.algebra_panel
+        pane = self.pane_manager.pane(pane_id)
+        if pane.scene_2d.get("matrix_transform_grid_deleted"):
+            return
+        compiled = self._active_linear_algebra_compiled
+        visible = set(selection.visible_aliases)
+        matrix_value = next(
+            (
+                operation.get("matrix")
+                for operation in compiled.plan.operations
+                if operation.get("op") == "geometry.transformed_grid"
+                and operation.get("alias") in visible
+            ),
+            None,
+        )
+        matrix_latex = self._basis_matrix_latex(matrix_value)
+        if matrix_latex is None:
+            return
+        latex = f"A={matrix_latex}"
+        model = panel.add_matrix_transform_tab(
+            pane_id,
+            pane.name,
+            editable=False,
+            activate=False,
+        )
+        runtime = pane.runtime
+        if runtime is None:
+            return
+        tool_grid = next(
+            (
+                operation
+                for alias, operation in getattr(runtime, "_agent_teaching_2d", {}).items()
+                if str(alias).startswith("la_tool_transform")
+                and isinstance(operation, dict)
+                and operation.get("op") == "geometry.transformed_grid"
+            ),
+            None,
+        )
+        if tool_grid is not None and tool_grid.get("matrix") == matrix_value:
+            model.set_matrix_transform_value(latex)
+            model.set_matrix_transform_grid_range(runtime._matrix_transform_grid_range)
+            return
+        model.set_matrix_transform_grid_range(5)
+        self._determinant_matrix_sync_in_progress = True
+        try:
+            self._apply_matrix_transform_from_tab(pane_id, latex, 5)
+        finally:
+            self._determinant_matrix_sync_in_progress = False
+
+    def _visible_teaching_matrix_grid(
         self,
         pane_id: str,
         selection: StoryboardVisibility | None = None,
     ) -> tuple[object, str, dict[str, object]] | None:
-        """Return the basis-grid operation selected for one teaching pane."""
+        """Return the matrix-grid operation selected for one teaching pane."""
         manager = getattr(self, "pane_manager", None)
         if (
             manager is None
@@ -3368,33 +3624,39 @@ class MainWindow:
             if (
                 alias in visible
                 and isinstance(operation, dict)
-                and operation.get("op") == "geometry.basis_grid"
+                and operation.get("op")
+                in {"geometry.basis_grid", "geometry.transformed_grid"}
             ):
                 return runtime, str(alias), operation
         return None
 
-    def _apply_teaching_basis_grid_settings(
+    def _apply_teaching_matrix_grid_settings(
         self,
         pane_id: str,
         matrix: CoordinateTransform,
         extent: float,
     ) -> bool:
-        """Resize a teaching basis grid without replacing the lesson scene."""
-        selected = self._visible_teaching_basis_grid(pane_id)
+        """Resize a teaching matrix grid without replacing the lesson scene."""
+        selected = self._visible_teaching_matrix_grid(pane_id)
         if selected is None:
             return False
         runtime, alias, operation = selected
         try:
+            matrix_key = (
+                "basis_matrix"
+                if operation.get("op") == "geometry.basis_grid"
+                else "matrix"
+            )
             basis = tuple(
                 tuple(float(value) for value in row)
-                for row in operation["basis_matrix"]  # type: ignore[index]
+                for row in operation[matrix_key]  # type: ignore[index]
             )
         except (KeyError, TypeError, ValueError):
             return False
         panel = getattr(self, "algebra_panel", None)
         if basis != matrix:
             if panel is not None:
-                panel.set_status("教学案例中的基矩阵为只读内容", is_error=True)
+                panel.set_status("教学案例中的矩阵为只读内容", is_error=True)
             return True
         bounds = (-extent, extent, -extent, extent)
         operation["bounds"] = list(bounds)
@@ -3403,12 +3665,24 @@ class MainWindow:
         pane.scene_2d["matrix_transform_grid_range"] = extent
         controller = getattr(runtime, "geometry_controller", None)
         if controller is not None:
-            controller.add_teaching_basis_grid(
-                basis,
-                bounds,
-                alias=alias,
-                color=str(operation.get("color", "#5b8def")),
-            )
+            if operation.get("op") == "geometry.basis_grid":
+                controller.add_teaching_basis_grid(
+                    basis,
+                    bounds,
+                    alias=alias,
+                    color=str(operation.get("color", "#5b8def")),
+                )
+            else:
+                controller.add_teaching_transformed_grid(
+                    basis,
+                    bounds,
+                    step=float(operation.get("step", 1.0)),
+                    alias=alias,
+                    color=str(operation.get("color", "#2f7ebd")),
+                    origin=tuple(float(value) for value in operation.get("origin", (0.0, 0.0))),
+                    show_source_grid=bool(operation.get("show_source_grid", False)),
+                    show_basis=bool(operation.get("show_basis", True)),
+                )
         renderer = pane.renderer_2d
         render = getattr(renderer, "render", None)
         if callable(render):
@@ -3534,7 +3808,15 @@ class MainWindow:
         self.algebra_panel.sync_layer(layer.id, updated)
 
     def _command_point_alias(self, alias: str) -> Point2D:
-        point = next((item for item in self._pane_scene().geometry_points if item.agent_alias == alias or item.name == alias), None)
+        # 命令引用优先使用稳定别名。显示名称只作旧数据的兼容回退，
+        # 否则名称 B 会抢先匹配别名 B（例如另一个点名为 B），把向量
+        # 的两个端点错误绑定到同一个点。
+        point = next(
+            (item for item in self._pane_scene().geometry_points if item.agent_alias == alias),
+            None,
+        )
+        if point is None:
+            point = next((item for item in self._pane_scene().geometry_points if item.name == alias), None)
         if point is None:
             raise CommandError(f"未知点别名: {alias}")
         return point
@@ -4414,6 +4696,9 @@ class MainWindow:
             self.algebra_panel.set_status("坐标格式无效，请输入形如 (x, y)", is_error=True)
             return
         before = self._capture_geometry_state()
+        point.constraint_kind = None
+        point.constraint_refs = ()
+        point.constraint_owned = False
         point.x, point.y = coordinates
         if self._pane_scene().geometry_controller is not None:
             self._pane_scene().geometry_controller.move_point(point_id, *coordinates)
@@ -4431,12 +4716,26 @@ class MainWindow:
         if entry.mode is SceneMode.THREE_D:
             self._add_builtin_surface(entry.builtin_id or entry.id)
             return
+        parameters = dict(entry.parameters)
+        try:
+            parsed = parse_curve_expression(entry.expression, entry.kind)
+            display_latex = format_parameterized_latex(
+                kind=parsed.kind,
+                simplified=parsed.simplified,
+                parameters=parameters,
+                source=parsed.source,
+                dependent_axis=parsed.dependent_axis,
+                parameter_range=parsed.parameter_range,
+                fallback=entry.latex,
+            )
+        except CurveExpressionError:
+            display_latex = entry.latex
         layer = CurveLayer(
             name=entry.name,
             kind=entry.kind,
             expression=entry.expression,
-            latex=entry.latex,
-            parameters=dict(entry.parameters),
+            latex=display_latex,
+            parameters=parameters,
             builtin_id=entry.id,
             color=entry.color,
         )
@@ -4628,7 +4927,12 @@ class MainWindow:
                 self._pending_curriculum_explanation = explanation_case
                 self._pending_curriculum_plan = lesson_plan
                 self._pending_curriculum_previous_scene = previous_scene_snapshot
-            self._open_teaching_case_panes(explanation_case, compiled)
+            text_only = not tuple(getattr(topic, "required_capabilities", ()))
+            if text_only:
+                # 纯讲义主题不注册案例窗格，也不触发 VTK/矩阵工具链。
+                self._close_teaching_case_panes()
+            else:
+                self._open_teaching_case_panes(explanation_case, compiled)
             if extended:
                 target_pane = next(iter(getattr(self, "_teaching_case_pane_ids", ())), None)
                 if target_pane is None:
@@ -4882,12 +5186,22 @@ class MainWindow:
         except (ExpressionError, LatexParseError) as error:
             self.algebra_panel.set_status(str(error), is_error=True)
             return
+        parameters = {name: 1.0 for name in parsed.parameter_names}
+        display_latex = format_parameterized_latex(
+            kind=parsed.kind,
+            simplified=parsed.simplified,
+            parameters=parameters,
+            source=parsed.source,
+            dependent_axis=parsed.dependent_axis,
+            parameter_ranges=parsed.parameter_ranges,
+            fallback=formula.latex,
+        )
         layer = SurfaceLayer(
             name=f"曲面 {len(self._pane_scene().layers) + 1}",
             kind=parsed.kind,
             expression=parsed.source,
-            latex=formula.latex,
-            parameters={name: 1.0 for name in parsed.parameter_names},
+            latex=display_latex,
+            parameters=parameters,
         )
         if self._add_layer(layer):
             self.algebra_panel.confirm_formula_saved()
@@ -4898,12 +5212,22 @@ class MainWindow:
         except (CurveExpressionError, LatexParseError) as error:
             self.algebra_panel.set_status(str(error), is_error=True)
             return
+        parameters = {name: 1.0 for name in parsed.parameter_names}
+        display_latex = format_parameterized_latex(
+            kind=parsed.kind,
+            simplified=parsed.simplified,
+            parameters=parameters,
+            source=parsed.source,
+            dependent_axis=parsed.dependent_axis,
+            parameter_range=parsed.parameter_range,
+            fallback=formula.latex,
+        )
         layer = CurveLayer(
             name=f"曲线 {len(self._pane_scene().curve_layers) + 1}",
             kind=parsed.kind,
             expression=parsed.source,
-            latex=formula.latex,
-            parameters={name: 1.0 for name in parsed.parameter_names},
+            latex=display_latex,
+            parameters=parameters,
         )
         if self._add_curve_layer(layer):
             self.algebra_panel.confirm_formula_saved()
@@ -4951,12 +5275,22 @@ class MainWindow:
         except (ExpressionError, LatexParseError) as error:
             self.algebra_panel.set_status(str(error), is_error=True)
             return
+        parameters = {name: current.parameters.get(name, 1.0) for name in parsed.parameter_names}
+        display_latex = format_parameterized_latex(
+            kind=parsed.kind,
+            simplified=parsed.simplified,
+            parameters=parameters,
+            source=parsed.source,
+            dependent_axis=parsed.dependent_axis,
+            parameter_ranges=parsed.parameter_ranges,
+            fallback=formula.latex,
+        )
         updated = replace(
             current,
             kind=parsed.kind,
             expression=parsed.source,
-            latex=formula.latex,
-            parameters={name: current.parameters.get(name, 1.0) for name in parsed.parameter_names},
+            latex=display_latex,
+            parameters=parameters,
             builtin_id=None,
         )
         try:
@@ -4979,12 +5313,22 @@ class MainWindow:
         except (CurveExpressionError, LatexParseError) as error:
             self.algebra_panel.set_status(str(error), is_error=True)
             return
+        parameters = {name: current.parameters.get(name, 1.0) for name in parsed.parameter_names}
+        display_latex = format_parameterized_latex(
+            kind=parsed.kind,
+            simplified=parsed.simplified,
+            parameters=parameters,
+            source=parsed.source,
+            dependent_axis=parsed.dependent_axis,
+            parameter_range=parsed.parameter_range,
+            fallback=formula.latex,
+        )
         updated = replace(
             current,
             kind=parsed.kind,
             expression=parsed.source,
-            latex=formula.latex,
-            parameters={name: current.parameters.get(name, 1.0) for name in parsed.parameter_names},
+            latex=display_latex,
+            parameters=parameters,
             builtin_id=None,
         )
         try:
@@ -5104,6 +5448,35 @@ class MainWindow:
                 for linear in self._pane_scene().linear_objects
                 if object_id in {linear.start_point_id, linear.end_point_id}
             )
+        while True:
+            removed_linear_ids = {
+                linear.id
+                for linear in self._pane_scene().linear_objects
+                if linear.id in removed_ids
+            }
+            dependent_point_ids: set[str] = set()
+            for point in self._pane_scene().geometry_points:
+                if (
+                    point.constraint_kind is None
+                    or not removed_linear_ids.intersection(point.constraint_refs)
+                ):
+                    continue
+                if point.constraint_owned:
+                    dependent_point_ids.add(point.id)
+                else:
+                    point.constraint_kind = None
+                    point.constraint_refs = ()
+                    point.constraint_owned = False
+            dependent_linear_ids = {
+                linear.id
+                for linear in self._pane_scene().linear_objects
+                if {linear.start_point_id, linear.end_point_id}.intersection(dependent_point_ids)
+            }
+            expanded = removed_ids | dependent_point_ids | dependent_linear_ids
+            if expanded == removed_ids:
+                break
+            removed_ids = expanded
+        removed_relation_aliases.update(removed_ids)
         linear_refs = {
             str(reference): linear.id
             for linear in (*self._pane_scene().linear_objects,)
@@ -5111,15 +5484,12 @@ class MainWindow:
             if reference is not None
         }
 
-        if isinstance(geometry, Point2D):
-            self._pane_scene().geometry_points = [point for point in self._pane_scene().geometry_points if point.id != object_id]
-            self._pane_scene().linear_objects = [
-                linear for linear in self._pane_scene().linear_objects if linear.id not in removed_ids
-            ]
-        else:
-            self._pane_scene().linear_objects = [
-                linear for linear in self._pane_scene().linear_objects if linear.id != object_id
-            ]
+        self._pane_scene().geometry_points = [
+            point for point in self._pane_scene().geometry_points if point.id not in removed_ids
+        ]
+        self._pane_scene().linear_objects = [
+            linear for linear in self._pane_scene().linear_objects if linear.id not in removed_ids
+        ]
         self._pane_scene()._vector_additions = [
             relation for relation in getattr(self._pane_scene(), "_vector_additions", [])
             if not (
@@ -5134,6 +5504,11 @@ class MainWindow:
             item_id for item_id in self._pane_scene()._two_d_object_order if item_id not in removed_ids
         ]
         if self._pane_scene()._pending_geometry_point_id in removed_ids:
+            self._set_2d_geometry_tool(self._pane_scene()._active_2d_tool)
+        if (
+            getattr(self._pane_scene(), "_pending_point_tool_point_id", None) in removed_ids
+            or getattr(self._pane_scene(), "_pending_point_tool_linear_id", None) in removed_ids
+        ):
             self._set_2d_geometry_tool(self._pane_scene()._active_2d_tool)
         if self._pane_scene().geometry_controller is not None:
             for removed_id in removed_ids:
@@ -5306,6 +5681,66 @@ class MainWindow:
         else:
             self._set_surface_range(layer_id, range_scale)
 
+    def _set_layer_parameter(self, layer_id: str, name: str, value: float) -> None:
+        """Update one symbolic parameter and its numeric algebra display."""
+        if self._pane_scene().scene_mode is SceneMode.TWO_D:
+            current = self._curve_layer(layer_id)
+            controller = self._pane_scene().curve_controller
+            if current is None or controller is None or name not in current.parameters:
+                return
+            parameters = dict(current.parameters)
+            parameters[name] = max(-10.0, min(10.0, round(float(value), 1)))
+            try:
+                parsed = parse_curve_expression(current.expression, current.kind)
+                display_latex = format_parameterized_latex(
+                    kind=parsed.kind,
+                    simplified=parsed.simplified,
+                    parameters=parameters,
+                    source=parsed.source,
+                    dependent_axis=parsed.dependent_axis,
+                    parameter_range=parsed.parameter_range,
+                    fallback=current.latex or current.expression,
+                )
+                updated = replace(current, parameters=parameters, latex=display_latex)
+                controller.update_layer(updated)
+            except (CurveExpressionError, CurveRenderError, ValueError) as error:
+                self.algebra_panel.set_status(f"无法更新参数 {name}: {error}", is_error=True)
+                return
+            self._pane_scene().curve_layers = [
+                updated if layer.id == layer_id else layer
+                for layer in self._pane_scene().curve_layers
+            ]
+        else:
+            current = self._layer(layer_id)
+            controller = self._pane_scene().layer_controller
+            if current is None or controller is None or name not in current.parameters:
+                return
+            parameters = dict(current.parameters)
+            parameters[name] = max(-10.0, min(10.0, round(float(value), 1)))
+            try:
+                parsed = parse_surface_expression(current.expression, current.kind)
+                display_latex = format_parameterized_latex(
+                    kind=parsed.kind,
+                    simplified=parsed.simplified,
+                    parameters=parameters,
+                    source=parsed.source,
+                    dependent_axis=parsed.dependent_axis,
+                    parameter_ranges=parsed.parameter_ranges,
+                    fallback=current.latex or current.expression,
+                )
+                updated = replace(current, parameters=parameters, latex=display_latex)
+                controller.update_layer(updated)
+            except (ExpressionError, LayerRenderError, ValueError) as error:
+                self.algebra_panel.set_status(f"无法更新参数 {name}: {error}", is_error=True)
+                return
+            self._pane_scene().layers = [
+                updated if layer.id == layer_id else layer
+                for layer in self._pane_scene().layers
+            ]
+        self.algebra_panel.sync_layer(layer_id, updated, refresh_settings=False)
+        self.algebra_panel.set_status(f"参数 {name} = {parameters[name]:g}")
+        self._pane_renderer().render()
+
     def _set_surface_range(self, layer_id: str, range_scale: float) -> None:
         current = self._layer(layer_id)
         if current is None or self._pane_scene().layer_controller is None:
@@ -5384,6 +5819,8 @@ class MainWindow:
         "ray": "射线",
         "vector": "向量",
         "annotation": "标记",
+        "midpoint": "中点",
+        "intersection": "交点",
         "addition": "向量加法",
     }
 
@@ -5392,6 +5829,8 @@ class MainWindow:
         if self._pane_scene().scene_mode is not SceneMode.TWO_D:
             tool = None
         self._pane_scene()._pending_geometry_point_id = None
+        self._pane_scene()._pending_point_tool_point_id = None
+        self._pane_scene()._pending_point_tool_linear_id = None
         self._pane_scene()._dragging_point_id = None
         self._pane_scene()._dragging_annotation_id = None
         self._pane_scene()._selection_start = None
@@ -5420,6 +5859,12 @@ class MainWindow:
                 "annotation": Qt.CursorShape.CrossCursor,
             }.get(tool, Qt.CursorShape.CrossCursor)
             self._pane_renderer().interactor.setCursor(cursor)
+        if tool == "point":
+            self.algebra_panel.set_status("点工具：单击画布创建点")
+        elif tool == "midpoint":
+            self.algebra_panel.set_status("中点工具：单击线段/向量，或先选一个点再选线段/向量")
+        elif tool == "intersection":
+            self.algebra_panel.set_status("交点工具：依次选择两个对象，或直接单击相交处")
 
     def _on_unified_2d_tool_selected(self, tool: ToolKind | None) -> None:
         """Route the single toolbar's selection to the active workspace."""
@@ -5469,6 +5914,10 @@ class MainWindow:
             self.algebra_panel.set_status("选择工具：单击选中，拖动点可移动，双击点可编辑坐标")
         elif tool == "point":
             self.algebra_panel.set_status("点工具：单击画布创建点")
+        elif tool == "midpoint":
+            self.algebra_panel.set_status("中点工具：单击线段/向量，或先选一个点再选线段/向量")
+        elif tool == "intersection":
+            self.algebra_panel.set_status("交点工具：依次选择两个对象，或直接单击相交处")
         elif tool is not None:
             if tool == "polygon":
                 self.algebra_panel.set_status("多边形工具：依次单击顶点，双击完成")
@@ -5508,9 +5957,10 @@ class MainWindow:
 
         model = panel.add_matrix_transform_tab(pane_id, pane.name)
         runtime = self._pane_scene(pane_id)
+        pane.scene_2d.pop("matrix_transform_grid_deleted", None)
         model.set_matrix_transform_grid_range(runtime._matrix_transform_grid_range)
         model.setFocus()
-        panel.set_status("请在代数列表中编辑 2×2 矩阵；网格大小可在行尾设置中调整")
+        panel.set_status("请在代数列表中编辑 2×2 矩阵；网格数量可在行尾设置中调整")
         toolbar = getattr(self, "two_d_geometry_toolbar", None)
         if toolbar is not None:
             toolbar.set_active_tool(None, emit_signal=False)
@@ -5526,16 +5976,27 @@ class MainWindow:
         panel = getattr(self, "algebra_panel", None)
         if manager is None or panel is None or pane_id not in manager.panes:
             return
-        matrix = self._parse_linear_algebra_matrix(text)
-        if matrix is None:
-            panel.set_status("矩阵格式无效，请输入两行两列数值", is_error=True)
+        expression = parse_matrix_expression(text)
+        if expression is None:
+            panel.set_status(
+                r"矩阵表达式无效；二维工具仅支持 2×2 的 A=\begin{pmatrix}...\end{pmatrix}，矩阵相乘使用 \cdot",
+                is_error=True,
+            )
             return
+        matrix = expression.result
         try:
             extent = max(1.0, min(float(grid_range), 100.0))
         except (TypeError, ValueError):
             panel.set_status("网格范围必须是 1 到 100 的数值", is_error=True)
             return
-        if self._apply_teaching_basis_grid_settings(pane_id, matrix, extent):
+        editor_getter = getattr(panel, "matrix_transform_editor", None)
+        editor = editor_getter(pane_id) if callable(editor_getter) else None
+        if editor is not None and callable(getattr(editor, "set_matrix_transform_value", None)):
+            editor.set_matrix_transform_value(
+                expression.input_latex,
+                expression.result_latex,
+            )
+        if self._apply_teaching_matrix_grid_settings(pane_id, matrix, extent):
             return
         with self._using_pane(pane_id):
             if self._pane_scene().scene_mode is not SceneMode.TWO_D:
@@ -5559,7 +6020,11 @@ class MainWindow:
             # from the former coordinate-system replacement behavior.
             render_2d = getattr(self, "_render_2d_scene", None)
             if callable(render_2d):
-                render_2d()
+                self._matrix_transform_apply_in_progress = True
+                try:
+                    render_2d()
+                finally:
+                    self._matrix_transform_apply_in_progress = False
             alias = "la_tool_transform"
             plan = build_matrix_grid_tool_plan(matrix, extent, alias)
             if not self._apply_linear_algebra_tool_plan(plan):
@@ -5567,7 +6032,41 @@ class MainWindow:
             sync_state = getattr(self, "_sync_pane_state", None)
             if callable(sync_state):
                 sync_state()
-            panel.set_status(f"已在当前窗格绘制矩阵网格，范围 ±{extent:g}（默认 5×5）")
+            panel.set_status(f"已在当前窗格绘制矩阵网格，范围 ±{extent:g}（默认值 5）")
+
+    def _delete_matrix_transform_grid(self, pane_id: str) -> None:
+        """Delete the matrix tool overlay and its algebra row from one pane."""
+
+        manager = getattr(self, "pane_manager", None)
+        panel = getattr(self, "algebra_panel", None)
+        if manager is None or panel is None or pane_id not in manager.panes:
+            return
+        with self._using_pane(pane_id):
+            runtime = self._pane_scene()
+            controller = getattr(runtime, "geometry_controller", None)
+            if controller is not None:
+                controller.clear_teaching_prefix("la_tool_transform")
+            runtime._agent_teaching_2d = {
+                alias: operation
+                for alias, operation in getattr(runtime, "_agent_teaching_2d", {}).items()
+                if not str(alias).startswith("la_tool_transform")
+            }
+            runtime._matrix_transform_grid_range = 5.0
+            runtime._linear_algebra_tool_preclear_state = None
+            pane = self._pane()
+            pane.scene_2d["matrix_transform_grid_range"] = 5.0
+            pane.scene_2d["matrix_transform_grid_deleted"] = True
+            sync_state = getattr(self, "_sync_pane_state", None)
+            if callable(sync_state):
+                sync_state()
+            renderer = self._pane_renderer(required=False)
+            render = getattr(renderer, "render", None)
+            if callable(render):
+                render()
+        remove_editor = getattr(panel, "remove_matrix_transform_tab", None)
+        if callable(remove_editor):
+            remove_editor(pane_id)
+        panel.set_status("已删除当前窗格的矩阵变换网格")
 
     def _set_matrix_coordinate_system_visibility(
         self, pane_id: str, show_original: bool, show_transformed: bool
@@ -5645,6 +6144,39 @@ class MainWindow:
         points = {point.id: point for point in self._pane_scene().geometry_points}
         return build_vector_tool_plan(tool, vectors, points, self._current_2d_bounds(), alias)
 
+    def _sync_vector_tool_direction_copy(self, operation: dict[str, object]) -> None:
+        """Draw the second vector at the first vector's origin when needed.
+
+        As with vector addition, this is a derived dashed copy; the user's
+        original vector and its endpoints are never rewritten.
+        """
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        alias = str(operation.get("alias", "vector-tool"))
+        if controller is None:
+            return
+        first = self._geometry_linear_ref(operation.get("source_vector_id"))
+        second = self._geometry_linear_ref(operation.get("direction_vector_id"))
+        if first is None or second is None:
+            controller.set_teaching_translated_vector(alias, (0.0, 0.0), (0.0, 0.0), visible=False)
+            return
+        first_start = self._geometry_point_ref(first.start_point_id)
+        second_start = self._geometry_point_ref(second.start_point_id)
+        second_end = self._geometry_point_ref(second.end_point_id)
+        if first_start is None or second_start is None or second_end is None:
+            controller.set_teaching_translated_vector(alias, (0.0, 0.0), (0.0, 0.0), visible=False)
+            return
+        separated = (
+            abs(first_start.x - second_start.x) > 1e-10
+            or abs(first_start.y - second_start.y) > 1e-10
+        )
+        controller.set_teaching_translated_vector(
+            alias,
+            (first_start.x, first_start.y),
+            (second_end.x - second_start.x, second_end.y - second_start.y),
+            visible=separated,
+            color=str(operation.get("direction_color", second.color)),
+        )
+
     def _geometry_point_ref(self, reference: object) -> Point2D | None:
         if not isinstance(reference, str):
             return None
@@ -5701,6 +6233,39 @@ class MainWindow:
             point.visible = visible
             self._move_addition_point(point, coordinates)
         return point
+
+    def _set_addition_point_name(self, point: Point2D, preferred_name: str) -> None:
+        """Give a generated addition point a label that cannot collide.
+
+        The old result endpoint was always named ``C``.  If the user had
+        already drawn a point C, the canvas rendered two indistinguishable C
+        labels.  Generated starts are intentionally unnamed; the result end
+        gets C only when that name is still free, otherwise it receives one
+        available name once and keeps that name during later redraws.
+        """
+        names_used_by_others = {
+            item.name
+            for item in self._pane_scene().geometry_points
+            if item.id != point.id and item.name
+        }
+        current_name = point.name.strip()
+        # A generated point is refreshed whenever a pane is restored or an
+        # input moves.  Reallocating its name here made D become E (and so on)
+        # merely because the point's own old name was now part of the scene.
+        if current_name and current_name not in names_used_by_others:
+            return
+        if preferred_name and preferred_name not in names_used_by_others:
+            target_name = preferred_name
+        elif preferred_name:
+            target_name = self._next_point_name()
+        else:
+            target_name = ""
+        if point.name == target_name:
+            return
+        point.name = target_name
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        if controller is not None:
+            controller.add_point(point)
 
     def _upsert_addition_linear(
         self,
@@ -5808,30 +6373,17 @@ class MainWindow:
                 replaced = True
                 break
         if not replaced:
+            # 输入向量属于用户已有对象，不能为满足首尾相接而移动其端点。
+            # 刷新关系时会建立独立的平移副本来表现三角形法则。
             relations.append(relation)
-            first = self._geometry_linear_ref(relation.get("vector_a"))
-            second = self._geometry_linear_ref(relation.get("vector_b"))
-            if first is not None and second is not None:
-                first_start = self._geometry_point_ref(first.start_point_id)
-                second_start = self._geometry_point_ref(second.start_point_id)
-                second_end = self._geometry_point_ref(second.end_point_id)
-                if first_start is not None and second_start is not None and second_end is not None:
-                    dx = first_start.x - second_start.x
-                    dy = first_start.y - second_start.y
-                    if abs(dx) > 1e-10 or abs(dy) > 1e-10:
-                        controller = getattr(self._pane_scene(), "geometry_controller", None)
-                        begin_batch = getattr(controller, "begin_batch_update", None)
-                        end_batch = getattr(controller, "end_batch_update", None)
-                        if callable(begin_batch):
-                            begin_batch()
-                        try:
-                            self._move_addition_point(second_start, (second_start.x + dx, second_start.y + dy))
-                            self._move_addition_point(second_end, (second_end.x + dx, second_end.y + dy))
-                        finally:
-                            if callable(end_batch):
-                                end_batch()
         self._pane_scene()._vector_additions = relations
         self._refresh_vector_addition(relation, create_missing=True)
+        # 工具直接生成关系时，之前只增量更新了画布演员；代数区的完整
+        # 列表要等下次重绘（例如最小化后恢复）才会重建。只在当前窗格
+        # 同步一次列表，后续拖动则由各对象的 sync_layer 轻量更新。
+        active_pane_id = getattr(getattr(self, "pane_manager", None), "active_pane_id", None)
+        if self._pane().pane_id == active_pane_id:
+            self.algebra_panel.set_layers(self._two_d_panel_layers())
 
     def _create_vector_addition_relation(self, first: Linear2D, second: Linear2D) -> bool:
         before = self._capture_geometry_state()
@@ -5852,6 +6404,10 @@ class MainWindow:
                 f"{prefix}__construction_a",
             ],
             "polygon_aliases": [f"{prefix}__parallelogram"],
+            # The toolbar always teaches the triangle rule: keep the
+            # translated copy visible as a dashed vector.  Lesson-authored
+            # relations may still opt out explicitly via their own flag.
+            "show_triangle_rule": True,
             "annotation_alias": f"{prefix}__formula",
             "last_selected_vector": second.id,
         }
@@ -5888,6 +6444,8 @@ class MainWindow:
         derived_visible = not isinstance(result_ref_value, str) or result_ref_value not in hidden_aliases
         show_triangle = relation.get("show_triangle_rule", True) is not False
         show_parallelogram = relation.get("show_parallelogram", True) is not False
+        first_label = str(relation.get("vector_a_label") or "a")
+        second_label = str(relation.get("vector_b_label") or "b")
         input_point_ids = {
             first.start_point_id,
             first.end_point_id,
@@ -5896,6 +6454,26 @@ class MainWindow:
         }
         controller = getattr(self._pane_scene(), "geometry_controller", None)
 
+        def result_point_reference(field: str, suffix: str) -> str:
+            """Normalize a sum endpoint to a relation-owned point alias.
+
+            Lesson data can name an output endpoint after an input point (such
+            as ``O`` or ``C``). Reusing that point would make the generated
+            vector mutate the source vector, so result endpoints always get
+            their own relation-owned identities.
+            """
+            fallback = f"{relation_id}__result__{suffix}"
+            candidate = str(relation.get(field) or fallback)
+            existing = self._geometry_point_ref(candidate)
+            return fallback if existing is not None and existing.id in input_point_ids else candidate
+
+        result_start_ref = result_point_reference("result_start", "origin")
+        result_end_ref = result_point_reference("result_end", "end")
+        if result_start_ref == result_end_ref:
+            result_end_ref = f"{relation_id}__result__end"
+        relation["result_start"] = result_start_ref
+        relation["result_end"] = result_end_ref
+
         def sync_visibility(item: Point2D | Linear2D | Annotation2D, visible: bool) -> None:
             item.visible = visible
             if controller is not None:
@@ -5903,10 +6481,8 @@ class MainWindow:
         result = self._geometry_linear_ref(relation.get("result_vector"))
         if result is None and create_missing:
             result_ref = str(relation.get("result_vector") or f"{relation_id}__result")
-            start_ref = str(relation.get("result_start") or f"{result_ref}__origin")
-            end_ref = str(relation.get("result_end") or f"{result_ref}__end")
-            result_start = self._upsert_addition_point(start_ref, "O", anchor, visible=derived_visible)
-            result_end = self._upsert_addition_point(end_ref, "C", result_end_coordinates, visible=derived_visible)
+            result_start = self._upsert_addition_point(result_start_ref, "", anchor, visible=derived_visible)
+            result_end = self._upsert_addition_point(result_end_ref, "C", result_end_coordinates, visible=derived_visible)
             result = self._upsert_addition_linear(
                 result_ref,
                 result_start,
@@ -5919,27 +6495,49 @@ class MainWindow:
                 visible=derived_visible,
             )
             relation["result_vector"] = result_ref
-            relation["result_start"] = start_ref
-            relation["result_end"] = end_ref
         if result is None:
             return False
+        if {result.start_point_id, result.end_point_id} & input_point_ids:
+            # Older relations may already bind the sum to input points. Detach
+            # them once so the result endpoint C remains independently movable.
+            result_start = self._upsert_addition_point(result_start_ref, "", anchor, visible=derived_visible)
+            result_end = self._upsert_addition_point(result_end_ref, "C", result_end_coordinates, visible=derived_visible)
+            result.start_point_id = result_start.id
+            result.end_point_id = result_end.id
+            if controller is not None:
+                controller.linears.pop(result.id, None)
+                controller.add_linear(result)
         result_start = self._geometry_point_ref(result.start_point_id)
         result_end = self._geometry_point_ref(result.end_point_id)
         if result_start is None or result_end is None:
             return False
+        # 讲义中预先声明的和向量可能带有 transformed_a/primary 角色；
+        # 关系刷新后它仍然是学生要读的 a+b 结果，必须走结果向量的代数格式。
+        result.role = "result"
+        result.label = "a+b"
+        self._set_addition_point_name(result_start, "")
+        self._set_addition_point_name(result_end, "C")
+        result.display_start_name = first_start.name.strip()
+        result.display_end_name = result_end.name.strip()
         begin_batch = getattr(controller, "begin_batch_update", None)
         end_batch = getattr(controller, "end_batch_update", None)
         if callable(begin_batch):
             begin_batch()
         self._pane_scene()._updating_vector_additions = True
         try:
+            # 选择的两条输入向量和画布、代数区使用同一套 a、b 记号。
+            first.label = first_label
+            second.label = second_label
+            if controller is not None:
+                controller.add_linear(first)
+                controller.add_linear(second)
             self._move_addition_point(result_start, anchor)
             self._move_addition_point(result_end, result_end_coordinates)
             # 隐藏结果向量时仍保留输入向量共用端点。
             sync_visibility(result_start, derived_visible or result_start.id in input_point_ids)
             sync_visibility(result_end, derived_visible or result_end.id in input_point_ids)
             sync_visibility(result, derived_visible)
-            result.label = f"a+b=({format_number(first_vector[0] + second_vector[0])},{format_number(first_vector[1] + second_vector[1])})"
+            # 图上只标示向量名称；分量计算属于代数区，不把坐标重复压在箭头上。
             if controller is not None:
                 controller.add_linear(result)
 
@@ -6080,8 +6678,12 @@ class MainWindow:
                     )
                     controller.set_teaching_visible(polygon_alias, derived_visible)
             annotation_alias = relation.get("annotation_alias")
-            if annotation_alias:
-                annotation_text = f"a+b=({format_number(first_vector[0] + second_vector[0])}, {format_number(first_vector[1] + second_vector[1])})"
+            show_result_annotation = relation.get(
+                "show_result_annotation",
+                not relation_id.startswith("la_addition_"),
+            ) is not False
+            if annotation_alias and show_result_annotation:
+                annotation_text = "a+b"
                 annotation = self._upsert_addition_annotation(
                     str(annotation_alias),
                     annotation_text,
@@ -6091,15 +6693,38 @@ class MainWindow:
                     ),
                     visible=derived_visible,
                 )
+            elif annotation_alias:
+                annotation = next(
+                    (
+                        item
+                        for item in self._pane_scene().annotations
+                        if item.agent_alias == str(annotation_alias)
+                    ),
+                    None,
+                )
+                if annotation is not None:
+                    sync_visibility(annotation, False)
         finally:
             self._pane_scene()._updating_vector_additions = False
             if callable(end_batch):
                 end_batch()
+        # 结果向量的代数式依赖端点坐标；仅同步端点行不会重新计算
+        # ``a+b=(...)``。关系刷新完成后立即重发当前窗格的完整对象列表，
+        # 避免必须最小化/恢复窗口才看到最新结果。
+        active_pane_id = getattr(getattr(self, "pane_manager", None), "active_pane_id", None)
+        panel = getattr(self, "algebra_panel", None)
+        if panel is not None and self._pane().pane_id == active_pane_id:
+            panel.set_layers(self._two_d_panel_layers())
         return True
 
     def _update_vector_additions_for_point(self, point_id: str) -> None:
+        # Toolbar projections are bound to their input vectors as well as
+        # vector-addition relations.  Refresh them before the addition early
+        # return so projection-only scenes are handled too.
+        self._update_vector_projections_for_point(point_id)
         relations = getattr(self._pane_scene(), "_vector_additions", ())
         if not relations:
+            self._refresh_constrained_points()
             return
         controller = getattr(self._pane_scene(), "geometry_controller", None)
         selected_id = controller.selected_id if controller is not None else None
@@ -6117,6 +6742,7 @@ class MainWindow:
                 if selected_vector not in {first.id, second.id}:
                     selected_vector = first.id
                 chosen = first if selected_vector == first.id else second
+                moved_input_point_id: str | None = None
                 chosen_start = self._geometry_point_ref(chosen.start_point_id)
                 other = second if chosen is first else first
                 other_start = self._geometry_point_ref(other.start_point_id)
@@ -6136,11 +6762,170 @@ class MainWindow:
                         chosen_end = self._geometry_point_ref(chosen.end_point_id)
                         if chosen_end is not None:
                             self._move_addition_point(chosen_end, (chosen_start.x + desired[0], chosen_start.y + desired[1]))
+                            # Moving the result endpoint changes one of the
+                            # original vectors.  Its live angle/projection
+                            # overlays must be refreshed after that endpoint
+                            # has received the new coordinates, not before.
+                            moved_input_point_id = chosen_end.id
                     finally:
                         if callable(end_batch):
                             end_batch()
+                if moved_input_point_id is not None:
+                    self._update_vector_projections_for_point(moved_input_point_id)
             if point_id in first_points or point_id in second_points or point_id == result_end_id:
                 self._refresh_vector_addition(relation, create_missing=True)
+        self._refresh_constrained_points()
+
+    def _update_vector_projections_for_point(self, point_id: str) -> None:
+        """Recompute live angle/projection overlays after an endpoint moves.
+
+        Toolbar drawings are teaching overlays rather than editable vectors.
+        Their operation records retain both source vector ids so each overlay
+        can be rebuilt from current point coordinates.
+        """
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        if controller is None:
+            return
+        teaching = getattr(self._pane_scene(), "_agent_teaching_2d", {})
+        for alias, raw_operation in tuple(teaching.items()):
+            if (
+                not isinstance(raw_operation, dict)
+                or raw_operation.get("op") not in {"geometry.angle_arc", "geometry.projection"}
+            ):
+                continue
+            source_ref = raw_operation.get("source_vector_id")
+            direction_ref = raw_operation.get("direction_vector_id")
+            if source_ref is None or direction_ref is None:
+                # Lecture-provided projections are static unless they opt into
+                # the toolbar's live source-vector binding.
+                continue
+            source = self._geometry_linear_ref(source_ref)
+            direction = self._geometry_linear_ref(direction_ref)
+            if (
+                source is None
+                or direction is None
+                or source.kind != "vector"
+                or direction.kind != "vector"
+            ):
+                continue
+            source_points = {source.start_point_id, source.end_point_id}
+            direction_points = {direction.start_point_id, direction.end_point_id}
+            if point_id not in source_points | direction_points:
+                continue
+            source_start = self._geometry_point_ref(source.start_point_id)
+            source_end = self._geometry_point_ref(source.end_point_id)
+            direction_start = self._geometry_point_ref(direction.start_point_id)
+            direction_end = self._geometry_point_ref(direction.end_point_id)
+            if any(point is None for point in (source_start, source_end, direction_start, direction_end)):
+                continue
+            assert source_start is not None and source_end is not None
+            assert direction_start is not None and direction_end is not None
+            vector = (source_end.x - source_start.x, source_end.y - source_start.y)
+            direction_vector = (
+                direction_end.x - direction_start.x,
+                direction_end.y - direction_start.y,
+            )
+            source_length = hypot(*vector)
+            direction_length = hypot(*direction_vector)
+            if source_length <= 1e-12 or direction_length <= 1e-12:
+                # Angle and projection both require two non-zero vectors. Keep
+                # the last valid overlay until the user restores them.
+                continue
+            operation = dict(raw_operation)
+            annotation_alias = str(operation.get("annotation_alias", f"{alias}_label"))
+            annotation = next(
+                (item for item in self._pane_scene().annotations if item.agent_alias == annotation_alias),
+                None,
+            )
+            if operation["op"] == "geometry.angle_arc":
+                cosine = (
+                    vector[0] * direction_vector[0]
+                    + vector[1] * direction_vector[1]
+                ) / (source_length * direction_length)
+                angle = degrees(acos(max(-1.0, min(1.0, cosine))))
+                radius = max(0.25, min(0.8, min(source_length, direction_length) * 0.22))
+                vertex = (source_start.x, source_start.y)
+                operation.update(
+                    {
+                        "vertex": [*vertex],
+                        "first": [vertex[0] + vector[0], vertex[1] + vector[1]],
+                        "second": [
+                            vertex[0] + direction_vector[0],
+                            vertex[1] + direction_vector[1],
+                        ],
+                        "radius": radius,
+                    }
+                )
+                teaching[str(alias)] = operation
+                controller.add_teaching_angle_arc(
+                    str(operation.get("alias", alias)),
+                    tuple(operation["vertex"]),  # type: ignore[arg-type]
+                    tuple(operation["first"]),  # type: ignore[arg-type]
+                    tuple(operation["second"]),  # type: ignore[arg-type]
+                    radius=radius,
+                    color=str(operation.get("color", "#d97845")),
+                )
+                if annotation is not None:
+                    bisector = (
+                        vector[0] / source_length + direction_vector[0] / direction_length,
+                        vector[1] / source_length + direction_vector[1] / direction_length,
+                    )
+                    bisector_length = hypot(*bisector)
+                    if bisector_length <= 1e-12:
+                        bisector = (-vector[1] / source_length, vector[0] / source_length)
+                    else:
+                        bisector = (
+                            bisector[0] / bisector_length,
+                            bisector[1] / bisector_length,
+                        )
+                    annotation.text = f"θ={angle:.1f}°"
+                    annotation.latex = annotation.text
+                    annotation.x = vertex[0] + bisector[0] * (radius + 0.28)
+                    annotation.y = vertex[1] + bisector[1] * (radius + 0.28)
+            else:
+                denominator = direction_length * direction_length
+                scale = (
+                    vector[0] * direction_vector[0]
+                    + vector[1] * direction_vector[1]
+                ) / denominator
+                projection = (
+                    scale * direction_vector[0],
+                    scale * direction_vector[1],
+                )
+                operation.update(
+                    {
+                        "vector": [vector[0], vector[1]],
+                        "direction": [direction_vector[0], direction_vector[1]],
+                        "origin": [source_start.x, source_start.y],
+                        "style": "dashed",
+                    }
+                )
+                teaching[str(alias)] = operation
+                controller.add_teaching_projection(
+                    vector,
+                    direction_vector,
+                    result_alias=str(operation.get("result_alias", f"{alias}_result")),
+                    foot_alias=str(operation.get("foot_alias", f"{alias}_foot")),
+                    residual_alias=str(operation.get("residual_alias", f"{alias}_residual")),
+                    alias=str(operation.get("alias", alias)),
+                    origin=(source_start.x, source_start.y),
+                    color=str(operation.get("color", "#2777b6")),
+                    style="dashed",
+                )
+                if annotation is not None:
+                    projection_x = format_number(projection[0])
+                    projection_y = format_number(projection[1])
+                    annotation.text = f"proj_b(a)=({projection_x}, {projection_y})"
+                    annotation.latex = (
+                        r"\operatorname{proj}_{b}(a)="
+                        rf"\left({projection_x},{projection_y}\right)"
+                    )
+                    annotation.x = source_start.x + 0.5 * projection[0]
+                    annotation.y = source_start.y + 0.5 * projection[1]
+            self._sync_vector_tool_direction_copy(operation)
+            if annotation is not None:
+                controller.annotations.pop(annotation.id, None)
+                controller.add_annotation(annotation)
 
     def _apply_linear_algebra_tool_plan(self, plan: CommandPlan) -> bool:
         preclear_state = getattr(self._pane_scene(), "_linear_algebra_tool_preclear_state", None)
@@ -6182,8 +6967,9 @@ class MainWindow:
             self._create_vector_addition_relation(first, second)
             self._select_geometry_object(None)
             return True
+        active_tool = self._pane_scene()._active_linear_algebra_tool or ""
         self._clear_linear_algebra_tool_overlays()
-        plan = self._build_linear_algebra_tool_plan(self._pane_scene()._active_linear_algebra_tool or "", (first, second))
+        plan = self._build_linear_algebra_tool_plan(active_tool, (first, second))
         if plan is not None and self._apply_linear_algebra_tool_plan(plan):
             self.algebra_panel.set_status(f"已完成{self._pane_scene()._active_linear_algebra_tool}计算")
         elif plan is None:
@@ -6249,6 +7035,281 @@ class MainWindow:
     def _set_snap_to_grid(self, enabled: bool) -> None:
         self._pane_scene()._snap_to_grid = bool(enabled)
         self.algebra_panel.set_status("已开启网格吸附" if enabled else "已关闭网格吸附")
+
+    def _linear_midpoint(self, linear: Linear2D) -> tuple[float, float] | None:
+        if linear.kind not in {"segment", "vector"}:
+            return None
+        start = self._geometry_point_ref(linear.start_point_id)
+        end = self._geometry_point_ref(linear.end_point_id)
+        if start is None or end is None:
+            return None
+        return ((start.x + end.x) * 0.5, (start.y + end.y) * 0.5)
+
+    @staticmethod
+    def _linear_parameter_is_valid(kind: str, parameter: float) -> bool:
+        tolerance = 1e-10
+        if kind in {"segment", "vector"}:
+            return -tolerance <= parameter <= 1.0 + tolerance
+        if kind == "ray":
+            return parameter >= -tolerance
+        return True
+
+    def _linear_intersection(
+        self,
+        first: Linear2D,
+        second: Linear2D,
+    ) -> tuple[float, float] | None:
+        """Return the unique intersection within both primitives' domains."""
+        first_start = self._geometry_point_ref(first.start_point_id)
+        first_end = self._geometry_point_ref(first.end_point_id)
+        second_start = self._geometry_point_ref(second.start_point_id)
+        second_end = self._geometry_point_ref(second.end_point_id)
+        if any(value is None for value in (first_start, first_end, second_start, second_end)):
+            return None
+        assert first_start is not None and first_end is not None
+        assert second_start is not None and second_end is not None
+        first_direction = (first_end.x - first_start.x, first_end.y - first_start.y)
+        second_direction = (second_end.x - second_start.x, second_end.y - second_start.y)
+        denominator = (
+            first_direction[0] * second_direction[1]
+            - first_direction[1] * second_direction[0]
+        )
+        scale = max(
+            1.0,
+            hypot(*first_direction) * hypot(*second_direction),
+        )
+        if abs(denominator) <= 1e-12 * scale:
+            return None
+        offset = (second_start.x - first_start.x, second_start.y - first_start.y)
+        first_parameter = (
+            offset[0] * second_direction[1]
+            - offset[1] * second_direction[0]
+        ) / denominator
+        second_parameter = (
+            offset[0] * first_direction[1]
+            - offset[1] * first_direction[0]
+        ) / denominator
+        if not self._linear_parameter_is_valid(first.kind, first_parameter):
+            return None
+        if not self._linear_parameter_is_valid(second.kind, second_parameter):
+            return None
+        return (
+            first_start.x + first_parameter * first_direction[0],
+            first_start.y + first_parameter * first_direction[1],
+        )
+
+    def _intersection_pair_near(
+        self,
+        x: float,
+        y: float,
+    ) -> tuple[Linear2D, Linear2D] | None:
+        best: tuple[float, Linear2D, Linear2D] | None = None
+        visible = [linear for linear in self._pane_scene().linear_objects if linear.visible]
+        tolerance_squared = (self._hit_tolerance() * 1.25) ** 2
+        for index, first in enumerate(visible):
+            for second in visible[index + 1:]:
+                intersection = self._linear_intersection(first, second)
+                if intersection is None:
+                    continue
+                distance_squared = (intersection[0] - x) ** 2 + (intersection[1] - y) ** 2
+                if distance_squared <= tolerance_squared and (
+                    best is None or distance_squared < best[0]
+                ):
+                    best = (distance_squared, first, second)
+        return (best[1], best[2]) if best is not None else None
+
+    def _set_point_constraint(
+        self,
+        point: Point2D,
+        kind: str,
+        references: tuple[str, ...],
+        coordinates: tuple[float, float],
+        *,
+        owned: bool,
+    ) -> None:
+        point.constraint_kind = kind  # type: ignore[assignment]
+        point.constraint_refs = references
+        point.constraint_owned = owned
+        point.visible = True
+        point.x, point.y = coordinates
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        if controller is not None:
+            controller.set_visible(point.id, True)
+            controller.move_point(point.id, *coordinates)
+        self.algebra_panel.sync_layer(point.id, point)
+
+    def _create_constrained_point(
+        self,
+        kind: str,
+        references: tuple[str, ...],
+        coordinates: tuple[float, float],
+        *,
+        point: Point2D | None = None,
+    ) -> Point2D:
+        owned = False
+        if point is None:
+            point, owned = self._get_or_create_geometry_point(
+                *coordinates,
+                record_history=False,
+            )
+        self._set_point_constraint(
+            point,
+            kind,
+            references,
+            coordinates,
+            owned=owned,
+        )
+        self.algebra_panel.set_layers(self._two_d_panel_layers())
+        self._select_geometry_object(point.id)
+        return point
+
+    def _handle_midpoint_tool_click(self, x: float, y: float) -> bool:
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        if controller is None:
+            return False
+        pending_id = getattr(self._pane_scene(), "_pending_point_tool_point_id", None)
+        linear_id = controller.hit_test_linear(
+            x,
+            y,
+            self._hit_tolerance(),
+            kinds={"segment", "vector"},
+        )
+        if pending_id is not None and linear_id is not None:
+            point = self._point_2d(pending_id)
+            linear = self._geometry_linear_ref(linear_id)
+            if point is None or linear is None:
+                self._pane_scene()._pending_point_tool_point_id = None
+                return False
+            if point.id in {linear.start_point_id, linear.end_point_id}:
+                self.algebra_panel.set_status("不能把对象自身的端点附着到其中点", is_error=True)
+                return True
+            coordinates = self._linear_midpoint(linear)
+            if coordinates is None:
+                return False
+            before = self._capture_geometry_state()
+            self._create_constrained_point(
+                "midpoint",
+                (linear.id,),
+                coordinates,
+                point=point,
+            )
+            self._pane_scene()._pending_point_tool_point_id = None
+            self._update_vector_additions_for_point(point.id)
+            self._record_geometry_change(before)
+            self.algebra_panel.set_status(f"已将点 {point.name} 附着到{self._TOOL_LABELS[linear.kind]} {linear.name} 的中点")
+            self._pane_renderer().render()
+            return True
+
+        hit_id = controller.hit_test(x, y, self._hit_tolerance())
+        hit_point = self._point_2d(hit_id)
+        if hit_point is not None:
+            self._pane_scene()._pending_point_tool_point_id = hit_point.id
+            self._select_geometry_object(hit_point.id)
+            self.algebra_panel.set_status(f"已选择点 {hit_point.name}，请再选择线段或向量")
+            self._pane_renderer().render()
+            return True
+        if linear_id is None:
+            self.algebra_panel.set_status("中点工具需要选择线段或向量", is_error=True)
+            return True
+        linear = self._geometry_linear_ref(linear_id)
+        coordinates = self._linear_midpoint(linear) if linear is not None else None
+        if linear is None or coordinates is None:
+            return False
+        before = self._capture_geometry_state()
+        point = self._create_constrained_point("midpoint", (linear.id,), coordinates)
+        self._record_geometry_change(before)
+        self.algebra_panel.set_status(f"已创建中点 {point.name}")
+        self._pane_renderer().render()
+        return True
+
+    def _handle_intersection_tool_click(self, x: float, y: float) -> bool:
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        if controller is None:
+            return False
+        pair = self._intersection_pair_near(x, y)
+        pending_id = getattr(self._pane_scene(), "_pending_point_tool_linear_id", None)
+        if pair is None:
+            linear_id = controller.hit_test_linear(
+                x,
+                y,
+                self._hit_tolerance(),
+                exclude={pending_id} if pending_id is not None else None,
+            )
+            if pending_id is None:
+                if linear_id is None:
+                    self.algebra_panel.set_status("请单击相交处，或依次选择两个直线类对象", is_error=True)
+                    return True
+                self._pane_scene()._pending_point_tool_linear_id = linear_id
+                selected = self._geometry_linear_ref(linear_id)
+                self._select_geometry_object(linear_id)
+                self.algebra_panel.set_status(
+                    f"已选择{self._TOOL_LABELS.get(selected.kind, '对象')} {selected.name}，请再选择一个对象"
+                    if selected is not None
+                    else "已选择第一个对象，请再选择一个对象"
+                )
+                self._pane_renderer().render()
+                return True
+            first = self._geometry_linear_ref(pending_id)
+            second = self._geometry_linear_ref(linear_id) if linear_id is not None else None
+            if first is None or second is None:
+                self.algebra_panel.set_status("请选择与第一个对象相交的另一个对象", is_error=True)
+                return True
+            pair = (first, second)
+
+        intersection = self._linear_intersection(*pair)
+        if intersection is None:
+            self.algebra_panel.set_status("所选对象没有唯一的有效交点", is_error=True)
+            return True
+        before = self._capture_geometry_state()
+        point = self._create_constrained_point(
+            "intersection",
+            (pair[0].id, pair[1].id),
+            intersection,
+        )
+        self._pane_scene()._pending_point_tool_linear_id = None
+        self._record_geometry_change(before)
+        self.algebra_panel.set_status(f"已创建交点 {point.name}")
+        self._pane_renderer().render()
+        return True
+
+    def _refresh_constrained_points(self) -> None:
+        """Recompute midpoint/intersection points after source endpoints move."""
+        controller = getattr(self._pane_scene(), "geometry_controller", None)
+        changed_ids: set[str] = set()
+        for _pass in range(max(1, len(self._pane_scene().geometry_points))):
+            changed_this_pass = False
+            for point in self._pane_scene().geometry_points:
+                coordinates: tuple[float, float] | None = None
+                if point.constraint_kind == "midpoint" and len(point.constraint_refs) == 1:
+                    linear = self._geometry_linear_ref(point.constraint_refs[0])
+                    coordinates = self._linear_midpoint(linear) if linear is not None else None
+                elif point.constraint_kind == "intersection" and len(point.constraint_refs) == 2:
+                    first = self._geometry_linear_ref(point.constraint_refs[0])
+                    second = self._geometry_linear_ref(point.constraint_refs[1])
+                    if first is not None and second is not None:
+                        coordinates = self._linear_intersection(first, second)
+                if point.constraint_kind is None:
+                    continue
+                visible = coordinates is not None
+                if point.visible != visible:
+                    point.visible = visible
+                    if controller is not None:
+                        controller.set_visible(point.id, visible)
+                    changed_this_pass = True
+                if coordinates is None:
+                    continue
+                if abs(point.x - coordinates[0]) <= 1e-10 and abs(point.y - coordinates[1]) <= 1e-10:
+                    continue
+                point.x, point.y = coordinates
+                if controller is not None:
+                    controller.move_point(point.id, *coordinates)
+                self.algebra_panel.sync_layer(point.id, point)
+                changed_ids.add(point.id)
+                changed_this_pass = True
+            if not changed_this_pass:
+                break
+        for point_id in changed_ids:
+            self._update_vector_projections_for_point(point_id)
 
     def _capture_geometry_state(self) -> _GeometryHistoryState:
         """复制当前几何状态，避免后续点移动修改历史快照。"""
@@ -6387,6 +7448,8 @@ class MainWindow:
         self._pane_scene()._vector_additions = [dict(relation) for relation in state.vector_additions]
         self._pane_scene()._two_d_object_order = list(state.object_order)
         self._pane_scene()._pending_geometry_point_id = None
+        self._pane_scene()._pending_point_tool_point_id = None
+        self._pane_scene()._pending_point_tool_linear_id = None
         self._pane_scene()._dragging_point_id = None
         self._pane_scene()._dragging_annotation_id = None
         self._pane_scene()._drag_moved = False
@@ -6481,6 +7544,16 @@ class MainWindow:
             event.accept()
             return True
         coordinates = self._maybe_snap(*coordinates)
+        if tool == "midpoint":
+            handled = self._handle_midpoint_tool_click(*coordinates)
+            if handled:
+                event.accept()
+            return handled
+        if tool == "intersection":
+            handled = self._handle_intersection_tool_click(*coordinates)
+            if handled:
+                event.accept()
+            return handled
         before = self._capture_geometry_state()
         point, created = self._get_or_create_geometry_point(*coordinates, record_history=False)
         if tool == "point":
@@ -6698,6 +7771,9 @@ class MainWindow:
         if self._pane_scene().geometry_controller is None:
             return False
         hit_id = self._pane_scene().geometry_controller.hit_test(x, y, self._hit_tolerance())
+        curve_controller = getattr(self._pane_scene(), "curve_controller", None)
+        if hit_id is None and curve_controller is not None:
+            hit_id = curve_controller.hit_test(x, y, self._hit_tolerance())
         self._select_geometry_object(hit_id)
         controller = self._pane_scene().geometry_controller
         self._pane_scene()._dragging_point_id = hit_id if hit_id in controller.points else None
@@ -6794,8 +7870,15 @@ class MainWindow:
                 return True
             if self._pane_scene()._dragging_point_id is not None:
                 snapped = self._maybe_snap(*coordinates)
+                dragged_point = self._point_2d(self._pane_scene()._dragging_point_id)
+                if dragged_point is not None and dragged_point.constraint_kind is not None:
+                    # A deliberate free drag releases a previously attached
+                    # midpoint/intersection from its source objects.
+                    dragged_point.constraint_kind = None
+                    dragged_point.constraint_refs = ()
+                    dragged_point.constraint_owned = False
                 self._pane_scene().geometry_controller.move_point(self._pane_scene()._dragging_point_id, *snapped)
-                point = self._point_2d(self._pane_scene()._dragging_point_id)
+                point = dragged_point
                 if point is not None:
                     point.x, point.y = snapped
                     self.algebra_panel.sync_layer(point.id, point)
@@ -6819,6 +7902,31 @@ class MainWindow:
                 )
                 self._pane_renderer().interactor.setCursor(cursor)
                 self._pane_renderer().render()
+            return False
+        if tool in {"midpoint", "intersection"}:
+            controller = self._pane_scene().geometry_controller
+            if tool == "midpoint":
+                hit_id = controller.hit_test(*coordinates, self._hit_tolerance())
+                if hit_id not in controller.points:
+                    hit_id = controller.hit_test_linear(
+                        *coordinates,
+                        self._hit_tolerance(),
+                        kinds={"segment", "vector"},
+                    )
+            else:
+                pair = self._intersection_pair_near(*coordinates)
+                hit_id = (
+                    pair[0].id
+                    if pair is not None
+                    else controller.hit_test_linear(*coordinates, self._hit_tolerance())
+                )
+            if controller.set_hover(hit_id):
+                self._pane_renderer().render()
+            self._pane_renderer().interactor.setCursor(
+                Qt.CursorShape.PointingHandCursor
+                if hit_id is not None
+                else Qt.CursorShape.CrossCursor
+            )
             return False
         if (
             tool in {"line", "segment", "dashed_segment", "ray", "vector"}
@@ -6936,8 +8044,18 @@ class MainWindow:
 
     def _select_geometry_object(self, object_id: str | None) -> None:
         self._pane().selected_object_ids = [object_id] if object_id is not None else []
+        curve_controller = getattr(self._pane_scene(), "curve_controller", None)
+        if curve_controller is not None:
+            curve_controller.set_selected(
+                object_id if self._curve_layer(object_id or "") is not None else None
+            )
         if self._pane_scene().geometry_controller is not None:
-            self._pane_scene().geometry_controller.set_selected(object_id)
+            geometry_id = (
+                object_id
+                if object_id is not None and self._geometry_object(object_id) is not None
+                else None
+            )
+            self._pane_scene().geometry_controller.set_selected(geometry_id)
             selected = self._geometry_object(object_id) if object_id is not None else None
             if isinstance(selected, Linear2D) and selected.kind == "vector":
                 for relation in getattr(self._pane_scene(), "_vector_additions", ()):
@@ -7252,7 +8370,12 @@ class MainWindow:
     def _open_agent_panel(self) -> None:
         if self.scene_settings_panel.isVisible():
             self._close_scene_settings(immediate=True)
-        self.agent_button.setChecked(True)
+        agent_button = getattr(self, "agent_button", None)
+        if agent_button is not None:
+            agent_button.setChecked(True)
+        title_bar = getattr(self, "title_bar", None)
+        if title_bar is not None:
+            title_bar.set_right_panel_expanded(True)
         self.agent_sidebar.show()
         self.agent_resize_handle.show()
         self.agent_sidebar.expand()
@@ -7261,7 +8384,12 @@ class MainWindow:
         self.agent_panel.view.setFocus()
 
     def _close_agent_panel(self, immediate: bool = False) -> None:
-        self.agent_button.setChecked(False)
+        agent_button = getattr(self, "agent_button", None)
+        if agent_button is not None:
+            agent_button.setChecked(False)
+        title_bar = getattr(self, "title_bar", None)
+        if title_bar is not None:
+            title_bar.set_right_panel_expanded(False)
         self.agent_sidebar.collapse()
         self.agent_resize_handle.hide()
         self._root_layout.activate()
@@ -7427,6 +8555,9 @@ class MainWindow:
             self.two_d_geometry_toolbar.setVisible(is_2d)
             if not is_2d:
                 self.two_d_geometry_toolbar.line_flyout.hide()
+                point_flyout = getattr(self.two_d_geometry_toolbar, "point_flyout", None)
+                if point_flyout is not None:
+                    point_flyout.hide()
         if hasattr(self, "three_d_geometry_toolbar"):
             is_3d = self._pane_scene().scene_mode is SceneMode.THREE_D
             self.three_d_geometry_toolbar.setVisible(is_3d)
@@ -7510,8 +8641,51 @@ class MainWindow:
 
     def _two_d_panel_layers(self) -> list[CurveLayer | GeometryObject | Annotation2D]:
         alias_filter = self._teaching_case_alias_filter()
+        compiled = getattr(self, "_active_linear_algebra_compiled", None)
+        toolbar_matrix_label_aliases: set[str] = set()
+        if str(getattr(compiled, "topic_id", "")) in _CHAPTER_TWO_MATRIX_TOOL_TOPICS:
+            toolbar_matrix_label_aliases = {
+                f"{alias}__label"
+                for operation in compiled.plan.operations
+                if operation.get("op") == "geometry.transformed_grid"
+                and isinstance(alias := operation.get("alias"), str)
+            }
+        addition_helper_aliases: set[str] = set()
+        for relation in getattr(self._pane_scene(), "_vector_additions", ()):
+            if not isinstance(relation, dict):
+                continue
+            translated = relation.get("translated_vector")
+            if isinstance(translated, str):
+                addition_helper_aliases.add(translated)
+            construction_aliases = relation.get("construction_aliases", ())
+            if isinstance(construction_aliases, (list, tuple)):
+                addition_helper_aliases.update(
+                    str(alias) for alias in construction_aliases if isinstance(alias, str)
+                )
 
         def include(item: CurveLayer | GeometryObject | Annotation2D) -> bool:
+            # 向量加法创建的无名锚点和虚线辅助边仅用于作图。将它们列入
+            # 代数区会出现 ``=(x,y)`` 和内部别名，既不对应学生看到的
+            # 向量，也无法说明数学含义。
+            if isinstance(item, Point2D) and not item.name.strip():
+                return False
+            # 几何证明中的无名向量仍需在代数区以端点形式显示
+            # ``\overrightarrow{AB}``；无名线段/射线只是内部构造，不能
+            # 退化成 ``=\overline{O?}`` 这样的占位公式。
+            if (
+                isinstance(item, Linear2D)
+                and item.kind != "vector"
+                and not item.name.strip()
+                and not (item.label or "").strip()
+            ):
+                return False
+            if isinstance(item, Linear2D) and item.agent_alias in addition_helper_aliases:
+                return False
+            if (
+                isinstance(item, Annotation2D)
+                and item.agent_alias in toolbar_matrix_label_aliases
+            ):
+                return False
             if alias_filter is None:
                 return True
             alias = getattr(item, "agent_alias", None)
@@ -7529,11 +8703,19 @@ class MainWindow:
         for object_id in objects:
             if object_id not in self._pane_scene()._two_d_object_order:
                 self._pane_scene()._two_d_object_order.append(object_id)
-        return [
-            objects[object_id]
-            for object_id in self._pane_scene()._two_d_object_order
-            if object_id in objects and include(objects[object_id])
-        ]
+        result: list[CurveLayer | GeometryObject | Annotation2D] = []
+        point_keys: set[tuple[str, float, float]] = set()
+        for object_id in self._pane_scene()._two_d_object_order:
+            if object_id not in objects or not include(objects[object_id]):
+                continue
+            item = objects[object_id]
+            if isinstance(item, Point2D):
+                key = (item.name.strip(), round(item.x, 10), round(item.y, 10))
+                if key in point_keys:
+                    continue
+                point_keys.add(key)
+            result.append(item)
+        return result
 
     def _three_d_vector_row(self, alias: str) -> AlgebraVector3D | None:
         operation = getattr(self._pane_scene(), "_agent_geometry3d", {}).get(alias)

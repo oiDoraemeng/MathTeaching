@@ -8,6 +8,7 @@ from ui.linear_algebra_tools import (
     build_transform_tool_plan,
     build_vector_tool_plan,
     parse_matrix,
+    parse_matrix_expression,
 )
 
 
@@ -63,6 +64,47 @@ def test_parse_matrix_accepts_common_forms_and_rejects_invalid_input() -> None:
     ) == ((0.5, -1.0), (0.0, 2.5))
     assert parse_matrix("1,0,0;0,1,0") is None
     assert parse_matrix("1,0;bad,1") is None
+
+
+def test_parse_matrix_expression_evaluates_a_chain_of_standard_latex_matrices() -> None:
+    expression = parse_matrix_expression(
+        r"A=\begin{pmatrix}1&2\\0&1\end{pmatrix}"
+        r"\cdot\begin{pmatrix}2&0\\0&3\end{pmatrix}"
+        r"\cdot\begin{pmatrix}1&1\\0&1\end{pmatrix}"
+    )
+
+    assert expression is not None
+    assert expression.result == ((2.0, 8.0), (0.0, 3.0))
+    assert expression.input_latex.endswith(
+        r"\cdot\begin{pmatrix}1&1\\0&1\end{pmatrix}"
+    )
+    assert expression.result_latex == r"\begin{pmatrix}2&8\\0&3\end{pmatrix}"
+    assert expression.display_latex.endswith(
+        r" = \begin{pmatrix}2&8\\0&3\end{pmatrix}"
+    )
+
+
+def test_parse_matrix_expression_recomputes_an_outdated_displayed_result() -> None:
+    expression = parse_matrix_expression(
+        r"A=\begin{pmatrix}2&0\\0&1\end{pmatrix}"
+        r"\cdot\begin{pmatrix}3&0\\0&1\end{pmatrix}"
+        r"=\begin{pmatrix}1&0\\0&1\end{pmatrix}"
+    )
+
+    assert expression is not None
+    assert expression.result == ((6.0, 0.0), (0.0, 1.0))
+    assert expression.result_latex == r"\begin{pmatrix}6&0\\0&1\end{pmatrix}"
+
+
+def test_parse_matrix_expression_rejects_nonstandard_forms_and_times() -> None:
+    assert parse_matrix_expression("A=[1 0;0 1]") is None
+    assert parse_matrix_expression(
+        r"A=\begin{pmatrix}1&0\\0&1\end{pmatrix}"
+        r"\times\begin{pmatrix}1&0\\0&1\end{pmatrix}"
+    ) is None
+    assert parse_matrix_expression(
+        r"A=\begin{pmatrix}1&0\\0&1&2\end{pmatrix}"
+    ) is None
 
 
 def test_vector_tool_plans_keep_math_explanation_with_drawing() -> None:

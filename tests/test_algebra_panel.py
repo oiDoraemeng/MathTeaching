@@ -7,11 +7,14 @@ from unittest.mock import MagicMock
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+from PySide6.QtCore import QEvent
+from PySide6.QtGui import QFocusEvent
 from PySide6.QtWidgets import QApplication, QFrame, QLabel, QWidget
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from MathInputWidget import FormulaListWidget, FormulaPreviewWidget
 from models.function_catalog import CatalogEntry
+from models.curve_layer import CurveLayer
 from models.scene_mode import SceneMode
 from models.geometry_2d import Annotation2D, Linear2D, Point2D
 from models.surface_layer import SurfaceLayer
@@ -39,6 +42,18 @@ class AlgebraPanelTests(unittest.TestCase):
         panel = AlgebraPanel()
 
         self.assertEqual(panel.new_formula_button.text(), "新增")
+
+    def test_function_catalog_is_removed_from_the_algebra_toolbar(self) -> None:
+        panel = AlgebraPanel()
+
+        self.assertFalse(panel.function_catalog_button.isVisibleTo(panel))
+
+    def test_viewport_toolbar_can_open_the_function_catalog(self) -> None:
+        panel = AlgebraPanel()
+
+        panel.open_function_catalog()
+
+        self.assertTrue(panel.catalog_popup.isVisible())
 
     def test_new_formula_action_inserts_an_inline_draft_without_a_popup(self) -> None:
         panel = AlgebraPanel()
@@ -297,6 +312,45 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertIn("bridge.editCancelled", html)
         self.assertIn("setLayers,", html)
         self.assertIn("setReadOnly(field, false)", html)
+        self.assertIn("bridge.keyboardRequested", html)
+        self.assertIn("applyExternalEdit", html)
+
+    def test_floating_keyboard_edits_are_applied_to_the_visible_list_field(self) -> None:
+        widget = FormulaListWidget()
+        widget._active_layer_id = "draft-1"
+        widget._page_ready = True
+        widget._run_javascript = MagicMock()
+
+        widget.apply_external_edit(r"y=x^2", 5)
+
+        script = widget._run_javascript.call_args.args[0]
+        self.assertIn("applyExternalEdit", script)
+        self.assertIn(r"y=x^2", script)
+        self.assertIn(", 5);", script)
+
+    def test_formula_focus_can_move_to_the_floating_keyboard_without_finishing_edit(self) -> None:
+        layer = SurfaceLayer("plane", "explicit", "z=x+y", latex=r"z=x+y")
+        widget = FormulaListWidget()
+        widget._layers = {layer.id: layer}
+        widget._active_layer_id = layer.id
+        widget.commit_active_mark = MagicMock()
+
+        widget.eventFilter(widget.web_view, QFocusEvent(QEvent.Type.FocusOut))
+
+        widget.commit_active_mark.assert_not_called()
+
+    def test_focus_leaving_formula_list_finishes_the_edit(self) -> None:
+        widget = FormulaListWidget()
+        widget._active_layer_id = "draft-1"
+        widget._page_ready = True
+        widget._run_javascript = MagicMock()
+
+        widget.finish_edit_on_focus_out()
+
+        self.assertIsNone(widget._active_layer_id)
+        widget._run_javascript.assert_called_once_with(
+            "if (window.formulaListReady) window.formulaList.finishEditOnFocusOut();"
+        )
 
     def test_advanced_lighting_button_requests_the_existing_lighting_editor(self) -> None:
         panel = AlgebraPanel()
@@ -394,6 +448,26 @@ class AlgebraPanelTests(unittest.TestCase):
 
         self.assertEqual(events, [(layer.id, 0.5)])
 
+    def test_parameter_sliders_use_the_shared_numeric_range_and_update_live(self) -> None:
+        layer = CurveLayer(
+            "line",
+            "explicit",
+            "y = a*x + b",
+            parameters={"a": 1.0, "b": 0.0},
+            latex="y=x",
+        )
+        panel = AlgebraPanel()
+        events: list[tuple[str, str, float]] = []
+        panel.parameter_changed.connect(lambda *event: events.append(event))
+
+        panel.settings_popup.open_layer(layer, None)
+        slider, value_label = panel.settings_popup._parameter_rows["b"]
+        slider.setValue(10)
+
+        self.assertEqual((slider.minimum(), slider.maximum(), slider.singleStep()), (-100, 100, 1))
+        self.assertEqual(value_label.text(), "1")
+        self.assertEqual(events, [(layer.id, "b", 1.0)])
+
     def test_surface_settings_expose_a_narrower_sampling_minimum(self) -> None:
         layer = SurfaceLayer("plane", "explicit", "z = x + y")
         panel = AlgebraPanel()
@@ -436,7 +510,8 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertTrue(point_payload["editable"])
         self.assertEqual(point_payload["latex"], "A=(1, 2)")
         self.assertFalse(segment_payload["editable"])
-        self.assertIn(r"\overline{", segment_payload["latex"])
+        self.assertEqual(segment_payload["latex"], "s_1")
+        self.assertNotIn("?", segment_payload["latex"])
 
     def test_user_annotation_rows_commit_and_close_immediately(self) -> None:
         annotation = Annotation2D("标记 1", "标记", 1.0, 2.0, latex="标记", editable=True)
@@ -481,9 +556,32 @@ class AlgebraPanelTests(unittest.TestCase):
 
         self.assertIn("layer-row matrix-transform-editor", source)
         self.assertIn(r"\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}", source)
+        self.assertIn("matrix-transform-input", source)
+        self.assertIn("matrix-transform-result", source)
+        self.assertIn("setReadOnly(result, true)", source)
         self.assertIn("bridge.matrixSettingsRequested", source)
         self.assertNotIn("matrix-transform-grid", source)
         self.assertNotIn("matrix-transform-range", source)
+
+    def test_matrix_transform_keeps_the_product_separate_from_editable_factors(self) -> None:
+        widget = FormulaListWidget()
+        widget._page_ready = True
+        widget._run_javascript = MagicMock()
+
+        widget.set_matrix_transform_value(
+            r"A=\begin{pmatrix}1&2\\0&1\end{pmatrix}"
+            r"\cdot\begin{pmatrix}2&0\\0&3\end{pmatrix}",
+            r"\begin{pmatrix}2&6\\0&3\end{pmatrix}",
+        )
+
+        self.assertNotIn("=\\begin{pmatrix}2&6", widget._matrix_transform_text)
+        self.assertEqual(
+            widget._matrix_transform_result,
+            r"\begin{pmatrix}2&6\\0&3\end{pmatrix}",
+        )
+        script = widget._run_javascript.call_args.args[0]
+        self.assertIn("setMatrixTransformValue", script)
+        self.assertIn(r"\\begin{pmatrix}2&6\\\\0&3\\end{pmatrix}", script)
 
     def test_matrix_transform_row_can_be_display_only_for_teaching_cases(self) -> None:
         widget = FormulaListWidget()
@@ -515,6 +613,25 @@ class AlgebraPanelTests(unittest.TestCase):
 
         self.assertTrue(panel.matrix_settings_popup.isVisible())
         self.assertEqual(events, [("pane-1", model._matrix_transform_text, 8)])
+
+    def test_matrix_settings_can_request_grid_deletion_and_remove_the_row(self) -> None:
+        panel = AlgebraPanel()
+        model = panel.add_matrix_transform_tab("pane-1")
+        deleted: list[str] = []
+        panel.matrix_transform_delete_requested.connect(deleted.append)
+
+        model.matrix_settings_requested.emit(None)
+        panel.matrix_settings_popup.delete_button.click()
+
+        self.assertEqual(deleted, ["pane-1"])
+        panel.remove_matrix_transform_tab("pane-1")
+        self.assertIsNone(panel.matrix_transform_editor("pane-1"))
+        self.assertFalse(model._matrix_transform_enabled)
+        self.assertEqual(
+            model._matrix_transform_text,
+            r"A=\begin{pmatrix}1&0\\0&1\end{pmatrix}",
+        )
+        self.assertEqual(model.matrix_transform_grid_range(), 5)
 
     def test_geometry_objects_use_the_geometry_delete_menu(self) -> None:
         first = Point2D("A", 1.0, 2.0)

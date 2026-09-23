@@ -31,7 +31,6 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-
 class HoverCloseTabBar(QTabBar):
     """Tab bar whose close affordance appears only while hovering a tab."""
     def __init__(self, parent=None):
@@ -182,7 +181,12 @@ class AlgebraPaneTabs(QWidget):
         self._resize_strip()
         self._ensure_current_visible()
 
-from MathInputWidget import FormulaEditorPopup, FormulaListWidget, FormulaPreviewWidget
+from MathInputWidget import (
+    FloatingMathKeyboard,
+    FormulaEditorPopup,
+    FormulaListWidget,
+    FormulaPreviewWidget,
+)
 from models.curve_layer import CurveLayer
 from models.function_catalog import CatalogEntry
 from models.geometry_2d import Annotation2D, GeometryObject, Linear2D, Point2D
@@ -232,6 +236,7 @@ class LayerSettingsPopup(QDialog):
     opacity_changed = Signal(str, float)
     line_width_changed = Signal(str, float)
     range_changed = Signal(str, float)
+    parameter_changed = Signal(str, str, float)
     delete_requested = Signal(str)
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -240,6 +245,7 @@ class LayerSettingsPopup(QDialog):
         self._is_curve = False
         self._color_dialog: QColorDialog | None = None
         self._color_target = "layer"
+        self._parameter_rows: dict[str, tuple[QSlider, QLabel]] = {}
         self.setObjectName("layerSettingsPopup")
         self.setWindowTitle("函数设置")
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
@@ -280,6 +286,11 @@ class LayerSettingsPopup(QDialog):
         layout.addWidget(self.line_width_row)
         self.range_row, self.range_slider, self.range_value = self._slider_row("采样范围", 10, 100)
         layout.addWidget(self.range_row)
+        self.parameter_group = QWidget(self)
+        self.parameter_layout = QVBoxLayout(self.parameter_group)
+        self.parameter_layout.setContentsMargins(0, 0, 0, 0)
+        self.parameter_layout.setSpacing(6)
+        layout.addWidget(self.parameter_group)
 
         self.delete_button = QPushButton("删除函数", self)
         self.delete_button.setToolTip("删除当前函数")
@@ -331,7 +342,20 @@ class LayerSettingsPopup(QDialog):
         self.intersection_color_row.setVisible(not self._is_curve)
         self.opacity_row.setVisible(not self._is_curve)
         self.line_width_row.setVisible(self._is_curve)
-        controls = (self.intersections_check, self.opacity_slider, self.line_width_slider, self.range_slider)
+        self._rebuild_parameter_controls(getattr(layer, "parameters", {}))
+        for name, (slider, value_label) in self._parameter_rows.items():
+            value = max(-10.0, min(10.0, float(getattr(layer, "parameters", {}).get(name, 0.0))))
+            slider.blockSignals(True)
+            slider.setValue(round(value * 10))
+            slider.blockSignals(False)
+            value_label.setText(f"{value:g}")
+        controls = (
+            self.intersections_check,
+            self.opacity_slider,
+            self.line_width_slider,
+            self.range_slider,
+            *(slider for slider, _value in self._parameter_rows.values()),
+        )
         for control in controls:
             control.blockSignals(True)
         try:
@@ -364,6 +388,43 @@ class LayerSettingsPopup(QDialog):
         self._show_animation.start()
         if anchor is not None:
             self.move(anchor)
+
+    def _rebuild_parameter_controls(self, parameters: dict[str, float]) -> None:
+        for index in range(self.parameter_layout.count() - 1, -1, -1):
+            item = self.parameter_layout.takeAt(index)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+        self._parameter_rows.clear()
+        for name in sorted(parameters):
+            row = QWidget(self.parameter_group)
+            row_layout = QHBoxLayout(row)
+            row_layout.setContentsMargins(0, 0, 0, 0)
+            label = QLabel(str(name), row)
+            label.setObjectName("sectionHeader")
+            label.setMinimumWidth(22)
+            slider = QSlider(Qt.Orientation.Horizontal, row)
+            slider.setRange(-100, 100)
+            slider.setSingleStep(1)
+            value = QLabel(row)
+            value.setMinimumWidth(42)
+            row_layout.addWidget(label)
+            row_layout.addWidget(slider, 1)
+            row_layout.addWidget(value)
+            self.parameter_layout.addWidget(row)
+            self._parameter_rows[str(name)] = (slider, value)
+            slider.valueChanged.connect(
+                lambda raw, parameter=str(name): self._emit_parameter(parameter, raw)
+            )
+        self.parameter_group.setVisible(bool(self._parameter_rows))
+
+    def _emit_parameter(self, name: str, raw_value: int) -> None:
+        value = raw_value / 10.0
+        row = self._parameter_rows.get(name)
+        if row is not None:
+            row[1].setText(f"{value:g}")
+        if self._layer_id is not None:
+            self.parameter_changed.emit(self._layer_id, name, value)
 
     def _emit_intersections(self, visible: bool) -> None:
         if self._layer_id is not None and not self._is_curve:
@@ -444,6 +505,7 @@ class MatrixTransformSettingsPopup(QDialog):
     """Settings opened from the matrix row's trailing ellipsis button."""
 
     grid_size_changed = Signal(int)
+    delete_requested = Signal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -464,15 +526,23 @@ class MatrixTransformSettingsPopup(QDialog):
         title.setObjectName("sectionHeader")
         layout.addWidget(title)
         row = QHBoxLayout()
-        row.addWidget(QLabel("网格大小", self))
+        row.addWidget(QLabel("网格数量", self))
         self.grid_size_spin = QSpinBox(self)
         self.grid_size_spin.setRange(1, 100)
         self.grid_size_spin.setValue(5)
-        self.grid_size_spin.setToolTip("设置矩阵网格的显示范围")
+        self.grid_size_spin.setToolTip("设置矩阵网格数量")
         row.addWidget(self.grid_size_spin)
         row.addStretch()
         layout.addLayout(row)
+        self.delete_button = QPushButton("删除网格", self)
+        self.delete_button.setToolTip("删除当前窗格的矩阵变换网格")
+        layout.addWidget(self.delete_button)
         self.grid_size_spin.valueChanged.connect(self.grid_size_changed)
+        self.delete_button.clicked.connect(self._request_delete)
+
+    def _request_delete(self) -> None:
+        self.hide()
+        self.delete_requested.emit()
 
     def open_at(self, grid_size: int, anchor: QPoint | None) -> None:
         blocker = QSignalBlocker(self.grid_size_spin)
@@ -590,7 +660,13 @@ class CatalogEntryRow(QFrame):
 
     selected = Signal(str)
 
-    def __init__(self, entry: CatalogEntry, parent: QWidget | None = None, *, initial_theme: ThemeName = "light") -> None:
+    def __init__(
+        self,
+        entry: CatalogEntry,
+        parent: QWidget | None = None,
+        *,
+        initial_theme: ThemeName = "light",
+    ) -> None:
         super().__init__(parent)
         self.entry_id = entry.id
         self.setObjectName("catalogEntryRow")
@@ -663,7 +739,6 @@ class FunctionCatalogPopup(QDialog):
     def open_at(self, anchor: QPoint) -> None:
         self.show()
         self.move(anchor)
-        self.raise_()
 
     def _request(self, entry_id: str) -> None:
         self.hide()
@@ -788,6 +863,7 @@ class AlgebraPanel(QFrame):
     opacity_changed = Signal(str, float)
     line_width_changed = Signal(str, float)
     range_changed = Signal(str, float)
+    parameter_changed = Signal(str, str, float)
     catalog_requested = Signal(str)
     # 为插件和旧测试保留该信号；工具栏中已没有对应的可见操作入口。
     builtin_requested = Signal(str)
@@ -799,9 +875,11 @@ class AlgebraPanel(QFrame):
     matrix_transform_requested = Signal(str, str)
     matrix_transform_settings_requested = Signal(str, str, int)
     matrix_transform_visibility_requested = Signal(str, bool, bool)
+    matrix_transform_delete_requested = Signal(str)
     three_d_vector_updated = Signal(str, str, str)
     annotation_updated = Signal(str, str, str)
     pane_changed = Signal(str)
+    status_changed = Signal(str, bool)
     MIN_WIDTH = 260
     DEFAULT_WIDTH = 320
     MAX_WIDTH = 420
@@ -818,6 +896,12 @@ class AlgebraPanel(QFrame):
         self._pane_models: dict[str, FormulaListWidget] = {}
         self._matrix_transform_panes: set[str] = set()
         self._matrix_settings_model: FormulaListWidget | None = None
+        self.floating_keyboard: FloatingMathKeyboard | None = None
+        self._floating_keyboard_model: FormulaListWidget | None = None
+        self._floating_keyboard_anchor: QWidget | None = None
+        application = QApplication.instance()
+        if application is not None:
+            application.focusChanged.connect(self._on_application_focus_changed)
         self._pane_manager = None
         self.inline_editor = None
         self.setObjectName("algebraPanel")
@@ -836,10 +920,10 @@ class AlgebraPanel(QFrame):
         self.new_formula_button.setFixedWidth(44)
         self.function_catalog_button = self._tool_button("函数", "函数目录")
         self.function_catalog_button.setFixedWidth(44)
+        self.function_catalog_button.setVisible(False)
         self.linear_algebra_button = self._tool_button("线性代数", "线性代数案例")
         self.linear_algebra_button.setFixedWidth(72)
         toolbar.addWidget(self.new_formula_button)
-        toolbar.addWidget(self.function_catalog_button)
         toolbar.addWidget(self.linear_algebra_button)
         layout.addLayout(toolbar)
 
@@ -897,24 +981,15 @@ class AlgebraPanel(QFrame):
         self.settings_popup.opacity_changed.connect(self.opacity_changed)
         self.settings_popup.line_width_changed.connect(self.line_width_changed)
         self.settings_popup.range_changed.connect(self.range_changed)
+        self.settings_popup.parameter_changed.connect(self.parameter_changed)
         self.settings_popup.delete_requested.connect(self.delete_requested)
         self.matrix_settings_popup.grid_size_changed.connect(self._change_matrix_grid_size)
+        self.matrix_settings_popup.delete_requested.connect(self._delete_matrix_grid)
         self.geometry_settings_popup.delete_requested.connect(self.delete_requested)
         self.intersection_popup.requested.connect(self.manual_intersection_requested)
         self.catalog_popup.requested.connect(self.catalog_requested)
         self.linear_algebra_popup.requested.connect(self.linear_algebra_requested)
-        self.formula_list.edit_requested.connect(self._open_inline_formula_for_layer)
-        self.formula_list.formula_submitted.connect(
-            lambda layer_id, latex, model=self.formula_list: self._submit_inline_formula_from_model(
-                model, layer_id, latex
-            )
-        )
-        self.formula_list.edit_cancelled.connect(self._cancel_inline_formula_edit)
-        self.formula_list.visibility_changed.connect(self.visibility_changed)
-        self.formula_list.settings_requested.connect(self._open_settings)
-        self.formula_list.matrix_settings_requested.connect(
-            lambda anchor, model=self.formula_list: self._open_matrix_settings(model, anchor)
-        )
+        self._wire_formula_list(self.formula_list)
 
     def showEvent(self, event: QShowEvent) -> None:
         super().showEvent(event)
@@ -942,6 +1017,8 @@ class AlgebraPanel(QFrame):
             model.set_theme(theme)
         self.formula_popup.set_theme(theme)
         self.catalog_popup.set_theme(theme)
+        if self.floating_keyboard is not None:
+            self.floating_keyboard.set_theme(theme)
         for preview in self.findChildren(FormulaPreviewWidget):
             preview.set_theme(theme)
         opaque_popups = {
@@ -1148,7 +1225,27 @@ class AlgebraPanel(QFrame):
     def matrix_transform_editor(self, pane_id: str):
         """Return the WebEngine-backed matrix editor host for a pane."""
         model = self._pane_models.get(str(pane_id))
-        return model if model is not None and str(pane_id) in self._matrix_transform_panes else None
+        return (
+            model
+            if model is not None
+            and str(pane_id) in self._matrix_transform_panes
+            and model._matrix_transform_enabled
+            else None
+        )
+
+    def remove_matrix_transform_tab(self, pane_id: str) -> None:
+        """Remove the matrix row while retaining its one-time signal wiring."""
+        model = self._pane_models.get(str(pane_id))
+        if model is None or str(pane_id) not in self._matrix_transform_panes:
+            return
+        model.set_matrix_transform_value(
+            r"A=\begin{pmatrix}1&0\\0&1\end{pmatrix}"
+        )
+        model.set_matrix_transform_grid_range(5)
+        model.set_matrix_transform_editor(False)
+        if self._matrix_settings_model is model:
+            self._matrix_settings_model = None
+            self.matrix_settings_popup.hide()
 
     def _on_tab_changed(self, index: int) -> None:
         if index < 0 or index >= len(self._pane_models):
@@ -1178,6 +1275,22 @@ class AlgebraPanel(QFrame):
 
     def _wire_formula_list(self, formula_list: FormulaListWidget) -> None:
         formula_list.edit_requested.connect(self._open_inline_formula_for_layer)
+        formula_list.keyboard_requested.connect(
+            lambda layer_id, latex, position, model=formula_list: self._open_floating_keyboard(
+                model, layer_id, latex, position
+            )
+        )
+        formula_list.edit_state_changed.connect(
+            lambda layer_id, latex, position, model=formula_list: self._sync_floating_keyboard(
+                model, layer_id, latex, position
+            )
+        )
+        formula_list.keyboard_dismissed.connect(
+            lambda model=formula_list: self._hide_floating_keyboard(model)
+        )
+        formula_list.focus_lost.connect(
+            lambda model=formula_list: self._finish_formula_edit_on_focus_lost(model)
+        )
         # 捕获原模型，防止延迟回调把编辑应用到新选中的窗格。
         formula_list.formula_submitted.connect(
             lambda layer_id, latex, model=formula_list: self._submit_inline_formula_from_model(
@@ -1190,6 +1303,111 @@ class AlgebraPanel(QFrame):
         formula_list.matrix_settings_requested.connect(
             lambda anchor, model=formula_list: self._open_matrix_settings(model, anchor)
         )
+
+    def _ensure_floating_keyboard(self) -> FloatingMathKeyboard:
+        if self.floating_keyboard is None:
+            self.floating_keyboard = FloatingMathKeyboard(
+                self.window(), initial_theme=self._effective_theme
+            )
+            self.floating_keyboard.set_anchor_widget(self._floating_keyboard_anchor)
+            self.floating_keyboard.edit_state_changed.connect(
+                self._apply_floating_keyboard_edit
+            )
+            self.floating_keyboard.dismissed.connect(
+                self._on_floating_keyboard_dismissed
+            )
+            self.floating_keyboard.focus_lost.connect(
+                self._on_floating_keyboard_focus_lost
+            )
+        return self.floating_keyboard
+
+    def set_floating_keyboard_anchor(self, widget: QWidget | None) -> None:
+        """Anchor the keyboard to the center viewport so algebra rows stay visible."""
+        self._floating_keyboard_anchor = widget
+        if self.floating_keyboard is not None:
+            self.floating_keyboard.set_anchor_widget(widget)
+
+    def _open_floating_keyboard(
+        self,
+        model: FormulaListWidget,
+        layer_id: str,
+        latex: str,
+        position: int,
+    ) -> None:
+        if model._active_layer_id != layer_id:
+            return
+        self._floating_keyboard_model = model
+        self._ensure_floating_keyboard().open_keyboard(latex, position)
+
+    def _sync_floating_keyboard(
+        self,
+        model: FormulaListWidget,
+        layer_id: str,
+        latex: str,
+        position: int,
+    ) -> None:
+        keyboard = self.floating_keyboard
+        if (
+            keyboard is None
+            or self._floating_keyboard_model is not model
+            or model._active_layer_id != layer_id
+        ):
+            return
+        keyboard.sync_state(latex, position)
+
+    def _apply_floating_keyboard_edit(self, latex: str, position: int) -> None:
+        model = self._floating_keyboard_model
+        if model is not None:
+            model.apply_external_edit(latex, position)
+
+    def _hide_floating_keyboard(self, model: FormulaListWidget | None = None) -> None:
+        if model is not None and self._floating_keyboard_model is not model:
+            return
+        if self.floating_keyboard is not None:
+            self.floating_keyboard.dismiss()
+        self._floating_keyboard_model = None
+
+    def _on_floating_keyboard_dismissed(self) -> None:
+        self._floating_keyboard_model = None
+
+    def _on_floating_keyboard_focus_lost(self) -> None:
+        model = self._floating_keyboard_model
+        if model is not None:
+            self._finish_formula_edit_on_focus_lost(model)
+
+    def _on_application_focus_changed(self, _old: QWidget | None, _new: QWidget | None) -> None:
+        """End inline editing when focus leaves both the row and its keyboard."""
+        model = self._floating_keyboard_model
+        if model is None or model._active_layer_id is None:
+            return
+        keyboard = self.floating_keyboard
+        if model.has_focus_inside() or (
+            keyboard is not None and keyboard.has_focus_inside()
+        ):
+            return
+        self._finish_formula_edit_on_focus_lost(model)
+
+    def _finish_formula_edit_on_focus_lost(self, model: FormulaListWidget) -> None:
+        """Leave rows editable only while focus is in the row or its keyboard."""
+        QTimer.singleShot(0, lambda: self._finish_formula_edit_if_needed(model))
+
+    def _finish_formula_edit_if_needed(self, model: FormulaListWidget) -> None:
+        if model._active_layer_id is None:
+            return
+        keyboard = self.floating_keyboard
+        if (
+            keyboard is not None
+            and self._floating_keyboard_model is model
+            and keyboard.isVisible()
+            and keyboard.has_focus_inside()
+        ):
+            return
+        if model.has_focus_inside():
+            return
+        active_layer_id = model._active_layer_id
+        model.finish_edit_on_focus_out()
+        if self._inline_active_layer_id == active_layer_id:
+            self._inline_active_layer_id = None
 
     def set_catalog_entries(self, entries: Iterable[CatalogEntry]) -> None:
         self.catalog_popup.set_entries(entries)
@@ -1228,11 +1446,18 @@ class AlgebraPanel(QFrame):
         self.formula_list.begin_edit(layer_id)
 
     def set_status(self, message: str, is_error: bool = False) -> None:
+        """Publish application status without occupying algebra-panel space.
+
+        The main window owns the persistent status area at the bottom.  Keeping
+        this label hidden preserves the long-standing public widget API while
+        ensuring a scene/action message is never duplicated inside the panel.
+        """
         self.status_label.setText(message)
-        self.status_label.setVisible(bool(message))
+        self.status_label.setVisible(False)
         self.status_label.setProperty("isError", is_error)
         self.status_label.style().unpolish(self.status_label)
         self.status_label.style().polish(self.status_label)
+        self.status_changed.emit(message, is_error)
 
     def confirm_formula_saved(self) -> None:
         self._active_layer_id = None
@@ -1263,6 +1488,13 @@ class AlgebraPanel(QFrame):
         self.settings_popup.hide()
         self.formula_list.cancel_edit()
         self.catalog_popup.open_at(self._popup_anchor(self.function_catalog_button))
+
+    def open_function_catalog(self, anchor: QPoint | None = None) -> None:
+        """Open the function directory from a viewport toolbar button."""
+        self.settings_popup.hide()
+        self.formula_list.cancel_edit()
+        self.linear_algebra_popup.hide()
+        self.catalog_popup.open_at(anchor or self._popup_anchor(self.linear_algebra_button))
 
     def _open_linear_algebra(self) -> None:
         self.settings_popup.hide()
@@ -1327,6 +1559,15 @@ class AlgebraPanel(QFrame):
             return
         model.set_matrix_transform_grid_range(value)
         model.submit_matrix_transform()
+
+    def _delete_matrix_grid(self) -> None:
+        model = self._matrix_settings_model
+        if model is None:
+            return
+        pane_id = self._pane_id_for_model(model)
+        self._matrix_settings_model = None
+        self.matrix_settings_popup.hide()
+        self.matrix_transform_delete_requested.emit(pane_id)
 
     def _open_manual_intersection_popup(self) -> None:
         if self.auto_intersections_action.isChecked():
@@ -1421,12 +1662,18 @@ class AlgebraPanel(QFrame):
     def _popup_anchor(self, widget: QWidget) -> QPoint:
         return widget.mapToGlobal(QPoint(0, widget.height() + 4))
 
-    def sync_layer(self, layer_id: str, layer: Layer | None) -> None:
+    def sync_layer(
+        self,
+        layer_id: str,
+        layer: Layer | None,
+        *,
+        refresh_settings: bool = True,
+    ) -> None:
         if layer is None:
             return
         self._layers = [layer if current.id == layer_id else current for current in self._layers]
         self.formula_list.sync_layer(layer_id, layer)
-        if self.settings_popup.isVisible() and self.settings_popup._layer_id == layer_id:
+        if refresh_settings and self.settings_popup.isVisible() and self.settings_popup._layer_id == layer_id:
             self.settings_popup.open_layer(layer, None)
         if self.geometry_settings_popup.isVisible() and self.geometry_settings_popup._object_id == layer_id:
             self.geometry_settings_popup.open_geometry(layer, None)
