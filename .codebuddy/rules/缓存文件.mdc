@@ -1,0 +1,9 @@
+---
+description: 
+alwaysApply: true
+enabled: true
+updatedAt: 2026-09-16T02:22:19.401Z
+provider: 
+---
+
+缓存文件不要直接放在根目录下，先创建.temp缓存文件夹 用完删除
