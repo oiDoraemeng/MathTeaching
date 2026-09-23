@@ -42,6 +42,14 @@ describe("Agent Web timeline layout", () => {
     expect(css).toContain(".math-case-structured .markdown-content th, .math-case-structured .markdown-content td");
   });
 
+  it("keeps text-only Chapter 3 lessons on the same lecture typography as visual lessons", () => {
+    const css = layoutCss();
+    expect(css).toContain(".math-case-view--chapter-three-text .math-case-header");
+    expect(css).toContain(".math-case-view--chapter-three-text .math-case-structured { font-size: 15px; line-height: 1.85; }");
+    expect(css).toContain(".math-case-view--chapter-three-text .math-case-header h1 { font-size: 24px; }");
+    expect(css).toContain(".math-case-view--chapter-three-text .math-case-section h3 { margin: 4px 0 10px; font-size: 14px; }");
+  });
+
   it("enforces readable text and minimum interaction targets", () => {
     const textFloor = [
       ".turn-actions button",

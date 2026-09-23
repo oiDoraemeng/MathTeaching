@@ -144,4 +144,176 @@ describe("MathCaseView chapters 4-8 payload", () => {
     expect(visibleMath).not.toContain("\\boldsymbol");
     expect(visibleMath).not.toContain("\\n");
   });
+
+  it("5.2 keeps the lecture definition heading and full worked-example title", () => {
+    const { container } = render(<MathCaseView caseData={{
+      id: "ch05.affine.solution-set",
+      topicId: "ch05.affine.solution-set",
+      category: "线性方程组",
+      name: "非齐次方程组的解结构",
+      formula: "",
+      steps: ["若 $\\boldsymbol x_p$ 是特解，则通解为 $\\boldsymbol x_p+\\operatorname{Null}(\\boldsymbol A)$。"],
+      conclusion: "解集是零空间的平移。",
+      definition: "**（非齐次方程组的解结构）** 设 $\\boldsymbol x_p$ 是一个特解。",
+      workedExamples: [{
+        id: "example.ch05.affine.solution-set.line",
+        title: "讲义例题：非齐次解集是一条不过原点的直线",
+        calculation: ["$$\\boldsymbol A=\\begin{pmatrix}1&2\\\\2&4\\end{pmatrix}$$"],
+      }],
+      sections: [
+        { id: "definition", title: "定义" },
+        { id: "derivation", title: "证明" },
+        { id: "worked_examples", title: "数学案例" },
+      ],
+      caseLayout: {
+        defaultPaneCount: 2,
+        cases: [
+          { id: "homogeneous", topicId: "ch05.affine.solution-set", exampleRef: "example.ch05.affine.solution-set.line", claimRefs: [], stageRefs: ["homogeneous-stage"], purpose: "零空间" },
+          { id: "solution", topicId: "ch05.affine.solution-set", exampleRef: "example.ch05.affine.solution-set.line", claimRefs: [], stageRefs: ["solution-stage"], purpose: "平移后的解集" },
+        ],
+      },
+    }} />);
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "讲义例题：非齐次解集是一条不过原点的直线", level: 3 })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "零空间" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "平移后的解集" })).toBeInTheDocument();
+    expect(container.querySelectorAll(".katex-html").length).toBeGreaterThan(0);
+  });
+
+  it("6.3 renders Definition, full lecture examples and the confirmed three-step flow", () => {
+    const purposes = ["P：翻译为标准坐标", "A：执行线性变换", "P⁻¹：翻译回新基"];
+    render(<MathCaseView caseData={{
+      id: "ch06.similarity-transform",
+      topicId: "ch06.similarity-transform",
+      category: "基变换与相似变换",
+      name: "相似变换",
+      formula: "",
+      steps: ["$$\\boldsymbol B=\\boldsymbol P^{-1}\\boldsymbol A\\boldsymbol P$$"],
+      conclusion: "",
+      definition: "**（相似）** 如果存在可逆矩阵 $\\boldsymbol P$，则两个矩阵相似。",
+      workedExamples: [{
+        id: "example.ch06.similarity-transform.diagonal",
+        title: "例 4：求新基下的矩阵",
+        calculation: ["$$\\boldsymbol B=\\begin{pmatrix}3&0\\\\0&1\\end{pmatrix}$$"],
+      }],
+      sections: [
+        { id: "definition", title: "定义" },
+        { id: "derivation", title: "推导与证明" },
+        { id: "worked_examples", title: "数学案例" },
+      ],
+      storyboard: purposes.map((title, index) => ({
+        id: `stage-${index + 1}`, title, caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0],
+      })),
+      caseLayout: {
+        defaultPaneCount: 3,
+        cases: purposes.map((purpose, index) => ({
+          id: `case-${index + 1}`,
+          topicId: "ch06.similarity-transform",
+          exampleRef: "example.ch06.similarity-transform.diagonal",
+          claimRefs: [],
+          stageRefs: [`stage-${index + 1}`],
+          purpose,
+        })),
+      },
+    }} />);
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "例 4：求新基下的矩阵", level: 3 })).toBeInTheDocument();
+    purposes.forEach((purpose) => expect(screen.getByRole("button", { name: purpose })).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "全部显示" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("7.4 renders Definition, the full lecture example and the three-step diagonalization flow", () => {
+    const purposes = ["P⁻¹：换到特征基", "D：沿特征方向独立缩放", "P：换回标准基"];
+    const { container } = render(<MathCaseView caseData={{
+      id: "ch07.diagonalization",
+      topicId: "ch07.diagonalization",
+      category: "特征值与特征向量",
+      name: "对角化的几何意义",
+      formula: "",
+      steps: ["$$\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1}$$"],
+      conclusion: "",
+      definition: "**（对角化）** 若存在可逆矩阵 $\\boldsymbol P$ 和对角矩阵 $\\boldsymbol D$，使得 $\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1}$，则称 $\\boldsymbol A$ 可对角化。",
+      workedExamples: [{
+        id: "example.ch07.diagonalization.symmetric",
+        title: "例 9：对称矩阵的对角化",
+        calculation: ["$$\\boldsymbol P=\\begin{pmatrix}1&1\\\\1&-1\\end{pmatrix},\\qquad \\boldsymbol D=\\begin{pmatrix}3&0\\\\0&1\\end{pmatrix}$$"],
+      }],
+      sections: [
+        { id: "definition", title: "定义" },
+        { id: "worked_examples", title: "数学案例" },
+      ],
+      storyboard: purposes.map((title, index) => ({
+        id: `stage-${index + 1}`, title, caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0],
+      })),
+      caseLayout: {
+        defaultPaneCount: 3,
+        cases: purposes.map((purpose, index) => ({
+          id: `case-${index + 1}`,
+          topicId: "ch07.diagonalization",
+          exampleRef: "example.ch07.diagonalization.symmetric",
+          claimRefs: [],
+          stageRefs: [`stage-${index + 1}`],
+          purpose,
+        })),
+      },
+    }} />);
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "例 9：对称矩阵的对角化", level: 3 })).toBeInTheDocument();
+    purposes.forEach((purpose) => expect(screen.getByRole("button", { name: purpose })).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "全部显示" })).toHaveAttribute("aria-pressed", "true");
+    expect(container.querySelectorAll(".katex-html").length).toBeGreaterThan(0);
+  });
+
+  it("8.3 renders Definition, the complete lecture example and all three principal-axis stages", () => {
+    const purposes = ["原始倾斜椭圆", "显示两条特征方向", "旋转后得到标准形"];
+    const { container } = render(<MathCaseView caseData={{
+      id: "ch08.principal-axis",
+      topicId: "ch08.principal-axis",
+      category: "二次型与主轴定理",
+      name: "主轴定理",
+      formula: "",
+      steps: ["$$\\boldsymbol Q^{T}\\boldsymbol A\\boldsymbol Q=\\boldsymbol D$$"],
+      conclusion: "",
+      definition: "**（主轴定理）** 存在正交矩阵 $\\boldsymbol Q$，使 $\\boldsymbol Q^{T}\\boldsymbol A\\boldsymbol Q=\\boldsymbol D$。",
+      derivation: ["$$Q(\\boldsymbol x)=\\boldsymbol y^{T}\\boldsymbol D\\boldsymbol y$$"],
+      workedExamples: [{
+        id: "example.ch08.principal-axis.complete",
+        title: "完整计算例题：将倾斜椭圆化为标准形",
+        calculation: ["$$\\boldsymbol A=\\begin{pmatrix}5&-3\\\\-3&5\\end{pmatrix},\\qquad a_1=\\sqrt{\\frac18}$$"],
+      }],
+      sections: [
+        { id: "definition", title: "定义" },
+        { id: "derivation", title: "推导" },
+        { id: "worked_examples", title: "数学案例" },
+      ],
+      storyboard: purposes.map((title, index) => ({
+        id: `stage-${index + 1}`, title, caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0],
+      })),
+      caseLayout: {
+        defaultPaneCount: 3,
+        cases: purposes.map((purpose, index) => ({
+          id: `case-${index + 1}`,
+          topicId: "ch08.principal-axis",
+          exampleRef: "example.ch08.principal-axis.complete",
+          claimRefs: [],
+          stageRefs: [`stage-${index + 1}`],
+          purpose,
+        })),
+      },
+    }} />);
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "完整计算例题：将倾斜椭圆化为标准形", level: 3 })).toBeInTheDocument();
+    purposes.forEach((purpose) => expect(screen.getByRole("button", { name: purpose })).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "全部显示" })).toHaveAttribute("aria-pressed", "true");
+    expect(container.querySelectorAll(".katex-html").length).toBeGreaterThan(0);
+    expect(container.querySelector(".katex-html .sqrt svg path")).toBeTruthy();
+  });
 });

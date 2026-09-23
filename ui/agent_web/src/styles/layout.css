@@ -92,21 +92,31 @@
 .math-case-view--vector-addition .math-case-storyboard,
 .math-case-view--case-layout .math-case-header,
 .math-case-view--case-layout .math-case-structured,
-.math-case-view--case-layout .math-case-storyboard { max-width: 760px; }
+.math-case-view--case-layout .math-case-storyboard,
+.math-case-view--chapter-three-text .math-case-header,
+.math-case-view--chapter-three-text .math-case-structured,
+.math-case-view--chapter-three-text .math-case-storyboard { max-width: 760px; }
 .math-case-view--vector-addition .math-case-structured,
-.math-case-view--case-layout .math-case-structured { font-size: 15px; line-height: 1.85; }
+.math-case-view--case-layout .math-case-structured,
+.math-case-view--chapter-three-text .math-case-structured { font-size: 15px; line-height: 1.85; }
 .math-case-view--vector-addition .math-case-header h1,
-.math-case-view--case-layout .math-case-header h1 { font-size: 24px; }
+.math-case-view--case-layout .math-case-header h1,
+.math-case-view--chapter-three-text .math-case-header h1 { font-size: 24px; }
 .math-case-view--vector-addition .math-case-section,
-.math-case-view--case-layout .math-case-section { margin: 30px 0; padding-bottom: 22px; }
+.math-case-view--case-layout .math-case-section,
+.math-case-view--chapter-three-text .math-case-section { margin: 30px 0; padding-bottom: 22px; }
 .math-case-view--vector-addition .math-case-section h2,
 .math-case-view--vector-addition .math-case-storyboard h2,
 .math-case-view--case-layout .math-case-section h2,
-.math-case-view--case-layout .math-case-storyboard h2 { margin-bottom: 12px; font-size: 16px; }
+.math-case-view--case-layout .math-case-storyboard h2,
+.math-case-view--chapter-three-text .math-case-section h2,
+.math-case-view--chapter-three-text .math-case-storyboard h2 { margin-bottom: 12px; font-size: 16px; }
 .math-case-view--vector-addition .math-case-section h3,
-.math-case-view--case-layout .math-case-section h3 { margin: 4px 0 10px; font-size: 14px; }
+.math-case-view--case-layout .math-case-section h3,
+.math-case-view--chapter-three-text .math-case-section h3 { margin: 4px 0 10px; font-size: 14px; }
 .math-case-view--vector-addition .math-case-example,
-.math-case-view--case-layout .math-case-example { padding: 16px 0; }
+.math-case-view--case-layout .math-case-example,
+.math-case-view--chapter-three-text .math-case-example { padding: 16px 0; }
 .math-case-view--vector-addition .math-case-example h3 { text-align: left; }
 .math-case-view--vector-addition .math-case-example-formula,
 .math-case-view--vector-addition .math-case-example-formula .markdown-content,
@@ -116,7 +126,8 @@
 .math-case-view--vector-addition .math-case-example-prose .markdown-content p { text-align: left; }
 .math-case-view--vector-addition .math-case-example-controls button,
 .math-case-view--case-layout .math-case-example-controls button { font-size: 12px; }
-.math-case-view--case-layout .math-case-example h3 { text-align: left; }
+.math-case-view--case-layout .math-case-example h3,
+.math-case-view--chapter-three-text .math-case-example h3 { text-align: left; }
 .math-case-view--case-layout .math-case-example-formula,
 .math-case-view--case-layout .math-case-example-formula .markdown-content,
 .math-case-view--case-layout .math-case-example-formula .markdown-content p { text-align: center; }

@@ -20,7 +20,7 @@ export function MathCaseView({
   const stages = caseData.storyboard ?? [];
   const paneCases = caseData.caseLayout?.cases ?? [];
   const [activePaneId, setActivePaneId] = useState(caseData.activeCaseId ?? paneCases[0]?.id ?? "");
-  // 数学案例流程的 default_pane_count 为 2：首屏即“全部显示”，两个步骤并排。
+  // 数学案例流程可声明多个默认窗格：首屏即“全部显示”。
   const [showingAllPanes, setShowingAllPanes] = useState(
     paneCases.length > 1 && (caseData.caseLayout?.defaultPaneCount ?? 1) > 1,
   );
@@ -30,7 +30,9 @@ export function MathCaseView({
   const isVectorAddition = caseData.id === "ch01.ops.addition";
   // 1.5 的几何证明小节按讲义正文排版，与带案例的小节同一字号层级。
   const isLectureProof = lectureProofSubsection(caseData.id);
-  const usesContinuousDerivation = isLectureProof || caseData.id === "ch01.inner.cauchy-schwarz";
+  // 3.3--3.6 虽然按要求不创建绘图窗格，讲义排版仍须与 3.1、3.2 一致。
+  const usesChapterThreeLectureTypography = chapterThreeTextSubsection(caseData.id);
+  const usesContinuousDerivation = isLectureProof || caseData.id === "ch01.inner.cauchy-schwarz" || caseData.id === "ch03.adjugate.matrix" || caseData.id === "ch03.det.zero.equivalence" || caseData.id.startsWith("ch07.") || caseData.id.startsWith("ch08.");
   // 讲义 1.2.1–1.2.4 都写成“自带公式的定义 + 正下方的几何解释”。
   const definitionOwnsFormula = lectureDefinitionOwnsFormula(caseData.id);
   // 分节顺序以讲义为准：4.1.3 把「几何直观」写在定义下方、证明之前，产物里的
@@ -113,7 +115,7 @@ export function MathCaseView({
   const geometricSection = section(sectionTitle(caseData, "geometric_meaning", "几何意义"), caseData.geometricMeaning);
 
   return (
-    <article className={`math-case-view${isVectorAddition ? " math-case-view--vector-addition" : ""}${hasCaseLayout && !isVectorAddition ? " math-case-view--case-layout" : ""}${isLectureProof ? " math-case-view--proof" : ""}`} aria-label={`${caseData.name}数学解释`} aria-busy={!sceneReady}>
+    <article className={`math-case-view${isVectorAddition ? " math-case-view--vector-addition" : ""}${hasCaseLayout && !isVectorAddition ? " math-case-view--case-layout" : ""}${isLectureProof ? " math-case-view--proof" : ""}${usesChapterThreeLectureTypography ? " math-case-view--chapter-three-text" : ""}`} aria-label={`${caseData.name}数学解释`} aria-busy={!sceneReady}>
       <header className="math-case-header">
         <span>{caseData.category}</span>
         <h1>{caseData.name}</h1>
@@ -291,10 +293,10 @@ function workedExamples(caseData: CaseProjection, controls?: ReactNode) {
   const hasCaseLayout = (caseData.caseLayout?.cases?.length ?? 0) > 0;
   return (
     <section className="math-case-section">
-      <h2>{hasCaseLayout ? sectionTitle(caseData, "worked_examples", lectureDefinitionOwnsFormula(caseData.id) ? "数学案例" : "案例") : "数字例题"}</h2>
+      <h2>{sectionTitle(caseData, "worked_examples", hasCaseLayout && !lectureDefinitionOwnsFormula(caseData.id) ? "案例" : "数学案例")}</h2>
       {caseData.workedExamples?.map((example, index) => (
         <article className="math-case-example" key={example.id || `${caseData.id}-example-${index}`}>
-          {!hasCaseLayout && <h3>{example.title || example.kind || `例题 ${index + 1}`}</h3>}
+          {(!hasCaseLayout || caseData.id === "ch02.matrix.powers" || caseData.id === "ch03.det.basic-properties" || caseData.id.startsWith("ch05.") || caseData.id.startsWith("ch06.") || caseData.id.startsWith("ch07.") || caseData.id.startsWith("ch08.")) && <h3>{example.title || example.kind || `例题 ${index + 1}`}</h3>}
           {example.calculation?.map((line, lineIndex) => (
             <div
               className={hasCaseLayout && isFormulaOnly(line) ? "math-case-example-formula" : "math-case-example-prose"}
@@ -347,6 +349,17 @@ function lectureDefinitionOwnsFormula(topicId: string): boolean {
     || topicId === "ch02.batch.inner-products"
     // 讲义 2.3 投影矩阵：单位条件、矩阵公式和 x 轴说明都写在定义 2.5 之内。
     || topicId === "ch02.batch.projection"
+    // 讲义 2.4：矩阵加法、矩阵数乘、分配律及原例题都写在定义块内。
+    || topicId === "ch02.matrix.additive-distributivity"
+    // 讲义 2.6：矩阵乘法的定义、定理和分配律证明都保留在同一个定义块内。
+    || topicId === "ch02.matrix.composition"
+    // 讲义 2.8：幂和转置的定义、性质与证明保留在定义块内。
+    || topicId === "ch02.matrix.powers"
+    // 第三章 3.3--3.6 的公式均保留在讲义中的定义、定理或性质位置。
+    || topicId === "ch03.cramer.area-ratio"
+    || topicId === "ch03.inverse.undo"
+    || topicId === "ch03.adjugate.matrix"
+    || topicId === "ch03.det.zero.equivalence"
     // 讲义 4.1.3 的 Col(A)、Null(A) 就写在定义 4.3、4.4 之内：定义块自带公式，
     // 分节名按讲义原文作「定义」，不再拼成「定义与公式」。
     || topicId === "ch04.subspace.col-null"
@@ -356,7 +369,14 @@ function lectureDefinitionOwnsFormula(topicId: string): boolean {
     // 定义块自带公式，案例区叫「数学案例」。
     || topicId === "ch04.basis.definition"
     // 讲义 4.4.1 与 4.4.2 合并后，定义、公式和判断表都属于同一个「定义」块。
-    || topicId === "ch04.linear-map.definition";
+    || topicId === "ch04.linear-map.definition"
+    // 第五章 5.1--5.5 的定义、定理和核心公式按讲义顺序放在「定义」块中。
+    || topicId.startsWith("ch05.")
+    // 第六章 6.2--6.3 的换基公式、相似定义和不变量均写在讲义「定义」块内。
+    || topicId.startsWith("ch06.")
+    // 第七、八章的定义、定理与核心公式按讲义写在「定义」块内。
+    || topicId.startsWith("ch07.")
+    || topicId.startsWith("ch08.");
 }
 
 /** 讲义 1.5 的三个几何证明小节按讲义正文排版（没有案例窗格，字号仍按讲义层级）。 */
@@ -364,6 +384,14 @@ function lectureProofSubsection(topicId: string): boolean {
   return topicId === "ch01.proof.midline"
     || topicId === "ch01.proof.centroid"
     || topicId === "ch01.proof.parallelogram-diagonals";
+}
+
+/** 第三章无图小节仍沿用 3.1、3.2 已确认的讲义字号和内容宽度。 */
+function chapterThreeTextSubsection(topicId: string): boolean {
+  return topicId === "ch03.cramer.area-ratio"
+    || topicId === "ch03.inverse.undo"
+    || topicId === "ch03.adjugate.matrix"
+    || topicId === "ch03.det.zero.equivalence";
 }
 
 function isFormulaOnly(line: string): boolean {

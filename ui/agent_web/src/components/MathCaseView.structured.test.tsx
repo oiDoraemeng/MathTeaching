@@ -3,6 +3,308 @@ import { describe, expect, it, vi } from "vitest";
 import { MathCaseView } from "./MathCaseView";
 
 describe("MathCaseView structured artifact", () => {
+  it("renders matrix composition as one definition and one four-pane case", () => {
+    const onSetCasePaneCount = vi.fn();
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id: "ch02.matrix.composition",
+          category: "矩阵",
+          name: "复合变换与 AB≠BA",
+          formula: "(AB)x=A(Bx)",
+          steps: [],
+          conclusion: "",
+          definition:
+            "**（矩阵乘法）** 设 $\\boldsymbol A$ 与 $\\boldsymbol B$ 的维度匹配。\n\n"
+            + "$$\\boldsymbol A=\\begin{pmatrix}2&0\\\\0&1\\end{pmatrix}$$\n\n"
+            + "**（乘法不满足交换律）** $\\boldsymbol A\\boldsymbol B\\ne\\boldsymbol B\\boldsymbol A$。",
+          sections: [
+            { id: "definition", title: "定义" },
+            { id: "worked_examples", title: "数学案例" },
+          ],
+          workedExamples: [{
+            id: "example.ch02.matrix.composition",
+            title: "同一输入的两条变换路径",
+            calculation: [
+              "$$\\boldsymbol x=\\begin{pmatrix}1\\\\1\\end{pmatrix}$$",
+              "$$\\boldsymbol A\\boldsymbol B=\\begin{pmatrix}0&-2\\\\1&0\\end{pmatrix}$$",
+            ],
+            result: [-2, 1],
+            checks: [],
+          }],
+          storyboard: [
+            { id: "stage.case.composition.input", title: "第一步：共同输入", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+            { id: "stage.case.composition.ab", title: "第二步：先旋转后拉伸", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 1] },
+            { id: "stage.case.composition.ba", title: "第三步：先拉伸后旋转", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [1, 0] },
+            { id: "stage.case.composition.compare", title: "第四步：比较终点", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [1, 1] },
+          ],
+          caseLayout: {
+            defaultPaneCount: 4,
+            cases: [
+              { id: "case.input", topicId: "ch02.matrix.composition", exampleRef: "example.ch02.matrix.composition", claimRefs: [], stageRefs: ["stage.case.composition.input"], purpose: "第一步：共同输入" },
+              { id: "case.ab", topicId: "ch02.matrix.composition", exampleRef: "example.ch02.matrix.composition", claimRefs: [], stageRefs: ["stage.case.composition.ab"], purpose: "第二步：先旋转后拉伸" },
+              { id: "case.ba", topicId: "ch02.matrix.composition", exampleRef: "example.ch02.matrix.composition", claimRefs: [], stageRefs: ["stage.case.composition.ba"], purpose: "第三步：先拉伸后旋转" },
+              { id: "case.compare", topicId: "ch02.matrix.composition", exampleRef: "example.ch02.matrix.composition", claimRefs: [], stageRefs: ["stage.case.composition.compare"], purpose: "第四步：比较终点" },
+            ],
+          },
+        }}
+        onSetCasePaneCount={onSetCasePaneCount}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "数学案例", level: 2 })).toBeInTheDocument();
+    expect(container.querySelector(".math-case-formula")).toBeNull();
+    expect(container.querySelectorAll(".katex-display .mtable").length).toBeGreaterThanOrEqual(3);
+    expect(screen.getByRole("button", { name: "第二步：先旋转后拉伸" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "第三步：先拉伸后旋转" })).toBeInTheDocument();
+    expect(onSetCasePaneCount).toHaveBeenCalledWith(4);
+    expect(screen.queryByText("分层例题")).not.toBeInTheDocument();
+    expect(screen.queryByText("自检")).not.toBeInTheDocument();
+  });
+
+  it("renders matrix powers as one definition, two original examples, and two panes", () => {
+    const onSetCasePaneCount = vi.fn();
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id: "ch02.matrix.powers",
+          category: "矩阵和基",
+          name: "矩阵的幂",
+          formula: "",
+          steps: [],
+          conclusion: "",
+          definition:
+            "**（矩阵的幂）** 设 $\\boldsymbol A$ 为 $n\\times n$ 方阵。\n\n"
+            + "$$\\boldsymbol A^{2}=\\boldsymbol A\\cdot\\boldsymbol A,\\qquad \\boldsymbol A^{0}=\\boldsymbol I$$\n\n"
+            + "**（转置的性质）**\n\n"
+            + "$$(\\boldsymbol A\\boldsymbol B)^{\\mathsf T}=\\boldsymbol B^{\\mathsf T}\\boldsymbol A^{\\mathsf T}$$",
+          sections: [
+            { id: "definition", title: "定义" },
+            { id: "worked_examples", title: "数学案例" },
+          ],
+          workedExamples: [
+            {
+              id: "example.ch02.matrix.powers.square",
+              title: "例1：求转置与平方",
+              calculation: [
+                "$$\\boldsymbol A=\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}$$",
+                "$$\\boldsymbol A^{2}=\\begin{pmatrix}7&10\\\\15&22\\end{pmatrix}$$",
+              ],
+              result: [[7, 10], [15, 22]],
+              checks: [],
+            },
+            {
+              id: "example.ch02.matrix.powers.transpose",
+              title: "例2：验证乘积转置",
+              calculation: [
+                "$$\\boldsymbol A\\boldsymbol B=\\begin{pmatrix}19&22\\\\43&50\\end{pmatrix}$$",
+                "$$(\\boldsymbol A\\boldsymbol B)^{\\mathsf T}=\\begin{pmatrix}19&43\\\\22&50\\end{pmatrix}$$",
+              ],
+              result: [[19, 43], [22, 50]],
+              checks: [],
+            },
+          ],
+          storyboard: [
+            { id: "stage.case.matrix.powers.first", title: "第一步：作用一次", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+            { id: "stage.case.matrix.powers.second", title: "第二步：再作用一次", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 1] },
+          ],
+          caseLayout: {
+            defaultPaneCount: 2,
+            cases: [
+              { id: "case.matrix.powers.first", topicId: "ch02.matrix.powers", exampleRef: "example.ch02.matrix.powers.square", claimRefs: [], stageRefs: ["stage.case.matrix.powers.first"], purpose: "第一步：作用一次" },
+              { id: "case.matrix.powers.second", topicId: "ch02.matrix.powers", exampleRef: "example.ch02.matrix.powers.square", claimRefs: [], stageRefs: ["stage.case.matrix.powers.second"], purpose: "第二步：再作用一次" },
+            ],
+          },
+        }}
+        onSetCasePaneCount={onSetCasePaneCount}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "数学案例", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "例1：求转置与平方", level: 3 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "例2：验证乘积转置", level: 3 })).toBeInTheDocument();
+    expect(container.querySelector(".math-case-formula")).toBeNull();
+    expect(container.querySelectorAll(".katex-display .mtable").length).toBeGreaterThanOrEqual(4);
+    expect(screen.getByRole("button", { name: "第一步：作用一次" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "第二步：再作用一次" })).toBeInTheDocument();
+    expect(onSetCasePaneCount).toHaveBeenCalledWith(2);
+  });
+
+  it("renders determinant basic properties with four figures and two algebra-only cases", () => {
+    const onSetCasePaneCount = vi.fn();
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id: "ch03.det.basic-properties",
+          category: "行列式的核心性质",
+          name: "行列式的基本性质",
+          formula: "",
+          steps: [],
+          conclusion: "",
+          definition:
+            "**（行列式的基本性质）**\n\n"
+            + "| 性质 | 操作 | 对 $\\det$ 的影响 |\n| --- | --- | --- |\n"
+            + "| **换行变号** | 交换两行 | $\\det$ 变号 |\n"
+            + "| **行倍乘** | 某行 $\\times(k)$ | $\\det$ 也 $\\times(k)$ |\n\n"
+            + "性质5（有一行全零$\\rightarrow$行列式为0）。",
+          sections: [
+            { id: "definition", title: "定义" },
+            { id: "worked_examples", title: "数学案例" },
+          ],
+          workedExamples: [
+            {
+              id: "example.ch03.det.basic-properties.1",
+              title: "案例一：交换两行",
+              calculation: [
+                "$$\\boldsymbol A=\\begin{pmatrix}2&1\\\\1&2\\end{pmatrix},\\qquad\\det(\\boldsymbol A)=3$$",
+                "$$\\boldsymbol A_{\\mathrm{swap}}=\\begin{pmatrix}1&2\\\\2&1\\end{pmatrix},\\qquad\\det(\\boldsymbol A_{\\mathrm{swap}})=-3$$",
+              ],
+              result: -3,
+              checks: [],
+            },
+            {
+              id: "example.ch03.det.basic-properties.2",
+              title: "案例二：第一行乘 2",
+              calculation: [
+                "$$\\boldsymbol A=\\begin{pmatrix}2&1\\\\1&2\\end{pmatrix},\\qquad\\det(\\boldsymbol A)=3$$",
+                "$$\\boldsymbol A_{\\mathrm{scale}}=\\begin{pmatrix}4&2\\\\1&2\\end{pmatrix},\\qquad\\det(\\boldsymbol A_{\\mathrm{scale}})=6$$",
+              ],
+              result: 6,
+              checks: [],
+            },
+            {
+              id: "example.ch03.det.basic-properties.3",
+              title: "案例三：第二行加上第一行的 2 倍",
+              calculation: [
+                "$$\\boldsymbol A_{\\mathrm{add}}=\\begin{pmatrix}2&1\\\\5&4\\end{pmatrix},\\qquad\\det(\\boldsymbol A_{\\mathrm{add}})=3$$",
+              ],
+              result: 3,
+              checks: [],
+            },
+            {
+              id: "example.ch03.det.basic-properties.4",
+              title: "案例四：第二行为零",
+              calculation: [
+                "$$\\boldsymbol A_0=\\begin{pmatrix}2&1\\\\0&0\\end{pmatrix},\\qquad\\det(\\boldsymbol A_0)=0$$",
+              ],
+              result: 0,
+              checks: [],
+            },
+          ],
+          storyboard: [
+            { id: "stage.case.ch03.det.basic-properties.1", title: "第一幅：交换两行之前", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+            { id: "stage.case.ch03.det.basic-properties.2", title: "第二幅：交换两行之后", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 1] },
+            { id: "stage.case.ch03.det.basic-properties.3", title: "第三幅：第一行乘 2 之前", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [1, 0] },
+            { id: "stage.case.ch03.det.basic-properties.4", title: "第四幅：第一行乘 2 之后", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [1, 1] },
+          ],
+          caseLayout: {
+            defaultPaneCount: 4,
+            cases: [
+              { id: "case.basic.1", topicId: "ch03.det.basic-properties", exampleRef: "example.ch03.det.basic-properties.1", claimRefs: [], stageRefs: ["stage.case.ch03.det.basic-properties.1"], purpose: "第一幅：交换两行之前" },
+              { id: "case.basic.2", topicId: "ch03.det.basic-properties", exampleRef: "example.ch03.det.basic-properties.1", claimRefs: [], stageRefs: ["stage.case.ch03.det.basic-properties.2"], purpose: "第二幅：交换两行之后" },
+              { id: "case.basic.3", topicId: "ch03.det.basic-properties", exampleRef: "example.ch03.det.basic-properties.2", claimRefs: [], stageRefs: ["stage.case.ch03.det.basic-properties.3"], purpose: "第三幅：第一行乘 2 之前" },
+              { id: "case.basic.4", topicId: "ch03.det.basic-properties", exampleRef: "example.ch03.det.basic-properties.2", claimRefs: [], stageRefs: ["stage.case.ch03.det.basic-properties.4"], purpose: "第四幅：第一行乘 2 之后" },
+            ],
+          },
+        }}
+        onSetCasePaneCount={onSetCasePaneCount}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "数学案例", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "案例一：交换两行", level: 3 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "案例二：第一行乘 2", level: 3 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "案例三：第二行加上第一行的 2 倍", level: 3 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "案例四：第二行为零", level: 3 })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "第一幅：交换两行之前" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "第四幅：第一行乘 2 之后" })).toBeInTheDocument();
+    expect(container.querySelectorAll(".katex-display .mtable").length).toBeGreaterThanOrEqual(6);
+    expect(container.querySelector(".math-case-formula")).toBeNull();
+    expect(screen.queryByText("补充例题")).not.toBeInTheDocument();
+    expect(screen.queryByText("分层例题")).not.toBeInTheDocument();
+    expect(screen.queryByText("自检")).not.toBeInTheDocument();
+    expect(onSetCasePaneCount).toHaveBeenCalledWith(4);
+  });
+
+  it("renders 3.6 as definition, continuous derivation, and text-only math cases", () => {
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id: "ch03.det.zero.equivalence",
+          category: "行列式",
+          name: "det=0 的等价几何条件",
+          formula: "",
+          steps: ["证明：对上三角矩阵按最后一列展开。\n\n推论：对角矩阵的行列式等于对角线元素之积。"],
+          conclusion: "",
+          definition:
+            "**（$\\det=0$ 的等价条件）** 对 $n\\times n$ 矩阵 $\\boldsymbol A$，以下等价。\n\n"
+            + "$$\\det(\\boldsymbol A)=0\\Leftrightarrow\\operatorname{rank}(\\boldsymbol A)<n$$",
+          sections: [
+            { id: "definition", title: "定义" },
+            { id: "derivation", title: "推导" },
+            { id: "worked_examples", title: "数学案例" },
+          ],
+          workedExamples: [
+            {
+              id: "example.ch03.det.zero.triangular",
+              title: "例5",
+              calculation: ["$$\\boldsymbol A=\\begin{pmatrix}2&5&-1\\\\0&3&4\\\\0&0&7\\end{pmatrix},\\quad\\det(\\boldsymbol A)=42$$"],
+              result: 42,
+              checks: [],
+            },
+            {
+              id: "example.ch03.det.zero.dependent",
+              title: "例题",
+              calculation: ["$$\\boldsymbol A=\\begin{pmatrix}1&3\\\\2&6\\end{pmatrix},\\quad\\det(\\boldsymbol A)=0$$"],
+              result: 0,
+              checks: [],
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "推导", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "数学案例", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "数字例题", level: 2 })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "例5", level: 3 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "例题", level: 3 })).toBeInTheDocument();
+    expect(container.querySelector(".math-case-steps--single")).toBeTruthy();
+    expect(container.querySelectorAll(".katex-display .mtable").length).toBeGreaterThanOrEqual(2);
+    expect(container.querySelector(".math-case-view--chapter-three-text")).toBeTruthy();
+  });
+
+  it.each([
+    "ch03.cramer.area-ratio",
+    "ch03.inverse.undo",
+    "ch03.adjugate.matrix",
+  ])("keeps the 3.1 and 3.2 lecture typography for %s without drawing panes", (id) => {
+    const { container } = render(
+      <MathCaseView
+        caseData={{
+          id,
+          category: "行列式",
+          name: "讲义小节",
+          formula: "",
+          steps: [],
+          conclusion: "",
+          definition: "**（定义）** 讲义正文。",
+          sections: [{ id: "definition", title: "定义" }],
+        }}
+      />,
+    );
+
+    expect(container.querySelector(".math-case-view--chapter-three-text")).toBeTruthy();
+    expect(container.querySelector(".math-case-view--case-layout")).toBeNull();
+  });
+
   it("keeps the lecture-style structure and switches storyboard stages locally", () => {
     const onSelectStage = vi.fn();
     render(
@@ -300,6 +602,81 @@ describe("MathCaseView structured artifact", () => {
     expect(screen.queryByText(/自检/)).not.toBeInTheDocument();
     expect(container.querySelector(".math-case-structured .katex-html .mtable")).toBeTruthy();
     expect(container.querySelectorAll(".math-case-structured .katex-html").length).toBeGreaterThan(4);
+  });
+
+  it("renders 2.4 matrix addition with its formulas in definition and both case routes", () => {
+    const onSetCasePaneCount = vi.fn();
+    const { container } = render(
+      <MathCaseView
+        onSetCasePaneCount={onSetCasePaneCount}
+        caseData={{
+          id: "ch02.matrix.additive-distributivity",
+          category: "矩阵加法与矩阵数乘",
+          name: "矩阵加法与变换分配律",
+          summary: "一句话动机：向量有加法和数乘，矩阵作为向量的集合，自然也继承了这些运算。",
+          formula: "",
+          steps: [],
+          conclusion: "",
+          definition:
+            "**（矩阵加法）** 两个同型矩阵 $\\boldsymbol A=[a_{ij}]$ 和 $\\boldsymbol B=[b_{ij}]$（都是 $m\\times n$），其和为：\n\n"
+            + "$$(\\boldsymbol A+\\boldsymbol B)_{ij}=a_{ij}+b_{ij}$$\n\n"
+            + "**（矩阵数乘）** 标量 $k$ 乘以矩阵 $\\boldsymbol A$：\n\n"
+            + "$$(k\\boldsymbol A)_{ij}=k\\cdot a_{ij}$$\n\n"
+            + "**（分配律）** $$(\\boldsymbol A+\\boldsymbol B)\\boldsymbol x=\\boldsymbol A\\boldsymbol x+\\boldsymbol B\\boldsymbol x$$\n\n"
+            + "$$\\boldsymbol A=\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix},\\qquad"
+            + "\\boldsymbol B=\\begin{pmatrix}5&6\\\\7&8\\end{pmatrix}$$\n\n"
+            + "$$\\boldsymbol A+\\boldsymbol B=\\begin{pmatrix}6&8\\\\10&12\\end{pmatrix}$$",
+          sections: [
+            { id: "definition", title: "定义" },
+            { id: "worked_examples", title: "数学案例" },
+          ],
+          workedExamples: [
+            {
+              id: "example.ch02.matrix.additive-distributivity.1",
+              title: "第一步：先加矩阵，再变换",
+              calculation: [
+                "$$\\boldsymbol A+\\boldsymbol B=\\begin{pmatrix}3&0\\\\0&3\\end{pmatrix}$$",
+                "$$(\\boldsymbol A+\\boldsymbol B)\\boldsymbol x=\\begin{pmatrix}3\\\\3\\end{pmatrix}$$",
+              ],
+              result: [3, 3],
+              checks: [],
+            },
+            {
+              id: "example.ch02.matrix.additive-distributivity.2",
+              title: "第二步：先各自变换，再相加",
+              calculation: [
+                "$$\\boldsymbol A\\boldsymbol x=\\begin{pmatrix}2\\\\1\\end{pmatrix},\\qquad\\boldsymbol B\\boldsymbol x=\\begin{pmatrix}1\\\\2\\end{pmatrix}$$",
+                "$$\\boldsymbol A\\boldsymbol x+\\boldsymbol B\\boldsymbol x=\\begin{pmatrix}3\\\\3\\end{pmatrix}$$",
+              ],
+              result: [3, 3],
+              checks: [],
+            },
+          ],
+          storyboard: [
+            { id: "stage.case.ch02.matrix.additive-distributivity.1", title: "第一步：先加矩阵，再变换", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+            { id: "stage.case.ch02.matrix.additive-distributivity.2", title: "第二步：先各自变换，再相加", caption: "", layout: "overlay", visibleRefs: [], visibleAliases: [], anchor: [0, 0] },
+          ],
+          caseLayout: {
+            defaultPaneCount: 2,
+            cases: [
+              { id: "case.ch02.matrix.additive-distributivity.1", topicId: "ch02.matrix.additive-distributivity", exampleRef: "example.ch02.matrix.additive-distributivity.1", claimRefs: [], stageRefs: ["stage.case.ch02.matrix.additive-distributivity.1"], purpose: "第一步：先加矩阵，再变换" },
+              { id: "case.ch02.matrix.additive-distributivity.2", topicId: "ch02.matrix.additive-distributivity", exampleRef: "example.ch02.matrix.additive-distributivity.2", claimRefs: [], stageRefs: ["stage.case.ch02.matrix.additive-distributivity.2"], purpose: "第二步：先各自变换，再相加" },
+            ],
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "定义", level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "数学案例", level: 2 })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "定义与公式", level: 2 })).not.toBeInTheDocument();
+    expect(container.querySelector(".math-case-formula")).toBeNull();
+    expect(container.querySelectorAll(".math-case-structured .katex-html .mtable").length).toBeGreaterThan(4);
+    expect(screen.getByRole("button", { name: "第一步：先加矩阵，再变换" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "第二步：先各自变换，再相加" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "全部显示" })).toHaveAttribute("aria-pressed", "true");
+    expect(onSetCasePaneCount).toHaveBeenCalledWith(2);
+    expect(screen.queryByText(/自检/)).not.toBeInTheDocument();
   });
 
   it("renders 1.2.2 vector subtraction as definition, geometry below it and one math flow", () => {

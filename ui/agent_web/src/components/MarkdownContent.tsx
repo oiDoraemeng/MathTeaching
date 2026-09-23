@@ -34,7 +34,11 @@ function normalizeKaTeXHtml(source: string): string {
 
 function renderMath(source: string): string {
   const tokens: string[] = [];
-  const normalized = normalizeKaTeXHtml(source);
+  // ``■`` is an editorial end-of-proof marker from the lecture source, not
+  // student-facing content.  Strip it at the final rendering boundary as
+  // well, so older published artifacts and source excerpts behave exactly
+  // like newly refined artifacts.
+  const normalized = normalizeKaTeXHtml(source.replaceAll("■", ""));
   const protectedSource = normalized
     .replace(/\\\[([\s\S]*?)\\\]/g, (_, expression: string) => { const token = `MATH_TOKEN_${tokens.length}`; tokens.push(renderFormula(expression, true)); return token; })
     .replace(/\$\$([\s\S]*?)\$\$/g, (_, expression: string) => { const token = `MATH_TOKEN_${tokens.length}`; tokens.push(renderFormula(expression, true)); return token; })
