@@ -18,6 +18,7 @@ class _FormulaPreviewBridge(QObject):
 
     edit_requested = Signal()
     content_height_changed = Signal(int)
+    preview_ready = Signal()
 
     @Slot()
     def editRequested(self) -> None:
@@ -26,6 +27,10 @@ class _FormulaPreviewBridge(QObject):
     @Slot(int)
     def contentHeightChanged(self, height: int) -> None:
         self.content_height_changed.emit(height)
+
+    @Slot()
+    def previewReady(self) -> None:
+        self.preview_ready.emit()
 
 
 class _FormulaPreviewClickTarget(QWidget):
@@ -58,12 +63,14 @@ class FormulaPreviewWidget(QWidget):
         super().__init__(parent)
         self._latex = latex
         self._page_ready = False
+        self._browser_painted = False
         self._editing_mode = False  # 其他公式处于编辑状态时暂时隐藏当前网页预览。
         self.web_view: QWebEngineView | None = None
         self._theme = initial_theme
         self._bridge = _FormulaPreviewBridge(self)
         self._bridge.edit_requested.connect(self.edit_requested)
         self._bridge.content_height_changed.connect(self._set_content_height)
+        self._bridge.preview_ready.connect(self._on_browser_painted)
         self._channel: QWebChannel | None = None
 
         self._layout = QStackedLayout(self)
@@ -97,7 +104,7 @@ class FormulaPreviewWidget(QWidget):
         self._editing_mode = enabled
         if self.web_view is not None:
             # 隐藏网页视图但不销毁，结束编辑后无需重新加载和排版公式。
-            self.web_view.setVisible(not enabled)
+            self.web_view.setVisible(not enabled and self._browser_painted)
 
     def showEvent(self, event: QShowEvent) -> None:
         """仅在公式实际显示时加载浏览器视图。"""
@@ -152,10 +159,25 @@ class FormulaPreviewWidget(QWidget):
         if self.web_view is not None:
             self._theme_bridge.on_load_finished(success)
         self._page_ready = success
-        if not success or self.web_view is None:
+        if not success:
+            self._browser_painted = False
             return
+        if self.web_view is None:
+            return
+        # Keep the native fallback visible until MathLive has painted at least
+        # one frame.  Showing QWebEngineView immediately after loadFinished
+        # exposes a blank frame while the custom element and fonts initialize.
         self._set_browser_latex(self._latex)
-        self.web_view.setVisible(True)
+        self._reveal_browser_preview()
+
+    def _on_browser_painted(self) -> None:
+        self._browser_painted = True
+        self._reveal_browser_preview()
+
+    def _reveal_browser_preview(self) -> None:
+        if self.web_view is None or not self._page_ready or not self._browser_painted:
+            return
+        self.web_view.setVisible(not self._editing_mode)
         self._fallback_label.setVisible(False)
 
     def set_theme(self, theme: str) -> None:

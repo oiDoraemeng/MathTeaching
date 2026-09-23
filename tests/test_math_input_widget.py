@@ -3,13 +3,19 @@
 import os
 import unittest
 from pathlib import Path
+from unittest.mock import MagicMock
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 os.environ.setdefault("QTWEBENGINE_DISABLE_SANDBOX", "1")
 
-from PySide6.QtWidgets import QApplication, QComboBox
+from PySide6.QtWidgets import QApplication, QComboBox, QWidget
 
-from MathInputWidget import FormulaEditorPopup, MathInputWidget
+from MathInputWidget import (
+    FloatingMathKeyboard,
+    FormulaEditorPopup,
+    FormulaPreviewWidget,
+    MathInputWidget,
+)
 
 
 class MathInputWidgetTests(unittest.TestCase):
@@ -76,6 +82,69 @@ class MathInputWidgetTests(unittest.TestCase):
         self.assertIn("field.mathVirtualKeyboardPolicy = 'manual'", list_source)
         start_edit = list_source.split("const startEdit =", 1)[1].split("const bindRow =", 1)[0]
         self.assertNotIn("showKeyboard(field", start_edit)
+
+    def test_floating_keyboard_has_no_visible_formula_input(self) -> None:
+        source = (
+            Path(__file__).parents[1] / "MathInputWidget" / "floating_math_keyboard.html"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn('id="keyboard-proxy"', source)
+        self.assertIn("left: -10000px", source)
+        self.assertIn("window.mathVirtualKeyboard.show()", source)
+        self.assertNotIn('id="formula"', source)
+
+    def test_floating_keyboard_uses_a_wide_centered_host_overlay(self) -> None:
+        host = QWidget()
+        host.resize(1200, 800)
+        keyboard = FloatingMathKeyboard(host)
+
+        keyboard.open_keyboard("")
+
+        self.assertEqual(keyboard.parentWidget(), host)
+        self.assertGreaterEqual(keyboard.width(), keyboard.MINIMUM_WIDTH)
+        self.assertEqual(keyboard.width(), keyboard.PREFERRED_WIDTH)
+        self.assertEqual(keyboard.x(), (host.width() - keyboard.width()) // 2)
+        self.assertEqual(keyboard.y(), host.height() - keyboard.height() - keyboard.OUTER_MARGIN)
+        keyboard.dismiss()
+        host.close()
+
+    def test_floating_keyboard_stays_to_the_right_of_its_anchor(self) -> None:
+        host = QWidget()
+        host.resize(1200, 800)
+        anchor = QWidget(host)
+        anchor.setGeometry(320, 0, 600, 800)
+        keyboard = FloatingMathKeyboard(host)
+        keyboard.set_anchor_widget(anchor)
+
+        keyboard.open_keyboard("")
+
+        self.assertGreaterEqual(keyboard.x(), anchor.x())
+        self.assertGreaterEqual(keyboard.width(), keyboard.MINIMUM_WIDTH)
+        keyboard.dismiss()
+        host.close()
+
+    def test_floating_keyboard_does_not_restore_itself_after_focus_moves_away(self) -> None:
+        source = (
+            Path(__file__).parents[1] / "MathInputWidget" / "floating_math_keyboard.html"
+        ).read_text(encoding="utf-8")
+
+        self.assertNotIn("proxy.addEventListener('blur'", source)
+        self.assertIn("const hide = () =>", source)
+
+    def test_formula_preview_keeps_fallback_until_page_and_first_paint_are_ready(self) -> None:
+        preview = FormulaPreviewWidget(r"y=\frac{1}{x}")
+        preview.web_view = MagicMock()
+        preview._theme_bridge = MagicMock()
+
+        preview._on_browser_painted()
+
+        preview.web_view.setVisible.assert_not_called()
+        self.assertFalse(preview._fallback_label.isHidden())
+
+        preview._on_load_finished(True)
+
+        preview.web_view.setVisible.assert_called_once_with(True)
+        self.assertTrue(preview._fallback_label.isHidden())
 
 
 if __name__ == "__main__":

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="mathlive-fonts.css">
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: transparent !important;
+    }
+    #keyboard-proxy {
+      position: fixed;
+      left: -10000px;
+      top: -10000px;
+      width: 1px;
+      height: 1px;
+      min-height: 1px;
+      padding: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #keyboard-proxy::part(virtual-keyboard-toggle),
+    #keyboard-proxy::part(menu-toggle) {
+      display: none;
+    }
+    .mathlive-native-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 4px;
+    }
+    .mathlive-native-action {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 28px;
+      padding: 0;
+      color: var(--mi-toolbar-accent, #2c2e2f);
+      background: var(--mi-toolbar-bg, transparent);
+      border: 0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .mathlive-native-action:hover {
+      color: var(--mi-toolbar-accent, #2f7ebd);
+      background: var(--mi-toolbar-hover, #eeeeee);
+    }
+    .mathlive-native-actions svg {
+      width: 18px;
+      height: 18px;
+    }
+  </style>
+  <script src="mathlive-bridge.js"></script>
+  <script defer src="mathlive.js"></script>
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+</head>
+<body>
+  <math-field id="keyboard-proxy" aria-hidden="true" tabindex="-1"></math-field>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const proxy = document.getElementById('keyboard-proxy');
+      new QWebChannel(qt.webChannelTransport, async (channel) => {
+        await customElements.whenDefined('math-field');
+        const bridge = channel.objects.bridge;
+        let syncing = false;
+
+        proxy.mathVirtualKeyboardPolicy = 'manual';
+
+        const clampPosition = (position) => Math.max(
+          0,
+          Math.min(Number(position) || 0, proxy.lastOffset ?? Number.MAX_SAFE_INTEGER),
+        );
+        const reportHeight = () => {
+          const height = Math.ceil(window.mathVirtualKeyboard?.boundingRect?.height || 0);
+          if (height > 0) bridge.keyboardHeightChanged(height);
+        };
+        const installToolbar = MathLiveBridge.installKeyboardToolbarActions(proxy, {
+          toggleKeyboard: () => bridge.closeRequested(),
+        });
+        const setState = (latex, position) => {
+          syncing = true;
+          proxy.setValue(String(latex || ''), { silenceNotifications: true });
+          proxy.position = clampPosition(position);
+          syncing = false;
+        };
+        const open = (state) => {
+          setState(state?.latex, state?.position);
+          proxy.focus();
+          window.mathVirtualKeyboard.show();
+          requestAnimationFrame(() => {
+            installToolbar();
+            reportHeight();
+          });
+          setTimeout(reportHeight, 50);
+        };
+        const syncState = (latex, position) => setState(latex, position);
+        const hide = () => {
+          window.mathVirtualKeyboard?.hide();
+        };
+
+        proxy.addEventListener('input', () => {
+          if (syncing) return;
+          bridge.editStateChanged(proxy.getValue('latex'), proxy.position);
+        });
+        window.mathVirtualKeyboard.addEventListener('geometrychange', reportHeight);
+
+        window.floatingMathKeyboard = { open, syncState, hide };
+        window.floatingMathKeyboardReady = true;
+        if (window.pendingFloatingMathKeyboard) {
+          open(window.pendingFloatingMathKeyboard);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

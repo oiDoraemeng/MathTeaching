@@ -157,7 +157,17 @@ def test_formula_cell_scrolls_long_content_without_visible_scrollbar() -> None:
     assert row_block is not None and "white-space: nowrap" not in row_block.group(1)
 
 
-@pytest.mark.parametrize("filename", ["mathlive.html", "inline_formula_overlay.html", "formula_preview.html"])
+def test_hidden_math_pages_do_not_wait_for_an_animation_frame_before_reveal() -> None:
+    for filename in ("formula_preview.html",):
+        html = (ROOT / "MathInputWidget" / filename).read_text(encoding="utf-8")
+        assert "queueMicrotask" in html
+        assert "requestAnimationFrame(" not in html
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["mathlive.html", "inline_formula_overlay.html", "formula_preview.html"],
+)
 def test_math_input_document_uses_theme_variables(filename: str) -> None:
     html = (ROOT / "MathInputWidget" / filename).read_text(encoding="utf-8")
     assert "var(--mi-bg-panel," in html or "var(--mi-editing-bg," in html

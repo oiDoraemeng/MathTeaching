@@ -121,6 +121,7 @@
       const formula = document.getElementById('formula');
       new QWebChannel(qt.webChannelTransport, async (channel) => {
         await customElements.whenDefined('math-field');
+        if (document.fonts && document.fonts.ready) await document.fonts.ready;
         const bridge = channel.objects.bridge;
 
         const height = MathLiveBridge.createHeightReporter(formula, bridge, 38);
@@ -136,7 +137,11 @@
         // 预览区也能立即响应。
         window.formulaPreview = { setLatex };
         window.formulaPreviewReady = true;
+        window.formulaPreviewPainted = () => bridge.previewReady();
         setLatex(window.pendingFormulaLatex || '');
+        // This preview is also hidden until it reports ready. Hidden WebEngine
+        // views do not reliably run animation-frame callbacks.
+        queueMicrotask(() => window.formulaPreviewPainted());
       });
     });
   </script>

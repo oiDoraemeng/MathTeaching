@@ -10,7 +10,7 @@ from PySide6.QtCore import QEvent, QObject, QPoint, QTimer, Qt, QUrl, Signal, Sl
 from PySide6.QtGui import QColor, QShowEvent
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineWidgets import QWebEngineView
-from PySide6.QtWidgets import QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QVBoxLayout, QWidget
 
 from models.curve_layer import CurveLayer
 from models.geometry_2d import Annotation2D, GeometryObject, Linear2D, Point2D, geometry_latex
@@ -42,6 +42,8 @@ class _FormulaListBridge(QObject):
     """接收共享 HTML 页面发出的列表和编辑器操作。"""
 
     edit_requested = Signal(str)
+    edit_state_changed = Signal(str, str, int)
+    keyboard_requested = Signal(str, str, int)
     formula_submitted = Signal(str, str)
     edit_cancelled = Signal(str)
     visibility_changed = Signal(str, bool)
@@ -54,6 +56,14 @@ class _FormulaListBridge(QObject):
     @Slot(str)
     def editRequested(self, layer_id: str) -> None:
         self.edit_requested.emit(layer_id)
+
+    @Slot(str, str, int)
+    def editStateChanged(self, layer_id: str, latex: str, position: int) -> None:
+        self.edit_state_changed.emit(layer_id, latex, int(position))
+
+    @Slot(str, str, int)
+    def keyboardRequested(self, layer_id: str, latex: str, position: int) -> None:
+        self.keyboard_requested.emit(layer_id, latex, int(position))
 
     @Slot(str, str)
     def formulaSubmitted(self, layer_id: str, latex: str) -> None:
@@ -92,6 +102,10 @@ class FormulaListWidget(QWidget):
     """在同一个 WebEngine 页面中渲染全部函数行与活动编辑器。"""
 
     edit_requested = Signal(str)
+    edit_state_changed = Signal(str, str, int)
+    keyboard_requested = Signal(str, str, int)
+    keyboard_dismissed = Signal()
+    focus_lost = Signal()
     formula_submitted = Signal(str, str)
     edit_cancelled = Signal(str)
     visibility_changed = Signal(str, bool)
@@ -109,7 +123,8 @@ class FormulaListWidget(QWidget):
         self._pending_edit_id: str | None = None
         self._matrix_transform_enabled = False
         self._matrix_transform_editable = True
-        self._matrix_transform_text = r"\begin{pmatrix}1&0\\0&1\end{pmatrix}"
+        self._matrix_transform_text = r"A=\begin{pmatrix}1&0\\0&1\end{pmatrix}"
+        self._matrix_transform_result = ""
         self._matrix_transform_grid_range = 5
         self._show_original_coordinate_system = True
         self._show_transformed_coordinate_system = True
@@ -137,6 +152,8 @@ class FormulaListWidget(QWidget):
         layout.addWidget(self.web_view)
 
         self._bridge.edit_requested.connect(self._on_edit_requested)
+        self._bridge.edit_state_changed.connect(self._on_edit_state_changed)
+        self._bridge.keyboard_requested.connect(self._on_keyboard_requested)
         self._bridge.formula_submitted.connect(self.formula_submitted)
         self._bridge.edit_cancelled.connect(self._on_edit_cancelled)
         self._bridge.visibility_changed.connect(self.visibility_changed)
@@ -182,8 +199,11 @@ class FormulaListWidget(QWidget):
         return rebuild_web_surface(getattr(self, "web_view", None))
 
     def set_layers(self, layers: list[Layer]) -> None:
+        had_active_edit = self._active_layer_id is not None
         self._layers = {layer.id: layer for layer in layers}
         self._active_layer_id = None
+        if had_active_edit:
+            self.keyboard_dismissed.emit()
         if self._pending_edit_id not in self._layers:
             self._pending_edit_id = None
         self._send_layers()
@@ -231,17 +251,20 @@ class FormulaListWidget(QWidget):
             f"if (window.formulaListReady) window.formulaList.setMatrixTransformGridRange({value});"
         )
 
-    def set_matrix_transform_value(self, text: str) -> None:
-        """Keep the standard matrix field in sync with the current transform."""
+    def set_matrix_transform_value(self, text: str, result: str = "") -> None:
+        """Sync the editable factors and the independently read-only result."""
         value = str(text).strip()
         if not value:
             return
         self._matrix_transform_text = value
+        self._matrix_transform_result = str(result).strip()
         if not self._page_ready:
             return
         payload = json.dumps(value)
+        result_payload = json.dumps(self._matrix_transform_result)
         self._run_javascript(
-            f"if (window.formulaListReady) window.formulaList.setMatrixTransformValue({payload});"
+            "if (window.formulaListReady) "
+            f"window.formulaList.setMatrixTransformValue({payload}, {result_payload});"
         )
 
     def submit_matrix_transform(self) -> None:
@@ -294,6 +317,7 @@ class FormulaListWidget(QWidget):
             "if (window.formulaListReady) window.formulaList.acceptEdit();"
         )
         self._active_layer_id = None
+        self.keyboard_dismissed.emit()
 
     def commit_active_mark(self) -> None:
         """Submit a mark row when focus moves from WebEngine into a viewport."""
@@ -301,6 +325,25 @@ class FormulaListWidget(QWidget):
             "if (window.formulaListReady) window.formulaList.commitActiveMark();"
         )
         self._active_layer_id = None
+        self.keyboard_dismissed.emit()
+
+    def finish_edit_on_focus_out(self) -> None:
+        """Commit the active row and return it to read-only mode."""
+        if self._active_layer_id is None:
+            return
+        self._run_javascript(
+            "if (window.formulaListReady) window.formulaList.finishEditOnFocusOut();"
+        )
+        self._active_layer_id = None
+        self.keyboard_dismissed.emit()
+
+    def has_focus_inside(self) -> bool:
+        """Return whether Qt focus is still inside this list's WebView."""
+        focused = QApplication.focusWidget()
+        return bool(
+            focused is self.web_view
+            or (focused is not None and self.web_view.isAncestorOf(focused))
+        )
 
     def cancel_edit(self) -> None:
         self._pending_edit_id = None
@@ -311,11 +354,22 @@ class FormulaListWidget(QWidget):
             "if (window.formulaListReady) window.formulaList.cancelEdit();"
         )
         self._active_layer_id = None
+        self.keyboard_dismissed.emit()
         self.edit_cancelled.emit(layer_id)
+
+    def apply_external_edit(self, latex: str, position: int) -> None:
+        """Apply a key press from the wide keyboard to the visible inline field."""
+        if self._active_layer_id is None or not self._page_ready:
+            return
+        self._run_javascript(
+            "if (window.formulaListReady) "
+            f"window.formulaList.applyExternalEdit({json.dumps(str(latex))}, "
+            f"{max(0, int(position))});"
+        )
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         if watched is self.web_view and event.type() == QEvent.Type.FocusOut:
-            self.commit_active_mark()
+            self.focus_lost.emit()
         return super().eventFilter(watched, event)
 
     def _send_layers(self) -> None:
@@ -336,7 +390,10 @@ class FormulaListWidget(QWidget):
                 "if (window.formulaListReady) "
                 f"window.formulaList.setMatrixTransformEditable({editable_payload});"
             )
-            self.set_matrix_transform_value(self._matrix_transform_text)
+            self.set_matrix_transform_value(
+                self._matrix_transform_text,
+                self._matrix_transform_result,
+            )
             self.set_matrix_transform_grid_range(self._matrix_transform_grid_range)
             self.set_matrix_transform_visibility(
                 self._show_original_coordinate_system,
@@ -431,9 +488,20 @@ class FormulaListWidget(QWidget):
         self._active_layer_id = layer_id
         self.edit_requested.emit(layer_id)
 
+    def _on_edit_state_changed(self, layer_id: str, latex: str, position: int) -> None:
+        if self._active_layer_id != layer_id:
+            return
+        self.edit_state_changed.emit(layer_id, latex, max(0, int(position)))
+
+    def _on_keyboard_requested(self, layer_id: str, latex: str, position: int) -> None:
+        if self._active_layer_id != layer_id:
+            return
+        self.keyboard_requested.emit(layer_id, latex, max(0, int(position)))
+
     def _on_edit_cancelled(self, layer_id: str) -> None:
         if self._active_layer_id == layer_id:
             self._active_layer_id = None
+        self.keyboard_dismissed.emit()
         self.edit_cancelled.emit(layer_id)
 
     def _on_settings_requested(self, layer_id: str, top: int, height: int) -> None:

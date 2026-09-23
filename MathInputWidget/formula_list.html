@@ -174,8 +174,23 @@
     .matrix-transform-editor .formula-cell {
       min-height: 44px;
     }
+    .matrix-expression {
+      display: flex;
+      align-items: center;
+      flex: 0 0 auto;
+      min-width: max-content;
+    }
     .matrix-transform-editor math-field {
+      width: auto;
+      flex: 0 0 auto;
       font-size: 20px;
+    }
+    .matrix-transform-result {
+      cursor: default;
+      --caret-color: transparent;
+    }
+    .matrix-transform-result[hidden] {
+      display: none;
     }
     math-field {
       box-sizing: border-box;
@@ -266,7 +281,8 @@
         let matrixActive = null;
         let matrixTransformEnabled = false;
         let matrixTransformEditable = true;
-        let matrixTransformValue = '\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}';
+        let matrixTransformValue = 'A=\\begin{pmatrix}1&0\\\\0&1\\end{pmatrix}';
+        let matrixTransformResult = '';
         let matrixTransformGridRange = 5;
         let showOriginalCoordinateSystem = true;
         let showTransformedCoordinateSystem = true;
@@ -279,7 +295,16 @@
           '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>';
 
         const matrixEditorFor = () => list.querySelector('.matrix-transform-editor');
-        const matrixField = () => matrixEditorFor()?.querySelector('math-field');
+        const matrixField = () => matrixEditorFor()?.querySelector('.matrix-transform-input');
+        const matrixResultField = () => matrixEditorFor()?.querySelector('.matrix-transform-result');
+        const renderMatrixResult = () => {
+          const field = matrixResultField();
+          if (!field) return;
+          field.hidden = !matrixTransformResult;
+          if (matrixTransformResult) {
+            field.setValue(`=${matrixTransformResult}`, { silenceNotifications: true });
+          }
+        };
         const matrixText = () => {
           const value = matrixField()?.getValue('latex').trim();
           if (value) matrixTransformValue = value;
@@ -296,19 +321,30 @@
           editor.className = 'layer-row matrix-transform-editor';
           const cell = document.createElement('div');
           cell.className = 'formula-cell';
+          const expression = document.createElement('div');
+          expression.className = 'matrix-expression';
           const field = document.createElement('math-field');
+          field.className = 'matrix-transform-input';
           field.setAttribute('aria-label', '变换矩阵');
           field.mathVirtualKeyboardPolicy = 'manual';
           field.setValue(matrixTransformValue, { silenceNotifications: true });
+          const result = document.createElement('math-field');
+          result.className = 'matrix-transform-result';
+          result.setAttribute('aria-label', '矩阵乘法结果');
+          result.setAttribute('tabindex', '-1');
+          setReadOnly(result, true);
+          result.hidden = true;
           const settings = document.createElement('button');
           settings.className = 'settings-button';
           settings.type = 'button';
           settings.innerHTML = settingsIcon();
           settings.title = '矩阵网格设置';
-          cell.append(field);
+          expression.append(field, result);
+          cell.append(expression);
           editor.append(cell, settings);
           list.prepend(editor);
           setReadOnly(field, true);
+          renderMatrixResult();
           watchField(editor, field);
           field.addEventListener('pointerdown', (event) => {
             event.stopPropagation();
@@ -344,11 +380,13 @@
             window.mathVirtualKeyboard.hide();
           }
         };
-        const showKeyboard = (field, installToolbar) => {
-          if (!window.mathVirtualKeyboard) return;
-          field.focus();
-          window.mathVirtualKeyboard.show();
-          requestAnimationFrame(installToolbar);
+        const requestFloatingKeyboard = () => {
+          if (!active) return;
+          bridge.keyboardRequested(
+            active.layerId,
+            active.field.getValue('latex'),
+            Number.isFinite(active.field.position) ? active.field.position : 0,
+          );
         };
         const installFieldToolbar = (field) => MathLiveBridge.installKeyboardToolbarActions(
           field,
@@ -357,7 +395,7 @@
               if (window.mathVirtualKeyboard.visible) {
                 hideKeyboard();
               } else {
-                showKeyboard(field, installToolbar);
+                requestFloatingKeyboard();
               }
             },
           },
@@ -454,6 +492,11 @@
           const field = fieldFor(layerId);
           const row = rowFor(layerId);
           if (!field || !row) return;
+          if (active?.layerId === layerId) {
+            field.focus();
+            requestFloatingKeyboard();
+            return;
+          }
           if (matrixActive) commitMatrixEdit();
           if (active && active.layerId !== layerId) {
             cancel();
@@ -472,6 +515,7 @@
           installToolbar();
           field.focus();
           bridge.editRequested(layerId);
+          requestFloatingKeyboard();
         };
         const bindRow = (layer, row, field) => {
           field.mathVirtualKeyboardPolicy = 'manual';
@@ -486,8 +530,21 @@
           field.addEventListener('input', () => {
             if (active?.layerId === layer.id) {
               active.submissionPending = false;
+              bridge.editStateChanged(
+                layer.id,
+                field.getValue('latex'),
+                Number.isFinite(field.position) ? field.position : 0,
+              );
             }
             syncRowHeight(row, field);
+          });
+          field.addEventListener('selection-change', () => {
+            if (active?.layerId !== layer.id) return;
+            bridge.editStateChanged(
+              layer.id,
+              field.getValue('latex'),
+              Number.isFinite(field.position) ? field.position : 0,
+            );
           });
           field.addEventListener('keydown', (event) => {
             if (active?.layerId !== layer.id) return;
@@ -567,15 +624,17 @@
           const field = matrixField();
           if (field) field.style.cursor = matrixTransformEditable ? 'text' : 'default';
         };
-        const setMatrixTransformValue = (value) => {
+        const setMatrixTransformValue = (value, result = '') => {
           const nextValue = String(value || '').trim();
           if (!nextValue) return;
           matrixTransformValue = nextValue;
+          matrixTransformResult = String(result || '').trim();
           const field = matrixField();
           if (field && matrixActive?.field !== field) {
             field.setValue(matrixTransformValue, { silenceNotifications: true });
             syncRowHeight(matrixEditorFor(), field);
           }
+          renderMatrixResult();
         };
         const setMatrixTransformVisibility = (showOriginal, showTransformed) => {
           showOriginalCoordinateSystem = Boolean(showOriginal);
@@ -593,6 +652,17 @@
             matrixTransformGridRange = Math.max(1, Math.min(100, parsed));
           }
         };
+        const finishEditOnFocusOut = () => {
+          if (!active) return;
+          const latex = active.field.getValue('latex');
+          if (!latex || latex === active.savedLatex) {
+            finishEdit(true);
+            return;
+          }
+          active.submissionPending = true;
+          bridge.formulaSubmitted(active.layerId, latex);
+          finishEdit(false);
+        };
         const updateLayer = (layer) => {
           layers.set(layer.id, {...layer});
           const field = fieldFor(layer.id);
@@ -606,6 +676,13 @@
           row.querySelector('.visibility-button').innerHTML = visibilityIcon(layer.visible);
           row.querySelector('.visibility-button').title = layer.visible ? '隐藏函数' : '显示函数';
           syncRowHeight(row, field);
+        };
+        const applyExternalEdit = (latex, position) => {
+          if (!active) return;
+          active.field.setValue(String(latex || ''), { silenceNotifications: true });
+          active.field.position = Math.max(0, Number(position) || 0);
+          active.submissionPending = false;
+          syncRowHeight(rowFor(active.layerId), active.field);
         };
         document.addEventListener('pointerdown', (event) => {
           if (
@@ -642,6 +719,8 @@
           updateLayer,
           setSelected,
           beginEdit,
+          applyExternalEdit,
+          finishEditOnFocusOut,
           setMatrixTransform,
           setMatrixTransformEditable,
           setMatrixTransformValue,
