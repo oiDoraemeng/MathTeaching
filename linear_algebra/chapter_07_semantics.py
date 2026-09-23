@@ -1,7 +1,12 @@
-"""Immutable, numerically closed Chapter 7 semantic descriptors."""
+"""Closed mathematical witnesses and stage contracts for Chapter 7."""
+
+from __future__ import annotations
+
 from dataclasses import dataclass
 from types import MappingProxyType
+
 from linear_algebra.chapter_04_semantics import EntityDescriptor, RelationDescriptor, StageDescriptor
+
 
 @dataclass(frozen=True)
 class Ch7Spec:
@@ -12,76 +17,169 @@ class Ch7Spec:
     invariants: tuple[str, ...]
     formula: str
     operations: tuple[str, ...]
+
     @property
-    def roles(self):
-        return tuple(e.role for e in self.entities)
+    def roles(self) -> tuple[str, ...]:
+        return tuple(entity.role for entity in self.entities)
 
-def _e(role, kind, value, dim=2):
-    return EntityDescriptor(role, kind, dim, value, role)
-def _r(name, source, target, **params):
-    return RelationDescriptor(name, 'maps_to', source, target, tuple(params.items()))
-def _s(name, title, ins, outs, rels, inv):
-    return StageDescriptor(name, title, 'sequence', ins, outs, rels, inv)
 
-A = ((3., 1.), (0., 2.))
-P = ((1., -1.), (0., 1.))
-PI = ((1., 1.), (0., 1.))
-D = ((3., 0.), (0., 2.))
-ROT = ((0., -1.), (1., 0.))
-INPUT = ((1., 0., 0.), (1., 1., 0.), (1., 1., 1.))
-PROJ = ((0., 0., 0.), (1., 0., 0.), (1., 1., 0.))
-ORTH = ((1., 0., 0.), (0., 1., 0.), (0., 0., 1.))
-Q = ((.6, -.8), (.8, .6))
+def _entity(role: str, value: object, kind: str = "vector") -> EntityDescriptor:
+    return EntityDescriptor(role, kind, 2, value, role)
 
-def _direction():
-    entities, relations, stages = [], [], []
-    for name, matrix, vector, value in (
-        ('stretch', ((2., 0.), (0., -1.)), (1., 0.), 2.),
-        ('reverse', ((2., 0.), (0., -1.)), (0., 1.), -1.),
-        ('collapse', ((1., 0.), (0., 0.)), (0., 1.), 0.),
-    ):
-        out = tuple(value * x for x in vector)
-        roles = tuple(name + '_' + r for r in ('operator', 'vector', 'output', 'eigenvalue'))
-        entities.extend((_e(roles[0], 'matrix', matrix), _e(roles[1], 'vector', vector), _e(roles[2], 'vector', out), _e(roles[3], 'point', (value, 0.))))
-        relations.append(_r(name, roles[1], roles[2], matrix=matrix, vector=vector, output=out, eigenvalue=value))
-        stages.append(_s(name, {'stretch': '正特征值拉伸', 'reverse': '负特征值反向', 'collapse': '零特征值消失'}[name], (roles[0], roles[1], roles[3]), (roles[2],), (name,), ('Av_equals_lambda_v',)))
-    return Ch7Spec('ch07.eigen.direction', tuple(entities), tuple(relations), tuple(stages), ('Av_equals_lambda_v',), 'Av=lambda v', ('geometry.transformed_grid', 'geometry.staged_transform'))
 
-def _spectrum(topic, characteristic):
-    entities = [_e('operator', 'matrix', A), _e('root_2', 'point', (2., 0.)), _e('root_3', 'point', (3., 0.)), _e('space_2', 'subspace', ((-1., 1.),)), _e('space_3', 'subspace', ((1., 0.),))]
-    relations = [_r('root_2', 'root_2', 'space_2', matrix=A, eigenvalue=2., shifted=((1., 1.), (0., 0.)), basis=((-1., 1.),)), _r('root_3', 'root_3', 'space_3', matrix=A, eigenvalue=3., shifted=((0., 1.), (0., -1.)), basis=((1., 0.),))]
-    stages = [_s('nullspace', '特征根对应零空间', ('operator', 'root_2', 'root_3'), ('space_2', 'space_3'), ('root_2', 'root_3'), ('roots_bind_nullspaces',))]
-    invariants = ['roots_bind_nullspaces']
-    operations = ['geometry.subspace_region']
-    if characteristic:
-        entities.extend((_e('polynomial', 'region', (1., -5., 6.)), _e('complex_operator', 'matrix', ROT), _e('complex_polynomial', 'region', (1., 0., 1.)), _e('complex_roots', 'region', ((0., -1.), (0., 1.)))))
-        relations.extend((_r('polynomial', 'operator', 'polynomial', matrix=A, coefficients=(1., -5., 6.), roots=((2., 0.), (3., 0.))), _r('complex_spectrum', 'complex_operator', 'complex_roots', matrix=ROT, coefficients=(1., 0., 1.), roots=((0., -1.), (0., 1.)))))
-        stages.extend((_s('polynomial', '特征多项式实根', ('operator', 'polynomial'), ('root_2', 'root_3'), ('polynomial', 'root_2', 'root_3'), ('polynomial_roots',)), _s('complex', '复根不生成实特征方向', ('complex_operator', 'complex_polynomial'), ('complex_roots',), ('complex_spectrum',), ('complex_has_no_real_directions',))))
-        invariants.extend(('polynomial_roots', 'complex_has_no_real_directions'))
-        operations.append('curve.create')
-    return Ch7Spec(topic, tuple(entities), tuple(relations), tuple(stages), tuple(invariants), 'E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)', tuple(operations))
+def _relation(name: str, kind: str, source: str, target: str, **parameters: object) -> RelationDescriptor:
+    return RelationDescriptor(name, kind, source, target, tuple(parameters.items()))
 
-_S = {
-    'ch07.eigen.direction': _direction(),
-    'ch07.characteristic-polynomial': _spectrum('ch07.characteristic-polynomial', True),
-    'ch07.eigenspace': _spectrum('ch07.eigenspace', False),
-    'ch07.diagonalization': Ch7Spec('ch07.diagonalization',
-        (_e('operator', 'matrix', A), _e('basis', 'matrix', P), _e('inverse_basis', 'matrix', PI), _e('diagonal', 'matrix', D), _e('standard', 'vector', (0., 1.)), _e('coordinates', 'vector', (1., 1.)), _e('scaled', 'vector', (3., 2.)), _e('endpoint', 'vector', (1., 2.))),
-        (_r('change_basis', 'standard', 'coordinates', matrix=PI, input=(0., 1.), output=(1., 1.)), _r('diagonal_scale', 'coordinates', 'scaled', matrix=D, input=(1., 1.), output=(3., 2.)), _r('change_basis_back', 'scaled', 'endpoint', matrix=P, input=(3., 2.), output=(1., 2.)), _r('direct_endpoint', 'standard', 'endpoint', matrix=A, input=(0., 1.), output=(1., 2.))),
-        (_s('change_basis', '换到特征基', ('standard', 'basis', 'inverse_basis'), ('coordinates',), ('change_basis',), ('inverse_coordinates',)), _s('diagonal_scale', '特征值独立缩放', ('coordinates', 'diagonal', 'operator'), ('scaled',), ('diagonal_scale',), ('diagonal_similarity',)), _s('change_basis_back', '换回标准坐标', ('scaled', 'basis'), ('endpoint',), ('change_basis_back', 'direct_endpoint'), ('endpoint_matches_direct',))),
-        ('inverse_coordinates', 'diagonal_similarity', 'endpoint_matches_direct'), 'A=PDP^{-1}', ('geometry.staged_transform', 'geometry.transformed_grid')),
-    'ch07.gram-schmidt': Ch7Spec('ch07.gram-schmidt', tuple(_e(r, 'basis', v, 3) for r, v in (('input_vectors', INPUT), ('projection', PROJ), ('residual', ORTH), ('normalized', ORTH))),
-        (_r('orthogonalize', 'input_vectors', 'normalized', vectors=INPUT, projections=PROJ, residuals=ORTH, normalized=ORTH, tolerance=1e-9),),
-        tuple(_s(name, title, ins, (out,), ('orthogonalize',), (inv,)) for name, title, ins, out, inv in (('input', '原始三维向量', ('input_vectors',), 'input_vectors', 'input_preserved'), ('projection', '投影分量', ('input_vectors', 'normalized'), 'projection', 'projection_subtracted'), ('residual', '正交残差', ('input_vectors', 'projection'), 'residual', 'residual_orthogonal'), ('normalized', '归一化', ('residual',), 'normalized', 'orthonormal_basis'))),
-        ('input_preserved', 'projection_subtracted', 'residual_orthogonal', 'orthonormal_basis'), 'u_i=v_i-sum_j proj_qj(v_i); q_i=u_i/||u_i||', ('geometry.orthogonalization', 'geometry.projection3d', 'linear3d.upsert')),
-    'ch07.orthogonal-transform': Ch7Spec('ch07.orthogonal-transform',
-        (_e('orthogonal_matrix', 'matrix', Q), _e('vector_a', 'vector', (2., 1.)), _e('vector_b', 'vector', (-1., 3.)), _e('transformed_a', 'vector', (.4, 2.2)), _e('transformed_b', 'vector', (-3., 1.))),
-        (_r('isometry', 'vector_a', 'transformed_a', matrix=Q, vector_a=(2., 1.), vector_b=(-1., 3.), transformed_a=(.4, 2.2), transformed_b=(-3., 1.), squared_lengths=(5., 10.), dot=1., area=7., gram=((1., 0.), (0., 1.))),),
-        (_s('isometry', '正交变换保持长度夹角面积', ('orthogonal_matrix', 'vector_a', 'vector_b'), ('transformed_a', 'transformed_b'), ('isometry',), ('orthogonal_matrix', 'length_preserved', 'angle_preserved', 'area_abs_preserved')),),
-        ('orthogonal_matrix', 'length_preserved', 'angle_preserved', 'area_abs_preserved'), 'Q^TQ=I; <Qx,Qy>=<x,y>', ('geometry.transformed_grid', 'geometry.oriented_area')),
-}
-SPECS = MappingProxyType(_S)
-def spec_for(topic):
-    return SPECS[topic if topic.startswith('ch07.') else 'ch07.' + topic]
-def specs():
-    return tuple(SPECS.values())
+
+def _stage(name: str, title: str, inputs: tuple[str, ...], outputs: tuple[str, ...], relations: tuple[str, ...], invariants: tuple[str, ...]) -> StageDescriptor:
+    return StageDescriptor(name, title, "overlay", inputs, outputs, relations, invariants)
+
+
+def _eigen_directions() -> Ch7Spec:
+    stretch = ((2.0, 0.0), (0.0, 1.0))
+    projection = ((1.0, 0.0), (0.0, 0.0))
+    rotation = ((0.0, -1.0), (1.0, 0.0))
+    reflection = ((0.0, 1.0), (1.0, 0.0))
+    invariants = (
+        "A v = lambda v for every displayed eigenvector",
+        "lambda zero eigenspace equals Null(A)",
+        "quarter turn has no real eigenvector",
+    )
+    entities = (
+        _entity("stretch_operator", stretch, "matrix"),
+        _entity("stretch_x", (1.0, 0.0)), _entity("stretch_x_image", (2.0, 0.0)),
+        _entity("stretch_y", (0.0, 1.0)), _entity("stretch_y_image", (0.0, 1.0)),
+        _entity("projection_operator", projection, "matrix"),
+        _entity("projection_x", (1.0, 0.0)), _entity("projection_x_image", (1.0, 0.0)),
+        _entity("projection_y", (0.0, 1.0)), _entity("projection_y_image", (0.0, 0.0)),
+        _entity("rotation_operator", rotation, "matrix"),
+        _entity("rotation_vector", (1.0, 0.0)), _entity("rotation_image", (0.0, 1.0)),
+        _entity("reflection_operator", reflection, "matrix"),
+        _entity("reflection_plus", (1.0, 1.0)), _entity("reflection_plus_image", (1.0, 1.0)),
+        _entity("reflection_minus", (1.0, -1.0)), _entity("reflection_minus_image", (-1.0, 1.0)),
+    )
+    relations = (
+        _relation("stretch_x", "maps_to", "stretch_x", "stretch_x_image", matrix=stretch, vector=(1.0, 0.0), output=(2.0, 0.0), eigenvalue=2.0),
+        _relation("stretch_y", "maps_to", "stretch_y", "stretch_y_image", matrix=stretch, vector=(0.0, 1.0), output=(0.0, 1.0), eigenvalue=1.0),
+        _relation("projection_x", "maps_to", "projection_x", "projection_x_image", matrix=projection, vector=(1.0, 0.0), output=(1.0, 0.0), eigenvalue=1.0),
+        _relation("projection_y", "collapses_to", "projection_y", "projection_y_image", matrix=projection, vector=(0.0, 1.0), output=(0.0, 0.0), eigenvalue=0.0),
+        _relation("rotation", "maps_to", "rotation_vector", "rotation_image", matrix=rotation, vector=(1.0, 0.0), output=(0.0, 1.0), characteristic=(1.0, 0.0, 1.0), discriminant=-4.0),
+        _relation("reflection_plus", "maps_to", "reflection_plus", "reflection_plus_image", matrix=reflection, vector=(1.0, 1.0), output=(1.0, 1.0), eigenvalue=1.0),
+        _relation("reflection_minus", "maps_to", "reflection_minus", "reflection_minus_image", matrix=reflection, vector=(1.0, -1.0), output=(-1.0, 1.0), eigenvalue=-1.0),
+    )
+    stages = (
+        _stage("stretch", "拉伸：两个坐标轴方向不变", ("stretch_operator", "stretch_x", "stretch_y"), ("stretch_x_image", "stretch_y_image"), ("stretch_x", "stretch_y"), invariants),
+        _stage("projection", "投影：一个方向不变，一个方向消失", ("projection_operator", "projection_x", "projection_y"), ("projection_x_image", "projection_y_image"), ("projection_x", "projection_y"), invariants),
+        _stage("rotation", "旋转 90 度：没有实特征方向", ("rotation_operator", "rotation_vector"), ("rotation_image",), ("rotation",), invariants),
+        _stage("reflection", "关于 y=x 反射：一个方向不变，一个方向反向", ("reflection_operator", "reflection_plus", "reflection_minus"), ("reflection_plus_image", "reflection_minus_image"), ("reflection_plus", "reflection_minus"), invariants),
+    )
+    return Ch7Spec("ch07.eigen.direction", entities, relations, stages, invariants, r"\boldsymbol A\boldsymbol v=\lambda\boldsymbol v", ("geometry.transformed_grid", "linear.upsert"))
+
+
+def _characteristic_polynomial() -> Ch7Spec:
+    real_matrix = ((2.0, 1.0), (1.0, 2.0))
+    complex_matrix = ((1.0, -1.0), (1.0, 1.0))
+    invariants = (
+        "roots of det(A-lambda I) are eigenvalues",
+        "real roots bind to Null(A-lambda I)",
+        "negative discriminant gives no real eigenvalue",
+    )
+    entities = (
+        _entity("real_operator", real_matrix, "matrix"),
+        _entity("real_polynomial", (1.0, -4.0, 3.0), "region"),
+        _entity("real_roots", ((1.0, 0.0), (3.0, 0.0)), "region"),
+        _entity("space_3", ((1.0, 1.0),), "eigenspace"),
+        _entity("space_1", ((1.0, -1.0),), "eigenspace"),
+        _entity("complex_operator", complex_matrix, "matrix"),
+        _entity("complex_polynomial", (1.0, -2.0, 2.0), "region"),
+        _entity("complex_roots", ((1.0, -1.0), (1.0, 1.0)), "region"),
+    )
+    relations = (
+        _relation("real_spectrum", "eigen_binding", "real_operator", "real_polynomial", matrix=real_matrix, coefficients=(1.0, -4.0, 3.0), roots=((1.0, 0.0), (3.0, 0.0)), basis_3=((1.0, 1.0),), basis_1=((1.0, -1.0),)),
+        _relation("complex_spectrum", "eigen_binding", "complex_operator", "complex_polynomial", matrix=complex_matrix, coefficients=(1.0, -2.0, 2.0), roots=((1.0, -1.0), (1.0, 1.0)), discriminant=-4.0),
+    )
+    stages = (
+        _stage("real", "例 1：两个实特征值", ("real_operator", "real_polynomial"), ("real_roots", "space_3", "space_1"), ("real_spectrum",), invariants),
+        _stage("complex", "例 2：没有实特征值", ("complex_operator", "complex_polynomial"), ("complex_roots",), ("complex_spectrum",), invariants),
+    )
+    return Ch7Spec("ch07.characteristic-polynomial", entities, relations, stages, invariants, r"p(\lambda)=\det(\boldsymbol A-\lambda\boldsymbol I)=0", ("curve.create", "point.upsert", "geometry.subspace_region"))
+
+
+def _eigenspaces() -> Ch7Spec:
+    operator = ((2.0, 1.0), (1.0, 2.0))
+    shear = ((1.0, 1.0), (0.0, 1.0))
+    invariants = (
+        "E_lambda = Null(A-lambda I)",
+        "distinct eigenvalues have independent eigenvectors",
+        "det(A) equals the product of eigenvalues",
+        "tr(A) equals the sum of eigenvalues",
+        "geometric multiplicity does not exceed algebraic multiplicity",
+    )
+    entities = (
+        _entity("operator", operator, "matrix"),
+        _entity("space_3", ((1.0, 1.0),), "eigenspace"),
+        _entity("space_1", ((1.0, -1.0),), "eigenspace"),
+        _entity("shear_operator", shear, "matrix"),
+        _entity("shear_space", ((1.0, 0.0),), "eigenspace"),
+        _entity("invariant_values", ((3.0, 1.0), (3.0, 4.0)), "region"),
+    )
+    relations = (
+        _relation("space_3", "eigen_binding", "operator", "space_3", matrix=operator, eigenvalue=3.0, shifted=((-1.0, 1.0), (1.0, -1.0)), basis=((1.0, 1.0),)),
+        _relation("space_1", "eigen_binding", "operator", "space_1", matrix=operator, eigenvalue=1.0, shifted=((1.0, 1.0), (1.0, 1.0)), basis=((1.0, -1.0),)),
+        _relation("shear_space", "eigen_binding", "shear_operator", "shear_space", matrix=shear, eigenvalue=1.0, shifted=((0.0, 1.0), (0.0, 0.0)), basis=((1.0, 0.0),), algebraic_multiplicity=2.0, geometric_multiplicity=1.0),
+        _relation("invariants", "invariant", "operator", "invariant_values", determinant=3.0, trace=4.0, eigenvalues=(3.0, 1.0)),
+    )
+    stages = (
+        _stage("eigenspaces", "两个特征值对应两个特征空间", ("operator",), ("space_3", "space_1"), ("space_3", "space_1"), invariants),
+        _stage("defective", "例 7：切变矩阵不能对角化", ("shear_operator",), ("shear_space",), ("shear_space",), invariants),
+        _stage("invariants", "例 8：用特征值验证行列式与迹", ("operator",), ("invariant_values",), ("invariants",), invariants),
+    )
+    return Ch7Spec("ch07.eigenspace", entities, relations, stages, invariants, r"E_\lambda=\operatorname{Null}(\boldsymbol A-\lambda\boldsymbol I)", ("geometry.transformed_grid", "geometry.subspace_region", "linear.upsert"))
+
+
+def _diagonalization() -> Ch7Spec:
+    operator = ((2.0, 1.0), (1.0, 2.0))
+    basis = ((1.0, 1.0), (1.0, -1.0))
+    inverse = ((0.5, 0.5), (0.5, -0.5))
+    diagonal = ((3.0, 0.0), (0.0, 1.0))
+    invariants = ("P inverse A P = D", "columns of P are independent eigenvectors", "D scales eigen-coordinates independently", "P D P inverse = A")
+    entities = (
+        _entity("operator", operator, "matrix"), _entity("basis", basis, "matrix"),
+        _entity("inverse_basis", inverse, "matrix"), _entity("diagonal", diagonal, "matrix"),
+        _entity("coordinate_e1", (1.0, 0.0)), _entity("coordinate_e2", (0.0, 1.0)),
+        _entity("scaled_e1", (3.0, 0.0)), _entity("scaled_e2", (0.0, 1.0)),
+        _entity("basis_v1", (1.0, 1.0)), _entity("basis_v2", (1.0, -1.0)),
+        _entity("image_v1", (3.0, 3.0)), _entity("image_v2", (1.0, -1.0)),
+    )
+    relations = (
+        _relation("similarity", "coordinate_equivalence", "operator", "diagonal", operator=operator, basis=basis, inverse_basis=inverse, diagonal=diagonal),
+        _relation("diagonal_v1", "maps_to", "coordinate_e1", "scaled_e1", matrix=diagonal, vector=(1.0, 0.0), output=(3.0, 0.0), eigenvalue=3.0),
+        _relation("diagonal_v2", "maps_to", "coordinate_e2", "scaled_e2", matrix=diagonal, vector=(0.0, 1.0), output=(0.0, 1.0), eigenvalue=1.0),
+        _relation("eigen_v1", "maps_to", "basis_v1", "image_v1", matrix=operator, vector=(1.0, 1.0), output=(3.0, 3.0), eigenvalue=3.0),
+        _relation("eigen_v2", "maps_to", "basis_v2", "image_v2", matrix=operator, vector=(1.0, -1.0), output=(1.0, -1.0), eigenvalue=1.0),
+    )
+    stages = (
+        _stage("change_basis", "第一步：换到特征基", ("basis", "inverse_basis"), ("basis_v1", "basis_v2"), ("similarity",), invariants),
+        _stage("diagonal_scale", "第二步：沿特征方向独立缩放", ("diagonal", "coordinate_e1", "coordinate_e2"), ("scaled_e1", "scaled_e2"), ("diagonal_v1", "diagonal_v2"), invariants),
+        _stage("change_basis_back", "第三步：换回标准基", ("operator", "basis_v1", "basis_v2"), ("image_v1", "image_v2"), ("similarity", "eigen_v1", "eigen_v2"), invariants),
+    )
+    return Ch7Spec("ch07.diagonalization", entities, relations, stages, invariants, r"\boldsymbol A=\boldsymbol P\boldsymbol D\boldsymbol P^{-1}", ("geometry.transformed_grid", "linear.upsert"))
+
+
+_SPECS = MappingProxyType({
+    "ch07.eigen.direction": _eigen_directions(),
+    "ch07.characteristic-polynomial": _characteristic_polynomial(),
+    "ch07.eigenspace": _eigenspaces(),
+    "ch07.diagonalization": _diagonalization(),
+})
+
+
+def spec_for(topic: str) -> Ch7Spec:
+    return _SPECS[topic if topic.startswith("ch07.") else f"ch07.{topic}"]
+
+
+def specs() -> tuple[Ch7Spec, ...]:
+    return tuple(_SPECS.values())
+
+
+__all__ = ["Ch7Spec", "spec_for", "specs"]

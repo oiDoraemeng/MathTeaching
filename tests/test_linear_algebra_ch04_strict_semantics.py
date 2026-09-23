@@ -274,7 +274,7 @@ def test_disk_revieweds_are_canonical_and_legacy_index_rows_match_release_baseli
     data=root/"linear_algebra"/"teaching"/"data"
     current=json.loads((data/"index.json").read_text(encoding="utf-8"))
     legacy=lambda payload: [row for row in payload["topics"] if not row["topic_id"].startswith("ch04.")]
-    assert current["topic_count"] == len(current["topics"]) == 57
+    assert current["topic_count"] == len(current["topics"]) == 47
     assert len({row["topic_id"] for row in current["topics"]}) == current["topic_count"]
     assert len([row for row in current["topics"] if row["topic_id"].startswith("ch04.")]) == 4
     # 重新发布第四章只允许改动 ch04 行；其余章节的行必须逐字节保持。

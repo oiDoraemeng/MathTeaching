@@ -27,13 +27,42 @@ def test_excluded_headings_are_not_part_of_context() -> None:
     assert "挑战选做" not in context.excerpt
 
 
+def test_matrix_powers_context_stops_before_later_2_8_topics() -> None:
+    entry = next(t for t in TOPICS if t.id == "ch02.matrix.powers")
+    context = LectureSourceRepository(Path(".agents/线性代数讲义.md")).context_for(entry)
+
+    assert context.spans[0].start_line == 521
+    assert context.spans[0].end_line == 545
+    assert "定义 2.15（矩阵的幂）" in context.excerpt
+    assert "定理 2.8（转置的性质）" in context.excerpt
+    assert "2.8.5 对称矩阵与反对称矩阵" not in context.excerpt
+    assert "2.8.6 分块矩阵" not in context.excerpt
+
+
+def test_chapter_three_text_topics_include_leading_prose_and_stop_before_summary() -> None:
+    entries = {topic.id: topic for topic in catalog_registry().topics}
+    repo = LectureSourceRepository(Path(".agents/线性代数讲义.md"))
+
+    cramer = repo.context_for(entries["ch03.cramer.area-ratio"])
+    inverse = repo.context_for(entries["ch03.inverse.undo"])
+    det_zero = repo.context_for(entries["ch03.det.zero.equivalence"])
+
+    assert cramer.spans[0].start_line == 924
+    assert "一句话动机：方程组$Ax=b$的解能否直接用行列式表达？" in cramer.excerpt
+    assert "本节目标：掌握Cramer法则的公式和几何含义" in cramer.excerpt
+    assert inverse.spans[0].start_line == 958
+    assert "一句话动机：变换A把空间拉伸旋转了" in inverse.excerpt
+    assert "本节目标：理解逆矩阵的几何意义" in inverse.excerpt
+    assert "#### 本章小结" not in det_zero.excerpt
+
+
 def test_all_catalog_contexts_resolve_in_catalog_order_without_excluded_blocks() -> None:
     entries = catalog_registry().topics
     repo = LectureSourceRepository(Path(".agents/线性代数讲义.md"))
 
     contexts = tuple(repo.context_for(entry) for entry in entries)
 
-    assert len(contexts) == 57
+    assert len(contexts) == 47
     assert tuple(context.topic_id for context in contexts) == tuple(entry.id for entry in entries)
     assert all(context.spans for context in contexts)
     assert all("自检" not in context.excerpt for context in contexts)

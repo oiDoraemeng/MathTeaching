@@ -1,51 +1,17 @@
 {
-  "artifact_digest": "sha256:3ba1013f4516ca63312ee29ec1f83aaa763d658d205e90319780dbc9462a1fe8",
+  "artifact_digest": "sha256:e28ccf85ee6cf45320cd24da98148fc6383441910398fb8ffda0ada4f5e05374",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:ce7a212384742990bef3ad0c2a56e33ac180fb345af1904c3d096feb2c8f5ba4",
+  "contract_digest": "sha256:ee5b85dd2dcdb70c2ec3bd9393c7cdefdb713232505cdc07b85c2d26d216bfe9",
   "plan": {
     "operations": [
       {
-        "alias": "ch06.similarity-transform__entity__standard_basis__basis_grid",
-        "alternate_alias": "ch06.similarity-transform__entity__standard_basis__alternate",
-        "alternate_coordinates": [
-          -1.0,
-          3.0
-        ],
-        "basis_alias": "ch06.similarity-transform__entity__standard_basis__basis_grid",
-        "basis_matrix": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
+        "alias": "ch06.similarity-transform__entity__standard_basis",
         "bounds": [
-          -8.0,
-          8.0,
-          -8.0,
-          8.0
-        ],
-        "entity_count": 4,
-        "op": "geometry.basis_grid",
-        "sample_count": 4,
-        "standard_alias": "ch06.similarity-transform__entity__standard_basis__standard",
-        "standard_vector": [
-          -1.0,
-          3.0
-        ],
-        "tolerance": 1e-09
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__standard_basis__lane",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -6.0,
+          6.0,
+          -6.0,
+          6.0
         ],
         "matrix": [
           [
@@ -58,78 +24,15 @@
           ]
         ],
         "op": "geometry.transformed_grid",
-        "origin": [
-          -10.0,
-          0.0
-        ],
         "step": 1.0
       },
       {
-        "alias": "ch06.similarity-transform__entity__standard_basis__same_vector__origin",
-        "coordinates": [
-          -10.0,
-          0.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__standard_basis__same_vector__end",
-        "coordinates": [
-          -11.0,
-          3.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__standard_basis__same_vector",
-        "end": "ch06.similarity-transform__entity__standard_basis__same_vector__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "start": "ch06.similarity-transform__entity__standard_basis__same_vector__origin"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__basis_matrix__basis_grid",
-        "alternate_alias": "ch06.similarity-transform__entity__basis_matrix__alternate",
-        "alternate_coordinates": [
-          1.0,
-          2.0
-        ],
-        "basis_alias": "ch06.similarity-transform__entity__basis_matrix__basis_grid",
-        "basis_matrix": [
-          [
-            1.0,
-            -1.0
-          ],
-          [
-            1.0,
-            1.0
-          ]
-        ],
+        "alias": "ch06.similarity-transform__entity__basis_matrix",
         "bounds": [
-          -8.0,
-          8.0,
-          -8.0,
-          8.0
-        ],
-        "entity_count": 4,
-        "op": "geometry.basis_grid",
-        "sample_count": 4,
-        "standard_alias": "ch06.similarity-transform__entity__basis_matrix__standard",
-        "standard_vector": [
-          -1.0,
-          3.0
-        ],
-        "tolerance": 1e-09
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__basis_matrix__lane",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -6.0,
+          6.0,
+          -6.0,
+          6.0
         ],
         "matrix": [
           [
@@ -142,44 +45,15 @@
           ]
         ],
         "op": "geometry.transformed_grid",
-        "origin": [
-          10.0,
-          0.0
-        ],
         "step": 1.0
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__basis_matrix__same_vector__origin",
-        "coordinates": [
-          10.0,
-          0.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__basis_matrix__same_vector__end",
-        "coordinates": [
-          9.0,
-          3.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__basis_matrix__same_vector",
-        "end": "ch06.similarity-transform__entity__basis_matrix__same_vector__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "start": "ch06.similarity-transform__entity__basis_matrix__same_vector__origin"
       },
       {
         "alias": "ch06.similarity-transform__entity__inverse_basis",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -6.0,
+          6.0,
+          -6.0,
+          6.0
         ],
         "matrix": [
           [
@@ -195,62 +69,12 @@
         "step": 1.0
       },
       {
-        "alias": "ch06.similarity-transform__entity__alternate_coordinates__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__alternate_coordinates__end",
-        "coordinates": [
-          1.0,
-          2.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__alternate_coordinates",
-        "end": "ch06.similarity-transform__entity__alternate_coordinates__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "start": "ch06.similarity-transform__entity__alternate_coordinates__origin"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__standard_vector__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__standard_vector__end",
-        "coordinates": [
-          -1.0,
-          3.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__standard_vector",
-        "end": "ch06.similarity-transform__entity__standard_vector__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "start": "ch06.similarity-transform__entity__standard_vector__origin"
-      },
-      {
         "alias": "ch06.similarity-transform__entity__operator",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -6.0,
+          6.0,
+          -6.0,
+          6.0
         ],
         "matrix": [
           [
@@ -268,10 +92,10 @@
       {
         "alias": "ch06.similarity-transform__entity__similar_operator",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -6.0,
+          6.0,
+          -6.0,
+          6.0
         ],
         "matrix": [
           [
@@ -287,214 +111,148 @@
         "step": 1.0
       },
       {
-        "alias": "ch06.similarity-transform__entity__standard_output__origin",
+        "alias": "ch06.similarity-transform__entity__basis_v1__origin",
+        "color": "#2F6BFF",
         "coordinates": [
           0.0,
           0.0
         ],
-        "name": "",
+        "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "ch06.similarity-transform__entity__standard_output__end",
+        "alias": "ch06.similarity-transform__entity__basis_v1__end",
+        "color": "#2F6BFF",
         "coordinates": [
           1.0,
-          5.0
+          1.0
         ],
-        "name": "",
+        "name": "basis_v1",
         "op": "point.upsert"
       },
       {
-        "alias": "ch06.similarity-transform__entity__standard_output",
-        "end": "ch06.similarity-transform__entity__standard_output__end",
+        "alias": "ch06.similarity-transform__entity__basis_v1",
+        "color": "#2F6BFF",
+        "end": "ch06.similarity-transform__entity__basis_v1__end",
         "kind": "vector",
         "op": "linear.upsert",
-        "start": "ch06.similarity-transform__entity__standard_output__origin"
+        "role": "primary",
+        "start": "ch06.similarity-transform__entity__basis_v1__origin"
       },
       {
-        "alias": "ch06.similarity-transform__entity__alternate_output__origin",
+        "alias": "ch06.similarity-transform__entity__basis_v2__origin",
+        "color": "#F08A24",
         "coordinates": [
           0.0,
           0.0
         ],
-        "name": "",
+        "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "ch06.similarity-transform__entity__alternate_output__end",
+        "alias": "ch06.similarity-transform__entity__basis_v2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          -1.0,
+          1.0
+        ],
+        "name": "basis_v2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__entity__basis_v2",
+        "color": "#F08A24",
+        "end": "ch06.similarity-transform__entity__basis_v2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch06.similarity-transform__entity__basis_v2__origin"
+      },
+      {
+        "alias": "ch06.similarity-transform__entity__image_v1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__entity__image_v1__end",
+        "color": "#2F6BFF",
         "coordinates": [
           3.0,
-          2.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__entity__alternate_output",
-        "end": "ch06.similarity-transform__entity__alternate_output__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "start": "ch06.similarity-transform__entity__alternate_output__origin"
-      },
-      {
-        "alias": "ch06.similarity-transform__relation__change_basis",
-        "aliases": [
-          "ch06.similarity-transform__relation__change_basis__point"
-        ],
-        "matrices": [
-          [
-            [
-              1.0,
-              -1.0
-            ],
-            [
-              1.0,
-              1.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            1.0,
-            2.0
-          ]
-        ]
-      },
-      {
-        "alias": "ch06.similarity-transform__relation__change_basis__readout__basis_grid",
-        "alternate_alias": "ch06.similarity-transform__relation__change_basis__readout__alternate",
-        "alternate_coordinates": [
-          1.0,
-          2.0
-        ],
-        "basis_alias": "ch06.similarity-transform__relation__change_basis__readout__basis_grid",
-        "basis_matrix": [
-          [
-            1.0,
-            -1.0
-          ],
-          [
-            1.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -8.0,
-          8.0,
-          -8.0,
-          8.0
-        ],
-        "entity_count": 4,
-        "op": "geometry.coordinate_readout",
-        "sample_count": 4,
-        "standard_alias": "ch06.similarity-transform__relation__change_basis__readout__standard",
-        "standard_vector": [
-          -1.0,
           3.0
         ],
-        "tolerance": 1e-09
+        "name": "image_v1",
+        "op": "point.upsert"
       },
       {
-        "alias": "ch06.similarity-transform__relation__apply_operator",
-        "aliases": [
-          "ch06.similarity-transform__relation__apply_operator__point"
-        ],
-        "matrices": [
-          [
-            [
-              2.0,
-              1.0
-            ],
-            [
-              1.0,
-              2.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            -1.0,
-            3.0
-          ]
-        ]
+        "alias": "ch06.similarity-transform__entity__image_v1",
+        "color": "#2F6BFF",
+        "end": "ch06.similarity-transform__entity__image_v1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch06.similarity-transform__entity__image_v1__origin"
       },
       {
-        "alias": "ch06.similarity-transform__relation__change_basis_back",
-        "aliases": [
-          "ch06.similarity-transform__relation__change_basis_back__point"
+        "alias": "ch06.similarity-transform__entity__image_v2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "matrices": [
-          [
-            [
-              0.5,
-              0.5
-            ],
-            [
-              -0.5,
-              0.5
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            1.0,
-            5.0
-          ]
-        ]
+        "name": "O",
+        "op": "point.upsert"
       },
       {
-        "alias": "ch06.similarity-transform__relation__change_basis_back__readout__basis_grid",
-        "alternate_alias": "ch06.similarity-transform__relation__change_basis_back__readout__alternate",
-        "alternate_coordinates": [
-          3.0,
-          2.0
+        "alias": "ch06.similarity-transform__entity__image_v2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          -1.0,
+          1.0
         ],
-        "basis_alias": "ch06.similarity-transform__relation__change_basis_back__readout__basis_grid",
-        "basis_matrix": [
-          [
-            1.0,
-            -1.0
-          ],
-          [
-            1.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -8.0,
-          8.0,
-          -8.0,
-          8.0
-        ],
-        "entity_count": 4,
-        "op": "geometry.coordinate_readout",
-        "sample_count": 4,
-        "standard_alias": "ch06.similarity-transform__relation__change_basis_back__readout__standard",
-        "standard_vector": [
-          1.0,
-          5.0
-        ],
-        "tolerance": 1e-09
+        "name": "image_v2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__entity__image_v2",
+        "color": "#F08A24",
+        "end": "ch06.similarity-transform__entity__image_v2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch06.similarity-transform__entity__image_v2__origin"
       },
       {
         "alias": "ch06.similarity-transform__relation__similarity",
+        "bounds": [
+          -6.0,
+          6.0,
+          -6.0,
+          6.0
+        ],
+        "matrix": [
+          [
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch06.similarity-transform__relation__apply_v1",
         "aliases": [
-          "ch06.similarity-transform__relation__similarity__point"
+          "ch06.similarity-transform__relation__apply_v1__point"
         ],
         "matrices": [
-          [
-            [
-              1.0,
-              -1.0
-            ],
-            [
-              1.0,
-              1.0
-            ]
-          ],
           [
             [
               2.0,
@@ -504,80 +262,20 @@
               1.0,
               2.0
             ]
-          ],
-          [
-            [
-              0.5,
-              0.5
-            ],
-            [
-              -0.5,
-              0.5
-            ]
           ]
         ],
         "op": "geometry.staged_transform",
         "points": [
           [
             1.0,
-            2.0
+            1.0
           ]
         ]
       },
       {
-        "alias": "ch06.similarity-transform__stage__change_basis",
+        "alias": "ch06.similarity-transform__relation__apply_v2",
         "aliases": [
-          "ch06.similarity-transform__stage__change_basis__point"
-        ],
-        "matrices": [
-          [
-            [
-              1.0,
-              -1.0
-            ],
-            [
-              1.0,
-              1.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            1.0,
-            2.0
-          ]
-        ]
-      },
-      {
-        "alias": "ch06.similarity-transform__stage__change_basis__output__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__stage__change_basis__output__end",
-        "coordinates": [
-          -1.0,
-          3.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__stage__change_basis__output",
-        "end": "ch06.similarity-transform__stage__change_basis__output__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "start": "ch06.similarity-transform__stage__change_basis__output__origin"
-      },
-      {
-        "alias": "ch06.similarity-transform__stage__apply_operator",
-        "aliases": [
-          "ch06.similarity-transform__stage__apply_operator__point"
+          "ch06.similarity-transform__relation__apply_v2__point"
         ],
         "matrices": [
           [
@@ -595,122 +293,324 @@
         "points": [
           [
             -1.0,
-            3.0
+            1.0
           ]
         ]
       },
       {
-        "alias": "ch06.similarity-transform__stage__apply_operator__output__origin",
-        "coordinates": [
-          0.0,
-          0.0
+        "alias": "ch06.similarity-transform__stage__change_basis__grid",
+        "bounds": [
+          -6.0,
+          6.0,
+          -6.0,
+          6.0
         ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__stage__apply_operator__output__end",
-        "coordinates": [
-          1.0,
-          5.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch06.similarity-transform__stage__apply_operator__output",
-        "end": "ch06.similarity-transform__stage__apply_operator__output__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "start": "ch06.similarity-transform__stage__apply_operator__output__origin"
-      },
-      {
-        "alias": "ch06.similarity-transform__stage__change_basis_back",
-        "aliases": [
-          "ch06.similarity-transform__stage__change_basis_back__point"
-        ],
-        "matrices": [
-          [
-            [
-              0.5,
-              0.5
-            ],
-            [
-              -0.5,
-              0.5
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
+        "color": "#6B7280",
+        "matrix": [
           [
             1.0,
-            5.0
+            -1.0
+          ],
+          [
+            1.0,
+            1.0
           ]
-        ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
-        "alias": "ch06.similarity-transform__stage__change_basis_back__output__origin",
+        "alias": "ch06.similarity-transform__stage__change_basis__v1__origin",
+        "color": "#2F6BFF",
         "coordinates": [
           0.0,
           0.0
         ],
-        "name": "",
+        "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "ch06.similarity-transform__stage__change_basis_back__output__end",
+        "alias": "ch06.similarity-transform__stage__change_basis__v1__end",
+        "color": "#2F6BFF",
         "coordinates": [
-          3.0,
-          2.0
+          1.0,
+          1.0
         ],
-        "name": "",
+        "name": "v1",
         "op": "point.upsert"
       },
       {
-        "alias": "ch06.similarity-transform__stage__change_basis_back__output",
-        "end": "ch06.similarity-transform__stage__change_basis_back__output__end",
+        "alias": "ch06.similarity-transform__stage__change_basis__v1",
+        "color": "#2F6BFF",
+        "end": "ch06.similarity-transform__stage__change_basis__v1__end",
         "kind": "vector",
         "op": "linear.upsert",
-        "start": "ch06.similarity-transform__stage__change_basis_back__output__origin"
+        "role": "primary",
+        "start": "ch06.similarity-transform__stage__change_basis__v1__origin"
       },
       {
-        "alias": "sem__change_basis__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "ch06.similarity-transform__stage__change_basis__v2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "P：翻译为标准坐标"
+        "name": "O",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__apply_operator__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
+        "alias": "ch06.similarity-transform__stage__change_basis__v2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          -1.0,
+          1.0
         ],
-        "text": "A：执行线性变换"
+        "name": "v2",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__change_basis_back__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          1.69
+        "alias": "ch06.similarity-transform__stage__change_basis__v2",
+        "color": "#F08A24",
+        "end": "ch06.similarity-transform__stage__change_basis__v2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch06.similarity-transform__stage__change_basis__v2__origin"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__grid",
+        "bounds": [
+          -6.0,
+          6.0,
+          -6.0,
+          6.0
         ],
-        "text": "P⁻¹：翻译回新基"
+        "color": "#6B7280",
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
+        "alias": "ch06.similarity-transform__stage__apply_operator__v1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__v1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "v1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__v1",
+        "color": "#2F6BFF",
+        "end": "ch06.similarity-transform__stage__apply_operator__v1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch06.similarity-transform__stage__apply_operator__v1__origin"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__v2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__v2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          -1.0,
+          1.0
+        ],
+        "name": "v2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__v2",
+        "color": "#F08A24",
+        "end": "ch06.similarity-transform__stage__apply_operator__v2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch06.similarity-transform__stage__apply_operator__v2__origin"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__av1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__av1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          3.0,
+          3.0
+        ],
+        "name": "Av1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__av1",
+        "color": "#2F6BFF",
+        "end": "ch06.similarity-transform__stage__apply_operator__av1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch06.similarity-transform__stage__apply_operator__av1__origin"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__av2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__av2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          -1.0,
+          1.0
+        ],
+        "name": "Av2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__apply_operator__av2",
+        "color": "#F08A24",
+        "end": "ch06.similarity-transform__stage__apply_operator__av2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch06.similarity-transform__stage__apply_operator__av2__origin"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__change_basis_back__grid",
+        "bounds": [
+          -6.0,
+          6.0,
+          -6.0,
+          6.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__change_basis_back__be1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__change_basis_back__be1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "3e1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__change_basis_back__be1",
+        "color": "#2F6BFF",
+        "end": "ch06.similarity-transform__stage__change_basis_back__be1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch06.similarity-transform__stage__change_basis_back__be1__origin"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__change_basis_back__be2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__change_basis_back__be2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "e2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch06.similarity-transform__stage__change_basis_back__be2",
+        "color": "#F08A24",
+        "end": "ch06.similarity-transform__stage__change_basis_back__be2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch06.similarity-transform__stage__change_basis_back__be2__origin"
+      },
+      {
+        "bounds": [
+          -1.0,
+          3.0,
+          0.0,
+          3.0
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "2d",
-    "summary": "6.3 相似变换——同一个变换在不同基下的矩阵",
+    "summary": "相似变换",
     "version": 1
   },
-  "plan_digest": "sha256:8afb471a7eca866e08ffdc783e60641ee2fcef3c61854249c4f3cd11d0be613c",
+  "plan_digest": "sha256:76019fb3dc8f5a341aee09cfa90b388471d9f00cb7613e398ae39b3ca34ac5d7",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
@@ -720,84 +620,68 @@
   "stages": [
     {
       "anchor": [
-        -2.65,
+        0.0,
         2.65
       ],
-      "caption": "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc",
-      "id": "change_basis",
-      "layout": "sequence",
+      "caption": "先观察右侧变换如何移动向量。",
+      "id": "stage.ch06.similarity-transform.change_basis",
+      "layout": "overlay",
       "title": "P：翻译为标准坐标",
       "visible_aliases": [
-        "ch06.similarity-transform__stage__change_basis",
-        "ch06.similarity-transform__stage__change_basis__output",
-        "ch06.similarity-transform__entity__alternate_coordinates",
-        "ch06.similarity-transform__entity__basis_matrix__basis_grid",
-        "ch06.similarity-transform__entity__basis_matrix__lane",
-        "ch06.similarity-transform__entity__basis_matrix__same_vector",
-        "ch06.similarity-transform__entity__standard_vector",
-        "ch06.similarity-transform__relation__change_basis",
-        "ch06.similarity-transform__relation__change_basis__readout__basis_grid",
-        "sem__change_basis__title"
+        "ch06.similarity-transform__stage__change_basis__grid",
+        "ch06.similarity-transform__stage__change_basis__v1",
+        "ch06.similarity-transform__stage__change_basis__v2"
       ],
       "visible_refs": [
-        "entity.ch06.similarity-transform.alternate_coordinates",
         "entity.ch06.similarity-transform.basis_matrix",
-        "entity.ch06.similarity-transform.standard_vector",
-        "relation.ch06.similarity-transform.change_basis"
+        "entity.ch06.similarity-transform.standard_basis",
+        "relation.ch06.similarity-transform.similarity"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
-      "caption": "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc",
-      "id": "apply_operator",
-      "layout": "sequence",
+      "caption": "再观察左侧变换如何作用在中间结果上。",
+      "id": "stage.ch06.similarity-transform.apply_operator",
+      "layout": "overlay",
       "title": "A：执行线性变换",
       "visible_aliases": [
-        "ch06.similarity-transform__stage__apply_operator",
-        "ch06.similarity-transform__stage__apply_operator__output",
-        "ch06.similarity-transform__entity__standard_vector",
-        "ch06.similarity-transform__entity__operator",
-        "ch06.similarity-transform__entity__standard_output",
-        "ch06.similarity-transform__relation__apply_operator",
-        "sem__apply_operator__title"
+        "ch06.similarity-transform__stage__apply_operator__grid",
+        "ch06.similarity-transform__stage__apply_operator__v1",
+        "ch06.similarity-transform__stage__apply_operator__v2",
+        "ch06.similarity-transform__stage__apply_operator__av1",
+        "ch06.similarity-transform__stage__apply_operator__av2"
       ],
       "visible_refs": [
-        "entity.ch06.similarity-transform.standard_vector",
+        "entity.ch06.similarity-transform.basis_v1",
+        "entity.ch06.similarity-transform.basis_v2",
         "entity.ch06.similarity-transform.operator",
-        "entity.ch06.similarity-transform.standard_output",
-        "relation.ch06.similarity-transform.apply_operator"
+        "entity.ch06.similarity-transform.image_v1",
+        "entity.ch06.similarity-transform.image_v2",
+        "relation.ch06.similarity-transform.apply_v1",
+        "relation.ch06.similarity-transform.apply_v2"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        1.69
+        0.0,
+        2.65
       ],
-      "caption": "B=P^{-1}AP,\\quad c\\to Pc\\to APc\\to P^{-1}APc",
-      "id": "change_basis_back",
-      "layout": "sequence",
+      "caption": "再观察左侧变换如何作用在中间结果上。",
+      "id": "stage.ch06.similarity-transform.change_basis_back",
+      "layout": "overlay",
       "title": "P⁻¹：翻译回新基",
       "visible_aliases": [
-        "ch06.similarity-transform__stage__change_basis_back",
-        "ch06.similarity-transform__stage__change_basis_back__output",
-        "ch06.similarity-transform__entity__standard_output",
-        "ch06.similarity-transform__entity__inverse_basis",
-        "ch06.similarity-transform__entity__alternate_output",
-        "ch06.similarity-transform__entity__similar_operator",
-        "ch06.similarity-transform__relation__change_basis_back",
-        "ch06.similarity-transform__relation__change_basis_back__readout__basis_grid",
-        "ch06.similarity-transform__relation__similarity",
-        "sem__change_basis_back__title"
+        "ch06.similarity-transform__stage__change_basis_back__grid",
+        "ch06.similarity-transform__stage__change_basis_back__be1",
+        "ch06.similarity-transform__stage__change_basis_back__be2"
       ],
       "visible_refs": [
-        "entity.ch06.similarity-transform.standard_output",
         "entity.ch06.similarity-transform.inverse_basis",
-        "entity.ch06.similarity-transform.alternate_output",
+        "entity.ch06.similarity-transform.operator",
         "entity.ch06.similarity-transform.similar_operator",
-        "relation.ch06.similarity-transform.change_basis_back",
         "relation.ch06.similarity-transform.similarity"
       ]
     }

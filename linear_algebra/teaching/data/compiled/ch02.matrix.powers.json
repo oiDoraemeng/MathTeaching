@@ -1,193 +1,127 @@
 {
-  "artifact_digest": "sha256:21df777f810b62cb4b72737cee0ad3216e0345e46f3c599efb374a632fb679dc",
+  "artifact_digest": "sha256:d2846da28a87381e3c3ac385593c82b94bb877e0a9be867aa36b55a49eefef80",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:1fcaebf52f908ee466460e91f6b5c3f2afdaf652ddd3b56ec50a06161cdd0cae",
+  "contract_digest": "sha256:338629a7d4c6f835dfc148d80ccdc1f7b158bdf0a718628c991062d213044108",
   "plan": {
     "operations": [
       {
-        "alias": "sem__A",
+        "alias": "sem__grid_a",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -1.0,
+          1.0,
+          -1.0,
+          1.0
         ],
-        "color": "#6B7280",
+        "color": "#2F6BFF",
         "matrix": [
           [
-            2.0,
-            0.0
+            1.0,
+            2.0
           ],
           [
-            0.0,
-            1.0
+            3.0,
+            4.0
           ]
         ],
         "op": "geometry.transformed_grid",
         "step": 1.0
       },
       {
-        "alias": "sem__x__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__x__end",
-        "coordinates": [
+        "alias": "sem__grid_a2",
+        "bounds": [
+          -1.0,
           1.0,
+          -1.0,
           1.0
         ],
-        "name": "x",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__x",
-        "color": "#2F6BFF",
-        "end": "sem__x__end",
-        "kind": "vector",
-        "label": "x",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__x__origin"
-      },
-      {
-        "alias": "sem__y__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__y__end",
-        "coordinates": [
-          2.0,
-          1.0
-        ],
-        "name": "Ax",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__y",
-        "color": "#7B61FF",
-        "end": "sem__y__end",
-        "kind": "vector",
-        "label": "Ax",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__y__origin"
-      },
-      {
-        "alias": "sem__A_maps_x_to_y",
+        "color": "#F08A24",
         "matrix": [
           [
-            2.0,
-            0.0
+            7.0,
+            10.0
           ],
           [
-            0.0,
-            1.0
+            15.0,
+            22.0
           ]
         ],
-        "op": "linear_algebra.matrix_transform"
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
-        "aliases": [
-          "cap__stage_source",
-          "cap__stage_target"
-        ],
-        "matrices": [
-          [
-            [
-              2.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ],
-          [
-            [
-              1.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            1.0,
-            1.0
-          ],
-          [
-            2.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__stage.input__title",
+        "alias": "sem__grid_a__label",
         "op": "annotation.upsert",
         "position": [
-          0.0,
-          2.65
+          -17.0,
+          35.0
         ],
-        "text": "输入与变换"
+        "text": "$A=\\left[\\genfrac{}{}{0}{}{1\\quad 2}{3\\quad 4}\\right]$"
       },
       {
+        "alias": "sem__grid_a2__label",
+        "op": "annotation.upsert",
+        "position": [
+          -17.0,
+          35.0
+        ],
+        "text": "$A^{2}=\\left[\\genfrac{}{}{0}{}{\\ 7\\quad 10}{15\\quad 22}\\right]$"
+      },
+      {
+        "bounds": [
+          -18.0,
+          18.0,
+          -38.0,
+          38.0
+        ],
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "2d",
-    "summary": "矩阵幂表示重复变换",
+    "summary": "矩阵的幂",
     "version": 1
   },
-  "plan_digest": "sha256:c78385e0ff98a993de305952ae0ce9ee1be509b3a5a08aa256f0b659a23d34fe",
+  "plan_digest": "sha256:e707e50a01026e4edbcd39752dc33a6df73ca51d5766724acbb08b035f27d0ec",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 13,
+  "revision": 15,
   "scene_family": "",
   "schema_version": 1,
-  "source_hash": "sha256:69c514d44197850d620d63c0d7f1df0b68e69d1dfdbe1446a5396a9d8aecbd49",
+  "source_hash": "sha256:f964abf7960f768773833e0217c2fa6ec0c0aaa405538d370fee19e4ea175ea4",
   "stages": [
     {
       "anchor": [
         0.0,
         2.65
       ],
-      "caption": "矩阵 A 作用于向量 x。",
-      "id": "stage.input",
+      "caption": "",
+      "id": "stage.case.matrix.powers.first",
       "layout": "overlay",
-      "title": "输入与变换",
+      "title": "第一步：作用一次",
       "visible_aliases": [
-        "sem__A",
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__y",
-        "sem__y__end",
-        "sem__y__origin",
-        "sem__A_maps_x_to_y",
-        "sem__stage.input__title",
-        "sem__mapping_grid__1"
+        "sem__grid_a",
+        "sem__grid_a__label"
       ],
       "visible_refs": [
-        "A",
-        "x",
-        "y",
-        "A_maps_x_to_y"
+        "grid_a"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.matrix.powers.second",
+      "layout": "overlay",
+      "title": "第二步：再作用一次",
+      "visible_aliases": [
+        "sem__grid_a2",
+        "sem__grid_a2__label"
+      ],
+      "visible_refs": [
+        "grid_a2"
       ]
     }
   ],

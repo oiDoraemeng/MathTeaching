@@ -1,25 +1,26 @@
 {
-  "artifact_digest": "sha256:908f402911b5621f81180539d17fab604f1c924792984fbf650e3b83b3771455",
+  "artifact_digest": "sha256:f0460fe1d2303e8214a46a84754f98fc45acd3ae2603c10391a686ea2e1b33c2",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:d0a73d8fb579aeaca0fed6812d0ed3a2fd9f6ff8d3b7cadf707c8e5b9630353f",
+  "contract_digest": "sha256:663dc87ba6a9d03fb026994c7548bd5b68a0f31d20aec1f6bf42f02ef17650e1",
   "plan": {
     "operations": [
       {
-        "alias": "entity_ch07_diagonalization_operator",
+        "alias": "ch07.diagonalization__entity__operator",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
         ],
+        "color": "#6B7280",
         "matrix": [
           [
-            3.0,
+            2.0,
             1.0
           ],
           [
-            0.0,
+            1.0,
             2.0
           ]
         ],
@@ -27,55 +28,58 @@
         "step": 1.0
       },
       {
-        "alias": "entity_ch07_diagonalization_basis",
+        "alias": "ch07.diagonalization__entity__basis",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
         ],
+        "color": "#6B7280",
         "matrix": [
+          [
+            1.0,
+            1.0
+          ],
           [
             1.0,
             -1.0
-          ],
-          [
-            0.0,
-            1.0
           ]
         ],
         "op": "geometry.transformed_grid",
         "step": 1.0
       },
       {
-        "alias": "entity_ch07_diagonalization_inverse_basis",
+        "alias": "ch07.diagonalization__entity__inverse_basis",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
         ],
+        "color": "#6B7280",
         "matrix": [
           [
-            1.0,
-            1.0
+            0.5,
+            0.5
           ],
           [
-            0.0,
-            1.0
+            0.5,
+            -0.5
           ]
         ],
         "op": "geometry.transformed_grid",
         "step": 1.0
       },
       {
-        "alias": "entity_ch07_diagonalization_diagonal",
+        "alias": "ch07.diagonalization__entity__diagonal",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
         ],
+        "color": "#6B7280",
         "matrix": [
           [
             3.0,
@@ -83,6 +87,615 @@
           ],
           [
             0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch07.diagonalization__entity__coordinate_e1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__coordinate_e1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "coordinate_e1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__coordinate_e1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__entity__coordinate_e1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__entity__coordinate_e1__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__coordinate_e2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__coordinate_e2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "coordinate_e2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__coordinate_e2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__entity__coordinate_e2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__entity__coordinate_e2__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__scaled_e1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__scaled_e1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "scaled_e1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__scaled_e1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__entity__scaled_e1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__entity__scaled_e1__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__scaled_e2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__scaled_e2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "scaled_e2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__scaled_e2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__entity__scaled_e2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__entity__scaled_e2__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__basis_v1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__basis_v1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "basis_v1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__basis_v1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__entity__basis_v1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__entity__basis_v1__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__basis_v2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__basis_v2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          1.0,
+          -1.0
+        ],
+        "name": "basis_v2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__basis_v2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__entity__basis_v2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__entity__basis_v2__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__image_v1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__image_v1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          3.0,
+          3.0
+        ],
+        "name": "image_v1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__image_v1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__entity__image_v1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__entity__image_v1__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__image_v2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__image_v2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          1.0,
+          -1.0
+        ],
+        "name": "image_v2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__entity__image_v2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__entity__image_v2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__entity__image_v2__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__similarity",
+        "basis": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            -1.0
+          ]
+        ],
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#2A9D8F",
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__diagonal_v1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__diagonal_v1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "scaled_e1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__diagonal_v1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__relation__diagonal_v1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__relation__diagonal_v1__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__diagonal_v2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__diagonal_v2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "scaled_e2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__diagonal_v2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__relation__diagonal_v2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__relation__diagonal_v2__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__eigen_v1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__eigen_v1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          3.0,
+          3.0
+        ],
+        "name": "image_v1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__eigen_v1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__relation__eigen_v1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__relation__eigen_v1__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__eigen_v2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__eigen_v2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          1.0,
+          -1.0
+        ],
+        "name": "image_v2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__relation__eigen_v2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__relation__eigen_v2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__relation__eigen_v2__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_basis__grid",
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_basis__v1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_basis__v1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "v1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_basis__v1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__stage__change_basis__v1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__stage__change_basis__v1__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_basis__v2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_basis__v2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          1.0,
+          -1.0
+        ],
+        "name": "v2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_basis__v2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__stage__change_basis__v2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__stage__change_basis__v2__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__grid",
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#2A9D8F",
+        "matrix": [
+          [
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__e1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__e1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "e1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__e1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__stage__diagonal__e1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__stage__diagonal__e1__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__de1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__de1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          3.0,
+          0.0
+        ],
+        "name": "3e1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__de1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__stage__diagonal__de1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__stage__diagonal__de1__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__e2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__e2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "e2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__e2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__stage__diagonal__e2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__stage__diagonal__e2__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__de2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__de2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          1.0
+        ],
+        "name": "e2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__diagonal__de2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__stage__diagonal__de2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__stage__diagonal__de2__origin"
+      },
+      {
+        "alias": "ch07.diagonalization__stage__change_back__grid",
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#2A9D8F",
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
             2.0
           ]
         ],
@@ -90,342 +703,137 @@
         "step": 1.0
       },
       {
-        "alias": "entity_ch07_diagonalization_standard__start",
+        "alias": "ch07.diagonalization__stage__change_back__v1__origin",
+        "color": "#2F6BFF",
         "coordinates": [
           0.0,
           0.0
         ],
-        "name": "",
+        "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "entity_ch07_diagonalization_standard__end",
-        "coordinates": [
-          0.0,
-          1.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "entity_ch07_diagonalization_standard",
-        "end": "entity_ch07_diagonalization_standard__end",
-        "kind": "vector",
-        "op": "linear.upsert",
-        "start": "entity_ch07_diagonalization_standard__start"
-      },
-      {
-        "alias": "entity_ch07_diagonalization_coordinates__start",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "entity_ch07_diagonalization_coordinates__end",
+        "alias": "ch07.diagonalization__stage__change_back__v1__end",
+        "color": "#2F6BFF",
         "coordinates": [
           1.0,
           1.0
         ],
-        "name": "",
+        "name": "v1",
         "op": "point.upsert"
       },
       {
-        "alias": "entity_ch07_diagonalization_coordinates",
-        "end": "entity_ch07_diagonalization_coordinates__end",
+        "alias": "ch07.diagonalization__stage__change_back__v1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__stage__change_back__v1__end",
         "kind": "vector",
         "op": "linear.upsert",
-        "start": "entity_ch07_diagonalization_coordinates__start"
+        "role": "primary",
+        "start": "ch07.diagonalization__stage__change_back__v1__origin"
       },
       {
-        "alias": "entity_ch07_diagonalization_scaled__start",
+        "alias": "ch07.diagonalization__stage__change_back__av1__origin",
+        "color": "#2F6BFF",
         "coordinates": [
           0.0,
           0.0
         ],
-        "name": "",
+        "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "entity_ch07_diagonalization_scaled__end",
+        "alias": "ch07.diagonalization__stage__change_back__av1__end",
+        "color": "#2F6BFF",
         "coordinates": [
           3.0,
-          2.0
+          3.0
         ],
-        "name": "",
+        "name": "Av1",
         "op": "point.upsert"
       },
       {
-        "alias": "entity_ch07_diagonalization_scaled",
-        "end": "entity_ch07_diagonalization_scaled__end",
+        "alias": "ch07.diagonalization__stage__change_back__av1",
+        "color": "#2F6BFF",
+        "end": "ch07.diagonalization__stage__change_back__av1__end",
         "kind": "vector",
         "op": "linear.upsert",
-        "start": "entity_ch07_diagonalization_scaled__start"
+        "role": "primary",
+        "start": "ch07.diagonalization__stage__change_back__av1__origin"
       },
       {
-        "alias": "entity_ch07_diagonalization_endpoint__start",
+        "alias": "ch07.diagonalization__stage__change_back__v2__origin",
+        "color": "#F08A24",
         "coordinates": [
           0.0,
           0.0
         ],
-        "name": "",
+        "name": "O",
         "op": "point.upsert"
       },
       {
-        "alias": "entity_ch07_diagonalization_endpoint__end",
+        "alias": "ch07.diagonalization__stage__change_back__v2__end",
+        "color": "#F08A24",
         "coordinates": [
           1.0,
-          2.0
+          -1.0
         ],
-        "name": "",
+        "name": "v2",
         "op": "point.upsert"
       },
       {
-        "alias": "entity_ch07_diagonalization_endpoint",
-        "end": "entity_ch07_diagonalization_endpoint__end",
+        "alias": "ch07.diagonalization__stage__change_back__v2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__stage__change_back__v2__end",
         "kind": "vector",
         "op": "linear.upsert",
-        "start": "entity_ch07_diagonalization_endpoint__start"
+        "role": "primary",
+        "start": "ch07.diagonalization__stage__change_back__v2__origin"
       },
       {
-        "alias": "ch07.diagonalization__relation__change_basis",
-        "aliases": [
-          "ch07.diagonalization__relation__change_basis__point"
+        "alias": "ch07.diagonalization__stage__change_back__av2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "matrices": [
-          [
-            [
-              1.0,
-              1.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            0.0,
-            1.0
-          ]
-        ]
+        "name": "O",
+        "op": "point.upsert"
       },
       {
-        "alias": "ch07.diagonalization__relation__diagonal_scale",
-        "aliases": [
-          "ch07.diagonalization__relation__diagonal_scale__point"
+        "alias": "ch07.diagonalization__stage__change_back__av2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          1.0,
+          -1.0
         ],
-        "matrices": [
-          [
-            [
-              3.0,
-              0.0
-            ],
-            [
-              0.0,
-              2.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            1.0,
-            1.0
-          ]
-        ]
+        "name": "Av2",
+        "op": "point.upsert"
       },
       {
-        "alias": "ch07.diagonalization__relation__change_basis_back",
-        "aliases": [
-          "ch07.diagonalization__relation__change_basis_back__point"
-        ],
-        "matrices": [
-          [
-            [
-              1.0,
-              -1.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            3.0,
-            2.0
-          ]
-        ]
+        "alias": "ch07.diagonalization__stage__change_back__av2",
+        "color": "#F08A24",
+        "end": "ch07.diagonalization__stage__change_back__av2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.diagonalization__stage__change_back__av2__origin"
       },
       {
-        "alias": "ch07.diagonalization__relation__direct_endpoint",
-        "aliases": [
-          "ch07.diagonalization__relation__direct_endpoint__point"
+        "bounds": [
+          0.0,
+          3.0,
+          -1.0,
+          3.0
         ],
-        "matrices": [
-          [
-            [
-              3.0,
-              1.0
-            ],
-            [
-              0.0,
-              2.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            0.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "ch07.diagonalization__stage__change_basis__change_basis",
-        "aliases": [
-          "ch07.diagonalization__stage__change_basis__change_basis__point"
-        ],
-        "matrices": [
-          [
-            [
-              1.0,
-              1.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            0.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "ch07.diagonalization__stage__diagonal_scale__diagonal_scale",
-        "aliases": [
-          "ch07.diagonalization__stage__diagonal_scale__diagonal_scale__point"
-        ],
-        "matrices": [
-          [
-            [
-              3.0,
-              0.0
-            ],
-            [
-              0.0,
-              2.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            1.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "ch07.diagonalization__stage__change_basis_back__change_basis_back",
-        "aliases": [
-          "ch07.diagonalization__stage__change_basis_back__change_basis_back__point"
-        ],
-        "matrices": [
-          [
-            [
-              1.0,
-              -1.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            3.0,
-            2.0
-          ]
-        ]
-      },
-      {
-        "alias": "ch07.diagonalization__stage__change_basis_back__direct_endpoint",
-        "aliases": [
-          "ch07.diagonalization__stage__change_basis_back__direct_endpoint__point"
-        ],
-        "matrices": [
-          [
-            [
-              3.0,
-              1.0
-            ],
-            [
-              0.0,
-              2.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            0.0,
-            1.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__stage.ch07.diagonalization.change_basis__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "换到特征基"
-      },
-      {
-        "alias": "sem__stage.ch07.diagonalization.diagonal_scale__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "特征值独立缩放"
-      },
-      {
-        "alias": "sem__stage.ch07.diagonalization.change_basis_back__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          1.69
-        ],
-        "text": "换回标准坐标"
-      },
-      {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "2d",
-    "summary": "7.4 对角化的几何意义",
+    "summary": "对角化的几何意义",
     "version": 1
   },
-  "plan_digest": "sha256:94da29aea5ddff7f426686dee8e8f989e31c8bbb32fc6c7dc8b6d45be87c77b2",
+  "plan_digest": "sha256:241180c4a1f39de68a1e871dc23ba3146692ac2070767350ed301d76fe09dd65",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
@@ -435,81 +843,77 @@
   "stages": [
     {
       "anchor": [
-        -2.65,
+        0.0,
         2.65
       ],
-      "caption": "A=PDP^{-1}",
+      "caption": "先看输入网格，再看它被矩阵拉伸、旋转或剪切后的形状。",
       "id": "stage.ch07.diagonalization.change_basis",
-      "layout": "sequence",
-      "title": "换到特征基",
+      "layout": "overlay",
+      "title": "第一步：换到特征基",
       "visible_aliases": [
-        "ch07.diagonalization__stage__change_basis__change_basis",
-        "entity_ch07_diagonalization_standard",
-        "entity_ch07_diagonalization_basis",
-        "entity_ch07_diagonalization_inverse_basis",
-        "entity_ch07_diagonalization_coordinates",
-        "ch07.diagonalization__relation__change_basis",
-        "sem__stage.ch07.diagonalization.change_basis__title"
+        "ch07.diagonalization__stage__change_basis__grid",
+        "ch07.diagonalization__stage__change_basis__v1",
+        "ch07.diagonalization__stage__change_basis__v2"
       ],
       "visible_refs": [
-        "entity.ch07.diagonalization.standard",
         "entity.ch07.diagonalization.basis",
         "entity.ch07.diagonalization.inverse_basis",
-        "entity.ch07.diagonalization.coordinates",
-        "relation.ch07.diagonalization.change_basis"
+        "entity.ch07.diagonalization.basis_v1",
+        "entity.ch07.diagonalization.basis_v2",
+        "relation.ch07.diagonalization.similarity"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
-      "caption": "A=PDP^{-1}",
+      "caption": "对比同一网格在变换后的方向和面积变化。",
       "id": "stage.ch07.diagonalization.diagonal_scale",
-      "layout": "sequence",
-      "title": "特征值独立缩放",
+      "layout": "overlay",
+      "title": "第二步：沿特征方向独立缩放",
       "visible_aliases": [
-        "ch07.diagonalization__stage__diagonal_scale__diagonal_scale",
-        "entity_ch07_diagonalization_coordinates",
-        "entity_ch07_diagonalization_diagonal",
-        "entity_ch07_diagonalization_operator",
-        "entity_ch07_diagonalization_scaled",
-        "ch07.diagonalization__relation__diagonal_scale",
-        "sem__stage.ch07.diagonalization.diagonal_scale__title"
+        "ch07.diagonalization__stage__diagonal__grid",
+        "ch07.diagonalization__stage__diagonal__e1",
+        "ch07.diagonalization__stage__diagonal__de1",
+        "ch07.diagonalization__stage__diagonal__e2",
+        "ch07.diagonalization__stage__diagonal__de2"
       ],
       "visible_refs": [
-        "entity.ch07.diagonalization.coordinates",
         "entity.ch07.diagonalization.diagonal",
-        "entity.ch07.diagonalization.operator",
-        "entity.ch07.diagonalization.scaled",
-        "relation.ch07.diagonalization.diagonal_scale"
+        "entity.ch07.diagonalization.coordinate_e1",
+        "entity.ch07.diagonalization.coordinate_e2",
+        "entity.ch07.diagonalization.scaled_e1",
+        "entity.ch07.diagonalization.scaled_e2",
+        "relation.ch07.diagonalization.diagonal_v1",
+        "relation.ch07.diagonalization.diagonal_v2"
       ]
     },
     {
       "anchor": [
-        -2.65,
-        1.69
+        0.0,
+        2.65
       ],
-      "caption": "A=PDP^{-1}",
+      "caption": "对比同一网格在变换后的方向和面积变化。",
       "id": "stage.ch07.diagonalization.change_basis_back",
-      "layout": "sequence",
-      "title": "换回标准坐标",
+      "layout": "overlay",
+      "title": "第三步：换回标准基",
       "visible_aliases": [
-        "ch07.diagonalization__stage__change_basis_back__change_basis_back",
-        "ch07.diagonalization__stage__change_basis_back__direct_endpoint",
-        "entity_ch07_diagonalization_scaled",
-        "entity_ch07_diagonalization_basis",
-        "entity_ch07_diagonalization_endpoint",
-        "ch07.diagonalization__relation__change_basis_back",
-        "ch07.diagonalization__relation__direct_endpoint",
-        "sem__stage.ch07.diagonalization.change_basis_back__title"
+        "ch07.diagonalization__stage__change_back__grid",
+        "ch07.diagonalization__stage__change_back__v1",
+        "ch07.diagonalization__stage__change_back__av1",
+        "ch07.diagonalization__stage__change_back__v2",
+        "ch07.diagonalization__stage__change_back__av2"
       ],
       "visible_refs": [
-        "entity.ch07.diagonalization.scaled",
-        "entity.ch07.diagonalization.basis",
-        "entity.ch07.diagonalization.endpoint",
-        "relation.ch07.diagonalization.change_basis_back",
-        "relation.ch07.diagonalization.direct_endpoint"
+        "entity.ch07.diagonalization.operator",
+        "entity.ch07.diagonalization.basis_v1",
+        "entity.ch07.diagonalization.basis_v2",
+        "entity.ch07.diagonalization.image_v1",
+        "entity.ch07.diagonalization.image_v2",
+        "relation.ch07.diagonalization.similarity",
+        "relation.ch07.diagonalization.eigen_v1",
+        "relation.ch07.diagonalization.eigen_v2"
       ]
     }
   ],

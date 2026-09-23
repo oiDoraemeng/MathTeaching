@@ -44,6 +44,43 @@ def test_batch_projection_example_recomputes_every_vector() -> None:
     assert result.checks[0].actual == ((3.0, 0.0), (-2.0, 0.0), (1.0, 0.0))
 
 
+def test_matrix_additive_distributivity_recomputes_both_paths() -> None:
+    example = _example(
+        "matrix_additive_distributivity",
+        (
+            [[2, 0], [0, 1]],
+            [[1, 0], [0, 2]],
+            [1, 1],
+        ),
+        (3.0, 3.0),
+        name="right_path",
+    )
+
+    result = verify_worked_example(example)
+
+    assert result.valid is True
+    assert result.checks[0].actual == (3.0, 3.0)
+
+
+def test_matrix_product_recomputes_square_and_transpose_identity() -> None:
+    square = _example(
+        "matrix_product",
+        ([[1, 2], [3, 4]], [[1, 2], [3, 4]]),
+        ((7.0, 10.0), (15.0, 22.0)),
+    )
+    transpose = _example(
+        "matrix_product",
+        ([[1, 2], [3, 4]], [[5, 6], [7, 8]]),
+        ((19.0, 43.0), (22.0, 50.0)),
+        name="reverse_product",
+    )
+
+    assert verify_worked_example(square).valid is True
+    checked = verify_worked_example(transpose)
+    assert checked.valid is True
+    assert checked.checks[0].actual == ((19.0, 43.0), (22.0, 50.0))
+
+
 def test_wrong_determinant_is_rejected() -> None:
     example = _example("determinant", [[1, 2], [3, 4]], 6.0, name="determinant")
 

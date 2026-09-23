@@ -186,7 +186,6 @@ def _artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[st
         from linear_algebra.chapter_08_semantics import spec_for
         spec=spec_for(topic_id); claim=payload['claims'][0]; ids={e.role:f'entity.{topic_id}.{e.role}' for e in spec.entities}
         payload['visual_semantics']={'scene_kind':'2d','scene_family':'quadratic_level_set','entities':[{'id':ids[e.role],'kind':e.kind,'dimension':e.dimension,'value':_json_value(e.value),'role':e.role,'label':e.label,'claim_refs':[claim['id']]} for e in spec.entities], 'relations':[{'id':f'relation.{topic_id}.{r.name}','kind':r.kind,'source_ref':ids[r.source_role],'target_ref':ids[r.target_role],'parameters':_json_value(dict(r.parameters)),'claim_refs':[claim['id']]} for r in spec.relations], 'stages':[{'id':f'stage.{topic_id}.{s.name}','title':s.title,'caption':spec.formula,'layout':s.layout,'input_entity_refs':[ids[r] for r in s.input_roles],'output_entity_refs':[ids[r] for r in s.output_roles],'relation_refs':[f'relation.{topic_id}.{r}' for r in s.relation_names],'expected_invariants':list(s.invariants)} for s in spec.stages]}
-        for stage, descriptor in zip(payload['visual_semantics']['stages'],spec.stages): stage['id']=descriptor.name
         payload['explanation']['derivation']=[s.title+': '+spec.formula for s in spec.stages]
         examples=[]
         for entity in spec.entities:
@@ -202,7 +201,7 @@ def _artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[st
         entities = [{"id": ids[e.role], "kind": e.kind, "dimension": e.dimension, "value": _json_value(e.value), "role": e.role, "label": e.label, "claim_refs": [claim["id"]]} for e in spec.entities]
         relations = [{"id": f"relation.{topic_id}.{r.name}", "kind": r.kind, "source_ref": ids[r.source_role], "target_ref": ids[r.target_role], "parameters": _json_value(dict(r.parameters)), "claim_refs": [claim["id"]]} for r in spec.relations]
         stages = [{"id": f"stage.{topic_id}.{s.name}", "title": s.title, "caption": spec.formula, "layout": s.layout, "input_entity_refs": [ids[r] for r in s.input_roles], "output_entity_refs": [ids[r] for r in s.output_roles], "relation_refs": [f"relation.{topic_id}.{r}" for r in s.relation_names], "expected_invariants": list(s.invariants)} for s in spec.stages]
-        payload["visual_semantics"] = {"scene_kind": "3d" if topic_id in {"ch07.gram-schmidt"} else "2d", "scene_family": "spectral_orthogonal", "entities": entities, "relations": relations, "stages": stages}
+        payload["visual_semantics"] = {"scene_kind": "2d", "scene_family": "spectral_orthogonal", "entities": entities, "relations": relations, "stages": stages}
         claim["entity_refs"] = list(ids.values()); claim["relation_refs"] = [r["id"] for r in relations]; claim["stage_refs"] = [s["id"] for s in stages]; claim["formula_symbols"] = list(spec.roles); claim["formula"] = spec.formula
         payload["explanation"]["formula"] = spec.formula; payload["explanation"]["invariants"] = list(spec.invariants); payload["explanation"]["symbol_roles"] = {role: role for role in spec.roles}
         payload['explanation']['derivation'] = [s.title + ': ' + spec.formula for s in spec.stages]
@@ -236,7 +235,7 @@ def _artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[st
         relations=[]
         for rel in spec.relations:
             relations.append({'id':f'relation.{topic_id}.{rel.name}','kind':rel.kind,'source_ref':ids[rel.source_role],'target_ref':ids[rel.target_role],'parameters':_json_value(dict(rel.parameters)),'claim_refs':[claim['id']]})
-        stages=[{'id':s.name,'title':s.title,'caption':spec.formula,'layout':s.layout,'input_entity_refs':[ids[r] for r in s.input_roles],'output_entity_refs':[ids[r] for r in s.output_roles],'relation_refs':[f'relation.{topic_id}.{r}' for r in s.relation_names],'expected_invariants':list(s.invariants)} for s in spec.stages]
+        stages=[{'id':f'stage.{topic_id}.{s.name}','title':s.title,'caption':spec.formula,'layout':s.layout,'input_entity_refs':[ids[r] for r in s.input_roles],'output_entity_refs':[ids[r] for r in s.output_roles],'relation_refs':[f'relation.{topic_id}.{r}' for r in s.relation_names],'expected_invariants':list(s.invariants)} for s in spec.stages]
         payload['visual_semantics']={'scene_kind':'2d','scene_family':'basis_change','entities':entities,'relations':relations,'stages':stages}
         claim['entity_refs']=list(ids.values()); claim['relation_refs']=[r['id'] for r in relations]; claim['stage_refs']=[s['id'] for s in stages]; claim['formula_symbols']=list(spec.roles)
         payload['explanation']['symbol_roles']={r:r for r in spec.roles}; payload['explanation']['invariants']=list(spec.invariants)
@@ -330,6 +329,34 @@ def artifact_payload_for(topic_id: str, *, status: str = "reviewed") -> dict[str
         from linear_algebra.teaching.quality import _refine_linear_map_definition
 
         _refine_linear_map_definition(payload, payload["explanation"], payload["visual_semantics"])
+        _refresh_digests(payload)
+    elif topic_id.startswith("ch05."):
+        # 第五章 5.1--5.5 使用逐节审阅过的讲义正文和数学案例，不回退到
+        # 第 4--8 章早期的概括性通用模板。
+        from linear_algebra.teaching.chapter_05_content import refine_chapter_05_topic
+
+        refine_chapter_05_topic(topic_id, payload, payload["explanation"], payload["visual_semantics"])
+        _refresh_digests(payload)
+    elif topic_id.startswith("ch06."):
+        # 第六章仅发布 6.2--6.3；专属适配器保留讲义的定义、推导、证明和全部例题，
+        # 并把确认后的三个基变换案例或三步相似变换过程绑定到独立窗格。
+        from linear_algebra.teaching.chapter_06_content import refine_chapter_06_topic
+
+        refine_chapter_06_topic(topic_id, payload, payload["explanation"], payload["visual_semantics"])
+        _refresh_digests(payload)
+    elif topic_id.startswith("ch07."):
+        # 第七章仅发布 7.1--7.4；专属适配器保留讲义的定义、推导、证明和全部例题，
+        # 并把确认后的特征方向、特征空间和三步对角化过程绑定到独立窗格。
+        from linear_algebra.teaching.chapter_07_content import refine_chapter_07_topic
+
+        refine_chapter_07_topic(topic_id, payload, payload["explanation"], payload["visual_semantics"])
+        _refresh_digests(payload)
+    elif topic_id.startswith("ch08."):
+        # 第八章仅发布 8.1--8.4；专属适配器保留讲义的定义、定理、推导、
+        # 证明思路和例题，并绑定确认后的矩阵、主轴与定性案例窗格。
+        from linear_algebra.teaching.chapter_08_content import refine_chapter_08_topic
+
+        refine_chapter_08_topic(topic_id, payload, payload["explanation"], payload["visual_semantics"])
         _refresh_digests(payload)
     return payload
 

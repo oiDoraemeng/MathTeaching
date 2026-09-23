@@ -38,9 +38,10 @@ class VisualContract:
 def contract_for(topic_id: str) -> VisualContract:
     """Return a stable contract for every catalog topic ID."""
 
-    if topic_id not in {topic.id for topic in topic_entries()}:
+    topic = next((item for item in topic_entries() if item.id == topic_id), None)
+    if topic is None:
         raise KeyError(f"unknown visual contract topic: {topic_id}")
-    base = VisualContract(topic_id, (), (), (), (), 1)
+    base = VisualContract(topic_id, (), (), (), (), 0 if not topic.required_capabilities else 1)
     overrides = {
         "ch01.projection.definition": VisualContract(
             topic_id, (), ("vector_a", "direction", "projection", "foot", "residual"),
@@ -51,24 +52,31 @@ def contract_for(topic_id: str) -> VisualContract:
             topic_id, (), (), ("invariant",), ("grid",), 2,
         ),
         "ch02.matrix.composition": VisualContract(
-            topic_id, (), ("vector_a", "transformed_a", "transformed_b"),
-            ("composition_order", "endpoint_diff", "compare"), (), 5,
-            distinguishable_role_groups=(("transformed_a", "transformed_b"),),
+            topic_id, (), ("neutral", "vector_a", "vector_b"),
+            ("composition_order", "endpoint_diff", "compare"), (), 4,
+            distinguishable_role_groups=(("vector_a", "vector_b"),),
+        ),
+        "ch02.matrix.powers": VisualContract(
+            topic_id, (), ("vector_a", "vector_b"), ("invariant",), ("grid",), 2,
+            distinguishable_role_groups=(("vector_a", "vector_b"),),
         ),
         "ch03.det.multiplicativity": VisualContract(
             topic_id, (), (), ("same_measure", "composition_order"), (), 3,
         ),
-        "ch03.inverse.undo": VisualContract(
-            topic_id, (), (), ("composition_order", "compare"), (), 3,
+        "ch03.det.basic-properties": VisualContract(
+            topic_id, (), (), ("same_measure",), (), 4,
+        ),
+        "ch03.det.transpose": VisualContract(
+            topic_id, (), (), ("same_measure",), (), 2,
         ),
     }
     extended_family = {
         **{topic: "subspace_region" for topic in (
             "ch04.subspace.col-null", "ch04.dependence.redundancy", "ch04.basis.definition", "ch04.linear-map.definition")},
-        **{topic: "affine_solution" for topic in ("ch05.homogeneous.solution-space", "ch05.affine.solution-set", "ch05.consistency.geometry", "ch05.gaussian-elimination", "ch05.least-squares.projection", "ch05.fundamental-solution-system", "ch05.elementary-matrix-elimination", "ch05.least-squares-derivation")},
-        **{topic: "basis_change" for topic in ("ch06.basis-change.motivation", "ch06.basis-change.coordinates", "ch06.similarity-transform")},
-        **{topic: "spectral_orthogonal" for topic in ("ch07.eigen.direction", "ch07.characteristic-polynomial", "ch07.eigenspace", "ch07.diagonalization", "ch07.gram-schmidt", "ch07.orthogonal-transform")},
-        **{topic: "quadratic_level_set" for topic in ("ch08.quadratic.matrix-form", "ch08.quadratic.level-sets", "ch08.principal-axis", "ch08.definiteness", "ch08.completing-square", "ch08.congruence-inertia")},
+        **{topic: "affine_solution" for topic in ("ch05.homogeneous.solution-space", "ch05.affine.solution-set", "ch05.consistency.geometry", "ch05.gaussian-elimination", "ch05.least-squares.projection")},
+        **{topic: "basis_change" for topic in ("ch06.basis-change.coordinates", "ch06.similarity-transform")},
+        **{topic: "spectral_orthogonal" for topic in ("ch07.eigen.direction", "ch07.characteristic-polynomial", "ch07.eigenspace", "ch07.diagonalization")},
+        **{topic: "quadratic_level_set" for topic in ("ch08.quadratic.matrix-form", "ch08.quadratic.level-sets", "ch08.principal-axis", "ch08.definiteness")},
     }
     if topic_id in extended_family:
         if topic_id.startswith("ch04."):

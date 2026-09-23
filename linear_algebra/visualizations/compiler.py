@@ -44,6 +44,7 @@ _MATRIX_VECTOR_CASE_TOPICS = frozenset(
         "ch02.matrix.transformed-grid",
         # 2.7 矩阵与基用两组基各占一个窗格，展示同一个旋转在换基后的矩阵。
         "ch02.matrix.basis",
+        "ch02.matrix.powers",
     }
 )
 # 2.9 以变换网格为主体，使用默认视野和共享相机。
@@ -64,27 +65,45 @@ _FLOW_VIEW_TOPICS = frozenset(
         # 2.2 批量内积沿用 1.3.1 的窗格词汇（u、V 的一列、投影与夹角），
         # 多个案例窗格必须共用同一视角。
         "ch02.batch.inner-products",
+        # 2.6 四步复合案例共用同一取景，便于直接比较两条路径的终点。
+        "ch02.matrix.composition",
         # 3.1 的案例是两步流程：单位正方形一格、两个像与 ad - bc 的外接矩形
         # 构造一格，两格必须共用一个固定视角。
         "ch03.det.oriented-area",
+        # 3.2 的三个定理主题都用同一范围比较有向面积。
+        "ch03.det.basic-properties",
+        "ch03.det.multiplicativity",
+        "ch03.det.transpose",
         *_MATRIX_VECTOR_CASE_TOPICS,
+        "ch06.basis-change.coordinates",
+        "ch06.similarity-transform",
+        "ch07.eigen.direction",
+        "ch07.characteristic-polynomial",
+        "ch07.eigenspace",
+        "ch07.diagonalization",
+        "ch08.quadratic.matrix-form",
+        "ch08.quadratic.level-sets",
+        "ch08.principal-axis",
+        "ch08.definiteness",
     }
 )
 # 2.5 的变形网格由视口裁切，取景时排除网格演员。
 _MATRIX_VECTOR_GRID_BOUNDS: tuple[float, float, float, float] = (-12.0, 12.0, -12.0, 12.0)
-# 2.7 的两个坐标系只需展示案例对象附近的网格；其他矩阵案例保持原有取景。
-_BASIS_GRID_BOUNDS: tuple[float, float, float, float] = (-4.0, 4.0, -4.0, 4.0)
+# 2.7 的换基网格默认显示 5 格，与工具栏矩阵变换的默认范围一致。
+_BASIS_GRID_BOUNDS: tuple[float, float, float, float] = (-5.0, 5.0, -5.0, 5.0)
 # 2.5 仅采样原点附近的 4×4 网格，避免画面过密。
 _TRANSFORMED_GRID_GRID_BOUNDS: tuple[float, float, float, float] = (-2.0, 2.0, -2.0, 2.0)
+_COMPOSITION_VIEW_BOUNDS: tuple[float, float, float, float] = (-3.0, 3.0, -3.0, 3.0)
+# 原例题的 A² 两列分别到 (7,15)、(10,22)，共用视野须容纳单位方格的全部像。
+_MATRIX_POWERS_VIEW_BOUNDS: tuple[float, float, float, float] = (-18.0, 18.0, -38.0, 38.0)
 # 3.1 案例把外接矩形的面积标注写在矩形上边之外，取景与标注位置共用这个边距。
 _DET_BOX_LABEL_MARGIN = 0.45
-# 2.7 的 B 列为新基坐标，绘制前需换算到显示世界。
-_CH02_BASIS_MATRIX: tuple[tuple[float, float], tuple[float, float]] = (
-    (1.0, 1.0),
-    (0.0, 1.0),
-)
-
-
+# 3.2 每个主题的全部窗格共享自己的固定范围，既防止各窗格缩放跳变，也完整容纳案例图形。
+_DET_CORE_VIEW_BOUNDS: dict[str, tuple[float, float, float, float]] = {
+    "ch03.det.basic-properties": (-1.0, 6.0, -1.0, 5.0),
+    "ch03.det.multiplicativity": (-1.0, 4.0, -1.0, 4.0),
+    "ch03.det.transpose": (-1.0, 4.0, -1.0, 8.0),
+}
 def _case_grid_bounds(topic_id: str, fallback: tuple[float, ...]) -> tuple[float, ...]:
     """Return the grid sampling rectangle used by one topic's case pane."""
 
@@ -92,6 +111,12 @@ def _case_grid_bounds(topic_id: str, fallback: tuple[float, ...]) -> tuple[float
         return _TRANSFORMED_GRID_GRID_BOUNDS
     if topic_id == "ch02.matrix.basis":
         return _BASIS_GRID_BOUNDS
+    if topic_id == "ch02.matrix.composition":
+        return _COMPOSITION_VIEW_BOUNDS
+    if topic_id == "ch02.matrix.powers":
+        return (-1.0, 1.0, -1.0, 1.0)
+    if topic_id in _DET_CORE_VIEW_BOUNDS:
+        return _DET_CORE_VIEW_BOUNDS[topic_id]
     if topic_id not in _MATRIX_VECTOR_CASE_TOPICS and topic_id not in _SUBSPACE_CASE_TOPICS:
         return fallback
     return _MATRIX_VECTOR_GRID_BOUNDS
@@ -355,7 +380,14 @@ class VisualSemanticsCompiler:
             if resolved_topic == "ch03.det.oriented-area":
                 # 3.1 的取景需覆盖外接矩形和上方面积标注。
                 endpoints.extend(_det_geometry_view_endpoints(semantics))
-            if endpoints:
+            if resolved_topic in _DET_CORE_VIEW_BOUNDS:
+                # 3.2 的全部窗格共享同一固定边界，矩阵网格和面积图不各自缩放。
+                view_fit["bounds"] = list(_DET_CORE_VIEW_BOUNDS[resolved_topic])
+            if resolved_topic == "ch02.matrix.composition":
+                view_fit["bounds"] = list(_COMPOSITION_VIEW_BOUNDS)
+            if resolved_topic == "ch02.matrix.powers":
+                view_fit["bounds"] = list(_MATRIX_POWERS_VIEW_BOUNDS)
+            if endpoints and resolved_topic not in _DET_CORE_VIEW_BOUNDS and resolved_topic not in {"ch02.matrix.composition", "ch02.matrix.powers"}:
                 xs = [0.0, *(point[0] for point in endpoints)]
                 ys = [0.0, *(point[1] for point in endpoints)]
                 min_x, max_x = min(xs), max(xs)
@@ -409,7 +441,7 @@ class VisualSemanticsCompiler:
             family_evidence=family_evidence,
             storyboard=storyboard,
         )
-        if artifact is not None:
+        if artifact is not None and _topic_has_visual_capabilities(resolved_topic):
             from .evidence import build_evidence_ledger
 
             ledger, evidence_issues = build_evidence_ledger(artifact, compiled)
@@ -480,7 +512,7 @@ class VisualSemanticsCompiler:
             if len(vectors2) >= 2:
                 # 投影是辅助构造，按讲义习惯默认画成虚线。
                 operations.append({"op": "geometry.projection", "vector": list(vectors2[0]), "direction": list(vectors2[1]), "result_alias": "cap__projection", "foot_alias": "cap__foot", "residual_alias": "cap__residual", "style": "dashed", "color": role_color("projection")})
-        if "transformed_grid" in declared and topic_id != "ch02.matrix.basis" and "geometry.transformed_grid" not in operation_names and semantics.scene_kind == "2d" and "staged_transform" not in declared:
+        if "transformed_grid" in declared and "geometry.transformed_grid" not in operation_names and semantics.scene_kind == "2d" and "staged_transform" not in declared:
             matrix = next(
                 (matrix for entity in semantics.entities if (matrix := _matrix2(entity.value)) is not None),
                 None,
@@ -534,11 +566,14 @@ class VisualSemanticsCompiler:
             visible_aliases_list = []
             # 章节自有阶段需保留帧级凭据及别名可见性。
             visible_aliases_list.extend(aliases.get(stage.id, ()))
-            for ref in visible_refs:
-                for alias in aliases.get(ref, ()):
-                    visible_aliases_list.append(alias)
-                    if alias.endswith("__end"):
-                        visible_aliases_list.append(f"{alias[:-5]}__origin")
+            # 第五章阶段操作已经是审阅后的完整教学窗格。阶段仍保留实体引用供
+            # claim/stage 审计，但不把矩阵、关系等底层凭据重复叠到案例图上。
+            if not stage.id.startswith(("stage.ch05.", "stage.ch06.", "stage.ch07.", "stage.ch08.")):
+                for ref in visible_refs:
+                    for alias in aliases.get(ref, ()):
+                        visible_aliases_list.append(alias)
+                        if alias.endswith("__end"):
+                            visible_aliases_list.append(f"{alias[:-5]}__origin")
             title_alias = f"{_alias(stage.id)}__title"
             show_case_stage_title = not (
                 stage.id.startswith("stage.magnitude.")
@@ -555,6 +590,9 @@ class VisualSemanticsCompiler:
                 or stage.id.startswith("stage.claim.ch01.ops.addition.")
                 or stage.id.startswith("stage.flow.")
                 or stage.id.startswith("stage.case.")
+                or stage.id.startswith("stage.ch06.")
+                or stage.id.startswith("stage.ch07.")
+                or stage.id.startswith("stage.ch08.")
             )
             if show_case_stage_title:
                 visible_aliases_list.append(title_alias)
@@ -751,9 +789,8 @@ class VisualSemanticsCompiler:
         elif entity.kind in {"matrix", "grid"} and scene == "2d":
             matrix = _matrix2(entity.value)
             if matrix is not None:
-                if context.topic_id != "ch02.matrix.basis":
-                    grid_bounds = _case_grid_bounds(context.topic_id, context.bounds)
-                    operations.append({"op": "geometry.transformed_grid", "alias": prefix, "matrix": matrix, "bounds": list(grid_bounds), "step": 1.0, "color": role_color(entity.role)})
+                grid_bounds = _case_grid_bounds(context.topic_id, context.bounds)
+                operations.append({"op": "geometry.transformed_grid", "alias": prefix, "matrix": matrix, "bounds": list(grid_bounds), "step": 1.0, "color": role_color(entity.role)})
                 aliases.append(prefix)
         elif entity.kind in {"basis", "region"} and scene == "2d":
             basis = _vectors2(entity.value)
@@ -835,6 +872,9 @@ class VisualSemanticsCompiler:
             return operations, [relation_alias]
         if relation.id.startswith(("rel.linear-combination.", "rel.velocity.", "rel.cross-product.", "rel.scalar-triple.")):
             # 公式和类型化实体已足够，不显示记账关系。
+            return operations, [relation_alias]
+        if relation.id.startswith("rel.matrix.powers."):
+            # 两个窗格已分别显示 A 与 A^2 的变换网格，不向学生暴露内部关系标签。
             return operations, [relation_alias]
         if relation.id.startswith("rel.case.") and relation.kind != "projects_to":
             # 案例窗格不重复显示编译器内部关系标签。
@@ -1037,6 +1077,7 @@ def _proof_figure_operations(
     point_ops: list[dict[str, Any]] = []
     segment_ops: list[dict[str, Any]] = []
     note_ops: list[dict[str, Any]] = []
+    formula_latex = ""
 
     def add_point(alias: str, coordinates: tuple[float, float], name: str) -> None:
         point_ops.append(
@@ -1153,6 +1194,7 @@ def _proof_figure_operations(
             outward_label(origin, midpoint_bc, centre, 0.36),
         )
         formula = "AG = (a + b) / 3"
+        formula_latex = r"\overrightarrow{AG}=\frac{\boldsymbol a+\boldsymbol b}{3}"
         vertices = [origin, vertex_b, vertex_c]
     elif topic_id == "ch01.proof.parallelogram-diagonals":
         vertex_d = vertex_c
@@ -1171,9 +1213,14 @@ def _proof_figure_operations(
         add_segment("proof__diagonal_ac", "proof__point_A", "proof__point_C", color=role_color("transformed_a"), style="dashed", kind="vector")
         add_segment("proof__diagonal_bd", "proof__point_B", "proof__point_D", color=role_color("transformed_b"), style="dashed", kind="vector")
         formula = "M(AC) = M(BD) = (a + b) / 2"
+        formula_latex = r"M(AC)=M(BD)=\frac{\boldsymbol a+\boldsymbol b}{2}"
         vertices = [origin, vertex_b, vertex_c_para, vertex_d]
     else:
         raise ValueError(f"unsupported geometry-proof topic: {topic_id}")
+
+    # The scene label remains plain ASCII for the VTK label renderer.  The
+    # algebra panel receives a separate KaTeX source so fractions are stacked
+    # and vector notation is rendered consistently.
 
     x_values = [float(operation["coordinates"][0]) for operation in point_ops]
     y_values = [float(operation["coordinates"][1]) for operation in point_ops]
@@ -1202,6 +1249,7 @@ def _proof_figure_operations(
                 "op": "annotation.formula",
                 "alias": "proof__formula",
                 "text": formula,
+                "latex": formula_latex,
                 "position": [round(float(formula_position[0]), 6), round(float(formula_position[1]), 6)],
             }
         )
@@ -1769,6 +1817,8 @@ def _stage_specific_aliases(semantics: VisualSemantics, stage: Any, index: int) 
             return ("sem__addition_parallelogram",)
         return ("sem__addition_triangle",) if index == 0 else ("sem__addition_parallelogram",)
     if "composition_order" in relation_kinds:
+        if str(getattr(stage, "id", "")).startswith("stage.case.composition."):
+            return ()
         stage_alias = f"sem__stage_order__{index + 1}"
         return (stage_alias,)
     # 投影只由 projects_to 关系本身落笔画：引用该关系的窗格才会显示投影。
@@ -1851,6 +1901,10 @@ def _stage_geometry_operations(
             return [{"op": "geometry.polygon", "alias": "sem__addition_triangle", "vertices": [[0.0, 0.0], list(a), [a[0] + b[0], a[1] + b[1]]], "color": role_color("construction"), "opacity": 0.14, "outline": True}]
         return [{"op": "geometry.polygon", "alias": "sem__addition_parallelogram", "vertices": [[0.0, 0.0], list(a), [a[0] + b[0], a[1] + b[1]], list(b)], "color": role_color("construction"), "opacity": 0.14, "outline": True}]
     if "composition_order" in relation_kinds:
+        if context.topic_id == "ch02.matrix.composition":
+            # 本节四步窗格已显式给出输入、中间向量、终点和两种结果网格；
+            # 不再叠加统一配色的阶段点，避免破坏两条路径各自的对象颜色。
+            return []
         relation = next(
             (
                 item
@@ -2019,7 +2073,6 @@ def _emit_matrix_vector_transform(
 
     if topic_id not in _MATRIX_VECTOR_CASE_TOPICS:
         return
-    entity_by_id = {entity.id: entity for entity in semantics.entities}
     for entity in semantics.entities:
         if entity.kind not in {"matrix", "grid"}:
             continue
@@ -2029,26 +2082,17 @@ def _emit_matrix_vector_transform(
         prefix = _alias(entity.id)
         staged_alias = f"{prefix}__staged"
         label_alias = f"{prefix}__label"
-        if topic_id == "ch02.matrix.basis":
-            # 2.7 的第二窗格不是独立生成一层 teaching grid，而是复用工具箱的
-            # “矩阵变换”坐标系：S 的两列就是新基 b1、b2。第一窗格不设置
-            # 变换，保留软件默认的标准基坐标系。
-            if entity.id == "mv_basis_grid_b":
-                if "mv_basis_b1" in entity_by_id and "mv_basis_b2" in entity_by_id:
-                    coordinate_alias = prefix
-                    operations.append(
-                        {
-                            "op": "linear_algebra.coordinate_transform",
-                            "alias": coordinate_alias,
-                            "matrix": [list(row) for row in _CH02_BASIS_MATRIX],
-                            "show_original": False,
-                            "show_transformed": True,
-                        }
-                    )
+        if topic_id in {"ch02.matrix.basis", "ch02.matrix.powers"}:
+            # 2.7 与其他矩阵案例共用 geometry.transformed_grid。
+            # 2.8 的网格也只补矩阵标注，直接复用工具栏的网格图元。
             aliases.setdefault(entity.id, []).append(label_alias)
             if matrix == [[1.0, 0.0], [0.0, 1.0]]:
                 continue
-            position = _stage_content_corner(semantics, entity.id)
+            position = (
+                (_MATRIX_POWERS_VIEW_BOUNDS[0] + 1.0, _MATRIX_POWERS_VIEW_BOUNDS[3] - 3.0)
+                if topic_id == "ch02.matrix.powers"
+                else _stage_content_corner(semantics, entity.id)
+            )
             if position is not None:
                 operations.append(
                     {
@@ -2123,6 +2167,12 @@ def _topic_requires_capability(topic_id: str, capability: str) -> bool:
         topic.id == topic_id and capability in topic.required_capabilities
         for topic in topic_entries()
     )
+
+
+def _topic_has_visual_capabilities(topic_id: str) -> bool:
+    """Return whether a catalog topic promises a rendered teaching scene."""
+
+    return bool(_topic_capabilities(topic_id))
 
 
 def _topic_capabilities(topic_id: str) -> frozenset[str]:

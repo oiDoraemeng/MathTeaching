@@ -188,6 +188,8 @@ def validate_claim_bindings(artifact: TeachingArtifact) -> tuple[ValidationIssue
     visual graph and its reverse claim link.
     """
 
+    topic = next((item for item in topic_entries() if item.id == artifact.topic_id), None)
+    text_only = topic is not None and not topic.required_capabilities
     entities = artifact.visual_semantics.entities
     relations = artifact.visual_semantics.relations
     stages = artifact.visual_semantics.stages
@@ -208,6 +210,9 @@ def validate_claim_bindings(artifact: TeachingArtifact) -> tuple[ValidationIssue
                         f"formula symbol {symbol!r} is not declared in explanation.symbol_roles or visual entities",
                     )
                 )
+
+        if text_only:
+            continue
 
         evidence = (
             ("entity_refs", claim.entity_refs, entity_ids, entities, "entity"),

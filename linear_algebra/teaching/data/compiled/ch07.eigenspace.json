@@ -1,25 +1,26 @@
 {
-  "artifact_digest": "sha256:713c5abcf05c2371d8c9a04a0b64ef4ff76079e3352a54498f9dcdc36c7f703c",
+  "artifact_digest": "sha256:63b37ec8e7d61fa6b6d3e5c8643c62f172a9a6e39d551cfc707b652f7551e682",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:752f0be1933d7acfbab7b588fe9f915ceda536f50e2a5ff6264e384cf99255b7",
+  "contract_digest": "sha256:e713176c5f104e7075f406499df67dc65aeffa9551baf36fb0bba01e0029c210",
   "plan": {
     "operations": [
       {
-        "alias": "entity_ch07_eigenspace_operator",
+        "alias": "ch07.eigenspace__entity__operator",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
         ],
+        "color": "#6B7280",
         "matrix": [
           [
-            3.0,
+            2.0,
             1.0
           ],
           [
-            0.0,
+            1.0,
             2.0
           ]
         ],
@@ -27,41 +28,134 @@
         "step": 1.0
       },
       {
-        "alias": "entity_ch07_eigenspace_root_2__root_0",
-        "coordinates": [
-          2.0,
-          0.0
+        "alias": "ch07.eigenspace__entity__space_3",
+        "basis": [
+          [
+            1.0,
+            1.0
+          ]
         ],
-        "name": "lambda",
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#2F6BFF",
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.eigenspace__entity__space_1",
+        "basis": [
+          [
+            1.0,
+            -1.0
+          ]
+        ],
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#F08A24",
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.eigenspace__entity__shear_operator",
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch07.eigenspace__entity__shear_space",
+        "basis": [
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#2A9D8F",
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.eigenspace__entity__invariant_values__0",
+        "color": "#2F6BFF",
+        "coordinates": [
+          3.0,
+          1.0
+        ],
+        "name": "lambda1",
         "op": "point.upsert"
       },
       {
-        "alias": "entity_ch07_eigenspace_root_3__root_0",
+        "alias": "ch07.eigenspace__entity__invariant_values__1",
+        "color": "#F08A24",
         "coordinates": [
           3.0,
-          0.0
+          4.0
         ],
-        "name": "lambda",
+        "name": "lambda2",
         "op": "point.upsert"
       },
       {
-        "alias": "entity_ch07_eigenspace_space_2",
+        "alias": "ch07.eigenspace__relation__space_3",
         "basis": [
           [
-            -1.0,
+            1.0,
             1.0
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
         ],
+        "color": "#2F6BFF",
         "op": "geometry.subspace_region"
       },
       {
-        "alias": "entity_ch07_eigenspace_space_3",
+        "alias": "ch07.eigenspace__relation__space_1",
+        "basis": [
+          [
+            1.0,
+            -1.0
+          ]
+        ],
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#F08A24",
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.eigenspace__relation__shear_space",
         "basis": [
           [
             1.0,
@@ -69,31 +163,114 @@
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
         ],
+        "color": "#2A9D8F",
         "op": "geometry.subspace_region"
       },
       {
-        "alias": "ch07.eigenspace__relation__root_2",
+        "alias": "ch07.eigenspace__relation__invariants__0",
+        "color": "#2F6BFF",
+        "coordinates": [
+          3.0,
+          1.0
+        ],
+        "name": "lambda1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigenspace__relation__invariants__1",
+        "color": "#F08A24",
+        "coordinates": [
+          3.0,
+          4.0
+        ],
+        "name": "lambda2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigenspace__stage__spaces__grid",
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#2A9D8F",
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch07.eigenspace__stage__spaces__space3",
         "basis": [
           [
-            -1.0,
+            1.0,
             1.0
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
         ],
+        "color": "#2F6BFF",
         "op": "geometry.subspace_region"
       },
       {
-        "alias": "ch07.eigenspace__relation__root_3",
+        "alias": "ch07.eigenspace__stage__spaces__space1",
+        "basis": [
+          [
+            1.0,
+            -1.0
+          ]
+        ],
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#F08A24",
+        "op": "geometry.subspace_region"
+      },
+      {
+        "alias": "ch07.eigenspace__stage__defective__grid",
+        "bounds": [
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
+        ],
+        "color": "#2A9D8F",
+        "matrix": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "ch07.eigenspace__stage__defective__space",
         "basis": [
           [
             1.0,
@@ -101,53 +278,93 @@
           ]
         ],
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
         ],
+        "color": "#2F6BFF",
         "op": "geometry.subspace_region"
       },
       {
-        "alias": "ch07.eigenspace__stage__nullspace__root_2",
-        "basis": [
-          [
-            -1.0,
-            1.0
-          ]
-        ],
+        "alias": "ch07.eigenspace__stage__invariants__grid",
         "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+          -4.0,
+          4.0,
+          -4.0,
+          4.0
         ],
-        "op": "geometry.subspace_region"
-      },
-      {
-        "alias": "ch07.eigenspace__stage__nullspace__root_3",
-        "basis": [
+        "color": "#2A9D8F",
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
           [
             1.0,
-            0.0
+            2.0
           ]
         ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "op": "geometry.subspace_region"
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
-        "alias": "sem__stage.ch07.eigenspace.nullspace__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "ch07.eigenspace__stage__invariants__v1__origin",
+        "color": "#2F6BFF",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "特征根对应零空间"
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigenspace__stage__invariants__v1__end",
+        "color": "#2F6BFF",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "v1",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigenspace__stage__invariants__v1",
+        "color": "#2F6BFF",
+        "end": "ch07.eigenspace__stage__invariants__v1__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.eigenspace__stage__invariants__v1__origin"
+      },
+      {
+        "alias": "ch07.eigenspace__stage__invariants__v2__origin",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigenspace__stage__invariants__v2__end",
+        "color": "#F08A24",
+        "coordinates": [
+          1.0,
+          -1.0
+        ],
+        "name": "v2",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigenspace__stage__invariants__v2",
+        "color": "#F08A24",
+        "end": "ch07.eigenspace__stage__invariants__v2__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.eigenspace__stage__invariants__v2__origin"
       },
       {
         "op": "view.fit",
@@ -155,10 +372,10 @@
       }
     ],
     "scene": "2d",
-    "summary": "7.3 求特征向量",
+    "summary": "求特征向量",
     "version": 1
   },
-  "plan_digest": "sha256:27864a82cd1331ae08533db89b80889f4430bdb292549fdc96bd3c4f34f426ac",
+  "plan_digest": "sha256:8c49162c286275e54e1fae11843f64d962f5f4cafe97e0dc71d0f4b925a7f5ec",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
@@ -168,33 +385,63 @@
   "stages": [
     {
       "anchor": [
-        -2.65,
+        0.0,
         2.65
       ],
-      "caption": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
-      "id": "stage.ch07.eigenspace.nullspace",
-      "layout": "sequence",
-      "title": "特征根对应零空间",
+      "caption": "",
+      "id": "stage.ch07.eigenspace.eigenspaces",
+      "layout": "overlay",
+      "title": "两个特征值对应两个特征空间",
       "visible_aliases": [
-        "ch07.eigenspace__stage__nullspace__root_2",
-        "ch07.eigenspace__stage__nullspace__root_3",
-        "entity_ch07_eigenspace_operator",
-        "entity_ch07_eigenspace_root_2__root_0",
-        "entity_ch07_eigenspace_root_3__root_0",
-        "entity_ch07_eigenspace_space_2",
-        "entity_ch07_eigenspace_space_3",
-        "ch07.eigenspace__relation__root_2",
-        "ch07.eigenspace__relation__root_3",
-        "sem__stage.ch07.eigenspace.nullspace__title"
+        "ch07.eigenspace__stage__spaces__grid",
+        "ch07.eigenspace__stage__spaces__space3",
+        "ch07.eigenspace__stage__spaces__space1"
       ],
       "visible_refs": [
         "entity.ch07.eigenspace.operator",
-        "entity.ch07.eigenspace.root_2",
-        "entity.ch07.eigenspace.root_3",
-        "entity.ch07.eigenspace.space_2",
         "entity.ch07.eigenspace.space_3",
-        "relation.ch07.eigenspace.root_2",
-        "relation.ch07.eigenspace.root_3"
+        "entity.ch07.eigenspace.space_1",
+        "relation.ch07.eigenspace.space_3",
+        "relation.ch07.eigenspace.space_1"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.ch07.eigenspace.defective",
+      "layout": "overlay",
+      "title": "例 7：切变矩阵不能对角化",
+      "visible_aliases": [
+        "ch07.eigenspace__stage__defective__grid",
+        "ch07.eigenspace__stage__defective__space"
+      ],
+      "visible_refs": [
+        "entity.ch07.eigenspace.shear_operator",
+        "entity.ch07.eigenspace.shear_space",
+        "relation.ch07.eigenspace.shear_space"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.ch07.eigenspace.invariants",
+      "layout": "overlay",
+      "title": "例 8：用特征值验证行列式与迹",
+      "visible_aliases": [
+        "ch07.eigenspace__stage__invariants__grid",
+        "ch07.eigenspace__stage__invariants__v1",
+        "ch07.eigenspace__stage__invariants__v2"
+      ],
+      "visible_refs": [
+        "entity.ch07.eigenspace.operator",
+        "entity.ch07.eigenspace.invariant_values",
+        "relation.ch07.eigenspace.invariants"
       ]
     }
   ],

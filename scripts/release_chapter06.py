@@ -1,4 +1,4 @@
-"""Atomically publish the three reviewed Chapter 6 visual bundles."""
+"""Atomically publish the two reviewed Chapter 6 visual bundles."""
 from pathlib import Path
 from linear_algebra.catalog.chapter_06 import TOPICS
 from linear_algebra.teaching.chapter_artifacts import artifact_payload_for

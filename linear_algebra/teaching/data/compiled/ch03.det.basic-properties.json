@@ -1,0 +1,517 @@
+{
+  "artifact_digest": "sha256:3392263baf5a0cb588f409064b279018c98d186c7c8ebf55dbd140ea495a4ad6",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:57df0df5822f2d130b29549edefc52a57de7d148836d791f0aebadebc536d695",
+  "plan": {
+    "operations": [
+      {
+        "alias": "sem__det_core_basic-properties_matrix_1",
+        "bounds": [
+          -1.0,
+          6.0,
+          -1.0,
+          5.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_1__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_1",
+        "color": "#2F6BFF",
+        "end": "sem__det_core_basic-properties_r1_1__end",
+        "kind": "vector",
+        "label": "r1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__det_core_basic-properties_r1_1__origin"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_1__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_1__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_1",
+        "color": "#F08A24",
+        "end": "sem__det_core_basic-properties_r2_1__end",
+        "kind": "vector",
+        "label": "r2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__det_core_basic-properties_r2_1__origin"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_area_1",
+        "color": "#E09F3E",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__det_core_basic-properties_matrix_2",
+        "bounds": [
+          -1.0,
+          6.0,
+          -1.0,
+          5.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_2__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_2",
+        "color": "#F08A24",
+        "end": "sem__det_core_basic-properties_r1_2__end",
+        "kind": "vector",
+        "label": "r2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__det_core_basic-properties_r1_2__origin"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_2__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_2",
+        "color": "#2F6BFF",
+        "end": "sem__det_core_basic-properties_r2_2__end",
+        "kind": "vector",
+        "label": "r1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__det_core_basic-properties_r2_2__origin"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_area_2",
+        "color": "#E09F3E",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            1.0,
+            2.0
+          ],
+          [
+            2.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__det_core_basic-properties_matrix_3",
+        "bounds": [
+          -1.0,
+          6.0,
+          -1.0,
+          5.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_3__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_3__end",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_3",
+        "color": "#2F6BFF",
+        "end": "sem__det_core_basic-properties_r1_3__end",
+        "kind": "vector",
+        "label": "r1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__det_core_basic-properties_r1_3__origin"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_3__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_3__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_3",
+        "color": "#F08A24",
+        "end": "sem__det_core_basic-properties_r2_3__end",
+        "kind": "vector",
+        "label": "r2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__det_core_basic-properties_r2_3__origin"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_area_3",
+        "color": "#E09F3E",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "alias": "sem__det_core_basic-properties_matrix_4",
+        "bounds": [
+          -1.0,
+          6.0,
+          -1.0,
+          5.0
+        ],
+        "color": "#6B7280",
+        "matrix": [
+          [
+            4.0,
+            2.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_4__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_4__end",
+        "coordinates": [
+          4.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r1_4",
+        "color": "#2F6BFF",
+        "end": "sem__det_core_basic-properties_r1_4__end",
+        "kind": "vector",
+        "label": "2r1",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__det_core_basic-properties_r1_4__origin"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_4__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_4__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_r2_4",
+        "color": "#F08A24",
+        "end": "sem__det_core_basic-properties_r2_4__end",
+        "kind": "vector",
+        "label": "r2",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__det_core_basic-properties_r2_4__origin"
+      },
+      {
+        "alias": "sem__det_core_basic-properties_area_4",
+        "color": "#E09F3E",
+        "op": "geometry.oriented_area",
+        "vectors": [
+          [
+            4.0,
+            2.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "bounds": [
+          -1.0,
+          6.0,
+          -1.0,
+          5.0
+        ],
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "行列式的基本性质",
+    "version": 1
+  },
+  "plan_digest": "sha256:a70a04fbdedb48d03077d374e91f60c3c60ba9b7d4d25148c9e878106403be73",
+  "read_guide": [],
+  "render_profile": "lecture-v1",
+  "revision": 3,
+  "scene_family": "",
+  "schema_version": 1,
+  "source_hash": "sha256:5fae138c96957c5a717544538cc6944b4c5fd2416e841c513842d94f031b2a8d",
+  "stages": [
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.ch03.det.basic-properties.1",
+      "layout": "overlay",
+      "title": "第一幅：交换两行之前",
+      "visible_aliases": [
+        "sem__det_core_basic-properties_matrix_1",
+        "sem__det_core_basic-properties_r1_1",
+        "sem__det_core_basic-properties_r1_1__end",
+        "sem__det_core_basic-properties_r1_1__origin",
+        "sem__det_core_basic-properties_r2_1",
+        "sem__det_core_basic-properties_r2_1__end",
+        "sem__det_core_basic-properties_r2_1__origin",
+        "sem__det_core_basic-properties_area_1",
+        "sem__rel.case.ch03.det.basic-properties.1"
+      ],
+      "visible_refs": [
+        "det_core_basic-properties_matrix_1",
+        "det_core_basic-properties_r1_1",
+        "det_core_basic-properties_r2_1",
+        "det_core_basic-properties_area_1",
+        "rel.case.ch03.det.basic-properties.1"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.ch03.det.basic-properties.2",
+      "layout": "overlay",
+      "title": "第二幅：交换两行之后",
+      "visible_aliases": [
+        "sem__det_core_basic-properties_matrix_2",
+        "sem__det_core_basic-properties_r1_2",
+        "sem__det_core_basic-properties_r1_2__end",
+        "sem__det_core_basic-properties_r1_2__origin",
+        "sem__det_core_basic-properties_r2_2",
+        "sem__det_core_basic-properties_r2_2__end",
+        "sem__det_core_basic-properties_r2_2__origin",
+        "sem__det_core_basic-properties_area_2",
+        "sem__rel.case.ch03.det.basic-properties.2"
+      ],
+      "visible_refs": [
+        "det_core_basic-properties_matrix_2",
+        "det_core_basic-properties_r1_2",
+        "det_core_basic-properties_r2_2",
+        "det_core_basic-properties_area_2",
+        "rel.case.ch03.det.basic-properties.2"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.ch03.det.basic-properties.3",
+      "layout": "overlay",
+      "title": "第三幅：第一行乘 2 之前",
+      "visible_aliases": [
+        "sem__det_core_basic-properties_matrix_3",
+        "sem__det_core_basic-properties_r1_3",
+        "sem__det_core_basic-properties_r1_3__end",
+        "sem__det_core_basic-properties_r1_3__origin",
+        "sem__det_core_basic-properties_r2_3",
+        "sem__det_core_basic-properties_r2_3__end",
+        "sem__det_core_basic-properties_r2_3__origin",
+        "sem__det_core_basic-properties_area_3",
+        "sem__rel.case.ch03.det.basic-properties.3"
+      ],
+      "visible_refs": [
+        "det_core_basic-properties_matrix_3",
+        "det_core_basic-properties_r1_3",
+        "det_core_basic-properties_r2_3",
+        "det_core_basic-properties_area_3",
+        "rel.case.ch03.det.basic-properties.3"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.ch03.det.basic-properties.4",
+      "layout": "overlay",
+      "title": "第四幅：第一行乘 2 之后",
+      "visible_aliases": [
+        "sem__det_core_basic-properties_matrix_4",
+        "sem__det_core_basic-properties_r1_4",
+        "sem__det_core_basic-properties_r1_4__end",
+        "sem__det_core_basic-properties_r1_4__origin",
+        "sem__det_core_basic-properties_r2_4",
+        "sem__det_core_basic-properties_r2_4__end",
+        "sem__det_core_basic-properties_r2_4__origin",
+        "sem__det_core_basic-properties_area_4",
+        "sem__rel.case.ch03.det.basic-properties.4"
+      ],
+      "visible_refs": [
+        "det_core_basic-properties_matrix_4",
+        "det_core_basic-properties_r1_4",
+        "det_core_basic-properties_r2_4",
+        "det_core_basic-properties_area_4",
+        "rel.case.ch03.det.basic-properties.4"
+      ]
+    }
+  ],
+  "topic_id": "ch03.det.basic-properties"
+}

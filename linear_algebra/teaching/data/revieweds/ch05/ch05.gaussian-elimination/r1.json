@@ -8,14 +8,10 @@
       ],
       "explanation_refs": [
         "definition",
-        "formula",
         "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
+        "worked_examples"
       ],
-      "formula": "5.4 高斯消元: finite typed semantic evidence",
+      "formula": "\\operatorname{Null}(\\boldsymbol E\\boldsymbol A)=\\operatorname{Null}(\\boldsymbol A),\\quad x_j=\\frac{\\det(\\boldsymbol A_j)}{\\det(\\boldsymbol A)}",
       "formula_symbols": [
         "matrix",
         "rhs",
@@ -31,50 +27,67 @@
       "stage_refs": [
         "stage.ch05.gaussian-elimination.initial",
         "stage.ch05.gaussian-elimination.eliminate",
-        "stage.ch05.gaussian-elimination.normalize",
-        "stage.ch05.gaussian-elimination.back_substitute"
+        "stage.ch05.gaussian-elimination.triangular"
       ],
-      "statement": "5.4 高斯消元 的数学主张由显式对象、关系和不变量支持。"
+      "statement": "掌握高斯消元的操作流程，理解消元的几何意义。"
     }
   ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch05.gaussian-elimination"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch05.gaussian-elimination.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.oriented-area"
-    }
-  ],
+  "connections": [],
   "explanation": {
-    "conclusion": "",
-    "connections": [],
-    "definition": "### 5.4 高斯消元\n定义 5.2（初等行变换） 对矩阵的行执行以下三种操作，不会改变方程组的解集：\n1. 交换两行（P 操作）——重新排列方程的编号\n2. 某行乘以非零常数（D 操作）——方程两边同乘非零数\n3. 某行加上另一行的 k 倍（E 操作）——一个方程加上另一个方程的倍数\n定理 5.5（行变换不改变零空间） 初等行变换保持矩阵的零空间不变：$\\operatorname{Null}(EA) = \\operatorname{Null}(A)$，其中 E 是任意初等矩阵的乘积。\n⚠️ 但行变换会改变列空间！ 行变换只保持零空间，列空间中向量的方向会变，但各列之间的线性组合关系保持不变。\n教学口诀：\"行操作解不变，列变关系不变。\"——这就是为什么高斯消元时只做行变换。\n定理 5.7（克莱姆法则 / Cramer's Rule） 设 A 为 $n \\times n$ 可逆矩阵（即 $\\det(A) \\neq 0$），则线性方程组 $Ax = b$ 有唯一解：\n$x_{j} = \\frac{\\det(A_{j})}{\\det(A)}$，其中 $A_{j}$ 是将 A 的第 j 列替换为 b 得到的矩阵。",
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch05.gaussian-elimination"
+          ],
+          "example_ref": "example.ch05.gaussian-elimination.process",
+          "id": "case.ch05.gaussian-elimination.1",
+          "purpose": "初始增广矩阵",
+          "stage_refs": [
+            "stage.ch05.gaussian-elimination.initial"
+          ],
+          "topic_id": "ch05.gaussian-elimination"
+        },
+        {
+          "claim_refs": [
+            "claim.ch05.gaussian-elimination"
+          ],
+          "example_ref": "example.ch05.gaussian-elimination.process",
+          "id": "case.ch05.gaussian-elimination.2",
+          "purpose": "消去第一列",
+          "stage_refs": [
+            "stage.ch05.gaussian-elimination.eliminate"
+          ],
+          "topic_id": "ch05.gaussian-elimination"
+        },
+        {
+          "claim_refs": [
+            "claim.ch05.gaussian-elimination"
+          ],
+          "example_ref": "example.ch05.gaussian-elimination.process",
+          "id": "case.ch05.gaussian-elimination.3",
+          "purpose": "上三角矩阵与回代",
+          "stage_refs": [
+            "stage.ch05.gaussian-elimination.triangular"
+          ],
+          "topic_id": "ch05.gaussian-elimination"
+        }
+      ],
+      "default_pane_count": 3
+    },
+    "definition": "一句话动机：有了理论工具还不够——具体怎么算？答案是高斯消元。\n\n本节目标：掌握高斯消元的操作流程，理解消元的几何意义。\n\n**（初等行变换）** 对矩阵的行执行以下三种操作，不会改变方程组的解集：\n\n- 交换两行（$P$ 操作）——重新排列方程的编号；\n- 某行乘以非零常数（$D$ 操作）——方程两边同乘非零数；\n- 某行加上另一行的 $k$ 倍（$E$ 操作）——一个方程加上另一个方程的倍数。\n\n**（行变换不改变零空间）** 初等行变换保持矩阵的零空间不变：\n\n$$\n\\operatorname{Null}(\\boldsymbol E\\boldsymbol A)=\\operatorname{Null}(\\boldsymbol A),\n$$\n\n其中 $\\boldsymbol E$ 是任意初等矩阵的乘积。\n\n但行变换会改变列空间。行变换只保持零空间，列空间中向量的方向会变，但各列之间的线性组合关系保持不变。\n\n教学口诀：“行操作解不变，列变关系不变。”——这就是为什么高斯消元时只做行变换。\n\n**（克莱姆法则 / Cramer's Rule）** 设 $\\boldsymbol A$ 为 $n\\times n$ 可逆矩阵，即 $\\det(\\boldsymbol A)\\neq0$，则线性方程组 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 有唯一解：\n\n$$\nx_j=\\frac{\\det(\\boldsymbol A_j)}{\\det(\\boldsymbol A)},\n$$\n\n其中 $\\boldsymbol A_j$ 是将 $\\boldsymbol A$ 的第 $j$ 列替换为 $\\boldsymbol b$ 得到的矩阵。\n\n几何含义：每个未知数 $x_j=$ 将这一列换成 $\\boldsymbol b$ 后得到的行列式 $\\div$ 原行列式 $=$ 缩放比例的“方向分量”。",
     "derivation": [
-      "#### 例题：消元全过程\n解：$x_{1} + 2x_{2} + x_{3} = 3, 2x_{1} + 5x_{2} + 2x_{3} = 8, x_{1} + x_{2} - x_{3} = -1$。\n增广矩阵：\n$$\n\\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 2 & 5 & 2 & 8 \\\\ 1 & 1 & -1 & -1\\end{array}\\right] \\xrightarrow{R_2 - 2R_1} \\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 0 & 1 & 0 & 2 \\\\ 0 & -1 & -2 & -4\\end{array}\\right]\n$$\n$$\n\\xrightarrow{R_{3}+R_{2}} \\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 0 & 1 & 0 & 2 \\\\ 0 & 0 & -2 & -2\\end{array}\\right]\n$$\n回代：$x_{3}=1, x_{2}=2, x_{1}=-4$。\n证明（思路）: 由 $Ax=b$ 且 A 可逆，得 $x = A^{-1}b$。利用伴随矩阵公式 $A^{-1} = (\\frac{1}{\\det(A)}) \\cdot \\operatorname{adj}(A)$，其中 $\\operatorname{adj}(A)$ 的第 $(j,i)$ 元素为 $(-1)^{i+j} \\cdot \\det(A$去掉第i行第j列)。\n则 $x_{j} = (\\frac{1}{\\det(A)}) \\cdot \\sum_{i} \\operatorname{adj}(A)_{ji} \\cdot b_{i} = \\frac{\\det(A_{j})}{\\det(A)}$。（此处 $\\det(A_{j})$ 按第 j 列展开即为 $\\sum_{i} b_{i} \\cdot C_{ij}$。）■\n##### 补充例题\n例6（克莱姆法则求解 $2 \\times 2$）: 用克莱姆法则解：$2x + 3y = 8, x + 2y = 5$。\n解: $A = \\begin{pmatrix}2 & 3 \\\\ 1 & 2\\end{pmatrix}$，$\\det(A) = 4-3 = 1$。\n$$\nA_{1} = \\begin{pmatrix}8 & 3 \\\\ 5 & 2\\end{pmatrix} \\rightarrow \\det(A_{1}) = 16-15 = 1 \\rightarrow x = \\frac{1}{1} = 1\n$$\n$$\nA_{2} = \\begin{pmatrix}2 & 8 \\\\ 1 & 5\\end{pmatrix} \\rightarrow \\det(A_{2}) = 10-8 = 2 \\rightarrow y = \\frac{2}{1} = 2\n$$\n例7（克莱姆法则与唯一性）: 若 $A = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}$，能否用克莱姆法则解 $Ax=b$？\n不能！$\\det(A)=0$，A 不可逆。克莱姆法则仅适用于 $\\det(A)\\neq0$ 的方阵。"
+      "**（克莱姆法则 / Cramer's Rule）**\n\n由 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 且 $\\boldsymbol A$ 可逆，得\n\n$$\n\\boldsymbol x=\\boldsymbol A^{-1}\\boldsymbol b.\n$$\n\n利用伴随矩阵公式\n\n$$\n\\boldsymbol A^{-1}\n=\\frac{1}{\\det(\\boldsymbol A)}\\operatorname{adj}(\\boldsymbol A),\n$$\n\n其中 $\\operatorname{adj}(\\boldsymbol A)$ 的第 $(j,i)$ 个元素为\n\n$$\n(-1)^{i+j}\\det(\\boldsymbol A\\text{ 去掉第 }i\\text{ 行第 }j\\text{ 列}).\n$$\n\n于是\n\n$$\nx_j\n=\\frac{1}{\\det(\\boldsymbol A)}\n\\sum_i\\operatorname{adj}(\\boldsymbol A)_{ji}b_i\n=\\frac{\\det(\\boldsymbol A_j)}{\\det(\\boldsymbol A)}.\n$$\n\n这里 $\\det(\\boldsymbol A_j)$ 按第 $j$ 列展开即为 $\\sum_i b_iC_{ij}$。"
     ],
-    "formula": "5.4 高斯消元: finite typed semantic evidence",
-    "geometric_meaning": "几何含义: 每个未知数 $x_{j} =$ 将这一列换成b后得到的行列式 $\\div$ 原行列式 $=$ 缩放比例的「方向分量」。",
-    "intuition": "一句话动机：有了理论工具还不够——具体怎么算？答案是高斯消元。",
-    "invariants": [
-      "row operations preserve solution set",
-      "each tableau is the previous tableau transformed",
-      "finite numeric result"
-    ],
-    "pitfalls": [],
-    "read_guide": [],
+    "formula": "",
+    "geometric_meaning": "",
     "searchable_text": [
-      "5.4 高斯消元",
-      "本节目标：掌握高斯消元的操作流程，理解消元的几何意义。",
-      "5.4 高斯消元: finite typed semantic evidence",
-      "### 5.4 高斯消元\n定义 5.2（初等行变换） 对矩阵的行执行以下三种操作，不会改变方程组的解集：\n1. 交换两行（P 操作）——重新排列方程的编号\n2. 某行乘以非零常数（D 操作）——方程两边同乘非零数\n3. 某行加上另一行的 k 倍（E 操作）——一个方程加上另一个方程的倍数\n定理 5.5（行变换不改变零空间） 初等行变换保持矩阵的零空间不变：$\\operatorname{Null}(EA) = \\operatorname{Null}(A)$，其中 E 是任意初等矩阵的乘积。\n⚠️ 但行变换会改变列空间！ 行变换只保持零空间，列空间中向量的方向会变，但各列之间的线性组合关系保持不变。\n教学口诀：\"行操作解不变，列变关系不变。\"——这就是为什么高斯消元时只做行变换。\n定理 5.7（克莱姆法则 / Cramer's Rule） 设 A 为 $n \\times n$ 可逆矩阵（即 $\\det(A) \\neq 0$），则线性方程组 $Ax = b$ 有唯一解：\n$x_{j} = \\frac{\\det(A_{j})}{\\det(A)}$，其中 $A_{j}$ 是将 A 的第 j 列替换为 b 得到的矩阵。",
-      "#### 例题：消元全过程\n解：$x_{1} + 2x_{2} + x_{3} = 3, 2x_{1} + 5x_{2} + 2x_{3} = 8, x_{1} + x_{2} - x_{3} = -1$。\n增广矩阵：\n$$\n\\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 2 & 5 & 2 & 8 \\\\ 1 & 1 & -1 & -1\\end{array}\\right] \\xrightarrow{R_2 - 2R_1} \\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 0 & 1 & 0 & 2 \\\\ 0 & -1 & -2 & -4\\end{array}\\right]\n$$\n$$\n\\xrightarrow{R_{3}+R_{2}} \\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 0 & 1 & 0 & 2 \\\\ 0 & 0 & -2 & -2\\end{array}\\right]\n$$\n回代：$x_{3}=1, x_{2}=2, x_{1}=-4$。\n证明（思路）: 由 $Ax=b$ 且 A 可逆，得 $x = A^{-1}b$。利用伴随矩阵公式 $A^{-1} = (\\frac{1}{\\det(A)}) \\cdot \\operatorname{adj}(A)$，其中 $\\operatorname{adj}(A)$ 的第 $(j,i)$ 元素为 $(-1)^{i+j} \\cdot \\det(A$去掉第i行第j列)。\n则 $x_{j} = (\\frac{1}{\\det(A)}) \\cdot \\sum_{i} \\operatorname{adj}(A)_{ji} \\cdot b_{i} = \\frac{\\det(A_{j})}{\\det(A)}$。（此处 $\\det(A_{j})$ 按第 j 列展开即为 $\\sum_{i} b_{i} \\cdot C_{ij}$。）■\n##### 补充例题\n例6（克莱姆法则求解 $2 \\times 2$）: 用克莱姆法则解：$2x + 3y = 8, x + 2y = 5$。\n解: $A = \\begin{pmatrix}2 & 3 \\\\ 1 & 2\\end{pmatrix}$，$\\det(A) = 4-3 = 1$。\n$$\nA_{1} = \\begin{pmatrix}8 & 3 \\\\ 5 & 2\\end{pmatrix} \\rightarrow \\det(A_{1}) = 16-15 = 1 \\rightarrow x = \\frac{1}{1} = 1\n$$\n$$\nA_{2} = \\begin{pmatrix}2 & 8 \\\\ 1 & 5\\end{pmatrix} \\rightarrow \\det(A_{2}) = 10-8 = 2 \\rightarrow y = \\frac{2}{1} = 2\n$$\n例7（克莱姆法则与唯一性）: 若 $A = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}$，能否用克莱姆法则解 $Ax=b$？\n不能！$\\det(A)=0$，A 不可逆。克莱姆法则仅适用于 $\\det(A)\\neq0$ 的方阵。",
-      "几何含义: 每个未知数 $x_{j} =$ 将这一列换成b后得到的行列式 $\\div$ 原行列式 $=$ 缩放比例的「方向分量」。",
-      "row operations preserve solution set",
-      "each tableau is the previous tableau transformed",
-      "finite numeric result"
+      "高斯消元",
+      "掌握高斯消元的操作流程，理解消元的几何意义。",
+      "一句话动机：有了理论工具还不够——具体怎么算？答案是高斯消元。\n\n本节目标：掌握高斯消元的操作流程，理解消元的几何意义。\n\n**（初等行变换）** 对矩阵的行执行以下三种操作，不会改变方程组的解集：\n\n- 交换两行（$P$ 操作）——重新排列方程的编号；\n- 某行乘以非零常数（$D$ 操作）——方程两边同乘非零数；\n- 某行加上另一行的 $k$ 倍（$E$ 操作）——一个方程加上另一个方程的倍数。\n\n**（行变换不改变零空间）** 初等行变换保持矩阵的零空间不变：\n\n$$\n\\operatorname{Null}(\\boldsymbol E\\boldsymbol A)=\\operatorname{Null}(\\boldsymbol A),\n$$\n\n其中 $\\boldsymbol E$ 是任意初等矩阵的乘积。\n\n但行变换会改变列空间。行变换只保持零空间，列空间中向量的方向会变，但各列之间的线性组合关系保持不变。\n\n教学口诀：“行操作解不变，列变关系不变。”——这就是为什么高斯消元时只做行变换。\n\n**（克莱姆法则 / Cramer's Rule）** 设 $\\boldsymbol A$ 为 $n\\times n$ 可逆矩阵，即 $\\det(\\boldsymbol A)\\neq0$，则线性方程组 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 有唯一解：\n\n$$\nx_j=\\frac{\\det(\\boldsymbol A_j)}{\\det(\\boldsymbol A)},\n$$\n\n其中 $\\boldsymbol A_j$ 是将 $\\boldsymbol A$ 的第 $j$ 列替换为 $\\boldsymbol b$ 得到的矩阵。\n\n几何含义：每个未知数 $x_j=$ 将这一列换成 $\\boldsymbol b$ 后得到的行列式 $\\div$ 原行列式 $=$ 缩放比例的“方向分量”。",
+      "解方程组：\n\n$$\n\\begin{cases}\nx_1+2x_2+x_3=3,\\\\\n2x_1+5x_2+2x_3=8,\\\\\nx_1+x_2-x_3=-1.\n\\end{cases}\n$$\n\n增广矩阵为\n\n$$\n\\left[\n\\begin{array}{ccc|c}\n1&2&1&3\\\\\n2&5&2&8\\\\\n1&1&-1&-1\n\\end{array}\n\\right]\n\\xrightarrow[,R_3-R_1,]{,R_2-2R_1,}\n\\left[\n\\begin{array}{ccc|c}\n1&2&1&3\\\\\n0&1&0&2\\\\\n0&-1&-2&-4\n\\end{array}\n\\right].\n$$\n\n继续消元：\n\n$$\n\\left[\n\\begin{array}{ccc|c}\n1&2&1&3\\\\\n0&1&0&2\\\\\n0&-1&-2&-4\n\\end{array}\n\\right]\n\\xrightarrow{R_3+R_2}\n\\left[\n\\begin{array}{ccc|c}\n1&2&1&3\\\\\n0&1&0&2\\\\\n0&0&-2&-2\n\\end{array}\n\\right].\n$$\n\n回代得到\n\n$$\nx_3=1,\\qquad x_2=2,\\qquad x_1=-2.\n$$",
+      "用克莱姆法则解：\n\n$$\n\\begin{cases}\n2x+3y=8,\\\\\nx+2y=5.\n\\end{cases}\n$$\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&3\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\det(\\boldsymbol A)=4-3=1.\n$$\n\n$$\n\\boldsymbol A_1=\n\\begin{pmatrix}\n8&3\\\\\n5&2\n\\end{pmatrix}\n\\rightarrow\n\\det(\\boldsymbol A_1)=16-15=1\n\\rightarrow\nx=\\frac11=1.\n$$\n\n$$\n\\boldsymbol A_2=\n\\begin{pmatrix}\n2&8\\\\\n1&5\n\\end{pmatrix}\n\\rightarrow\n\\det(\\boldsymbol A_2)=10-8=2\n\\rightarrow\ny=\\frac21=2.\n$$",
+      "若\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&2\\\\\n2&4\n\\end{pmatrix},\n$$\n\n能否用克莱姆法则解 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$？\n\n不能，因为\n\n$$\n\\det(\\boldsymbol A)=0,\n$$\n\n$\\boldsymbol A$ 不可逆。克莱姆法则仅适用于 $\\det(\\boldsymbol A)\\neq0$ 的方阵。"
     ],
     "sections": [
       {
@@ -82,89 +95,46 @@
           "claim.ch05.gaussian-elimination"
         ],
         "id": "definition",
-        "text": "### 5.4 高斯消元\n定义 5.2（初等行变换） 对矩阵的行执行以下三种操作，不会改变方程组的解集：\n1. 交换两行（P 操作）——重新排列方程的编号\n2. 某行乘以非零常数（D 操作）——方程两边同乘非零数\n3. 某行加上另一行的 k 倍（E 操作）——一个方程加上另一个方程的倍数\n定理 5.5（行变换不改变零空间） 初等行变换保持矩阵的零空间不变：$\\operatorname{Null}(EA) = \\operatorname{Null}(A)$，其中 E 是任意初等矩阵的乘积。\n⚠️ 但行变换会改变列空间！ 行变换只保持零空间，列空间中向量的方向会变，但各列之间的线性组合关系保持不变。\n教学口诀：\"行操作解不变，列变关系不变。\"——这就是为什么高斯消元时只做行变换。\n定理 5.7（克莱姆法则 / Cramer's Rule） 设 A 为 $n \\times n$ 可逆矩阵（即 $\\det(A) \\neq 0$），则线性方程组 $Ax = b$ 有唯一解：\n$x_{j} = \\frac{\\det(A_{j})}{\\det(A)}$，其中 $A_{j}$ 是将 A 的第 j 列替换为 b 得到的矩阵。",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.gaussian-elimination"
-        ],
-        "id": "formula",
-        "text": "5.4 高斯消元: finite typed semantic evidence",
-        "title": "formula"
+        "text": "",
+        "title": "定义"
       },
       {
         "claim_refs": [
           "claim.ch05.gaussian-elimination"
         ],
         "id": "derivation",
-        "text": "#### 例题：消元全过程\n解：$x_{1} + 2x_{2} + x_{3} = 3, 2x_{1} + 5x_{2} + 2x_{3} = 8, x_{1} + x_{2} - x_{3} = -1$。\n增广矩阵：\n$$\n\\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 2 & 5 & 2 & 8 \\\\ 1 & 1 & -1 & -1\\end{array}\\right] \\xrightarrow{R_2 - 2R_1} \\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 0 & 1 & 0 & 2 \\\\ 0 & -1 & -2 & -4\\end{array}\\right]\n$$\n$$\n\\xrightarrow{R_{3}+R_{2}} \\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 0 & 1 & 0 & 2 \\\\ 0 & 0 & -2 & -2\\end{array}\\right]\n$$\n回代：$x_{3}=1, x_{2}=2, x_{1}=-4$。\n证明（思路）: 由 $Ax=b$ 且 A 可逆，得 $x = A^{-1}b$。利用伴随矩阵公式 $A^{-1} = (\\frac{1}{\\det(A)}) \\cdot \\operatorname{adj}(A)$，其中 $\\operatorname{adj}(A)$ 的第 $(j,i)$ 元素为 $(-1)^{i+j} \\cdot \\det(A$去掉第i行第j列)。\n则 $x_{j} = (\\frac{1}{\\det(A)}) \\cdot \\sum_{i} \\operatorname{adj}(A)_{ji} \\cdot b_{i} = \\frac{\\det(A_{j})}{\\det(A)}$。（此处 $\\det(A_{j})$ 按第 j 列展开即为 $\\sum_{i} b_{i} \\cdot C_{ij}$。）■\n##### 补充例题\n例6（克莱姆法则求解 $2 \\times 2$）: 用克莱姆法则解：$2x + 3y = 8, x + 2y = 5$。\n解: $A = \\begin{pmatrix}2 & 3 \\\\ 1 & 2\\end{pmatrix}$，$\\det(A) = 4-3 = 1$。\n$$\nA_{1} = \\begin{pmatrix}8 & 3 \\\\ 5 & 2\\end{pmatrix} \\rightarrow \\det(A_{1}) = 16-15 = 1 \\rightarrow x = \\frac{1}{1} = 1\n$$\n$$\nA_{2} = \\begin{pmatrix}2 & 8 \\\\ 1 & 5\\end{pmatrix} \\rightarrow \\det(A_{2}) = 10-8 = 2 \\rightarrow y = \\frac{2}{1} = 2\n$$\n例7（克莱姆法则与唯一性）: 若 $A = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}$，能否用克莱姆法则解 $Ax=b$？\n不能！$\\det(A)=0$，A 不可逆。克莱姆法则仅适用于 $\\det(A)\\neq0$ 的方阵。",
-        "title": "derivation"
+        "text": "",
+        "title": "证明"
       },
       {
         "claim_refs": [
           "claim.ch05.gaussian-elimination"
         ],
         "id": "worked_examples",
-        "text": "5.4 高斯消元: finite typed semantic evidence",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.gaussian-elimination"
-        ],
-        "id": "geometric_meaning",
-        "text": "几何含义: 每个未知数 $x_{j} =$ 将这一列换成b后得到的行列式 $\\div$ 原行列式 $=$ 缩放比例的「方向分量」。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.gaussian-elimination"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 5.4 高斯消元。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.gaussian-elimination"
-        ],
-        "id": "connections",
-        "text": "connections: 5.4 高斯消元。",
-        "title": "connections"
-      },
-      {
-        "claim_refs": [],
-        "id": "intuition",
-        "text": "一句话动机：有了理论工具还不够——具体怎么算？答案是高斯消元。",
-        "title": "intuition"
-      },
-      {
-        "claim_refs": [],
-        "id": "invariants",
-        "text": "row operations preserve solution set\neach tableau is the previous tableau transformed\nfinite numeric result",
-        "title": "invariants"
+        "text": "",
+        "title": "数学案例"
       }
     ],
-    "summary": "本节目标：掌握高斯消元的操作流程，理解消元的几何意义。",
+    "summary": "掌握高斯消元的操作流程，理解消元的几何意义。",
     "symbol_roles": {
       "matrix": "matrix",
       "rhs": "rhs",
       "tableau": "tableau"
     },
-    "title": "5.4 高斯消元",
+    "title": "高斯消元",
     "worked_examples": [
       {
         "calculation": [
-          "5.4 高斯消元: finite typed semantic evidence"
+          "解方程组：\n\n$$\n\\begin{cases}\nx_1+2x_2+x_3=3,\\\\\n2x_1+5x_2+2x_3=8,\\\\\nx_1+x_2-x_3=-1.\n\\end{cases}\n$$\n\n增广矩阵为\n\n$$\n\\left[\n\\begin{array}{ccc|c}\n1&2&1&3\\\\\n2&5&2&8\\\\\n1&1&-1&-1\n\\end{array}\n\\right]\n\\xrightarrow[,R_3-R_1,]{,R_2-2R_1,}\n\\left[\n\\begin{array}{ccc|c}\n1&2&1&3\\\\\n0&1&0&2\\\\\n0&-1&-2&-4\n\\end{array}\n\\right].\n$$\n\n继续消元：\n\n$$\n\\left[\n\\begin{array}{ccc|c}\n1&2&1&3\\\\\n0&1&0&2\\\\\n0&-1&-2&-4\n\\end{array}\n\\right]\n\\xrightarrow{R_3+R_2}\n\\left[\n\\begin{array}{ccc|c}\n1&2&1&3\\\\\n0&1&0&2\\\\\n0&0&-2&-2\n\\end{array}\n\\right].\n$$\n\n回代得到\n\n$$\nx_3=1,\\qquad x_2=2,\\qquad x_1=-2.\n$$"
         ],
         "checks": [
           {
             "expected": [
-              2,
-              4
+              3,
+              8,
+              -1
             ],
-            "name": "result",
+            "name": "transformed",
             "tolerance": 1e-09
           }
         ],
@@ -172,29 +142,117 @@
           "claim.ch05.gaussian-elimination"
         ],
         "given": [
-          2,
+          [
+            [
+              1,
+              2,
+              1
+            ],
+            [
+              2,
+              5,
+              2
+            ],
+            [
+              1,
+              1,
+              -1
+            ]
+          ],
+          [
+            -2,
+            2,
+            1
+          ]
+        ],
+        "id": "example.ch05.gaussian-elimination.process",
+        "kind": "matrix_transform",
+        "result": [
+          3,
+          8,
+          -1
+        ],
+        "title": "例题：消元全过程"
+      },
+      {
+        "calculation": [
+          "用克莱姆法则解：\n\n$$\n\\begin{cases}\n2x+3y=8,\\\\\nx+2y=5.\n\\end{cases}\n$$\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&3\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\det(\\boldsymbol A)=4-3=1.\n$$\n\n$$\n\\boldsymbol A_1=\n\\begin{pmatrix}\n8&3\\\\\n5&2\n\\end{pmatrix}\n\\rightarrow\n\\det(\\boldsymbol A_1)=16-15=1\n\\rightarrow\nx=\\frac11=1.\n$$\n\n$$\n\\boldsymbol A_2=\n\\begin{pmatrix}\n2&8\\\\\n1&5\n\\end{pmatrix}\n\\rightarrow\n\\det(\\boldsymbol A_2)=10-8=2\n\\rightarrow\ny=\\frac21=2.\n$$"
+        ],
+        "checks": [
+          {
+            "expected": [
+              8,
+              5
+            ],
+            "name": "transformed",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.gaussian-elimination"
+        ],
+        "given": [
+          [
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              2
+            ]
+          ],
           [
             1,
             2
           ]
         ],
-        "id": "example.ch05.gaussian-elimination",
-        "kind": "scalar_multiple",
+        "id": "example.ch05.gaussian-elimination.cramer",
+        "kind": "matrix_transform",
         "result": [
-          2,
-          4
+          8,
+          5
         ],
-        "title": "主题数值例"
+        "title": "补充例题：克莱姆法则求解二元方程组"
+      },
+      {
+        "calculation": [
+          "若\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&2\\\\\n2&4\n\\end{pmatrix},\n$$\n\n能否用克莱姆法则解 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$？\n\n不能，因为\n\n$$\n\\det(\\boldsymbol A)=0,\n$$\n\n$\\boldsymbol A$ 不可逆。克莱姆法则仅适用于 $\\det(\\boldsymbol A)\\neq0$ 的方阵。"
+        ],
+        "checks": [
+          {
+            "expected": 0,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.gaussian-elimination"
+        ],
+        "given": [
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            4
+          ]
+        ],
+        "id": "example.ch05.gaussian-elimination.cramer-boundary",
+        "kind": "determinant",
+        "result": 0,
+        "title": "补充例题：克莱姆法则与唯一性"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:82938a796cf898db3dc2c40e48748f828b454b9676cfdc0b7faddd54b543deca",
+    "artifact_digest": "sha256:68bd7215c55da029eb912b77fcf094ca16a2d1997b58cb457cb674d856471b4a",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:b32c568595fb2e138942b7bae7ae9f73918aeee13bf7275351a40410cb3c1dea",
+    "raw_reply_digest": "sha256:c7e1f5f31b8e702d4d31516554ff0178b11308af7eed3ce5eb085fb584a703d0",
     "source_hash": "sha256:c7e4c2ba54c7f02253463ab88d7bac9940380fca5d95d757673c0591150f4473"
   },
   "revision": 1,
@@ -219,29 +277,25 @@
     ],
     "spans": [
       {
-        "end_line": 1866,
+        "end_line": 1733,
         "fingerprint": "sha256:c7e4c2ba54c7f02253463ab88d7bac9940380fca5d95d757673c0591150f4473",
         "heading_path": [
           "第5章 线性方程组",
           "5.4 高斯消元"
         ],
         "id": "第5章 线性方程组 / 5.4 高斯消元::1::sha256:c7e4c2ba54c7f02253463ab88d7bac9940380fca5d95d757673c0591150f4473",
-        "start_line": 1818,
+        "start_line": 1685,
         "text": "### 5.4 高斯消元\n\n一句话动机：有了理论工具还不够——具体怎么算？答案是高斯消元。\n本节目标：掌握高斯消元的操作流程，理解消元的几何意义。\n\n定义 5.2（初等行变换） 对矩阵的行执行以下三种操作，不会改变方程组的解集：\n1. 交换两行（P 操作）——重新排列方程的编号\n2. 某行乘以非零常数（D 操作）——方程两边同乘非零数\n3. 某行加上另一行的 k 倍（E 操作）——一个方程加上另一个方程的倍数\n定理 5.5（行变换不改变零空间） 初等行变换保持矩阵的零空间不变：$\\operatorname{Null}(EA) = \\operatorname{Null}(A)$，其中 E 是任意初等矩阵的乘积。\n⚠️ 但行变换会改变列空间！ 行变换只保持零空间，列空间中向量的方向会变，但各列之间的线性组合关系保持不变。\n教学口诀：\"行操作解不变，列变关系不变。\"——这就是为什么高斯消元时只做行变换。\n\n#### 例题：消元全过程\n\n解：$x_{1} + 2x_{2} + x_{3} = 3, 2x_{1} + 5x_{2} + 2x_{3} = 8, x_{1} + x_{2} - x_{3} = -1$。\n增广矩阵：\n$$\n\\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 2 & 5 & 2 & 8 \\\\ 1 & 1 & -1 & -1\\end{array}\\right] \\xrightarrow{R_2 - 2R_1} \\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 0 & 1 & 0 & 2 \\\\ 0 & -1 & -2 & -4\\end{array}\\right]\n$$\n$$\n\\xrightarrow{R_{3}+R_{2}} \\left[\\begin{array}{ccc|c}1 & 2 & 1 & 3 \\\\ 0 & 1 & 0 & 2 \\\\ 0 & 0 & -2 & -2\\end{array}\\right]\n$$\n回代：$x_{3}=1, x_{2}=2, x_{1}=-4$。\n\n定理 5.7（克莱姆法则 / Cramer's Rule） 设 A 为 $n \\times n$ 可逆矩阵（即 $\\det(A) \\neq 0$），则线性方程组 $Ax = b$ 有唯一解：\n$x_{j} = \\frac{\\det(A_{j})}{\\det(A)}$，其中 $A_{j}$ 是将 A 的第 j 列替换为 b 得到的矩阵。\n证明（思路）: 由 $Ax=b$ 且 A 可逆，得 $x = A^{-1}b$。利用伴随矩阵公式 $A^{-1} = (\\frac{1}{\\det(A)}) \\cdot \\operatorname{adj}(A)$，其中 $\\operatorname{adj}(A)$ 的第 $(j,i)$ 元素为 $(-1)^{i+j} \\cdot \\det(A$去掉第i行第j列)。\n则 $x_{j} = (\\frac{1}{\\det(A)}) \\cdot \\sum_{i} \\operatorname{adj}(A)_{ji} \\cdot b_{i} = \\frac{\\det(A_{j})}{\\det(A)}$。（此处 $\\det(A_{j})$ 按第 j 列展开即为 $\\sum_{i} b_{i} \\cdot C_{ij}$。）■\n几何含义: 每个未知数 $x_{j} =$ 将这一列换成b后得到的行列式 $\\div$ 原行列式 $=$ 缩放比例的「方向分量」。\n\n##### 补充例题\n\n例6（克莱姆法则求解 $2 \\times 2$）: 用克莱姆法则解：$2x + 3y = 8, x + 2y = 5$。\n解: $A = \\begin{pmatrix}2 & 3 \\\\ 1 & 2\\end{pmatrix}$，$\\det(A) = 4-3 = 1$。\n$$\nA_{1} = \\begin{pmatrix}8 & 3 \\\\ 5 & 2\\end{pmatrix} \\rightarrow \\det(A_{1}) = 16-15 = 1 \\rightarrow x = \\frac{1}{1} = 1\n$$\n$$\nA_{2} = \\begin{pmatrix}2 & 8 \\\\ 1 & 5\\end{pmatrix} \\rightarrow \\det(A_{2}) = 10-8 = 2 \\rightarrow y = \\frac{2}{1} = 2\n$$\n例7（克莱姆法则与唯一性）: 若 $A = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}$，能否用克莱姆法则解 $Ax=b$？\n不能！$\\det(A)=0$，A 不可逆。克莱姆法则仅适用于 $\\det(A)\\neq0$ 的方阵。"
       }
     ]
   },
   "status": "reviewed",
   "teaching_profile": {
-    "minimum_level": 3,
+    "minimum_level": 2,
     "required_sections": [
       "definition",
-      "formula",
       "derivation",
-      "worked_examples",
-      "geometric_meaning",
-      "pitfalls",
-      "connections"
+      "worked_examples"
     ],
     "requires_analogy_boundary": false
   },
@@ -259,12 +313,19 @@
         "role": "matrix",
         "value": [
           [
+            1.0,
             2.0,
             1.0
           ],
           [
-            4.0,
-            3.0
+            2.0,
+            5.0,
+            2.0
+          ],
+          [
+            1.0,
+            1.0,
+            -1.0
           ]
         ]
       },
@@ -278,8 +339,9 @@
         "label": "rhs",
         "role": "rhs",
         "value": [
-          5.0,
-          11.0
+          3.0,
+          8.0,
+          -1.0
         ]
       },
       {
@@ -294,11 +356,18 @@
         "value": [
           [
             1.0,
+            2.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0,
             0.0
           ],
           [
             0.0,
-            1.0
+            0.0,
+            -2.0
           ]
         ]
       }
@@ -313,12 +382,19 @@
         "parameters": {
           "matrix": [
             [
+              1.0,
               2.0,
               1.0
             ],
             [
-              4.0,
-              3.0
+              2.0,
+              5.0,
+              2.0
+            ],
+            [
+              1.0,
+              1.0,
+              -1.0
             ]
           ],
           "operations": [
@@ -328,30 +404,42 @@
               2.0
             ],
             [
+              2.0,
               0.0,
-              -1.0,
-              0.5
+              1.0
             ],
             [
-              0.0,
+              2.0,
               1.0,
-              0.5
+              -1.0
             ]
           ],
           "rhs": [
-            5.0,
-            11.0
+            3.0,
+            8.0,
+            -1.0
           ],
           "solution_code": 1.0,
           "tableau": [
             [
               1.0,
+              2.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
               0.0
             ],
             [
               0.0,
-              1.0
+              0.0,
+              -2.0
             ]
+          ],
+          "transition_sizes": [
+            2.0,
+            1.0
           ]
         },
         "source_ref": "entity.ch05.gaussian-elimination.matrix",
@@ -362,100 +450,52 @@
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "initial",
+        "caption": "",
         "expected_invariants": [
-          "row operations preserve solution set",
-          "each tableau is the previous tableau transformed",
+          "row operations preserve the solution set",
+          "each displayed tableau follows from the previous tableau",
           "finite numeric result"
         ],
         "id": "stage.ch05.gaussian-elimination.initial",
         "input_entity_refs": [
-          "entity.ch05.gaussian-elimination.matrix",
-          "entity.ch05.gaussian-elimination.rhs",
-          "entity.ch05.gaussian-elimination.tableau"
+          "entity.ch05.gaussian-elimination.matrix"
         ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.gaussian-elimination.matrix",
-          "entity.ch05.gaussian-elimination.rhs",
-          "entity.ch05.gaussian-elimination.tableau"
-        ],
-        "relation_refs": [
-          "relation.ch05.gaussian-elimination.row_operation"
-        ],
-        "title": "initial"
+        "layout": "overlay",
+        "output_entity_refs": [],
+        "relation_refs": [],
+        "title": "初始增广矩阵"
       },
       {
-        "caption": "eliminate",
+        "caption": "",
         "expected_invariants": [
-          "row operations preserve solution set",
-          "each tableau is the previous tableau transformed",
+          "row operations preserve the solution set",
+          "each displayed tableau follows from the previous tableau",
           "finite numeric result"
         ],
         "id": "stage.ch05.gaussian-elimination.eliminate",
         "input_entity_refs": [
-          "entity.ch05.gaussian-elimination.matrix",
-          "entity.ch05.gaussian-elimination.rhs",
-          "entity.ch05.gaussian-elimination.tableau"
+          "entity.ch05.gaussian-elimination.matrix"
         ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.gaussian-elimination.matrix",
-          "entity.ch05.gaussian-elimination.rhs",
-          "entity.ch05.gaussian-elimination.tableau"
-        ],
-        "relation_refs": [
-          "relation.ch05.gaussian-elimination.row_operation"
-        ],
-        "title": "eliminate"
+        "layout": "overlay",
+        "output_entity_refs": [],
+        "relation_refs": [],
+        "title": "消去第一列"
       },
       {
-        "caption": "normalize",
+        "caption": "",
         "expected_invariants": [
-          "row operations preserve solution set",
-          "each tableau is the previous tableau transformed",
+          "row operations preserve the solution set",
+          "each displayed tableau follows from the previous tableau",
           "finite numeric result"
         ],
-        "id": "stage.ch05.gaussian-elimination.normalize",
+        "id": "stage.ch05.gaussian-elimination.triangular",
         "input_entity_refs": [
-          "entity.ch05.gaussian-elimination.matrix",
-          "entity.ch05.gaussian-elimination.rhs",
-          "entity.ch05.gaussian-elimination.tableau"
+          "entity.ch05.gaussian-elimination.matrix"
         ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.gaussian-elimination.matrix",
-          "entity.ch05.gaussian-elimination.rhs",
-          "entity.ch05.gaussian-elimination.tableau"
-        ],
-        "relation_refs": [
-          "relation.ch05.gaussian-elimination.row_operation"
-        ],
-        "title": "normalize"
-      },
-      {
-        "caption": "back_substitute",
-        "expected_invariants": [
-          "row operations preserve solution set",
-          "each tableau is the previous tableau transformed",
-          "finite numeric result"
-        ],
-        "id": "stage.ch05.gaussian-elimination.back_substitute",
-        "input_entity_refs": [
-          "entity.ch05.gaussian-elimination.matrix",
-          "entity.ch05.gaussian-elimination.rhs",
-          "entity.ch05.gaussian-elimination.tableau"
-        ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.gaussian-elimination.matrix",
-          "entity.ch05.gaussian-elimination.rhs",
-          "entity.ch05.gaussian-elimination.tableau"
-        ],
-        "relation_refs": [
-          "relation.ch05.gaussian-elimination.row_operation"
-        ],
-        "title": "back_substitute"
+        "layout": "overlay",
+        "output_entity_refs": [],
+        "relation_refs": [],
+        "title": "上三角矩阵与回代"
       }
     ]
   }

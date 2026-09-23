@@ -59,6 +59,60 @@ DATA = ROOT / "linear_algebra" / "teaching" / "data"
 TOPIC_ID = "ch02.matrix.additive-distributivity"
 
 
+def _sync_chapter_and_digest_indexes(resource: CompiledResource) -> None:
+    chapter_path = DATA / "index-ch02.json"
+    chapter_payload = json.loads(chapter_path.read_text(encoding="utf-8"))
+    chapter_rows = chapter_payload.get("topics") if isinstance(chapter_payload, dict) else None
+    if not isinstance(chapter_rows, list) or not all(isinstance(row, dict) for row in chapter_rows):
+        raise ValueError("index-ch02.json must contain object topic rows")
+    replacement_row = {
+        "topic_id": resource.topic_id,
+        "revision": resource.revision,
+        "source_hash": resource.source_hash,
+    }
+    updated_chapter_rows = [
+        row for row in chapter_rows if row.get("topic_id") != resource.topic_id
+    ]
+    updated_chapter_rows.append(replacement_row)
+    chapter_payload["topics"] = sorted(
+        updated_chapter_rows,
+        key=lambda row: str(row.get("topic_id", "")),
+    )
+    chapter_temporary = chapter_path.with_suffix(chapter_path.suffix + ".tmp")
+    chapter_temporary.write_text(
+        json.dumps(chapter_payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    chapter_temporary.replace(chapter_path)
+
+    digest_path = DATA / "topic-digests.json"
+    rows = json.loads(digest_path.read_text(encoding="utf-8"))
+    if not isinstance(rows, list) or not all(isinstance(row, dict) for row in rows):
+        raise ValueError("topic-digests.json must contain object rows")
+    replacement = {
+        "topic_id": resource.topic_id,
+        "revision": resource.revision,
+        "source_hash": resource.source_hash,
+        "artifact_digest": resource.artifact_digest,
+        "compiler_version": resource.compiler_version,
+        "render_profile": resource.render_profile,
+        "plan_digest": resource.plan_digest,
+        "stage_count": len(resource.stages),
+        "claim_count": resource.claim_count,
+    }
+    updated = [row for row in rows if row.get("topic_id") != resource.topic_id]
+    updated.append(replacement)
+    updated.sort(key=lambda row: str(row.get("topic_id", "")))
+    temporary = digest_path.with_suffix(digest_path.suffix + ".tmp")
+    temporary.write_text(
+        json.dumps(updated, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    temporary.replace(digest_path)
+
+
 def compile_and_activate(
     store: TeachingArtifactStore,
     *,
@@ -120,6 +174,7 @@ def compile_and_activate(
             "reviewed_revision": reviewed_revision,
         },
     )
+    _sync_chapter_and_digest_indexes(resource)
     return resource
 
 
@@ -169,6 +224,7 @@ def main() -> int:
                 "source_hash": context.source_hash,
                 "stage_count": len(resource.stages),
                 "artifact_digest": resource.artifact_digest,
+                "plan_digest": resource.plan_digest,
             },
             ensure_ascii=False,
             sort_keys=True,

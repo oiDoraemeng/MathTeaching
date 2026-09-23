@@ -1,1 +1,545 @@
-{"claims":[{"entity_refs":["entity.ch08.quadratic.matrix-form.v","entity.ch08.quadratic.matrix-form.result"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"v=(1,2),\\quad 2v=(2,4)","formula_symbols":["v","result"],"id":"claim.ch08.quadratic.matrix-form","relation_refs":["relation.ch08.quadratic.matrix-form.maps"],"source_refs":["第8章 二次型与主轴定理 / 8.1 二次型的定义与矩阵表示::1::sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7"],"stage_refs":["stage.ch08.quadratic.matrix-form.input"],"statement":"8.1 二次型的定义与矩阵表示 的线性表示保持可检验的向量关系。"}],"connections":[{"claim_refs":["claim.ch08.quadratic.matrix-form"],"description":"前置的线性表示与几何关系。","id":"connection.ch08.quadratic.matrix-form.prior","relation":"prerequisite","target_topic_id":"ch03.det.oriented-area"}],"explanation":{"analogy_boundary":"二维示意推广到有限维时保留代数关系。","conclusion":"数值关系与讲义定义一致。","connections":["与前置线性表示相连。"],"definition":"8.1 二次型的定义与矩阵表示 的对象和定义。","derivation":["代入 v=(1,2)。","计算得到 result=(2,4)。"],"formula":"v=(1,2),\\quad 2v=(2,4)","geometric_meaning":"向量在有限维空间中的方向和尺度保持可读。","invariants":["finite numeric result"],"pitfalls":["不要混淆对象和坐标。"],"read_guide":["先定义，再公式，最后读数值例。"],"searchable_text":["8.1 二次型的定义与矩阵表示","线性空间","数值例"],"sections":[{"claim_refs":["claim.ch08.quadratic.matrix-form"],"id":"definition","text":"definition: 8.1 二次型的定义与矩阵表示。","title":"definition"},{"claim_refs":["claim.ch08.quadratic.matrix-form"],"id":"formula","text":"formula: 8.1 二次型的定义与矩阵表示。","title":"formula"},{"claim_refs":["claim.ch08.quadratic.matrix-form"],"id":"derivation","text":"derivation: 8.1 二次型的定义与矩阵表示。","title":"derivation"},{"claim_refs":["claim.ch08.quadratic.matrix-form"],"id":"worked_examples","text":"worked_examples: 8.1 二次型的定义与矩阵表示。","title":"worked_examples"},{"claim_refs":["claim.ch08.quadratic.matrix-form"],"id":"geometric_meaning","text":"geometric_meaning: 8.1 二次型的定义与矩阵表示。","title":"geometric_meaning"},{"claim_refs":["claim.ch08.quadratic.matrix-form"],"id":"pitfalls","text":"pitfalls: 8.1 二次型的定义与矩阵表示。","title":"pitfalls"},{"claim_refs":["claim.ch08.quadratic.matrix-form"],"id":"connections","text":"connections: 8.1 二次型的定义与矩阵表示。","title":"connections"}],"summary":"8.1 二次型的定义与矩阵表示 的确定性讲义 artifact。","symbol_roles":{"result":"transformed_a","v":"vector_a"},"title":"8.1 二次型的定义与矩阵表示","transfer_note":"先识别对象，再核对公式和不变量。","worked_examples":[{"calculation":["2*(1,2)=(2,4)"],"checks":[{"expected":[2,4],"name":"result","tolerance":1e-09}],"claim_refs":["claim.ch08.quadratic.matrix-form"],"given":[2,[1,2]],"id":"example.ch08.quadratic.matrix-form","kind":"scalar_multiple","result":[2,4],"title":"数值例"}]},"generated":{"artifact_digest":"sha256:881c6b5b203db72efc19ac57a1eb49a3ca839f010a0f7b8fdf296876279b70e2","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:789f7beef5126590e378cc67c295f38a5f6fc8919e1b2a9d4193c6af6eb2460d","source_hash":"sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7"},"revision":1,"schema_version":1,"source":{"excerpt":"### 8.1 二次型的定义与矩阵表示\n\n一句话动机：$x^{2} + y^{2} =$ 圆，$2x^{2}+3y^{2}+xy =$ ？怎么快速判断是什么形状？\n本节目标：能把二次函数写成矩阵形式 $x^{T}Ax$，并识别 A 的特征值与图形的关系。\n\n定义 8.1（二次型） n 个变量的二次型是所有项都为二次的齐次多项式：\n$$\nQ(x_{1}, ..., x_{n}) = \\sum_{ij} a_{ij} \\cdot x_{i} \\cdot x_{j}\n$$\n在 2D 中，通常写作：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2}\n$$\n定理 8.1（二次型的矩阵表示） 任何二次型都可以表示为：\n$$\nQ(x) = x^{T} A x\n$$\n其中 A 是对称矩阵（$A^{T} = A$）。具体地：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2} \\Leftrightarrow A = \\begin{pmatrix}a & b \\\\ b & c\\end{pmatrix}\n$$\n\n#### 例题\n\n| 二次型 | 对称矩阵 A |\n| --- | --- |\n| $x^{2} + y^{2}$ | $\\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix}$ |\n| $2x^{2} + 3y^{2}$ | $\\begin{pmatrix}2 & 0 \\\\ 0 & 3\\end{pmatrix}$ |\n| $x^{2} + 2xy + y^{2}$ | $\\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix}$ |\n| $x^{2} + 6xy + 9y^{2}$ | $\\begin{pmatrix}1 & 3 \\\\ 3 & 9\\end{pmatrix}$ |\n| $3x^{2} - 2xy + y^{2}$ | $\\begin{pmatrix}3 & -1 \\\\ -1 & 1\\end{pmatrix}$ |\n\n重点：交叉项系数 2b 在矩阵中拆成两个 b 放在非对角线位置。例如 $6xy \\rightarrow b=3 \\rightarrow$ 矩阵对角线上各放一个 3。","heading_level":3,"heading_path":["第8章 二次型与主轴定理","8.1 二次型的定义与矩阵表示"],"neighboring_titles":["8.2 二次型的几何意义"],"occurrence":1,"source_hash":"sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7","source_path":["第8章 二次型与主轴定理","8.1 二次型的定义与矩阵表示","8.1 二次型的定义与矩阵表示"],"spans":[{"end_line":2667,"fingerprint":"sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7","heading_path":["第8章 二次型与主轴定理","8.1 二次型的定义与矩阵表示"],"id":"第8章 二次型与主轴定理 / 8.1 二次型的定义与矩阵表示::1::sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7","start_line":2629,"text":"### 8.1 二次型的定义与矩阵表示\n\n一句话动机：$x^{2} + y^{2} =$ 圆，$2x^{2}+3y^{2}+xy =$ ？怎么快速判断是什么形状？\n本节目标：能把二次函数写成矩阵形式 $x^{T}Ax$，并识别 A 的特征值与图形的关系。\n\n定义 8.1（二次型） n 个变量的二次型是所有项都为二次的齐次多项式：\n$$\nQ(x_{1}, ..., x_{n}) = \\sum_{ij} a_{ij} \\cdot x_{i} \\cdot x_{j}\n$$\n在 2D 中，通常写作：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2}\n$$\n定理 8.1（二次型的矩阵表示） 任何二次型都可以表示为：\n$$\nQ(x) = x^{T} A x\n$$\n其中 A 是对称矩阵（$A^{T} = A$）。具体地：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2} \\Leftrightarrow A = \\begin{pmatrix}a & b \\\\ b & c\\end{pmatrix}\n$$\n\n#### 例题\n\n| 二次型 | 对称矩阵 A |\n| --- | --- |\n| $x^{2} + y^{2}$ | $\\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix}$ |\n| $2x^{2} + 3y^{2}$ | $\\begin{pmatrix}2 & 0 \\\\ 0 & 3\\end{pmatrix}$ |\n| $x^{2} + 2xy + y^{2}$ | $\\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix}$ |\n| $x^{2} + 6xy + 9y^{2}$ | $\\begin{pmatrix}1 & 3 \\\\ 3 & 9\\end{pmatrix}$ |\n| $3x^{2} - 2xy + y^{2}$ | $\\begin{pmatrix}3 & -1 \\\\ -1 & 1\\end{pmatrix}$ |\n\n重点：交叉项系数 2b 在矩阵中拆成两个 b 放在非对角线位置。例如 $6xy \\rightarrow b=3 \\rightarrow$ 矩阵对角线上各放一个 3。"}]},"status":"draft","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch08.quadratic.matrix-form","visual_semantics":{"entities":[{"claim_refs":["claim.ch08.quadratic.matrix-form"],"dimension":2,"id":"entity.ch08.quadratic.matrix-form.v","kind":"vector","label":"v","role":"vector_a","value":[1,2]},{"claim_refs":["claim.ch08.quadratic.matrix-form"],"dimension":2,"id":"entity.ch08.quadratic.matrix-form.result","kind":"vector","label":"result","role":"transformed_a","value":[2,4]}],"relations":[{"claim_refs":["claim.ch08.quadratic.matrix-form"],"id":"relation.ch08.quadratic.matrix-form.maps","kind":"maps_to","parameters":{"scalar":2},"source_ref":"entity.ch08.quadratic.matrix-form.v","target_ref":"entity.ch08.quadratic.matrix-form.result"}],"scene_family":"subspace_region","scene_kind":"2d","stages":[{"caption":"显示线性关系。","expected_invariants":["finite numeric result"],"id":"stage.ch08.quadratic.matrix-form.input","input_entity_refs":["entity.ch08.quadratic.matrix-form.v"],"layout":"sequence","output_entity_refs":["entity.ch08.quadratic.matrix-form.result"],"relation_refs":["relation.ch08.quadratic.matrix-form.maps"],"title":"输入与结果"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch08.quadratic.matrix-form.circle",
+        "entity.ch08.quadratic.matrix-form.aligned_ellipse",
+        "entity.ch08.quadratic.matrix-form.positive_unit",
+        "entity.ch08.quadratic.matrix-form.positive_scaled",
+        "entity.ch08.quadratic.matrix-form.negative_cross"
+      ],
+      "explanation_refs": [
+        "definition",
+        "worked_examples"
+      ],
+      "formula": "Q(\\boldsymbol x)=\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x",
+      "formula_symbols": [
+        "circle",
+        "aligned_ellipse",
+        "positive_unit",
+        "positive_scaled",
+        "negative_cross"
+      ],
+      "id": "claim.ch08.quadratic.matrix-form",
+      "relation_refs": [
+        "relation.ch08.quadratic.matrix-form.diagonal_examples",
+        "relation.ch08.quadratic.matrix-form.positive_cross_examples",
+        "relation.ch08.quadratic.matrix-form.negative_cross_example"
+      ],
+      "source_refs": [
+        "第8章 二次型与主轴定理 / 8.1 二次型的定义与矩阵表示::1::sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7"
+      ],
+      "stage_refs": [
+        "stage.ch08.quadratic.matrix-form.diagonal",
+        "stage.ch08.quadratic.matrix-form.positive_cross",
+        "stage.ch08.quadratic.matrix-form.negative_cross"
+      ],
+      "statement": "二次型可以写成对称矩阵的矩阵形式，交叉项系数要平均拆到两个非对角元。"
+    }
+  ],
+  "connections": [],
+  "explanation": {
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch08.quadratic.matrix-form"
+          ],
+          "example_ref": "example.ch08.quadratic.matrix-form.diagonal",
+          "id": "case.ch08.quadratic.matrix-form.1",
+          "purpose": "无交叉项：两个对角矩阵",
+          "stage_refs": [
+            "stage.ch08.quadratic.matrix-form.diagonal"
+          ],
+          "topic_id": "ch08.quadratic.matrix-form"
+        },
+        {
+          "claim_refs": [
+            "claim.ch08.quadratic.matrix-form"
+          ],
+          "example_ref": "example.ch08.quadratic.matrix-form.positive-cross",
+          "id": "case.ch08.quadratic.matrix-form.2",
+          "purpose": "正交叉项：系数拆到两个非对角元",
+          "stage_refs": [
+            "stage.ch08.quadratic.matrix-form.positive_cross"
+          ],
+          "topic_id": "ch08.quadratic.matrix-form"
+        },
+        {
+          "claim_refs": [
+            "claim.ch08.quadratic.matrix-form"
+          ],
+          "example_ref": "example.ch08.quadratic.matrix-form.negative-cross",
+          "id": "case.ch08.quadratic.matrix-form.3",
+          "purpose": "负交叉项：负号随非对角元",
+          "stage_refs": [
+            "stage.ch08.quadratic.matrix-form.negative_cross"
+          ],
+          "topic_id": "ch08.quadratic.matrix-form"
+        }
+      ],
+      "default_pane_count": 1
+    },
+    "definition": "一句话动机：$x^{2}+y^{2}=$ 圆，$2x^{2}+3y^{2}+xy=$？怎么快速判断是什么形状？\n\n本节目标：能把二次函数写成矩阵形式 $\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x$，并识别 $\\boldsymbol A$ 的特征值与图形的关系。\n\n**（二次型）** $n$ 个变量的二次型是所有项都为二次的齐次多项式：\n\n$$\nQ(x_1,\\ldots,x_n)=\\sum_{ij}a_{ij}x_ix_j.\n$$\n\n在二维中，通常写作：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2.\n$$\n\n**（二次型的矩阵表示）** 任何二次型都可以表示为：\n\n$$\nQ(\\boldsymbol x)=\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x,\n$$\n\n其中 $\\boldsymbol A$ 是对称矩阵，即 $\\boldsymbol A^{T}=\\boldsymbol A$。具体地：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\na&b\\\\\nb&c\n\\end{pmatrix}.\n$$\n\n重点：交叉项系数 $2b$ 在矩阵中拆成两个 $b$，放在两个非对角线位置。例如 $6xy\\rightarrow b=3$，矩阵的两个非对角元都为 $3$。",
+    "derivation": [],
+    "formula": "",
+    "geometric_meaning": "",
+    "invariants": [
+      "diagonal_coefficients",
+      "positive_cross_split",
+      "negative_cross_split"
+    ],
+    "searchable_text": [
+      "二次型",
+      "二次型可以写成对称矩阵的矩阵形式，交叉项系数要平均拆到两个非对角元。",
+      "一句话动机：$x^{2}+y^{2}=$ 圆，$2x^{2}+3y^{2}+xy=$？怎么快速判断是什么形状？\n\n本节目标：能把二次函数写成矩阵形式 $\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x$，并识别 $\\boldsymbol A$ 的特征值与图形的关系。\n\n**（二次型）** $n$ 个变量的二次型是所有项都为二次的齐次多项式：\n\n$$\nQ(x_1,\\ldots,x_n)=\\sum_{ij}a_{ij}x_ix_j.\n$$\n\n在二维中，通常写作：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2.\n$$\n\n**（二次型的矩阵表示）** 任何二次型都可以表示为：\n\n$$\nQ(\\boldsymbol x)=\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x,\n$$\n\n其中 $\\boldsymbol A$ 是对称矩阵，即 $\\boldsymbol A^{T}=\\boldsymbol A$。具体地：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\na&b\\\\\nb&c\n\\end{pmatrix}.\n$$\n\n重点：交叉项系数 $2b$ 在矩阵中拆成两个 $b$，放在两个非对角线位置。例如 $6xy\\rightarrow b=3$，矩阵的两个非对角元都为 $3$。",
+      "讲义中的前两组二次型没有交叉项。\n\n$$\nx^2+y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n$$\n2x^2+3y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n2&0\\\\\n0&3\n\\end{pmatrix}.\n$$",
+      "交叉项的系数平均拆到两个非对角元：\n\n$$\nx^2+2xy+y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n1&1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n$$\nx^2+6xy+9y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n1&3\\\\\n3&9\n\\end{pmatrix}.\n$$",
+      "对于\n\n$$\n3x^2-2xy+y^2,\n$$\n\n交叉项满足 $2b=-2$，所以 $b=-1$：\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n3&-1\\\\\n-1&1\n\\end{pmatrix}.\n$$"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "definition",
+        "text": "",
+        "title": "定义"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "worked_examples",
+        "text": "",
+        "title": "数学案例"
+      }
+    ],
+    "summary": "二次型可以写成对称矩阵的矩阵形式，交叉项系数要平均拆到两个非对角元。",
+    "symbol_roles": {
+      "aligned_ellipse": "aligned_ellipse",
+      "circle": "circle",
+      "negative_cross": "negative_cross",
+      "positive_scaled": "positive_scaled",
+      "positive_unit": "positive_unit"
+    },
+    "title": "二次型",
+    "worked_examples": [
+      {
+        "calculation": [
+          "讲义中的前两组二次型没有交叉项。\n\n$$\nx^2+y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n$$\n2x^2+3y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n2&0\\\\\n0&3\n\\end{pmatrix}.\n$$"
+        ],
+        "checks": [
+          {
+            "expected": 1,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "given": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "example.ch08.quadratic.matrix-form.diagonal",
+        "kind": "determinant",
+        "result": 1,
+        "title": "例题：无交叉项"
+      },
+      {
+        "calculation": [
+          "交叉项的系数平均拆到两个非对角元：\n\n$$\nx^2+2xy+y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n1&1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n$$\nx^2+6xy+9y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n1&3\\\\\n3&9\n\\end{pmatrix}.\n$$"
+        ],
+        "checks": [
+          {
+            "expected": 0,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "given": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "id": "example.ch08.quadratic.matrix-form.positive-cross",
+        "kind": "determinant",
+        "result": 0,
+        "title": "例题：正交叉项"
+      },
+      {
+        "calculation": [
+          "对于\n\n$$\n3x^2-2xy+y^2,\n$$\n\n交叉项满足 $2b=-2$，所以 $b=-1$：\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n3&-1\\\\\n-1&1\n\\end{pmatrix}.\n$$"
+        ],
+        "checks": [
+          {
+            "expected": 2,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "given": [
+          [
+            3,
+            -1
+          ],
+          [
+            -1,
+            1
+          ]
+        ],
+        "id": "example.ch08.quadratic.matrix-form.negative-cross",
+        "kind": "determinant",
+        "result": 2,
+        "title": "例题：负交叉项"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:6deb2858c9b6f3781317a231c77a75eee8afaabf389dfd4c68c1b48518c512de",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:f184e87604fb2aeb5e350a5e17251de919188351e1c8c644af117fed024c09a0",
+    "source_hash": "sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 8.1 二次型的定义与矩阵表示\n\n一句话动机：$x^{2} + y^{2} =$ 圆，$2x^{2}+3y^{2}+xy =$ ？怎么快速判断是什么形状？\n本节目标：能把二次函数写成矩阵形式 $x^{T}Ax$，并识别 A 的特征值与图形的关系。\n\n定义 8.1（二次型） n 个变量的二次型是所有项都为二次的齐次多项式：\n$$\nQ(x_{1}, ..., x_{n}) = \\sum_{ij} a_{ij} \\cdot x_{i} \\cdot x_{j}\n$$\n在 2D 中，通常写作：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2}\n$$\n定理 8.1（二次型的矩阵表示） 任何二次型都可以表示为：\n$$\nQ(x) = x^{T} A x\n$$\n其中 A 是对称矩阵（$A^{T} = A$）。具体地：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2} \\Leftrightarrow A = \\begin{pmatrix}a & b \\\\ b & c\\end{pmatrix}\n$$\n\n#### 例题\n\n| 二次型 | 对称矩阵 A |\n| --- | --- |\n| $x^{2} + y^{2}$ | $\\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix}$ |\n| $2x^{2} + 3y^{2}$ | $\\begin{pmatrix}2 & 0 \\\\ 0 & 3\\end{pmatrix}$ |\n| $x^{2} + 2xy + y^{2}$ | $\\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix}$ |\n| $x^{2} + 6xy + 9y^{2}$ | $\\begin{pmatrix}1 & 3 \\\\ 3 & 9\\end{pmatrix}$ |\n| $3x^{2} - 2xy + y^{2}$ | $\\begin{pmatrix}3 & -1 \\\\ -1 & 1\\end{pmatrix}$ |\n\n重点：交叉项系数 2b 在矩阵中拆成两个 b 放在非对角线位置。例如 $6xy \\rightarrow b=3 \\rightarrow$ 矩阵对角线上各放一个 3。",
+    "heading_level": 3,
+    "heading_path": [
+      "第8章 二次型与主轴定理",
+      "8.1 二次型的定义与矩阵表示"
+    ],
+    "neighboring_titles": [
+      "8.2 二次型的几何意义"
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7",
+    "source_path": [
+      "第8章 二次型与主轴定理",
+      "8.1 二次型的定义与矩阵表示",
+      "8.1 二次型的定义与矩阵表示"
+    ],
+    "spans": [
+      {
+        "end_line": 2309,
+        "fingerprint": "sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7",
+        "heading_path": [
+          "第8章 二次型与主轴定理",
+          "8.1 二次型的定义与矩阵表示"
+        ],
+        "id": "第8章 二次型与主轴定理 / 8.1 二次型的定义与矩阵表示::1::sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7",
+        "start_line": 2271,
+        "text": "### 8.1 二次型的定义与矩阵表示\n\n一句话动机：$x^{2} + y^{2} =$ 圆，$2x^{2}+3y^{2}+xy =$ ？怎么快速判断是什么形状？\n本节目标：能把二次函数写成矩阵形式 $x^{T}Ax$，并识别 A 的特征值与图形的关系。\n\n定义 8.1（二次型） n 个变量的二次型是所有项都为二次的齐次多项式：\n$$\nQ(x_{1}, ..., x_{n}) = \\sum_{ij} a_{ij} \\cdot x_{i} \\cdot x_{j}\n$$\n在 2D 中，通常写作：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2}\n$$\n定理 8.1（二次型的矩阵表示） 任何二次型都可以表示为：\n$$\nQ(x) = x^{T} A x\n$$\n其中 A 是对称矩阵（$A^{T} = A$）。具体地：\n$$\nQ(x, y) = ax^{2} + 2bxy + cy^{2} \\Leftrightarrow A = \\begin{pmatrix}a & b \\\\ b & c\\end{pmatrix}\n$$\n\n#### 例题\n\n| 二次型 | 对称矩阵 A |\n| --- | --- |\n| $x^{2} + y^{2}$ | $\\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix}$ |\n| $2x^{2} + 3y^{2}$ | $\\begin{pmatrix}2 & 0 \\\\ 0 & 3\\end{pmatrix}$ |\n| $x^{2} + 2xy + y^{2}$ | $\\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix}$ |\n| $x^{2} + 6xy + 9y^{2}$ | $\\begin{pmatrix}1 & 3 \\\\ 3 & 9\\end{pmatrix}$ |\n| $3x^{2} - 2xy + y^{2}$ | $\\begin{pmatrix}3 & -1 \\\\ -1 & 1\\end{pmatrix}$ |\n\n重点：交叉项系数 2b 在矩阵中拆成两个 b 放在非对角线位置。例如 $6xy \\rightarrow b=3 \\rightarrow$ 矩阵对角线上各放一个 3。"
+      }
+    ]
+  },
+  "status": "draft",
+  "teaching_profile": {
+    "minimum_level": 2,
+    "required_sections": [
+      "definition",
+      "worked_examples"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch08.quadratic.matrix-form",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.matrix-form.circle",
+        "kind": "matrix",
+        "label": "x^2+y^2",
+        "role": "circle",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.matrix-form.aligned_ellipse",
+        "kind": "matrix",
+        "label": "2x^2+3y^2",
+        "role": "aligned_ellipse",
+        "value": [
+          [
+            2.0,
+            0.0
+          ],
+          [
+            0.0,
+            3.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.matrix-form.positive_unit",
+        "kind": "matrix",
+        "label": "x^2+2xy+y^2",
+        "role": "positive_unit",
+        "value": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.matrix-form.positive_scaled",
+        "kind": "matrix",
+        "label": "x^2+6xy+9y^2",
+        "role": "positive_scaled",
+        "value": [
+          [
+            1.0,
+            3.0
+          ],
+          [
+            3.0,
+            9.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.matrix-form.negative_cross",
+        "kind": "matrix",
+        "label": "3x^2-2xy+y^2",
+        "role": "negative_cross",
+        "value": [
+          [
+            3.0,
+            -1.0
+          ],
+          [
+            -1.0,
+            1.0
+          ]
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "relation.ch08.quadratic.matrix-form.diagonal_examples",
+        "kind": "maps_to",
+        "parameters": {
+          "circle_coefficients": [
+            1.0,
+            0.0,
+            1.0
+          ],
+          "circle_matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "ellipse_coefficients": [
+            2.0,
+            0.0,
+            3.0
+          ],
+          "ellipse_matrix": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              3.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch08.quadratic.matrix-form.circle",
+        "target_ref": "entity.ch08.quadratic.matrix-form.aligned_ellipse"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "relation.ch08.quadratic.matrix-form.positive_cross_examples",
+        "kind": "maps_to",
+        "parameters": {
+          "scaled_coefficients": [
+            1.0,
+            6.0,
+            9.0
+          ],
+          "scaled_matrix": [
+            [
+              1.0,
+              3.0
+            ],
+            [
+              3.0,
+              9.0
+            ]
+          ],
+          "unit_coefficients": [
+            1.0,
+            2.0,
+            1.0
+          ],
+          "unit_matrix": [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch08.quadratic.matrix-form.positive_unit",
+        "target_ref": "entity.ch08.quadratic.matrix-form.positive_scaled"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.matrix-form"
+        ],
+        "id": "relation.ch08.quadratic.matrix-form.negative_cross_example",
+        "kind": "maps_to",
+        "parameters": {
+          "coefficients": [
+            3.0,
+            -2.0,
+            1.0
+          ],
+          "matrix": [
+            [
+              3.0,
+              -1.0
+            ],
+            [
+              -1.0,
+              1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch08.quadratic.matrix-form.negative_cross",
+        "target_ref": "entity.ch08.quadratic.matrix-form.negative_cross"
+      }
+    ],
+    "scene_family": "quadratic_level_set",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "",
+        "expected_invariants": [
+          "diagonal_coefficients"
+        ],
+        "id": "stage.ch08.quadratic.matrix-form.diagonal",
+        "input_entity_refs": [
+          "entity.ch08.quadratic.matrix-form.circle",
+          "entity.ch08.quadratic.matrix-form.aligned_ellipse"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch08.quadratic.matrix-form.circle",
+          "entity.ch08.quadratic.matrix-form.aligned_ellipse"
+        ],
+        "relation_refs": [
+          "relation.ch08.quadratic.matrix-form.diagonal_examples"
+        ],
+        "title": "无交叉项：两个对角矩阵"
+      },
+      {
+        "caption": "",
+        "expected_invariants": [
+          "positive_cross_split"
+        ],
+        "id": "stage.ch08.quadratic.matrix-form.positive_cross",
+        "input_entity_refs": [
+          "entity.ch08.quadratic.matrix-form.positive_unit",
+          "entity.ch08.quadratic.matrix-form.positive_scaled"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch08.quadratic.matrix-form.positive_unit",
+          "entity.ch08.quadratic.matrix-form.positive_scaled"
+        ],
+        "relation_refs": [
+          "relation.ch08.quadratic.matrix-form.positive_cross_examples"
+        ],
+        "title": "正交叉项：系数拆到两个非对角元"
+      },
+      {
+        "caption": "",
+        "expected_invariants": [
+          "negative_cross_split"
+        ],
+        "id": "stage.ch08.quadratic.matrix-form.negative_cross",
+        "input_entity_refs": [
+          "entity.ch08.quadratic.matrix-form.negative_cross"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch08.quadratic.matrix-form.negative_cross"
+        ],
+        "relation_refs": [
+          "relation.ch08.quadratic.matrix-form.negative_cross_example"
+        ],
+        "title": "负交叉项：负号随非对角元"
+      }
+    ]
+  }
+}

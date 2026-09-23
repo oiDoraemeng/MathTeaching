@@ -6,6 +6,28 @@
   "plan": {
     "operations": [
       {
+        "alias": "sem__mv_basis_grid_a",
+        "bounds": [
+          -5.0,
+          5.0,
+          -5.0,
+          5.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            0.0,
+            -1.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
+      },
+      {
         "alias": "sem__mv_basis_e1__origin",
         "coordinates": [
           0.0,
@@ -116,6 +138,28 @@
         "op": "linear.upsert",
         "role": "primary",
         "start": "sem__mv_basis_rx_a__origin"
+      },
+      {
+        "alias": "sem__mv_basis_grid_b",
+        "bounds": [
+          -5.0,
+          5.0,
+          -5.0,
+          5.0
+        ],
+        "color": "#7B61FF",
+        "matrix": [
+          [
+            -1.0,
+            -2.0
+          ],
+          [
+            1.0,
+            1.0
+          ]
+        ],
+        "op": "geometry.transformed_grid",
+        "step": 1.0
       },
       {
         "alias": "sem__mv_basis_b1__origin",
@@ -239,22 +283,6 @@
         "text": "$A=\\left[\\genfrac{}{}{0}{}{0\\quad -1}{1\\quad \\ 0}\\right]$"
       },
       {
-        "alias": "sem__mv_basis_grid_b",
-        "matrix": [
-          [
-            1.0,
-            1.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "op": "linear_algebra.coordinate_transform",
-        "show_original": false,
-        "show_transformed": true
-      },
-      {
         "alias": "sem__mv_basis_grid_b__label",
         "op": "annotation.upsert",
         "position": [
@@ -278,7 +306,7 @@
     "summary": "基",
     "version": 1
   },
-  "plan_digest": "sha256:739f6934b0fabaf3644295c38db462cc06e95051ff83d5814117023f26cf81ad",
+  "plan_digest": "sha256:aa21186676edc18f53ab6b2776c8c0229a053e2661cf542fbc66a6e19127e3b4",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 19,

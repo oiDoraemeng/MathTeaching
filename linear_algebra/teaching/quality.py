@@ -173,6 +173,8 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
                 claim["formula_symbols"] = ["P", "u", "v"]
     elif topic_id == "ch02.matrix.composition":
         _refine_matrix_composition(result, explanation, visual, example)
+    elif topic_id == "ch02.matrix.powers":
+        _refine_matrix_powers(result, explanation, visual)
     elif topic_id == "ch03.det.oriented-area":
         _refine_det_geometry(explanation, visual)
         result["connections"] = []
@@ -182,6 +184,15 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
                 claim["statement"] = "行列式等于以矩阵两列为邻边的平行四边形的有向面积，按 ad-bc 计算。"
                 claim["formula"] = _DET_GEOMETRY_FORMULA
                 claim["formula_symbols"] = ["a", "b", "area"]
+    elif topic_id in _DET_CORE_SPECS:
+        _refine_det_core(topic_id, explanation, visual)
+        result["connections"] = []
+        spec = _DET_CORE_SPECS[topic_id]
+        for claim in result.get("claims", []):
+            if isinstance(claim, dict):
+                claim["statement"] = str(spec["statement"])
+                claim["formula"] = str(spec["claim_formula"])
+                claim["formula_symbols"] = [str(item) for item in spec["formula_symbols"]]
     else:
         _refine_generic(topic_id, explanation, visual, example)
 
@@ -189,7 +200,16 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
     from linear_algebra.teaching import lecture_content
 
     lecture_content.apply(result)
-    if topic_id == "ch04.subspace.col-null":
+    if topic_id in {
+        "ch03.cramer.area-ratio",
+        "ch03.inverse.undo",
+        "ch03.adjugate.matrix",
+        "ch03.det.zero.equivalence",
+    }:
+        from linear_algebra.teaching.chapter_03_content import refine_chapter_03_text_topic
+
+        refine_chapter_03_text_topic(topic_id, result, explanation, visual)
+    elif topic_id == "ch04.subspace.col-null":
         _refine_linear_space(result, explanation, visual)
     elif topic_id == "ch04.dependence.redundancy":
         _refine_linear_dependence(result, explanation, visual)
@@ -197,6 +217,15 @@ def refine_payload(payload: Mapping[str, Any]) -> dict[str, Any]:
         _refine_basis_definition(result, explanation, visual)
     elif topic_id == "ch04.linear-map.definition":
         _refine_linear_map_definition(result, explanation, visual)
+
+    # 讲义中的 ``■`` 是编辑性的证明结束标记，不应进入学生界面。
+    # 清理生成数据而不改写权威讲义源文件；随后重新同步 sections 和搜索索引。
+    from linear_algebra.teaching.lecture_content import strip_teaching_markers
+
+    cleaned = strip_teaching_markers(result)
+    if isinstance(cleaned, dict):
+        result = cleaned
+        explanation = result.setdefault("explanation", {})
 
     # 案例布局变化后，将声明重新绑定到实际发布的实体、关系和阶段。
     for claim in result.get("claims", []):
@@ -658,7 +687,7 @@ _BASIS_PROOF = "\n\n".join(
     (
         r"设 $\{v_{1}, \dots ,v_{n}\}$ 是 $\dim(V)=n$ 的空间中 $n$ 个线性无关的向量。",
         r"若它们不生成 $V$，则存在 $w \in V$ 无法表示为它们的线性组合 $\rightarrow \{v_{1}, \dots ,v_{n},w\}$ 中有 $n+1$ 个向量线性无关 $\rightarrow$ 与 $\dim(V)=n$ 矛盾。",
-        r"因此 $n$ 个线性无关向量必然生成整个空间，自动构成一组基。■",
+        r"因此 $n$ 个线性无关向量必然生成整个空间，自动构成一组基。",
     )
 )
 
@@ -953,6 +982,350 @@ _DET_GEOMETRY_CASE_STEPS = (
         ),
     ),
 )
+
+
+# 3.2 按讲义中的三个定理分成三个目录主题；每个主题的定义块仍保留对应的
+# 原文措辞，公式不另起「公式」分节，数值案例只负责把定义中的性质算出来。
+_DET_CORE_SPECS: dict[str, dict[str, Any]] = {
+    "ch03.det.basic-properties": {
+        "title": "行列式的基本性质",
+        "statement": "熟记行列式6条核心性质，能灵活用性质化简计算。",
+        "summary": "行列式不是孤立的数字——它有一组强大的运算规则。掌握这些规则，行列式计算像搭积木。",
+        "claim_formula": r"\det(\boldsymbol A_{\mathrm{swap}})=-\det(\boldsymbol A),\quad\det(\boldsymbol A_{\mathrm{scale}})=k\det(\boldsymbol A),\quad\det(\boldsymbol A_{\mathrm{add}})=\det(\boldsymbol A)",
+        "formula_symbols": ("A",),
+        "symbol_roles": {"A": "area"},
+        "definition": "\n\n".join(
+            (
+                r"一句话动机：行列式不是孤立的数字——它有一组强大的运算规则。掌握这些规则，行列式计算像搭积木。",
+                r"本节目标：熟记行列式6条核心性质，能灵活用性质化简计算。",
+                r"**（行列式的基本性质）**",
+                "| 性质 | 操作 | 对 $\det$ 的影响 |\n| --- | --- | --- |\n| **换行变号** | 交换两行 | $\det$ 变号（平行四边形翻面） |\n| **行倍乘** | 某行 $\times(k)$ | $\det$ 也 $\times(k)$（那个方向拉伸 $k$ 倍） |\n| **行叠** | 一行 $+$（另一行的 $k$ 倍） | **$\det$ 不变！**（切变——面积守恒） |",
+                r"⚠️ 常见误区：$\det(\boldsymbol A+\boldsymbol B) \neq \det(\boldsymbol A)+\det(\boldsymbol B)$。",
+                r"**（行列式的性质逐条解释与几何含义）**",
+                r"性质1（单位矩阵的行列式为1）: $\det(\boldsymbol I)=1$。单位矩阵对应的变换是「什么都不做」，所以单位正方形的面积保持为1。",
+                r"性质2（交换两行，行列式变号）: 行列互换$=$平行四边形方向反转$\rightarrow$有向面积变号。绝对值不变。",
+                r"性质3（某行乘以 $k$，行列式乘以 $k$）: 将平行四边形的某条边拉长 $k$ 倍$\rightarrow$面积变为 $k$ 倍。",
+                r"性质4（某行加上另一行的 $k$ 倍，行列式不变）: 这是切变(shear)操作——将平行四边形沿某边方向推斜，但底边长度不变，高也不变$\rightarrow$面积不变。这是高斯消元不改变$\det$的根本原因。",
+                r"性质5（有一行全零$\rightarrow$行列式为0）: 某条边退化为零长度$\rightarrow$平行四边形退化为线段$\rightarrow$面积$=0$。",
+                r"性质6（两行相等$\rightarrow$行列式为0）: 两条边重合$\rightarrow$平行四边形退化为线段$\rightarrow$面积$=0$。",
+                r"⚠ 常见误区：$\det(\boldsymbol A+\boldsymbol B) \neq \det(\boldsymbol A)+\det(\boldsymbol B)$。（行列式不是线性函数！）",
+            )
+        ),
+        "steps": (
+            {
+                "purpose": "第一幅：交换两行之前",
+                "matrix": [[2, 1], [1, 2]],
+                "vectors": [[2, 1], [1, 2]],
+                "roles": ["vector_a", "vector_b"],
+                "labels": ["r1", "r2"],
+                "result": 3.0,
+            },
+            {
+                "purpose": "第二幅：交换两行之后",
+                "matrix": [[1, 2], [2, 1]],
+                "vectors": [[1, 2], [2, 1]],
+                "roles": ["vector_b", "vector_a"],
+                "labels": ["r2", "r1"],
+                "result": -3.0,
+            },
+            {
+                "purpose": "第三幅：第一行乘 2 之前",
+                "matrix": [[2, 1], [1, 2]],
+                "vectors": [[2, 1], [1, 2]],
+                "roles": ["vector_a", "vector_b"],
+                "labels": ["r1", "r2"],
+                "result": 3.0,
+            },
+            {
+                "purpose": "第四幅：第一行乘 2 之后",
+                "matrix": [[4, 2], [1, 2]],
+                "vectors": [[4, 2], [1, 2]],
+                "roles": ["vector_a", "vector_b"],
+                "labels": ["2r1", "r2"],
+                "result": 6.0,
+            },
+        ),
+        "examples": (
+            {
+                "title": "案例一：交换两行",
+                "given": [[1, 2], [2, 1]],
+                "result": -3.0,
+                "lines": (
+                    r"交换两行之前：",
+                    r"$$\boldsymbol A=\begin{pmatrix}2&1\\1&2\end{pmatrix},\qquad \det(\boldsymbol A)=2\times2-1\times1=3$$",
+                    r"交换两行之后：",
+                    r"$$\boldsymbol A_{\mathrm{swap}}=\begin{pmatrix}1&2\\2&1\end{pmatrix},\qquad \det(\boldsymbol A_{\mathrm{swap}})=1\times1-2\times2=-3=-\det(\boldsymbol A)$$",
+                ),
+            },
+            {
+                "title": "案例二：第一行乘 2",
+                "given": [[4, 2], [1, 2]],
+                "result": 6.0,
+                "lines": (
+                    r"第一行乘以 $2$ 之前：",
+                    r"$$\boldsymbol A=\begin{pmatrix}2&1\\1&2\end{pmatrix},\qquad \det(\boldsymbol A)=3$$",
+                    r"第一行乘以 $2$ 之后：",
+                    r"$$\boldsymbol A_{\mathrm{scale}}=\begin{pmatrix}4&2\\1&2\end{pmatrix},\qquad \det(\boldsymbol A_{\mathrm{scale}})=4\times2-2\times1=6=2\det(\boldsymbol A)$$",
+                ),
+            },
+            {
+                "title": "案例三：第二行加上第一行的 2 倍",
+                "given": [[2, 1], [5, 4]],
+                "result": 3.0,
+                "lines": (
+                    r"把第二行加上第一行的 $2$ 倍：",
+                    r"$$\boldsymbol A_{\mathrm{add}}=\begin{pmatrix}2&1\\1+2\times2&2+2\times1\end{pmatrix}=\begin{pmatrix}2&1\\5&4\end{pmatrix}$$",
+                    r"$$\det(\boldsymbol A_{\mathrm{add}})=2\times4-1\times5=3=\det(\boldsymbol A)$$",
+                ),
+            },
+            {
+                "title": "案例四：第二行为零",
+                "given": [[2, 1], [0, 0]],
+                "result": 0.0,
+                "lines": (
+                    r"令第二行为零：",
+                    r"$$\boldsymbol A_{0}=\begin{pmatrix}2&1\\0&0\end{pmatrix},\qquad \det(\boldsymbol A_{0})=2\times0-1\times0=0$$",
+                ),
+            },
+        ),
+        "case_example_indices": (0, 0, 1, 1),
+    },
+    "ch03.det.multiplicativity": {
+        "title": "乘积的行列式",
+        "statement": r"复合变换的面积倍率等于两个阶段倍率的乘积。",
+        "summary": r"先经过 $\boldsymbol B$ 再经过 $\boldsymbol A$，面积缩放因子逐阶段相乘。",
+        "claim_formula": r"\det(\boldsymbol A\boldsymbol B)=\det(\boldsymbol A)\det(\boldsymbol B)",
+        "formula_symbols": ("A", "B"),
+        "symbol_roles": {"A": "area", "B": "area"},
+        "definition": r"**（乘积的行列式）** $\det(\boldsymbol A\boldsymbol B) = \det(\boldsymbol A) \cdot \det(\boldsymbol B)$。",
+        "steps": (
+            {
+                "purpose": "第一步：单位平行四边形",
+                "matrix": [[1, 0], [0, 1]],
+                "result": 1.0,
+                "lines": (
+                    r"从单位正方形开始，$\det(\boldsymbol I)=1$。",
+                    r"$$\boldsymbol I=\begin{pmatrix}1&0\\0&1\end{pmatrix},\qquad \det(\boldsymbol I)=1$$",
+                ),
+            },
+            {
+                "purpose": "第二步：先经过 B，面积乘 3",
+                "matrix": [[1, 0], [0, 3]],
+                "result": 3.0,
+                "lines": (
+                    r"取 $\boldsymbol B=\begin{pmatrix}1&0\\0&3\end{pmatrix}$，它把一个方向拉伸 $3$ 倍。",
+                    r"$$\det(\boldsymbol B)=1\times3=3$$",
+                    r"经过 $\boldsymbol B$ 后，面积从 $1$ 变为 $3$。",
+                ),
+            },
+            {
+                "purpose": "第三步：再经过 A，总面积乘 6",
+                "matrix": [[2, 0], [0, 3]],
+                "result": 6.0,
+                "lines": (
+                    r"再取 $\boldsymbol A=\begin{pmatrix}2&0\\0&1\end{pmatrix}$，所以 $\det(\boldsymbol A)=2$。",
+                    r"复合矩阵为 $\boldsymbol A\boldsymbol B=\begin{pmatrix}2&0\\0&3\end{pmatrix}$，于是",
+                    r"$$\det(\boldsymbol A\boldsymbol B)=2\times3=6=\det(\boldsymbol A)\det(\boldsymbol B)$$",
+                ),
+            },
+        ),
+    },
+    "ch03.det.transpose": {
+        "title": "转置不变性",
+        "statement": r"矩阵转置后，有向面积的数值保持不变。",
+        "summary": r"转置改变矩阵的行列排列，但不改变行列式。",
+        "claim_formula": r"\det(\boldsymbol A^{T})=\det(\boldsymbol A)",
+        "formula_symbols": ("A", "A^T"),
+        "symbol_roles": {"A": "area", "A^T": "area"},
+        "definition": r"**（转置不变性）** $\det(\boldsymbol A^{T}) = \det(\boldsymbol A)$。",
+        "steps": (
+            {
+                "purpose": "第一步：矩阵 A 的有向面积",
+                "matrix": [[2, 2], [1, 3]],
+                "vectors": [[2, 1], [2, 3]],
+                "result": 4.0,
+                "lines": (
+                    r"取 $\boldsymbol A=\begin{pmatrix}2&2\\1&3\end{pmatrix}$。",
+                    r"$$\det(\boldsymbol A)=2\times3-2\times1=4$$",
+                ),
+            },
+            {
+                "purpose": "第二步：转置后面积不变",
+                "matrix": [[2, 1], [2, 3]],
+                "vectors": [[2, 2], [1, 3]],
+                "result": 4.0,
+                "lines": (
+                    r"转置得到 $\boldsymbol A^{T}=\begin{pmatrix}2&1\\2&3\end{pmatrix}$。",
+                    r"$$\det(\boldsymbol A^{T})=2\times3-1\times2=4=\det(\boldsymbol A)$$",
+                    r"虽然行列排列改变，两个窗格中的有向面积数值相同。",
+                ),
+            },
+        ),
+    },
+}
+
+
+def _det_core_entity(
+    entity_id: str,
+    kind: str,
+    value: Any,
+    role: str,
+    label: str,
+    claim_id: str,
+) -> dict[str, Any]:
+    return {
+        "id": entity_id,
+        "kind": kind,
+        "dimension": 2,
+        "value": deepcopy(value),
+        "role": role,
+        "label": label,
+        "claim_refs": [claim_id],
+    }
+
+
+def _refine_det_core(topic_id: str, explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    """Publish one of the three 3.2 theorem topics with checked area cases."""
+
+    spec = _DET_CORE_SPECS[topic_id]
+    claim_id = f"claim.{topic_id}"
+    steps = tuple(spec["steps"])
+    examples: list[dict[str, Any]] = []
+    entities: list[dict[str, Any]] = []
+    relations: list[dict[str, Any]] = []
+    stages: list[dict[str, Any]] = []
+
+    for index, step in enumerate(steps, start=1):
+        matrix = step["matrix"]
+        result = float(step["result"])
+        matrix_id = f"det_core_{topic_id.rsplit('.', 1)[-1]}_matrix_{index}"
+        area_id = f"det_core_{topic_id.rsplit('.', 1)[-1]}_area_{index}"
+        vector_values = step.get("vectors")
+        if vector_values is None:
+            vector_values = [matrix[0], matrix[1]]
+        vector_roles = step.get("roles", ("vector_a", "vector_b"))
+        vector_labels = step.get("labels", ("r1", "r2"))
+        first_id = f"det_core_{topic_id.rsplit('.', 1)[-1]}_r1_{index}"
+        second_id = f"det_core_{topic_id.rsplit('.', 1)[-1]}_r2_{index}"
+        entities.extend(
+            (
+                _det_core_entity(matrix_id, "matrix", matrix, "matrix_a", "A", claim_id),
+                _det_core_entity(first_id, "vector", vector_values[0], vector_roles[0], vector_labels[0], claim_id),
+                _det_core_entity(second_id, "vector", vector_values[1], vector_roles[1], vector_labels[1], claim_id),
+                _det_core_entity(area_id, "area", vector_values, "area", "det", claim_id),
+            )
+        )
+        relation_id = f"rel.case.{topic_id}.{index}"
+        relations.append(
+            {
+                "id": relation_id,
+                "kind": "same_measure",
+                "source_ref": matrix_id,
+                "target_ref": area_id,
+                "parameters": {"determinant": result},
+                "claim_refs": [claim_id],
+            }
+        )
+        stages.append(
+            {
+                "id": f"stage.case.{topic_id}.{index}",
+                "title": str(step["purpose"]),
+                "caption": "",
+                "layout": "overlay",
+                "input_entity_refs": [matrix_id, first_id, second_id],
+                "output_entity_refs": [area_id],
+                "relation_refs": [relation_id],
+                "expected_invariants": [f"determinant {result:g}"],
+            }
+        )
+        if "examples" not in spec:
+            examples.append(
+                {
+                    "id": f"example.{topic_id}.{index}",
+                    "title": str(step["purpose"]),
+                    "kind": "determinant",
+                    "given": deepcopy(matrix),
+                    "calculation": list(step["lines"]),
+                    "result": result,
+                    "checks": [{"name": "determinant", "expected": result, "tolerance": 1e-9}],
+                    "claim_refs": [claim_id],
+                }
+            )
+
+    for index, example in enumerate(spec.get("examples", ()), start=1):
+        result = float(example["result"])
+        examples.append(
+            {
+                "id": f"example.{topic_id}.{index}",
+                "title": str(example["title"]),
+                "kind": "determinant",
+                "given": deepcopy(example["given"]),
+                "calculation": list(example["lines"]),
+                "result": result,
+                "checks": [{"name": "determinant", "expected": result, "tolerance": 1e-9}],
+                "claim_refs": [claim_id],
+            }
+        )
+
+    if topic_id == "ch03.det.multiplicativity" and len(stages) >= 3:
+        composition_id = f"rel.case.{topic_id}.composition"
+        relations.append(
+            {
+                "id": composition_id,
+                "kind": "composition_order",
+                "source_ref": stages[1]["output_entity_refs"][0],
+                "target_ref": stages[2]["output_entity_refs"][0],
+                "parameters": {"matrices": [[[1, 0], [0, 3]], [[2, 0], [0, 1]]]},
+                "claim_refs": [claim_id],
+            }
+        )
+        stages[2]["relation_refs"].append(composition_id)
+
+    explanation.update(
+        {
+            "title": str(spec["title"]),
+            "summary": str(spec["summary"]),
+            "definition": str(spec["definition"]),
+            "formula": "",
+            "derivation": [],
+            "geometric_meaning": "",
+            "worked_examples": examples,
+            "sections": [
+                {"id": section_id, "title": title, "text": "", "claim_refs": [claim_id]}
+                for section_id, title in (("definition", "定义"), ("worked_examples", "数学案例"))
+            ],
+            "symbol_roles": dict(spec["symbol_roles"]),
+            "case_layout": {
+                "default_pane_count": min(4, len(steps)),
+                "cases": [
+                    {
+                        "id": f"case.{topic_id}.{index}",
+                        "topic_id": topic_id,
+                        "example_ref": examples[
+                            tuple(spec.get("case_example_indices", range(len(steps))))[index - 1]
+                        ]["id"],
+                        "claim_refs": [claim_id],
+                        "stage_refs": [stages[index - 1]["id"]],
+                        "purpose": str(step["purpose"]),
+                    }
+                    for index, step in enumerate(steps, start=1)
+                ],
+            },
+        }
+    )
+    for key in (
+        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
+        "analogy_boundary", "invariants", "pitfalls",
+    ):
+        explanation.pop(key, None)
+    visual.update(
+        {
+            "scene_kind": "2d",
+            "entities": entities,
+            "relations": relations,
+            "stages": stages,
+        }
+    )
 
 
 def _refine_det_geometry(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
@@ -1603,7 +1976,7 @@ def _refine_cauchy_schwarz(explanation: dict[str, Any], visual: dict[str, Any]) 
             "\n\n"
             r"$$\Rightarrow(\boldsymbol a\cdot\boldsymbol b)^{2}\leq\lvert\boldsymbol a\rvert^{2}\lvert\boldsymbol b\rvert^{2}$$"
             "\n\n"
-            r"$$\Rightarrow\lvert\boldsymbol a\cdot\boldsymbol b\rvert\leq\lvert\boldsymbol a\rvert\cdot\lvert\boldsymbol b\rvert.\;■$$"
+            r"$$\Rightarrow\lvert\boldsymbol a\cdot\boldsymbol b\rvert\leq\lvert\boldsymbol a\rvert\cdot\lvert\boldsymbol b\rvert.\;$$"
         ),
         (
             r"若 $\boldsymbol b=\boldsymbol0$，则不等式两边均为 $0$，等号自然成立。"
@@ -1619,7 +1992,7 @@ def _refine_cauchy_schwarz(explanation: dict[str, Any], visual: dict[str, Any]) 
             r"$$=a_{1}^{2}b_{2}^{2}+a_{2}^{2}b_{1}^{2}-2a_{1}b_{1}a_{2}b_{2}=(a_{1}b_{2}-a_{2}b_{1})^{2}\geq0$$"
         ),
         (
-            r"差值为完全平方 $\rightarrow$ 不等式成立。等号成立 $\Longleftrightarrow a_{1}b_{2}-a_{2}b_{1}=0\Longleftrightarrow\boldsymbol a$ 与 $\boldsymbol b$ 共线。■"
+            r"差值为完全平方 $\rightarrow$ 不等式成立。等号成立 $\Longleftrightarrow a_{1}b_{2}-a_{2}b_{1}=0\Longleftrightarrow\boldsymbol a$ 与 $\boldsymbol b$ 共线。"
             "\n\n"
             r"（对 n 维的推广：可用同样的「平方差$=$平方和」方法或归纳法证明，此处从略。）"
         ),
@@ -2098,11 +2471,11 @@ def _refine_geometry_proof(topic_id: str, explanation: dict[str, Any], visual: d
 _MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
     "ch02.matrix.additive-distributivity": {
         "title": "矩阵加法与变换分配律",
+        "example_kind": "matrix_additive_distributivity",
         "statement": "矩阵按对应位置相加、按元素数乘；先加矩阵再变换等于先各自变换再加结果。",
         "summary": "一句话动机：向量有加法和数乘，矩阵作为向量的集合，自然也继承了这些运算。",
         "definition": "\n\n".join(
             (
-                r"一句话动机：向量有加法和数乘，矩阵作为向量的集合，自然也继承了这些运算。",
                 r"**（矩阵加法）** 两个同型矩阵 $\boldsymbol A = [a_{ij}]$ 和 $\boldsymbol B = [b_{ij}]$（都是 $m \times n$），其和为",
                 r"$$(\boldsymbol A + \boldsymbol B)_{ij} = a_{ij} + b_{ij}$$",
                 r"即对应位置的元素相加。写成矩阵就是",
@@ -2139,7 +2512,11 @@ _MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
             {
                 "purpose": "第一步：先加矩阵，再变换",
                 "invariant": "先加矩阵再变换：A+B=3I 把 x 送到 (3,3)",
-                "given": [[[3, 0], [0, 3]], [1, 1]],
+                "given": [
+                    [[2, 0], [0, 1]],
+                    [[1, 0], [0, 2]],
+                    [1, 1],
+                ],
                 "result": [3, 3],
                 "lines": (
                     r"取两个各自只沿一个坐标轴拉伸的矩阵，再加上向量 $\boldsymbol x$：",
@@ -2156,8 +2533,12 @@ _MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
             {
                 "purpose": "第二步：先各自变换，再相加",
                 "invariant": "先各自变换再相加：Ax+Bx 也落在 (3,3)",
-                "given": [[[2, 0], [0, 1]], [1, 1]],
-                "result": [2, 1],
+                "given": [
+                    [[2, 0], [0, 1]],
+                    [[1, 0], [0, 2]],
+                    [1, 1],
+                ],
+                "result": [3, 3],
                 "lines": (
                     r"换一条路线：先让 $\boldsymbol A$、$\boldsymbol B$ 分别作用于 $\boldsymbol x$：",
                     r"$$\boldsymbol A\boldsymbol x=\begin{pmatrix}2&0\\0&1\end{pmatrix}\begin{pmatrix}1\\1\end{pmatrix}=\begin{pmatrix}2\\1\end{pmatrix},\qquad \boldsymbol B\boldsymbol x=\begin{pmatrix}1&0\\0&2\end{pmatrix}\begin{pmatrix}1\\1\end{pmatrix}=\begin{pmatrix}1\\2\end{pmatrix}$$",
@@ -2668,7 +3049,7 @@ def _refine_subspace_lesson(topic_id: str, explanation: dict[str, Any], visual: 
 def _refine_matrix_vector_subsection(
     topic_id: str, explanation: dict[str, Any], visual: dict[str, Any]
 ) -> None:
-    """Publish one 2.5 subsection as lecture text plus a step-by-step math case.
+    """Publish a Chapter 2 matrix subsection plus its step-by-step math case.
 
     The definition block carries the lecture wording (only bare symbols are
     wrapped in ``$...$``).  The case is authored from that definition and
@@ -2683,7 +3064,7 @@ def _refine_matrix_vector_subsection(
         {
             "id": f"example.{topic_id}.{index}",
             "title": str(step["purpose"]),
-            "kind": "matrix_transform",
+            "kind": str(spec.get("example_kind", "matrix_transform")),
             "given": deepcopy(step["given"]),
             "calculation": list(step["lines"]),
             "result": deepcopy(step["result"]),
@@ -3158,23 +3539,25 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
     if topic_id == "ch01.projection.definition":
         # 1.4.1 的定义、定理和公式含义合并在定义块中。
         definition = (
-            r"定义 1.13（投影向量）设 $\boldsymbol u$ 是一个非零向量。向量 $\boldsymbol v$ 在 "
+            r"**（投影向量）** 设 $\boldsymbol u$ 是一个非零向量。向量 $\boldsymbol v$ 在 "
             r"$\boldsymbol u$ 所在直线上的正交投影（简称投影）为一个沿 $\boldsymbol u$ 方向的向量，"
             r"记为 $\operatorname{Proj}_{\boldsymbol u}(\boldsymbol v)$，满足："
             "\n\n"
-            r"$$\boldsymbol v-\operatorname{Proj}_{\boldsymbol u}(\boldsymbol v)\ \text{与}\ \boldsymbol u\ \text{正交}$$"
+            r"$$\boldsymbol v-\operatorname{Proj}_{\boldsymbol u}(\boldsymbol v)\perp\boldsymbol u$$"
             "\n\n"
             r"即“从 $\boldsymbol v$ 的终点向 $\boldsymbol u$ 所在直线作垂线，垂足对应的向量”。"
             "\n\n"
-            r"定理 1.6（投影公式）"
+            r"**（投影公式）**"
             "\n\n"
-            r"$$\operatorname{Proj}_{\boldsymbol u}(\boldsymbol v)"
-            r"=\left[\frac{\boldsymbol v\cdot\boldsymbol u}{\boldsymbol u\cdot\boldsymbol u}\right]\times\boldsymbol u"
-            r"=\left[(\boldsymbol v\cdot\boldsymbol u)/\lvert\boldsymbol u\rvert^{2}\right]\times\boldsymbol u$$"
+            r"$$\begin{aligned}"
+            r"\operatorname{Proj}_{\boldsymbol u}(\boldsymbol v)"
+            r"&=\frac{\boldsymbol v\cdot\boldsymbol u}{\boldsymbol u\cdot\boldsymbol u}\,\boldsymbol u\\"
+            r"&=\frac{\boldsymbol v\cdot\boldsymbol u}{\lvert\boldsymbol u\rvert^{2}}\,\boldsymbol u"
+            r"\end{aligned}$$"
             "\n\n"
             r"当 $\boldsymbol u$ 为单位向量（$\lvert\boldsymbol u\rvert=1$）时，公式简化为："
             "\n\n"
-            r"$$\operatorname{Proj}_{\boldsymbol u}(\boldsymbol v)=(\boldsymbol v\cdot\boldsymbol u)\times\boldsymbol u$$"
+            r"$$\operatorname{Proj}_{\boldsymbol u}(\boldsymbol v)=(\boldsymbol v\cdot\boldsymbol u)\,\boldsymbol u$$"
             "\n\n"
             r"公式的含义：系数 $\frac{\boldsymbol v\cdot\boldsymbol u}{\boldsymbol u\cdot\boldsymbol u}$ 计算的是"
             r"“$\boldsymbol v$ 在 $\boldsymbol u$ 上的影子长度是 $\boldsymbol u$ 的多少倍”；"
@@ -3480,106 +3863,224 @@ def _refine_remaining_chapter_one(topic_id: str, explanation: dict[str, Any], vi
 
 
 def _refine_matrix_composition(result: dict[str, Any], explanation: dict[str, Any], visual: dict[str, Any], example: dict[str, Any]) -> None:
+    claim = result["claims"][0]
+    claim_id = str(claim["id"])
+    definition = "\n\n".join((
+        r"一句话动机：矩阵乘以矩阵是「变换的复合」——先做 $\boldsymbol B$ 再做 $\boldsymbol A$，等于做 $\boldsymbol A\boldsymbol B$。",
+        r"**（矩阵乘法）** 设 $\boldsymbol A$ 是 $m \times p$ 矩阵，$\boldsymbol B$ 是 $p \times n$ 矩阵。则乘积 $\boldsymbol C = \boldsymbol A\boldsymbol B$ 是一个 $m \times n$ 矩阵，其第 $i$ 行第 $j$ 列的元素为：",
+        r"$$c_{ij} = \sum_{k=1}^{p} A_{ik} \cdot B_{kj}$$",
+        r"即 $\boldsymbol A$ 的第 $i$ 行与 $\boldsymbol B$ 的第 $j$ 列的内积。",
+        r"什么时候可乘：$\boldsymbol A$ 的列数必须等于 $\boldsymbol B$ 的行数。结果 $\boldsymbol C$ 的行数 $=$ $\boldsymbol A$ 的行数，列数 $=$ $\boldsymbol B$ 的列数。",
+        r"**（矩阵乘法的几何含义）** $(\boldsymbol A\boldsymbol B)\boldsymbol x = \boldsymbol A(\boldsymbol B\boldsymbol x)$：先做 $\boldsymbol B$ 变换，再做 $\boldsymbol A$ 变换。$\boldsymbol A\boldsymbol B =$ 两者的复合变换，从右往左读。",
+        r"**（乘法的结合律）** $(\boldsymbol A\boldsymbol B)\boldsymbol C = \boldsymbol A(\boldsymbol B\boldsymbol C)$。",
+        r"**（乘法不满足交换律）** 对一般矩阵，$\boldsymbol A\boldsymbol B \neq \boldsymbol B\boldsymbol A$。",
+        r"先拉伸再旋转 $\neq$ 先旋转再拉伸——操作的先后顺序决定最终效果。",
+        r"**（矩阵乘法的分配律）** 对维度匹配的矩阵：",
+        r"（1）左分配律：$\boldsymbol A(\boldsymbol B + \boldsymbol C) = \boldsymbol A\boldsymbol B + \boldsymbol A\boldsymbol C$；",
+        r"（2）右分配律：$(\boldsymbol A + \boldsymbol B)\boldsymbol C = \boldsymbol A\boldsymbol C + \boldsymbol B\boldsymbol C$。",
+        r"证明（1）: $$\begin{aligned}[\boldsymbol A(\boldsymbol B+\boldsymbol C)]_{ij}&=\sum_k A_{ik}\cdot(B+C)_{kj}\\&=\sum_k A_{ik}\cdot(B_{kj}+C_{kj})\\&=\sum_k A_{ik}B_{kj}+\sum_k A_{ik}C_{kj}\\&=(\boldsymbol A\boldsymbol B)_{ij}+(\boldsymbol A\boldsymbol C)_{ij}\end{aligned}$$",
+        r"这说明矩阵乘法继承了普通数乘法的分配律——这是线性性质在矩阵层面的体现。",
+    ))
+    example_id = "example.ch02.matrix.composition"
+    example_data = {
+        "id": example_id,
+        "title": "同一输入的两条变换路径",
+        "kind": "matrix_transform",
+        "given": [[[0, -2], [1, 0]], [1, 1]],
+        "calculation": [
+            r"取讲义中的横向拉伸和逆时针旋转，固定同一个输入向量：",
+            r"$$\boldsymbol A=\begin{pmatrix}2&0\\0&1\end{pmatrix},\quad\boldsymbol B=\begin{pmatrix}0&-1\\1&0\end{pmatrix},\quad\boldsymbol x=\begin{pmatrix}1\\1\end{pmatrix}$$",
+            r"第一步：两条路径都从 $\boldsymbol x$ 和单位网格出发。",
+            r"第二步：先旋转，再横向拉伸：",
+            r"$$\boldsymbol B\boldsymbol x=\begin{pmatrix}-1\\1\end{pmatrix},\quad\boldsymbol A(\boldsymbol B\boldsymbol x)=\begin{pmatrix}-2\\1\end{pmatrix},\quad\boldsymbol A\boldsymbol B=\begin{pmatrix}0&-2\\1&0\end{pmatrix}$$",
+            r"第三步：先横向拉伸，再旋转：",
+            r"$$\boldsymbol A\boldsymbol x=\begin{pmatrix}2\\1\end{pmatrix},\quad\boldsymbol B(\boldsymbol A\boldsymbol x)=\begin{pmatrix}-1\\2\end{pmatrix},\quad\boldsymbol B\boldsymbol A=\begin{pmatrix}0&-1\\2&0\end{pmatrix}$$",
+            r"第四步：同一个输入得到不同的终点，对照两种矩阵乘积：",
+            r"$$\boldsymbol A\boldsymbol B\boldsymbol x=\begin{pmatrix}-2\\1\end{pmatrix}\ne\begin{pmatrix}-1\\2\end{pmatrix}=\boldsymbol B\boldsymbol A\boldsymbol x,\quad\boldsymbol A\boldsymbol B\ne\boldsymbol B\boldsymbol A$$",
+        ],
+        "result": [-2, 1],
+        "checks": [{"name": "transformed", "expected": [-2, 1], "tolerance": 1e-9}],
+        "claim_refs": [claim_id],
+    }
+    stage_steps = (
+        ("input", "第一步：共同输入", ["grid_input", "x"], [], []),
+        ("ab", "第二步：先旋转后拉伸", ["grid_ab", "x", "bx", "abx"], [], ["rel.case.composition.ab"]),
+        ("ba", "第三步：先拉伸后旋转", ["grid_ba", "x", "ax", "bax"], [], ["rel.case.composition.ba"]),
+        ("compare", "第四步：比较终点", ["x", "abx", "bax"], [], ["rel.case.composition.difference", "rel.case.composition.compare"]),
+    )
+    entities = [
+        {"id": entity_id, "kind": kind, "dimension": 2, "value": value, "role": role, "label": label, "claim_refs": [claim_id]}
+        for entity_id, kind, value, role, label in (
+            ("grid_input", "matrix", [[1, 0], [0, 1]], "neutral", "I"),
+            ("grid_ab", "matrix", [[0, -2], [1, 0]], "vector_a", "AB"),
+            ("grid_ba", "matrix", [[0, -1], [2, 0]], "vector_b", "BA"),
+            ("x", "vector", [1, 1], "neutral", "x"),
+            ("bx", "vector", [-1, 1], "vector_a", "Bx"),
+            ("abx", "vector", [-2, 1], "vector_a", "ABx"),
+            ("ax", "vector", [2, 1], "vector_b", "Ax"),
+            ("bax", "vector", [-1, 2], "vector_b", "BAx"),
+        )
+    ]
+    relations = [
+        {"id": relation_id, "kind": kind, "source_ref": source, "target_ref": target, "parameters": parameters, "claim_refs": [claim_id]}
+        for relation_id, kind, source, target, parameters in (
+            ("rel.case.composition.ab", "composition_order", "x", "abx", {"matrices": [[[0, -1], [1, 0]], [[2, 0], [0, 1]]]}),
+            ("rel.case.composition.ba", "composition_order", "x", "bax", {"matrices": [[[2, 0], [0, 1]], [[0, -1], [1, 0]]]}),
+            ("rel.case.composition.difference", "endpoint_diff", "abx", "bax", {}),
+            ("rel.case.composition.compare", "compare", "abx", "bax", {}),
+        )
+    ]
+    stages = [
+        {
+            "id": f"stage.case.composition.{key}", "title": title, "caption": "", "layout": "overlay",
+            "input_entity_refs": inputs, "output_entity_refs": outputs, "relation_refs": refs,
+            "expected_invariants": [key],
+        }
+        for key, title, inputs, outputs, refs in stage_steps
+    ]
     explanation.update({
         "title": "复合变换与 AB≠BA",
-        "summary": "矩阵乘法表示变换的复合，最右侧矩阵先作用；交换顺序通常会改变终点。",
-        "definition": r"若 A、B 的维度匹配，则 (AB)x=A(Bx)，读作先做 B，再做 A。",
-        "formula": r"(AB)x=A(Bx),\quad AB\ne BA",
-        "derivation": [
-            r"矩阵乘积的第 (i,j) 个元素为 (AB)_{ij}=\sum_k A_{ik}B_{kj}，所以 AB 代表复合变换。",
-            r"先计算 Bx，再把 A 作用于 Bx；若交换顺序，则计算 Ax 后再作用 B。",
+        "summary": r"矩阵乘以矩阵是「变换的复合」——先做 $\boldsymbol B$ 再做 $\boldsymbol A$，等于做 $\boldsymbol A\boldsymbol B$。",
+        "definition": definition,
+        "formula": "",
+        "derivation": [],
+        "geometric_meaning": "",
+        "worked_examples": [example_data],
+        "sections": [
+            {"id": "definition", "title": "定义", "text": "", "claim_refs": [claim_id]},
+            {"id": "worked_examples", "title": "数学案例", "text": "", "claim_refs": [claim_id]},
         ],
-        "geometric_meaning": (
-            r"取 A=\begin{pmatrix}2&0\\0&1\end{pmatrix}（水平拉伸 2 倍），"
-            r"B=\begin{pmatrix}0&-1\\1&0\end{pmatrix}（逆时针旋转 90^\circ），x=(1,1)^T。\n\n"
-            r"先旋转再拉伸：Bx=(-1,1)^T，ABx=(-2,1)^T。"
-            r" 先拉伸再旋转：Ax=(2,1)^T，BAx=(-1,2)^T。"
-            r" 两个终点不同，所以 AB\ne BA。"
-        ),
-        "worked_examples": [],
-    })
-    for key in (
-        "intuition", "connections", "transfer_note", "conclusion", "read_guide",
-        "analogy_boundary", "invariants", "pitfalls",
-    ):
-        explanation.pop(key, None)
-    explanation.update({
-        "connections": ["复合变换的顺序可迁移到矩阵幂、坐标变换和函数复合。"],
-        "transfer_note": "遇到多个矩阵时从右向左执行，并用同一个输入比较交换顺序后的终点。",
-        "invariants": ["两条路径使用同一输入，终点差异由变换顺序造成。"],
-        "pitfalls": ["把 AB 误读成先做 A 后做 B，或默认矩阵乘法满足交换律。"],
-    })
-    if example is None:
-        example = {
-            "id": "example.ch02.matrix.composition",
-            "kind": "matrix_transform",
-            "given": [[[0, -2], [1, 0]], [1, 1]],
-            "calculation": [], "result": [-2, 1],
-            "checks": [{"name": "transformed", "expected": [-2, 1], "tolerance": 1e-9}],
-            "claim_refs": [],
-        }
-        explanation["worked_examples"] = [example]
-    if example:
-        example.update({
-            "title": "案例一：复合顺序比较",
-            "given": [[[0, -2], [1, 0]], [1, 1]],
-            "calculation": [
-                r"A=\begin{pmatrix}2&0\\0&1\end{pmatrix},\quad B=\begin{pmatrix}0&-1\\1&0\end{pmatrix},\quad x=(1,1)^T。",
-                r"Bx=(-1,1)^T，ABx=(-2,1)^T。",
-                r"Ax=(2,1)^T，BAx=(-1,2)^T。",
+        "symbol_roles": {
+            "A": "matrix_a", "B": "matrix_b", "x": "neutral",
+            "Bx": "vector_a", "ABx": "vector_a", "Ax": "vector_b", "BAx": "vector_b",
+        },
+        "case_layout": {
+            "default_pane_count": 4,
+            "cases": [
+                {
+                    "id": f"case.composition.{key}", "topic_id": "ch02.matrix.composition",
+                    "example_ref": example_id, "claim_refs": [claim_id],
+                    "stage_refs": [f"stage.case.composition.{key}"], "purpose": title,
+                }
+                for key, title, _inputs, _outputs, _refs in stage_steps
             ],
-            "result": [-2, 1],
-            "checks": [{"name": "transformed", "expected": [-2, 1], "tolerance": 1e-9}],
-        })
-        explanation["worked_examples"] = [example]
-    entities = visual.setdefault("entities", [])
-    _upsert_entity(entities, "A", "matrix", [[2, 0], [0, 1]], "matrix_a", "A")
-    _upsert_entity(entities, "B", "matrix", [[0, -1], [1, 0]], "matrix_b", "B")
-    _upsert_entity(entities, "x", "vector", [1, 1], "vector_a", "x")
-    _upsert_entity(entities, "y", "vector", [-2, 1], "transformed_a", "ABx")
-    _upsert_entity(entities, "z", "vector", [-1, 2], "transformed_b", "BAx")
-    relations = visual.setdefault("relations", [])
-    _upsert_relation(relations, "composition_order", "composition_order", "x", "y", {"matrices": [[[0, -1], [1, 0]], [[2, 0], [0, 1]]]})
-    _upsert_relation(relations, "composition_order_ba", "composition_order", "x", "z", {"matrices": [[[2, 0], [0, 1]], [[0, -1], [1, 0]]]})
-    _upsert_relation(relations, "endpoint_diff", "endpoint_diff", "y", "z", {})
-    _upsert_relation(relations, "composition_compare", "compare", "y", "z", {})
-    claim = (result.get("claims") or [{}])[0]
-    claim["entity_refs"] = [entity["id"] for entity in entities]
-    claim["formula_symbols"] = ["A", "B", "x", "ABx", "BAx"]
-    claim["relation_refs"] = [relation["id"] for relation in relations]
-    visual["stages"] = [
-        {"id": "stage.composition.input", "title": "固定输入", "caption": "同一向量 x 作为两条路径的输入。", "layout": "overlay", "input_entity_refs": ["x"], "output_entity_refs": [], "relation_refs": [], "expected_invariants": ["input fixed"]},
-        {"id": "stage.composition.ab", "title": "先 B 后 A", "caption": "B 先旋转，再由 A 沿水平方向拉伸，终点为 ABx=(-2,1)。", "layout": "sequence", "input_entity_refs": ["x", "B"], "output_entity_refs": ["y"], "relation_refs": ["composition_order"], "expected_invariants": ["AB path"]},
-        {"id": "stage.composition.ba", "title": "先 A 后 B", "caption": "A 先拉伸，再由 B 旋转，终点为 BAx=(-1,2)。", "layout": "sequence", "input_entity_refs": ["x", "A"], "output_entity_refs": ["z"], "relation_refs": ["composition_order_ba"], "expected_invariants": ["BA path"]},
-        {"id": "stage.composition.compare", "title": "终点比较", "caption": "ABx 与 BAx 不同，因此 AB≠BA。", "layout": "side_by_side", "input_entity_refs": ["y", "z"], "output_entity_refs": [], "relation_refs": ["endpoint_diff", "composition_compare"], "expected_invariants": ["different endpoints"]},
-        {"id": "stage.composition.formula", "title": "代数结论", "caption": "两条路径对应不同的矩阵乘积，得到 AB≠BA。", "layout": "overlay", "input_entity_refs": ["A", "B", "y", "z"], "output_entity_refs": [], "relation_refs": ["composition_compare"], "expected_invariants": ["AB != BA"]},
-    ]
-    claim["stage_refs"] = [stage["id"] for stage in visual["stages"]]
-    explanation["symbol_roles"] = {"A": "matrix_a", "B": "matrix_b", "x": "vector_a", "ABx": "transformed_a", "BAx": "transformed_b"}
-    explanation["sections"] = [
-        {"id": section_id, "title": section_id, "text": "", "claim_refs": [claim["id"]]}
-        for section_id in ("definition", "formula", "derivation", "worked_examples", "geometric_meaning")
-    ]
-    explanation["case_layout"] = {
-        "default_pane_count": 1,
-        "cases": [
-            {
-                "id": "case.composition.ab", "topic_id": "ch02.matrix.composition",
-                "example_ref": str(example["id"]), "claim_refs": [claim["id"]],
-                "stage_refs": ["stage.composition.ab"], "purpose": "案例一：先 B 后 A",
-            },
-            {
-                "id": "case.composition.ba", "topic_id": "ch02.matrix.composition",
-                "example_ref": str(example["id"]), "claim_refs": [claim["id"]],
-                "stage_refs": ["stage.composition.ba"], "purpose": "案例二：先 A 后 B",
-            },
-            {
-                "id": "case.composition.compare", "topic_id": "ch02.matrix.composition",
-                "example_ref": str(example["id"]), "claim_refs": [claim["id"]],
-                "stage_refs": ["stage.composition.compare"], "purpose": "案例三：终点比较",
-            },
+        },
+    })
+    for key in ("intuition", "connections", "transfer_note", "conclusion", "read_guide",
+                "analogy_boundary", "invariants", "pitfalls"):
+        explanation.pop(key, None)
+    visual.update({"scene_kind": "2d", "entities": entities, "relations": relations, "stages": stages})
+    result["connections"] = []
+    claim.update({
+        "statement": "矩阵乘法是变换的复合；对一般矩阵，交换次序后结果不同。",
+        "formula": r"(\boldsymbol A\boldsymbol B)\boldsymbol x=\boldsymbol A(\boldsymbol B\boldsymbol x),\quad\boldsymbol A\boldsymbol B\ne\boldsymbol B\boldsymbol A",
+        "formula_symbols": ["A", "B", "x"],
+    })
+
+
+def _refine_matrix_powers(result: dict[str, Any], explanation: dict[str, Any], visual: dict[str, Any]) -> None:
+    claim = result["claims"][0]
+    claim_id = str(claim["id"])
+    definition = "\n\n".join((
+        "一句话动机：幂是重复做同一变换，转置是行与列的视角切换。",
+        "在第3章引入逆矩阵之前，先掌握矩阵的两种基本代数操作：幂和转置。",
+        r"**（矩阵的幂）** 设 $\boldsymbol A$ 为 $n\times n$ 方阵。定义：",
+        r"$\boldsymbol A^{2}=\boldsymbol A\cdot\boldsymbol A$，$\boldsymbol A^{3}=\boldsymbol A\cdot\boldsymbol A\cdot\boldsymbol A$，…，$\boldsymbol A^{k}=\underbrace{\boldsymbol A\cdot\boldsymbol A\cdot\dots\cdot\boldsymbol A}_{k\text{ 个 }\boldsymbol A\text{ 相乘}}$。",
+        r"特别地，$\boldsymbol A^{0}=\boldsymbol I$（单位矩阵）。",
+        r"注意：只有方阵才能定义幂（否则 $\boldsymbol A\cdot\boldsymbol A$ 维度不匹配）。",
+        r"**（转置的性质）** 对于可乘的矩阵 $\boldsymbol A$、$\boldsymbol B$：",
+        r"（1）$(\boldsymbol A^{\mathsf T})^{\mathsf T}=\boldsymbol A$ —— 转置两次回到原矩阵；",
+        r"（2）$(\boldsymbol A+\boldsymbol B)^{\mathsf T}=\boldsymbol A^{\mathsf T}+\boldsymbol B^{\mathsf T}$ —— 和的转置 $=$ 转置的和；",
+        r"（3）$(k\boldsymbol A)^{\mathsf T}=k\cdot\boldsymbol A^{\mathsf T}$ —— 数乘的转置 $=$ 转置的数乘；",
+        r"（4）$(\boldsymbol A\boldsymbol B)^{\mathsf T}=\boldsymbol B^{\mathsf T}\boldsymbol A^{\mathsf T}$ —— 乘积的转置 $=$ 转置的逆序乘积（最重要的性质！）。",
+        r"证明（4）：$((\boldsymbol A\boldsymbol B)^{\mathsf T})_{ij}=(\boldsymbol A\boldsymbol B)_{ji}=\sum_k A_{jk}B_{ki}$。而 $(\boldsymbol B^{\mathsf T}\boldsymbol A^{\mathsf T})_{ij}=\sum_k(\boldsymbol B^{\mathsf T})_{ik}(\boldsymbol A^{\mathsf T})_{kj}=\sum_k B_{ki}A_{jk}$。两者相等。",
+    ))
+    first_id = "example.ch02.matrix.powers.square"
+    first_example = {
+        "id": first_id, "title": "例1：求转置与平方", "kind": "matrix_product",
+        "given": [[[1, 2], [3, 4]], [[1, 2], [3, 4]]],
+        "calculation": [
+            r"设 $\boldsymbol A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$。求 $\boldsymbol A^{\mathsf T}$ 和 $\boldsymbol A^{2}$。",
+            r"解：$$\boldsymbol A^{\mathsf T}=\begin{pmatrix}1&3\\2&4\end{pmatrix}$$",
+            r"$$\boldsymbol A^{2}=\boldsymbol A\cdot\boldsymbol A=\begin{pmatrix}1\cdot1+2\cdot3&1\cdot2+2\cdot4\\3\cdot1+4\cdot3&3\cdot2+4\cdot4\end{pmatrix}=\begin{pmatrix}7&10\\15&22\end{pmatrix}$$",
         ],
+        "result": [[7, 10], [15, 22]],
+        "checks": [
+            {"name": "result", "expected": [[7, 10], [15, 22]], "tolerance": 1e-9},
+            {"name": "transpose_a", "expected": [[1, 3], [2, 4]], "tolerance": 1e-9},
+        ],
+        "claim_refs": [claim_id],
     }
+    second_example = {
+        "id": "example.ch02.matrix.powers.transpose", "title": "例2：验证乘积转置", "kind": "matrix_product",
+        "given": [[[1, 2], [3, 4]], [[5, 6], [7, 8]]],
+        "calculation": [
+            r"设 $\boldsymbol A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$，$\boldsymbol B=\begin{pmatrix}5&6\\7&8\end{pmatrix}$。验证 $(\boldsymbol A\boldsymbol B)^{\mathsf T}=\boldsymbol B^{\mathsf T}\boldsymbol A^{\mathsf T}$。",
+            r"解：$$\boldsymbol A\boldsymbol B=\begin{pmatrix}19&22\\43&50\end{pmatrix}\quad\longrightarrow\quad(\boldsymbol A\boldsymbol B)^{\mathsf T}=\begin{pmatrix}19&43\\22&50\end{pmatrix}$$",
+            r"$$\boldsymbol B^{\mathsf T}\boldsymbol A^{\mathsf T}=\begin{pmatrix}5&7\\6&8\end{pmatrix}\cdot\begin{pmatrix}1&3\\2&4\end{pmatrix}=\begin{pmatrix}19&43\\22&50\end{pmatrix}$$",
+        ],
+        "result": [[19, 43], [22, 50]],
+        "checks": [
+            {"name": "transpose_product", "expected": [[19, 43], [22, 50]], "tolerance": 1e-9},
+            {"name": "reverse_product", "expected": [[19, 43], [22, 50]], "tolerance": 1e-9},
+        ],
+        "claim_refs": [claim_id],
+    }
+    stages = (
+        ("first", "第一步：作用一次", "grid_a"),
+        ("second", "第二步：再作用一次", "grid_a2"),
+    )
+    explanation.update({
+        "title": "矩阵的幂",
+        "summary": "幂是重复做同一变换，转置是行与列的视角切换。",
+        "definition": definition,
+        "formula": "",
+        "derivation": [],
+        "geometric_meaning": "",
+        "worked_examples": [first_example, second_example],
+        "sections": [
+            {"id": "definition", "title": "定义", "text": "", "claim_refs": [claim_id]},
+            {"id": "worked_examples", "title": "数学案例", "text": "", "claim_refs": [claim_id]},
+        ],
+        "symbol_roles": {"A": "matrix_a", "B": "matrix_b", "I": "neutral"},
+        "case_layout": {
+            "default_pane_count": 2,
+            "cases": [
+                {"id": f"case.matrix.powers.{key}", "topic_id": "ch02.matrix.powers",
+                 "example_ref": first_id, "claim_refs": [claim_id],
+                 "stage_refs": [f"stage.case.matrix.powers.{key}"], "purpose": title}
+                for key, title, _entity_id in stages
+            ],
+        },
+    })
+    for key in ("intuition", "connections", "transfer_note", "conclusion", "read_guide",
+                "analogy_boundary", "invariants", "pitfalls"):
+        explanation.pop(key, None)
+    visual.update({
+        "scene_kind": "2d",
+        "entities": [
+            {"id": "grid_a", "kind": "grid", "dimension": 2, "value": [[1, 2], [3, 4]],
+             "role": "vector_a", "label": "A", "claim_refs": [claim_id]},
+            {"id": "grid_a2", "kind": "grid", "dimension": 2, "value": [[7, 10], [15, 22]],
+             "role": "vector_b", "label": "A^{2}", "claim_refs": [claim_id]},
+        ],
+        "relations": [
+            {"id": "rel.matrix.powers.repetition", "kind": "invariant", "source_ref": "grid_a",
+             "target_ref": "grid_a2", "parameters": {}, "claim_refs": [claim_id]},
+        ],
+        "stages": [
+            {"id": f"stage.case.matrix.powers.{key}", "title": title, "caption": "",
+             "layout": "overlay", "input_entity_refs": [entity_id], "output_entity_refs": [],
+             "relation_refs": [], "expected_invariants": ["same matrix applied again"]}
+            for key, title, entity_id in stages
+        ],
+    })
+    result["connections"] = []
+    claim.update({
+        "statement": "方阵的幂表示重复作用；转置满足乘积逆序法则。",
+        "formula": r"\boldsymbol A^{2}=\boldsymbol A\boldsymbol A,\quad(\boldsymbol A\boldsymbol B)^{\mathsf T}=\boldsymbol B^{\mathsf T}\boldsymbol A^{\mathsf T}",
+        "formula_symbols": ["A", "B"],
+    })
 
 
 _BATCH_LESSONS: dict[str, dict[str, Any]] = {

@@ -1,0 +1,26 @@
+{
+  "artifact_digest": "sha256:03940d64ce8f01ceb146ca01db28dd740643ce7bd76e173ae1f7ed65c4674149",
+  "claim_count": 1,
+  "compiler_version": "visual-compiler-v1",
+  "contract_digest": "sha256:380ba9375599ccc1741db05464c9be34956c3ffe90209a2eb716602feca274dd",
+  "plan": {
+    "operations": [
+      {
+        "op": "view.fit",
+        "padding": 1.15
+      }
+    ],
+    "scene": "2d",
+    "summary": "伴随矩阵",
+    "version": 1
+  },
+  "plan_digest": "sha256:31c3670de8b428bd56dd4fd1ac8273760d5c8f03d8ed0d13985ed1414eb6030b",
+  "read_guide": [],
+  "render_profile": "lecture-v1",
+  "revision": 3,
+  "scene_family": "",
+  "schema_version": 1,
+  "source_hash": "sha256:9adf7294b680bf4691abd3b10f2ae825b04df48c401f9ee6f860efad0a8e4d63",
+  "stages": [],
+  "topic_id": "ch03.adjugate.matrix"
+}

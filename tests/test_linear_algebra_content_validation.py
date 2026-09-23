@@ -22,5 +22,5 @@ def test_chapter_reports_keep_expected_coverage_when_resources_are_missing(tmp_p
 def test_all_chapter_reports_preserve_current_catalog_shape(tmp_path: Path) -> None:
     reports = validate_all_chapters(TeachingArtifactStore(tmp_path), lecture_source_repository())
 
-    assert tuple(report.expected_topic_count for report in reports) == (11, 9, 10)
+    assert tuple(report.expected_topic_count for report in reports) == (11, 9, 8)
     assert tuple(report.topic_count for report in reports) == (0, 0, 0)

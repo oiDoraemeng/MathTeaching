@@ -10,14 +10,9 @@
       ],
       "explanation_refs": [
         "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
+        "worked_examples"
       ],
-      "formula": "5.5 最小二乘问题（选学阅读）: finite typed semantic evidence",
+      "formula": "\\boldsymbol A^{T}\\boldsymbol A\\hat{\\boldsymbol x}=\\boldsymbol A^{T}\\boldsymbol b",
       "formula_symbols": [
         "matrix",
         "values",
@@ -33,47 +28,39 @@
         "第5章 线性方程组 / 5.5 最小二乘问题（选学阅读）::1::sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a"
       ],
       "stage_refs": [
-        "stage.ch05.least-squares.projection.data",
-        "stage.ch05.least-squares.projection.projection",
-        "stage.ch05.least-squares.projection.residual",
-        "stage.ch05.least-squares.projection.orthogonality"
+        "stage.ch05.least-squares.projection.projection"
       ],
-      "statement": "5.5 最小二乘问题（选学阅读） 的数学主张由显式对象、关系和不变量支持。"
+      "statement": "当精确方程无解时，用正交投影寻找残差最小的解。"
     }
   ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch05.least-squares.projection"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch05.least-squares.projection.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.oriented-area"
-    }
-  ],
+  "connections": [],
   "explanation": {
-    "conclusion": "",
-    "connections": [],
-    "definition": "### 5.5 最小二乘问题（选学阅读）\n📖 本节为选学内容，不作考试要求。\n当 $Ax = b$ 无解时（b 不在列空间内），我们能做的最接近的事就是找到使得 $|Ax-b|$ 最小的 x——这就是最小二乘解。\n定理 5.6（最小二乘解） $\\hat{x}$ 满足正规方程 $A^{T}A \\cdot \\hat{x} = A^{T}b$。几何上，$\\hat{x}$ 使得 $A\\hat{x}$ 是 b 在 Col(A) 上的正交投影。\n#### 本章小结",
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch05.least-squares.projection"
+          ],
+          "example_ref": "example.ch05.least-squares.projection.orthogonal",
+          "id": "case.ch05.least-squares.projection.1",
+          "purpose": "最小二乘投影",
+          "stage_refs": [
+            "stage.ch05.least-squares.projection.projection"
+          ],
+          "topic_id": "ch05.least-squares.projection"
+        }
+      ],
+      "default_pane_count": 1
+    },
+    "definition": "本节为选学内容，不作考试要求。\n\n当 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 无解时，即 $\\boldsymbol b$ 不在列空间内，我们能做的最接近的事就是找到使得\n\n$$\n\\lVert\\boldsymbol A\\boldsymbol x-\\boldsymbol b\\rVert\n$$\n\n最小的 $\\boldsymbol x$——这就是最小二乘解。\n\n**（最小二乘解）** $\\hat{\\boldsymbol x}$ 满足正规方程\n\n$$\n\\boldsymbol A^{T}\\boldsymbol A\\hat{\\boldsymbol x}\n=\\boldsymbol A^{T}\\boldsymbol b.\n$$\n\n几何上，$\\hat{\\boldsymbol x}$ 使得 $\\boldsymbol A\\hat{\\boldsymbol x}$ 是 $\\boldsymbol b$ 在 $\\operatorname{Col}(\\boldsymbol A)$ 上的正交投影。",
     "derivation": [],
-    "formula": "5.5 最小二乘问题（选学阅读）: finite typed semantic evidence",
+    "formula": "",
     "geometric_meaning": "",
-    "intuition": "",
-    "invariants": [
-      "residual orthogonal to column space",
-      "projection plus residual equals data",
-      "finite numeric result"
-    ],
-    "pitfalls": [],
-    "read_guide": [],
     "searchable_text": [
-      "5.5 最小二乘问题（选学阅读）",
-      "5.5 最小二乘问题（选学阅读）: finite typed semantic evidence",
-      "### 5.5 最小二乘问题（选学阅读）\n📖 本节为选学内容，不作考试要求。\n当 $Ax = b$ 无解时（b 不在列空间内），我们能做的最接近的事就是找到使得 $|Ax-b|$ 最小的 x——这就是最小二乘解。\n定理 5.6（最小二乘解） $\\hat{x}$ 满足正规方程 $A^{T}A \\cdot \\hat{x} = A^{T}b$。几何上，$\\hat{x}$ 使得 $A\\hat{x}$ 是 b 在 Col(A) 上的正交投影。\n#### 本章小结",
-      "residual orthogonal to column space",
-      "projection plus residual equals data",
-      "finite numeric result"
+      "最小二乘解",
+      "当精确方程无解时，用正交投影寻找残差最小的解。",
+      "本节为选学内容，不作考试要求。\n\n当 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 无解时，即 $\\boldsymbol b$ 不在列空间内，我们能做的最接近的事就是找到使得\n\n$$\n\\lVert\\boldsymbol A\\boldsymbol x-\\boldsymbol b\\rVert\n$$\n\n最小的 $\\boldsymbol x$——这就是最小二乘解。\n\n**（最小二乘解）** $\\hat{\\boldsymbol x}$ 满足正规方程\n\n$$\n\\boldsymbol A^{T}\\boldsymbol A\\hat{\\boldsymbol x}\n=\\boldsymbol A^{T}\\boldsymbol b.\n$$\n\n几何上，$\\hat{\\boldsymbol x}$ 使得 $\\boldsymbol A\\hat{\\boldsymbol x}$ 是 $\\boldsymbol b$ 在 $\\operatorname{Col}(\\boldsymbol A)$ 上的正交投影。",
+      "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1\\\\0\n\\end{pmatrix},\\qquad\n\\boldsymbol b=\n\\begin{pmatrix}\n2\\\\1\n\\end{pmatrix}.\n$$\n\n因为 $\\boldsymbol b\\notin\\operatorname{Col}(\\boldsymbol A)$，所以 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 无精确解。正规方程为\n\n$$\n\\begin{pmatrix}1&0\\end{pmatrix}\n\\begin{pmatrix}1\\\\0\\end{pmatrix}\n\\hat{x}\n=\n\\begin{pmatrix}1&0\\end{pmatrix}\n\\begin{pmatrix}2\\\\1\\end{pmatrix},\n$$\n\n即 $\\hat{x}=2$。于是\n\n$$\n\\boldsymbol A\\hat{x}\n=\\begin{pmatrix}2\\\\0\\end{pmatrix},\\qquad\n\\boldsymbol r\n=\\boldsymbol b-\\boldsymbol A\\hat{x}\n=\\begin{pmatrix}0\\\\1\\end{pmatrix}.\n$$\n\n$\\boldsymbol A\\hat{x}$ 是 $\\boldsymbol b$ 在 $\\operatorname{Col}(\\boldsymbol A)$ 上的正交投影，残差 $\\boldsymbol r$ 与列空间正交。"
     ],
     "sections": [
       {
@@ -81,65 +68,19 @@
           "claim.ch05.least-squares.projection"
         ],
         "id": "definition",
-        "text": "### 5.5 最小二乘问题（选学阅读）\n📖 本节为选学内容，不作考试要求。\n当 $Ax = b$ 无解时（b 不在列空间内），我们能做的最接近的事就是找到使得 $|Ax-b|$ 最小的 x——这就是最小二乘解。\n定理 5.6（最小二乘解） $\\hat{x}$ 满足正规方程 $A^{T}A \\cdot \\hat{x} = A^{T}b$。几何上，$\\hat{x}$ 使得 $A\\hat{x}$ 是 b 在 Col(A) 上的正交投影。\n#### 本章小结",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.least-squares.projection"
-        ],
-        "id": "formula",
-        "text": "5.5 最小二乘问题（选学阅读）: finite typed semantic evidence",
-        "title": "formula"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.least-squares.projection"
-        ],
-        "id": "derivation",
-        "text": "derivation: 5.5 最小二乘问题（选学阅读）。",
-        "title": "derivation"
+        "text": "",
+        "title": "定义"
       },
       {
         "claim_refs": [
           "claim.ch05.least-squares.projection"
         ],
         "id": "worked_examples",
-        "text": "5.5 最小二乘问题（选学阅读）: finite typed semantic evidence",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.least-squares.projection"
-        ],
-        "id": "geometric_meaning",
-        "text": "geometric_meaning: 5.5 最小二乘问题（选学阅读）。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.least-squares.projection"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 5.5 最小二乘问题（选学阅读）。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.least-squares.projection"
-        ],
-        "id": "connections",
-        "text": "connections: 5.5 最小二乘问题（选学阅读）。",
-        "title": "connections"
-      },
-      {
-        "claim_refs": [],
-        "id": "invariants",
-        "text": "residual orthogonal to column space\nprojection plus residual equals data\nfinite numeric result",
-        "title": "invariants"
+        "text": "",
+        "title": "数学案例"
       }
     ],
-    "summary": "5.5 最小二乘问题（选学阅读）",
+    "summary": "当精确方程无解时，用正交投影寻找残差最小的解。",
     "symbol_roles": {
       "data": "data",
       "fit": "fit",
@@ -147,19 +88,19 @@
       "residual": "residual",
       "values": "values"
     },
-    "title": "5.5 最小二乘问题（选学阅读）",
+    "title": "最小二乘解",
     "worked_examples": [
       {
         "calculation": [
-          "5.5 最小二乘问题（选学阅读）: finite typed semantic evidence"
+          "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1\\\\0\n\\end{pmatrix},\\qquad\n\\boldsymbol b=\n\\begin{pmatrix}\n2\\\\1\n\\end{pmatrix}.\n$$\n\n因为 $\\boldsymbol b\\notin\\operatorname{Col}(\\boldsymbol A)$，所以 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 无精确解。正规方程为\n\n$$\n\\begin{pmatrix}1&0\\end{pmatrix}\n\\begin{pmatrix}1\\\\0\\end{pmatrix}\n\\hat{x}\n=\n\\begin{pmatrix}1&0\\end{pmatrix}\n\\begin{pmatrix}2\\\\1\\end{pmatrix},\n$$\n\n即 $\\hat{x}=2$。于是\n\n$$\n\\boldsymbol A\\hat{x}\n=\\begin{pmatrix}2\\\\0\\end{pmatrix},\\qquad\n\\boldsymbol r\n=\\boldsymbol b-\\boldsymbol A\\hat{x}\n=\\begin{pmatrix}0\\\\1\\end{pmatrix}.\n$$\n\n$\\boldsymbol A\\hat{x}$ 是 $\\boldsymbol b$ 在 $\\operatorname{Col}(\\boldsymbol A)$ 上的正交投影，残差 $\\boldsymbol r$ 与列空间正交。"
         ],
         "checks": [
           {
             "expected": [
               2,
-              4
+              0
             ],
-            "name": "result",
+            "name": "projection",
             "tolerance": 1e-09
           }
         ],
@@ -167,29 +108,32 @@
           "claim.ch05.least-squares.projection"
         ],
         "given": [
-          2,
+          [
+            2,
+            1
+          ],
           [
             1,
-            2
+            0
           ]
         ],
-        "id": "example.ch05.least-squares.projection",
-        "kind": "scalar_multiple",
+        "id": "example.ch05.least-squares.projection.orthogonal",
+        "kind": "projection",
         "result": [
           2,
-          4
+          0
         ],
-        "title": "主题数值例"
+        "title": "案例：投影到列空间"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:fecfa3b3fff3e2596c20c69a75cec59df2ff5723808e12aa379221ade1e710c0",
+    "artifact_digest": "sha256:aa7017b7c117607517e47e056489b6c1218df29814fe2c026d9ac3f3bd3218ea",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:4974a717942979efc09981c26085a1f23423100000d98615520f6a8ff11d8e93",
+    "raw_reply_digest": "sha256:56b5677ee450bc53c4c214eff393e52692ec3c21c5330ac01eaa9f451a2e1586",
     "source_hash": "sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a"
   },
   "revision": 1,
@@ -213,29 +157,24 @@
     ],
     "spans": [
       {
-        "end_line": 1874,
+        "end_line": 1741,
         "fingerprint": "sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a",
         "heading_path": [
           "第5章 线性方程组",
           "5.5 最小二乘问题（选学阅读）"
         ],
         "id": "第5章 线性方程组 / 5.5 最小二乘问题（选学阅读）::1::sha256:d868923221d2838a464ed502994a389708da843960245e8919adc8b1d4bb7a7a",
-        "start_line": 1867,
+        "start_line": 1734,
         "text": "### 5.5 最小二乘问题（选学阅读）\n\n📖 本节为选学内容，不作考试要求。\n当 $Ax = b$ 无解时（b 不在列空间内），我们能做的最接近的事就是找到使得 $|Ax-b|$ 最小的 x——这就是最小二乘解。\n定理 5.6（最小二乘解） $\\hat{x}$ 满足正规方程 $A^{T}A \\cdot \\hat{x} = A^{T}b$。几何上，$\\hat{x}$ 使得 $A\\hat{x}$ 是 b 在 Col(A) 上的正交投影。\n\n#### 本章小结"
       }
     ]
   },
   "status": "reviewed",
   "teaching_profile": {
-    "minimum_level": 3,
+    "minimum_level": 2,
     "required_sections": [
       "definition",
-      "formula",
-      "derivation",
-      "worked_examples",
-      "geometric_meaning",
-      "pitfalls",
-      "connections"
+      "worked_examples"
     ],
     "requires_analogy_boundary": false
   },
@@ -253,16 +192,10 @@
         "role": "matrix",
         "value": [
           [
-            1.0,
             1.0
           ],
           [
-            1.0,
-            2.0
-          ],
-          [
-            1.0,
-            3.0
+            0.0
           ]
         ]
       },
@@ -270,60 +203,56 @@
         "claim_refs": [
           "claim.ch05.least-squares.projection"
         ],
-        "dimension": 3,
+        "dimension": 2,
         "id": "entity.ch05.least-squares.projection.values",
         "kind": "vector",
         "label": "values",
         "role": "values",
         "value": [
-          1.0,
           2.0,
-          2.0
+          1.0
         ]
       },
       {
         "claim_refs": [
           "claim.ch05.least-squares.projection"
         ],
-        "dimension": 3,
+        "dimension": 2,
         "id": "entity.ch05.least-squares.projection.data",
         "kind": "vector",
         "label": "data",
         "role": "data",
         "value": [
-          1.0,
           2.0,
-          2.0
+          1.0
         ]
       },
       {
         "claim_refs": [
           "claim.ch05.least-squares.projection"
         ],
-        "dimension": 3,
+        "dimension": 2,
         "id": "entity.ch05.least-squares.projection.fit",
         "kind": "vector",
         "label": "fit",
         "role": "fit",
         "value": [
-          1.1666666666666667,
-          1.6666666666666667,
-          2.1666666666666665
+          2.0,
+          0.0
         ]
       },
       {
         "claim_refs": [
           "claim.ch05.least-squares.projection"
         ],
-        "dimension": 3,
+        "dimension": 2,
         "id": "entity.ch05.least-squares.projection.residual",
         "kind": "vector",
         "label": "residual",
         "role": "residual",
         "value": [
-          -0.16666666666666666,
-          0.3333333333333333,
-          -0.16666666666666666
+          0.0,
+          1.0
         ]
       }
     ],
@@ -335,38 +264,25 @@
         "id": "relation.ch05.least-squares.projection.projects_to",
         "kind": "projects_to",
         "parameters": {
-          "coefficients": [
-            0.6666666666666666,
-            0.5
-          ],
           "fit": [
-            1.1666666666666667,
-            1.6666666666666667,
-            2.1666666666666665
+            2.0,
+            0.0
           ],
           "matrix": [
             [
-              1.0,
               1.0
             ],
             [
-              1.0,
-              2.0
-            ],
-            [
-              1.0,
-              3.0
+              0.0
             ]
           ],
           "residual": [
-            -0.16666666666666666,
-            0.3333333333333333,
-            -0.16666666666666666
+            0.0,
+            1.0
           ],
           "values": [
-            1.0,
             2.0,
-            2.0
+            1.0
           ]
         },
         "source_ref": "entity.ch05.least-squares.projection.matrix",
@@ -377,116 +293,20 @@
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "data",
+        "caption": "",
         "expected_invariants": [
-          "residual orthogonal to column space",
-          "projection plus residual equals data",
-          "finite numeric result"
-        ],
-        "id": "stage.ch05.least-squares.projection.data",
-        "input_entity_refs": [
-          "entity.ch05.least-squares.projection.matrix",
-          "entity.ch05.least-squares.projection.values",
-          "entity.ch05.least-squares.projection.data",
-          "entity.ch05.least-squares.projection.fit",
-          "entity.ch05.least-squares.projection.residual"
-        ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.least-squares.projection.matrix",
-          "entity.ch05.least-squares.projection.values",
-          "entity.ch05.least-squares.projection.data",
-          "entity.ch05.least-squares.projection.fit",
-          "entity.ch05.least-squares.projection.residual"
-        ],
-        "relation_refs": [
-          "relation.ch05.least-squares.projection.projects_to"
-        ],
-        "title": "data"
-      },
-      {
-        "caption": "projection",
-        "expected_invariants": [
-          "residual orthogonal to column space",
-          "projection plus residual equals data",
+          "the residual is orthogonal to Col(A)",
+          "A x_hat plus the residual equals b",
           "finite numeric result"
         ],
         "id": "stage.ch05.least-squares.projection.projection",
         "input_entity_refs": [
-          "entity.ch05.least-squares.projection.matrix",
-          "entity.ch05.least-squares.projection.values",
-          "entity.ch05.least-squares.projection.data",
-          "entity.ch05.least-squares.projection.fit",
-          "entity.ch05.least-squares.projection.residual"
+          "entity.ch05.least-squares.projection.matrix"
         ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.least-squares.projection.matrix",
-          "entity.ch05.least-squares.projection.values",
-          "entity.ch05.least-squares.projection.data",
-          "entity.ch05.least-squares.projection.fit",
-          "entity.ch05.least-squares.projection.residual"
-        ],
-        "relation_refs": [
-          "relation.ch05.least-squares.projection.projects_to"
-        ],
-        "title": "projection"
-      },
-      {
-        "caption": "residual",
-        "expected_invariants": [
-          "residual orthogonal to column space",
-          "projection plus residual equals data",
-          "finite numeric result"
-        ],
-        "id": "stage.ch05.least-squares.projection.residual",
-        "input_entity_refs": [
-          "entity.ch05.least-squares.projection.matrix",
-          "entity.ch05.least-squares.projection.values",
-          "entity.ch05.least-squares.projection.data",
-          "entity.ch05.least-squares.projection.fit",
-          "entity.ch05.least-squares.projection.residual"
-        ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.least-squares.projection.matrix",
-          "entity.ch05.least-squares.projection.values",
-          "entity.ch05.least-squares.projection.data",
-          "entity.ch05.least-squares.projection.fit",
-          "entity.ch05.least-squares.projection.residual"
-        ],
-        "relation_refs": [
-          "relation.ch05.least-squares.projection.projects_to"
-        ],
-        "title": "residual"
-      },
-      {
-        "caption": "orthogonality",
-        "expected_invariants": [
-          "residual orthogonal to column space",
-          "projection plus residual equals data",
-          "finite numeric result"
-        ],
-        "id": "stage.ch05.least-squares.projection.orthogonality",
-        "input_entity_refs": [
-          "entity.ch05.least-squares.projection.matrix",
-          "entity.ch05.least-squares.projection.values",
-          "entity.ch05.least-squares.projection.data",
-          "entity.ch05.least-squares.projection.fit",
-          "entity.ch05.least-squares.projection.residual"
-        ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.least-squares.projection.matrix",
-          "entity.ch05.least-squares.projection.values",
-          "entity.ch05.least-squares.projection.data",
-          "entity.ch05.least-squares.projection.fit",
-          "entity.ch05.least-squares.projection.residual"
-        ],
-        "relation_refs": [
-          "relation.ch05.least-squares.projection.projects_to"
-        ],
-        "title": "orthogonality"
+        "layout": "overlay",
+        "output_entity_refs": [],
+        "relation_refs": [],
+        "title": "最小二乘投影"
       }
     ]
   }

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import hashlib
 from pathlib import Path
 import re
@@ -15,7 +15,18 @@ _HEADING = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
 _CHAPTER = re.compile(r"^第(\d+)章(?:\s|[^A-Za-z0-9]|$)")
 _SECTION = re.compile(r"^\d+\.\d+(?:\s|$)")
 _EXCLUDED = ("自检", "练习", "挑战", "课后练习", "练习题", "挑战题")
+_LEADING_PROSE_LINE_COUNTS = {
+    # 这两节的动机与目标写在三级标题正上方，仍属于该节讲义正文。
+    "ch03.cramer.area-ratio": 2,
+    "ch03.inverse.undo": 2,
+}
 _MERGED_TOPIC_PATHS: dict[str, tuple[tuple[str, ...], ...]] = {
+    # 3.5 的定义位于主讲义段，完整推导位于本章后面的补充段；同一主题同时引用
+    # 两段原文，软件目录仍只显示一个「伴随矩阵」小节。
+    "ch03.adjugate.matrix": (
+        ("第3章 行列式", "3.5 伴随矩阵（选学）"),
+        ("第3章 行列式", "3.5 伴随矩阵求逆的完整推导"),
+    ),
     # 4.2 的目录项合并 4.2.1 与 4.2.2，但不能顺手把同一父节后面的 4.2.3、4.2.4
     # 纳入来源。路径仍是讲义原文标题，供锚点与哈希复核。
     "ch04.dependence.redundancy": (
@@ -206,6 +217,29 @@ class LectureSourceRepository:
             sections = (_resolve_anchor(records, entry.source_anchor),)
         else:
             sections = tuple(_resolve_merged_section(records, path) for path in merged_paths)
+        neighboring_section = sections[0]
+        leading_line_count = _LEADING_PROSE_LINE_COUNTS.get(entry.id)
+        if leading_line_count is not None:
+            source = self.path.read_text(encoding="utf-8")
+            sections = (
+                _with_leading_prose(sections[0], source, leading_line_count),
+                *sections[1:],
+            )
+        if entry.id == "ch02.matrix.powers":
+            # 2.8.5/2.8.6 与下一节动机也落在该二级标题下；本主题只取幂、转置及其原例题。
+            section = sections[0]
+            marker = "一句话动机：矩阵不只是数字表"
+            if marker not in section.text:
+                raise ValueError("missing 2.8 boundary before the 2.9 motivation")
+            text = section.text.split(marker, 1)[0].rstrip()
+            sections = (replace(section, text=text, end_line=section.start_line + len(text.splitlines()) - 1),)
+        elif entry.id == "ch03.det.zero.equivalence":
+            section = sections[0]
+            marker = "#### 本章小结"
+            if marker not in section.text:
+                raise ValueError("missing 3.6 boundary before the chapter summary")
+            text = section.text.split(marker, 1)[0].rstrip()
+            sections = (replace(section, text=text, end_line=section.start_line + len(text.splitlines()) - 1),)
         excerpt, spans = _bounded_topic_excerpt(sections, excluded=_EXCLUDED)
         digest = _fingerprint(excerpt)
         context = SourceContext(
@@ -217,7 +251,7 @@ class LectureSourceRepository:
             excerpt=excerpt,
             source_hash=f"sha256:{digest}",
             spans=spans,
-            neighboring_titles=_neighbor_titles(records, sections[0]),
+            neighboring_titles=_neighbor_titles(records, neighboring_section),
         )
         self._contexts[entry.id] = context
         return context
@@ -257,6 +291,26 @@ def _resolve_merged_section(
         if record.path == path and record.occurrence == 1:
             return record
     raise ValueError(f"missing merged lecture source heading: {' / '.join(path)}")
+
+
+def _with_leading_prose(section: HeadingSection, source: str, line_count: int) -> HeadingSection:
+    """Prepend the exact non-heading prose immediately above a section title."""
+
+    lines = source.replace("\r\n", "\n").split("\n")
+    selected: list[tuple[int, str]] = []
+    cursor = section.start_line - 2
+    while cursor >= 0 and len(selected) < line_count:
+        line = lines[cursor]
+        if line.strip():
+            if _HEADING.match(line) is not None:
+                break
+            selected.append((cursor + 1, line))
+        cursor -= 1
+    if len(selected) != line_count:
+        raise ValueError(f"missing leading prose before {' / '.join(section.path)}")
+    selected.reverse()
+    prefix = "\n".join(line for _, line in selected)
+    return replace(section, start_line=selected[0][0], text=f"{prefix}\n\n{section.text}")
 
 
 def _bounded_topic_excerpt(

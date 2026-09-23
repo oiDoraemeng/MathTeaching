@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:9cbb7e8fa378ac0c8118be267ebace8b04fae5ca4f2f342ed92b4d827289e227",
+  "artifact_digest": "sha256:be0a383006553cd269efba38aa8e6b6841846731dd7cd8683b2734c3325c9d1c",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:6f13e3ef2398b59ab545a8535491877ac7bf73aac78e8763902c8fecc73d9340",
+  "contract_digest": "sha256:b851c0d928cbc68d818038e629c333f95b7e94dc794aa390de0de756c2e360d4",
   "plan": {
     "operations": [
       {
@@ -12,28 +12,7 @@
           "ch08.principal-axis__entity__matrix__principal",
           "ch08.principal-axis__entity__matrix__standard"
         ],
-        "axis_segments": [
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.7071067811865475,
-              0.7071067811865475
-            ]
-          ],
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.7071067811865475,
-              -0.7071067811865475
-            ]
-          ]
-        ],
+        "axis_segments": [],
         "bounds": [
           -3.0,
           3.0,
@@ -41,6 +20,7 @@
           3.0
         ],
         "classification": "positive_definite",
+        "color": "#2A9D8F",
         "contour_segments": [
           [
             0,
@@ -591,25 +571,52 @@
         "tolerance": 1e-09
       },
       {
-        "alias": "ch08.principal-axis__entity__axes",
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
+        "alias": "ch08.principal-axis__entity__axes__axis_1__start",
+        "coordinates": [
+          -2.1213203435596424,
+          2.1213203435596424
         ],
-        "matrix": [
-          [
-            0.7071067811865475,
-            0.7071067811865475
-          ],
-          [
-            -0.7071067811865475,
-            0.7071067811865475
-          ]
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch08.principal-axis__entity__axes__axis_1__end",
+        "coordinates": [
+          2.1213203435596424,
+          -2.1213203435596424
         ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch08.principal-axis__entity__axes__axis_1",
+        "color": "#2F6BFF",
+        "end": "ch08.principal-axis__entity__axes__axis_1__end",
+        "kind": "line",
+        "op": "linear.upsert",
+        "start": "ch08.principal-axis__entity__axes__axis_1__start"
+      },
+      {
+        "alias": "ch08.principal-axis__entity__axes__axis_2__start",
+        "coordinates": [
+          -2.1213203435596424,
+          -2.1213203435596424
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch08.principal-axis__entity__axes__axis_2__end",
+        "coordinates": [
+          2.1213203435596424,
+          2.1213203435596424
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch08.principal-axis__entity__axes__axis_2",
+        "color": "#F08A24",
+        "end": "ch08.principal-axis__entity__axes__axis_2__end",
+        "kind": "line",
+        "op": "linear.upsert",
+        "start": "ch08.principal-axis__entity__axes__axis_2__start"
       },
       {
         "alias": "ch08.principal-axis__entity__standard",
@@ -618,28 +625,7 @@
           "ch08.principal-axis__entity__standard__principal",
           "ch08.principal-axis__entity__standard__standard"
         ],
-        "axis_segments": [
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ],
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              1.0,
-              0.0
-            ]
-          ]
-        ],
+        "axis_segments": [],
         "bounds": [
           -3.0,
           3.0,
@@ -647,6 +633,7 @@
           3.0
         ],
         "classification": "positive_definite",
+        "color": "#2A9D8F",
         "contour_segments": [
           [
             0,
@@ -1214,8 +1201,9 @@
       },
       {
         "alias": "ch08.principal-axis__entity__point",
+        "color": "#2F6BFF",
         "end": "ch08.principal-axis__entity__point__end",
-        "kind": "vector",
+        "kind": "line",
         "op": "linear.upsert",
         "start": "ch08.principal-axis__entity__point__start"
       },
@@ -1237,8 +1225,9 @@
       },
       {
         "alias": "ch08.principal-axis__entity__coordinates",
+        "color": "#2F6BFF",
         "end": "ch08.principal-axis__entity__coordinates__end",
-        "kind": "vector",
+        "kind": "line",
         "op": "linear.upsert",
         "start": "ch08.principal-axis__entity__coordinates__start"
       },
@@ -1249,28 +1238,7 @@
           "ch08.principal-axis__relation__orthogonal_axes__form__principal",
           "ch08.principal-axis__relation__orthogonal_axes__form__standard"
         ],
-        "axis_segments": [
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.7071067811865475,
-              0.7071067811865475
-            ]
-          ],
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.7071067811865475,
-              -0.7071067811865475
-            ]
-          ]
-        ],
+        "axis_segments": [],
         "bounds": [
           -3.0,
           3.0,
@@ -1278,6 +1246,7 @@
           3.0
         ],
         "classification": "positive_definite",
+        "color": "#2A9D8F",
         "contour_segments": [
           [
             0,
@@ -1828,50 +1797,54 @@
         "tolerance": 1e-09
       },
       {
-        "alias": "ch08.principal-axis__relation__orthogonal_axes__axis_0__start",
+        "alias": "ch08.principal-axis__relation__orthogonal_axes__q1__start",
         "coordinates": [
-          0.0,
-          0.0
+          -2.1213203435596424,
+          2.1213203435596424
         ],
         "op": "point.upsert"
       },
       {
-        "alias": "ch08.principal-axis__relation__orthogonal_axes__axis_0__end",
+        "alias": "ch08.principal-axis__relation__orthogonal_axes__q1__end",
         "coordinates": [
-          0.7071067811865475,
-          -0.7071067811865475
+          2.1213203435596424,
+          -2.1213203435596424
         ],
         "op": "point.upsert"
       },
       {
-        "alias": "ch08.principal-axis__relation__orthogonal_axes__axis_0",
-        "end": "ch08.principal-axis__relation__orthogonal_axes__axis_0__end",
-        "kind": "vector",
+        "alias": "ch08.principal-axis__relation__orthogonal_axes__q1",
+        "color": "#2F6BFF",
+        "end": "ch08.principal-axis__relation__orthogonal_axes__q1__end",
+        "kind": "line",
+        "label": "q1",
         "op": "linear.upsert",
-        "start": "ch08.principal-axis__relation__orthogonal_axes__axis_0__start"
+        "start": "ch08.principal-axis__relation__orthogonal_axes__q1__start"
       },
       {
-        "alias": "ch08.principal-axis__relation__orthogonal_axes__axis_1__start",
+        "alias": "ch08.principal-axis__relation__orthogonal_axes__q2__start",
         "coordinates": [
-          0.0,
-          0.0
+          -2.1213203435596424,
+          -2.1213203435596424
         ],
         "op": "point.upsert"
       },
       {
-        "alias": "ch08.principal-axis__relation__orthogonal_axes__axis_1__end",
+        "alias": "ch08.principal-axis__relation__orthogonal_axes__q2__end",
         "coordinates": [
-          0.7071067811865475,
-          0.7071067811865475
+          2.1213203435596424,
+          2.1213203435596424
         ],
         "op": "point.upsert"
       },
       {
-        "alias": "ch08.principal-axis__relation__orthogonal_axes__axis_1",
-        "end": "ch08.principal-axis__relation__orthogonal_axes__axis_1__end",
-        "kind": "vector",
+        "alias": "ch08.principal-axis__relation__orthogonal_axes__q2",
+        "color": "#F08A24",
+        "end": "ch08.principal-axis__relation__orthogonal_axes__q2__end",
+        "kind": "line",
+        "label": "q2",
         "op": "linear.upsert",
-        "start": "ch08.principal-axis__relation__orthogonal_axes__axis_1__start"
+        "start": "ch08.principal-axis__relation__orthogonal_axes__q2__start"
       },
       {
         "alias": "ch08.principal-axis__relation__rotation",
@@ -1899,34 +1872,13 @@
         ]
       },
       {
-        "alias": "ch08.principal-axis__relation__standard_form__original",
+        "alias": "ch08.principal-axis__relation__standard_form",
         "aliases": [
-          "ch08.principal-axis__relation__standard_form__original",
-          "ch08.principal-axis__relation__standard_form__original__principal",
-          "ch08.principal-axis__relation__standard_form__original__standard"
+          "ch08.principal-axis__relation__standard_form",
+          "ch08.principal-axis__relation__standard_form__principal",
+          "ch08.principal-axis__relation__standard_form__standard"
         ],
-        "axis_segments": [
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.7071067811865475,
-              0.7071067811865475
-            ]
-          ],
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.7071067811865475,
-              -0.7071067811865475
-            ]
-          ]
-        ],
+        "axis_segments": [],
         "bounds": [
           -3.0,
           3.0,
@@ -1934,591 +1886,7 @@
           3.0
         ],
         "classification": "positive_definite",
-        "contour_segments": [
-          [
-            0,
-            1
-          ],
-          [
-            1,
-            2
-          ],
-          [
-            2,
-            3
-          ],
-          [
-            3,
-            4
-          ],
-          [
-            4,
-            5
-          ],
-          [
-            5,
-            6
-          ],
-          [
-            6,
-            7
-          ],
-          [
-            7,
-            8
-          ],
-          [
-            8,
-            9
-          ],
-          [
-            9,
-            10
-          ],
-          [
-            10,
-            11
-          ],
-          [
-            11,
-            12
-          ],
-          [
-            12,
-            13
-          ],
-          [
-            13,
-            14
-          ],
-          [
-            14,
-            15
-          ],
-          [
-            15,
-            16
-          ],
-          [
-            16,
-            17
-          ],
-          [
-            17,
-            18
-          ],
-          [
-            18,
-            19
-          ],
-          [
-            19,
-            20
-          ],
-          [
-            20,
-            21
-          ],
-          [
-            21,
-            22
-          ],
-          [
-            22,
-            23
-          ],
-          [
-            23,
-            24
-          ],
-          [
-            24,
-            25
-          ],
-          [
-            25,
-            26
-          ],
-          [
-            26,
-            27
-          ],
-          [
-            27,
-            28
-          ],
-          [
-            28,
-            29
-          ],
-          [
-            29,
-            30
-          ],
-          [
-            30,
-            31
-          ],
-          [
-            31,
-            32
-          ],
-          [
-            32,
-            33
-          ],
-          [
-            33,
-            34
-          ],
-          [
-            34,
-            35
-          ],
-          [
-            35,
-            36
-          ],
-          [
-            36,
-            37
-          ],
-          [
-            37,
-            38
-          ],
-          [
-            38,
-            39
-          ],
-          [
-            39,
-            40
-          ],
-          [
-            40,
-            41
-          ],
-          [
-            41,
-            42
-          ],
-          [
-            42,
-            43
-          ],
-          [
-            43,
-            44
-          ],
-          [
-            44,
-            45
-          ],
-          [
-            45,
-            46
-          ],
-          [
-            46,
-            47
-          ],
-          [
-            47,
-            48
-          ],
-          [
-            48,
-            49
-          ],
-          [
-            49,
-            50
-          ],
-          [
-            50,
-            51
-          ],
-          [
-            51,
-            52
-          ],
-          [
-            52,
-            53
-          ],
-          [
-            53,
-            54
-          ],
-          [
-            54,
-            55
-          ],
-          [
-            55,
-            56
-          ],
-          [
-            56,
-            57
-          ],
-          [
-            57,
-            58
-          ],
-          [
-            58,
-            59
-          ],
-          [
-            59,
-            60
-          ],
-          [
-            60,
-            61
-          ],
-          [
-            61,
-            62
-          ],
-          [
-            62,
-            63
-          ],
-          [
-            63,
-            0
-          ]
-        ],
-        "contour_vertices": [
-          [
-            0.4472135954999579,
-            0.0
-          ],
-          [
-            0.47364360266470557,
-            0.04664982311758995
-          ],
-          [
-            0.4997279443786714,
-            0.09940206846213158
-          ],
-          [
-            0.5241412699576208,
-            0.15899651598338502
-          ],
-          [
-            0.5445260693773268,
-            0.22555008300180168
-          ],
-          [
-            0.5571533034134529,
-            0.2978046451062608
-          ],
-          [
-            0.5569979130711641,
-            0.3721741068797825
-          ],
-          [
-            0.5388901320740342,
-            0.44225570198001546
-          ],
-          [
-            0.5,
-            0.5
-          ],
-          [
-            0.4422557019800155,
-            0.5388901320740342
-          ],
-          [
-            0.3721741068797826,
-            0.5569979130711642
-          ],
-          [
-            0.29780464510626087,
-            0.5571533034134528
-          ],
-          [
-            0.2255500830018017,
-            0.5445260693773268
-          ],
-          [
-            0.15899651598338496,
-            0.5241412699576207
-          ],
-          [
-            0.09940206846213162,
-            0.4997279443786714
-          ],
-          [
-            0.046649823117590035,
-            0.47364360266470557
-          ],
-          [
-            2.738393491321013e-17,
-            0.4472135954999579
-          ],
-          [
-            -0.041474380143153314,
-            0.421096448313897
-          ],
-          [
-            -0.07868048343370788,
-            0.39555350162583336
-          ],
-          [
-            -0.11242640078693328,
-            0.37062017441555484
-          ],
-          [
-            -0.14340338385193652,
-            0.34620639418554006
-          ],
-          [
-            -0.17219394712536634,
-            0.3221522163781802
-          ],
-          [
-            -0.19928869822032347,
-            0.29825661419063987
-          ],
-          [
-            -0.22510435975261092,
-            0.27429045598378066
-          ],
-          [
-            -0.24999999999999994,
-            0.25
-          ],
-          [
-            -0.27429045598378066,
-            0.22510435975261098
-          ],
-          [
-            -0.2982566141906398,
-            0.19928869822032352
-          ],
-          [
-            -0.32215221637818015,
-            0.17219394712536637
-          ],
-          [
-            -0.34620639418554,
-            0.14340338385193657
-          ],
-          [
-            -0.3706201744155548,
-            0.11242640078693336
-          ],
-          [
-            -0.39555350162583325,
-            0.07868048343370804
-          ],
-          [
-            -0.4210964483138969,
-            0.04147438014315339
-          ],
-          [
-            -0.4472135954999579,
-            5.476786982642026e-17
-          ],
-          [
-            -0.47364360266470557,
-            -0.046649823117589945
-          ],
-          [
-            -0.4997279443786714,
-            -0.09940206846213163
-          ],
-          [
-            -0.5241412699576207,
-            -0.15899651598338485
-          ],
-          [
-            -0.544526069377327,
-            -0.22555008300180163
-          ],
-          [
-            -0.5571533034134529,
-            -0.2978046451062608
-          ],
-          [
-            -0.5569979130711641,
-            -0.37217410687978225
-          ],
-          [
-            -0.5388901320740344,
-            -0.4422557019800153
-          ],
-          [
-            -0.5000000000000001,
-            -0.4999999999999999
-          ],
-          [
-            -0.44225570198001585,
-            -0.5388901320740341
-          ],
-          [
-            -0.3721741068797825,
-            -0.5569979130711641
-          ],
-          [
-            -0.2978046451062609,
-            -0.5571533034134528
-          ],
-          [
-            -0.2255500830018021,
-            -0.544526069377327
-          ],
-          [
-            -0.15899651598338507,
-            -0.5241412699576208
-          ],
-          [
-            -0.09940206846213182,
-            -0.49972794437867146
-          ],
-          [
-            -0.04664982311758987,
-            -0.47364360266470545
-          ],
-          [
-            -8.21518047396304e-17,
-            -0.447213595499958
-          ],
-          [
-            0.04147438014315309,
-            -0.42109644831389714
-          ],
-          [
-            0.07868048343370794,
-            -0.39555350162583336
-          ],
-          [
-            0.11242640078693325,
-            -0.3706201744155549
-          ],
-          [
-            0.1434033838519366,
-            -0.34620639418554
-          ],
-          [
-            0.1721939471253663,
-            -0.3221522163781802
-          ],
-          [
-            0.19928869822032344,
-            -0.2982566141906399
-          ],
-          [
-            0.22510435975261103,
-            -0.2742904559837806
-          ],
-          [
-            0.24999999999999992,
-            -0.25000000000000006
-          ],
-          [
-            0.2742904559837805,
-            -0.22510435975261114
-          ],
-          [
-            0.2982566141906398,
-            -0.19928869822032352
-          ],
-          [
-            0.32215221637818015,
-            -0.17219394712536643
-          ],
-          [
-            0.3462063941855399,
-            -0.14340338385193674
-          ],
-          [
-            0.3706201744155547,
-            -0.11242640078693339
-          ],
-          [
-            0.39555350162583325,
-            -0.07868048343370808
-          ],
-          [
-            0.421096448313897,
-            -0.04147438014315325
-          ]
-        ],
-        "eigenvalues": [
-          2.0,
-          8.0
-        ],
-        "matrix": [
-          [
-            5.0,
-            -3.0
-          ],
-          [
-            -3.0,
-            5.0
-          ]
-        ],
-        "op": "geometry.quadratic_level_set",
-        "principal_axes": [
-          [
-            0.7071067811865475,
-            0.7071067811865475
-          ],
-          [
-            0.7071067811865475,
-            -0.7071067811865475
-          ]
-        ],
-        "sample_count": 4096,
-        "signature": [
-          2,
-          0,
-          0
-        ],
-        "tolerance": 1e-09
-      },
-      {
-        "alias": "ch08.principal-axis__relation__standard_form__result",
-        "aliases": [
-          "ch08.principal-axis__relation__standard_form__result",
-          "ch08.principal-axis__relation__standard_form__result__principal",
-          "ch08.principal-axis__relation__standard_form__result__standard"
-        ],
-        "axis_segments": [
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ],
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              1.0,
-              0.0
-            ]
-          ]
-        ],
-        "bounds": [
-          -3.0,
-          3.0,
-          -3.0,
-          3.0
-        ],
-        "classification": "positive_definite",
+        "color": "#2A9D8F",
         "contour_segments": [
           [
             0,
@@ -3075,28 +2443,7 @@
           "ch08.principal-axis__stage__original__principal",
           "ch08.principal-axis__stage__original__standard"
         ],
-        "axis_segments": [
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.7071067811865475,
-              0.7071067811865475
-            ]
-          ],
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.7071067811865475,
-              -0.7071067811865475
-            ]
-          ]
-        ],
+        "axis_segments": [],
         "bounds": [
           -3.0,
           3.0,
@@ -3104,6 +2451,7 @@
           3.0
         ],
         "classification": "positive_definite",
+        "color": "#2A9D8F",
         "contour_segments": [
           [
             0,
@@ -3654,25 +3002,619 @@
         "tolerance": 1e-09
       },
       {
-        "alias": "ch08.principal-axis__stage__axes__axes",
+        "alias": "ch08.principal-axis__stage__axes__form",
+        "aliases": [
+          "ch08.principal-axis__stage__axes__form",
+          "ch08.principal-axis__stage__axes__form__principal",
+          "ch08.principal-axis__stage__axes__form__standard"
+        ],
+        "axis_segments": [],
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
+        "classification": "positive_definite",
+        "color": "#2A9D8F",
+        "contour_segments": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            5,
+            6
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            7,
+            8
+          ],
+          [
+            8,
+            9
+          ],
+          [
+            9,
+            10
+          ],
+          [
+            10,
+            11
+          ],
+          [
+            11,
+            12
+          ],
+          [
+            12,
+            13
+          ],
+          [
+            13,
+            14
+          ],
+          [
+            14,
+            15
+          ],
+          [
+            15,
+            16
+          ],
+          [
+            16,
+            17
+          ],
+          [
+            17,
+            18
+          ],
+          [
+            18,
+            19
+          ],
+          [
+            19,
+            20
+          ],
+          [
+            20,
+            21
+          ],
+          [
+            21,
+            22
+          ],
+          [
+            22,
+            23
+          ],
+          [
+            23,
+            24
+          ],
+          [
+            24,
+            25
+          ],
+          [
+            25,
+            26
+          ],
+          [
+            26,
+            27
+          ],
+          [
+            27,
+            28
+          ],
+          [
+            28,
+            29
+          ],
+          [
+            29,
+            30
+          ],
+          [
+            30,
+            31
+          ],
+          [
+            31,
+            32
+          ],
+          [
+            32,
+            33
+          ],
+          [
+            33,
+            34
+          ],
+          [
+            34,
+            35
+          ],
+          [
+            35,
+            36
+          ],
+          [
+            36,
+            37
+          ],
+          [
+            37,
+            38
+          ],
+          [
+            38,
+            39
+          ],
+          [
+            39,
+            40
+          ],
+          [
+            40,
+            41
+          ],
+          [
+            41,
+            42
+          ],
+          [
+            42,
+            43
+          ],
+          [
+            43,
+            44
+          ],
+          [
+            44,
+            45
+          ],
+          [
+            45,
+            46
+          ],
+          [
+            46,
+            47
+          ],
+          [
+            47,
+            48
+          ],
+          [
+            48,
+            49
+          ],
+          [
+            49,
+            50
+          ],
+          [
+            50,
+            51
+          ],
+          [
+            51,
+            52
+          ],
+          [
+            52,
+            53
+          ],
+          [
+            53,
+            54
+          ],
+          [
+            54,
+            55
+          ],
+          [
+            55,
+            56
+          ],
+          [
+            56,
+            57
+          ],
+          [
+            57,
+            58
+          ],
+          [
+            58,
+            59
+          ],
+          [
+            59,
+            60
+          ],
+          [
+            60,
+            61
+          ],
+          [
+            61,
+            62
+          ],
+          [
+            62,
+            63
+          ],
+          [
+            63,
+            0
+          ]
+        ],
+        "contour_vertices": [
+          [
+            0.4472135954999579,
+            0.0
+          ],
+          [
+            0.47364360266470557,
+            0.04664982311758995
+          ],
+          [
+            0.4997279443786714,
+            0.09940206846213158
+          ],
+          [
+            0.5241412699576208,
+            0.15899651598338502
+          ],
+          [
+            0.5445260693773268,
+            0.22555008300180168
+          ],
+          [
+            0.5571533034134529,
+            0.2978046451062608
+          ],
+          [
+            0.5569979130711641,
+            0.3721741068797825
+          ],
+          [
+            0.5388901320740342,
+            0.44225570198001546
+          ],
+          [
+            0.5,
+            0.5
+          ],
+          [
+            0.4422557019800155,
+            0.5388901320740342
+          ],
+          [
+            0.3721741068797826,
+            0.5569979130711642
+          ],
+          [
+            0.29780464510626087,
+            0.5571533034134528
+          ],
+          [
+            0.2255500830018017,
+            0.5445260693773268
+          ],
+          [
+            0.15899651598338496,
+            0.5241412699576207
+          ],
+          [
+            0.09940206846213162,
+            0.4997279443786714
+          ],
+          [
+            0.046649823117590035,
+            0.47364360266470557
+          ],
+          [
+            2.738393491321013e-17,
+            0.4472135954999579
+          ],
+          [
+            -0.041474380143153314,
+            0.421096448313897
+          ],
+          [
+            -0.07868048343370788,
+            0.39555350162583336
+          ],
+          [
+            -0.11242640078693328,
+            0.37062017441555484
+          ],
+          [
+            -0.14340338385193652,
+            0.34620639418554006
+          ],
+          [
+            -0.17219394712536634,
+            0.3221522163781802
+          ],
+          [
+            -0.19928869822032347,
+            0.29825661419063987
+          ],
+          [
+            -0.22510435975261092,
+            0.27429045598378066
+          ],
+          [
+            -0.24999999999999994,
+            0.25
+          ],
+          [
+            -0.27429045598378066,
+            0.22510435975261098
+          ],
+          [
+            -0.2982566141906398,
+            0.19928869822032352
+          ],
+          [
+            -0.32215221637818015,
+            0.17219394712536637
+          ],
+          [
+            -0.34620639418554,
+            0.14340338385193657
+          ],
+          [
+            -0.3706201744155548,
+            0.11242640078693336
+          ],
+          [
+            -0.39555350162583325,
+            0.07868048343370804
+          ],
+          [
+            -0.4210964483138969,
+            0.04147438014315339
+          ],
+          [
+            -0.4472135954999579,
+            5.476786982642026e-17
+          ],
+          [
+            -0.47364360266470557,
+            -0.046649823117589945
+          ],
+          [
+            -0.4997279443786714,
+            -0.09940206846213163
+          ],
+          [
+            -0.5241412699576207,
+            -0.15899651598338485
+          ],
+          [
+            -0.544526069377327,
+            -0.22555008300180163
+          ],
+          [
+            -0.5571533034134529,
+            -0.2978046451062608
+          ],
+          [
+            -0.5569979130711641,
+            -0.37217410687978225
+          ],
+          [
+            -0.5388901320740344,
+            -0.4422557019800153
+          ],
+          [
+            -0.5000000000000001,
+            -0.4999999999999999
+          ],
+          [
+            -0.44225570198001585,
+            -0.5388901320740341
+          ],
+          [
+            -0.3721741068797825,
+            -0.5569979130711641
+          ],
+          [
+            -0.2978046451062609,
+            -0.5571533034134528
+          ],
+          [
+            -0.2255500830018021,
+            -0.544526069377327
+          ],
+          [
+            -0.15899651598338507,
+            -0.5241412699576208
+          ],
+          [
+            -0.09940206846213182,
+            -0.49972794437867146
+          ],
+          [
+            -0.04664982311758987,
+            -0.47364360266470545
+          ],
+          [
+            -8.21518047396304e-17,
+            -0.447213595499958
+          ],
+          [
+            0.04147438014315309,
+            -0.42109644831389714
+          ],
+          [
+            0.07868048343370794,
+            -0.39555350162583336
+          ],
+          [
+            0.11242640078693325,
+            -0.3706201744155549
+          ],
+          [
+            0.1434033838519366,
+            -0.34620639418554
+          ],
+          [
+            0.1721939471253663,
+            -0.3221522163781802
+          ],
+          [
+            0.19928869822032344,
+            -0.2982566141906399
+          ],
+          [
+            0.22510435975261103,
+            -0.2742904559837806
+          ],
+          [
+            0.24999999999999992,
+            -0.25000000000000006
+          ],
+          [
+            0.2742904559837805,
+            -0.22510435975261114
+          ],
+          [
+            0.2982566141906398,
+            -0.19928869822032352
+          ],
+          [
+            0.32215221637818015,
+            -0.17219394712536643
+          ],
+          [
+            0.3462063941855399,
+            -0.14340338385193674
+          ],
+          [
+            0.3706201744155547,
+            -0.11242640078693339
+          ],
+          [
+            0.39555350162583325,
+            -0.07868048343370808
+          ],
+          [
+            0.421096448313897,
+            -0.04147438014315325
+          ]
+        ],
+        "eigenvalues": [
+          2.0,
+          8.0
+        ],
         "matrix": [
+          [
+            5.0,
+            -3.0
+          ],
+          [
+            -3.0,
+            5.0
+          ]
+        ],
+        "op": "geometry.quadratic_level_set",
+        "principal_axes": [
           [
             0.7071067811865475,
             0.7071067811865475
           ],
           [
-            -0.7071067811865475,
-            0.7071067811865475
+            0.7071067811865475,
+            -0.7071067811865475
           ]
         ],
-        "op": "geometry.transformed_grid",
-        "step": 1.0
+        "sample_count": 4096,
+        "signature": [
+          2,
+          0,
+          0
+        ],
+        "tolerance": 1e-09
+      },
+      {
+        "alias": "ch08.principal-axis__stage__axes__q1__start",
+        "coordinates": [
+          -2.1213203435596424,
+          2.1213203435596424
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch08.principal-axis__stage__axes__q1__end",
+        "coordinates": [
+          2.1213203435596424,
+          -2.1213203435596424
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch08.principal-axis__stage__axes__q1",
+        "color": "#2F6BFF",
+        "end": "ch08.principal-axis__stage__axes__q1__end",
+        "kind": "line",
+        "label": "q1",
+        "op": "linear.upsert",
+        "start": "ch08.principal-axis__stage__axes__q1__start"
+      },
+      {
+        "alias": "ch08.principal-axis__stage__axes__q2__start",
+        "coordinates": [
+          -2.1213203435596424,
+          -2.1213203435596424
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch08.principal-axis__stage__axes__q2__end",
+        "coordinates": [
+          2.1213203435596424,
+          2.1213203435596424
+        ],
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch08.principal-axis__stage__axes__q2",
+        "color": "#F08A24",
+        "end": "ch08.principal-axis__stage__axes__q2__end",
+        "kind": "line",
+        "label": "q2",
+        "op": "linear.upsert",
+        "start": "ch08.principal-axis__stage__axes__q2__start"
       },
       {
         "alias": "ch08.principal-axis__stage__axes__rotation",
@@ -3706,28 +3648,7 @@
           "ch08.principal-axis__stage__standard__principal",
           "ch08.principal-axis__stage__standard__standard"
         ],
-        "axis_segments": [
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ],
-          [
-            [
-              0.0,
-              0.0
-            ],
-            [
-              1.0,
-              0.0
-            ]
-          ]
-        ],
+        "axis_segments": [],
         "bounds": [
           -3.0,
           3.0,
@@ -3735,6 +3656,7 @@
           3.0
         ],
         "classification": "positive_definite",
+        "color": "#2A9D8F",
         "contour_segments": [
           [
             0,
@@ -4285,66 +4207,39 @@
         "tolerance": 1e-09
       },
       {
-        "alias": "sem__original__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "bounds": [
+          0.0,
+          2.0,
+          0.0,
+          2.1213203435596424
         ],
-        "text": "原始倾斜二次型"
-      },
-      {
-        "alias": "sem__axes__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
-        ],
-        "text": "正交主轴坐标"
-      },
-      {
-        "alias": "sem__standard__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          1.69
-        ],
-        "text": "无交叉项标准形"
-      },
-      {
         "op": "view.fit",
         "padding": 1.15
       }
     ],
     "scene": "2d",
-    "summary": "8.3.1 主轴定理",
+    "summary": "主轴定理",
     "version": 1
   },
-  "plan_digest": "sha256:1c7f84ab180d0af124f128ca81f876183b06b9226cc259e869a06f01f96ceeb0",
+  "plan_digest": "sha256:d325fd2c03d534654f101b40626aa77ad4ea4df0f7aa1eac9ef9b2226bfbc5e7",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
   "scene_family": "quadratic_level_set",
   "schema_version": 1,
-  "source_hash": "sha256:6070ef97f7c347269da95f348d213d97363fcd712afd7bcb3bc536bfbf4ed435",
+  "source_hash": "sha256:272b663972e6a5d5e9cd42451242f9658c4f6a99f9cf2e2722939a86f712f27f",
   "stages": [
     {
       "anchor": [
-        -2.65,
+        0.0,
         2.65
       ],
-      "caption": "Q^T A Q=diag(8,2); x=Qy",
-      "id": "original",
-      "layout": "sequence",
-      "title": "原始倾斜二次型",
+      "caption": "先看输入网格，再看它被矩阵拉伸、旋转或剪切后的形状。",
+      "id": "stage.ch08.principal-axis.original",
+      "layout": "overlay",
+      "title": "原始倾斜椭圆",
       "visible_aliases": [
-        "ch08.principal-axis__stage__original",
-        "ch08.principal-axis__entity__matrix",
-        "ch08.principal-axis__entity__point",
-        "ch08.principal-axis__relation__orthogonal_axes__form",
-        "ch08.principal-axis__relation__orthogonal_axes__axis_0",
-        "ch08.principal-axis__relation__orthogonal_axes__axis_1",
-        "sem__original__title"
+        "ch08.principal-axis__stage__original"
       ],
       "visible_refs": [
         "entity.ch08.principal-axis.matrix",
@@ -4354,25 +4249,22 @@
     },
     {
       "anchor": [
-        -2.65,
-        2.17
+        0.0,
+        2.65
       ],
-      "caption": "Q^T A Q=diag(8,2); x=Qy",
-      "id": "axes",
-      "layout": "sequence",
-      "title": "正交主轴坐标",
+      "caption": "对比同一网格在变换后的方向和面积变化。",
+      "id": "stage.ch08.principal-axis.axes",
+      "layout": "overlay",
+      "title": "显示两条特征方向",
       "visible_aliases": [
-        "ch08.principal-axis__stage__axes__axes",
-        "ch08.principal-axis__stage__axes__rotation",
-        "ch08.principal-axis__entity__matrix",
-        "ch08.principal-axis__entity__axes",
-        "ch08.principal-axis__entity__point",
-        "ch08.principal-axis__entity__coordinates",
-        "ch08.principal-axis__relation__orthogonal_axes__form",
-        "ch08.principal-axis__relation__orthogonal_axes__axis_0",
-        "ch08.principal-axis__relation__orthogonal_axes__axis_1",
-        "ch08.principal-axis__relation__rotation",
-        "sem__axes__title"
+        "ch08.principal-axis__stage__axes__form",
+        "ch08.principal-axis__stage__axes__q1__start",
+        "ch08.principal-axis__stage__axes__q1__end",
+        "ch08.principal-axis__stage__axes__q1",
+        "ch08.principal-axis__stage__axes__q2__start",
+        "ch08.principal-axis__stage__axes__q2__end",
+        "ch08.principal-axis__stage__axes__q2",
+        "ch08.principal-axis__stage__axes__rotation"
       ],
       "visible_refs": [
         "entity.ch08.principal-axis.matrix",
@@ -4385,22 +4277,15 @@
     },
     {
       "anchor": [
-        -2.65,
-        1.69
+        0.0,
+        2.65
       ],
-      "caption": "Q^T A Q=diag(8,2); x=Qy",
-      "id": "standard",
-      "layout": "sequence",
-      "title": "无交叉项标准形",
+      "caption": "对比同一网格在变换后的方向和面积变化。",
+      "id": "stage.ch08.principal-axis.standard",
+      "layout": "overlay",
+      "title": "旋转后得到标准形",
       "visible_aliases": [
-        "ch08.principal-axis__stage__standard",
-        "ch08.principal-axis__entity__matrix",
-        "ch08.principal-axis__entity__axes",
-        "ch08.principal-axis__entity__coordinates",
-        "ch08.principal-axis__entity__standard",
-        "ch08.principal-axis__relation__standard_form__original",
-        "ch08.principal-axis__relation__standard_form__result",
-        "sem__standard__title"
+        "ch08.principal-axis__stage__standard"
       ],
       "visible_refs": [
         "entity.ch08.principal-axis.matrix",

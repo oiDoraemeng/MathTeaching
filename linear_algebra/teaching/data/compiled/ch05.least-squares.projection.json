@@ -1,75 +1,40 @@
 {
-  "artifact_digest": "sha256:69a55d4bdbb474656c08ef7207f86ee479ad41068b194dc59d466991718a5286",
+  "artifact_digest": "sha256:cb73fb6468e12aac0284092b0eeb93145c7d73c3ddaf6108d53242c877019a31",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:ecdee818a748213e2f1c6262f23371467392861f68ad506c8640dd46162a155e",
+  "contract_digest": "sha256:c44d8f0d603b2cc51f35b2078e9cef7f9b9f68352993e21abd83d5764e3812fa",
   "plan": {
     "operations": [
       {
-        "alias": "ch05.least-squares.projection__entity__matrix",
-        "aliases": [
-          "ch05.least-squares.projection__entity__matrix__stage_0"
-        ],
-        "augmented_rank": 2,
-        "matrix": [
-          [
-            1.0,
-            1.0
-          ],
-          [
-            1.0,
-            2.0
-          ],
-          [
-            1.0,
-            3.0
-          ]
-        ],
-        "op": "geometry.matrix_tableau",
-        "rank": 2,
-        "rhs": [
-          0.0,
+        "alias": "ch05.least-squares.projection__entity__matrix__point_0",
+        "coordinates": [
           0.0,
           0.0
         ],
-        "solution_state": "unknown",
-        "stages": [
-          {
-            "alias": "ch05.least-squares.projection__entity__matrix__stage_0",
-            "augmented_rank": 2,
-            "caption": "初始增广矩阵",
-            "highlight_rows": [],
-            "matrix": [
-              [
-                1.0,
-                1.0
-              ],
-              [
-                1.0,
-                2.0
-              ],
-              [
-                1.0,
-                3.0
-              ]
-            ],
-            "operation_label": "初始增广矩阵",
-            "rank": 2,
-            "rhs": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "solution_state": "unique",
-            "title": "第 1 阶段"
-          }
-        ]
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.least-squares.projection__entity__matrix__point_1",
+        "coordinates": [
+          1.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.least-squares.projection__entity__matrix",
+        "end": "ch05.least-squares.projection__entity__matrix__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.least-squares.projection__entity__matrix__point_0"
       },
       {
         "alias": "ch05.least-squares.projection__entity__values__point_0",
         "coordinates": [
           0.0,
-          1.0
+          0.0
         ],
         "name": "",
         "op": "point.upsert"
@@ -77,17 +42,8 @@
       {
         "alias": "ch05.least-squares.projection__entity__values__point_1",
         "coordinates": [
-          1.0,
-          2.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__values__point_2",
-        "coordinates": [
           2.0,
-          2.0
+          1.0
         ],
         "name": "",
         "op": "point.upsert"
@@ -95,19 +51,71 @@
       {
         "alias": "ch05.least-squares.projection__entity__values",
         "end": "ch05.least-squares.projection__entity__values__point_1",
-        "kind": "segment",
+        "kind": "vector",
         "op": "linear.upsert",
         "start": "ch05.least-squares.projection__entity__values__point_0"
       },
       {
-        "alias": "ch05.least-squares.projection__entity__values__segment_1",
-        "end": "ch05.least-squares.projection__entity__values__point_2",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__entity__values__point_1"
+        "alias": "ch05.least-squares.projection__entity__data__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
       },
       {
-        "alias": "ch05.least-squares.projection__entity__data__point_0",
+        "alias": "ch05.least-squares.projection__entity__data__point_1",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.least-squares.projection__entity__data",
+        "end": "ch05.least-squares.projection__entity__data__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.least-squares.projection__entity__data__point_0"
+      },
+      {
+        "alias": "ch05.least-squares.projection__entity__fit__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.least-squares.projection__entity__fit__point_1",
+        "coordinates": [
+          2.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.least-squares.projection__entity__fit",
+        "end": "ch05.least-squares.projection__entity__fit__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.least-squares.projection__entity__fit__point_0"
+      },
+      {
+        "alias": "ch05.least-squares.projection__entity__residual__point_0",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.least-squares.projection__entity__residual__point_1",
         "coordinates": [
           0.0,
           1.0
@@ -116,118 +124,11 @@
         "op": "point.upsert"
       },
       {
-        "alias": "ch05.least-squares.projection__entity__data__point_1",
-        "coordinates": [
-          1.0,
-          2.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__data__point_2",
-        "coordinates": [
-          2.0,
-          2.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__data",
-        "end": "ch05.least-squares.projection__entity__data__point_1",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__entity__data__point_0"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__data__segment_1",
-        "end": "ch05.least-squares.projection__entity__data__point_2",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__entity__data__point_1"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__fit__point_0",
-        "coordinates": [
-          0.0,
-          1.1666666666666667
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__fit__point_1",
-        "coordinates": [
-          1.0,
-          1.6666666666666667
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__fit__point_2",
-        "coordinates": [
-          2.0,
-          2.1666666666666665
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__fit",
-        "end": "ch05.least-squares.projection__entity__fit__point_1",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__entity__fit__point_0"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__fit__segment_1",
-        "end": "ch05.least-squares.projection__entity__fit__point_2",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__entity__fit__point_1"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__residual__point_0",
-        "coordinates": [
-          0.0,
-          -0.16666666666666666
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__residual__point_1",
-        "coordinates": [
-          1.0,
-          0.3333333333333333
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__residual__point_2",
-        "coordinates": [
-          2.0,
-          -0.16666666666666666
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
         "alias": "ch05.least-squares.projection__entity__residual",
         "end": "ch05.least-squares.projection__entity__residual__point_1",
-        "kind": "segment",
+        "kind": "vector",
         "op": "linear.upsert",
         "start": "ch05.least-squares.projection__entity__residual__point_0"
-      },
-      {
-        "alias": "ch05.least-squares.projection__entity__residual__segment_1",
-        "end": "ch05.least-squares.projection__entity__residual__point_2",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__entity__residual__point_1"
       },
       {
         "alias": "ch05.least-squares.projection__relation__data",
@@ -238,251 +139,134 @@
           2.0
         ],
         "coefficients": [
-          0.666666666666666,
-          0.5000000000000003
+          2.0
         ],
         "data_alias": "ch05.least-squares.projection__relation__data",
-        "entity_count": 6,
+        "entity_count": 5,
         "fit": [
-          1.1666666666666663,
-          1.6666666666666665,
-          2.166666666666667
+          2.0,
+          0.0
         ],
         "fit_alias": "ch05.least-squares.projection__relation__fit",
         "matrix": [
           [
-            1.0,
             1.0
           ],
           [
-            1.0,
-            2.0
-          ],
-          [
-            1.0,
-            3.0
+            0.0
           ]
         ],
         "op": "geometry.least_squares",
         "projection": [
-          1.1666666666666663,
-          1.6666666666666665,
-          2.166666666666667
+          2.0,
+          0.0
         ],
         "projection_alias": "ch05.least-squares.projection__relation__projection",
         "residual": [
-          -0.1666666666666663,
-          0.3333333333333335,
-          -0.16666666666666696
+          0.0,
+          1.0
         ],
         "residual_alias": "ch05.least-squares.projection__relation__residual",
-        "sample_count": 3,
+        "sample_count": 2,
         "tolerance": 1e-09,
         "values": [
-          1.0,
           2.0,
-          2.0
+          1.0
         ]
       },
       {
-        "alias": "ch05.least-squares.projection__stage__data__point_0",
+        "alias": "ch05.least-squares.projection__stage__projection__b__point_0",
+        "color": "#F08A24",
         "coordinates": [
           0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.least-squares.projection__stage__projection__b__point_1",
+        "color": "#F08A24",
+        "coordinates": [
+          2.0,
           1.0
         ],
         "name": "",
         "op": "point.upsert"
       },
       {
-        "alias": "ch05.least-squares.projection__stage__data__point_1",
-        "coordinates": [
-          1.0,
-          2.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__data__point_2",
-        "coordinates": [
-          2.0,
-          2.0
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__data",
-        "end": "ch05.least-squares.projection__stage__data__point_1",
-        "kind": "segment",
+        "alias": "ch05.least-squares.projection__stage__projection__b",
+        "color": "#F08A24",
+        "end": "ch05.least-squares.projection__stage__projection__b__point_1",
+        "kind": "vector",
         "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__stage__data__point_0"
+        "start": "ch05.least-squares.projection__stage__projection__b__point_0"
       },
       {
-        "alias": "ch05.least-squares.projection__stage__data__segment_1",
-        "end": "ch05.least-squares.projection__stage__data__point_2",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__stage__data__point_1"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__projection__point_0",
+        "alias": "ch05.least-squares.projection__stage__projection__projection__point_0",
+        "color": "#6B7280",
         "coordinates": [
           0.0,
-          1.1666666666666667
+          0.0
         ],
         "name": "",
         "op": "point.upsert"
       },
       {
-        "alias": "ch05.least-squares.projection__stage__projection__point_1",
-        "coordinates": [
-          1.0,
-          1.6666666666666667
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__projection__point_2",
+        "alias": "ch05.least-squares.projection__stage__projection__projection__point_1",
+        "color": "#6B7280",
         "coordinates": [
           2.0,
-          2.1666666666666665
+          0.0
         ],
         "name": "",
         "op": "point.upsert"
       },
       {
-        "alias": "ch05.least-squares.projection__stage__projection",
-        "end": "ch05.least-squares.projection__stage__projection__point_1",
-        "kind": "segment",
+        "alias": "ch05.least-squares.projection__stage__projection__projection",
+        "color": "#6B7280",
+        "end": "ch05.least-squares.projection__stage__projection__projection__point_1",
+        "kind": "vector",
         "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__stage__projection__point_0"
+        "start": "ch05.least-squares.projection__stage__projection__projection__point_0"
       },
       {
-        "alias": "ch05.least-squares.projection__stage__projection__segment_1",
-        "end": "ch05.least-squares.projection__stage__projection__point_2",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__stage__projection__point_1"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__residual__point_0",
-        "coordinates": [
-          0.0,
-          -0.16666666666666666
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__residual__point_1",
-        "coordinates": [
-          1.0,
-          0.3333333333333333
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__residual__point_2",
+        "alias": "ch05.least-squares.projection__stage__projection__residual__start",
+        "color": "#E76F51",
         "coordinates": [
           2.0,
-          -0.16666666666666666
+          0.0
         ],
         "name": "",
         "op": "point.upsert"
       },
       {
-        "alias": "ch05.least-squares.projection__stage__residual",
-        "end": "ch05.least-squares.projection__stage__residual__point_1",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__stage__residual__point_0"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__residual__segment_1",
-        "end": "ch05.least-squares.projection__stage__residual__point_2",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__stage__residual__point_1"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__orthogonality__point_0",
-        "coordinates": [
-          0.0,
-          -0.16666666666666666
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__orthogonality__point_1",
-        "coordinates": [
-          1.0,
-          0.3333333333333333
-        ],
-        "name": "",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__orthogonality__point_2",
+        "alias": "ch05.least-squares.projection__stage__projection__residual__end",
+        "color": "#E76F51",
         "coordinates": [
           2.0,
-          -0.16666666666666666
+          1.0
         ],
         "name": "",
         "op": "point.upsert"
       },
       {
-        "alias": "ch05.least-squares.projection__stage__orthogonality",
-        "end": "ch05.least-squares.projection__stage__orthogonality__point_1",
+        "alias": "ch05.least-squares.projection__stage__projection__residual",
+        "color": "#E76F51",
+        "end": "ch05.least-squares.projection__stage__projection__residual__end",
         "kind": "segment",
         "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__stage__orthogonality__point_0"
-      },
-      {
-        "alias": "ch05.least-squares.projection__stage__orthogonality__segment_1",
-        "end": "ch05.least-squares.projection__stage__orthogonality__point_2",
-        "kind": "segment",
-        "op": "linear.upsert",
-        "start": "ch05.least-squares.projection__stage__orthogonality__point_1"
-      },
-      {
-        "alias": "sem__stage.ch05.least-squares.projection.data__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "data"
+        "start": "ch05.least-squares.projection__stage__projection__residual__start",
+        "style": "dashed"
       },
       {
         "alias": "sem__stage.ch05.least-squares.projection.projection__title",
         "op": "annotation.upsert",
         "position": [
-          -2.65,
-          2.17
+          0.0,
+          2.65
         ],
-        "text": "projection"
-      },
-      {
-        "alias": "sem__stage.ch05.least-squares.projection.residual__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          1.69
-        ],
-        "text": "residual"
-      },
-      {
-        "alias": "sem__stage.ch05.least-squares.projection.orthogonality__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          1.21
-        ],
-        "text": "orthogonality"
+        "text": "最小二乘投影"
       },
       {
         "op": "view.fit",
@@ -490,10 +274,10 @@
       }
     ],
     "scene": "2d",
-    "summary": "5.5 最小二乘问题（选学阅读）",
+    "summary": "最小二乘解",
     "version": 1
   },
-  "plan_digest": "sha256:355d1364887772c73e767a3dce4c2636af3947e380af6e2e484541a0ddec9d5b",
+  "plan_digest": "sha256:314f1d213e8d8a7a9a4cd4cb24198572336a014388f5b245757066dd956b17aa",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
@@ -503,134 +287,27 @@
   "stages": [
     {
       "anchor": [
-        -2.65,
+        0.0,
         2.65
       ],
-      "caption": "data",
-      "id": "stage.ch05.least-squares.projection.data",
-      "layout": "sequence",
-      "title": "data",
-      "visible_aliases": [
-        "ch05.least-squares.projection__stage__data",
-        "ch05.least-squares.projection__stage__data__segment_1",
-        "ch05.least-squares.projection__entity__matrix",
-        "ch05.least-squares.projection__entity__values",
-        "ch05.least-squares.projection__entity__values__segment_1",
-        "ch05.least-squares.projection__entity__data",
-        "ch05.least-squares.projection__entity__data__segment_1",
-        "ch05.least-squares.projection__entity__fit",
-        "ch05.least-squares.projection__entity__fit__segment_1",
-        "ch05.least-squares.projection__entity__residual",
-        "ch05.least-squares.projection__entity__residual__segment_1",
-        "ch05.least-squares.projection__relation__data",
-        "sem__stage.ch05.least-squares.projection.data__title"
-      ],
-      "visible_refs": [
-        "entity.ch05.least-squares.projection.matrix",
-        "entity.ch05.least-squares.projection.values",
-        "entity.ch05.least-squares.projection.data",
-        "entity.ch05.least-squares.projection.fit",
-        "entity.ch05.least-squares.projection.residual",
-        "relation.ch05.least-squares.projection.projects_to"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "projection",
+      "caption": "沿着方向线读出投影分量。",
       "id": "stage.ch05.least-squares.projection.projection",
-      "layout": "sequence",
-      "title": "projection",
+      "layout": "overlay",
+      "title": "最小二乘投影",
       "visible_aliases": [
-        "ch05.least-squares.projection__stage__projection",
-        "ch05.least-squares.projection__stage__projection__segment_1",
-        "ch05.least-squares.projection__entity__matrix",
-        "ch05.least-squares.projection__entity__values",
-        "ch05.least-squares.projection__entity__values__segment_1",
-        "ch05.least-squares.projection__entity__data",
-        "ch05.least-squares.projection__entity__data__segment_1",
-        "ch05.least-squares.projection__entity__fit",
-        "ch05.least-squares.projection__entity__fit__segment_1",
-        "ch05.least-squares.projection__entity__residual",
-        "ch05.least-squares.projection__entity__residual__segment_1",
-        "ch05.least-squares.projection__relation__data",
+        "ch05.least-squares.projection__stage__projection__b__point_0",
+        "ch05.least-squares.projection__stage__projection__b__point_1",
+        "ch05.least-squares.projection__stage__projection__b",
+        "ch05.least-squares.projection__stage__projection__projection__point_0",
+        "ch05.least-squares.projection__stage__projection__projection__point_1",
+        "ch05.least-squares.projection__stage__projection__projection",
+        "ch05.least-squares.projection__stage__projection__residual__start",
+        "ch05.least-squares.projection__stage__projection__residual__end",
+        "ch05.least-squares.projection__stage__projection__residual",
         "sem__stage.ch05.least-squares.projection.projection__title"
       ],
       "visible_refs": [
-        "entity.ch05.least-squares.projection.matrix",
-        "entity.ch05.least-squares.projection.values",
-        "entity.ch05.least-squares.projection.data",
-        "entity.ch05.least-squares.projection.fit",
-        "entity.ch05.least-squares.projection.residual",
-        "relation.ch05.least-squares.projection.projects_to"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        1.69
-      ],
-      "caption": "residual",
-      "id": "stage.ch05.least-squares.projection.residual",
-      "layout": "sequence",
-      "title": "residual",
-      "visible_aliases": [
-        "ch05.least-squares.projection__stage__residual",
-        "ch05.least-squares.projection__stage__residual__segment_1",
-        "ch05.least-squares.projection__entity__matrix",
-        "ch05.least-squares.projection__entity__values",
-        "ch05.least-squares.projection__entity__values__segment_1",
-        "ch05.least-squares.projection__entity__data",
-        "ch05.least-squares.projection__entity__data__segment_1",
-        "ch05.least-squares.projection__entity__fit",
-        "ch05.least-squares.projection__entity__fit__segment_1",
-        "ch05.least-squares.projection__entity__residual",
-        "ch05.least-squares.projection__entity__residual__segment_1",
-        "ch05.least-squares.projection__relation__data",
-        "sem__stage.ch05.least-squares.projection.residual__title"
-      ],
-      "visible_refs": [
-        "entity.ch05.least-squares.projection.matrix",
-        "entity.ch05.least-squares.projection.values",
-        "entity.ch05.least-squares.projection.data",
-        "entity.ch05.least-squares.projection.fit",
-        "entity.ch05.least-squares.projection.residual",
-        "relation.ch05.least-squares.projection.projects_to"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        1.21
-      ],
-      "caption": "orthogonality",
-      "id": "stage.ch05.least-squares.projection.orthogonality",
-      "layout": "sequence",
-      "title": "orthogonality",
-      "visible_aliases": [
-        "ch05.least-squares.projection__stage__orthogonality",
-        "ch05.least-squares.projection__stage__orthogonality__segment_1",
-        "ch05.least-squares.projection__entity__matrix",
-        "ch05.least-squares.projection__entity__values",
-        "ch05.least-squares.projection__entity__values__segment_1",
-        "ch05.least-squares.projection__entity__data",
-        "ch05.least-squares.projection__entity__data__segment_1",
-        "ch05.least-squares.projection__entity__fit",
-        "ch05.least-squares.projection__entity__fit__segment_1",
-        "ch05.least-squares.projection__entity__residual",
-        "ch05.least-squares.projection__entity__residual__segment_1",
-        "ch05.least-squares.projection__relation__data",
-        "sem__stage.ch05.least-squares.projection.orthogonality__title"
-      ],
-      "visible_refs": [
-        "entity.ch05.least-squares.projection.matrix",
-        "entity.ch05.least-squares.projection.values",
-        "entity.ch05.least-squares.projection.data",
-        "entity.ch05.least-squares.projection.fit",
-        "entity.ch05.least-squares.projection.residual",
-        "relation.ch05.least-squares.projection.projects_to"
+        "entity.ch05.least-squares.projection.matrix"
       ]
     }
   ],

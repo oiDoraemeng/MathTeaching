@@ -35,14 +35,12 @@ import generate_chapter1_local as chapter1
 
 _SPEC = {
     "ch03.det.oriented-area": {"formula": "det(A)=ad-bc", "kind": "oriented_area", "given": {"a": [2, 1], "b": [1, 3]}, "result": 5.0, "check": "area", "statement": "行列式等于以矩阵两列为邻边的平行四边形的有向面积；单位正方形因此变成面积 5 的平行四边形。", "relation": "same_measure"},
-    "ch03.det.row-swap": {"formula": "det(PA)=-det(A)", "kind": "determinant", "given": {"matrix": [[1, 2], [3, 4]]}, "result": -2.0, "check": "determinant", "statement": "交换两行会翻转两列的有向平行四边形方向，因此行列式变号而绝对面积不变。", "relation": "orientation"},
-    "ch03.det.scaling": {"formula": "det(A')=k\\,det(A)", "kind": "determinant", "given": {"matrix": [[2, 0], [0, 3]]}, "result": 6.0, "check": "determinant", "statement": "某一行乘以 k 等价于沿一个方向拉伸 k 倍，行列式也乘以 k。", "relation": "same_measure"},
-    "ch03.det.shear": {"formula": "det([[1,k],[0,1]])=1", "kind": "determinant", "given": {"matrix": [[1, 2], [0, 1]]}, "result": 1.0, "check": "determinant", "statement": "切变只改变平行四边形的倾斜，不改变底和高的乘积，所以面积保持不变。", "relation": "invariant"},
-    "ch03.det.multiplicativity": {"formula": "det(AB)=det(A)det(B)", "kind": "determinant", "given": {"matrix": [[2, 0], [0, 3]]}, "result": 6.0, "check": "determinant", "statement": "复合变换的总面积缩放等于两个阶段缩放因子的乘积，体现 det(AB)=det(A)det(B)。", "relation": "same_measure", "multiplicativity": True},
+    "ch03.det.basic-properties": {"formula": "det(A')=\\pm k\\,det(A)", "kind": "determinant", "given": {"matrix": [[3, 4], [1, 2]]}, "result": 2.0, "check": "determinant", "statement": "交换、数乘和行叠分别改变有向面积的方向、比例或形状。", "relation": "same_measure"},
+    "ch03.det.multiplicativity": {"formula": "det(AB)=det(A)det(B)", "kind": "determinant", "given": {"matrix": [[2, 0], [0, 3]]}, "result": 6.0, "check": "determinant", "statement": "复合变换的面积倍率等于两个阶段倍率的乘积。", "relation": "same_measure", "multiplicativity": True},
+    "ch03.det.transpose": {"formula": "det(A^T)=det(A)", "kind": "determinant", "given": {"matrix": [[2, 2], [1, 3]]}, "result": 4.0, "check": "determinant", "statement": "矩阵转置后，有向面积的数值保持不变。", "relation": "same_measure"},
     "ch03.cramer.area-ratio": {"formula": "x_i=det(A_i)/det(A)", "kind": "oriented_area", "given": {"a": [2, 1], "b": [1, 3]}, "result": 5.0, "check": "area", "statement": "克拉默法则把未知量表示为替换一列后的有向面积与原面积之比。", "relation": "same_measure"},
     "ch03.inverse.undo": {"formula": "AA^{-1}=I", "kind": "matrix_transform", "given": {"matrix": [[2, 0], [0, 1]], "vector": [1, 2]}, "result": [2.0, 2.0], "check": "transformed", "statement": "逆矩阵撤销原变换；行列式非零时每个输出都能沿唯一轨迹追溯到输入。", "relation": "composition_order", "inverse": True, "matrix": True},
-    "ch03.inverse.formula": {"formula": "A^{-1}=1/(ad-bc)[[d,-b],[-c,a]]", "kind": "determinant", "given": {"matrix": [[3, 1], [2, 4]]}, "result": 10.0, "check": "determinant", "statement": "2×2 求逆公式先交换主对角元、反转副对角元，再除以非零行列式。", "relation": "invariant"},
-    "ch03.inverse.examples": {"formula": "det(A)≠0⇔A^{-1}存在", "kind": "matrix_transform", "given": {"matrix": [[2, 0], [0, 1]], "vector": [3, 4]}, "result": [6.0, 4.0], "check": "transformed", "statement": "可逆变换保留全部维度且能撤销；行列式为零的退化变换丢失信息，无法唯一还原。", "relation": "maps_to", "inverse": True, "matrix": True},
+    "ch03.adjugate.matrix": {"formula": "A adj(A)=det(A)I", "kind": "matrix_transform", "given": {"matrix": [[1, 0], [0, 1]], "vector": [1, 1]}, "result": [1.0, 1.0], "check": "transformed", "statement": "伴随矩阵满足 A adj(A)=det(A)I。", "relation": "invariant", "matrix": True},
     "ch03.det.zero.equivalence": {"formula": "det(A)=0⇔rank(A)<n", "kind": "determinant", "given": {"matrix": [[1, 2], [2, 4]]}, "result": 0.0, "check": "determinant", "statement": "det=0、列线性相关、秩下降和存在非零零空间是同一压扁现象的等价描述。", "relation": "collapses_to"},
 }
 
@@ -51,7 +49,8 @@ class LocalChapterThreeAgent:
     def generate(self, context, topic, profile, vocabulary):
         chapter1._SPEC = _SPEC
         payload = refine_payload(chapter1.build_payload(context, topic, profile))
-        _normalize_visual(payload, topic.id)
+        if topic_required_capabilities(topic.id) and topic.id not in {"ch03.det.basic-properties", "ch03.det.multiplicativity", "ch03.det.transpose"}:
+            _normalize_visual(payload, topic.id)
         from linear_algebra.teaching.model import TeachingArtifact
         from linear_algebra.teaching.agent import TeachingArtifactDraft
 

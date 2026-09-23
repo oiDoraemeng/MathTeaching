@@ -239,8 +239,8 @@ def test_chapter_four_index_upsert_preserves_legacy_rows_and_is_idempotent(tmp_p
 
     compile_chapter_04(output_root=tmp_path / "compiled", index_path=index_path)
     payload = json.loads(index_path.read_text(encoding="utf-8"))
-    assert payload["topic_count"] == len(payload["topics"]) == 57
-    assert len({row["topic_id"] for row in payload["topics"]}) == 57
+    assert payload["topic_count"] == len(payload["topics"]) == 47
+    assert len({row["topic_id"] for row in payload["topics"]}) == 47
     assert sum(row["topic_id"].startswith("ch04.") for row in payload["topics"]) == 4
     retained = {row["topic_id"]: row for row in payload["topics"] if not row["topic_id"].startswith("ch04.")}
     assert list(retained.values()) == legacy_rows

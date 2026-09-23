@@ -6,37 +6,41 @@
         "entity.ch07.diagonalization.basis",
         "entity.ch07.diagonalization.inverse_basis",
         "entity.ch07.diagonalization.diagonal",
-        "entity.ch07.diagonalization.standard",
-        "entity.ch07.diagonalization.coordinates",
-        "entity.ch07.diagonalization.scaled",
-        "entity.ch07.diagonalization.endpoint"
+        "entity.ch07.diagonalization.coordinate_e1",
+        "entity.ch07.diagonalization.coordinate_e2",
+        "entity.ch07.diagonalization.scaled_e1",
+        "entity.ch07.diagonalization.scaled_e2",
+        "entity.ch07.diagonalization.basis_v1",
+        "entity.ch07.diagonalization.basis_v2",
+        "entity.ch07.diagonalization.image_v1",
+        "entity.ch07.diagonalization.image_v2"
       ],
       "explanation_refs": [
         "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
+        "worked_examples"
       ],
-      "formula": "A=PDP^{-1}",
+      "formula": "\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1}",
       "formula_symbols": [
         "operator",
         "basis",
         "inverse_basis",
         "diagonal",
-        "standard",
-        "coordinates",
-        "scaled",
-        "endpoint"
+        "coordinate_e1",
+        "coordinate_e2",
+        "scaled_e1",
+        "scaled_e2",
+        "basis_v1",
+        "basis_v2",
+        "image_v1",
+        "image_v2"
       ],
       "id": "claim.ch07.diagonalization",
       "relation_refs": [
-        "relation.ch07.diagonalization.change_basis",
-        "relation.ch07.diagonalization.diagonal_scale",
-        "relation.ch07.diagonalization.change_basis_back",
-        "relation.ch07.diagonalization.direct_endpoint"
+        "relation.ch07.diagonalization.similarity",
+        "relation.ch07.diagonalization.diagonal_v1",
+        "relation.ch07.diagonalization.diagonal_v2",
+        "relation.ch07.diagonalization.eigen_v1",
+        "relation.ch07.diagonalization.eigen_v2"
       ],
       "source_refs": [
         "第7章 特征值与特征向量 / 7.4 对角化的几何意义::1::sha256:c370dc89d6decc1af953b64023d41ad23f8858ec9f3cdcac971a15bc36e8ff5a"
@@ -46,46 +50,67 @@
         "stage.ch07.diagonalization.diagonal_scale",
         "stage.ch07.diagonalization.change_basis_back"
       ],
-      "statement": "7.4 对角化的几何意义 的数学主张由显式对象、关系和不变量支持。"
+      "statement": "以特征向量为新基，线性变换就变成沿各特征方向的独立缩放。"
     }
   ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch07.diagonalization"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch07.diagonalization.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.oriented-area"
-    }
-  ],
+  "connections": [],
   "explanation": {
-    "conclusion": "",
-    "connections": [],
-    "definition": "### 7.4 对角化的几何意义\n定理 7.1（对角化） 若 $n \\times n$ 矩阵 A 有 n 个线性无关的特征向量 $v_{1}, ..., v_{n}$，对应特征值 $\\lambda_{1}, ..., \\lambda_{n}$，则：\n$$\nA = P D P^{-1}\n$$\n其中：\n- $P = [v_{1} v_{2} ... v_{n}]$（特征向量按列排）\n- $D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})$（对角矩阵）\n等价地：$P^{-1}AP = D$（用 $P^{-1}$ 在左边\"换基\"）\n#### 本章小结",
-    "derivation": [
-      "三步走直觉（$P^{-1}AP = D$）：\n```\n标准基下看 A：     x ───(A，方向纠缠)───→ Ax\n```\n特征基下看 A（三步）：\n第一步：换到特征基  $\\rightarrow y = P^{-1}x$     （用特征向量当尺子量 x）\n第二步：独立缩放      $\\rightarrow Dy = (\\lambda_{1}y_{1}, ..., \\lambda_{n}y_{n})$\n第三步：换回标准基  $\\rightarrow P \\cdot Dy = Ax$\n核心：在特征基下，A 只是各方向独立的缩放，没有任何\"交叉\"。\n#### 例题\n$$\nA = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}\n$$\n$$\nP = \\begin{pmatrix}1 & 1 \\\\ 1 & -1\\end{pmatrix}, D = \\begin{pmatrix}3 & 0 \\\\ 0 & 1\\end{pmatrix}, P^{-1} = (\\frac{1}{2})\\begin{pmatrix}1 & 1 \\\\ 1 & -1\\end{pmatrix}\n$$\n验证 $P^{-1}AP = D$。"
-    ],
-    "formula": "A=PDP^{-1}",
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch07.diagonalization"
+          ],
+          "example_ref": "example.ch07.diagonalization.verify",
+          "id": "case.ch07.diagonalization.1",
+          "purpose": "第一步：换到特征基",
+          "stage_refs": [
+            "stage.ch07.diagonalization.change_basis"
+          ],
+          "topic_id": "ch07.diagonalization"
+        },
+        {
+          "claim_refs": [
+            "claim.ch07.diagonalization"
+          ],
+          "example_ref": "example.ch07.diagonalization.verify",
+          "id": "case.ch07.diagonalization.2",
+          "purpose": "第二步：沿特征方向独立缩放",
+          "stage_refs": [
+            "stage.ch07.diagonalization.diagonal_scale"
+          ],
+          "topic_id": "ch07.diagonalization"
+        },
+        {
+          "claim_refs": [
+            "claim.ch07.diagonalization"
+          ],
+          "example_ref": "example.ch07.diagonalization.verify",
+          "id": "case.ch07.diagonalization.3",
+          "purpose": "第三步：换回标准基",
+          "stage_refs": [
+            "stage.ch07.diagonalization.change_basis_back"
+          ],
+          "topic_id": "ch07.diagonalization"
+        }
+      ],
+      "default_pane_count": 3
+    },
+    "definition": "一句话动机：以特征向量为“新基”来看变换，会发现它只是各方向独立缩放。\n\n本节目标：理解\n\n$$\n\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1}\n$$\n\n的几何本质，即换到最好的基上，变换变成对角矩阵。\n\n**（对角化）** 若 $n\\times n$ 矩阵 $\\boldsymbol A$ 有 $n$ 个线性无关的特征向量 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_n$，对应特征值为 $\\lambda_1,\\ldots,\\lambda_n$，则\n\n$$\n\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1},\n$$\n\n其中\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n\\vert&\\vert&&\\vert\\\\\n\\boldsymbol v_1&\\boldsymbol v_2&\\cdots&\\boldsymbol v_n\\\\\n\\vert&\\vert&&\\vert\n\\end{pmatrix},\n$$\n\n即特征向量按列排列，并且\n\n$$\n\\boldsymbol D=\n\\begin{pmatrix}\n\\lambda_1&0&\\cdots&0\\\\\n0&\\lambda_2&\\cdots&0\\\\\n\\vdots&\\vdots&\\ddots&\\vdots\\\\\n0&0&\\cdots&\\lambda_n\n\\end{pmatrix}.\n$$\n\n等价地，\n\n$$\n\\boldsymbol P^{-1}\\boldsymbol A\\boldsymbol P=\\boldsymbol D.\n$$\n\n三步走直觉：在标准基下看，$\\boldsymbol A$ 的各方向纠缠在一起；在特征基下看，可以分成三步。\n\n第一步，换到特征基：\n\n$$\n\\boldsymbol y=\\boldsymbol P^{-1}\\boldsymbol x,\n$$\n\n即用特征向量当尺子量 $\\boldsymbol x$。\n\n第二步，独立缩放：\n\n$$\n\\boldsymbol D\\boldsymbol y\n=\\begin{pmatrix}\n\\lambda_1y_1\\\\\n\\vdots\\\\\n\\lambda_ny_n\n\\end{pmatrix}.\n$$\n\n第三步，换回标准基：\n\n$$\n\\boldsymbol P\\boldsymbol D\\boldsymbol y\n=\\boldsymbol A\\boldsymbol x.\n$$\n\n核心：在特征基下，$\\boldsymbol A$ 只是各方向独立的缩放，没有任何交叉。",
+    "derivation": [],
+    "formula": "",
     "geometric_meaning": "",
-    "intuition": "一句话动机：以特征向量为\"新基\"来看变换——你会发现它只是各方向独立缩放。",
     "invariants": [
-      "inverse_coordinates",
-      "diagonal_similarity",
-      "endpoint_matches_direct"
+      "P inverse A P = D",
+      "columns of P are independent eigenvectors",
+      "D scales eigen-coordinates independently",
+      "P D P inverse = A"
     ],
-    "pitfalls": [],
-    "read_guide": [],
     "searchable_text": [
-      "7.4 对角化的几何意义",
-      "本节目标：理解 $A = PDP^{-1}$ 的几何本质——换到最好的基上，变换变成对角矩阵。",
-      "A=PDP^{-1}",
-      "### 7.4 对角化的几何意义\n定理 7.1（对角化） 若 $n \\times n$ 矩阵 A 有 n 个线性无关的特征向量 $v_{1}, ..., v_{n}$，对应特征值 $\\lambda_{1}, ..., \\lambda_{n}$，则：\n$$\nA = P D P^{-1}\n$$\n其中：\n- $P = [v_{1} v_{2} ... v_{n}]$（特征向量按列排）\n- $D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})$（对角矩阵）\n等价地：$P^{-1}AP = D$（用 $P^{-1}$ 在左边\"换基\"）\n#### 本章小结",
-      "三步走直觉（$P^{-1}AP = D$）：\n```\n标准基下看 A：     x ───(A，方向纠缠)───→ Ax\n```\n特征基下看 A（三步）：\n第一步：换到特征基  $\\rightarrow y = P^{-1}x$     （用特征向量当尺子量 x）\n第二步：独立缩放      $\\rightarrow Dy = (\\lambda_{1}y_{1}, ..., \\lambda_{n}y_{n})$\n第三步：换回标准基  $\\rightarrow P \\cdot Dy = Ax$\n核心：在特征基下，A 只是各方向独立的缩放，没有任何\"交叉\"。\n#### 例题\n$$\nA = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}\n$$\n$$\nP = \\begin{pmatrix}1 & 1 \\\\ 1 & -1\\end{pmatrix}, D = \\begin{pmatrix}3 & 0 \\\\ 0 & 1\\end{pmatrix}, P^{-1} = (\\frac{1}{2})\\begin{pmatrix}1 & 1 \\\\ 1 & -1\\end{pmatrix}\n$$\n验证 $P^{-1}AP = D$。",
-      "inverse_coordinates",
-      "diagonal_similarity",
-      "endpoint_matches_direct"
+      "对角化的几何意义",
+      "以特征向量为新基，线性变换就变成沿各特征方向的独立缩放。",
+      "一句话动机：以特征向量为“新基”来看变换，会发现它只是各方向独立缩放。\n\n本节目标：理解\n\n$$\n\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1}\n$$\n\n的几何本质，即换到最好的基上，变换变成对角矩阵。\n\n**（对角化）** 若 $n\\times n$ 矩阵 $\\boldsymbol A$ 有 $n$ 个线性无关的特征向量 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_n$，对应特征值为 $\\lambda_1,\\ldots,\\lambda_n$，则\n\n$$\n\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1},\n$$\n\n其中\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n\\vert&\\vert&&\\vert\\\\\n\\boldsymbol v_1&\\boldsymbol v_2&\\cdots&\\boldsymbol v_n\\\\\n\\vert&\\vert&&\\vert\n\\end{pmatrix},\n$$\n\n即特征向量按列排列，并且\n\n$$\n\\boldsymbol D=\n\\begin{pmatrix}\n\\lambda_1&0&\\cdots&0\\\\\n0&\\lambda_2&\\cdots&0\\\\\n\\vdots&\\vdots&\\ddots&\\vdots\\\\\n0&0&\\cdots&\\lambda_n\n\\end{pmatrix}.\n$$\n\n等价地，\n\n$$\n\\boldsymbol P^{-1}\\boldsymbol A\\boldsymbol P=\\boldsymbol D.\n$$\n\n三步走直觉：在标准基下看，$\\boldsymbol A$ 的各方向纠缠在一起；在特征基下看，可以分成三步。\n\n第一步，换到特征基：\n\n$$\n\\boldsymbol y=\\boldsymbol P^{-1}\\boldsymbol x,\n$$\n\n即用特征向量当尺子量 $\\boldsymbol x$。\n\n第二步，独立缩放：\n\n$$\n\\boldsymbol D\\boldsymbol y\n=\\begin{pmatrix}\n\\lambda_1y_1\\\\\n\\vdots\\\\\n\\lambda_ny_n\n\\end{pmatrix}.\n$$\n\n第三步，换回标准基：\n\n$$\n\\boldsymbol P\\boldsymbol D\\boldsymbol y\n=\\boldsymbol A\\boldsymbol x.\n$$\n\n核心：在特征基下，$\\boldsymbol A$ 只是各方向独立的缩放，没有任何交叉。",
+      "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\n$$\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n1&1\\\\\n1&-1\n\\end{pmatrix},\\qquad\n\\boldsymbol D=\n\\begin{pmatrix}\n3&0\\\\\n0&1\n\\end{pmatrix},\n$$\n\n并且\n\n$$\n\\boldsymbol P^{-1}\n=\\frac12\n\\begin{pmatrix}\n1&1\\\\\n1&-1\n\\end{pmatrix}.\n$$\n\n验证得\n\n$$\n\\begin{aligned}\n\\boldsymbol P^{-1}\\boldsymbol A\\boldsymbol P\n&=\\frac12\n\\begin{pmatrix}\n1&1\\\\\n1&-1\n\\end{pmatrix}\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix}\n\\begin{pmatrix}\n1&1\\\\\n1&-1\n\\end{pmatrix}\\\\\n&=\n\\begin{pmatrix}\n3&0\\\\\n0&1\n\\end{pmatrix}\n=\\boldsymbol D.\n\\end{aligned}\n$$"
     ],
     "sections": [
       {
@@ -93,92 +118,50 @@
           "claim.ch07.diagonalization"
         ],
         "id": "definition",
-        "text": "### 7.4 对角化的几何意义\n定理 7.1（对角化） 若 $n \\times n$ 矩阵 A 有 n 个线性无关的特征向量 $v_{1}, ..., v_{n}$，对应特征值 $\\lambda_{1}, ..., \\lambda_{n}$，则：\n$$\nA = P D P^{-1}\n$$\n其中：\n- $P = [v_{1} v_{2} ... v_{n}]$（特征向量按列排）\n- $D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})$（对角矩阵）\n等价地：$P^{-1}AP = D$（用 $P^{-1}$ 在左边\"换基\"）\n#### 本章小结",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.diagonalization"
-        ],
-        "id": "formula",
-        "text": "A=PDP^{-1}",
-        "title": "formula"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.diagonalization"
-        ],
-        "id": "derivation",
-        "text": "三步走直觉（$P^{-1}AP = D$）：\n```\n标准基下看 A：     x ───(A，方向纠缠)───→ Ax\n```\n特征基下看 A（三步）：\n第一步：换到特征基  $\\rightarrow y = P^{-1}x$     （用特征向量当尺子量 x）\n第二步：独立缩放      $\\rightarrow Dy = (\\lambda_{1}y_{1}, ..., \\lambda_{n}y_{n})$\n第三步：换回标准基  $\\rightarrow P \\cdot Dy = Ax$\n核心：在特征基下，A 只是各方向独立的缩放，没有任何\"交叉\"。\n#### 例题\n$$\nA = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}\n$$\n$$\nP = \\begin{pmatrix}1 & 1 \\\\ 1 & -1\\end{pmatrix}, D = \\begin{pmatrix}3 & 0 \\\\ 0 & 1\\end{pmatrix}, P^{-1} = (\\frac{1}{2})\\begin{pmatrix}1 & 1 \\\\ 1 & -1\\end{pmatrix}\n$$\n验证 $P^{-1}AP = D$。",
-        "title": "derivation"
+        "text": "",
+        "title": "定义"
       },
       {
         "claim_refs": [
           "claim.ch07.diagonalization"
         ],
         "id": "worked_examples",
-        "text": "A=PDP^{-1}",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.diagonalization"
-        ],
-        "id": "geometric_meaning",
-        "text": "geometric_meaning: 7.4 对角化的几何意义。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.diagonalization"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 7.4 对角化的几何意义。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.diagonalization"
-        ],
-        "id": "connections",
-        "text": "connections: 7.4 对角化的几何意义。",
-        "title": "connections"
-      },
-      {
-        "claim_refs": [],
-        "id": "intuition",
-        "text": "一句话动机：以特征向量为\"新基\"来看变换——你会发现它只是各方向独立缩放。",
-        "title": "intuition"
-      },
-      {
-        "claim_refs": [],
-        "id": "invariants",
-        "text": "inverse_coordinates\ndiagonal_similarity\nendpoint_matches_direct",
-        "title": "invariants"
+        "text": "",
+        "title": "数学案例"
       }
     ],
-    "summary": "本节目标：理解 $A = PDP^{-1}$ 的几何本质——换到最好的基上，变换变成对角矩阵。",
+    "summary": "以特征向量为新基，线性变换就变成沿各特征方向的独立缩放。",
     "symbol_roles": {
       "basis": "basis",
-      "coordinates": "coordinates",
+      "basis_v1": "basis_v1",
+      "basis_v2": "basis_v2",
+      "coordinate_e1": "coordinate_e1",
+      "coordinate_e2": "coordinate_e2",
       "diagonal": "diagonal",
-      "endpoint": "endpoint",
+      "image_v1": "image_v1",
+      "image_v2": "image_v2",
       "inverse_basis": "inverse_basis",
       "operator": "operator",
-      "scaled": "scaled",
-      "standard": "standard"
+      "scaled_e1": "scaled_e1",
+      "scaled_e2": "scaled_e2"
     },
-    "title": "7.4 对角化的几何意义",
+    "title": "对角化的几何意义",
     "worked_examples": [
       {
         "calculation": [
-          "A=PDP^{-1}"
+          "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\n$$\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n1&1\\\\\n1&-1\n\\end{pmatrix},\\qquad\n\\boldsymbol D=\n\\begin{pmatrix}\n3&0\\\\\n0&1\n\\end{pmatrix},\n$$\n\n并且\n\n$$\n\\boldsymbol P^{-1}\n=\\frac12\n\\begin{pmatrix}\n1&1\\\\\n1&-1\n\\end{pmatrix}.\n$$\n\n验证得\n\n$$\n\\begin{aligned}\n\\boldsymbol P^{-1}\\boldsymbol A\\boldsymbol P\n&=\\frac12\n\\begin{pmatrix}\n1&1\\\\\n1&-1\n\\end{pmatrix}\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix}\n\\begin{pmatrix}\n1&1\\\\\n1&-1\n\\end{pmatrix}\\\\\n&=\n\\begin{pmatrix}\n3&0\\\\\n0&1\n\\end{pmatrix}\n=\\boldsymbol D.\n\\end{aligned}\n$$"
         ],
         "checks": [
           {
             "expected": [
-              1.0,
-              1.0
+              [
+                3,
+                0
+              ],
+              [
+                0,
+                1
+              ]
             ],
             "name": "result",
             "tolerance": 1e-09
@@ -190,159 +173,48 @@
         "given": [
           [
             [
-              1.0,
-              1.0
+              0.5,
+              0.5
             ],
             [
-              0.0,
-              1.0
+              0.5,
+              -0.5
             ]
           ],
           [
-            0.0,
-            1.0
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              -1
+            ]
           ]
         ],
-        "id": "example.ch07.diagonalization.change_basis.0",
-        "kind": "matrix_transform",
+        "id": "example.ch07.diagonalization.verify",
+        "kind": "matrix_product",
         "result": [
-          1.0,
-          1.0
-        ],
-        "title": "change_basis"
-      },
-      {
-        "calculation": [
-          "A=PDP^{-1}"
-        ],
-        "checks": [
-          {
-            "expected": [
-              3.0,
-              2.0
-            ],
-            "name": "result",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch07.diagonalization"
-        ],
-        "given": [
           [
-            [
-              3.0,
-              0.0
-            ],
-            [
-              0.0,
-              2.0
-            ]
+            3,
+            0
           ],
           [
-            1.0,
-            1.0
+            0,
+            1
           ]
         ],
-        "id": "example.ch07.diagonalization.diagonal_scale.0",
-        "kind": "matrix_transform",
-        "result": [
-          3.0,
-          2.0
-        ],
-        "title": "diagonal_scale"
-      },
-      {
-        "calculation": [
-          "A=PDP^{-1}"
-        ],
-        "checks": [
-          {
-            "expected": [
-              1.0,
-              2.0
-            ],
-            "name": "result",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch07.diagonalization"
-        ],
-        "given": [
-          [
-            [
-              1.0,
-              -1.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ],
-          [
-            3.0,
-            2.0
-          ]
-        ],
-        "id": "example.ch07.diagonalization.change_basis_back.0",
-        "kind": "matrix_transform",
-        "result": [
-          1.0,
-          2.0
-        ],
-        "title": "change_basis_back"
-      },
-      {
-        "calculation": [
-          "A=PDP^{-1}"
-        ],
-        "checks": [
-          {
-            "expected": [
-              1.0,
-              2.0
-            ],
-            "name": "result",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch07.diagonalization"
-        ],
-        "given": [
-          [
-            [
-              3.0,
-              1.0
-            ],
-            [
-              0.0,
-              2.0
-            ]
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "id": "example.ch07.diagonalization.direct_endpoint.0",
-        "kind": "matrix_transform",
-        "result": [
-          1.0,
-          2.0
-        ],
-        "title": "direct_endpoint"
+        "title": "例题：验证对角化"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:6ec442de5455561bf7e0281658c1449dd6eafb977a895c91bdd157d6f314b820",
+    "artifact_digest": "sha256:6ef111282e949389709a827d2e40e4eeaeb71bcc8106c57af4bbf90cfc12928f",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:7b50071db5b0a8a67a341cadbe950753c2c99d074a9f784b1f5439521b0d0f40",
+    "raw_reply_digest": "sha256:2e8e4215ee7f23d1059f286ca3f6985475ada85ed6e59ecb4e3d4ac92bd6e4ed",
     "source_hash": "sha256:c370dc89d6decc1af953b64023d41ad23f8858ec9f3cdcac971a15bc36e8ff5a"
   },
   "revision": 1,
@@ -362,33 +234,28 @@
     "source_path": [
       "第7章 特征值与特征向量",
       "7.4 对角化的几何意义",
-      "7.4 对角化的几何意义"
+      "对角化的几何意义"
     ],
     "spans": [
       {
-        "end_line": 2316,
+        "end_line": 2183,
         "fingerprint": "sha256:c370dc89d6decc1af953b64023d41ad23f8858ec9f3cdcac971a15bc36e8ff5a",
         "heading_path": [
           "第7章 特征值与特征向量",
           "7.4 对角化的几何意义"
         ],
         "id": "第7章 特征值与特征向量 / 7.4 对角化的几何意义::1::sha256:c370dc89d6decc1af953b64023d41ad23f8858ec9f3cdcac971a15bc36e8ff5a",
-        "start_line": 2274,
+        "start_line": 2141,
         "text": "### 7.4 对角化的几何意义\n\n一句话动机：以特征向量为\"新基\"来看变换——你会发现它只是各方向独立缩放。\n本节目标：理解 $A = PDP^{-1}$ 的几何本质——换到最好的基上，变换变成对角矩阵。\n\n定理 7.1（对角化） 若 $n \\times n$ 矩阵 A 有 n 个线性无关的特征向量 $v_{1}, ..., v_{n}$，对应特征值 $\\lambda_{1}, ..., \\lambda_{n}$，则：\n$$\nA = P D P^{-1}\n$$\n其中：\n- $P = [v_{1} v_{2} ... v_{n}]$（特征向量按列排）\n- $D = \\operatorname{diag}(\\lambda_{1}, \\lambda_{2}, ..., \\lambda_{n})$（对角矩阵）\n等价地：$P^{-1}AP = D$（用 $P^{-1}$ 在左边\"换基\"）\n\n三步走直觉（$P^{-1}AP = D$）：\n\n```\n标准基下看 A：     x ───(A，方向纠缠)───→ Ax\n```\n\n特征基下看 A（三步）：\n第一步：换到特征基  $\\rightarrow y = P^{-1}x$     （用特征向量当尺子量 x）\n第二步：独立缩放      $\\rightarrow Dy = (\\lambda_{1}y_{1}, ..., \\lambda_{n}y_{n})$\n第三步：换回标准基  $\\rightarrow P \\cdot Dy = Ax$\n核心：在特征基下，A 只是各方向独立的缩放，没有任何\"交叉\"。\n\n#### 例题\n\n$$\nA = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}\n$$\n$$\nP = \\begin{pmatrix}1 & 1 \\\\ 1 & -1\\end{pmatrix}, D = \\begin{pmatrix}3 & 0 \\\\ 0 & 1\\end{pmatrix}, P^{-1} = (\\frac{1}{2})\\begin{pmatrix}1 & 1 \\\\ 1 & -1\\end{pmatrix}\n$$\n验证 $P^{-1}AP = D$。\n\n#### 本章小结"
       }
     ]
   },
   "status": "reviewed",
   "teaching_profile": {
-    "minimum_level": 3,
+    "minimum_level": 2,
     "required_sections": [
       "definition",
-      "formula",
-      "derivation",
-      "worked_examples",
-      "geometric_meaning",
-      "pitfalls",
-      "connections"
+      "worked_examples"
     ],
     "requires_analogy_boundary": false
   },
@@ -406,11 +273,11 @@
         "role": "operator",
         "value": [
           [
-            3.0,
+            2.0,
             1.0
           ],
           [
-            0.0,
+            1.0,
             2.0
           ]
         ]
@@ -427,11 +294,11 @@
         "value": [
           [
             1.0,
-            -1.0
+            1.0
           ],
           [
-            0.0,
-            1.0
+            1.0,
+            -1.0
           ]
         ]
       },
@@ -446,12 +313,12 @@
         "role": "inverse_basis",
         "value": [
           [
-            1.0,
-            1.0
+            0.5,
+            0.5
           ],
           [
-            0.0,
-            1.0
+            0.5,
+            -0.5
           ]
         ]
       },
@@ -471,7 +338,7 @@
           ],
           [
             0.0,
-            2.0
+            1.0
           ]
         ]
       },
@@ -480,10 +347,24 @@
           "claim.ch07.diagonalization"
         ],
         "dimension": 2,
-        "id": "entity.ch07.diagonalization.standard",
+        "id": "entity.ch07.diagonalization.coordinate_e1",
         "kind": "vector",
-        "label": "standard",
-        "role": "standard",
+        "label": "coordinate_e1",
+        "role": "coordinate_e1",
+        "value": [
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.diagonalization"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.diagonalization.coordinate_e2",
+        "kind": "vector",
+        "label": "coordinate_e2",
+        "role": "coordinate_e2",
         "value": [
           0.0,
           1.0
@@ -494,10 +375,38 @@
           "claim.ch07.diagonalization"
         ],
         "dimension": 2,
-        "id": "entity.ch07.diagonalization.coordinates",
+        "id": "entity.ch07.diagonalization.scaled_e1",
         "kind": "vector",
-        "label": "coordinates",
-        "role": "coordinates",
+        "label": "scaled_e1",
+        "role": "scaled_e1",
+        "value": [
+          3.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.diagonalization"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.diagonalization.scaled_e2",
+        "kind": "vector",
+        "label": "scaled_e2",
+        "role": "scaled_e2",
+        "value": [
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.diagonalization"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.diagonalization.basis_v1",
+        "kind": "vector",
+        "label": "basis_v1",
+        "role": "basis_v1",
         "value": [
           1.0,
           1.0
@@ -508,13 +417,13 @@
           "claim.ch07.diagonalization"
         ],
         "dimension": 2,
-        "id": "entity.ch07.diagonalization.scaled",
+        "id": "entity.ch07.diagonalization.basis_v2",
         "kind": "vector",
-        "label": "scaled",
-        "role": "scaled",
+        "label": "basis_v2",
+        "role": "basis_v2",
         "value": [
-          3.0,
-          2.0
+          1.0,
+          -1.0
         ]
       },
       {
@@ -522,13 +431,27 @@
           "claim.ch07.diagonalization"
         ],
         "dimension": 2,
-        "id": "entity.ch07.diagonalization.endpoint",
+        "id": "entity.ch07.diagonalization.image_v1",
         "kind": "vector",
-        "label": "endpoint",
-        "role": "endpoint",
+        "label": "image_v1",
+        "role": "image_v1",
+        "value": [
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.diagonalization"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.diagonalization.image_v2",
+        "kind": "vector",
+        "label": "image_v2",
+        "role": "image_v2",
         "value": [
           1.0,
-          2.0
+          -1.0
         ]
       }
     ],
@@ -537,42 +460,61 @@
         "claim_refs": [
           "claim.ch07.diagonalization"
         ],
-        "id": "relation.ch07.diagonalization.change_basis",
-        "kind": "maps_to",
+        "id": "relation.ch07.diagonalization.similarity",
+        "kind": "coordinate_equivalence",
         "parameters": {
-          "input": [
-            0.0,
-            1.0
-          ],
-          "matrix": [
+          "basis": [
             [
               1.0,
               1.0
+            ],
+            [
+              1.0,
+              -1.0
+            ]
+          ],
+          "diagonal": [
+            [
+              3.0,
+              0.0
             ],
             [
               0.0,
               1.0
             ]
           ],
-          "output": [
-            1.0,
-            1.0
+          "inverse_basis": [
+            [
+              0.5,
+              0.5
+            ],
+            [
+              0.5,
+              -0.5
+            ]
+          ],
+          "operator": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              2.0
+            ]
           ]
         },
-        "source_ref": "entity.ch07.diagonalization.standard",
-        "target_ref": "entity.ch07.diagonalization.coordinates"
+        "source_ref": "entity.ch07.diagonalization.operator",
+        "target_ref": "entity.ch07.diagonalization.diagonal"
       },
       {
         "claim_refs": [
           "claim.ch07.diagonalization"
         ],
-        "id": "relation.ch07.diagonalization.diagonal_scale",
+        "id": "relation.ch07.diagonalization.diagonal_v1",
         "kind": "maps_to",
         "parameters": {
-          "input": [
-            1.0,
-            1.0
-          ],
+          "eigenvalue": 3.0,
           "matrix": [
             [
               3.0,
@@ -580,138 +522,188 @@
             ],
             [
               0.0,
-              2.0
-            ]
-          ],
-          "output": [
-            3.0,
-            2.0
-          ]
-        },
-        "source_ref": "entity.ch07.diagonalization.coordinates",
-        "target_ref": "entity.ch07.diagonalization.scaled"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.diagonalization"
-        ],
-        "id": "relation.ch07.diagonalization.change_basis_back",
-        "kind": "maps_to",
-        "parameters": {
-          "input": [
-            3.0,
-            2.0
-          ],
-          "matrix": [
-            [
-              1.0,
-              -1.0
-            ],
-            [
-              0.0,
               1.0
             ]
           ],
           "output": [
+            3.0,
+            0.0
+          ],
+          "vector": [
             1.0,
-            2.0
+            0.0
           ]
         },
-        "source_ref": "entity.ch07.diagonalization.scaled",
-        "target_ref": "entity.ch07.diagonalization.endpoint"
+        "source_ref": "entity.ch07.diagonalization.coordinate_e1",
+        "target_ref": "entity.ch07.diagonalization.scaled_e1"
       },
       {
         "claim_refs": [
           "claim.ch07.diagonalization"
         ],
-        "id": "relation.ch07.diagonalization.direct_endpoint",
+        "id": "relation.ch07.diagonalization.diagonal_v2",
         "kind": "maps_to",
         "parameters": {
-          "input": [
-            0.0,
-            1.0
-          ],
+          "eigenvalue": 1.0,
           "matrix": [
             [
               3.0,
-              1.0
+              0.0
             ],
             [
               0.0,
+              1.0
+            ]
+          ],
+          "output": [
+            0.0,
+            1.0
+          ],
+          "vector": [
+            0.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch07.diagonalization.coordinate_e2",
+        "target_ref": "entity.ch07.diagonalization.scaled_e2"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.diagonalization"
+        ],
+        "id": "relation.ch07.diagonalization.eigen_v1",
+        "kind": "maps_to",
+        "parameters": {
+          "eigenvalue": 3.0,
+          "matrix": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              2.0
+            ]
+          ],
+          "output": [
+            3.0,
+            3.0
+          ],
+          "vector": [
+            1.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch07.diagonalization.basis_v1",
+        "target_ref": "entity.ch07.diagonalization.image_v1"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.diagonalization"
+        ],
+        "id": "relation.ch07.diagonalization.eigen_v2",
+        "kind": "maps_to",
+        "parameters": {
+          "eigenvalue": 1.0,
+          "matrix": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
               2.0
             ]
           ],
           "output": [
             1.0,
-            2.0
+            -1.0
+          ],
+          "vector": [
+            1.0,
+            -1.0
           ]
         },
-        "source_ref": "entity.ch07.diagonalization.standard",
-        "target_ref": "entity.ch07.diagonalization.endpoint"
+        "source_ref": "entity.ch07.diagonalization.basis_v2",
+        "target_ref": "entity.ch07.diagonalization.image_v2"
       }
     ],
     "scene_family": "spectral_orthogonal",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "A=PDP^{-1}",
+        "caption": "",
         "expected_invariants": [
-          "inverse_coordinates"
+          "P inverse A P = D",
+          "columns of P are independent eigenvectors",
+          "D scales eigen-coordinates independently",
+          "P D P inverse = A"
         ],
         "id": "stage.ch07.diagonalization.change_basis",
         "input_entity_refs": [
-          "entity.ch07.diagonalization.standard",
           "entity.ch07.diagonalization.basis",
           "entity.ch07.diagonalization.inverse_basis"
         ],
-        "layout": "sequence",
+        "layout": "overlay",
         "output_entity_refs": [
-          "entity.ch07.diagonalization.coordinates"
+          "entity.ch07.diagonalization.basis_v1",
+          "entity.ch07.diagonalization.basis_v2"
         ],
         "relation_refs": [
-          "relation.ch07.diagonalization.change_basis"
+          "relation.ch07.diagonalization.similarity"
         ],
-        "title": "换到特征基"
+        "title": "第一步：换到特征基"
       },
       {
-        "caption": "A=PDP^{-1}",
+        "caption": "",
         "expected_invariants": [
-          "diagonal_similarity"
+          "P inverse A P = D",
+          "columns of P are independent eigenvectors",
+          "D scales eigen-coordinates independently",
+          "P D P inverse = A"
         ],
         "id": "stage.ch07.diagonalization.diagonal_scale",
         "input_entity_refs": [
-          "entity.ch07.diagonalization.coordinates",
           "entity.ch07.diagonalization.diagonal",
-          "entity.ch07.diagonalization.operator"
+          "entity.ch07.diagonalization.coordinate_e1",
+          "entity.ch07.diagonalization.coordinate_e2"
         ],
-        "layout": "sequence",
+        "layout": "overlay",
         "output_entity_refs": [
-          "entity.ch07.diagonalization.scaled"
+          "entity.ch07.diagonalization.scaled_e1",
+          "entity.ch07.diagonalization.scaled_e2"
         ],
         "relation_refs": [
-          "relation.ch07.diagonalization.diagonal_scale"
+          "relation.ch07.diagonalization.diagonal_v1",
+          "relation.ch07.diagonalization.diagonal_v2"
         ],
-        "title": "特征值独立缩放"
+        "title": "第二步：沿特征方向独立缩放"
       },
       {
-        "caption": "A=PDP^{-1}",
+        "caption": "",
         "expected_invariants": [
-          "endpoint_matches_direct"
+          "P inverse A P = D",
+          "columns of P are independent eigenvectors",
+          "D scales eigen-coordinates independently",
+          "P D P inverse = A"
         ],
         "id": "stage.ch07.diagonalization.change_basis_back",
         "input_entity_refs": [
-          "entity.ch07.diagonalization.scaled",
-          "entity.ch07.diagonalization.basis"
+          "entity.ch07.diagonalization.operator",
+          "entity.ch07.diagonalization.basis_v1",
+          "entity.ch07.diagonalization.basis_v2"
         ],
-        "layout": "sequence",
+        "layout": "overlay",
         "output_entity_refs": [
-          "entity.ch07.diagonalization.endpoint"
+          "entity.ch07.diagonalization.image_v1",
+          "entity.ch07.diagonalization.image_v2"
         ],
         "relation_refs": [
-          "relation.ch07.diagonalization.change_basis_back",
-          "relation.ch07.diagonalization.direct_endpoint"
+          "relation.ch07.diagonalization.similarity",
+          "relation.ch07.diagonalization.eigen_v1",
+          "relation.ch07.diagonalization.eigen_v2"
         ],
-        "title": "换回标准坐标"
+        "title": "第三步：换回标准基"
       }
     ]
   }

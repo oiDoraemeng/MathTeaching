@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import re
 from typing import Literal
 
 
@@ -55,6 +56,39 @@ _INLINE_MATH_SYMBOLS: tuple[tuple[str, str], ...] = (
     (r"\det", "det"),
 )
 
+_SUBSCRIPT_TRANSLATION = str.maketrans("0123456789+-", "₀₁₂₃₄₅₆₇₈₉₊₋")
+
+
+def display_math_text(text: str) -> str:
+    """Convert short TeX-like UI labels to readable plain text.
+
+    Tab bars and the application status bar do not render TeX.  Feeding them
+    lecture source such as ``$\\boldsymbol v_1$`` exposes markup instead of a
+    student-facing label, so normalize only the small inline subset used by
+    those controls.
+    """
+
+    rendered = str(text or "")
+    for command, symbol in _INLINE_MATH_SYMBOLS:
+        rendered = rendered.replace(command, symbol)
+    rendered = re.sub(
+        r"\\(?:boldsymbol|mathbf|vec)\s*\{([^{}]+)\}",
+        r"\1",
+        rendered,
+    )
+    rendered = re.sub(
+        r"\\(?:boldsymbol|mathbf|vec)\s+([A-Za-z])",
+        r"\1",
+        rendered,
+    )
+
+    def subscript(match: re.Match[str]) -> str:
+        digits = match.group(1) or match.group(2) or ""
+        return digits.translate(_SUBSCRIPT_TRANSLATION)
+
+    rendered = re.sub(r"_\{([0-9+-]+)\}|_([0-9]+)", subscript, rendered)
+    return rendered.replace("$", "").strip()
+
 
 def display_heading(heading: str) -> str:
     """Return a lecture heading rendered for display instead of source anchoring.
@@ -65,12 +99,7 @@ def display_heading(heading: str) -> str:
     symbols they stand for before they reach the user.
     """
 
-    if "$" not in heading:
-        return heading
-    rendered = heading
-    for command, symbol in _INLINE_MATH_SYMBOLS:
-        rendered = rendered.replace(command, symbol)
-    return rendered.replace("$", "").strip()
+    return display_math_text(heading)
 
 
 def topic_entry(
@@ -98,4 +127,3 @@ def topic_entry(
         required_capabilities=required_capabilities,
         display_title=display_title,
     )
-

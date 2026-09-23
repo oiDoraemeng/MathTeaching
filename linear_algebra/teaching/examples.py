@@ -25,6 +25,8 @@ SUPPORTED_KINDS = frozenset(
         "inner_product",
         "projection",
         "batch_projection",
+        "matrix_additive_distributivity",
+        "matrix_product",
         "matrix_transform",
         "determinant",
         "oriented_area",
@@ -207,6 +209,67 @@ def _calculate(kind: str, given: JsonValue) -> _Calculation:
             raise ValueError("matrix and vector dimensions do not match")
         value = tuple(float(sum(row[j] * vector[j] for j in range(len(vector)))) for row in matrix)
         return _named(value, result=value, transformed=value, output=value)
+
+    if kind == "matrix_product":
+        left_value, right_value = _pair(given, "A", "B")
+        left, right = _matrix(left_value), _matrix(right_value)
+        if len(left[0]) != len(right):
+            raise ValueError("matrix product dimensions do not match")
+        product = tuple(
+            tuple(sum(row[k] * right[k][j] for k in range(len(right))) for j in range(len(right[0])))
+            for row in left
+        )
+        transpose = lambda matrix: tuple(tuple(row[j] for row in matrix) for j in range(len(matrix[0])))
+        left_t, right_t = transpose(left), transpose(right)
+        reverse = tuple(
+            tuple(sum(row[k] * left_t[k][j] for k in range(len(left_t))) for j in range(len(left_t[0])))
+            for row in right_t
+        )
+        return _named(
+            product, result=product, transpose_a=left_t,
+            transpose_product=transpose(product), reverse_product=reverse,
+        )
+
+    if kind == "matrix_additive_distributivity":
+        matrix_a_value, matrix_b_value, vector_value = _triple(given, "A", "B", "x")
+        matrix_a = _matrix(matrix_a_value)
+        matrix_b = _matrix(matrix_b_value)
+        if len(matrix_a) != len(matrix_b) or any(
+            len(row_a) != len(row_b) for row_a, row_b in zip(matrix_a, matrix_b)
+        ):
+            raise ValueError("matrix operands must have matching dimensions")
+        vector = _vector(vector_value, dimension=len(matrix_a[0]))
+        if len(matrix_a) != len(vector):
+            raise ValueError("matrix and vector dimensions do not match")
+        matrix_sum = tuple(
+            tuple(left + right for left, right in zip(row_a, row_b))
+            for row_a, row_b in zip(matrix_a, matrix_b)
+        )
+        left_path = tuple(
+            float(sum(row[index] * vector[index] for index in range(len(vector))))
+            for row in matrix_sum
+        )
+        transformed_a = tuple(
+            float(sum(row[index] * vector[index] for index in range(len(vector))))
+            for row in matrix_a
+        )
+        transformed_b = tuple(
+            float(sum(row[index] * vector[index] for index in range(len(vector))))
+            for row in matrix_b
+        )
+        right_path = tuple(
+            left + right for left, right in zip(transformed_a, transformed_b)
+        )
+        return _named(
+            left_path,
+            result=left_path,
+            transformed=left_path,
+            output=left_path,
+            left_path=left_path,
+            right_path=right_path,
+            transformed_a=transformed_a,
+            transformed_b=transformed_b,
+        )
 
     if kind == "determinant":
         matrix = _matrix(_mapping_or_value(given, "matrix"))

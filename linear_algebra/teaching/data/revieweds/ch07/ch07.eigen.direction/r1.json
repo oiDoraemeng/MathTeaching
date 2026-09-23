@@ -3,95 +3,147 @@
     {
       "entity_refs": [
         "entity.ch07.eigen.direction.stretch_operator",
-        "entity.ch07.eigen.direction.stretch_vector",
-        "entity.ch07.eigen.direction.stretch_output",
-        "entity.ch07.eigen.direction.stretch_eigenvalue",
-        "entity.ch07.eigen.direction.reverse_operator",
-        "entity.ch07.eigen.direction.reverse_vector",
-        "entity.ch07.eigen.direction.reverse_output",
-        "entity.ch07.eigen.direction.reverse_eigenvalue",
-        "entity.ch07.eigen.direction.collapse_operator",
-        "entity.ch07.eigen.direction.collapse_vector",
-        "entity.ch07.eigen.direction.collapse_output",
-        "entity.ch07.eigen.direction.collapse_eigenvalue"
+        "entity.ch07.eigen.direction.stretch_x",
+        "entity.ch07.eigen.direction.stretch_x_image",
+        "entity.ch07.eigen.direction.stretch_y",
+        "entity.ch07.eigen.direction.stretch_y_image",
+        "entity.ch07.eigen.direction.projection_operator",
+        "entity.ch07.eigen.direction.projection_x",
+        "entity.ch07.eigen.direction.projection_x_image",
+        "entity.ch07.eigen.direction.projection_y",
+        "entity.ch07.eigen.direction.projection_y_image",
+        "entity.ch07.eigen.direction.rotation_operator",
+        "entity.ch07.eigen.direction.rotation_vector",
+        "entity.ch07.eigen.direction.rotation_image",
+        "entity.ch07.eigen.direction.reflection_operator",
+        "entity.ch07.eigen.direction.reflection_plus",
+        "entity.ch07.eigen.direction.reflection_plus_image",
+        "entity.ch07.eigen.direction.reflection_minus",
+        "entity.ch07.eigen.direction.reflection_minus_image"
       ],
       "explanation_refs": [
         "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
+        "worked_examples"
       ],
-      "formula": "Av=lambda v",
+      "formula": "\\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v",
       "formula_symbols": [
         "stretch_operator",
-        "stretch_vector",
-        "stretch_output",
-        "stretch_eigenvalue",
-        "reverse_operator",
-        "reverse_vector",
-        "reverse_output",
-        "reverse_eigenvalue",
-        "collapse_operator",
-        "collapse_vector",
-        "collapse_output",
-        "collapse_eigenvalue"
+        "stretch_x",
+        "stretch_x_image",
+        "stretch_y",
+        "stretch_y_image",
+        "projection_operator",
+        "projection_x",
+        "projection_x_image",
+        "projection_y",
+        "projection_y_image",
+        "rotation_operator",
+        "rotation_vector",
+        "rotation_image",
+        "reflection_operator",
+        "reflection_plus",
+        "reflection_plus_image",
+        "reflection_minus",
+        "reflection_minus_image"
       ],
       "id": "claim.ch07.eigen.direction",
       "relation_refs": [
-        "relation.ch07.eigen.direction.stretch",
-        "relation.ch07.eigen.direction.reverse",
-        "relation.ch07.eigen.direction.collapse"
+        "relation.ch07.eigen.direction.stretch_x",
+        "relation.ch07.eigen.direction.stretch_y",
+        "relation.ch07.eigen.direction.projection_x",
+        "relation.ch07.eigen.direction.projection_y",
+        "relation.ch07.eigen.direction.rotation",
+        "relation.ch07.eigen.direction.reflection_plus",
+        "relation.ch07.eigen.direction.reflection_minus"
       ],
       "source_refs": [
-        "第7章 特征值与特征向量 / 7.1 定义与几何意义 / 7.1.1 定义::1::sha256:30af9dcc59b5a2344ed089db3091ca7de1a2e225b1576719d7ebae897dc9dc22"
+        "第7章 特征值与特征向量 / 7.1 定义与几何意义::1::sha256:16386c8ca3ab73af234181d47a8b71968ef22ea1632c6cc2715998be20eaf58e"
       ],
       "stage_refs": [
         "stage.ch07.eigen.direction.stretch",
-        "stage.ch07.eigen.direction.reverse",
-        "stage.ch07.eigen.direction.collapse"
+        "stage.ch07.eigen.direction.projection",
+        "stage.ch07.eigen.direction.rotation",
+        "stage.ch07.eigen.direction.reflection"
       ],
-      "statement": "7.1.1 定义 的数学主张由显式对象、关系和不变量支持。"
+      "statement": "有些方向的线段经过变换后只改变长度而不改变方向，这些方向就是特征方向。"
     }
   ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch07.eigen.direction"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch07.eigen.direction.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.oriented-area"
-    }
-  ],
+  "connections": [],
   "explanation": {
-    "conclusion": "",
-    "connections": [],
-    "definition": "#### 7.1.1 定义\n定义 7.1（特征值与特征向量） 设 A 是一个 $n \\times n$ 矩阵。如果存在非零向量 v 和标量 $\\lambda$，使得：\n$$\nA \\cdot v = \\lambda \\cdot v\n$$\n则称 $\\lambda$ 为 A 的一个特征值（Eigenvalue），v 为对应的特征向量（Eigenvector）。\n核心含义：A 作用在 v 上，效果仅仅是\"把 v 拉长或缩短 $\\lambda$ 倍\"——方向不变（$\\lambda>0$）、反向（$\\lambda<0$），或消失（$\\lambda=0$）。\n定义 7.2（特征空间） 对应特征值 $\\lambda$ 的所有特征向量（加上零向量）构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n$$\nE_{\\lambda} = \\{v \\mid Av = \\lambda v\\} = \\operatorname{Null}(A - \\lambda I)\n$$",
-    "derivation": [
-      "正特征值拉伸: Av=lambda v",
-      "负特征值反向: Av=lambda v",
-      "零特征值消失: Av=lambda v"
-    ],
-    "formula": "Av=lambda v",
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch07.eigen.direction"
+          ],
+          "example_ref": "example.ch07.eigen.direction.stretch",
+          "id": "case.ch07.eigen.direction.1",
+          "purpose": "拉伸：两个坐标轴方向不变",
+          "stage_refs": [
+            "stage.ch07.eigen.direction.stretch"
+          ],
+          "topic_id": "ch07.eigen.direction"
+        },
+        {
+          "claim_refs": [
+            "claim.ch07.eigen.direction"
+          ],
+          "example_ref": "example.ch07.eigen.direction.projection",
+          "id": "case.ch07.eigen.direction.2",
+          "purpose": "投影：一个方向不变，一个方向消失",
+          "stage_refs": [
+            "stage.ch07.eigen.direction.projection"
+          ],
+          "topic_id": "ch07.eigen.direction"
+        },
+        {
+          "claim_refs": [
+            "claim.ch07.eigen.direction"
+          ],
+          "example_ref": "example.ch07.eigen.direction.rotation",
+          "id": "case.ch07.eigen.direction.3",
+          "purpose": "旋转 90 度：没有实特征方向",
+          "stage_refs": [
+            "stage.ch07.eigen.direction.rotation"
+          ],
+          "topic_id": "ch07.eigen.direction"
+        },
+        {
+          "claim_refs": [
+            "claim.ch07.eigen.direction"
+          ],
+          "example_ref": "example.ch07.eigen.direction.reflection",
+          "id": "case.ch07.eigen.direction.4",
+          "purpose": "关于 y=x 反射：一个方向不变，一个方向反向",
+          "stage_refs": [
+            "stage.ch07.eigen.direction.reflection"
+          ],
+          "topic_id": "ch07.eigen.direction"
+        }
+      ],
+      "default_pane_count": 1
+    },
+    "definition": "一句话动机：你对一张图片做拉伸——有些方向的线段只变长不变方向，有些方向却歪了。能一直保持不歪的方向，就是\"特征方向\"。\n\n本节目标：看到特征值和特征向量，你脑子里能画出一个\"方向不变箭头被拉长/缩短\"的画面。\n\n**（特征值与特征向量）** 设 $\\boldsymbol A$ 是一个 $n\\times n$ 矩阵。如果存在非零向量 $\\boldsymbol v$ 和标量 $\\lambda$，使得\n\n$$\n\\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v,\n$$\n\n则称 $\\lambda$ 为 $\\boldsymbol A$ 的一个特征值，$\\boldsymbol v$ 为对应的特征向量。\n\n核心含义：$\\boldsymbol A$ 作用在 $\\boldsymbol v$ 上，效果仅仅是把 $\\boldsymbol v$ 拉长或缩短 $\\lambda$ 倍。$\\lambda>0$ 时方向不变，$\\lambda<0$ 时反向，$\\lambda=0$ 时消失。\n\n**（特征空间）** 对应特征值 $\\lambda$ 的所有特征向量加上零向量构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n\n$$\nE_\\lambda\n=\\{\\boldsymbol v\\mid \\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v\\}\n=\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I).\n$$",
+    "derivation": [],
+    "formula": "",
     "geometric_meaning": "",
-    "intuition": "",
     "invariants": [
-      "Av_equals_lambda_v"
+      "A v = lambda v for every displayed eigenvector",
+      "lambda zero eigenspace equals Null(A)",
+      "quarter turn has no real eigenvector"
     ],
-    "pitfalls": [],
-    "read_guide": [],
     "searchable_text": [
-      "7.1.1 定义",
-      "Av=lambda v",
-      "#### 7.1.1 定义\n定义 7.1（特征值与特征向量） 设 A 是一个 $n \\times n$ 矩阵。如果存在非零向量 v 和标量 $\\lambda$，使得：\n$$\nA \\cdot v = \\lambda \\cdot v\n$$\n则称 $\\lambda$ 为 A 的一个特征值（Eigenvalue），v 为对应的特征向量（Eigenvector）。\n核心含义：A 作用在 v 上，效果仅仅是\"把 v 拉长或缩短 $\\lambda$ 倍\"——方向不变（$\\lambda>0$）、反向（$\\lambda<0$），或消失（$\\lambda=0$）。\n定义 7.2（特征空间） 对应特征值 $\\lambda$ 的所有特征向量（加上零向量）构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n$$\nE_{\\lambda} = \\{v \\mid Av = \\lambda v\\} = \\operatorname{Null}(A - \\lambda I)\n$$",
-      "正特征值拉伸: Av=lambda v",
-      "负特征值反向: Av=lambda v",
-      "零特征值消失: Av=lambda v",
-      "Av_equals_lambda_v"
+      "特征值与特征向量",
+      "有些方向的线段经过变换后只改变长度而不改变方向，这些方向就是特征方向。",
+      "一句话动机：你对一张图片做拉伸——有些方向的线段只变长不变方向，有些方向却歪了。能一直保持不歪的方向，就是\"特征方向\"。\n\n本节目标：看到特征值和特征向量，你脑子里能画出一个\"方向不变箭头被拉长/缩短\"的画面。\n\n**（特征值与特征向量）** 设 $\\boldsymbol A$ 是一个 $n\\times n$ 矩阵。如果存在非零向量 $\\boldsymbol v$ 和标量 $\\lambda$，使得\n\n$$\n\\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v,\n$$\n\n则称 $\\lambda$ 为 $\\boldsymbol A$ 的一个特征值，$\\boldsymbol v$ 为对应的特征向量。\n\n核心含义：$\\boldsymbol A$ 作用在 $\\boldsymbol v$ 上，效果仅仅是把 $\\boldsymbol v$ 拉长或缩短 $\\lambda$ 倍。$\\lambda>0$ 时方向不变，$\\lambda<0$ 时反向，$\\lambda=0$ 时消失。\n\n**（特征空间）** 对应特征值 $\\lambda$ 的所有特征向量加上零向量构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n\n$$\nE_\\lambda\n=\\{\\boldsymbol v\\mid \\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v\\}\n=\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I).\n$$",
+      "取拉伸变换\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&0\\\\\n0&1\n\\end{pmatrix},\n$$\n\n即横轴方向拉伸为原来的 $2$ 倍，纵轴方向不变。对于\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n变换后\n\n$$\n\\boldsymbol A\\boldsymbol v_1\n=\\begin{pmatrix}2\\\\0\\end{pmatrix}\n=2\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n所以 $\\lambda=2$，方向不变。对于\n\n$$\n\\boldsymbol v_2=\n\\begin{pmatrix}0\\\\1\\end{pmatrix},\n$$\n\n变换后\n\n$$\n\\boldsymbol A\\boldsymbol v_2\n=\\begin{pmatrix}0\\\\1\\end{pmatrix}\n=1\\begin{pmatrix}0\\\\1\\end{pmatrix},\n$$\n\n所以 $\\lambda=1$，向量完全不变。",
+      "取投影到横轴的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&0\n\\end{pmatrix}.\n$$\n\n横轴方向满足\n\n$$\n\\boldsymbol A\n\\begin{pmatrix}1\\\\0\\end{pmatrix}\n=\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n所以对应 $\\lambda=1$。纵轴方向满足\n\n$$\n\\boldsymbol A\n\\begin{pmatrix}0\\\\1\\end{pmatrix}\n=\\begin{pmatrix}0\\\\0\\end{pmatrix},\n$$\n\n所以对应 $\\lambda=0$，这个方向消失了。\n\n特征值 $\\lambda=0$ 的含义是这个方向上的向量被压没了，即 $\\boldsymbol v\\in\\operatorname{Null}(\\boldsymbol A)$。特征值 $0$ 对应的特征空间就是零空间。",
+      "取旋转 $90^\\circ$ 的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n0&-1\\\\\n1&0\n\\end{pmatrix}.\n$$\n\n几何上，旋转 $90^\\circ$ 后，没有任何非零方向还指着原来的方向。因此在实数范围内，旋转 $90^\\circ$ 没有实特征向量。\n\n几何直觉总结如下：\n\n| 变换 | 特征向量（哪些方向不变） | 特征值 |\n| --- | --- | --- |\n| 均匀放大 $2$ 倍 | **所有方向** | 全部为 $2$ |\n| 横轴拉伸 $2$ 倍，纵轴不变 | 横轴方向、纵轴方向 | $2,1$ |\n| 投影到横轴 | 横轴方向不变，纵轴方向消失 | $1,0$ |\n| 旋转 $90^\\circ$ | 无 | 无实特征值 |\n| 关于原点反射 | 所有方向反向 | $-1$ |",
+      "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n0&1\\\\\n1&0\n\\end{pmatrix},\n$$\n\n它表示关于直线 $y=x$ 的反射。对于\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\1\\end{pmatrix},\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol v_1\n=\\begin{pmatrix}1\\\\1\\end{pmatrix}\n=\\boldsymbol v_1,\n$$\n\n所以 $\\boldsymbol v_1$ 是特征向量，$\\lambda=1$。\n\n对于\n\n$$\n\\boldsymbol v_2=\n\\begin{pmatrix}1\\\\-1\\end{pmatrix},\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol v_2\n=\\begin{pmatrix}-1\\\\1\\end{pmatrix}\n=-\\begin{pmatrix}1\\\\-1\\end{pmatrix},\n$$\n\n所以 $\\lambda=-1$。",
+      "验证\n\n$$\n\\boldsymbol v=\n\\begin{pmatrix}2\\\\1\\end{pmatrix}\n$$\n\n是否为\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&4\\\\\n2&3\n\\end{pmatrix}\n$$\n\n的特征向量。计算得\n\n$$\n\\boldsymbol A\\boldsymbol v\n=\\begin{pmatrix}6\\\\7\\end{pmatrix}.\n$$\n\n不存在标量 $k$ 使\n\n$$\n\\begin{pmatrix}6\\\\7\\end{pmatrix}\n=k\\begin{pmatrix}2\\\\1\\end{pmatrix},\n$$\n\n所以 $\\boldsymbol v$ 不是特征向量。",
+      "对于投影到横轴的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&0\n\\end{pmatrix},\n$$\n\n特征值 $\\lambda=1$ 对应横轴上的向量不变，特征值 $\\lambda=0$ 对应纵轴被压扁。特征空间为\n\n$$\nE_1=\\operatorname{span}\\left\\{\n\\begin{pmatrix}1\\\\0\\end{pmatrix}\n\\right\\},\\qquad\nE_0=\\operatorname{span}\\left\\{\n\\begin{pmatrix}0\\\\1\\end{pmatrix}\n\\right\\}.\n$$\n\n$\\lambda=0$ 对应的特征空间恰好等于 $\\operatorname{Null}(\\boldsymbol A)$，$\\lambda=1$ 对应的特征空间是投影的目标线。",
+      "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n4&0&0\\\\\n0&7&0\\\\\n0&0&-2\n\\end{pmatrix}.\n$$\n\n可以直接读出特征值\n\n$$\n\\lambda_1=4,\\qquad \\lambda_2=7,\\qquad \\lambda_3=-2.\n$$\n\n一句话动机：$x^2+y^2$ 是圆，$2x^2+3y^2$ 是椭圆，$x^2-y^2$ 是双曲线。能用一个统一的方法判断任何二次方程的图形吗？能，特征值告诉你答案。\n\n本节目标：掌握二次型的矩阵表示，能用主轴定理判断二次曲线的形状和主轴方向。\n\n对应的特征向量分别为\n\n$$\n\\boldsymbol e_1=\n\\begin{pmatrix}1\\\\0\\\\0\\end{pmatrix},\\qquad\n\\boldsymbol e_2=\n\\begin{pmatrix}0\\\\1\\\\0\\end{pmatrix},\\qquad\n\\boldsymbol e_3=\n\\begin{pmatrix}0\\\\0\\\\1\\end{pmatrix}.\n$$\n\n对角矩阵的特征向量就是标准基。",
+      "取三角矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n3&5&-1\\\\\n0&-2&4\\\\\n0&0&1\n\\end{pmatrix}.\n$$\n\n三角矩阵的特征值就是对角线元素：\n\n$$\n\\lambda=3,-2,1.\n$$\n\n对三角矩阵，\n\n$$\n\\det(\\boldsymbol A-\\lambda\\boldsymbol I)\n=(a_{11}-\\lambda)(a_{22}-\\lambda)\\cdots(a_{nn}-\\lambda),\n$$\n\n所以对角线元素就是特征值。"
     ],
     "sections": [
       {
@@ -99,92 +151,52 @@
           "claim.ch07.eigen.direction"
         ],
         "id": "definition",
-        "text": "#### 7.1.1 定义\n定义 7.1（特征值与特征向量） 设 A 是一个 $n \\times n$ 矩阵。如果存在非零向量 v 和标量 $\\lambda$，使得：\n$$\nA \\cdot v = \\lambda \\cdot v\n$$\n则称 $\\lambda$ 为 A 的一个特征值（Eigenvalue），v 为对应的特征向量（Eigenvector）。\n核心含义：A 作用在 v 上，效果仅仅是\"把 v 拉长或缩短 $\\lambda$ 倍\"——方向不变（$\\lambda>0$）、反向（$\\lambda<0$），或消失（$\\lambda=0$）。\n定义 7.2（特征空间） 对应特征值 $\\lambda$ 的所有特征向量（加上零向量）构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n$$\nE_{\\lambda} = \\{v \\mid Av = \\lambda v\\} = \\operatorname{Null}(A - \\lambda I)\n$$",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "id": "formula",
-        "text": "Av=lambda v",
-        "title": "formula"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "id": "derivation",
-        "text": "正特征值拉伸: Av=lambda v\n负特征值反向: Av=lambda v\n零特征值消失: Av=lambda v",
-        "title": "derivation"
+        "text": "",
+        "title": "定义"
       },
       {
         "claim_refs": [
           "claim.ch07.eigen.direction"
         ],
         "id": "worked_examples",
-        "text": "Av=lambda v",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "id": "geometric_meaning",
-        "text": "geometric_meaning: 7.1.1 定义。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 7.1.1 定义。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "id": "connections",
-        "text": "connections: 7.1.1 定义。",
-        "title": "connections"
-      },
-      {
-        "claim_refs": [],
-        "id": "invariants",
-        "text": "Av_equals_lambda_v",
-        "title": "invariants"
+        "text": "",
+        "title": "数学案例"
       }
     ],
-    "summary": "7.1.1 定义",
+    "summary": "有些方向的线段经过变换后只改变长度而不改变方向，这些方向就是特征方向。",
     "symbol_roles": {
-      "collapse_eigenvalue": "collapse_eigenvalue",
-      "collapse_operator": "collapse_operator",
-      "collapse_output": "collapse_output",
-      "collapse_vector": "collapse_vector",
-      "reverse_eigenvalue": "reverse_eigenvalue",
-      "reverse_operator": "reverse_operator",
-      "reverse_output": "reverse_output",
-      "reverse_vector": "reverse_vector",
-      "stretch_eigenvalue": "stretch_eigenvalue",
+      "projection_operator": "projection_operator",
+      "projection_x": "projection_x",
+      "projection_x_image": "projection_x_image",
+      "projection_y": "projection_y",
+      "projection_y_image": "projection_y_image",
+      "reflection_minus": "reflection_minus",
+      "reflection_minus_image": "reflection_minus_image",
+      "reflection_operator": "reflection_operator",
+      "reflection_plus": "reflection_plus",
+      "reflection_plus_image": "reflection_plus_image",
+      "rotation_image": "rotation_image",
+      "rotation_operator": "rotation_operator",
+      "rotation_vector": "rotation_vector",
       "stretch_operator": "stretch_operator",
-      "stretch_output": "stretch_output",
-      "stretch_vector": "stretch_vector"
+      "stretch_x": "stretch_x",
+      "stretch_x_image": "stretch_x_image",
+      "stretch_y": "stretch_y",
+      "stretch_y_image": "stretch_y_image"
     },
-    "title": "7.1.1 定义",
+    "title": "特征值与特征向量",
     "worked_examples": [
       {
         "calculation": [
-          "Av=lambda v"
+          "取拉伸变换\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&0\\\\\n0&1\n\\end{pmatrix},\n$$\n\n即横轴方向拉伸为原来的 $2$ 倍，纵轴方向不变。对于\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n变换后\n\n$$\n\\boldsymbol A\\boldsymbol v_1\n=\\begin{pmatrix}2\\\\0\\end{pmatrix}\n=2\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n所以 $\\lambda=2$，方向不变。对于\n\n$$\n\\boldsymbol v_2=\n\\begin{pmatrix}0\\\\1\\end{pmatrix},\n$$\n\n变换后\n\n$$\n\\boldsymbol A\\boldsymbol v_2\n=\\begin{pmatrix}0\\\\1\\end{pmatrix}\n=1\\begin{pmatrix}0\\\\1\\end{pmatrix},\n$$\n\n所以 $\\lambda=1$，向量完全不变。"
         ],
         "checks": [
           {
             "expected": [
-              2.0,
-              0.0
+              2,
+              0
             ],
-            "name": "result",
+            "name": "transformed",
             "tolerance": 1e-09
           }
         ],
@@ -194,38 +206,38 @@
         "given": [
           [
             [
-              2.0,
-              0.0
+              2,
+              0
             ],
             [
-              0.0,
-              -1.0
+              0,
+              1
             ]
           ],
           [
-            1.0,
-            0.0
+            1,
+            0
           ]
         ],
-        "id": "example.ch07.eigen.direction.stretch.0",
+        "id": "example.ch07.eigen.direction.stretch",
         "kind": "matrix_transform",
         "result": [
-          2.0,
-          0.0
+          2,
+          0
         ],
-        "title": "stretch"
+        "title": "几何直觉例 1：拉伸变换"
       },
       {
         "calculation": [
-          "Av=lambda v"
+          "取投影到横轴的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&0\n\\end{pmatrix}.\n$$\n\n横轴方向满足\n\n$$\n\\boldsymbol A\n\\begin{pmatrix}1\\\\0\\end{pmatrix}\n=\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n所以对应 $\\lambda=1$。纵轴方向满足\n\n$$\n\\boldsymbol A\n\\begin{pmatrix}0\\\\1\\end{pmatrix}\n=\\begin{pmatrix}0\\\\0\\end{pmatrix},\n$$\n\n所以对应 $\\lambda=0$，这个方向消失了。\n\n特征值 $\\lambda=0$ 的含义是这个方向上的向量被压没了，即 $\\boldsymbol v\\in\\operatorname{Null}(\\boldsymbol A)$。特征值 $0$ 对应的特征空间就是零空间。"
         ],
         "checks": [
           {
             "expected": [
-              -0.0,
-              -1.0
+              0,
+              0
             ],
-            "name": "result",
+            "name": "transformed",
             "tolerance": 1e-09
           }
         ],
@@ -235,38 +247,38 @@
         "given": [
           [
             [
-              2.0,
-              0.0
+              1,
+              0
             ],
             [
-              0.0,
-              -1.0
+              0,
+              0
             ]
           ],
           [
-            0.0,
-            1.0
+            0,
+            1
           ]
         ],
-        "id": "example.ch07.eigen.direction.reverse.0",
+        "id": "example.ch07.eigen.direction.projection",
         "kind": "matrix_transform",
         "result": [
-          -0.0,
-          -1.0
+          0,
+          0
         ],
-        "title": "reverse"
+        "title": "几何直觉例 2：投影到横轴"
       },
       {
         "calculation": [
-          "Av=lambda v"
+          "取旋转 $90^\\circ$ 的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n0&-1\\\\\n1&0\n\\end{pmatrix}.\n$$\n\n几何上，旋转 $90^\\circ$ 后，没有任何非零方向还指着原来的方向。因此在实数范围内，旋转 $90^\\circ$ 没有实特征向量。\n\n几何直觉总结如下：\n\n| 变换 | 特征向量（哪些方向不变） | 特征值 |\n| --- | --- | --- |\n| 均匀放大 $2$ 倍 | **所有方向** | 全部为 $2$ |\n| 横轴拉伸 $2$ 倍，纵轴不变 | 横轴方向、纵轴方向 | $2,1$ |\n| 投影到横轴 | 横轴方向不变，纵轴方向消失 | $1,0$ |\n| 旋转 $90^\\circ$ | 无 | 无实特征值 |\n| 关于原点反射 | 所有方向反向 | $-1$ |"
         ],
         "checks": [
           {
             "expected": [
-              0.0,
-              0.0
+              0,
+              1
             ],
-            "name": "result",
+            "name": "transformed",
             "tolerance": 1e-09
           }
         ],
@@ -276,84 +288,260 @@
         "given": [
           [
             [
-              1.0,
-              0.0
+              0,
+              -1
             ],
             [
-              0.0,
-              0.0
+              1,
+              0
             ]
           ],
           [
-            0.0,
-            1.0
+            1,
+            0
           ]
         ],
-        "id": "example.ch07.eigen.direction.collapse.0",
+        "id": "example.ch07.eigen.direction.rotation",
         "kind": "matrix_transform",
         "result": [
-          0.0,
-          0.0
+          0,
+          1
         ],
-        "title": "collapse"
+        "title": "几何直觉例 3：旋转 90 度"
+      },
+      {
+        "calculation": [
+          "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n0&1\\\\\n1&0\n\\end{pmatrix},\n$$\n\n它表示关于直线 $y=x$ 的反射。对于\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\1\\end{pmatrix},\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol v_1\n=\\begin{pmatrix}1\\\\1\\end{pmatrix}\n=\\boldsymbol v_1,\n$$\n\n所以 $\\boldsymbol v_1$ 是特征向量，$\\lambda=1$。\n\n对于\n\n$$\n\\boldsymbol v_2=\n\\begin{pmatrix}1\\\\-1\\end{pmatrix},\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol v_2\n=\\begin{pmatrix}-1\\\\1\\end{pmatrix}\n=-\\begin{pmatrix}1\\\\-1\\end{pmatrix},\n$$\n\n所以 $\\lambda=-1$。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              -1,
+              1
+            ],
+            "name": "transformed",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "given": [
+          [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          [
+            1,
+            -1
+          ]
+        ],
+        "id": "example.ch07.eigen.direction.reflection",
+        "kind": "matrix_transform",
+        "result": [
+          -1,
+          1
+        ],
+        "title": "理解层例 1–2：关于直线 y=x 反射"
+      },
+      {
+        "calculation": [
+          "验证\n\n$$\n\\boldsymbol v=\n\\begin{pmatrix}2\\\\1\\end{pmatrix}\n$$\n\n是否为\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&4\\\\\n2&3\n\\end{pmatrix}\n$$\n\n的特征向量。计算得\n\n$$\n\\boldsymbol A\\boldsymbol v\n=\\begin{pmatrix}6\\\\7\\end{pmatrix}.\n$$\n\n不存在标量 $k$ 使\n\n$$\n\\begin{pmatrix}6\\\\7\\end{pmatrix}\n=k\\begin{pmatrix}2\\\\1\\end{pmatrix},\n$$\n\n所以 $\\boldsymbol v$ 不是特征向量。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              6,
+              7
+            ],
+            "name": "transformed",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "given": [
+          [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              3
+            ]
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "id": "example.ch07.eigen.direction.not-eigenvector",
+        "kind": "matrix_transform",
+        "result": [
+          6,
+          7
+        ],
+        "title": "计算层例 3：验证一个向量不是特征向量"
+      },
+      {
+        "calculation": [
+          "对于投影到横轴的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&0\n\\end{pmatrix},\n$$\n\n特征值 $\\lambda=1$ 对应横轴上的向量不变，特征值 $\\lambda=0$ 对应纵轴被压扁。特征空间为\n\n$$\nE_1=\\operatorname{span}\\left\\{\n\\begin{pmatrix}1\\\\0\\end{pmatrix}\n\\right\\},\\qquad\nE_0=\\operatorname{span}\\left\\{\n\\begin{pmatrix}0\\\\1\\end{pmatrix}\n\\right\\}.\n$$\n\n$\\lambda=0$ 对应的特征空间恰好等于 $\\operatorname{Null}(\\boldsymbol A)$，$\\lambda=1$ 对应的特征空间是投影的目标线。"
+        ],
+        "checks": [
+          {
+            "expected": 0,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "given": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "example.ch07.eigen.direction.projection-spaces",
+        "kind": "determinant",
+        "result": 0,
+        "title": "补充例 4：投影矩阵的特征值与特征向量"
+      },
+      {
+        "calculation": [
+          "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n4&0&0\\\\\n0&7&0\\\\\n0&0&-2\n\\end{pmatrix}.\n$$\n\n可以直接读出特征值\n\n$$\n\\lambda_1=4,\\qquad \\lambda_2=7,\\qquad \\lambda_3=-2.\n$$\n\n一句话动机：$x^2+y^2$ 是圆，$2x^2+3y^2$ 是椭圆，$x^2-y^2$ 是双曲线。能用一个统一的方法判断任何二次方程的图形吗？能，特征值告诉你答案。\n\n本节目标：掌握二次型的矩阵表示，能用主轴定理判断二次曲线的形状和主轴方向。\n\n对应的特征向量分别为\n\n$$\n\\boldsymbol e_1=\n\\begin{pmatrix}1\\\\0\\\\0\\end{pmatrix},\\qquad\n\\boldsymbol e_2=\n\\begin{pmatrix}0\\\\1\\\\0\\end{pmatrix},\\qquad\n\\boldsymbol e_3=\n\\begin{pmatrix}0\\\\0\\\\1\\end{pmatrix}.\n$$\n\n对角矩阵的特征向量就是标准基。"
+        ],
+        "checks": [
+          {
+            "expected": -56,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "given": [
+          [
+            4,
+            0,
+            0
+          ],
+          [
+            0,
+            7,
+            0
+          ],
+          [
+            0,
+            0,
+            -2
+          ]
+        ],
+        "id": "example.ch07.eigen.direction.diagonal",
+        "kind": "determinant",
+        "result": -56,
+        "title": "补充例 5：对角矩阵的特征值"
+      },
+      {
+        "calculation": [
+          "取三角矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n3&5&-1\\\\\n0&-2&4\\\\\n0&0&1\n\\end{pmatrix}.\n$$\n\n三角矩阵的特征值就是对角线元素：\n\n$$\n\\lambda=3,-2,1.\n$$\n\n对三角矩阵，\n\n$$\n\\det(\\boldsymbol A-\\lambda\\boldsymbol I)\n=(a_{11}-\\lambda)(a_{22}-\\lambda)\\cdots(a_{nn}-\\lambda),\n$$\n\n所以对角线元素就是特征值。"
+        ],
+        "checks": [
+          {
+            "expected": -6,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "given": [
+          [
+            3,
+            5,
+            -1
+          ],
+          [
+            0,
+            -2,
+            4
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "id": "example.ch07.eigen.direction.triangular",
+        "kind": "determinant",
+        "result": -6,
+        "title": "补充例 6：三角矩阵的特征值"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:2f755e6d4169db32f65f94b66025b5fb24cf74fd60771e6c6ba4391bab0cfbe9",
+    "artifact_digest": "sha256:3dd7f391f1625d37d11d833f2cb48629de750ba09e26c7d4d9484312f480f35f",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:8fd068408f7e47e0161735ba863da4592a200650deab29d0cfe8a5823d9b9b7f",
-    "source_hash": "sha256:30af9dcc59b5a2344ed089db3091ca7de1a2e225b1576719d7ebae897dc9dc22"
+    "raw_reply_digest": "sha256:a26a25b57efcbc7e3a859e1d154c2b86ed30f3ffa61b3ad68ac345e345e4fc1c",
+    "source_hash": "sha256:16386c8ca3ab73af234181d47a8b71968ef22ea1632c6cc2715998be20eaf58e"
   },
   "revision": 1,
   "schema_version": 1,
   "source": {
-    "excerpt": "#### 7.1.1 定义\n\n定义 7.1（特征值与特征向量） 设 A 是一个 $n \\times n$ 矩阵。如果存在非零向量 v 和标量 $\\lambda$，使得：\n$$\nA \\cdot v = \\lambda \\cdot v\n$$\n则称 $\\lambda$ 为 A 的一个特征值（Eigenvalue），v 为对应的特征向量（Eigenvector）。\n核心含义：A 作用在 v 上，效果仅仅是\"把 v 拉长或缩短 $\\lambda$ 倍\"——方向不变（$\\lambda>0$）、反向（$\\lambda<0$），或消失（$\\lambda=0$）。\n定义 7.2（特征空间） 对应特征值 $\\lambda$ 的所有特征向量（加上零向量）构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n$$\nE_{\\lambda} = \\{v \\mid Av = \\lambda v\\} = \\operatorname{Null}(A - \\lambda I)\n$$",
-    "heading_level": 4,
+    "excerpt": "### 7.1 定义与几何意义\n\n一句话动机：你对一张图片做拉伸——有些方向的线段只变长不变方向，有些方向却歪了。能一直保持不歪的方向，就是\"特征方向\"。\n本节目标：看到特征值和特征向量，你脑子里能画出一个\"方向不变箭头被拉长/缩短\"的画面。\n\n#### 7.1.1 定义\n\n定义 7.1（特征值与特征向量） 设 A 是一个 $n \\times n$ 矩阵。如果存在非零向量 v 和标量 $\\lambda$，使得：\n$$\nA \\cdot v = \\lambda \\cdot v\n$$\n则称 $\\lambda$ 为 A 的一个特征值（Eigenvalue），v 为对应的特征向量（Eigenvector）。\n核心含义：A 作用在 v 上，效果仅仅是\"把 v 拉长或缩短 $\\lambda$ 倍\"——方向不变（$\\lambda>0$）、反向（$\\lambda<0$），或消失（$\\lambda=0$）。\n定义 7.2（特征空间） 对应特征值 $\\lambda$ 的所有特征向量（加上零向量）构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n$$\nE_{\\lambda} = \\{v \\mid Av = \\lambda v\\} = \\operatorname{Null}(A - \\lambda I)\n$$\n\n#### 7.1.2 几何直觉（先看图）\n\n例1：拉伸变换 $A = \\begin{pmatrix}2 & 0 \\\\ 0 & 1\\end{pmatrix}$（x 方向拉 2 倍，y 不变）\n$v_{1} = (1,0)$：变换后 $(2,0) = 2 \\cdot (1,0) \\rightarrow \\lambda=2$，方向不变\n$v_{2} = (0,1)$：变换后 $(0,1) = 1 \\cdot (0,1) \\rightarrow \\lambda=1$，完全不变\n例2：投影到 x 轴 $A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$\n$v_{1} = (1,0)$：投影到自己 $\\rightarrow \\lambda=1$\n$v_{2} = (0,1)$：投影到 $(0,0) \\rightarrow \\lambda=0$（方向消失了！）\n特征值 $\\lambda=0$ 的含义：这个方向上的向量被\"压没了\"——$v \\in \\operatorname{Null}(A)$。特征值 0 对应的特征空间 $=$ 零空间。\n例3：旋转 $90^\\circ A = \\begin{pmatrix}0 & -1 \\\\ 1 & 0\\end{pmatrix}$\n有没有非零 v 满足 $A \\cdot v = \\lambda \\cdot v$？\n几何上：旋转 $90^\\circ$ 后，没有任何方向还指着原来的方向。\n$\\rightarrow$ 在实数范围内，旋转 $90^\\circ$ 没有实特征向量。\n\n#### 7.1.3 几何直觉总结表\n\n| 变换 | 特征向量（哪些方向不变） | 特征值 |\n| --- | --- | --- |\n| 均匀放大 2 倍 | **所有方向** | 全部 2 |\n| x 拉 2 倍，y 不变 | x 轴方向，y 轴方向 | 2, 1 |\n| 投影到 x 轴 | x 轴方向（不变），y 轴方向（消失） | 1, 0 |\n| 旋转 $90^\\circ$ | 无 | 无实特征值 |\n| 关于原点反射 | 所有方向（但反向） | $-1$ |\n\n#### 分层例题\n\n**【理解层】**\n例1：$A = \\begin{pmatrix}0 & 1 \\\\ 1 & 0\\end{pmatrix}$（关于 $y=x$ 反射）。$v=(1,1)$ 被 A 作用后变成什么？它是特征向量吗？\n$A \\cdot (1,1) = (1,1) \\rightarrow$ 是特征向量，$\\lambda=1$。\n例2：同样的 A，$v=(1,-1)$ 被 A 作用后变成 $(-1,1) = -(1,-1) \\rightarrow \\lambda=-1$。\n**【计算层】**\n例3：验证 $v=(2,1)$ 是否是 $A=\\begin{pmatrix}1 & 4 \\\\ 2 & 3\\end{pmatrix}$ 的特征向量。\n$A \\cdot (2,1) = (6,7)$。$(6,7) \\neq k \\cdot (2,1)$ 对任何 k 成立 $\\rightarrow$ 不是特征向量。\n\n##### 补充例题\n\n例4（投影矩阵的特征值与特征向量）: $A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到x轴）。\n特征值 $\\lambda=1$（对应x轴上的向量不变）和 $\\lambda=0$（y轴被压扁）。\n特征空间：$E_{1} = \\operatorname{span}\\{(1,0)\\}$，$E_{0} = \\operatorname{span}\\{(0,1)\\}$。\n注意：$\\lambda=0$对应的特征空间恰好等于Null(A)，$\\lambda=1$对应的特征空间是投影的目标线。\n例5（对角矩阵的特征值）: $A = \\operatorname{diag}(4, 7, -2)$。直接读出特征值：$\\lambda_{1}=4, \\lambda_{2}=7, \\lambda_{3}=-2$。\n一句话动机：$x^{2}+y^{2}$是圆，$2x^{2}+3y^{2}$是椭圆，$x^{2}-y^{2}$是双曲线。能用一个统一的方法判断任何二次方程的图形吗？——能，特征值告诉你答案。\n本节目标：掌握二次型的矩阵表示，能用主轴定理判断二次曲线的形状和主轴方向。\n特征向量分别是 $e_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1)$。对角矩阵的特征向量就是标准基！\n例6（三角矩阵的特征值）: $A = \\begin{pmatrix}3 & 5 & -1 \\\\ 0 & -2 & 4 \\\\ 0 & 0 & 1\\end{pmatrix}$。\n三角矩阵的特征值 $=$ 对角线元素：$\\lambda=3, -2, 1$。\n性质（证明）: $\\det(A-\\lambda I)$ 对于三角矩阵 $= (a_{11}-\\lambda)(a_{22}-\\lambda) \\dots (a_{nn}-\\lambda)$，对角线元素就是特征值。",
+    "heading_level": 3,
     "heading_path": [
       "第7章 特征值与特征向量",
-      "7.1 定义与几何意义",
-      "7.1.1 定义"
+      "7.1 定义与几何意义"
     ],
     "neighboring_titles": [
-      "7.1.2 几何直觉（先看图）"
+      "7.2 特征多项式"
     ],
     "occurrence": 1,
-    "source_hash": "sha256:30af9dcc59b5a2344ed089db3091ca7de1a2e225b1576719d7ebae897dc9dc22",
+    "source_hash": "sha256:16386c8ca3ab73af234181d47a8b71968ef22ea1632c6cc2715998be20eaf58e",
     "source_path": [
       "第7章 特征值与特征向量",
       "7.1 定义与几何意义",
-      "7.1.1 定义"
+      "特征值与特征向量"
     ],
     "spans": [
       {
-        "end_line": 2109,
-        "fingerprint": "sha256:30af9dcc59b5a2344ed089db3091ca7de1a2e225b1576719d7ebae897dc9dc22",
+        "end_line": 2030,
+        "fingerprint": "sha256:16386c8ca3ab73af234181d47a8b71968ef22ea1632c6cc2715998be20eaf58e",
         "heading_path": [
           "第7章 特征值与特征向量",
-          "7.1 定义与几何意义",
-          "7.1.1 定义"
+          "7.1 定义与几何意义"
         ],
-        "id": "第7章 特征值与特征向量 / 7.1 定义与几何意义 / 7.1.1 定义::1::sha256:30af9dcc59b5a2344ed089db3091ca7de1a2e225b1576719d7ebae897dc9dc22",
-        "start_line": 2097,
-        "text": "#### 7.1.1 定义\n\n定义 7.1（特征值与特征向量） 设 A 是一个 $n \\times n$ 矩阵。如果存在非零向量 v 和标量 $\\lambda$，使得：\n$$\nA \\cdot v = \\lambda \\cdot v\n$$\n则称 $\\lambda$ 为 A 的一个特征值（Eigenvalue），v 为对应的特征向量（Eigenvector）。\n核心含义：A 作用在 v 上，效果仅仅是\"把 v 拉长或缩短 $\\lambda$ 倍\"——方向不变（$\\lambda>0$）、反向（$\\lambda<0$），或消失（$\\lambda=0$）。\n定义 7.2（特征空间） 对应特征值 $\\lambda$ 的所有特征向量（加上零向量）构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n$$\nE_{\\lambda} = \\{v \\mid Av = \\lambda v\\} = \\operatorname{Null}(A - \\lambda I)\n$$"
+        "id": "第7章 特征值与特征向量 / 7.1 定义与几何意义::1::sha256:16386c8ca3ab73af234181d47a8b71968ef22ea1632c6cc2715998be20eaf58e",
+        "start_line": 1959,
+        "text": "### 7.1 定义与几何意义\n\n一句话动机：你对一张图片做拉伸——有些方向的线段只变长不变方向，有些方向却歪了。能一直保持不歪的方向，就是\"特征方向\"。\n本节目标：看到特征值和特征向量，你脑子里能画出一个\"方向不变箭头被拉长/缩短\"的画面。\n\n#### 7.1.1 定义\n\n定义 7.1（特征值与特征向量） 设 A 是一个 $n \\times n$ 矩阵。如果存在非零向量 v 和标量 $\\lambda$，使得：\n$$\nA \\cdot v = \\lambda \\cdot v\n$$\n则称 $\\lambda$ 为 A 的一个特征值（Eigenvalue），v 为对应的特征向量（Eigenvector）。\n核心含义：A 作用在 v 上，效果仅仅是\"把 v 拉长或缩短 $\\lambda$ 倍\"——方向不变（$\\lambda>0$）、反向（$\\lambda<0$），或消失（$\\lambda=0$）。\n定义 7.2（特征空间） 对应特征值 $\\lambda$ 的所有特征向量（加上零向量）构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n$$\nE_{\\lambda} = \\{v \\mid Av = \\lambda v\\} = \\operatorname{Null}(A - \\lambda I)\n$$\n\n#### 7.1.2 几何直觉（先看图）\n\n例1：拉伸变换 $A = \\begin{pmatrix}2 & 0 \\\\ 0 & 1\\end{pmatrix}$（x 方向拉 2 倍，y 不变）\n$v_{1} = (1,0)$：变换后 $(2,0) = 2 \\cdot (1,0) \\rightarrow \\lambda=2$，方向不变\n$v_{2} = (0,1)$：变换后 $(0,1) = 1 \\cdot (0,1) \\rightarrow \\lambda=1$，完全不变\n例2：投影到 x 轴 $A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$\n$v_{1} = (1,0)$：投影到自己 $\\rightarrow \\lambda=1$\n$v_{2} = (0,1)$：投影到 $(0,0) \\rightarrow \\lambda=0$（方向消失了！）\n特征值 $\\lambda=0$ 的含义：这个方向上的向量被\"压没了\"——$v \\in \\operatorname{Null}(A)$。特征值 0 对应的特征空间 $=$ 零空间。\n例3：旋转 $90^\\circ A = \\begin{pmatrix}0 & -1 \\\\ 1 & 0\\end{pmatrix}$\n有没有非零 v 满足 $A \\cdot v = \\lambda \\cdot v$？\n几何上：旋转 $90^\\circ$ 后，没有任何方向还指着原来的方向。\n$\\rightarrow$ 在实数范围内，旋转 $90^\\circ$ 没有实特征向量。\n\n#### 7.1.3 几何直觉总结表\n\n| 变换 | 特征向量（哪些方向不变） | 特征值 |\n| --- | --- | --- |\n| 均匀放大 2 倍 | **所有方向** | 全部 2 |\n| x 拉 2 倍，y 不变 | x 轴方向，y 轴方向 | 2, 1 |\n| 投影到 x 轴 | x 轴方向（不变），y 轴方向（消失） | 1, 0 |\n| 旋转 $90^\\circ$ | 无 | 无实特征值 |\n| 关于原点反射 | 所有方向（但反向） | $-1$ |\n\n#### 分层例题\n\n**【理解层】**\n例1：$A = \\begin{pmatrix}0 & 1 \\\\ 1 & 0\\end{pmatrix}$（关于 $y=x$ 反射）。$v=(1,1)$ 被 A 作用后变成什么？它是特征向量吗？\n$A \\cdot (1,1) = (1,1) \\rightarrow$ 是特征向量，$\\lambda=1$。\n例2：同样的 A，$v=(1,-1)$ 被 A 作用后变成 $(-1,1) = -(1,-1) \\rightarrow \\lambda=-1$。\n**【计算层】**\n例3：验证 $v=(2,1)$ 是否是 $A=\\begin{pmatrix}1 & 4 \\\\ 2 & 3\\end{pmatrix}$ 的特征向量。\n$A \\cdot (2,1) = (6,7)$。$(6,7) \\neq k \\cdot (2,1)$ 对任何 k 成立 $\\rightarrow$ 不是特征向量。\n\n##### 补充例题\n\n例4（投影矩阵的特征值与特征向量）: $A = \\begin{pmatrix}1 & 0 \\\\ 0 & 0\\end{pmatrix}$（投影到x轴）。\n特征值 $\\lambda=1$（对应x轴上的向量不变）和 $\\lambda=0$（y轴被压扁）。\n特征空间：$E_{1} = \\operatorname{span}\\{(1,0)\\}$，$E_{0} = \\operatorname{span}\\{(0,1)\\}$。\n注意：$\\lambda=0$对应的特征空间恰好等于Null(A)，$\\lambda=1$对应的特征空间是投影的目标线。\n例5（对角矩阵的特征值）: $A = \\operatorname{diag}(4, 7, -2)$。直接读出特征值：$\\lambda_{1}=4, \\lambda_{2}=7, \\lambda_{3}=-2$。\n一句话动机：$x^{2}+y^{2}$是圆，$2x^{2}+3y^{2}$是椭圆，$x^{2}-y^{2}$是双曲线。能用一个统一的方法判断任何二次方程的图形吗？——能，特征值告诉你答案。\n本节目标：掌握二次型的矩阵表示，能用主轴定理判断二次曲线的形状和主轴方向。\n特征向量分别是 $e_{1}=(1,0,0), e_{2}=(0,1,0), e_{3}=(0,0,1)$。对角矩阵的特征向量就是标准基！\n例6（三角矩阵的特征值）: $A = \\begin{pmatrix}3 & 5 & -1 \\\\ 0 & -2 & 4 \\\\ 0 & 0 & 1\\end{pmatrix}$。\n三角矩阵的特征值 $=$ 对角线元素：$\\lambda=3, -2, 1$。\n性质（证明）: $\\det(A-\\lambda I)$ 对于三角矩阵 $= (a_{11}-\\lambda)(a_{22}-\\lambda) \\dots (a_{nn}-\\lambda)$，对角线元素就是特征值。"
       }
     ]
   },
   "status": "reviewed",
   "teaching_profile": {
-    "minimum_level": 3,
+    "minimum_level": 2,
     "required_sections": [
       "definition",
-      "formula",
-      "derivation",
-      "worked_examples",
-      "geometric_meaning",
-      "pitfalls",
-      "connections"
+      "worked_examples"
     ],
     "requires_analogy_boundary": false
   },
@@ -376,7 +564,7 @@
           ],
           [
             0.0,
-            -1.0
+            1.0
           ]
         ]
       },
@@ -385,10 +573,10 @@
           "claim.ch07.eigen.direction"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigen.direction.stretch_vector",
+        "id": "entity.ch07.eigen.direction.stretch_x",
         "kind": "vector",
-        "label": "stretch_vector",
-        "role": "stretch_vector",
+        "label": "stretch_x",
+        "role": "stretch_x",
         "value": [
           1.0,
           0.0
@@ -399,10 +587,10 @@
           "claim.ch07.eigen.direction"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigen.direction.stretch_output",
+        "id": "entity.ch07.eigen.direction.stretch_x_image",
         "kind": "vector",
-        "label": "stretch_output",
-        "role": "stretch_output",
+        "label": "stretch_x_image",
+        "role": "stretch_x_image",
         "value": [
           2.0,
           0.0
@@ -413,44 +601,10 @@
           "claim.ch07.eigen.direction"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigen.direction.stretch_eigenvalue",
-        "kind": "point",
-        "label": "stretch_eigenvalue",
-        "role": "stretch_eigenvalue",
-        "value": [
-          2.0,
-          0.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "dimension": 2,
-        "id": "entity.ch07.eigen.direction.reverse_operator",
-        "kind": "matrix",
-        "label": "reverse_operator",
-        "role": "reverse_operator",
-        "value": [
-          [
-            2.0,
-            0.0
-          ],
-          [
-            0.0,
-            -1.0
-          ]
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "dimension": 2,
-        "id": "entity.ch07.eigen.direction.reverse_vector",
+        "id": "entity.ch07.eigen.direction.stretch_y",
         "kind": "vector",
-        "label": "reverse_vector",
-        "role": "reverse_vector",
+        "label": "stretch_y",
+        "role": "stretch_y",
         "value": [
           0.0,
           1.0
@@ -461,13 +615,13 @@
           "claim.ch07.eigen.direction"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigen.direction.reverse_output",
+        "id": "entity.ch07.eigen.direction.stretch_y_image",
         "kind": "vector",
-        "label": "reverse_output",
-        "role": "reverse_output",
+        "label": "stretch_y_image",
+        "role": "stretch_y_image",
         "value": [
-          -0.0,
-          -1.0
+          0.0,
+          1.0
         ]
       },
       {
@@ -475,24 +629,10 @@
           "claim.ch07.eigen.direction"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigen.direction.reverse_eigenvalue",
-        "kind": "point",
-        "label": "reverse_eigenvalue",
-        "role": "reverse_eigenvalue",
-        "value": [
-          -1.0,
-          0.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "dimension": 2,
-        "id": "entity.ch07.eigen.direction.collapse_operator",
+        "id": "entity.ch07.eigen.direction.projection_operator",
         "kind": "matrix",
-        "label": "collapse_operator",
-        "role": "collapse_operator",
+        "label": "projection_operator",
+        "role": "projection_operator",
         "value": [
           [
             1.0,
@@ -509,10 +649,38 @@
           "claim.ch07.eigen.direction"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigen.direction.collapse_vector",
+        "id": "entity.ch07.eigen.direction.projection_x",
         "kind": "vector",
-        "label": "collapse_vector",
-        "role": "collapse_vector",
+        "label": "projection_x",
+        "role": "projection_x",
+        "value": [
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.projection_x_image",
+        "kind": "vector",
+        "label": "projection_x_image",
+        "role": "projection_x_image",
+        "value": [
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.projection_y",
+        "kind": "vector",
+        "label": "projection_y",
+        "role": "projection_y",
         "value": [
           0.0,
           1.0
@@ -523,10 +691,10 @@
           "claim.ch07.eigen.direction"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigen.direction.collapse_output",
+        "id": "entity.ch07.eigen.direction.projection_y_image",
         "kind": "vector",
-        "label": "collapse_output",
-        "role": "collapse_output",
+        "label": "projection_y_image",
+        "role": "projection_y_image",
         "value": [
           0.0,
           0.0
@@ -537,13 +705,123 @@
           "claim.ch07.eigen.direction"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigen.direction.collapse_eigenvalue",
-        "kind": "point",
-        "label": "collapse_eigenvalue",
-        "role": "collapse_eigenvalue",
+        "id": "entity.ch07.eigen.direction.rotation_operator",
+        "kind": "matrix",
+        "label": "rotation_operator",
+        "role": "rotation_operator",
+        "value": [
+          [
+            0.0,
+            -1.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.rotation_vector",
+        "kind": "vector",
+        "label": "rotation_vector",
+        "role": "rotation_vector",
+        "value": [
+          1.0,
+          0.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.rotation_image",
+        "kind": "vector",
+        "label": "rotation_image",
+        "role": "rotation_image",
         "value": [
           0.0,
-          0.0
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.reflection_operator",
+        "kind": "matrix",
+        "label": "reflection_operator",
+        "role": "reflection_operator",
+        "value": [
+          [
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.reflection_plus",
+        "kind": "vector",
+        "label": "reflection_plus",
+        "role": "reflection_plus",
+        "value": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.reflection_plus_image",
+        "kind": "vector",
+        "label": "reflection_plus_image",
+        "role": "reflection_plus_image",
+        "value": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.reflection_minus",
+        "kind": "vector",
+        "label": "reflection_minus",
+        "role": "reflection_minus",
+        "value": [
+          1.0,
+          -1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.reflection_minus_image",
+        "kind": "vector",
+        "label": "reflection_minus_image",
+        "role": "reflection_minus_image",
+        "value": [
+          -1.0,
+          1.0
         ]
       }
     ],
@@ -552,7 +830,7 @@
         "claim_refs": [
           "claim.ch07.eigen.direction"
         ],
-        "id": "relation.ch07.eigen.direction.stretch",
+        "id": "relation.ch07.eigen.direction.stretch_x",
         "kind": "maps_to",
         "parameters": {
           "eigenvalue": 2.0,
@@ -563,7 +841,7 @@
             ],
             [
               0.0,
-              -1.0
+              1.0
             ]
           ],
           "output": [
@@ -575,17 +853,17 @@
             0.0
           ]
         },
-        "source_ref": "entity.ch07.eigen.direction.stretch_vector",
-        "target_ref": "entity.ch07.eigen.direction.stretch_output"
+        "source_ref": "entity.ch07.eigen.direction.stretch_x",
+        "target_ref": "entity.ch07.eigen.direction.stretch_x_image"
       },
       {
         "claim_refs": [
           "claim.ch07.eigen.direction"
         ],
-        "id": "relation.ch07.eigen.direction.reverse",
+        "id": "relation.ch07.eigen.direction.stretch_y",
         "kind": "maps_to",
         "parameters": {
-          "eigenvalue": -1.0,
+          "eigenvalue": 1.0,
           "matrix": [
             [
               2.0,
@@ -593,27 +871,57 @@
             ],
             [
               0.0,
-              -1.0
+              1.0
             ]
           ],
           "output": [
-            -0.0,
-            -1.0
+            0.0,
+            1.0
           ],
           "vector": [
             0.0,
             1.0
           ]
         },
-        "source_ref": "entity.ch07.eigen.direction.reverse_vector",
-        "target_ref": "entity.ch07.eigen.direction.reverse_output"
+        "source_ref": "entity.ch07.eigen.direction.stretch_y",
+        "target_ref": "entity.ch07.eigen.direction.stretch_y_image"
       },
       {
         "claim_refs": [
           "claim.ch07.eigen.direction"
         ],
-        "id": "relation.ch07.eigen.direction.collapse",
+        "id": "relation.ch07.eigen.direction.projection_x",
         "kind": "maps_to",
+        "parameters": {
+          "eigenvalue": 1.0,
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          "output": [
+            1.0,
+            0.0
+          ],
+          "vector": [
+            1.0,
+            0.0
+          ]
+        },
+        "source_ref": "entity.ch07.eigen.direction.projection_x",
+        "target_ref": "entity.ch07.eigen.direction.projection_x_image"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "id": "relation.ch07.eigen.direction.projection_y",
+        "kind": "collapses_to",
         "parameters": {
           "eigenvalue": 0.0,
           "matrix": [
@@ -635,72 +943,200 @@
             1.0
           ]
         },
-        "source_ref": "entity.ch07.eigen.direction.collapse_vector",
-        "target_ref": "entity.ch07.eigen.direction.collapse_output"
+        "source_ref": "entity.ch07.eigen.direction.projection_y",
+        "target_ref": "entity.ch07.eigen.direction.projection_y_image"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "id": "relation.ch07.eigen.direction.rotation",
+        "kind": "maps_to",
+        "parameters": {
+          "characteristic": [
+            1.0,
+            0.0,
+            1.0
+          ],
+          "discriminant": -4.0,
+          "matrix": [
+            [
+              0.0,
+              -1.0
+            ],
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          "output": [
+            0.0,
+            1.0
+          ],
+          "vector": [
+            1.0,
+            0.0
+          ]
+        },
+        "source_ref": "entity.ch07.eigen.direction.rotation_vector",
+        "target_ref": "entity.ch07.eigen.direction.rotation_image"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "id": "relation.ch07.eigen.direction.reflection_plus",
+        "kind": "maps_to",
+        "parameters": {
+          "eigenvalue": 1.0,
+          "matrix": [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          "output": [
+            1.0,
+            1.0
+          ],
+          "vector": [
+            1.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch07.eigen.direction.reflection_plus",
+        "target_ref": "entity.ch07.eigen.direction.reflection_plus_image"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "id": "relation.ch07.eigen.direction.reflection_minus",
+        "kind": "maps_to",
+        "parameters": {
+          "eigenvalue": -1.0,
+          "matrix": [
+            [
+              0.0,
+              1.0
+            ],
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          "output": [
+            -1.0,
+            1.0
+          ],
+          "vector": [
+            1.0,
+            -1.0
+          ]
+        },
+        "source_ref": "entity.ch07.eigen.direction.reflection_minus",
+        "target_ref": "entity.ch07.eigen.direction.reflection_minus_image"
       }
     ],
     "scene_family": "spectral_orthogonal",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "Av=lambda v",
+        "caption": "",
         "expected_invariants": [
-          "Av_equals_lambda_v"
+          "A v = lambda v for every displayed eigenvector",
+          "lambda zero eigenspace equals Null(A)",
+          "quarter turn has no real eigenvector"
         ],
         "id": "stage.ch07.eigen.direction.stretch",
         "input_entity_refs": [
           "entity.ch07.eigen.direction.stretch_operator",
-          "entity.ch07.eigen.direction.stretch_vector",
-          "entity.ch07.eigen.direction.stretch_eigenvalue"
+          "entity.ch07.eigen.direction.stretch_x",
+          "entity.ch07.eigen.direction.stretch_y"
         ],
-        "layout": "sequence",
+        "layout": "overlay",
         "output_entity_refs": [
-          "entity.ch07.eigen.direction.stretch_output"
+          "entity.ch07.eigen.direction.stretch_x_image",
+          "entity.ch07.eigen.direction.stretch_y_image"
         ],
         "relation_refs": [
-          "relation.ch07.eigen.direction.stretch"
+          "relation.ch07.eigen.direction.stretch_x",
+          "relation.ch07.eigen.direction.stretch_y"
         ],
-        "title": "正特征值拉伸"
+        "title": "拉伸：两个坐标轴方向不变"
       },
       {
-        "caption": "Av=lambda v",
+        "caption": "",
         "expected_invariants": [
-          "Av_equals_lambda_v"
+          "A v = lambda v for every displayed eigenvector",
+          "lambda zero eigenspace equals Null(A)",
+          "quarter turn has no real eigenvector"
         ],
-        "id": "stage.ch07.eigen.direction.reverse",
+        "id": "stage.ch07.eigen.direction.projection",
         "input_entity_refs": [
-          "entity.ch07.eigen.direction.reverse_operator",
-          "entity.ch07.eigen.direction.reverse_vector",
-          "entity.ch07.eigen.direction.reverse_eigenvalue"
+          "entity.ch07.eigen.direction.projection_operator",
+          "entity.ch07.eigen.direction.projection_x",
+          "entity.ch07.eigen.direction.projection_y"
         ],
-        "layout": "sequence",
+        "layout": "overlay",
         "output_entity_refs": [
-          "entity.ch07.eigen.direction.reverse_output"
+          "entity.ch07.eigen.direction.projection_x_image",
+          "entity.ch07.eigen.direction.projection_y_image"
         ],
         "relation_refs": [
-          "relation.ch07.eigen.direction.reverse"
+          "relation.ch07.eigen.direction.projection_x",
+          "relation.ch07.eigen.direction.projection_y"
         ],
-        "title": "负特征值反向"
+        "title": "投影：一个方向不变，一个方向消失"
       },
       {
-        "caption": "Av=lambda v",
+        "caption": "",
         "expected_invariants": [
-          "Av_equals_lambda_v"
+          "A v = lambda v for every displayed eigenvector",
+          "lambda zero eigenspace equals Null(A)",
+          "quarter turn has no real eigenvector"
         ],
-        "id": "stage.ch07.eigen.direction.collapse",
+        "id": "stage.ch07.eigen.direction.rotation",
         "input_entity_refs": [
-          "entity.ch07.eigen.direction.collapse_operator",
-          "entity.ch07.eigen.direction.collapse_vector",
-          "entity.ch07.eigen.direction.collapse_eigenvalue"
+          "entity.ch07.eigen.direction.rotation_operator",
+          "entity.ch07.eigen.direction.rotation_vector"
         ],
-        "layout": "sequence",
+        "layout": "overlay",
         "output_entity_refs": [
-          "entity.ch07.eigen.direction.collapse_output"
+          "entity.ch07.eigen.direction.rotation_image"
         ],
         "relation_refs": [
-          "relation.ch07.eigen.direction.collapse"
+          "relation.ch07.eigen.direction.rotation"
         ],
-        "title": "零特征值消失"
+        "title": "旋转 90 度：没有实特征方向"
+      },
+      {
+        "caption": "",
+        "expected_invariants": [
+          "A v = lambda v for every displayed eigenvector",
+          "lambda zero eigenspace equals Null(A)",
+          "quarter turn has no real eigenvector"
+        ],
+        "id": "stage.ch07.eigen.direction.reflection",
+        "input_entity_refs": [
+          "entity.ch07.eigen.direction.reflection_operator",
+          "entity.ch07.eigen.direction.reflection_plus",
+          "entity.ch07.eigen.direction.reflection_minus"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch07.eigen.direction.reflection_plus_image",
+          "entity.ch07.eigen.direction.reflection_minus_image"
+        ],
+        "relation_refs": [
+          "relation.ch07.eigen.direction.reflection_plus",
+          "relation.ch07.eigen.direction.reflection_minus"
+        ],
+        "title": "关于 y=x 反射：一个方向不变，一个方向反向"
       }
     ]
   }

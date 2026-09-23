@@ -1,4 +1,4 @@
-"""Release-gate tests for the complete 64-topic linear algebra curriculum."""
+"""Release-gate tests for the complete linear algebra curriculum."""
 
 from pathlib import Path
 
@@ -15,14 +15,14 @@ def test_full_validation_accepts_exact_topic_distribution() -> None:
     assert report.chapter_counts == {
         1: 11,
         2: 9,
-        3: 10,
+        3: 8,
         4: 4,
-        5: 8,
-        6: 3,
-        7: 6,
-        8: 6,
+        5: 5,
+        6: 2,
+        7: 4,
+        8: 4,
     }
-    assert report.topic_count == 57
+    assert report.topic_count == 47
     assert report.issues == ()
     assert report.errors == ()
 
@@ -31,14 +31,14 @@ def test_full_validation_records_every_topic_release_witness() -> None:
     report = validate_all_topics(PROJECT_ROOT)
     records = report.topic_records
 
-    assert len(records) == 57
+    assert len(records) == 47
     assert tuple(record.topic_id for record in records) == tuple(
         topic.id for topic in catalog_registry().topics
     )
     assert all(record.source_hash.startswith("sha256:") for record in records)
     assert all(record.artifact_revision is not None and record.artifact_revision >= 1 for record in records)
     assert all(record.plan_digest.startswith("sha256:") for record in records)
-    assert len([record for record in records if record.chapter >= 4]) == 27
+    assert len([record for record in records if record.chapter >= 4]) == 19
 
 
 def test_validation_reports_missing_artifact_with_stable_issue_fields(
@@ -61,7 +61,7 @@ def test_validation_requires_published_snapshots_when_snapshot_root_is_explicit(
     report = validate_all_topics(PROJECT_ROOT, snapshot_root=tmp_path)
 
     missing = [issue for issue in report.issues if issue.code == "missing_snapshot"]
-    assert len(missing) == 57
+    assert len(missing) == 47
     assert missing[0].topic_id == "ch01.inner.cauchy-schwarz"
     assert list(report.issues) == sorted(
         report.issues,

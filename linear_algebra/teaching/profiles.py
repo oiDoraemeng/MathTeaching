@@ -103,10 +103,32 @@ _PROJECTION_MATRIX = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "worked_examples"),
 )
+_MATRIX_COMPOSITION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+_MATRIX_POWERS = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
 # 3.1 的行列式公式位于定义块，不要求独立公式和推导。
 _DET_GEOMETRY = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "geometric_meaning", "worked_examples"),
+)
+# 3.2 的三个定理与行列式几何说明写在定义块；没有独立证明，案例负责数值复算。
+_DET_CORE_PROPERTIES = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+# 3.3、3.4 的公式写入定义块；3.5、3.6 另保留讲义中的完整推导。
+_CHAPTER_3_DEFINITION_CASE = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+_ADJUGATE_MATRIX = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "derivation", "worked_examples"),
 )
 # 4.3 合并后只要求定义、性质证明和读数案例。
 _BASIS_DEFINITION = TeachingProfile(
@@ -117,6 +139,46 @@ _BASIS_DEFINITION = TeachingProfile(
 _DEPENDENCE_DEFINITION = TeachingProfile(
     TeachingLevel.CALCULATE,
     ("definition", "worked_examples"),
+)
+_CHAPTER_5_WITH_PROOF = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "derivation", "worked_examples"),
+)
+_CHAPTER_5_DEFINITION_CASE = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+_CHAPTER_6_BASIS_CHANGE = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+_CHAPTER_6_SIMILARITY = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "derivation", "worked_examples"),
+)
+_CHAPTER_7_DIRECTION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+_CHAPTER_7_POLYNOMIAL = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "derivation", "worked_examples"),
+)
+_CHAPTER_7_EIGENSPACE = TeachingProfile(
+    TeachingLevel.EXPLAIN,
+    ("definition", "derivation", "worked_examples"),
+)
+_CHAPTER_7_DIAGONALIZATION = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+_CHAPTER_8_DEFINITION_CASE = TeachingProfile(
+    TeachingLevel.CALCULATE,
+    ("definition", "worked_examples"),
+)
+_CHAPTER_8_WITH_DERIVATION = TeachingProfile(
+    TeachingLevel.EXPLAIN,
+    ("definition", "derivation", "worked_examples"),
 )
 _BRIDGE = TeachingProfile(
     TeachingLevel.TRANSFER,
@@ -148,24 +210,21 @@ _PROFILES: dict[str, TeachingProfile] = {
     "ch02.batch.projection": _PROJECTION_MATRIX,
     "ch02.matrix.additive-distributivity": _MATRIX_VECTOR_SUBSECTION,
     "ch02.matrix.transformed-grid": _MATRIX_VECTOR_SUBSECTION,
-    "ch02.matrix.composition": _VECTOR_FOUNDATION,
+    "ch02.matrix.composition": _MATRIX_COMPOSITION,
     "ch02.matrix.basis": _MATRIX_VECTOR_SUBSECTION,
-    "ch02.matrix.powers": _VECTOR_FOUNDATION,
+    "ch02.matrix.powers": _MATRIX_POWERS,
     # 2.9 沿用 2.5 配置，仅要求定义和分步案例。
     "ch02.subspace.independence": _MATRIX_VECTOR_SUBSECTION,
     "ch02.subspace.rank": _MATRIX_VECTOR_SUBSECTION,
     "ch03.det.oriented-area": _DET_GEOMETRY,
-    "ch03.det.row-swap": _CORE,
-    "ch03.det.scaling": _CORE,
-    "ch03.det.shear": _CORE,
-    "ch03.det.multiplicativity": _BRIDGE,
-    "ch03.cramer.area-ratio": _BRIDGE,
-    "ch03.inverse.undo": _BRIDGE,
-    "ch03.inverse.formula": _CORE,
-    "ch03.inverse.examples": _CORE,
-    "ch03.det.zero.equivalence": _BRIDGE,
+    "ch03.det.basic-properties": _DET_CORE_PROPERTIES,
+    "ch03.det.multiplicativity": _DET_CORE_PROPERTIES,
+    "ch03.det.transpose": _DET_CORE_PROPERTIES,
+    "ch03.cramer.area-ratio": _CHAPTER_3_DEFINITION_CASE,
+    "ch03.inverse.undo": _CHAPTER_3_DEFINITION_CASE,
+    "ch03.adjugate.matrix": _ADJUGATE_MATRIX,
+    "ch03.det.zero.equivalence": _ADJUGATE_MATRIX,
 }
-_PROFILES["ch02.matrix.composition"] = _BRIDGE
 
 # 第 4 至 8 章暂用统一策略，并按稳定主题标识显式登记。
 _CHAPTER_4_8_PROFILE = TeachingProfile(
@@ -183,6 +242,29 @@ _PROFILES["ch04.dependence.redundancy"] = _DEPENDENCE_DEFINITION
 # 4.3 合并后的「基的定义」：定义、维数与坐标写在同一小节，公式在定义块内，
 # 讲义唯一的证明进「推导」，读数案例由定义自定。
 _PROFILES["ch04.basis.definition"] = _BASIS_DEFINITION
+_PROFILES.update({
+    "ch05.homogeneous.solution-space": _CHAPTER_5_WITH_PROOF,
+    "ch05.affine.solution-set": _CHAPTER_5_WITH_PROOF,
+    "ch05.consistency.geometry": _CHAPTER_5_DEFINITION_CASE,
+    "ch05.gaussian-elimination": _CHAPTER_5_WITH_PROOF,
+    "ch05.least-squares.projection": _CHAPTER_5_DEFINITION_CASE,
+})
+_PROFILES.update({
+    "ch07.eigen.direction": _CHAPTER_7_DIRECTION,
+    "ch07.characteristic-polynomial": _CHAPTER_7_POLYNOMIAL,
+    "ch07.eigenspace": _CHAPTER_7_EIGENSPACE,
+    "ch07.diagonalization": _CHAPTER_7_DIAGONALIZATION,
+})
+_PROFILES.update({
+    "ch06.basis-change.coordinates": _CHAPTER_6_BASIS_CHANGE,
+    "ch06.similarity-transform": _CHAPTER_6_SIMILARITY,
+})
+_PROFILES.update({
+    "ch08.quadratic.matrix-form": _CHAPTER_8_DEFINITION_CASE,
+    "ch08.quadratic.level-sets": _CHAPTER_8_DEFINITION_CASE,
+    "ch08.principal-axis": _CHAPTER_8_WITH_DERIVATION,
+    "ch08.definiteness": _CHAPTER_8_WITH_DERIVATION,
+})
 
 
 def profile_for(topic_id: str) -> TeachingProfile:

@@ -1,4 +1,4 @@
-"""Chapter 3: Determinants - 15 topic builders."""
+"""Chapter 3 determinant visualization recipes."""
 
 from __future__ import annotations
 
@@ -96,69 +96,33 @@ def build_det_multiplicativity(context: RenderContext) -> CommandPlan:
     return CommandPlan(scene="2d", operations=tuple(ops), summary="det(AB) = det(A)det(B)")
 
 
+def build_det_basic_properties(context: RenderContext) -> CommandPlan:
+    """行列式的基本性质：目录配方保留有向面积图。"""
+    return build_det_row_swap(context)
+
+
+def build_det_transpose(context: RenderContext) -> CommandPlan:
+    """转置不变性：目录配方保留两条邻边与有向面积图。"""
+    return build_oriented_area(context)
+
+
 def build_cramer_area_ratio(context: RenderContext) -> CommandPlan:
-    """克拉默法则的面积比解方程组"""
-    a = [2.0, 0.5]
-    b = [0.5, 2.0]
-    target = [2.5, 2.0]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], a, "a", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b, "b", role="secondary"))
-    ops.extend(make_vector_2d([0, 0], target, "target", role="result"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.15, alias="basis_area"))
-    ops.append(make_polygon([[0, 0], target, b], opacity=0.2, color=role_color("projection"), alias="target_area"))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="面积比求解线性方程组")
+    """纯讲义主题只保留一个合法的无图场景计划。"""
+    return build_text_only(context)
 
 
 def build_inverse_undo(context: RenderContext) -> CommandPlan:
-    """逆矩阵的几何撤销"""
-    v = [1.0, 1.0]
-    av = [2.5, 1.5]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], v, "v", role="primary"))
-    ops.extend(make_vector_2d([0, 0], av, "Av", role="secondary"))
-    ops.extend(make_vector_2d(av, [av[0] + 1.5, av[1] + 0.5], "undo_arrow", role="result", style="dashed"))
-    ops.append(make_label("A", [(v[0] + av[0]) / 2, (v[1] + av[1]) / 2], offset=[0, 0.3]))
-    ops.append(make_label("A⁻¹", [av[0] + 0.75, av[1] + 0.25], offset=[0, 0.3]))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="逆矩阵撤销变换")
+    """纯讲义主题只保留一个合法的无图场景计划。"""
+    return build_text_only(context)
 
 
-def build_inverse_formula(context: RenderContext) -> CommandPlan:
-    """2×2 求逆公式的几何参数"""
-    a = [2.0, 0.5]
-    b = [0.5, 2.0]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], a, "col1", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b, "col2", role="secondary"))
-    ops.append(make_polygon([[0, 0], a, [a[0] + b[0], a[1] + b[1]], b], opacity=0.2, alias="cramer_area"))
-    ops.append(make_view_fit(padding=1.2))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="逆矩阵公式的几何含义")
-
-
-def build_inverse_examples(context: RenderContext) -> CommandPlan:
-    """可逆与退化变换的分层例题"""
-    a1 = [2.0, 0.5]
-    b1 = [0.5, 2.0]
-    a2 = [2.0, 1.0]
-    b2 = [1.0, 0.5]
-
-    ops = []
-    ops.extend(make_vector_2d([0, 0], a1, "a1", role="primary"))
-    ops.extend(make_vector_2d([0, 0], b1, "b1", role="secondary"))
-    ops.append(make_polygon([[0, 0], a1, [a1[0] + b1[0], a1[1] + b1[1]], b1], opacity=0.2))
-    ops.extend(make_vector_2d([0, 0], a2, "a2", role="result"))
-    ops.extend(make_vector_2d([0, 0], b2, "b2", role="auxiliary"))
-    ops.append(make_view_fit(padding=1.3))
-
-    return CommandPlan(scene="2d", operations=tuple(ops), summary="对比可逆和不可逆矩阵")
+def build_text_only(context: RenderContext) -> CommandPlan:
+    """Return a valid plan without teaching geometry or annotations."""
+    return CommandPlan(
+        scene="2d",
+        operations=(make_view_fit(padding=1.15),),
+        summary="仅显示讲义与数学案例",
+    )
 
 
 def build_det_zero_equivalence(context: RenderContext) -> CommandPlan:
@@ -177,13 +141,14 @@ def build_det_zero_equivalence(context: RenderContext) -> CommandPlan:
 
 BUILDERS = {
     "draw.ch03.det.oriented-area": build_oriented_area,
+    "draw.ch03.det.basic-properties": build_det_basic_properties,
     "draw.ch03.det.row-swap": build_det_row_swap,
     "draw.ch03.det.scaling": build_det_scaling,
     "draw.ch03.det.shear": build_det_shear,
     "draw.ch03.det.multiplicativity": build_det_multiplicativity,
+    "draw.ch03.det.transpose": build_det_transpose,
     "draw.ch03.cramer.area-ratio": build_cramer_area_ratio,
     "draw.ch03.inverse.undo": build_inverse_undo,
-    "draw.ch03.inverse.formula": build_inverse_formula,
-    "draw.ch03.inverse.examples": build_inverse_examples,
-    "draw.ch03.det.zero.equivalence": build_det_zero_equivalence,
+    "draw.ch03.adjugate.matrix": build_text_only,
+    "draw.ch03.det.zero.equivalence": build_text_only,
 }

@@ -13,7 +13,7 @@
       "topic_id": "ch02.batch.projection"
     },
     {
-      "revision": 17,
+      "revision": 19,
       "source_hash": "sha256:84ab593cf1329589b1006d9590fdd31bdc599ba1394f2fd24fbb65989d42c35b",
       "topic_id": "ch02.matrix.additive-distributivity"
     },
@@ -23,13 +23,13 @@
       "topic_id": "ch02.matrix.basis"
     },
     {
-      "revision": 16,
+      "revision": 17,
       "source_hash": "sha256:249f825ba9ab6a2d3d042a39fa709e8e6e22611b121cfdf2759e82f232484499",
       "topic_id": "ch02.matrix.composition"
     },
     {
-      "revision": 13,
-      "source_hash": "sha256:69c514d44197850d620d63c0d7f1df0b68e69d1dfdbe1446a5396a9d8aecbd49",
+      "revision": 15,
+      "source_hash": "sha256:f964abf7960f768773833e0217c2fa6ec0c0aaa405538d370fee19e4ea175ea4",
       "topic_id": "ch02.matrix.powers"
     },
     {

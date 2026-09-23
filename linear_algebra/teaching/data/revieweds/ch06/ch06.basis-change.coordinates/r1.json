@@ -5,82 +5,104 @@
         "entity.ch06.basis-change.coordinates.standard_basis",
         "entity.ch06.basis-change.coordinates.basis_matrix",
         "entity.ch06.basis-change.coordinates.inverse_basis",
-        "entity.ch06.basis-change.coordinates.alternate_coordinates",
-        "entity.ch06.basis-change.coordinates.standard_vector"
+        "entity.ch06.basis-change.coordinates.forward_coordinates",
+        "entity.ch06.basis-change.coordinates.forward_vector",
+        "entity.ch06.basis-change.coordinates.inverse_vector",
+        "entity.ch06.basis-change.coordinates.inverse_coordinates",
+        "entity.ch06.basis-change.coordinates.identity_basis"
       ],
       "explanation_refs": [
         "definition",
-        "formula",
-        "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
+        "worked_examples"
       ],
-      "formula": "x=Pc,\\quad c=P^{-1}x",
+      "formula": "\\boldsymbol x=\\boldsymbol P\\boldsymbol c,\\quad \\boldsymbol c=\\boldsymbol P^{-1}\\boldsymbol x",
       "formula_symbols": [
         "standard_basis",
         "basis_matrix",
         "inverse_basis",
-        "alternate_coordinates",
-        "standard_vector"
+        "forward_coordinates",
+        "forward_vector",
+        "inverse_vector",
+        "inverse_coordinates",
+        "identity_basis"
       ],
       "id": "claim.ch06.basis-change.coordinates",
       "relation_refs": [
         "relation.ch06.basis-change.coordinates.forward",
-        "relation.ch06.basis-change.coordinates.backward"
+        "relation.ch06.basis-change.coordinates.backward",
+        "relation.ch06.basis-change.coordinates.identity"
       ],
       "source_refs": [
         "第6章 基变换与相似变换 / 6.2 基变换——同一个向量在不同基下的坐标::1::sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e"
       ],
       "stage_refs": [
-        "forward",
-        "backward"
+        "stage.ch06.basis-change.coordinates.forward",
+        "stage.ch06.basis-change.coordinates.backward",
+        "stage.ch06.basis-change.coordinates.identity"
       ],
-      "statement": "6.2 基变换——同一个向量在不同基下的坐标 的数学主张由显式对象、关系和不变量支持。"
+      "statement": "同一个向量在不同基下有不同的坐标，基变换矩阵负责在两种坐标之间翻译。"
     }
   ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch06.basis-change.coordinates"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch06.basis-change.coordinates.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.oriented-area"
-    }
-  ],
+  "connections": [],
   "explanation": {
-    "conclusion": "",
-    "connections": [],
-    "definition": "### 6.2 基变换——同一个向量在不同基下的坐标\n定义 6.1（基变换矩阵） 设 $B = \\{v_{1}, v_{2}, ..., v_{n}\\}$ 是 $R^{n}$ 的一组基。将这些向量按列排成矩阵 $P = [v_{1} v_{2} ... v_{n}]$。则对任意向量 x：\nx(在标准基下的坐标$) = P \\cdot x($在 B 基下的坐标)\n即：P 把\"新基下的坐标\"翻译成\"标准基下的坐标\"。\n反过来：x(在 B 基下的坐标$) = P^{-1} \\cdot x($在标准基下的坐标)。$P^{-1}$ 把标准坐标翻译成新基坐标。",
-    "derivation": [
-      "新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x",
-      "标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x",
-      "例1 — 新基 $v_{1} = (1,1), v_{2} = (-1,1)$。向量在新基下坐标为 $c = (2, 3)$。求标准坐标。\n解：$P = \\begin{pmatrix}1 & -1 \\\\ 1 & 1\\end{pmatrix}$。$x = Pc = 2 \\cdot (1,1) + 3 \\cdot (-1,1) = (2-3, 2+3) = (-1, 5)$。\n例2 — 同上新基。标准坐标 $x = (4, 2)$，求新基下的坐标。\n解：$P^{-1} = (\\frac{1}{2}) \\cdot \\begin{pmatrix}1 & 1 \\\\ -1 & 1\\end{pmatrix}$。$c = P^{-1}x = (\\frac{1}{2}) \\cdot (4+2, -4+2) = (3, -1)$。\n例3 — 标准基本身算不算一组基？它的基变换矩阵 P 是什么？\n答：是。$P = [e_{1} e_{2}] = \\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix} = I$。标准基到标准基，变换矩阵就是单位矩阵。"
-    ],
-    "formula": "x=Pc,\\quad c=P^{-1}x",
-    "geometric_meaning": "几何理解：\n标准基 $e_{1},e_{2}$        新基 $v_{1},v_{2}$\n```\n↑                    ↑\n     │ 坐标 (x,y)          │ 坐标 (c₁,c₂)\n     │                    │\n     └── P: 新→旧 ──────→┘\n     ←── P⁻¹: 旧→新 ──────\n```\nP 的列就是新基向量在标准基下的坐标。用它乘上\"新坐标\"就得到\"老坐标\"。",
-    "intuition": "",
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch06.basis-change.coordinates"
+          ],
+          "example_ref": "example.ch06.basis-change.coordinates.forward",
+          "id": "case.ch06.basis-change.coordinates.1",
+          "purpose": "新坐标变成标准坐标",
+          "stage_refs": [
+            "stage.ch06.basis-change.coordinates.forward"
+          ],
+          "topic_id": "ch06.basis-change.coordinates"
+        },
+        {
+          "claim_refs": [
+            "claim.ch06.basis-change.coordinates"
+          ],
+          "example_ref": "example.ch06.basis-change.coordinates.backward",
+          "id": "case.ch06.basis-change.coordinates.2",
+          "purpose": "标准坐标变成新坐标",
+          "stage_refs": [
+            "stage.ch06.basis-change.coordinates.backward"
+          ],
+          "topic_id": "ch06.basis-change.coordinates"
+        },
+        {
+          "claim_refs": [
+            "claim.ch06.basis-change.coordinates"
+          ],
+          "example_ref": "example.ch06.basis-change.coordinates.identity",
+          "id": "case.ch06.basis-change.coordinates.3",
+          "purpose": "标准基到标准基",
+          "stage_refs": [
+            "stage.ch06.basis-change.coordinates.identity"
+          ],
+          "topic_id": "ch06.basis-change.coordinates"
+        }
+      ],
+      "default_pane_count": 1
+    },
+    "definition": "**（基变换矩阵）** 设\n\n$$\nB=\\{\\boldsymbol v_1,\\boldsymbol v_2,\\ldots,\\boldsymbol v_n\\}\n$$\n\n是 $\\mathbb R^n$ 的一组基。将这些向量按列排成矩阵\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n\\vert&\\vert&&\\vert\\\\\n\\boldsymbol v_1&\\boldsymbol v_2&\\cdots&\\boldsymbol v_n\\\\\n\\vert&\\vert&&\\vert\n\\end{pmatrix}.\n$$\n\n对任意向量 $\\boldsymbol x$，标准基下的坐标与 $B$ 基下的坐标满足\n\n$$\n[\\boldsymbol x]_{\\mathrm{标准基}}\n=\\boldsymbol P[\\boldsymbol x]_B.\n$$\n\n即：$\\boldsymbol P$ 把“新基下的坐标”翻译成“标准基下的坐标”。\n\n反过来：\n\n$$\n[\\boldsymbol x]_B\n=\\boldsymbol P^{-1}[\\boldsymbol x]_{\\mathrm{标准基}}.\n$$\n\n$\\boldsymbol P^{-1}$ 把标准坐标翻译成新基坐标。\n\n几何理解：标准基 $\\boldsymbol e_1,\\boldsymbol e_2$ 与新基 $\\boldsymbol v_1,\\boldsymbol v_2$ 是两组不同的“尺子”。$\\boldsymbol P$ 完成从新坐标到旧坐标的翻译，$\\boldsymbol P^{-1}$ 完成从旧坐标到新坐标的翻译。\n\n$\\boldsymbol P$ 的列就是新基向量在标准基下的坐标。用它乘上“新坐标”就得到“老坐标”。",
+    "derivation": [],
+    "formula": "",
+    "geometric_meaning": "",
     "invariants": [
       "P inverse P = I",
       "P c = x",
-      "P inverse x = c"
+      "P inverse x = c",
+      "standard basis change matrix is I"
     ],
-    "pitfalls": [],
-    "read_guide": [],
     "searchable_text": [
-      "6.2 基变换——同一个向量在不同基下的坐标",
-      "x=Pc,\\quad c=P^{-1}x",
-      "### 6.2 基变换——同一个向量在不同基下的坐标\n定义 6.1（基变换矩阵） 设 $B = \\{v_{1}, v_{2}, ..., v_{n}\\}$ 是 $R^{n}$ 的一组基。将这些向量按列排成矩阵 $P = [v_{1} v_{2} ... v_{n}]$。则对任意向量 x：\nx(在标准基下的坐标$) = P \\cdot x($在 B 基下的坐标)\n即：P 把\"新基下的坐标\"翻译成\"标准基下的坐标\"。\n反过来：x(在 B 基下的坐标$) = P^{-1} \\cdot x($在标准基下的坐标)。$P^{-1}$ 把标准坐标翻译成新基坐标。",
-      "新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x",
-      "标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x",
-      "例1 — 新基 $v_{1} = (1,1), v_{2} = (-1,1)$。向量在新基下坐标为 $c = (2, 3)$。求标准坐标。\n解：$P = \\begin{pmatrix}1 & -1 \\\\ 1 & 1\\end{pmatrix}$。$x = Pc = 2 \\cdot (1,1) + 3 \\cdot (-1,1) = (2-3, 2+3) = (-1, 5)$。\n例2 — 同上新基。标准坐标 $x = (4, 2)$，求新基下的坐标。\n解：$P^{-1} = (\\frac{1}{2}) \\cdot \\begin{pmatrix}1 & 1 \\\\ -1 & 1\\end{pmatrix}$。$c = P^{-1}x = (\\frac{1}{2}) \\cdot (4+2, -4+2) = (3, -1)$。\n例3 — 标准基本身算不算一组基？它的基变换矩阵 P 是什么？\n答：是。$P = [e_{1} e_{2}] = \\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix} = I$。标准基到标准基，变换矩阵就是单位矩阵。",
-      "几何理解：\n标准基 $e_{1},e_{2}$        新基 $v_{1},v_{2}$\n```\n↑                    ↑\n     │ 坐标 (x,y)          │ 坐标 (c₁,c₂)\n     │                    │\n     └── P: 新→旧 ──────→┘\n     ←── P⁻¹: 旧→新 ──────\n```\nP 的列就是新基向量在标准基下的坐标。用它乘上\"新坐标\"就得到\"老坐标\"。",
-      "P inverse P = I",
-      "P c = x",
-      "P inverse x = c"
+      "基变换",
+      "同一个向量在不同基下有不同的坐标，基变换矩阵负责在两种坐标之间翻译。",
+      "**（基变换矩阵）** 设\n\n$$\nB=\\{\\boldsymbol v_1,\\boldsymbol v_2,\\ldots,\\boldsymbol v_n\\}\n$$\n\n是 $\\mathbb R^n$ 的一组基。将这些向量按列排成矩阵\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n\\vert&\\vert&&\\vert\\\\\n\\boldsymbol v_1&\\boldsymbol v_2&\\cdots&\\boldsymbol v_n\\\\\n\\vert&\\vert&&\\vert\n\\end{pmatrix}.\n$$\n\n对任意向量 $\\boldsymbol x$，标准基下的坐标与 $B$ 基下的坐标满足\n\n$$\n[\\boldsymbol x]_{\\mathrm{标准基}}\n=\\boldsymbol P[\\boldsymbol x]_B.\n$$\n\n即：$\\boldsymbol P$ 把“新基下的坐标”翻译成“标准基下的坐标”。\n\n反过来：\n\n$$\n[\\boldsymbol x]_B\n=\\boldsymbol P^{-1}[\\boldsymbol x]_{\\mathrm{标准基}}.\n$$\n\n$\\boldsymbol P^{-1}$ 把标准坐标翻译成新基坐标。\n\n几何理解：标准基 $\\boldsymbol e_1,\\boldsymbol e_2$ 与新基 $\\boldsymbol v_1,\\boldsymbol v_2$ 是两组不同的“尺子”。$\\boldsymbol P$ 完成从新坐标到旧坐标的翻译，$\\boldsymbol P^{-1}$ 完成从旧坐标到新坐标的翻译。\n\n$\\boldsymbol P$ 的列就是新基向量在标准基下的坐标。用它乘上“新坐标”就得到“老坐标”。",
+      "新基为\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}\n1\\\\1\n\\end{pmatrix},\\qquad\n\\boldsymbol v_2=\n\\begin{pmatrix}\n-1\\\\1\n\\end{pmatrix}.\n$$\n\n向量在新基下的坐标为\n\n$$\n\\boldsymbol c=\n\\begin{pmatrix}\n2\\\\3\n\\end{pmatrix}.\n$$\n\n基变换矩阵为\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n1&-1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n标准坐标为\n\n$$\n\\boldsymbol x\n=\\boldsymbol P\\boldsymbol c\n=2\\begin{pmatrix}1\\\\1\\end{pmatrix}\n+3\\begin{pmatrix}-1\\\\1\\end{pmatrix}\n=\\begin{pmatrix}2-3\\\\2+3\\end{pmatrix}\n=\\begin{pmatrix}-1\\\\5\\end{pmatrix}.\n$$",
+      "沿用例 1 的新基。标准坐标为\n\n$$\n\\boldsymbol x=\n\\begin{pmatrix}\n4\\\\2\n\\end{pmatrix}.\n$$\n\n由\n\n$$\n\\boldsymbol P^{-1}\n=\\frac12\n\\begin{pmatrix}\n1&1\\\\\n-1&1\n\\end{pmatrix},\n$$\n\n得到新基下的坐标\n\n$$\n\\boldsymbol c\n=\\boldsymbol P^{-1}\\boldsymbol x\n=\\frac12\n\\begin{pmatrix}\n1&1\\\\\n-1&1\n\\end{pmatrix}\n\\begin{pmatrix}\n4\\\\2\n\\end{pmatrix}\n=\\frac12\n\\begin{pmatrix}\n4+2\\\\-4+2\n\\end{pmatrix}\n=\\begin{pmatrix}\n3\\\\-1\n\\end{pmatrix}.\n$$",
+      "标准基本身当然是一组基。它的基变换矩阵为\n\n$$\n\\boldsymbol P\n=\\begin{pmatrix}\n\\vert&\\vert\\\\\n\\boldsymbol e_1&\\boldsymbol e_2\\\\\n\\vert&\\vert\n\\end{pmatrix}\n=\\begin{pmatrix}\n1&0\\\\\n0&1\n\\end{pmatrix}\n=\\boldsymbol I.\n$$\n\n标准基到标准基，变换矩阵就是单位矩阵。"
     ],
     "sections": [
       {
@@ -88,85 +110,42 @@
           "claim.ch06.basis-change.coordinates"
         ],
         "id": "definition",
-        "text": "### 6.2 基变换——同一个向量在不同基下的坐标\n定义 6.1（基变换矩阵） 设 $B = \\{v_{1}, v_{2}, ..., v_{n}\\}$ 是 $R^{n}$ 的一组基。将这些向量按列排成矩阵 $P = [v_{1} v_{2} ... v_{n}]$。则对任意向量 x：\nx(在标准基下的坐标$) = P \\cdot x($在 B 基下的坐标)\n即：P 把\"新基下的坐标\"翻译成\"标准基下的坐标\"。\n反过来：x(在 B 基下的坐标$) = P^{-1} \\cdot x($在标准基下的坐标)。$P^{-1}$ 把标准坐标翻译成新基坐标。",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch06.basis-change.coordinates"
-        ],
-        "id": "formula",
-        "text": "x=Pc,\\quad c=P^{-1}x",
-        "title": "formula"
-      },
-      {
-        "claim_refs": [
-          "claim.ch06.basis-change.coordinates"
-        ],
-        "id": "derivation",
-        "text": "新坐标 → 标准坐标: x=Pc,\\quad c=P^{-1}x\n标准坐标 → 新坐标: x=Pc,\\quad c=P^{-1}x\n例1 — 新基 $v_{1} = (1,1), v_{2} = (-1,1)$。向量在新基下坐标为 $c = (2, 3)$。求标准坐标。\n解：$P = \\begin{pmatrix}1 & -1 \\\\ 1 & 1\\end{pmatrix}$。$x = Pc = 2 \\cdot (1,1) + 3 \\cdot (-1,1) = (2-3, 2+3) = (-1, 5)$。\n例2 — 同上新基。标准坐标 $x = (4, 2)$，求新基下的坐标。\n解：$P^{-1} = (\\frac{1}{2}) \\cdot \\begin{pmatrix}1 & 1 \\\\ -1 & 1\\end{pmatrix}$。$c = P^{-1}x = (\\frac{1}{2}) \\cdot (4+2, -4+2) = (3, -1)$。\n例3 — 标准基本身算不算一组基？它的基变换矩阵 P 是什么？\n答：是。$P = [e_{1} e_{2}] = \\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix} = I$。标准基到标准基，变换矩阵就是单位矩阵。",
-        "title": "derivation"
+        "text": "",
+        "title": "定义"
       },
       {
         "claim_refs": [
           "claim.ch06.basis-change.coordinates"
         ],
         "id": "worked_examples",
-        "text": "x=Pc,\\quad c=P^{-1}x",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch06.basis-change.coordinates"
-        ],
-        "id": "geometric_meaning",
-        "text": "几何理解：\n标准基 $e_{1},e_{2}$        新基 $v_{1},v_{2}$\n```\n↑                    ↑\n     │ 坐标 (x,y)          │ 坐标 (c₁,c₂)\n     │                    │\n     └── P: 新→旧 ──────→┘\n     ←── P⁻¹: 旧→新 ──────\n```\nP 的列就是新基向量在标准基下的坐标。用它乘上\"新坐标\"就得到\"老坐标\"。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch06.basis-change.coordinates"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 6.2 基变换——同一个向量在不同基下的坐标。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch06.basis-change.coordinates"
-        ],
-        "id": "connections",
-        "text": "connections: 6.2 基变换——同一个向量在不同基下的坐标。",
-        "title": "connections"
-      },
-      {
-        "claim_refs": [],
-        "id": "invariants",
-        "text": "P inverse P = I\nP c = x\nP inverse x = c",
-        "title": "invariants"
+        "text": "",
+        "title": "数学案例"
       }
     ],
-    "summary": "6.2 基变换——同一个向量在不同基下的坐标",
+    "summary": "同一个向量在不同基下有不同的坐标，基变换矩阵负责在两种坐标之间翻译。",
     "symbol_roles": {
-      "alternate_coordinates": "alternate_coordinates",
       "basis_matrix": "basis_matrix",
+      "forward_coordinates": "forward_coordinates",
+      "forward_vector": "forward_vector",
+      "identity_basis": "identity_basis",
       "inverse_basis": "inverse_basis",
-      "standard_basis": "standard_basis",
-      "standard_vector": "standard_vector"
+      "inverse_coordinates": "inverse_coordinates",
+      "inverse_vector": "inverse_vector",
+      "standard_basis": "standard_basis"
     },
-    "title": "6.2 基变换——同一个向量在不同基下的坐标",
+    "title": "基变换",
     "worked_examples": [
       {
         "calculation": [
-          "x=Pc,\\quad c=P^{-1}x"
+          "新基为\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}\n1\\\\1\n\\end{pmatrix},\\qquad\n\\boldsymbol v_2=\n\\begin{pmatrix}\n-1\\\\1\n\\end{pmatrix}.\n$$\n\n向量在新基下的坐标为\n\n$$\n\\boldsymbol c=\n\\begin{pmatrix}\n2\\\\3\n\\end{pmatrix}.\n$$\n\n基变换矩阵为\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n1&-1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n标准坐标为\n\n$$\n\\boldsymbol x\n=\\boldsymbol P\\boldsymbol c\n=2\\begin{pmatrix}1\\\\1\\end{pmatrix}\n+3\\begin{pmatrix}-1\\\\1\\end{pmatrix}\n=\\begin{pmatrix}2-3\\\\2+3\\end{pmatrix}\n=\\begin{pmatrix}-1\\\\5\\end{pmatrix}.\n$$"
         ],
         "checks": [
           {
             "expected": [
-              4.0,
-              7.0
+              -1,
+              5
             ],
-            "name": "result",
+            "name": "transformed",
             "tolerance": 1e-09
           }
         ],
@@ -176,38 +155,38 @@
         "given": [
           [
             [
-              2.0,
-              1.0
+              1,
+              -1
             ],
             [
-              1.0,
-              3.0
+              1,
+              1
             ]
           ],
           [
-            1.0,
-            2.0
+            2,
+            3
           ]
         ],
         "id": "example.ch06.basis-change.coordinates.forward",
         "kind": "matrix_transform",
         "result": [
-          4.0,
-          7.0
+          -1,
+          5
         ],
-        "title": "forward"
+        "title": "例 1：新基坐标变成标准坐标"
       },
       {
         "calculation": [
-          "x=Pc,\\quad c=P^{-1}x"
+          "沿用例 1 的新基。标准坐标为\n\n$$\n\\boldsymbol x=\n\\begin{pmatrix}\n4\\\\2\n\\end{pmatrix}.\n$$\n\n由\n\n$$\n\\boldsymbol P^{-1}\n=\\frac12\n\\begin{pmatrix}\n1&1\\\\\n-1&1\n\\end{pmatrix},\n$$\n\n得到新基下的坐标\n\n$$\n\\boldsymbol c\n=\\boldsymbol P^{-1}\\boldsymbol x\n=\\frac12\n\\begin{pmatrix}\n1&1\\\\\n-1&1\n\\end{pmatrix}\n\\begin{pmatrix}\n4\\\\2\n\\end{pmatrix}\n=\\frac12\n\\begin{pmatrix}\n4+2\\\\-4+2\n\\end{pmatrix}\n=\\begin{pmatrix}\n3\\\\-1\n\\end{pmatrix}.\n$$"
         ],
         "checks": [
           {
             "expected": [
-              1.0,
-              2.0
+              3,
+              -1
             ],
-            "name": "result",
+            "name": "transformed",
             "tolerance": 1e-09
           }
         ],
@@ -217,36 +196,65 @@
         "given": [
           [
             [
-              0.6,
-              -0.2
+              0.5,
+              0.5
             ],
             [
-              -0.2,
-              0.4
+              -0.5,
+              0.5
             ]
           ],
           [
-            4.0,
-            7.0
+            4,
+            2
           ]
         ],
         "id": "example.ch06.basis-change.coordinates.backward",
         "kind": "matrix_transform",
         "result": [
-          1.0,
-          2.0
+          3,
+          -1
         ],
-        "title": "backward"
+        "title": "例 2：标准坐标变成新基坐标"
+      },
+      {
+        "calculation": [
+          "标准基本身当然是一组基。它的基变换矩阵为\n\n$$\n\\boldsymbol P\n=\\begin{pmatrix}\n\\vert&\\vert\\\\\n\\boldsymbol e_1&\\boldsymbol e_2\\\\\n\\vert&\\vert\n\\end{pmatrix}\n=\\begin{pmatrix}\n1&0\\\\\n0&1\n\\end{pmatrix}\n=\\boldsymbol I.\n$$\n\n标准基到标准基，变换矩阵就是单位矩阵。"
+        ],
+        "checks": [
+          {
+            "expected": 1,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "given": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "example.ch06.basis-change.coordinates.identity",
+        "kind": "determinant",
+        "result": 1,
+        "title": "例 3：标准基本身"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:596748317dd254403293cdd22b80dc47d585df5d97b30ff5935df7bfd0ac0810",
+    "artifact_digest": "sha256:c019b619142cc7206a2e139e7a6d90eed6bfe9e638f6ce7bb2d9e7a0ba644f0a",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:d59d51b67f14eb0543f07ebec5d060845d71f9b8652bda78599d3d1623a7afc5",
+    "raw_reply_digest": "sha256:e1660f8273655c0e97a88a805513705ab595f97c7e7b1377c5fffce9c6a1ecb0",
     "source_hash": "sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e"
   },
   "revision": 1,
@@ -271,29 +279,24 @@
     ],
     "spans": [
       {
-        "end_line": 1979,
+        "end_line": 1846,
         "fingerprint": "sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e",
         "heading_path": [
           "第6章 基变换与相似变换",
           "6.2 基变换——同一个向量在不同基下的坐标"
         ],
         "id": "第6章 基变换与相似变换 / 6.2 基变换——同一个向量在不同基下的坐标::1::sha256:55be404c0ffdfa998b7307b51082d9c647f1eecd3ebd86925acdf424c3a0fb1e",
-        "start_line": 1954,
+        "start_line": 1821,
         "text": "### 6.2 基变换——同一个向量在不同基下的坐标\n\n定义 6.1（基变换矩阵） 设 $B = \\{v_{1}, v_{2}, ..., v_{n}\\}$ 是 $R^{n}$ 的一组基。将这些向量按列排成矩阵 $P = [v_{1} v_{2} ... v_{n}]$。则对任意向量 x：\nx(在标准基下的坐标$) = P \\cdot x($在 B 基下的坐标)\n即：P 把\"新基下的坐标\"翻译成\"标准基下的坐标\"。\n反过来：x(在 B 基下的坐标$) = P^{-1} \\cdot x($在标准基下的坐标)。$P^{-1}$ 把标准坐标翻译成新基坐标。\n几何理解：\n标准基 $e_{1},e_{2}$        新基 $v_{1},v_{2}$\n\n```\n↑                    ↑\n     │ 坐标 (x,y)          │ 坐标 (c₁,c₂)\n     │                    │\n     └── P: 新→旧 ──────→┘\n     ←── P⁻¹: 旧→新 ──────\n```\n\nP 的列就是新基向量在标准基下的坐标。用它乘上\"新坐标\"就得到\"老坐标\"。\n\n例1 — 新基 $v_{1} = (1,1), v_{2} = (-1,1)$。向量在新基下坐标为 $c = (2, 3)$。求标准坐标。\n解：$P = \\begin{pmatrix}1 & -1 \\\\ 1 & 1\\end{pmatrix}$。$x = Pc = 2 \\cdot (1,1) + 3 \\cdot (-1,1) = (2-3, 2+3) = (-1, 5)$。\n例2 — 同上新基。标准坐标 $x = (4, 2)$，求新基下的坐标。\n解：$P^{-1} = (\\frac{1}{2}) \\cdot \\begin{pmatrix}1 & 1 \\\\ -1 & 1\\end{pmatrix}$。$c = P^{-1}x = (\\frac{1}{2}) \\cdot (4+2, -4+2) = (3, -1)$。\n例3 — 标准基本身算不算一组基？它的基变换矩阵 P 是什么？\n答：是。$P = [e_{1} e_{2}] = \\begin{pmatrix}1 & 0 \\\\ 0 & 1\\end{pmatrix} = I$。标准基到标准基，变换矩阵就是单位矩阵。"
       }
     ]
   },
   "status": "reviewed",
   "teaching_profile": {
-    "minimum_level": 3,
+    "minimum_level": 2,
     "required_sections": [
       "definition",
-      "formula",
-      "derivation",
-      "worked_examples",
-      "geometric_meaning",
-      "pitfalls",
-      "connections"
+      "worked_examples"
     ],
     "requires_analogy_boundary": false
   },
@@ -331,12 +334,12 @@
         "role": "basis_matrix",
         "value": [
           [
-            2.0,
-            1.0
+            1.0,
+            -1.0
           ],
           [
             1.0,
-            3.0
+            1.0
           ]
         ]
       },
@@ -351,12 +354,12 @@
         "role": "inverse_basis",
         "value": [
           [
-            0.6,
-            -0.2
+            0.5,
+            0.5
           ],
           [
-            -0.2,
-            0.4
+            -0.5,
+            0.5
           ]
         ]
       },
@@ -365,12 +368,40 @@
           "claim.ch06.basis-change.coordinates"
         ],
         "dimension": 2,
-        "id": "entity.ch06.basis-change.coordinates.alternate_coordinates",
+        "id": "entity.ch06.basis-change.coordinates.forward_coordinates",
         "kind": "vector",
-        "label": "alternate_coordinates",
-        "role": "alternate_coordinates",
+        "label": "forward_coordinates",
+        "role": "forward_coordinates",
         "value": [
-          1.0,
+          2.0,
+          3.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.coordinates.forward_vector",
+        "kind": "vector",
+        "label": "forward_vector",
+        "role": "forward_vector",
+        "value": [
+          -1.0,
+          5.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.coordinates.inverse_vector",
+        "kind": "vector",
+        "label": "inverse_vector",
+        "role": "inverse_vector",
+        "value": [
+          4.0,
           2.0
         ]
       },
@@ -379,13 +410,33 @@
           "claim.ch06.basis-change.coordinates"
         ],
         "dimension": 2,
-        "id": "entity.ch06.basis-change.coordinates.standard_vector",
+        "id": "entity.ch06.basis-change.coordinates.inverse_coordinates",
         "kind": "vector",
-        "label": "standard_vector",
-        "role": "standard_vector",
+        "label": "inverse_coordinates",
+        "role": "inverse_coordinates",
         "value": [
-          4.0,
-          7.0
+          3.0,
+          -1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "dimension": 2,
+        "id": "entity.ch06.basis-change.coordinates.identity_basis",
+        "kind": "matrix",
+        "label": "identity_basis",
+        "role": "identity_basis",
+        "value": [
+          [
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
         ]
       }
     ],
@@ -398,26 +449,26 @@
         "kind": "maps_to",
         "parameters": {
           "input": [
-            1.0,
-            2.0
+            2.0,
+            3.0
           ],
           "matrix": [
             [
-              2.0,
-              1.0
+              1.0,
+              -1.0
             ],
             [
               1.0,
-              3.0
+              1.0
             ]
           ],
           "output": [
-            4.0,
-            7.0
+            -1.0,
+            5.0
           ]
         },
-        "source_ref": "entity.ch06.basis-change.coordinates.alternate_coordinates",
-        "target_ref": "entity.ch06.basis-change.coordinates.standard_vector"
+        "source_ref": "entity.ch06.basis-change.coordinates.forward_coordinates",
+        "target_ref": "entity.ch06.basis-change.coordinates.forward_vector"
       },
       {
         "claim_refs": [
@@ -428,71 +479,135 @@
         "parameters": {
           "input": [
             4.0,
-            7.0
+            2.0
           ],
           "matrix": [
             [
-              0.6,
-              -0.2
+              0.5,
+              0.5
             ],
             [
-              -0.2,
-              0.4
+              -0.5,
+              0.5
             ]
           ],
           "output": [
-            1.0,
-            2.0
+            3.0,
+            -1.0
           ]
         },
-        "source_ref": "entity.ch06.basis-change.coordinates.standard_vector",
-        "target_ref": "entity.ch06.basis-change.coordinates.alternate_coordinates"
+        "source_ref": "entity.ch06.basis-change.coordinates.inverse_vector",
+        "target_ref": "entity.ch06.basis-change.coordinates.inverse_coordinates"
+      },
+      {
+        "claim_refs": [
+          "claim.ch06.basis-change.coordinates"
+        ],
+        "id": "relation.ch06.basis-change.coordinates.identity",
+        "kind": "coordinate_equivalence",
+        "parameters": {
+          "input": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "matrix": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "output": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch06.basis-change.coordinates.standard_basis",
+        "target_ref": "entity.ch06.basis-change.coordinates.identity_basis"
       }
     ],
     "scene_family": "basis_change",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "x=Pc,\\quad c=P^{-1}x",
+        "caption": "",
         "expected_invariants": [
           "P inverse P = I",
           "P c = x",
-          "P inverse x = c"
+          "P inverse x = c",
+          "standard basis change matrix is I"
         ],
-        "id": "forward",
+        "id": "stage.ch06.basis-change.coordinates.forward",
         "input_entity_refs": [
-          "entity.ch06.basis-change.coordinates.alternate_coordinates",
-          "entity.ch06.basis-change.coordinates.basis_matrix"
+          "entity.ch06.basis-change.coordinates.basis_matrix",
+          "entity.ch06.basis-change.coordinates.forward_coordinates"
         ],
-        "layout": "side_by_side",
+        "layout": "overlay",
         "output_entity_refs": [
-          "entity.ch06.basis-change.coordinates.standard_vector"
+          "entity.ch06.basis-change.coordinates.forward_vector"
         ],
         "relation_refs": [
           "relation.ch06.basis-change.coordinates.forward"
         ],
-        "title": "新坐标 → 标准坐标"
+        "title": "新坐标变成标准坐标"
       },
       {
-        "caption": "x=Pc,\\quad c=P^{-1}x",
+        "caption": "",
         "expected_invariants": [
           "P inverse P = I",
           "P c = x",
-          "P inverse x = c"
+          "P inverse x = c",
+          "standard basis change matrix is I"
         ],
-        "id": "backward",
+        "id": "stage.ch06.basis-change.coordinates.backward",
         "input_entity_refs": [
-          "entity.ch06.basis-change.coordinates.standard_vector",
-          "entity.ch06.basis-change.coordinates.inverse_basis"
+          "entity.ch06.basis-change.coordinates.basis_matrix",
+          "entity.ch06.basis-change.coordinates.inverse_vector"
         ],
-        "layout": "side_by_side",
+        "layout": "overlay",
         "output_entity_refs": [
-          "entity.ch06.basis-change.coordinates.alternate_coordinates"
+          "entity.ch06.basis-change.coordinates.inverse_coordinates"
         ],
         "relation_refs": [
           "relation.ch06.basis-change.coordinates.backward"
         ],
-        "title": "标准坐标 → 新坐标"
+        "title": "标准坐标变成新坐标"
+      },
+      {
+        "caption": "",
+        "expected_invariants": [
+          "P inverse P = I",
+          "P c = x",
+          "P inverse x = c",
+          "standard basis change matrix is I"
+        ],
+        "id": "stage.ch06.basis-change.coordinates.identity",
+        "input_entity_refs": [
+          "entity.ch06.basis-change.coordinates.standard_basis"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch06.basis-change.coordinates.identity_basis"
+        ],
+        "relation_refs": [
+          "relation.ch06.basis-change.coordinates.identity"
+        ],
+        "title": "标准基到标准基"
       }
     ]
   }

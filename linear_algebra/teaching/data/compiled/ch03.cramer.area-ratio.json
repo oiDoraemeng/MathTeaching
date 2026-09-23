@@ -1,133 +1,10 @@
 {
-  "artifact_digest": "sha256:d26e937f57b1f91cb7dbf23f4eff2b1a297d1f85236cf213ba989274f99b3dae",
+  "artifact_digest": "sha256:1c3d00289f403188ca8d788a48cd0415842262f09aea0b42f15382d2e704fe63",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:ccd8b72fdf0e12cd812a23895acb1fabfd95ec270fa36c84cab881dfbc9b5e9d",
+  "contract_digest": "sha256:45dd8db75f4b8f2cad1d62c6978b670940d28198b7ba498ce66bcbca40477dbf",
   "plan": {
     "operations": [
-      {
-        "alias": "sem__a__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__a__end",
-        "coordinates": [
-          2.0,
-          1.0
-        ],
-        "name": "a",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__a",
-        "color": "#2F6BFF",
-        "end": "sem__a__end",
-        "kind": "vector",
-        "label": "a",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__a__origin"
-      },
-      {
-        "alias": "sem__b__origin",
-        "coordinates": [
-          0.0,
-          0.0
-        ],
-        "name": "O",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__b__end",
-        "coordinates": [
-          1.0,
-          3.0
-        ],
-        "name": "b",
-        "op": "point.upsert"
-      },
-      {
-        "alias": "sem__b",
-        "color": "#F08A24",
-        "end": "sem__b__end",
-        "kind": "vector",
-        "label": "b",
-        "op": "linear.upsert",
-        "role": "primary",
-        "start": "sem__b__origin"
-      },
-      {
-        "alias": "sem__area",
-        "color": "#E09F3E",
-        "op": "geometry.oriented_area",
-        "vectors": [
-          [
-            2.0,
-            1.0
-          ],
-          [
-            1.0,
-            3.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__main_relation",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "same_measure: a → oriented area"
-      },
-      {
-        "alias": "cap__polygon",
-        "color": "#E09F3E",
-        "op": "geometry.polygon",
-        "opacity": 0.24,
-        "outline": true,
-        "vertices": [
-          [
-            0.0,
-            0.0
-          ],
-          [
-            2.0,
-            1.0
-          ],
-          [
-            3.0,
-            4.0
-          ],
-          [
-            1.0,
-            3.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__stage.main__title",
-        "op": "annotation.upsert",
-        "position": [
-          0.0,
-          2.65
-        ],
-        "text": "数学关系"
-      },
-      {
-        "alias": "sem__ch03.cramer.area-ratio__formula",
-        "op": "annotation.formula",
-        "position": [
-          -2.65,
-          2.65
-        ],
-        "text": "x_i=det(A_i)/det(A)"
-      },
       {
         "op": "view.fit",
         "padding": 1.15
@@ -137,43 +14,13 @@
     "summary": "克拉默法则的面积比解方程组",
     "version": 1
   },
-  "plan_digest": "sha256:7d33ba2c30549b5dd2272692446dba20407ce0f11a4411d32e27321ca59bf110",
-  "read_guide": [
-    "先看输入实体，再看关系箭头，最后核对阶段标题中的不变量。"
-  ],
+  "plan_digest": "sha256:1ad7f7be8ff5164121aef975597b64a44df93b7a7c5ad29a38f1281e8c952ffe",
+  "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 11,
+  "revision": 14,
   "scene_family": "",
   "schema_version": 1,
-  "source_hash": "sha256:bbe5f38a43d15ff245e4ea6589f44a4cb8b56e89c8c639347f666e40dcadad70",
-  "stages": [
-    {
-      "anchor": [
-        0.0,
-        2.65
-      ],
-      "caption": "从输入向量读出公式中的结果与不变量。",
-      "id": "stage.main",
-      "layout": "overlay",
-      "title": "数学关系",
-      "visible_aliases": [
-        "sem__a",
-        "sem__a__end",
-        "sem__a__origin",
-        "sem__b",
-        "sem__b__end",
-        "sem__b__origin",
-        "sem__area",
-        "sem__main_relation",
-        "sem__stage.main__title"
-      ],
-      "visible_refs": [
-        "a",
-        "b",
-        "area",
-        "main_relation"
-      ]
-    }
-  ],
+  "source_hash": "sha256:4f655bd58bd87fa55c7a570166bac20c67edb0ae776d316f6af4b38c439f251f",
+  "stages": [],
   "topic_id": "ch03.cramer.area-ratio"
 }

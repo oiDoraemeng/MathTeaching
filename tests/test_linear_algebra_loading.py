@@ -2,6 +2,7 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 from linear_algebra.catalog.manifest import topic_entries
+from models.geometry_2d import Point2D
 from models.scene_mode import SceneMode
 from services.scene_commands import CommandPlan
 from ui.scene_pane_manager import ScenePaneManager
@@ -83,6 +84,82 @@ def test_loading_a_2d_topic_activates_the_visible_select_tool() -> None:
         "select",
         emit_signal=False,
     )
+
+
+def test_focusing_the_second_case_pane_keeps_the_shared_select_tool_active() -> None:
+    """A point in the second vector-addition pane must be selectable too."""
+
+    window = MainWindow.__new__(MainWindow)
+    window.pane_manager = ScenePaneManager()
+    first = window.pane_manager.register_case("case.addition.objects")
+    second = window.pane_manager.register_case("case.addition.parallelogram")
+    window.pane_manager.enter_lecture("case.addition.objects", [
+        "case.addition.objects",
+        "case.addition.parallelogram",
+    ])
+    window.pane_manager.show_all_cases()
+    window._active_linear_algebra_topic_id = "ch01.ops.addition"
+    window._pane_scene(first).scene_mode = SceneMode.TWO_D
+    window._pane_scene(second).scene_mode = SceneMode.TWO_D
+    # The first pane receives the select tool during topic finalization; the
+    # second pane used to retain the runtime default (no tool).
+    window._pane_scene(first)._active_2d_tool = "select"
+    window._pane_scene(second)._active_2d_tool = None
+    window._pane_scene(second)._active_linear_algebra_tool = None
+    point_c = Point2D("C", 4.0, 3.0)
+    second_runtime = window._pane_scene(second)
+    second_runtime.geometry_points = [point_c]
+    second_runtime.linear_objects = []
+    second_runtime.annotations = []
+    second_runtime.curve_layers = []
+    second_runtime._agent_teaching_2d = {}
+    second_runtime._vector_additions = []
+    second_runtime.geometry_controller = SimpleNamespace(
+        points={point_c.id: point_c},
+        linears={},
+        annotations={},
+        selected_id=None,
+        hit_test=lambda *_args: point_c.id,
+        set_selected=lambda object_id: setattr(second_runtime.geometry_controller, "selected_id", object_id),
+    )
+    second_runtime.pane.renderer_2d = SimpleNamespace(
+        interactor=SimpleNamespace(setCursor=lambda *_args: None),
+        render=lambda: None,
+    )
+    window.two_d_geometry_toolbar = SimpleNamespace(_active_tool="select")
+    window.algebra_panel = SimpleNamespace(
+        set_pane_id=lambda *_args: None,
+        set_scene_mode=lambda *_args: None,
+        set_layers=lambda *_args: None,
+        set_selected_layer=lambda *_args: None,
+    )
+    window._two_d_panel_layers = lambda: []
+    window._hit_tolerance = lambda: 0.25
+
+    window.pane_manager.focus_pane(second)
+    window._on_algebra_pane_focus_changed(second)
+
+    assert window._pane_scene(second)._active_2d_tool == "select"
+    assert window._pane_scene(second)._active_linear_algebra_tool is None
+    assert window._begin_select_or_drag(4.0, 3.0) is True
+    assert second_runtime.geometry_controller.selected_id == point_c.id
+
+
+def test_loading_a_text_only_topic_does_not_create_case_panes() -> None:
+    window = MainWindow.__new__(MainWindow)
+    window.pane_manager = ScenePaneManager()
+    window._pane_scene().scene_mode = SceneMode.TWO_D
+    window.algebra_panel = SimpleNamespace(set_status=lambda *_args, **_kwargs: None)
+    window.scene_command_service = SimpleNamespace(execute=lambda _plan: None)
+    window._set_2d_geometry_tool = MagicMock()
+    window._sync_scene_controls = MagicMock()
+    window.two_d_geometry_toolbar = MagicMock()
+
+    window._load_linear_algebra_topic("ch03.adjugate.matrix")
+
+    assert window._active_linear_algebra_topic_id == "ch03.adjugate.matrix"
+    assert window._teaching_case_pane_ids == []
+    assert all(pane.source == "user" for pane in window.pane_manager.panes.values())
 
 
 def test_linear_algebra_source_repository_is_reused_for_topic_switches() -> None:
@@ -340,3 +417,66 @@ def test_lecture_vector_addition_binds_only_the_pane_that_shows_the_sum() -> Non
     window._register_linear_algebra_case_vector_additions()
 
     assert [operation["result_vector"] for operation in registered] == ["sem__flow_sum"]
+
+
+def test_vector_addition_refresh_is_pinned_to_its_own_case_pane() -> None:
+    """Refreshing step two must not create derived vectors in step one."""
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    first = manager.register_case("case.addition.objects")
+    second = manager.register_case("case.addition.parallelogram")
+    manager.enter_lecture("case.addition.objects", [
+        "case.addition.objects",
+        "case.addition.parallelogram",
+    ])
+    manager.show_all_cases()
+    first_stage = SimpleNamespace(
+        id="stage.flow.objects",
+        title="第一步",
+        caption="",
+        layout="overlay",
+        visible_aliases=("sem__flow_a", "sem__flow_b"),
+        visible_refs=("flow_a", "flow_b"),
+        anchor=(0.0, 0.0),
+    )
+    second_stage = SimpleNamespace(
+        id="stage.flow.parallelogram",
+        title="第二步",
+        caption="",
+        layout="overlay",
+        visible_aliases=("sem__flow_a", "sem__flow_b", "sem__flow_sum"),
+        visible_refs=("flow_a", "flow_b", "flow_sum"),
+        anchor=(0.0, 0.0),
+    )
+    window._active_linear_algebra_compiled = SimpleNamespace(
+        topic_id="ch01.ops.addition",
+        storyboard=(first_stage, second_stage),
+        aliases=(),
+    )
+    window._active_linear_algebra_stage_id = None
+    window._teaching_case_pane_ids = [first, second]
+    window._teaching_case_stage_refs = {
+        first: (first_stage.id,),
+        second: (second_stage.id,),
+    }
+    manager.pane(first).runtime = SimpleNamespace(
+        geometry_controller=None,
+        geometry3d_controller=None,
+        _vector_additions=[],
+    )
+    relation = {"alias": "dynamic__sem__rel.addition.flow"}
+    manager.pane(second).runtime = SimpleNamespace(
+        geometry_controller=None,
+        geometry3d_controller=None,
+        _vector_additions=[relation],
+    )
+    window._sync_teaching_matrix_grid = lambda *_args, **_kwargs: None
+    refreshed: list[str] = []
+    window._refresh_vector_addition = lambda *_args, **_kwargs: refreshed.append(
+        window._pane().pane_id
+    )
+
+    window._apply_linear_algebra_storyboard_visibility()
+
+    assert manager.active_pane_id == first
+    assert refreshed == [second]

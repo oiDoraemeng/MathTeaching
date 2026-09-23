@@ -1,34 +1,34 @@
 {
-  "artifact_digest": "sha256:6a5bb4c1604f059bc1d1be3b22671baceff917678391dc2d723728b3157478ec",
+  "artifact_digest": "sha256:70fca3e0c50b6826dd3326724bacbff6284a78cae9ee791241ad6ba95300dc32",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:c89ffc15595f95932c88bd27386eb5619fa7ca1c24401cc9be713a02914b7fcc",
   "plan": {
     "operations": [
       {
-        "alias": "sem__A",
+        "alias": "sem__mv_add_grid",
         "bounds": [
           -3.0,
           3.0,
           -3.0,
           3.0
         ],
-        "color": "#6B7280",
+        "color": "#7B61FF",
         "matrix": [
           [
-            6.0,
-            8.0
+            3.0,
+            0.0
           ],
           [
-            10.0,
-            12.0
+            0.0,
+            3.0
           ]
         ],
         "op": "geometry.transformed_grid",
         "step": 1.0
       },
       {
-        "alias": "sem__x__origin",
+        "alias": "sem__mv_add_x__origin",
         "coordinates": [
           0.0,
           0.0
@@ -37,7 +37,7 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x__end",
+        "alias": "sem__mv_add_x__end",
         "coordinates": [
           1.0,
           1.0
@@ -46,17 +46,17 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__x",
+        "alias": "sem__mv_add_x",
         "color": "#2F6BFF",
-        "end": "sem__x__end",
+        "end": "sem__mv_add_x__end",
         "kind": "vector",
         "label": "x",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__x__origin"
+        "start": "sem__mv_add_x__origin"
       },
       {
-        "alias": "sem__y__origin",
+        "alias": "sem__mv_add_y1__origin",
         "coordinates": [
           0.0,
           0.0
@@ -65,85 +65,107 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__y__end",
+        "alias": "sem__mv_add_y1__end",
         "coordinates": [
-          14.0,
-          22.0
+          3.0,
+          3.0
+        ],
+        "name": "(A+B)x",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_add_y1",
+        "color": "#6B7280",
+        "end": "sem__mv_add_y1__end",
+        "kind": "vector",
+        "label": "(A+B)x",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__mv_add_y1__origin"
+      },
+      {
+        "alias": "sem__mv_add_ax__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_add_ax__end",
+        "coordinates": [
+          2.0,
+          1.0
         ],
         "name": "Ax",
         "op": "point.upsert"
       },
       {
-        "alias": "sem__y",
+        "alias": "sem__mv_add_ax",
         "color": "#7B61FF",
-        "end": "sem__y__end",
+        "end": "sem__mv_add_ax__end",
         "kind": "vector",
         "label": "Ax",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__y__origin"
+        "start": "sem__mv_add_ax__origin"
       },
       {
-        "alias": "sem__A_maps_x_to_y",
-        "matrix": [
-          [
-            6.0,
-            8.0
-          ],
-          [
-            10.0,
-            12.0
-          ]
-        ],
-        "op": "linear_algebra.matrix_transform"
-      },
-      {
-        "aliases": [
-          "cap__stage_source",
-          "cap__stage_target"
-        ],
-        "matrices": [
-          [
-            [
-              6.0,
-              8.0
-            ],
-            [
-              10.0,
-              12.0
-            ]
-          ],
-          [
-            [
-              1.0,
-              0.0
-            ],
-            [
-              0.0,
-              1.0
-            ]
-          ]
-        ],
-        "op": "geometry.staged_transform",
-        "points": [
-          [
-            1.0,
-            1.0
-          ],
-          [
-            14.0,
-            22.0
-          ]
-        ]
-      },
-      {
-        "alias": "sem__stage.input__title",
-        "op": "annotation.upsert",
-        "position": [
+        "alias": "sem__mv_add_bx__origin",
+        "coordinates": [
           0.0,
-          2.65
+          0.0
         ],
-        "text": "输入与变换"
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_add_bx__end",
+        "coordinates": [
+          1.0,
+          2.0
+        ],
+        "name": "Bx",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_add_bx",
+        "color": "#D64550",
+        "end": "sem__mv_add_bx__end",
+        "kind": "vector",
+        "label": "Bx",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__mv_add_bx__origin"
+      },
+      {
+        "alias": "sem__mv_add_y2__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_add_y2__end",
+        "coordinates": [
+          3.0,
+          3.0
+        ],
+        "name": "Ax+Bx",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__mv_add_y2",
+        "color": "#6B7280",
+        "end": "sem__mv_add_y2__end",
+        "kind": "vector",
+        "label": "Ax+Bx",
+        "op": "linear.upsert",
+        "role": "result",
+        "start": "sem__mv_add_y2__origin"
       },
       {
         "op": "view.fit",
@@ -154,10 +176,10 @@
     "summary": "矩阵加法与变换分配律",
     "version": 1
   },
-  "plan_digest": "sha256:c9740c08c8f0dadaddfb757f7b4927d7f33dae4f6c047335b6c17a048f6dee95",
+  "plan_digest": "sha256:489a4bb8eebae206e6d7fdfed32ec413b3619ff1e2fd2d6318270758e030c49e",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 17,
+  "revision": 19,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:84ab593cf1329589b1006d9590fdd31bdc599ba1394f2fd24fbb65989d42c35b",
@@ -167,27 +189,51 @@
         0.0,
         2.65
       ],
-      "caption": "矩阵 A 作用于向量 x。",
-      "id": "stage.input",
+      "caption": "",
+      "id": "stage.case.ch02.matrix.additive-distributivity.1",
       "layout": "overlay",
-      "title": "输入与变换",
+      "title": "第一步：先加矩阵，再变换",
       "visible_aliases": [
-        "sem__A",
-        "sem__x",
-        "sem__x__end",
-        "sem__x__origin",
-        "sem__y",
-        "sem__y__end",
-        "sem__y__origin",
-        "sem__A_maps_x_to_y",
-        "sem__stage.input__title",
-        "sem__mapping_grid__1"
+        "sem__mv_add_grid",
+        "sem__mv_add_x",
+        "sem__mv_add_x__end",
+        "sem__mv_add_x__origin",
+        "sem__mv_add_y1",
+        "sem__mv_add_y1__end",
+        "sem__mv_add_y1__origin"
       ],
       "visible_refs": [
-        "A",
-        "x",
-        "y",
-        "A_maps_x_to_y"
+        "mv_add_grid",
+        "mv_add_x",
+        "mv_add_y1"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "",
+      "id": "stage.case.ch02.matrix.additive-distributivity.2",
+      "layout": "overlay",
+      "title": "第二步：先各自变换，再相加",
+      "visible_aliases": [
+        "sem__mv_add_ax",
+        "sem__mv_add_ax__end",
+        "sem__mv_add_ax__origin",
+        "sem__mv_add_bx",
+        "sem__mv_add_bx__end",
+        "sem__mv_add_bx__origin",
+        "sem__mv_add_y2",
+        "sem__mv_add_y2__end",
+        "sem__mv_add_y2__origin",
+        "sem__rel.case.ch02.matrix.additive-distributivity.endpoint"
+      ],
+      "visible_refs": [
+        "mv_add_ax",
+        "mv_add_bx",
+        "mv_add_y2",
+        "rel.case.ch02.matrix.additive-distributivity.endpoint"
       ]
     }
   ],

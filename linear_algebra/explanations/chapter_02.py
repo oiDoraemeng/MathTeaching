@@ -21,7 +21,7 @@ CONTENT = {
 "ch02.matrix.transformed-grid": _content("ch02.matrix.transformed-grid", "矩阵变换", "矩阵乘向量可按行计算，也可按列解释；矩阵的两列决定网格如何变形。", r"\boldsymbol A\boldsymbol x=x_1\boldsymbol A\boldsymbol e_1+x_2\boldsymbol A\boldsymbol e_2", "标准基的两个方向被送到矩阵两列，所有网格线随之移动。", "观察基向量就能预测线性变换的整体形状。", "显示原始正交网格。", "叠加变换后的网格和基向量。"),
 "ch02.matrix.composition": _content("ch02.matrix.composition", "复合变换与 AB ≠ BA", "先做 B 后做 A 等于 AB，顺序通常不可交换。", r"(AB)x=A(Bx)", "同一输入经过两种顺序会到达不同终点，显示非交换性。", "矩阵乘法是变换复合，最右侧矩阵先作用。", "画出先切变后旋转。", "并列展示先旋转后切变。"),
 "ch02.matrix.basis": _content("ch02.matrix.basis", "基", "同一个变换，用不同的基描述，矩阵就不同。", r"A=\begin{pmatrix}0&-1\\1&0\end{pmatrix}", "同一个变换用不同的基描述，矩阵就不同。", "同一个变换的矩阵取决于所选的基。", "显示标准基和新基。", "标出同一个旋转在两组基下的坐标。"),
-"ch02.matrix.powers": _content("ch02.matrix.powers", "矩阵幂表示重复变换", "矩阵幂记录同一变换连续执行的结果。", r"A^k x=A(A(...Ax))", "重复作用会让网格持续旋转、拉伸或压缩。", "矩阵幂是离散动态过程的几何记录。", "显示 A、A^2、A^3 的网格。", "标注每次变换的阶段。"),
+"ch02.matrix.powers": _content("ch02.matrix.powers", "矩阵的幂", "幂是重复做同一变换，转置是行与列的视角切换。", r"\boldsymbol A^2=\boldsymbol A\boldsymbol A", "同一个矩阵连续作用两次，得到平方矩阵对应的网格。", "矩阵的幂记录同一变换的重复作用。", "显示 A 的网格。", "显示 A^2 的网格。"),
 "ch02.subspace.independence": _content("ch02.subspace.independence", "线性无关与线性相关", "只有全零系数才能把线性无关的向量组合出零向量。", r"c_1 v_1+c_2 v_2=0\Rightarrow c_1=c_2=0", "平面中两个方向不共线时线性无关；共线时其中一个能被另一个拼出来。", "线性无关表示每个向量都是必要的。", "显示不共线的两个方向。", "切换到共线的一组作对比。", "再用第三个向量说明多余方向。"),
 "ch02.subspace.rank": _content("ch02.subspace.rank", "秩", "秩是矩阵列向量中最大线性无关组的个数。", r"rank(A)=dim(Col(A))", "秩等于变换后空间的真实维度：满秩是面，秩 1 是线，秩 0 是点。", "秩数出变换还有多少有效自由度。", "显示满秩网格。", "依次压缩到一条线和原点。"),
 }

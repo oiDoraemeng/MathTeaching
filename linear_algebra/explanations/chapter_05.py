@@ -1,6 +1,6 @@
 from .model import ExplanationContent
 
-_IDS = ("homogeneous.solution-space", "affine.solution-set", "consistency.geometry", "gaussian-elimination", "least-squares.projection", "fundamental-solution-system", "elementary-matrix-elimination", "least-squares-derivation")
+_IDS = ("homogeneous.solution-space", "affine.solution-set", "consistency.geometry", "gaussian-elimination", "least-squares.projection")
 
 
 def _content(topic: str) -> ExplanationContent:

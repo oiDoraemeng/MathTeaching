@@ -8,9 +8,8 @@ from linear_algebra.registry import bundled_teaching_store
 
 def test_every_published_artifact_has_matching_compiled_snapshot() -> None:
     report = validate_compiled_resources(bundled_teaching_store(), compiled_resource_store())
-    # 目录中第 1 章 11 个、第 2 章 9 个、第 3 章 10 个主题已发布，
-    # 因此有 compiled 快照的已发布主题共 30 个。
-    assert report.count == 30
+    # 目录中第 1 章 11 个、第 2 章 9 个、第 3 章 8 个主题已发布。
+    assert report.count == 28
     assert report.errors == ()
 
 

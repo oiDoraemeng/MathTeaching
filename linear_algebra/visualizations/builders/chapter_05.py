@@ -2,7 +2,7 @@
 from __future__ import annotations
 from linear_algebra.visualizations.common import RenderContext
 
-_IDS = ("homogeneous.solution-space", "affine.solution-set", "consistency.geometry", "gaussian-elimination", "least-squares.projection", "fundamental-solution-system", "elementary-matrix-elimination", "least-squares-derivation")
+_IDS = ("homogeneous.solution-space", "affine.solution-set", "consistency.geometry", "gaussian-elimination", "least-squares.projection")
 
 def _compile(context, *args, **kwargs):
     from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts

@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:08afc75a62138a8191765ee5a839125028ebb1f54d59cc6af321dd76a2835523",
+  "artifact_digest": "sha256:57ab9901160e4dbf6a4185583d9ab6aec353c17f59d55169b6665ca65d80c8ea",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:195da9bac0f45a9c8134c342f01299f2b001cf2a312d8933261d040376e3decc",
+  "contract_digest": "sha256:031f56006df2d7246e6364e6040cdca2d0ab8d7dc8c340c6911c863fa664f635",
   "plan": {
     "operations": [
       {
@@ -260,60 +260,6 @@
         ]
       },
       {
-        "alias": "ch05.homogeneous.solution-space__stage__domain",
-        "basis": [
-          [
-            1.0,
-            0.0
-          ],
-          [
-            0.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -2,
-          2,
-          -2,
-          2
-        ],
-        "dimension": 2,
-        "offset": [
-          0.0,
-          0.0
-        ],
-        "op": "geometry.affine_solution",
-        "origin": [
-          0.0,
-          0.0
-        ]
-      },
-      {
-        "alias": "ch05.homogeneous.solution-space__stage__kernel",
-        "basis": [
-          [
-            -2.0,
-            1.0
-          ]
-        ],
-        "bounds": [
-          -2,
-          2,
-          -2,
-          2
-        ],
-        "dimension": 2,
-        "offset": [
-          0.0,
-          0.0
-        ],
-        "op": "geometry.affine_solution",
-        "origin": [
-          0.0,
-          0.0
-        ]
-      },
-      {
         "alias": "ch05.homogeneous.solution-space__stage__solution",
         "basis": [
           [
@@ -327,6 +273,7 @@
           -2,
           2
         ],
+        "color": "#6B7280",
         "dimension": 2,
         "offset": [
           0.0,
@@ -339,31 +286,41 @@
         ]
       },
       {
-        "alias": "sem__stage.ch05.homogeneous.solution-space.domain__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.65
+        "alias": "ch05.homogeneous.solution-space__stage__solution__translation__point_0",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "domain"
+        "name": "",
+        "op": "point.upsert"
       },
       {
-        "alias": "sem__stage.ch05.homogeneous.solution-space.kernel__title",
-        "op": "annotation.upsert",
-        "position": [
-          -2.65,
-          2.17
+        "alias": "ch05.homogeneous.solution-space__stage__solution__translation__point_1",
+        "color": "#F08A24",
+        "coordinates": [
+          0.0,
+          0.0
         ],
-        "text": "kernel"
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch05.homogeneous.solution-space__stage__solution__translation",
+        "color": "#F08A24",
+        "end": "ch05.homogeneous.solution-space__stage__solution__translation__point_1",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "start": "ch05.homogeneous.solution-space__stage__solution__translation__point_0"
       },
       {
         "alias": "sem__stage.ch05.homogeneous.solution-space.solution__title",
         "op": "annotation.upsert",
         "position": [
-          -2.65,
-          1.69
+          0.0,
+          2.65
         ],
-        "text": "solution"
+        "text": "零空间直线"
       },
       {
         "op": "view.fit",
@@ -371,10 +328,10 @@
       }
     ],
     "scene": "2d",
-    "summary": "5.1 齐次方程组 $Ax = 0$",
+    "summary": "齐次线性方程组",
     "version": 1
   },
-  "plan_digest": "sha256:52cf4d33f5e4b42d6997f27ddf321ea1226724bd3e3f967273ad0ca1a999a354",
+  "plan_digest": "sha256:ac124b3528af47d933dd02bdabcc09f6b5729b7cb44029e32547aad42050f3bd",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
@@ -384,95 +341,22 @@
   "stages": [
     {
       "anchor": [
-        -2.65,
+        0.0,
         2.65
       ],
-      "caption": "domain",
-      "id": "stage.ch05.homogeneous.solution-space.domain",
-      "layout": "sequence",
-      "title": "domain",
-      "visible_aliases": [
-        "ch05.homogeneous.solution-space__stage__domain",
-        "ch05.homogeneous.solution-space__entity__matrix",
-        "ch05.homogeneous.solution-space__entity__rhs",
-        "ch05.homogeneous.solution-space__entity__particular",
-        "ch05.homogeneous.solution-space__entity__nullspace",
-        "ch05.homogeneous.solution-space__entity__solution_set",
-        "ch05.homogeneous.solution-space__relation",
-        "ch05.homogeneous.solution-space__relation__domain",
-        "ch05.homogeneous.solution-space__relation__image",
-        "ch05.homogeneous.solution-space__relation__kernel",
-        "sem__stage.ch05.homogeneous.solution-space.domain__title"
-      ],
-      "visible_refs": [
-        "entity.ch05.homogeneous.solution-space.matrix",
-        "entity.ch05.homogeneous.solution-space.rhs",
-        "entity.ch05.homogeneous.solution-space.particular",
-        "entity.ch05.homogeneous.solution-space.nullspace",
-        "entity.ch05.homogeneous.solution-space.solution_set",
-        "relation.ch05.homogeneous.solution-space.null_solution"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        2.17
-      ],
-      "caption": "kernel",
-      "id": "stage.ch05.homogeneous.solution-space.kernel",
-      "layout": "sequence",
-      "title": "kernel",
-      "visible_aliases": [
-        "ch05.homogeneous.solution-space__stage__kernel",
-        "ch05.homogeneous.solution-space__entity__matrix",
-        "ch05.homogeneous.solution-space__entity__rhs",
-        "ch05.homogeneous.solution-space__entity__particular",
-        "ch05.homogeneous.solution-space__entity__nullspace",
-        "ch05.homogeneous.solution-space__entity__solution_set",
-        "ch05.homogeneous.solution-space__relation",
-        "ch05.homogeneous.solution-space__relation__domain",
-        "ch05.homogeneous.solution-space__relation__image",
-        "ch05.homogeneous.solution-space__relation__kernel",
-        "sem__stage.ch05.homogeneous.solution-space.kernel__title"
-      ],
-      "visible_refs": [
-        "entity.ch05.homogeneous.solution-space.matrix",
-        "entity.ch05.homogeneous.solution-space.rhs",
-        "entity.ch05.homogeneous.solution-space.particular",
-        "entity.ch05.homogeneous.solution-space.nullspace",
-        "entity.ch05.homogeneous.solution-space.solution_set",
-        "relation.ch05.homogeneous.solution-space.null_solution"
-      ]
-    },
-    {
-      "anchor": [
-        -2.65,
-        1.69
-      ],
-      "caption": "solution",
+      "caption": "",
       "id": "stage.ch05.homogeneous.solution-space.solution",
-      "layout": "sequence",
-      "title": "solution",
+      "layout": "overlay",
+      "title": "零空间直线",
       "visible_aliases": [
         "ch05.homogeneous.solution-space__stage__solution",
-        "ch05.homogeneous.solution-space__entity__matrix",
-        "ch05.homogeneous.solution-space__entity__rhs",
-        "ch05.homogeneous.solution-space__entity__particular",
-        "ch05.homogeneous.solution-space__entity__nullspace",
-        "ch05.homogeneous.solution-space__entity__solution_set",
-        "ch05.homogeneous.solution-space__relation",
-        "ch05.homogeneous.solution-space__relation__domain",
-        "ch05.homogeneous.solution-space__relation__image",
-        "ch05.homogeneous.solution-space__relation__kernel",
+        "ch05.homogeneous.solution-space__stage__solution__translation__point_0",
+        "ch05.homogeneous.solution-space__stage__solution__translation__point_1",
+        "ch05.homogeneous.solution-space__stage__solution__translation",
         "sem__stage.ch05.homogeneous.solution-space.solution__title"
       ],
       "visible_refs": [
-        "entity.ch05.homogeneous.solution-space.matrix",
-        "entity.ch05.homogeneous.solution-space.rhs",
-        "entity.ch05.homogeneous.solution-space.particular",
-        "entity.ch05.homogeneous.solution-space.nullspace",
-        "entity.ch05.homogeneous.solution-space.solution_set",
-        "relation.ch05.homogeneous.solution-space.null_solution"
+        "entity.ch05.homogeneous.solution-space.matrix"
       ]
     }
   ],

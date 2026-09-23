@@ -1,6 +1,6 @@
 from .model import ExplanationContent
 
-_IDS = ("eigen.direction", "characteristic-polynomial", "eigenspace", "diagonalization", "gram-schmidt", "orthogonal-transform")
+_IDS = ("eigen.direction", "characteristic-polynomial", "eigenspace", "diagonalization")
 
 
 def _content(topic: str) -> ExplanationContent:

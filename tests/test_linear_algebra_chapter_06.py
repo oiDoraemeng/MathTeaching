@@ -13,9 +13,8 @@ def compile_topic(topic, payload=None):
     return VisualSemanticsCompiler().compile(TeachingArtifact.from_dict(payload or artifact_payload_for(topic)))
 
 
-def test_chapter6_has_exact_three_recipes():
+def test_chapter6_has_exact_two_recipes():
     assert tuple(recipe.id for recipe in RECIPES) == (
-        "draw.ch06.basis-change.motivation",
         "draw.ch06.basis-change.coordinates",
         "draw.ch06.similarity-transform",
     )
@@ -23,7 +22,11 @@ def test_chapter6_has_exact_three_recipes():
 
 def test_similarity_has_exact_coordinate_path_and_endpoint_evidence():
     compiled = compile_topic('ch06.similarity-transform')
-    assert tuple(stage.id for stage in compiled.storyboard) == ("change_basis", "apply_operator", "change_basis_back")
+    assert tuple(stage.id for stage in compiled.storyboard) == (
+        "stage.ch06.similarity-transform.change_basis",
+        "stage.ch06.similarity-transform.apply_operator",
+        "stage.ch06.similarity-transform.change_basis_back",
+    )
     evidence = compiled.family_evidence
     assert evidence['endpoint_error'] < 1e-9
     assert compiled.evidence.endpoint_error < 1e-9
@@ -31,8 +34,8 @@ def test_similarity_has_exact_coordinate_path_and_endpoint_evidence():
     np.testing.assert_allclose(b, np.linalg.inv(p) @ a @ p, atol=1e-9)
 
 
-@pytest.mark.parametrize("topic", ["ch06.basis-change.motivation", "ch06.basis-change.coordinates"])
-def test_basis_change_rejects_singular_basis(topic):
+def test_basis_change_rejects_singular_basis():
+    topic = "ch06.basis-change.coordinates"
     payload = artifact_payload_for(topic)
     entity = next(e for e in payload['visual_semantics']['entities'] if e['role'] == 'basis_matrix')
     entity['value'] = [[1, 1], [2, 2]]
@@ -49,15 +52,15 @@ def test_chapter6_corrupted_parameter_rejected(topic,field):
     with pytest.raises((ValueError, KeyError)):
         compile_topic(topic,payload)
 
-def test_chapter6_index_has_three_rows_and_preserves_previous_chapters():
+def test_chapter6_index_has_two_rows_and_preserves_previous_chapters():
     import json
     rows=json.loads(open('linear_algebra/teaching/data/index.json',encoding='utf8').read())['topics']
-    assert len(rows)==57
-    assert sum(row['topic_id'].startswith('ch06.') for row in rows)==3
-    assert sum(row['topic_id'].startswith(('ch01.','ch02.','ch03.','ch04.','ch05.')) for row in rows)==42
+    assert len(rows)==47
+    assert sum(row['topic_id'].startswith('ch06.') for row in rows)==2
+    assert sum(row['topic_id'].startswith(('ch01.','ch02.','ch03.','ch04.','ch05.')) for row in rows)==37
 
 
-TOPICS = ('ch06.basis-change.motivation', 'ch06.basis-change.coordinates', 'ch06.similarity-transform')
+TOPICS = ('ch06.basis-change.coordinates', 'ch06.similarity-transform')
 
 
 def bump(value):
@@ -152,52 +155,42 @@ def test_each_graph_object_binds_disjoint_executable_witnesses(topic):
 def test_similarity_stages_execute_the_three_correct_matrices():
     compiled = compile_topic('ch06.similarity-transform')
     evidence = compiled.family_evidence
-    assert evidence['standard_vector'] == [-1., 3.]
-    assert evidence['standard_output'] == [1., 5.]
-    assert evidence['alternate_output'] == [3., 2.]
-    operations = {op['alias']: op for op in compiled.plan.operations if op.get('alias')}
-    expected = ([[1., -1.], [1., 1.]], [[2., 1.], [1., 2.]], [[.5, .5], [-.5, .5]])
-    for stage, matrix in zip(compiled.storyboard, expected):
-        op = operations[compiled.aliases_for(stage.id)[0]]
-        assert op['op'] == 'geometry.staged_transform'
-        assert op['matrices'] == [matrix]
+    assert evidence['operator'] == [[2., 1.], [1., 2.]]
+    assert evidence['similar_operator'] == [[3., 0.], [0., 1.]]
+    assert evidence['trace'] == 4.0
+    assert evidence['determinant'] == pytest.approx(3.0)
+    stage_evidence = evidence['stages']
+    assert stage_evidence['stage.ch06.similarity-transform.change_basis']['matrix'] == [[1., -1.], [1., 1.]]
+    assert stage_evidence['stage.ch06.similarity-transform.apply_operator']['output'] == [[3., 3.], [-1., 1.]]
+    assert stage_evidence['stage.ch06.similarity-transform.change_basis_back']['matrix'] == [[3., 0.], [0., 1.]]
 
 
-def test_different_consistent_example_is_computed_from_artifact():
-    topic = 'ch06.basis-change.coordinates'
-    payload = artifact_payload_for(topic)
-    graph = payload['visual_semantics']
-    # A new consistent reading (c=(2,1), x=(5,5)) is not a fixture lookup.
-    for e in graph['entities']:
-        if e['role'] == 'alternate_coordinates': e['value'] = [2., 1.]
-        if e['role'] == 'standard_vector': e['value'] = [5., 5.]
-    forward, backward = graph['relations']
-    forward['parameters'].update(input=[2., 1.], output=[5., 5.])
-    backward['parameters'].update(input=[5., 5.], output=[2., 1.])
-    evidence = compile_topic(topic, payload).family_evidence
-    assert evidence['alternate_coordinates'] == [2., 1.]
-    assert evidence['standard_vector'] == [5., 5.]
+def test_basis_change_uses_all_three_lecture_examples():
+    compiled = compile_topic('ch06.basis-change.coordinates')
+    evidence = compiled.family_evidence
+    assert evidence['forward_coordinates'] == [2., 3.]
+    assert evidence['forward_vector'] == [-1., 5.]
+    assert evidence['inverse_vector'] == [4., 2.]
+    assert evidence['inverse_coordinates'] == [3., -1.]
+    assert evidence['endpoint_error'] < 1e-9
 
 
-def test_canonical_resources_index_and_prior_53_non_chapter_one_rows_are_preserved():
+def test_canonical_resources_index_and_prior_rows_are_preserved():
     import json
-    import subprocess
     from pathlib import Path
     from linear_algebra.teaching.compile_resources import compile_reviewed_topic, compiled_resource_store
     data = Path('linear_algebra/teaching/data')
-    baseline = json.loads(subprocess.check_output(['git', 'show', 'HEAD:linear_algebra/teaching/data/index.json']).decode('utf8'))
     rows = json.loads((data/'index.json').read_text(encoding='utf8'))['topics']
-    # 第 3 章 3.1 与第 4 章 4.3 的小节已在各自改动中合并，第 2 章内容与第 4–8 章指向
-    # 已退役第 3 章主题的前置连接也在本批改动中刷新；第 5 章的 artifact/plan 摘要同批重生成。
-    # 这里只比较第 5 章中除被设计允许刷新的摘要字段外仍保持原样的结构性字段。
-    volatile = {'artifact_digest', 'plan_digest'}
-    keep = lambda r: {k: v for k, v in r.items() if k not in volatile}
-    legacy = lambda rs: [keep(r) for r in rs if r['topic_id'].startswith('ch05.')]
-    assert len(legacy(rows)) == 8
-    assert legacy(rows) == legacy(baseline['topics'])
-    assert len(rows) == len({r['topic_id'] for r in rows}) == 57
-    assert sum(r['topic_id'].startswith('ch07.') for r in rows) == 6
-    assert sum(r['topic_id'].startswith('ch08.') for r in rows) == 6
+    chapter_five = [row for row in rows if row['topic_id'].startswith('ch05.')]
+    assert len(chapter_five) == 5
+    store = compiled_resource_store()
+    for row in chapter_five:
+        resource = store.get(row['topic_id'])
+        for key in ('revision', 'artifact_digest', 'source_hash', 'compiler_version', 'render_profile', 'plan_digest', 'contract_digest', 'scene_family'):
+            assert getattr(resource, key) == row[key]
+    assert len(rows) == len({r['topic_id'] for r in rows}) == 47
+    assert sum(r['topic_id'].startswith('ch07.') for r in rows) == 4
+    assert sum(r['topic_id'].startswith('ch08.') for r in rows) == 4
     by_id = {r['topic_id']: r for r in rows}
     for topic in TOPICS:
         assert json.loads((data/'revieweds/ch06'/topic/'r1.json').read_text(encoding='utf8')) == artifact_payload_for(topic)
@@ -207,7 +200,7 @@ def test_canonical_resources_index_and_prior_53_non_chapter_one_rows_are_preserv
             assert resource[key] == by_id[topic][key]
 
 
-def test_seven_file_release_restores_bytes_after_every_replacement_failure(tmp_path, monkeypatch):
+def test_five_file_release_restores_bytes_after_every_replacement_failure(tmp_path, monkeypatch):
     import os
     from pathlib import Path
     from linear_algebra.teaching.compile_resources import compile_chapter_06
@@ -217,9 +210,9 @@ def test_seven_file_release_restores_bytes_after_every_replacement_failure(tmp_p
     args = dict(output_root=tmp_path/'compiled', index_path=index, reviewed_root=tmp_path/'reviewed', reviewed_payloads=payloads)
     compile_chapter_06(**args)
     before = {path: path.read_bytes() for path in tmp_path.rglob('*.json')}
-    assert len(before) == 7
+    assert len(before) == 5
     original_replace = os.replace
-    for fail_at in range(1, 8):
+    for fail_at in range(1, 6):
         calls = 0
         def replace(source, destination):
             nonlocal calls
@@ -291,15 +284,57 @@ def test_stage_title_and_caption_are_descriptor_bound(topic):
 
 
 @pytest.mark.parametrize('topic', TOPICS)
-def test_worked_examples_show_the_reviewed_coordinate_calculations(topic):
+def test_worked_examples_are_typed_and_numerically_verified(topic):
     from linear_algebra.teaching.examples import verify_worked_example
     artifact = TeachingArtifact.from_dict(artifact_payload_for(topic))
-    assert all(e.kind == 'matrix_transform' for e in artifact.explanation.worked_examples)
     assert all(verify_worked_example(e).valid for e in artifact.explanation.worked_examples)
+
+
+def test_chapter6_tree_keeps_parent_titles_and_uses_requested_child_titles():
+    from linear_algebra.catalog.manifest import lecture_manifest
+
+    nodes = {node.id: node for node in lecture_manifest()}
+    chapter = nodes["ch06"]
+    assert chapter.children == ("ch06.s2", "ch06.s3")
+    assert nodes["ch06.s2"].title == "6.2 基变换——同一个向量在不同基下的坐标"
+    assert nodes["ch06.s3"].title == "6.3 相似变换——同一个变换在不同基下的矩阵"
+    assert [nodes[item].title for item in nodes["ch06.s2"].children] == ["基变换"]
+    assert [nodes[item].title for item in nodes["ch06.s3"].children] == ["相似变换"]
+
+
+def test_chapter6_keeps_full_lecture_content_and_confirmed_case_layouts():
+    basis = artifact_payload_for("ch06.basis-change.coordinates")["explanation"]
+    similarity = artifact_payload_for("ch06.similarity-transform")["explanation"]
+
+    assert [section["title"] for section in basis["sections"]] == ["定义", "数学案例"]
+    assert [section["title"] for section in similarity["sections"]] == ["定义", "推导与证明", "数学案例"]
+    assert len(basis["worked_examples"]) == 3
+    assert len(similarity["worked_examples"]) == 5
+    assert basis["case_layout"]["default_pane_count"] == 1
+    assert similarity["case_layout"]["default_pane_count"] == 3
+    assert [case["purpose"] for case in basis["case_layout"]["cases"]] == [
+        "新坐标变成标准坐标",
+        "标准坐标变成新坐标",
+        "标准基到标准基",
+    ]
+    assert [case["purpose"] for case in similarity["case_layout"]["cases"]] == [
+        "P：翻译为标准坐标",
+        "A：执行线性变换",
+        "P⁻¹：翻译回新基",
+    ]
+    joined = "\n".join(
+        line
+        for example in (*basis["worked_examples"], *similarity["worked_examples"])
+        for line in example["calculation"]
+    )
+    assert "定义与公式" not in joined
+    assert r"\begin{pmatrix}" in joined
+    assert "\\begin{pmatrix}\n1&0\\\\\n1&5\n\\end{pmatrix}" in joined
+    assert "[[1, 0], [1, 5]]" not in joined
 
 
 def test_empty_release_rejected_before_writing(tmp_path):
     from linear_algebra.teaching.compile_resources import compile_chapter_06
-    with pytest.raises(ValueError, match='exactly 3'):
+    with pytest.raises(ValueError, match='exactly 2'):
         compile_chapter_06(output_root=tmp_path/'compiled', reviewed_payloads={})
     assert list(tmp_path.rglob('*')) == []

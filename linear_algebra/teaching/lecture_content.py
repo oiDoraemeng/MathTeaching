@@ -17,6 +17,29 @@ from __future__ import annotations
 from typing import Any
 
 
+def strip_teaching_markers(value: Any) -> Any:
+    """Remove lecture proof markers that are not student-facing content.
+
+    The source lecture uses ``■`` as an editorial end-of-proof marker.  It is
+    useful in the source, but it is not mathematical prose and renders as a
+    stray black square in the explanation panel.  Keep this helper limited to
+    generated explanation data; the authoritative lecture file and its source
+    hash remain unchanged.
+    """
+    if isinstance(value, str):
+        return value.replace("■", "")
+    if isinstance(value, list):
+        return [strip_teaching_markers(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(strip_teaching_markers(item) for item in value)
+    if isinstance(value, dict):
+        return {
+            key: strip_teaching_markers(item)
+            for key, item in value.items()
+        }
+    return value
+
+
 def _sync_sections(explanation: dict[str, Any]) -> None:
     """Refresh ``explanation['sections']`` from the explanation fields."""
     field_text = {
@@ -84,4 +107,4 @@ def apply(payload: dict[str, Any]) -> bool:
     return lecture_from_source.apply(payload)
 
 
-__all__ = ["apply"]
+__all__ = ["apply", "strip_teaching_markers"]

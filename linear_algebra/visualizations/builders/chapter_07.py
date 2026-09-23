@@ -1,5 +1,5 @@
 from linear_algebra.visualizations.common import RenderContext
-_IDS=('eigen.direction','characteristic-polynomial','eigenspace','diagonalization','gram-schmidt','orthogonal-transform')
+_IDS=('eigen.direction','characteristic-polynomial','eigenspace','diagonalization')
 def _build(context,*args,**kwargs):
     from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts
     from linear_algebra.teaching.model import TeachingArtifact

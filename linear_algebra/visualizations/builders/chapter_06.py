@@ -1,6 +1,6 @@
 """Artifact-backed Chapter 6 builders."""
 from linear_algebra.visualizations.common import RenderContext
-_IDS=('basis-change.motivation','basis-change.coordinates','similarity-transform')
+_IDS=('basis-change.coordinates','similarity-transform')
 def _build(context,*args,**kwargs):
     from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts
     from linear_algebra.teaching.model import TeachingArtifact

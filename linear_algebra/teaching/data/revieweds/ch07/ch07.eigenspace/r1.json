@@ -3,78 +3,112 @@
     {
       "entity_refs": [
         "entity.ch07.eigenspace.operator",
-        "entity.ch07.eigenspace.root_2",
-        "entity.ch07.eigenspace.root_3",
-        "entity.ch07.eigenspace.space_2",
-        "entity.ch07.eigenspace.space_3"
+        "entity.ch07.eigenspace.space_3",
+        "entity.ch07.eigenspace.space_1",
+        "entity.ch07.eigenspace.shear_operator",
+        "entity.ch07.eigenspace.shear_space",
+        "entity.ch07.eigenspace.invariant_values"
       ],
       "explanation_refs": [
         "definition",
-        "formula",
         "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
+        "worked_examples"
       ],
-      "formula": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
+      "formula": "E_\\lambda=\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)",
       "formula_symbols": [
         "operator",
-        "root_2",
-        "root_3",
-        "space_2",
-        "space_3"
+        "space_3",
+        "space_1",
+        "shear_operator",
+        "shear_space",
+        "invariant_values"
       ],
       "id": "claim.ch07.eigenspace",
       "relation_refs": [
-        "relation.ch07.eigenspace.root_2",
-        "relation.ch07.eigenspace.root_3"
+        "relation.ch07.eigenspace.space_3",
+        "relation.ch07.eigenspace.space_1",
+        "relation.ch07.eigenspace.shear_space",
+        "relation.ch07.eigenspace.invariants"
       ],
       "source_refs": [
         "第7章 特征值与特征向量 / 7.3 求特征向量::1::sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724"
       ],
       "stage_refs": [
-        "stage.ch07.eigenspace.nullspace"
+        "stage.ch07.eigenspace.eigenspaces",
+        "stage.ch07.eigenspace.defective",
+        "stage.ch07.eigenspace.invariants"
       ],
-      "statement": "7.3 求特征向量 的数学主张由显式对象、关系和不变量支持。"
+      "statement": "对每个特征值求齐次方程组的零空间，得到对应的特征空间。"
     }
   ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch07.eigenspace"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch07.eigenspace.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.oriented-area"
-    }
-  ],
+  "connections": [],
   "explanation": {
-    "conclusion": "",
-    "connections": [],
-    "definition": "### 7.3 求特征向量\n方法：对每个特征值 $\\lambda$，解齐次方程组 $(A - \\lambda I) \\cdot v = 0$：\n1. 代入 $\\lambda$，得到矩阵 $A - \\lambda I$\n2. 解方程 $(A - \\lambda I) \\cdot v = 0$（高斯消元）\n3. 得到 $\\operatorname{Null}(A - \\lambda I)$ 的一组基——这就是 $\\lambda$ 对应的特征空间\n性质 7.2（特征值的乘积与行列式） $\\det(A) = \\lambda_{1} \\cdot \\lambda_{2} \\cdot \\dots \\cdot \\lambda_{n}$。\n性质 7.3（特征值的和与迹） $\\operatorname{tr}(A) = \\lambda_{1} + \\lambda_{2} + \\dots + \\lambda_{n}$，其中 $\\operatorname{tr}(A) = \\sum_{i} a_{ii}$（对角线元素之和）。\n定理 7.2（不同特征值对应的特征向量线性无关） 设 $\\lambda_{1}, \\dots ,\\lambda_{k}$ 是 A 的两两不同的特征值，$v_{1}, \\dots ,v_{k}$ 是对应的特征向量。则 $v_{1}, \\dots ,v_{k}$ 线性无关。\n推论: 若 $n \\times n$ 矩阵有 n 个不同的特征值，则它一定可以对角化（因为有 n 个线性无关的特征向量）。\n定义 7.4（代数重数与几何重数） 设 $\\lambda_{0}$ 是 A 的特征值：\n- 代数重数 $m_{a}(\\lambda_{0}) = \\lambda_{0}$ 作为特征多项式根的重复次数；\n性质 7.4（重数关系） 对每个特征值 $\\lambda_{0}$，有 1 $\\leq m_g(\\lambda_{0}) \\leq m_{a}(\\lambda_{0})$。\n关键: A 可对角化 $\\Leftrightarrow$ 对所有特征值，$m_g = m_{a}$（即几何重数 $=$ 代数重数）。\n若存在某个特征值满足 $m_g < m_{a}$，则该矩阵不能对角化（特征向量不够 n 个）。",
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch07.eigenspace"
+          ],
+          "example_ref": "example.ch07.eigenspace.solve",
+          "id": "case.ch07.eigenspace.1",
+          "purpose": "两个特征值对应两个特征空间",
+          "stage_refs": [
+            "stage.ch07.eigenspace.eigenspaces"
+          ],
+          "topic_id": "ch07.eigenspace"
+        },
+        {
+          "claim_refs": [
+            "claim.ch07.eigenspace"
+          ],
+          "example_ref": "example.ch07.eigenspace.defective",
+          "id": "case.ch07.eigenspace.2",
+          "purpose": "例 7：切变矩阵不能对角化",
+          "stage_refs": [
+            "stage.ch07.eigenspace.defective"
+          ],
+          "topic_id": "ch07.eigenspace"
+        },
+        {
+          "claim_refs": [
+            "claim.ch07.eigenspace"
+          ],
+          "example_ref": "example.ch07.eigenspace.invariants",
+          "id": "case.ch07.eigenspace.3",
+          "purpose": "例 8：用特征值验证行列式与迹",
+          "stage_refs": [
+            "stage.ch07.eigenspace.invariants"
+          ],
+          "topic_id": "ch07.eigenspace"
+        }
+      ],
+      "default_pane_count": 1
+    },
+    "definition": "本节目标：对每个 $\\lambda$，解\n\n$$\n(\\boldsymbol A-\\lambda\\boldsymbol I)\\boldsymbol v=\\boldsymbol 0\n$$\n\n求出对应的特征空间。\n\n方法：对每个特征值 $\\lambda$，解齐次方程组 $(\\boldsymbol A-\\lambda\\boldsymbol I)\\boldsymbol v=\\boldsymbol 0$。\n\n- 代入 $\\lambda$，得到矩阵 $\\boldsymbol A-\\lambda\\boldsymbol I$；\n- 用高斯消元解方程 $(\\boldsymbol A-\\lambda\\boldsymbol I)\\boldsymbol v=\\boldsymbol 0$；\n- 得到 $\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$ 的一组基，这就是 $\\lambda$ 对应的特征空间。\n\n**（特征值的乘积与行列式）**\n\n$$\n\\det(\\boldsymbol A)=\\lambda_1\\lambda_2\\cdots\\lambda_n.\n$$\n\n几何含义：所有特征值的乘积等于行列式的值。行列式等于各方向缩放倍数的乘积，也就是变换后体积的放大率。\n\n**（特征值的和与迹）**\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=\\lambda_1+\\lambda_2+\\cdots+\\lambda_n,\n$$\n\n其中\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=\\sum_i a_{ii}\n$$\n\n是对角线元素之和。\n\n**（不同特征值对应的特征向量线性无关）** 设 $\\lambda_1,\\ldots,\\lambda_k$ 是 $\\boldsymbol A$ 的两两不同的特征值，$\\boldsymbol v_1,\\ldots,\\boldsymbol v_k$ 是对应的特征向量，则 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_k$ 线性无关。\n\n推论：若 $n\\times n$ 矩阵有 $n$ 个不同的特征值，则它一定可以对角化，因为它有 $n$ 个线性无关的特征向量。\n\n**（代数重数与几何重数）** 设 $\\lambda_0$ 是 $\\boldsymbol A$ 的特征值：\n\n- 代数重数 $m_a(\\lambda_0)$ 是 $\\lambda_0$ 作为特征多项式根的重复次数；\n- 几何重数\n\n$$\nm_g(\\lambda_0)\n=\\dim(E_{\\lambda_0})\n=\\dim\\operatorname{Null}(\\boldsymbol A-\\lambda_0\\boldsymbol I),\n$$\n\n即对应特征空间的维数。\n\n**（重数关系）** 对每个特征值 $\\lambda_0$，都有\n\n$$\n1\\leq m_g(\\lambda_0)\\leq m_a(\\lambda_0).\n$$\n\n矩阵 $\\boldsymbol A$ 可对角化，当且仅当对所有特征值都有 $m_g=m_a$。若存在某个特征值满足 $m_g<m_a$，则该矩阵不能对角化，因为特征向量不够 $n$ 个。",
     "derivation": [
-      "特征根对应零空间: E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
-      "#### 例题（续 7.2 例1）\n$$\nA = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}, \\lambda_{1}=3, \\lambda_{2}=1\n$$\n$\\lambda_{1} = 3$：$(A-3I) = \\begin{pmatrix}-1 & 1 \\\\ 1 & -1\\end{pmatrix} \\rightarrow$ 解 $-x+y=0 \\rightarrow y=x \\rightarrow v_{1} = t \\cdot (1,1)$\n$\\lambda_{2} = 1$：$(A-I) = \\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix} \\rightarrow$ 解 $x+y=0 \\rightarrow y=-x \\rightarrow v_{2} = t \\cdot (1,-1)$\n证明: 特征多项式 $p(\\lambda) = \\det(A-\\lambda I) = (-1)^{n} \\cdot \\lambda^{n} + (-1)^{n-1} \\cdot \\operatorname{tr}(A) \\cdot \\lambda^{n-1} + \\dots + \\det(A)$。\n另一方面，若 $\\lambda_{1}, \\dots ,\\lambda_{n}$ 是特征值（计算重数），则 $p(\\lambda) = (-1)^{n} \\cdot (\\lambda-\\lambda_{1})(\\lambda-\\lambda_{2}) \\dots (\\lambda-\\lambda_{n})$。\n比较常数项：$p(0) = \\det(A) = (-1)^{n} \\cdot (-\\lambda_{1})(-\\lambda_{2}) \\dots (-\\lambda_{n}) = \\lambda_{1} \\cdot \\lambda_{2} \\cdot \\dots \\cdot \\lambda_{n}$。■\n证明: $p(\\lambda) = \\det(A-\\lambda I)$ 展开后 $\\lambda^{n-1}$ 的系数为 $(-1)^{n-1} \\cdot (a_{11}+ \\dots +a_{nn}) = (-1)^{n-1} \\cdot \\operatorname{tr}(A)$。\n同时 $(-1)^{n} \\cdot (\\lambda-\\lambda_{1}) \\dots (\\lambda-\\lambda_{n})$ 展开后 $\\lambda^{n-1}$ 的系数为 $(-1)^{n-1} \\cdot (\\lambda_{1}+ \\dots +\\lambda_{n})$。比较即得。■\n证明（数学归纳法）: $k=1$ 时显然（非零向量自身线性无关）。\n假设 $k-1$ 时成立。若 $c_{1}v_{1} + \\dots + c_{k}v_{k} = 0$，两边左乘 $(A-\\lambda_{k}I)$：\n$$\nc_{1}(\\lambda_{1}-\\lambda_{k})v_{1} + \\dots + c_{k-1}(\\lambda_{k-1}-\\lambda_{k})v_{k-1} + c_{k} \\cdot 0 = 0\n$$\n由归纳假设，$v_{1}, \\dots ,v_{k-1}$ 线性无关，故 $c_{i}(\\lambda_{i}-\\lambda_{k})=0$。又 $\\lambda_{i} \\neq \\lambda_{k}$，所以 $c_{1}= \\dots =c_{k-1}=0$。\n代回原式得 $c_{k}v_{k}=0$，故 $c_{k}=0$。全零 $\\rightarrow v_{1}, \\dots ,v_{k}$ 线性无关。■\n##### 补充例题\n例7（不可对角化的矩阵）: $A = \\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$。求特征值、特征向量和重数。\n解: $\\lambda=1$（二重根，$m_{a}=2$）。$A-I = \\begin{pmatrix}0 & 1 \\\\ 0 & 0\\end{pmatrix}$，秩$=1 \\rightarrow \\operatorname{Null}$维数$=1 \\rightarrow m_g=1$。\n$m_g < m_{a} \\rightarrow$ 只有一个线性无关的特征向量，不能对角化。\n例8（特征值乘积验证）: $A = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$。$\\lambda_{1}=3, \\lambda_{2}=1$。验证 $\\det(A)=3=\\lambda_{1} \\cdot \\lambda_{2}$ 和 $\\operatorname{tr}(A)=4=\\lambda_{1}+\\lambda_{2}$。\n关键观察：$v_{1}$ 和 $v_{2}$ 互相垂直。这不是巧合——对称矩阵的所有不同特征值对应的特征向量一定正交（定理 7.4）。"
+      "**（特征值的乘积与行列式）**\n\n特征多项式为\n\n$$\np(\\lambda)\n=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)\n=(-1)^n\\lambda^n+(-1)^{n-1}\\operatorname{tr}(\\boldsymbol A)\\lambda^{n-1}+\\cdots+\\det(\\boldsymbol A).\n$$\n\n另一方面，若 $\\lambda_1,\\ldots,\\lambda_n$ 是特征值并计算重数，则\n\n$$\np(\\lambda)\n=(-1)^n(\\lambda-\\lambda_1)(\\lambda-\\lambda_2)\\cdots(\\lambda-\\lambda_n).\n$$\n\n比较常数项：\n\n$$\n\\begin{aligned}\np(0)\n&=\\det(\\boldsymbol A)\\\\\n&=(-1)^n(-\\lambda_1)(-\\lambda_2)\\cdots(-\\lambda_n)\\\\\n&=\\lambda_1\\lambda_2\\cdots\\lambda_n.\n\\end{aligned}\n$$",
+      "**（特征值的和与迹）**\n\n$p(\\lambda)=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)$ 展开后，$\\lambda^{n-1}$ 的系数为\n\n$$\n(-1)^{n-1}(a_{11}+\\cdots+a_{nn})\n=(-1)^{n-1}\\operatorname{tr}(\\boldsymbol A).\n$$\n\n同时，\n\n$$\n(-1)^n(\\lambda-\\lambda_1)\\cdots(\\lambda-\\lambda_n)\n$$\n\n展开后，$\\lambda^{n-1}$ 的系数为\n\n$$\n(-1)^{n-1}(\\lambda_1+\\cdots+\\lambda_n).\n$$\n\n比较两个系数可得\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=\\lambda_1+\\cdots+\\lambda_n.\n$$",
+      "**（不同特征值对应的特征向量线性无关）**\n\n用数学归纳法证明。当 $k=1$ 时，非零向量自身线性无关。\n\n假设结论对 $k-1$ 个向量成立。若\n\n$$\nc_1\\boldsymbol v_1+\\cdots+c_k\\boldsymbol v_k=\\boldsymbol 0,\n$$\n\n两边左乘 $\\boldsymbol A-\\lambda_k\\boldsymbol I$，得到\n\n$$\nc_1(\\lambda_1-\\lambda_k)\\boldsymbol v_1\n+\\cdots+\nc_{k-1}(\\lambda_{k-1}-\\lambda_k)\\boldsymbol v_{k-1}\n+c_k\\boldsymbol 0\n=\\boldsymbol 0.\n$$\n\n由归纳假设，$\\boldsymbol v_1,\\ldots,\\boldsymbol v_{k-1}$ 线性无关，所以\n\n$$\nc_i(\\lambda_i-\\lambda_k)=0.\n$$\n\n又因为 $\\lambda_i\\neq\\lambda_k$，所以\n\n$$\nc_1=\\cdots=c_{k-1}=0.\n$$\n\n代回原式得\n\n$$\nc_k\\boldsymbol v_k=\\boldsymbol 0,\n$$\n\n因此 $c_k=0$。全部系数均为零，所以 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_k$ 线性无关。"
     ],
-    "formula": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
-    "geometric_meaning": "几何含义: 所有特征值的乘积等于行列式的值——行列式 $=$ 各方向缩放倍数的乘积 $=$ 变换后体积的放大率。\n- 几何重数 $m_g(\\lambda_{0}) = \\dim(E_{\\lambda_{0}}) = \\dim \\operatorname{Null}(A-\\lambda_{0}I) =$ 对应特征空间的维数。\n几何含义：这个变换是水平的切变(shear)，只有一个方向上的向量保持不变方向。",
-    "intuition": "",
+    "formula": "",
+    "geometric_meaning": "",
     "invariants": [
-      "roots_bind_nullspaces"
+      "E_lambda = Null(A-lambda I)",
+      "distinct eigenvalues have independent eigenvectors",
+      "det(A) equals the product of eigenvalues",
+      "tr(A) equals the sum of eigenvalues",
+      "geometric multiplicity does not exceed algebraic multiplicity"
     ],
-    "pitfalls": [],
-    "read_guide": [],
     "searchable_text": [
-      "7.3 求特征向量",
-      "本节目标：对每个 $\\lambda$，解 $(A - \\lambda I) \\cdot v = 0$ 求出对应的特征空间。",
-      "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
-      "### 7.3 求特征向量\n方法：对每个特征值 $\\lambda$，解齐次方程组 $(A - \\lambda I) \\cdot v = 0$：\n1. 代入 $\\lambda$，得到矩阵 $A - \\lambda I$\n2. 解方程 $(A - \\lambda I) \\cdot v = 0$（高斯消元）\n3. 得到 $\\operatorname{Null}(A - \\lambda I)$ 的一组基——这就是 $\\lambda$ 对应的特征空间\n性质 7.2（特征值的乘积与行列式） $\\det(A) = \\lambda_{1} \\cdot \\lambda_{2} \\cdot \\dots \\cdot \\lambda_{n}$。\n性质 7.3（特征值的和与迹） $\\operatorname{tr}(A) = \\lambda_{1} + \\lambda_{2} + \\dots + \\lambda_{n}$，其中 $\\operatorname{tr}(A) = \\sum_{i} a_{ii}$（对角线元素之和）。\n定理 7.2（不同特征值对应的特征向量线性无关） 设 $\\lambda_{1}, \\dots ,\\lambda_{k}$ 是 A 的两两不同的特征值，$v_{1}, \\dots ,v_{k}$ 是对应的特征向量。则 $v_{1}, \\dots ,v_{k}$ 线性无关。\n推论: 若 $n \\times n$ 矩阵有 n 个不同的特征值，则它一定可以对角化（因为有 n 个线性无关的特征向量）。\n定义 7.4（代数重数与几何重数） 设 $\\lambda_{0}$ 是 A 的特征值：\n- 代数重数 $m_{a}(\\lambda_{0}) = \\lambda_{0}$ 作为特征多项式根的重复次数；\n性质 7.4（重数关系） 对每个特征值 $\\lambda_{0}$，有 1 $\\leq m_g(\\lambda_{0}) \\leq m_{a}(\\lambda_{0})$。\n关键: A 可对角化 $\\Leftrightarrow$ 对所有特征值，$m_g = m_{a}$（即几何重数 $=$ 代数重数）。\n若存在某个特征值满足 $m_g < m_{a}$，则该矩阵不能对角化（特征向量不够 n 个）。",
-      "特征根对应零空间: E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
-      "#### 例题（续 7.2 例1）\n$$\nA = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}, \\lambda_{1}=3, \\lambda_{2}=1\n$$\n$\\lambda_{1} = 3$：$(A-3I) = \\begin{pmatrix}-1 & 1 \\\\ 1 & -1\\end{pmatrix} \\rightarrow$ 解 $-x+y=0 \\rightarrow y=x \\rightarrow v_{1} = t \\cdot (1,1)$\n$\\lambda_{2} = 1$：$(A-I) = \\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix} \\rightarrow$ 解 $x+y=0 \\rightarrow y=-x \\rightarrow v_{2} = t \\cdot (1,-1)$\n证明: 特征多项式 $p(\\lambda) = \\det(A-\\lambda I) = (-1)^{n} \\cdot \\lambda^{n} + (-1)^{n-1} \\cdot \\operatorname{tr}(A) \\cdot \\lambda^{n-1} + \\dots + \\det(A)$。\n另一方面，若 $\\lambda_{1}, \\dots ,\\lambda_{n}$ 是特征值（计算重数），则 $p(\\lambda) = (-1)^{n} \\cdot (\\lambda-\\lambda_{1})(\\lambda-\\lambda_{2}) \\dots (\\lambda-\\lambda_{n})$。\n比较常数项：$p(0) = \\det(A) = (-1)^{n} \\cdot (-\\lambda_{1})(-\\lambda_{2}) \\dots (-\\lambda_{n}) = \\lambda_{1} \\cdot \\lambda_{2} \\cdot \\dots \\cdot \\lambda_{n}$。■\n证明: $p(\\lambda) = \\det(A-\\lambda I)$ 展开后 $\\lambda^{n-1}$ 的系数为 $(-1)^{n-1} \\cdot (a_{11}+ \\dots +a_{nn}) = (-1)^{n-1} \\cdot \\operatorname{tr}(A)$。\n同时 $(-1)^{n} \\cdot (\\lambda-\\lambda_{1}) \\dots (\\lambda-\\lambda_{n})$ 展开后 $\\lambda^{n-1}$ 的系数为 $(-1)^{n-1} \\cdot (\\lambda_{1}+ \\dots +\\lambda_{n})$。比较即得。■\n证明（数学归纳法）: $k=1$ 时显然（非零向量自身线性无关）。\n假设 $k-1$ 时成立。若 $c_{1}v_{1} + \\dots + c_{k}v_{k} = 0$，两边左乘 $(A-\\lambda_{k}I)$：\n$$\nc_{1}(\\lambda_{1}-\\lambda_{k})v_{1} + \\dots + c_{k-1}(\\lambda_{k-1}-\\lambda_{k})v_{k-1} + c_{k} \\cdot 0 = 0\n$$\n由归纳假设，$v_{1}, \\dots ,v_{k-1}$ 线性无关，故 $c_{i}(\\lambda_{i}-\\lambda_{k})=0$。又 $\\lambda_{i} \\neq \\lambda_{k}$，所以 $c_{1}= \\dots =c_{k-1}=0$。\n代回原式得 $c_{k}v_{k}=0$，故 $c_{k}=0$。全零 $\\rightarrow v_{1}, \\dots ,v_{k}$ 线性无关。■\n##### 补充例题\n例7（不可对角化的矩阵）: $A = \\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$。求特征值、特征向量和重数。\n解: $\\lambda=1$（二重根，$m_{a}=2$）。$A-I = \\begin{pmatrix}0 & 1 \\\\ 0 & 0\\end{pmatrix}$，秩$=1 \\rightarrow \\operatorname{Null}$维数$=1 \\rightarrow m_g=1$。\n$m_g < m_{a} \\rightarrow$ 只有一个线性无关的特征向量，不能对角化。\n例8（特征值乘积验证）: $A = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$。$\\lambda_{1}=3, \\lambda_{2}=1$。验证 $\\det(A)=3=\\lambda_{1} \\cdot \\lambda_{2}$ 和 $\\operatorname{tr}(A)=4=\\lambda_{1}+\\lambda_{2}$。\n关键观察：$v_{1}$ 和 $v_{2}$ 互相垂直。这不是巧合——对称矩阵的所有不同特征值对应的特征向量一定正交（定理 7.4）。",
-      "几何含义: 所有特征值的乘积等于行列式的值——行列式 $=$ 各方向缩放倍数的乘积 $=$ 变换后体积的放大率。\n- 几何重数 $m_g(\\lambda_{0}) = \\dim(E_{\\lambda_{0}}) = \\dim \\operatorname{Null}(A-\\lambda_{0}I) =$ 对应特征空间的维数。\n几何含义：这个变换是水平的切变(shear)，只有一个方向上的向量保持不变方向。",
-      "roots_bind_nullspaces"
+      "求特征向量",
+      "对每个特征值求齐次方程组的零空间，得到对应的特征空间。",
+      "本节目标：对每个 $\\lambda$，解\n\n$$\n(\\boldsymbol A-\\lambda\\boldsymbol I)\\boldsymbol v=\\boldsymbol 0\n$$\n\n求出对应的特征空间。\n\n方法：对每个特征值 $\\lambda$，解齐次方程组 $(\\boldsymbol A-\\lambda\\boldsymbol I)\\boldsymbol v=\\boldsymbol 0$。\n\n- 代入 $\\lambda$，得到矩阵 $\\boldsymbol A-\\lambda\\boldsymbol I$；\n- 用高斯消元解方程 $(\\boldsymbol A-\\lambda\\boldsymbol I)\\boldsymbol v=\\boldsymbol 0$；\n- 得到 $\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$ 的一组基，这就是 $\\lambda$ 对应的特征空间。\n\n**（特征值的乘积与行列式）**\n\n$$\n\\det(\\boldsymbol A)=\\lambda_1\\lambda_2\\cdots\\lambda_n.\n$$\n\n几何含义：所有特征值的乘积等于行列式的值。行列式等于各方向缩放倍数的乘积，也就是变换后体积的放大率。\n\n**（特征值的和与迹）**\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=\\lambda_1+\\lambda_2+\\cdots+\\lambda_n,\n$$\n\n其中\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=\\sum_i a_{ii}\n$$\n\n是对角线元素之和。\n\n**（不同特征值对应的特征向量线性无关）** 设 $\\lambda_1,\\ldots,\\lambda_k$ 是 $\\boldsymbol A$ 的两两不同的特征值，$\\boldsymbol v_1,\\ldots,\\boldsymbol v_k$ 是对应的特征向量，则 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_k$ 线性无关。\n\n推论：若 $n\\times n$ 矩阵有 $n$ 个不同的特征值，则它一定可以对角化，因为它有 $n$ 个线性无关的特征向量。\n\n**（代数重数与几何重数）** 设 $\\lambda_0$ 是 $\\boldsymbol A$ 的特征值：\n\n- 代数重数 $m_a(\\lambda_0)$ 是 $\\lambda_0$ 作为特征多项式根的重复次数；\n- 几何重数\n\n$$\nm_g(\\lambda_0)\n=\\dim(E_{\\lambda_0})\n=\\dim\\operatorname{Null}(\\boldsymbol A-\\lambda_0\\boldsymbol I),\n$$\n\n即对应特征空间的维数。\n\n**（重数关系）** 对每个特征值 $\\lambda_0$，都有\n\n$$\n1\\leq m_g(\\lambda_0)\\leq m_a(\\lambda_0).\n$$\n\n矩阵 $\\boldsymbol A$ 可对角化，当且仅当对所有特征值都有 $m_g=m_a$。若存在某个特征值满足 $m_g<m_a$，则该矩阵不能对角化，因为特征向量不够 $n$ 个。",
+      "**（特征值的乘积与行列式）**\n\n特征多项式为\n\n$$\np(\\lambda)\n=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)\n=(-1)^n\\lambda^n+(-1)^{n-1}\\operatorname{tr}(\\boldsymbol A)\\lambda^{n-1}+\\cdots+\\det(\\boldsymbol A).\n$$\n\n另一方面，若 $\\lambda_1,\\ldots,\\lambda_n$ 是特征值并计算重数，则\n\n$$\np(\\lambda)\n=(-1)^n(\\lambda-\\lambda_1)(\\lambda-\\lambda_2)\\cdots(\\lambda-\\lambda_n).\n$$\n\n比较常数项：\n\n$$\n\\begin{aligned}\np(0)\n&=\\det(\\boldsymbol A)\\\\\n&=(-1)^n(-\\lambda_1)(-\\lambda_2)\\cdots(-\\lambda_n)\\\\\n&=\\lambda_1\\lambda_2\\cdots\\lambda_n.\n\\end{aligned}\n$$",
+      "**（特征值的和与迹）**\n\n$p(\\lambda)=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)$ 展开后，$\\lambda^{n-1}$ 的系数为\n\n$$\n(-1)^{n-1}(a_{11}+\\cdots+a_{nn})\n=(-1)^{n-1}\\operatorname{tr}(\\boldsymbol A).\n$$\n\n同时，\n\n$$\n(-1)^n(\\lambda-\\lambda_1)\\cdots(\\lambda-\\lambda_n)\n$$\n\n展开后，$\\lambda^{n-1}$ 的系数为\n\n$$\n(-1)^{n-1}(\\lambda_1+\\cdots+\\lambda_n).\n$$\n\n比较两个系数可得\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=\\lambda_1+\\cdots+\\lambda_n.\n$$",
+      "**（不同特征值对应的特征向量线性无关）**\n\n用数学归纳法证明。当 $k=1$ 时，非零向量自身线性无关。\n\n假设结论对 $k-1$ 个向量成立。若\n\n$$\nc_1\\boldsymbol v_1+\\cdots+c_k\\boldsymbol v_k=\\boldsymbol 0,\n$$\n\n两边左乘 $\\boldsymbol A-\\lambda_k\\boldsymbol I$，得到\n\n$$\nc_1(\\lambda_1-\\lambda_k)\\boldsymbol v_1\n+\\cdots+\nc_{k-1}(\\lambda_{k-1}-\\lambda_k)\\boldsymbol v_{k-1}\n+c_k\\boldsymbol 0\n=\\boldsymbol 0.\n$$\n\n由归纳假设，$\\boldsymbol v_1,\\ldots,\\boldsymbol v_{k-1}$ 线性无关，所以\n\n$$\nc_i(\\lambda_i-\\lambda_k)=0.\n$$\n\n又因为 $\\lambda_i\\neq\\lambda_k$，所以\n\n$$\nc_1=\\cdots=c_{k-1}=0.\n$$\n\n代回原式得\n\n$$\nc_k\\boldsymbol v_k=\\boldsymbol 0,\n$$\n\n因此 $c_k=0$。全部系数均为零，所以 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_k$ 线性无关。",
+      "沿用 7.2 例 1：\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n当 $\\lambda_1=3$ 时，\n\n$$\n\\boldsymbol A-3\\boldsymbol I\n=\\begin{pmatrix}\n-1&1\\\\\n1&-1\n\\end{pmatrix}.\n$$\n\n方程 $-x+y=0$ 给出 $y=x$，所以\n\n$$\n\\boldsymbol v_1=t\n\\begin{pmatrix}1\\\\1\\end{pmatrix}.\n$$\n\n当 $\\lambda_2=1$ 时，\n\n$$\n\\boldsymbol A-\\boldsymbol I\n=\\begin{pmatrix}\n1&1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n方程 $x+y=0$ 给出 $y=-x$，所以\n\n$$\n\\boldsymbol v_2=t\n\\begin{pmatrix}1\\\\-1\\end{pmatrix}.\n$$",
+      "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&1\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n$\\lambda=1$ 是二重根，所以\n\n$$\nm_a=2.\n$$\n\n而\n\n$$\n\\boldsymbol A-\\boldsymbol I\n=\\begin{pmatrix}\n0&1\\\\\n0&0\n\\end{pmatrix}\n$$\n\n的秩为 $1$，零空间维数为 $1$，所以\n\n$$\nm_g=1.\n$$\n\n由于 $m_g<m_a$，只有一个线性无关的特征向量，矩阵不能对角化。\n\n几何含义：这个变换是水平切变，只有一个方向上的向量保持不变方向。",
+      "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n行列式满足\n\n$$\n\\det(\\boldsymbol A)=3=\\lambda_1\\lambda_2.\n$$\n\n迹满足\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=4=\\lambda_1+\\lambda_2.\n$$\n\n对应的特征向量\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\1\\end{pmatrix},\\qquad\n\\boldsymbol v_2=\n\\begin{pmatrix}1\\\\-1\\end{pmatrix}\n$$\n\n互相垂直。这不是巧合，对称矩阵的所有不同特征值对应的特征向量一定正交。"
     ],
     "sections": [
       {
@@ -82,85 +116,48 @@
           "claim.ch07.eigenspace"
         ],
         "id": "definition",
-        "text": "### 7.3 求特征向量\n方法：对每个特征值 $\\lambda$，解齐次方程组 $(A - \\lambda I) \\cdot v = 0$：\n1. 代入 $\\lambda$，得到矩阵 $A - \\lambda I$\n2. 解方程 $(A - \\lambda I) \\cdot v = 0$（高斯消元）\n3. 得到 $\\operatorname{Null}(A - \\lambda I)$ 的一组基——这就是 $\\lambda$ 对应的特征空间\n性质 7.2（特征值的乘积与行列式） $\\det(A) = \\lambda_{1} \\cdot \\lambda_{2} \\cdot \\dots \\cdot \\lambda_{n}$。\n性质 7.3（特征值的和与迹） $\\operatorname{tr}(A) = \\lambda_{1} + \\lambda_{2} + \\dots + \\lambda_{n}$，其中 $\\operatorname{tr}(A) = \\sum_{i} a_{ii}$（对角线元素之和）。\n定理 7.2（不同特征值对应的特征向量线性无关） 设 $\\lambda_{1}, \\dots ,\\lambda_{k}$ 是 A 的两两不同的特征值，$v_{1}, \\dots ,v_{k}$ 是对应的特征向量。则 $v_{1}, \\dots ,v_{k}$ 线性无关。\n推论: 若 $n \\times n$ 矩阵有 n 个不同的特征值，则它一定可以对角化（因为有 n 个线性无关的特征向量）。\n定义 7.4（代数重数与几何重数） 设 $\\lambda_{0}$ 是 A 的特征值：\n- 代数重数 $m_{a}(\\lambda_{0}) = \\lambda_{0}$ 作为特征多项式根的重复次数；\n性质 7.4（重数关系） 对每个特征值 $\\lambda_{0}$，有 1 $\\leq m_g(\\lambda_{0}) \\leq m_{a}(\\lambda_{0})$。\n关键: A 可对角化 $\\Leftrightarrow$ 对所有特征值，$m_g = m_{a}$（即几何重数 $=$ 代数重数）。\n若存在某个特征值满足 $m_g < m_{a}$，则该矩阵不能对角化（特征向量不够 n 个）。",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigenspace"
-        ],
-        "id": "formula",
-        "text": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
-        "title": "formula"
+        "text": "",
+        "title": "定义"
       },
       {
         "claim_refs": [
           "claim.ch07.eigenspace"
         ],
         "id": "derivation",
-        "text": "特征根对应零空间: E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)\n#### 例题（续 7.2 例1）\n$$\nA = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}, \\lambda_{1}=3, \\lambda_{2}=1\n$$\n$\\lambda_{1} = 3$：$(A-3I) = \\begin{pmatrix}-1 & 1 \\\\ 1 & -1\\end{pmatrix} \\rightarrow$ 解 $-x+y=0 \\rightarrow y=x \\rightarrow v_{1} = t \\cdot (1,1)$\n$\\lambda_{2} = 1$：$(A-I) = \\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix} \\rightarrow$ 解 $x+y=0 \\rightarrow y=-x \\rightarrow v_{2} = t \\cdot (1,-1)$\n证明: 特征多项式 $p(\\lambda) = \\det(A-\\lambda I) = (-1)^{n} \\cdot \\lambda^{n} + (-1)^{n-1} \\cdot \\operatorname{tr}(A) \\cdot \\lambda^{n-1} + \\dots + \\det(A)$。\n另一方面，若 $\\lambda_{1}, \\dots ,\\lambda_{n}$ 是特征值（计算重数），则 $p(\\lambda) = (-1)^{n} \\cdot (\\lambda-\\lambda_{1})(\\lambda-\\lambda_{2}) \\dots (\\lambda-\\lambda_{n})$。\n比较常数项：$p(0) = \\det(A) = (-1)^{n} \\cdot (-\\lambda_{1})(-\\lambda_{2}) \\dots (-\\lambda_{n}) = \\lambda_{1} \\cdot \\lambda_{2} \\cdot \\dots \\cdot \\lambda_{n}$。■\n证明: $p(\\lambda) = \\det(A-\\lambda I)$ 展开后 $\\lambda^{n-1}$ 的系数为 $(-1)^{n-1} \\cdot (a_{11}+ \\dots +a_{nn}) = (-1)^{n-1} \\cdot \\operatorname{tr}(A)$。\n同时 $(-1)^{n} \\cdot (\\lambda-\\lambda_{1}) \\dots (\\lambda-\\lambda_{n})$ 展开后 $\\lambda^{n-1}$ 的系数为 $(-1)^{n-1} \\cdot (\\lambda_{1}+ \\dots +\\lambda_{n})$。比较即得。■\n证明（数学归纳法）: $k=1$ 时显然（非零向量自身线性无关）。\n假设 $k-1$ 时成立。若 $c_{1}v_{1} + \\dots + c_{k}v_{k} = 0$，两边左乘 $(A-\\lambda_{k}I)$：\n$$\nc_{1}(\\lambda_{1}-\\lambda_{k})v_{1} + \\dots + c_{k-1}(\\lambda_{k-1}-\\lambda_{k})v_{k-1} + c_{k} \\cdot 0 = 0\n$$\n由归纳假设，$v_{1}, \\dots ,v_{k-1}$ 线性无关，故 $c_{i}(\\lambda_{i}-\\lambda_{k})=0$。又 $\\lambda_{i} \\neq \\lambda_{k}$，所以 $c_{1}= \\dots =c_{k-1}=0$。\n代回原式得 $c_{k}v_{k}=0$，故 $c_{k}=0$。全零 $\\rightarrow v_{1}, \\dots ,v_{k}$ 线性无关。■\n##### 补充例题\n例7（不可对角化的矩阵）: $A = \\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$。求特征值、特征向量和重数。\n解: $\\lambda=1$（二重根，$m_{a}=2$）。$A-I = \\begin{pmatrix}0 & 1 \\\\ 0 & 0\\end{pmatrix}$，秩$=1 \\rightarrow \\operatorname{Null}$维数$=1 \\rightarrow m_g=1$。\n$m_g < m_{a} \\rightarrow$ 只有一个线性无关的特征向量，不能对角化。\n例8（特征值乘积验证）: $A = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$。$\\lambda_{1}=3, \\lambda_{2}=1$。验证 $\\det(A)=3=\\lambda_{1} \\cdot \\lambda_{2}$ 和 $\\operatorname{tr}(A)=4=\\lambda_{1}+\\lambda_{2}$。\n关键观察：$v_{1}$ 和 $v_{2}$ 互相垂直。这不是巧合——对称矩阵的所有不同特征值对应的特征向量一定正交（定理 7.4）。",
-        "title": "derivation"
+        "text": "",
+        "title": "推导与证明"
       },
       {
         "claim_refs": [
           "claim.ch07.eigenspace"
         ],
         "id": "worked_examples",
-        "text": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigenspace"
-        ],
-        "id": "geometric_meaning",
-        "text": "几何含义: 所有特征值的乘积等于行列式的值——行列式 $=$ 各方向缩放倍数的乘积 $=$ 变换后体积的放大率。\n- 几何重数 $m_g(\\lambda_{0}) = \\dim(E_{\\lambda_{0}}) = \\dim \\operatorname{Null}(A-\\lambda_{0}I) =$ 对应特征空间的维数。\n几何含义：这个变换是水平的切变(shear)，只有一个方向上的向量保持不变方向。",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigenspace"
-        ],
-        "id": "pitfalls",
-        "text": "pitfalls: 7.3 求特征向量。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigenspace"
-        ],
-        "id": "connections",
-        "text": "connections: 7.3 求特征向量。",
-        "title": "connections"
-      },
-      {
-        "claim_refs": [],
-        "id": "invariants",
-        "text": "roots_bind_nullspaces",
-        "title": "invariants"
+        "text": "",
+        "title": "数学案例"
       }
     ],
-    "summary": "本节目标：对每个 $\\lambda$，解 $(A - \\lambda I) \\cdot v = 0$ 求出对应的特征空间。",
+    "summary": "对每个特征值求齐次方程组的零空间，得到对应的特征空间。",
     "symbol_roles": {
+      "invariant_values": "invariant_values",
       "operator": "operator",
-      "root_2": "root_2",
-      "root_3": "root_3",
-      "space_2": "space_2",
+      "shear_operator": "shear_operator",
+      "shear_space": "shear_space",
+      "space_1": "space_1",
       "space_3": "space_3"
     },
-    "title": "7.3 求特征向量",
+    "title": "求特征向量",
     "worked_examples": [
       {
         "calculation": [
-          "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)"
+          "沿用 7.2 例 1：\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n当 $\\lambda_1=3$ 时，\n\n$$\n\\boldsymbol A-3\\boldsymbol I\n=\\begin{pmatrix}\n-1&1\\\\\n1&-1\n\\end{pmatrix}.\n$$\n\n方程 $-x+y=0$ 给出 $y=x$，所以\n\n$$\n\\boldsymbol v_1=t\n\\begin{pmatrix}1\\\\1\\end{pmatrix}.\n$$\n\n当 $\\lambda_2=1$ 时，\n\n$$\n\\boldsymbol A-\\boldsymbol I\n=\\begin{pmatrix}\n1&1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n方程 $x+y=0$ 给出 $y=-x$，所以\n\n$$\n\\boldsymbol v_2=t\n\\begin{pmatrix}1\\\\-1\\end{pmatrix}.\n$$"
         ],
         "checks": [
           {
             "expected": [
-              0.0,
-              0.0
+              0,
+              0
             ],
-            "name": "result",
+            "name": "transformed",
             "tolerance": 1e-09
           }
         ],
@@ -170,38 +167,38 @@
         "given": [
           [
             [
-              1.0,
-              1.0
+              -1,
+              1
             ],
             [
-              0.0,
-              0.0
+              1,
+              -1
             ]
           ],
           [
-            -1.0,
-            1.0
+            1,
+            1
           ]
         ],
-        "id": "example.ch07.eigenspace.root_2.0",
+        "id": "example.ch07.eigenspace.solve",
         "kind": "matrix_transform",
         "result": [
-          0.0,
-          0.0
+          0,
+          0
         ],
-        "title": "root_2"
+        "title": "例题：求两个特征空间"
       },
       {
         "calculation": [
-          "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)"
+          "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&1\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n$\\lambda=1$ 是二重根，所以\n\n$$\nm_a=2.\n$$\n\n而\n\n$$\n\\boldsymbol A-\\boldsymbol I\n=\\begin{pmatrix}\n0&1\\\\\n0&0\n\\end{pmatrix}\n$$\n\n的秩为 $1$，零空间维数为 $1$，所以\n\n$$\nm_g=1.\n$$\n\n由于 $m_g<m_a$，只有一个线性无关的特征向量，矩阵不能对角化。\n\n几何含义：这个变换是水平切变，只有一个方向上的向量保持不变方向。"
         ],
         "checks": [
           {
             "expected": [
-              0.0,
-              0.0
+              0,
+              0
             ],
-            "name": "result",
+            "name": "transformed",
             "tolerance": 1e-09
           }
         ],
@@ -211,36 +208,65 @@
         "given": [
           [
             [
-              0.0,
-              1.0
+              0,
+              1
             ],
             [
-              0.0,
-              -1.0
+              0,
+              0
             ]
           ],
           [
-            1.0,
-            0.0
+            1,
+            0
           ]
         ],
-        "id": "example.ch07.eigenspace.root_3.0",
+        "id": "example.ch07.eigenspace.defective",
         "kind": "matrix_transform",
         "result": [
-          0.0,
-          0.0
+          0,
+          0
         ],
-        "title": "root_3"
+        "title": "例 7：不可对角化的矩阵"
+      },
+      {
+        "calculation": [
+          "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n行列式满足\n\n$$\n\\det(\\boldsymbol A)=3=\\lambda_1\\lambda_2.\n$$\n\n迹满足\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=4=\\lambda_1+\\lambda_2.\n$$\n\n对应的特征向量\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\1\\end{pmatrix},\\qquad\n\\boldsymbol v_2=\n\\begin{pmatrix}1\\\\-1\\end{pmatrix}\n$$\n\n互相垂直。这不是巧合，对称矩阵的所有不同特征值对应的特征向量一定正交。"
+        ],
+        "checks": [
+          {
+            "expected": 3,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "given": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch07.eigenspace.invariants",
+        "kind": "determinant",
+        "result": 3,
+        "title": "例 8：验证特征值的乘积、和与正交性"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:742061d64173690777def42600414af3e1f4f95ae02ec1e27501660ae1cdbbcf",
+    "artifact_digest": "sha256:5f73bd62f54d876449f04e1a4e3f7f83a2c8bacce10fbfd42c64fe17bf3640b1",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:f39fe0ed7e638a8e29abddc892c5db12da980f1fc6bf2ab5f34da8587e24bae4",
+    "raw_reply_digest": "sha256:a3937a96e0c7dcde2627f6fcd8ac5a8679193ebd435e5a1095343e269d224775",
     "source_hash": "sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724"
   },
   "revision": 1,
@@ -261,18 +287,18 @@
     "source_path": [
       "第7章 特征值与特征向量",
       "7.3 求特征向量",
-      "7.3 求特征向量"
+      "求特征向量"
     ],
     "spans": [
       {
-        "end_line": 2273,
+        "end_line": 2140,
         "fingerprint": "sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724",
         "heading_path": [
           "第7章 特征值与特征向量",
           "7.3 求特征向量"
         ],
         "id": "第7章 特征值与特征向量 / 7.3 求特征向量::1::sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724",
-        "start_line": 2216,
+        "start_line": 2083,
         "text": "### 7.3 求特征向量\n\n本节目标：对每个 $\\lambda$，解 $(A - \\lambda I) \\cdot v = 0$ 求出对应的特征空间。\n\n方法：对每个特征值 $\\lambda$，解齐次方程组 $(A - \\lambda I) \\cdot v = 0$：\n1. 代入 $\\lambda$，得到矩阵 $A - \\lambda I$\n2. 解方程 $(A - \\lambda I) \\cdot v = 0$（高斯消元）\n3. 得到 $\\operatorname{Null}(A - \\lambda I)$ 的一组基——这就是 $\\lambda$ 对应的特征空间\n\n#### 例题（续 7.2 例1）\n\n$$\nA = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}, \\lambda_{1}=3, \\lambda_{2}=1\n$$\n$\\lambda_{1} = 3$：$(A-3I) = \\begin{pmatrix}-1 & 1 \\\\ 1 & -1\\end{pmatrix} \\rightarrow$ 解 $-x+y=0 \\rightarrow y=x \\rightarrow v_{1} = t \\cdot (1,1)$\n$\\lambda_{2} = 1$：$(A-I) = \\begin{pmatrix}1 & 1 \\\\ 1 & 1\\end{pmatrix} \\rightarrow$ 解 $x+y=0 \\rightarrow y=-x \\rightarrow v_{2} = t \\cdot (1,-1)$\n\n性质 7.2（特征值的乘积与行列式） $\\det(A) = \\lambda_{1} \\cdot \\lambda_{2} \\cdot \\dots \\cdot \\lambda_{n}$。\n证明: 特征多项式 $p(\\lambda) = \\det(A-\\lambda I) = (-1)^{n} \\cdot \\lambda^{n} + (-1)^{n-1} \\cdot \\operatorname{tr}(A) \\cdot \\lambda^{n-1} + \\dots + \\det(A)$。\n另一方面，若 $\\lambda_{1}, \\dots ,\\lambda_{n}$ 是特征值（计算重数），则 $p(\\lambda) = (-1)^{n} \\cdot (\\lambda-\\lambda_{1})(\\lambda-\\lambda_{2}) \\dots (\\lambda-\\lambda_{n})$。\n比较常数项：$p(0) = \\det(A) = (-1)^{n} \\cdot (-\\lambda_{1})(-\\lambda_{2}) \\dots (-\\lambda_{n}) = \\lambda_{1} \\cdot \\lambda_{2} \\cdot \\dots \\cdot \\lambda_{n}$。■\n几何含义: 所有特征值的乘积等于行列式的值——行列式 $=$ 各方向缩放倍数的乘积 $=$ 变换后体积的放大率。\n\n性质 7.3（特征值的和与迹） $\\operatorname{tr}(A) = \\lambda_{1} + \\lambda_{2} + \\dots + \\lambda_{n}$，其中 $\\operatorname{tr}(A) = \\sum_{i} a_{ii}$（对角线元素之和）。\n证明: $p(\\lambda) = \\det(A-\\lambda I)$ 展开后 $\\lambda^{n-1}$ 的系数为 $(-1)^{n-1} \\cdot (a_{11}+ \\dots +a_{nn}) = (-1)^{n-1} \\cdot \\operatorname{tr}(A)$。\n同时 $(-1)^{n} \\cdot (\\lambda-\\lambda_{1}) \\dots (\\lambda-\\lambda_{n})$ 展开后 $\\lambda^{n-1}$ 的系数为 $(-1)^{n-1} \\cdot (\\lambda_{1}+ \\dots +\\lambda_{n})$。比较即得。■\n\n定理 7.2（不同特征值对应的特征向量线性无关） 设 $\\lambda_{1}, \\dots ,\\lambda_{k}$ 是 A 的两两不同的特征值，$v_{1}, \\dots ,v_{k}$ 是对应的特征向量。则 $v_{1}, \\dots ,v_{k}$ 线性无关。\n证明（数学归纳法）: $k=1$ 时显然（非零向量自身线性无关）。\n假设 $k-1$ 时成立。若 $c_{1}v_{1} + \\dots + c_{k}v_{k} = 0$，两边左乘 $(A-\\lambda_{k}I)$：\n$$\nc_{1}(\\lambda_{1}-\\lambda_{k})v_{1} + \\dots + c_{k-1}(\\lambda_{k-1}-\\lambda_{k})v_{k-1} + c_{k} \\cdot 0 = 0\n$$\n由归纳假设，$v_{1}, \\dots ,v_{k-1}$ 线性无关，故 $c_{i}(\\lambda_{i}-\\lambda_{k})=0$。又 $\\lambda_{i} \\neq \\lambda_{k}$，所以 $c_{1}= \\dots =c_{k-1}=0$。\n代回原式得 $c_{k}v_{k}=0$，故 $c_{k}=0$。全零 $\\rightarrow v_{1}, \\dots ,v_{k}$ 线性无关。■\n推论: 若 $n \\times n$ 矩阵有 n 个不同的特征值，则它一定可以对角化（因为有 n 个线性无关的特征向量）。\n\n定义 7.4（代数重数与几何重数） 设 $\\lambda_{0}$ 是 A 的特征值：\n- 代数重数 $m_{a}(\\lambda_{0}) = \\lambda_{0}$ 作为特征多项式根的重复次数；\n- 几何重数 $m_g(\\lambda_{0}) = \\dim(E_{\\lambda_{0}}) = \\dim \\operatorname{Null}(A-\\lambda_{0}I) =$ 对应特征空间的维数。\n性质 7.4（重数关系） 对每个特征值 $\\lambda_{0}$，有 1 $\\leq m_g(\\lambda_{0}) \\leq m_{a}(\\lambda_{0})$。\n关键: A 可对角化 $\\Leftrightarrow$ 对所有特征值，$m_g = m_{a}$（即几何重数 $=$ 代数重数）。\n若存在某个特征值满足 $m_g < m_{a}$，则该矩阵不能对角化（特征向量不够 n 个）。\n\n##### 补充例题\n\n例7（不可对角化的矩阵）: $A = \\begin{pmatrix}1 & 1 \\\\ 0 & 1\\end{pmatrix}$。求特征值、特征向量和重数。\n解: $\\lambda=1$（二重根，$m_{a}=2$）。$A-I = \\begin{pmatrix}0 & 1 \\\\ 0 & 0\\end{pmatrix}$，秩$=1 \\rightarrow \\operatorname{Null}$维数$=1 \\rightarrow m_g=1$。\n$m_g < m_{a} \\rightarrow$ 只有一个线性无关的特征向量，不能对角化。\n几何含义：这个变换是水平的切变(shear)，只有一个方向上的向量保持不变方向。\n例8（特征值乘积验证）: $A = \\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$。$\\lambda_{1}=3, \\lambda_{2}=1$。验证 $\\det(A)=3=\\lambda_{1} \\cdot \\lambda_{2}$ 和 $\\operatorname{tr}(A)=4=\\lambda_{1}+\\lambda_{2}$。\n关键观察：$v_{1}$ 和 $v_{2}$ 互相垂直。这不是巧合——对称矩阵的所有不同特征值对应的特征向量一定正交（定理 7.4）。"
       }
     ]
@@ -282,12 +308,8 @@
     "minimum_level": 3,
     "required_sections": [
       "definition",
-      "formula",
       "derivation",
-      "worked_examples",
-      "geometric_meaning",
-      "pitfalls",
-      "connections"
+      "worked_examples"
     ],
     "requires_analogy_boundary": false
   },
@@ -305,11 +327,11 @@
         "role": "operator",
         "value": [
           [
-            3.0,
+            2.0,
             1.0
           ],
           [
-            0.0,
+            1.0,
             2.0
           ]
         ]
@@ -319,41 +341,13 @@
           "claim.ch07.eigenspace"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigenspace.root_2",
-        "kind": "point",
-        "label": "root_2",
-        "role": "root_2",
-        "value": [
-          2.0,
-          0.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigenspace"
-        ],
-        "dimension": 2,
-        "id": "entity.ch07.eigenspace.root_3",
-        "kind": "point",
-        "label": "root_3",
-        "role": "root_3",
-        "value": [
-          3.0,
-          0.0
-        ]
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigenspace"
-        ],
-        "dimension": 2,
-        "id": "entity.ch07.eigenspace.space_2",
-        "kind": "subspace",
-        "label": "space_2",
-        "role": "space_2",
+        "id": "entity.ch07.eigenspace.space_3",
+        "kind": "eigenspace",
+        "label": "space_3",
+        "role": "space_3",
         "value": [
           [
-            -1.0,
+            1.0,
             1.0
           ]
         ]
@@ -363,14 +357,70 @@
           "claim.ch07.eigenspace"
         ],
         "dimension": 2,
-        "id": "entity.ch07.eigenspace.space_3",
-        "kind": "subspace",
-        "label": "space_3",
-        "role": "space_3",
+        "id": "entity.ch07.eigenspace.space_1",
+        "kind": "eigenspace",
+        "label": "space_1",
+        "role": "space_1",
+        "value": [
+          [
+            1.0,
+            -1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigenspace.shear_operator",
+        "kind": "matrix",
+        "label": "shear_operator",
+        "role": "shear_operator",
+        "value": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigenspace.shear_space",
+        "kind": "eigenspace",
+        "label": "shear_space",
+        "role": "shear_space",
         "value": [
           [
             1.0,
             0.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigenspace.invariant_values",
+        "kind": "region",
+        "label": "invariant_values",
+        "role": "invariant_values",
+        "value": [
+          [
+            3.0,
+            1.0
+          ],
+          [
+            3.0,
+            4.0
           ]
         ]
       }
@@ -380,62 +430,102 @@
         "claim_refs": [
           "claim.ch07.eigenspace"
         ],
-        "id": "relation.ch07.eigenspace.root_2",
-        "kind": "maps_to",
-        "parameters": {
-          "basis": [
-            [
-              -1.0,
-              1.0
-            ]
-          ],
-          "eigenvalue": 2.0,
-          "matrix": [
-            [
-              3.0,
-              1.0
-            ],
-            [
-              0.0,
-              2.0
-            ]
-          ],
-          "shifted": [
-            [
-              1.0,
-              1.0
-            ],
-            [
-              0.0,
-              0.0
-            ]
-          ]
-        },
-        "source_ref": "entity.ch07.eigenspace.root_2",
-        "target_ref": "entity.ch07.eigenspace.space_2"
-      },
-      {
-        "claim_refs": [
-          "claim.ch07.eigenspace"
-        ],
-        "id": "relation.ch07.eigenspace.root_3",
-        "kind": "maps_to",
+        "id": "relation.ch07.eigenspace.space_3",
+        "kind": "eigen_binding",
         "parameters": {
           "basis": [
             [
               1.0,
-              0.0
+              1.0
             ]
           ],
           "eigenvalue": 3.0,
           "matrix": [
             [
-              3.0,
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              2.0
+            ]
+          ],
+          "shifted": [
+            [
+              -1.0,
+              1.0
+            ],
+            [
+              1.0,
+              -1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch07.eigenspace.operator",
+        "target_ref": "entity.ch07.eigenspace.space_3"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "id": "relation.ch07.eigenspace.space_1",
+        "kind": "eigen_binding",
+        "parameters": {
+          "basis": [
+            [
+              1.0,
+              -1.0
+            ]
+          ],
+          "eigenvalue": 1.0,
+          "matrix": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              2.0
+            ]
+          ],
+          "shifted": [
+            [
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch07.eigenspace.operator",
+        "target_ref": "entity.ch07.eigenspace.space_1"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "id": "relation.ch07.eigenspace.shear_space",
+        "kind": "eigen_binding",
+        "parameters": {
+          "algebraic_multiplicity": 2.0,
+          "basis": [
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          "eigenvalue": 1.0,
+          "geometric_multiplicity": 1.0,
+          "matrix": [
+            [
+              1.0,
               1.0
             ],
             [
               0.0,
-              2.0
+              1.0
             ]
           ],
           "shifted": [
@@ -445,38 +535,101 @@
             ],
             [
               0.0,
-              -1.0
+              0.0
             ]
           ]
         },
-        "source_ref": "entity.ch07.eigenspace.root_3",
-        "target_ref": "entity.ch07.eigenspace.space_3"
+        "source_ref": "entity.ch07.eigenspace.shear_operator",
+        "target_ref": "entity.ch07.eigenspace.shear_space"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "id": "relation.ch07.eigenspace.invariants",
+        "kind": "invariant",
+        "parameters": {
+          "determinant": 3.0,
+          "eigenvalues": [
+            3.0,
+            1.0
+          ],
+          "trace": 4.0
+        },
+        "source_ref": "entity.ch07.eigenspace.operator",
+        "target_ref": "entity.ch07.eigenspace.invariant_values"
       }
     ],
     "scene_family": "spectral_orthogonal",
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "E_lambda=Null(A-lambda I); p(lambda)=det(A-lambda I)",
+        "caption": "",
         "expected_invariants": [
-          "roots_bind_nullspaces"
+          "E_lambda = Null(A-lambda I)",
+          "distinct eigenvalues have independent eigenvectors",
+          "det(A) equals the product of eigenvalues",
+          "tr(A) equals the sum of eigenvalues",
+          "geometric multiplicity does not exceed algebraic multiplicity"
         ],
-        "id": "stage.ch07.eigenspace.nullspace",
+        "id": "stage.ch07.eigenspace.eigenspaces",
         "input_entity_refs": [
-          "entity.ch07.eigenspace.operator",
-          "entity.ch07.eigenspace.root_2",
-          "entity.ch07.eigenspace.root_3"
+          "entity.ch07.eigenspace.operator"
         ],
-        "layout": "sequence",
+        "layout": "overlay",
         "output_entity_refs": [
-          "entity.ch07.eigenspace.space_2",
-          "entity.ch07.eigenspace.space_3"
+          "entity.ch07.eigenspace.space_3",
+          "entity.ch07.eigenspace.space_1"
         ],
         "relation_refs": [
-          "relation.ch07.eigenspace.root_2",
-          "relation.ch07.eigenspace.root_3"
+          "relation.ch07.eigenspace.space_3",
+          "relation.ch07.eigenspace.space_1"
         ],
-        "title": "特征根对应零空间"
+        "title": "两个特征值对应两个特征空间"
+      },
+      {
+        "caption": "",
+        "expected_invariants": [
+          "E_lambda = Null(A-lambda I)",
+          "distinct eigenvalues have independent eigenvectors",
+          "det(A) equals the product of eigenvalues",
+          "tr(A) equals the sum of eigenvalues",
+          "geometric multiplicity does not exceed algebraic multiplicity"
+        ],
+        "id": "stage.ch07.eigenspace.defective",
+        "input_entity_refs": [
+          "entity.ch07.eigenspace.shear_operator"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch07.eigenspace.shear_space"
+        ],
+        "relation_refs": [
+          "relation.ch07.eigenspace.shear_space"
+        ],
+        "title": "例 7：切变矩阵不能对角化"
+      },
+      {
+        "caption": "",
+        "expected_invariants": [
+          "E_lambda = Null(A-lambda I)",
+          "distinct eigenvalues have independent eigenvectors",
+          "det(A) equals the product of eigenvalues",
+          "tr(A) equals the sum of eigenvalues",
+          "geometric multiplicity does not exceed algebraic multiplicity"
+        ],
+        "id": "stage.ch07.eigenspace.invariants",
+        "input_entity_refs": [
+          "entity.ch07.eigenspace.operator"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch07.eigenspace.invariant_values"
+        ],
+        "relation_refs": [
+          "relation.ch07.eigenspace.invariants"
+        ],
+        "title": "例 8：用特征值验证行列式与迹"
       }
     ]
   }

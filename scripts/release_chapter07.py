@@ -8,7 +8,7 @@ from linear_algebra.teaching.compile_resources import compile_chapter_07
 def main() -> int:
     payloads = {topic.id: artifact_payload_for(topic.id) for topic in TOPICS}
     resources = compile_chapter_07(reviewed_payloads=payloads)
-    print(f'released {len(resources)} Chapter 7 reviewed and compiled resources')
+    print(f'released {len(resources)} Chapter 7 sections 7.1--7.4 reviewed and compiled resources')
     return 0
 
 

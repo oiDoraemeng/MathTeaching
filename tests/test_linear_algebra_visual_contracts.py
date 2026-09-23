@@ -10,8 +10,15 @@ from tests.teaching_fixtures import projection_artifact_payload
 
 def test_composition_contract_requires_two_paths_and_endpoint_difference() -> None:
     contract = contract_for("ch02.matrix.composition")
-    assert contract.minimum_stage_count == 5
+    assert contract.minimum_stage_count == 4
     assert {"composition_order", "endpoint_diff", "compare"} <= set(contract.required_relations)
+
+
+def test_matrix_powers_contract_requires_two_distinct_grid_stages() -> None:
+    contract = contract_for("ch02.matrix.powers")
+    assert contract.minimum_stage_count == 2
+    assert contract.required_primitives == ("grid",)
+    assert contract.distinguishable_role_groups == (("vector_a", "vector_b"),)
 
 
 def test_projection_contract_rejects_missing_residual() -> None:
@@ -22,13 +29,13 @@ def test_projection_contract_rejects_missing_residual() -> None:
 
 def test_all_catalog_topics_resolve_explicit_contracts() -> None:
     contracts = tuple(contract_for(topic.id) for topic in topic_entries())
-    assert len(contracts) == 57
+    assert len(contracts) == 47
     assert {contract.topic_id for contract in contracts} == {topic.id for topic in topic_entries()}
 
 
 def test_all_new_topics_have_explicit_family_contracts():
     topics = [topic for topic in topic_entries() if 4 <= topic.chapter_number <= 8]
-    assert len(topics) == 27
+    assert len(topics) == 19
     for topic in topics:
         contract = contract_for(topic.id)
         assert contract.topic_id == topic.id

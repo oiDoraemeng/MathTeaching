@@ -12,8 +12,16 @@ def test_every_topic_has_a_teaching_profile() -> None:
     }
 
 
-def test_bridge_profile_is_explicit() -> None:
-    assert profile_for("ch02.matrix.composition").minimum_level >= TeachingLevel.EXPLAIN
+def test_matrix_composition_profile_matches_its_two_display_sections() -> None:
+    profile = profile_for("ch02.matrix.composition")
+    assert profile.minimum_level == TeachingLevel.CALCULATE
+    assert profile.required_sections == ("definition", "worked_examples")
+
+
+def test_matrix_powers_profile_matches_its_two_display_sections() -> None:
+    profile = profile_for("ch02.matrix.powers")
+    assert profile.minimum_level == TeachingLevel.CALCULATE
+    assert profile.required_sections == ("definition", "worked_examples")
 
 
 def test_profile_serializes_to_the_stable_artifact_record() -> None:
@@ -21,18 +29,13 @@ def test_profile_serializes_to_the_stable_artifact_record() -> None:
     record = profile.to_record()
 
     assert isinstance(record, TeachingProfileRecord)
-    assert record.minimum_level == TeachingLevel.TRANSFER
-    assert "connections" in record.required_sections
+    assert record.minimum_level == TeachingLevel.CALCULATE
+    assert "connections" not in record.required_sections
     assert profile.to_dict() == {
-        "minimum_level": 4,
+        "minimum_level": 2,
         "required_sections": [
             "definition",
-            "formula",
-            "derivation",
             "worked_examples",
-            "geometric_meaning",
-            "pitfalls",
-            "connections",
         ],
         "requires_analogy_boundary": False,
     }

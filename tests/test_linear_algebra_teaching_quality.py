@@ -20,7 +20,7 @@ def test_batch_projection_keeps_the_lecture_definition_and_one_confirmed_case() 
     explanation = refined["explanation"]
     assert explanation["title"] == "投影矩阵"
     nodes = {node.id: node for node in lecture_manifest()}
-    assert nodes["ch02.s23"].title == "批量投影"
+    assert nodes["ch02.s23"].title == "2.3 批量投影"
     assert nodes["ch02.batch.projection"].title == "投影矩阵"
     assert explanation["summary"] == "投影也能批处理——矩阵乘法的雏形已经萌芽。"
     assert "**（投影矩阵）**" in explanation["definition"]
@@ -83,6 +83,61 @@ def test_batch_projection_keeps_the_lecture_definition_and_one_confirmed_case() 
         operation.get("alias") == "sem__u"
         for operation in pane_plan.operations
     )
+
+
+def test_matrix_addition_keeps_the_lecture_text_and_confirmed_two_route_case() -> None:
+    payload = composition_artifact_payload()
+    payload["topic_id"] = "ch02.matrix.additive-distributivity"
+    payload["claims"][0]["id"] = "claim.ch02.matrix.additive-distributivity"  # type: ignore[index]
+
+    refined = refine_payload(payload)
+
+    explanation = refined["explanation"]
+    assert explanation["title"] == "矩阵加法与变换分配律"
+    assert explanation["summary"] == "一句话动机：向量有加法和数乘，矩阵作为向量的集合，自然也继承了这些运算。"
+    definition = explanation["definition"]
+    assert "**（矩阵加法）**" in definition
+    assert "**（矩阵数乘）**" in definition
+    assert "**（分配律）**" in definition
+    assert r"(\boldsymbol A + \boldsymbol B)_{ij} = a_{ij} + b_{ij}" in definition
+    assert r"(k\boldsymbol A)_{ij} = k \cdot a_{ij}" in definition
+    assert r"\begin{pmatrix}1 & 2 \\ 3 & 4\end{pmatrix}" in definition
+    assert r"\begin{pmatrix}6 & 8 \\ 10 & 12\end{pmatrix}" in definition
+    assert "自检" not in definition
+    assert explanation["formula"] == ""
+    assert explanation["derivation"] == []
+    assert explanation["geometric_meaning"] == ""
+    assert [section["title"] for section in explanation["sections"]] == ["定义", "数学案例"]
+    assert [example["kind"] for example in explanation["worked_examples"]] == [
+        "matrix_additive_distributivity",
+        "matrix_additive_distributivity",
+    ]
+    assert [example["result"] for example in explanation["worked_examples"]] == [
+        [3, 3],
+        [3, 3],
+    ]
+    assert explanation["case_layout"]["default_pane_count"] == 2
+    assert len(explanation["case_layout"]["cases"]) == 2
+    assert len(refined["visual_semantics"]["stages"]) == 2
+
+    artifact = TeachingArtifact.from_dict(refined)
+    compiled = VisualSemanticsCompiler().compile(
+        artifact,
+        contract_for("ch02.matrix.additive-distributivity"),
+        RenderContext.default("ch02.matrix.additive-distributivity"),
+    )
+    assert compiled.storyboard[0].anchor == compiled.storyboard[1].anchor
+    operations = {
+        str(operation.get("alias")): operation
+        for operation in compiled.plan.operations
+        if operation.get("alias")
+    }
+    assert operations["sem__mv_add_ax"]["color"] != operations["sem__mv_add_bx"]["color"]
+    assert operations["sem__mv_add_y1"]["color"] == operations["sem__mv_add_y2"]["color"]
+    first_pane = case_plan(compiled, "stage.case.ch02.matrix.additive-distributivity.1")
+    second_pane = case_plan(compiled, "stage.case.ch02.matrix.additive-distributivity.2")
+    assert any(operation.get("op") == "geometry.transformed_grid" for operation in first_pane.operations)
+    assert sum(operation.get("op") == "linear.upsert" for operation in second_pane.operations) == 3
 
 
 def test_vector_addition_refinement_keeps_the_lecture_parallelogram_reading() -> None:
@@ -286,11 +341,17 @@ def test_composition_refinement_binds_both_endpoints_to_the_visual_graph() -> No
     refined = refine_payload(composition_artifact_payload())
 
     entities = {item["id"]: item for item in refined["visual_semantics"]["entities"]}
-    assert entities["y"]["value"] == [-2, 1]
-    assert entities["z"]["value"] == [-1, 2]
-    assert entities["B"]["value"] == [[0, -1], [1, 0]]
-    assert "先 B 后 A" in {stage["title"] for stage in refined["visual_semantics"]["stages"]}
-    assert "先 A 后 B" in {stage["title"] for stage in refined["visual_semantics"]["stages"]}
+    assert entities["x"]["value"] == [1, 1]
+    assert entities["abx"]["value"] == [-2, 1]
+    assert entities["bax"]["value"] == [-1, 2]
+    assert entities["grid_ab"]["value"] == [[0, -2], [1, 0]]
+    assert entities["grid_ba"]["value"] == [[0, -1], [2, 0]]
+    assert [stage["title"] for stage in refined["visual_semantics"]["stages"]] == [
+        "第一步：共同输入",
+        "第二步：先旋转后拉伸",
+        "第三步：先拉伸后旋转",
+        "第四步：比较终点",
+    ]
 
 
 def test_refinement_rebinds_claims_to_the_final_explanation_sections() -> None:
@@ -408,3 +469,20 @@ def test_inner_product_definitions_refinement_projects_b_to_a_in_the_second_pane
         "rel.case.ch01.inner.definitions.2",
         "rel.angle.ch01.inner.definitions.2",
     ]
+
+
+def test_projection_definition_uses_skill_compliant_headings_and_fractions() -> None:
+    payload = composition_artifact_payload()
+    payload["topic_id"] = "ch01.projection.definition"
+    payload["claims"][0]["id"] = "claim.ch01.projection.definition"  # type: ignore[index]
+
+    refined = refine_payload(payload)
+    definition = refined["explanation"]["definition"]
+
+    assert "**（投影向量）**" in definition
+    assert "**（投影公式）**" in definition
+    assert "定义 1.13" not in definition
+    assert "定理 1.6" not in definition
+    assert r"\begin{aligned}" in definition
+    assert r"\frac{\boldsymbol v\cdot\boldsymbol u}{\lvert\boldsymbol u\rvert^{2}}" in definition
+    assert r"(\boldsymbol v\cdot\boldsymbol u)/\lvert\boldsymbol u\rvert^{2}" not in definition

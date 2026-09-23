@@ -10,14 +10,10 @@
       ],
       "explanation_refs": [
         "definition",
-        "formula",
         "derivation",
-        "worked_examples",
-        "geometric_meaning",
-        "pitfalls",
-        "connections"
+        "worked_examples"
       ],
-      "formula": "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence",
+      "formula": "\\{\\boldsymbol x_p+\\boldsymbol z\\mid \\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)\\}",
       "formula_symbols": [
         "matrix",
         "rhs",
@@ -34,55 +30,54 @@
       ],
       "stage_refs": [
         "stage.ch05.affine.solution-set.homogeneous",
-        "stage.ch05.affine.solution-set.translation",
         "stage.ch05.affine.solution-set.solution"
       ],
-      "statement": "5.2 非齐次方程组 $Ax = b$ 的数学主张由显式对象、关系和不变量支持。"
+      "statement": "掌握非齐次方程组的通解 $=$ 一个特解 $+\\operatorname{Null}(\\boldsymbol A)$ 的全部元素。"
     }
   ],
-  "connections": [
-    {
-      "claim_refs": [
-        "claim.ch05.affine.solution-set"
-      ],
-      "description": "前置的线性表示与几何关系。",
-      "id": "connection.ch05.affine.solution-set.prior",
-      "relation": "prerequisite",
-      "target_topic_id": "ch03.det.oriented-area"
-    }
-  ],
+  "connections": [],
   "explanation": {
-    "conclusion": "",
-    "connections": [],
-    "definition": "### 5.2 非齐次方程组 $Ax = b$\n定理 5.2（非齐次方程组的解结构） 设 $x_{p}$ 是 $Ax = b$ 的一个特解（任意一个解）。则 $Ax = b$ 的所有解为：\n$$\n{ x_{p} + z | z \\in \\operatorname{Null}(A) }\n$$\n即：通解 $=$ 特解 $+$ 零空间（一个平移后的线性子空间）。\n本节目标：理解基变换和相似变换的公式，知道行列式、秩、迹、特征多项式是相似不变量。\n一句话动机：第4章定义了变换$T(x)=Ax$，A是在标准基下的矩阵。换一组基（换一套尺子），同一个变换的矩阵长什么样？——答案：$B=P^{-1}AP$。",
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch05.affine.solution-set"
+          ],
+          "example_ref": "example.ch05.affine.solution-set.line",
+          "id": "case.ch05.affine.solution-set.1",
+          "purpose": "零空间",
+          "stage_refs": [
+            "stage.ch05.affine.solution-set.homogeneous"
+          ],
+          "topic_id": "ch05.affine.solution-set"
+        },
+        {
+          "claim_refs": [
+            "claim.ch05.affine.solution-set"
+          ],
+          "example_ref": "example.ch05.affine.solution-set.line",
+          "id": "case.ch05.affine.solution-set.2",
+          "purpose": "平移后的解集",
+          "stage_refs": [
+            "stage.ch05.affine.solution-set.solution"
+          ],
+          "topic_id": "ch05.affine.solution-set"
+        }
+      ],
+      "default_pane_count": 2
+    },
+    "definition": "一句话动机：$\\boldsymbol b$ 不是零——那解是什么结构？\n\n本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+\\operatorname{Null}(\\boldsymbol A)$ 的全部元素。\n\n**（非齐次方程组的解结构）** 设 $\\boldsymbol x_p$ 是 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的一个特解，即任意一个解。则 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的所有解为\n\n$$\n\\left\\{\\boldsymbol x_p+\\boldsymbol z\\mathrel{\\Big|}\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)\\right\\}.\n$$\n\n即：通解 $=$ 特解 $+$ 零空间，一个平移后的线性子空间。\n\n几何理解：\n\n- 齐次方程的解集是一条穿过原点的直线或平面——一个子空间；\n- 非齐次方程的解集是那条直线或平面平移到特解 $\\boldsymbol x_p$ 的位置——一个仿射空间；\n- 这和向量加减法完全一致：\n\n$$\n\\boldsymbol b\n=\\boldsymbol A(\\boldsymbol x_p+\\boldsymbol z)\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol A\\boldsymbol z\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol 0.\n$$",
     "derivation": [
-      "#### 例题\n解：$x_{1} + 2x_{2} = 3, 2x_{1} + 4x_{2} = 6$。\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, b = (3,6)\n$$\n##### 定理 5.2 的证明\n设 $x_{p}$ 是 $Ax=b$ 的一个特解，即 $Ax_{p} = b$。\n（1）任取 $z \\in \\operatorname{Null}(A)$，则 $A(x_{p}+z) = Ax_{p} + Az = b + 0 = b \\rightarrow x_{p}+z$ 也是解。\n（2）若 x 是 $Ax=b$ 的任意解，则 $A(x-x_{p}) = Ax - Ax_{p} = b - b = 0 \\rightarrow x-x_{p} \\in \\operatorname{Null}(A)$。\n令 $z = x-x_{p}$，则 $x = x_{p} + z$，$z \\in \\operatorname{Null}(A)$。\n综合（1）（2），$Ax=b$ 的解集恰好为 $\\{x_{p} + z \\mid z \\in \\operatorname{Null}(A)\\}$。■\n##### 补充例题\n例4（$3 \\times 3$非齐次方程组的完整求解）: 解方程组：\n$$\nx_{1} + x_{2} + x_{3} = 6\n$$\n$$\nx_{1} - x_{2} + 2x_{3} = 5\n$$\n$$\n2x_{1} + 3x_{3} = 11\n$$\n解: 增广矩阵消元得 RREF：$x_{1} + (\\frac{3}{2})x_{3} = \\frac{11}{2}, x_{2} - (\\frac{1}{2})x_{3} = \\frac{1}{2}$。\n令 $x_{3} = t$（自由变量），则 $x_{1} = \\frac{11}{2} - (\\frac{3}{2})t, x_{2} = \\frac{1}{2} + (\\frac{1}{2})t$。\n取 $t=0$ 得特解 $x_{p} = (\\frac{11}{2}, \\frac{1}{2}, 0)$。\n对应齐次解（取 $t=2$ 得整数基）：$x_{h} = t \\cdot (-3, 1, 2)$。（或写作 $\\operatorname{span}\\{(3, -1, -2)\\}$）\n通解 $= (\\frac{11}{2}, \\frac{1}{2}, 0) + t \\cdot (-3, 1, 2)$。\n验证：Null(A)维数 $= 1$（一个自由变量），$\\operatorname{rank}(A)=2$，$n=3 \\rightarrow$ 秩-零化度：$2+1=3 ✓$。"
+      "**（非齐次方程组的解结构）**\n\n设 $\\boldsymbol x_p$ 是 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的一个特解，即\n\n$$\n\\boldsymbol A\\boldsymbol x_p=\\boldsymbol b.\n$$\n\n任取 $\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)$，则\n\n$$\n\\boldsymbol A(\\boldsymbol x_p+\\boldsymbol z)\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol A\\boldsymbol z\n=\\boldsymbol b+\\boldsymbol 0\n=\\boldsymbol b,\n$$\n\n所以 $\\boldsymbol x_p+\\boldsymbol z$ 也是解。\n\n若 $\\boldsymbol x$ 是 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的任意解，则\n\n$$\n\\boldsymbol A(\\boldsymbol x-\\boldsymbol x_p)\n=\\boldsymbol A\\boldsymbol x-\\boldsymbol A\\boldsymbol x_p\n=\\boldsymbol b-\\boldsymbol b\n=\\boldsymbol 0,\n$$\n\n所以 $\\boldsymbol x-\\boldsymbol x_p\\in\\operatorname{Null}(\\boldsymbol A)$。令 $\\boldsymbol z=\\boldsymbol x-\\boldsymbol x_p$，则\n\n$$\n\\boldsymbol x=\\boldsymbol x_p+\\boldsymbol z,\\qquad\n\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A).\n$$\n\n综合以上两方面，$\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的解集恰好为\n\n$$\n\\left\\{\\boldsymbol x_p+\\boldsymbol z\\mathrel{\\Big|}\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)\\right\\}.\n$$"
     ],
-    "formula": "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence",
-    "geometric_meaning": "几何理解：\n- 齐次方程的解集是一条穿过原点的直线（或平面）——一个子空间\n- 非齐次方程的解集是那条直线（或平面）平移到特解 $x_{p}$ 的位置——一个仿射空间\n- 这和向量加减法完全一致：$b = A(x_{p}+z) = Ax_{p} + Az = Ax_{p} + 0$",
-    "intuition": "一句话动机：b 不是零——那解是什么结构？",
-    "invariants": [
-      "domain/image/kernel evidence",
-      "A x_p = b and A N = 0",
-      "nullspace basis is complete",
-      "finite numeric result"
-    ],
-    "pitfalls": [
-      "注意 $b = 3 \\times (1,2)$，即 b 在 A 的列空间 Col(A) 中$\\rightarrow$有解。\n找特解：$x_{1} = 3 - 2x_{2}$，取 $x_{2}=0 \\rightarrow x_{p} = (3,0)$。\n$$\n\\operatorname{Null}(A) = \\{(-2t, t) \\mid t \\in R\\}\n$$\n通解：$(x_{1}, x_{2}) = (3,0) + t \\cdot (-2,1)$ ——一条不过原点的直线。"
-    ],
-    "read_guide": [],
+    "formula": "",
+    "geometric_meaning": "",
     "searchable_text": [
-      "5.2 非齐次方程组 $Ax = b$",
-      "本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+ \\operatorname{Null}(A)$ 的全部元素。",
-      "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence",
-      "### 5.2 非齐次方程组 $Ax = b$\n定理 5.2（非齐次方程组的解结构） 设 $x_{p}$ 是 $Ax = b$ 的一个特解（任意一个解）。则 $Ax = b$ 的所有解为：\n$$\n{ x_{p} + z | z \\in \\operatorname{Null}(A) }\n$$\n即：通解 $=$ 特解 $+$ 零空间（一个平移后的线性子空间）。\n本节目标：理解基变换和相似变换的公式，知道行列式、秩、迹、特征多项式是相似不变量。\n一句话动机：第4章定义了变换$T(x)=Ax$，A是在标准基下的矩阵。换一组基（换一套尺子），同一个变换的矩阵长什么样？——答案：$B=P^{-1}AP$。",
-      "#### 例题\n解：$x_{1} + 2x_{2} = 3, 2x_{1} + 4x_{2} = 6$。\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, b = (3,6)\n$$\n##### 定理 5.2 的证明\n设 $x_{p}$ 是 $Ax=b$ 的一个特解，即 $Ax_{p} = b$。\n（1）任取 $z \\in \\operatorname{Null}(A)$，则 $A(x_{p}+z) = Ax_{p} + Az = b + 0 = b \\rightarrow x_{p}+z$ 也是解。\n（2）若 x 是 $Ax=b$ 的任意解，则 $A(x-x_{p}) = Ax - Ax_{p} = b - b = 0 \\rightarrow x-x_{p} \\in \\operatorname{Null}(A)$。\n令 $z = x-x_{p}$，则 $x = x_{p} + z$，$z \\in \\operatorname{Null}(A)$。\n综合（1）（2），$Ax=b$ 的解集恰好为 $\\{x_{p} + z \\mid z \\in \\operatorname{Null}(A)\\}$。■\n##### 补充例题\n例4（$3 \\times 3$非齐次方程组的完整求解）: 解方程组：\n$$\nx_{1} + x_{2} + x_{3} = 6\n$$\n$$\nx_{1} - x_{2} + 2x_{3} = 5\n$$\n$$\n2x_{1} + 3x_{3} = 11\n$$\n解: 增广矩阵消元得 RREF：$x_{1} + (\\frac{3}{2})x_{3} = \\frac{11}{2}, x_{2} - (\\frac{1}{2})x_{3} = \\frac{1}{2}$。\n令 $x_{3} = t$（自由变量），则 $x_{1} = \\frac{11}{2} - (\\frac{3}{2})t, x_{2} = \\frac{1}{2} + (\\frac{1}{2})t$。\n取 $t=0$ 得特解 $x_{p} = (\\frac{11}{2}, \\frac{1}{2}, 0)$。\n对应齐次解（取 $t=2$ 得整数基）：$x_{h} = t \\cdot (-3, 1, 2)$。（或写作 $\\operatorname{span}\\{(3, -1, -2)\\}$）\n通解 $= (\\frac{11}{2}, \\frac{1}{2}, 0) + t \\cdot (-3, 1, 2)$。\n验证：Null(A)维数 $= 1$（一个自由变量），$\\operatorname{rank}(A)=2$，$n=3 \\rightarrow$ 秩-零化度：$2+1=3 ✓$。",
-      "几何理解：\n- 齐次方程的解集是一条穿过原点的直线（或平面）——一个子空间\n- 非齐次方程的解集是那条直线（或平面）平移到特解 $x_{p}$ 的位置——一个仿射空间\n- 这和向量加减法完全一致：$b = A(x_{p}+z) = Ax_{p} + Az = Ax_{p} + 0$",
-      "domain/image/kernel evidence",
-      "A x_p = b and A N = 0",
-      "nullspace basis is complete",
-      "finite numeric result",
-      "注意 $b = 3 \\times (1,2)$，即 b 在 A 的列空间 Col(A) 中$\\rightarrow$有解。\n找特解：$x_{1} = 3 - 2x_{2}$，取 $x_{2}=0 \\rightarrow x_{p} = (3,0)$。\n$$\n\\operatorname{Null}(A) = \\{(-2t, t) \\mid t \\in R\\}\n$$\n通解：$(x_{1}, x_{2}) = (3,0) + t \\cdot (-2,1)$ ——一条不过原点的直线。"
+      "非齐次方程组的解结构",
+      "掌握非齐次方程组的通解 $=$ 一个特解 $+\\operatorname{Null}(\\boldsymbol A)$ 的全部元素。",
+      "一句话动机：$\\boldsymbol b$ 不是零——那解是什么结构？\n\n本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+\\operatorname{Null}(\\boldsymbol A)$ 的全部元素。\n\n**（非齐次方程组的解结构）** 设 $\\boldsymbol x_p$ 是 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的一个特解，即任意一个解。则 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的所有解为\n\n$$\n\\left\\{\\boldsymbol x_p+\\boldsymbol z\\mathrel{\\Big|}\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)\\right\\}.\n$$\n\n即：通解 $=$ 特解 $+$ 零空间，一个平移后的线性子空间。\n\n几何理解：\n\n- 齐次方程的解集是一条穿过原点的直线或平面——一个子空间；\n- 非齐次方程的解集是那条直线或平面平移到特解 $\\boldsymbol x_p$ 的位置——一个仿射空间；\n- 这和向量加减法完全一致：\n\n$$\n\\boldsymbol b\n=\\boldsymbol A(\\boldsymbol x_p+\\boldsymbol z)\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol A\\boldsymbol z\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol 0.\n$$",
+      "解方程组：\n\n$$\n\\begin{cases}\nx_1+2x_2=3,\\\\\n2x_1+4x_2=6.\n\\end{cases}\n$$\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&2\\\\\n2&4\n\\end{pmatrix},\\qquad\n\\boldsymbol b=\n\\begin{pmatrix}\n3\\\\6\n\\end{pmatrix}.\n$$\n\n注意\n\n$$\n\\boldsymbol b=3\\begin{pmatrix}1\\\\2\\end{pmatrix},\n$$\n\n即 $\\boldsymbol b\\in\\operatorname{Col}(\\boldsymbol A)$，所以有解。由 $x_1=3-2x_2$，取 $x_2=0$，得到特解\n\n$$\n\\boldsymbol x_p=\n\\begin{pmatrix}\n3\\\\0\n\\end{pmatrix}.\n$$\n\n又\n\n$$\n\\operatorname{Null}(\\boldsymbol A)\n=\\left\\{\nt\\begin{pmatrix}-2\\\\1\\end{pmatrix}\n\\mathrel{\\Big|}t\\in\\mathbb R\n\\right\\}.\n$$\n\n通解为\n\n$$\n\\boldsymbol x\n=\\begin{pmatrix}3\\\\0\\end{pmatrix}\n+t\\begin{pmatrix}-2\\\\1\\end{pmatrix},\\qquad t\\in\\mathbb R,\n$$\n\n是一条不过原点的直线。",
+      "解方程组：\n\n$$\n\\begin{cases}\nx_1+x_2+x_3=6,\\\\\nx_1-x_2+2x_3=5,\\\\\n2x_1+3x_3=11.\n\\end{cases}\n$$\n\n增广矩阵消元得到\n\n$$\nx_1+\\frac32x_3=\\frac{11}{2},\\qquad\nx_2-\\frac12x_3=\\frac12.\n$$\n\n令 $x_3=t$，则\n\n$$\nx_1=\\frac{11}{2}-\\frac32t,\\qquad\nx_2=\\frac12+\\frac12t.\n$$\n\n取 $t=0$ 得特解\n\n$$\n\\boldsymbol x_p=\n\\begin{pmatrix}\n\\frac{11}{2}\\\\[2pt]\n\\frac12\\\\[2pt]\n0\n\\end{pmatrix}.\n$$\n\n对应齐次解可取方向向量\n\n$$\n\\begin{pmatrix}-3\\\\1\\\\2\\end{pmatrix}.\n$$\n\n因此通解为\n\n$$\n\\boldsymbol x=\n\\begin{pmatrix}\n\\frac{11}{2}\\\\[2pt]\n\\frac12\\\\[2pt]\n0\n\\end{pmatrix}\n+s\\begin{pmatrix}-3\\\\1\\\\2\\end{pmatrix},\\qquad s\\in\\mathbb R.\n$$\n\n验证：$\\operatorname{rank}(\\boldsymbol A)=2$，$n=3$，所以零空间维数为 $1$，满足秩-零化度定理。"
     ],
     "sections": [
       {
@@ -90,71 +85,27 @@
           "claim.ch05.affine.solution-set"
         ],
         "id": "definition",
-        "text": "### 5.2 非齐次方程组 $Ax = b$\n定理 5.2（非齐次方程组的解结构） 设 $x_{p}$ 是 $Ax = b$ 的一个特解（任意一个解）。则 $Ax = b$ 的所有解为：\n$$\n{ x_{p} + z | z \\in \\operatorname{Null}(A) }\n$$\n即：通解 $=$ 特解 $+$ 零空间（一个平移后的线性子空间）。\n本节目标：理解基变换和相似变换的公式，知道行列式、秩、迹、特征多项式是相似不变量。\n一句话动机：第4章定义了变换$T(x)=Ax$，A是在标准基下的矩阵。换一组基（换一套尺子），同一个变换的矩阵长什么样？——答案：$B=P^{-1}AP$。",
-        "title": "definition"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ],
-        "id": "formula",
-        "text": "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence",
-        "title": "formula"
+        "text": "",
+        "title": "定义"
       },
       {
         "claim_refs": [
           "claim.ch05.affine.solution-set"
         ],
         "id": "derivation",
-        "text": "#### 例题\n解：$x_{1} + 2x_{2} = 3, 2x_{1} + 4x_{2} = 6$。\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, b = (3,6)\n$$\n##### 定理 5.2 的证明\n设 $x_{p}$ 是 $Ax=b$ 的一个特解，即 $Ax_{p} = b$。\n（1）任取 $z \\in \\operatorname{Null}(A)$，则 $A(x_{p}+z) = Ax_{p} + Az = b + 0 = b \\rightarrow x_{p}+z$ 也是解。\n（2）若 x 是 $Ax=b$ 的任意解，则 $A(x-x_{p}) = Ax - Ax_{p} = b - b = 0 \\rightarrow x-x_{p} \\in \\operatorname{Null}(A)$。\n令 $z = x-x_{p}$，则 $x = x_{p} + z$，$z \\in \\operatorname{Null}(A)$。\n综合（1）（2），$Ax=b$ 的解集恰好为 $\\{x_{p} + z \\mid z \\in \\operatorname{Null}(A)\\}$。■\n##### 补充例题\n例4（$3 \\times 3$非齐次方程组的完整求解）: 解方程组：\n$$\nx_{1} + x_{2} + x_{3} = 6\n$$\n$$\nx_{1} - x_{2} + 2x_{3} = 5\n$$\n$$\n2x_{1} + 3x_{3} = 11\n$$\n解: 增广矩阵消元得 RREF：$x_{1} + (\\frac{3}{2})x_{3} = \\frac{11}{2}, x_{2} - (\\frac{1}{2})x_{3} = \\frac{1}{2}$。\n令 $x_{3} = t$（自由变量），则 $x_{1} = \\frac{11}{2} - (\\frac{3}{2})t, x_{2} = \\frac{1}{2} + (\\frac{1}{2})t$。\n取 $t=0$ 得特解 $x_{p} = (\\frac{11}{2}, \\frac{1}{2}, 0)$。\n对应齐次解（取 $t=2$ 得整数基）：$x_{h} = t \\cdot (-3, 1, 2)$。（或写作 $\\operatorname{span}\\{(3, -1, -2)\\}$）\n通解 $= (\\frac{11}{2}, \\frac{1}{2}, 0) + t \\cdot (-3, 1, 2)$。\n验证：Null(A)维数 $= 1$（一个自由变量），$\\operatorname{rank}(A)=2$，$n=3 \\rightarrow$ 秩-零化度：$2+1=3 ✓$。",
-        "title": "derivation"
+        "text": "",
+        "title": "证明"
       },
       {
         "claim_refs": [
           "claim.ch05.affine.solution-set"
         ],
         "id": "worked_examples",
-        "text": "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence",
-        "title": "worked_examples"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ],
-        "id": "geometric_meaning",
-        "text": "几何理解：\n- 齐次方程的解集是一条穿过原点的直线（或平面）——一个子空间\n- 非齐次方程的解集是那条直线（或平面）平移到特解 $x_{p}$ 的位置——一个仿射空间\n- 这和向量加减法完全一致：$b = A(x_{p}+z) = Ax_{p} + Az = Ax_{p} + 0$",
-        "title": "geometric_meaning"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ],
-        "id": "pitfalls",
-        "text": "注意 $b = 3 \\times (1,2)$，即 b 在 A 的列空间 Col(A) 中$\\rightarrow$有解。\n找特解：$x_{1} = 3 - 2x_{2}$，取 $x_{2}=0 \\rightarrow x_{p} = (3,0)$。\n$$\n\\operatorname{Null}(A) = \\{(-2t, t) \\mid t \\in R\\}\n$$\n通解：$(x_{1}, x_{2}) = (3,0) + t \\cdot (-2,1)$ ——一条不过原点的直线。",
-        "title": "pitfalls"
-      },
-      {
-        "claim_refs": [
-          "claim.ch05.affine.solution-set"
-        ],
-        "id": "connections",
-        "text": "connections: 5.2 非齐次方程组 $Ax = b$。",
-        "title": "connections"
-      },
-      {
-        "claim_refs": [],
-        "id": "intuition",
-        "text": "一句话动机：b 不是零——那解是什么结构？",
-        "title": "intuition"
-      },
-      {
-        "claim_refs": [],
-        "id": "invariants",
-        "text": "domain/image/kernel evidence\nA x_p = b and A N = 0\nnullspace basis is complete\nfinite numeric result",
-        "title": "invariants"
+        "text": "",
+        "title": "数学案例"
       }
     ],
-    "summary": "本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+ \\operatorname{Null}(A)$ 的全部元素。",
+    "summary": "掌握非齐次方程组的通解 $=$ 一个特解 $+\\operatorname{Null}(\\boldsymbol A)$ 的全部元素。",
     "symbol_roles": {
       "matrix": "matrix",
       "nullspace": "nullspace",
@@ -162,19 +113,19 @@
       "rhs": "rhs",
       "solution_set": "solution_set"
     },
-    "title": "5.2 非齐次方程组 $Ax = b$",
+    "title": "非齐次方程组的解结构",
     "worked_examples": [
       {
         "calculation": [
-          "5.2 非齐次方程组 $Ax = b$: finite typed semantic evidence"
+          "解方程组：\n\n$$\n\\begin{cases}\nx_1+2x_2=3,\\\\\n2x_1+4x_2=6.\n\\end{cases}\n$$\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&2\\\\\n2&4\n\\end{pmatrix},\\qquad\n\\boldsymbol b=\n\\begin{pmatrix}\n3\\\\6\n\\end{pmatrix}.\n$$\n\n注意\n\n$$\n\\boldsymbol b=3\\begin{pmatrix}1\\\\2\\end{pmatrix},\n$$\n\n即 $\\boldsymbol b\\in\\operatorname{Col}(\\boldsymbol A)$，所以有解。由 $x_1=3-2x_2$，取 $x_2=0$，得到特解\n\n$$\n\\boldsymbol x_p=\n\\begin{pmatrix}\n3\\\\0\n\\end{pmatrix}.\n$$\n\n又\n\n$$\n\\operatorname{Null}(\\boldsymbol A)\n=\\left\\{\nt\\begin{pmatrix}-2\\\\1\\end{pmatrix}\n\\mathrel{\\Big|}t\\in\\mathbb R\n\\right\\}.\n$$\n\n通解为\n\n$$\n\\boldsymbol x\n=\\begin{pmatrix}3\\\\0\\end{pmatrix}\n+t\\begin{pmatrix}-2\\\\1\\end{pmatrix},\\qquad t\\in\\mathbb R,\n$$\n\n是一条不过原点的直线。"
         ],
         "checks": [
           {
             "expected": [
-              2,
-              4
+              3,
+              6
             ],
-            "name": "result",
+            "name": "transformed",
             "tolerance": 1e-09
           }
         ],
@@ -182,29 +133,89 @@
           "claim.ch05.affine.solution-set"
         ],
         "given": [
-          2,
           [
-            1,
-            2
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              4
+            ]
+          ],
+          [
+            3,
+            0
           ]
         ],
-        "id": "example.ch05.affine.solution-set",
-        "kind": "scalar_multiple",
+        "id": "example.ch05.affine.solution-set.line",
+        "kind": "matrix_transform",
         "result": [
-          2,
-          4
+          3,
+          6
         ],
-        "title": "主题数值例"
+        "title": "例题：平移后的解直线"
+      },
+      {
+        "calculation": [
+          "解方程组：\n\n$$\n\\begin{cases}\nx_1+x_2+x_3=6,\\\\\nx_1-x_2+2x_3=5,\\\\\n2x_1+3x_3=11.\n\\end{cases}\n$$\n\n增广矩阵消元得到\n\n$$\nx_1+\\frac32x_3=\\frac{11}{2},\\qquad\nx_2-\\frac12x_3=\\frac12.\n$$\n\n令 $x_3=t$，则\n\n$$\nx_1=\\frac{11}{2}-\\frac32t,\\qquad\nx_2=\\frac12+\\frac12t.\n$$\n\n取 $t=0$ 得特解\n\n$$\n\\boldsymbol x_p=\n\\begin{pmatrix}\n\\frac{11}{2}\\\\[2pt]\n\\frac12\\\\[2pt]\n0\n\\end{pmatrix}.\n$$\n\n对应齐次解可取方向向量\n\n$$\n\\begin{pmatrix}-3\\\\1\\\\2\\end{pmatrix}.\n$$\n\n因此通解为\n\n$$\n\\boldsymbol x=\n\\begin{pmatrix}\n\\frac{11}{2}\\\\[2pt]\n\\frac12\\\\[2pt]\n0\n\\end{pmatrix}\n+s\\begin{pmatrix}-3\\\\1\\\\2\\end{pmatrix},\\qquad s\\in\\mathbb R.\n$$\n\n验证：$\\operatorname{rank}(\\boldsymbol A)=2$，$n=3$，所以零空间维数为 $1$，满足秩-零化度定理。"
+        ],
+        "checks": [
+          {
+            "expected": [
+              6,
+              5,
+              11
+            ],
+            "name": "transformed",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch05.affine.solution-set"
+        ],
+        "given": [
+          [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              -1,
+              2
+            ],
+            [
+              2,
+              0,
+              3
+            ]
+          ],
+          [
+            5.5,
+            0.5,
+            0
+          ]
+        ],
+        "id": "example.ch05.affine.solution-set.three-by-three",
+        "kind": "matrix_transform",
+        "result": [
+          6,
+          5,
+          11
+        ],
+        "title": "补充例题：三元非齐次方程组"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:20696c1d4cef5ddb21b01feb3c8867ccc43a24687749480531a461cbbc3fe3a0",
+    "artifact_digest": "sha256:48dbd0f643a29f6d4137693aa2736a533538b275709133fd2b00fd55df785cb1",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:db665ca7e84d8eb4d1001cf05869115e76eeddcb62c605786ce4dfc04b281014",
+    "raw_reply_digest": "sha256:7e2a94303b895351ba30beb2fd720863ceea2c0f61c5e29059edaa1d04e48787",
     "source_hash": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f"
   },
   "revision": 1,
@@ -229,29 +240,25 @@
     ],
     "spans": [
       {
-        "end_line": 1787,
+        "end_line": 1654,
         "fingerprint": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f",
         "heading_path": [
           "第5章 线性方程组",
           "5.2 非齐次方程组 $Ax = b$"
         ],
         "id": "第5章 线性方程组 / 5.2 非齐次方程组 $Ax = b$::1::sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f",
-        "start_line": 1725,
+        "start_line": 1592,
         "text": "### 5.2 非齐次方程组 $Ax = b$\n\n一句话动机：b 不是零——那解是什么结构？\n本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+ \\operatorname{Null}(A)$ 的全部元素。\n\n定理 5.2（非齐次方程组的解结构） 设 $x_{p}$ 是 $Ax = b$ 的一个特解（任意一个解）。则 $Ax = b$ 的所有解为：\n$$\n{ x_{p} + z | z \\in \\operatorname{Null}(A) }\n$$\n即：通解 $=$ 特解 $+$ 零空间（一个平移后的线性子空间）。\n几何理解：\n- 齐次方程的解集是一条穿过原点的直线（或平面）——一个子空间\n- 非齐次方程的解集是那条直线（或平面）平移到特解 $x_{p}$ 的位置——一个仿射空间\n- 这和向量加减法完全一致：$b = A(x_{p}+z) = Ax_{p} + Az = Ax_{p} + 0$\n\n#### 例题\n\n解：$x_{1} + 2x_{2} = 3, 2x_{1} + 4x_{2} = 6$。\n$$\nA = \\begin{pmatrix}1 & 2 \\\\ 2 & 4\\end{pmatrix}, b = (3,6)\n$$\n注意 $b = 3 \\times (1,2)$，即 b 在 A 的列空间 Col(A) 中$\\rightarrow$有解。\n找特解：$x_{1} = 3 - 2x_{2}$，取 $x_{2}=0 \\rightarrow x_{p} = (3,0)$。\n$$\n\\operatorname{Null}(A) = \\{(-2t, t) \\mid t \\in R\\}\n$$\n通解：$(x_{1}, x_{2}) = (3,0) + t \\cdot (-2,1)$ ——一条不过原点的直线。\n\n##### 定理 5.2 的证明\n\n设 $x_{p}$ 是 $Ax=b$ 的一个特解，即 $Ax_{p} = b$。\n（1）任取 $z \\in \\operatorname{Null}(A)$，则 $A(x_{p}+z) = Ax_{p} + Az = b + 0 = b \\rightarrow x_{p}+z$ 也是解。\n（2）若 x 是 $Ax=b$ 的任意解，则 $A(x-x_{p}) = Ax - Ax_{p} = b - b = 0 \\rightarrow x-x_{p} \\in \\operatorname{Null}(A)$。\n令 $z = x-x_{p}$，则 $x = x_{p} + z$，$z \\in \\operatorname{Null}(A)$。\n综合（1）（2），$Ax=b$ 的解集恰好为 $\\{x_{p} + z \\mid z \\in \\operatorname{Null}(A)\\}$。■\n\n一句话动机：第4章定义了变换$T(x)=Ax$，A是在标准基下的矩阵。换一组基（换一套尺子），同一个变换的矩阵长什么样？——答案：$B=P^{-1}AP$。\n本节目标：理解基变换和相似变换的公式，知道行列式、秩、迹、特征多项式是相似不变量。\n\n##### 补充例题\n\n例4（$3 \\times 3$非齐次方程组的完整求解）: 解方程组：\n$$\nx_{1} + x_{2} + x_{3} = 6\n$$\n$$\nx_{1} - x_{2} + 2x_{3} = 5\n$$\n$$\n2x_{1} + 3x_{3} = 11\n$$\n解: 增广矩阵消元得 RREF：$x_{1} + (\\frac{3}{2})x_{3} = \\frac{11}{2}, x_{2} - (\\frac{1}{2})x_{3} = \\frac{1}{2}$。\n令 $x_{3} = t$（自由变量），则 $x_{1} = \\frac{11}{2} - (\\frac{3}{2})t, x_{2} = \\frac{1}{2} + (\\frac{1}{2})t$。\n取 $t=0$ 得特解 $x_{p} = (\\frac{11}{2}, \\frac{1}{2}, 0)$。\n对应齐次解（取 $t=2$ 得整数基）：$x_{h} = t \\cdot (-3, 1, 2)$。（或写作 $\\operatorname{span}\\{(3, -1, -2)\\}$）\n通解 $= (\\frac{11}{2}, \\frac{1}{2}, 0) + t \\cdot (-3, 1, 2)$。\n验证：Null(A)维数 $= 1$（一个自由变量），$\\operatorname{rank}(A)=2$，$n=3 \\rightarrow$ 秩-零化度：$2+1=3 ✓$。"
       }
     ]
   },
   "status": "reviewed",
   "teaching_profile": {
-    "minimum_level": 3,
+    "minimum_level": 2,
     "required_sections": [
       "definition",
-      "formula",
       "derivation",
-      "worked_examples",
-      "geometric_meaning",
-      "pitfalls",
-      "connections"
+      "worked_examples"
     ],
     "requires_analogy_boundary": false
   },
@@ -379,91 +386,36 @@
     "scene_kind": "2d",
     "stages": [
       {
-        "caption": "homogeneous",
+        "caption": "",
         "expected_invariants": [
-          "domain/image/kernel evidence",
-          "A x_p = b and A N = 0",
-          "nullspace basis is complete",
+          "A x_p = b and A z = 0",
+          "the affine solution set is the nullspace translated by x_p",
           "finite numeric result"
         ],
         "id": "stage.ch05.affine.solution-set.homogeneous",
         "input_entity_refs": [
-          "entity.ch05.affine.solution-set.matrix",
-          "entity.ch05.affine.solution-set.rhs",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.nullspace",
-          "entity.ch05.affine.solution-set.solution_set"
+          "entity.ch05.affine.solution-set.matrix"
         ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.affine.solution-set.matrix",
-          "entity.ch05.affine.solution-set.rhs",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.nullspace",
-          "entity.ch05.affine.solution-set.solution_set"
-        ],
-        "relation_refs": [
-          "relation.ch05.affine.solution-set.affine_translation"
-        ],
-        "title": "homogeneous"
+        "layout": "overlay",
+        "output_entity_refs": [],
+        "relation_refs": [],
+        "title": "零空间"
       },
       {
-        "caption": "translation",
+        "caption": "",
         "expected_invariants": [
-          "domain/image/kernel evidence",
-          "A x_p = b and A N = 0",
-          "nullspace basis is complete",
-          "finite numeric result"
-        ],
-        "id": "stage.ch05.affine.solution-set.translation",
-        "input_entity_refs": [
-          "entity.ch05.affine.solution-set.matrix",
-          "entity.ch05.affine.solution-set.rhs",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.nullspace",
-          "entity.ch05.affine.solution-set.solution_set"
-        ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.affine.solution-set.matrix",
-          "entity.ch05.affine.solution-set.rhs",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.nullspace",
-          "entity.ch05.affine.solution-set.solution_set"
-        ],
-        "relation_refs": [
-          "relation.ch05.affine.solution-set.affine_translation"
-        ],
-        "title": "translation"
-      },
-      {
-        "caption": "solution",
-        "expected_invariants": [
-          "domain/image/kernel evidence",
-          "A x_p = b and A N = 0",
-          "nullspace basis is complete",
+          "A x_p = b and A z = 0",
+          "the affine solution set is the nullspace translated by x_p",
           "finite numeric result"
         ],
         "id": "stage.ch05.affine.solution-set.solution",
         "input_entity_refs": [
-          "entity.ch05.affine.solution-set.matrix",
-          "entity.ch05.affine.solution-set.rhs",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.nullspace",
-          "entity.ch05.affine.solution-set.solution_set"
+          "entity.ch05.affine.solution-set.matrix"
         ],
-        "layout": "sequence",
-        "output_entity_refs": [
-          "entity.ch05.affine.solution-set.matrix",
-          "entity.ch05.affine.solution-set.rhs",
-          "entity.ch05.affine.solution-set.particular",
-          "entity.ch05.affine.solution-set.nullspace",
-          "entity.ch05.affine.solution-set.solution_set"
-        ],
-        "relation_refs": [
-          "relation.ch05.affine.solution-set.affine_translation"
-        ],
-        "title": "solution"
+        "layout": "overlay",
+        "output_entity_refs": [],
+        "relation_refs": [],
+        "title": "平移后的解集"
       }
     ]
   }

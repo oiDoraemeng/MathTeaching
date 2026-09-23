@@ -80,8 +80,8 @@ _SPEC = {
     "ch02.matrix.composition": {
         "formula": "(AB)x=A(Bx),\\quad AB\\ne BA",
         "kind": "matrix_transform",
-        "given": {"matrix": [[2, 0], [0, 1]], "vector": [1, 2]},
-        "result": [2.0, 2.0],
+        "given": {"matrix": [[0, -2], [1, 0]], "vector": [1, 1]},
+        "result": [-2.0, 1.0],
         "check": "transformed",
         "statement": "矩阵乘法表示变换的复合：AB 先做 B 再做 A；改变先后顺序通常得到不同终点。",
         "relation": "composition_order",
@@ -166,11 +166,9 @@ def _add_contract_semantics(payload: dict, topic_id: str) -> None:
 
     elif topic_id == "ch02.matrix.composition":
         # 质量适配器已生成路径、端点和阶段，避免重复添加实体。
-        if {
-            "z",
-        } <= {str(entity.get("id", "")) for entity in entities} and {
-            "composition_order", "endpoint_diff", "composition_compare",
-        } <= {str(relation.get("id", "")) for relation in relations}:
+        if "stage.case.composition.input" in {
+            str(stage.get("id", "")) for stage in stages
+        }:
             return
         entities.append({"id": "z", "kind": "vector", "dimension": 2, "value": [1.0, 2.0], "role": "transformed_b", "label": "BAx", "claim_refs": [claim_id]})
         relations.extend([

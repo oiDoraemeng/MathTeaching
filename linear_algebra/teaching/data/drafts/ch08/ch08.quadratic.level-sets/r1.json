@@ -1,1 +1,379 @@
-{"claims":[{"entity_refs":["entity.ch08.quadratic.level-sets.v","entity.ch08.quadratic.level-sets.result"],"explanation_refs":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"formula":"v=(1,2),\\quad 2v=(2,4)","formula_symbols":["v","result"],"id":"claim.ch08.quadratic.level-sets","relation_refs":["relation.ch08.quadratic.level-sets.maps"],"source_refs":["第8章 二次型与主轴定理 / 8.2 二次型的几何意义::1::sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b"],"stage_refs":["stage.ch08.quadratic.level-sets.input"],"statement":"8.2 二次型的几何意义 的线性表示保持可检验的向量关系。"}],"connections":[{"claim_refs":["claim.ch08.quadratic.level-sets"],"description":"前置的线性表示与几何关系。","id":"connection.ch08.quadratic.level-sets.prior","relation":"prerequisite","target_topic_id":"ch03.det.oriented-area"}],"explanation":{"analogy_boundary":"二维示意推广到有限维时保留代数关系。","conclusion":"数值关系与讲义定义一致。","connections":["与前置线性表示相连。"],"definition":"8.2 二次型的几何意义 的对象和定义。","derivation":["代入 v=(1,2)。","计算得到 result=(2,4)。"],"formula":"v=(1,2),\\quad 2v=(2,4)","geometric_meaning":"向量在有限维空间中的方向和尺度保持可读。","invariants":["finite numeric result"],"pitfalls":["不要混淆对象和坐标。"],"read_guide":["先定义，再公式，最后读数值例。"],"searchable_text":["8.2 二次型的几何意义","线性空间","数值例"],"sections":[{"claim_refs":["claim.ch08.quadratic.level-sets"],"id":"definition","text":"definition: 8.2 二次型的几何意义。","title":"definition"},{"claim_refs":["claim.ch08.quadratic.level-sets"],"id":"formula","text":"formula: 8.2 二次型的几何意义。","title":"formula"},{"claim_refs":["claim.ch08.quadratic.level-sets"],"id":"derivation","text":"derivation: 8.2 二次型的几何意义。","title":"derivation"},{"claim_refs":["claim.ch08.quadratic.level-sets"],"id":"worked_examples","text":"worked_examples: 8.2 二次型的几何意义。","title":"worked_examples"},{"claim_refs":["claim.ch08.quadratic.level-sets"],"id":"geometric_meaning","text":"geometric_meaning: 8.2 二次型的几何意义。","title":"geometric_meaning"},{"claim_refs":["claim.ch08.quadratic.level-sets"],"id":"pitfalls","text":"pitfalls: 8.2 二次型的几何意义。","title":"pitfalls"},{"claim_refs":["claim.ch08.quadratic.level-sets"],"id":"connections","text":"connections: 8.2 二次型的几何意义。","title":"connections"}],"summary":"8.2 二次型的几何意义 的确定性讲义 artifact。","symbol_roles":{"result":"transformed_a","v":"vector_a"},"title":"8.2 二次型的几何意义","transfer_note":"先识别对象，再核对公式和不变量。","worked_examples":[{"calculation":["2*(1,2)=(2,4)"],"checks":[{"expected":[2,4],"name":"result","tolerance":1e-09}],"claim_refs":["claim.ch08.quadratic.level-sets"],"given":[2,[1,2]],"id":"example.ch08.quadratic.level-sets","kind":"scalar_multiple","result":[2,4],"title":"数值例"}]},"generated":{"artifact_digest":"sha256:de5069403f3b71b34b25ea854b7a1b5f7ae31ab6ff116f08711b225cf3e32000","generated_at":"2026-09-12T00:00:00Z","model":"fixture","prompt_version":"chapter-4-8-v1","provider":"deterministic-fixture","raw_reply_digest":"sha256:38613a8baaaaf7428192f9322b2308d5217ea55e6e2f4de7dc1e573bf1185c0c","source_hash":"sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b"},"revision":1,"schema_version":1,"source":{"excerpt":"### 8.2 二次型的几何意义\n\n一句话动机：$Q(x, y) = 1$ 画出来是什么形状？\n本节目标：理解\"没有 xy 项 $=$ 正的图形 $=$ 特征向量方向恰好和坐标轴一致\"。\n\n定理 8.2（对角矩阵对应的图形） 若 $A = \\begin{pmatrix}\\lambda_{1} & 0 \\\\ 0 & \\lambda_{2}\\end{pmatrix}$（对角矩阵），则 $Q(x) = \\lambda_{1}x^{2} + \\lambda_{2}y^{2}$。\n当 $\\lambda_{1}>0, \\lambda_{2}>0$ 时，$Q(x,y)=1$ 画出来是正的椭圆，x 轴和 y 轴就是椭圆的主轴。\n反例（有 xy 项）：$Q(x,y) = 2x^{2}+2y^{2}+2xy$ 的矩阵是 $\\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$，有非对角线元素$\\rightarrow$画出来是歪的椭圆。\n\n| 矩阵类型 | 方程 | 图形 | 和坐标轴 |\n| --- | --- | --- | --- |\n| 对角矩阵 | $\\lambda_{1}x^{2}+\\lambda_{2}y^{2}=1$ | 椭圆 | 正（对齐） |\n| 非对角 | $ax^{2}+2bxy+cy^{2}=1$ | 椭圆 | 歪（不对齐） |\n\n核心问题：为什么有 xy 项就歪？因为 xy 项意味着\"x 和 y 纠缠在一起\"——沿 x 轴的变化影响 y 方向，沿 y 轴的变化影响 x 方向。这本质上就是矩阵没有在特征向量方向上被坐标化。","heading_level":3,"heading_path":["第8章 二次型与主轴定理","8.2 二次型的几何意义"],"neighboring_titles":["8.1 二次型的定义与矩阵表示","8.3 主轴定理：把歪的图形\"转正\""],"occurrence":1,"source_hash":"sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b","source_path":["第8章 二次型与主轴定理","8.2 二次型的几何意义","8.2 二次型的几何意义"],"spans":[{"end_line":2688,"fingerprint":"sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b","heading_path":["第8章 二次型与主轴定理","8.2 二次型的几何意义"],"id":"第8章 二次型与主轴定理 / 8.2 二次型的几何意义::1::sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b","start_line":2668,"text":"### 8.2 二次型的几何意义\n\n一句话动机：$Q(x, y) = 1$ 画出来是什么形状？\n本节目标：理解\"没有 xy 项 $=$ 正的图形 $=$ 特征向量方向恰好和坐标轴一致\"。\n\n定理 8.2（对角矩阵对应的图形） 若 $A = \\begin{pmatrix}\\lambda_{1} & 0 \\\\ 0 & \\lambda_{2}\\end{pmatrix}$（对角矩阵），则 $Q(x) = \\lambda_{1}x^{2} + \\lambda_{2}y^{2}$。\n当 $\\lambda_{1}>0, \\lambda_{2}>0$ 时，$Q(x,y)=1$ 画出来是正的椭圆，x 轴和 y 轴就是椭圆的主轴。\n反例（有 xy 项）：$Q(x,y) = 2x^{2}+2y^{2}+2xy$ 的矩阵是 $\\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$，有非对角线元素$\\rightarrow$画出来是歪的椭圆。\n\n| 矩阵类型 | 方程 | 图形 | 和坐标轴 |\n| --- | --- | --- | --- |\n| 对角矩阵 | $\\lambda_{1}x^{2}+\\lambda_{2}y^{2}=1$ | 椭圆 | 正（对齐） |\n| 非对角 | $ax^{2}+2bxy+cy^{2}=1$ | 椭圆 | 歪（不对齐） |\n\n核心问题：为什么有 xy 项就歪？因为 xy 项意味着\"x 和 y 纠缠在一起\"——沿 x 轴的变化影响 y 方向，沿 y 轴的变化影响 x 方向。这本质上就是矩阵没有在特征向量方向上被坐标化。"}]},"status":"draft","teaching_profile":{"minimum_level":3,"required_sections":["definition","formula","derivation","worked_examples","geometric_meaning","pitfalls","connections"],"requires_analogy_boundary":false},"topic_id":"ch08.quadratic.level-sets","visual_semantics":{"entities":[{"claim_refs":["claim.ch08.quadratic.level-sets"],"dimension":2,"id":"entity.ch08.quadratic.level-sets.v","kind":"vector","label":"v","role":"vector_a","value":[1,2]},{"claim_refs":["claim.ch08.quadratic.level-sets"],"dimension":2,"id":"entity.ch08.quadratic.level-sets.result","kind":"vector","label":"result","role":"transformed_a","value":[2,4]}],"relations":[{"claim_refs":["claim.ch08.quadratic.level-sets"],"id":"relation.ch08.quadratic.level-sets.maps","kind":"maps_to","parameters":{"scalar":2},"source_ref":"entity.ch08.quadratic.level-sets.v","target_ref":"entity.ch08.quadratic.level-sets.result"}],"scene_family":"subspace_region","scene_kind":"2d","stages":[{"caption":"显示线性关系。","expected_invariants":["finite numeric result"],"id":"stage.ch08.quadratic.level-sets.input","input_entity_refs":["entity.ch08.quadratic.level-sets.v"],"layout":"sequence","output_entity_refs":["entity.ch08.quadratic.level-sets.result"],"relation_refs":["relation.ch08.quadratic.level-sets.maps"],"title":"输入与结果"}]}}
+{
+  "claims": [
+    {
+      "entity_refs": [
+        "entity.ch08.quadratic.level-sets.aligned",
+        "entity.ch08.quadratic.level-sets.tilted",
+        "entity.ch08.quadratic.level-sets.rotation"
+      ],
+      "explanation_refs": [
+        "definition",
+        "worked_examples"
+      ],
+      "formula": "Q(x,y)=1",
+      "formula_symbols": [
+        "aligned",
+        "tilted",
+        "rotation"
+      ],
+      "id": "claim.ch08.quadratic.level-sets",
+      "relation_refs": [
+        "relation.ch08.quadratic.level-sets.level_comparison"
+      ],
+      "source_refs": [
+        "第8章 二次型与主轴定理 / 8.2 二次型的几何意义::1::sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b"
+      ],
+      "stage_refs": [
+        "stage.ch08.quadratic.level-sets.aligned",
+        "stage.ch08.quadratic.level-sets.tilted"
+      ],
+      "statement": "没有交叉项时主轴与坐标轴对齐，有交叉项时椭圆的主轴倾斜。"
+    }
+  ],
+  "connections": [],
+  "explanation": {
+    "case_layout": {
+      "cases": [
+        {
+          "claim_refs": [
+            "claim.ch08.quadratic.level-sets"
+          ],
+          "example_ref": "example.ch08.quadratic.level-sets.aligned",
+          "id": "case.ch08.quadratic.level-sets.1",
+          "purpose": "无交叉项：椭圆与坐标轴对齐",
+          "stage_refs": [
+            "stage.ch08.quadratic.level-sets.aligned"
+          ],
+          "topic_id": "ch08.quadratic.level-sets"
+        },
+        {
+          "claim_refs": [
+            "claim.ch08.quadratic.level-sets"
+          ],
+          "example_ref": "example.ch08.quadratic.level-sets.tilted",
+          "id": "case.ch08.quadratic.level-sets.2",
+          "purpose": "有交叉项：椭圆主轴倾斜",
+          "stage_refs": [
+            "stage.ch08.quadratic.level-sets.tilted"
+          ],
+          "topic_id": "ch08.quadratic.level-sets"
+        }
+      ],
+      "default_pane_count": 1
+    },
+    "definition": "一句话动机：$Q(x,y)=1$ 画出来是什么形状？\n\n本节目标：理解“没有 $xy$ 项 $=$ 正的图形 $=$ 特征向量方向恰好和坐标轴一致”。\n\n**（对角矩阵对应的图形）** 若\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n\\lambda_1&0\\\\\n0&\\lambda_2\n\\end{pmatrix},\n$$\n\n则\n\n$$\nQ(x,y)=\\lambda_1x^2+\\lambda_2y^2.\n$$\n\n当 $\\lambda_1>0$、$\\lambda_2>0$ 时，$Q(x,y)=1$ 画出来是正的椭圆，$x$ 轴和 $y$ 轴就是椭圆的主轴。\n\n反例（有 $xy$ 项）：\n\n$$\nQ(x,y)=2x^2+2y^2+2xy,\n$$\n\n它的矩阵是\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\n$$\n\n有非对角线元素，画出来是歪的椭圆。\n\n| 矩阵类型 | 方程 | 图形 | 和坐标轴 |\n| --- | --- | --- | --- |\n| 对角矩阵 | $\\lambda_1x^2+\\lambda_2y^2=1$ | 椭圆 | 正（对齐） |\n| 非对角矩阵 | $ax^2+2bxy+cy^2=1$ | 椭圆 | 歪（不对齐） |\n\n核心问题：为什么有 $xy$ 项就歪？因为 $xy$ 项意味着“$x$ 和 $y$ 纠缠在一起”——沿 $x$ 轴的变化影响 $y$ 方向，沿 $y$ 轴的变化影响 $x$ 方向。这本质上就是矩阵没有在特征向量方向上被坐标化。",
+    "derivation": [],
+    "formula": "",
+    "geometric_meaning": "",
+    "invariants": [
+      "same_eigenvalues",
+      "aligned_axes",
+      "tilted_axes"
+    ],
+    "searchable_text": [
+      "二次型的几何意义",
+      "没有交叉项时主轴与坐标轴对齐，有交叉项时椭圆的主轴倾斜。",
+      "一句话动机：$Q(x,y)=1$ 画出来是什么形状？\n\n本节目标：理解“没有 $xy$ 项 $=$ 正的图形 $=$ 特征向量方向恰好和坐标轴一致”。\n\n**（对角矩阵对应的图形）** 若\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n\\lambda_1&0\\\\\n0&\\lambda_2\n\\end{pmatrix},\n$$\n\n则\n\n$$\nQ(x,y)=\\lambda_1x^2+\\lambda_2y^2.\n$$\n\n当 $\\lambda_1>0$、$\\lambda_2>0$ 时，$Q(x,y)=1$ 画出来是正的椭圆，$x$ 轴和 $y$ 轴就是椭圆的主轴。\n\n反例（有 $xy$ 项）：\n\n$$\nQ(x,y)=2x^2+2y^2+2xy,\n$$\n\n它的矩阵是\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\n$$\n\n有非对角线元素，画出来是歪的椭圆。\n\n| 矩阵类型 | 方程 | 图形 | 和坐标轴 |\n| --- | --- | --- | --- |\n| 对角矩阵 | $\\lambda_1x^2+\\lambda_2y^2=1$ | 椭圆 | 正（对齐） |\n| 非对角矩阵 | $ax^2+2bxy+cy^2=1$ | 椭圆 | 歪（不对齐） |\n\n核心问题：为什么有 $xy$ 项就歪？因为 $xy$ 项意味着“$x$ 和 $y$ 纠缠在一起”——沿 $x$ 轴的变化影响 $y$ 方向，沿 $y$ 轴的变化影响 $x$ 方向。这本质上就是矩阵没有在特征向量方向上被坐标化。",
+      "取没有交叉项的二次型\n\n$$\n3x^2+y^2=1,\n$$\n\n对应矩阵为\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n3&0\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n它的两个特征值是 $3$ 和 $1$，椭圆主轴与坐标轴对齐。",
+      "讲义中的二次型\n\n$$\n2x^2+2xy+2y^2=1\n$$\n\n对应矩阵为\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix}.\n$$\n\n它的两个特征值同样是 $3$ 和 $1$，但非对角元不为零，椭圆主轴相对坐标轴发生倾斜。"
+    ],
+    "sections": [
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.level-sets"
+        ],
+        "id": "definition",
+        "text": "",
+        "title": "定义"
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.level-sets"
+        ],
+        "id": "worked_examples",
+        "text": "",
+        "title": "数学案例"
+      }
+    ],
+    "summary": "没有交叉项时主轴与坐标轴对齐，有交叉项时椭圆的主轴倾斜。",
+    "symbol_roles": {
+      "aligned": "aligned",
+      "rotation": "rotation",
+      "tilted": "tilted"
+    },
+    "title": "二次型的几何意义",
+    "worked_examples": [
+      {
+        "calculation": [
+          "取没有交叉项的二次型\n\n$$\n3x^2+y^2=1,\n$$\n\n对应矩阵为\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n3&0\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n它的两个特征值是 $3$ 和 $1$，椭圆主轴与坐标轴对齐。"
+        ],
+        "checks": [
+          {
+            "expected": 3,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.quadratic.level-sets"
+        ],
+        "given": [
+          [
+            3,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "example.ch08.quadratic.level-sets.aligned",
+        "kind": "determinant",
+        "result": 3,
+        "title": "对照案例：与坐标轴对齐的椭圆"
+      },
+      {
+        "calculation": [
+          "讲义中的二次型\n\n$$\n2x^2+2xy+2y^2=1\n$$\n\n对应矩阵为\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix}.\n$$\n\n它的两个特征值同样是 $3$ 和 $1$，但非对角元不为零，椭圆主轴相对坐标轴发生倾斜。"
+        ],
+        "checks": [
+          {
+            "expected": 3,
+            "name": "determinant",
+            "tolerance": 1e-09
+          }
+        ],
+        "claim_refs": [
+          "claim.ch08.quadratic.level-sets"
+        ],
+        "given": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "id": "example.ch08.quadratic.level-sets.tilted",
+        "kind": "determinant",
+        "result": 3,
+        "title": "讲义反例：有交叉项的倾斜椭圆"
+      }
+    ]
+  },
+  "generated": {
+    "artifact_digest": "sha256:1d2e38900ff0e2f8cc85ac5dd2ea4dcdbdf358618572339791a626887e14074a",
+    "generated_at": "2026-09-12T00:00:00Z",
+    "model": "fixture",
+    "prompt_version": "chapter-4-8-v1",
+    "provider": "deterministic-fixture",
+    "raw_reply_digest": "sha256:ced9667649d367b40be9c080dfdfeb55dca628f0a333923b1c7042021e6ce405",
+    "source_hash": "sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b"
+  },
+  "revision": 1,
+  "schema_version": 1,
+  "source": {
+    "excerpt": "### 8.2 二次型的几何意义\n\n一句话动机：$Q(x, y) = 1$ 画出来是什么形状？\n本节目标：理解\"没有 xy 项 $=$ 正的图形 $=$ 特征向量方向恰好和坐标轴一致\"。\n\n定理 8.2（对角矩阵对应的图形） 若 $A = \\begin{pmatrix}\\lambda_{1} & 0 \\\\ 0 & \\lambda_{2}\\end{pmatrix}$（对角矩阵），则 $Q(x) = \\lambda_{1}x^{2} + \\lambda_{2}y^{2}$。\n当 $\\lambda_{1}>0, \\lambda_{2}>0$ 时，$Q(x,y)=1$ 画出来是正的椭圆，x 轴和 y 轴就是椭圆的主轴。\n反例（有 xy 项）：$Q(x,y) = 2x^{2}+2y^{2}+2xy$ 的矩阵是 $\\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$，有非对角线元素$\\rightarrow$画出来是歪的椭圆。\n\n| 矩阵类型 | 方程 | 图形 | 和坐标轴 |\n| --- | --- | --- | --- |\n| 对角矩阵 | $\\lambda_{1}x^{2}+\\lambda_{2}y^{2}=1$ | 椭圆 | 正（对齐） |\n| 非对角 | $ax^{2}+2bxy+cy^{2}=1$ | 椭圆 | 歪（不对齐） |\n\n核心问题：为什么有 xy 项就歪？因为 xy 项意味着\"x 和 y 纠缠在一起\"——沿 x 轴的变化影响 y 方向，沿 y 轴的变化影响 x 方向。这本质上就是矩阵没有在特征向量方向上被坐标化。",
+    "heading_level": 3,
+    "heading_path": [
+      "第8章 二次型与主轴定理",
+      "8.2 二次型的几何意义"
+    ],
+    "neighboring_titles": [
+      "8.1 二次型的定义与矩阵表示",
+      "8.3 主轴定理：把歪的图形\"转正\""
+    ],
+    "occurrence": 1,
+    "source_hash": "sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b",
+    "source_path": [
+      "第8章 二次型与主轴定理",
+      "8.2 二次型的几何意义",
+      "8.2 二次型的几何意义"
+    ],
+    "spans": [
+      {
+        "end_line": 2330,
+        "fingerprint": "sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b",
+        "heading_path": [
+          "第8章 二次型与主轴定理",
+          "8.2 二次型的几何意义"
+        ],
+        "id": "第8章 二次型与主轴定理 / 8.2 二次型的几何意义::1::sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b",
+        "start_line": 2310,
+        "text": "### 8.2 二次型的几何意义\n\n一句话动机：$Q(x, y) = 1$ 画出来是什么形状？\n本节目标：理解\"没有 xy 项 $=$ 正的图形 $=$ 特征向量方向恰好和坐标轴一致\"。\n\n定理 8.2（对角矩阵对应的图形） 若 $A = \\begin{pmatrix}\\lambda_{1} & 0 \\\\ 0 & \\lambda_{2}\\end{pmatrix}$（对角矩阵），则 $Q(x) = \\lambda_{1}x^{2} + \\lambda_{2}y^{2}$。\n当 $\\lambda_{1}>0, \\lambda_{2}>0$ 时，$Q(x,y)=1$ 画出来是正的椭圆，x 轴和 y 轴就是椭圆的主轴。\n反例（有 xy 项）：$Q(x,y) = 2x^{2}+2y^{2}+2xy$ 的矩阵是 $\\begin{pmatrix}2 & 1 \\\\ 1 & 2\\end{pmatrix}$，有非对角线元素$\\rightarrow$画出来是歪的椭圆。\n\n| 矩阵类型 | 方程 | 图形 | 和坐标轴 |\n| --- | --- | --- | --- |\n| 对角矩阵 | $\\lambda_{1}x^{2}+\\lambda_{2}y^{2}=1$ | 椭圆 | 正（对齐） |\n| 非对角 | $ax^{2}+2bxy+cy^{2}=1$ | 椭圆 | 歪（不对齐） |\n\n核心问题：为什么有 xy 项就歪？因为 xy 项意味着\"x 和 y 纠缠在一起\"——沿 x 轴的变化影响 y 方向，沿 y 轴的变化影响 x 方向。这本质上就是矩阵没有在特征向量方向上被坐标化。"
+      }
+    ]
+  },
+  "status": "draft",
+  "teaching_profile": {
+    "minimum_level": 2,
+    "required_sections": [
+      "definition",
+      "worked_examples"
+    ],
+    "requires_analogy_boundary": false
+  },
+  "topic_id": "ch08.quadratic.level-sets",
+  "visual_semantics": {
+    "entities": [
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.level-sets"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.level-sets.aligned",
+        "kind": "matrix",
+        "label": "3x^2+y^2",
+        "role": "aligned",
+        "value": [
+          [
+            3.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.level-sets"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.level-sets.tilted",
+        "kind": "matrix",
+        "label": "2x^2+2xy+2y^2",
+        "role": "tilted",
+        "value": [
+          [
+            2.0,
+            1.0
+          ],
+          [
+            1.0,
+            2.0
+          ]
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.level-sets"
+        ],
+        "dimension": 2,
+        "id": "entity.ch08.quadratic.level-sets.rotation",
+        "kind": "matrix",
+        "label": "R",
+        "role": "rotation",
+        "value": [
+          [
+            0.7071067811865475,
+            -0.7071067811865475
+          ],
+          [
+            0.7071067811865475,
+            0.7071067811865475
+          ]
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "claim_refs": [
+          "claim.ch08.quadratic.level-sets"
+        ],
+        "id": "relation.ch08.quadratic.level-sets.level_comparison",
+        "kind": "maps_to",
+        "parameters": {
+          "aligned": [
+            [
+              3.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "eigenvalues": [
+            1.0,
+            3.0
+          ],
+          "level": 1.0,
+          "rotation": [
+            [
+              0.7071067811865475,
+              -0.7071067811865475
+            ],
+            [
+              0.7071067811865475,
+              0.7071067811865475
+            ]
+          ],
+          "signature": [
+            2,
+            0,
+            0
+          ],
+          "tilted": [
+            [
+              2.0,
+              1.0
+            ],
+            [
+              1.0,
+              2.0
+            ]
+          ]
+        },
+        "source_ref": "entity.ch08.quadratic.level-sets.aligned",
+        "target_ref": "entity.ch08.quadratic.level-sets.tilted"
+      }
+    ],
+    "scene_family": "quadratic_level_set",
+    "scene_kind": "2d",
+    "stages": [
+      {
+        "caption": "",
+        "expected_invariants": [
+          "same_eigenvalues",
+          "aligned_axes"
+        ],
+        "id": "stage.ch08.quadratic.level-sets.aligned",
+        "input_entity_refs": [
+          "entity.ch08.quadratic.level-sets.aligned"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch08.quadratic.level-sets.aligned"
+        ],
+        "relation_refs": [
+          "relation.ch08.quadratic.level-sets.level_comparison"
+        ],
+        "title": "无交叉项：椭圆与坐标轴对齐"
+      },
+      {
+        "caption": "",
+        "expected_invariants": [
+          "same_eigenvalues",
+          "tilted_axes"
+        ],
+        "id": "stage.ch08.quadratic.level-sets.tilted",
+        "input_entity_refs": [
+          "entity.ch08.quadratic.level-sets.tilted",
+          "entity.ch08.quadratic.level-sets.rotation"
+        ],
+        "layout": "overlay",
+        "output_entity_refs": [
+          "entity.ch08.quadratic.level-sets.tilted"
+        ],
+        "relation_refs": [
+          "relation.ch08.quadratic.level-sets.level_comparison"
+        ],
+        "title": "有交叉项：椭圆主轴倾斜"
+      }
+    ]
+  }
+}

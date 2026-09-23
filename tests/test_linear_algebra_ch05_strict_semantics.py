@@ -107,18 +107,17 @@ def test_all_roles_relations_and_stages_have_disjoint_real_operations(topic):
         assert set(compiled.aliases_for(stage.id)) <= set(stage.visible_aliases)
 
 
-def test_row_operations_are_distinct_and_elementary_matrices_reproduce_every_frame():
-    plans = [compile_payload('ch05.' + name) for name in ('gaussian-elimination', 'elementary-matrix-elimination')]
-    assert plans[0].family_evidence['frames'] != plans[1].family_evidence['frames']
-    for compiled in plans:
-        evidence = compiled.family_evidence
-        for index, elementary in enumerate(evidence['elementary_matrices']):
-            a, b = evidence['frames'][index]
-            next_a, next_b = evidence['frames'][index+1]
-            assert np.allclose(np.asarray(elementary) @ a, next_a)
-            assert np.allclose(np.asarray(elementary) @ b, next_b)
-        stage_ops = [next(op for op in compiled.plan.operations if op.get('alias') == compiled.aliases_for(stage.id)[0]) for stage in compiled.storyboard]
-        assert [op['matrix'] for op in stage_ops] == [a for a, b in evidence['frames']]
+def test_gaussian_transitions_reproduce_the_three_lecture_frames():
+    compiled = compile_payload('ch05.gaussian-elimination')
+    evidence = compiled.family_evidence
+    assert len(evidence['frames']) == 3
+    assert evidence['frames'][-1] == (
+        [[1.0, 2.0, 1.0], [0.0, 1.0, 0.0], [0.0, 0.0, -2.0]],
+        [3.0, 2.0, -2.0],
+    )
+    assert np.allclose(np.asarray(evidence['matrix']) @ np.asarray([-2.0, 2.0, 1.0]), np.asarray(evidence['rhs']))
+    stage_ops = [next(op for op in compiled.plan.operations if op.get('alias') == compiled.aliases_for(stage.id)[0]) for stage in compiled.storyboard]
+    assert [op['matrix'] for op in stage_ops] == [matrix for matrix, _ in evidence['frames']]
 
 
 def test_reviewed_snapshot_and_index_digests_match_and_preserve_legacy():
@@ -150,7 +149,7 @@ def test_reviewed_snapshot_and_index_digests_match_and_preserve_legacy():
     assert len(legacy(current['topics'])) == 23
     assert legacy(current['topics']) == legacy(baseline['topics'])
     rows = {row['topic_id']: row for row in current['topics']}
-    assert len([topic for topic in rows if topic.startswith('ch05.')]) == 8
+    assert len([topic for topic in rows if topic.startswith('ch05.')]) == 5
     for topic in TOPICS:
         assert json.loads((data / 'revieweds/ch05' / topic / 'r1.json').read_text(encoding='utf-8')) == artifact_payload_for(topic)
         resource = compile_reviewed_topic(topic).to_dict()
@@ -170,9 +169,9 @@ def test_all_seventeen_publication_writes_roll_back(tmp_path, monkeypatch):
     payloads = {topic: artifact_payload_for(topic) for topic in TOPICS}
     compile_chapter_05(output_root=compiled, reviewed_root=reviewed, index_path=index, reviewed_payloads=payloads)
     files = {path: path.read_bytes() for path in tmp_path.rglob('*.json')}
-    assert len(files) == 17
+    assert len(files) == 11
     original = os.replace
-    for failure_index in range(1, 18):
+    for failure_index in range(1, 12):
         calls = [0]
         def failing(source, target):
             calls[0] += 1
@@ -188,7 +187,7 @@ def test_all_seventeen_publication_writes_roll_back(tmp_path, monkeypatch):
 
 def test_empty_release_does_not_fall_back_to_disk_or_write(tmp_path):
     from linear_algebra.teaching.compile_resources import compile_chapter_05
-    with pytest.raises(ValueError, match='exactly 8'):
+    with pytest.raises(ValueError, match='exactly 5'):
         compile_chapter_05(output_root=tmp_path / 'compiled', reviewed_root=tmp_path / 'reviewed', reviewed_payloads={})
     assert list(tmp_path.rglob('*')) == []
 

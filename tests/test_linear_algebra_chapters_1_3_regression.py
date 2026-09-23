@@ -25,18 +25,21 @@ LEGACY_PLAN_DIGESTS = {
     "ch01.inner.cauchy-schwarz": "sha256:032d7e836cc4cb664a89a089514f814e29b402082b033e3412f1f91da29c1868",
     "ch01.projection.definition": "sha256:66450b1edbf36646762a740be7239a41f6439eb97c2398cae640f8eaa8e10711",
     "ch01.proof.midline": "sha256:ef698dd38942fce8724934c6ab59f110933a256d13d16f4c56c4972526f542a9",
-    # r20：两道证明题改为「命题/公式/向量证明」三分节（无案例、无几何意义），
-    # 图全部按向量画；重心图 E、F 按讲义标注为 AB、AC 边中点。
-    "ch01.proof.centroid": "sha256:e957d4ef26dc4b21b0a6cfa67b582451e14fd9eb0636d3e4bfcfae683978c3d6",
-    "ch01.proof.parallelogram-diagonals": "sha256:00379edf33edb0d6841a24f76402def6790797c9114e26cbae04c523cda45397",
+    # 两道证明题的图内标签继续使用 VTK 可显示的纯文本；代数区额外接收
+    # KaTeX 公式，分数使用上下结构，向量使用标准记号。
+    "ch01.proof.centroid": "sha256:46be1891befac710a4ee82c407ddb23e3a74b4e7ba96b76ff202a1f58ca0fb27",
+    "ch01.proof.parallelogram-diagonals": "sha256:06351edffe16a87eb041d5c82746516f2f150c2b1f807f526c6669626dc0aaf4",
     "ch02.batch.inner-products": "sha256:e7dbeb49e88770e1d6a7a9bc32cae6e8984c938cc9e892af6fee405cba3a6c63",
     # r20：2.3 完整保留讲义定义，单一案例在一个窗格中同时投影三个向量。
     "ch02.batch.projection": "sha256:c9267766e9de66b5ef542c09732dd8827470cc7e367610d2649e9d2fd27aeb57",
-    "ch02.matrix.additive-distributivity": "sha256:c9740c08c8f0dadaddfb757f7b4927d7f33dae4f6c047335b6c17a048f6dee95",
+    # r19：2.4 完整保留讲义定义与原例题，并用两条路线验证变换分配律。
+    "ch02.matrix.additive-distributivity": "sha256:489a4bb8eebae206e6d7fdfed32ec413b3619ff1e2fd2d6318270758e030c49e",
     "ch02.matrix.transformed-grid": "sha256:8d958082161d4ba266b55e6e587e6116f9fb3e99d781d914cb4ff9ba0fdf4599",
-    "ch02.matrix.composition": "sha256:efa1dd269ebe968fdc49db7cf500597b29f8b721d476250857f6192f7c620c41",
-    "ch02.matrix.basis": "sha256:739f6934b0fabaf3644295c38db462cc06e95051ff83d5814117023f26cf81ad",
-    "ch02.matrix.powers": "sha256:c78385e0ff98a993de305952ae0ce9ee1be509b3a5a08aa256f0b659a23d34fe",
+    # r17：2.6 的讲义正文归入「定义」，案例用四窗格对照 AB 与 BA 的两条路径。
+    "ch02.matrix.composition": "sha256:7962a43021dc6225286aaaea228b9e44c226101fffdd9fa481967abb0f2a3929",
+    "ch02.matrix.basis": "sha256:aa21186676edc18f53ab6b2776c8c0229a053e2661cf542fbc66a6e19127e3b4",
+    # r15：2.8 完整保留幂与转置性质，两窗格用同一视野对照 A 与 A^2。
+    "ch02.matrix.powers": "sha256:e707e50a01026e4edbcd39752dc33a6df73ca51d5766724acbb08b035f27d0ec",
     # 2.9 只发布讲义 2.9.1「线性无关与线性相关」与 2.9.2「秩」：原零空间、列空间与
     # 与后续章节的关系三节已从目录与数据中移除，冻结的 digest 相应更新。
     "ch02.subspace.independence": "sha256:3e35510a4e2bba9f30db1dfc577c4ea8f95e4cbfe35e942d178678e0ad4a5f1f",
@@ -44,15 +47,16 @@ LEGACY_PLAN_DIGESTS = {
     # 3.1 的四个小节已合并为单一小节「行列式的几何定义」：案例改为两步流程
     # （单位正方形 / 两个像 + 外接矩形与切角辅助线），冻结的 digest 相应更新。
     "ch03.det.oriented-area": "sha256:a568f67cf2e15697170e5715c452d1bad983c413b25dc59b120d6cd0581da75e",
-    "ch03.det.row-swap": "sha256:cac64eb0b748e2514d099a7c44f72d6401366ce00c9c5643ada26921304e72d3",
-    "ch03.det.scaling": "sha256:48071122621c703f14a27096f32878699e30b9033e8d12e6fe1c2190961685ee",
-    "ch03.det.shear": "sha256:f955248683a5bf6c3dab44a0cac8f3f8d35aabc225448afa364ec64313935334",
-    "ch03.det.multiplicativity": "sha256:e9720722e8844abce9e399e67c07d40fb632a84bfae44096d792f85d3ec6a303",
-    "ch03.cramer.area-ratio": "sha256:7d33ba2c30549b5dd2272692446dba20407ce0f11a4411d32e27321ca59bf110",
-    "ch03.inverse.undo": "sha256:28ec0b3a7e10110845066adb6749507713d2a08bbfe036a05fdf8ad9640b6536",
-    "ch03.inverse.formula": "sha256:387c2362561c51b96abc02abb29e8714b00ac5eb646f004bbed09c499bcc361d",
-    "ch03.inverse.examples": "sha256:890dcdedc976c2b2c23de474dc5fc1bc5917809751e315cbe36f78036cf0ce79",
-    "ch03.det.zero.equivalence": "sha256:e84a87ae9410886a7af8145c2cf5f0f6189cc0458c122d472b17fd9a782178e7",
+    # r3：3.2.1 以同一矩阵展示换行和第一行倍乘的前后四幅图，行叠与零行只作代数计算。
+    "ch03.det.basic-properties": "sha256:a70a04fbdedb48d03077d374e91f60c3c60ba9b7d4d25148c9e878106403be73",
+    "ch03.det.multiplicativity": "sha256:bffec6ad1fb052bd2aa7d1bb0ae6c0295de88a158fcda61f3fcde68b1be66796",
+    # r2：3.2.3 使用 A=[[2,2],[1,3]] 与其转置，两幅图的有向面积均为 4。
+    "ch03.det.transpose": "sha256:af8bef52fb2b563b1b23a5ae927af8c835c6fef3b2b489ba275d1e550698358a",
+    # 3.3--3.6 只显示讲义与文字数学案例；编译计划不含教学图元。
+    "ch03.cramer.area-ratio": "sha256:1ad7f7be8ff5164121aef975597b64a44df93b7a7c5ad29a38f1281e8c952ffe",
+    "ch03.inverse.undo": "sha256:73263a85af0e6cb9d2def60deab6fad2139c30252d29068bae9732bd295935b3",
+    "ch03.adjugate.matrix": "sha256:31c3670de8b428bd56dd4fd1ac8273760d5c8f03d8ed0d13985ed1414eb6030b",
+    "ch03.det.zero.equivalence": "sha256:147105367da70142c46b1acd171382ec08b9505c834384940bed07bfc0004840",
 }
 
 
@@ -66,7 +70,7 @@ def test_all_legacy_topic_ids_and_plan_digests_are_frozen(legacy_registry_bundle
     legacy_ids = tuple(topic.id for topic in topic_entries() if topic.chapter_number <= 3)
 
     assert legacy_ids == tuple(LEGACY_PLAN_DIGESTS)
-    assert len(legacy_ids) == 30
+    assert len(legacy_ids) == 28
     for topic_id, expected_digest in LEGACY_PLAN_DIGESTS.items():
         bundle = registry.resolve_bundle(topic_id, artifact_store=store)
         assert bundle.compiled.plan_digest == expected_digest

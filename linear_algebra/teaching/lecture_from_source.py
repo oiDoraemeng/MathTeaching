@@ -38,14 +38,22 @@ _VERBATIM_TOPICS = frozenset(
         "ch02.matrix.transformed-grid",
         # 2.4 已由质量适配器处理（定义 2.6/2.7 + 分配律两路线案例）。
         "ch02.matrix.additive-distributivity",
+        # 2.6 只发布讲义定义、定理及原证明；分层例题和自检不进入解释正文。
+        "ch02.matrix.composition",
         # 2.2 已由质量适配器处理。
         "ch02.batch.inner-products",
         # 2.3 已由质量适配器完整保留定义并加入用户确认的单一批量案例。
         "ch02.batch.projection",
         # 2.7 已由质量适配器处理。
         "ch02.matrix.basis",
+        # 2.8 只取原定义、转置性质与证明、两个原例题，不重复合并后续小节。
+        "ch02.matrix.powers",
         # 3.1 已由质量适配器处理，避免误收未发布的 3.1.4。
         "ch03.det.oriented-area",
+        # 3.2 按定理 3.2–3.4 分成三个目录主题，由专用适配器保留对应讲义正文。
+        "ch03.det.basic-properties",
+        "ch03.det.multiplicativity",
+        "ch03.det.transpose",
         # 4.3 已由质量适配器处理，避免误收未发布内容。
         "ch04.basis.definition",
         # 4.2 由专用适配器保留 4.2.1、4.2.2 的顺序和标题。

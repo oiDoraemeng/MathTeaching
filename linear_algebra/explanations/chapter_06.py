@@ -1,6 +1,6 @@
 from .model import ExplanationContent
 
-_IDS = ("basis-change.motivation", "basis-change.coordinates", "similarity-transform")
+_IDS = ("basis-change.coordinates", "similarity-transform")
 
 
 def _content(topic: str) -> ExplanationContent:
