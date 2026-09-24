@@ -81,6 +81,13 @@ class ScenePaneWidget(QWidget):
     recreate the control without losing the scene model.
     """
 
+    # 拖动左右面板分隔条时 ``resizeEvent`` 会以鼠标事件频率连续触发。若每次都在
+    # 当前事件里同步完成所有窗格的几何更新、2-D 视图拟合、3-D 箭头重建与
+    # ``VTK render``，GUI 线程会被拖满：分隔条只能成块地跳，原生 VTK 窗口在
+    # 重绘间隙露出黑底。几何立即前推保证跟手，真正的重绘用单发定时器合并，
+    # 最多约每 16ms 一次。
+    _RESIZE_RENDER_INTERVAL_MS = 16
+
     def __init__(self, manager: ScenePaneManager, parent: QWidget | None = None,
                  interactor_factory: Callable[[QWidget], Any] | None = None,
                  on_interactor_created: Callable[[str, Any], None] | None = None,
@@ -97,6 +104,11 @@ class ScenePaneWidget(QWidget):
         self._retry_timers: dict[str, QTimer] = {}
         self._refresh_callbacks: dict[str, Callable[[str], None]] = {}
         self._refreshing = False
+        # 批量切换可见集合期间只记录最终状态，结束后一次性物化。
+        self._layout_batch_depth = 0
+        # 拖动面板分隔条期间只前推几何、暂停整窗重绘。
+        self._panel_dragging = False
+        self._panel_drag_geometry: dict[str, QRect] = {}
         # 记录全屏窗格及被隐藏布局，使按钮可恢复原布局。
         self._fullscreen_pane_id: str | None = None
         self._fullscreen_restore_ids: tuple[str, ...] = ()
@@ -105,6 +117,10 @@ class ScenePaneWidget(QWidget):
         manager.pane_renamed.connect(self._on_pane_renamed)
         manager.visible_panes_changed.connect(self.sync_layout)
         manager.workspace_restored.connect(self._restore_workspace)
+        self._resize_render_timer = QTimer(self)
+        self._resize_render_timer.setSingleShot(True)
+        self._resize_render_timer.setInterval(self._RESIZE_RENDER_INTERVAL_MS)
+        self._resize_render_timer.timeout.connect(self._render_after_resize)
         self.sync_layout()
 
     def _restore_workspace(self) -> None:
@@ -142,8 +158,30 @@ class ScenePaneWidget(QWidget):
             return chrome.geometry()
         return self.manager.layout_rects(self.size()).get(target, self.rect())
 
+    def begin_layout_batch(self) -> None:
+        """Defer layout materialization until the matching :meth:`end_layout_batch`.
+
+        Teaching-case switches change the visible pane set several times in one
+        synchronous call stack (leave lecture, register cases, enter lecture,
+        show all).  Each intermediate ``visible_panes_changed`` would otherwise
+        tear down and rebuild VTK surfaces, painting a lone full-size pane
+        before the final split.  Batch the changes so only the final set
+        materializes once.
+        """
+        self._layout_batch_depth += 1
+
+    def end_layout_batch(self) -> tuple[str, ...]:
+        if self._layout_batch_depth > 0:
+            self._layout_batch_depth -= 1
+        if self._layout_batch_depth == 0:
+            return self.sync_layout()
+        return self.manager.visible_pane_ids()
+
     def sync_layout(self) -> tuple[str, ...]:
         visible = self.manager.visible_pane_ids()
+        if self._layout_batch_depth > 0:
+            # 批量切换期间只累积最终可见集合，等结束时一次性物化。
+            return visible
         visible_set = set(visible)
         if self._fullscreen_pane_id is not None and self._fullscreen_pane_id not in visible_set:
             # 窗格通过隐藏、关闭或换布局离开时取消全屏记录。
@@ -364,7 +402,6 @@ class ScenePaneWidget(QWidget):
             self._schedule_retry(pane_id)
         else:
             self._clear_retry(pane_id)
-        self._update_highlight()
 
     def _schedule_retry(self, pane_id: str) -> None:
         if pane_id in self._retry_timers:
@@ -382,6 +419,8 @@ class ScenePaneWidget(QWidget):
             self._retry_timers.pop(pane_id, None)
             timer.deleteLater()
             self._refresh_pane(pane_id)
+            # 重绘入口不再逐个窗格刷新高亮，这里补一次即可。
+            self._update_highlight()
 
         timer.timeout.connect(retry)
         timer.start()
@@ -440,6 +479,69 @@ class ScenePaneWidget(QWidget):
 
     def resizeEvent(self, event: Any) -> None:
         super().resizeEvent(event)
+        # 几何立即前推，保证拖动分隔条时窗格边界跟手；完整重绘（含 2-D 拟合、
+        # 3-D 箭头重建与 VTK render）交给节流定时器，避免每帧重复全量重绘。
+        self._reflow_pane_geometry()
+        if self._panel_dragging:
+            # 正在拖动分隔条：只让几何跟手，整窗重绘留到松开时一次完成，
+            # 避免每帧 VTK render 造成卡顿和原生窗口露出黑底。
+            return
+        if not self._resize_render_timer.isActive():
+            self._resize_render_timer.start()
+
+    def set_panel_dragging(self, dragging: bool) -> None:
+        """拖动面板分隔条期间暂停整窗重绘，松开后补一次完整重绘。
+
+        几何每帧照常前推，保证窗格边界跟手；昂贵的重绘（2-D 拟合、3-D 重建、
+        VTK render）推迟到拖动结束，既避免卡顿，也避免原生 VTK 窗口在部分
+        重绘间隙露出黑底。
+        """
+        dragging = bool(dragging)
+        if dragging == self._panel_dragging:
+            return
+        if dragging:
+            # Keep the native VTK child surfaces at their last painted size.
+            # Resizing a QVTKRenderWindowInteractor on every divider event
+            # clears its Windows backing store before the next render, which
+            # is the black flash visible during panel dragging.
+            self._panel_drag_geometry = {}
+            for pane_id in self.manager.visible_pane_ids():
+                target = self._chromes.get(pane_id) or self._interactors.get(pane_id)
+                if target is not None and isValid(target):
+                    self._panel_drag_geometry[pane_id] = QRect(target.geometry())
+            self._panel_dragging = True
+            # A resize event may have queued a timer just before the mouse
+            # press reached the handle.  Cancel it so no expensive render can
+            # run in the middle of the drag.
+            self._resize_render_timer.stop()
+        else:
+            self._panel_dragging = False
+            self._panel_drag_geometry = {}
+            self._resize_render_timer.stop()
+            self._reflow_pane_geometry()
+            self.refresh_visible_panes()
+
+    def _reflow_pane_geometry(self) -> None:
+        """Move visible panes to the new rectangles without a full redraw."""
+        if self._refreshing:
+            return
+        rects = self.manager.layout_rects(self.size())
+        for pane_id in self.manager.visible_pane_ids():
+            chrome = self._chromes.get(pane_id)
+            target = chrome if chrome is not None else self._interactors.get(pane_id)
+            if target is not None and isValid(target):
+                rect = rects.get(pane_id, self.rect())
+                if self._panel_dragging:
+                    painted = self._panel_drag_geometry.get(pane_id)
+                    if painted is not None:
+                        # Move with the changing viewport origin, but do not
+                        # resize the native surface until the drag is over.
+                        rect = QRect(rect.topLeft(), painted.size())
+                target.setGeometry(rect)
+
+    def _render_after_resize(self) -> None:
+        if self._panel_dragging:
+            return
         self.refresh_visible_panes()
 
     def showEvent(self, event: Any) -> None:

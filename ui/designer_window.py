@@ -124,6 +124,14 @@ _CHAPTER_TWO_MATRIX_TOOL_TOPICS = frozenset(
         "ch02.matrix.powers",
     }
 )
+_CHAPTER_SEVEN_MATRIX_TOOL_TOPICS = frozenset(
+    {
+        "ch07.eigen.direction",
+        "ch07.characteristic-polynomial",
+        "ch07.eigenspace",
+        "ch07.diagonalization",
+    }
+)
 _DETERMINANT_MATRIX_TOOL_TOPICS = frozenset(
     {
         "ch03.det.basic-properties",
@@ -131,7 +139,12 @@ _DETERMINANT_MATRIX_TOOL_TOPICS = frozenset(
         "ch03.det.transpose",
     }
 )
-
+_CHAPTER_FOUR_MATRIX_TOOL_TOPICS = frozenset(
+    {
+        "ch04.basis.definition",
+        "ch04.linear-map.definition",
+    }
+)
 _ANNOTATION_TEXT_COMMAND = re.compile(r"\\(?:text|mathrm|operatorname)\{([^{}]*)\}")
 
 
@@ -1748,7 +1761,42 @@ class MainWindow:
             panel.set_layers(
                 self._two_d_panel_layers() if mode is SceneMode.TWO_D else self._three_d_panel_layers()
             )
+        self._sync_teaching_algebra_panel_visibility(pane_id)
         self._sync_scene_controls()
+
+    def _sync_teaching_algebra_panel_visibility(self, pane_id: str | None = None) -> None:
+        """Keep the algebra column while a lecture is loaded; hide it only when a focused case pane is genuinely empty."""
+        panel = getattr(self, "algebra_panel", None)
+        if panel is None:
+            return
+        manager = getattr(self, "pane_manager", None)
+        active_pane_id = pane_id or getattr(manager, "active_pane_id", None)
+        is_case_pane = active_pane_id in tuple(getattr(self, "_teaching_case_pane_ids", ()))
+        # Registering a case pane and materializing its renderer happen in
+        # separate callbacks.  During that short hand-off the panel has no
+        # layers yet, but hiding it would let the VTK viewport expand into the
+        # left column for one frame.  Keep the column stable until the final
+        # layer/matrix synchronization decides its steady-state visibility.
+        materializing = getattr(self, "_teaching_case_materializing", False)
+        visible = True
+        if is_case_pane and not materializing:
+            has_layers = bool(getattr(panel, "_layers", ()))
+            matrix_editor = getattr(panel, "matrix_transform_editor", None)
+            has_matrix_editor = bool(matrix_editor(active_pane_id)) if callable(matrix_editor) else False
+            # 已加载的讲义把讲解内容放在代数区。切换 2D/3D 后当前案例可能暂时没有
+            # 可显示的场景图元，但代数区不能被中间视口吞掉，否则讲解列会整列消失。
+            loaded_lecture = bool(
+                getattr(self, "_active_linear_algebra_topic_id", None)
+                and getattr(self, "_active_linear_algebra_explanation_case", None) is not None
+            )
+            visible = has_layers or has_matrix_editor or loaded_lecture
+        set_panel_visible = getattr(panel, "setVisible", None)
+        if callable(set_panel_visible):
+            set_panel_visible(visible)
+        resize_handle = getattr(self, "algebra_resize_handle", None)
+        set_handle_visible = getattr(resize_handle, "setVisible", None)
+        if callable(set_handle_visible):
+            set_handle_visible(visible)
 
     # AI 场景命令适配层
 
@@ -2617,6 +2665,17 @@ class MainWindow:
         elif name == "geometry.subspace_region":
             basis = tuple(tuple(float(v) for v in row) for row in operation["basis"])  # type: ignore[index]
             self._pane_scene().geometry_controller.add_teaching_subspace_region(basis, tuple(float(v) for v in operation["bounds"]), alias=str(operation["alias"]) if operation.get("alias") else None, origin=tuple(float(v) for v in operation.get("origin", (0.0, 0.0))), color=str(operation.get("color", "#4c9f70")), opacity=float(operation.get("opacity", 0.2)))  # type: ignore[arg-type]
+        elif name == "geometry.affine_solution":
+            # 仿射解集与线性子空间共用同一图元渲染，但平移量来自 ``offset``
+            # （``origin`` 在编译产物中恒为零向量）。第五章的平移解集必须
+            # 落在这个偏移点上，不能再用原点。
+            basis = tuple(tuple(float(v) for v in row) for row in operation["basis"])  # type: ignore[index]
+            self._pane_scene().geometry_controller.add_teaching_subspace_region(basis, tuple(float(v) for v in operation["bounds"]), alias=str(operation["alias"]) if operation.get("alias") else None, origin=tuple(float(v) for v in operation.get("offset", (0.0, 0.0))), color=str(operation.get("color", "#4c9f70")), opacity=float(operation.get("opacity", 0.2)))  # type: ignore[arg-type]
+        elif name in {"geometry.matrix_tableau", "geometry.elimination_tableau"}:
+            # 阶梯矩阵只提供代数读数；几何解释由同一计划里的向量与标注绘制。
+            # 这里仅登记别名（上面已写入 _agent_teaching_2d），故事板与代数区
+            # 依靠该别名按阶段切换，宿主无需创建额外演员。
+            pass
         elif name == "geometry.basis_grid":
             basis = tuple(tuple(float(v) for v in row) for row in operation["basis_matrix"])  # type: ignore[index]
             self._pane_scene().geometry_controller.add_teaching_basis_grid(basis, tuple(float(v) for v in operation["bounds"]), alias=str(operation.get("alias", "basis-grid")), color=str(operation.get("color", "#5b8def")))  # type: ignore[arg-type]
@@ -3135,11 +3194,15 @@ class MainWindow:
                             raise CommandError("；".join(result.messages))
                         # 阶段掩码只保留当前窗格绑定的步骤。矩阵工具初始化
                         # 会触碰 WebEngine 与 VTK，必须等当前原生回调返回后再做。
+                        # 保留外层的物化状态：批量打开案例窗格时它一直是 True，
+                        # 这里若直接写回 False 会让后续窗格误以为已结束物化，
+                        # 从而同步触发矩阵工具等重活，拖慢多窗格切换。
+                        was_materializing = getattr(self, "_teaching_case_materializing", False)
                         self._teaching_case_materializing = True
                         try:
                             self._apply_linear_algebra_storyboard_visibility()
                         finally:
-                            self._teaching_case_materializing = False
+                            self._teaching_case_materializing = was_materializing
                     except Exception:
                         data = pane.scene_2d if pane.scene_mode == "2d" else pane.scene_3d
                         data["pending_plan"] = pending
@@ -3241,6 +3304,24 @@ class MainWindow:
         return self._open_teaching_case_panes_impl(explanation_case, compiled, defer_render=False)
 
     def _open_teaching_case_panes_impl(self, explanation_case: object, compiled: object | None, *, defer_render: bool = False) -> None:
+        container = getattr(self, "scene_pane_widget", None)
+        batching = (
+            container is not None
+            and not defer_render
+            and hasattr(container, "begin_layout_batch")
+            and hasattr(container, "end_layout_batch")
+        )
+        if batching:
+            # 打开案例窗格会在同一调用栈里多次改动可见集合；先合并，结束时
+            # 一次性物化最终布局，避免出现「先整屏单窗格、再拆成多窗格」的闪动。
+            container.begin_layout_batch()
+        try:
+            self._materialize_teaching_case_panes(explanation_case, compiled, defer_render=defer_render)
+        finally:
+            if batching:
+                container.end_layout_batch()
+
+    def _materialize_teaching_case_panes(self, explanation_case: object, compiled: object | None, *, defer_render: bool = False) -> None:
         self._close_teaching_case_panes()
         if compiled is None or getattr(compiled, "plan", None) is None:
             return
@@ -3277,8 +3358,17 @@ class MainWindow:
                 pass
             pane_id = self.pane_manager.register_case(case_id, name=name)
             pane = self.pane_manager.pane(pane_id)
-            extended = str(getattr(compiled, "topic_id", "")).startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08."))
-            plan = compiled.plan if extended and getattr(compiled, "storyboard", ()) else (case_plan(compiled, refs[0]) if refs else compiled.plan)
+            topic_id = str(getattr(compiled, "topic_id", ""))
+            extended = topic_id.startswith(("ch04.", "ch05.", "ch06.", "ch07.", "ch08."))
+            # 矩阵案例必须走与工具栏相同的阶段筛选和矩阵网格计划工厂；
+            # 这样案例窗格、代数区和"矩阵变换"设置使用同一条链路。
+            if (
+                (topic_id.startswith("ch07.") or topic_id in _CHAPTER_FOUR_MATRIX_TOOL_TOPICS)
+                and refs
+            ):
+                plan = case_plan(compiled, refs[0])
+            else:
+                plan = compiled.plan if extended and getattr(compiled, "storyboard", ()) else (case_plan(compiled, refs[0]) if refs else compiled.plan)
             pane.scene_mode = plan.scene
             data = pane.scene_2d if plan.scene == "2d" else pane.scene_3d
             data["pending_plan"] = plan.to_dict()
@@ -3413,6 +3503,7 @@ class MainWindow:
                 panel.set_layers(
                     self._two_d_panel_layers() if mode is SceneMode.TWO_D else self._three_d_panel_layers()
                 )
+        self._sync_teaching_algebra_panel_visibility(active_pane_id)
 
     @staticmethod
     def _basis_matrix_latex(matrix: object) -> str | None:
@@ -3460,7 +3551,11 @@ class MainWindow:
         latex = self._basis_matrix_latex(matrix_value)
         if latex is None:
             return
-        if topic_id in _CHAPTER_TWO_MATRIX_TOOL_TOPICS:
+        if (
+            topic_id in _CHAPTER_TWO_MATRIX_TOOL_TOPICS
+            or topic_id in _CHAPTER_SEVEN_MATRIX_TOOL_TOPICS
+            or topic_id in _CHAPTER_FOUR_MATRIX_TOOL_TOPICS
+        ):
             # 第二章矩阵案例使用工具栏“矩阵变换”的标准代数表达式；画布上的
             # 矩阵标注只负责就地说明，不再充当第二条代数记录。
             latex = f"A={latex}"
@@ -3473,7 +3568,11 @@ class MainWindow:
         )
         model.set_matrix_transform_value(latex)
         bounds = grid.get("bounds")
-        if isinstance(bounds, (list, tuple)) and bounds:
+        if topic_id in _CHAPTER_SEVEN_MATRIX_TOOL_TOPICS:
+            # 第七章矩阵案例沿用矩阵工具默认网格数量 5；之后用户仍可
+            # 通过同一个设置入口修改。
+            model.set_matrix_transform_grid_range(5)
+        elif isinstance(bounds, (list, tuple)) and bounds:
             try:
                 extent = max(abs(float(value)) for value in bounds)
             except (TypeError, ValueError):
@@ -4757,10 +4856,13 @@ class MainWindow:
             operations=({"op": "scene.clear", "scope": "all"}, *lesson_plan.operations),
         )
 
-    def _linear_algebra_source_repository(self) -> LectureSourceRepository:
-        """切换主题时复用讲义索引。"""
+    def _linear_algebra_source_repository(self) -> LectureSourceRepository | None:
+        """开发环境存在讲义源时复用索引；发布环境允许没有源文件。"""
 
         source_path = Path(__file__).resolve().parents[1] / ".agents" / "线性代数讲义.md"
+        if not source_path.is_file():
+            self._linear_algebra_source_repository_instance = None
+            return None
         repository = getattr(self, "_linear_algebra_source_repository_instance", None)
         if repository is None or repository.path != source_path:
             repository = LectureSourceRepository(source_path)
@@ -4928,11 +5030,16 @@ class MainWindow:
                 self._pending_curriculum_plan = lesson_plan
                 self._pending_curriculum_previous_scene = previous_scene_snapshot
             text_only = not tuple(getattr(topic, "required_capabilities", ()))
-            if text_only:
-                # 纯讲义主题不注册案例窗格，也不触发 VTK/矩阵工具链。
-                self._close_teaching_case_panes()
-            else:
-                self._open_teaching_case_panes(explanation_case, compiled)
+            was_materializing = getattr(self, "_teaching_case_materializing", False)
+            self._teaching_case_materializing = True
+            try:
+                if text_only:
+                    # 纯讲义主题不注册案例窗格，也不触发 VTK/矩阵工具链。
+                    self._close_teaching_case_panes()
+                else:
+                    self._open_teaching_case_panes(explanation_case, compiled)
+            finally:
+                self._teaching_case_materializing = was_materializing
             if extended:
                 target_pane = next(iter(getattr(self, "_teaching_case_pane_ids", ())), None)
                 if target_pane is None:
@@ -5033,9 +5140,11 @@ class MainWindow:
         *,
         registry: CurriculumRegistry,
         store: TeachingArtifactStore,
-        source_repository: LectureSourceRepository,
+        source_repository: LectureSourceRepository | None,
     ) -> AuthoringSyncResult | None:
         if not getattr(self, "_teaching_authoring_enabled", False):
+            return None
+        if source_repository is None:
             return None
         if not workspace_authoring_available(store=store):
             return None
@@ -8643,7 +8752,13 @@ class MainWindow:
         alias_filter = self._teaching_case_alias_filter()
         compiled = getattr(self, "_active_linear_algebra_compiled", None)
         toolbar_matrix_label_aliases: set[str] = set()
-        if str(getattr(compiled, "topic_id", "")) in _CHAPTER_TWO_MATRIX_TOOL_TOPICS:
+        topic_id = str(getattr(compiled, "topic_id", ""))
+        chapter_seven_case = topic_id in _CHAPTER_SEVEN_MATRIX_TOOL_TOPICS
+        if str(getattr(compiled, "topic_id", "")) in (
+            _CHAPTER_TWO_MATRIX_TOOL_TOPICS
+            | _CHAPTER_SEVEN_MATRIX_TOOL_TOPICS
+            | _CHAPTER_FOUR_MATRIX_TOOL_TOPICS
+        ):
             toolbar_matrix_label_aliases = {
                 f"{alias}__label"
                 for operation in compiled.plan.operations
@@ -8680,6 +8795,10 @@ class MainWindow:
             ):
                 return False
             if isinstance(item, Linear2D) and item.agent_alias in addition_helper_aliases:
+                return False
+            if chapter_seven_case and isinstance(item, Point2D):
+                # 矩阵案例代数区以矩阵与向量公式为主。向量端点只负责画图，
+                # 列成 O、v1、Av1 等点坐标会和公式重复并制造无关标签。
                 return False
             if (
                 isinstance(item, Annotation2D)

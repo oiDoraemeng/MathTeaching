@@ -47,6 +47,10 @@ def build_application_font() -> QFont:
 
 def main() -> int:
     app = QApplication(sys.argv)
+    # Keep all QSettings-backed UI preferences in the same application scope
+    # as AgentSettingsDialog and the panel resize handles.
+    app.setOrganizationName("Math3DTeaching")
+    app.setApplicationName("Math3DTeaching")
     install_titlebar_tracker(app)
     app.setStyle("Fusion")
     settings = QSettings()

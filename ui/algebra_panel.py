@@ -909,6 +909,8 @@ class AlgebraPanel(QFrame):
         self.setMinimumWidth(self.MIN_WIDTH)
         self.setMaximumWidth(self.MAX_WIDTH)
         layout = QVBoxLayout(self)
+        self._panel_layout = layout
+        self._panel_dragging = False
         layout.setContentsMargins(10, 12, 10, 10)
         layout.setSpacing(7)
         toolbar = QHBoxLayout()
@@ -993,6 +995,50 @@ class AlgebraPanel(QFrame):
 
     def showEvent(self, event: QShowEvent) -> None:
         super().showEvent(event)
+
+    def set_panel_dragging(self, dragging: bool) -> None:
+        """Keep the WebEngine surface at its last painted size while resizing.
+
+        QtWebEngine owns a native composited surface.  Resizing it on every
+        splitter event exposes an unpainted backing store (black on Windows)
+        before Chromium can produce the next frame.  Holding the algebra
+        layout during the drag lets the opaque panel background follow the
+        splitter while the native surface remains stable; the final layout is
+        activated once on release.
+        """
+        dragging = bool(dragging)
+        if dragging == self._panel_dragging:
+            return
+        self._panel_dragging = dragging
+        models = tuple(getattr(self, "_pane_models", {}).values())
+        views = tuple(
+            view
+            for model in models
+            if (view := getattr(model, "web_view", None)) is not None
+        )
+        if dragging:
+            self._panel_layout.setEnabled(False)
+            for view in views:
+                view.setUpdatesEnabled(False)
+            return
+
+        self._panel_layout.setEnabled(True)
+        self._panel_layout.activate()
+        for view in views:
+            view.setUpdatesEnabled(True)
+            view.update()
+        self.update()
+        # Let the native child receive the final geometry before refreshing.
+        QTimer.singleShot(0, self._refresh_after_panel_drag)
+
+    def _refresh_after_panel_drag(self) -> None:
+        if self._panel_dragging:
+            return
+        self._panel_layout.activate()
+        for model in tuple(getattr(self, "_pane_models", {}).values()):
+            view = getattr(model, "web_view", None)
+            if view is not None:
+                view.update()
 
     def restore_render_surface(self) -> None:
         """Restore the active algebra WebEngine after window restoration."""

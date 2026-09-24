@@ -90,3 +90,58 @@ def test_double_click_resets_and_new_handle_restores_width(tmp_path) -> None:
     assert settings.value(spec.settings_key, type=int) == 440
     restored = _PanelResizeHandle(spec, settings=settings)
     assert restored.restore_width() == 440
+
+
+def test_drag_persists_only_on_release(tmp_path) -> None:
+    """拖动过程中不写设置，松开后才持久化，避免每帧同步写盘拖慢交互。"""
+    app = QApplication.instance() or QApplication([])
+    settings = QSettings(str(tmp_path / "settings.ini"), QSettings.Format.IniFormat)
+    spec = PanelResizeSpec(260, 420, 320, "ui/algebra_panel_width", "right")
+    handle = _PanelResizeHandle(spec, settings=settings)
+    handle.set_width(320)
+    handle.resize(6, 24)
+    handle.show()
+    QApplication.processEvents()
+    QTest.mousePress(handle, Qt.MouseButton.LeftButton, pos=QPoint(2, 2))
+    QTest.mouseMove(handle, QPoint(82, 2))
+    assert handle.current_width == 400
+    assert settings.value(spec.settings_key, type=int) == 320
+    QTest.mouseRelease(handle, Qt.MouseButton.LeftButton, pos=QPoint(82, 2))
+    assert settings.value(spec.settings_key, type=int) == 400
+
+
+def test_drag_baseline_follows_live_width_not_stored_value(tmp_path) -> None:
+    """按下时以面板当前宽度为基准，持久化值落后也不会跳回旧宽度。"""
+    app = QApplication.instance() or QApplication([])
+    settings = QSettings(str(tmp_path / "settings.ini"), QSettings.Format.IniFormat)
+    spec = PanelResizeSpec(260, 420, 320, "ui/algebra_panel_width", "right")
+    handle = _PanelResizeHandle(spec, settings=settings)
+    handle.set_width(400)
+    # 模拟持久化值与显示宽度不同步（例如外部改动后未写回）。
+    settings.setValue(spec.settings_key, 300)
+    handle.resize(6, 24)
+    handle.show()
+    QApplication.processEvents()
+    QTest.mousePress(handle, Qt.MouseButton.LeftButton, pos=QPoint(2, 2))
+    QTest.mouseMove(handle, QPoint(2, 2))
+    assert handle.current_width == 400
+    QTest.mouseRelease(handle, Qt.MouseButton.LeftButton, pos=QPoint(2, 2))
+
+
+def test_double_click_after_drag_does_not_reset(tmp_path) -> None:
+    """连续点击微调会被系统识别成双击；上一次点击有拖动时不应复位。"""
+    app = QApplication.instance() or QApplication([])
+    settings = QSettings(str(tmp_path / "settings.ini"), QSettings.Format.IniFormat)
+    spec = PanelResizeSpec(360, 720, 440, "ui/agent_panel_width", "left")
+    handle = _PanelResizeHandle(spec, settings=settings)
+    handle.set_width(440)
+    handle.resize(6, 24)
+    handle.show()
+    QApplication.processEvents()
+    QTest.mousePress(handle, Qt.MouseButton.LeftButton, pos=QPoint(2, 2))
+    QTest.mouseMove(handle, QPoint(62, 2))
+    QTest.mouseRelease(handle, Qt.MouseButton.LeftButton, pos=QPoint(62, 2))
+    dragged = settings.value(spec.settings_key, type=int)
+    assert dragged == 380
+    QTest.mouseDClick(handle, Qt.MouseButton.LeftButton, pos=QPoint(2, 2))
+    assert settings.value(spec.settings_key, type=int) == dragged

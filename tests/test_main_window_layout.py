@@ -3,12 +3,13 @@
 import os
 from pathlib import Path
 import unittest
+from types import SimpleNamespace
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import QFile, QIODevice
 from PySide6.QtUiTools import QUiLoader
-from PySide6.QtWidgets import QApplication, QHBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QHBoxLayout, QVBoxLayout, QWidget
 
 from MathInputWidget import LatexParser
 from ui.algebra_panel import AlgebraPanel
@@ -43,6 +44,26 @@ class MainWindowLayoutTests(unittest.TestCase):
         self.assertEqual(root_layout.itemAt(2).widget().objectName(), "viewportHost")
         self.assertEqual(window.algebra_panel.MIN_WIDTH, 260)
         self.assertEqual(window.algebra_panel.MAX_WIDTH, 420)
+
+    def test_algebra_panel_freezes_web_surfaces_during_splitter_drag(self) -> None:
+        host = QWidget()
+        layout = QVBoxLayout(host)
+        view = QWidget(host)
+        layout.addWidget(view)
+        panel = object.__new__(AlgebraPanel)
+        panel._panel_layout = layout
+        panel._panel_dragging = False
+        panel._pane_models = {"pane": SimpleNamespace(web_view=view)}
+        panel.update = lambda: None
+
+        AlgebraPanel.set_panel_dragging(panel, True)
+        self.assertFalse(layout.isEnabled())
+        self.assertFalse(view.updatesEnabled())
+
+        AlgebraPanel.set_panel_dragging(panel, False)
+        self.assertTrue(layout.isEnabled())
+        self.assertTrue(view.updatesEnabled())
+        host.deleteLater()
 
     def test_binding_populates_the_builtin_surface_menu(self) -> None:
         window = object.__new__(MainWindow)
