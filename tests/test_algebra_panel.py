@@ -513,6 +513,18 @@ class AlgebraPanelTests(unittest.TestCase):
         self.assertEqual(segment_payload["latex"], "s_1")
         self.assertNotIn("?", segment_payload["latex"])
 
+    def test_unnamed_geometry_helpers_do_not_create_blank_algebra_rows(self) -> None:
+        helper_point = Point2D("", 0.0, 0.0)
+        named_point = Point2D("A", 1.0, 2.0)
+        helper_segment = Linear2D("", "segment", helper_point.id, "missing")
+        panel = AlgebraPanel()
+
+        panel.set_layers([helper_point, named_point, helper_segment])
+
+        self.assertNotIn(helper_point.id, panel.formula_list._layers)
+        self.assertNotIn(helper_segment.id, panel.formula_list._layers)
+        self.assertIn(named_point.id, panel.formula_list._layers)
+
     def test_user_annotation_rows_commit_and_close_immediately(self) -> None:
         annotation = Annotation2D("标记 1", "标记", 1.0, 2.0, latex="标记", editable=True)
         panel = AlgebraPanel()

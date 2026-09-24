@@ -200,7 +200,24 @@ class FormulaListWidget(QWidget):
 
     def set_layers(self, layers: list[Layer]) -> None:
         had_active_edit = self._active_layer_id is not None
-        self._layers = {layer.id: layer for layer in layers}
+        # 教学几何会创建一些只用于绘图的辅助端点。它们没有学生可读的
+        # 名称，若直接送进 MathLive，会退化成 ``=(x,y)`` 的空白公式行。
+        # 统一在列表入口过滤，避免不同窗格/同步时序把这些内部对象重新显示
+        # 到代数区；有名称的点、可读的向量以及 FormulaDraft 不受影响。
+        materialized = list(layers)
+        points = {
+            layer.id: layer
+            for layer in materialized
+            if isinstance(layer, Point2D)
+        }
+        visible_layers: list[Layer] = []
+        for layer in materialized:
+            if isinstance(layer, Point2D) and not layer.name.strip():
+                continue
+            if isinstance(layer, Linear2D) and not geometry_latex(layer, points).strip():
+                continue
+            visible_layers.append(layer)
+        self._layers = {layer.id: layer for layer in visible_layers}
         self._active_layer_id = None
         if had_active_edit:
             self.keyboard_dismissed.emit()
