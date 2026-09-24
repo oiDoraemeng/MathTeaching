@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { MarkdownContent } from "./MarkdownContent";
+import { InlineMarkdown, MarkdownContent } from "./MarkdownContent";
 import type { CaseProjection } from "../types";
 
 /** 将来源明确的解释组织为连续讲义。 */
@@ -117,13 +117,13 @@ export function MathCaseView({
   return (
     <article className={`math-case-view${isVectorAddition ? " math-case-view--vector-addition" : ""}${hasCaseLayout && !isVectorAddition ? " math-case-view--case-layout" : ""}${isLectureProof ? " math-case-view--proof" : ""}${usesChapterThreeLectureTypography ? " math-case-view--chapter-three-text" : ""}`} aria-label={`${caseData.name}数学解释`} aria-busy={!sceneReady}>
       <header className="math-case-header">
-        <span>{caseData.category}</span>
-        <h1>{caseData.name}</h1>
-        {caseData.summary && <p>{caseData.summary}</p>}
+        <span><InlineMarkdown>{caseData.category}</InlineMarkdown></span>
+        <h1><InlineMarkdown>{caseData.name}</InlineMarkdown></h1>
+        {caseData.summary && <p><InlineMarkdown>{caseData.summary}</InlineMarkdown></p>}
         {caseData.source && (caseData.source.headingPath.length > 0 || caseData.source.sourcePath.length > 0) && (
           <section className="math-case-source" aria-label="讲义来源">
             <span>讲义来源：</span>
-            <span>{[...caseData.source.sourcePath, ...caseData.source.headingPath].join(" / ")}</span>
+            <span><InlineMarkdown>{[...caseData.source.sourcePath, ...caseData.source.headingPath].join(" / ")}</InlineMarkdown></span>
             {caseData.source.sourceHash && <small>（{caseData.source.sourceHash}）</small>}
           </section>
         )}

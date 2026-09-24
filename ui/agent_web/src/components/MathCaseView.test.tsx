@@ -58,4 +58,15 @@ describe("MathCaseView", () => {
     expect(screen.getByRole("heading", { name: "内积的基本性质", level: 2 })).toBeInTheDocument();
     expect(screen.queryByRole("region", { name: "讲义正文" })).not.toBeInTheDocument();
   });
+
+  it("renders header LaTeX as math instead of literal dollar signs", () => {
+    const { container } = render(<MathCaseView caseData={{
+      id: "ch02.matrix.composition", category: "2.6 矩阵 $\\times$ 矩阵", name: "复合变换与 AB≠BA",
+      summary: "矩阵乘以矩阵是「变换的复合」——先做 $\\boldsymbol B$ 再做 $\\boldsymbol A$，等于做 $\\boldsymbol A\\boldsymbol B$。",
+      formula: "", steps: [], conclusion: "",
+    }} />);
+    expect(container.querySelector(".math-case-header > span .katex")).not.toBeNull();
+    expect(container.querySelector(".math-case-header p .katex")).not.toBeNull();
+    expect(container.querySelector(".math-case-header")?.textContent ?? "").not.toContain("$");
+  });
 });
