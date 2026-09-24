@@ -44,6 +44,14 @@ _MATRIX_TOOL_CASE_TOPICS = frozenset(
         "ch02.matrix.composition",
         "ch02.matrix.basis",
         "ch02.matrix.powers",
+        "ch04.basis.definition",
+        "ch04.linear-map.definition",
+        "ch06.basis-change.coordinates",
+        "ch06.similarity-transform",
+        "ch07.eigen.direction",
+        "ch07.characteristic-polynomial",
+        "ch07.eigenspace",
+        "ch07.diagonalization",
     }
 )
 _MATRIX_WORKSPACE_CASE_TOPICS = frozenset(
@@ -115,16 +123,22 @@ def _operation_visible(operation: Mapping[str, Any], controlled: set[str], visib
 
 
 def _toolbar_matrix_grid(
-    operation: Mapping[str, Any], *, preserve_color: bool = False
+    operation: Mapping[str, Any], *, preserve_color: bool = False,
+    grid_range: float | None = None,
 ) -> dict[str, Any]:
     """Rebuild one lesson grid through the same plan factory as the 2-D toolbar."""
 
+    matrix_value = operation.get("basis_matrix", operation.get("matrix", ()))
     matrix = tuple(
         tuple(float(value) for value in row)
-        for row in operation.get("matrix", ())
+        for row in matrix_value
     )
     bounds = tuple(float(value) for value in operation.get("bounds", ()))
-    extent = max((abs(value) for value in bounds), default=5.0)
+    extent = (
+        max(1.0, min(float(grid_range), 100.0))
+        if grid_range is not None
+        else max((abs(value) for value in bounds), default=5.0)
+    )
     alias = str(operation.get("alias", "teaching_matrix"))
     tool_operation = dict(
         build_matrix_grid_tool_plan(matrix, extent, alias).operations[0]  # type: ignore[arg-type]
@@ -136,19 +150,64 @@ def _toolbar_matrix_grid(
     return tool_operation
 
 
+def _uses_matrix_toolbar_grid(topic_id: str, operation: Mapping[str, Any]) -> bool:
+    """Return whether one lesson grid is representable by the matrix tool."""
+
+    if operation.get("op") not in {"geometry.basis_grid", "geometry.transformed_grid"}:
+        return False
+    if topic_id == "ch04.linear-map.definition":
+        # The translation witness is intentionally affine.  A matrix toolbar
+        # row for its linear part would incorrectly present T(v)=v+b as A=I.
+        origin = operation.get("origin", (0.0, 0.0))
+        try:
+            return all(abs(float(value)) <= 1e-12 for value in origin)
+        except (TypeError, ValueError):
+            return False
+    return True
+
+
 def _matrix_case_view_bounds(compiled: Any) -> list[float] | None:
     """Return one shared viewport from toolbar grid ranges and lesson points."""
 
     coordinates: list[tuple[float, float]] = []
+    chapter_six = str(getattr(compiled, "topic_id", "")).startswith("ch06.")
     for operation in compiled.plan.operations:
-        if operation.get("op") == "geometry.transformed_grid":
+        if operation.get("op") in {"geometry.basis_grid", "geometry.transformed_grid"}:
             try:
-                left, right, bottom, top = (
-                    float(value) for value in operation["bounds"]
-                )
+                if chapter_six:
+                    # Chapter 6 case grids are rebuilt by the matrix toolbar
+                    # with its default range of 5. Fit their transformed
+                    # corners, not the compiler's old untransformed +/-6 box.
+                    left, right, bottom, top = -5.0, 5.0, -5.0, 5.0
+                else:
+                    left, right, bottom, top = (
+                        float(value) for value in operation["bounds"]
+                    )
             except (KeyError, TypeError, ValueError):
                 continue
-            coordinates.extend(((left, bottom), (right, top)))
+            corners = (
+                (left, bottom),
+                (left, top),
+                (right, bottom),
+                (right, top),
+            )
+            matrix_value = operation.get("basis_matrix", operation.get("matrix"))
+            if chapter_six and matrix_value is not None:
+                try:
+                    ((a, b), (c, d)) = tuple(
+                        tuple(float(value) for value in row) for row in matrix_value
+                    )
+                    origin_x, origin_y = (
+                        float(value) for value in operation.get("origin", (0.0, 0.0))
+                    )
+                except (TypeError, ValueError):
+                    continue
+                coordinates.extend(
+                    (a * x + b * y + origin_x, c * x + d * y + origin_y)
+                    for x, y in corners
+                )
+            else:
+                coordinates.extend(corners)
         elif operation.get("op") == "point.upsert":
             try:
                 x, y = (float(value) for value in operation["coordinates"])
@@ -289,18 +348,66 @@ def case_plan(compiled: Any, stage_id: str) -> CommandPlan:
             if operation.get("op") != "geometry.transformed_grid"
         ]
     if topic_id in _MATRIX_TOOL_CASE_TOPICS:
+        is_chapter_seven = topic_id.startswith("ch07.")
+        is_chapter_six = topic_id.startswith("ch06.")
+        if is_chapter_seven or is_chapter_six:
+            # 第六、七章的每个案例窗格只保留当前阶段的对象；端点属于可见向量，
+            # 即使它们没有单独列在 storyboard visible_aliases 中也要一并保留。
+            def belongs_to_stage(alias: object) -> bool:
+                if not isinstance(alias, str):
+                    return False
+                if alias in visible:
+                    return True
+                for suffix in ("__origin", "__end"):
+                    if alias.endswith(suffix) and alias[: -len(suffix)] in visible:
+                        return True
+                return False
+
+            operations = [
+                operation
+                for operation in operations
+                if operation.get("op") in {"scene.set_mode", "view.fit"}
+                or belongs_to_stage(operation.get("alias"))
+            ]
+            if is_chapter_seven:
+                # The compiled direction stages contain a reference grid and
+                # its transformed copy. The matrix toolbar owns one
+                # transformed grid; keeping the reference copy would make the
+                # algebra pane select A=I instead of the stage matrix.
+                transformed_aliases = {
+                    str(operation.get("alias"))
+                    for operation in operations
+                    if operation.get("op") == "geometry.transformed_grid"
+                    and str(operation.get("alias", "")).endswith("__transformed")
+                }
+                if transformed_aliases:
+                    operations = [
+                        operation
+                        for operation in operations
+                        if operation.get("op") != "geometry.transformed_grid"
+                        or str(operation.get("alias")) in transformed_aliases
+                    ]
         operations = [
             _toolbar_matrix_grid(
                 operation,
                 preserve_color=topic_id == "ch02.matrix.powers",
+                grid_range=5.0 if (is_chapter_seven or is_chapter_six) else None,
             )
-            if operation.get("op") == "geometry.transformed_grid"
+            if _uses_matrix_toolbar_grid(topic_id, operation)
             else operation
             for operation in operations
         ]
-        bounds = _matrix_case_view_bounds(compiled) if topic_id != "ch02.matrix.powers" else None
+        if topic_id.startswith("ch06."):
+            bounds = [-8.0, 8.0, -8.0, 8.0]
+            padding = 1.0
+        elif topic_id.startswith("ch07."):
+            bounds = [-5.0, 5.0, -5.0, 5.0]
+            padding = 1.15
+        else:
+            bounds = _matrix_case_view_bounds(compiled) if topic_id != "ch02.matrix.powers" else None
+            padding = 1.15
         if bounds is not None:
-            fit = {"op": "view.fit", "padding": 1.15, "bounds": bounds}
+            fit = {"op": "view.fit", "padding": padding, "bounds": bounds}
             operations = [
                 fit if operation.get("op") == "view.fit" else operation
                 for operation in operations
@@ -696,7 +803,17 @@ class TeachingCasePane(PaneChrome):
         self.plotter.reset_camera()
         configure_2d_camera(self.plotter)
         topic_id = str(getattr(self.compiled, "topic_id", ""))
-        if topic_id in {"ch01.ops.addition", "ch02.matrix.powers"}:
+        if topic_id in {
+            "ch01.ops.addition",
+            "ch02.matrix.powers",
+            # 4.3 的计划已经声明了 [-5, 5]×[-5, 5] 的共享视窗；此前
+            # 案例窗格走通用 reset_camera，导致窄窗格里端点显得过近。
+            "ch04.basis.definition",
+        }:
+            _apply_planned_view_fit(self.plotter, plan.operations)
+        elif topic_id in _MATRIX_TOOL_CASE_TOPICS:
+            # 矩阵案例统一使用计划中的共享边界，避免按少量端点 reset_camera
+            # 后在窄窗格里把绘图区拉得过近。
             _apply_planned_view_fit(self.plotter, plan.operations)
         else:
             self.plotter.camera.parallel_scale = max(

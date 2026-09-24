@@ -98,6 +98,28 @@ def test_vector_addition_first_pane_uses_the_same_bounds_without_sum_geometry():
     )
 
 
+def test_basis_definition_case_panes_use_the_shared_wide_view():
+    compiled = catalog_registry().resolve_bundle(
+        "ch04.basis.definition",
+        artifact_store=runtime_teaching_store(),
+        source_repository=LectureSourceRepository(Path(".agents") / "线性代数讲义.md"),
+    ).compiled
+
+    fits = [
+        next(operation for operation in case_plan(compiled, stage_id).operations if operation.get("op") == "view.fit")
+        for stage_id in (
+            "stage.ch04.basis.definition.standard",
+            "stage.ch04.basis.definition.oblique",
+        )
+    ]
+
+    assert fits[0] == fits[1] == {
+        "op": "view.fit",
+        "padding": 1.15,
+        "bounds": [-5.0, 5.0, -5.0, 5.0],
+    }
+
+
 def test_three_case_panes_use_one_left_pane_and_two_stacked_right_panes():
     assert [case_pane_placement(3, index) for index in range(3)] == [
         (0, 0, 2, 1),
@@ -420,3 +442,79 @@ def test_chapter_two_matrix_cases_share_toolbar_grid_contract(
     assert fits
     assert all(operation["bounds"] == expected_bounds for operation in fits)
     assert all(operation["padding"] == 1.15 for operation in fits)
+
+
+def test_chapter_four_matrix_cases_reuse_toolbar_only_for_linear_witnesses() -> None:
+    basis = catalog_registry().resolve_bundle(
+        "ch04.basis.definition",
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    expected_basis = (
+        [[1.0, 0.0], [0.0, 1.0]],
+        [[1.0, 1.0], [1.0, -1.0]],
+    )
+    for stage, expected_matrix in zip(basis.storyboard, expected_basis):
+        operations = case_plan(basis, stage.id).operations
+        grids = [
+            operation
+            for operation in operations
+            if operation.get("op") == "geometry.transformed_grid"
+        ]
+        assert len(grids) == 1
+        assert grids[0]["matrix"] == expected_matrix
+        assert grids[0]["bounds"] == [-5.0, 5.0, -5.0, 5.0]
+        assert grids[0]["show_source_grid"] is False
+        assert grids[0]["show_basis"] is True
+        assert grids[0]["color"] == "#2f7ebd"
+
+    linear_map = catalog_registry().resolve_bundle(
+        "ch04.linear-map.definition",
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    stretch = case_plan(linear_map, linear_map.storyboard[0].id).operations
+    translation = case_plan(linear_map, linear_map.storyboard[1].id).operations
+    stretch_grid = next(
+        operation
+        for operation in stretch
+        if operation.get("op") == "geometry.transformed_grid"
+    )
+    translation_grid = next(
+        operation
+        for operation in translation
+        if operation.get("op") == "geometry.transformed_grid"
+    )
+    assert stretch_grid["matrix"] == [[2.0, 0.0], [0.0, 1.0]]
+    assert stretch_grid["show_source_grid"] is False
+    assert stretch_grid["show_basis"] is True
+    assert translation_grid["origin"] == [1, 0]
+    assert translation_grid.get("show_basis", False) is False
+
+
+@pytest.mark.parametrize(
+    "topic_id",
+    (
+        "ch06.basis-change.coordinates",
+        "ch06.similarity-transform",
+    ),
+)
+def test_chapter_six_matrix_cases_use_default_five_and_fit_transformed_grid(
+    topic_id: str,
+) -> None:
+    compiled = catalog_registry().resolve_bundle(
+        topic_id,
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+
+    for stage in compiled.storyboard:
+        operations = case_plan(compiled, stage.id).operations
+        grids = [
+            operation
+            for operation in operations
+            if operation.get("op") == "geometry.transformed_grid"
+        ]
+        fit = next(operation for operation in operations if operation.get("op") == "view.fit")
+
+        assert len(grids) == 1
+        assert grids[0]["bounds"] == [-5.0, 5.0, -5.0, 5.0]
+        assert fit["bounds"] == [-8.0, 8.0, -8.0, 8.0]
+        assert fit["padding"] == 1.0

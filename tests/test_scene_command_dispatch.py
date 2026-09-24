@@ -144,6 +144,59 @@ def _pane_window() -> MainWindow:
     return window
 
 
+def test_empty_teaching_algebra_area_is_hidden_and_restored_when_content_exists() -> None:
+    window = object.__new__(MainWindow)
+    window.algebra_panel = MagicMock()
+    window.algebra_resize_handle = MagicMock()
+    window.pane_manager = SimpleNamespace(active_pane_id="case-1")
+    window._teaching_case_pane_ids = ["case-1"]
+    window.algebra_panel._layers = []
+    window.algebra_panel.matrix_transform_editor.side_effect = [None, object(), None]
+
+    window._sync_teaching_algebra_panel_visibility()
+    window._sync_teaching_algebra_panel_visibility()
+    window.pane_manager.active_pane_id = "user-1"
+    window._sync_teaching_algebra_panel_visibility()
+
+    assert [call.args[0] for call in window.algebra_panel.setVisible.call_args_list] == [False, True, True]
+    assert [call.args[0] for call in window.algebra_resize_handle.setVisible.call_args_list] == [False, True, True]
+
+
+def test_teaching_algebra_area_stays_visible_while_case_materializes() -> None:
+    window = object.__new__(MainWindow)
+    window.algebra_panel = MagicMock()
+    window.algebra_resize_handle = MagicMock()
+    window.pane_manager = SimpleNamespace(active_pane_id="case-1")
+    window._teaching_case_pane_ids = ["case-1"]
+    window._teaching_case_materializing = True
+    window.algebra_panel._layers = []
+
+    window._sync_teaching_algebra_panel_visibility()
+
+    window.algebra_panel.setVisible.assert_called_once_with(True)
+    window.algebra_resize_handle.setVisible.assert_called_once_with(True)
+
+
+def test_teaching_algebra_area_stays_visible_when_switching_scene_mode() -> None:
+    """A loaded lecture keeps its explanation panel across 2-D/3-D changes."""
+    window = object.__new__(MainWindow)
+    window.algebra_panel = MagicMock()
+    window.algebra_resize_handle = MagicMock()
+    window.pane_manager = SimpleNamespace(active_pane_id="case-1")
+    window._teaching_case_pane_ids = ["case-1"]
+    window._active_linear_algebra_topic_id = "ch04.subspace.col-null"
+    window._active_linear_algebra_explanation_case = object()
+    window.algebra_panel._layers = []
+    window.algebra_panel.matrix_transform_editor.return_value = None
+
+    # Mode changes can leave the current case without ordinary scene layers;
+    # the active teaching topic is still the algebra panel's content.
+    window._sync_teaching_algebra_panel_visibility()
+
+    window.algebra_panel.setVisible.assert_called_once_with(True)
+    window.algebra_resize_handle.setVisible.assert_called_once_with(True)
+
+
 def _drawing_plan() -> CommandPlan:
     return CommandPlan(operations=(
         {"op": "point.upsert", "alias": "A", "coordinates": [1, 2]},
@@ -415,6 +468,52 @@ def test_other_chapter_two_matrix_cases_use_one_toolbar_matrix_row(
         assert label_alias not in algebra_aliases
 
 
+@pytest.mark.parametrize(
+    "topic_id, expected_latex",
+    (
+        (
+            "ch06.basis-change.coordinates",
+            r"A=\begin{pmatrix}1&-1\\1&1\end{pmatrix}",
+        ),
+        (
+            "ch06.similarity-transform",
+            r"A=\begin{pmatrix}1&-1\\1&1\end{pmatrix}",
+        ),
+    ),
+)
+def test_chapter_six_matrix_toolbar_starts_at_default_grid_range_five(
+    topic_id: str,
+    expected_latex: str,
+) -> None:
+    compiled = catalog_registry().resolve_bundle(
+        topic_id,
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    stage = compiled.storyboard[0]
+    plan = case_plan(compiled, stage.id)
+    grid = next(
+        operation
+        for operation in plan.operations
+        if operation.get("op") == "geometry.transformed_grid"
+    )
+    window = _pane_window()
+    pane_id = window.pane_manager.visible_pane_ids()[0]
+    window._pane_scene(pane_id)._agent_teaching_2d[str(grid["alias"])] = dict(grid)
+    window._active_linear_algebra_compiled = compiled
+    window._teaching_case_pane_ids = [pane_id]
+    window._teaching_case_stage_refs = {pane_id: (stage.id,)}
+    matrix_model = MagicMock()
+    window.algebra_panel.add_matrix_transform_tab.return_value = matrix_model
+
+    window._sync_teaching_matrix_grid(
+        pane_id,
+        SimpleNamespace(visible_aliases=(str(grid["alias"]),)),
+    )
+
+    matrix_model.set_matrix_transform_value.assert_called_once_with(expected_latex)
+    matrix_model.set_matrix_transform_grid_range.assert_called_once_with(5)
+
+
 def test_basis_case_syncs_each_visible_grid_matrix_to_its_algebra_tab() -> None:
     compiled = catalog_registry().resolve_bundle(
         "ch04.basis.definition",
@@ -442,10 +541,10 @@ def test_basis_case_syncs_each_visible_grid_matrix_to_its_algebra_tab() -> None:
     window._apply_linear_algebra_storyboard_visibility()
 
     models[first].set_matrix_transform_value.assert_called_once_with(
-        r"\begin{pmatrix}1&0\\0&1\end{pmatrix}"
+        r"A=\begin{pmatrix}1&0\\0&1\end{pmatrix}"
     )
     models[second].set_matrix_transform_value.assert_called_once_with(
-        r"\begin{pmatrix}1&1\\1&-1\end{pmatrix}"
+        r"A=\begin{pmatrix}1&1\\1&-1\end{pmatrix}"
     )
     models[first].set_matrix_transform_grid_range.assert_called_once_with(5)
     models[second].set_matrix_transform_grid_range.assert_called_once_with(5)
@@ -487,6 +586,48 @@ def test_basis_case_syncs_each_visible_grid_matrix_to_its_algebra_tab() -> None:
     assert standard_grid["bounds"] == [-8.0, 8.0, -8.0, 8.0]
     assert window._pane_scene(first)._matrix_transform_grid_range == 8
     window._clear_linear_algebra_tool_overlays.assert_not_called()
+
+
+def test_linear_map_matrix_sync_skips_affine_translation() -> None:
+    compiled = catalog_registry().resolve_bundle(
+        "ch04.linear-map.definition",
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    window = _pane_window()
+    first, second = window.pane_manager.visible_pane_ids()
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+    window.scene_command_service = service
+    stages = tuple(compiled.storyboard[:2])
+    for pane_id, stage in zip((first, second), stages):
+        result = service.execute(case_plan(compiled, stage.id), pane_id=pane_id)
+        assert result.valid
+
+    models = {first: MagicMock(), second: MagicMock()}
+    window.algebra_panel.add_matrix_transform_tab.side_effect = (
+        lambda pane_id, *_args, **_kwargs: models[pane_id]
+    )
+    window._active_linear_algebra_compiled = compiled
+    window._active_linear_algebra_stage_id = stages[0].id
+    window._teaching_case_pane_ids = [first, second]
+    window._teaching_case_stage_refs = {
+        first: (stages[0].id,),
+        second: (stages[1].id,),
+    }
+    window.pane_manager.focus_pane(first)
+
+    window._apply_linear_algebra_storyboard_visibility()
+
+    models[first].set_matrix_transform_value.assert_called_once_with(
+        r"A=\begin{pmatrix}2&0\\0&1\end{pmatrix}"
+    )
+    models[first].set_matrix_transform_grid_range.assert_called_once_with(3)
+    models[second].set_matrix_transform_value.assert_not_called()
+    models[second].set_matrix_transform_grid_range.assert_not_called()
+    assert window.algebra_panel.add_matrix_transform_tab.call_count == 1
+    translation_grid = window._pane_scene(second)._agent_teaching_2d[
+        "ch04__relation__translation_case__grid"
+    ]
+    assert translation_grid["origin"] == [1, 0]
 
 
 @pytest.mark.parametrize(
@@ -944,6 +1085,50 @@ def test_chapter_four_real_host_executes_geometry_and_rolls_back(topic):
     with window._using_pane(target):
         after=window._capture_scene_command_state()
     assert before==after
+
+
+@pytest.mark.parametrize(
+    "topic_id",
+    (
+        "ch05.affine.solution-set",
+        "ch05.consistency.geometry",
+        "ch05.gaussian-elimination",
+        "ch05.homogeneous.solution-space",
+        "ch05.least-squares.projection",
+    ),
+)
+def test_chapter_five_real_host_replays_affine_and_tableau_plans(topic_id: str) -> None:
+    """Chapter 5 mixes affine_solution/tableau ops with ordinary 2-D actors.
+
+    A missing host branch used to raise mid-plan, so the atomic load rolled
+    back: the pane kept the previous chapter's actors and the explanation
+    reverted to that chapter.  Replaying the compiled plan through the real
+    host must therefore succeed and register every chapter-5 geometry alias.
+    """
+    compiled = catalog_registry().resolve_bundle(
+        topic_id,
+        artifact_store=runtime_teaching_store(),
+    ).compiled
+    window = _pane_window()
+    target = window.pane_manager.visible_pane_ids()[0]
+    service = SceneCommandService(_SceneCommandHostProxy(_SceneCommandBridge(window)))
+
+    result = service.execute(compiled.plan, pane_id=target)
+
+    assert result.valid
+    scene = window._pane_scene(target)
+    special_aliases = {
+        str(operation["alias"])
+        for operation in compiled.plan.operations
+        if operation.get("op")
+        in {
+            "geometry.affine_solution",
+            "geometry.matrix_tableau",
+            "geometry.elimination_tableau",
+        }
+        and operation.get("alias")
+    }
+    assert special_aliases <= set(scene._agent_teaching_2d)
 
 
 def test_service_cleans_up_when_pane_is_deleted_during_execution() -> None:

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import html
+import re
 from typing import Mapping
 
 from PySide6.QtCore import Qt
@@ -10,6 +12,8 @@ from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from linear_algebra.explanations.model import ExplanationContent
 from linear_algebra.teaching.model import ExplanationContentV2
+
+_BOLD_SPAN = re.compile(r"\*\*(?=\S)(.+?)(?<=\S)\*\*", re.DOTALL)
 
 
 def _render_markdown_tables(value: str) -> str:
@@ -22,15 +26,31 @@ def _render_markdown_tables(value: str) -> str:
     return rendered if "<table" in rendered else value
 
 
+def _render_inline_bold(value: str) -> str | None:
+    """Render ``**强调**`` spans as rich text, keeping the rest literal."""
+
+    if "**" not in value:
+        return None
+    escaped = html.escape(value, quote=False)
+    rendered = _BOLD_SPAN.sub(r"<b>\1</b>", escaped)
+    if rendered == escaped:
+        return None
+    return rendered.replace("\n", "<br/>")
+
+
 def _set_label_content(label: QLabel, value: str) -> None:
-    """Set plain text normally and use rich text only when a table exists."""
+    """Set plain text normally, and rich text when tables or bold spans exist."""
+
     rendered = _render_markdown_tables(value)
     if rendered == value:
-        label.setTextFormat(Qt.TextFormat.AutoText)
-        label.setText(value)
-    else:
-        label.setTextFormat(Qt.TextFormat.RichText)
-        label.setText(rendered)
+        inline = _render_inline_bold(value)
+        if inline is None:
+            label.setTextFormat(Qt.TextFormat.AutoText)
+            label.setText(value)
+            return
+        rendered = inline
+    label.setTextFormat(Qt.TextFormat.RichText)
+    label.setText(rendered)
 
 
 class LinearAlgebraContentView(QWidget):
