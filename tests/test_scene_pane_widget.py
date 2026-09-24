@@ -369,6 +369,52 @@ def test_dependence_opens_four_shared_plan_panes_by_default() -> None:
     )
 
 
+@pytest.mark.parametrize("topic_id", ["ch04.basis.definition", "ch04.linear-map.definition"])
+def test_matrix_definition_case_panes_store_stage_filtered_toolbar_plans(topic_id: str) -> None:
+    from linear_algebra.teaching.chapter_artifacts import load_reviewed_artifacts
+    from linear_algebra.teaching.model import TeachingArtifact
+    from linear_algebra.visualizations.common import RenderContext
+    from linear_algebra.visualizations.compiler import VisualSemanticsCompiler
+    from linear_algebra.visualizations.contracts import contract_for
+
+    artifact = TeachingArtifact.from_dict(load_reviewed_artifacts()[topic_id])
+    compiled = VisualSemanticsCompiler().compile(
+        artifact,
+        contract_for(topic_id),
+        RenderContext.default(topic_id),
+    )
+    window = MainWindow.__new__(MainWindow)
+    manager = window.pane_manager = ScenePaneManager()
+    window._close_teaching_case_panes = lambda: None
+    window._sync_layout_buttons = lambda: None
+    window.algebra_panel = SimpleNamespace(sync_pane_tabs=lambda: None)
+    window.scene_pane_widget = None
+
+    window._open_teaching_case_panes_impl(
+        artifact.explanation,
+        compiled,
+        defer_render=True,
+    )
+
+    plans = [
+        manager.pane(pane_id).scene_2d["pending_plan"]
+        for pane_id in window._teaching_case_pane_ids
+    ]
+    assert plans
+    for index, plan in enumerate(plans):
+        grids = [
+            operation
+            for operation in plan["operations"]
+            if operation.get("op") == "geometry.transformed_grid"
+        ]
+        assert len(grids) == 1
+        assert grids[0]["show_source_grid"] is False
+        if topic_id == "ch04.basis.definition" or index == 0:
+            assert grids[0]["show_basis"] is True
+        else:
+            assert grids[0].get("show_basis", False) is False
+
+
 def test_clear_pending_plans_keeps_the_token_of_panes_without_a_renderer() -> None:
     """多窗格案例逐个物化：还没绑定渲染器的窗格必须保住自己的 hand-off token。"""
     window = MainWindow.__new__(MainWindow)
@@ -508,3 +554,57 @@ def test_agent_workspace_refresh_notifies_only_after_runtime_is_restored():
     window._restore_agent_scene_snapshot(snapshot)
 
     assert refreshed == [3]
+
+
+def test_layout_batch_defers_materialization_to_the_final_visible_set(qapp):
+    """切换小节时可见集合会变多次，批量期间不应逐个物化窗格。"""
+    manager = ScenePaneManager()
+    widget = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
+    widget.sync_layout()
+    assert len(widget.interactors) == 1
+
+    widget.begin_layout_batch()
+    try:
+        widget.set_layout(4)
+        # 批量期间只累积状态，保持原窗格，避免出现单窗格闪一下再拆分的观感。
+        assert len(widget.interactors) == 1
+    finally:
+        visible = widget.end_layout_batch()
+
+    assert set(visible) == set(manager.visible_pane_ids())
+    assert len(widget.interactors) == 4
+    widget.close()
+
+
+def test_panel_dragging_cancels_queued_resize_render(qapp):
+    """A pending resize repaint must not run while a side panel is dragged."""
+    manager = ScenePaneManager()
+    widget = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
+    widget._resize_render_timer.start()
+    assert widget._resize_render_timer.isActive()
+
+    widget.set_panel_dragging(True)
+
+    assert not widget._resize_render_timer.isActive()
+    widget.set_panel_dragging(False)
+    widget.close()
+
+
+def test_panel_dragging_preserves_native_surface_size_until_release(qapp):
+    """Divider moves should clip the painted surface instead of resizing it."""
+    manager = ScenePaneManager()
+    widget = ScenePaneWidget(manager, interactor_factory=FakeInteractor)
+    widget.resize(640, 360)
+    QApplication.processEvents()
+    pane_id = manager.active_pane_id
+    painted_width = widget._chromes[pane_id].width()
+
+    widget.set_panel_dragging(True)
+    widget.resize(420, 360)
+    QApplication.processEvents()
+    assert widget._chromes[pane_id].width() == painted_width
+
+    widget.set_panel_dragging(False)
+    QApplication.processEvents()
+    assert widget._chromes[pane_id].width() == 420
+    widget.close()
