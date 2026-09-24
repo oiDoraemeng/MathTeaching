@@ -136,6 +136,20 @@ def test_display_text_keeps_math_text_for_the_math_renderer() -> None:
         assert rendered == "A=[2  0]\n  [0  1]"
 
 
+def test_display_text_normalizes_standard_matrix_environments() -> None:
+    """MathLive matrix input must render as a matrix instead of raw LaTeX."""
+    source = r"A=\begin{pmatrix}1&2\\3&4\end{pmatrix}"
+    normalized = math_labels.normalize_matrix_environments(source)
+
+    assert normalized == r"A=\left(\genfrac{}{}{0}{}{1\quad 2}{3\quad 4}\right)"
+    rendered = math_labels.display_text("matrix", source, font_size=_FONT_SIZE, bold=True)
+    if math_labels.math_text_available():
+        assert rendered == rf"${normalized}$"
+    else:
+        assert "1" in rendered and "4" in rendered
+        assert "\\begin" not in rendered
+
+
 def test_fallback_matrix_text_rebuilds_plain_literal() -> None:
     assert (
         math_labels.fallback_matrix_text(r"$A=\left[\genfrac{}{}{0}{}{2\quad 0}{0\quad 1}\right]$")

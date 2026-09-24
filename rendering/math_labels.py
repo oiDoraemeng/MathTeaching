@@ -37,6 +37,15 @@ _COLUMN_GAP = r"\quad"
 _MATRIX_TEXT_PATTERN = re.compile(
     r"^\$(?P<name>.*?)=\\left\[(?P<body>.*)\\right\]\$$", re.DOTALL
 )
+# VTK's MathText backend does not understand LaTeX matrix environments such as
+# ``pmatrix``/``bmatrix``.  Keep accepting those standard forms from MathLive,
+# then lower them to the ``genfrac`` representation used by the canvas labels.
+_MATRIX_ENV_PATTERN = re.compile(
+    r"\\begin\{(?P<env>pmatrix|bmatrix|Bmatrix|vmatrix|Vmatrix|matrix)\}"
+    r"(?P<body>.*?)"
+    r"\\end\{(?P=env)\}",
+    re.DOTALL,
+)
 
 #: VTK 内置字体缺少中文字形，优先选用系统中文字体。
 _LABEL_FONT_CANDIDATES = (
@@ -83,14 +92,18 @@ def normalize_subscripts(text: str) -> str:
 def display_text(text: str, latex: str | None, *, font_size: int, bold: bool) -> str:
     """优先使用 MathText，失败时降级为堆叠分数或纯文本。"""
     if latex:
-        rendered = vtk_math_text(latex, font_size=font_size, bold=bold)
+        normalized_latex = normalize_matrix_environments(latex)
+        rendered = vtk_math_text(normalized_latex, font_size=font_size, bold=bold)
         if rendered is not None:
             return rendered
-        stacked = stacked_latex(latex, font_size=font_size, bold=bold)
+        stacked = stacked_latex(normalized_latex, font_size=font_size, bold=bold)
         if stacked is not None:
             return stacked
-    if text.startswith("$") and not math_text_available():
-        fallback = fallback_matrix_text(text)
+    if not math_text_available():
+        fallback_source = _math_text_candidate(latex or text)
+        if text.startswith("$") and not (latex or "").strip():
+            fallback_source = _math_text_candidate(text)
+        fallback = fallback_matrix_text(fallback_source)
         if fallback is not None:
             return fallback
     # 此处只处理未进入数学排版分支的纯文本。
@@ -120,6 +133,7 @@ def vtk_math_text(latex: str, *, font_size: int, bold: bool) -> str | None:
 
 def _math_text_candidate(source: str) -> str:
     """将公式规范为 VTK MathText 格式。"""
+    source = normalize_matrix_environments(source)
     # MathText 会把竖线当作表格分隔符，改用等价命令。
     source = source.replace(r"\lvert", r"\vert").replace(r"\rvert", r"\vert")
     source = source.replace("|", r"\vert{}")
@@ -128,6 +142,45 @@ def _math_text_candidate(source: str) -> str:
     if "$" in source:
         return source
     return f"${source}$"
+
+
+def normalize_matrix_environments(source: str) -> str:
+    """Convert common LaTeX matrix environments to VTK-compatible MathText.
+
+    MathLive emits ``\\begin{pmatrix}...\\end{pmatrix}`` for a matrix typed in
+    the left algebra editor.  Matplotlib/VTK MathText rejects that environment
+    even though it accepts the equivalent ``\\genfrac`` row stack, so normalize
+    only the matrix environment and leave all other LaTeX untouched.
+    """
+
+    def replace(match: re.Match[str]) -> str:
+        env = match.group("env")
+        body = match.group("body").strip()
+        raw_rows = re.split(r"\\\\\s*", body) if body else []
+        rows: list[str] = []
+        for raw_row in raw_rows:
+            cells = [cell.strip() for cell in raw_row.split("&")]
+            if not cells or any(not cell for cell in cells):
+                return match.group(0)
+            rows.append(r"\quad ".join(cells))
+        if not rows or len({len(row.split(r"\quad ")) for row in rows}) != 1:
+            return match.group(0)
+
+        stacked = rows[-1]
+        for row in reversed(rows[:-1]):
+            stacked = rf"\genfrac{{}}{{}}{{0}}{{}}{{{row}}}{{{stacked}}}"
+        delimiters = {
+            "pmatrix": (r"\left(", r"\right)"),
+            "bmatrix": (r"\left[", r"\right]"),
+            "Bmatrix": (r"\left\{", r"\right\}"),
+            "vmatrix": (r"\left|", r"\right|"),
+            "Vmatrix": (r"\left\Vert", r"\right\Vert"),
+            "matrix": ("", ""),
+        }
+        left, right = delimiters[env]
+        return f"{left}{stacked}{right}"
+
+    return _MATRIX_ENV_PATTERN.sub(replace, source)
 
 
 @lru_cache(maxsize=512)
@@ -153,6 +206,35 @@ def fallback_matrix_text(text: str) -> str | None:
     识别不了就返回 ``None``，由调用方原样显示。各行按列宽右对齐，尽量还原矩阵排版。
     """
     match = _MATRIX_TEXT_PATTERN.match(text)
+    left, right = "[", "]"
+    if match is None:
+        # The normalizer preserves the delimiter selected by the user.  Keep
+        # the no-MathText fallback useful for pmatrix/bmatrix and friends too.
+        for left_token, right_token, left_glyph, right_glyph in (
+            (r"\left(", r"\right)", "(", ")"),
+            (r"\left\{", r"\right\}", "{", "}"),
+            (r"\left|", r"\right|", "|", "|"),
+            (r"\left\Vert", r"\right\Vert", "‖", "‖"),
+            (r"\left[", r"\right]", "[", "]"),
+        ):
+            candidate = re.fullmatch(
+                rf"\$(?P<name>.*?)={re.escape(left_token)}"
+                rf"(?P<body>\\genfrac.*)"
+                rf"{re.escape(right_token)}\$",
+                text,
+                re.DOTALL,
+            )
+            if candidate is not None:
+                match = candidate
+                left, right = left_glyph, right_glyph
+                break
+    if match is None:
+        # A plain ``matrix`` environment has no delimiters after normalization.
+        match = re.fullmatch(
+            r"\$(?P<name>.*?)=(?P<body>\\genfrac.*)\$",
+            text,
+            re.DOTALL,
+        )
     if match is None:
         return None
     rows = _matrix_rows(match.group("body"))
@@ -166,9 +248,9 @@ def fallback_matrix_text(text: str) -> str | None:
     indent = " " * (len(name) + 1)
     lines = [
         (
-            f"{name}=[{_matrix_row_text(row, widths)}]"
+            f"{name}={left}{_matrix_row_text(row, widths)}{right}"
             if position == 0
-            else f"{indent}[{_matrix_row_text(row, widths)}]"
+            else f"{indent}{left}{_matrix_row_text(row, widths)}{right}"
         )
         for position, row in enumerate(rows)
     ]
