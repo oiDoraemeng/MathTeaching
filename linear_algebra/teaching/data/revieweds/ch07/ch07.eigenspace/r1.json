@@ -93,11 +93,11 @@
     "formula": "",
     "geometric_meaning": "",
     "invariants": [
-      "E_lambda = Null(A-lambda I)",
-      "distinct eigenvalues have independent eigenvectors",
-      "det(A) equals the product of eigenvalues",
-      "tr(A) equals the sum of eigenvalues",
-      "geometric multiplicity does not exceed algebraic multiplicity"
+      "$E_{\\lambda}=\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$。",
+      "不同特征值对应的特征向量线性无关。",
+      "$\\det(\\boldsymbol A)=\\lambda_{1}\\lambda_{2}\\cdots\\lambda_{n}$。",
+      "$\\operatorname{tr}(\\boldsymbol A)=\\lambda_{1}+\\lambda_{2}+\\cdots+\\lambda_{n}$。",
+      "$1\\leq m_g(\\lambda_0)\\leq m_a(\\lambda_0)$。"
     ],
     "searchable_text": [
       "求特征向量",
@@ -106,9 +106,14 @@
       "**（特征值的乘积与行列式）**\n\n特征多项式为\n\n$$\np(\\lambda)\n=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)\n=(-1)^n\\lambda^n+(-1)^{n-1}\\operatorname{tr}(\\boldsymbol A)\\lambda^{n-1}+\\cdots+\\det(\\boldsymbol A).\n$$\n\n另一方面，若 $\\lambda_1,\\ldots,\\lambda_n$ 是特征值并计算重数，则\n\n$$\np(\\lambda)\n=(-1)^n(\\lambda-\\lambda_1)(\\lambda-\\lambda_2)\\cdots(\\lambda-\\lambda_n).\n$$\n\n比较常数项：\n\n$$\n\\begin{aligned}\np(0)\n&=\\det(\\boldsymbol A)\\\\\n&=(-1)^n(-\\lambda_1)(-\\lambda_2)\\cdots(-\\lambda_n)\\\\\n&=\\lambda_1\\lambda_2\\cdots\\lambda_n.\n\\end{aligned}\n$$",
       "**（特征值的和与迹）**\n\n$p(\\lambda)=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)$ 展开后，$\\lambda^{n-1}$ 的系数为\n\n$$\n(-1)^{n-1}(a_{11}+\\cdots+a_{nn})\n=(-1)^{n-1}\\operatorname{tr}(\\boldsymbol A).\n$$\n\n同时，\n\n$$\n(-1)^n(\\lambda-\\lambda_1)\\cdots(\\lambda-\\lambda_n)\n$$\n\n展开后，$\\lambda^{n-1}$ 的系数为\n\n$$\n(-1)^{n-1}(\\lambda_1+\\cdots+\\lambda_n).\n$$\n\n比较两个系数可得\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=\\lambda_1+\\cdots+\\lambda_n.\n$$",
       "**（不同特征值对应的特征向量线性无关）**\n\n用数学归纳法证明。当 $k=1$ 时，非零向量自身线性无关。\n\n假设结论对 $k-1$ 个向量成立。若\n\n$$\nc_1\\boldsymbol v_1+\\cdots+c_k\\boldsymbol v_k=\\boldsymbol 0,\n$$\n\n两边左乘 $\\boldsymbol A-\\lambda_k\\boldsymbol I$，得到\n\n$$\nc_1(\\lambda_1-\\lambda_k)\\boldsymbol v_1\n+\\cdots+\nc_{k-1}(\\lambda_{k-1}-\\lambda_k)\\boldsymbol v_{k-1}\n+c_k\\boldsymbol 0\n=\\boldsymbol 0.\n$$\n\n由归纳假设，$\\boldsymbol v_1,\\ldots,\\boldsymbol v_{k-1}$ 线性无关，所以\n\n$$\nc_i(\\lambda_i-\\lambda_k)=0.\n$$\n\n又因为 $\\lambda_i\\neq\\lambda_k$，所以\n\n$$\nc_1=\\cdots=c_{k-1}=0.\n$$\n\n代回原式得\n\n$$\nc_k\\boldsymbol v_k=\\boldsymbol 0,\n$$\n\n因此 $c_k=0$。全部系数均为零，所以 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_k$ 线性无关。",
-      "沿用 7.2 例 1：\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n当 $\\lambda_1=3$ 时，\n\n$$\n\\boldsymbol A-3\\boldsymbol I\n=\\begin{pmatrix}\n-1&1\\\\\n1&-1\n\\end{pmatrix}.\n$$\n\n方程 $-x+y=0$ 给出 $y=x$，所以\n\n$$\n\\boldsymbol v_1=t\n\\begin{pmatrix}1\\\\1\\end{pmatrix}.\n$$\n\n当 $\\lambda_2=1$ 时，\n\n$$\n\\boldsymbol A-\\boldsymbol I\n=\\begin{pmatrix}\n1&1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n方程 $x+y=0$ 给出 $y=-x$，所以\n\n$$\n\\boldsymbol v_2=t\n\\begin{pmatrix}1\\\\-1\\end{pmatrix}.\n$$",
+      "$E_{\\lambda}=\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$。",
+      "不同特征值对应的特征向量线性无关。",
+      "$\\det(\\boldsymbol A)=\\lambda_{1}\\lambda_{2}\\cdots\\lambda_{n}$。",
+      "$\\operatorname{tr}(\\boldsymbol A)=\\lambda_{1}+\\lambda_{2}+\\cdots+\\lambda_{n}$。",
+      "$1\\leq m_g(\\lambda_0)\\leq m_a(\\lambda_0)$。",
+      "沿用 7.2 例 1：\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n当 $\\lambda_1=3$ 时，\n\n$$\n\\boldsymbol A-3\\boldsymbol I\n=\\begin{pmatrix}\n-1&1\\\\\n1&-1\n\\end{pmatrix}.\n$$\n\n方程 $-x+y=0$ 给出 $y=x$，所以\n\n$$\n\\boldsymbol v_1=t\n\\begin{pmatrix}\n1\\\\\n1\n\\end{pmatrix}.\n$$\n\n当 $\\lambda_2=1$ 时，\n\n$$\n\\boldsymbol A-\\boldsymbol I\n=\\begin{pmatrix}\n1&1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n方程 $x+y=0$ 给出 $y=-x$，所以\n\n$$\n\\boldsymbol v_2=t\n\\begin{pmatrix}\n1\\\\\n-1\n\\end{pmatrix}.\n$$",
       "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&1\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n$\\lambda=1$ 是二重根，所以\n\n$$\nm_a=2.\n$$\n\n而\n\n$$\n\\boldsymbol A-\\boldsymbol I\n=\\begin{pmatrix}\n0&1\\\\\n0&0\n\\end{pmatrix}\n$$\n\n的秩为 $1$，零空间维数为 $1$，所以\n\n$$\nm_g=1.\n$$\n\n由于 $m_g<m_a$，只有一个线性无关的特征向量，矩阵不能对角化。\n\n几何含义：这个变换是水平切变，只有一个方向上的向量保持不变方向。",
-      "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n行列式满足\n\n$$\n\\det(\\boldsymbol A)=3=\\lambda_1\\lambda_2.\n$$\n\n迹满足\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=4=\\lambda_1+\\lambda_2.\n$$\n\n对应的特征向量\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\1\\end{pmatrix},\\qquad\n\\boldsymbol v_2=\n\\begin{pmatrix}1\\\\-1\\end{pmatrix}\n$$\n\n互相垂直。这不是巧合，对称矩阵的所有不同特征值对应的特征向量一定正交。"
+      "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n行列式满足\n\n$$\n\\det(\\boldsymbol A)=3=\\lambda_1\\lambda_2.\n$$\n\n迹满足\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=4=\\lambda_1+\\lambda_2.\n$$\n\n对应的特征向量\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}\n1\\\\\n1\n\\end{pmatrix},\\qquad\n\\boldsymbol v_2=\n\\begin{pmatrix}\n1\\\\\n-1\n\\end{pmatrix}\n$$\n\n互相垂直。这不是巧合，对称矩阵的所有不同特征值对应的特征向量一定正交。"
     ],
     "sections": [
       {
@@ -134,6 +139,14 @@
         "id": "worked_examples",
         "text": "",
         "title": "数学案例"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigenspace"
+        ],
+        "id": "invariants",
+        "text": "",
+        "title": "不变量"
       }
     ],
     "summary": "对每个特征值求齐次方程组的零空间，得到对应的特征空间。",
@@ -149,7 +162,7 @@
     "worked_examples": [
       {
         "calculation": [
-          "沿用 7.2 例 1：\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n当 $\\lambda_1=3$ 时，\n\n$$\n\\boldsymbol A-3\\boldsymbol I\n=\\begin{pmatrix}\n-1&1\\\\\n1&-1\n\\end{pmatrix}.\n$$\n\n方程 $-x+y=0$ 给出 $y=x$，所以\n\n$$\n\\boldsymbol v_1=t\n\\begin{pmatrix}1\\\\1\\end{pmatrix}.\n$$\n\n当 $\\lambda_2=1$ 时，\n\n$$\n\\boldsymbol A-\\boldsymbol I\n=\\begin{pmatrix}\n1&1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n方程 $x+y=0$ 给出 $y=-x$，所以\n\n$$\n\\boldsymbol v_2=t\n\\begin{pmatrix}1\\\\-1\\end{pmatrix}.\n$$"
+          "沿用 7.2 例 1：\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n当 $\\lambda_1=3$ 时，\n\n$$\n\\boldsymbol A-3\\boldsymbol I\n=\\begin{pmatrix}\n-1&1\\\\\n1&-1\n\\end{pmatrix}.\n$$\n\n方程 $-x+y=0$ 给出 $y=x$，所以\n\n$$\n\\boldsymbol v_1=t\n\\begin{pmatrix}\n1\\\\\n1\n\\end{pmatrix}.\n$$\n\n当 $\\lambda_2=1$ 时，\n\n$$\n\\boldsymbol A-\\boldsymbol I\n=\\begin{pmatrix}\n1&1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n方程 $x+y=0$ 给出 $y=-x$，所以\n\n$$\n\\boldsymbol v_2=t\n\\begin{pmatrix}\n1\\\\\n-1\n\\end{pmatrix}.\n$$"
         ],
         "checks": [
           {
@@ -231,7 +244,7 @@
       },
       {
         "calculation": [
-          "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n行列式满足\n\n$$\n\\det(\\boldsymbol A)=3=\\lambda_1\\lambda_2.\n$$\n\n迹满足\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=4=\\lambda_1+\\lambda_2.\n$$\n\n对应的特征向量\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\1\\end{pmatrix},\\qquad\n\\boldsymbol v_2=\n\\begin{pmatrix}1\\\\-1\\end{pmatrix}\n$$\n\n互相垂直。这不是巧合，对称矩阵的所有不同特征值对应的特征向量一定正交。"
+          "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\\qquad\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n行列式满足\n\n$$\n\\det(\\boldsymbol A)=3=\\lambda_1\\lambda_2.\n$$\n\n迹满足\n\n$$\n\\operatorname{tr}(\\boldsymbol A)=4=\\lambda_1+\\lambda_2.\n$$\n\n对应的特征向量\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}\n1\\\\\n1\n\\end{pmatrix},\\qquad\n\\boldsymbol v_2=\n\\begin{pmatrix}\n1\\\\\n-1\n\\end{pmatrix}\n$$\n\n互相垂直。这不是巧合，对称矩阵的所有不同特征值对应的特征向量一定正交。"
         ],
         "checks": [
           {
@@ -261,12 +274,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:5f73bd62f54d876449f04e1a4e3f7f83a2c8bacce10fbfd42c64fe17bf3640b1",
+    "artifact_digest": "sha256:a7d7f4cb01c99faf8f1a9b5ea44c6a6dda741eb0d30edcbf4026be9fd37e9143",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:a3937a96e0c7dcde2627f6fcd8ac5a8679193ebd435e5a1095343e269d224775",
+    "raw_reply_digest": "sha256:32a64ea87d039b9ae435bd01711ad62ef3ee50fba44cd07a7e52975d6b088d16",
     "source_hash": "sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724"
   },
   "revision": 1,
@@ -566,11 +579,11 @@
       {
         "caption": "",
         "expected_invariants": [
-          "E_lambda = Null(A-lambda I)",
-          "distinct eigenvalues have independent eigenvectors",
-          "det(A) equals the product of eigenvalues",
-          "tr(A) equals the sum of eigenvalues",
-          "geometric multiplicity does not exceed algebraic multiplicity"
+          "$E_{\\lambda}=\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$。",
+          "不同特征值对应的特征向量线性无关。",
+          "$\\det(\\boldsymbol A)=\\lambda_{1}\\lambda_{2}\\cdots\\lambda_{n}$。",
+          "$\\operatorname{tr}(\\boldsymbol A)=\\lambda_{1}+\\lambda_{2}+\\cdots+\\lambda_{n}$。",
+          "$1\\leq m_g(\\lambda_0)\\leq m_a(\\lambda_0)$。"
         ],
         "id": "stage.ch07.eigenspace.eigenspaces",
         "input_entity_refs": [
@@ -590,11 +603,11 @@
       {
         "caption": "",
         "expected_invariants": [
-          "E_lambda = Null(A-lambda I)",
-          "distinct eigenvalues have independent eigenvectors",
-          "det(A) equals the product of eigenvalues",
-          "tr(A) equals the sum of eigenvalues",
-          "geometric multiplicity does not exceed algebraic multiplicity"
+          "$E_{\\lambda}=\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$。",
+          "不同特征值对应的特征向量线性无关。",
+          "$\\det(\\boldsymbol A)=\\lambda_{1}\\lambda_{2}\\cdots\\lambda_{n}$。",
+          "$\\operatorname{tr}(\\boldsymbol A)=\\lambda_{1}+\\lambda_{2}+\\cdots+\\lambda_{n}$。",
+          "$1\\leq m_g(\\lambda_0)\\leq m_a(\\lambda_0)$。"
         ],
         "id": "stage.ch07.eigenspace.defective",
         "input_entity_refs": [
@@ -612,11 +625,11 @@
       {
         "caption": "",
         "expected_invariants": [
-          "E_lambda = Null(A-lambda I)",
-          "distinct eigenvalues have independent eigenvectors",
-          "det(A) equals the product of eigenvalues",
-          "tr(A) equals the sum of eigenvalues",
-          "geometric multiplicity does not exceed algebraic multiplicity"
+          "$E_{\\lambda}=\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$。",
+          "不同特征值对应的特征向量线性无关。",
+          "$\\det(\\boldsymbol A)=\\lambda_{1}\\lambda_{2}\\cdots\\lambda_{n}$。",
+          "$\\operatorname{tr}(\\boldsymbol A)=\\lambda_{1}+\\lambda_{2}+\\cdots+\\lambda_{n}$。",
+          "$1\\leq m_g(\\lambda_0)\\leq m_a(\\lambda_0)$。"
         ],
         "id": "stage.ch07.eigenspace.invariants",
         "input_entity_refs": [

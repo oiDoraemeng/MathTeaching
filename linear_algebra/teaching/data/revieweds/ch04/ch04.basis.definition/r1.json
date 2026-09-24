@@ -80,16 +80,12 @@
     "connections": [],
     "definition": "**（基）** $V$ 的一组基满足两个条件：\n\n1. 线性无关 —— 没有冗余\n2. 生成整个空间 —— 任何向量都能写成基的线性组合\n\n基 $=$ \"最小的完整尺子组\"——少了量不全，多了有冗余。\n\n标准基 $e_{1},...,e_{n}$ 是 $R^{n}$ 最常见的一组基。\n\n**（维数唯一性）** 同一空间任何基的向量个数相等。这个个数 $=$ 空间的维数 $\\dim(V)$。\n$R^{2}$ 的维数 $= 2$，$R^{3}$ 的维数 $= 3$。\n维数的关键性质：\n1. 若 $H$ 是 $V$ 的子空间，则 $\\dim(H) \\leq \\dim(V)$\n2. $\\dim(R^{n}) = n$\n3. 一组基恰好含有 $\\dim(V)$ 个向量——不能多（多了必相关），不能少（少了张不满整个空间）\n4. 若一组线性无关向量个数 $= \\dim(V)$，则它自动构成一组基（不需要再验证\"生成\"条件）\n\n**（坐标）** 给定基 $B=\\{v_{1},...,v_{n}\\}$，任何向量 $x$ 唯一写为 $x = c_{1}v_{1}+...+c_{n}v_{n}$。系数向量 $(c_{1},...,c_{n})$ 就是 $x$ 在基 $B$ 下的坐标。\n坐标 $=$ 用一组基去\"量\"向量得到的读数。换一组基（换一套尺子），读数就变——这是第 6 章基变换的核心。",
     "derivation": [
-      "设 $\\{v_{1}, \\dots ,v_{n}\\}$ 是 $\\dim(V)=n$ 的空间中 $n$ 个线性无关的向量。\n\n若它们不生成 $V$，则存在 $w \\in V$ 无法表示为它们的线性组合 $\\rightarrow \\{v_{1}, \\dots ,v_{n},w\\}$ 中有 $n+1$ 个向量线性无关 $\\rightarrow$ 与 $\\dim(V)=n$ 矛盾。\n\n因此 $n$ 个线性无关向量必然生成整个空间，自动构成一组基。■"
+      "设 $\\{v_{1}, \\dots ,v_{n}\\}$ 是 $\\dim(V)=n$ 的空间中 $n$ 个线性无关的向量。\n\n若它们不生成 $V$，则存在 $w \\in V$ 无法表示为它们的线性组合 $\\rightarrow \\{v_{1}, \\dots ,v_{n},w\\}$ 中有 $n+1$ 个向量线性无关 $\\rightarrow$ 与 $\\dim(V)=n$ 矛盾。\n\n因此 $n$ 个线性无关向量必然生成整个空间，自动构成一组基。"
     ],
     "formula": "",
     "geometric_meaning": "",
     "intuition": "",
-    "invariants": [
-      "基的两个条件：线性无关——没有冗余；生成整个空间——任何向量都能写成基的线性组合。",
-      "标准基下 $x=5e_{1}+3e_{2}$，读数就是 $(5,3)$。",
-      "换一组基 $B=\\{(1,1),(1,-1)\\}$ 后 $x=4b_{1}+1b_{2}$，同一个向量的读数变成 $(4,1)$。"
-    ],
+    "invariants": [],
     "pitfalls": [],
     "read_guide": [],
     "searchable_text": [
@@ -230,12 +226,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:a9d1a840d8ea30cb90d6127c5732f8f2edb4591fe2d9d4aeee9ee3472decdfbe",
+    "artifact_digest": "sha256:d113c8932f70a17bea9bedb2838fbb51545a93bf0b65d576cef0948d30904321",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:a9f49552b0977d088cebe2372c7d8d13434e67f44268bd0dd3ff2ac858196d59",
+    "raw_reply_digest": "sha256:46c5d2b0c0a87452d50ad5ce214887f0dba662da78b579b1485a9922d4f2f0ab",
     "source_hash": "sha256:673e2bba22d2d77b10624b8aabf9b10e61619c2f9736345c9c6ecdf17b9d82e0"
   },
   "revision": 1,

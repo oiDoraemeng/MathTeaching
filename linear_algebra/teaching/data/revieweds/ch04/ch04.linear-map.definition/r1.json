@@ -67,7 +67,7 @@
     },
     "conclusion": "",
     "connections": [],
-    "definition": "定义 4.11（线性变换） 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。\n\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 旋转 | $T(x,y)=(xcos\\theta-ysin\\theta, xsin\\theta+ycos\\theta)$ | 平移 | $T(x,y)=(x+1, y)$ |\n| 拉伸 | $T(x,y)=(ax, by)$ | 平方 | $T(x)=x^{2}$ |\n| 投影 | $T(v)=\\operatorname{Proj}(v)$ | 加常数 | $T(v)=v+b (b\\neq0)$ |\n\n判断平移：$T(v_{1}+v_{2})=(v_{11}+v_{21}+1, v_{12}+v_{22})$，但 $T(v_{1})+T(v_{2})=(v_{11}+1+v_{21}+1, ... ) \\rightarrow$ 加性不成立。",
+    "definition": "**（线性变换）** 映射 T: $R^{n} \\rightarrow R^{m}$ 是线性变换 $\\Leftrightarrow$\n加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \\cdot T(v)$\n等价条件——T 保持线性组合：$T(\\alpha_{1}v_{1}+...+\\alpha_{k}v_{k}) = \\alpha_{1}T(v_{1})+...+\\alpha_{k}T(v_{k})$。\n\n| 是 | 公式 | 不是 | 公式 |\n| --- | --- | --- | --- |\n| 旋转 | $T(x,y)=(xcos\\theta-ysin\\theta, xsin\\theta+ycos\\theta)$ | 平移 | $T(x,y)=(x+1, y)$ |\n| 拉伸 | $T(x,y)=(ax, by)$ | 平方 | $T(x)=x^{2}$ |\n| 投影 | $T(v)=\\operatorname{Proj}(v)$ | 加常数 | $T(v)=v+b (b\\neq0)$ |\n\n判断平移：$T(v_{1}+v_{2})=(v_{11}+v_{21}+1, v_{12}+v_{22})$，但 $T(v_{1})+T(v_{2})=(v_{11}+1+v_{21}+1, ... ) \\rightarrow$ 加性不成立。",
     "derivation": [],
     "formula": "",
     "geometric_meaning": "",
@@ -196,7 +196,7 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:064c352b1d75083dc2e303fe3cb0ee8fe5f144b8271d7ade5d95b3c9d9a153b4",
+    "artifact_digest": "sha256:9ce7611d4c1d1ae4d69080077478b196f72cf2cbafbf4481c7f51f6a64494c97",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",

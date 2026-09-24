@@ -80,15 +80,18 @@
     "formula": "",
     "geometric_meaning": "",
     "invariants": [
-      "roots of det(A-lambda I) are eigenvalues",
-      "real roots bind to Null(A-lambda I)",
-      "negative discriminant gives no real eigenvalue"
+      "$p(\\lambda)=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)$ 的根就是特征值。",
+      "每个实根 $\\lambda$ 对应 $\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$。",
+      "判别式小于零时没有实特征值。"
     ],
     "searchable_text": [
       "特征多项式",
       "用特征方程求出矩阵的全部特征值。",
       "一句话动机：前面靠“看图”找到了特征方向，但矩阵一大就没法看了，需要代数工具。\n\n本节目标：掌握特征方程 $\\det(\\boldsymbol A-\\lambda\\boldsymbol I)=0$ 的来源，能用它求所有特征值。\n\n**（特征方程与特征多项式）**\n\n$$\np(\\lambda)=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)=0\n$$\n\n称为 $\\boldsymbol A$ 的特征方程。$p(\\lambda)$ 是一个关于 $\\lambda$ 的 $n$ 次多项式，它的根就是 $\\boldsymbol A$ 的特征值。\n\n几何翻译：$\\det(\\boldsymbol A-\\lambda\\boldsymbol I)=0$ 在寻找一个 $\\lambda$，使得变换 $\\boldsymbol A-\\lambda\\boldsymbol I$ 把某些方向压扁。行列式等于 $0$ 表示面积消失，这些被压扁的方向上的向量就是特征向量。",
       "要求非零向量 $\\boldsymbol v$ 满足\n\n$$\n\\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v.\n$$\n\n移项得到\n\n$$\n\\boldsymbol A\\boldsymbol v-\\lambda\\boldsymbol v=\\boldsymbol 0.\n$$\n\n$\\lambda$ 是标量，乘单位矩阵后可以与矩阵 $\\boldsymbol A$ 相减：\n\n$$\n\\boldsymbol A\\boldsymbol v-\\lambda\\boldsymbol I\\boldsymbol v=\\boldsymbol 0.\n$$\n\n因此\n\n$$\n(\\boldsymbol A-\\lambda\\boldsymbol I)\\boldsymbol v=\\boldsymbol 0.\n$$\n\n由齐次方程组的知识，$(\\boldsymbol A-\\lambda\\boldsymbol I)\\boldsymbol v=\\boldsymbol 0$ 有非零解，当且仅当\n\n$$\n\\det(\\boldsymbol A-\\lambda\\boldsymbol I)=0.\n$$",
+      "$p(\\lambda)=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)$ 的根就是特征值。",
+      "每个实根 $\\lambda$ 对应 $\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$。",
+      "判别式小于零时没有实特征值。",
       "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix}.\n$$\n\n则\n\n$$\n\\boldsymbol A-\\lambda\\boldsymbol I\n=\\begin{pmatrix}\n2-\\lambda&1\\\\\n1&2-\\lambda\n\\end{pmatrix}.\n$$\n\n特征方程为\n\n$$\n\\begin{aligned}\n\\det(\\boldsymbol A-\\lambda\\boldsymbol I)\n&=(2-\\lambda)^2-1\\\\\n&=\\lambda^2-4\\lambda+3\\\\\n&=(\\lambda-3)(\\lambda-1)=0.\n\\end{aligned}\n$$\n\n所以\n\n$$\n\\lambda_1=3,\\qquad \\lambda_2=1.\n$$\n\n几何翻译：这个变换在一个方向上拉伸 $3$ 倍，在另一个方向上拉伸 $1$ 倍。",
       "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&-1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n它的特征方程为\n\n$$\n\\begin{aligned}\n\\det(\\boldsymbol A-\\lambda\\boldsymbol I)\n&=(1-\\lambda)^2+1\\\\\n&=\\lambda^2-2\\lambda+2=0.\n\\end{aligned}\n$$\n\n判别式为\n\n$$\n\\Delta=4-8=-4<0,\n$$\n\n所以没有实特征值，但有两个共轭复特征值\n\n$$\n\\lambda=1\\pm i.\n$$"
     ],
@@ -116,6 +119,14 @@
         "id": "worked_examples",
         "text": "",
         "title": "数学案例"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.characteristic-polynomial"
+        ],
+        "id": "invariants",
+        "text": "",
+        "title": "不变量"
       }
     ],
     "summary": "用特征方程求出矩阵的全部特征值。",
@@ -192,12 +203,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:4358c58577637f5996c03c4a527a84dd8ae5f87b7295db7d143aa3cad1dca090",
+    "artifact_digest": "sha256:c835e5b150017fba8affe5f63e30a7b097869609d0602e4f8df152b3f6c07259",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:abd8d3f92521cefb5f7110bcc433472c3de061eb6a6316fe70a9348e57920250",
+    "raw_reply_digest": "sha256:841e8caaf9c49416fb26e47538e63b29462963ecc71d0e1acc632ccb887ec9ad",
     "source_hash": "sha256:32535406a6bce6511ac710005c50bbe98a55e2fb39270dcec624eea8ee940060"
   },
   "revision": 1,
@@ -483,9 +494,9 @@
       {
         "caption": "",
         "expected_invariants": [
-          "roots of det(A-lambda I) are eigenvalues",
-          "real roots bind to Null(A-lambda I)",
-          "negative discriminant gives no real eigenvalue"
+          "$p(\\lambda)=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)$ 的根就是特征值。",
+          "每个实根 $\\lambda$ 对应 $\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$。",
+          "判别式小于零时没有实特征值。"
         ],
         "id": "stage.ch07.characteristic-polynomial.real",
         "input_entity_refs": [
@@ -506,9 +517,9 @@
       {
         "caption": "",
         "expected_invariants": [
-          "roots of det(A-lambda I) are eigenvalues",
-          "real roots bind to Null(A-lambda I)",
-          "negative discriminant gives no real eigenvalue"
+          "$p(\\lambda)=\\det(\\boldsymbol A-\\lambda\\boldsymbol I)$ 的根就是特征值。",
+          "每个实根 $\\lambda$ 对应 $\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I)$。",
+          "判别式小于零时没有实特征值。"
         ],
         "id": "stage.ch07.characteristic-polynomial.complex",
         "input_entity_refs": [

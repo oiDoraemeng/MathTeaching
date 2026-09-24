@@ -19,11 +19,7 @@ CONTENT: dict[str, dict[str, Any]] = {
     "ch05.homogeneous.solution-space": {
         "title": "齐次线性方程组",
         "summary": r"理解解齐次方程组 $=$ 求 $\operatorname{Null}(\boldsymbol A)=$ 求 $\operatorname{Ker}(T)$。",
-        "definition": r"""一句话动机：要找哪些输入经过变换 $\boldsymbol A$ 之后“消失”了——这就是零空间。
-
-本节目标：理解解齐次方程组 $=$ 求 $\operatorname{Null}(\boldsymbol A)=$ 求 $\operatorname{Ker}(T)$。
-
-**（齐次线性方程组）** 方程组
+        "definition": r"""**（齐次线性方程组）** 方程组
 
 $$
 \boldsymbol A\boldsymbol x=\boldsymbol 0
@@ -208,11 +204,7 @@ $$""",),
     "ch05.affine.solution-set": {
         "title": "非齐次方程组的解结构",
         "summary": r"掌握非齐次方程组的通解 $=$ 一个特解 $+\operatorname{Null}(\boldsymbol A)$ 的全部元素。",
-        "definition": r"""一句话动机：$\boldsymbol b$ 不是零——那解是什么结构？
-
-本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+\operatorname{Null}(\boldsymbol A)$ 的全部元素。
-
-**（非齐次方程组的解结构）** 设 $\boldsymbol x_p$ 是 $\boldsymbol A\boldsymbol x=\boldsymbol b$ 的一个特解，即任意一个解。则 $\boldsymbol A\boldsymbol x=\boldsymbol b$ 的所有解为
+        "definition": r"""**（非齐次方程组的解结构）** 设 $\boldsymbol x_p$ 是 $\boldsymbol A\boldsymbol x=\boldsymbol b$ 的一个特解，即任意一个解。则 $\boldsymbol A\boldsymbol x=\boldsymbol b$ 的所有解为
 
 $$
 \left\{\boldsymbol x_p+\boldsymbol z\mathrel{\Big|}\boldsymbol z\in\operatorname{Null}(\boldsymbol A)\right\}.
@@ -493,11 +485,7 @@ $$
     "ch05.gaussian-elimination": {
         "title": "高斯消元",
         "summary": "掌握高斯消元的操作流程，理解消元的几何意义。",
-        "definition": r"""一句话动机：有了理论工具还不够——具体怎么算？答案是高斯消元。
-
-本节目标：掌握高斯消元的操作流程，理解消元的几何意义。
-
-**（初等行变换）** 对矩阵的行执行以下三种操作，不会改变方程组的解集：
+        "definition": r"""**（初等行变换）** 对矩阵的行执行以下三种操作，不会改变方程组的解集：
 
 - 交换两行（$P$ 操作）——重新排列方程的编号；
 - 某行乘以非零常数（$D$ 操作）——方程两边同乘非零数；

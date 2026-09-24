@@ -18,11 +18,7 @@ CONTENT: dict[str, dict[str, Any]] = {
     "ch07.eigen.direction": {
         "title": "特征值与特征向量",
         "summary": "有些方向的线段经过变换后只改变长度而不改变方向，这些方向就是特征方向。",
-        "definition": r"""一句话动机：你对一张图片做拉伸——有些方向的线段只变长不变方向，有些方向却歪了。能一直保持不歪的方向，就是"特征方向"。
-
-本节目标：看到特征值和特征向量，你脑子里能画出一个"方向不变箭头被拉长/缩短"的画面。
-
-**（特征值与特征向量）** 设 $\boldsymbol A$ 是一个 $n\times n$ 矩阵。如果存在非零向量 $\boldsymbol v$ 和标量 $\lambda$，使得
+        "definition": r"""**（特征值与特征向量）** 设 $\boldsymbol A$ 是一个 $n\times n$ 矩阵。如果存在非零向量 $\boldsymbol v$ 和标量 $\lambda$，使得
 
 $$
 \boldsymbol A\boldsymbol v=\lambda\boldsymbol v,
@@ -62,30 +58,48 @@ $$
 
 $$
 \boldsymbol v_1=
-\begin{pmatrix}1\\0\end{pmatrix},
+\begin{pmatrix}
+1\\
+0
+\end{pmatrix},
 $$
 
 变换后
 
 $$
 \boldsymbol A\boldsymbol v_1
-=\begin{pmatrix}2\\0\end{pmatrix}
-=2\begin{pmatrix}1\\0\end{pmatrix},
+=\begin{pmatrix}
+2\\
+0
+\end{pmatrix}
+=2\begin{pmatrix}
+1\\
+0
+\end{pmatrix},
 $$
 
 所以 $\lambda=2$，方向不变。对于
 
 $$
 \boldsymbol v_2=
-\begin{pmatrix}0\\1\end{pmatrix},
+\begin{pmatrix}
+0\\
+1
+\end{pmatrix},
 $$
 
 变换后
 
 $$
 \boldsymbol A\boldsymbol v_2
-=\begin{pmatrix}0\\1\end{pmatrix}
-=1\begin{pmatrix}0\\1\end{pmatrix},
+=\begin{pmatrix}
+0\\
+1
+\end{pmatrix}
+=1\begin{pmatrix}
+0\\
+1
+\end{pmatrix},
 $$
 
 所以 $\lambda=1$，向量完全不变。""",),
@@ -111,16 +125,28 @@ $$
 
 $$
 \boldsymbol A
-\begin{pmatrix}1\\0\end{pmatrix}
-=\begin{pmatrix}1\\0\end{pmatrix},
+\begin{pmatrix}
+1\\
+0
+\end{pmatrix}
+=\begin{pmatrix}
+1\\
+0
+\end{pmatrix},
 $$
 
 所以对应 $\lambda=1$。纵轴方向满足
 
 $$
 \boldsymbol A
-\begin{pmatrix}0\\1\end{pmatrix}
-=\begin{pmatrix}0\\0\end{pmatrix},
+\begin{pmatrix}
+0\\
+1
+\end{pmatrix}
+=\begin{pmatrix}
+0\\
+0
+\end{pmatrix},
 $$
 
 所以对应 $\lambda=0$，这个方向消失了。
@@ -177,14 +203,20 @@ $$
 
 $$
 \boldsymbol v_1=
-\begin{pmatrix}1\\1\end{pmatrix},
+\begin{pmatrix}
+1\\
+1
+\end{pmatrix},
 $$
 
 有
 
 $$
 \boldsymbol A\boldsymbol v_1
-=\begin{pmatrix}1\\1\end{pmatrix}
+=\begin{pmatrix}
+1\\
+1
+\end{pmatrix}
 =\boldsymbol v_1,
 $$
 
@@ -194,15 +226,24 @@ $$
 
 $$
 \boldsymbol v_2=
-\begin{pmatrix}1\\-1\end{pmatrix},
+\begin{pmatrix}
+1\\
+-1
+\end{pmatrix},
 $$
 
 有
 
 $$
 \boldsymbol A\boldsymbol v_2
-=\begin{pmatrix}-1\\1\end{pmatrix}
-=-\begin{pmatrix}1\\-1\end{pmatrix},
+=\begin{pmatrix}
+-1\\
+1
+\end{pmatrix}
+=-\begin{pmatrix}
+1\\
+-1
+\end{pmatrix},
 $$
 
 所以 $\lambda=-1$。""",),
@@ -218,7 +259,10 @@ $$
 
 $$
 \boldsymbol v=
-\begin{pmatrix}2\\1\end{pmatrix}
+\begin{pmatrix}
+2\\
+1
+\end{pmatrix}
 $$
 
 是否为
@@ -235,14 +279,23 @@ $$
 
 $$
 \boldsymbol A\boldsymbol v
-=\begin{pmatrix}6\\7\end{pmatrix}.
+=\begin{pmatrix}
+6\\
+7
+\end{pmatrix}.
 $$
 
 不存在标量 $k$ 使
 
 $$
-\begin{pmatrix}6\\7\end{pmatrix}
-=k\begin{pmatrix}2\\1\end{pmatrix},
+\begin{pmatrix}
+6\\
+7
+\end{pmatrix}
+=k\begin{pmatrix}
+2\\
+1
+\end{pmatrix},
 $$
 
 所以 $\boldsymbol v$ 不是特征向量。""",),
@@ -268,10 +321,16 @@ $$
 
 $$
 E_1=\operatorname{span}\left\{
-\begin{pmatrix}1\\0\end{pmatrix}
+\begin{pmatrix}
+1\\
+0
+\end{pmatrix}
 \right\},\qquad
 E_0=\operatorname{span}\left\{
-\begin{pmatrix}0\\1\end{pmatrix}
+\begin{pmatrix}
+0\\
+1
+\end{pmatrix}
 \right\}.
 $$
 
@@ -301,19 +360,27 @@ $$
 \lambda_1=4,\qquad \lambda_2=7,\qquad \lambda_3=-2.
 $$
 
-一句话动机：$x^2+y^2$ 是圆，$2x^2+3y^2$ 是椭圆，$x^2-y^2$ 是双曲线。能用一个统一的方法判断任何二次方程的图形吗？能，特征值告诉你答案。
-
-本节目标：掌握二次型的矩阵表示，能用主轴定理判断二次曲线的形状和主轴方向。
-
 对应的特征向量分别为
 
 $$
 \boldsymbol e_1=
-\begin{pmatrix}1\\0\\0\end{pmatrix},\qquad
+\begin{pmatrix}
+1\\
+0\\
+0
+\end{pmatrix},\qquad
 \boldsymbol e_2=
-\begin{pmatrix}0\\1\\0\end{pmatrix},\qquad
+\begin{pmatrix}
+0\\
+1\\
+0
+\end{pmatrix},\qquad
 \boldsymbol e_3=
-\begin{pmatrix}0\\0\\1\end{pmatrix}.
+\begin{pmatrix}
+0\\
+0\\
+1
+\end{pmatrix}.
 $$
 
 对角矩阵的特征向量就是标准基。""",),
@@ -352,7 +419,7 @@ $$
 所以对角线元素就是特征值。""",),
             },
         ),
-        "stages": (("stretch", "拉伸：两个坐标轴方向不变"), ("projection", "投影：一个方向不变，一个方向消失"), ("rotation", "旋转 90 度：没有实特征方向"), ("reflection", "关于 y=x 反射：一个方向不变，一个方向反向")),
+        "stages": (("stretch", "拉伸：方向保持与方向改变"), ("projection", "投影：一个方向不变，一个方向消失"), ("rotation", "旋转 90 度：没有实特征方向"), ("reflection", "关于 y=x 反射：一个方向不变，一个方向反向")),
         "default_pane_count": 1,
         "case_example_indices": (0, 1, 2, 3),
         "sections": (("definition", "定义"), ("worked_examples", "数学案例")),
@@ -360,11 +427,7 @@ $$
     "ch07.characteristic-polynomial": {
         "title": "特征多项式",
         "summary": "用特征方程求出矩阵的全部特征值。",
-        "definition": r"""一句话动机：前面靠“看图”找到了特征方向，但矩阵一大就没法看了，需要代数工具。
-
-本节目标：掌握特征方程 $\det(\boldsymbol A-\lambda\boldsymbol I)=0$ 的来源，能用它求所有特征值。
-
-**（特征方程与特征多项式）**
+        "definition": r"""**（特征方程与特征多项式）**
 
 $$
 p(\lambda)=\det(\boldsymbol A-\lambda\boldsymbol I)=0
@@ -684,7 +747,10 @@ $$
 
 $$
 \boldsymbol v_1=t
-\begin{pmatrix}1\\1\end{pmatrix}.
+\begin{pmatrix}
+1\\
+1
+\end{pmatrix}.
 $$
 
 当 $\lambda_2=1$ 时，
@@ -701,7 +767,10 @@ $$
 
 $$
 \boldsymbol v_2=t
-\begin{pmatrix}1\\-1\end{pmatrix}.
+\begin{pmatrix}
+1\\
+-1
+\end{pmatrix}.
 $$""",),
             },
             {
@@ -781,9 +850,15 @@ $$
 
 $$
 \boldsymbol v_1=
-\begin{pmatrix}1\\1\end{pmatrix},\qquad
+\begin{pmatrix}
+1\\
+1
+\end{pmatrix},\qquad
 \boldsymbol v_2=
-\begin{pmatrix}1\\-1\end{pmatrix}
+\begin{pmatrix}
+1\\
+-1
+\end{pmatrix}
 $$
 
 互相垂直。这不是巧合，对称矩阵的所有不同特征值对应的特征向量一定正交。""",),
@@ -797,17 +872,7 @@ $$
     "ch07.diagonalization": {
         "title": "对角化的几何意义",
         "summary": "以特征向量为新基，线性变换就变成沿各特征方向的独立缩放。",
-        "definition": r"""一句话动机：以特征向量为“新基”来看变换，会发现它只是各方向独立缩放。
-
-本节目标：理解
-
-$$
-\boldsymbol A=\boldsymbol P\boldsymbol D\boldsymbol P^{-1}
-$$
-
-的几何本质，即换到最好的基上，变换变成对角矩阵。
-
-**（对角化）** 若 $n\times n$ 矩阵 $\boldsymbol A$ 有 $n$ 个线性无关的特征向量 $\boldsymbol v_1,\ldots,\boldsymbol v_n$，对应特征值为 $\lambda_1,\ldots,\lambda_n$，则
+        "definition": r"""**（对角化）** 若 $n\times n$ 矩阵 $\boldsymbol A$ 有 $n$ 个线性无关的特征向量 $\boldsymbol v_1,\ldots,\boldsymbol v_n$，对应特征值为 $\lambda_1,\ldots,\lambda_n$，则
 
 $$
 \boldsymbol A=\boldsymbol P\boldsymbol D\boldsymbol P^{-1},
@@ -960,26 +1025,250 @@ def _worked_example(spec: dict[str, Any], claim_id: str) -> dict[str, Any]:
     }
 
 
+_EIGEN_DIRECTION_DEFINITION = r"""**（特征值与特征向量）** 设 $\boldsymbol A$ 是一个 $n \times n$ 矩阵。如果存在非零向量 $\boldsymbol v$ 和标量 $\lambda$，使得：
+
+$$
+\boldsymbol A \cdot \boldsymbol v = \lambda \cdot \boldsymbol v
+$$
+
+则称 $\lambda$ 为 $\boldsymbol A$ 的一个特征值（Eigenvalue），$\boldsymbol v$ 为对应的特征向量（Eigenvector）。
+
+核心含义：$\boldsymbol A$ 作用在 $\boldsymbol v$ 上，效果仅仅是“把 $\boldsymbol v$ 拉长或缩短 $\lambda$ 倍”——方向不变（$\lambda>0$）、反向（$\lambda<0$），或消失（$\lambda=0$）。
+
+**（特征空间）** 对应特征值 $\lambda$ 的所有特征向量（加上零向量）构成一个向量子空间，称为 $\lambda$ 的特征空间：
+
+$$
+E_{\lambda} = \{\boldsymbol v \mid \boldsymbol A\boldsymbol v = \lambda\boldsymbol v\} = \operatorname{Null}(\boldsymbol A - \lambda\boldsymbol I)
+$$
+
+**几何直觉（先看图）**
+
+例1：拉伸变换
+
+$$
+\boldsymbol A = \begin{pmatrix}
+2 & 0\\
+0 & 1
+\end{pmatrix}
+$$
+
+（$x$ 方向拉 $2$ 倍，$y$ 不变）
+
+$$
+\boldsymbol v_{1} = \begin{pmatrix}
+1\\
+0
+\end{pmatrix}
+$$
+
+变换后
+
+$$
+\boldsymbol A \cdot \boldsymbol v_{1} = \begin{pmatrix}
+2\\
+0
+\end{pmatrix}=2\begin{pmatrix}
+1\\
+0
+\end{pmatrix}
+$$
+
+所以 $\lambda=2$，方向不变。对于
+
+$$
+\boldsymbol v_{2} = \begin{pmatrix}
+0\\
+1
+\end{pmatrix}
+$$
+
+变换后
+
+$$
+\boldsymbol A \cdot \boldsymbol v_{2} = \begin{pmatrix}
+0\\
+1
+\end{pmatrix}=1\begin{pmatrix}
+0\\
+1
+\end{pmatrix}
+$$
+
+所以 $\lambda=1$，完全不变。
+
+例2：投影到 $x$ 轴
+
+$$
+\boldsymbol A = \begin{pmatrix}
+1 & 0\\
+0 & 0
+\end{pmatrix}
+$$
+
+$$
+\boldsymbol v_{1} = \begin{pmatrix}
+1\\
+0
+\end{pmatrix},\qquad \boldsymbol A \cdot \boldsymbol v_{1} = \begin{pmatrix}
+1\\
+0
+\end{pmatrix}
+$$
+
+投影到自己，$\lambda=1$。对于
+
+$$
+\boldsymbol v_{2} = \begin{pmatrix}
+0\\
+1
+\end{pmatrix}
+$$
+
+投影到
+
+$$
+\boldsymbol A \cdot \boldsymbol v_{2} = \begin{pmatrix}
+0\\
+0
+\end{pmatrix}
+$$
+
+$\rightarrow \lambda=0$（方向消失了！）
+
+特征值 $\lambda=0$ 的含义：这个方向上的向量被"压没了"——$\boldsymbol v \in \operatorname{Null}(\boldsymbol A)$。特征值 0 对应的特征空间 $=$ 零空间。
+
+例3：旋转 $90^\circ$
+
+$$
+\boldsymbol A = \begin{pmatrix}
+0 & -1\\
+1 & 0
+\end{pmatrix}
+$$
+
+有没有非零 $\boldsymbol v$ 满足 $\boldsymbol A \cdot \boldsymbol v = \lambda \cdot \boldsymbol v$？
+
+几何上：旋转 $90^\circ$ 后，没有任何方向还指着原来的方向。
+
+$\rightarrow$ 在实数范围内，旋转 $90^\circ$ 没有实特征向量。
+
+**几何直觉总结表**
+
+| 变换 | 特征向量（哪些方向不变） | 特征值 |
+| --- | --- | --- |
+| 均匀放大 2 倍 | **所有方向** | 全部 2 |
+| x 拉 2 倍，y 不变 | x 轴方向，y 轴方向 | 2, 1 |
+| 投影到 x 轴 | x 轴方向（不变），y 轴方向（消失） | 1, 0 |
+| 旋转 $90^\circ$ | 无 | 无实特征值 |
+| 关于原点反射 | 所有方向（但反向） | $-1$ |"""
+
+_EIGEN_DIRECTION_EXAMPLE = {
+    "id": "example.ch07.eigen.direction.contrast",
+    "title": "拉伸下的方向保持与改变",
+    "kind": "matrix_transform",
+    "given": [[[2, 0], [0, 1]], [1, 0]],
+    "result": [2, 0],
+    "check": "transformed",
+    "lines": (r"""取拉伸变换
+
+$$
+\boldsymbol A=\begin{pmatrix}
+2&0\\
+0&1
+\end{pmatrix}.
+$$
+
+对于
+
+$$
+\boldsymbol v=\begin{pmatrix}
+1\\
+0
+\end{pmatrix},
+$$
+
+有
+
+$$
+\boldsymbol A\boldsymbol v=\begin{pmatrix}
+2\\
+0
+\end{pmatrix}=2\begin{pmatrix}
+1\\
+0
+\end{pmatrix}=2\boldsymbol v.
+$$
+
+因此，$\boldsymbol v$ 是特征向量，特征值为 $\lambda=2$，方向不变。
+
+再取
+
+$$
+\boldsymbol u=\begin{pmatrix}
+1\\
+1
+\end{pmatrix}.
+$$
+
+有
+
+$$
+\boldsymbol A\boldsymbol u=\begin{pmatrix}
+2\\
+1
+\end{pmatrix}.
+$$
+
+不存在标量 $k$ 使
+
+$$
+\begin{pmatrix}
+2\\
+1
+\end{pmatrix}=k\begin{pmatrix}
+1\\
+1
+\end{pmatrix},
+$$
+
+所以 $\boldsymbol u$ 不是特征向量；变换后方向发生了改变。""",),
+}
+
 def refine_chapter_07_topic(topic_id: str, payload: dict[str, Any], explanation: dict[str, Any], visual: dict[str, Any]) -> None:
     """Replace generic Chapter 7 prose with reviewed lecture content."""
 
     spec = CONTENT[topic_id]
     claim_id = f"claim.{topic_id}"
-    examples = [_worked_example(item, claim_id) for item in spec["examples"]]
+    is_eigen_direction = topic_id == "ch07.eigen.direction"
+    definition = _EIGEN_DIRECTION_DEFINITION if is_eigen_direction else str(spec["definition"])
+    example_specs = (_EIGEN_DIRECTION_EXAMPLE,) if is_eigen_direction else tuple(spec["examples"])
+    examples = [_worked_example(item, claim_id) for item in example_specs]
+    invariants = [] if is_eigen_direction else list(
+        visual.get("stages", [{}])[0].get("expected_invariants", ())
+        if visual.get("stages")
+        else ()
+    )
+    stage_specs = spec["stages"]
+    case_stage_specs = (("stretch", "拉伸下的方向保持与改变"),) if is_eigen_direction else stage_specs
+    case_example_indices = (0,) if is_eigen_direction else spec["case_example_indices"]
     explanation.update({
-        "title": str(spec["title"]), "summary": str(spec["summary"]),
-        "definition": str(spec["definition"]), "formula": "",
+        "title": str(spec["title"]), "summary": "" if is_eigen_direction else str(spec["summary"]),
+        "definition": definition, "formula": "",
         "derivation": list(spec["derivation"]), "worked_examples": examples,
+        "invariants": invariants,
         "geometric_meaning": "",
-        "sections": [{"id": section_id, "title": title, "text": "", "claim_refs": [claim_id]} for section_id, title in spec["sections"]],
-        "searchable_text": [str(spec["title"]), str(spec["summary"]), str(spec["definition"]), *spec["derivation"], *[line for item in spec["examples"] for line in item["lines"]]],
+        "sections": [
+            {"id": section_id, "title": title, "text": "", "claim_refs": [claim_id]}
+            for section_id, title in spec["sections"]
+        ] + ([{"id": "invariants", "title": "不变量", "text": "", "claim_refs": [claim_id]}] if invariants else []),
+        "searchable_text": [str(spec["title"]), str(spec["summary"]), definition, *spec["derivation"], *invariants, *[line for item in example_specs for line in item["lines"]]],
     })
     for key in ("intuition", "pitfalls", "connections", "analogy_boundary", "transfer_note", "read_guide", "conclusion"):
         explanation.pop(key, None)
 
     stages = {stage["id"].rsplit(".", 1)[-1]: stage for stage in visual["stages"]}
     ordered_stages = []
-    for stage_name, purpose in spec["stages"]:
+    for stage_name, purpose in stage_specs:
         stage = stages[stage_name]
         stage.update({"title": purpose, "caption": "", "layout": "overlay"})
         ordered_stages.append(stage)
@@ -991,7 +1280,7 @@ def refine_chapter_07_topic(topic_id: str, payload: dict[str, Any], explanation:
             "id": f"case.{topic_id}.{index}", "topic_id": topic_id,
             "example_ref": examples[example_index]["id"], "claim_refs": [claim_id],
             "stage_refs": [stage["id"]], "purpose": purpose,
-        } for index, ((_, purpose), stage, example_index) in enumerate(zip(spec["stages"], ordered_stages, spec["case_example_indices"]), start=1)],
+        } for index, ((_, purpose), stage, example_index) in enumerate(zip(case_stage_specs, (stages[stage_name] for stage_name, _ in case_stage_specs), case_example_indices), start=1)],
     }
 
     claim = payload["claims"][0]

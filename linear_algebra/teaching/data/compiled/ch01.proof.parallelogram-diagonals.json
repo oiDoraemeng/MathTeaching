@@ -137,6 +137,7 @@
       },
       {
         "alias": "proof__formula",
+        "latex": "M(AC)=M(BD)=\\frac{\\boldsymbol a+\\boldsymbol b}{2}",
         "op": "annotation.formula",
         "position": [
           2.1,
@@ -153,7 +154,7 @@
     "summary": "平行四边形对角线互相平分",
     "version": 1
   },
-  "plan_digest": "sha256:00379edf33edb0d6841a24f76402def6790797c9114e26cbae04c523cda45397",
+  "plan_digest": "sha256:06351edffe16a87eb041d5c82746516f2f150c2b1f807f526c6669626dc0aaf4",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 20,

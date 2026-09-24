@@ -106,80 +106,6 @@ $$
 =\begin{pmatrix}-1\\5\end{pmatrix}.
 $$""",),
             },
-            {
-                "id": "example.ch06.basis-change.coordinates.backward",
-                "title": "例 2：标准坐标变成新基坐标",
-                "kind": "matrix_transform",
-                "given": [[[0.5, 0.5], [-0.5, 0.5]], [4, 2]],
-                "result": [3, -1],
-                "check": "transformed",
-                "lines": (r"""沿用例 1 的新基。标准坐标为
-
-$$
-\boldsymbol x=
-\begin{pmatrix}
-4\\2
-\end{pmatrix}.
-$$
-
-由
-
-$$
-\boldsymbol P^{-1}
-=\frac12
-\begin{pmatrix}
-1&1\\
--1&1
-\end{pmatrix},
-$$
-
-得到新基下的坐标
-
-$$
-\boldsymbol c
-=\boldsymbol P^{-1}\boldsymbol x
-=\frac12
-\begin{pmatrix}
-1&1\\
--1&1
-\end{pmatrix}
-\begin{pmatrix}
-4\\2
-\end{pmatrix}
-=\frac12
-\begin{pmatrix}
-4+2\\-4+2
-\end{pmatrix}
-=\begin{pmatrix}
-3\\-1
-\end{pmatrix}.
-$$""",),
-            },
-            {
-                "id": "example.ch06.basis-change.coordinates.identity",
-                "title": "例 3：标准基本身",
-                "kind": "determinant",
-                "given": [[1, 0], [0, 1]],
-                "result": 1,
-                "check": "determinant",
-                "lines": (r"""标准基本身当然是一组基。它的基变换矩阵为
-
-$$
-\boldsymbol P
-=\begin{pmatrix}
-\vert&\vert\\
-\boldsymbol e_1&\boldsymbol e_2\\
-\vert&\vert
-\end{pmatrix}
-=\begin{pmatrix}
-1&0\\
-0&1
-\end{pmatrix}
-=\boldsymbol I.
-$$
-
-标准基到标准基，变换矩阵就是单位矩阵。""",),
-            },
         ),
         "stages": (
             ("forward", "新坐标变成标准坐标"),
@@ -187,7 +113,7 @@ $$
             ("identity", "标准基到标准基"),
         ),
         "default_pane_count": 1,
-        "case_example_indices": (0, 1, 2),
+        "case_example_indices": (0,),
         "sections": (("definition", "定义"), ("worked_examples", "数学案例")),
     },
     "ch06.similarity-transform": {
@@ -586,6 +512,8 @@ def refine_chapter_06_topic(
             "summary": str(spec["summary"]),
             "definition": str(spec["definition"]),
             "formula": "",
+            # 不变量属于讲义正文和编译校验语义，不单独生成通用分区。
+            "invariants": [],
             "derivation": list(spec["derivation"]),
             "worked_examples": examples,
             "geometric_meaning": "",

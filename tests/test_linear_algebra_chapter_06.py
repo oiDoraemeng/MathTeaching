@@ -308,14 +308,12 @@ def test_chapter6_keeps_full_lecture_content_and_confirmed_case_layouts():
 
     assert [section["title"] for section in basis["sections"]] == ["定义", "数学案例"]
     assert [section["title"] for section in similarity["sections"]] == ["定义", "推导与证明", "数学案例"]
-    assert len(basis["worked_examples"]) == 3
+    assert len(basis["worked_examples"]) == 1
     assert len(similarity["worked_examples"]) == 5
     assert basis["case_layout"]["default_pane_count"] == 1
     assert similarity["case_layout"]["default_pane_count"] == 3
     assert [case["purpose"] for case in basis["case_layout"]["cases"]] == [
         "新坐标变成标准坐标",
-        "标准坐标变成新坐标",
-        "标准基到标准基",
     ]
     assert [case["purpose"] for case in similarity["case_layout"]["cases"]] == [
         "P：翻译为标准坐标",

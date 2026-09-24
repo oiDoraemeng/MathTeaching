@@ -385,50 +385,6 @@
     "topic_id": "ch06.similarity-transform"
   },
   {
-    "artifact_digest": "sha256:367232df7eadacbd99fca994337cdadfb7e2513ddf2b51d428b5d43a929ff851",
-    "compiler_version": "visual-compiler-v1",
-    "contract_digest": "sha256:4530713fc15d7af7d71573d4afa4ce0725497bc7983030ad0a338446056b5262",
-    "plan_digest": "sha256:9b84fdcc47fa0b462da49891070f73073fe688b6fd08a50df55bdb47e5d8aa6e",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "scene_family": "spectral_orthogonal",
-    "source_hash": "sha256:32535406a6bce6511ac710005c50bbe98a55e2fb39270dcec624eea8ee940060",
-    "topic_id": "ch07.characteristic-polynomial"
-  },
-  {
-    "artifact_digest": "sha256:f0460fe1d2303e8214a46a84754f98fc45acd3ae2603c10391a686ea2e1b33c2",
-    "compiler_version": "visual-compiler-v1",
-    "contract_digest": "sha256:663dc87ba6a9d03fb026994c7548bd5b68a0f31d20aec1f6bf42f02ef17650e1",
-    "plan_digest": "sha256:241180c4a1f39de68a1e871dc23ba3146692ac2070767350ed301d76fe09dd65",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "scene_family": "spectral_orthogonal",
-    "source_hash": "sha256:c370dc89d6decc1af953b64023d41ad23f8858ec9f3cdcac971a15bc36e8ff5a",
-    "topic_id": "ch07.diagonalization"
-  },
-  {
-    "artifact_digest": "sha256:cbaa2f1afabfe60390ff813a839740ef673e2d74350e760a904a436bc4314a6e",
-    "compiler_version": "visual-compiler-v1",
-    "contract_digest": "sha256:58c752db7c8d5e214ba5cc762a518b1ae39b9ab2e9f39b95a0da29b36aa0bee9",
-    "plan_digest": "sha256:83d19cfc96b3866012cff37c0f978d21285a7cc0befa7b9a0a6a669788e05a69",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "scene_family": "spectral_orthogonal",
-    "source_hash": "sha256:16386c8ca3ab73af234181d47a8b71968ef22ea1632c6cc2715998be20eaf58e",
-    "topic_id": "ch07.eigen.direction"
-  },
-  {
-    "artifact_digest": "sha256:63b37ec8e7d61fa6b6d3e5c8643c62f172a9a6e39d551cfc707b652f7551e682",
-    "compiler_version": "visual-compiler-v1",
-    "contract_digest": "sha256:e713176c5f104e7075f406499df67dc65aeffa9551baf36fb0bba01e0029c210",
-    "plan_digest": "sha256:8c49162c286275e54e1fae11843f64d962f5f4cafe97e0dc71d0f4b925a7f5ec",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "scene_family": "spectral_orthogonal",
-    "source_hash": "sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724",
-    "topic_id": "ch07.eigenspace"
-  },
-  {
     "artifact_digest": "sha256:c20e49de44ebecd0f0147bb0b427d5fca55f60983233243592027a6b049a7d93",
     "compiler_version": "visual-compiler-v1",
     "contract_digest": "sha256:6d09b35a4f3c0056e6b578d458cfdee5902c31d03853a2af848005663ab201d8",
@@ -471,5 +427,51 @@
     "scene_family": "quadratic_level_set",
     "source_hash": "sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7",
     "topic_id": "ch08.quadratic.matrix-form"
+  },
+  {
+    "artifact_digest": "sha256:ab941cc28af95f9a012d1523791fa3651229a2a62a59779ed276eb369d0ece18",
+    "claim_count": 1,
+    "compiler_version": "visual-compiler-v1",
+    "contract_digest": "sha256:ab86f2348d727d2ad78872f74d8afa6f6781ca9f890a482d661fac8a8451e607",
+    "plan_digest": "sha256:e614b65d5ba1e42597b77b104e089e76c19c87fde3fc474f1d4f57dd0373e593",
+    "render_profile": "lecture-v1",
+    "revision": 1,
+    "scene_family": "spectral_orthogonal",
+    "source_hash": "sha256:16386c8ca3ab73af234181d47a8b71968ef22ea1632c6cc2715998be20eaf58e",
+    "stage_count": 4,
+    "topic_id": "ch07.eigen.direction"
+  },
+  {
+    "artifact_digest": "sha256:e7dd124493c065d60d7a025320d399544b4ac51ea08c88cba86a8d0bd5188a56",
+    "compiler_version": "visual-compiler-v1",
+    "contract_digest": "sha256:408e0a501f6aba9eb73d74900b5e09dd4af8e960495234c03ce9f8dfc3545667",
+    "plan_digest": "sha256:92de3ff4788b0b9ed592383565a0212209d85245e54f0a91d145a5b90302a787",
+    "render_profile": "lecture-v1",
+    "revision": 1,
+    "scene_family": "spectral_orthogonal",
+    "source_hash": "sha256:32535406a6bce6511ac710005c50bbe98a55e2fb39270dcec624eea8ee940060",
+    "topic_id": "ch07.characteristic-polynomial"
+  },
+  {
+    "artifact_digest": "sha256:b7b8935564bda8a45c4ec8c6d25b53abb795a0f9a5fbec0c5dce9c8f390fb6c8",
+    "compiler_version": "visual-compiler-v1",
+    "contract_digest": "sha256:a453e8780f0d59da395dcf58e6ab7b9dc23f95021983d54176599d1f2cc7fcbe",
+    "plan_digest": "sha256:8c49162c286275e54e1fae11843f64d962f5f4cafe97e0dc71d0f4b925a7f5ec",
+    "render_profile": "lecture-v1",
+    "revision": 1,
+    "scene_family": "spectral_orthogonal",
+    "source_hash": "sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724",
+    "topic_id": "ch07.eigenspace"
+  },
+  {
+    "artifact_digest": "sha256:d3cbe70647ad74eece9af8dc6f9af4894026468b96258a83850347fd75d89803",
+    "compiler_version": "visual-compiler-v1",
+    "contract_digest": "sha256:e55d1e05f904410d1d8fb37f5186a0654e55047b66cd783df3cbc042595f78d1",
+    "plan_digest": "sha256:56599b497a8e32308aca614b1c2ffd5468085fc54aa75141845dd4081ff36d71",
+    "render_profile": "lecture-v1",
+    "revision": 1,
+    "scene_family": "spectral_orthogonal",
+    "source_hash": "sha256:c370dc89d6decc1af953b64023d41ad23f8858ec9f3cdcac971a15bc36e8ff5a",
+    "topic_id": "ch07.diagonalization"
   }
 ]

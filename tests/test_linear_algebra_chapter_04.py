@@ -86,6 +86,10 @@ def test_basis_definition_omits_optional_explanation_tail_sections():
         load_reviewed_artifacts()["ch04.basis.definition"]
     )
 
+    assert artifact.explanation.invariants == ()
+    assert [section.title for section in artifact.explanation.sections] == [
+        "定义", "性质 4 的证明", "数学案例"
+    ]
     assert artifact.explanation.analogy_boundary == ""
     assert artifact.explanation.transfer_note == ""
     assert artifact.explanation.conclusion == ""
@@ -190,7 +194,10 @@ def test_linear_map_definition_merges_verbatim_lecture_and_uses_two_coloured_cas
     )
 
     source_bodies = [span.text.split("\n", 2)[2] for span in artifact.source.spans]
-    assert artifact.explanation.definition == "\n\n".join(source_bodies)
+    # 学生界面的定义名去掉「定义 4.11」编号并加粗，正文其余内容逐字来自讲义源。
+    assert artifact.explanation.definition == "\n\n".join(source_bodies).replace(
+        "定义 4.11（线性变换）", "**（线性变换）**", 1
+    )
     assert [span.heading_path[-1] for span in artifact.source.spans] == [
         "4.4.1 线性变换的定义",
         "4.4.2 是 vs 不是线性变换",

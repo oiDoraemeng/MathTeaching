@@ -691,14 +691,6 @@ _BASIS_PROOF = "\n\n".join(
     )
 )
 
-# 学生可见内容使用讲义原句，不显示内部校验标识。
-_BASIS_INVARIANTS = (
-    r"基的两个条件：线性无关——没有冗余；生成整个空间——任何向量都能写成基的线性组合。",
-    r"标准基下 $x=5e_{1}+3e_{2}$，读数就是 $(5,3)$。",
-    r"换一组基 $B=\{(1,1),(1,-1)\}$ 后 $x=4b_{1}+1b_{2}$，同一个向量的读数变成 $(4,1)$。",
-)
-
-
 def _refine_basis_definition(result: dict[str, Any], explanation: dict[str, Any], visual: dict[str, Any]) -> None:
     """搬入 4.3.1–4.3.3 的讲义原文，并给出例 4 的两窗格读数案例。
 
@@ -768,7 +760,8 @@ def _refine_basis_definition(result: dict[str, Any], explanation: dict[str, Any]
             "transfer_note": "",
             "conclusion": "",
             "read_guide": [],
-            "invariants": list(_BASIS_INVARIANTS),
+            # 讲义 4.3 没有“不变量”分节，数学解释不额外生成该层。
+            "invariants": [],
             "symbol_roles": {
                 "x": "same_vector",
                 "e_1": "standard_basis",
@@ -816,7 +809,7 @@ _LINEAR_MAP_DEFINITION = "\n\n".join(
     (
         "\n".join(
             (
-                r"定义 4.11（线性变换） 映射 T: $R^{n} \rightarrow R^{m}$ 是线性变换 $\Leftrightarrow$",
+                r"**（线性变换）** 映射 T: $R^{n} \rightarrow R^{m}$ 是线性变换 $\Leftrightarrow$",
                 r"加性：$T(u+v) = T(u)+T(v)$    齐性：$T(kv) = k \cdot T(v)$",
                 r"等价条件——T 保持线性组合：$T(\alpha_{1}v_{1}+...+\alpha_{k}v_{k}) = \alpha_{1}T(v_{1})+...+\alpha_{k}T(v_{k})$。",
             )
@@ -933,7 +926,7 @@ def _refine_linear_map_definition(
 # 3.1.1 至 3.1.3 仅规范数学定界符，公式并入"定义"。
 _DET_GEOMETRY_DEFINITION = "\n\n".join(
     (
-        r"定义 3.1（行列式——几何定义） 设 $\boldsymbol A$ 是 $2 \times 2$ 矩阵。$\boldsymbol A$ 的行列式，记为 $\det(\boldsymbol A)$ 或 $|\boldsymbol A|$，等于以 $\boldsymbol A$ 的两列为邻边的平行四边形的有向面积。",
+        r"**（行列式——几何定义）** 设 $\boldsymbol A$ 是 $2 \times 2$ 矩阵。$\boldsymbol A$ 的行列式，记为 $\det(\boldsymbol A)$ 或 $|\boldsymbol A|$，等于以 $\boldsymbol A$ 的两列为邻边的平行四边形的有向面积。",
         "\n".join(
             (
                 r"- 若 $\det(\boldsymbol A) > 0$，两列的顺序与 $e_{1} \rightarrow e_{2}$ 的旋转方向一致（逆时针）",
@@ -941,7 +934,7 @@ _DET_GEOMETRY_DEFINITION = "\n\n".join(
                 r"- 若 $\det(\boldsymbol A) = 0$，两列共线，平行四边形退化为线段$\rightarrow$面积为零",
             )
         ),
-        r"定理 3.1（$2 \times 2$ 行列式公式）",
+        r"**（（$2 \times 2$ 行列式公式 ）**",
         r"$$\det(\begin{pmatrix} a & b \\ c & d \end{pmatrix}) = ad - bc$$",
         '推导直觉：$a$ 和 $d$ 构成"主轴方向的矩形面积"，$bc$ 是"交叉项"的修正。',
         r"$3 \times 3$ 行列式用三阶展开公式，几何上对应平行六面体的有向体积。",
@@ -996,18 +989,16 @@ _DET_CORE_SPECS: dict[str, dict[str, Any]] = {
         "symbol_roles": {"A": "area"},
         "definition": "\n\n".join(
             (
-                r"一句话动机：行列式不是孤立的数字——它有一组强大的运算规则。掌握这些规则，行列式计算像搭积木。",
-                r"本节目标：熟记行列式6条核心性质，能灵活用性质化简计算。",
                 r"**（行列式的基本性质）**",
                 "| 性质 | 操作 | 对 $\det$ 的影响 |\n| --- | --- | --- |\n| **换行变号** | 交换两行 | $\det$ 变号（平行四边形翻面） |\n| **行倍乘** | 某行 $\times(k)$ | $\det$ 也 $\times(k)$（那个方向拉伸 $k$ 倍） |\n| **行叠** | 一行 $+$（另一行的 $k$ 倍） | **$\det$ 不变！**（切变——面积守恒） |",
                 r"⚠️ 常见误区：$\det(\boldsymbol A+\boldsymbol B) \neq \det(\boldsymbol A)+\det(\boldsymbol B)$。",
                 r"**（行列式的性质逐条解释与几何含义）**",
-                r"性质1（单位矩阵的行列式为1）: $\det(\boldsymbol I)=1$。单位矩阵对应的变换是「什么都不做」，所以单位正方形的面积保持为1。",
-                r"性质2（交换两行，行列式变号）: 行列互换$=$平行四边形方向反转$\rightarrow$有向面积变号。绝对值不变。",
-                r"性质3（某行乘以 $k$，行列式乘以 $k$）: 将平行四边形的某条边拉长 $k$ 倍$\rightarrow$面积变为 $k$ 倍。",
-                r"性质4（某行加上另一行的 $k$ 倍，行列式不变）: 这是切变(shear)操作——将平行四边形沿某边方向推斜，但底边长度不变，高也不变$\rightarrow$面积不变。这是高斯消元不改变$\det$的根本原因。",
-                r"性质5（有一行全零$\rightarrow$行列式为0）: 某条边退化为零长度$\rightarrow$平行四边形退化为线段$\rightarrow$面积$=0$。",
-                r"性质6（两行相等$\rightarrow$行列式为0）: 两条边重合$\rightarrow$平行四边形退化为线段$\rightarrow$面积$=0$。",
+                r"**性质1（单位矩阵的行列式为1）:** $\det(\boldsymbol I)=1$。单位矩阵对应的变换是「什么都不做」，所以单位正方形的面积保持为1。",
+                r"**性质2（交换两行，行列式变号）:** 行列互换$=$平行四边形方向反转$\rightarrow$有向面积变号。绝对值不变。",
+                r"**性质3（某行乘以 $k$，行列式乘以 $k$）:** 将平行四边形的某条边拉长 $k$ 倍$\rightarrow$面积变为 $k$ 倍。",
+                r"**性质4（某行加上另一行的 $k$ 倍，行列式不变）:** 这是切变(shear)操作——将平行四边形沿某边方向推斜，但底边长度不变，高也不变$\rightarrow$面积不变。这是高斯消元不改变$\det$的根本原因。",
+                r"**性质5（有一行全零$\rightarrow$行列式为0）:** 某条边退化为零长度$\rightarrow$平行四边形退化为线段$\rightarrow$面积$=0$。",
+                r"**性质6（两行相等$\rightarrow$行列式为0）:** 两条边重合$\rightarrow$平行四边形退化为线段$\rightarrow$面积$=0$。",
                 r"⚠ 常见误区：$\det(\boldsymbol A+\boldsymbol B) \neq \det(\boldsymbol A)+\det(\boldsymbol B)$。（行列式不是线性函数！）",
             )
         ),
@@ -1807,7 +1798,7 @@ def _refine_vector_subtraction(explanation: dict[str, Any], visual: dict[str, An
 def _refine_vector_scalar(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
     """Present subsection 1.2.3 as the lecture's definition, scaling and collinearity.
 
-    讲义 1.2.3 依次给出定义 1.7、几何解释（含 k 取值的效果表）与定义 1.8（共线）；
+    讲义 1.2.3 依次给出定义 1.7、几何解释（含 k 取值的效果表）与定义（共线）；
     数值例按用户确认改用 a=(2,1)、2a=(4,2)。这里按
     讲义顺序保留定义、定义正下方的几何解释与共线定义，并把它做成两步数学案例流程。
     """
@@ -1825,7 +1816,7 @@ def _refine_vector_scalar(explanation: dict[str, Any], visual: dict[str, Any]) -
         ),
         "formula": r"k\boldsymbol a=(kx,ky)",
         "derivation": [],
-        # 讲义 1.2.3 的几何解释与 k 取值表紧随定义，定义 1.8（共线）在两者之后。
+        # 讲义 1.2.3 的几何解释与 k 取值表紧随定义，定义（共线）在两者之后。
         "geometric_meaning": (
             r"数乘就是缩放——把箭头的长度变为原来的 $\lvert k\rvert$ 倍；"
             r"若 $k<0$，则同时反转方向。"
@@ -1837,7 +1828,7 @@ def _refine_vector_scalar(explanation: dict[str, Any], visual: dict[str, Any]) -
             "| $k=-1$ | 反向，长度不变 |\n"
             "| $k<0$ | 反向且缩放 |"
             "\n\n"
-            r"定义 1.8（共线）：如果存在实数 $k$ 使得 $\boldsymbol b=k\boldsymbol a$，"
+            r"**（共线）**：如果存在实数 $k$ 使得 $\boldsymbol b=k\boldsymbol a$，"
             r"则称 $\boldsymbol a$ 与 $\boldsymbol b$ 共线（方向相同或相反）。"
             r"此时 $\boldsymbol b$ 的箭头落在 $\boldsymbol a$ 所在的直线上。"
         ),
@@ -1939,7 +1930,7 @@ def _refine_cauchy_schwarz(explanation: dict[str, Any], visual: dict[str, Any]) 
 
     claim_refs = ["claim.ch01.inner.cauchy-schwarz"]
     definition = (
-        r"定理 1.5（Cauchy-Schwarz 不等式）对任意两个向量 $\boldsymbol a,\boldsymbol b$，有："
+        r"**（Cauchy-Schwarz 不等式）** 对任意两个向量 $\boldsymbol a,\boldsymbol b$，有："
         "\n\n"
         r"$$\lvert\boldsymbol a\cdot\boldsymbol b\rvert\leq\lvert\boldsymbol a\rvert\cdot\lvert\boldsymbol b\rvert$$"
         "\n\n"
@@ -1993,8 +1984,6 @@ def _refine_cauchy_schwarz(explanation: dict[str, Any], visual: dict[str, Any]) 
         ),
         (
             r"差值为完全平方 $\rightarrow$ 不等式成立。等号成立 $\Longleftrightarrow a_{1}b_{2}-a_{2}b_{1}=0\Longleftrightarrow\boldsymbol a$ 与 $\boldsymbol b$ 共线。"
-            "\n\n"
-            r"（对 n 维的推广：可用同样的「平方差$=$平方和」方法或归纳法证明，此处从略。）"
         ),
     ]
     examples = [
@@ -2037,7 +2026,7 @@ def _refine_cauchy_schwarz(explanation: dict[str, Any], visual: dict[str, Any]) 
         "worked_examples": examples,
         "symbol_roles": {"a": "vector_a", "b": "vector_b", "p": "projection", "r": "residual"},
         "sections": [
-            {"id": "definition", "title": "定义", "text": "", "claim_refs": claim_refs},
+            {"id": "definition", "title": "定理", "text": "", "claim_refs": claim_refs},
             {"id": "derivation", "title": "Cauchy-Schwarz 不等式的证明（2D情形）", "text": "", "claim_refs": claim_refs},
             {"id": "worked_examples", "title": "数学案例", "text": "", "claim_refs": claim_refs},
         ],
@@ -2252,8 +2241,8 @@ _PROOF_TOPIC_SPECS: dict[str, dict[str, Any]] = {
         "case_title": "三角形重心定理",
         "invariant": r"重心把每条中线都分成 $2:1$ 的两段",
         "title": "三角形重心定理",
-        "summary": r"三角形三条中线交于一点（重心），且重心到顶点的距离是到对边中点距离的 $2$ 倍。",
-        "definition": r"三角形三条中线交于一点（重心），且重心到顶点的距离是到对边中点距离的 $2$ 倍。",
+        "summary": r"三角形三条中线交于一点（重心），且重心到顶点的距离是到对边中点距离的 2 倍。",
+        "definition": r"三角形三条中线交于一点（重心），且重心到顶点的距离是到对边中点距离的 2 倍。",
         "formula": r"\overrightarrow{AG}=\frac23\overrightarrow{AD}=\frac{\boldsymbol a+\boldsymbol b}{3}",
         # 补充例题保留连续证明，并补全三条中线的 2:1 验证。
         "derivation": [
@@ -2473,7 +2462,7 @@ _MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
         "title": "矩阵加法与变换分配律",
         "example_kind": "matrix_additive_distributivity",
         "statement": "矩阵按对应位置相加、按元素数乘；先加矩阵再变换等于先各自变换再加结果。",
-        "summary": "一句话动机：向量有加法和数乘，矩阵作为向量的集合，自然也继承了这些运算。",
+        "summary": "向量有加法和数乘，矩阵作为向量的集合，自然也继承了这些运算。",
         "definition": "\n\n".join(
             (
                 r"**（矩阵加法）** 两个同型矩阵 $\boldsymbol A = [a_{ij}]$ 和 $\boldsymbol B = [b_{ij}]$（都是 $m \times n$），其和为",
@@ -2555,14 +2544,14 @@ _MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
     "ch02.matrix.transformed-grid": {
         "title": "矩阵变换",
         "statement": "矩阵的两列分别是标准基向量的像；知道两列如何移动，就能确定整张坐标网格的拉伸、旋转或压扁。",
-        "summary": "一句话动机：矩阵乘以向量——本节是整门课最重要的运算，没有之一。",
+        "summary": "矩阵乘以向量——本节是整门课最重要的运算，没有之一。",
         "definition": "\n\n".join(
             (
                 r"设 $\boldsymbol A$ 是 $m \times n$ 矩阵，$\boldsymbol x$ 是 $n$ 维列向量。",
                 r"$$\boldsymbol A=\begin{pmatrix}a_{11}&a_{12}&\cdots&a_{1n}\\a_{21}&a_{22}&\cdots&a_{2n}\\\vdots&\vdots&\ddots&\vdots\\a_{m1}&a_{m2}&\cdots&a_{mn}\end{pmatrix},\qquad \boldsymbol x=\begin{pmatrix}x_{1}\\x_{2}\\\vdots\\x_{n}\end{pmatrix}$$",
-                r"算法一（行视角 — 内积法）：$\boldsymbol A\boldsymbol x$ 的第 $i$ 个分量 $=$ $\boldsymbol A$ 的第 $i$ 行与 $\boldsymbol x$ 的内积。",
+                r"**算法一（行视角 — 内积法）：**$\boldsymbol A\boldsymbol x$ 的第 $i$ 个分量 $=$ $\boldsymbol A$ 的第 $i$ 行与 $\boldsymbol x$ 的内积。",
                 '这是"怎么算"——算得快，但不解释"什么意思"。',
-                "算法二（列视角 — 线性组合法）：",
+                "**算法二（列视角 — 线性组合法）：**",
                 r"$$\boldsymbol A\boldsymbol x=x_{1}\cdot\begin{pmatrix}a_{11}\\a_{21}\\\vdots\\a_{m1}\end{pmatrix}+x_{2}\cdot\begin{pmatrix}a_{12}\\a_{22}\\\vdots\\a_{m2}\end{pmatrix}+\cdots+x_{n}\cdot\begin{pmatrix}a_{1n}\\a_{2n}\\\vdots\\a_{mn}\end{pmatrix}$$",
                 r'这就是"什么意思"：把矩阵各列取出来，用 $\boldsymbol x$ 的分量当系数，组合起来。结果向量的每一项都是"第 $k$ 列 $\times$ 系数"的叠加。',
                 r"**（矩阵变换的基向量解释）** 设 $\boldsymbol A$ 是 $2 \times 2$ 矩阵。则：",
@@ -2668,7 +2657,6 @@ _MATRIX_VECTOR_TOPIC_SPECS: dict[str, dict[str, Any]] = {
         "summary": "同一个变换，用不同的基描述，矩阵就不同。",
         "definition": "\n\n".join(
             (
-                r"一句话动机：同一个变换，用不同的基描述，矩阵就不同——这是「坐标系自由」的第一步。",
                 r"**（基）** $R^{n}$ 中 $n$ 个线性无关的向量组成的一组有序向量，称为 $R^{n}$ 的一组基。",
                 r"我们平时用的 $(\boldsymbol e_{1}, \boldsymbol e_{2})$ 只是众多基中的一组——它是标准基，但不是唯一的基。",
                 r'核心认知：变换本身是客观的（比如"逆时针旋转 $90^\circ$"），但描述它的矩阵取决于你用什么基来记录坐标。',
@@ -2738,7 +2726,7 @@ _SUBSPACE_LESSON_SPECS: dict[str, dict[str, Any]] = {
     "ch02.subspace.independence": {
         "title": "线性无关与线性相关",
         "statement": "一组向量线性无关，当且仅当只有全零系数才能把它们的线性组合变成零向量；只要有一个向量能被其余向量拼出来，这组向量就线性相关。",
-        "summary": r'记忆口诀：线性无关 $=$ 每个向量都是"必要的"，少一个就不完整。',
+        "summary": r'记忆口诀：线性无关 = 每个向量都是"必要的"，少一个就不完整。',
         "definition": "\n\n".join(
             (
                 r"**（线性无关）** 一组向量 $\boldsymbol v_{1}, \boldsymbol v_{2}, ..., \boldsymbol v_{k}$ 称为线性无关的，如果只有当所有系数都为零时，它们的线性组合才等于零向量：",
@@ -3149,8 +3137,7 @@ def _refine_matrix_vector_subsection(
 def _refine_batch_inner_products(explanation: dict[str, Any], visual: dict[str, Any]) -> None:
     """Publish 讲义 2.2 批量内积 as the lecture definition plus its worked case.
 
-    讲义 2.2 只有「定义 2.4（行向量与矩阵乘法 — 批量内积）」+ 一句话总结与一组
-    分层例题；例题只保留**一个**：u=(2,3)，V 是一个 2×2 矩阵，两列取 (2,1) 与
+    例题只保留**一个**：u=(2,3)，V 是一个 2×2 矩阵，两列取 (2,1) 与
     (-1,2)（刻意不用标准基 e1、e2）。案例只写成一块、V 只写一次，u 一次乘 V
     就同时得到两个内积分量 u·V=[7,4]。画法沿用 1.3.1 已确认工件（一条 u、虚线
     投影与垂足、夹角弧，以及窗格上的模长标注），把 V 两列的整套图元叠进
@@ -3191,7 +3178,7 @@ def _refine_batch_inner_products(explanation: dict[str, Any], visual: dict[str, 
             "title": "批量内积",
             "summary": "一次内积算一个角度——那要算一百个角度呢？答案是批量内积。",
             "definition": (
-                r"定义 2.4（行向量与矩阵乘法 — 批量内积）设 $\boldsymbol u$ 是一个 $1\times m$ 行向量，"
+                r"**（行向量与矩阵乘法 — 批量内积）** 设 $\boldsymbol u$ 是一个 $1\times m$ 行向量，"
                 r"$V$ 是一个 $m\times n$ 矩阵。定义乘积 $\boldsymbol u\cdot V$ 为一个 $1\times n$ 行向量，"
                 r"其第 $j$ 个分量是 $\boldsymbol u$ 与 $V$ 的第 $j$ 列的内积："
                 "\n\n"
@@ -3866,7 +3853,6 @@ def _refine_matrix_composition(result: dict[str, Any], explanation: dict[str, An
     claim = result["claims"][0]
     claim_id = str(claim["id"])
     definition = "\n\n".join((
-        r"一句话动机：矩阵乘以矩阵是「变换的复合」——先做 $\boldsymbol B$ 再做 $\boldsymbol A$，等于做 $\boldsymbol A\boldsymbol B$。",
         r"**（矩阵乘法）** 设 $\boldsymbol A$ 是 $m \times p$ 矩阵，$\boldsymbol B$ 是 $p \times n$ 矩阵。则乘积 $\boldsymbol C = \boldsymbol A\boldsymbol B$ 是一个 $m \times n$ 矩阵，其第 $i$ 行第 $j$ 列的元素为：",
         r"$$c_{ij} = \sum_{k=1}^{p} A_{ik} \cdot B_{kj}$$",
         r"即 $\boldsymbol A$ 的第 $i$ 行与 $\boldsymbol B$ 的第 $j$ 列的内积。",
@@ -3982,8 +3968,6 @@ def _refine_matrix_powers(result: dict[str, Any], explanation: dict[str, Any], v
     claim = result["claims"][0]
     claim_id = str(claim["id"])
     definition = "\n\n".join((
-        "一句话动机：幂是重复做同一变换，转置是行与列的视角切换。",
-        "在第3章引入逆矩阵之前，先掌握矩阵的两种基本代数操作：幂和转置。",
         r"**（矩阵的幂）** 设 $\boldsymbol A$ 为 $n\times n$ 方阵。定义：",
         r"$\boldsymbol A^{2}=\boldsymbol A\cdot\boldsymbol A$，$\boldsymbol A^{3}=\boldsymbol A\cdot\boldsymbol A\cdot\boldsymbol A$，…，$\boldsymbol A^{k}=\underbrace{\boldsymbol A\cdot\boldsymbol A\cdot\dots\cdot\boldsymbol A}_{k\text{ 个 }\boldsymbol A\text{ 相乘}}$。",
         r"特别地，$\boldsymbol A^{0}=\boldsymbol I$（单位矩阵）。",

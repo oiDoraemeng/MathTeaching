@@ -117,6 +117,7 @@ def test_exact_graph_and_every_stage_member_fail_before_operations(topic, monkey
 def test_lecture_numeric_evidence_is_recomputed():
     direction = compile_topic("ch07.eigen.direction").family_evidence
     assert direction["directions"]["stretch_x"] == {"eigenvalue": 2.0, "output": [2.0, 0.0]}
+    assert direction["counterexamples"]["stretch_diagonal"] == {"output": [2.0, 1.0], "direction_changed": True}
     assert direction["directions"]["projection_y"] == {"eigenvalue": 0.0, "output": [0.0, 0.0]}
     assert direction["rotation_real_directions"] == []
 
@@ -150,13 +151,31 @@ def test_chapter7_tree_merges_711_to_713_and_keeps_requested_titles():
     ]
 
 
-def test_chapter7_keeps_full_lecture_content_and_confirmed_case_layouts():
+def test_chapter7_merges_711_to_713_and_uses_the_confirmed_direction_contrast():
     direction = artifact_payload_for("ch07.eigen.direction")["explanation"]
     assert "**（特征值与特征向量）**" in direction["definition"]
     assert "**（特征空间）**" in direction["definition"]
-    assert len(direction["worked_examples"]) == 8
-    assert len(direction["case_layout"]["cases"]) == 4
+    assert "**定义 7.1" not in direction["definition"]
+    assert "**定义 7.2" not in direction["definition"]
+    assert "几何直觉（先看图）" in direction["definition"]
+    assert "几何直觉总结表" in direction["definition"]
+    assert "没有实特征向量" in direction["definition"]
+    assert len(direction["worked_examples"]) == 1
+    assert len(direction["case_layout"]["cases"]) == 1
     assert direction["case_layout"]["default_pane_count"] == 1
+    case = direction["worked_examples"][0]
+    assert case["id"] == "example.ch07.eigen.direction.contrast"
+    assert r"\boldsymbol u" in case["calculation"][0]
+    assert r"\boldsymbol A\boldsymbol u" in case["calculation"][0]
+    assert r"\begin{pmatrix}" in direction["definition"]
+    assert "| 不变量 |" not in direction["definition"]
+    assert "分层例题" not in direction["definition"]
+    assert "补充例题" not in direction["definition"]
+    assert "自检" not in direction["definition"]
+    assert "二次型" not in direction["definition"]
+    assert direction["invariants"] == []
+    assert all(section["title"] != "不变量" for section in direction["sections"])
+    assert direction["case_layout"]["cases"][0]["stage_refs"] == ["stage.ch07.eigen.direction.stretch"]
 
     polynomial = artifact_payload_for("ch07.characteristic-polynomial")["explanation"]
     assert "$(\\boldsymbol A-\\lambda\\boldsymbol I)\\boldsymbol v=\\boldsymbol 0$" in polynomial["derivation"][0]

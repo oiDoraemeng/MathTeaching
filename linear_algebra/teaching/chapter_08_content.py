@@ -18,11 +18,7 @@ CONTENT: dict[str, dict[str, Any]] = {
     "ch08.quadratic.matrix-form": {
         "title": "二次型",
         "summary": "二次型可以写成对称矩阵的矩阵形式，交叉项系数要平均拆到两个非对角元。",
-        "definition": r"""一句话动机：$x^{2}+y^{2}=$ 圆，$2x^{2}+3y^{2}+xy=$？怎么快速判断是什么形状？
-
-本节目标：能把二次函数写成矩阵形式 $\boldsymbol x^{T}\boldsymbol A\boldsymbol x$，并识别 $\boldsymbol A$ 的特征值与图形的关系。
-
-**（二次型）** $n$ 个变量的二次型是所有项都为二次的齐次多项式：
+        "definition": r"""**（二次型）** $n$ 个变量的二次型是所有项都为二次的齐次多项式：
 
 $$
 Q(x_1,\ldots,x_n)=\sum_{ij}a_{ij}x_ix_j.
@@ -145,11 +141,7 @@ $$""",),
     "ch08.quadratic.level-sets": {
         "title": "二次型的几何意义",
         "summary": "没有交叉项时主轴与坐标轴对齐，有交叉项时椭圆的主轴倾斜。",
-        "definition": r"""一句话动机：$Q(x,y)=1$ 画出来是什么形状？
-
-本节目标：理解“没有 $xy$ 项 $=$ 正的图形 $=$ 特征向量方向恰好和坐标轴一致”。
-
-**（对角矩阵对应的图形）** 若
+        "definition": r"""**（对角矩阵对应的图形）** 若
 
 $$
 \boldsymbol A=
@@ -252,11 +244,7 @@ $$
     "ch08.principal-axis": {
         "title": "主轴定理",
         "summary": "实对称矩阵可以通过正交变换对角化，二次型因此消去交叉项并转到主轴坐标。",
-        "definition": r"""一句话动机：能不能找到一个旋转，让歪的椭圆变正？——能，旋转到特征向量的方向。
-
-本节目标：理解二次型标准化 $=$ 用正交矩阵 $\boldsymbol Q$（由特征向量组成）做正交变换。
-
-**（主轴定理）** 设 $\boldsymbol A$ 是 $n\times n$ 实对称矩阵。则存在正交矩阵 $\boldsymbol Q$，满足 $\boldsymbol Q^{-1}=\boldsymbol Q^{T}$，使得：
+        "definition": r"""**（主轴定理）** 设 $\boldsymbol A$ 是 $n\times n$ 实对称矩阵。则存在正交矩阵 $\boldsymbol Q$，满足 $\boldsymbol Q^{-1}=\boldsymbol Q^{T}$，使得：
 
 $$
 \boldsymbol Q^{T}\boldsymbol A\boldsymbol Q
@@ -453,11 +441,7 @@ $$
     "ch08.definiteness": {
         "title": "定性：正定、负定、不定",
         "summary": "实对称矩阵特征值的正负决定二次型是正定、负定、不定还是半正定。",
-        "definition": r"""一句话动机：看到特征值的正负，就知道图形是椭圆、双曲线还是马鞍面。
-
-本节目标：根据二次型矩阵的特征值正负判断图形的定性。
-
-**（二次型的定性）** 对实对称矩阵 $\boldsymbol A$：
+        "definition": r"""**（二次型的定性）** 对实对称矩阵 $\boldsymbol A$：
 
 | 条件 | 定性 | 二维图形 | 三维图形 |
 | --- | --- | --- | --- |

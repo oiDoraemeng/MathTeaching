@@ -10,11 +10,7 @@ CONTENT: dict[str, dict[str, Any]] = {
     "ch03.cramer.area-ratio": {
         "title": "克拉默法则的面积比解方程组",
         "summary": "克拉默法则",
-        "definition": r'''一句话动机：方程组 $\boldsymbol A\boldsymbol x=\boldsymbol b$ 的解能否直接用行列式表达？——能，这就是克莱姆法则，用「面积比」直观解释每个解。
-
-本节目标：掌握 Cramer 法则的公式和几何含义，能用它解 $2 \times 2$ 和 $3 \times 3$ 方程组。
-
-**（Cramer 法则）** 对于线性方程组 $\boldsymbol A\boldsymbol x=\boldsymbol b$（$\boldsymbol A$ 为 $n \times n$ 可逆矩阵），解的第 $i$ 个分量为：
+        "definition": r'''**（Cramer 法则）** 对于线性方程组 $\boldsymbol A\boldsymbol x=\boldsymbol b$（$\boldsymbol A$ 为 $n \times n$ 可逆矩阵），解的第 $i$ 个分量为：
 
 $$
 x_{i}=\frac{\det(\boldsymbol A_{i})}{\det(\boldsymbol A)}
@@ -80,11 +76,7 @@ $$''',),
     "ch03.inverse.undo": {
         "title": "逆矩阵",
         "summary": "逆矩阵",
-        "definition": r'''一句话动机：变换 $\boldsymbol A$ 把空间拉伸旋转了——怎么「还原」回去？逆矩阵 $\boldsymbol A^{-1}$ 就是「撤销」按钮。
-
-本节目标：理解逆矩阵的几何意义，熟练计算 $2 \times 2$ 矩阵的逆，懂得用逆矩阵解方程组。
-
-**（逆矩阵）** 对 $n \times n$ 矩阵 $\boldsymbol A$，若存在 $n \times n$ 矩阵 $\boldsymbol B$ 使得：
+        "definition": r'''**（逆矩阵）** 对 $n \times n$ 矩阵 $\boldsymbol A$，若存在 $n \times n$ 矩阵 $\boldsymbol B$ 使得：
 
 $$
 \boldsymbol A\boldsymbol B=\boldsymbol B\boldsymbol A=\boldsymbol I
@@ -253,13 +245,7 @@ $$''',),
     "ch03.adjugate.matrix": {
         "title": "伴随矩阵",
         "summary": "伴随矩阵",
-        "definition": r'''一句话动机：$\det=0$ 不只是一个数字——它是「变换不可逆」的代名词，连通行列式、秩、线性相关性三大概念。
-
-本节目标：能说出 $\det=0$ 的四种等价表述，理解它们从不同角度描述同一件事。
-
-📖 选学本节，不做考试要求。考研同学需掌握。
-
-**（伴随矩阵）** 对 $n \times n$ 矩阵 $\boldsymbol A$，其伴随矩阵 $\operatorname{adj}(\boldsymbol A)$ 的第 $(j,i)$ 元素为 $\boldsymbol A$ 的 $(i,j)$ 代数余子式。逆矩阵公式：
+        "definition": r'''**（伴随矩阵）** 对 $n \times n$ 矩阵 $\boldsymbol A$，其伴随矩阵 $\operatorname{adj}(\boldsymbol A)$ 的第 $(j,i)$ 元素为 $\boldsymbol A$ 的 $(i,j)$ 代数余子式。逆矩阵公式：
 
 $$
 \boldsymbol A^{-1}=\operatorname{adj}\frac{\boldsymbol A}{\det(\boldsymbol A)}

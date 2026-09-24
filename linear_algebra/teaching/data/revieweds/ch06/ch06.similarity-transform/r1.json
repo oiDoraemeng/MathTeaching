@@ -96,12 +96,7 @@
     ],
     "formula": "",
     "geometric_meaning": "",
-    "invariants": [
-      "B = P inverse A P",
-      "A v1 = 3 v1",
-      "A v2 = v2",
-      "similarity preserves determinant rank trace and spectrum"
-    ],
+    "invariants": [],
     "searchable_text": [
       "相似变换",
       "同一个线性变换在不同基下由相似矩阵表示。",
@@ -360,12 +355,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:5ad33d17ba8e856d1ff7533553fddca1f650df22746c9d48f80a30008dbe3b9c",
+    "artifact_digest": "sha256:3112506a7784d912e4474cb47a30206160235b2f27b11ec85ea0acbf4505c9fc",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:f56786d4a4b167578b51929ea6d9f4a5e6b069a37c5bfeb5c4c966573efde9a1",
+    "raw_reply_digest": "sha256:acb6a8469da924b4215e57be15e1ccbdbe97a2523dfaf36317ebc7e2e7db5b9e",
     "source_hash": "sha256:c700a7e3f54691290562a7c582245d08d693033604df782a6dbc475be605d7a7"
   },
   "revision": 1,

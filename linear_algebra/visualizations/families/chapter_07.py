@@ -72,6 +72,7 @@ def _validate_math(topic, spec, relations, values):
     evidence = {"invariants": {name: True for name in spec.invariants}}
     if topic == "ch07.eigen.direction":
         directions = {}
+        counterexamples = {}
         for descriptor in spec.relations:
             params = relations[descriptor.name].parameters
             matrix = np.asarray(params["matrix"], dtype=float)
@@ -82,13 +83,19 @@ def _validate_math(topic, spec, relations, values):
                 eigenvalue = float(params["eigenvalue"])
                 _equal(output, eigenvalue * vector, f"{descriptor.name}: lambda v")
                 directions[descriptor.name] = {"eigenvalue": eigenvalue, "output": output.tolist()}
-            else:
+            elif descriptor.name == "rotation":
                 _equal(np.poly(matrix), params["characteristic"], "rotation characteristic polynomial")
                 if float(params["discriminant"]) >= 0 or any(abs(value.imag) < TOL for value in np.linalg.eigvals(matrix)):
                     raise ValueError("quarter turn must have no real eigenvector")
+            else:
+                _equal(matrix @ vector, output, f"{descriptor.name}: A v")
+                if np.linalg.matrix_rank(np.column_stack((vector, output)), tol=TOL) < 2:
+                    raise ValueError(f"{descriptor.name}: counterexample image must change direction")
+                counterexamples[descriptor.name] = {"output": output.tolist(), "direction_changed": True}
         if np.linalg.norm(values["projection_operator"] @ values["projection_y"]) >= TOL:
             raise ValueError("lambda zero direction must lie in Null(A)")
         evidence["directions"] = directions
+        evidence["counterexamples"] = counterexamples
         evidence["rotation_real_directions"] = []
 
     elif topic == "ch07.characteristic-polynomial":
@@ -242,15 +249,17 @@ def _emit_stages(scene, topic, semantics, values):
     blue, orange = role_color("vector_a"), role_color("vector_b")
     stage_ids = [stage.id for stage in semantics.stages]
     if topic == "ch07.eigen.direction":
-        _stage_direction(scene, topic, stage_ids[0], values["stretch_operator"], ((values["stretch_x"], values["stretch_x_image"], "v1"), (values["stretch_y"], values["stretch_y_image"], "v2")))
+        _stage_direction(scene, topic, stage_ids[0], values["stretch_operator"], ((values["stretch_x"], values["stretch_x_image"], "v"), (values["stretch_diagonal"], values["stretch_diagonal_image"], "u")))
         _stage_direction(scene, topic, stage_ids[1], values["projection_operator"], ((values["projection_x"], values["projection_x_image"], "v1"), (values["projection_y"], values["projection_y_image"], "v2")))
         _stage_direction(scene, topic, stage_ids[2], values["rotation_operator"], ((values["rotation_vector"], values["rotation_image"], "v"),))
         _stage_direction(scene, topic, stage_ids[3], values["reflection_operator"], ((values["reflection_plus"], values["reflection_plus_image"], "v1"), (values["reflection_minus"], values["reflection_minus_image"], "v2")))
     elif topic == "ch07.characteristic-polynomial":
+        scene.grid(stage_ids[0], values["real_operator"], f"{topic}__stage__real__grid", color=role_color("combination"))
         scene.curve(stage_ids[0], values["real_polynomial"], f"{topic}__stage__real__polynomial", color=role_color("neutral"))
         scene.points(stage_ids[0], values["real_roots"], f"{topic}__stage__real__roots", colors=(blue, orange))
         scene.subspace(stage_ids[0], values["space_3"], f"{topic}__stage__real__space3", color=blue)
         scene.subspace(stage_ids[0], values["space_1"], f"{topic}__stage__real__space1", color=orange)
+        scene.grid(stage_ids[1], values["complex_operator"], f"{topic}__stage__complex__grid", color=role_color("combination"))
         scene.curve(stage_ids[1], values["complex_polynomial"], f"{topic}__stage__complex__polynomial", color=role_color("neutral"))
         scene.points(stage_ids[1], values["complex_roots"], f"{topic}__stage__complex__roots", colors=(blue, orange))
     elif topic == "ch07.eigenspace":
@@ -263,7 +272,7 @@ def _emit_stages(scene, topic, semantics, values):
         scene.vector(stage_ids[2], values["space_3"][0], f"{topic}__stage__invariants__v1", color=blue, label="v1")
         scene.vector(stage_ids[2], values["space_1"][0], f"{topic}__stage__invariants__v2", color=orange, label="v2")
     else:
-        scene.grid(stage_ids[0], np.eye(2), f"{topic}__stage__change_basis__grid", color=role_color("neutral"))
+        scene.grid(stage_ids[0], values["basis"], f"{topic}__stage__change_basis__grid", color=role_color("neutral"))
         scene.vector(stage_ids[0], values["basis_v1"], f"{topic}__stage__change_basis__v1", color=blue, label="v1")
         scene.vector(stage_ids[0], values["basis_v2"], f"{topic}__stage__change_basis__v2", color=orange, label="v2")
         scene.grid(stage_ids[1], values["diagonal"], f"{topic}__stage__diagonal__grid", color=role_color("combination"))

@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:cbaa2f1afabfe60390ff813a839740ef673e2d74350e760a904a436bc4314a6e",
+  "artifact_digest": "sha256:31eeaaef355e05fef95a32ac76a45e87bacd93e41f5d1e73fdad8a71db9e4f81",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:58c752db7c8d5e214ba5cc762a518b1ae39b9ab2e9f39b95a0da29b36aa0bee9",
+  "contract_digest": "sha256:26680ba874c7b24c0f26fe6a4b094d357dabecc8f91e3ce682a0593661cf9fc6",
   "plan": {
     "operations": [
       {
@@ -142,6 +142,64 @@
         "op": "linear.upsert",
         "role": "primary",
         "start": "ch07.eigen.direction__entity__stretch_y_image__origin"
+      },
+      {
+        "alias": "ch07.eigen.direction__entity__stretch_diagonal__origin",
+        "color": "#2A9D8F",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigen.direction__entity__stretch_diagonal__end",
+        "color": "#2A9D8F",
+        "coordinates": [
+          1.0,
+          1.0
+        ],
+        "name": "stretch_diagonal",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigen.direction__entity__stretch_diagonal",
+        "color": "#2A9D8F",
+        "end": "ch07.eigen.direction__entity__stretch_diagonal__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.eigen.direction__entity__stretch_diagonal__origin"
+      },
+      {
+        "alias": "ch07.eigen.direction__entity__stretch_diagonal_image__origin",
+        "color": "#2A9D8F",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigen.direction__entity__stretch_diagonal_image__end",
+        "color": "#2A9D8F",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "stretch_diagonal_image",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigen.direction__entity__stretch_diagonal_image",
+        "color": "#2A9D8F",
+        "end": "ch07.eigen.direction__entity__stretch_diagonal_image__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.eigen.direction__entity__stretch_diagonal_image__origin"
       },
       {
         "alias": "ch07.eigen.direction__entity__projection_operator",
@@ -539,6 +597,35 @@
         "start": "ch07.eigen.direction__relation__stretch_y__origin"
       },
       {
+        "alias": "ch07.eigen.direction__relation__stretch_diagonal__origin",
+        "color": "#2A9D8F",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "O",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigen.direction__relation__stretch_diagonal__end",
+        "color": "#2A9D8F",
+        "coordinates": [
+          2.0,
+          1.0
+        ],
+        "name": "stretch_diagonal_image",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "ch07.eigen.direction__relation__stretch_diagonal",
+        "color": "#2A9D8F",
+        "end": "ch07.eigen.direction__relation__stretch_diagonal__end",
+        "kind": "vector",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "ch07.eigen.direction__relation__stretch_diagonal__origin"
+      },
+      {
         "alias": "ch07.eigen.direction__relation__projection_x__origin",
         "color": "#2F6BFF",
         "coordinates": [
@@ -725,7 +812,7 @@
           1.0,
           0.0
         ],
-        "name": "v1",
+        "name": "v",
         "op": "point.upsert"
       },
       {
@@ -754,7 +841,7 @@
           2.0,
           0.0
         ],
-        "name": "Av1",
+        "name": "Av",
         "op": "point.upsert"
       },
       {
@@ -780,10 +867,10 @@
         "alias": "ch07.eigen.direction__stage__stretch__v2__end",
         "color": "#F08A24",
         "coordinates": [
-          0.0,
+          1.0,
           1.0
         ],
-        "name": "v2",
+        "name": "u",
         "op": "point.upsert"
       },
       {
@@ -809,10 +896,10 @@
         "alias": "ch07.eigen.direction__stage__stretch__av2__end",
         "color": "#F08A24",
         "coordinates": [
-          0.0,
+          2.0,
           1.0
         ],
-        "name": "Av2",
+        "name": "Au",
         "op": "point.upsert"
       },
       {
@@ -1242,7 +1329,7 @@
     "summary": "特征值与特征向量",
     "version": 1
   },
-  "plan_digest": "sha256:83d19cfc96b3866012cff37c0f978d21285a7cc0befa7b9a0a6a669788e05a69",
+  "plan_digest": "sha256:e614b65d5ba1e42597b77b104e089e76c19c87fde3fc474f1d4f57dd0373e593",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,
@@ -1258,7 +1345,7 @@
       "caption": "先看输入网格，再看它被矩阵拉伸、旋转或剪切后的形状。",
       "id": "stage.ch07.eigen.direction.stretch",
       "layout": "overlay",
-      "title": "拉伸：两个坐标轴方向不变",
+      "title": "拉伸：方向保持与方向改变",
       "visible_aliases": [
         "ch07.eigen.direction__stage__stretch__original",
         "ch07.eigen.direction__stage__stretch__transformed",
@@ -1270,11 +1357,11 @@
       "visible_refs": [
         "entity.ch07.eigen.direction.stretch_operator",
         "entity.ch07.eigen.direction.stretch_x",
-        "entity.ch07.eigen.direction.stretch_y",
+        "entity.ch07.eigen.direction.stretch_diagonal",
         "entity.ch07.eigen.direction.stretch_x_image",
-        "entity.ch07.eigen.direction.stretch_y_image",
+        "entity.ch07.eigen.direction.stretch_diagonal_image",
         "relation.ch07.eigen.direction.stretch_x",
-        "relation.ch07.eigen.direction.stretch_y"
+        "relation.ch07.eigen.direction.stretch_diagonal"
       ]
     },
     {

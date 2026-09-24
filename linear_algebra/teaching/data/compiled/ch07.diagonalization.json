@@ -1,8 +1,8 @@
 {
-  "artifact_digest": "sha256:f0460fe1d2303e8214a46a84754f98fc45acd3ae2603c10391a686ea2e1b33c2",
+  "artifact_digest": "sha256:d3cbe70647ad74eece9af8dc6f9af4894026468b96258a83850347fd75d89803",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
-  "contract_digest": "sha256:663dc87ba6a9d03fb026994c7548bd5b68a0f31d20aec1f6bf42f02ef17650e1",
+  "contract_digest": "sha256:e55d1e05f904410d1d8fb37f5186a0654e55047b66cd783df3cbc042595f78d1",
   "plan": {
     "operations": [
       {
@@ -474,11 +474,11 @@
         "matrix": [
           [
             1.0,
-            0.0
+            1.0
           ],
           [
-            0.0,
-            1.0
+            1.0,
+            -1.0
           ]
         ],
         "op": "geometry.transformed_grid",
@@ -833,7 +833,7 @@
     "summary": "对角化的几何意义",
     "version": 1
   },
-  "plan_digest": "sha256:241180c4a1f39de68a1e871dc23ba3146692ac2070767350ed301d76fe09dd65",
+  "plan_digest": "sha256:56599b497a8e32308aca614b1c2ffd5468085fc54aa75141845dd4081ff36d71",
   "read_guide": [],
   "render_profile": "lecture-v1",
   "revision": 1,

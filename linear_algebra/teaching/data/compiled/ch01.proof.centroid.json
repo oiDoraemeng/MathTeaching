@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:8127e65376d0ece255e7ed67de68d6725c13b36cdb2c9f21adc8d9bfe12a543f",
+  "artifact_digest": "sha256:4d8d37f02406aa3a8997bbbc0e610025ff57793e1a5244aeeb4944d25bffa749",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:f1f2e06ef429919736757a5196ae4470701b0fbf672ce407a22ec3097f926118",
@@ -160,6 +160,7 @@
       },
       {
         "alias": "proof__formula",
+        "latex": "\\overrightarrow{AG}=\\frac{\\boldsymbol a+\\boldsymbol b}{3}",
         "op": "annotation.formula",
         "position": [
           2.25,
@@ -176,10 +177,10 @@
     "summary": "三角形重心定理",
     "version": 1
   },
-  "plan_digest": "sha256:e957d4ef26dc4b21b0a6cfa67b582451e14fd9eb0636d3e4bfcfae683978c3d6",
+  "plan_digest": "sha256:46be1891befac710a4ee82c407ddb23e3a74b4e7ba96b76ff202a1f58ca0fb27",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 20,
+  "revision": 21,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:3b0b668a61fcc041c6bf6b27cc98a127cf2743ab2ec11b5546419b8dc4316c06",

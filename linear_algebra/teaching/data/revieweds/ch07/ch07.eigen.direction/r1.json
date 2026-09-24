@@ -7,6 +7,8 @@
         "entity.ch07.eigen.direction.stretch_x_image",
         "entity.ch07.eigen.direction.stretch_y",
         "entity.ch07.eigen.direction.stretch_y_image",
+        "entity.ch07.eigen.direction.stretch_diagonal",
+        "entity.ch07.eigen.direction.stretch_diagonal_image",
         "entity.ch07.eigen.direction.projection_operator",
         "entity.ch07.eigen.direction.projection_x",
         "entity.ch07.eigen.direction.projection_x_image",
@@ -32,6 +34,8 @@
         "stretch_x_image",
         "stretch_y",
         "stretch_y_image",
+        "stretch_diagonal",
+        "stretch_diagonal_image",
         "projection_operator",
         "projection_x",
         "projection_x_image",
@@ -50,6 +54,7 @@
       "relation_refs": [
         "relation.ch07.eigen.direction.stretch_x",
         "relation.ch07.eigen.direction.stretch_y",
+        "relation.ch07.eigen.direction.stretch_diagonal",
         "relation.ch07.eigen.direction.projection_x",
         "relation.ch07.eigen.direction.projection_y",
         "relation.ch07.eigen.direction.rotation",
@@ -76,74 +81,27 @@
           "claim_refs": [
             "claim.ch07.eigen.direction"
           ],
-          "example_ref": "example.ch07.eigen.direction.stretch",
+          "example_ref": "example.ch07.eigen.direction.contrast",
           "id": "case.ch07.eigen.direction.1",
-          "purpose": "拉伸：两个坐标轴方向不变",
+          "purpose": "拉伸下的方向保持与改变",
           "stage_refs": [
             "stage.ch07.eigen.direction.stretch"
-          ],
-          "topic_id": "ch07.eigen.direction"
-        },
-        {
-          "claim_refs": [
-            "claim.ch07.eigen.direction"
-          ],
-          "example_ref": "example.ch07.eigen.direction.projection",
-          "id": "case.ch07.eigen.direction.2",
-          "purpose": "投影：一个方向不变，一个方向消失",
-          "stage_refs": [
-            "stage.ch07.eigen.direction.projection"
-          ],
-          "topic_id": "ch07.eigen.direction"
-        },
-        {
-          "claim_refs": [
-            "claim.ch07.eigen.direction"
-          ],
-          "example_ref": "example.ch07.eigen.direction.rotation",
-          "id": "case.ch07.eigen.direction.3",
-          "purpose": "旋转 90 度：没有实特征方向",
-          "stage_refs": [
-            "stage.ch07.eigen.direction.rotation"
-          ],
-          "topic_id": "ch07.eigen.direction"
-        },
-        {
-          "claim_refs": [
-            "claim.ch07.eigen.direction"
-          ],
-          "example_ref": "example.ch07.eigen.direction.reflection",
-          "id": "case.ch07.eigen.direction.4",
-          "purpose": "关于 y=x 反射：一个方向不变，一个方向反向",
-          "stage_refs": [
-            "stage.ch07.eigen.direction.reflection"
           ],
           "topic_id": "ch07.eigen.direction"
         }
       ],
       "default_pane_count": 1
     },
-    "definition": "一句话动机：你对一张图片做拉伸——有些方向的线段只变长不变方向，有些方向却歪了。能一直保持不歪的方向，就是\"特征方向\"。\n\n本节目标：看到特征值和特征向量，你脑子里能画出一个\"方向不变箭头被拉长/缩短\"的画面。\n\n**（特征值与特征向量）** 设 $\\boldsymbol A$ 是一个 $n\\times n$ 矩阵。如果存在非零向量 $\\boldsymbol v$ 和标量 $\\lambda$，使得\n\n$$\n\\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v,\n$$\n\n则称 $\\lambda$ 为 $\\boldsymbol A$ 的一个特征值，$\\boldsymbol v$ 为对应的特征向量。\n\n核心含义：$\\boldsymbol A$ 作用在 $\\boldsymbol v$ 上，效果仅仅是把 $\\boldsymbol v$ 拉长或缩短 $\\lambda$ 倍。$\\lambda>0$ 时方向不变，$\\lambda<0$ 时反向，$\\lambda=0$ 时消失。\n\n**（特征空间）** 对应特征值 $\\lambda$ 的所有特征向量加上零向量构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n\n$$\nE_\\lambda\n=\\{\\boldsymbol v\\mid \\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v\\}\n=\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I).\n$$",
+    "definition": "**（特征值与特征向量）** 设 $\\boldsymbol A$ 是一个 $n \\times n$ 矩阵。如果存在非零向量 $\\boldsymbol v$ 和标量 $\\lambda$，使得：\n\n$$\n\\boldsymbol A \\cdot \\boldsymbol v = \\lambda \\cdot \\boldsymbol v\n$$\n\n则称 $\\lambda$ 为 $\\boldsymbol A$ 的一个特征值（Eigenvalue），$\\boldsymbol v$ 为对应的特征向量（Eigenvector）。\n\n核心含义：$\\boldsymbol A$ 作用在 $\\boldsymbol v$ 上，效果仅仅是“把 $\\boldsymbol v$ 拉长或缩短 $\\lambda$ 倍”——方向不变（$\\lambda>0$）、反向（$\\lambda<0$），或消失（$\\lambda=0$）。\n\n**（特征空间）** 对应特征值 $\\lambda$ 的所有特征向量（加上零向量）构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n\n$$\nE_{\\lambda} = \\{\\boldsymbol v \\mid \\boldsymbol A\\boldsymbol v = \\lambda\\boldsymbol v\\} = \\operatorname{Null}(\\boldsymbol A - \\lambda\\boldsymbol I)\n$$\n\n**几何直觉（先看图）**\n\n例1：拉伸变换\n\n$$\n\\boldsymbol A = \\begin{pmatrix}\n2 & 0\\\\\n0 & 1\n\\end{pmatrix}\n$$\n\n（$x$ 方向拉 $2$ 倍，$y$ 不变）\n\n$$\n\\boldsymbol v_{1} = \\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix}\n$$\n\n变换后\n\n$$\n\\boldsymbol A \\cdot \\boldsymbol v_{1} = \\begin{pmatrix}\n2\\\\\n0\n\\end{pmatrix}=2\\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix}\n$$\n\n所以 $\\lambda=2$，方向不变。对于\n\n$$\n\\boldsymbol v_{2} = \\begin{pmatrix}\n0\\\\\n1\n\\end{pmatrix}\n$$\n\n变换后\n\n$$\n\\boldsymbol A \\cdot \\boldsymbol v_{2} = \\begin{pmatrix}\n0\\\\\n1\n\\end{pmatrix}=1\\begin{pmatrix}\n0\\\\\n1\n\\end{pmatrix}\n$$\n\n所以 $\\lambda=1$，完全不变。\n\n例2：投影到 $x$ 轴\n\n$$\n\\boldsymbol A = \\begin{pmatrix}\n1 & 0\\\\\n0 & 0\n\\end{pmatrix}\n$$\n\n$$\n\\boldsymbol v_{1} = \\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix},\\qquad \\boldsymbol A \\cdot \\boldsymbol v_{1} = \\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix}\n$$\n\n投影到自己，$\\lambda=1$。对于\n\n$$\n\\boldsymbol v_{2} = \\begin{pmatrix}\n0\\\\\n1\n\\end{pmatrix}\n$$\n\n投影到\n\n$$\n\\boldsymbol A \\cdot \\boldsymbol v_{2} = \\begin{pmatrix}\n0\\\\\n0\n\\end{pmatrix}\n$$\n\n$\\rightarrow \\lambda=0$（方向消失了！）\n\n特征值 $\\lambda=0$ 的含义：这个方向上的向量被\"压没了\"——$\\boldsymbol v \\in \\operatorname{Null}(\\boldsymbol A)$。特征值 0 对应的特征空间 $=$ 零空间。\n\n例3：旋转 $90^\\circ$\n\n$$\n\\boldsymbol A = \\begin{pmatrix}\n0 & -1\\\\\n1 & 0\n\\end{pmatrix}\n$$\n\n有没有非零 $\\boldsymbol v$ 满足 $\\boldsymbol A \\cdot \\boldsymbol v = \\lambda \\cdot \\boldsymbol v$？\n\n几何上：旋转 $90^\\circ$ 后，没有任何方向还指着原来的方向。\n\n$\\rightarrow$ 在实数范围内，旋转 $90^\\circ$ 没有实特征向量。\n\n**几何直觉总结表**\n\n| 变换 | 特征向量（哪些方向不变） | 特征值 |\n| --- | --- | --- |\n| 均匀放大 2 倍 | **所有方向** | 全部 2 |\n| x 拉 2 倍，y 不变 | x 轴方向，y 轴方向 | 2, 1 |\n| 投影到 x 轴 | x 轴方向（不变），y 轴方向（消失） | 1, 0 |\n| 旋转 $90^\\circ$ | 无 | 无实特征值 |\n| 关于原点反射 | 所有方向（但反向） | $-1$ |",
     "derivation": [],
     "formula": "",
     "geometric_meaning": "",
-    "invariants": [
-      "A v = lambda v for every displayed eigenvector",
-      "lambda zero eigenspace equals Null(A)",
-      "quarter turn has no real eigenvector"
-    ],
+    "invariants": [],
     "searchable_text": [
       "特征值与特征向量",
       "有些方向的线段经过变换后只改变长度而不改变方向，这些方向就是特征方向。",
-      "一句话动机：你对一张图片做拉伸——有些方向的线段只变长不变方向，有些方向却歪了。能一直保持不歪的方向，就是\"特征方向\"。\n\n本节目标：看到特征值和特征向量，你脑子里能画出一个\"方向不变箭头被拉长/缩短\"的画面。\n\n**（特征值与特征向量）** 设 $\\boldsymbol A$ 是一个 $n\\times n$ 矩阵。如果存在非零向量 $\\boldsymbol v$ 和标量 $\\lambda$，使得\n\n$$\n\\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v,\n$$\n\n则称 $\\lambda$ 为 $\\boldsymbol A$ 的一个特征值，$\\boldsymbol v$ 为对应的特征向量。\n\n核心含义：$\\boldsymbol A$ 作用在 $\\boldsymbol v$ 上，效果仅仅是把 $\\boldsymbol v$ 拉长或缩短 $\\lambda$ 倍。$\\lambda>0$ 时方向不变，$\\lambda<0$ 时反向，$\\lambda=0$ 时消失。\n\n**（特征空间）** 对应特征值 $\\lambda$ 的所有特征向量加上零向量构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n\n$$\nE_\\lambda\n=\\{\\boldsymbol v\\mid \\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v\\}\n=\\operatorname{Null}(\\boldsymbol A-\\lambda\\boldsymbol I).\n$$",
-      "取拉伸变换\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&0\\\\\n0&1\n\\end{pmatrix},\n$$\n\n即横轴方向拉伸为原来的 $2$ 倍，纵轴方向不变。对于\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n变换后\n\n$$\n\\boldsymbol A\\boldsymbol v_1\n=\\begin{pmatrix}2\\\\0\\end{pmatrix}\n=2\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n所以 $\\lambda=2$，方向不变。对于\n\n$$\n\\boldsymbol v_2=\n\\begin{pmatrix}0\\\\1\\end{pmatrix},\n$$\n\n变换后\n\n$$\n\\boldsymbol A\\boldsymbol v_2\n=\\begin{pmatrix}0\\\\1\\end{pmatrix}\n=1\\begin{pmatrix}0\\\\1\\end{pmatrix},\n$$\n\n所以 $\\lambda=1$，向量完全不变。",
-      "取投影到横轴的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&0\n\\end{pmatrix}.\n$$\n\n横轴方向满足\n\n$$\n\\boldsymbol A\n\\begin{pmatrix}1\\\\0\\end{pmatrix}\n=\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n所以对应 $\\lambda=1$。纵轴方向满足\n\n$$\n\\boldsymbol A\n\\begin{pmatrix}0\\\\1\\end{pmatrix}\n=\\begin{pmatrix}0\\\\0\\end{pmatrix},\n$$\n\n所以对应 $\\lambda=0$，这个方向消失了。\n\n特征值 $\\lambda=0$ 的含义是这个方向上的向量被压没了，即 $\\boldsymbol v\\in\\operatorname{Null}(\\boldsymbol A)$。特征值 $0$ 对应的特征空间就是零空间。",
-      "取旋转 $90^\\circ$ 的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n0&-1\\\\\n1&0\n\\end{pmatrix}.\n$$\n\n几何上，旋转 $90^\\circ$ 后，没有任何非零方向还指着原来的方向。因此在实数范围内，旋转 $90^\\circ$ 没有实特征向量。\n\n几何直觉总结如下：\n\n| 变换 | 特征向量（哪些方向不变） | 特征值 |\n| --- | --- | --- |\n| 均匀放大 $2$ 倍 | **所有方向** | 全部为 $2$ |\n| 横轴拉伸 $2$ 倍，纵轴不变 | 横轴方向、纵轴方向 | $2,1$ |\n| 投影到横轴 | 横轴方向不变，纵轴方向消失 | $1,0$ |\n| 旋转 $90^\\circ$ | 无 | 无实特征值 |\n| 关于原点反射 | 所有方向反向 | $-1$ |",
-      "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n0&1\\\\\n1&0\n\\end{pmatrix},\n$$\n\n它表示关于直线 $y=x$ 的反射。对于\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\1\\end{pmatrix},\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol v_1\n=\\begin{pmatrix}1\\\\1\\end{pmatrix}\n=\\boldsymbol v_1,\n$$\n\n所以 $\\boldsymbol v_1$ 是特征向量，$\\lambda=1$。\n\n对于\n\n$$\n\\boldsymbol v_2=\n\\begin{pmatrix}1\\\\-1\\end{pmatrix},\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol v_2\n=\\begin{pmatrix}-1\\\\1\\end{pmatrix}\n=-\\begin{pmatrix}1\\\\-1\\end{pmatrix},\n$$\n\n所以 $\\lambda=-1$。",
-      "验证\n\n$$\n\\boldsymbol v=\n\\begin{pmatrix}2\\\\1\\end{pmatrix}\n$$\n\n是否为\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&4\\\\\n2&3\n\\end{pmatrix}\n$$\n\n的特征向量。计算得\n\n$$\n\\boldsymbol A\\boldsymbol v\n=\\begin{pmatrix}6\\\\7\\end{pmatrix}.\n$$\n\n不存在标量 $k$ 使\n\n$$\n\\begin{pmatrix}6\\\\7\\end{pmatrix}\n=k\\begin{pmatrix}2\\\\1\\end{pmatrix},\n$$\n\n所以 $\\boldsymbol v$ 不是特征向量。",
-      "对于投影到横轴的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&0\n\\end{pmatrix},\n$$\n\n特征值 $\\lambda=1$ 对应横轴上的向量不变，特征值 $\\lambda=0$ 对应纵轴被压扁。特征空间为\n\n$$\nE_1=\\operatorname{span}\\left\\{\n\\begin{pmatrix}1\\\\0\\end{pmatrix}\n\\right\\},\\qquad\nE_0=\\operatorname{span}\\left\\{\n\\begin{pmatrix}0\\\\1\\end{pmatrix}\n\\right\\}.\n$$\n\n$\\lambda=0$ 对应的特征空间恰好等于 $\\operatorname{Null}(\\boldsymbol A)$，$\\lambda=1$ 对应的特征空间是投影的目标线。",
-      "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n4&0&0\\\\\n0&7&0\\\\\n0&0&-2\n\\end{pmatrix}.\n$$\n\n可以直接读出特征值\n\n$$\n\\lambda_1=4,\\qquad \\lambda_2=7,\\qquad \\lambda_3=-2.\n$$\n\n一句话动机：$x^2+y^2$ 是圆，$2x^2+3y^2$ 是椭圆，$x^2-y^2$ 是双曲线。能用一个统一的方法判断任何二次方程的图形吗？能，特征值告诉你答案。\n\n本节目标：掌握二次型的矩阵表示，能用主轴定理判断二次曲线的形状和主轴方向。\n\n对应的特征向量分别为\n\n$$\n\\boldsymbol e_1=\n\\begin{pmatrix}1\\\\0\\\\0\\end{pmatrix},\\qquad\n\\boldsymbol e_2=\n\\begin{pmatrix}0\\\\1\\\\0\\end{pmatrix},\\qquad\n\\boldsymbol e_3=\n\\begin{pmatrix}0\\\\0\\\\1\\end{pmatrix}.\n$$\n\n对角矩阵的特征向量就是标准基。",
-      "取三角矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n3&5&-1\\\\\n0&-2&4\\\\\n0&0&1\n\\end{pmatrix}.\n$$\n\n三角矩阵的特征值就是对角线元素：\n\n$$\n\\lambda=3,-2,1.\n$$\n\n对三角矩阵，\n\n$$\n\\det(\\boldsymbol A-\\lambda\\boldsymbol I)\n=(a_{11}-\\lambda)(a_{22}-\\lambda)\\cdots(a_{nn}-\\lambda),\n$$\n\n所以对角线元素就是特征值。"
+      "**（特征值与特征向量）** 设 $\\boldsymbol A$ 是一个 $n \\times n$ 矩阵。如果存在非零向量 $\\boldsymbol v$ 和标量 $\\lambda$，使得：\n\n$$\n\\boldsymbol A \\cdot \\boldsymbol v = \\lambda \\cdot \\boldsymbol v\n$$\n\n则称 $\\lambda$ 为 $\\boldsymbol A$ 的一个特征值（Eigenvalue），$\\boldsymbol v$ 为对应的特征向量（Eigenvector）。\n\n核心含义：$\\boldsymbol A$ 作用在 $\\boldsymbol v$ 上，效果仅仅是“把 $\\boldsymbol v$ 拉长或缩短 $\\lambda$ 倍”——方向不变（$\\lambda>0$）、反向（$\\lambda<0$），或消失（$\\lambda=0$）。\n\n**（特征空间）** 对应特征值 $\\lambda$ 的所有特征向量（加上零向量）构成一个向量子空间，称为 $\\lambda$ 的特征空间：\n\n$$\nE_{\\lambda} = \\{\\boldsymbol v \\mid \\boldsymbol A\\boldsymbol v = \\lambda\\boldsymbol v\\} = \\operatorname{Null}(\\boldsymbol A - \\lambda\\boldsymbol I)\n$$\n\n**几何直觉（先看图）**\n\n例1：拉伸变换\n\n$$\n\\boldsymbol A = \\begin{pmatrix}\n2 & 0\\\\\n0 & 1\n\\end{pmatrix}\n$$\n\n（$x$ 方向拉 $2$ 倍，$y$ 不变）\n\n$$\n\\boldsymbol v_{1} = \\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix}\n$$\n\n变换后\n\n$$\n\\boldsymbol A \\cdot \\boldsymbol v_{1} = \\begin{pmatrix}\n2\\\\\n0\n\\end{pmatrix}=2\\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix}\n$$\n\n所以 $\\lambda=2$，方向不变。对于\n\n$$\n\\boldsymbol v_{2} = \\begin{pmatrix}\n0\\\\\n1\n\\end{pmatrix}\n$$\n\n变换后\n\n$$\n\\boldsymbol A \\cdot \\boldsymbol v_{2} = \\begin{pmatrix}\n0\\\\\n1\n\\end{pmatrix}=1\\begin{pmatrix}\n0\\\\\n1\n\\end{pmatrix}\n$$\n\n所以 $\\lambda=1$，完全不变。\n\n例2：投影到 $x$ 轴\n\n$$\n\\boldsymbol A = \\begin{pmatrix}\n1 & 0\\\\\n0 & 0\n\\end{pmatrix}\n$$\n\n$$\n\\boldsymbol v_{1} = \\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix},\\qquad \\boldsymbol A \\cdot \\boldsymbol v_{1} = \\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix}\n$$\n\n投影到自己，$\\lambda=1$。对于\n\n$$\n\\boldsymbol v_{2} = \\begin{pmatrix}\n0\\\\\n1\n\\end{pmatrix}\n$$\n\n投影到\n\n$$\n\\boldsymbol A \\cdot \\boldsymbol v_{2} = \\begin{pmatrix}\n0\\\\\n0\n\\end{pmatrix}\n$$\n\n$\\rightarrow \\lambda=0$（方向消失了！）\n\n特征值 $\\lambda=0$ 的含义：这个方向上的向量被\"压没了\"——$\\boldsymbol v \\in \\operatorname{Null}(\\boldsymbol A)$。特征值 0 对应的特征空间 $=$ 零空间。\n\n例3：旋转 $90^\\circ$\n\n$$\n\\boldsymbol A = \\begin{pmatrix}\n0 & -1\\\\\n1 & 0\n\\end{pmatrix}\n$$\n\n有没有非零 $\\boldsymbol v$ 满足 $\\boldsymbol A \\cdot \\boldsymbol v = \\lambda \\cdot \\boldsymbol v$？\n\n几何上：旋转 $90^\\circ$ 后，没有任何方向还指着原来的方向。\n\n$\\rightarrow$ 在实数范围内，旋转 $90^\\circ$ 没有实特征向量。\n\n**几何直觉总结表**\n\n| 变换 | 特征向量（哪些方向不变） | 特征值 |\n| --- | --- | --- |\n| 均匀放大 2 倍 | **所有方向** | 全部 2 |\n| x 拉 2 倍，y 不变 | x 轴方向，y 轴方向 | 2, 1 |\n| 投影到 x 轴 | x 轴方向（不变），y 轴方向（消失） | 1, 0 |\n| 旋转 $90^\\circ$ | 无 | 无实特征值 |\n| 关于原点反射 | 所有方向（但反向） | $-1$ |",
+      "取拉伸变换\n\n$$\n\\boldsymbol A=\\begin{pmatrix}\n2&0\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n对于\n\n$$\n\\boldsymbol v=\\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix},\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol v=\\begin{pmatrix}\n2\\\\\n0\n\\end{pmatrix}=2\\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix}=2\\boldsymbol v.\n$$\n\n因此，$\\boldsymbol v$ 是特征向量，特征值为 $\\lambda=2$，方向不变。\n\n再取\n\n$$\n\\boldsymbol u=\\begin{pmatrix}\n1\\\\\n1\n\\end{pmatrix}.\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol u=\\begin{pmatrix}\n2\\\\\n1\n\\end{pmatrix}.\n$$\n\n不存在标量 $k$ 使\n\n$$\n\\begin{pmatrix}\n2\\\\\n1\n\\end{pmatrix}=k\\begin{pmatrix}\n1\\\\\n1\n\\end{pmatrix},\n$$\n\n所以 $\\boldsymbol u$ 不是特征向量；变换后方向发生了改变。"
     ],
     "sections": [
       {
@@ -163,7 +121,7 @@
         "title": "数学案例"
       }
     ],
-    "summary": "有些方向的线段经过变换后只改变长度而不改变方向，这些方向就是特征方向。",
+    "summary": "",
     "symbol_roles": {
       "projection_operator": "projection_operator",
       "projection_x": "projection_x",
@@ -178,6 +136,8 @@
       "rotation_image": "rotation_image",
       "rotation_operator": "rotation_operator",
       "rotation_vector": "rotation_vector",
+      "stretch_diagonal": "stretch_diagonal",
+      "stretch_diagonal_image": "stretch_diagonal_image",
       "stretch_operator": "stretch_operator",
       "stretch_x": "stretch_x",
       "stretch_x_image": "stretch_x_image",
@@ -188,7 +148,7 @@
     "worked_examples": [
       {
         "calculation": [
-          "取拉伸变换\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&0\\\\\n0&1\n\\end{pmatrix},\n$$\n\n即横轴方向拉伸为原来的 $2$ 倍，纵轴方向不变。对于\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n变换后\n\n$$\n\\boldsymbol A\\boldsymbol v_1\n=\\begin{pmatrix}2\\\\0\\end{pmatrix}\n=2\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n所以 $\\lambda=2$，方向不变。对于\n\n$$\n\\boldsymbol v_2=\n\\begin{pmatrix}0\\\\1\\end{pmatrix},\n$$\n\n变换后\n\n$$\n\\boldsymbol A\\boldsymbol v_2\n=\\begin{pmatrix}0\\\\1\\end{pmatrix}\n=1\\begin{pmatrix}0\\\\1\\end{pmatrix},\n$$\n\n所以 $\\lambda=1$，向量完全不变。"
+          "取拉伸变换\n\n$$\n\\boldsymbol A=\\begin{pmatrix}\n2&0\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n对于\n\n$$\n\\boldsymbol v=\\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix},\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol v=\\begin{pmatrix}\n2\\\\\n0\n\\end{pmatrix}=2\\begin{pmatrix}\n1\\\\\n0\n\\end{pmatrix}=2\\boldsymbol v.\n$$\n\n因此，$\\boldsymbol v$ 是特征向量，特征值为 $\\lambda=2$，方向不变。\n\n再取\n\n$$\n\\boldsymbol u=\\begin{pmatrix}\n1\\\\\n1\n\\end{pmatrix}.\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol u=\\begin{pmatrix}\n2\\\\\n1\n\\end{pmatrix}.\n$$\n\n不存在标量 $k$ 使\n\n$$\n\\begin{pmatrix}\n2\\\\\n1\n\\end{pmatrix}=k\\begin{pmatrix}\n1\\\\\n1\n\\end{pmatrix},\n$$\n\n所以 $\\boldsymbol u$ 不是特征向量；变换后方向发生了改变。"
         ],
         "checks": [
           {
@@ -219,288 +179,23 @@
             0
           ]
         ],
-        "id": "example.ch07.eigen.direction.stretch",
+        "id": "example.ch07.eigen.direction.contrast",
         "kind": "matrix_transform",
         "result": [
           2,
           0
         ],
-        "title": "几何直觉例 1：拉伸变换"
-      },
-      {
-        "calculation": [
-          "取投影到横轴的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&0\n\\end{pmatrix}.\n$$\n\n横轴方向满足\n\n$$\n\\boldsymbol A\n\\begin{pmatrix}1\\\\0\\end{pmatrix}\n=\\begin{pmatrix}1\\\\0\\end{pmatrix},\n$$\n\n所以对应 $\\lambda=1$。纵轴方向满足\n\n$$\n\\boldsymbol A\n\\begin{pmatrix}0\\\\1\\end{pmatrix}\n=\\begin{pmatrix}0\\\\0\\end{pmatrix},\n$$\n\n所以对应 $\\lambda=0$，这个方向消失了。\n\n特征值 $\\lambda=0$ 的含义是这个方向上的向量被压没了，即 $\\boldsymbol v\\in\\operatorname{Null}(\\boldsymbol A)$。特征值 $0$ 对应的特征空间就是零空间。"
-        ],
-        "checks": [
-          {
-            "expected": [
-              0,
-              0
-            ],
-            "name": "transformed",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "given": [
-          [
-            [
-              1,
-              0
-            ],
-            [
-              0,
-              0
-            ]
-          ],
-          [
-            0,
-            1
-          ]
-        ],
-        "id": "example.ch07.eigen.direction.projection",
-        "kind": "matrix_transform",
-        "result": [
-          0,
-          0
-        ],
-        "title": "几何直觉例 2：投影到横轴"
-      },
-      {
-        "calculation": [
-          "取旋转 $90^\\circ$ 的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n0&-1\\\\\n1&0\n\\end{pmatrix}.\n$$\n\n几何上，旋转 $90^\\circ$ 后，没有任何非零方向还指着原来的方向。因此在实数范围内，旋转 $90^\\circ$ 没有实特征向量。\n\n几何直觉总结如下：\n\n| 变换 | 特征向量（哪些方向不变） | 特征值 |\n| --- | --- | --- |\n| 均匀放大 $2$ 倍 | **所有方向** | 全部为 $2$ |\n| 横轴拉伸 $2$ 倍，纵轴不变 | 横轴方向、纵轴方向 | $2,1$ |\n| 投影到横轴 | 横轴方向不变，纵轴方向消失 | $1,0$ |\n| 旋转 $90^\\circ$ | 无 | 无实特征值 |\n| 关于原点反射 | 所有方向反向 | $-1$ |"
-        ],
-        "checks": [
-          {
-            "expected": [
-              0,
-              1
-            ],
-            "name": "transformed",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "given": [
-          [
-            [
-              0,
-              -1
-            ],
-            [
-              1,
-              0
-            ]
-          ],
-          [
-            1,
-            0
-          ]
-        ],
-        "id": "example.ch07.eigen.direction.rotation",
-        "kind": "matrix_transform",
-        "result": [
-          0,
-          1
-        ],
-        "title": "几何直觉例 3：旋转 90 度"
-      },
-      {
-        "calculation": [
-          "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n0&1\\\\\n1&0\n\\end{pmatrix},\n$$\n\n它表示关于直线 $y=x$ 的反射。对于\n\n$$\n\\boldsymbol v_1=\n\\begin{pmatrix}1\\\\1\\end{pmatrix},\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol v_1\n=\\begin{pmatrix}1\\\\1\\end{pmatrix}\n=\\boldsymbol v_1,\n$$\n\n所以 $\\boldsymbol v_1$ 是特征向量，$\\lambda=1$。\n\n对于\n\n$$\n\\boldsymbol v_2=\n\\begin{pmatrix}1\\\\-1\\end{pmatrix},\n$$\n\n有\n\n$$\n\\boldsymbol A\\boldsymbol v_2\n=\\begin{pmatrix}-1\\\\1\\end{pmatrix}\n=-\\begin{pmatrix}1\\\\-1\\end{pmatrix},\n$$\n\n所以 $\\lambda=-1$。"
-        ],
-        "checks": [
-          {
-            "expected": [
-              -1,
-              1
-            ],
-            "name": "transformed",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "given": [
-          [
-            [
-              0,
-              1
-            ],
-            [
-              1,
-              0
-            ]
-          ],
-          [
-            1,
-            -1
-          ]
-        ],
-        "id": "example.ch07.eigen.direction.reflection",
-        "kind": "matrix_transform",
-        "result": [
-          -1,
-          1
-        ],
-        "title": "理解层例 1–2：关于直线 y=x 反射"
-      },
-      {
-        "calculation": [
-          "验证\n\n$$\n\\boldsymbol v=\n\\begin{pmatrix}2\\\\1\\end{pmatrix}\n$$\n\n是否为\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&4\\\\\n2&3\n\\end{pmatrix}\n$$\n\n的特征向量。计算得\n\n$$\n\\boldsymbol A\\boldsymbol v\n=\\begin{pmatrix}6\\\\7\\end{pmatrix}.\n$$\n\n不存在标量 $k$ 使\n\n$$\n\\begin{pmatrix}6\\\\7\\end{pmatrix}\n=k\\begin{pmatrix}2\\\\1\\end{pmatrix},\n$$\n\n所以 $\\boldsymbol v$ 不是特征向量。"
-        ],
-        "checks": [
-          {
-            "expected": [
-              6,
-              7
-            ],
-            "name": "transformed",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "given": [
-          [
-            [
-              1,
-              4
-            ],
-            [
-              2,
-              3
-            ]
-          ],
-          [
-            2,
-            1
-          ]
-        ],
-        "id": "example.ch07.eigen.direction.not-eigenvector",
-        "kind": "matrix_transform",
-        "result": [
-          6,
-          7
-        ],
-        "title": "计算层例 3：验证一个向量不是特征向量"
-      },
-      {
-        "calculation": [
-          "对于投影到横轴的矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&0\n\\end{pmatrix},\n$$\n\n特征值 $\\lambda=1$ 对应横轴上的向量不变，特征值 $\\lambda=0$ 对应纵轴被压扁。特征空间为\n\n$$\nE_1=\\operatorname{span}\\left\\{\n\\begin{pmatrix}1\\\\0\\end{pmatrix}\n\\right\\},\\qquad\nE_0=\\operatorname{span}\\left\\{\n\\begin{pmatrix}0\\\\1\\end{pmatrix}\n\\right\\}.\n$$\n\n$\\lambda=0$ 对应的特征空间恰好等于 $\\operatorname{Null}(\\boldsymbol A)$，$\\lambda=1$ 对应的特征空间是投影的目标线。"
-        ],
-        "checks": [
-          {
-            "expected": 0,
-            "name": "determinant",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "given": [
-          [
-            1,
-            0
-          ],
-          [
-            0,
-            0
-          ]
-        ],
-        "id": "example.ch07.eigen.direction.projection-spaces",
-        "kind": "determinant",
-        "result": 0,
-        "title": "补充例 4：投影矩阵的特征值与特征向量"
-      },
-      {
-        "calculation": [
-          "取\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n4&0&0\\\\\n0&7&0\\\\\n0&0&-2\n\\end{pmatrix}.\n$$\n\n可以直接读出特征值\n\n$$\n\\lambda_1=4,\\qquad \\lambda_2=7,\\qquad \\lambda_3=-2.\n$$\n\n一句话动机：$x^2+y^2$ 是圆，$2x^2+3y^2$ 是椭圆，$x^2-y^2$ 是双曲线。能用一个统一的方法判断任何二次方程的图形吗？能，特征值告诉你答案。\n\n本节目标：掌握二次型的矩阵表示，能用主轴定理判断二次曲线的形状和主轴方向。\n\n对应的特征向量分别为\n\n$$\n\\boldsymbol e_1=\n\\begin{pmatrix}1\\\\0\\\\0\\end{pmatrix},\\qquad\n\\boldsymbol e_2=\n\\begin{pmatrix}0\\\\1\\\\0\\end{pmatrix},\\qquad\n\\boldsymbol e_3=\n\\begin{pmatrix}0\\\\0\\\\1\\end{pmatrix}.\n$$\n\n对角矩阵的特征向量就是标准基。"
-        ],
-        "checks": [
-          {
-            "expected": -56,
-            "name": "determinant",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "given": [
-          [
-            4,
-            0,
-            0
-          ],
-          [
-            0,
-            7,
-            0
-          ],
-          [
-            0,
-            0,
-            -2
-          ]
-        ],
-        "id": "example.ch07.eigen.direction.diagonal",
-        "kind": "determinant",
-        "result": -56,
-        "title": "补充例 5：对角矩阵的特征值"
-      },
-      {
-        "calculation": [
-          "取三角矩阵\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n3&5&-1\\\\\n0&-2&4\\\\\n0&0&1\n\\end{pmatrix}.\n$$\n\n三角矩阵的特征值就是对角线元素：\n\n$$\n\\lambda=3,-2,1.\n$$\n\n对三角矩阵，\n\n$$\n\\det(\\boldsymbol A-\\lambda\\boldsymbol I)\n=(a_{11}-\\lambda)(a_{22}-\\lambda)\\cdots(a_{nn}-\\lambda),\n$$\n\n所以对角线元素就是特征值。"
-        ],
-        "checks": [
-          {
-            "expected": -6,
-            "name": "determinant",
-            "tolerance": 1e-09
-          }
-        ],
-        "claim_refs": [
-          "claim.ch07.eigen.direction"
-        ],
-        "given": [
-          [
-            3,
-            5,
-            -1
-          ],
-          [
-            0,
-            -2,
-            4
-          ],
-          [
-            0,
-            0,
-            1
-          ]
-        ],
-        "id": "example.ch07.eigen.direction.triangular",
-        "kind": "determinant",
-        "result": -6,
-        "title": "补充例 6：三角矩阵的特征值"
+        "title": "拉伸下的方向保持与改变"
       }
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:3dd7f391f1625d37d11d833f2cb48629de750ba09e26c7d4d9484312f480f35f",
+    "artifact_digest": "sha256:9805a10c1bfd5e0114624cbaf024bcc6aea9defaef9a3fd2cadde772fe241627",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:a26a25b57efcbc7e3a859e1d154c2b86ed30f3ffa61b3ad68ac345e345e4fc1c",
+    "raw_reply_digest": "sha256:fdfd9a0c2fbf63769a92f8a38b79761e841beb600c4766ac1cbbab6e0a232950",
     "source_hash": "sha256:16386c8ca3ab73af234181d47a8b71968ef22ea1632c6cc2715998be20eaf58e"
   },
   "revision": 1,
@@ -621,6 +316,34 @@
         "role": "stretch_y_image",
         "value": [
           0.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.stretch_diagonal",
+        "kind": "vector",
+        "label": "stretch_diagonal",
+        "role": "stretch_diagonal",
+        "value": [
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
+        "dimension": 2,
+        "id": "entity.ch07.eigen.direction.stretch_diagonal_image",
+        "kind": "vector",
+        "label": "stretch_diagonal_image",
+        "role": "stretch_diagonal_image",
+        "value": [
+          2.0,
           1.0
         ]
       },
@@ -890,6 +613,35 @@
         "claim_refs": [
           "claim.ch07.eigen.direction"
         ],
+        "id": "relation.ch07.eigen.direction.stretch_diagonal",
+        "kind": "maps_to",
+        "parameters": {
+          "matrix": [
+            [
+              2.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0
+            ]
+          ],
+          "output": [
+            2.0,
+            1.0
+          ],
+          "vector": [
+            1.0,
+            1.0
+          ]
+        },
+        "source_ref": "entity.ch07.eigen.direction.stretch_diagonal",
+        "target_ref": "entity.ch07.eigen.direction.stretch_diagonal_image"
+      },
+      {
+        "claim_refs": [
+          "claim.ch07.eigen.direction"
+        ],
         "id": "relation.ch07.eigen.direction.projection_x",
         "kind": "maps_to",
         "parameters": {
@@ -1048,33 +800,33 @@
       {
         "caption": "",
         "expected_invariants": [
-          "A v = lambda v for every displayed eigenvector",
-          "lambda zero eigenspace equals Null(A)",
-          "quarter turn has no real eigenvector"
+          "$\\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v$ 对每个展示的特征向量成立。",
+          "当 $\\lambda=0$ 时，$E_{0}=\\operatorname{Null}(\\boldsymbol A)$。",
+          "$90^\\circ$ 旋转在实数范围内没有非零特征向量。"
         ],
         "id": "stage.ch07.eigen.direction.stretch",
         "input_entity_refs": [
           "entity.ch07.eigen.direction.stretch_operator",
           "entity.ch07.eigen.direction.stretch_x",
-          "entity.ch07.eigen.direction.stretch_y"
+          "entity.ch07.eigen.direction.stretch_diagonal"
         ],
         "layout": "overlay",
         "output_entity_refs": [
           "entity.ch07.eigen.direction.stretch_x_image",
-          "entity.ch07.eigen.direction.stretch_y_image"
+          "entity.ch07.eigen.direction.stretch_diagonal_image"
         ],
         "relation_refs": [
           "relation.ch07.eigen.direction.stretch_x",
-          "relation.ch07.eigen.direction.stretch_y"
+          "relation.ch07.eigen.direction.stretch_diagonal"
         ],
-        "title": "拉伸：两个坐标轴方向不变"
+        "title": "拉伸：方向保持与方向改变"
       },
       {
         "caption": "",
         "expected_invariants": [
-          "A v = lambda v for every displayed eigenvector",
-          "lambda zero eigenspace equals Null(A)",
-          "quarter turn has no real eigenvector"
+          "$\\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v$ 对每个展示的特征向量成立。",
+          "当 $\\lambda=0$ 时，$E_{0}=\\operatorname{Null}(\\boldsymbol A)$。",
+          "$90^\\circ$ 旋转在实数范围内没有非零特征向量。"
         ],
         "id": "stage.ch07.eigen.direction.projection",
         "input_entity_refs": [
@@ -1096,9 +848,9 @@
       {
         "caption": "",
         "expected_invariants": [
-          "A v = lambda v for every displayed eigenvector",
-          "lambda zero eigenspace equals Null(A)",
-          "quarter turn has no real eigenvector"
+          "$\\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v$ 对每个展示的特征向量成立。",
+          "当 $\\lambda=0$ 时，$E_{0}=\\operatorname{Null}(\\boldsymbol A)$。",
+          "$90^\\circ$ 旋转在实数范围内没有非零特征向量。"
         ],
         "id": "stage.ch07.eigen.direction.rotation",
         "input_entity_refs": [
@@ -1117,9 +869,9 @@
       {
         "caption": "",
         "expected_invariants": [
-          "A v = lambda v for every displayed eigenvector",
-          "lambda zero eigenspace equals Null(A)",
-          "quarter turn has no real eigenvector"
+          "$\\boldsymbol A\\boldsymbol v=\\lambda\\boldsymbol v$ 对每个展示的特征向量成立。",
+          "当 $\\lambda=0$ 时，$E_{0}=\\operatorname{Null}(\\boldsymbol A)$。",
+          "$90^\\circ$ 旋转在实数范围内没有非零特征向量。"
         ],
         "id": "stage.ch07.eigen.direction.reflection",
         "input_entity_refs": [

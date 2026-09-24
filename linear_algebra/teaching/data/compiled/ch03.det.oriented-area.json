@@ -1,5 +1,5 @@
 {
-  "artifact_digest": "sha256:b38b1d887a4e871fe9010c3c0f05d08a1eb765e03d0d95e63161f87d8c4314d0",
+  "artifact_digest": "sha256:b9c1801b5d6b05dab3cf5350b52d04810b49b52cbffa8e93e52ac1427cf18628",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:bf761630b69ea2b915ecca440b6e7e0e19fe73a387733dde53e6e1db9ca8ba72",
@@ -337,7 +337,7 @@
   "plan_digest": "sha256:a568f67cf2e15697170e5715c452d1bad983c413b25dc59b120d6cd0581da75e",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 16,
+  "revision": 19,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:2335b4ec231d51cb971094f8fa3c6f468bd6390fdce36380e8f4933f6139a965",

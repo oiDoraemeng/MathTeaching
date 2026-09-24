@@ -1,12 +1,12 @@
 {
-  "artifact_digest": "sha256:86588cfbf495be953ef73dfd498a0bec4f54a4abb95276768c1ffa928069dacf",
+  "artifact_digest": "sha256:0c63726ea6e6c876eba3b817e01bfc081ec0f83ee48575dd07d93da30e4a9cce",
   "claim_count": 1,
   "compiler_version": "visual-compiler-v1",
   "contract_digest": "sha256:229bcfbf4aaf19dcf85660f795783d9df21cce548b2bfae953fa592b0835fd8a",
   "plan": {
     "operations": [
       {
-        "alias": "sem__v__origin",
+        "alias": "sem__nonzero_v__origin",
         "coordinates": [
           0.0,
           0.0
@@ -15,7 +15,7 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v__end",
+        "alias": "sem__nonzero_v__end",
         "coordinates": [
           3.0,
           4.0
@@ -24,23 +24,51 @@
         "op": "point.upsert"
       },
       {
-        "alias": "sem__v",
+        "alias": "sem__nonzero_v",
         "color": "#2F6BFF",
-        "end": "sem__v__end",
+        "end": "sem__nonzero_v__end",
         "kind": "vector",
         "label": "v",
         "op": "linear.upsert",
         "role": "primary",
-        "start": "sem__v__origin"
+        "start": "sem__nonzero_v__origin"
       },
       {
-        "alias": "sem__v_length",
+        "alias": "sem__nonzero_length",
         "coordinates": [
           3.0,
           4.0
         ],
         "name": "",
         "op": "point.upsert"
+      },
+      {
+        "alias": "sem__zero_v__origin",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__zero_v__end",
+        "coordinates": [
+          0.0,
+          0.0
+        ],
+        "name": "0",
+        "op": "point.upsert"
+      },
+      {
+        "alias": "sem__zero_v",
+        "color": "#2F6BFF",
+        "end": "sem__zero_v__end",
+        "kind": "vector",
+        "label": "",
+        "op": "linear.upsert",
+        "role": "primary",
+        "start": "sem__zero_v__origin"
       },
       {
         "op": "view.fit",
@@ -48,13 +76,13 @@
       }
     ],
     "scene": "2d",
-    "summary": "什么是向量",
+    "summary": "向量的几何量：方向、长度与零向量",
     "version": 1
   },
-  "plan_digest": "sha256:e14f4d44c1783c8c721b68ad78305a98ad6552ca5b979e4fd99d6654c5ec9295",
+  "plan_digest": "sha256:bb4f4238604ac4e65e25de180491d6357e6f99e1b2e50e8278889baea172d9e6",
   "read_guide": [],
   "render_profile": "lecture-v1",
-  "revision": 27,
+  "revision": 29,
   "scene_family": "",
   "schema_version": 1,
   "source_hash": "sha256:2b53dbe40acf6537f3db65a7393acc792022be98e32f278f8f056dfd8013baca",
@@ -64,21 +92,41 @@
         0.0,
         2.65
       ],
-      "caption": "$\\boldsymbol v=(3,4)$ 的模 $|\\boldsymbol v| = 5$。",
+      "caption": "$\\boldsymbol v=(3,4)$ 的箭头长度为 $5$。",
       "id": "stage.magnitude.nonzero",
       "layout": "overlay",
-      "title": "案例一：$\\boldsymbol v=(3,4)$ 的模",
+      "title": "案例一：非零向量的长度",
       "visible_aliases": [
-        "sem__v",
-        "sem__v__end",
-        "sem__v__origin",
-        "sem__v_length",
+        "sem__nonzero_v",
+        "sem__nonzero_v__end",
+        "sem__nonzero_v__origin",
+        "sem__nonzero_length",
         "sem__rel.magnitude.nonzero"
       ],
       "visible_refs": [
-        "v",
-        "v_length",
+        "nonzero_v",
+        "nonzero_length",
         "rel.magnitude.nonzero"
+      ]
+    },
+    {
+      "anchor": [
+        0.0,
+        2.65
+      ],
+      "caption": "$\\boldsymbol 0=(0,0)$ 的起点和终点重合，长度为 $0$。",
+      "id": "stage.magnitude.zero",
+      "layout": "overlay",
+      "title": "案例二：零向量",
+      "visible_aliases": [
+        "sem__zero_v",
+        "sem__zero_v__end",
+        "sem__zero_v__origin",
+        "sem__rel.magnitude.zero"
+      ],
+      "visible_refs": [
+        "zero_v",
+        "rel.magnitude.zero"
       ]
     }
   ],
