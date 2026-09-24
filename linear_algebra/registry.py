@@ -139,6 +139,10 @@ class CurriculumRegistry:
                     if loaded is not None:
                         artifact = loaded.artifact
                         source_diagnostic = loaded.diagnostic
+                except FileNotFoundError:
+                    # The lecture source is a development-time authoring input;
+                    # packaged runtime builds may only contain published artifacts.
+                    source_context = None
                 except (ValueError, OSError, KeyError) as error:
                     bundle_diagnostic = ("source_invalid", "source", str(error))
             else:
@@ -158,8 +162,11 @@ class CurriculumRegistry:
                     artifact = replace(TeachingArtifact.from_dict(reviewed), status="published")
                     artifact_from_reviewed_fallback = True
                     if source_repository is not None:
-                        source_context = source_repository.context_for(topic)
-                        if artifact.source.source_hash != source_context.source_hash:
+                        try:
+                            source_context = source_repository.context_for(topic)
+                        except FileNotFoundError:
+                            source_context = None
+                        if source_context is not None and artifact.source.source_hash != source_context.source_hash:
                             source_diagnostic = ("stale_source", artifact.source.source_hash, source_context.source_hash)
             except (FileNotFoundError, ValueError, OSError) as error:
                 artifact = None

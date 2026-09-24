@@ -6,6 +6,7 @@ from pathlib import Path
 
 from linear_algebra.registry import bundled_teaching_store, catalog_registry
 from linear_algebra.teaching.load_states import LoadPhase
+from linear_algebra.teaching.source import LectureSourceRepository
 from linear_algebra.teaching.store import TeachingArtifactStore
 from linear_algebra.visualizations.snapshots import CompiledSnapshotStore
 
@@ -23,6 +24,20 @@ def test_extended_topic_bundle_is_one_to_one() -> None:
     assert bundle.topic.id == bundle.artifact.topic_id == bundle.contract.topic_id
     assert bundle.topic.id == bundle.compiled.topic_id == bundle.snapshot.topic_id
     assert bundle.snapshot.plan_digest == bundle.compiled.plan_digest
+
+
+def test_missing_authoring_source_uses_reviewed_runtime_artifact(tmp_path: Path) -> None:
+    source_repository = LectureSourceRepository(tmp_path / "missing-lecture.md")
+    bundle = catalog_registry().resolve_bundle(
+        "ch08.principal-axis",
+        artifact_store=bundled_teaching_store(),
+        source_repository=source_repository,
+    )
+
+    assert bundle.artifact is not None
+    assert bundle.compiled is not None
+    assert bundle.source_diagnostic is None
+    assert bundle.bundle_diagnostic is None
 
 
 def test_invalid_extended_bundle_is_rejected_before_host_commit() -> None:
