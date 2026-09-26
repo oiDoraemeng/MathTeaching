@@ -96,7 +96,7 @@
       ],
       "default_pane_count": 3
     },
-    "definition": "一句话动机：以特征向量为“新基”来看变换，会发现它只是各方向独立缩放。\n\n本节目标：理解\n\n$$\n\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1}\n$$\n\n的几何本质，即换到最好的基上，变换变成对角矩阵。\n\n**（对角化）** 若 $n\\times n$ 矩阵 $\\boldsymbol A$ 有 $n$ 个线性无关的特征向量 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_n$，对应特征值为 $\\lambda_1,\\ldots,\\lambda_n$，则\n\n$$\n\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1},\n$$\n\n其中\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n\\vert&\\vert&&\\vert\\\\\n\\boldsymbol v_1&\\boldsymbol v_2&\\cdots&\\boldsymbol v_n\\\\\n\\vert&\\vert&&\\vert\n\\end{pmatrix},\n$$\n\n即特征向量按列排列，并且\n\n$$\n\\boldsymbol D=\n\\begin{pmatrix}\n\\lambda_1&0&\\cdots&0\\\\\n0&\\lambda_2&\\cdots&0\\\\\n\\vdots&\\vdots&\\ddots&\\vdots\\\\\n0&0&\\cdots&\\lambda_n\n\\end{pmatrix}.\n$$\n\n等价地，\n\n$$\n\\boldsymbol P^{-1}\\boldsymbol A\\boldsymbol P=\\boldsymbol D.\n$$\n\n三步走直觉：在标准基下看，$\\boldsymbol A$ 的各方向纠缠在一起；在特征基下看，可以分成三步。\n\n第一步，换到特征基：\n\n$$\n\\boldsymbol y=\\boldsymbol P^{-1}\\boldsymbol x,\n$$\n\n即用特征向量当尺子量 $\\boldsymbol x$。\n\n第二步，独立缩放：\n\n$$\n\\boldsymbol D\\boldsymbol y\n=\\begin{pmatrix}\n\\lambda_1y_1\\\\\n\\vdots\\\\\n\\lambda_ny_n\n\\end{pmatrix}.\n$$\n\n第三步，换回标准基：\n\n$$\n\\boldsymbol P\\boldsymbol D\\boldsymbol y\n=\\boldsymbol A\\boldsymbol x.\n$$\n\n核心：在特征基下，$\\boldsymbol A$ 只是各方向独立的缩放，没有任何交叉。",
+    "definition": "**（对角化）** 若 $n\\times n$ 矩阵 $\\boldsymbol A$ 有 $n$ 个线性无关的特征向量 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_n$，对应特征值为 $\\lambda_1,\\ldots,\\lambda_n$，则\n\n$$\n\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1},\n$$\n\n其中\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n\\vert&\\vert&&\\vert\\\\\n\\boldsymbol v_1&\\boldsymbol v_2&\\cdots&\\boldsymbol v_n\\\\\n\\vert&\\vert&&\\vert\n\\end{pmatrix},\n$$\n\n即特征向量按列排列，并且\n\n$$\n\\boldsymbol D=\n\\begin{pmatrix}\n\\lambda_1&0&\\cdots&0\\\\\n0&\\lambda_2&\\cdots&0\\\\\n\\vdots&\\vdots&\\ddots&\\vdots\\\\\n0&0&\\cdots&\\lambda_n\n\\end{pmatrix}.\n$$\n\n等价地，\n\n$$\n\\boldsymbol P^{-1}\\boldsymbol A\\boldsymbol P=\\boldsymbol D.\n$$\n\n三步走直觉：在标准基下看，$\\boldsymbol A$ 的各方向纠缠在一起；在特征基下看，可以分成三步。\n\n第一步，换到特征基：\n\n$$\n\\boldsymbol y=\\boldsymbol P^{-1}\\boldsymbol x,\n$$\n\n即用特征向量当尺子量 $\\boldsymbol x$。\n\n第二步，独立缩放：\n\n$$\n\\boldsymbol D\\boldsymbol y\n=\\begin{pmatrix}\n\\lambda_1y_1\\\\\n\\vdots\\\\\n\\lambda_ny_n\n\\end{pmatrix}.\n$$\n\n第三步，换回标准基：\n\n$$\n\\boldsymbol P\\boldsymbol D\\boldsymbol y\n=\\boldsymbol A\\boldsymbol x.\n$$\n\n核心：在特征基下，$\\boldsymbol A$ 只是各方向独立的缩放，没有任何交叉。",
     "derivation": [],
     "formula": "",
     "geometric_meaning": "",
@@ -109,7 +109,7 @@
     "searchable_text": [
       "对角化的几何意义",
       "以特征向量为新基，线性变换就变成沿各特征方向的独立缩放。",
-      "一句话动机：以特征向量为“新基”来看变换，会发现它只是各方向独立缩放。\n\n本节目标：理解\n\n$$\n\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1}\n$$\n\n的几何本质，即换到最好的基上，变换变成对角矩阵。\n\n**（对角化）** 若 $n\\times n$ 矩阵 $\\boldsymbol A$ 有 $n$ 个线性无关的特征向量 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_n$，对应特征值为 $\\lambda_1,\\ldots,\\lambda_n$，则\n\n$$\n\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1},\n$$\n\n其中\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n\\vert&\\vert&&\\vert\\\\\n\\boldsymbol v_1&\\boldsymbol v_2&\\cdots&\\boldsymbol v_n\\\\\n\\vert&\\vert&&\\vert\n\\end{pmatrix},\n$$\n\n即特征向量按列排列，并且\n\n$$\n\\boldsymbol D=\n\\begin{pmatrix}\n\\lambda_1&0&\\cdots&0\\\\\n0&\\lambda_2&\\cdots&0\\\\\n\\vdots&\\vdots&\\ddots&\\vdots\\\\\n0&0&\\cdots&\\lambda_n\n\\end{pmatrix}.\n$$\n\n等价地，\n\n$$\n\\boldsymbol P^{-1}\\boldsymbol A\\boldsymbol P=\\boldsymbol D.\n$$\n\n三步走直觉：在标准基下看，$\\boldsymbol A$ 的各方向纠缠在一起；在特征基下看，可以分成三步。\n\n第一步，换到特征基：\n\n$$\n\\boldsymbol y=\\boldsymbol P^{-1}\\boldsymbol x,\n$$\n\n即用特征向量当尺子量 $\\boldsymbol x$。\n\n第二步，独立缩放：\n\n$$\n\\boldsymbol D\\boldsymbol y\n=\\begin{pmatrix}\n\\lambda_1y_1\\\\\n\\vdots\\\\\n\\lambda_ny_n\n\\end{pmatrix}.\n$$\n\n第三步，换回标准基：\n\n$$\n\\boldsymbol P\\boldsymbol D\\boldsymbol y\n=\\boldsymbol A\\boldsymbol x.\n$$\n\n核心：在特征基下，$\\boldsymbol A$ 只是各方向独立的缩放，没有任何交叉。",
+      "**（对角化）** 若 $n\\times n$ 矩阵 $\\boldsymbol A$ 有 $n$ 个线性无关的特征向量 $\\boldsymbol v_1,\\ldots,\\boldsymbol v_n$，对应特征值为 $\\lambda_1,\\ldots,\\lambda_n$，则\n\n$$\n\\boldsymbol A=\\boldsymbol P\\boldsymbol D\\boldsymbol P^{-1},\n$$\n\n其中\n\n$$\n\\boldsymbol P=\n\\begin{pmatrix}\n\\vert&\\vert&&\\vert\\\\\n\\boldsymbol v_1&\\boldsymbol v_2&\\cdots&\\boldsymbol v_n\\\\\n\\vert&\\vert&&\\vert\n\\end{pmatrix},\n$$\n\n即特征向量按列排列，并且\n\n$$\n\\boldsymbol D=\n\\begin{pmatrix}\n\\lambda_1&0&\\cdots&0\\\\\n0&\\lambda_2&\\cdots&0\\\\\n\\vdots&\\vdots&\\ddots&\\vdots\\\\\n0&0&\\cdots&\\lambda_n\n\\end{pmatrix}.\n$$\n\n等价地，\n\n$$\n\\boldsymbol P^{-1}\\boldsymbol A\\boldsymbol P=\\boldsymbol D.\n$$\n\n三步走直觉：在标准基下看，$\\boldsymbol A$ 的各方向纠缠在一起；在特征基下看，可以分成三步。\n\n第一步，换到特征基：\n\n$$\n\\boldsymbol y=\\boldsymbol P^{-1}\\boldsymbol x,\n$$\n\n即用特征向量当尺子量 $\\boldsymbol x$。\n\n第二步，独立缩放：\n\n$$\n\\boldsymbol D\\boldsymbol y\n=\\begin{pmatrix}\n\\lambda_1y_1\\\\\n\\vdots\\\\\n\\lambda_ny_n\n\\end{pmatrix}.\n$$\n\n第三步，换回标准基：\n\n$$\n\\boldsymbol P\\boldsymbol D\\boldsymbol y\n=\\boldsymbol A\\boldsymbol x.\n$$\n\n核心：在特征基下，$\\boldsymbol A$ 只是各方向独立的缩放，没有任何交叉。",
       "$\\boldsymbol P^{-1}\\boldsymbol A\\boldsymbol P=\\boldsymbol D$。",
       "$\\boldsymbol P$ 的列是线性无关的特征向量。",
       "$\\boldsymbol D$ 在特征坐标中沿各坐标方向独立缩放。",
@@ -221,12 +221,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:cecc976bd5a4aaa6c619b5957e99669fe425b698981fb45c7ecd6da21cb1a17d",
+    "artifact_digest": "sha256:93505af5aa86e3cd89af64609ad20adb2e0a61f27db201c6689bcf8985afc16d",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:8282bb61ea3ae6482fb7a465624d6036568725c29c016a37446367a81bdef7ed",
+    "raw_reply_digest": "sha256:6c0af1a97db2336f2b37546a2c4550f94525b61f1cb872c848e03f067c1f2195",
     "source_hash": "sha256:c370dc89d6decc1af953b64023d41ad23f8858ec9f3cdcac971a15bc36e8ff5a"
   },
   "revision": 1,

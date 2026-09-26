@@ -61,7 +61,7 @@
       ],
       "default_pane_count": 1
     },
-    "definition": "一句话动机：$Q(x,y)=1$ 画出来是什么形状？\n\n本节目标：理解“没有 $xy$ 项 $=$ 正的图形 $=$ 特征向量方向恰好和坐标轴一致”。\n\n**（对角矩阵对应的图形）** 若\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n\\lambda_1&0\\\\\n0&\\lambda_2\n\\end{pmatrix},\n$$\n\n则\n\n$$\nQ(x,y)=\\lambda_1x^2+\\lambda_2y^2.\n$$\n\n当 $\\lambda_1>0$、$\\lambda_2>0$ 时，$Q(x,y)=1$ 画出来是正的椭圆，$x$ 轴和 $y$ 轴就是椭圆的主轴。\n\n反例（有 $xy$ 项）：\n\n$$\nQ(x,y)=2x^2+2y^2+2xy,\n$$\n\n它的矩阵是\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\n$$\n\n有非对角线元素，画出来是歪的椭圆。\n\n| 矩阵类型 | 方程 | 图形 | 和坐标轴 |\n| --- | --- | --- | --- |\n| 对角矩阵 | $\\lambda_1x^2+\\lambda_2y^2=1$ | 椭圆 | 正（对齐） |\n| 非对角矩阵 | $ax^2+2bxy+cy^2=1$ | 椭圆 | 歪（不对齐） |\n\n核心问题：为什么有 $xy$ 项就歪？因为 $xy$ 项意味着“$x$ 和 $y$ 纠缠在一起”——沿 $x$ 轴的变化影响 $y$ 方向，沿 $y$ 轴的变化影响 $x$ 方向。这本质上就是矩阵没有在特征向量方向上被坐标化。",
+    "definition": "**（对角矩阵对应的图形）** 若\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n\\lambda_1&0\\\\\n0&\\lambda_2\n\\end{pmatrix},\n$$\n\n则\n\n$$\nQ(x,y)=\\lambda_1x^2+\\lambda_2y^2.\n$$\n\n当 $\\lambda_1>0$、$\\lambda_2>0$ 时，$Q(x,y)=1$ 画出来是正的椭圆，$x$ 轴和 $y$ 轴就是椭圆的主轴。\n\n反例（有 $xy$ 项）：\n\n$$\nQ(x,y)=2x^2+2y^2+2xy,\n$$\n\n它的矩阵是\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\n$$\n\n有非对角线元素，画出来是歪的椭圆。\n\n| 矩阵类型 | 方程 | 图形 | 和坐标轴 |\n| --- | --- | --- | --- |\n| 对角矩阵 | $\\lambda_1x^2+\\lambda_2y^2=1$ | 椭圆 | 正（对齐） |\n| 非对角矩阵 | $ax^2+2bxy+cy^2=1$ | 椭圆 | 歪（不对齐） |\n\n核心问题：为什么有 $xy$ 项就歪？因为 $xy$ 项意味着“$x$ 和 $y$ 纠缠在一起”——沿 $x$ 轴的变化影响 $y$ 方向，沿 $y$ 轴的变化影响 $x$ 方向。这本质上就是矩阵没有在特征向量方向上被坐标化。",
     "derivation": [],
     "formula": "",
     "geometric_meaning": "",
@@ -73,7 +73,7 @@
     "searchable_text": [
       "二次型的几何意义",
       "没有交叉项时主轴与坐标轴对齐，有交叉项时椭圆的主轴倾斜。",
-      "一句话动机：$Q(x,y)=1$ 画出来是什么形状？\n\n本节目标：理解“没有 $xy$ 项 $=$ 正的图形 $=$ 特征向量方向恰好和坐标轴一致”。\n\n**（对角矩阵对应的图形）** 若\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n\\lambda_1&0\\\\\n0&\\lambda_2\n\\end{pmatrix},\n$$\n\n则\n\n$$\nQ(x,y)=\\lambda_1x^2+\\lambda_2y^2.\n$$\n\n当 $\\lambda_1>0$、$\\lambda_2>0$ 时，$Q(x,y)=1$ 画出来是正的椭圆，$x$ 轴和 $y$ 轴就是椭圆的主轴。\n\n反例（有 $xy$ 项）：\n\n$$\nQ(x,y)=2x^2+2y^2+2xy,\n$$\n\n它的矩阵是\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\n$$\n\n有非对角线元素，画出来是歪的椭圆。\n\n| 矩阵类型 | 方程 | 图形 | 和坐标轴 |\n| --- | --- | --- | --- |\n| 对角矩阵 | $\\lambda_1x^2+\\lambda_2y^2=1$ | 椭圆 | 正（对齐） |\n| 非对角矩阵 | $ax^2+2bxy+cy^2=1$ | 椭圆 | 歪（不对齐） |\n\n核心问题：为什么有 $xy$ 项就歪？因为 $xy$ 项意味着“$x$ 和 $y$ 纠缠在一起”——沿 $x$ 轴的变化影响 $y$ 方向，沿 $y$ 轴的变化影响 $x$ 方向。这本质上就是矩阵没有在特征向量方向上被坐标化。",
+      "**（对角矩阵对应的图形）** 若\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n\\lambda_1&0\\\\\n0&\\lambda_2\n\\end{pmatrix},\n$$\n\n则\n\n$$\nQ(x,y)=\\lambda_1x^2+\\lambda_2y^2.\n$$\n\n当 $\\lambda_1>0$、$\\lambda_2>0$ 时，$Q(x,y)=1$ 画出来是正的椭圆，$x$ 轴和 $y$ 轴就是椭圆的主轴。\n\n反例（有 $xy$ 项）：\n\n$$\nQ(x,y)=2x^2+2y^2+2xy,\n$$\n\n它的矩阵是\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix},\n$$\n\n有非对角线元素，画出来是歪的椭圆。\n\n| 矩阵类型 | 方程 | 图形 | 和坐标轴 |\n| --- | --- | --- | --- |\n| 对角矩阵 | $\\lambda_1x^2+\\lambda_2y^2=1$ | 椭圆 | 正（对齐） |\n| 非对角矩阵 | $ax^2+2bxy+cy^2=1$ | 椭圆 | 歪（不对齐） |\n\n核心问题：为什么有 $xy$ 项就歪？因为 $xy$ 项意味着“$x$ 和 $y$ 纠缠在一起”——沿 $x$ 轴的变化影响 $y$ 方向，沿 $y$ 轴的变化影响 $x$ 方向。这本质上就是矩阵没有在特征向量方向上被坐标化。",
       "取没有交叉项的二次型\n\n$$\n3x^2+y^2=1,\n$$\n\n对应矩阵为\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n3&0\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n它的两个特征值是 $3$ 和 $1$，椭圆主轴与坐标轴对齐。",
       "讲义中的二次型\n\n$$\n2x^2+2xy+2y^2=1\n$$\n\n对应矩阵为\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n2&1\\\\\n1&2\n\\end{pmatrix}.\n$$\n\n它的两个特征值同样是 $3$ 和 $1$，但非对角元不为零，椭圆主轴相对坐标轴发生倾斜。"
     ],
@@ -164,12 +164,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:ba447a0c7ee5527328f581f44d3e6c63619a96dc846ad220fe07f72170c793bd",
+    "artifact_digest": "sha256:8d1f7ead8b84db5f34f76fe769882255b281e58e6db45651652ef56665e84835",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:e5ec83839210d2ff4de38636f1ab5d8f9733d493b902cc75e93511311b87ab2a",
+    "raw_reply_digest": "sha256:d4c57c0706500fbf463f2596bd9d538681ae2b3698cb856f3f81f2413c4c14d9",
     "source_hash": "sha256:3877b3e166251007ad089dc286b7a806817aa45fadd67111ea4c791880b9588b"
   },
   "revision": 1,

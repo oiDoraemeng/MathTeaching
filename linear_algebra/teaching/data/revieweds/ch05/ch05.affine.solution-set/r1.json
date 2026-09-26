@@ -66,7 +66,7 @@
       ],
       "default_pane_count": 2
     },
-    "definition": "一句话动机：$\\boldsymbol b$ 不是零——那解是什么结构？\n\n本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+\\operatorname{Null}(\\boldsymbol A)$ 的全部元素。\n\n**（非齐次方程组的解结构）** 设 $\\boldsymbol x_p$ 是 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的一个特解，即任意一个解。则 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的所有解为\n\n$$\n\\left\\{\\boldsymbol x_p+\\boldsymbol z\\mathrel{\\Big|}\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)\\right\\}.\n$$\n\n即：通解 $=$ 特解 $+$ 零空间，一个平移后的线性子空间。\n\n几何理解：\n\n- 齐次方程的解集是一条穿过原点的直线或平面——一个子空间；\n- 非齐次方程的解集是那条直线或平面平移到特解 $\\boldsymbol x_p$ 的位置——一个仿射空间；\n- 这和向量加减法完全一致：\n\n$$\n\\boldsymbol b\n=\\boldsymbol A(\\boldsymbol x_p+\\boldsymbol z)\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol A\\boldsymbol z\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol 0.\n$$",
+    "definition": "**（非齐次方程组的解结构）** 设 $\\boldsymbol x_p$ 是 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的一个特解，即任意一个解。则 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的所有解为\n\n$$\n\\left\\{\\boldsymbol x_p+\\boldsymbol z\\mathrel{\\Big|}\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)\\right\\}.\n$$\n\n即：通解 $=$ 特解 $+$ 零空间，一个平移后的线性子空间。\n\n几何理解：\n\n- 齐次方程的解集是一条穿过原点的直线或平面——一个子空间；\n- 非齐次方程的解集是那条直线或平面平移到特解 $\\boldsymbol x_p$ 的位置——一个仿射空间；\n- 这和向量加减法完全一致：\n\n$$\n\\boldsymbol b\n=\\boldsymbol A(\\boldsymbol x_p+\\boldsymbol z)\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol A\\boldsymbol z\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol 0.\n$$",
     "derivation": [
       "**（非齐次方程组的解结构）**\n\n设 $\\boldsymbol x_p$ 是 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的一个特解，即\n\n$$\n\\boldsymbol A\\boldsymbol x_p=\\boldsymbol b.\n$$\n\n任取 $\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)$，则\n\n$$\n\\boldsymbol A(\\boldsymbol x_p+\\boldsymbol z)\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol A\\boldsymbol z\n=\\boldsymbol b+\\boldsymbol 0\n=\\boldsymbol b,\n$$\n\n所以 $\\boldsymbol x_p+\\boldsymbol z$ 也是解。\n\n若 $\\boldsymbol x$ 是 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的任意解，则\n\n$$\n\\boldsymbol A(\\boldsymbol x-\\boldsymbol x_p)\n=\\boldsymbol A\\boldsymbol x-\\boldsymbol A\\boldsymbol x_p\n=\\boldsymbol b-\\boldsymbol b\n=\\boldsymbol 0,\n$$\n\n所以 $\\boldsymbol x-\\boldsymbol x_p\\in\\operatorname{Null}(\\boldsymbol A)$。令 $\\boldsymbol z=\\boldsymbol x-\\boldsymbol x_p$，则\n\n$$\n\\boldsymbol x=\\boldsymbol x_p+\\boldsymbol z,\\qquad\n\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A).\n$$\n\n综合以上两方面，$\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的解集恰好为\n\n$$\n\\left\\{\\boldsymbol x_p+\\boldsymbol z\\mathrel{\\Big|}\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)\\right\\}.\n$$"
     ],
@@ -75,7 +75,7 @@
     "searchable_text": [
       "非齐次方程组的解结构",
       "掌握非齐次方程组的通解 $=$ 一个特解 $+\\operatorname{Null}(\\boldsymbol A)$ 的全部元素。",
-      "一句话动机：$\\boldsymbol b$ 不是零——那解是什么结构？\n\n本节目标：掌握非齐次方程组的通解 $=$ 一个特解 $+\\operatorname{Null}(\\boldsymbol A)$ 的全部元素。\n\n**（非齐次方程组的解结构）** 设 $\\boldsymbol x_p$ 是 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的一个特解，即任意一个解。则 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的所有解为\n\n$$\n\\left\\{\\boldsymbol x_p+\\boldsymbol z\\mathrel{\\Big|}\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)\\right\\}.\n$$\n\n即：通解 $=$ 特解 $+$ 零空间，一个平移后的线性子空间。\n\n几何理解：\n\n- 齐次方程的解集是一条穿过原点的直线或平面——一个子空间；\n- 非齐次方程的解集是那条直线或平面平移到特解 $\\boldsymbol x_p$ 的位置——一个仿射空间；\n- 这和向量加减法完全一致：\n\n$$\n\\boldsymbol b\n=\\boldsymbol A(\\boldsymbol x_p+\\boldsymbol z)\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol A\\boldsymbol z\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol 0.\n$$",
+      "**（非齐次方程组的解结构）** 设 $\\boldsymbol x_p$ 是 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的一个特解，即任意一个解。则 $\\boldsymbol A\\boldsymbol x=\\boldsymbol b$ 的所有解为\n\n$$\n\\left\\{\\boldsymbol x_p+\\boldsymbol z\\mathrel{\\Big|}\\boldsymbol z\\in\\operatorname{Null}(\\boldsymbol A)\\right\\}.\n$$\n\n即：通解 $=$ 特解 $+$ 零空间，一个平移后的线性子空间。\n\n几何理解：\n\n- 齐次方程的解集是一条穿过原点的直线或平面——一个子空间；\n- 非齐次方程的解集是那条直线或平面平移到特解 $\\boldsymbol x_p$ 的位置——一个仿射空间；\n- 这和向量加减法完全一致：\n\n$$\n\\boldsymbol b\n=\\boldsymbol A(\\boldsymbol x_p+\\boldsymbol z)\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol A\\boldsymbol z\n=\\boldsymbol A\\boldsymbol x_p+\\boldsymbol 0.\n$$",
       "解方程组：\n\n$$\n\\begin{cases}\nx_1+2x_2=3,\\\\\n2x_1+4x_2=6.\n\\end{cases}\n$$\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n1&2\\\\\n2&4\n\\end{pmatrix},\\qquad\n\\boldsymbol b=\n\\begin{pmatrix}\n3\\\\6\n\\end{pmatrix}.\n$$\n\n注意\n\n$$\n\\boldsymbol b=3\\begin{pmatrix}1\\\\2\\end{pmatrix},\n$$\n\n即 $\\boldsymbol b\\in\\operatorname{Col}(\\boldsymbol A)$，所以有解。由 $x_1=3-2x_2$，取 $x_2=0$，得到特解\n\n$$\n\\boldsymbol x_p=\n\\begin{pmatrix}\n3\\\\0\n\\end{pmatrix}.\n$$\n\n又\n\n$$\n\\operatorname{Null}(\\boldsymbol A)\n=\\left\\{\nt\\begin{pmatrix}-2\\\\1\\end{pmatrix}\n\\mathrel{\\Big|}t\\in\\mathbb R\n\\right\\}.\n$$\n\n通解为\n\n$$\n\\boldsymbol x\n=\\begin{pmatrix}3\\\\0\\end{pmatrix}\n+t\\begin{pmatrix}-2\\\\1\\end{pmatrix},\\qquad t\\in\\mathbb R,\n$$\n\n是一条不过原点的直线。",
       "解方程组：\n\n$$\n\\begin{cases}\nx_1+x_2+x_3=6,\\\\\nx_1-x_2+2x_3=5,\\\\\n2x_1+3x_3=11.\n\\end{cases}\n$$\n\n增广矩阵消元得到\n\n$$\nx_1+\\frac32x_3=\\frac{11}{2},\\qquad\nx_2-\\frac12x_3=\\frac12.\n$$\n\n令 $x_3=t$，则\n\n$$\nx_1=\\frac{11}{2}-\\frac32t,\\qquad\nx_2=\\frac12+\\frac12t.\n$$\n\n取 $t=0$ 得特解\n\n$$\n\\boldsymbol x_p=\n\\begin{pmatrix}\n\\frac{11}{2}\\\\[2pt]\n\\frac12\\\\[2pt]\n0\n\\end{pmatrix}.\n$$\n\n对应齐次解可取方向向量\n\n$$\n\\begin{pmatrix}-3\\\\1\\\\2\\end{pmatrix}.\n$$\n\n因此通解为\n\n$$\n\\boldsymbol x=\n\\begin{pmatrix}\n\\frac{11}{2}\\\\[2pt]\n\\frac12\\\\[2pt]\n0\n\\end{pmatrix}\n+s\\begin{pmatrix}-3\\\\1\\\\2\\end{pmatrix},\\qquad s\\in\\mathbb R.\n$$\n\n验证：$\\operatorname{rank}(\\boldsymbol A)=2$，$n=3$，所以零空间维数为 $1$，满足秩-零化度定理。"
     ],
@@ -210,12 +210,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:48dbd0f643a29f6d4137693aa2736a533538b275709133fd2b00fd55df785cb1",
+    "artifact_digest": "sha256:841c78b79fb6aac43717c5f6e68894accc534015e01bd890879b6566f8bea813",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:7e2a94303b895351ba30beb2fd720863ceea2c0f61c5e29059edaa1d04e48787",
+    "raw_reply_digest": "sha256:72bccd36aea8126b88c3faa86721d71de2e4a4b02c1f5061e342d17032eeb66c",
     "source_hash": "sha256:7533c359dac0f3bbaefc1e870b572f93b52d239ea82e7c6423c29f8e0f1f904f"
   },
   "revision": 1,

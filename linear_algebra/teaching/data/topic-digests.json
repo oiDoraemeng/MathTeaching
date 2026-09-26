@@ -308,7 +308,7 @@
     "topic_id": "ch03.inverse.undo"
   },
   {
-    "artifact_digest": "sha256:6773755374c1ea5c50ae534adbdafe1c863b1eaeb1c26ad2c857942e5b2cb579",
+    "artifact_digest": "sha256:7047d139fc8ba63f81e6fc70687c0968abce9cae9f0215e11acd76dfdd193c69",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
     "plan_digest": "sha256:3448ee14f8e132a12964d50100858e0118ba71aef3315649809f069748297884",
@@ -330,7 +330,7 @@
     "topic_id": "ch05.consistency.geometry"
   },
   {
-    "artifact_digest": "sha256:da41cbf4245ec1a3da560c0c8bf52a40a89aae27417b4a1fd28a33aec8cd6530",
+    "artifact_digest": "sha256:96c2f00ffb3f3f4e684e08ec9926baa198622ff2ebde5e45a6bea31614ca3447",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
     "plan_digest": "sha256:24189688ef4d60ec62d24578eb395a3060c5b2a072ad7633f2263556bb14a778",
@@ -341,7 +341,7 @@
     "topic_id": "ch05.gaussian-elimination"
   },
   {
-    "artifact_digest": "sha256:57ab9901160e4dbf6a4185583d9ab6aec353c17f59d55169b6665ca65d80c8ea",
+    "artifact_digest": "sha256:e7b55cc63340385c481f3c14315689bfde61d2390af94d3538763c74e529ff8a",
     "claim_count": 1,
     "compiler_version": "visual-compiler-v1",
     "plan_digest": "sha256:ac124b3528af47d933dd02bdabcc09f6b5729b7cb44029e32547aad42050f3bd",
@@ -383,6 +383,52 @@
     "source_hash": "sha256:c700a7e3f54691290562a7c582245d08d693033604df782a6dbc475be605d7a7",
     "stage_count": 3,
     "topic_id": "ch06.similarity-transform"
+  },
+  {
+    "artifact_digest": "sha256:e7dd124493c065d60d7a025320d399544b4ac51ea08c88cba86a8d0bd5188a56",
+    "compiler_version": "visual-compiler-v1",
+    "contract_digest": "sha256:408e0a501f6aba9eb73d74900b5e09dd4af8e960495234c03ce9f8dfc3545667",
+    "plan_digest": "sha256:92de3ff4788b0b9ed592383565a0212209d85245e54f0a91d145a5b90302a787",
+    "render_profile": "lecture-v1",
+    "revision": 1,
+    "scene_family": "spectral_orthogonal",
+    "source_hash": "sha256:32535406a6bce6511ac710005c50bbe98a55e2fb39270dcec624eea8ee940060",
+    "topic_id": "ch07.characteristic-polynomial"
+  },
+  {
+    "artifact_digest": "sha256:d3cbe70647ad74eece9af8dc6f9af4894026468b96258a83850347fd75d89803",
+    "compiler_version": "visual-compiler-v1",
+    "contract_digest": "sha256:e55d1e05f904410d1d8fb37f5186a0654e55047b66cd783df3cbc042595f78d1",
+    "plan_digest": "sha256:56599b497a8e32308aca614b1c2ffd5468085fc54aa75141845dd4081ff36d71",
+    "render_profile": "lecture-v1",
+    "revision": 1,
+    "scene_family": "spectral_orthogonal",
+    "source_hash": "sha256:c370dc89d6decc1af953b64023d41ad23f8858ec9f3cdcac971a15bc36e8ff5a",
+    "topic_id": "ch07.diagonalization"
+  },
+  {
+    "artifact_digest": "sha256:ab941cc28af95f9a012d1523791fa3651229a2a62a59779ed276eb369d0ece18",
+    "claim_count": 1,
+    "compiler_version": "visual-compiler-v1",
+    "contract_digest": "sha256:ab86f2348d727d2ad78872f74d8afa6f6781ca9f890a482d661fac8a8451e607",
+    "plan_digest": "sha256:e614b65d5ba1e42597b77b104e089e76c19c87fde3fc474f1d4f57dd0373e593",
+    "render_profile": "lecture-v1",
+    "revision": 1,
+    "scene_family": "spectral_orthogonal",
+    "source_hash": "sha256:16386c8ca3ab73af234181d47a8b71968ef22ea1632c6cc2715998be20eaf58e",
+    "stage_count": 4,
+    "topic_id": "ch07.eigen.direction"
+  },
+  {
+    "artifact_digest": "sha256:b7b8935564bda8a45c4ec8c6d25b53abb795a0f9a5fbec0c5dce9c8f390fb6c8",
+    "compiler_version": "visual-compiler-v1",
+    "contract_digest": "sha256:a453e8780f0d59da395dcf58e6ab7b9dc23f95021983d54176599d1f2cc7fcbe",
+    "plan_digest": "sha256:8c49162c286275e54e1fae11843f64d962f5f4cafe97e0dc71d0f4b925a7f5ec",
+    "render_profile": "lecture-v1",
+    "revision": 1,
+    "scene_family": "spectral_orthogonal",
+    "source_hash": "sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724",
+    "topic_id": "ch07.eigenspace"
   },
   {
     "artifact_digest": "sha256:c20e49de44ebecd0f0147bb0b427d5fca55f60983233243592027a6b049a7d93",
@@ -427,51 +473,5 @@
     "scene_family": "quadratic_level_set",
     "source_hash": "sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7",
     "topic_id": "ch08.quadratic.matrix-form"
-  },
-  {
-    "artifact_digest": "sha256:ab941cc28af95f9a012d1523791fa3651229a2a62a59779ed276eb369d0ece18",
-    "claim_count": 1,
-    "compiler_version": "visual-compiler-v1",
-    "contract_digest": "sha256:ab86f2348d727d2ad78872f74d8afa6f6781ca9f890a482d661fac8a8451e607",
-    "plan_digest": "sha256:e614b65d5ba1e42597b77b104e089e76c19c87fde3fc474f1d4f57dd0373e593",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "scene_family": "spectral_orthogonal",
-    "source_hash": "sha256:16386c8ca3ab73af234181d47a8b71968ef22ea1632c6cc2715998be20eaf58e",
-    "stage_count": 4,
-    "topic_id": "ch07.eigen.direction"
-  },
-  {
-    "artifact_digest": "sha256:e7dd124493c065d60d7a025320d399544b4ac51ea08c88cba86a8d0bd5188a56",
-    "compiler_version": "visual-compiler-v1",
-    "contract_digest": "sha256:408e0a501f6aba9eb73d74900b5e09dd4af8e960495234c03ce9f8dfc3545667",
-    "plan_digest": "sha256:92de3ff4788b0b9ed592383565a0212209d85245e54f0a91d145a5b90302a787",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "scene_family": "spectral_orthogonal",
-    "source_hash": "sha256:32535406a6bce6511ac710005c50bbe98a55e2fb39270dcec624eea8ee940060",
-    "topic_id": "ch07.characteristic-polynomial"
-  },
-  {
-    "artifact_digest": "sha256:b7b8935564bda8a45c4ec8c6d25b53abb795a0f9a5fbec0c5dce9c8f390fb6c8",
-    "compiler_version": "visual-compiler-v1",
-    "contract_digest": "sha256:a453e8780f0d59da395dcf58e6ab7b9dc23f95021983d54176599d1f2cc7fcbe",
-    "plan_digest": "sha256:8c49162c286275e54e1fae11843f64d962f5f4cafe97e0dc71d0f4b925a7f5ec",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "scene_family": "spectral_orthogonal",
-    "source_hash": "sha256:55db6b2e438b7759825cc44cee155bc752be4a46725514772df24b8565ebc724",
-    "topic_id": "ch07.eigenspace"
-  },
-  {
-    "artifact_digest": "sha256:d3cbe70647ad74eece9af8dc6f9af4894026468b96258a83850347fd75d89803",
-    "compiler_version": "visual-compiler-v1",
-    "contract_digest": "sha256:e55d1e05f904410d1d8fb37f5186a0654e55047b66cd783df3cbc042595f78d1",
-    "plan_digest": "sha256:56599b497a8e32308aca614b1c2ffd5468085fc54aa75141845dd4081ff36d71",
-    "render_profile": "lecture-v1",
-    "revision": 1,
-    "scene_family": "spectral_orthogonal",
-    "source_hash": "sha256:c370dc89d6decc1af953b64023d41ad23f8858ec9f3cdcac971a15bc36e8ff5a",
-    "topic_id": "ch07.diagonalization"
   }
 ]

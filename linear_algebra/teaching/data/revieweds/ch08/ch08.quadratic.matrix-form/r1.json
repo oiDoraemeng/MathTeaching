@@ -80,7 +80,7 @@
       ],
       "default_pane_count": 1
     },
-    "definition": "一句话动机：$x^{2}+y^{2}=$ 圆，$2x^{2}+3y^{2}+xy=$？怎么快速判断是什么形状？\n\n本节目标：能把二次函数写成矩阵形式 $\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x$，并识别 $\\boldsymbol A$ 的特征值与图形的关系。\n\n**（二次型）** $n$ 个变量的二次型是所有项都为二次的齐次多项式：\n\n$$\nQ(x_1,\\ldots,x_n)=\\sum_{ij}a_{ij}x_ix_j.\n$$\n\n在二维中，通常写作：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2.\n$$\n\n**（二次型的矩阵表示）** 任何二次型都可以表示为：\n\n$$\nQ(\\boldsymbol x)=\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x,\n$$\n\n其中 $\\boldsymbol A$ 是对称矩阵，即 $\\boldsymbol A^{T}=\\boldsymbol A$。具体地：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\na&b\\\\\nb&c\n\\end{pmatrix}.\n$$\n\n重点：交叉项系数 $2b$ 在矩阵中拆成两个 $b$，放在两个非对角线位置。例如 $6xy\\rightarrow b=3$，矩阵的两个非对角元都为 $3$。",
+    "definition": "**（二次型）** $n$ 个变量的二次型是所有项都为二次的齐次多项式：\n\n$$\nQ(x_1,\\ldots,x_n)=\\sum_{ij}a_{ij}x_ix_j.\n$$\n\n在二维中，通常写作：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2.\n$$\n\n**（二次型的矩阵表示）** 任何二次型都可以表示为：\n\n$$\nQ(\\boldsymbol x)=\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x,\n$$\n\n其中 $\\boldsymbol A$ 是对称矩阵，即 $\\boldsymbol A^{T}=\\boldsymbol A$。具体地：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\na&b\\\\\nb&c\n\\end{pmatrix}.\n$$\n\n重点：交叉项系数 $2b$ 在矩阵中拆成两个 $b$，放在两个非对角线位置。例如 $6xy\\rightarrow b=3$，矩阵的两个非对角元都为 $3$。",
     "derivation": [],
     "formula": "",
     "geometric_meaning": "",
@@ -92,7 +92,7 @@
     "searchable_text": [
       "二次型",
       "二次型可以写成对称矩阵的矩阵形式，交叉项系数要平均拆到两个非对角元。",
-      "一句话动机：$x^{2}+y^{2}=$ 圆，$2x^{2}+3y^{2}+xy=$？怎么快速判断是什么形状？\n\n本节目标：能把二次函数写成矩阵形式 $\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x$，并识别 $\\boldsymbol A$ 的特征值与图形的关系。\n\n**（二次型）** $n$ 个变量的二次型是所有项都为二次的齐次多项式：\n\n$$\nQ(x_1,\\ldots,x_n)=\\sum_{ij}a_{ij}x_ix_j.\n$$\n\n在二维中，通常写作：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2.\n$$\n\n**（二次型的矩阵表示）** 任何二次型都可以表示为：\n\n$$\nQ(\\boldsymbol x)=\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x,\n$$\n\n其中 $\\boldsymbol A$ 是对称矩阵，即 $\\boldsymbol A^{T}=\\boldsymbol A$。具体地：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\na&b\\\\\nb&c\n\\end{pmatrix}.\n$$\n\n重点：交叉项系数 $2b$ 在矩阵中拆成两个 $b$，放在两个非对角线位置。例如 $6xy\\rightarrow b=3$，矩阵的两个非对角元都为 $3$。",
+      "**（二次型）** $n$ 个变量的二次型是所有项都为二次的齐次多项式：\n\n$$\nQ(x_1,\\ldots,x_n)=\\sum_{ij}a_{ij}x_ix_j.\n$$\n\n在二维中，通常写作：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2.\n$$\n\n**（二次型的矩阵表示）** 任何二次型都可以表示为：\n\n$$\nQ(\\boldsymbol x)=\\boldsymbol x^{T}\\boldsymbol A\\boldsymbol x,\n$$\n\n其中 $\\boldsymbol A$ 是对称矩阵，即 $\\boldsymbol A^{T}=\\boldsymbol A$。具体地：\n\n$$\nQ(x,y)=ax^2+2bxy+cy^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\na&b\\\\\nb&c\n\\end{pmatrix}.\n$$\n\n重点：交叉项系数 $2b$ 在矩阵中拆成两个 $b$，放在两个非对角线位置。例如 $6xy\\rightarrow b=3$，矩阵的两个非对角元都为 $3$。",
       "讲义中的前两组二次型没有交叉项。\n\n$$\nx^2+y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n1&0\\\\\n0&1\n\\end{pmatrix}.\n$$\n\n$$\n2x^2+3y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n2&0\\\\\n0&3\n\\end{pmatrix}.\n$$",
       "交叉项的系数平均拆到两个非对角元：\n\n$$\nx^2+2xy+y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n1&1\\\\\n1&1\n\\end{pmatrix}.\n$$\n\n$$\nx^2+6xy+9y^2\n\\Longleftrightarrow\n\\boldsymbol A=\n\\begin{pmatrix}\n1&3\\\\\n3&9\n\\end{pmatrix}.\n$$",
       "对于\n\n$$\n3x^2-2xy+y^2,\n$$\n\n交叉项满足 $2b=-2$，所以 $b=-1$：\n\n$$\n\\boldsymbol A=\n\\begin{pmatrix}\n3&-1\\\\\n-1&1\n\\end{pmatrix}.\n$$"
@@ -215,12 +215,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:fcb34969b4aa7c7116e317275d3ccb1ba2f3e6bc11fcc7b4ad1e5d004c542236",
+    "artifact_digest": "sha256:171c9ce5add233ef38e9239f6704feed1159a055dfbadbffb08d3abf08a4d2bd",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:b1756f292706d43c775d139ebcd2b08a466ce54b38bb56ef026946265007ce67",
+    "raw_reply_digest": "sha256:84a21327e2c292abad3b15b9b06593815fe34a4b3d61dd7b8bae8150c45dc773",
     "source_hash": "sha256:31079826b6a16c93f19c2e31e019c4d50db97705684a15e4f1fbb9e66a1ef9e7"
   },
   "revision": 1,

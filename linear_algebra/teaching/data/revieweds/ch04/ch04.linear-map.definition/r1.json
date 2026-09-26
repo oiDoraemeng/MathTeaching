@@ -196,12 +196,12 @@
     ]
   },
   "generated": {
-    "artifact_digest": "sha256:9ce7611d4c1d1ae4d69080077478b196f72cf2cbafbf4481c7f51f6a64494c97",
+    "artifact_digest": "sha256:3ed8e6ea2944e42401e76aed9b188b9f5aa11531d19fa0254e8903de703da3c6",
     "generated_at": "2026-09-12T00:00:00Z",
     "model": "fixture",
     "prompt_version": "chapter-4-8-v1",
     "provider": "deterministic-fixture",
-    "raw_reply_digest": "sha256:a180f0997f2b1deee65a18715fecf21e0d4710af299f971709207272e9d37d9a",
+    "raw_reply_digest": "sha256:849774f46b9514656f4aef7e45a67e331ae938d44a0d8ecd653e8e56c00231d7",
     "source_hash": "sha256:fe48fd57c8810a6f58de0ad63908fabf577f00acadc6d04c6f9b789d950f77eb"
   },
   "revision": 1,
